@@ -427,6 +427,7 @@ Light
     LTR558, components/sensor/ltr501, ltr501.jpg, Lux & Proximity
     LTR559, components/sensor/ltr_als_ps, ltr559.jpg, Lux & Proximity
     LTR659, components/sensor/ltr_als_ps, ltr-ps.jpg, Proximity
+    OPT3001, components/sensor/opt3001, opt3001.jpg, Lux
     MAX44009, components/sensor/max44009, max44009.svg, Lux
     TCS34725, components/sensor/tcs34725, tcs34725.jpg, Lux & RGB colour
     TSL2561, components/sensor/tsl2561, tsl2561.jpg, Lux
