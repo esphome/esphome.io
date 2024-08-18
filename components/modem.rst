@@ -43,6 +43,7 @@ Configuration variables:
 - **tx_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin used for ``TX`` on the esp side (connected to the ``RX`` pin on the modem side).
 - **apn** (**Required**, string): Operator apn.
 - **pin_code** (*Optional*, string): The pin code of the sim card.
+- **baud_rate** (*Optional*, int): Modem baud rate. Use ``AT+IPR=?`` with ``init_at:`` to see available baud rate for your modem.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the PPPoS interface will be enabled on boot. Defaults to ``true``.
 - **enable_cmux** (*Optional*, boolean): If enabled, CMUX will be enabled. In this mode, the modem will be able to answer `AT` commands while connected. Defaults to ``false``.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting after connecting attempt fail. Defaults to ``10min``.
