@@ -103,7 +103,7 @@ In this example
 
 - when the output level is set to ``0.5``, the load will turn on for 1.5 seconds and then off for 1.5 seconds
 - when the output level is set to ``0.25``, the load will turn on for ``min_time_on``, which is 1 second, but then to compensate and observe the 25% level, the load will turn off for another 3 seconds
-- when the output level is set to ``0.75``, the load will turn on for 3 seconds, in order to compensate and observe the 25% level, then the load will turn off for another ``min_time_off`` which is 1 second
+- when the output level is set to ``0.75``, the load will turn on for 3 seconds, in order to compensate and observe the 75% level, then the load will turn off for another ``min_time_off`` which is 1 second
 - when the output level is set to ``0.1``, the load will turn on for ``min_time_on`` 1 second, but it will fail to follow the set level (meaning a cycle period of 10 seconds), as the ``max_period`` states that it can only be off for another 4 seconds
 - when the output level is set to ``0.9``, the load will turn on for 4 seconds, in order to respect the ``max_period``, then it will turn off for ``min_time_off`` which is 1 second, unable to respect the set level
 
