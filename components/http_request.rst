@@ -246,6 +246,10 @@ can assign values to keys by using the ``root["KEY_NAME"] = VALUE;`` syntax as s
 
 GET values from a JSON body response
 ************************************
+If you want to retrieve the value for the vol key and assign it to a template sensor or number component whose id is 
+set to player_volume you can do this, but note that checking for the presence of the key will prevent difficult-to-read
+error messages:
+
 
 This example assumes that the server returns a response as a JSON object similar to this:
 ``{"status":"play","vol":"42","mute":"0"}``
