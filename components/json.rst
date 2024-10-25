@@ -14,42 +14,56 @@ ECMAScript as defined in the ECMAScript Language Specification, Third Edition.
 - https://ecma-international.org/wp-content/uploads/ECMA-404_2nd_edition_december_2017.pdf
 
 
-.. code-block:: json
+Example 1: Relatively complex JSON::
 
-{
-  "first_name": "John",
-  "last_name": "Smith",
-  "is_alive": true,
-  "age": 27,
-  "address": {
-    "street_address": "21 2nd Street",
-    "city": "New York",
-    "state": "NY",
-    "postal_code": "10021-3100"
-  },
-  "phone_numbers": [
-    {
-      "type": "home",
-      "number": "212 555-1234"
-    },
-    {
-      "type": "office",
-      "number": "646 555-4567"
-    }
-  ],
-  "children": [
-    "Catherine",
-    "Thomas",
-    "Trevor"
-  ],
-  "spouse": null
-}
+  {
+   "first_name": "John",
+   "last_name": "Smith",
+   "is_alive": true,
+   "age": 27,
+   "address": {
+     "street_address": "21 2nd Street",
+     "city": "New York",
+     "state": "NY",
+     "postal_code": "10021-3100"
+   },
+   "phone_numbers": [
+     {
+       "type": "home",
+       "number": "212 555-1234"
+     },
+     {
+       "type": "office",
+       "number": "646 555-4567"
+     }
+   ],
+   "children": [
+     "Catherine",
+     "Thomas",
+     "Trevor"
+   ],
+   "spouse": null
+  }
 
-
+Example 2: Simple JSON::
+ {"key": 42.0, "greeting": "Hello World"}
 
 Parsing JSON:
 -------------
 
 Building JSON:
 --------------
+
+Building JSON in a lambda::
+ on_...:
+   - http_request.post:
+       url: https://esphome.io
+       json: |-
+         root["key"] = id(my_sensor).state;
+         root["greeting"] = "Hello World";
+
+This will send::
+ {"key": 42.0, "greeting": "Hello World"}
+
+
 
