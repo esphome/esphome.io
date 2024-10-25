@@ -97,12 +97,12 @@ You can build JSON in a lambda with a nested array like this:
 
 .. code-block::
 
-     on_...:
-       - http_request.post:
-           url: https://esphome.io
-           json: |-
-             root["key"] = id(my_sensor).state;
-             root["greeting"] = "Hello World";
+    on_...:
+      - http_request.post:
+          url: https://esphome.io
+          json: |-
+            root["key"] = id(my_sensor).state;
+            root["greeting"] = "Hello World";
 
 This will send::
  ``{"key": 42.0, "greeting": "Hello World"}``
@@ -116,3 +116,4 @@ See Also
 - :apiref:`json/json_util.h`
 - `ArduinoJson <https://arduinojson.org/>`
 - :ghedit:`Edit`
+
