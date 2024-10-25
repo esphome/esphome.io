@@ -142,6 +142,8 @@ As an example, if the configuration needed to support three garage doors using t
         platform: gpio
         # ...
 
+.. _config-packages_extend:
+
 Extend
 ------
 
@@ -168,6 +170,8 @@ For example, to set a specific update interval on a common uptime sensor that is
     sensor:
       - id: !extend uptime_sensor
         update_interval: 10s
+
+.. _config-packages_remove:
 
 Remove
 ------

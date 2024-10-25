@@ -251,6 +251,165 @@ adhere to the following order:
 
       Note that a blank line is *required* after every ``code-block`` directive.
 
+- **Collapsible section**: To add a collapsible section, use the ``collapse`` directive:
+
+  .. code-block:: rst
+
+      .. collapse:: Details
+
+          Something small enough to escape casual notice.
+
+  .. collapse:: Details
+
+      Something small enough to escape casual notice.
+
+  .. code-block:: rst
+
+      .. collapse:: A long code block
+
+          .. code-block:: yaml
+
+              # Sample configuration entry
+              switch:
+                - platform: gpio
+                  name: "Relay #42"
+                  pin: GPIOXX
+
+  .. collapse:: A long code block
+
+      .. code-block:: yaml
+
+          # Sample configuration entry
+          switch:
+            - platform: gpio
+              name: "Relay #42"
+              pin: GPIOXX
+
+  The ``:open:`` flag can be used to have the section open by default.
+
+  .. code-block:: rst
+
+      .. collapse:: Open
+          :open:
+
+          This section is open by default.
+
+  .. collapse:: Open
+      :open:
+
+      This section is open by default.
+
+  .. note::
+
+      - The ``:open:`` flag must immediately follow the ``collapse`` directive without a blank line between them.
+      - A blank line is *required* after every ``collapse`` directive.
+
+- **Tabs**: To group content into tabs, use the ``tabs`` directive. The tabs directive defines a tab set.
+  Basic tabs are added using the ``tab`` directive (without s), which takes the tab’s label as an argument:
+
+  .. code-block:: rst
+
+      .. tabs::
+
+          .. tab:: Apples
+
+              Apples are green, or sometimes red.
+
+          .. tab:: Pears
+
+              Pears are green.
+
+          .. tab:: Oranges
+
+              Oranges are orange.
+
+  This will appear as
+
+  .. tabs::
+
+      .. tab:: Apples
+
+          Apples are green, or sometimes red.
+
+      .. tab:: Pears
+
+          Pears are green.
+
+      .. tab:: Oranges
+
+          Oranges are orange.
+
+  Tabs can also be nested inside one another:
+
+  .. code-block:: rst
+
+      .. tabs::
+
+          .. tab:: Stars
+
+              .. tabs::
+
+                  .. tab:: The Sun
+
+                      The closest star to us.
+
+                  .. tab:: Proxima Centauri
+
+                      The second closest star to us.
+
+                  .. tab:: Polaris
+
+                      The North Star.
+
+          .. tab:: Moons
+
+              .. tabs::
+
+                  .. tab:: The Moon
+
+                      Orbits the Earth
+
+                  .. tab:: Titan
+
+                      Orbits Jupiter
+
+  .. tabs::
+
+      .. tab:: Stars
+
+          .. tabs::
+
+              .. tab:: The Sun
+
+                  The closest star to us.
+
+              .. tab:: Proxima Centauri
+
+                  The second closest star to us.
+
+              .. tab:: Polaris
+
+                  The North Star.
+
+      .. tab:: Moons
+
+          .. tabs::
+
+              .. tab:: The Moon
+
+                  Orbits the Earth
+
+              .. tab:: Titan
+
+                  Orbits Jupiter
+
+  .. note::
+
+      - A blank line is *required* after every ``tabs`` directive.
+      - The contents of each tab can be displayed by clicking on the tab that you wish to show.
+        Clicking again on the tab that is currently open will hide its content, leaving only the tab set labels visible.
+      - For advanced features like tab-groupings, refer to https://sphinx-tabs.readthedocs.io/en/latest/
+
 - **Images**: Use the ``figure`` directive to display an image:
 
   .. code-block:: rst
@@ -618,6 +777,8 @@ For this reason, you'll periodically want to update your local ``dev`` branch. A
 
 Note that you can use this procedure for other branches, too, such as ``next`` or ``current`` from ``esphome-docs``.
 
+.. _force_push:
+
 .. warning::
 
     Using ``git rebase`` will result in your changes having to be *force-pushed* back up to GitHub.
@@ -703,7 +864,7 @@ and the ESPHome core will copy them with no additional code required by the comp
 
     ESPHome also has a ``custom_components`` mechanism like `Home Assistant does
     <https://developers.home-assistant.io/docs/creating_component_index>`__. Note, however, that
-    **custom componenets are deprecated** in favor of :doc:`/components/external_components`.
+    **custom components are deprecated** in favor of :doc:`/components/external_components`.
 
 .. _config_validation:
 
