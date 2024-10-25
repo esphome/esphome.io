@@ -1028,7 +1028,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
-    Nabu Media Player, components/media_player/nabu, nabu.svg
+    Speaker Media Player, components/media_player/speaker, speaker.svg
 
 Microphone Components
 ---------------------

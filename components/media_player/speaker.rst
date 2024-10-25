@@ -1,17 +1,17 @@
-Nabu Audio Media Player
-=======================
+Speaker Audio Media Player
+==========================
 
 .. seo::
-    :description: Instructions for setting up a Nabu media player in ESPHome.
-    :image: nabu.svg
+    :description: Instructions for setting up a speaker media player in ESPHome.
+    :image: speaker.svg
 
-The ``nabu`` media player platform allows you to play local and online audio media via :doc:`/components/speaker/index`.
+The ``speaker`` media player platform allows you to play local and online audio media via :doc:`/components/speaker/index`.
 
 This platform requires PSRAM and the :ref:`esp32-espidf_framework`. It is designed to run an ESP32-S3. It may work on other ESP32 variants, with potentially decreased performance.
 
 It natively supports decoding ``WAV``, ``MP3``, and ``FLAC`` audio files. Home Assistant (since version 2024.10) will proxy any media it sends and transcode it to FLAC at the configured sample rate to minimize the device's computational load.
 
-It supports two different audio streams: media and announcement. If both streams are active, they will be mixed together for playback. Use the ``nabu.set_ducking`` action to lower the volume of the media stream. :ref:`Media player actions <media_player-actions>` only affect the media stream. Use the ``nabu.stop_pipeline`` action to stop an announcement.
+It supports two different audio streams: media and announcement. If both streams are active, they will be mixed together for playback. Use the ``speaker_media_player.set_ducking`` action to lower the volume of the media stream. :ref:`Media player actions <media_player-actions>` only affect the media stream. Use the ``speaker_media_player.stop_pipeline`` action to stop an announcement.
 
 Local files built directly into the firmware are played without a network connection. Encode local files with the configured sample rate, 1 or 2 channels, and 16 bits per sample. If the file is encoded at a different sample rate, a slow low-quality resampler is used.
 
@@ -19,7 +19,7 @@ Local files built directly into the firmware are played without a network connec
 
     # Example minimal configuration entry
     media_player:
-      - platform: nabu
+      - platform: speaker
         speaker: speaker_id
 
 Configuration variables:
@@ -42,10 +42,10 @@ Configuration variables:
 Automations
 -----------
 
-.. _nabu-play_local_media_file:
+.. _speaker_media_player-play_local_media_file:
 
-``nabu.play_local_media_file`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``speaker_media_player.play_local_media_file`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will play a local media file.
 
@@ -53,10 +53,10 @@ This action will play a local media file.
 
     on_...:
       # Simple
-      - nabu.play_local_media_file: file_id
+      - speaker_media_player.play_local_media_file: file_id
 
       # Full
-      - nabu.play_local_media_file:
+      - speaker_media_player.play_local_media_file:
           media_file: wake_word_trigger_sound
           announcement: true
 
@@ -65,33 +65,33 @@ Configuration variables:
 - **media_file** (**Required**, :ref:`config-id`): The ID of the media file.
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to ``false``.
 
-.. _nabu-stop_pipeline:
+.. _speaker_media_player-stop_pipeline:
 
-``nabu.stop_pipeline`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``speaker_media_player.stop_pipeline`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will stop either the media or announcement pipeline immediately.
 
 .. code-block::
 
     on_...:
-      - nabu.stop_pipeline: announcement
+      - speaker_media_player.stop_pipeline: announcement
 
 Configuration variables:
 
 - **pipeline** (**Required**, enum): Which audio pipeline stream to stop. One of ``announcement`` or ``media``.
 
-.. _nabu-set_ducking:
+.. _speaker_media_player-set_ducking:
 
-``nabu.set_ducking`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``speaker_media_player.set_ducking`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action ducks (reduces the volume) of the media stream.
 
 .. code-block::
 
     on_...:
-      - nabu.set_ducking:
+      - speaker_media_player.set_ducking:
           decibel_reduction: 20
           duration: 2.0s
 
@@ -119,9 +119,9 @@ This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/
         sample_rate: 48000
 
     media_player:
-      - platform: nabu
-        name: "Nabu Media Player"
-        id: nabu_media_player_id
+      - platform: speaker
+        name: "Speaker Media Player"
+        id: speaker_media_player_id
         speaker: speaker_id
         sample_rate: 48000
         files:
@@ -136,14 +136,14 @@ This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/
         restore_mode: ALWAYS_OFF
         on_turn_off:
             # Stop playing the alarm
-            - nabu.stop_pipeline: announcement
+            - speaker_media_player.stop_pipeline: announcement
             # Stop ducking the media stream over 2 seconds
-            - nabu.set_ducking:
+            - speaker_media_player.set_ducking:
                 decibel_reduction: 0
                 duration: 2.0s
         on_turn_on:
             # Duck media audio by 20 decibels instantly
-            - nabu.set_ducking:
+            - speaker_media_player.set_ducking:
                 decibel_reduction: 20
                 duration: 0.0s
             - while:
@@ -151,7 +151,7 @@ This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/
                     switch.is_on: timer_ringing
                 then:
                     # Play the alarm sound as an announcement
-                    - nabu.play_local_media_file:
+                    - speaker_media_player.play_local_media_file:
                         media_file: alarm_sound
                         announcement: true
                     # Wait until the alarm sound starts playing
