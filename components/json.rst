@@ -16,8 +16,7 @@ What is JSON?
 JSON is a text syntax that facilitates structured data interchange between all programming languages. JSON
 is a syntax of braces, brackets, colons, and commas that is useful in many contexts, profiles, and applications.
 JSON stands for JavaScript Object Notation and was inspired by the object literals of JavaScript aka
-ECMAScript as defined in the ECMAScript Language Specification, Third Edition.
-- https://ecma-international.org/wp-content/uploads/ECMA-404_2nd_edition_december_2017.pdf
+ECMAScript as defined in the `ECMAScript Language Specification, Third Edition<https://ecma-international.org/wp-content/uploads/ECMA-404_2nd_edition_december_2017.pdf>`__ .
 
 Example 1: Relatively complex JSON
 
@@ -106,6 +105,20 @@ You can build JSON in a lambda with a nested array like this:
 
 This will send::
  ``{"key": 42.0, "greeting": "Hello World"}``
+
+
+Troubleshooting Errors:
+-----------------------
+A very common error when deserializing is:
+
+.. code-block::
+
+    JSON parse error: InvalidInput
+
+The software ESPHome uses does not provide particularly informative messages as to why, but 
+the people at ArduinoJson have created a `wonderful troubleshooter<https://arduinojson.org/troubleshooter>`__.
+
+Another important resource is `JSONLint<https://jsonlint.com/>`__. It will help you determine if the JSON you are using is valid. It must be valid to work with ESPHome's deserializer and it probably needs to be valid for the destination, if you are sending it.
 
 
 See Also
