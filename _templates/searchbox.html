@@ -75,7 +75,10 @@
         const margin = 20;
 
         function getLink(location, anchors, url) {
-            anchor = anchors.filter(a => a.location === location)[0];
+            if (!anchors || !anchors.length)
+                return null;
+            // find the closest anchor at or before the current location
+            const anchor = anchors.sort((a, b) => b.location - a.location).find(a => a.location <= location);
             if (anchor) {
                 return url + "#" + anchor.id;
             }
@@ -197,13 +200,13 @@
                 }
             });
         }
-        input_field = document.querySelector("#pfmod-input-0");
+        const input_field = document.getElementById("pfmod-input-0");
         if (input_field) {
             input_field.focus({preventScroll: true});
             input_field.addEventListener("blur", () => {
-                setTimeout(() => {
+                requestAnimationFrame(() => {
                     input_field.focus({preventScroll: true});
-                }, 100);
+                });
             })
         }
     });
