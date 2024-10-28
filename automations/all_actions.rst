@@ -58,6 +58,7 @@
 - **servo:** ``detach``, ``write``
 - **sim800l:** ``connect``, ``dial``, ``disconnect``, ``send_sms``, ``send_ussd``
 - **speaker:** ``play``, ``stop``, ``finish``, ``volume_set``
+- **speaker_media_player:** ``play_local_media_file``, ``stop_stream``, ``set_ducking``
 - **sprinkler:** ``clear_queued_valves``, ``next_valve``, ``pause``, ``previous_valve``, ``queue_valve``, ``resume``, ``resume_or_start_full_cycle``, ``set_divider``, ``set_multiplier``, ``set_repeat``, ``set_valve_run_duration``, ``shutdown``, ``start_from_queue``, ``start_full_cycle``, ``start_single_valve``
 - **sps30:** ``start_fan_autoclean``
 - **stepper:** ``report_position``, ``set_acceleration``, ``set_deceleration``, ``set_speed``, ``set_target``
