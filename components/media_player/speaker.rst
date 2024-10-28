@@ -11,7 +11,7 @@ This platform requires PSRAM and the :ref:`esp32-espidf_framework`. It is design
 
 It natively supports decoding ``WAV``, ``MP3``, and ``FLAC`` audio files. Home Assistant (since version 2024.10) will proxy any media it sends and transcode it to FLAC at the configured sample rate to minimize the device's computational load.
 
-It supports two different audio streams: media and announcement. If both streams are active, they will be mixed together for playback. Use the ``speaker_media_player.set_ducking`` action to lower the volume of the media stream. :ref:`Media player actions <media_player-actions>` only affect the media stream. Use the ``speaker_media_player.stop_pipeline`` action to stop an announcement.
+It supports two different audio streams: media and announcement. If both streams are active, they will be mixed together for playback. Use the ``speaker_media_player.set_ducking`` action to lower the volume of the media stream. :ref:`Media player actions <media_player-actions>` only affect the media stream. Use the ``speaker_media_player.stop_stream`` action to stop an announcement.
 
 Local files built directly into the firmware are played without a network connection. Encode local files with the configured sample rate, 1 or 2 channels, and 16 bits per sample. If the file is encoded at a different sample rate, a slow low-quality resampler is used.
 
@@ -65,21 +65,21 @@ Configuration variables:
 - **media_file** (**Required**, :ref:`config-id`): The ID of the media file.
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to ``false``.
 
-.. _speaker_media_player-stop_pipeline:
+.. _speaker_media_player-stop_stream:
 
-``speaker_media_player.stop_pipeline`` Action
+``speaker_media_player.stop_stream`` Action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This action will stop either the media or announcement pipeline immediately.
+This action will stop either the media or announcement stream immediately.
 
 .. code-block::
 
     on_...:
-      - speaker_media_player.stop_pipeline: announcement
+      - speaker_media_player.stop_stream: announcement
 
 Configuration variables:
 
-- **pipeline** (**Required**, enum): Which audio pipeline stream to stop. One of ``announcement`` or ``media``.
+- **stream** (**Required**, enum): Which audio stream to stop. One of ``announcement`` or ``media``.
 
 .. _speaker_media_player-set_ducking:
 
@@ -136,7 +136,7 @@ This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/
         restore_mode: ALWAYS_OFF
         on_turn_off:
             # Stop playing the alarm
-            - speaker_media_player.stop_pipeline: announcement
+            - speaker_media_player.stop_stream: announcement
             # Stop ducking the media stream over 2 seconds
             - speaker_media_player.set_ducking:
                 decibel_reduction: 0
