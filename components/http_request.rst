@@ -166,6 +166,11 @@ The following variables are available for use in :ref:`lambdas <config-lambda>`:
 - ``body`` as ``std::string`` which contains the response body when ``capture_response``
   (see :ref:`http_request-get_action`) is set to ``true``.
 
+    .. note::
+
+        The ``status_code`` should be checked before using the ``body`` variable. A successful response will usually have
+        a status code of ``200``. Server errors such as "not found" (404) or "internal server error" (500) will have an appropriate status code, and may contain an error message in the ``body`` variable.
+
 .. code-block:: yaml
 
     on_...
@@ -261,11 +266,19 @@ whose ``id`` is  set to ``player_volume``:
         capture_response: true
         on_response:
           then:
-            - lambda: |-
-                json::parse_json(body, [](JsonObject root) -> bool {
-                    id(player_volume).publish_state(root["vol"]);
-                    return true;
-                });
+            - if:
+                condition:
+                    lambda: return response->status_code == 200;
+                then:
+                    - lambda: |-
+                        json::parse_json(body, [](JsonObject root) -> bool {
+                            id(player_volume).publish_state(root["vol"]);
+                            return true;
+                        });
+                else:
+                    - logger.log:
+                        format: "Error: Response status: %d, message %s"
+                        args: [response->status_code, body.c_str()];
 
 
 See Also
