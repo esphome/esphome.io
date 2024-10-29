@@ -105,6 +105,7 @@ This :ref:`action <config-action>` sends a GET request.
 - **max_response_buffer_size** (*Optional*, integer): The maximum buffer size to be used to store the response.
   Defaults to ``1 kB``.
 - **on_response** (*Optional*, :ref:`Automation <automation>`): An automation to perform after the request is received.
+- **on_error** (*Optional*, :ref:`Automation <automation>`): An automation to perform if the request cannot be completed.
 
 .. _http_request-post_action:
 
@@ -181,6 +182,20 @@ The following variables are available for use in :ref:`lambdas <config-lambda>`:
                       - response->duration_ms
                 - lambda: |-
                     ESP_LOGD(TAG, "Response status: %d, Duration: %u ms", response->status_code, response->duration_ms);
+            on_error:
+              then:
+                - logger.log: "Request failed!"
+
+
+.. _http_request-on_error:
+
+``on_error`` Trigger
+-----------------------
+
+This automation will be triggered when the HTTP request fails to complete. This may be e.g. when the network is not available,
+or the server is not reachable. This will *not* be triggered if the request
+completes, even if the response code is not 200. No information on the type of error is available and no variables
+are available for use in :ref:`lambdas <config-lambda>`. See example usage above.
 
 
 .. _http_request-examples:
