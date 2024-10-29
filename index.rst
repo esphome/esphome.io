@@ -1019,6 +1019,7 @@ Audio DAC Components
 
     Audio DAC Core, components/audio_dac/index, audio_dac.svg
     AIC3204, components/audio_dac/aic3204, aic3204.svg
+    ES8311, components/audio_dac/es8311, es8311.svg
 
 Media Player Components
 -----------------------
