@@ -282,4 +282,5 @@ See Also
 
 - :doc:`index`
 - :apiref:`http_request/http_request.h`
+- :doc:`/components/json`
 - :ghedit:`Edit`
