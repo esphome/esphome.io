@@ -768,18 +768,18 @@ This action turns on the MQTT component on demand.
 
 .. code-block:: yaml
 
-  mqtt:
-    id: mqtt_id
-    broker: ""
-    enable_on_boot: False
+    mqtt:
+      id: mqtt_id
+      broker: ""
+      enable_on_boot: False
 
-   globals:
-     - id: broker_address
-       type: std::string
-       restore_value: yes
-       max_restore_data_length: 24
-       initial_value: '"192.168.1.2"'
-  # At another point in the code
+    globals:
+      - id: broker_address
+        type: std::string
+        restore_value: yes
+        max_restore_data_length: 24
+        initial_value: '"192.168.1.2"'
+
     on_...:
       then:
         - lambda: !lambda id(mqtt_id).set_broker_address(id(broker_address));
