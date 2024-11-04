@@ -193,7 +193,7 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
               then:
                 - deep_sleep.enter: deep_sleep_1
 
-    You may have calls to deep_sleep.allow or enter from other places which can re-enable deep sleep. An on_value handler based on a periodically checked sensor value (battery level okay: prevent, low: allow), or some other automation from Home Assitant. In that case this can be overriden and the device goes to deep sleep nevertheless. To be absolutely sure, you can use this switch. When enabled and the timer reaches run_duration, deep sleep will be postponed until it is disabled again. Any call to deep_sleep.enter will be ignored, too.
+    You may have calls to deep_sleep.allow or enter from other places which can re-enable deep sleep. An on_value handler based on a periodically checked sensor value (battery level okay: prevent, low: allow), or some other automation from Home Assistant. In that case this can be overriden and the device goes to deep sleep nevertheless. To be absolutely sure, you can use this switch. When enabled and the timer reaches run_duration, deep sleep will be postponed until it is disabled again. Any call to deep_sleep.enter will be ignored, too.
 
     .. code-block:: yaml
 
