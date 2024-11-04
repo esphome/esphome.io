@@ -201,6 +201,7 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
           - platform: deep_sleep
             guard:
               name: Deep Sleep Guard
+              deep_sleep_id: deep_sleep_1
 
 .. _deep_sleep-allow_action:
 
