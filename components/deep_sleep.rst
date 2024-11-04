@@ -193,6 +193,15 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
               then:
                 - deep_sleep.enter: deep_sleep_1
 
+    You may have calls to deep_sleep.enter from other places which can re-enable sleep. An on_value handler based on a sensor value, or automation from HA. In that case this can be overriden later and the device does go to deep sleep. To be absolutely sure it never happens, you can use this switch. When enabled and the timer reaches run_duration, or deep_sleep.enter is called, deep sleep will be postponed until it is disabled again.
+
+    .. code-block:: yaml
+
+        switch:
+          - platform: deep_sleep
+            guard:
+              name: Deep Sleep Guard
+
 .. _deep_sleep-allow_action:
 
 ``deep_sleep.allow`` Action
