@@ -193,7 +193,7 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
               then:
                 - deep_sleep.enter: deep_sleep_1
 
-    You may have calls to deep_sleep.allow or enter from other places which can re-enable deep sleep. An on_value handler based on a periodically checked sensor value (battery level okay: prevent, low: allow), or some other automation from Home Assistant. In that case this can be overriden and the device goes to deep sleep nevertheless. To be absolutely sure, you can use this switch. When enabled and the timer reaches run_duration, deep sleep will be postponed until it is disabled again. Any call to deep_sleep.enter will be ignored, too.
+You may have calls to deep_sleep.allow or enter from other places which can re-enable deep sleep. An on_value handler based on a periodically checked sensor value (battery level okay: prevent, low: allow), or some other automation from Home Assistant. In that case this can be overriden and the device goes to deep sleep nevertheless. To be absolutely sure, you can use this switch. When enabled and the timer reaches run_duration, deep sleep will be postponed until it is disabled again. Any call to deep_sleep.enter will be ignored, too.
 
     .. code-block:: yaml
 
@@ -202,6 +202,9 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
             deep_sleep_id: deep_sleep_1
             guard:
               name: Deep Sleep Guard
+
+- **deep_sleep_id** (*Optional*, :ref:`config-id`): ID of the deep_sleep component.
+- **guard** (*Optional*, switch): This is the switch to guard the device from deep sleep. All properties from sensor, at least the name is required to show up in HA. Defaults to off.
 
 .. _deep_sleep-allow_action:
 
