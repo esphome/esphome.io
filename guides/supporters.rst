@@ -144,6 +144,7 @@ Contributors
 - `Ryan DeShone (@ardichoke) <https://github.com/ardichoke>`__
 - `Ariff Saad (@arffsaad) <https://github.com/arffsaad>`__
 - `ArkanStasarik (@ArkanStasarik) <https://github.com/ArkanStasarik>`__
+- `Aleksandr Artemev (@artemyevav) <https://github.com/artemyevav>`__
 - `arturo182 (@arturo182) <https://github.com/arturo182>`__
 - `arunderwood (@arunderwood) <https://github.com/arunderwood>`__
 - `Arya (@Arya11111) <https://github.com/Arya11111>`__
@@ -263,6 +264,7 @@ Contributors
 - `briangunderson (@briangunderson) <https://github.com/briangunderson>`__
 - `Brian Hanifin (@brianhanifin) <https://github.com/brianhanifin>`__
 - `brianrjones69 (@brianrjones69) <https://github.com/brianrjones69>`__
+- `brickets (@brickets) <https://github.com/brickets>`__
 - `Ben Brooks (@brooksben11) <https://github.com/brooksben11>`__
 - `brtchip-tuannguyen (@brtchip-tuannguyen) <https://github.com/brtchip-tuannguyen>`__
 - `Vaclav (@bruxy70) <https://github.com/bruxy70>`__
@@ -315,6 +317,7 @@ Contributors
 - `chbmuc (@chbmuc) <https://github.com/chbmuc>`__
 - `Audric Schiltknecht (@chemicalstorm) <https://github.com/chemicalstorm>`__
 - `Charles Johnson (@ChemicalXandco) <https://github.com/ChemicalXandco>`__
+- `Rui Chen (@chenrui333) <https://github.com/chenrui333>`__
 - `chiahsing (@chiahsing) <https://github.com/chiahsing>`__
 - `Paweł Dembicki (@CHKDSK88) <https://github.com/CHKDSK88>`__
 - `chris-jennings (@chris-jennings) <https://github.com/chris-jennings>`__
@@ -376,6 +379,7 @@ Contributors
 - `cstaahl (@cstaahl) <https://github.com/cstaahl>`__
 - `Chris Talkington (@ctalkington) <https://github.com/ctalkington>`__
 - `Massimo Cetra (@ctrix) <https://github.com/ctrix>`__
+- `Curtis Malainey (@cujomalainey) <https://github.com/cujomalainey>`__
 - `CVan (@cvandesande) <https://github.com/cvandesande>`__
 - `cvwillegen (@cvwillegen) <https://github.com/cvwillegen>`__
 - `Christoph Wempe (@CWempe) <https://github.com/CWempe>`__
@@ -638,6 +642,7 @@ Contributors
 - `flyize (@flyize) <https://github.com/flyize>`__
 - `风飘雨 (@flyrainning) <https://github.com/flyrainning>`__
 - `foltymat (@foltymat) <https://github.com/foltymat>`__
+- `footswitch (@footswitch) <https://github.com/footswitch>`__
 - `Fabio Pugliese Ornellas (@fornellas) <https://github.com/fornellas>`__
 - `SmartShackMaster (@fototakas) <https://github.com/fototakas>`__
 - `foxsam21 (@foxsam21) <https://github.com/foxsam21>`__
@@ -1057,6 +1062,7 @@ Contributors
 - `Benny de Leeuw (@leeuwte) <https://github.com/leeuwte>`__
 - `Thayne (@Legot) <https://github.com/Legot>`__
 - `lein1013 (@lein1013) <https://github.com/lein1013>`__
+- `Lennart (@lennart-k) <https://github.com/lennart-k>`__
 - `Leonardo La Rocca (@leoli51) <https://github.com/leoli51>`__
 - `leoshusar (@leoshusar) <https://github.com/leoshusar>`__
 - `Leo Winter (@LeoWinterDE) <https://github.com/LeoWinterDE>`__
@@ -1663,6 +1669,7 @@ Contributors
 - `Shreyas Karnik (@shreyaskarnik) <https://github.com/shreyaskarnik>`__
 - `Sherman K (@shrmnk) <https://github.com/shrmnk>`__
 - `shuchitak (@shuchitak) <https://github.com/shuchitak>`__
+- `Shivam Maurya (@shvmm) <https://github.com/shvmm>`__
 - `sibowler (@sibowler) <https://github.com/sibowler>`__
 - `signix (@signix) <https://github.com/signix>`__
 - `SiliconAvatar (@SiliconAvatar) <https://github.com/SiliconAvatar>`__
@@ -1727,6 +1734,7 @@ Contributors
 - `sud33p (@sud33p) <https://github.com/sud33p>`__
 - `sumirati (@sumirati) <https://github.com/sumirati>`__
 - `Sun Xiang yu (@sun-xiangyu) <https://github.com/sun-xiangyu>`__
+- `Hans Svedåker (@svedaker) <https://github.com/svedaker>`__
 - `sveip (@sveip) <https://github.com/sveip>`__
 - `Penny Wood (@Swamp-Ig) <https://github.com/Swamp-Ig>`__
 - `SwedishChef (@SwedishChef) <https://github.com/SwedishChef>`__
@@ -1998,4 +2006,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated October 16, 2024.*
+*This page was last updated October 24, 2024.*

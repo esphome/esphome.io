@@ -901,6 +901,7 @@ Touchscreen Components
 .. imgtable::
 
     Touchscreen Core, components/touchscreen/index, folder-open.svg, dark-invert
+    AXS15231, components/touchscreen/axs15231, axs15231.svg
     CST226, components/touchscreen/cst226, t4-s3.jpg
     CST816, components/touchscreen/cst816, cst816.jpg
     EKTF2232, components/touchscreen/ektf2232, ektf2232.svg, Inkplate 6 Plus
@@ -1019,6 +1020,7 @@ Audio DAC Components
 
     Audio DAC Core, components/audio_dac/index, audio_dac.svg
     AIC3204, components/audio_dac/aic3204, aic3204.svg
+    ES8311, components/audio_dac/es8311, es8311.svg
 
 Media Player Components
 -----------------------
