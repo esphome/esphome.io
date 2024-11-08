@@ -277,7 +277,7 @@ This example assumes that the server returns a response as a JSON object similar
 If you want to retrieve the value for the ``vol`` key and assign it to a template ``sensor`` or ``number`` component
 whose ``id`` is  set to ``player_volume``:
 
-.. code-block:: yaml
+.. code-block:: none
 
     on_...:
     - http_request.get:
