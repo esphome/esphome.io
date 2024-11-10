@@ -28,10 +28,11 @@ There may be multiple BMS on a single RS485 bus.
         ...
 
     modbus:
+      id: bms_modbus
       uart_id: bms_uart
 
     daly_hkms_bms:
-      - modbus: modbus_id
+      - modbus_id: bms_modbus
         daly_address: 1
         update_interval: 10s
 
@@ -147,7 +148,7 @@ Text sensor that indicates the status of BMS.
 .. code-block:: yaml
 
     text_sensor:
-      - platform: daly_bms
+      - platform: daly_hkms_bms
         status:
           name: "BMS Status"
 
@@ -168,7 +169,7 @@ Binary sensor that indicates the status of MOS.
 .. code-block:: yaml
 
     binary_sensor:
-      - platform: daly_bms
+      - platform: daly_hkms_bms
         charging_mos_enabled:
           name: "Charging MOS"
         discharging_mos_enabled:
