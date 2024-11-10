@@ -13,12 +13,20 @@ speaker platforms.
 Base Speaker Configuration
 --------------------------
 
-No configuration variables
+.. code-block:: yaml
+
+    speaker:
+      - platform: ...
+
+
+Configuration variables:
+
+- **audio_dac** (*Optional*, :ref:`config-id`): The :doc:`audio DAC </components/audio_dac/index>` to use for volume control.
 
 .. _speaker-actions:
 
 Speaker Actions
-------------------
+---------------
 
 All ``speaker`` actions can be used without specifying an ``id`` if you have only one ``speaker`` in
 your configuration YAML.
@@ -26,7 +34,7 @@ your configuration YAML.
 .. _speaker-play:
 
 ``speaker.play`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will start playing raw audio data from the speaker.
 
@@ -52,7 +60,7 @@ Configuration variables:
 .. _speaker-stop:
 
 ``speaker.stop`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will stop playing audio data from the speaker and discard the unplayed data.
 
@@ -65,11 +73,58 @@ Configuration variables:
 ``speaker.finish`` Action
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This action will stop playing audio data from the speaker after all data **is** played. 
+This action will stop playing audio data from the speaker after all data **is** played.
 
 Configuration variables:
 
 - **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+
+.. _speaker-mute_on:
+
+``speaker.mute_on`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will mute the speaker.
+
+Configuration variables:
+
+- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+
+.. _speaker-mute_off:
+
+``speaker.mute_off`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will unmute the speaker.
+
+Configuration variables:
+
+- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+
+.. _speaker-volume_set:
+
+``speaker.volume_set`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will set the volume of the speaker.
+
+.. code-block::
+
+    on_...:
+      # Simple
+      - speaker.volume_set: 50%
+
+      # Full
+      - speaker.volume_set:
+          id: speaker_id
+          volume: 50%
+
+      # Simple with lambda
+      -  speaker.volume_set: !lambda "return 0.5;"
+
+Configuration variables:
+
+**volume** (**Required**, percentage): The volume to set the speaker to.
 
 .. _speaker-conditions:
 
@@ -82,7 +137,7 @@ your configuration YAML.
 .. _speaker-is_playing:
 
 ``speaker.is_playing`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This condition will check if the speaker is currently playing audio data.
 

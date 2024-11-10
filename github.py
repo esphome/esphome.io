@@ -136,6 +136,7 @@ class ImageTableDirective(Table):
                 else:
                     category = row[3].strip()
             if len(row) == 5 and row[4].strip() == "dark-invert":
+                category = row[3].strip()
                 dark_invert = True
             items.append(
                 {

@@ -8,6 +8,12 @@ Home Assistant Number
 The ``homeassistant`` number platform allows you to create a number that is synchronized
 with Home Assistant. Min, Max and Step are not configurable for this platform because they are taken from the Home Assistant entity.
 
+.. note::
+
+    Although you might not plan to *export* states from the node and you do not need an entity of the node
+    in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+    :ref:`connecting-your-device-to-home-assistant`.
+
 .. code-block:: yaml
 
     # Example configuration entry

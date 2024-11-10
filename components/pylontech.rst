@@ -22,7 +22,7 @@ Hardware Setup
 You can connect to Pylontech Batteries using the port labeled "Console".
 Any connections via CAN or RS485 (e.g. to an inverter) are untouched and remain functional.
 
-The console port offers a RS232 interface using a RJ10 or RJ45 connector.
+The console port offers a RS232 interface using a RJ11 or RJ45 connector.
 The voltage levels are *not* TTL-compatible. A RS232 transceiver must be placed between the Batteries and the ESPHome device.
 MAX3232-based transceivers have been tested and work well.
 
@@ -50,10 +50,10 @@ If you have multiple batteries you need to connect to the master battery's conso
 
     RJ45 pinout
 
-.. list-table:: Pylontech RJ10 Console Pinout (US2000B)
+.. list-table:: Pylontech RJ11 Console Pinout (US2000B, US2000)
     :header-rows: 1
 
-    * - RJ410 Pin
+    * - RJ11 Pin
       - Function
       - Connect to
     * - 2
@@ -105,7 +105,7 @@ Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **pylontech_id** (*Optional*): Manually specify the ID of the pylontech instance if there are multiple.
-- **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..6 for child batteries.
+- **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
 - **voltage** (*Optional*): Voltage of the battery. All options from :ref:`Sensor <config-sensor>`.
 - **current** (*Optional*): Current flowing into the battery. Negative when discharging. All options from :ref:`Sensor <config-sensor>`.
 - **coulomb** (*Optional*): State of Charge in percent. All options from :ref:`Sensor <config-sensor>`.
@@ -136,7 +136,7 @@ Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **pylontech_id** (**Optional**): Manually specify the ID of the pylontech instance if there are multiple.
-- **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..6 for child batteries.
+- **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
 - **base_state** (*Optional*): Base state. Usually reads ``Dischg``, ``Charge`` or ``Idle``. All options from :ref:`Text Sensor <config-text_sensor>`.
 - **voltage_state** (*Optional*): Voltage state. Usually reads ``Normal``. All options from :ref:`Text Sensor <config-text_sensor>`.
 - **current_state** (*Optional*): Current state. Usually reads ``Normal``. All options from :ref:`Text Sensor <config-text_sensor>`.
@@ -193,5 +193,7 @@ See Also
 
 - `Pylontech-Battery-Monitoring <https://github.com/irekzielinski/Pylontech-Battery-Monitoring>`__
 - `nodered-pylontech-console-reader <https://github.com/juanhaywood/nodered-pylontech-console-reader>`__
+- `MultiSIBControl <http://www.multisibcontrol.net/>`__
+- `ioBroker.pylontech <https://github.com/PLCHome/ioBroker.pylontech/>`__
 - :ref:`uart`
 - :ghedit:`Edit`

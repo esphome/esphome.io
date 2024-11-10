@@ -2,27 +2,29 @@ Getting Started with ESPHome and Home Assistant
 ===============================================
 
 .. seo::
-    :description: Getting Started guide for installing ESPHome Dashboard as a Home Assistant add-on and creating a basic configuration.
+    :description: Getting Started guide for installing ESPHome Device Compiler as a Home Assistant add-on and creating a basic configuration.
     :image: home-assistant.svg
 
-In this guide we’ll go through how to install ESPHome on a device using the ESPHome Dashboard, installed as a Home Assistant add-on.
+In this guide we’ll go through how to install ESPHome on a device using the ESPHome Device Compiler, installed as a Home Assistant add-on.
 
-First, here's a very quick introduction to how ESPHome works. ESPHome is a tool that aims to simplify managing your supported devices. It reads a YAML configuration file, creates custom firmware, and can install it on your device. Any devices or sensors defined in the ESPHome configuration will automatically appear in Home Assistant's user interface.
+First, here's a very quick introduction to how ESPHome works. ESPHome allows you to write configurations and turn your microcontrollers
+into smart home devices. It reads a YAML configuration file, creates custom firmware, and can install it directly on your device. Any devices
+or sensors defined in the ESPHome configuration will automatically appear in Home Assistant's user interface.
 
-Installing ESPHome Dashboard
-----------------------------
+Installing ESPHome Device Compiler
+----------------------------------
 
-The ESPHome Dashboard can be installed as a Home Assistant add-on, which you can find in the add-on store in the Supervisor panel. Open it using the following button then click on INSTALL:
-
-If you do not have the official ESPHome add-on repository added you can add with this button:
+To install the ESPHome Device Compiler in Home Assistant, click the following button to open the ESPHome add-on page and hit the INSTALL button:
 
 .. raw:: html
 
     <a href="https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon" target="_blank">
-        <img src="https://my.home-assistant.io/badges/supervisor_addon.svg" alt="Open your Home Assistant instance and show the dashboard of the ESPHome add-on." />
+        <img src="https://my.home-assistant.io/badges/supervisor_addon.svg" alt="Open your Home Assistant instance and show the user interface of the ESPHome add-on." />
     </a>
 
-After that, wait a bit until it is installed (this can take a while). Click "Start" and then click "Open Web UI". If you see "502: Bad Gateway" it is currently starting, and you can refresh the page after a couple of seconds.
+If you run a Home Assistant installation that does not have access to add-ons, take a look at the other installation methods here.
+
+It can take a bit until the add-on is installed. Once done, click "Start" and then click "Open Web UI".
 
 .. figure:: images/hassio_addon.png
     :align: center
@@ -44,11 +46,11 @@ The wizard will guide you through creating your first configuration and, dependi
     For guidance on making this first connection, see :doc:`physical_device_connection`
 
 
-Dashboard Interface
+ESPHome Interface
 -------------------
 
 Assuming you created your first configuration file with the wizard, let's take a quick
-tour of the ESPHome Dashboard interface.
+tour of the ESPHome Device Compiler interface.
 
 .. figure:: images/dashboard_states.png
     :align: center
@@ -104,6 +106,8 @@ to the configuration like this:
 
 In above example, we're simply adding a switch that's called "Living Room Dehumidifier" (could control
 anything really, for example lights) and is connected to the pin ``GPIO5``.
+
+.. _connecting-your-device-to-home-assistant:
 
 Connecting your device to Home Assistant
 ----------------------------------------

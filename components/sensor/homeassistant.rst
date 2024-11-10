@@ -8,6 +8,12 @@ Home Assistant Sensor
 The ``homeassistant`` sensor platform allows you to create sensors that import
 states from your Home Assistant instance using the :doc:`native API </components/api>`.
 
+.. note::
+
+    Although you might not plan to *export* states from the node and you do not need an entity of the node
+    in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+    :ref:`connecting-your-device-to-home-assistant`.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -32,9 +38,6 @@ Entity state attributes can also be imported:
     This component is only for numeral states. If you want to import arbitrary text states
     from Home Assistant, use the :doc:`Home Assistant Text Sensor </components/text_sensor/homeassistant>`.
 
-    Although you might not plan to *export* states from the node and you do not need an entity of the node
-    in Home Assistant, this component still requires you to register the node under Home Assistant. See:
-    :doc:`Getting started with Home Assistant </guides/getting_started_hassio>`
 
 Configuration variables:
 ------------------------

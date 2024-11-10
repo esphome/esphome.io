@@ -254,6 +254,36 @@ This condition checks if the media player is playing media.
         condition:
           media_player.is_playing:
 
+.. _media_player-is_paused_condition:
+
+``media_player.is_paused`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is paused.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_paused:
+
+.. _media_player-is_announcing_condition:
+
+``media_player.is_announcing`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is playing an announcement.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_announcing:
+
 Play media in order
 -------------------
 

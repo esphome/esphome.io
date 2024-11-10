@@ -77,7 +77,7 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 **Configuration variables:**
 
 - **displays** (*Optional*, list, :ref:`config-id`): A list of display IDs where LVGL should perform rendering based on its configuration. This may be omitted if there is a single display configured, which will be used automatically.
-- **touchscreens** (*Optional*, list): A list of touchscreens interacting with the LVGL widgets on the display.
+- **touchscreens** (*Optional*, list): A list of touchscreens interacting with the LVGL widgets on the display. If you configure a single touchscreen it will be used automatically, and this config entry will not be required.
     - **touchscreen_id** (**Required**, :ref:`config-id`): ID of a touchscreen configuration related to a display.
     - **long_press_time** (*Optional*, :ref:`Time <config-time>`): For the touchscreen, delay after which the ``on_long_pressed`` :ref:`interaction trigger <lvgl-automation-triggers>` will be called. Defaults to ``400ms``.
     - **long_press_repeat_time** (*Optional*, :ref:`Time <config-time>`): For the touchscreen, repeated interval after ``long_press_time``, when ``on_long_pressed_repeat`` :ref:`interaction trigger <lvgl-automation-triggers>` will be called. Defaults to ``100ms``.
@@ -113,8 +113,21 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
         The ``long_press_time`` and ``long_press_repeat_time`` can be fine-tuned also by setting them to ``never`` and using the ``autorepeat`` filter on each binary sensor separately.
 
+    .. tip::
+
+        When using an encoder input device the navigation works as follows:
+
+        - By turning the encoder you can focus on the next/previous object.
+        - When you press the encoder on a simple object (like a button), it will be clicked.
+        - If you press the encoder on a complex object (like a list, message box, etc.) the object will go to edit mode whereby you can adjust the value of the object by turning the encoder.
+        - To leave edit mode, long press the button.
+
+
+
+- **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to ``true``. "Interacts" means to release a touch or button, or rotate an encoder.
 - **color_depth** (*Optional*, string): The color deph at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
 - **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. Default is ``100%`` (or ``1.0``). For devices without PSRAM, the recommended value is ``25%``.
+- **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: ``TRACE``, ``INFO``, ``WARN``, ``ERROR``, ``USER``, ``NONE``. Defaults to ``WARN``.
 - **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either ``big_endian`` or ``little_endian``. Defaults to ``big_endian``.
 - **disp_bg_color** (*Optional*, :ref:`color <lvgl-color>`): Solid color used to fill the background. Can be changed at runtime with the ``lvgl.update`` action.
@@ -145,8 +158,6 @@ The following configuration variables apply to the main ``lvgl`` component, in o
     lvgl:
       displays:
         - my_display
-      touchscreens:
-        - my_touch
       pages:
         - id: main_page
           widgets:
@@ -156,6 +167,27 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 See :ref:`lvgl-cookbook-navigator` in the Cookbook for an example which demonstrates how to implement a page navigation bar at the bottom of the screen.
 
+.. _lgvgl-multi-conf:
+
+
+Multiple LVGL configurations
+****************************
+
+If you have multiple displays configured, and wish to have different content displayed on each display, you can configure multiple LVGL configurations. For example:
+
+.. code-block:: yaml
+
+    lvgl:
+      - id: lvgl_1
+          displays: display_1
+          widgets:
+            - label:
+                text: 'Hello World #1!'
+      - id: lvgl_2
+          displays: display_2
+          widgets:
+            - label:
+                text: 'Hello World #2!'
 .. _lvgl-color:
 
 Colors
@@ -576,15 +608,17 @@ A gradient is a sequence of colors which can be applied to an object using the `
 
 
 Widgets
-*******
+-------
 
 LVGL supports a list of :doc:`/components/lvgl/widgets` which can be used to draw interactive objects on the screen.
 
 Actions
 -------
 
-Widgets support :ref:`general or specific <lvgl-automation-actions>` actions.
-Several actions are available for LVGL, these are outlined below.
+Widgets support :ref:`general or specific <lvgl-automation-actions>` actions - see the :doc:`/components/lvgl/widgets` section for more information.
+
+Several actions are available for the LVGL component itself, these are outlined below. Note that if multiple LVGL instances are configured, an **lvgl_id** config entry will be required to specify which instance the action relates to. This is not required if there is only a single LVGL instance configured.
+
 
 .. _lvgl-redraw-action:
 
@@ -594,12 +628,14 @@ Several actions are available for LVGL, these are outlined below.
 This :ref:`action <actions-action>` redraws the entire screen, or optionally only a widget on it.
 
 - **id** (*Optional*): The ID of a widget configured in LVGL which you want to redraw; if omitted, the entire screen will be redrawn.
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to redraw.
 
 .. code-block:: yaml
 
     on_...:
       then:
         - lvgl.widget.redraw:
+            lvgl_id: lvgl1  # optional when only one LVGL instance is configured
 
 .. _lvgl-pause-action:
 
@@ -609,6 +645,7 @@ This :ref:`action <actions-action>` redraws the entire screen, or optionally onl
 This :ref:`action <actions-action>` pauses the activity of LVGL, including rendering.
 
 - **show_snow** (*Optional*, boolean): When paused, display random colored pixels across the entire screen in order to minimize screen burn-in, to relief the tension put on each individual pixel. See :ref:`lvgl-cookbook-antiburn` for an example which demonstrates how to use this.
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to pause.
 
 .. code-block:: yaml
 
@@ -624,11 +661,14 @@ This :ref:`action <actions-action>` pauses the activity of LVGL, including rende
 
 This :ref:`action <actions-action>` resumes the activity of LVGL, including rendering.
 
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to resume.
+
 .. code-block:: yaml
 
     on_...:
       then:
         - lvgl.resume:
+
 
 ``lvgl.update``
 ***************
@@ -754,6 +794,7 @@ Conditions
 This :ref:`condition <common_conditions>` checks if the amount of time specified has passed since the last touch event.
 
 - **timeout** (**Required**, :ref:`templatable <config-templatable>`, int): Amount of :ref:`time <config-time>` expected since the last touch event.
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to monitor.
 
 .. code-block:: yaml
 
@@ -776,6 +817,8 @@ This :ref:`condition <common_conditions>` checks if the amount of time specified
 
 This :ref:`condition <common_conditions>` checks if LVGL is in the paused state or not.
 
+- **lvgl_id** (*Optional*): The ID of the LVGL instance to monitor.
+
 .. code-block:: yaml
 
     # In some trigger:
@@ -789,18 +832,18 @@ This :ref:`condition <common_conditions>` checks if LVGL is in the paused state 
 Triggers
 --------
 
-Widget level :ref:`interaction triggers <lvgl-automation-triggers>` can be configured universally, or depending on the widtget functionality.
+Widget level :ref:`interaction triggers <lvgl-automation-triggers>` are available, plus a few for the LVGL component itself:
 
 .. _lvgl-on-idle-trigger:
 
-``lvgl.on_idle``
-****************
+``on_idle``
+***********
 
-LVGL has a notion of screen inactivity -- in other words, the time since the last user interaction with the screen is tracked. This can be used to dim the display backlight or turn it off after a moment of inactivity (like a screen saver). Every use of an input device (touchscreen, rotary encoder) counts as an activity and resets the inactivity counter.
+LVGL has a notion of screen inactivity -- i.e. the time since the last user interaction with the screen is tracked. This can, for example, be used to dim the display backlight or turn it off after a moment of inactivity (like a screen saver). Every use of an input device (touchscreen, rotary encoder) counts as an activity and resets the inactivity counter.
 
 The ``on_idle`` :ref:`triggers <automation>` are activated when inactivity time becomes longer than the specified ``timeout``. You can configure any desired number of timeouts with different actions.
 
-- **timeout** (**Required**, :ref:`templatable <config-templatable>`, int): :ref:`Time <config-time>` that has elapsed since the last touch event, after which you want your actions to be performed.
+- **timeout** (**Required**, :ref:`templatable <config-templatable>`, int): :ref:`Time <config-time>` that has elapsed since the last touch event, after which the trigger will be invoked.
 
 .. code-block:: yaml
 
@@ -816,6 +859,21 @@ The ``on_idle`` :ref:`triggers <automation>` are activated when inactivity time 
             - lvgl.pause:
 
 See :ref:`lvgl-cookbook-idlescreen` for an example which demonstrates how to implement screen saving with idle settings.
+
+.. _lvgl_on_pause_trigger:
+
+``on_pause``
+************
+
+This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is paused. This can be used to perform any desired actions when the screen is locked, such as turning off the display backlight.
+
+.. _lvgl_on_resume_trigger:
+
+``on_resume``
+*************
+
+This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is resumed. This can be used to perform any desired actions when the screen is unlocked, such as turning on the display backlight.
+
 
 See Also
 --------

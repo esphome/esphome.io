@@ -55,6 +55,7 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 MQTT options:
 
@@ -71,7 +72,6 @@ MQTT options:
 - **speed_command_topic** (*Optional*, string): The topic to receive
   speed commands on (options: LOW, MEDIUM, HIGH).
 - All other options from :ref:`MQTT Component <config-mqtt-component>`.
-- If Webserver enabled, ``web_server_sorting_weight`` can be set. See :ref:`Webserver Entity Sorting <config-webserver-sorting>`.
 
 Automation triggers:
 
