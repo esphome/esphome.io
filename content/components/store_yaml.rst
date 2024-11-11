@@ -17,10 +17,10 @@ Example configuration entry
       show_in_dump_config: False
       show_secrets: True
 
-.. _store_yaml-configuration_variables:
-
 Configuration variables:
 ------------------------
+
+.. _store_yaml-configuration_variables:
 
 -  **show_in_dump_config** (*Optional*, boolean): Set to ``true`` to display the YAML during dump_config.
 -  **show_secrets** (*Optional*, boolean): Replace `!secret ...` with their real values.
