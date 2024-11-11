@@ -17,8 +17,8 @@ Example configuration entry
       show_in_dump_config: False
       show_secrets: True
 
-Configuration variables:
-------------------------
+Configuration variables
+-----------------------
 
 .. _store_yaml-configuration_variables:
 
@@ -29,8 +29,8 @@ Configuration variables:
 
     `show_in_dump_config` may trigger a watchdog reboot and safe mode when the configuration is too large to be sent quickly.
 
-Actions:
---------
+Actions
+-------
 
 ``store_yaml.log`` Action
 ^^^^^^^^^^^^^^^^^^^^^^^^^
