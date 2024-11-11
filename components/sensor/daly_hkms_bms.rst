@@ -196,10 +196,10 @@ Configuration variables:
 UART Connection
 ---------------
 
-Connect RX from BMS to TX on ESP board and TX from BMS to RX on ESP board.
+Connect BMS RX to ESP TX, BMS TX to ESP RX and BMS GND to ESP GND.
 
 Alternatively, use an RS485 converter and connect A to A/+ and B to B/-.
-Always connect the ground when using RS485 to avoid stray currents running through the RS485 transceivers.
+Always connect the ground, even when using RS485, to avoid stray currents running through the RS485 transceivers.
 
 Be aware that by default, the BMS goes to sleep after 1 hour and can not be woken up via RS485,
 only by RX/TX UART communication, charging/discharging the battery or toggling the switch input.
