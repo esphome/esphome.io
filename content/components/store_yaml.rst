@@ -29,9 +29,6 @@ Configuration variables
 
     `show_in_dump_config` may trigger a watchdog reboot and safe mode when the configuration is too large to be sent quickly.
 
-Actions
--------
-
 ``store_yaml.log`` Action
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
