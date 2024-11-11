@@ -499,6 +499,7 @@ Environmental
     SHTCx, components/sensor/shtcx, shtc3.jpg, Temperature & Humidity
     SMT100, components/sensor/smt100, smt100.jpg, Moisture & Temperature
     STS3X, components/sensor/sts3x, sts3x.jpg, Temperature
+    TC74, components/sensor/tc74, tc74.jpg, Temperature
     TEE501, components/sensor/tee501, TEE501.png, Temperature
     TE-M3200, components/sensor/tem3200, tem3200.jpg, Temperature & Pressure
     TMP102, components/sensor/tmp102, tmp102.jpg, Temperature
@@ -559,12 +560,14 @@ Miscellaneous
     Duty Time, components/sensor/duty_time, timer-play-outline.svg, dark-invert
     EZO sensor circuits, components/sensor/ezo, ezo-ph-circuit.png, (pH)
     FS3000, components/sensor/fs3000, fs3000.jpg, Air velocity
+    GDK101, components/sensor/gdk101, gdk101.jpg, Radiation
     Growatt Solar, components/sensor/growatt_solar, growatt.jpg, Solar rooftop
     Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg, Solar rooftop
     Integration, components/sensor/integration, sigma.svg, dark-invert
     Kuntze pool sensor, components/sensor/kuntze, kuntze.jpg
     LVGL widget, components/sensor/lvgl, lvgl_c_num.png
     M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
+    MAX17043, components/sensor/max17043, max17043.jpg, Battery
     MicroNova pellet stove, components/micronova, micronova.svg
     Modbus Sensor, components/sensor/modbus_controller, modbus.png
     Nextion, components/sensor/nextion, nextion.jpg, Sensors from display
@@ -577,7 +580,6 @@ Miscellaneous
     uFire EC sensor, components/sensor/ufire_ec, ufire_ec.png, EC & Temperature
     uFire ISE sensor, components/sensor/ufire_ise, ufire_ise.png, pH & Temperature
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
-    GDK101, components/sensor/gdk101, gdk101.jpg, Radiation
 
 Motion
 ******
@@ -872,7 +874,7 @@ Display Hardware Platforms
     Nextion, components/display/nextion, nextion.jpg
     PCD8544 (Nokia 5110/ 3310), components/display/pcd8544, pcd8544.jpg
     PVVX MiThermometer, components/display/pvvx_mithermometer, ../components/sensor/images/xiaomi_lywsd03mmc.jpg
-    Quad SPI AMOLED, components/display/qspi_amoled, t4-s3.jpg
+    Quad SPI Displays, components/display/qspi_dbi, t4-s3.jpg
     RPI_DPI_RGB, components/display/rpi_dpi_rgb, waveshare_touch-s3.jpg
     SSD1306, components/display/ssd1306, ssd1306.jpg
     SSD1322, components/display/ssd1322, ssd1322.jpg
@@ -899,6 +901,7 @@ Touchscreen Components
 .. imgtable::
 
     Touchscreen Core, components/touchscreen/index, folder-open.svg, dark-invert
+    AXS15231, components/touchscreen/axs15231, axs15231.svg
     CST226, components/touchscreen/cst226, t4-s3.jpg
     CST816, components/touchscreen/cst816, cst816.jpg
     EKTF2232, components/touchscreen/ektf2232, ektf2232.svg, Inkplate 6 Plus
@@ -1017,6 +1020,7 @@ Audio DAC Components
 
     Audio DAC Core, components/audio_dac/index, audio_dac.svg
     AIC3204, components/audio_dac/aic3204, aic3204.svg
+    ES8311, components/audio_dac/es8311, es8311.svg
 
 Media Player Components
 -----------------------

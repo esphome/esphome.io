@@ -123,12 +123,14 @@ Filters are applied in the order they are defined in your configuration.
     # Example filters:
     filters:
       - offset: 2.0
-      - multiply: 1.2
+      - multiply: !lambda return 1.2;
       - calibrate_linear:
           - 0.0 -> 0.0
           - 40.0 -> 45.0
           - 100.0 -> 102.5
-      - filter_out: 42.0
+      - filter_out:
+          - 42.0
+          - 43.0
       - median:
           window_size: 5
           send_every: 5
@@ -158,7 +160,7 @@ Filters are applied in the order they are defined in your configuration.
 ``offset``
 **********
 
-Adds a constant value to each sensor value.
+Adds a value to each sensor value. The value may be a constant or a lambda returning a float.
 
 .. code-block:: yaml
 
@@ -168,11 +170,12 @@ Adds a constant value to each sensor value.
       filters:
         - offset: 2.0
         - multiply: 1.2
+        - offset: !lambda return id(some_sensor).state;
 
 ``multiply``
 ************
 
-Multiplies each value by a constant value.
+Multiplies each value by a templatable value.
 
 .. _sensor-filter-calibrate_linear:
 
@@ -255,6 +258,20 @@ degree with a least squares solver.
       # ...
       filters:
         - filter_out: 85.0
+
+A list of values may be supplied, and values are templatable:
+
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    - platform: wifi_signal
+      # ...
+      filters:
+        - filter_out:
+            - 85.0
+            - !lambda return id(some_sensor).state;
+
 
 ``clamp``
 *********
@@ -538,7 +555,7 @@ of the input values.
 ************
 
 After the first value has been sent, if no subsequent value is published within the
-``specified time period``, send a value which defaults to ``NaN``.
+``specified time period``, send a templatable value which defaults to ``NaN``.
 Especially useful when data is derived from some other communication
 channel, e.g. a serial port, which can potentially be interrupted.
 
@@ -549,7 +566,7 @@ channel, e.g. a serial port, which can potentially be interrupted.
       - timeout: 10s  # sent value will be NaN
       - timeout:
           timeout: 10s
-          value: 0
+          value: !lambda return 0;
 
 ``debounce``
 ************

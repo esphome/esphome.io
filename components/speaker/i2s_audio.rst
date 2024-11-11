@@ -55,6 +55,7 @@ Configuration variables:
   - ``pcm_short``
   - ``pcm_long``
 - **timeout** (*Optional*, :ref:`config-time`): How long to wait after finishing playback before releasing the bus. Defaults to ``100ms``.
+- All other options from :ref:`Speaker Component <config-speaker>`.
 
 External DAC
 ************

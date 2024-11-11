@@ -126,7 +126,7 @@ Reads and writes on the device can be performed with lambdas. For example:
         id: spidev
         cs_pin: GPIOXX
         data_rate: 2MHz
-        mode: 3
+        spi_mode: 3
         bit_order: lsb_first
 
    on...:
@@ -143,7 +143,7 @@ Configuration variables:
 - **data_rate** (*Optional*): Set the data rate of the controller. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz``,
   ``5MHz``, ``4MHz``, ``2MHz``, ``1MHz`` (default), ``200kHz``, ``75kHz`` or ``1kHz``. A numeric value in Hz can alternatively
   be specified.
-- **mode** (*Optional*): Set the controller mode - one of ``mode0``, ``mode1``, ``mode2``, ``mode3``. The default is ``mode3``.
+- **spi_mode** (*Optional*): Set the controller mode - one of ``mode0``, ``mode1``, ``mode2``, ``mode3``. The default is ``mode3``.
   See table below for more information
 - **bit_order** (*Optional*): Set the bit order - choose one of ``msb_first`` (default) or ``lsb_first``.
 - **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
