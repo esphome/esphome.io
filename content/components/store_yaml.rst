@@ -17,7 +17,7 @@ Example configuration entry
       show_in_dump_config: False
       show_secrets: True
 
-.. _safe_mode-configuration_variables:
+.. _store_yaml-configuration_variables:
 
 Configuration variables:
 ------------------------
