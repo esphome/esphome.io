@@ -37,12 +37,14 @@ sys.path.append(os.path.abspath("_extensions"))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "apiref",
+    "components",
     "github",
     "seo",
-    "components",
     "sitemap",
     "sphinx_tabs.tabs",
     "sphinx_toolbox.collapse",
+    "tables",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
