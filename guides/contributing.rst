@@ -194,6 +194,8 @@ adhere to the following order:
       - The length of the bar below the text **must** match the title text length.
       - Section titles should use Title Case.
 
+.. _contributing-links:
+
 - **Links**: To create a link to an external resource (for example https://www.google.com), use
   ``\`Link text <link_url>\`__``. For example:
 
