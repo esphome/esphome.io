@@ -22,7 +22,7 @@ Example configuration entry
 
 -  **show_in_dump_config** (*Optional*, boolean): Set to ``true`` to display the YAML during dump_config.
 -  **show_secrets** (*Optional*, boolean): Replace `!secret ...` with their real values.
--  **url** (*Optional*, string): .
+-  **url** (*Optional*, string): The request string to use for the web server.
 
 .. warning::
 
