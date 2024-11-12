@@ -54,6 +54,7 @@ Configuration variables:
   - ``pcm``
   - ``pcm_short``
   - ``pcm_long``
+- **buffer_duration** (*Optional*, :ref:`config-time`): The duration of the internal ring buffer. Larger values can reduce stuttering but uses more memory. Defaults to ``500ms``.
 - **timeout** (*Optional*, :ref:`config-time`): How long to wait after finishing playback before releasing the bus. Set to ``disable`` to never stop the speaker due to a timeout. Defaults to ``500ms``.
 - All other options from :ref:`Speaker Component <config-speaker>`.
 
