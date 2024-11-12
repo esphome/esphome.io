@@ -16,13 +16,14 @@ Example configuration entry
     store_yaml:
       show_in_dump_config: False
       show_secrets: True
-      url: /config
+      http:
+        url: /config
 
 .. _store_yaml-configuration_variables:
 
 -  **show_in_dump_config** (*Optional*, boolean): Set to ``true`` to display the YAML during dump_config.
 -  **show_secrets** (*Optional*, boolean): Replace `!secret ...` with their real values.
--  **url** (*Optional*, string): The request string to use for the web server.
+-  **url** (*Optional*, string): The request string to use for the web server. Does not support RP2040.
 
 .. warning::
 
