@@ -203,6 +203,11 @@ adhere to the following order:
 
   `Google.com <https://www.google.com>`__
 
+  .. note::
+
+      Referral links are not permitted unless they directly benefit the ESPHome project.
+      This applies to all official ESPHome documentation or websites.
+
 - **References**: To reference another document, use the ``:doc:`` and ``:ref:`` roles (references are set up globally
   and can be used between documents):
 
@@ -495,7 +500,7 @@ adhere to the following order:
 
   Because these images are served on the main page, they need to be compressed heavily. SVGs are preferred over JPGs
   and JPGs should be no more than 300x300px.
-  
+
   If you have imagemagick installed, you can use this command to convert the thumbnail:
 
   .. code-block:: bash
@@ -1026,7 +1031,7 @@ ESPHome has since deprecated this feature in favor of :doc:`/components/external
   robust and easier to use and share:
 
   - Just like any other ESPHome component/platform:
-  
+
     - They are configured entirely in YAML.
     - Their YAML configuration is validated.
 
