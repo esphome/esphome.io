@@ -154,12 +154,15 @@ room temperature value to be used instead of the internal indoor unit sensor.
       then:
         - midea_ac.follow_me:
             temperature: !lambda "return x;"
+            fahrenheit: false
             beeper: false
 
 Configuration variables:
 
 - **temperature** (**Required**, float, :ref:`templatable <config-templatable>`): Set the
   value of a internal temperature sensor.
+- **fahrenheit** (*Optional*, boolean, :ref:`templatable <config-templatable>`): Specifies if the temperature value is in Fahrenheit. When set to True, the temperature is sent in Fahrenheit.
+  Defaults to ``False`` (Celsius)
 - **beeper** (*Optional*, boolean, :ref:`templatable <config-templatable>`): set beep on update.
   Defaults to ``False``
 
