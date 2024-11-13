@@ -161,7 +161,7 @@ Configuration variables:
 
 - **temperature** (**Required**, float, :ref:`templatable <config-templatable>`): Set the
   value of a internal temperature sensor.
-- **fahrenheit** (*Optional*, boolean, :ref:`templatable <config-templatable>`): Specifies if the temperature value is in Fahrenheit. When set to True, the temperature is sent in Fahrenheit.
+- **fahrenheit** (*Optional*, boolean, :ref:`templatable <config-templatable>`): Specifies if the temperature configuration variable value is in Fahrenheit. When set to True, the temperature is parsed and sent in Fahrenheit.
   Defaults to ``False`` (Celsius)
 - **beeper** (*Optional*, boolean, :ref:`templatable <config-templatable>`): set beep on update.
   Defaults to ``False``
