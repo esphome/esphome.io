@@ -341,6 +341,7 @@ This action stores an SSID and password in persistent memory so that the next ti
         - wifi.set_sta:
             ssid: "MyHomeNetwork"
             password: "VerySafePassword"
+            timeout: 30000ms
             on_connect: 
               - logger.log: "Connected to WiFi!"
             on_error:
@@ -350,6 +351,7 @@ Configuration variables:
 
 - **ssid** (*Required*, string, :ref:`templatable <config-templatable>`): The name of the WiFi access point.
 - **password** (*Required*, string, :ref:`templatable <config-templatable>`): The password of the WiFi access point. Leave empty for no password.
+- **timeout** (*Optional*, :ref:`config-time`): The time to wait for the connection to be established. Defaults to 30 seconds.
 - **on_connect** (*Optional*, :ref:`Automation <automation>`): An action to be performed when a connection is established.
 - **on_error** (*Optional*, :ref:`Automation <automation>`): An action to be performed when the connection fails.
 
