@@ -285,7 +285,7 @@ The following arguments will be available:
 .. _nextion-on_buffer_overflow:
 
 ``on_buffer_overflow``
-************
+**********************
 
 This automation is triggered when the Nextion display reports a serial buffer overflow.
 When this happens, the Nextion's buffer will continue to receive the new instructions, but all previous instructions are lost and the Nextion queue may get out of sync.
