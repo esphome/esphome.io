@@ -145,7 +145,7 @@ This action toggle the power state. Identical to pressing the power button on th
 ``midea_ac.follow_me`` Action
 *****************************
 
-This action transmit IR FollowMe command telling the air conditioner a more accurate
+This action transmits an IR FollowMe command telling the air conditioner a more accurate
 room temperature value to be used instead of the internal indoor unit sensor.
 
 .. code-block:: yaml
@@ -154,17 +154,21 @@ room temperature value to be used instead of the internal indoor unit sensor.
       then:
         - midea_ac.follow_me:
             temperature: !lambda "return x;"
-            fahrenheit: false
+            use_fahrenheit: false
             beeper: false
 
 Configuration variables:
 
-- **temperature** (**Required**, float, :ref:`templatable <config-templatable>`): Set the
-  value of a internal temperature sensor.
-- **fahrenheit** (*Optional*, boolean, :ref:`templatable <config-templatable>`): Specifies if the temperature configuration variable value is in Fahrenheit. When set to True, the temperature is parsed and sent in Fahrenheit.
-  Defaults to ``False`` (Celsius)
-- **beeper** (*Optional*, boolean, :ref:`templatable <config-templatable>`): set beep on update.
-  Defaults to ``False``
+- **temperature** (**Required**, float, :ref:`templatable <config-templatable>`):  
+  Sets the value of an internal temperature sensor. The value will be **clamped** to the range:  
+  - `0 °C to 37 °C` when `use_fahrenheit` is `false`.  
+  - `32 °F to 99 °F` when `use_fahrenheit` is `true`.
+
+- **use_fahrenheit** (*Optional*, boolean, :ref:`templatable <config-templatable>`):  
+  Specifies if the `temperature` value is in Fahrenheit. When set to `true`, the temperature is parsed and sent in Fahrenheit. Defaults to ``false`` (Celsius).
+
+- **beeper** (*Optional*, boolean, :ref:`templatable <config-templatable>`):  
+  Sets beep on update. Defaults to ``false``.
 
 
 .. _midea_ac-display_toggle_action:
