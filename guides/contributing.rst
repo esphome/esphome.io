@@ -1017,7 +1017,10 @@ ESPHome's "custom component" mechanism is a holdover from Home Assistant's featu
 :doc:`/components/external_components` and offered a way to "hack in" support for devices which were not officially
 supported by ESPHome.
 
-ESPHome has since deprecated this feature in favor of :doc:`/components/external_components` for several reasons:
+Why are Custom Components Deprecated?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are several reasons for this change.
 
 - Custom components are very fragile:
 
@@ -1026,11 +1029,13 @@ ESPHome has since deprecated this feature in favor of :doc:`/components/external
     resulting in compiler errors, unexpected behavior and/or crashes.
   - Custom components are difficult to use. You have to manually copy all of the custom component's files into *just
     the right location* on your system or else you will receive compiler errors and the component won't work.
-  - Custom components almost always require C++ code changes when you want them to work even *slightly* differently
-    than the original author intended.
+  - Custom components lack flexibility and almost always require C++ code changes when you want them to work even
+    *slightly* differently than the original author intended/designed. For example, a simple change of input units
+    (``cm`` to ``m``, for example) could require significant changes to the C++ code, depending on how the original
+    author designed the custom component.
 
 - :doc:`/components/external_components` initially require a bit more effort by the developer but are ultimately more
-  robust and easier to use and share:
+  robust and are easier to use and share:
 
   - Just like any other ESPHome component/platform:
 
@@ -1044,7 +1049,8 @@ ESPHome has since deprecated this feature in favor of :doc:`/components/external
 
   - They tend to be more flexible since they are configured in YAML (as opposed to editing C++ code to make changes).
 
-**So what is the difference between custom components and** :doc:`/components/external_components`?
+What's the Difference?
+^^^^^^^^^^^^^^^^^^^^^^
 
 Custom components are typically (more or less) just the :ref:`runtime` part of an ESPHome component/platform. On the
 other hand, :doc:`/components/external_components` are just like any other ESPHome component -- the only difference is
@@ -1057,6 +1063,9 @@ In terms of implementation, custom components just lack the Python part of an ES
 
 As such, most custom components can be made into :doc:`/components/external_components` simply by adding the required
 Python parts to make the custom component into a proper, complete ESPHome component.
+
+What's Next?
+^^^^^^^^^^^^
 
 We encourage all custom component developers to extend their custom component(s) into proper
 :doc:`/components/external_components`; doing so will make your custom component easier to share and use. As you do so,
