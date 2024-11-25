@@ -105,7 +105,7 @@ Build
 
 .. note::
 
-    The easiest way is to use the `esphome-docs container image <ghcr.io/esphome/esphome-docs/>`__:
+    The easiest way is to use the `esphome-docs container image <https://ghcr.io/esphome/esphome-docs/>`__:
 
     .. code-block:: bash
 
