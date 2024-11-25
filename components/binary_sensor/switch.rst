@@ -26,8 +26,6 @@ Configuration variables:
 ------------------------
 
 - **source_id** (**Required**, :ref:`config-id`): The source switch to observe.
-- **name** (*Optional*, string): The name of the binary sensor.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 See Also
