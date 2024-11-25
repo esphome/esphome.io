@@ -20,7 +20,7 @@ read-only binary sensor.
     switch:
       - platform: gpio
         id: relay1
-        pin: 2
+        pin: GPIOXX
 
 Configuration variables:
 ------------------------
