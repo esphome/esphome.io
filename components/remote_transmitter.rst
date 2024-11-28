@@ -34,7 +34,7 @@ Configuration variables:
 -  **carrier_duty_percent** (*Optional*, int): How much of the time the remote is on. For example, infrared
    protocols modulate the signal using a carrier signal. Set this to ``50%`` if you're working with IR LEDs and to
    ``100%`` if working with other things like 433MHz transmitters.
-- **rmt_channel** (*Optional*, int): The RMT channel to use. Only on **esp32**.
+- **rmt_channel** (*Optional*, int): The RMT channel to use. Only on **esp32**. Obsolete with IDF framework v5.
   The following ESP32 variants have these channels available:
 
   .. csv-table::
@@ -47,6 +47,8 @@ Configuration variables:
 
 -  **id** (*Optional*, :ref:`config-id`): Manually specify
    the ID used for code generation. Use this if you have multiple remote transmitters.
+- **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver. Only with IDF framework v5.
+- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it. Only with IDF framework v5.
 
 .. _remote_transmitter-transmit_action:
 

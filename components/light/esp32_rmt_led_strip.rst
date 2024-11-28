@@ -23,16 +23,6 @@ Configuration variables
 
 - **pin** (**Required**, :ref:`config-pin`): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
-- **rmt_channel** (**Required**, int): The RMT channel to use. If using multiple strips, you need to use different channels.
-
-  .. csv-table::
-      :header: "ESP32 Variant", "Channels"
-
-      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "0, 1, 2, 3"
-      "ESP32-C3", "0, 1"
-
 - **chipset** (**Required**, enum): The chipset to apply known timings from. Not used if specifying the timings manually, see below.
     - ``WS2811``
     - ``WS2812``
@@ -47,6 +37,16 @@ Configuration variables
     - ``GBR``
     - ``BGR``
     - ``BRG``
+
+- **rmt_channel** (**Optional**, int): The RMT channel to use. If using multiple strips, you need to use different channels. Obsolete with IDF framework v5.
+
+  .. csv-table::
+      :header: "ESP32 Variant", "Channels"
+
+      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
+      "ESP32-S2", "0, 1, 2, 3"
+      "ESP32-S3", "0, 1, 2, 3"
+      "ESP32-C3", "0, 1"
 
 - **is_rgbw** (*Optional*, boolean): Set to ``true`` if the strip is RGBW. Defaults to ``false``.
 - **is_wrgb** (*Optional*, boolean): Set to ``true`` if the strip is WRGB. Defaults to ``false``.
