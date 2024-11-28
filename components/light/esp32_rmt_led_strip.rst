@@ -38,7 +38,7 @@ Configuration variables
     - ``BGR``
     - ``BRG``
 
-- **rmt_channel** (**Optional**, int): The RMT channel to use. If using multiple strips, you need to use different channels. Obsolete with IDF framework v5.
+- **rmt_channel** (**Optional**, int): The RMT channel to use. If using multiple strips, you need to use different channels. Obsolete with ESP-IDF v5.
 
   .. csv-table::
       :header: "ESP32 Variant", "Channels"

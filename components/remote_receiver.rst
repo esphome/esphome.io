@@ -72,7 +72,7 @@ Configuration variables:
 
 - **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to ``10kB``
   on the ESP32 and ``1kB`` on the ESP8266.
-- **rmt_channel** (*Optional*, int): The RMT channel to use. Only on **esp32**. Obsolete with IDF framework v5.
+- **rmt_channel** (*Optional*, int): The RMT channel to use. Only on **esp32**. Obsolete with ESP-IDF v5.
   The following ESP32 variants have these channels available:
 
   .. csv-table::
@@ -95,9 +95,9 @@ Configuration variables:
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Only used on ESP32
   platform. Defaults to ``80``.
 - **max_length** (*Optional*, int): Maximum length of the remote code in number of values. Will only receive more than the physical RMT
-  ``memory_blocks`` can hold on variants that support it. Only with IDF framework v5.
-- **min_length** (*Optional*, int): Minimum length of the remote code in number of values. Useful to filter out noise. Only with IDF framework v5.
-- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it. Only with IDF framework v5.
+  ``memory_blocks`` can hold on variants that support it. Only with ESP-IDF v5.
+- **min_length** (*Optional*, int): Minimum length of the remote code in number of values. Useful to filter out noise. Only with ESP-IDF v5.
+- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it. Only with ESP-IDF v5.
 
 .. note::
 
