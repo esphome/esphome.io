@@ -266,6 +266,10 @@ can assign values to keys by using the ``root["KEY_NAME"] = VALUE;`` syntax as s
 
 GET values from a JSON body response
 ************************************
+If you want to retrieve the value for the vol key and assign it to a template sensor or number component whose id is
+set to player_volume you can do this, but note that checking for the presence of the key will prevent difficult-to-read
+error messages:
+
 
 This example assumes that the server returns a response as a JSON object similar to this:
 ``{"status":"play","vol":"42","mute":"0"}``
@@ -287,18 +291,21 @@ whose ``id`` is  set to ``player_volume``:
                 then:
                     - lambda: |-
                         json::parse_json(body, [](JsonObject root) -> bool {
-                            id(player_volume).publish_state(root["vol"]);
-                            return true;
+                          if (root["vol"]) {
+                              id(player_volume).publish_state(root["vol"]);
+                          } else {
+                            ESP_LOGD(TAG,"No 'vol' key in this json!");
+                          }
                         });
                 else:
                     - logger.log:
                         format: "Error: Response status: %d, message %s"
                         args: [response->status_code, body.c_str()];
 
-
 See Also
 --------
 
 - :doc:`index`
 - :apiref:`http_request/http_request.h`
+- :doc:`/components/json`
 - :ghedit:`Edit`

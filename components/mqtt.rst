@@ -12,8 +12,8 @@ in which case this is not needed.
 
 .. warning::
 
-    If you enable MQTT and you do *not* use the "native API" for Home Assistant, you must
-    remove the ``api:`` line from your ESPHome configuration, otherwise the ESP will
+    If you enable MQTT and you do *not* use the :doc:`/components/api`, you must
+    remove the ``api:`` configuration or set ``reboot_timeout: 0s``, otherwise the ESP will
     reboot every 15 minutes because no client connected to the native API.
 
 .. code-block:: yaml
