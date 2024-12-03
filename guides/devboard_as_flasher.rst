@@ -38,22 +38,22 @@ the ESP chip on flasher module from booting and polluting the serial lines.
     it can even be used to interface with serial console (using PuTTy or similar) on a RPi or any similar device.
     You may need to enable serial interface from ``raspi-config`` first.
     We don't decide what you may use it for.
-    
+
     The connection diagram is mostly unchanged.
 
     - connect both ``EN`` and ``GND`` together in the flasher devboard
     - connect ``GND`` to ``GND`` to prevent it from floating
     - ``TX`` of flasher devboard to ``TX GPIO14`` of the ``RPi``
     - ``RX`` of flasher devboard to ``RX GPIO15`` of the ``RPi``
-    
+
     .. figure:: /guides/images/devboard-as-flasher-pi.jpg
         :align: center
         :width: 75.0%
-    
+
         Connection diagram for a RPi serial target. Refer to https://pinout.xyz/
-    
+
     .. warning::
-    
+
         Powering a Raspberry Pi directly through the flasher devboard is not advised.
 
 Future Todo
