@@ -15,24 +15,24 @@ Make sure you've read the :doc:`/guides/physical_device_connection` for properly
 
     Connection diagram for an ESP flash target
 
-You need to make five electrical connections:
+You need to make the following electrical connections:
 
 - connect both ``EN`` and ``GND`` together in the flasher devboard
-- ``+5.0V`` or ``3V3`` on the flasher devboard to ``VIN`` or ``3V3`` respectively of the ``target device``
+- ``+5.0V`` or ``3V3`` on the flasher devboard to ``VIN`` or ``3V3`` respectively of the target device
 - ``GND``, or ground
-- ``TX`` of flasher devboard to ``TX`` of the ``target device``
-- ``RX`` of flasher devboard to ``RX`` of the ``target device``
+- ``TX`` of flasher devboard to ``TX`` of the target device
+- ``RX`` of flasher devboard to ``RX`` of the target device
 
 Pulling down ``EN`` by connecting it to ``GND`` on the flasher board prevents
 the ESP chip on flasher module from booting and polluting the serial lines.
 
-..note::
+.. note::
 
-    - On some boards like the AiThinker Cam models, you additionally need to connect IO0 with GND on the target device
-      to manually put the target board in flash/download mode.
+    - On some boards like the AiThinker ESP32Cam, you additionally need to connect ``IO0`` with ``GND``
+      on the target device to force flash/download mode.
     - Do not connect 3V3 to VIN of the target devices with a 3V3 LDO as it may lead to brownouts.
 
-.. collapse:: Connecting to Raspberry Pi UART
+.. collapse:: **Connecting to a Raspberry Pi UART**
 
     Because it is really just exposing the onboard USB_UART bridge chip,
     it can even be used to interface with serial console (using PuTTy or similar) on a RPi or any similar device.
@@ -56,6 +56,9 @@ the ESP chip on flasher module from booting and polluting the serial lines.
 
         Powering a Raspberry Pi directly through the flasher devboard is not advised.
 
-Future Todo
-***********
-Verifying functionality for RPico and RPi5 debug ports.
+    Future Todo
+    -----------
+    
+    Verify functionality for UART debug ports on the following devices:
+        - Raspberry Pi Pico series
+        - Raspberry Pi 5
