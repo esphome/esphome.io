@@ -39,7 +39,7 @@ The connection diagram is mostly unchanged.
 - ``TX`` of flasher devboard to ``TX GPIO14`` of the ``RPi``
 - ``RX`` of flasher devboard to ``RX GPIO15`` of the ``RPi``
 
-.. figure:: /guides/images/devboard-as-flasher-pi.JPG
+.. figure:: /guides/images/devboard-as-flasher-pi.jpg
     :align: center
     :width: 75.0%
 
