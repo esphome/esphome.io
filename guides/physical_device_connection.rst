@@ -242,7 +242,8 @@ require different parts and tools.
         .. _usb-cable:
     * - :ref:`USB to micro-USB/mini-USB/USB-C <usb-cable>`
       - If your target device has a USB port on it, you need the appropriate
-        cable to connect to it.
+        data cable to connect to it. A power only USB cable that usually
+        comes presupplied with powerbanks won't work.
       - $3 to $10
       - .. image:: /guides/images/usb-cable.jpg
             :alt: From https://www.stockvault.net/photo/271754/usb-cable
