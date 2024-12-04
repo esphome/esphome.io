@@ -1,5 +1,5 @@
-Using an ESP devboard as serial flasher
-=======================================
+Using an ESP devboard as a USB-UART bridge
+==========================================
 
 .. _devboard-as-flasher:
 
@@ -17,6 +17,9 @@ Make sure you've read the :doc:`/guides/physical_device_connection` for properly
 
 You need to make the following electrical connections:
 
+Note that the 5V connection on either board may be labelled either ``5V`` or ``VIN``. Some boards may not have a 5V connection and will require 3.3V only.
+
+Rather than powering the target board from the flasher board, it is also possible to use a separate power supply, just make sure all the ground pins are connected together.
 - connect both ``EN`` and ``GND`` together in the flasher devboard
 - ``+5.0V`` or ``3V3`` on the flasher devboard to ``VIN`` or ``3V3`` respectively of the target device
 - ``GND``, or ground
@@ -28,9 +31,10 @@ the ESP chip on flasher module from booting and polluting the serial lines.
 
 .. note::
 
-    - On some boards like the AiThinker ESP32Cam, you additionally need to connect ``IO0`` with ``GND``
-      on the target device to force flash/download mode.
+    - If the board has not previously had ESPHome loaded, it is probable that you will need to hold the ``IO0` pin low (i.e. connected to ground) to force the board into flash mode. This must be done before power is applied.
     - Do not connect 3V3 to VIN of the target devices with a 3V3 LDO as it may lead to brownouts.
+    
+Once the connections are made, plug the flasher board into your computer via USB and proceed with flashing the target board via whichever means you intend to use.
 
 .. collapse:: **Connecting to a Raspberry Pi UART**
 
