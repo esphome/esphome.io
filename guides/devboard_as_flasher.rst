@@ -14,12 +14,9 @@ This is achieved by holding the ESP chip in reset so that it doesn't interfere w
 It does NOT require any firmware to be flashed onto the development board
 and will not change anything already flashed onto it - it's purely a way to use the serial interface chip.
 
-    .. note:
-        Most ESP32 S and C series boards do *not* have a separate USB-UART chip - they have it built into the ESP - so are not suitable for this application.
-
 We will refer to the devboard with functional USB_UART bridge chip as flasher board for this guide.
 
-Make sure you've read the :doc:`/guides/physical_device_connection` for properly understanding of the functionality of your flasher devboard.
+Make sure you've read the :doc:`/guides/physical_device_connection` for properly understanding the functionality of your flasher devboard.
 
 .. figure:: /guides/images/devboard-as-flasher.png
     :align: center
@@ -29,9 +26,11 @@ Make sure you've read the :doc:`/guides/physical_device_connection` for properly
 
 You need to make the following electrical connections:
 
-Note that the 5V connection on either board may be labelled either ``5V`` or ``VIN``. Some boards may not have a 5V connection and will require 3.3V only.
+.. note::
 
-Rather than powering the target board from the flasher board, it is also possible to use a separate power supply, just make sure all the ground pins are connected together.
+    - Most ESP32 S and C series boards do *not* have a separate USB-UART chip - they have it built into the ESP - so are not suitable for this application.
+    - The 5V connection on either board may be labelled either ``5V`` or ``VIN``. Some boards may not have a 5V connection and will require 3.3V only.
+    - Rather than powering the target board from the flasher board, it is also possible to use a separate power supply, just make sure all the ground pins are connected together.
 
 - connect both ``EN`` and ``GND`` together in the flasher devboard
 - ``+5.0V`` or ``3V3`` on the flasher devboard to ``VIN`` or ``3V3`` respectively of the target device
