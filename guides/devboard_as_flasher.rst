@@ -44,7 +44,8 @@ the ESP chip on flasher module from booting and polluting the serial lines.
 
 .. note::
 
-    - If the board has not previously had ESPHome loaded, you may need to pull the ``IO0` pin low (i.e. connected to ``GND``) to force the board into flash mode. This must be         done before power is applied.
+    - If the board has not previously had ESPHome loaded, you may need to pull the ``IO0`` pin low (i.e. connected to ``GND``) to force the board into flash mode.
+      This must be done before power is applied.
     - Do not connect 3V3 to VIN of the target devices with a 3V3 LDO as it may lead to brownouts.
 
 Once the connections are made, plug the flasher board into your computer via USB and proceed with flashing the target board via whichever means you intend to use.
