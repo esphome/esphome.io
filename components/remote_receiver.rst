@@ -93,7 +93,8 @@ Configuration variables:
   multiple remote receivers.
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Only used on ESP32
-  platform. Defaults to ``80``.
+  platform. Defaults to ``80``. Obsolete with ESP-IDF v5.
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``. Only with ESP-IDF v5.
 - **max_length** (*Optional*, int): Maximum length of the remote code in number of values. Will only receive more than the physical RMT
   ``memory_blocks`` can hold on variants that support it. Only with ESP-IDF v5.
 - **min_length** (*Optional*, int): Minimum length of the remote code in number of values. Useful to filter out noise. Only with ESP-IDF v5.
