@@ -71,7 +71,7 @@ Configuration variables:
 - **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
 - **command_spacing** (*Optional*, :ref:`config-time`): Sets the minimum time between commands sent to the Nextion display.
   Can help prevent buffer overflows on busy displays. If you see "buffer overflow" warnings in the logs, try increasing this value.
-  Defaults to ``0ms``.
+  Defaults to ``0ms`` (no spacing).
 
 .. _display-nextion_lambda:
 
