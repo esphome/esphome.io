@@ -39,11 +39,10 @@ Configuration variables:
 
 ESP32 IDF configuration variables:
 
-- **rmt_symbols** (*Optional*, int): If ``with_dma`` is enabled this represents the size of RMT drivers internal 
-  DMA buffer. If DMA is not used, this field controls the size of the dedicated RMT memory block. RMT symbols 
-  should be a multiple of the block size. Each symbol is 32 bits and contains two values. RMT symbol memory is 
-  shared by all receivers and transmitters. On variants other than ``ESP32`` and ``ESP32-S2`` only half the symbol 
-  memory is available to receivers and the other half to transmitters.
+- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled ``rmt_symbols`` represents the size of the drivers
+  internal DMA buffer. If DMA is not used ``rmt_symbols`` controls the amount of RMT memory allocated to this component.
+  Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the
+  symbol memory is available to receivers and the other half to transmitters. Each symbol is 32 bits and contains two values.
 
   .. csv-table::
       :header: "ESP32 Variant", "Memory Size", "Block Size"
@@ -55,7 +54,7 @@ ESP32 IDF configuration variables:
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
 - **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver.
-- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 
 ESP32 Arduino configuration variables:
 
