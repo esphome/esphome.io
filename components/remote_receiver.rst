@@ -72,8 +72,40 @@ Configuration variables:
 
 - **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to ``10kB``
   on the ESP32 and ``1kB`` on the ESP8266.
-- **rmt_channel** (*Optional*, int): The RMT channel to use. Only on **esp32**. Obsolete with ESP-IDF v5.
-  The following ESP32 variants have these channels available:
+- **filter** (*Optional*, :ref:`config-time`): Filter any pulses that are shorter than this. Useful for removing
+  glitches from noisy signals. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``50us``.
+- **idle** (*Optional*, :ref:`config-time`): The amount of time that a signal should remain stable (i.e. not
+  change) for it to be considered complete. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``10ms``.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Use this if you have
+  multiple remote receivers.
+
+ESP32 IDF configuration variables:
+
+- **rmt_symbols** (*Optional*, int): If ``with_dma`` is enabled this represents the size of RMT drivers internal 
+  DMA buffer. If DMA is not used, this field controls the size of the dedicated RMT memory block. RMT symbols 
+  should be a multiple of the block size. Each symbol is 32 bits and contains two values. RMT symbol memory is 
+  shared by all receivers and transmitters. On variants other than ``ESP32`` and ``ESP32-S2`` only half the symbol 
+  memory is available to receivers and the other half to transmitters.
+
+
+  .. csv-table::
+    :header: "ESP32 Variant", "Memory Size", "Block Size"
+
+    "ESP32", "512 symbols", "64 symbols"
+    "ESP32-S2", "256 symbols", "64 symbols"
+    "ESP32-S3", "384 symbols", "48 symbols"
+    "ESP32-C3", "192 symbols", "48 symbols"
+
+- **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is limited
+  to ``rmt_symbols``.
+- **filter_symbols** (*Optional*, int): Filter out any receive that has a length in symbols less than ``filter_symbols``.
+  Useful to filter out short bursts of noise.
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
+- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+
+ESP32 Arduino configuration variables:
+
+- **rmt_channel** (*Optional*, int): The RMT channel to use. The following ESP32 variants have these channels available:
 
   .. csv-table::
       :header: "ESP32 Variant", "Channels"
@@ -83,22 +115,10 @@ Configuration variables:
       "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
 
-- **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. Only used on ESP32 platform. The maximum
+- **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
-- **filter** (*Optional*, :ref:`config-time`): Filter any pulses that are shorter than this. Useful for removing
-  glitches from noisy signals. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``50us``.
-- **idle** (*Optional*, :ref:`config-time`): The amount of time that a signal should remain stable (i.e. not
-  change) for it to be considered complete. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``10ms``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Use this if you have
-  multiple remote receivers.
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
-  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Only used on ESP32
-  platform. Defaults to ``80``. Obsolete with ESP-IDF v5.
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``. Only with ESP-IDF v5.
-- **max_length** (*Optional*, int): Maximum length of the remote code in number of values. Will only receive more than the physical RMT
-  ``memory_blocks`` can hold on variants that support it. Only with ESP-IDF v5.
-- **min_length** (*Optional*, int): Minimum length of the remote code in number of values. Useful to filter out noise. Only with ESP-IDF v5.
-- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it. Only with ESP-IDF v5.
+  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``
 
 .. note::
 

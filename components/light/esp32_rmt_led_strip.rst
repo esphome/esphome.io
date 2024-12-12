@@ -38,7 +38,31 @@ Configuration variables
     - ``BGR``
     - ``BRG``
 
-- **rmt_channel** (**Optional**, int): The RMT channel to use. If using multiple strips, you need to use different channels. Obsolete with ESP-IDF v5.
+- **is_rgbw** (*Optional*, boolean): Set to ``true`` if the strip is RGBW. Defaults to ``false``.
+- **is_wrgb** (*Optional*, boolean): Set to ``true`` if the strip is WRGB. Defaults to ``false``.
+- **max_refresh_rate** (*Optional*, :ref:`config-time`):
+  A time interval used to limit the number of commands a light can handle per second. For example
+  16ms will limit the light to a refresh rate of about 60Hz. Defaults to sending commands as quickly as
+  changes are made to the lights.
+
+ESP32 IDF configuration variables:
+
+- **rmt_symbols** (*Optional*, int): This field controls the size of the dedicated RMT memory block. RMT symbols 
+  should be a multiple of the block size. Each symbol is 32 bits and contains two values. RMT symbol memory is 
+  shared by all receivers and transmitters. On variants other than ``ESP32`` and ``ESP32-S2`` only half the symbol 
+  memory is available to receivers and the other half to transmitters.
+
+  .. csv-table::
+    :header: "ESP32 Variant", "Memory Size", "Block Size"
+
+    "ESP32", "512 symbols", "64 symbols"
+    "ESP32-S2", "256 symbols", "64 symbols"
+    "ESP32-S3", "384 symbols", "48 symbols"
+    "ESP32-C3", "192 symbols", "48 symbols"
+
+ESP32 Arduino configuration variables:
+
+- **rmt_channel** (**Required**, int): The RMT channel to use. If using multiple strips, you need to use different channels.
 
   .. csv-table::
       :header: "ESP32 Variant", "Channels"
@@ -47,13 +71,6 @@ Configuration variables
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "0, 1, 2, 3"
       "ESP32-C3", "0, 1"
-
-- **is_rgbw** (*Optional*, boolean): Set to ``true`` if the strip is RGBW. Defaults to ``false``.
-- **is_wrgb** (*Optional*, boolean): Set to ``true`` if the strip is WRGB. Defaults to ``false``.
-- **max_refresh_rate** (*Optional*, :ref:`config-time`):
-  A time interval used to limit the number of commands a light can handle per second. For example
-  16ms will limit the light to a refresh rate of about 60Hz. Defaults to sending commands as quickly as
-  changes are made to the lights.
 
 - All other options from :ref:`Light <config-light>`.
 

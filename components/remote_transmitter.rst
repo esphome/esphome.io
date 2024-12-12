@@ -34,8 +34,32 @@ Configuration variables:
 -  **carrier_duty_percent** (*Optional*, int): How much of the time the remote is on. For example, infrared
    protocols modulate the signal using a carrier signal. Set this to ``50%`` if you're working with IR LEDs and to
    ``100%`` if working with other things like 433MHz transmitters.
-- **rmt_channel** (*Optional*, int): The RMT channel to use. Only on **esp32**. Obsolete with ESP-IDF v5.
-  The following ESP32 variants have these channels available:
+-  **id** (*Optional*, :ref:`config-id`): Manually specify
+   the ID used for code generation. Use this if you have multiple remote transmitters.
+
+ESP32 IDF configuration variables:
+
+- **rmt_symbols** (*Optional*, int): If ``with_dma`` is enabled this represents the size of RMT drivers internal 
+  DMA buffer. If DMA is not used, this field controls the size of the dedicated RMT memory block. RMT symbols 
+  should be a multiple of the block size. Each symbol is 32 bits and contains two values. RMT symbol memory is 
+  shared by all receivers and transmitters. On variants other than ``ESP32`` and ``ESP32-S2`` only half the symbol 
+  memory is available to receivers and the other half to transmitters.
+
+  .. csv-table::
+    :header: "ESP32 Variant", "Memory Size", "Block Size"
+
+    "ESP32", "512 symbols", "64 symbols"
+    "ESP32-S2", "256 symbols", "64 symbols"
+    "ESP32-S3", "384 symbols", "48 symbols"
+    "ESP32-C3", "192 symbols", "48 symbols"
+
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
+- **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver.
+- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+
+ESP32 Arduino configuration variables:
+
+- **rmt_channel** (*Optional*, int): The RMT channel to use. The following ESP32 variants have these channels available:
 
   .. csv-table::
       :header: "ESP32 Variant", "Channels"
@@ -45,14 +69,8 @@ Configuration variables:
       "ESP32-S3", "0, 1, 2, 3"
       "ESP32-C3", "0, 1"
 
--  **id** (*Optional*, :ref:`config-id`): Manually specify
-   the ID used for code generation. Use this if you have multiple remote transmitters.
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
-  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Only used on ESP32
-  platform. Defaults to ``80``. Obsolete with ESP-IDF v5.
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``. Only with ESP-IDF v5.
-- **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver. Only with ESP-IDF v5.
-- **with_dma** (*Optional*, boolean): Enable DMA on variants that support it. Only with ESP-IDF v5.
+  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.
 
 .. _remote_transmitter-transmit_action:
 
