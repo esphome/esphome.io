@@ -75,7 +75,7 @@ To simplify this, we provide the setting ``attenuation: auto`` for an automatic/
 .. _adc-esp32_pins:
 
 ESP32 pins and Hardware Details
-------------------------------
+-------------------------------
 
 ``ADC2`` pins are only usable when Wi-Fi is not configured on the device.
 
