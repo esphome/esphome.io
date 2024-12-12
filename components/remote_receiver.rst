@@ -89,12 +89,12 @@ ESP32 IDF configuration variables:
 
 
   .. csv-table::
-    :header: "ESP32 Variant", "Memory Size", "Block Size"
+      :header: "ESP32 Variant", "Memory Size", "Block Size"
 
-    "ESP32", "512 symbols", "64 symbols"
-    "ESP32-S2", "256 symbols", "64 symbols"
-    "ESP32-S3", "384 symbols", "48 symbols"
-    "ESP32-C3", "192 symbols", "48 symbols"
+      "ESP32", "512 symbols", "64 symbols"
+      "ESP32-S2", "256 symbols", "64 symbols"
+      "ESP32-S3", "384 symbols", "48 symbols"
+      "ESP32-C3", "192 symbols", "48 symbols"
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is limited
   to ``rmt_symbols``.
