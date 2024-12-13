@@ -49,7 +49,7 @@ ESP32 IDF configuration variables:
 
 - **rmt_symbols** (*Optional*, int): The amount of RMT memory allocated to this component. Memory is shared
   by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the symbol
-  memory is available to receivers and the other half to transmitters. Each symbol is 32 bits and contains two values.
+  memory is available to transmitters. Each symbol is 32 bits and contains two values.
 
   .. csv-table::
       :header: "ESP32 Variant", "Memory Size", "Block Size"

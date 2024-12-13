@@ -42,7 +42,7 @@ ESP32 IDF configuration variables:
 - **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled ``rmt_symbols`` represents the size of the drivers
   internal DMA buffer. If DMA is not used ``rmt_symbols`` controls the amount of RMT memory allocated to this component.
   Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the
-  symbol memory is available to receivers and the other half to transmitters. Each symbol is 32 bits and contains two values.
+  symbol memory is available to transmitters. Each symbol is 32 bits and contains two values.
 
   .. csv-table::
       :header: "ESP32 Variant", "Memory Size", "Block Size"
