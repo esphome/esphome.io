@@ -1,13 +1,13 @@
-Inkplate 6, 10 and 6 Plus
-=========================
+Inkplate 5, 6, 10 and 6 Plus
+============================
 
 .. seo::
     :description: Instructions for setting up Inkplate E-Paper displays in ESPHome.
     :image: inkplate6.jpg
 
-All-in-one e-paper display ``Inkplate 6``, ``Inkplate 10`` and ``Inkplate 6 Plus``.
+All-in-one e-paper display ``Inkplate 5``, ``Inkplate 6``, ``Inkplate 10`` and ``Inkplate 6 Plus``.
 
-The Inkplate 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
+The Inkplate 5, 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
 recycled from a Kindle e-reader. Its main feature is simplicity.
 
 Learn more at `Inkplate's documentation website <https://inkplate.readthedocs.io/en/stable/>`__
@@ -355,6 +355,52 @@ Below is a config example:
       partial_updating: false
       update_interval: never
       model: inkplate_6_v2
+
+      ckv_pin: 32
+      sph_pin: 33
+      gmod_pin:
+        pca6416a: pca6416a_hub
+        number: 1
+      gpio0_enable_pin:
+        pca6416a: pca6416a_hub
+        number: 8
+      oe_pin:
+        pca6416a: pca6416a_hub
+        number: 0
+      spv_pin:
+        pca6416a: pca6416a_hub
+        number: 2
+      powerup_pin:
+        pca6416a: pca6416a_hub
+        number: 4
+      wakeup_pin:
+        pca6416a: pca6416a_hub
+        number: 3
+      vcom_pin:
+        pca6416a: pca6416a_hub
+        number: 5
+
+
+Inkplate 5
+***************************
+
+The Inkplate 5 has nearly the same configuration as inkplate 6 v2.
+Below is a config example:
+
+.. code-block:: yaml
+
+    # Example minimal configuration entry
+    pca6416a:
+      - id: pca6416a_hub
+        address: 0x20
+
+    display:
+    - platform: inkplate5
+      id: inkplate_display
+      greyscale: true
+      partial_updating: false
+      update_interval: never
+      model: inkplate_5_v2
 
       ckv_pin: 32
       sph_pin: 33

@@ -69,13 +69,13 @@ use a voltage divider here instead.
 
 .. figure:: images/canbus_esp32_5v.png
     :align: center
-    :target: ../_images/canbus_esp32_5v.png
+    :target: /_images/canbus_esp32_5v.png
 
 If you prefer to only have a 3.3V power supply, special 3.3V CAN transceivers are available.
 
 .. figure:: images/canbus_esp32_3v3.png
     :align: center
-    :target: ../_images/canbus_esp32_3v3.png
+    :target: /_images/canbus_esp32_3v3.png
 
 See Also
 --------

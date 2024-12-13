@@ -129,7 +129,7 @@ class SEODirective(Directive):
             if not image.startswith("/"):
                 local_img = f"/images/{image}"
                 image = "/_images/" + image
-            p = Path(__file__).parent / local_img[1:]
+            p = Path(__file__).parent.parent / local_img[1:]
             if not p.is_file():
                 raise ValueError(f"File {p} for seo tag does not exist {self.state.document}")
             

@@ -224,7 +224,7 @@ To start the ESPHome dashboard, simply start ESPHome with the following command
 .. code-block:: bash
 
     # Install dashboard dependencies
-    pip install tornado esptool\
+    pip install tornado esptool \
      esphome dashboard config
 
     # On Docker, host networking mode is required for online status indicators

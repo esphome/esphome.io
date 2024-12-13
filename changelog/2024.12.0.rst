@@ -1,0 +1,226 @@
+ESPHome 2024.12.0 - 18th December 2024
+======================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.12.0.
+    :image: /_static/changelog-2024.12.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 2
+
+    Seeed Studio MR60BHA2 mmWave, components/seeed_mr60bha2, seeed_mr60bha2.jpg
+    Seeed Studio MR60FDA2 mmWave, components/seeed_mr60fda2, seeed_mr60fda2.jpg
+    H-bridge Switch, components/switch/hbridge, hbridge-relay.jpg
+    Switch Binary Sensor, components/binary_sensor/switch, electric-switch.svg, dark-invert
+
+
+ESP-IDF
+-------
+
+ESPHome has now updated the core ESP32 code to use `ESP-IDF <https://github.com/espressif/esp-idf/>`__ 5.1.5.
+This is a major upgrade and should bring more features, chip support (Most notably the ESP32-C6 that people keep raving on about)
+and in general more stability.
+
+To acommodate this change, ESPHome has moved away from the "official" platformio provided ESP32 platform,
+and is now using a community fork `pioarduino/platform-espressif32 <https://github.com/pioarduino/platform-espressif32>`__ as platformio
+has decided to stop providing ESP-IDF updates to their platform for Espressif chips. As a user, you should not notice any difference.
+
+As we are unable to test every single component and board, there might be issues with specific configurations. Please report these in
+the `ESPHome issue tracker <https://github.com/esphome/issues/issues>`__ on GitHub.
+
+
+ESPHome ``armv7`` Docker Support
+--------------------------------
+
+We will be retiring ESPHome's Docker support for ``armv7`` hardware in the February 2025 release.
+
+This is due to both waning support as it relates to tooling and performance reasons. We strongly recommend moving to a
+more modern architecture, especially if you're using the ESPHome Device Compiler to build/compile firmware for your
+devices.
+
+
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add: Seeed Studio mr60fda2 mmwave sensor :esphomepr:`7576` by :ghuser:`limengdu` (new-integration)
+- Add: Seeed Studio MR60BHA2 mmWave Sensor :esphomepr:`7589` by :ghuser:`limengdu` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- binary_sensor for switch state :esphomepr:`7819` by :ghuser:`ssieb` (new-platform)
+- Add H-Bridge switch component :esphomepr:`7421` by :ghuser:`dwmw2` (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Fix entity name validation to allow "Off" and "On" :esphomepr:`7821` by :ghuser:`jesserockz` (breaking-change)
+- MQTT sensors handling of publishing NaN values  :esphomepr:`7768` by :ghuser:`kbullet` (breaking-change)
+- Synchronise esp32 boards with platform version 51.03.07 :esphomepr:`7945` by :ghuser:`jesserockz` (breaking-change)
+
+All changes
+^^^^^^^^^^^
+
+- Bump codecov/codecov-action from 4 to 5 :esphomepr:`7771` by :ghuser:`dependabot[bot]`
+- [remote_base] Fix extra comma in dump raw :esphomepr:`7774` by :ghuser:`swoboda1337`
+- [nextion] New trigger `on_buffer_overflow` :esphomepr:`7772` by :ghuser:`edwardtfn`
+- enable rp2040 for online_image :esphomepr:`7769` by :ghuser:`afflux`
+- [nextion] Add publish actions :esphomepr:`7646` by :ghuser:`pkejval`
+- [wifi] Make wifi_channel_() public :esphomepr:`7818` by :ghuser:`nielsnl68`
+- feat(WiFi): Add wifi.configure action :esphomepr:`7335` by :ghuser:`Rapsssito`
+- allow multiple graphical menus :esphomepr:`7809` by :ghuser:`ssieb`
+- Move ``CONF_NAME_ADD_MAC_SUFFIX`` to ``const.py`` :esphomepr:`7820` by :ghuser:`jesserockz`
+- binary_sensor for switch state :esphomepr:`7819` by :ghuser:`ssieb` (new-platform)
+- [nextion] Remove assignment within `if` :esphomepr:`7824` by :ghuser:`kbx81`
+- [ota] `void` functions should return nothing :esphomepr:`7825` by :ghuser:`kbx81`
+- [safe_mode] Remove unused capture :esphomepr:`7826` by :ghuser:`kbx81`
+- [stepper] Remove unnecessary ``#include`` :esphomepr:`7827` by :ghuser:`kbx81`
+- [sx1509] Fix up includes :esphomepr:`7828` by :ghuser:`kbx81`
+- [uart] `void` functions should return nothing :esphomepr:`7829` by :ghuser:`kbx81`
+- [audio] Header modernization :esphomepr:`7832` by :ghuser:`kbx81`
+- [opentherm] Follow variable naming convention :esphomepr:`7833` by :ghuser:`kbx81`
+- [opentherm] Add nolint for 8266 static global :esphomepr:`7837` by :ghuser:`kbx81`
+- [helpers] Add NOLINT for Mutex private field ``handle_`` :esphomepr:`7838` by :ghuser:`kbx81`
+- Add waveshare 1 45 in v2 b support :esphomepr:`7052` by :ghuser:`programmingbgloDE`
+- added Waveshare BWR Mode for the 7.5in Display :esphomepr:`7687` by :ghuser:`JonasB2497`
+- [homeassistant.number] Return when value not set :esphomepr:`7839` by :ghuser:`kbx81`
+- [CI] Add/update some system include paths :esphomepr:`7831` by :ghuser:`kbx81`
+- add on_key trigger to matrix_keypad :esphomepr:`7830` by :ghuser:`ssieb`
+- Add: Seeed Studio mr60fda2 mmwave sensor :esphomepr:`7576` by :ghuser:`limengdu` (new-integration)
+- [lvgl] clang-tidy fixes for #7822 :esphomepr:`7843` by :ghuser:`kbx81`
+- [xiaomi_ble] clang-tidy fixes for #7822 :esphomepr:`7860` by :ghuser:`kbx81`
+- [wireguard] clang-tidy fixes for #7822 :esphomepr:`7859` by :ghuser:`kbx81`
+- [dsmr] clang-tidy fixes for #7822 :esphomepr:`7848` by :ghuser:`kbx81`
+- Fix entity name validation to allow "Off" and "On" :esphomepr:`7821` by :ghuser:`jesserockz` (breaking-change)
+- [camera_web_server] Add ``NOLINT`` due to naming :esphomepr:`7823` by :ghuser:`kbx81`
+- [display_menu_base] clang-tidy fixes for #7822 :esphomepr:`7847` by :ghuser:`kbx81`
+- [nextion] clang-tidy fixes for #7822 :esphomepr:`7852` by :ghuser:`kbx81`
+- [shelly_dimmer] clang-tidy fixes for #7822 :esphomepr:`7844` by :ghuser:`kbx81`
+- [sim800l] clang-tidy fixes for #7822 :esphomepr:`7856` by :ghuser:`kbx81`
+- [nfc, pn532, pn7150, pn7160] clang-tidy fixes for #7822 :esphomepr:`7853` by :ghuser:`kbx81`
+- [output] clang-tidy fixes for #7822 :esphomepr:`7854` by :ghuser:`kbx81`
+- [sun_gtil2] clang-tidy fixes for #7822 :esphomepr:`7858` by :ghuser:`kbx81`
+- [pipsolar] clang-tidy fixes for #7822 :esphomepr:`7855` by :ghuser:`kbx81`
+- [ltr501] clang-tidy fixes for #7822 :esphomepr:`7850` by :ghuser:`kbx81`
+- [cse7766] clang-tidy fixes for #7822 :esphomepr:`7846` by :ghuser:`kbx81`
+- [alarm_control_panel] clang-tidy fixes for #7822 :esphomepr:`7845` by :ghuser:`kbx81`
+- [sprinkler] clang-tidy fixes for #7822 :esphomepr:`7857` by :ghuser:`kbx81`
+- [haier] clang-tidy fixes for #7822 :esphomepr:`7849` by :ghuser:`kbx81`
+- [mqtt] clang-tidy fixes for #7822 :esphomepr:`7851` by :ghuser:`kbx81`
+- [helpers, optional] clang-tidy fixes for #7822 :esphomepr:`7841` by :ghuser:`kbx81`
+- Move ``USE_CAPTIVE_PORTAL`` into all define groups it can be used with :esphomepr:`7863` by :ghuser:`jesserockz`
+- Bump docker/build-push-action from 6.9.0 to 6.10.0 in /.github/actions/build-image :esphomepr:`7866` by :ghuser:`dependabot[bot]`
+- python lint for platform components :esphomepr:`7864` by :ghuser:`tomaszduda23`
+- [max31865] clang-tidy fixes for #7822 :esphomepr:`7876` by :ghuser:`kbx81`
+- [esp32_ble] clang-tidy fixes for #7822 :esphomepr:`7883` by :ghuser:`kbx81`
+- [mqtt] clang-tidy fixes for #7822 :esphomepr:`7877` by :ghuser:`kbx81`
+- [uln2003] clang-tidy fixes for #7822 :esphomepr:`7881` by :ghuser:`kbx81`
+- [rotary_encoder] clang-tidy fixes for #7822 :esphomepr:`7880` by :ghuser:`kbx81`
+- [pca6416a, pca9554] clang-tidy fixes for #7822 :esphomepr:`7879` by :ghuser:`kbx81`
+- [nextion] clang-tidy fixes for #7822 :esphomepr:`7878` by :ghuser:`kbx81`
+- [various] clang-tidy fixes for #7822 :esphomepr:`7874` by :ghuser:`kbx81`
+- [logger] clang-tidy fixes for #7822 :esphomepr:`7875` by :ghuser:`kbx81`
+- [ezo] clang-tidy fixes for #7822 :esphomepr:`7873` by :ghuser:`kbx81`
+- [apds9306] clang-tidy fixes for #7822 :esphomepr:`7872` by :ghuser:`kbx81`
+- [dht] clang-tidy fixes for #7822 :esphomepr:`7871` by :ghuser:`kbx81`
+- [network] clang-tidy fixes for #7822 :esphomepr:`7870` by :ghuser:`kbx81`
+- [lvgl] Make image update via lambda work :esphomepr:`7886` by :ghuser:`clydebarrow`
+- [deep_sleep] fix deep_sleep not keeping awake when sleep_duration is defined :esphomepr:`7885` by :ghuser:`makstech`
+- [hx711] clang-tidy fixes for #7822 :esphomepr:`7900` by :ghuser:`kbx81`
+- [modbus_controller] Clang fixes :esphomepr:`7899` by :ghuser:`kbx81`
+- Add H-Bridge switch component :esphomepr:`7421` by :ghuser:`dwmw2` (new-platform)
+- [CI] Bump GHA runners to ``ubuntu-24.04`` :esphomepr:`7905` by :ghuser:`kbx81`
+- [font et. al.] Remove explicit check for pillow installed. :esphomepr:`7891` by :ghuser:`clydebarrow`
+- [CI] Update clang-tidy to 18.1.3 :esphomepr:`7822` by :ghuser:`kbx81`
+- MQTT sensors handling of publishing NaN values  :esphomepr:`7768` by :ghuser:`kbullet` (breaking-change)
+- [ble] Allow setting shorter name for ble advertisements :esphomepr:`7867` by :ghuser:`jesserockz`
+- [font] Restore correct default glyphs for bitmap fonts :esphomepr:`7907` by :ghuser:`clydebarrow`
+- [helpers] clang-tidy fix for #7706 :esphomepr:`7909` by :ghuser:`kbx81`
+- [docker] Fix clang-tidy installation :esphomepr:`7910` by :ghuser:`kbx81`
+- [sntp] Resolve warnings from ESP-IDF 5.x :esphomepr:`7913` by :ghuser:`clydebarrow`
+- Add strftime variant with background color :esphomepr:`7714` by :ghuser:`mikosoft83`
+- [i2s_audio] Bugfix: Follow configured bits per sample :esphomepr:`7916` by :ghuser:`kahrendt`
+- Haier AC quiet mode switch fix :esphomepr:`7902` by :ghuser:`paveldn`
+- [CI] Update clang-tidy to 18.1.8 :esphomepr:`7915` by :ghuser:`syssi`
+- [i2s_audio] Speaker type fix :esphomepr:`7919` by :ghuser:`kbx81`
+- [esp32_rmt_led_strip] Add ``COMPONENT_SCHEMA`` extending :esphomepr:`7918` by :ghuser:`jesserockz`
+- [esp32] Use pioarduino + IDF 5.1.5 as default for IDF builds :esphomepr:`7706` by :ghuser:`kbx81`
+- Bump actions/cache from 4.1.2 to 4.2.0 :esphomepr:`7926` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.1.2 to 4.2.0 in /.github/actions/restore-python :esphomepr:`7925` by :ghuser:`dependabot[bot]`
+- Add OCI Image Labels  :esphomepr:`7924` by :ghuser:`Passific`
+- Move docker oci labels to correct image :esphomepr:`7927` by :ghuser:`jesserockz`
+- Update project description :esphomepr:`7928` by :ghuser:`jesserockz`
+- [modbus] More clean-up :esphomepr:`7921` by :ghuser:`kbx81`
+- Add: Seeed Studio MR60BHA2 mmWave Sensor :esphomepr:`7589` by :ghuser:`limengdu` (new-integration)
+- Optimize QMC5883L reads :esphomepr:`7889` by :ghuser:`dnschneid`
+- [display] Fix strftime overload ignoring alignment :esphomepr:`7937` by :ghuser:`jesserockz`
+- Add font anti-aliasing for grayscale display :esphomepr:`7934` by :ghuser:`koreapyj`
+- Bump pypa/gh-action-pypi-publish from 1.12.2 to 1.12.3 :esphomepr:`7941` by :ghuser:`dependabot[bot]`
+- [adc] Split files by platform :esphomepr:`7940` by :ghuser:`edwardtfn`
+- [const] Move ``CONF_TEMPERATURE_COMPENSATION`` to common const.py :esphomepr:`7943` by :ghuser:`jesserockz`
+- [lvgl] Fix image `mode` property (Bugfix) :esphomepr:`7938` by :ghuser:`clydebarrow`
+- [lvgl] Add `on_change` event :esphomepr:`7939` by :ghuser:`clydebarrow`
+- Synchronise esp32 boards with platform version 51.03.07 :esphomepr:`7945` by :ghuser:`jesserockz` (breaking-change)
+- [i2c] Use correct macro to determine number of i2c peripherals for idf :esphomepr:`7947` by :ghuser:`jesserockz`
+
+
+Past Changelogs
+---------------
+
+- :doc:`2024.11.0`
+- :doc:`2024.10.0`
+- :doc:`2024.9.0`
+- :doc:`2024.8.0`
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

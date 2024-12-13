@@ -68,6 +68,7 @@ Configuration variables:
 - **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See :ref:`Nextion Automation <nextion-on_sleep>`.
 - **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See :ref:`Nextion Automation <nextion-on_page>`.
 - **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or release). See :ref:`Nextion Automation <nextion-on_touch>`.
+- **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
 
 .. _display-nextion_lambda:
 
@@ -280,6 +281,22 @@ The following arguments will be available:
           ESP_LOGD("nextion.on_touch", "Page Id: %i", page_id);
           ESP_LOGD("nextion.on_touch", "Component Id: %i", component_id);
           ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
+
+.. _nextion-on_buffer_overflow:
+
+``on_buffer_overflow``
+**********************
+
+This automation is triggered when the Nextion display reports a serial buffer overflow.
+When this happens, the Nextion's buffer will continue to receive the new instructions, but all previous instructions are lost and the Nextion queue may get out of sync.
+This automation will allow you handle this situation nicelly, like repeating some command to Nextion or restarting the system.
+
+.. code-block:: yaml
+
+    on_buffer_overflow:
+      then:
+        lambda: |-
+          ESP_LOGW("nextion.on_buffer_overflow", "Nextion reported a buffer overflow event!");
 
 .. _nextion_upload_tft_file:
 

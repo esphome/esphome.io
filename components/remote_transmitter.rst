@@ -73,6 +73,26 @@ ESP32 Arduino configuration variables:
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.
 
+Automations:
+------------
+
+- **on_transmit** (*Optional*, :ref:`Automation <automation>`): An automation to perform before
+  data is sent. Useful if the radio / IR hardware needs to change state or power on.
+- **on_complete** (*Optional*, :ref:`Automation <automation>`): An automation to perform after
+  data has been sent. Useful if the radio / IR hardware needs to change state or power off.
+
+.. code-block:: yaml
+
+    # Example automation
+    remote_transmitter:
+      ...
+      on_transmit:
+        then:
+          - switch.turn_on: tx_enable
+      on_complete:
+        then:
+          - switch.turn_off: tx_enable
+
 .. _remote_transmitter-transmit_action:
 
 Remote Transmitter Actions
