@@ -81,8 +81,8 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
-IDF configuration variables:
-****************************
+ESP32 IDF configuration variables:
+**********************************
 
 - **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
   internal DMA buffer. If DMA is not enabled, ``rmt_symbols`` determines the amount of RMT memory allocated to this
@@ -105,8 +105,8 @@ IDF configuration variables:
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 
-Arduino configuration variables:
-********************************
+ESP32 Arduino configuration variables:
+**************************************
 
 - **rmt_channel** (*Optional*, int): The RMT channel to use. The following ESP32 variants have these channels available:
 

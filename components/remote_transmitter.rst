@@ -18,7 +18,8 @@ The component is split into two parts:
 
 .. note::
 
-    This component is more accurate on the ESP32, as it has a dedicated peripheral for sending exact signal sequences.
+    This component performs best with an ESP32 or variant; they have a dedicated hardware peripheral which ensures
+    accurate signal timing.
 
 .. code-block:: yaml
 
