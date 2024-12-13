@@ -61,7 +61,7 @@ ESP32 IDF configuration variables:
 
 ESP32 Arduino configuration variables:
 
-- **rmt_channel** (**Required**, int): The RMT channel to use. If using multiple strips, you need to use different channels.
+- **rmt_channel** (**Required**, int): The RMT channel to use. Each LED strip needs to use a unique channel.
 
   .. csv-table::
       :header: "ESP32 Variant", "Channels"

@@ -74,16 +74,16 @@ Configuration variables:
   on the ESP32 and ``1kB`` on the ESP8266.
 - **filter** (*Optional*, :ref:`config-time`): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``50us``.
-- **idle** (*Optional*, :ref:`config-time`): The amount of time that a signal should remain stable (i.e. not
-  change) for it to be considered complete. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``10ms``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Use this if you have
-  multiple remote receivers.
+- **idle** (*Optional*, :ref:`config-time`): The amount of time that a signal should remain stable (remain
+  unchanged) for it to be considered complete. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``10ms``.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
+  receivers are connected to a single device.
 
 ESP32 IDF configuration variables:
 
-- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled ``rmt_symbols`` represents the size of the drivers
-  internal DMA buffer. If DMA is not used ``rmt_symbols`` controls the amount of RMT memory allocated to this component.
-  Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the
+- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
+  internal DMA buffer. If DMA is not enabled, ``rmt_symbols`` determines the amount of RMT memory allocated to this component.
+  Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2``, only half of the
   symbol memory is available to receivers. Each symbol is 32 bits and contains two values.
 
   .. csv-table::
@@ -96,8 +96,8 @@ ESP32 IDF configuration variables:
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is limited
   to ``rmt_symbols``.
-- **filter_symbols** (*Optional*, int): Filter out any receive that has a length in symbols less than ``filter_symbols``.
-  Useful to filter out short bursts of noise.
+- **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than ``filter_symbols``.
+  Useful for filtering out short bursts of noise.
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 

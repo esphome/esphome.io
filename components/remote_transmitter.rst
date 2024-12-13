@@ -35,12 +35,13 @@ Configuration variables:
    protocols modulate the signal using a carrier signal. Set this to ``50%`` if you're working with IR LEDs and to
    ``100%`` if working with other things like 433MHz transmitters.
 -  **id** (*Optional*, :ref:`config-id`): Manually specify
-   the ID used for code generation. Use this if you have multiple remote transmitters.
+   the ID used for code generation. Useful when multiple
+  transmitters are connected to a single device.
 
 ESP32 IDF configuration variables:
 
-- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled ``rmt_symbols`` represents the size of the drivers
-  internal DMA buffer. If DMA is not used ``rmt_symbols`` controls the amount of RMT memory allocated to this component.
+- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
+  internal DMA buffer. If DMA is not enabled, ``rmt_symbols`` determines the amount of RMT memory allocated to this component.
   Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the
   symbol memory is available to transmitters. Each symbol is 32 bits and contains two values.
 
