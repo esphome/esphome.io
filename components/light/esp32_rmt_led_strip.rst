@@ -23,7 +23,9 @@ Configuration variables
 
 - **pin** (**Required**, :ref:`config-pin`): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
-- **chipset** (**Required**, enum): The chipset to apply known timings from. Not used if specifying the timings manually, see below.
+- **chipset** (**Required**, enum): The name of the chipset used; determines signal timing. Not required if
+  :ref:`specifying the timings manually<esp32-rmt-led-strip-manual_timings>`.
+
     - ``WS2811``
     - ``WS2812``
     - ``SK6812``
@@ -31,6 +33,7 @@ Configuration variables
     - ``SM16703``
 
 - **rgb_order** (**Required**, string): The RGB order of the strip.
+
     - ``RGB``
     - ``RBG``
     - ``GRB``
@@ -40,16 +43,16 @@ Configuration variables
 
 - **is_rgbw** (*Optional*, boolean): Set to ``true`` if the strip is RGBW. Defaults to ``false``.
 - **is_wrgb** (*Optional*, boolean): Set to ``true`` if the strip is WRGB. Defaults to ``false``.
-- **max_refresh_rate** (*Optional*, :ref:`config-time`):
-  A time interval used to limit the number of commands a light can handle per second. For example
-  16ms will limit the light to a refresh rate of about 60Hz. Defaults to sending commands as quickly as
-  changes are made to the lights.
+- **max_refresh_rate** (*Optional*, :ref:`config-time`): A time interval used to limit the number of commands a light
+  can handle per second. For example, ``16ms`` will limit the light to a refresh rate of about 60Hz. Defaults to
+  sending commands as quickly as changes are made to the lights.
 
-ESP32 IDF configuration variables:
+IDF configuration variables:
+****************************
 
-- **rmt_symbols** (*Optional*, int): The amount of RMT memory allocated to this component. Memory is shared
-  by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the symbol
-  memory is available to transmitters. Each symbol is 32 bits and contains two values.
+- **rmt_symbols** (*Optional*, int): The amount of RMT memory allocated to this component. Memory is shared by all
+  receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the symbol memory is
+  available to transmitters. Each symbol is 32 bits and contains two values.
 
   .. csv-table::
       :header: "ESP32 Variant", "Memory Size", "Block Size"
@@ -59,7 +62,8 @@ ESP32 IDF configuration variables:
       "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
 
-ESP32 Arduino configuration variables:
+Arduino configuration variables:
+********************************
 
 - **rmt_channel** (**Required**, int): The RMT channel to use. Each LED strip needs to use a unique channel.
 
@@ -73,6 +77,7 @@ ESP32 Arduino configuration variables:
 
 - All other options from :ref:`Light <config-light>`.
 
+.. _esp32-rmt-led-strip-manual_timings:
 
 Manual Timings
 **************
