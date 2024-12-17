@@ -53,6 +53,8 @@ ESP32 IDF configuration variables:
       "ESP32-S2", "256 symbols", "64 symbols"
       "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
+      "ESP32-C6", "192 symbols", "48 symbols"
+      "ESP32-H2", "192 symbols", "48 symbols"
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
 - **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver.

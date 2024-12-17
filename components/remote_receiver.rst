@@ -96,6 +96,8 @@ ESP32 IDF configuration variables:
       "ESP32-S2", "256 symbols", "64 symbols"
       "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
+      "ESP32-C6", "192 symbols", "48 symbols"
+      "ESP32-H2", "192 symbols", "48 symbols"
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to ``rmt_symbols``.
