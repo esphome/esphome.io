@@ -311,7 +311,8 @@ If the ``adv_hittest`` :ref:`flag <lvgl-widget-flags>` is enabled the arc can be
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the knob changes the value of the arc. The new value is returned in the variable ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the arc value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the arc value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -347,7 +348,7 @@ If the ``adv_hittest`` :ref:`flag <lvgl-widget-flags>` is enabled the arc can be
 
 .. note::
 
-    The ``on_value`` trigger is sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a :ref:`universal interaction trigger <lvgl-automation-triggers>` like ``on_release``, to get the ``x`` variable once after the interaction has completed.
+    The ``on_value`` and ``on_change`` triggers are sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a :ref:`universal interaction trigger <lvgl-automation-triggers>` like ``on_release``, to get the ``x`` variable once after the interaction has completed.
 
 The ``arc`` can be also integrated as a :doc:`Number </components/number/lvgl>` or :doc:`Sensor </components/sensor/lvgl>` component.
 
@@ -429,7 +430,8 @@ A notable state is ``checked`` (boolean) which can have different styles applied
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated after clicking. If ``checkable`` is ``true``, the boolean variable ``x``, representing the checked state, may be used by lambdas within this trigger.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated after clicking. If ``checkable`` is ``true``, the boolean variable ``x``, representing the checked state, may be used by lambdas within this trigger.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the checked value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers.
 
 **Example:**
@@ -630,7 +632,8 @@ The checkbox widget is made internally from a *tick box* and a label. When the c
 
 **Triggers:**
 
-``on_value`` :ref:`trigger <actions-trigger>` is activated when toggling the checkbox. The boolean variable ``x``, representing the checkbox's state, may be used by lambdas within this trigger.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when interactively toggling the checkbox. The boolean variable ``x``, representing the checkbox's state, may be used by lambdas within this trigger.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the checkbox is toggled, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -701,7 +704,8 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated only when you select an item from the list. The new selected index is returned in the variable ``x``. The :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers also apply, and they also return the selected index in ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated only when the user selects an item from the list. The new selected index is returned in the variable ``x``. The :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers also apply, and they also return the selected index in ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - ``on_cancel`` :ref:`trigger <actions-trigger>` is also activated when you close the dropdown without selecting an item from the list. The currently selected index is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
@@ -1322,7 +1326,8 @@ Roller allows you to simply select one option from a list by scrolling.
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when you select an item from the list. The new selected index is returned in the variable ``x``, and the text of the selected item is returned in the variable ``text``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated only when the user selects an item from the list. The new selected index is returned in the variable ``x``. The :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers also apply, and they also return the selected index in ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the selected index in ``x``.
 
 **Example:**
@@ -1388,7 +1393,8 @@ Normally, the slider can be adjusted either by dragging the knob, or by clicking
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the knob changes the value of the slider. The new value is returned in the variable ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the slider value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the slider value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -1469,7 +1475,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the knob changes the value of the arc. The new value is returned in the variable ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the spinbox value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -1577,7 +1583,8 @@ The switch looks like a little slider and can be used to turn something on and o
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when toggling the switch. The boolean variable ``x``, representing the switch's state, may be used by lambdas within this trigger.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the switch value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the switch value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -1635,7 +1642,8 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when displayed tab changes. The new value is returned in the variable ``tab`` as the ID of the now-visible tab.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the tab value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the tab value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers.
 
 **Example:**
@@ -1902,7 +1910,7 @@ These :ref:`actions <actions-action>` are shorthands for toggling the ``disabled
 Triggers
 ********
 
-Specific triggers like ``on_value`` are available for certain widgets; they are described above in their respective section.
+Specific triggers like ``on_value`` and ``on_change``` are available for certain widgets; they are described above in their respective section.
 Some universal triggers are also available for all of the widgets:
 
 ESPHome implements as universal triggers the following interaction events generated by LVGL:
