@@ -58,11 +58,11 @@ Configuration variables:
   - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel.
   - ``RGB``: Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
 
-- **use_transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``none`` (default), ``chroma_key`` and ``alpha_channel``. See discussion on transparency below.
+- **use_transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``. See discussion on transparency below.
 
 - **dither** (*Optional*): Specifies which dither method used to process the image, only used in GRAYSCALE and BINARY type image. Defaults to ``NONE``. You can read more about it `here <https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=Dither#PIL.Image.Image.convert>`__ and `here <https://en.wikipedia.org/wiki/Dither>`__.
 
-  - ``NONE``: Every pixel convert to its nearest color.
+  - ``NONE``: Every pixel converts to its nearest color.
   - ``FLOYDSTEINBERG``: Uses Floyd-Steinberg dither to approximate the original image luminosity levels.
 
 .. note::
@@ -72,7 +72,48 @@ Configuration variables:
     additionally need to have the python ``cairosvg`` package installed. These are automatically installed when
     setting up ESPHome via the usual methods.
 
-And then later in code:
+Grouping images by type
+-----------------------
+
+You can group images by type to make it easier to manage them. This is useful when you have a lot of images to be encoded in the same way, and avoids having to repeat the same type for each image. The type name is used as the key for the group. For example:
+
+.. code-block:: yaml
+
+    image:
+      grayscale:
+        - file: "image1.png"
+          id: image1
+        - file: "image2.png"
+          id: image2
+        - file: "image3.png"
+          id: image3
+
+      rgb565:
+        - file: "image4.png"
+          id: image4
+        - file: "image5.png"
+          id: image5
+
+In addition, the default transparency type can be set within a type group by using the transparency type as a key.
+
+.. code-block:: yaml
+
+    image:
+      rgb565:
+        alpha_channel:
+        - file: "image1.png"
+          id: image1
+        - file: "image2.png"
+          id: image2
+        opaque:
+        - file: "image2.png"
+
+Displaying Images
+-----------------
+
+Images may be used in LVGL configurations wherever an image is required. See the :doc:`LVGL </components/lvgl/index>` documentation for more information.
+
+To display an image directly on an ESPHome display, you can use the ``image`` method in the display lambda.
 
 .. code-block:: yaml
 
@@ -126,5 +167,6 @@ Transparency options
 
 By default transparency is not used. If ``use_transparency: chroma_key`` is set then a specific colour (0, 1, 0) will be used to replace any transparent or partially transparent portions of the image. This will not be drawn when rendering the image, allowing the background to be visible.
 
-If ``use_transparency: alpha_channel`` is set, then each pixel of the image will be assigned an additional byte with a transparency value. This is useful mainly when using :doc:`LVGL </components/lvgl/index>` - the display image drawing functions will either draw or not draw the pixel, no blending with the background will be done. With LVGL however the ``alpha_channel`` transparency will enable smooth blending of transparent images with the background.
+If ``use_transparency: alpha_channel`` is set, then each pixel of the image will be assigned an additional byte with a transparency value. This is useful mainly when using :doc:`LVGL </components/lvgl/index>` as the ``alpha_channel`` transparency will enable smooth blending of transparent images with the background.
+When using the display lambda image drawing functions these will draw or not draw the pixel, no blending with the background will be done.
 The ``BINARY`` format only permits ``chroma_key`` transparency, which effectively turns the image into an alpha mask with one bit per pixel. GRAYSCALE images with transparency store the alpha channel only, and remain 1 byte per pixel.
