@@ -1,0 +1,59 @@
+ES7210
+======
+
+.. seo::
+    :description: Instructions for using ESPHome's ES7210 platform to configure microphone inputs.
+    :image: es7210.svg
+    :keywords: ES7210, Audio, ADC, I2S, ESP32
+
+The ``es7210`` platform allows your ESPHome devices to use the ES7210 high performance four channels audio ADC (`datasheet <http://www.everest-semi.com/pdf/ES7210%20PB.pdf>`__).
+This allows attached microphones to be used as a microphone input via :doc:`/components/microphone/i2s_audio`.
+The :ref:`I²C bus <i2c>` is required in your configuration as this is used to communicate with the ES7210.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    es7210:
+
+.. _config-es7210:
+
+Configuration variables:
+------------------------
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of ``16bit``, ``24bit``, or ``32bit``. Defaults to ``16bit``.
+- **sample_rate** (*Optional*, positive integer): I2S sample rate. Defaults to ``16000``.
+- **mic_gain** (*Optional*, enum): The gain applied to the ADC microphones. One of ``0DB``, ``3DB``, ``6DB``, ``9DB``, ``12DB``, ``15DB``, ``18DB``, ``21DB``, ``24DB``, ``27DB``, ``30DB``, ``33DB``, ``34.5DB``, ``36DB``, or ``37.5DB``. Defaults to ``24DB``.
+- **address** (*Optional*, int): The I²C address of the driver. Defaults to ``0x40``.
+- **i2c_id** (*Optional*): The ID of the :ref:`I²C bus <i2c>` the ES7210 is connected to.
+
+Configuration Examples
+----------------------
+
+**ESP32 S3 Box 3**:
+
+.. code-block:: yaml
+
+    es7210:
+      id: es7210_adc
+      bits_per_sample: 16bit
+      sample_rate: 16000
+
+    i2s_audio:
+      - id: i2s_audio_bus
+        i2s_lrclk_pin: GPIO45
+        i2s_bclk_pin: GPIO17
+        i2s_mclk_pin: GPIO2
+
+    microphone:
+      - platform: i2s_audio
+        id: box_mic
+        sample_rate: 16000
+        i2s_din_pin: GPIO16
+        bits_per_sample: 16bit
+        adc_type: external
+
+See Also
+--------
+
+- :doc:`index`
+- :apiref:`es7210/es7210.h`
+- :ghedit:`Edit`

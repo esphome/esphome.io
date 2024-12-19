@@ -728,6 +728,13 @@ Alarm Control Panel Components
     Alarm Control Panel Core, components/alarm_control_panel/index, alarm-panel.svg, dark-invert
     Template Alarm Control Panel, components/alarm_control_panel/template, description.svg, dark-invert
 
+Audio ADC Components
+--------------------
+
+.. imgtable::
+
+    ES7210, components/es7210, es7210.svg
+
 Audio DAC Components
 --------------------
 
