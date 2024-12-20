@@ -30,7 +30,7 @@ You need to make the following electrical connections:
 
 .. note::
 
-    - Most ESP32 S and C series devboards do *not* have a separate USB-UART chip - they have it built into the ESP. See below for instructions.
+    - Most ESP32 S and C series devboards do *not* have a separate USB-UART chip - they have it built into the ESP. See below for instructions regarding ESP32-S series.
     - The 5V connection on either board may be labelled either ``5V`` or ``VIN``. Some boards may not have a 5V connection and will require 3.3V only.
     - Rather than powering the target board from the flasher board, it is also possible to use a separate power supply, just make sure all the ground pins are connected together.
 
@@ -56,7 +56,7 @@ Making an ESP32-S Series devboard act like a USB-UART bridge
 
 .. _esp32s-usb-uart-bridge:
 
-Users with ESP32-S2/S3 devboards can instead have a look at https://github.com/espressif/esp-usb-bridge instead.
+Users with ESP32-S2/S3 devboards can have a look at https://github.com/espressif/esp-usb-bridge instead.
 But be warned, it demands flashing your S2/S3 board using ESP-IDF to act like a USB_UART bridge first.
 In the SDKconfig, make sure to verify the GPIO pins for the TxD/RxD signals.
 
