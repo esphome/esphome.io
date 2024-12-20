@@ -172,6 +172,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Improv via BLE, components/esp32_improv, improv.svg, dark-invert
     Improv via Serial, components/improv_serial, improv.svg, dark-invert
     Interval, components/interval, description.svg, dark-invert
+    JSON, components/json, json.svg, dark-invert
     Script, components/script, description.svg, dark-invert
 
 ESPHome Configuration
@@ -258,12 +259,13 @@ Hardware Peripheral Interfaces/Busses
 
 .. imgtable::
 
+    1-Wire, components/one_wire, one-wire.svg
     CAN Bus, components/canbus/index, canbus.svg
     I²C Bus, components/i2c, i2c.svg
     I²S Audio, components/i2s_audio, i2s_audio.svg
+    OpenTherm, components/opentherm, opentherm.png
     SPI Bus, components/spi, spi.svg
     UART, components/uart, uart.svg
-    1-Wire, components/one_wire, one-wire.svg
 
 I/O Expanders/Multiplexers
 --------------------------
@@ -281,6 +283,7 @@ I/O Expanders/Multiplexers
     SN74HC595, components/sn74hc595, sn74hc595.jpg
     SX1509, components/sx1509, sx1509.jpg
     TCA9548A I²C Multiplexer, components/tca9548a, tca9548a.jpg
+    TCA9555, components/tca9555, tca9555.svg
     WeiKai SPI/I²C UART/IO Expander, components/weikai, wk2168.jpg
     XL9535, components/xl9535, xl9535.svg
 
@@ -296,7 +299,7 @@ CAN Bus
 Sensor Components
 -----------------
 
-Sensors are split into categories. If a sensor fits into more than one category, it will be listed multiple times.
+Sensors are organized into categories; if a given sensor fits into more than one category, it will appear multiple times.
 
 Core
 ****
@@ -321,6 +324,8 @@ Air Quality
     EE895, components/sensor/ee895, EE895.png,  CO2 & Temperature & Pressure
     ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
     GCJA5, components/sensor/gcja5, gcja5.svg, Particulate
+    GP2Y1010AU0F, components/sensor/gp2y1010au0f, gp2y1010au0f.png, Particulate
+    Grove Multichannel Gas V2, components/sensor/grove_gas_mc_v2, grove-gas-mc-v2.png, NO2 & CO & Ethanol & Volatile organics
     HM3301, components/sensor/hm3301, hm3301.jpg, Particulate
     iAQ-Core, components/sensor/iaqcore, iaqcore.jpg, CO2 & Volatile organics
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
@@ -355,6 +360,7 @@ Analogue
     CD74HC4067, components/sensor/cd74hc4067, cd74hc4067.jpg, 16-channel analog multiplexer
     MCP3008, components/sensor/mcp3008, mcp3008.jpg, 8-channel ADC
     MCP3204 / MCP3208, components/sensor/mcp3204, mcp3204.jpg, 4-channel ADC
+    NAU7802, components/sensor/nau7802, nau7802.jpg, ADC
     Resistance, components/sensor/resistance, omega.svg, dark-invert
 
 Bluetooth Low Energy (BLE)
@@ -480,6 +486,7 @@ Environmental
     MPL3115A2, components/sensor/mpl3115a2, mpl3115a2.jpg, Temperature & Pressure
     MS5611, components/sensor/ms5611, ms5611.jpg, Pressure
     MS8607, components/sensor/ms8607, ms8607.jpg, Temperature & Humidity & Pressure
+    NPI-19, components/sensor/npi19, npi19.jpg, Pressure
     NTC Thermistor, components/sensor/ntc, ntc.jpg, Temperature
     PMWCS3, components/sensor/pmwcs3, pmwcs3.jpg, Soil moisture & Temperature
     QMP6988, components/sensor/qmp6988, qmp6988_env3.png, Temperature & Pressure
@@ -494,11 +501,21 @@ Environmental
     SHTCx, components/sensor/shtcx, shtc3.jpg, Temperature & Humidity
     SMT100, components/sensor/smt100, smt100.jpg, Moisture & Temperature
     STS3X, components/sensor/sts3x, sts3x.jpg, Temperature
+    TC74, components/sensor/tc74, tc74.jpg, Temperature
     TEE501, components/sensor/tee501, TEE501.png, Temperature
+    TE-M3200, components/sensor/tem3200, tem3200.jpg, Temperature & Pressure
     TMP102, components/sensor/tmp102, tmp102.jpg, Temperature
     TMP1075, components/sensor/tmp1075, tmp1075.jpg, Temperature
     TMP117, components/sensor/tmp117, tmp117.jpg, Temperature
     XGZP68xx Series, components/sensor/xgzp68xx, 6897d.jpg, Differential Pressure
+
+Health/Safety
+*************
+
+.. imgtable::
+
+    Seeed Studio MR60BHA2 mmWave, components/seeed_mr60bha2, seeed_mr60bha2.jpg, Breathing & heartbeat detection
+    Seeed Studio MR60FDA2 mmWave, components/seeed_mr60fda2, seeed_mr60fda2.jpg, Presence & Fall detection
 
 Light
 *****
@@ -553,12 +570,14 @@ Miscellaneous
     Duty Time, components/sensor/duty_time, timer-play-outline.svg, dark-invert
     EZO sensor circuits, components/sensor/ezo, ezo-ph-circuit.png, (pH)
     FS3000, components/sensor/fs3000, fs3000.jpg, Air velocity
+    GDK101, components/sensor/gdk101, gdk101.jpg, Radiation
     Growatt Solar, components/sensor/growatt_solar, growatt.jpg, Solar rooftop
     Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg, Solar rooftop
     Integration, components/sensor/integration, sigma.svg, dark-invert
     Kuntze pool sensor, components/sensor/kuntze, kuntze.jpg
     LVGL widget, components/sensor/lvgl, lvgl_c_num.png
     M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
+    MAX17043, components/sensor/max17043, max17043.jpg, Battery
     MicroNova pellet stove, components/micronova, micronova.svg
     Modbus Sensor, components/sensor/modbus_controller, modbus.png
     Nextion, components/sensor/nextion, nextion.jpg, Sensors from display
@@ -571,7 +590,6 @@ Miscellaneous
     uFire EC sensor, components/sensor/ufire_ec, ufire_ec.png, EC & Temperature
     uFire ISE sensor, components/sensor/ufire_ise, ufire_ise.png, pH & Temperature
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
-    GDK101, components/sensor/gdk101, gdk101.jpg, Radiation
 
 Motion
 ******
@@ -616,7 +634,7 @@ configuration <https://devices.esphome.io/devices/temt6000>`__.
 Binary Sensor Components
 ------------------------
 
-Binary Sensors are split into categories. If a sensor fits into more than one category, it will be listed multiple times.
+Binary Sensors are organized into categories; if a given sensor fits into more than one category, it will appear multiple times.
 
 Core
 ****
@@ -628,6 +646,7 @@ Core
     GPIO, components/binary_sensor/gpio, gpio.svg
     Home Assistant, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
     Status, components/binary_sensor/status, server-network.svg, dark-invert
+    Switch, components/binary_sensor/switch, electric-switch.svg, dark-invert
 
 Capacitive Touch
 ****************
@@ -702,95 +721,22 @@ Miscellaneous
     Tuya Binary Sensor, components/binary_sensor/tuya, tuya.png
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
 
-Output Components
------------------
+Alarm Control Panel Components
+------------------------------
 
 .. imgtable::
 
-    Output Core, components/output/index, folder-open.svg, dark-invert
-    Template Output, components/output/template, description.svg, dark-invert
-    AC Dimmer, components/output/ac_dimmer, ac_dimmer.svg, dark-invert
-    BLE Binary Output, components/output/ble_client, bluetooth.svg, dark-invert
-    BP1658CJ, components/output/bp1658cj, bp1658cj.svg
-    BP5758D, components/output/bp5758d, bp5758d.svg
-    DAC7678, components/output/dac7678, dac7678.svg
-    EMC2101, components/emc2101, emc2101.jpg
-    ESP32 DAC, components/output/esp32_dac, dac.svg
-    ESP32 LEDC, components/output/ledc, pwm.png
-    ESP8266 Software PWM, components/output/esp8266_pwm, pwm.png
-    GP8403, components/output/gp8403, gp8403.svg
-    GPIO Output, components/output/gpio, gpio.svg
-    LibreTiny PWM, components/output/libretiny_pwm, pwm.png
-    MCP4725, components/output/mcp4725, mcp4725.jpg
-    MCP4728, components/output/mcp4728, mcp4728.jpg
-    MCP47A1, components/output/mcp47a1, mcp47a1.svg
-    Modbus Output, components/output/modbus_controller, modbus.png
-    MY9231/MY9291, components/output/my9231, my9231.svg
-    PCA9685, components/output/pca9685, pca9685.jpg
-    Sigma-Delta Output, components/output/sigma_delta_output, sigma-delta.svg, dark-invert
-    Slow PWM, components/output/slow_pwm, pwm.png
-    SM16716, components/output/sm16716, sm16716.svg
-    SM2135, components/output/sm2135, sm2135.svg
-    SM2235, components/output/sm2235, sm2235.svg
-    SM2335, components/output/sm2335, sm2335.svg
-    TLC59208F, components/output/tlc59208f, tlc59208f.jpg
-    TLC5947, components/output/tlc5947, tlc5947.jpg
-    TLC5971, components/output/tlc5971, tlc5971.jpg
-    X9C Potentiometer, components/output/x9c, x9c.jpg
+    Alarm Control Panel Core, components/alarm_control_panel/index, alarm-panel.svg, dark-invert
+    Template Alarm Control Panel, components/alarm_control_panel/template, description.svg, dark-invert
 
-Light Components
-----------------
+Audio DAC Components
+--------------------
 
 .. imgtable::
 
-    Light Core, components/light/index, folder-open.svg, dark-invert
-    Beken SPI, components/light/beken_spi_led_strip, color_lens.svg, dark-invert
-    Binary Light, components/light/binary, lightbulb.svg, dark-invert
-    Cold+Warm White Light, components/light/cwww, brightness-medium.svg, dark-invert
-    Color Temperature Light, components/light/color_temperature, brightness-medium.svg, dark-invert
-    ESP32 RMT, components/light/esp32_rmt_led_strip, color_lens.svg, dark-invert
-    FastLED Light, components/light/fastled, color_lens.svg, dark-invert
-    H-bridge Light, components/light/hbridge, brightness-medium.svg, dark-invert
-    Light Partition, components/light/partition, color_lens.svg, dark-invert
-    LightWaveRF, components/lightwaverf, brightness-medium.svg, dark-invert
-    LVGL widget, components/light/lvgl, lvgl_c_lig.png
-    Monochromatic Light, components/light/monochromatic, brightness-medium.svg, dark-invert
-    NeoPixelBus Light, components/light/neopixelbus, color_lens.svg, dark-invert
-    RGB Light, components/light/rgb, rgb.png
-    RGBCT Light, components/light/rgbct, rgbw.png
-    RGBW Light, components/light/rgbw, rgbw.png
-    RGBWW Light, components/light/rgbww, rgbw.png
-    RP2040 PIO, components/light/rp2040_pio_led_strip, color_lens.svg, dark-invert
-    Shelly Dimmer, components/light/shelly_dimmer, shellydimmer2.jpg
-    Sonoff D1 Dimmer, components/light/sonoff_d1, sonoff_d1.jpg
-    SPI LED Strips, components/light/spi_led_strip, apa102.jpg
-    Status Led, components/light/status_led, led-on.svg, dark-invert
-    Tuya Dimmer, components/light/tuya, tuya.png
-
-**Looking for WS2811 and similar individually addressable lights?** For the ESP32 and its variants, we
-recommend the :doc:`components/light/esp32_rmt_led_strip` or :doc:`components/light/spi_led_strip`; for
-other processors, have a look at the :doc:`FastLED Light </components/light/fastled>`.
-
-Switch Components
------------------
-
-.. imgtable::
-
-    Switch Core, components/switch/index, folder-open.svg, dark-invert
-    Template Switch, components/switch/template, description.svg, dark-invert
-    BLE Client Switch, components/switch/ble_client, bluetooth.svg, dark-invert
-    Factory Reset Switch, components/switch/factory_reset, restart-alert.svg, dark-invert
-    Generic Output Switch, components/switch/output, upload.svg, dark-invert
-    GPIO Switch, components/switch/gpio, gpio.svg
-    LVGL Widget, components/switch/lvgl, lvgl_c_swi.png
-    Modbus Switch, components/switch/modbus_controller, modbus.png
-    Nextion Switch, components/switch/nextion, nextion.jpg
-    Restart Switch, components/switch/restart, restart.svg, dark-invert
-    Safe Mode Switch, components/switch/safe_mode, restart-alert.svg, dark-invert
-    Shutdown Switch, components/switch/shutdown, power_settings.svg, dark-invert
-    Tuya Switch, components/switch/tuya, tuya.png
-    UART Switch, components/switch/uart, uart.svg
-    Home Assistant, components/switch/homeassistant, home-assistant.svg, dark-invert
+    Audio DAC Core, components/audio_dac/index, audio_dac.svg
+    AIC3204, components/audio_dac/aic3204, aic3204.svg
+    ES8311, components/audio_dac/es8311, es8311.svg
 
 Button Components
 -----------------
@@ -807,25 +753,45 @@ Button Components
     UART Button, components/button/uart, uart.svg
     Wake-on-LAN, components/button/wake_on_lan, power_settings.svg, dark-invert
 
-Event Components
------------------
+Climate Components
+------------------
 
 .. imgtable::
 
-    Event Core, components/event/index, folder-open.svg, dark-invert
-    Template Event, components/event/template, description.svg, dark-invert
+    Climate Core, components/climate/index, folder-open.svg, dark-invert
+    Anova Cooker, components/climate/anova, anova.png
+    Bang Bang Controller, components/climate/bang_bang, air-conditioner.svg, dark-invert
+    BedJet Climate System, components/climate/bedjet, bedjet.png
+    Haier Climate, components/climate/haier, haier.svg
+    IR Remote Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
+    Midea, components/climate/midea, midea.svg
+    PID Controller, components/climate/pid, function.svg, dark-invert
+    Thermostat Controller, components/climate/thermostat, air-conditioner.svg, dark-invert
+    Tuya Climate, components/climate/tuya, tuya.png
+    Uponor Smatrix Base Pulse Underfloor Heating, components/uponor_smatrix, uponor.svg
 
-Fan Components
---------------
+Cover Components
+----------------
 
 .. imgtable::
 
-    Fan Core, components/fan/index, folder-open.svg, dark-invert
-    Template Fan, components/fan/template, description.svg, dark-invert
-    Binary Fan, components/fan/binary, fan.svg, dark-invert
-    H-bridge Fan, components/fan/hbridge, fan.svg, dark-invert
-    Speed Fan, components/fan/speed, fan.svg, dark-invert
-    Tuya Fan, components/fan/tuya, tuya.png
+    Cover Core, components/cover/index, folder-open.svg, dark-invert
+    Template Cover, components/cover/template, description.svg, dark-invert
+    AM43 Cover, components/cover/am43, am43.jpg
+    Current-Based Cover, components/cover/current_based, flash.svg, dark-invert
+    Endstop Cover, components/cover/endstop, electric-switch.svg, dark-invert
+    Feedback Cover, components/cover/feedback, feedback_cover.svg, dark-invert
+    HE60R Cover, components/cover/he60r, he60r.jpg
+    Time-Based Cover, components/cover/time_based, timer.svg, dark-invert
+    Tuya Cover, components/cover/tuya, tuya.png
+
+Datetime Components
+-------------------
+
+.. imgtable::
+
+    Datetime Core, components/datetime/index, clock-outline.svg, dark-invert
+    Template Datetime, components/datetime/template, description.svg, dark-invert
 
 Display Components
 ------------------
@@ -866,7 +832,7 @@ Display Hardware Platforms
     Nextion, components/display/nextion, nextion.jpg
     PCD8544 (Nokia 5110/ 3310), components/display/pcd8544, pcd8544.jpg
     PVVX MiThermometer, components/display/pvvx_mithermometer, ../components/sensor/images/xiaomi_lywsd03mmc.jpg
-    Quad SPI AMOLED, components/display/qspi_amoled, t4-s3.jpg
+    Quad SPI Displays, components/display/qspi_dbi, t4-s3.jpg
     RPI_DPI_RGB, components/display/rpi_dpi_rgb, waveshare_touch-s3.jpg
     SSD1306, components/display/ssd1306, ssd1306.jpg
     SSD1322, components/display/ssd1322, ssd1322.jpg
@@ -887,113 +853,97 @@ Display Hardware Platforms
     Waveshare E-Paper, components/display/waveshare_epaper, waveshare_epaper.jpg
     Host SDL2 display, components/display/sdl, sdl.png
 
-Touchscreen Components
-----------------------
-
-.. imgtable::
-
-    Touchscreen Core, components/touchscreen/index, folder-open.svg, dark-invert
-    CST226, components/touchscreen/cst226, t4-s3.jpg
-    CST816, components/touchscreen/cst816, cst816.jpg
-    EKTF2232, components/touchscreen/ektf2232, ektf2232.svg, Inkplate 6 Plus
-    FT63X6, components/touchscreen/ft63x6, wt32-sc01.png
-    GT911, components/touchscreen/gt911, esp32_s3_box_3.png
-    Lilygo T5 4.7", components/touchscreen/lilygo_t5_47, lilygo_t5_47_touch.jpg
-    TT21100, components/touchscreen/tt21100, esp32-s3-korvo-2-lcd.png
-    XPT2046, components/touchscreen/xpt2046, xpt2046.jpg
-
-Cover Components
-----------------
-
-.. imgtable::
-
-    Cover Core, components/cover/index, folder-open.svg, dark-invert
-    Template Cover, components/cover/template, description.svg, dark-invert
-    AM43 Cover, components/cover/am43, am43.jpg
-    Current-Based Cover, components/cover/current_based, flash.svg, dark-invert
-    Endstop Cover, components/cover/endstop, electric-switch.svg, dark-invert
-    Feedback Cover, components/cover/feedback, feedback_cover.svg, dark-invert
-    HE60R Cover, components/cover/he60r, he60r.jpg
-    Time-Based Cover, components/cover/time_based, timer.svg, dark-invert
-    Tuya Cover, components/cover/tuya, tuya.png
-
-Text Components
----------------
-
-.. imgtable::
-
-    Text Core, components/text/index, folder-open.svg, dark-invert
-    Template Text, components/text/template, description.svg, dark-invert
-    LVGL textarea Text, components/text/lvgl, lvgl_c_txt.png
-
-Valve Components
-----------------
-
-.. imgtable::
-
-    Valve Core, components/valve/index, folder-open.svg, dark-invert
-    Template Valve, components/valve/template, description.svg, dark-invert
-
-Text Sensor Components
-----------------------
-
-.. imgtable::
-
-    Text Sensor Core, components/text_sensor/index, folder-open.svg, dark-invert
-    Template Text Sensor, components/text_sensor/template, description.svg, dark-invert
-    BLE Scanner, components/text_sensor/ble_scanner, bluetooth.svg, dark-invert
-    Ethernet Info, components/text_sensor/ethernet_info, ethernet.svg, dark-invert
-    Home Assistant, components/text_sensor/homeassistant, home-assistant.svg, dark-invert
-    LibreTiny, components/text_sensor/libretiny, libretiny.svg
-    LVGL textarea Text Sensor, components/text_sensor/lvgl, lvgl_c_txt.png
-    Modbus Text Sensor, components/text_sensor/modbus_controller, modbus.png
-    MQTT Subscribe Text, components/text_sensor/mqtt_subscribe, mqtt.png
-    Nextion Text Sensor, components/text_sensor/nextion, nextion.jpg
-    Tuya Text Sensor, components/text_sensor/tuya, tuya.png
-    Version, components/text_sensor/version, new-box.svg, dark-invert
-    WiFi Info, components/text_sensor/wifi_info, network-wifi.svg, dark-invert
-    WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
-    WL-134 Pet Tag Sensor , components/text_sensor/wl_134, fingerprint.svg, dark-invert
-
-Climate Components
-------------------
-
-.. imgtable::
-
-    Climate Core, components/climate/index, folder-open.svg, dark-invert
-    Anova Cooker, components/climate/anova, anova.png
-    Bang Bang Controller, components/climate/bang_bang, air-conditioner.svg, dark-invert
-    BedJet Climate System, components/climate/bedjet, bedjet.png
-    Haier Climate, components/climate/haier, haier.svg
-    IR Remote Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
-    Midea, components/climate/midea, midea.svg
-    PID Controller, components/climate/pid, function.svg, dark-invert
-    Thermostat Controller, components/climate/thermostat, air-conditioner.svg, dark-invert
-    Tuya Climate, components/climate/tuya, tuya.png
-    Uponor Smatrix Base Pulse Underfloor Heating, components/uponor_smatrix, uponor.svg
-
-Number Components
+Electromechanical
 -----------------
 
 .. imgtable::
 
-    Number Core, components/number/index, folder-open.svg, dark-invert
-    Template Number, components/number/template, description.svg, dark-invert
-    Home Assistant, components/number/homeassistant, home-assistant.svg, dark-invert
-    LVGL widget Number, components/number/lvgl, lvgl_c_num.png
-    Modbus Number, components/number/modbus_controller, modbus.png
-    Tuya Number, components/number/tuya, tuya.png
+    Atlas Scientific Peristaltic Pump, components/ezo_pmp, ezo-pmp.jpg
+    Grove TB6612FNG, components/grove_tb6612fng, motor.png, dark-invert
+    Matrix Keypad, components/matrix_keypad, matrix_keypad.jpg
+    RTTTL Buzzer, components/rtttl, buzzer.jpg
+    Servo, components/servo, servo.svg
+    Stepper, components/stepper/index, stepper.svg
 
-Select Components
------------------
+Energy/Solar Management
+-----------------------
 
 .. imgtable::
 
-    Select Core, components/select/index, folder-open.svg, dark-invert
-    Template Select, components/select/template, description.svg, dark-invert
-    LVGL widget Select, components/select/lvgl, lvgl_c_sel.png
-    Modbus Select, components/select/modbus_controller, modbus.png
-    Tuya Select, components/select/tuya, tuya.png
+    PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
+    Power Supply, components/power_supply, power.svg, dark-invert
+    Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
+    SML, components/sml, sml.svg
+    SUN-GTIL2 inverter, components/sun_gtil2, sun_1000g2.png
+
+Event Components
+----------------
+
+.. imgtable::
+
+    Event Core, components/event/index, folder-open.svg, dark-invert
+    Template Event, components/event/template, description.svg, dark-invert
+
+Fan Components
+--------------
+
+.. imgtable::
+
+    Fan Core, components/fan/index, folder-open.svg, dark-invert
+    Template Fan, components/fan/template, description.svg, dark-invert
+    Binary Fan, components/fan/binary, fan.svg, dark-invert
+    H-bridge Fan, components/fan/hbridge, fan.svg, dark-invert
+    Speed Fan, components/fan/speed, fan.svg, dark-invert
+    Tuya Fan, components/fan/tuya, tuya.png
+
+Home Assistant Components
+-------------------------
+
+Components specifically for interacting with Home Assistant.
+
+.. imgtable::
+
+    Binary Sensor, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
+    Bluetooth Proxy, components/bluetooth_proxy, bluetooth.svg, dark-invert
+    micro Wake Word, components/micro_wake_word, voice-assistant.svg, dark-invert
+    Number, components/number/homeassistant, home-assistant.svg, dark-invert
+    Sensor, components/sensor/homeassistant, home-assistant.svg, dark-invert
+    Switch, components/switch/homeassistant, home-assistant.svg, dark-invert
+    Text Sensor, components/text_sensor/homeassistant, home-assistant.svg, dark-invert
+    Voice Assistant, components/voice_assistant, voice-assistant.svg, dark-invert
+
+Light Components
+----------------
+
+.. imgtable::
+
+    Light Core, components/light/index, folder-open.svg, dark-invert
+    Beken SPI, components/light/beken_spi_led_strip, color_lens.svg, dark-invert
+    Binary Light, components/light/binary, lightbulb.svg, dark-invert
+    Cold+Warm White Light, components/light/cwww, brightness-medium.svg, dark-invert
+    Color Temperature Light, components/light/color_temperature, brightness-medium.svg, dark-invert
+    ESP32 RMT, components/light/esp32_rmt_led_strip, color_lens.svg, dark-invert
+    FastLED Light, components/light/fastled, color_lens.svg, dark-invert
+    H-bridge Light, components/light/hbridge, brightness-medium.svg, dark-invert
+    Light Partition, components/light/partition, color_lens.svg, dark-invert
+    LightWaveRF, components/lightwaverf, brightness-medium.svg, dark-invert
+    LVGL widget, components/light/lvgl, lvgl_c_lig.png
+    Monochromatic Light, components/light/monochromatic, brightness-medium.svg, dark-invert
+    NeoPixelBus Light, components/light/neopixelbus, color_lens.svg, dark-invert
+    RGB Light, components/light/rgb, rgb.png
+    RGBCT Light, components/light/rgbct, rgbw.png
+    RGBW Light, components/light/rgbw, rgbw.png
+    RGBWW Light, components/light/rgbww, rgbw.png
+    RP2040 PIO, components/light/rp2040_pio_led_strip, color_lens.svg, dark-invert
+    Shelly Dimmer, components/light/shelly_dimmer, shellydimmer2.jpg
+    Sonoff D1 Dimmer, components/light/sonoff_d1, sonoff_d1.jpg
+    SPI LED Strips, components/light/spi_led_strip, apa102.jpg
+    Status Led, components/light/status_led, led-on.svg, dark-invert
+    Tuya Dimmer, components/light/tuya, tuya.png
+
+**Looking for WS2811 and similar individually addressable lights?** For the ESP32 and its variants, we
+recommend the :doc:`components/light/esp32_rmt_led_strip` or :doc:`components/light/spi_led_strip`; for
+other processors, have a look at the :doc:`FastLED Light </components/light/fastled>`.
 
 Lock Components
 ---------------
@@ -1021,6 +971,65 @@ Microphone Components
     Microphone Core, components/microphone/index, microphone.svg, dark-invert
     I2S Microphone, components/microphone/i2s_audio, i2s_audio.svg
 
+Number Components
+-----------------
+
+.. imgtable::
+
+    Number Core, components/number/index, folder-open.svg, dark-invert
+    Template Number, components/number/template, description.svg, dark-invert
+    Home Assistant, components/number/homeassistant, home-assistant.svg, dark-invert
+    LVGL widget Number, components/number/lvgl, lvgl_c_num.png
+    Modbus Number, components/number/modbus_controller, modbus.png
+    Tuya Number, components/number/tuya, tuya.png
+
+Output Components
+-----------------
+
+.. imgtable::
+
+    Output Core, components/output/index, folder-open.svg, dark-invert
+    Template Output, components/output/template, description.svg, dark-invert
+    AC Dimmer, components/output/ac_dimmer, ac_dimmer.svg, dark-invert
+    BLE Binary Output, components/output/ble_client, bluetooth.svg, dark-invert
+    BP1658CJ, components/output/bp1658cj, bp1658cj.svg
+    BP5758D, components/output/bp5758d, bp5758d.svg
+    DAC7678, components/output/dac7678, dac7678.svg
+    EMC2101, components/emc2101, emc2101.jpg
+    ESP32 DAC, components/output/esp32_dac, dac.svg
+    ESP32 LEDC, components/output/ledc, pwm.png
+    ESP8266 Software PWM, components/output/esp8266_pwm, pwm.png
+    GP8403, components/output/gp8403, gp8403.svg
+    GPIO Output, components/output/gpio, gpio.svg
+    LibreTiny PWM, components/output/libretiny_pwm, pwm.png
+    MCP4725, components/output/mcp4725, mcp4725.jpg
+    MCP4728, components/output/mcp4728, mcp4728.jpg
+    MCP47A1, components/output/mcp47a1, mcp47a1.svg
+    Modbus Output, components/output/modbus_controller, modbus.png
+    MY9231/MY9291, components/output/my9231, my9231.svg
+    PCA9685, components/output/pca9685, pca9685.jpg
+    Sigma-Delta Output, components/output/sigma_delta_output, sigma-delta.svg, dark-invert
+    Slow PWM, components/output/slow_pwm, pwm.png
+    SM16716, components/output/sm16716, sm16716.svg
+    SM2135, components/output/sm2135, sm2135.svg
+    SM2235, components/output/sm2235, sm2235.svg
+    SM2335, components/output/sm2335, sm2335.svg
+    TLC59208F, components/output/tlc59208f, tlc59208f.jpg
+    TLC5947, components/output/tlc5947, tlc5947.jpg
+    TLC5971, components/output/tlc5971, tlc5971.jpg
+    X9C Potentiometer, components/output/x9c, x9c.jpg
+
+Select Components
+-----------------
+
+.. imgtable::
+
+    Select Core, components/select/index, folder-open.svg, dark-invert
+    Template Select, components/select/template, description.svg, dark-invert
+    LVGL widget Select, components/select/lvgl, lvgl_c_sel.png
+    Modbus Select, components/select/modbus_controller, modbus.png
+    Tuya Select, components/select/tuya, tuya.png
+
 Speaker Components
 ------------------
 
@@ -1028,6 +1037,58 @@ Speaker Components
 
     Speaker Core, components/speaker/index, speaker.svg, dark-invert
     I2S Speaker, components/speaker/i2s_audio, i2s_audio.svg
+
+Switch Components
+-----------------
+
+.. imgtable::
+
+    Switch Core, components/switch/index, folder-open.svg, dark-invert
+    Template Switch, components/switch/template, description.svg, dark-invert
+    BLE Client Switch, components/switch/ble_client, bluetooth.svg, dark-invert
+    Factory Reset Switch, components/switch/factory_reset, restart-alert.svg, dark-invert
+    Generic Output Switch, components/switch/output, upload.svg, dark-invert
+    GPIO Switch, components/switch/gpio, gpio.svg
+    H-bridge Switch, components/switch/hbridge, hbridge-relay.jpg
+    LVGL Widget, components/switch/lvgl, lvgl_c_swi.png
+    Modbus Switch, components/switch/modbus_controller, modbus.png
+    Nextion Switch, components/switch/nextion, nextion.jpg
+    Restart Switch, components/switch/restart, restart.svg, dark-invert
+    Safe Mode Switch, components/switch/safe_mode, restart-alert.svg, dark-invert
+    Shutdown Switch, components/switch/shutdown, power_settings.svg, dark-invert
+    Tuya Switch, components/switch/tuya, tuya.png
+    UART Switch, components/switch/uart, uart.svg
+    Home Assistant, components/switch/homeassistant, home-assistant.svg, dark-invert
+
+Text Components
+---------------
+
+.. imgtable::
+
+    Text Core, components/text/index, folder-open.svg, dark-invert
+    Template Text, components/text/template, description.svg, dark-invert
+    LVGL textarea Text, components/text/lvgl, lvgl_c_txt.png
+
+Text Sensor Components
+----------------------
+
+.. imgtable::
+
+    Text Sensor Core, components/text_sensor/index, folder-open.svg, dark-invert
+    Template Text Sensor, components/text_sensor/template, description.svg, dark-invert
+    BLE Scanner, components/text_sensor/ble_scanner, bluetooth.svg, dark-invert
+    Ethernet Info, components/text_sensor/ethernet_info, ethernet.svg, dark-invert
+    Home Assistant, components/text_sensor/homeassistant, home-assistant.svg, dark-invert
+    LibreTiny, components/text_sensor/libretiny, libretiny.svg
+    LVGL textarea Text Sensor, components/text_sensor/lvgl, lvgl_c_txt.png
+    Modbus Text Sensor, components/text_sensor/modbus_controller, modbus.png
+    MQTT Subscribe Text, components/text_sensor/mqtt_subscribe, mqtt.png
+    Nextion Text Sensor, components/text_sensor/nextion, nextion.jpg
+    Tuya Text Sensor, components/text_sensor/tuya, tuya.png
+    Version, components/text_sensor/version, new-box.svg, dark-invert
+    WiFi Info, components/text_sensor/wifi_info, network-wifi.svg, dark-invert
+    WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
+    WL-134 Pet Tag Sensor , components/text_sensor/wl_134, fingerprint.svg, dark-invert
 
 Time Components
 ---------------
@@ -1042,66 +1103,35 @@ Time Components
     PCF8563 RTC, components/time/pcf8563, clock-outline.svg, dark-invert
     SNTP, components/time/sntp, clock-outline.svg, dark-invert
 
-Home Assistant Components
--------------------------
-
-Components specifically for interacting with Home Assistant.
+Touchscreen Components
+----------------------
 
 .. imgtable::
 
-    Binary Sensor, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
-    Bluetooth Proxy, components/bluetooth_proxy, bluetooth.svg, dark-invert
-    micro Wake Word, components/micro_wake_word, voice-assistant.svg, dark-invert
-    Number, components/number/homeassistant, home-assistant.svg, dark-invert
-    Sensor, components/sensor/homeassistant, home-assistant.svg, dark-invert
-    Switch, components/switch/homeassistant, home-assistant.svg, dark-invert
-    Text Sensor, components/text_sensor/homeassistant, home-assistant.svg, dark-invert
-    Voice Assistant, components/voice_assistant, voice-assistant.svg, dark-invert
+    Touchscreen Core, components/touchscreen/index, folder-open.svg, dark-invert
+    AXS15231, components/touchscreen/axs15231, axs15231.svg
+    CST226, components/touchscreen/cst226, t4-s3.jpg
+    CST816, components/touchscreen/cst816, cst816.jpg
+    EKTF2232, components/touchscreen/ektf2232, ektf2232.svg, Inkplate 6 Plus
+    FT63X6, components/touchscreen/ft63x6, wt32-sc01.png
+    GT911, components/touchscreen/gt911, esp32_s3_box_3.png
+    Lilygo T5 4.7", components/touchscreen/lilygo_t5_47, lilygo_t5_47_touch.jpg
+    TT21100, components/touchscreen/tt21100, esp32-s3-korvo-2-lcd.png
+    XPT2046, components/touchscreen/xpt2046, xpt2046.jpg
 
-
-Alarm Control Panel Components
-------------------------------
-
-.. imgtable::
-
-    Alarm Control Panel Core, components/alarm_control_panel/index, alarm-panel.svg, dark-invert
-    Template Alarm Control Panel, components/alarm_control_panel/template, description.svg, dark-invert
-
-Datetime Components
--------------------
+Valve Components
+----------------
 
 .. imgtable::
 
-    Datetime Core, components/datetime/index, clock-outline.svg, dark-invert
-    Template Datetime, components/datetime/template, description.svg, dark-invert
-
-Energy/Solar Management
------------------------
-
-.. imgtable::
-
-    PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
-    Power Supply, components/power_supply, power.svg, dark-invert
-    Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
-    SML, components/sml, sml.svg
-    SUN-GTIL2 inverter, components/sun_gtil2, sun_1000g2.png
-
-Electromechanical
------------------
-
-.. imgtable::
-
-    Atlas Scientific Peristaltic Pump, components/ezo_pmp, ezo-pmp.jpg
-    Grove TB6612FNG, components/grove_tb6612fng, motor.png, dark-invert
-    Matrix Keypad, components/matrix_keypad, matrix_keypad.jpg
-    RTTTL Buzzer, components/rtttl, buzzer.jpg
-    Servo, components/servo, servo.svg
-    Stepper, components/stepper/index, stepper.svg
+    Valve Core, components/valve/index, folder-open.svg, dark-invert
+    Template Valve, components/valve/template, description.svg, dark-invert
 
 Wireless Communication
 ----------------------
 
-Wireless communication that is **not Wi-Fi.**
+Used for creating infrared (IR) or radio frequency (RF) remote control transmitters and/or receivers, or to connect
+ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 
 .. imgtable::
 

@@ -34,6 +34,9 @@ For all projects
 - Your project is powered by an ESP32 or *supported* ESP32 variant such as the S2, S3, C3, etc.
 - Your ESPHome configuration is open source, available for end users to modify/update
 - Users should be able to apply updates if your project sells ready-made devices
+- All components/platforms used must have an ``id`` specified so users can easily refer to,
+  :ref:`config-packages_extend` and/or :ref:`config-packages_remove` configuration variables should they choose to
+  "take control"
 - Your project supports adoption via the ``dashboard_import`` feature of ESPHome (see
   :doc:`Sharing </guides/creators>`). In particular:
 

@@ -1,20 +1,22 @@
-Quad SPI AMOLED Displays
-========================
+Quad SPI Displays
+=================
 
 .. seo::
-    :description: Instructions for setting up quad SPI AMOLED displays.
+    :description: Instructions for setting up quad SPI displays.
     :image: t4-s3.jpg
 
-.. _qspi_amoled:
+.. _qspi_dbi:
 
 Models
 ------
-This display driver supports AMOLED displays with quad SPI interfaces.
+This display driver supports AMOLED and LCD displays with quad SPI interfaces, using the MIPI DBI interface.
 
 This driver has been tested with the following displays:
 
   - Lilygo T4-S3
   - Lilygo T-Display S3 AMOLED
+  - JC4832W535 board
+  - JC3636W518 board
 
 Usage
 -----
@@ -36,19 +38,16 @@ ESP-IDF. PSRAM is a requirement due to the size of the display buffer. A :ref:`q
 
 .. code-block:: yaml
 
-    # Example minimal configuration entry
+    # Example configuration entry
 
     display:
-      - platform: qspi_amoled
+      - platform: qspi_dbi
         model: RM690B0
         data_rate: 80MHz
-        spi_mode: mode0
         dimensions:
           width: 450
           height: 600
           offset_width: 16
-        color_order: rgb
-        invert_colors: false
         brightness: 255
         cs_pin: GPIOXX
         reset_pin: GPIOXX
@@ -58,7 +57,14 @@ ESP-IDF. PSRAM is a requirement due to the size of the display buffer. A :ref:`q
 Configuration variables:
 ************************
 
-- **model** (**Required**): One of ``RM67162`` or ``RM690B0``.
+- **model** (**Required**): One of
+    - ``CUSTOM``
+    - ``RM67162``
+    - ``RM690B0``
+    - ``JC4832W535``
+    - ``JC3636W518``
+    - ``AXS15231``
+- **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. This is required when using the ``CUSTOM`` model - but may be empty. If specified for other models this data will be sent after the pre-configured sequence.
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The chip select pin.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.
 - **enable_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The display enable pin.
@@ -78,12 +84,14 @@ Configuration variables:
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of ``0°``, ``90°``, ``180°``, or ``270°``.
 - **transform** (*Optional*): Transform the display presentation using hardware. All defaults are ``false``. This option cannot be used with ``rotation``.
 
-   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
+   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes. Not available for some chips
    - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
    - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
-- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz`` (default), ``5MHz``, ``2MHz`` or  ``1MHz``.
+- **data_rate** (*Optional*, int): Set the data rate of the SPI interface to the display. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz`` (default), ``5MHz``, ``2MHz`` or  ``1MHz``.
 - **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is ``MODE0``.
-- **invert_colors** (*Optional*): With this boolean option you can invert the display colors.
+- **invert_colors** (*Optional*, boolean): With this boolean option you can invert the display colors.
+- **draw_from_origin** (*Optional*, boolean): When set, all partial display updates will start at the origin (0,0). Defaults to false.
+- **draw_rounding** (*Optional*, int): Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be a power of 2.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
   See :ref:`display-engine` for more information.
 
@@ -115,7 +123,7 @@ Lilygo T4-S3
         reset_pin: 17
 
     display:
-      - platform: qspi_amoled
+      - platform: qspi_dbi
         model: RM690B0
         data_rate: 80MHz
         spi_mode: mode0
@@ -162,7 +170,7 @@ Lilygo T-Display S3 AMOLED
           number: 21
 
     display:
-      - platform: qspi_amoled
+      - platform: qspi_dbi
         model: RM67162
         id: main_lcd
         dimensions:
@@ -178,9 +186,55 @@ Lilygo T-Display S3 AMOLED
         enable_pin: 38
 
 
+JC4832W535 3.5" LCD Board
+*************************
+
+This rotates the display into landscape mode using software rotation.
+
+.. code-block:: yaml
+
+    psram:
+      mode: octal
+      speed: 80MHz
+
+    spi:
+      id: display_qspi
+      type: quad
+      clk_pin: 47
+      data_pins: [21,48,40,39]
+
+    power_supply:
+      id: backlight_id
+      pin: 1
+      enable_on_boot: true
+
+    display:
+      - platform: qspi_dbi
+        model: JC4832W535
+        data_rate: 40MHz
+        rotation: 270
+        dimensions:
+          height: 480
+          width: 320
+        cs_pin:
+          number: 45
+          ignore_strapping_warning: true
+        show_test_card: true
+
+    i2c:
+      sda: 4
+      scl: 8
+
+    touchscreen:
+      platform: axs15231
+      transform:
+        swap_xy: true
+        mirror_y: true
+
+
 See Also
 --------
 
 - :doc:`index`
-- :apiref:`qspi_amoled/qspi_amoled.h`
+- :apiref:`qspi_dbi/qspi_dbi.h`
 - :ghedit:`Edit`

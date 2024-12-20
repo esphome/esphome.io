@@ -191,8 +191,8 @@ time period.
 ``if`` Action
 *************
 
-This action first evaluated a certain condition (``if:``) and then either
-executes the ``then:`` branch or the ``else:`` branch depending on the output of the condition.
+This action first evaluates the ``condition:`` and then either
+executes the ``then:`` branch if the condition returns true or the ``else:`` branch if the condition returns false.
 
 After the chosen branch (``then`` or ``else``) is done with execution, the next action is performed.
 
@@ -217,7 +217,11 @@ turns on a light for 5 seconds. Otherwise, the light is turned off immediately.
 
 Configuration variables:
 
-- **condition** (**Required**, :ref:`Condition <config-condition>`): The condition to check to determine which branch to take.
+At least one of ``condition``, ``all`` or ``any`` must be provided.
+  
+- **condition** (*Optional*, :ref:`Condition <config-condition>`): The condition to check to determine which branch to take. If this is configured with a list of conditions then they must all be true for the condition to be true.
+- **all** (*Optional*, :ref:`Condition <config-condition>`): Takes a list of conditions, all of which must be true (and is therefore equivalent to ``condition``.)
+- **any** (*Optional*, :ref:`Condition <config-condition>`): Takes a list of conditions; if at least one is true, the condition will be true.
 - **then** (*Optional*, :ref:`Action <config-action>`): The action to perform if the condition evaluates to true.
   Defaults to doing nothing.
 - **else** (*Optional*, :ref:`Action <config-action>`): The action to perform if the condition evaluates to false.
@@ -406,14 +410,17 @@ Common Conditions
 "Conditions" provide a way for your device to take an action only when a specific (set of) condition(s) is satisfied.
 
 .. _and_condition:
+.. _all_condition:
 .. _or_condition:
+.. _any_condition:
 .. _xor_condition:
 .. _not_condition:
 
-``and`` / ``or`` / ``xor`` / ``not`` Condition
-**********************************************
+``and`` / ``all`` / ``or`` / ``any`` / ``xor`` / ``not`` Condition
+******************************************************************
 
-Check a combination of conditions
+Check a combination of conditions. ``all`` is a synonym for ``and``, and ``any`` is a synonym for ``or``.
+``all`` and ``any`` may also be used directly in place of ``condition``.
 
 .. code-block:: yaml
 
@@ -428,9 +435,10 @@ Check a combination of conditions
             # ...
 
         - if:
-            condition:
-              not:
-                binary_sensor.is_off: some_binary_sensor
+            any:
+              - not:
+                  binary_sensor.is_off: some_binary_sensor
+              - binary_sensor.is_on: some_other_sensor
 
 .. _for_condition:
 
