@@ -52,7 +52,7 @@ the ESP chip on flasher module from booting and polluting the serial lines.
 Once the connections are made, plug the flasher board into your computer via USB and proceed with flashing the target board via whichever means you intend to use.
 
 Making an ESP32-S Series devboard act like a USB-UART bridge
-============================================================
+------------------------------------------------------------
 
 .. _esp32s-usb-uart-bridge:
 
@@ -68,7 +68,14 @@ The connections needed to flash a target device using an ESP32-S devboard are:
 - ``RxD`` of flasher devboard to ``TX`` of the target device
 
 Because we are using the internal UART of the ESP the TX and RX lines should be crossed.
-This is opposite to aforementioned boards with external USB_UART bridge chip.
+This is in contrast to the aforementioned devboards with external USB_UART bridge chip.
+
+.. note::
+
+    Because we have made our ESP32-S Series board act like a USB_UART bridge,
+    flashing another binary on it won't work because the exposed COM port corresponds to the USB_UART bridge.
+    For that, you need to first manually put it into DOWNLOAD mode.
+    (by holding RESET and tapping BOOT button)
 
 See Also
 --------
