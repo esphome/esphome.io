@@ -3,7 +3,8 @@ Using an ESP devboard as a USB-UART bridge
 
 .. _devboard-as-flasher:
 
-ESP development boards usually have an onboard USB interface, either built into the chip (e.g. ESP32-S3) or via an onboard USB-UART bridge chip.
+ESP development boards usually have an onboard USB interface,
+either built into the chip (e.g. ESP32-S Series) or via an onboard USB-UART bridge chip.
 However some ESP based devices not designed for development work don't bother with this,
 and only expose the UART0 pins (TX and RX) for flashing purposes.
 
@@ -16,7 +17,8 @@ and will not change anything already flashed onto it - it's purely a way to use 
 
 We will refer to the devboard with functional USB_UART bridge chip as flasher board for this guide.
 
-Make sure you've read the :doc:`/guides/physical_device_connection` for properly understanding the functionality of your flasher devboard.
+Make sure you've read the :doc:`/guides/physical_device_connection`
+for properly understanding the functionality of your flasher devboard.
 
 .. figure:: /guides/images/devboard-as-flasher.png
     :align: center
@@ -58,7 +60,7 @@ Users with ESP32-S2/S3 devboards can instead have a look at https://github.com/e
 But be warned, it demands flashing your S2/S3 board using ESP-IDF to act like a USB_UART bridge first.
 In the SDKconfig, make sure to verify the GPIO pins for the TxD/RxD signals.
 
-The connections needed in order to flash a binary on target device using an ESP32-S devboard are:
+The connections needed to flash a target device using an ESP32-S devboard are:
 
 - ``VU/VUSB/5V`` or ``3V3`` on the flasher devboard to ``VIN`` or ``3V3`` respectively of the target device
 - ``GND``, or ground of flasher devboard to ``GND`` of the target device
@@ -71,5 +73,5 @@ This is opposite to aforementioned boards with external USB_UART bridge chip.
 See Also
 --------
 
-- :doc:`Guides </guides/>`
+- :doc:`Guides </guides/index>`
 - :ghedit:`Edit`
