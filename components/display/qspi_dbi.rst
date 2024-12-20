@@ -15,7 +15,8 @@ This driver has been tested with the following displays:
 
   - Lilygo T4-S3
   - Lilygo T-Display S3 AMOLED
-  - JC4832W535 board using AXS15231
+  - JC4832W535 board
+  - JC3636W518 board
 
 Usage
 -----
@@ -56,7 +57,13 @@ ESP-IDF. PSRAM is a requirement due to the size of the display buffer. A :ref:`q
 Configuration variables:
 ************************
 
-- **model** (**Required**): One of ``CUSTOM``, ``RM67162`` or ``RM690B0``.
+- **model** (**Required**): One of
+    - ``CUSTOM``
+    - ``RM67162``
+    - ``RM690B0``
+    - ``JC4832W535``
+    - ``JC3636W518``
+    - ``AXS15231``
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. This is required when using the ``CUSTOM`` model - but may be empty. If specified for other models this data will be sent after the pre-configured sequence.
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The chip select pin.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.
@@ -77,13 +84,14 @@ Configuration variables:
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of ``0°``, ``90°``, ``180°``, or ``270°``.
 - **transform** (*Optional*): Transform the display presentation using hardware. All defaults are ``false``. This option cannot be used with ``rotation``.
 
-   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
+   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes. Not available for some chips
    - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
    - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
-- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz`` (default), ``5MHz``, ``2MHz`` or  ``1MHz``.
+- **data_rate** (*Optional*, int): Set the data rate of the SPI interface to the display. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz`` (default), ``5MHz``, ``2MHz`` or  ``1MHz``.
 - **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is ``MODE0``.
-- **invert_colors** (*Optional*): With this boolean option you can invert the display colors.
-- **draw_from_origin** (*Optional*): When set, all partial display updates will start at the origin (0,0). Defaults to false.
+- **invert_colors** (*Optional*, boolean): With this boolean option you can invert the display colors.
+- **draw_from_origin** (*Optional*, boolean): When set, all partial display updates will start at the origin (0,0). Defaults to false.
+- **draw_rounding** (*Optional*, int): Caters for display chips that require partial drawing to be aligned to certain boundaries. Default is 2, must be a power of 2.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
   See :ref:`display-engine` for more information.
 
@@ -202,17 +210,16 @@ This rotates the display into landscape mode using software rotation.
 
     display:
       - platform: qspi_dbi
-        model: axs15231
+        model: JC4832W535
         data_rate: 40MHz
+        rotation: 270
         dimensions:
           height: 480
           width: 320
         cs_pin:
           number: 45
           ignore_strapping_warning: true
-        auto_clear_enabled: false
-        update_interval: never
-        init_sequence:
+        show_test_card: true
 
     i2c:
       sda: 4

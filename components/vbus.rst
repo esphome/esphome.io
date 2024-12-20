@@ -27,7 +27,7 @@ The following table shows the currently supported models of Vbus devices.
     "Dux H3214","deltasol_bs_2009","427B", "Pump 2 unsupported"
     "DeltaSol C","deltasol_c","4212"
     "DeltaSol CS2","deltasol_cs2","1121"
-    "DeltaSol CS2 Plus","deltasol_cs2_plus","2211"
+    "DeltaSol CS Plus","deltasol_cs_plus","2211"
 
 The ``Config Value`` should be used for the ``model`` parameter in your ``sensor`` and ``binary_sensor`` entries.
 

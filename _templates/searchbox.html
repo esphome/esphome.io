@@ -60,7 +60,7 @@
         if (!inpel)
             return;
 
-        var mobileWidth = getComputedStyle(document.body).getPropertyValue("--mobile-width-stop");
+        const mobileWidth = getComputedStyle(document.body).getPropertyValue("--mobile-width-stop");
 
         function isMobile() {
             return window.innerWidth <= mobileWidth;
@@ -74,26 +74,42 @@
 
         const margin = 20;
 
-        const resultTemplate = (result) => {
-            let wrapper = new El("li").class("pagefind-modular-list-result");
+        function getLink(location, anchors, url) {
+            if (!anchors || !anchors.length)
+                return null;
+            // find the closest anchor at or before the current location
+            const anchor = anchors.sort((a, b) => b.location - a.location).find(a => a.location <= location);
+            if (anchor) {
+                return url + "#" + anchor.id;
+            }
+            return null;
+        }
 
-            let thumb = new El("div").class("pagefind-modular-list-thumb").addTo(wrapper);
-            if (result?.meta?.image) {
+        const resultTemplate = (result) => {
+            const wrapper = new El("li").class("pagefind-modular-list-result");
+
+            const thumb = new El("div").class("pagefind-modular-list-thumb").addTo(wrapper);
+            let image = result?.meta?.image;
+            if (image) {
+                if (image.includes("/_images/"))
+                    image = image.substring(image.indexOf("/_images/"));
                 new El("img").class("pagefind-modular-list-image").attrs({
-                    src: result.meta.image,
+                    src: image,
                     alt: result.meta.image_alt || result.meta.title
                 }).addTo(thumb);
             }
 
-            let inner = new El("div").class("pagefind-modular-list-inner").addTo(wrapper);
-            let title = new El("p").class("pagefind-modular-list-title").addTo(inner);
+            const inner = new El("div").class("pagefind-modular-list-inner").addTo(wrapper);
+            const title = new El("p").class("pagefind-modular-list-title").addTo(inner);
             new El("a").class("pagefind-modular-list-link").text(result.meta?.title).attrs({
                 href: result.meta?.url || result.url
             }).addTo(title);
 
-            let excerpt = new El("p").class("pagefind-modular-list-excerpt").addTo(inner);
+            const excerpt = new El("p").class("pagefind-modular-list-excerpt").addTo(inner);
+            const locations = result.weighted_locations.sort((a, b) => b.weight - a.weight);
+            const url = getLink(locations[0]?.location, result.anchors, result.url) || result.meta?.url || result.url;
             new El("a").class("pagefind-modular-list-link").html(result.excerpt).attrs({
-                href: result.meta?.url || result.url
+                href: url
             }).addTo(excerpt);
 
             return wrapper.element;
@@ -102,9 +118,9 @@
 
         function resizeTarget() {
             const searchPos = inpel.getBoundingClientRect();
-            var leftPos;
-            var topPos;
-            var maxWidth = 650;
+            let leftPos;
+            let topPos;
+            const maxWidth = 650;
             target.style.width = "auto;"
             target.style.height = "fit-content";
             target.style.maxWidth = maxWidth + "px";
@@ -141,10 +157,20 @@
             resizeTarget();
         }
 
+        function search_focus() {
+            const input_field = document.getElementById("pfmod-input-0");
+            if (input_field) {
+                requestAnimationFrame(() => input_field.focus());
+            }
+        }
+
+
         function hideTargets() {
             if (target.style.display !== "none") {
                 target.style.display = "none";
                 document.removeEventListener('click', clickCallback);
+                // keep focus on search box after clicking on search result
+                search_focus();
             }
         }
 
@@ -171,7 +197,7 @@
 
         const clickCallback = (event) => {
             const path = event.composedPath();
-            if (path.includes(target) || path.includes(inpel))
+            if (path.includes(inpel))
                 return;
             hideTargets();
         };
@@ -183,6 +209,13 @@
                     hideTargets();
                 }
             });
+        }
+        // focus the search field on page load.
+        search_focus();
+        // focus when clicking on clear button
+        const clears = document.getElementsByClassName("pagefind-modular-list-clear");
+        for (let i = 0; i !== clears.length; i++) {
+            clears[i].addEventListener("click", search_focus);
         }
     });
 </script>
