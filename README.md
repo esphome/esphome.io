@@ -6,7 +6,6 @@
     <img src="https://esphome.io/_static/logo-text-on-light.svg" alt="ESPHome Logo">
   </picture>
 </a>
-[![ESPHome-Docs Logo](https://esphome.io/_images/logo-docs.png)](https://esphome.io/)
 
 **Documentation:** https://esphome.io/
 
