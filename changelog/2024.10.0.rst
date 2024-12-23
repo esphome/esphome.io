@@ -31,6 +31,46 @@ This is also a breaking change as the previous ``web_server_sorting_weight`` has
 
 Please see :ref:`config-webserver-sorting` for the latest documentation on these features.
 
+ESP32 Advanced MAC Address Configuration
+----------------------------------------
+
+ESPHome now supports reading a custom MAC address from the ESP32 eFuse blocks and will read and use it by default if
+there is data burned into the eFuses. If you would like to disable this, or the eFuse has data burned that is not a
+MAC address into those eFuses, then you can add ``ignore_efuse_custom_mac: true`` to your ESP32 ``advanced``
+configuration. See :ref:`ESP32 Advanced Configuration <esp32-advanced_configuration>` for more details.
+
+
+CSE7766 Breaking Changes
+------------------------
+
+The :doc:`/components/sensor/cse7766` now requires even parity in configuration. There are some chips that work without ``EVEN``,
+but the majority of newer chips seem to require it and the older ones work fine with it set as well so to make it consistent across all devices
+the component now requires it.
+
+Release 2024.10.1 - October 22
+------------------------------
+
+- [config] Fix crash with empty substitutions block :esphomepr:`7612` by :ghuser:`clydebarrow`
+- Fix broken ibeacon_uuid config in ble_rssi :esphomepr:`7640` by :ghuser:`lennart-k`
+- auto-load preferences :esphomepr:`7642` by :ghuser:`ssieb`
+- [wifi] Support custom MAC on Arduino, too :esphomepr:`7644` by :ghuser:`kbx81`
+- [config] Ensure user-supplied build flags don't get silently overwritten :esphomepr:`7622` by :ghuser:`clydebarrow`
+- [lvgl] Remove states from style definitions (Bugfix) :esphomepr:`7645` by :ghuser:`clydebarrow`
+- Move setting global voice assistant to constructor :esphomepr:`7630` by :ghuser:`synesthesiam`
+
+Release 2024.10.2 - October 24
+------------------------------
+
+- Humanized the missing MQTT log topic error message :esphomepr:`7634` by :ghuser:`solarkennedy`
+- [lvgl] Some properties were not templatable (Bugfix) :esphomepr:`7655` by :ghuser:`clydebarrow`
+- [voice_assistant] Bugfix: Fix crash on start :esphomepr:`7662` by :ghuser:`kahrendt`
+
+Release 2024.10.3 - November 8
+------------------------------
+
+- [rpi_dpi_rgb] Fix get_width and height (Bugfix) :esphomepr:`7675` by :ghuser:`clydebarrow`
+- Fixes modbus timing error :esphomepr:`7674` by :ghuser:`exciton`
+- [lvgl] Ensure images are configured before using them. (Bugfix) :esphomepr:`7721` by :ghuser:`clydebarrow`
 
 Full list of changes
 --------------------

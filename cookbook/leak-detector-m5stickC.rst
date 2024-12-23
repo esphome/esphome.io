@@ -24,14 +24,14 @@ Things you'll need
     :align: center
 
 -  Moisture sensor
-    This example uses a `Guardian Remote Sensor Probe <https://amazon.com/Guardian-by-Elexa-Remote-Sensor/dp/B07G5BMD7L>`__
+    This example uses a `Guardian Remote Sensor Probe <https://www.amazon.com/gp/product/B07G5BMD7L>`__
     which has a 6' cord.
 
 .. figure:: images/leak-detector-m5stickC_probe.jpg
     :align: center
 
 - Grove connector pigtail
-    `Amazon Link <https://www.amazon.com/Cables-Grove-Female-Jumper-Grove-Conversion/dp/B01CNZ9EEC>`__
+    `Amazon Link <https://www.amazon.com/gp/product/B01CNZ9EEC>`__
 
 .. figure:: images/leak-detector-m5stickC_grove1.jpg
     :align: center

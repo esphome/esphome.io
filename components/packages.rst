@@ -128,8 +128,12 @@ As an example, if the configuration needed to support three garage doors using t
         file: garage-door.yaml
         vars:
           door_name: Left
+      middle_garage_door: !include
+        file: garage-door.yaml
         vars:
           door_name: Middle
+      right_garage_door: !include
+        file: garage-door.yaml
         vars:
           door_name: Right
 
@@ -141,6 +145,8 @@ As an example, if the configuration needed to support three garage doors using t
       - name: ${door_name} Garage Door Switch
         platform: gpio
         # ...
+
+.. _config-packages_extend:
 
 Extend
 ------
@@ -168,6 +174,8 @@ For example, to set a specific update interval on a common uptime sensor that is
     sensor:
       - id: !extend uptime_sensor
         update_interval: 10s
+
+.. _config-packages_remove:
 
 Remove
 ------

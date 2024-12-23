@@ -18,6 +18,10 @@ LEDs, or any others with a similar interface - SPI, 8 bits per colour and BGR or
 .. code-block:: yaml
 
     # Example configuration entry
+    spi:
+      mosi_pin: GPIO06
+      clk_pin: GPIO07
+
     light:
       - platform: spi_led_strip
         num_leds: 30
