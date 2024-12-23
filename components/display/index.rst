@@ -125,6 +125,13 @@ Now that you know a bit more about ESPHome's coordinate system, let's draw some 
           // ... and the same thing filled again
           it.filled_circle(20, 75, 10);
 
+          // Ring and half-ring. First draw the circle with a hole in it
+          // at [75,75] with inner raduis of 20 and outer of 30
+          it.filled_ring(75, 75, 30, 20);
+          // and a "gauge": half-ring that is partially filled.
+          // Same position and size but 80% filled left to right
+          it.filled_gauge(75, 75, 30, 20, 80);
+
           // Triangles... Let's draw the outline of a triangle from the [x,y] coordinates of its three points
           // [25,5], [100,5], [80,25]
           it.triangle(25, 5, 100, 5, 80, 25);

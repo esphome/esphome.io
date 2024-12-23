@@ -17,7 +17,7 @@ and works with this component.
 
 As the communication with the CSE7766 done using UART, you need
 to have an :ref:`UART bus <uart>` in your configuration with the ``rx_pin`` connected to the CSE7766.
-Additionally, you need to set the baud rate to 4800.  The device sends multiple updates per second, so you
+Additionally, you need to set the baud rate to 4800 and parity to EVEN.  The device sends multiple updates per second, so you
 will probably want some sort of averaging or throttle filter on the sensors.
 
 .. code-block:: yaml
@@ -33,6 +33,7 @@ will probably want some sort of averaging or throttle filter on the sensors.
     uart:
       rx_pin: RX
       baud_rate: 4800
+      parity: EVEN
 
     sensor:
       - platform: cse7766
