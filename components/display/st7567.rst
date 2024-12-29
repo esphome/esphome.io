@@ -10,12 +10,11 @@ ST7567 LCD Graphic Display
 Usage
 -----
 
-The ``st7567`` display platform allows you to use wide range of 128x64 display modules based on 
+The ``st7567`` display platform allows you to use wide range of 128x64 display modules based on
 Sitronix ST7567 chipset family (ST7567A, ST7567S, ST7567G, etc.) (`datasheet <https://github.com/latonita/datasheets-storage/blob/main/lcd-modules/ST7567A_V1.2b.pdf>`__,
-`Sitronix <https://www.sitronix.com.tw/en/products/industrial-display-driver-ic/mono-stn-lcd-driver-ic/>`__,
-`Aliexpress <https://www.aliexpress.com/af/st7567s.html>`__) with ESPHome. 
+`Sitronix <https://www.sitronix.com.tw/en/products/industrial-display-driver-ic/mono-stn-lcd-driver-ic/>`__) with ESPHome.
 
-Note that this component is for displays that are connected via the :ref:`I²C Bus <i2c>` (see :ref:`st7567-i2c`) 
+Note that this component is for displays that are connected via the :ref:`I²C Bus <i2c>` (see :ref:`st7567-i2c`)
 or 3-Wire or 4-Wire :ref:`SPI bus <spi>` (see :ref:`st7567-spi`).
 It's a monochrome LCD graphic display.
 
@@ -30,11 +29,11 @@ It's a monochrome LCD graphic display.
     **Voltage:** Check your module specs for required power. Most of the modules are tolerant to range of voltages from 3.3V to 5V, but some might require either 5V or 3.3V.
 
     **Electrical interference:** To reduce malfunction caused by noise, datasheet recommends to "use the refresh sequence regularly in a specified interval".
-    
-    Noone knows what exact interval is - it varies based on your electrical environment - some might need it every hour, for example. 
+
+    Noone knows what exact interval is - it varies based on your electrical environment - some might need it every hour, for example.
     Without doing refresh sequence picture on LCD might get glitchy after some time.
-    
-    You can plan refresh by using ``interval:`` section and calling ``request_refresh()`` function, after that it will perform display 
+
+    You can plan refresh by using ``interval:`` section and calling ``request_refresh()`` function, after that it will perform display
     refresh sequence on next component update.
 
 
@@ -43,8 +42,8 @@ It's a monochrome LCD graphic display.
 Over I²C
 --------
 
-Connect ``SDA`` and ``SCL`` pins on a module to pins you chose for the :ref:`I²C Bus <i2c>`. 
-If your display module has ``RESET`` pin you may optionally connect it to a pin on the 
+Connect ``SDA`` and ``SCL`` pins on a module to pins you chose for the :ref:`I²C Bus <i2c>`.
+If your display module has ``RESET`` pin you may optionally connect it to a pin on the
 ESP which may improve reliability. For power, connect ``VCC`` to 3.3V and ``GND`` to ``GND``.
 
 
@@ -60,7 +59,7 @@ ESP which may improve reliability. For power, connect ``VCC`` to 3.3V and ``GND`
         id: my_display
         lambda: |-
           it.print(0, 0, id(my_font), "Hello World!");
-          
+
     interval:
       - interval: 1h
         then:
@@ -90,7 +89,7 @@ Configuration variables:
 
 .. code-block:: yaml
 
-    # Example increased I²C bus speed 
+    # Example increased I²C bus speed
     i2c:
       sda: D1
       scl: D2
@@ -117,7 +116,7 @@ Over SPI
 --------
 
 Connect ``D0`` to the ``CLK`` pin you chose for the :ref:`SPI bus <spi>`, connect ``D1`` to the ``MOSI`` pin and ``DC`` and ``CS``
-to some GPIO pins on the ESP. For power, connect ``VCC`` to 3.3V and ``GND`` to ``GND``. 
+to some GPIO pins on the ESP. For power, connect ``VCC`` to 3.3V and ``GND`` to ``GND``.
 Optionally you can also connect the ``RESET`` pin to a pin on the ESP which may improve reliability.
 
 .. code-block:: yaml

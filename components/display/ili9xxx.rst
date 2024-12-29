@@ -36,8 +36,7 @@ This component is the successor of the ILI9341 component supporting more display
 families.
 
 The ``ILI9xxx`` display platform allows you to use
-ILI9341 (`datasheet <https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf>`__,
-`Aliexpress <https://www.aliexpress.com/af/Ili9341.html>`__) and other
+ILI9341 (`datasheet <https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf>`__) and other
 displays from the same chip family with ESPHome. As this is a somewhat higher resolution display and requires additional pins
 beyond the basic SPI connections, and a reasonable amount of RAM, it is not well suited for the ESP8266.
 

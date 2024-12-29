@@ -55,6 +55,50 @@ should be prefixed with the page name (page0/page1 or whatever you have changed 
 
 ``component_name: page0.text0``
 
+.. _text_sensor-nextion-publish_action:
+
+``text_sensor.nextion.publish`` Action
+---------------------------------------
+
+You can also publish a state to a Nextion text sensor from elsewhere in your YAML file
+with the ``text_sensor.nextion.publish`` action.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    text_sensor:
+      - platform: nextion
+        id: nextion_text
+        ...
+    # in some trigger
+    on_...:
+      - text_sensor.nextion.publish:
+          id: nextion_text
+          state: "Hello World"
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+      # Templated
+      - text_sensor.nextion.publish:
+          id: nextion_text
+          state: !lambda 'return "Hello World";'
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+
+Configuration variables:
+
+- **id** (**Required**, :ref:`config-id`): The ID of the Nextion text sensor.
+- **state** (**Required**, string, :ref:`templatable <config-templatable>`): The string to publish.
+- **publish_state** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Home Assistant.
+  Default is true.
+- **send_to_nextion** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Nextion
+  display which will update component. Default is true.
+
+.. note::
+
+    This action can also be written in lambdas. See :ref:`nextion_text_sensor_lambda_calls`
+        
 .. _nextion_text_sensor_lambda_calls:
 
 Lambda Calls

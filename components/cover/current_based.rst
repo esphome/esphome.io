@@ -132,7 +132,7 @@ Configuration example:
       scl: GPIO14
 
     sensor:
-      - platform: ade7953
+      - platform: ade7953_i2c
         irq_pin: GPIO16
         voltage:
           name: Shelly 2.5 Mains Voltage

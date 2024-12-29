@@ -83,6 +83,7 @@ Configuration variables:
 
   - ``1.54in``
   - ``1.54inv2``
+  - ``1.54inv2-b`` - Black/White/Red
   - ``2.13in`` - not tested
   - ``2.13in-ttgo`` - T5_V2.3 tested. Also works for Wemos D1 Mini ePaper Shield 2.13 1.0.0 "LOLIN"
   - ``2.13in-ttgo-b73`` - T5_V2.3 with B73 display tested
@@ -108,6 +109,7 @@ Configuration variables:
   - ``7.50in``
   - ``7.50in-bV2`` - also supports v3, B/W rendering only
   - ``7.50in-bV3`` - display with the '(V3)' sticker on the back, B/W rendering only
+  - ``7.50in-bV3-bwr`` - display with the '(V3)' sticker on the back, BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - ``7.50in-bc`` - display with version sticker '(C)' on the back, B/W rendering only
   - ``7.50inV2`` - Can't use with an ESP8266 as it runs out of RAM
   - ``7.50inV2alt`` (alternative version to the above ``7.50inV2``)
