@@ -1,5 +1,5 @@
 Uptime Text Sensor
-=============
+==================
 
 .. seo::
     :description: Instructions for setting up a text sensor that tracks the uptime of the ESP.
