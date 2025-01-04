@@ -84,6 +84,7 @@ Configuration variables:
 - **temperature_coefficient** (*Optional*, integer from ``0`` to ``16383``): Temperature coefficient (ppm/°C) of the 
   shunt for temperature compensation correction. Only applicable to INA228 and INA229 devices. Zero value means 
   no compensation is done. Defaults to ``0``.
+- **bus_voltage_over_limit** (*Optional*, float): Set a the bus voltage over limit threshold to trigger an alert. Only applicable to INA228 and INA229 devices.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 - All other options from :ref:`Sensor <config-sensor>` and :ref:`I²C device <i2c>`.
 
@@ -135,6 +136,7 @@ Configuration variables:
 - **temperature_coefficient** (*Optional*, integer from ``0`` to ``16383``): Temperature coefficient (ppm/°C) of the 
   shunt for temperature compensation correction. Only applicable to INA228 and INA229 devices. Zero value means 
   no compensation is done. Defaults to ``0``.
+- **bus_voltage_over_limit** (*Optional*, float): Set a the bus voltage over limit threshold to trigger an alert. Only applicable to INA228 and INA229 devices.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 - All other options from :ref:`Sensor <config-sensor>` and :ref:`SPI device <spi>`.
 
