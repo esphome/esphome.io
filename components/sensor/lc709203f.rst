@@ -7,18 +7,19 @@ LC709203F Battery Monitor
     :keywords: LC709203F
 
 The ``lc709203f`` sensor platform allows you to use a LC709203F
-(\`datasheet <https://cdn-learn.adafruit.com/assets/assets/000/094/597/original/LC709203F-D.PDF?1599248750>\`__) 
+(`datasheet <https://cdn-learn.adafruit.com/assets/assets/000/094/597/original/LC709203F-D.PDF?1599248750>`__) 
 battery monitor with ESPHome. This device is available as a 
-\`standalone sensor <https://www.adafruit.com/product/4712>\`__ and it is also one of the battery
-monitor chips used on their \`ESP32 Feather<https://www.adafruit.com/product/5477>\`__ dev boards.
+`standalone sensor <https://www.adafruit.com/product/4712>`__ and it is also one of the battery
+monitor chips used on their `ESP32 Feather <https://www.adafruit.com/product/5477>`__ dev boards.
 
 .. figure:: images/LC709203f_product_image.jpg
+    :align: left
     :width: 40.0%
     
 .. figure:: images/LC709203f_feather_product_image.jpg
     :width: 40.0%
-    
-.. note::
+
+.. note:: 
 
     This device does not contain a temperature sensor. Only enable the temperature sensor option 
     if you have attached a thermistor as shown in :ref:`temperature-sensor`.
@@ -31,29 +32,29 @@ that component for details. A basic example of what that looks like is below.
 
 .. code-block:: yaml
 
-i2c:
-  sda: SDA
-  scl: SCL
-  scan: true
-  id: bus_a
-
+    i2c:
+      sda: SDA
+      scl: SCL
+      scan: true
+      id: bus_a
 
 Configuration Example:
 ------------------------
+An example configuration YAML is shown below.
 
 .. code-block:: yaml
 
-sensor:
-  - platform: lc709203f
-    size: 2000
-    voltage: 3.7
-    battery_voltage:
-      name: "Battery Voltage"
-    battery_level:
-      name: "Battery"
-    temperature:
-      name: "Pack Temperature"
-      thermistor_b_constant: 0xA5A5
+    sensor:
+      - platform: lc709203f
+        size: 2000
+        voltage: 3.7
+        battery_voltage:
+          name: "Battery Voltage"
+        battery_level:
+          name: "Battery"
+        temperature:
+          name: "Pack Temperature"
+          thermistor_b_constant: 0xA5A5
 
 Configuration variables:
 ------------------------
@@ -82,16 +83,19 @@ Configuration variables:
   - **name** (*Optional*): I suggest setting this one.
 
 - **temperature** (*Optional*): The setup information for the battery temperature sensor.
-
-  - Note: the device does not have a built-in temperature sensor. Only enable this sensor 
-          if you have attached a thermistor to the device as shown in :ref:`temperature-sensor`.
-  - Standard options from :ref:`Sensor <config-sensor>`.
-  - **name** (*Optional*): I suggest setting this one.
+  
   - **thermistor_b_constant** (*Optional*): The B-constant of the thermistor. Defaults 
     to `0x0BA6` but if you are using a thermistor, you should really change this.
+  - Standard options from :ref:`Sensor <config-sensor>`.
+  - **name** (*Optional*): I suggest setting this one.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
+
+Home Assistant View:
+------------------------
+
+When properly set up, the sensor will report values to Home Assistant as shown:
 
 .. figure:: images/LC709203f_ui.jpg
     :align: center
@@ -116,14 +120,14 @@ Pack Voltage
 
 When setting up the device. You will need to set the nominal pack voltage of the device. This 
 is used internally to make the sensor more accurate. The nominal voltage is used to set the 
-`change of the parameter` register per table 8 in the datasheet.
+``change of the parameter`` register per table 8 in the datasheet.
 
 .. figure:: images/LC709203f_battery_profiles.jpg
     :align: center
     :width: 80.0%
 
 We assume that the device is a ``-01`` or ``-03`` device. This is the correct setup for the
-Adafruit sensors.
+Adafruit sensors and batteries.
 
 .. _temperature-sensor:
 
@@ -133,7 +137,7 @@ Temperature Sensor Information
 If you want to measure temperature of the battery, you **must** have a thermistor attached to 
 the device as shown in figure 2 of the datasheet.
 
-.. figure:: images/LC709203f_thermistor connection.jpg
+.. figure:: images/LC709203f_thermistor_connection.jpg
     :align: center
     :width: 80.0%
 
