@@ -87,6 +87,36 @@ Joining multiple LED lights into one
         internal: true
         # Other settings
 
+      # Example for joining multiple segments of one source. 
+      # For example when using RGBIC + CCTIC addressable LED strips.
+      # These can have the RGBIC LEDs on the even addresses and the CCTIC LEDs on the odd addresses.
+      - platform: partition
+        name: "Odd leds"
+        segments:
+          # first odd led
+          - id: light1
+            from: 1
+            to: 1
+          # second odd led
+          - id: light1
+            from: 3
+            to: 3
+          # etc.
+
+      - platform: partition
+        name: "Even leds"
+        segments:
+          # first even led
+          - id: light1
+            from: 0
+            to: 0
+          # second even led
+          - id: light1
+            from: 2
+            to: 2
+          # etc.
+
+
 Configuration variables:
 ------------------------
 
