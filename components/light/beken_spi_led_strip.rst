@@ -55,5 +55,6 @@ See Also
 
 - :doc:`/components/light/index`
 - :doc:`/components/power_supply`
+- :doc:`/components/light/partition`
 - :apiref:`beken_spi_led_strip/beken_spi_led_strip.h`
 - :ghedit:`Edit`
