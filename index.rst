@@ -773,6 +773,7 @@ Climate Components
     Thermostat Controller, components/climate/thermostat, air-conditioner.svg, dark-invert
     Tuya Climate, components/climate/tuya, tuya.png
     Uponor Smatrix Base Pulse Underfloor Heating, components/uponor_smatrix, uponor.svg
+    Webasto Diesel Heater with BLE, components/diesel_heater_ble, air-conditioner.svg, dark-invert
 
 Cover Components
 ----------------
