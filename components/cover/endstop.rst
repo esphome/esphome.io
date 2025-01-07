@@ -62,7 +62,7 @@ Configuration variables:
   :ref:`Binary Sensor <config-binary_sensor>` that turns on when the closed position is reached.
 
 - **stop_action** (**Required**, :ref:`Action <config-action>`): The action that should
-  be performed when the remote requests the cover to be closed or an endstop is reached.
+  be performed when the remote requests the cover to stop or an endstop is reached.
 - **max_duration** (*Optional*, :ref:`config-time`): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional endstops.
 - All other options from :ref:`Cover <config-cover>`.
