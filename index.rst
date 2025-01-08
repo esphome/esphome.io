@@ -285,7 +285,7 @@ I/O Expanders/Multiplexers
     TCA9555, components/tca9555, tca9555.svg
     WeiKai SPI/I²C UART/IO Expander, components/weikai, wk2168.jpg
     XL9535, components/xl9535, xl9535.svg
-    DS2406, components/ds2406, ds2406.jpg
+    DS2406, components/ds2406, ds2406.webp
 
 CAN Bus
 -------
