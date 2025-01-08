@@ -1,0 +1,80 @@
+Dallas DS2406
+====================
+
+.. seo::
+    :description: Instructions for setting up Dallas DS2406
+    :image: dfrobot_sen0395.jpg
+    :keywords: Dallas, ds2406, onewire
+
+The ``ds2406`` component allows you to use the 
+`DS2406 <https://www.analog.com/en/products/ds2406.html>`__
+(`datasheet <https://www.analog.com/media/en/technical-documentation/data-sheets/DS2406.pdf>`__)
+component that is able to sense and switch two channels. A :ref:`1-Wire bus <one_wire>` is
+required to be set up in your configuration for this component to work.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    ds2406:
+      - address: 0x99000000c695bd12
+        update_interval: 1s
+
+Configuration variables:
+************************
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Necessary if you want
+  to define multiple instances of this component.
+- **address** (*Optional*, int): The address of the sensor. Required if there is more than one device on the bus.
+- **update_interval** (*Optional*, :ref:`config-time`): The interval that the sensors should be checked.
+  Defaults to 60 seconds.
+- **one_wire_id** (*Optional*, :ref:`one_wire`): The ID of the 1-Wire bus to use.
+  Required if there is more than one bus.
+
+Binary Sensor
+-------------
+
+With the :ref:`Binary Sensor components <config-binary_sensor>` you check whether voltage is applied to one of the channels. 
+
+.. code-block:: yaml
+
+    binary_sensor:
+      - platform: ds2406
+        name: Channel 1
+        channel: 1
+
+
+Configuration variables:
+************************
+
+- **ds2406_id** (*Optional*, :ref:`config-id`): The ID of the DS2406 component defined above.
+  Required when multiple instances of the ``ds2406`` component are defined.
+- **channel** (*Optional*, int): `1` or `2`. Which channel should be monitored.
+- All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+
+Switch
+------
+
+With the :ref:`Switch components <config-switch>` channels could be turned on or off.
+
+.. code-block:: yaml
+
+    switch:
+      - platform: ds2406
+        name: Channel 2
+        channel: 2
+
+Configuration variables:
+************************
+
+- **ds2406_id** (*Optional*, :ref:`config-id`): The ID of the DS2406 component defined above.
+  Required when multiple instances of the ``ds2406`` component are defined.
+- **channel** (*Optional*, int): `1` or `2`. Channel to be controlled.
+- All other options from :ref:`Switch <config-switch>`.
+
+See Also
+--------
+- :ref:`1-Wire bus <one_wire>`
+- :ref:`Binary Sensor <config-binary_sensor>`
+- :ref:`Switch <config-switch>`
+- :ref:`config-id`
+- :ghedit:`Edit`
