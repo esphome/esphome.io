@@ -105,7 +105,7 @@ Build
 
 .. note::
 
-    The easiest way is to use the `esphome-docs container image <ghcr.io/esphome/esphome-docs/>`__:
+    The easiest way is to use the `esphome-docs container image <https://ghcr.io/esphome/esphome-docs/>`__:
 
     .. code-block:: bash
 
@@ -194,6 +194,8 @@ adhere to the following order:
       - The length of the bar below the text **must** match the title text length.
       - Section titles should use Title Case.
 
+.. _contributing-links:
+
 - **Links**: To create a link to an external resource (for example https://www.google.com), use
   ``\`Link text <link_url>\`__``. For example:
 
@@ -202,6 +204,13 @@ adhere to the following order:
       `Google.com <https://www.google.com>`__
 
   `Google.com <https://www.google.com>`__
+
+.. _contributing-referrals:
+
+  .. note::
+
+      Referral links are only permitted if they provide a direct benefit to the ESPHome project.
+      This policy applies to all official ESPHome documentation and websites.
 
 - **References**: To reference another document, use the ``:doc:`` and ``:ref:`` roles (references are set up globally
   and can be used between documents):
@@ -495,7 +504,7 @@ adhere to the following order:
 
   Because these images are served on the main page, they need to be compressed heavily. SVGs are preferred over JPGs
   and JPGs should be no more than 300x300px.
-  
+
   If you have imagemagick installed, you can use this command to convert the thumbnail:
 
   .. code-block:: bash
@@ -536,9 +545,6 @@ wish to use it.
 
 Now you can open ESPHome in your IDE of choice (many of us are using `VSCode <https://code.visualstudio.com/download>`__)
 with the PlatformIO addons (see PlatformIO docs for more info) and develop the new feature with the guidelines below.
-
-All PRs are automatically checked and tested for some common formatting/code errors with Github Actions. *These checks*
-**must all pass** *before we will review (and eventually merge) your PR.*
 
 Setting Up Git Environment
 --------------------------
@@ -588,7 +594,7 @@ near the top of the page (or, alternatively, go to branches and create it from t
 - Complete the Pull Request template:
 
   - Include a brief (but complete) summary of your changes.
-  - PRs without a descrption/summary of the changes will not be reviewed or merged, although exceptions may
+  - PRs without a description/summary of the changes will not be reviewed or merged, although exceptions may
     occasionally be made for small PRs and/or PRs made by frequent contributors/maintainers.
   - **Do not delete the template.**
 
@@ -602,15 +608,47 @@ near the top of the page (or, alternatively, go to branches and create it from t
   it is ready. We do this because, if a PR is reviewed and then it changes, it must be re-reviewed. Reviewing a single
   PR multiple times is not a productive use of time and we try as much as possible to avoid doing so.
 
+So now that you've created your PR...you're not quite done! Read on to the next section below so you know what to
+expect next.
+
 Review Process
 **************
 
-ESPHome's maintainers work hard to maintain a high standard for its code, so reviews can take some time. At the bottom
-of each pull request you will see the "Github Actions" continuous integration (CI) checks which will automatically
-analyize all code changed in your branch. These checks try to spot (and suggest corrections for) errors. If any CI
-check fails, please look at the Github Actions log and fix all errors that appear there.
+.. _automated_checks:
 
-**All automated checks must be passing** before a given PR will be reviewed and (eventually) merged!
+Automated Checks
+^^^^^^^^^^^^^^^^
+
+At the bottom of each pull request you will see the "Github Actions" continuous integration (CI) checks which will
+automatically analyze all code changed in your branch. These checks try to spot (and suggest corrections for) common
+errors; they look like this:
+
+.. figure:: images/gha_checks.jpg
+    :align: center
+    :width: 100.0%
+    :alt: Automated checks on PR by GitHub Actions
+    :class: light-invert
+
+You can click the "Details" link to the right of each check to see the logs for that check. If a red ❌ appears next to
+any given check, *you'll need to view that check's logs and make the suggested changes so that the test will pass.*
+
+**Implementing Feedback from Automated Checks**
+
+Occasionally, an automated check may suggest a change that either isn't directly related to your PR or that may require
+changes to other components/platforms. When this happens, please create a new/additional PR to implement this change.
+
+For example, the automated checks may suggest moving a constant from your (new) component/platform into ``const.py``.
+This is a simple change, but we require that it is done in a separate PR.
+
+Ultimately, **all automated checks must be passing** before maintainers will review and (eventually) merge your PR!
+
+Review by Maintainers
+^^^^^^^^^^^^^^^^^^^^^
+
+ESPHome's maintainers work hard to maintain a high standard for its code, so reviews by a human can take some time.
+
+**All automated checks must be passing** before maintainers will review and (eventually) merge your PR! See
+:ref:`automated_checks` above.
 
 **When will my PR be reviewed/merged?**
 
@@ -700,7 +738,7 @@ Beyond basic functionality (*"does it work?"*), here are a few other items we ch
 .. _prs-are-being-drafted-when-changes-are-needed:
 
 Why was my PR marked as a draft?
-************************************
+********************************
 
 If your PR was reviewed and changes were requested, our bot will automatically mark your PR as a draft. This means that
 the PR is not ready to be merged or further reviewed for the moment.
@@ -997,7 +1035,7 @@ it then attempts to read back the measurement from the sensor.
 :apiclass:`PollingComponent`.
 
 For any :apiclass:`Component` (which is nearly everything), the well-known ``set_timeout`` method is also available;
-this can be a handy alternative to implemeting a state machine.
+this can be a handy alternative to implementing a state machine.
 
 .. _a_note_about_custom_components:
 
@@ -1010,7 +1048,10 @@ ESPHome's "custom component" mechanism is a holdover from Home Assistant's featu
 :doc:`/components/external_components` and offered a way to "hack in" support for devices which were not officially
 supported by ESPHome.
 
-ESPHome has since deprecated this feature in favor of :doc:`/components/external_components` for several reasons:
+Why are Custom Components Deprecated?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+There are several reasons for this change.
 
 - Custom components are very fragile:
 
@@ -1019,14 +1060,16 @@ ESPHome has since deprecated this feature in favor of :doc:`/components/external
     resulting in compiler errors, unexpected behavior and/or crashes.
   - Custom components are difficult to use. You have to manually copy all of the custom component's files into *just
     the right location* on your system or else you will receive compiler errors and the component won't work.
-  - Custom components almost always require C++ code changes when you want them to work even *slightly* differently
-    than the original author intended.
+  - Custom components lack flexibility and almost always require C++ code changes when you want them to work even
+    *slightly* differently than the original author intended/designed. For example, a simple change of input units
+    (``cm`` to ``m``, for example) could require significant changes to the C++ code, depending on how the original
+    author designed the custom component.
 
 - :doc:`/components/external_components` initially require a bit more effort by the developer but are ultimately more
-  robust and easier to use and share:
+  robust and are easier to use and share:
 
   - Just like any other ESPHome component/platform:
-  
+
     - They are configured entirely in YAML.
     - Their YAML configuration is validated.
 
@@ -1037,7 +1080,8 @@ ESPHome has since deprecated this feature in favor of :doc:`/components/external
 
   - They tend to be more flexible since they are configured in YAML (as opposed to editing C++ code to make changes).
 
-**So what is the difference between custom components and** :doc:`/components/external_components`?
+What's the Difference?
+^^^^^^^^^^^^^^^^^^^^^^
 
 Custom components are typically (more or less) just the :ref:`runtime` part of an ESPHome component/platform. On the
 other hand, :doc:`/components/external_components` are just like any other ESPHome component -- the only difference is
@@ -1050,6 +1094,9 @@ In terms of implementation, custom components just lack the Python part of an ES
 
 As such, most custom components can be made into :doc:`/components/external_components` simply by adding the required
 Python parts to make the custom component into a proper, complete ESPHome component.
+
+What's Next?
+^^^^^^^^^^^^
 
 We encourage all custom component developers to extend their custom component(s) into proper
 :doc:`/components/external_components`; doing so will make your custom component easier to share and use. As you do so,
@@ -1106,8 +1153,8 @@ ESPHome's maintainers work hard to maintain a high standard for its code. We try
 
 - Components should dump their configuration using ``ESP_LOGCONFIG`` at startup in ``dump_config()``.
 - ESPHome uses a unified formatting tool for all source files (but this tool can be difficult to install).
-  When creating a new PR in GitHub, be sure to check the Github Actions output to see what formatting needs to be
-  changed and what potential problems are detected.
+  When creating a new PR in GitHub, be sure to check the :ref:`Github Actions<automated_checks>` output to see what
+  formatting needs to be changed and what potential problems are detected.
 - Use of external libraries should be kept to a minimum:
 
   - If the component you're developing has a simple communication interface, please consider implementing the library
@@ -1117,7 +1164,7 @@ ESPHome's maintainers work hard to maintain a high standard for its code. We try
     communication abstractions.
   - If the library accesses a global variable/state (``Wire`` is a good example) then there's likely a problem because
     the component may not be modular. Put another way, this approach may mean that it's not possible to create multiple
-    instances of the component for use wihtin ESPHome.
+    instances of the component for use within ESPHome.
 
 - Components **must** use the provided abstractions like ``sensor``, ``switch``, etc. Components specifically should
   **not** directly access other components -- for example, to publish to MQTT topics.

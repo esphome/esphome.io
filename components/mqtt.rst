@@ -12,8 +12,8 @@ in which case this is not needed.
 
 .. warning::
 
-    If you enable MQTT and you do *not* use the "native API" for Home Assistant, you must
-    remove the ``api:`` line from your ESPHome configuration, otherwise the ESP will
+    If you enable MQTT and you do *not* use the :doc:`/components/api`, you must
+    remove the ``api:`` configuration or set ``reboot_timeout: 0s``, otherwise the ESP will
     reboot every 15 minutes because no client connected to the native API.
 
 .. code-block:: yaml
@@ -106,6 +106,7 @@ Configuration variables:
 - **on_json_message** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a JSON message on a specific MQTT topic is received. See :ref:`mqtt-on_json_message`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **publish_nan_as_none** (*Optional*, bool): Publish ``None`` instead of ``NaN`` to handle Unknown/Unavailable sensor states in Home Assistant. Defaults to ``false``.
 
 .. _mqtt-message:
 

@@ -296,7 +296,7 @@ whose ``id`` is  set to ``player_volume``:
                           } else {
                             ESP_LOGD(TAG,"No 'vol' key in this json!");
                           }
-                      });
+                        });
                 else:
                     - logger.log:
                         format: "Error: Response status: %d, message %s"

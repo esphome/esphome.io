@@ -2204,7 +2204,6 @@ In the example below, pixel training is done four times for a half an hour every
               then:
                 - lvgl.resume:
                 - lvgl.widget.redraw:
-                - delay: 1s
           - lvgl.pause:
               show_snow: true
         turn_off_action:
@@ -2214,8 +2213,6 @@ In the example below, pixel training is done four times for a half an hour every
               then:
                 - lvgl.resume:
                 - lvgl.widget.redraw:
-                - delay: 1s
-                - lvgl.pause:
 
     touchscreen:
       - platform: ...

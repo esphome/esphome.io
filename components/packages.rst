@@ -128,8 +128,12 @@ As an example, if the configuration needed to support three garage doors using t
         file: garage-door.yaml
         vars:
           door_name: Left
+      middle_garage_door: !include
+        file: garage-door.yaml
         vars:
           door_name: Middle
+      right_garage_door: !include
+        file: garage-door.yaml
         vars:
           door_name: Right
 
