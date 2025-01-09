@@ -127,7 +127,7 @@ Configuration variables:
 - **temperature_2** (*Optional*): The second temperature sensor.
   All options from :ref:`Sensor <config-sensor>`.
 
-- **cell_1_voltage** (*Optional*): The voltage of cell number 1. Cell number can be from 1 to 16.
+- **cell_1_voltage** (*Optional*): The voltage of cell number 1. Cell number can be from 1 to 18.
   All options from :ref:`Sensor <config-sensor>`.
 
 Text Sensor
