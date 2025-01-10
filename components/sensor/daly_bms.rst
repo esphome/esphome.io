@@ -78,6 +78,34 @@ A sensor platform to read BMS data
           name: "Cell 3 Voltage"
         cell_4_voltage:
           name: "Cell 4 Voltage"
+        cell_5_voltage:
+          name: "Cell 5 Voltage"
+        cell_6_voltage:
+          name: "Cell 6 Voltage"
+        cell_7_voltage:
+          name: "Cell 7 Voltage"
+        cell_8_voltage:
+          name: "Cell 8 Voltage"
+        cell_9_voltage:
+          name: "Cell 9 Voltage"
+        cell_10_voltage:
+          name: "Cell 10 Voltage"
+        cell_11_voltage:
+          name: "Cell 11 Voltage"
+        cell_12_voltage:
+          name: "Cell 12 Voltage"
+        cell_13_voltage:
+          name: "Cell 13 Voltage"
+        cell_14_voltage:
+          name: "Cell 14 Voltage"
+        cell_15_voltage:
+          name: "Cell 15 Voltage"
+        cell_16_voltage:
+          name: "Cell 16 Voltage"
+        cell_17_voltage:
+          name: "Cell 17 Voltage"
+        cell_18_voltage:
+          name: "Cell 18 Voltage"
 
 Configuration variables:
 ************************
