@@ -9,9 +9,9 @@ The ``waveshare_epaper`` display platform allows you to use
 some E-Paper displays sold by `Waveshare <https://www.waveshare.com/product/displays/e-paper.htm>`__
 with ESPHome. The 2.13" `TTGO module <https://github.com/lewisxhe/TTGO-EPaper-Series>`__ and the
 `Waveshare Cloud Module <https://www.waveshare.com/wiki/2.13inch_e-Paper_Cloud_Module>`__ with an ESP32
-on the board are supported as well. Depending on your specific revision of the TTGO board you might need to try out the ``-b73`` or ``-b1`` 
+on the board are supported as well. Depending on your specific revision of the TTGO board you might need to try out the ``-b73`` or ``-b1``
 version (see below).
-The 1.54" `Good Display gdew0154m09 <https://www.good-display.com/product/206.html>`__ 
+The 1.54" `Good Display gdew0154m09 <https://www.good-display.com/product/206.html>`__
 as used in the `M5Stack Core Ink <https://shop.m5stack.com/products/m5stack-esp32-core-ink-development-kit1-54-elnk-display>`__
 is also supported.
 Similar modules sold by other vendors might also work but not have been tested yet. Currently only
@@ -99,11 +99,12 @@ Configuration variables:
   - ``2.90in``
   - ``2.90in-dke``
   - ``2.90inv2``
-  - ``2.90inv2-r2`` - 2.9in V2 display, but with different initialization and full/partial display refresh management than ``2.90inv2`` 
+  - ``2.90inv2-r2`` - 2.9in V2 display, but with different initialization and full/partial display refresh management than ``2.90inv2``
   - ``2.90in-b`` - B/W rendering only
   - ``2.90in-bV3`` - B/W rendering only
   - ``4.20in``
   - ``4.20in-bV2`` - B/W rendering only
+  - ``gdey042t81`` - GoodDisplay GDEY042T81 4.2" B/W
   - ``5.83in``
   - ``5.83inv2``
   - ``7.50in``
@@ -120,8 +121,8 @@ Configuration variables:
 
 .. warning::
 
-    The BUSY pin on the gdew0154m09 and Waveshare 7.50in V2 models must be inverted to prevent permanent display damage. Set the pin to 
-    ``inverted: true`` in the config. 
+    The BUSY pin on the gdew0154m09 and Waveshare 7.50in V2 models must be inverted to prevent permanent display damage. Set the pin to
+    ``inverted: true`` in the config.
 
 - **busy_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The BUSY pin. Defaults to not connected.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin. Defaults to not connected.
