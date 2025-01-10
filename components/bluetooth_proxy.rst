@@ -45,6 +45,7 @@ Configuration:
 
 - **active** (*Optional*, boolean): Enables proxying active connections. Defaults to ``false``.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to ``true`` when using the ESP-IDF framework.
+- **max_characteristics** (*Optional*, int): The maximum number of characteristics to read from each device. Defaults to ``40`` when using the ESP-IDF framework.
 
 The Bluetooth proxy depends on :doc:`esp32_ble_tracker` so make sure to add that to your configuration.
 
