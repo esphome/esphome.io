@@ -107,12 +107,11 @@ configuration for the "Bedroom Light" node in the picture above can be found in 
 .. note::
 
     Home Assistant add-ons run as individual containers; this can make accessing your configuration files/logs a bit
-    challenging. If you wish to do so, you'll need to install and configure Home Assistant's
-    `SSH addon <https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-ssh-add-on>`__. You'll need to
-    configure an SSH username and password and disable "Protection Mode" (please assess the risks associated with
-    doing so).
+    challenging. If you wish to do so, you'll need to install Home Assistant's
+    `SSH add-on <https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-ssh-add-on>`__, configure it
+    with a username and password and also disable "Protection Mode" (please assess the risks associated with doing so).
 
-    Then, to access the logs from a device through an SSH client, you can log in and use a command like
+    Finally, to access the logs from a device through an SSH client, you can log in and use a command like
     ``docker exec -it addon_15ef4d2f_esphome esphome logs /config/esphome/bedroom-light.yaml``.
 
     See :doc:`getting_started_command_line` for more detail.
