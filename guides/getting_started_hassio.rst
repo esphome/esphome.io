@@ -50,8 +50,8 @@ Installation of the add-on may take a moment or two. Once done, click "Start" an
 
 .. note::
 
-    If you're running Home Assistant in a way that does not provide access to add-ons, take a look at the other
-    installation methods here. **(#TODO: WHERE???)**
+    If you're running Home Assistant in a way that does not provide access to add-ons, you may
+    :ref:`run the ESPHome Device Builder independently in Docker<esphome-device-builder-docker>`.
 
 The web UI will present a wizard which will walk you through creating your first configuration:
 
