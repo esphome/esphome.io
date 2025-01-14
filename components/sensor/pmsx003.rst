@@ -31,11 +31,6 @@ If you wish to use the optional ``update_interval`` ensure you have a ``tx_pin``
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      rx_pin: GPIO23
-      tx_pin: GPIO22
-      baud_rate: 9600
-
     sensor:
       - platform: pmsx003
         type: PMSX003
@@ -45,7 +40,6 @@ If you wish to use the optional ``update_interval`` ensure you have a ``tx_pin``
           name: "Particulate Matter <2.5µm Concentration"
         pm_10_0:
           name: "Particulate Matter <10.0µm Concentration"
-        update_interval: 120s
 
 Configuration variables:
 ------------------------

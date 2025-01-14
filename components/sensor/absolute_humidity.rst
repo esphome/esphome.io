@@ -30,7 +30,6 @@ See the links at the bottom of the page for details on absolute humidity and the
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the absolute humidity sensor.
 - **temperature** (**Required**, :ref:`config-id`): The sensor that is used to measure the current temperature, in °C.
 - **humidity** (**Required**, :ref:`config-id`): The sensor that is used to measure the current relative humidity, in %.
 - **equation** (*Optional*): The saturated vapor pressure equation to use (see below).

@@ -19,7 +19,8 @@ Base Alarm Control Panel Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the alarm control panel.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the alarm control panel. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -44,6 +45,13 @@ Configuration variables:
   when the alarm state changes to ``disarmed``. See :ref:`alarm_control_panel_on_disarmed_trigger`.
 - **on_cleared** (*Optional*, :ref:`Action <config-action>`): An automation to perform
   when the alarm clears. See :ref:`alarm_control_panel_on_cleared_trigger`.
+- **on_ready** (*Optional*, :ref:`Action <config-action>`): An automation to perform
+  when the logical 'and' of all the zone sensors change state. See :ref:`alarm_control_panel_on_ready_trigger`.
+- **on_chime** (*Optional*, :ref:`Action <config-action>`): An automation to perform
+  when a zone has been marked as chime in the configuration, and it changes from closed to open.
+  See :ref:`alarm_control_panel_on_chime_trigger`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
+- If MQTT enabled, all other options from :ref:`MQTT Component <config-mqtt-component>`.
 
 
 Automation:
@@ -184,6 +192,39 @@ This trigger is activated when the alarm changes from to disarmed.
         then:
           - logger.log: "Alarm Disarmed!"
 
+.. _alarm_control_panel_on_ready_trigger:
+
+``on_ready`` Trigger
+********************
+
+This trigger is activated when the logical 'and' of all the alarm sensors change state. This is useful for implementing "alarm ready" LEDs.
+Once this trigger is called, you can get the ready state by calling get_all_sensors_ready() in a lambda block.
+
+.. code-block:: yaml
+
+    alarm_control_panel:
+      # ...
+      on_disarmed:
+        then:
+          - lambda: !lambda |-
+              ESP_LOGI("AlarmPanel", "Sensor ready change to: %s", ((id(acp1).get_all_sensors_ready()) ? (const char *) "True" : (const char *) "False"));
+
+.. _alarm_control_panel_on_chime_trigger:
+
+``on_chime`` Trigger
+********************
+
+This trigger is activated when a zone sensor marked with chime:true changes from closed to open. This is useful for implementing keypad chimes when a zone
+opens.
+
+.. code-block:: yaml
+
+    alarm_control_panel:
+      # ...
+      on_chime:
+        then:
+          - logger.log: "Alarm Chime!"
+
 .. _alarm_control_panel_arm_away_action:
 
 ``arm_away`` Action
@@ -296,6 +337,7 @@ From :ref:`lambdas <config-lambda>`, you can call the following methods:
 - ``arm_home(code)``
 - ``arm_night(code)``
 - ``disarm(code)``
+- ``get_all_sensors_ready()``
 
 .. code-block:: cpp
 
@@ -303,6 +345,7 @@ From :ref:`lambdas <config-lambda>`, you can call the following methods:
     id(acp1).arm_home();
     id(acp1).arm_night();
     id(acp1).disarm(std::string("1234"));
+    bool all_sensors_ready = id(acp1).get_all_sensors_ready();
 
 
 Platforms

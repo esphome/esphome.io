@@ -5,6 +5,10 @@
 {% endblock %}
 
 {%- block extrahead %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+  <link href="/pagefind/pagefind-modular-ui.css" rel="stylesheet">
   <link rel="stylesheet" href="{{ pathto('_static/custom.css', 1) }}?hash={{ custom_css_hash }}" type="text/css" />
   <link rel="apple-touch-icon" sizes="180x180" href="/_static/apple-touch-icon.png">
   <link rel="shortcut icon" href="/_static/favicon.ico">
@@ -15,32 +19,35 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/_static/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/_static/favicon-16x16.png">
   <link rel="manifest" href="/_static/site.webmanifest">
-  <link rel="mask-icon" href="/_static/safari-pinned-tab.svg" color="#646464">
+  <link rel="mask-icon" href="/_static/safari-pinned-tab.svg" color="#18bcf2">
+  <link rel="me" href="https://fosstodon.org/@esphome">
   <meta name="apple-mobile-web-app-title" content="ESPHome">
   <meta name="application-name" content="ESPHome">
-  <meta name="msapplication-TileColor" content="#dfdfdf">
+  <meta name="msapplication-TileColor" content="#18bcf2">
   <meta name="msapplication-config" content="/_static/browserconfig.xml">
-  <meta name="theme-color" content="#dfdfdf">
+  <meta name="theme-color" content="#18bcf2">
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
   <meta property="og:site_name" content="ESPHome">
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=3, interactive-widget=overlays-content">
 {% endblock %}
 
 {% block relbar_top %}
-  {% if parents|length > 0 %}
   <ul class="breadcrumbs">
+  {% if parents|length > 0 %}
     {%- for doc in parents %}
-      <li><a href="{{ doc.link|e }}">{{ doc.title }}</a> ➔</li>
+      <li><a href="{{ doc.link|e }}">{{ doc.title }}</a> ▸</li>
     {%- endfor %}
       <li>{{title}}</li>
-  </ul>
+
   {% endif %}
+  </ul>
 {% endblock %}
 
 {% block footer %}
   <div id="upgrade-footer">
-    A new version has been release since you last visited this page: {{ release }} 🎉
+    A new version has been released since you last visited this page: {{ release }} 🎉
     <div class="footer-button-container">
       <div role="button" id="upgrade-footer-dismiss" class="footer-button">Dismiss</div>
       <a id="upgrade-footer-changelog" class="footer-button" href="/changelog/{{ version }}.0.html">View Changelog</a>

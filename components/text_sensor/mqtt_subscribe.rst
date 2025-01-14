@@ -22,16 +22,14 @@ in its ``id(mysensor).state``.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the text sensor.
 - **topic** (**Required**, string): The MQTT topic to listen for string data.
 - **qos** (*Optional*, int): The MQTT QoS to subscribe with. Defaults to ``0``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 Example Usage for Displays
 --------------------------
 
-This integration is especially useful for displays, to show external data on the display.
+This component is especially useful for displays, to show external data on the display.
 Please note you have to use the ``.c_str()`` method on the ``.state`` object together with the ``%s`` format
 to use it in ``printf`` expressions.
 

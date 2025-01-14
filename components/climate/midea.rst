@@ -22,20 +22,11 @@ The ``midea`` component creates a Midea air conditioner climate device.
 
     Control is possible with a custom dongle. Example of hardware implementation is `IoT Uni Dongle <https://github.com/dudanov/iot-uni-dongle>`_ or `Midea SLWF-01pro <https://smartlight.me/smart-home-devices/wifi-devices/wifi-dongle-air-conditioners-midea-idea-electrolux-for-home-assistant>`_ (`CloudFree <https://cloudfree.shop/product/ductless-hvac-wi-fi-module/>`_, `Tindie <https://www.tindie.com/products/smartlightme/wifi-dongle-for-air-conditioners-midea-electrolux>`_).
 
+The Midea air conditioner requires the UART to be configured with ``baud_rate: 9600``.  The hardware requires **5V logic levels** and does not appear to work with 3.3V logic levels. Use a logic level shifter if building your own dongle. 
+
 .. code-block:: yaml
 
     # Example configuration entry
-
-    # Disable logging over UART (required)
-    logger:
-      baud_rate: 0
-
-    # UART settings for Midea dongle (required)
-    uart:
-      tx_pin: 1         # hardware dependant
-      rx_pin: 3         # hardware dependant
-      baud_rate: 9600
-
     # Main settings
     climate:
       - platform: midea
@@ -78,10 +69,8 @@ The ``midea`` component creates a Midea air conditioner climate device.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :doc:`../uart` if you want
   to use multiple UART buses.
-- **name** (**Required**, string): The name of the climate device.
 - **transmitter_id** (*Optional*, :ref:`config-id`): Defined and used automatically when using :doc:`../remote_transmitter` component for IR commands transmit.
 - **period** (*Optional*, :ref:`config-time`): Minimal period between requests to the appliance. Defaults to ``1s``.
 - **timeout** (*Optional*, :ref:`config-time`): Request response timeout until next request attempt. Defaults to ``2s``.
@@ -97,21 +86,15 @@ Configuration variables:
 - **outdoor_temperature** (*Optional*): The information for the outdoor temperature
   sensor.
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 - **power_usage** (*Optional*): The information for the current power consumption
   sensor.
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 - **humidity_setpoint** (*Optional*): The information for the humidity indoor
   sensor (experimental).
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 - All other options from :ref:`Climate <config-climate>`.
 
 Automations

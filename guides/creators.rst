@@ -43,6 +43,7 @@ Example configuration
 
     # OTA is required for Over-the-Air updating
     ota:
+      platform: esphome
 
     # This should point to the public location of this yaml file.
     dashboard_import:

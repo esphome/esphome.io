@@ -1,16 +1,6 @@
 Custom Sensor Component
 =======================
 
-.. warning::
-
-    Custom components are deprecated, not recommended for new configurations
-    and will be removed from ESPHome in a future release.
-    Please look at creating a real ESPHome component and "importing" it into your
-    configuration with :doc:`/components/external_components`.
-
-    You can find some basic documentation on creating your own components
-    at :ref:`contributing_to_esphome`.
-
 .. seo::
     :description: Instructions for setting up Custom C++ sensors with ESPHome.
     :image: language-cpp.svg
@@ -18,11 +8,18 @@ Custom Sensor Component
 
 .. warning::
 
-    While I do try to keep the ESPHome configuration options as stable as possible
-    and back-port them, the ESPHome API is less stable. If something in the APIs needs
-    to be changed in order for something else to work, I will do so.
+    :ref:`Custom Components are deprecated<a_note_about_custom_components>`, not recommended for new configurations and
+    will be removed from ESPHome in the ``2025.1.0`` release. Please look at creating a real ESPHome component and
+    "importing" it into your configuration with :doc:`/components/external_components`.
 
-So, you just set up ESPHome for your ESP32/ESP8266, but sadly ESPHome is missing a sensor integration
+    You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
+
+.. warning::
+
+    While we try to keep the ESPHome YAML configuration options as stable as possible, the ESPHome API is less
+    stable. If something in the APIs needs to be changed in order for something else to work, we will do so.
+
+So, you just set up ESPHome for your ESP32/ESP8266, but sadly ESPHome is missing a sensor component
 you'd really like to have 😕. It's pretty much impossible to support every single sensor, as there are simply too many.
 That's why ESPHome has a really simple API for you to create your own **custom sensors** 🎉
 

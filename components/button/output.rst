@@ -17,7 +17,7 @@ momentarily set a GPIO pin using a button.
     # Example configuration entry
     output:
       - platform: gpio
-        pin: 25
+        pin: GPIOXX
         id: output1
 
     button:
@@ -29,8 +29,6 @@ momentarily set a GPIO pin using a button.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the button.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **output** (**Required**, :ref:`config-id`): The ID of the output component to use.
 - **duration** (**Required**, :ref:`config-time`): How long the output should be set when the button is pressed.
 - All other options from :ref:`Button <config-button>`.

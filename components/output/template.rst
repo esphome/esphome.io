@@ -22,14 +22,10 @@ The ``template`` output component can be used to create templated binary and flo
               id: output2
               level: !lambda return state;
 
-      - platform: esp8266_pwm
+      - platform: ...
         id: output1
-        pin: GPIO12
-        inverted: true
-      - platform: esp8266_pwm
+      - platform: ...
         id: output2
-        pin: GPIO14
-        inverted: true
 
 
 

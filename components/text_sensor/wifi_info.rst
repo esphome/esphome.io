@@ -15,6 +15,16 @@ via text sensors.
       - platform: wifi_info
         ip_address:
           name: ESP IP Address
+          address_0:
+            name: ESP IP Address 0
+          address_1:
+            name: ESP IP Address 1
+          address_2:
+            name: ESP IP Address 2
+          address_3:
+            name: ESP IP Address 3
+          address_4:
+            name: ESP IP Address 4
         ssid:
           name: ESP Connected SSID
         bssid:
@@ -30,6 +40,8 @@ Configuration variables:
 ------------------------
 
 - **ip_address** (*Optional*): Expose the IP Address of the ESP as a text sensor. All options from
+  :ref:`Text Sensor <config-text_sensor>`.
+- **address_0-address_4** (*Optional*): With dual stack (IPv4 and IPv6) the device will have at least two IP addresses -- often more. To report all addresses the configuration may have up to five sub-sensors. All options from
   :ref:`Text Sensor <config-text_sensor>`.
 - **ssid** (*Optional*): Expose the SSID of the currently connected WiFi network as a text sensor. All options from
   :ref:`Text Sensor <config-text_sensor>`.

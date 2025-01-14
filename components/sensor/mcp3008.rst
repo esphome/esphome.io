@@ -27,12 +27,13 @@ It uses the :ref:`SPI Bus <spi>` for communication.
 Once configured, you can use any of the 8 pins as
 sensors for your projects.
 
-Each pin will respond with a voltage calculated off of the reference_voltage (default is 3.3v).
-It calculates the voltage by multiplying the reference_voltage * value on the pin (basically the percentage of VREF)
 
-Most configurations will set the reference_voltage = VREF (pin 13 on the chip)
+Each pin will respond with a voltage calculated off of the ``reference_voltage`` (default is 3.3V).
+It calculates the voltage by multiplying the ``reference_voltage`` by the value on the pin (basically the percentage of VREF).
 
-If you want just the scaled value you can use the read_data function
+Most configurations will establish the reference voltage by assigning it the value of VREF, which is located at pin 13 on the chip.
+
+If you want just the scaled value you can use the read_data function:
   ``float MCP3008::read_data(uint8_t pin)``
 
 .. code-block:: yaml
@@ -68,8 +69,9 @@ If you want just the scaled value you can use the read_data function
         name: Freezer Temperature
 
 Configuration variables:
+
 - **id** (**Required**, :ref:`config-id`): The id to use for this MCP3008 component.
-- **cs_pin** (**Required**, int): The SPI cable select pin to use
+- **cs_pin** (**Required**, int): The SPI cable select pin to use.
 
 
 Sensor
@@ -82,7 +84,7 @@ sensor platform to create individual sensors that will report the voltage to Hom
 Configuration variables:
 
 - **mcp3008_id** (**Required**, :ref:`config-id`): The id of the parent MCP3008 component.
-- **number** (**Required**, int): The pin number of the MCP3008
+- **number** (**Required**, int): The pin number of the MCP3008.
 - **reference_voltage** (*Optional*, float): The reference voltage. Defaults to ``3.3V``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``1s``.
 

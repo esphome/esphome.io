@@ -56,7 +56,6 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
 - **signal_rate_limit** (*Optional*, float): Set the return signal rate limit in units of MCPS
@@ -73,7 +72,6 @@ Configuration variables:
   on vl53l0x to enable/disable sensor. **Required** if not using address ``0x29`` which is the cause if you
   have multiple VL53L0X on the same i2c bus. In this case you have to assign a different pin to each VL53L0X.
 - **timeout** (*Optional*, :ref:`config-time`): Sensor setup timeout. Default to ``10ms``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 
@@ -86,7 +84,7 @@ Configuration variables:
         name: "distance1"
         id: distance1
         address: 0x41
-        enable_pin: GPIO16
+        enable_pin: GPIOXX
         timeout: 200us
         update_interval: 500ms
         unit_of_measurement: "m"
@@ -95,7 +93,7 @@ Configuration variables:
         name: "distance2"
         id: distance2
         address: 0x42
-        enable_pin: GPIO17
+        enable_pin: GPIOXX
         timeout: 200us
         update_interval: 500ms
         unit_of_measurement: "m"

@@ -21,7 +21,7 @@ after the last output has been disabled.
     # Example configuration entry
     power_supply:
       - id: 'power_supply1'
-        pin: 13
+        pin: GPIOXX
 
 Configuration variables:
 ------------------------
@@ -33,10 +33,14 @@ Configuration variables:
 - **enable_time** (*Optional*, :ref:`config-time`): The time
   that the power supply needs for startup. The output component will
   wait for this period of time after turning on the PSU and before
-  switching the output on. Defaults to ``20ms``.
+  switching the output on. Defaults to ``20ms``. Maximum of less than ``5s``.
 - **keep_on_time** (*Optional*, :ref:`config-time`): The time the
   power supply should be kept enabled after the last output that used
   it has been switch off. Defaults to ``10s``.
+- **enable_on_boot** (*Optional*, bool): If the power supply should be enabled when the power supply
+  component is setup. Defaults to false. The startup delay will be applied (other component setup will be blocked
+  until the delay has elapsed.) This is useful for power supplies that will never be turned off and avoids the need
+  to specifically configure the power supply in a different component.
 
 See the :ref:`output component base configuration <config-output>`
 for information on how to apply the power supply for a specific output.

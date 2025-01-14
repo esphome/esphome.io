@@ -28,7 +28,8 @@ All cover config schemas inherit from this schema - you can set these keys for c
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the cover.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name for the cover. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -36,7 +37,7 @@ Configuration variables:
       you want the cover to use that name, you can set ``name: None``.
 
 - **device_class** (*Optional*, string): The device class for the
-  sensor. See https://www.home-assistant.io/components/cover/ for a list of available options.
+  sensor. See https://www.home-assistant.io/integrations/cover/#device-class for a list of available options.
 - **icon** (*Optional*, icon): Manually set the icon to use for the cover in the frontend.
 
 Advanced options:
@@ -46,11 +47,13 @@ Advanced options:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
+
 
 MQTT options:
 

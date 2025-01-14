@@ -5,10 +5,10 @@ Safe Mode Button
     :description: Instructions for setting up buttons that can remotely reboot the ESP in ESPHome into safe mode.
     :image: restart.svg
 
-The ``safe_mode`` button allows you to remotely reboot your node into :ref:`Safe Mode <config-ota>`. This is useful in certain situations
+The ``safe_mode`` button allows you to remotely reboot your node into :doc:`/components/safe_mode`. This is useful in certain situations
 where a misbehaving component is preventing Over-The-Air updates from completing successfully.
 
-This component requires :ref:`OTA <config-ota>` to be configured.
+This component requires :doc:`/components/safe_mode` to be configured.
 
 .. figure:: images/safemode-ui.png
     :align: center
@@ -24,9 +24,7 @@ This component requires :ref:`OTA <config-ota>` to be configured.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the button.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- All other options from :ref:`Button <config-button>`.
+- All options from :ref:`Button <config-button>`.
 
 See Also
 --------

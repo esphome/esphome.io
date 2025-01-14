@@ -27,31 +27,9 @@ global ``sm2135`` hub and give it an id, and then define the
 
     # Example configuration entry
     sm2135:
-      data_pin: GPIO12
-      clock_pin: GPIO14
+      data_pin: GPIOXX
+      clock_pin: GPIOXX
 
-    # Individual outputs
-    output:
-      - platform: sm2135
-        id: output_red
-        channel: 0
-        max_power: 0.8
-      - platform: sm2135
-        id: output_green
-        channel: 1
-        max_power: 0.8
-      - platform: sm2135
-        id: output_blue
-        channel: 2
-        max_power: 0.8
-      - platform: sm2135
-        id: output_white
-        channel: 3
-        max_power: 0.8
-      - platform: sm2135
-        id: output_warmwhite
-        channel: 4
-        max_power: 0.8
 
 Configuration variables:
 ************************
@@ -62,12 +40,15 @@ Configuration variables:
 -  **id** (*Optional*, :ref:`config-id`): The id to use for
    this ``sm2135`` component. Use this if you have multiple SM2135 chains
    connected at the same time.
-- **cw_current** (*Optional*, current): The current used for the white channel. 
+- **cw_current** (*Optional*, current): The current used for the white channel.
   Defaults to ``10mA``.
   Can be one of ``10mA``, ``15mA``, ``20mA``, ``25mA``, ``30mA``, ``35mA``, ``40mA``, ``45mA``, ``50mA``, ``55mA``, ``60mA``.
 - **rgb_current** (*Optional*, current): The current used for the RGB channel.
   Defaults to ``20mA``.
   Can be one of ``10mA``, ``15mA``, ``20mA``, ``25mA``, ``30mA``, ``35mA``, ``40mA``, ``45mA``.
+- **separate_modes** (*Optional*, bool): Use separate RGB/CW modes instead of writing all 5 values as RGB.
+  Defaults to ``true``, keep it at ``true`` if your SM2135 chip variant does not support simultaneous CW and RGB modes (e.g. SM2135E).
+  Set this to ``false`` when your SM2135 chip variant supports having CW and RGB leds on at the same time (e.g. SM2135EH/SM2135EJ).
 
 .. _sm2135-output:
 
@@ -78,11 +59,6 @@ The SM2135 output component exposes a SM2135 channel of a global
 :ref:`sm2135-component` as a float output.
 
 .. code-block:: yaml
-
-    # Example configuration entry
-    sm2135:
-      data_pin: GPIO12
-      clock_pin: GPIO14
 
     # Individual outputs
     output:

@@ -1,0 +1,327 @@
+ESPHome 2024.5.0 - 15th May 2024
+================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.5.0.
+    :image: /_static/changelog-2024.5.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+
+    Valve Core, components/valve/index, folder-open.svg, dark-invert
+    Template Valve, components/valve/template, description.svg, dark-invert
+    Event Core, components/event/index, folder-open.svg, dark-invert
+    Template Event, components/event/template, description.svg, dark-invert
+    Template Time, components/datetime/template, description.svg, dark-invert
+    Template Datetime, components/datetime/template, description.svg, dark-invert
+    WeiKai SPI/I²C UART/IO Expander, components/weikai, wk2168.jpg
+
+
+Valves, Events, and More
+------------------------
+
+This release brings a new ``Valve`` component, which can be used to control valves.
+A ``Valve`` can be opened, closed, or a specific position set if supported.
+
+``Event`` entities were added to Home Assistant in `2023.8 <https://www.home-assistant.io/blog/2023/08/02/release-20238/#introducing-the-event-entity>`__.
+They allow better structure and also history and logging of the events sent from ESPHome to Home Assistant compared to just using publishing events onto the
+Home Assistant event bus with the ``homeassistant.event`` action.
+
+The ``datetime`` component has also been extended with ``DateTime`` and ``Time`` entity types this release.
+
+
+ESP32 ADC Attenuation
+---------------------
+
+The attenuation configuration option for ESP32 ``adc`` sensors has had a deprecation in the underlying ESP-IDF framework with the ``11dB`` option.
+The value to replace ``11dB`` with is ``12dB``. There are no functionality changes otherwise. There will be a warning in the logs when installing if you
+are using ``11dB`` and it will be removed in **2024.8.0**.
+
+Remote Receiver tolerance
+-------------------------
+
+The ``tolerance`` option in the ``remote_receiver`` component has been extended to allow time values, but at the same time the validation is now more strict.
+If you were using a raw value with no unit before 2024.5.0, for example ``25``, you will need to change it to ``25%``.
+
+
+Release 2024.5.1 - May 20
+-------------------------
+
+- Add device_class to valve core config :esphomepr:`6765` by :ghuser:`acshef`
+- Synchronise Device Classes from Home Assistant :esphomepr:`6768` by :ghuser:`esphomebot`
+- Fix Upload from Dashboard with MQTT discovery. :esphomepr:`6774` by :ghuser:`Links2004`
+- Fix MQTT dashboard discovery (Exception in MqttStatusThread). :esphomepr:`6775` by :ghuser:`Links2004`
+
+
+Release 2024.5.2 - May 21
+-------------------------
+
+- Revert "Fix MQTT dashboard discovery (Exception in MqttStatusThread)." :esphomepr:`6782` by :ghuser:`bdraco`
+- Fix DashboardEntries.all() call :esphomepr:`6783` by :ghuser:`bdraco`
+- [remote_receiver] Add better error message for tolerance breaking change :esphomepr:`6784` by :ghuser:`jesserockz`
+- Update webserver local assets to 20240519-215627 :esphomepr:`6779` by :ghuser:`esphomebot`
+
+
+Release 2024.5.3 - May 25
+-------------------------
+
+- [voice_assistant] Don't allocate buffers until starting the microphone for the first time :esphomepr:`6800` by :ghuser:`jesserockz`
+
+
+Release 2024.5.4 - May 28
+-------------------------
+
+- [web_server_base] Bump ESPAsyncWebServer-esphome to 3.2.2 :esphomepr:`6797` by :ghuser:`jesserockz`
+- [helpers] Move Base64 string to cpp :esphomepr:`6819` by :ghuser:`gabest11`
+
+
+Release 2024.5.5 - June 5
+-------------------------
+
+- [voice_assistant] Half the microphone ringbuffer size :esphomepr:`6830` by :ghuser:`jesserockz`
+- [i2s_speaker] Add buffer allocation failure checks :esphomepr:`6829` by :ghuser:`jesserockz`
+- [improv_serial] Fix for IDF 4.4.7 :esphomepr:`6855` by :ghuser:`kbx81`
+
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add valve component :esphomepr:`6447` by :ghuser:`kbx81` (new-integration)
+- Add the WeiKai SPI/I2C UART/IO Expander components to esphome  :esphomepr:`5218` by :ghuser:`DrCoolzic` (new-integration)
+- Event entity support :esphomepr:`6451` by :ghuser:`nohat` (new-integration)
+- SPI and I2C for BMP390 and BMP380 :esphomepr:`6652` by :ghuser:`latonita` (new-integration) (breaking-change)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Add DNS sensor and simplify format :esphomepr:`6450` by :ghuser:`HeMan` (breaking-change)
+- SM2135 - Use standard channel ordering. :esphomepr:`6573` by :ghuser:`Cossid` (breaking-change)
+- [sn74hc595] Enforce type field to distinguish gpio vs spi mode :esphomepr:`6609` by :ghuser:`jesserockz` (breaking-change)
+- Add datetime entities :esphomepr:`6513` by :ghuser:`jesserockz` (breaking-change)
+- SPI and I2C for BMP390 and BMP380 :esphomepr:`6652` by :ghuser:`latonita` (new-integration) (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- [github] Upgrade to actions/[upload,download]-artifact v4 :esphomepr:`6698` by :ghuser:`jesserockz`
+- [nextion] Replace flags to ``USE_ARDUINO`` :esphomepr:`6700` by :ghuser:`edwardtfn`
+- [remote_receiver, remote_transmitter] Improve error messages on the ESP32 :esphomepr:`6701` by :ghuser:`Mat931`
+- [ethernet] Use constexpr instead of inline define for KSZ80XX_PC2R_REG_ADDR :esphomepr:`6705` by :ghuser:`jesserockz`
+- Add PHY register writes to enable external clock on Ethernet with RTL8201 :esphomepr:`6704` by :ghuser:`heythisisnate`
+- Bump recommended ESP-IDF to 4.4.7 :esphomepr:`6703` by :ghuser:`bdraco`
+- [core] Ensure that a generated ID name is distinct from its type. :esphomepr:`6706` by :ghuser:`clydebarrow`
+- [color] Fix crash when hex color parses as int, improve error reporting. :esphomepr:`6707` by :ghuser:`clydebarrow`
+- [github] Fix digest artifact name :esphomepr:`6710` by :ghuser:`jesserockz`
+- fix(ltr390): stuck ALS values when configured for ALS+UV readings :esphomepr:`6723` by :ghuser:`CodeInPolish`
+- Set FEATURE_API_AUDIO flag also if the speaker component is not used :esphomepr:`6712` by :ghuser:`gnumpi`
+- Bump platformio from 6.1.13 to 6.1.15 :esphomepr:`6634` by :ghuser:`dependabot[bot]`
+- Fix ESPHOME_PROJECT_VERSION_30 :esphomepr:`6731` by :ghuser:`jesserockz`
+- Voice-Assistant: Start-order change for VAD disabled: start va-pipeline when microphon… :esphomepr:`6391` by :ghuser:`gnumpi`
+- Add ANNOUNCING state to media_player. :esphomepr:`6691` by :ghuser:`gnumpi`
+- [adc] Fix 11db deprecation warning :esphomepr:`6749` by :ghuser:`jesserockz` (notable-change)
+
+Notable Changes
+^^^^^^^^^^^^^^^
+
+- [adc] Fix 11db deprecation warning :esphomepr:`6749` by :ghuser:`jesserockz` (notable-change)
+
+All changes
+^^^^^^^^^^^
+
+- Add some components to the new testing framework (H) :esphomepr:`6179` by :ghuser:`kbx81`
+- Added Htu21d model option :esphomepr:`6511` by :ghuser:`MRemy2`
+- Add bk72xx base test file :esphomepr:`6522` by :ghuser:`jesserockz`
+- Add "log" alias for "logs" command :esphomepr:`6519` by :ghuser:`pzich`
+- Add DNS sensor and simplify format :esphomepr:`6450` by :ghuser:`HeMan` (breaking-change)
+- Add all missing ``remote_receiver`` ``on_...`` tests :esphomepr:`6524` by :ghuser:`kbx81`
+- Add actions to http_request tests :esphomepr:`6529` by :ghuser:`kbx81`
+- Update homeassistant component tests with actions :esphomepr:`6528` by :ghuser:`kbx81`
+- Define ``USE_PSRAM`` :esphomepr:`6526` by :ghuser:`edwardtfn`
+- Bump black from 24.2.0 to 24.4.0 :esphomepr:`6539` by :ghuser:`dependabot[bot]`
+- Bump peter-evans/create-pull-request from 6.0.2 to 6.0.3 :esphomepr:`6525` by :ghuser:`dependabot[bot]`
+- Bump python version in sync-device-classes workflow to 3.12 for HA :esphomepr:`6541` by :ghuser:`jesserockz`
+- Bump pylint from 3.0.3 to 3.1.0 :esphomepr:`6287` by :ghuser:`dependabot[bot]`
+- Bump aioesphomeapi from 23.2.0 to 24.0.0 :esphomepr:`6544` by :ghuser:`dependabot[bot]`
+- Bump pyupgrade from 3.15.1 to 3.15.2 :esphomepr:`6543` by :ghuser:`dependabot[bot]`
+- Add enum option to typed_schema :esphomepr:`6546` by :ghuser:`jesserockz`
+- Move esphome-fork startup script to main repo. :esphomepr:`6523` by :ghuser:`jesserockz`
+- Call workflow for addon with dev version :esphomepr:`6549` by :ghuser:`jesserockz`
+- Use trusted publishing token for pypi :esphomepr:`6545` by :ghuser:`jesserockz`
+- Fix uart to work with new enum definition in esp-idf-v5.2.1 :esphomepr:`6487` by :ghuser:`luar123`
+- Housecleaning: Use walrus operator in datetime :esphomepr:`6552` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in text :esphomepr:`6560` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in light :esphomepr:`6556` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in select :esphomepr:`6557` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in number :esphomepr:`6561` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in cover :esphomepr:`6562` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in climate :esphomepr:`6551` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in fan :esphomepr:`6555` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in text_sensor :esphomepr:`6559` by :ghuser:`jesserockz`
+- Bump zeroconf to 0.132.2 :esphomepr:`6548` by :ghuser:`bdraco`
+- Housecleaning: Use walrus operator in switch :esphomepr:`6558` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in lock :esphomepr:`6554` by :ghuser:`jesserockz`
+- Housecleaning: Use walrus operator in sensor :esphomepr:`6553` by :ghuser:`jesserockz`
+- Bump pytest-mock from 3.12.0 to 3.14.0 :esphomepr:`6572` by :ghuser:`dependabot[bot]`
+- Bump peter-evans/create-pull-request from 6.0.3 to 6.0.4 :esphomepr:`6569` by :ghuser:`dependabot[bot]`
+- Nextion - Review set_protocol_reparse_mode() :esphomepr:`6567` by :ghuser:`edwardtfn`
+- Allow component final_validate :esphomepr:`6475` by :ghuser:`kbx81`
+- SM2135 - Use standard channel ordering. :esphomepr:`6573` by :ghuser:`Cossid` (breaking-change)
+- Nextion - Do not refresh sensors while updating :esphomepr:`6566` by :ghuser:`edwardtfn`
+- Nextion - Review types :esphomepr:`6565` by :ghuser:`edwardtfn`
+- On failure, dump the output of preceding jobs in CI status :esphomepr:`6564` by :ghuser:`clydebarrow`
+- Nextion ``send_command`` method :esphomepr:`6540` by :ghuser:`edwardtfn`
+- Fix some printf formats for size_t. :esphomepr:`6542` by :ghuser:`clydebarrow`
+- remove delay from tmp102 :esphomepr:`6577` by :ghuser:`ssieb`
+- Create ``component_dir`` substitution for local files to be included in… :esphomepr:`6575` by :ghuser:`jesserockz`
+- Define ``USE_ESP32_BLE`` :esphomepr:`6585` by :ghuser:`edwardtfn`
+- Bump aioesphomeapi from 24.0.0 to 24.3.0 :esphomepr:`6602` by :ghuser:`dependabot[bot]`
+- Add yamllint and clang-format to pre-commit hooks :esphomepr:`6578` by :ghuser:`clydebarrow`
+- Use clang-format version from requirements_dev file :esphomepr:`6606` by :ghuser:`jesserockz`
+- Add some components to the new testing framework (P) :esphomepr:`6213` by :ghuser:`kbx81`
+- Add some components to the new testing framework (M part 1) :esphomepr:`6207` by :ghuser:`kbx81`
+- Add some components to the new testing framework (M part 2) :esphomepr:`6208` by :ghuser:`kbx81`
+- Add some components to the new testing framework (O) :esphomepr:`6211` by :ghuser:`kbx81`
+- [mopeka_std_check] Fix test file indentation :esphomepr:`6610` by :ghuser:`jesserockz`
+- Add valve component :esphomepr:`6447` by :ghuser:`kbx81` (new-integration)
+- Add some components to the new testing framework (R) :esphomepr:`6219` by :ghuser:`kbx81`
+- [sn74hc595] Enforce type field to distinguish gpio vs spi mode :esphomepr:`6609` by :ghuser:`jesserockz` (breaking-change)
+- [tests] Run yaml tests in groups if over 100 to run :esphomepr:`6612` by :ghuser:`jesserockz`
+- Add some components to the new testing framework (I) :esphomepr:`6185` by :ghuser:`kbx81`
+- Add some components to the new testing framework (T) :esphomepr:`6229` by :ghuser:`kbx81`
+- Add some components to the new testing framework (S part 1) :esphomepr:`6224` by :ghuser:`kbx81`
+- Add some components to the new testing framework (S part 2) :esphomepr:`6227` by :ghuser:`kbx81`
+- ``graphical_display_menu`` requires a Display, not DisplayBuffer :esphomepr:`6614` by :ghuser:`clydebarrow`
+- Add null GPIO pin  :esphomepr:`6611` by :ghuser:`clydebarrow`
+- Allow UART to be AUTO LOADed :esphomepr:`6617` by :ghuser:`jesserockz`
+- Add the WeiKai SPI/I2C UART/IO Expander components to esphome  :esphomepr:`5218` by :ghuser:`DrCoolzic` (new-integration)
+- Sort mqtt_const alphabetically :esphomepr:`6619` by :ghuser:`jesserockz`
+- Limit Rx wait loop time to 3 seconds. :esphomepr:`6594` by :ghuser:`descipher`
+- Event entity support :esphomepr:`6451` by :ghuser:`nohat` (new-integration)
+- Only check c/c++ files with clang-format :esphomepr:`6620` by :ghuser:`jesserockz`
+- Added base64 helper :esphomepr:`4866` by :ghuser:`freekode`
+- Add Roomba IR protocol :esphomepr:`4595` by :ghuser:`rforro`
+- Fix issue when setting cw/ww brightness via temperature :esphomepr:`5976` by :ghuser:`patagonaa`
+- Add get/set color temperature functions in Kelvin :esphomepr:`5006` by :ghuser:`danielkent-net`
+- Move CONF_PLATFORM_VERSION to global const.py :esphomepr:`6629` by :ghuser:`tomaszduda23`
+- Ble client fixes for proxy :esphomepr:`6596` by :ghuser:`elupus`
+- Fix for #6614- use background_color, improve anti-aliasing :esphomepr:`6618` by :ghuser:`clydebarrow`
+- Fix graph hangs when y <= 0 :esphomepr:`6593` by :ghuser:`chiahsing`
+- Feature add last_operation to time based cover :esphomepr:`6084` by :ghuser:`xprofiler`
+- Add ``event``, ``text_sensor`` and ``valve`` device classes to sync script :esphomepr:`6624` by :ghuser:`kbx81`
+- Add datetime entities :esphomepr:`6513` by :ghuser:`jesserockz` (breaking-change)
+- Multiple Daly-BMS support :esphomepr:`6615` by :ghuser:`latonita`
+- Remove text_sensor from sync-device-class job :esphomepr:`6637` by :ghuser:`kbx81`
+- Synchronise Device Classes from Home Assistant :esphomepr:`6638` by :ghuser:`esphomebot`
+- Display: add diagnostic test_card option :esphomepr:`6608` by :ghuser:`nielsnl68`
+- waveshare_epaper: Add 2.90in-dke :esphomepr:`6492` by :ghuser:`polyfloyd`
+- Extract core comments from #6241 :esphomepr:`6643` by :ghuser:`javawizard`
+- [hm3301] Updated the AQI based on the airnow document :esphomepr:`6004` by :ghuser:`optimusprimespace`
+- Fix command line substitutions without any yaml substitutions :esphomepr:`6644` by :ghuser:`jesserockz`
+- Allow platform dependencies :esphomepr:`6623` by :ghuser:`kbx81`
+- [light] Add transition_length to strobe effect. :esphomepr:`6595` by :ghuser:`lhartmann`
+- Fixed the issue that graph draws out of the boundary. :esphomepr:`6651` by :ghuser:`chiahsing`
+- Fix upload command. MQTT user and password is missing from configuration. #5093 :esphomepr:`5766` by :ghuser:`dylan09`
+- patch esphome cli to skip mqtt based device discovery if --device option is specified :esphomepr:`6371` by :ghuser:`quigleymd`
+- Fix for #4866 - inconsistent arguments :esphomepr:`6639` by :ghuser:`clydebarrow`
+- [template/text] Fix lambda config :esphomepr:`6655` by :ghuser:`asergunov`
+- web_server: Add support for v3 local server_index :esphomepr:`6563` by :ghuser:`pzich`
+- Update webserver local assets to 20240429-211523 :esphomepr:`6657` by :ghuser:`esphomebot`
+- [nextion] Exit reparse before update TFT :esphomepr:`6589` by :ghuser:`edwardtfn`
+- [nextion] Set alternative TFT update baud rate :esphomepr:`6587` by :ghuser:`edwardtfn`
+- [TM1637] Let turn off the display :esphomepr:`6656` by :ghuser:`asergunov`
+- [nextion] Use persistent http connection for TFT upload (Arduino) :esphomepr:`6582` by :ghuser:`edwardtfn`
+- Extend MQTT tests :esphomepr:`6648` by :ghuser:`kbx81`
+- Extend and consolidate ``script`` tests :esphomepr:`6663` by :ghuser:`kbx81`
+- [nextion] Use persistent http connection for TFT upload (ESP-IDF) :esphomepr:`6576` by :ghuser:`edwardtfn`
+- Add a function to return the loop_interval :esphomepr:`6666` by :ghuser:`tronikos`
+- Remote receiver improvements :esphomepr:`4642` by :ghuser:`Mat931`
+- Make fast update intervals in qmc5883l work :esphomepr:`6647` by :ghuser:`tronikos`
+- SPI and I2C for BMP390 and BMP380 :esphomepr:`6652` by :ghuser:`latonita` (new-integration) (breaking-change)
+- Set ``CONF_`` CI counter to fail on 3 or more definitions :esphomepr:`6668` by :ghuser:`jesserockz`
+- [core] Rename ALWAYS_INLINE to ESPHOME_ALWAYS_INLINE :esphomepr:`6636` by :ghuser:`tomaszduda23`
+- print task name if logger is called from other than main thread :esphomepr:`6630` by :ghuser:`tomaszduda23`
+- Fix recent definitions into `defines.h` :esphomepr:`6667` by :ghuser:`edwardtfn`
+- Add fast update to HMC5883L :esphomepr:`6669` by :ghuser:`mkmer`
+- Minor tidy up of BME280 code :esphomepr:`6672` by :ghuser:`latonita`
+- External components: optional configurable path for git source :esphomepr:`6677` by :ghuser:`twasilczyk`
+- Use clang-apply-replacements when clang-apply-replacements-14 does not exist :esphomepr:`6684` by :ghuser:`Links2004`
+- fix conflict with EMPTY macro in zephyr :esphomepr:`6679` by :ghuser:`tomaszduda23`
+- Bump actions/checkout from 4.1.1 to 4.1.5 :esphomepr:`6685` by :ghuser:`dependabot[bot]`
+- Fix Datetime-Datetime compiler error :esphomepr:`6686` by :ghuser:`RFDarter`
+- Bump esphome/ESPAsyncWebServer-esphome to 3.2.0 :esphomepr:`6687` by :ghuser:`jesserockz`
+- fix date_time validation :esphomepr:`6688` by :ghuser:`RFDarter`
+- proceed if AP mode is set up :esphomepr:`6631` by :ghuser:`ssieb`
+- Migrate some constants to core code :esphomepr:`6692` by :ghuser:`clydebarrow`
+- Consolidate test files where all tests are identical :esphomepr:`6690` by :ghuser:`kbx81`
+- Make ``pulse_meter`` PULSE filter report the pulse as soon as it can :esphomepr:`6014` by :ghuser:`TrentHouliston`
+- Update webserver local assets to 20240507-231331 :esphomepr:`6696` by :ghuser:`esphomebot`
+- [github] Upgrade to actions/[upload,download]-artifact v4 :esphomepr:`6698` by :ghuser:`jesserockz`
+- [nextion] Replace flags to ``USE_ARDUINO`` :esphomepr:`6700` by :ghuser:`edwardtfn`
+- [remote_receiver, remote_transmitter] Improve error messages on the ESP32 :esphomepr:`6701` by :ghuser:`Mat931`
+- [ethernet] Use constexpr instead of inline define for KSZ80XX_PC2R_REG_ADDR :esphomepr:`6705` by :ghuser:`jesserockz`
+- Add PHY register writes to enable external clock on Ethernet with RTL8201 :esphomepr:`6704` by :ghuser:`heythisisnate`
+- Bump recommended ESP-IDF to 4.4.7 :esphomepr:`6703` by :ghuser:`bdraco`
+- [core] Ensure that a generated ID name is distinct from its type. :esphomepr:`6706` by :ghuser:`clydebarrow`
+- [color] Fix crash when hex color parses as int, improve error reporting. :esphomepr:`6707` by :ghuser:`clydebarrow`
+- [github] Fix digest artifact name :esphomepr:`6710` by :ghuser:`jesserockz`
+- fix(ltr390): stuck ALS values when configured for ALS+UV readings :esphomepr:`6723` by :ghuser:`CodeInPolish`
+- Set FEATURE_API_AUDIO flag also if the speaker component is not used :esphomepr:`6712` by :ghuser:`gnumpi`
+- Bump platformio from 6.1.13 to 6.1.15 :esphomepr:`6634` by :ghuser:`dependabot[bot]`
+- Fix ESPHOME_PROJECT_VERSION_30 :esphomepr:`6731` by :ghuser:`jesserockz`
+- Voice-Assistant: Start-order change for VAD disabled: start va-pipeline when microphon… :esphomepr:`6391` by :ghuser:`gnumpi`
+- Add ANNOUNCING state to media_player. :esphomepr:`6691` by :ghuser:`gnumpi`
+- [adc] Fix 11db deprecation warning :esphomepr:`6749` by :ghuser:`jesserockz` (notable-change)
+
+Past Changelogs
+---------------
+
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

@@ -31,6 +31,7 @@ Example sensors:
     # Example configuration entry
     sensor:
       - platform: htu21d
+        model: htu21d
         temperature:
           name: "Temperature"
         humidity:
@@ -51,6 +52,8 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+
+- **model** (*Optional*): Possible values are HTU21D, SI7021, SHT21. Defaults to HTU21D.
 
 The heater may be enabled to help correct the reading; see the datasheet for more information.
 

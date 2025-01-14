@@ -61,16 +61,40 @@ For instance, assume we have a pH sensor that reads from 0.00 to 15.00 with a sc
       max_value: 15.00
       multiply: 100
 
+Hidden datapoints:
+------------------
+The above configurations will work fine as long as Tuya device publishes the datapoint value (along with its type) at initialization.
+However this is not always the case. To be able to use such "hidden" datapoints as Number, you need to specify additional ``datapoint_hidden`` configuration block.
+This block allows to specify the missing datapoint type and, optionally, the value that should be written to the datapoint at initialization.
+
+TuyaMCU restores the state of all its datapoints after reboot, but with the hidden datapoints there is no way to know what their values are.
+Therefore there is also an option to store them on the ESPHome side and they will be set at initialization. To use this feature, set the ``restore_value`` yaml key to True.
+
+.. code-block:: yaml
+
+    - platform: "tuya"
+      name: "Alarm at maximum"
+      number_datapoint: 116
+      min_value: 0
+      max_value: 100
+      datapoint_hidden:
+        datapoint_type: int
+        initial_value: 85
+        restore_value: yes
+
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the switch.
 - **number_datapoint** (**Required**, int): The datapoint id number of the number.
 - **min_value** (**Required**, float): The minimum value this number can be.
 - **max_value** (**Required**, float): The maximum value this number can be.
 - **step** (*Optional*, float): The granularity with which the number can be set. Defaults to 1.
 - **multiply** (*Optional*, float): multiply the new value with this factor before sending the requests.
+- **datapoint_hidden** (*Optional*): Specify information required for hidden datapoints.
+
+  - **datapoint_type** (**Required**, string): The datapoint type, one of *int*, *uint*, *enum*.
+  - **initial_value** (*Optional*, float): The value to be written at initialization. Must be between ``min_value`` and ``max_value``.
+  - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash. Defaults to ``false``.
 
 - All other options from :ref:`Number <config-number>`.
 

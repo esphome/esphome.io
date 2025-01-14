@@ -1,7 +1,7 @@
 Sigma-Delta Output
 ==================
 
-This integration uses `sigma-delta modulation <https://en.wikipedia.org/wiki/Delta-sigma_modulation>`__
+This component uses `sigma-delta modulation <https://en.wikipedia.org/wiki/Delta-sigma_modulation>`__
 to output a floating-point value on a binary output. Unlike with :doc:`/components/output/slow_pwm`,
 it is possible to update the output value with each update cycle, not just at the end of a longer period.
 
@@ -14,13 +14,13 @@ it is possible to update the output value with each update cycle, not just at th
 For example, if you choose to toggle the output at most once every 1 second and decide on a
 PWM period of 10 seconds, for reasonably frequent updates, with :doc:`/components/output/slow_pwm`
 there are only 10 possible levels, and for higher precision a longer update interval is needed,
-restricting the update rate. 
+restricting the update rate.
 
 A *sigma-delta* output is updated during each cycle, thus a higher precision can be achieved, without
 being constrained by a calculation timeframe (=period).
 
 So instead of having to define a ``period`` where the width of the pulse determines the output level, here you
-choose an ``update_interval`` which acts like a clock signal from where the pulse density determines the output level. 
+choose an ``update_interval`` which acts like a clock signal from where the pulse density determines the output level.
 
 This component can be used as a drop-in replacement for :doc:`/components/output/slow_pwm` by changing the ``platform`` to
 ``sigma_delta_output`` and changing ``period`` to ``update_interval`` (you usually want to set the *sigma-delta*'s
@@ -35,7 +35,7 @@ This component can be used as a drop-in replacement for :doc:`/components/output
         id: sd_heater_output
 
         # Output to a pin
-        pin: 15
+        pin: GPIOXX
 
         # Use the same output, but through automations
         turn_on_action:
@@ -44,9 +44,9 @@ This component can be used as a drop-in replacement for :doc:`/components/output
         turn_off_action:
           then:
             - output.turn_off: heater_relay
-    
+
       - platform: gpio
-        pin: 15
+        pin: GPIOXX
         id: heater_relay
 
 Configuration variables:

@@ -25,7 +25,8 @@ Base Media Player Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the media player.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the media player. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -208,6 +209,21 @@ This trigger is activated every time the media player finishes playing.
         on_idle:
           - logger.log: "Playback finished!"
 
+.. _media_player-on_announcement_trigger:
+
+``media_player.on_announcement`` Trigger
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This trigger is activated every time the media player plays an announcement.
+
+.. code-block:: yaml
+
+    media_player:
+      - platform: i2s_audio  # or any other platform
+        # ...
+        on_announcement:
+          - logger.log: "Announcing!"
+
 .. _media_player-is_idle_condition:
 
 ``media_player.is_idle`` Condition
@@ -237,6 +253,36 @@ This condition checks if the media player is playing media.
       if:
         condition:
           media_player.is_playing:
+
+.. _media_player-is_paused_condition:
+
+``media_player.is_paused`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is paused.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_paused:
+
+.. _media_player-is_announcing_condition:
+
+``media_player.is_announcing`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is playing an announcement.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_announcing:
 
 Play media in order
 -------------------

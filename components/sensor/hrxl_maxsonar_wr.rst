@@ -6,7 +6,7 @@ HRXL/XL MaxSonar WR Series
     :image: hrxl_maxsonar_wr.jpg
     :keywords: ultrasonic, maxbotix, maxsonar
 
-This sensor allows you to use HRXL MaxSonar WR series ultrasonic sensors by MaxBotix 
+This sensor allows you to use HRXL MaxSonar WR series ultrasonic sensors by MaxBotix
 (`datasheet <https://www.maxbotix.com/documents/HRXL-MaxSonar-WR_Datasheet.pdf>`__)
 or the XL MaxSonar WR series
 (`datasheet <https://www.maxbotix.com/documents/XL-MaxSonar-WR_Datasheet.pdf>`__)
@@ -27,28 +27,15 @@ multiple times per second, filtering is highly recommended.
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      rx_pin: 36
-      baud_rate: 9600
-
     sensor:
       - platform: "hrxl_maxsonar_wr"
         name: "Rainwater Tank"
-        # Tweak the filters for your application
-        filters:
-          - sliding_window_moving_average:
-              window_size: 12
-              send_every: 12
-          - or:
-            - throttle: "20min"
-            - delta: 0.02
 
 
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
-- All other options from :ref:`Sensor <config-sensor>`.
+- All options from :ref:`Sensor <config-sensor>`.
 
 Advanced options:
 

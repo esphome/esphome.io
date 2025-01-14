@@ -6,12 +6,13 @@ DHT Temperature+Humidity Sensor
     :image: dht.jpg
     :keywords: DHT11, DHT21, DHT22, AMS2301, AM2302, RHT03, SI7021
 
-The DHT Temperature+Humidity sensor allows you to use your 
+The DHT Temperature+Humidity sensor allows you to use your
 
-- DHT11 (`datasheet <https://akizukidenshi.com/download/ds/aosong/DHT11.pdf>`__, `Adafruit <https://www.adafruit.com/product/386>`__), 
-- DHT21/DHT22 (`datasheet <https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf>`__, `Adafruit <https://www.adafruit.com/product/385>`__), 
-- AMS2301/AM2302 (`datasheet <https://cdn-shop.adafruit.com/datasheets/Digital+humidity+and+temperature+sensor+AM2302.pdf>`__, `Adafruit <https://www.adafruit.com/product/393>`__), 
-- RHT03 (`datasheet <https://cdn.sparkfun.com/datasheets/Sensors/Weather/RHT03.pdf>`__, `SparkFun <https://cdn.sparkfun.com/datasheets/Sensors/Weather/RHT03.pdf>`__) and 
+- DHT11 (`datasheet <https://akizukidenshi.com/download/ds/aosong/DHT11.pdf>`__, `Adafruit <https://www.adafruit.com/product/386>`__),
+- DHT21/DHT22 (`datasheet <https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf>`__, `Adafruit <https://www.adafruit.com/product/385>`__),
+- AMS2301/AM2302 (`datasheet <https://cdn-shop.adafruit.com/datasheets/Digital+humidity+and+temperature+sensor+AM2302.pdf>`__, `Adafruit <https://www.adafruit.com/product/393>`__),
+- AM2120 (`datasheet <https://www.micros.com.pl/mediaserver/UPAM2120_0004.pdf>`__),
+- RHT03 (`datasheet <https://cdn.sparkfun.com/datasheets/Sensors/Weather/RHT03.pdf>`__, `SparkFun <https://cdn.sparkfun.com/datasheets/Sensors/Weather/RHT03.pdf>`__) and
 - SI7021 (one wire Sonoff version) (`datasheet <https://cdn.sparkfun.com/assets/b/1/b/8/5/Si7021-A20.pdf>`__, `SparkFun <https://cdn.sparkfun.com/assets/b/1/b/8/5/Si7021-A20.pdf>`__)
 
 sensors with ESPHome.
@@ -50,29 +51,25 @@ Configuration variables:
 - **pin** (**Required**, :ref:`config-pin`): The pin where the DHT bus is connected.
 - **temperature** (**Required**): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (**Required**): The information for the humidity sensor
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-  
+  - All options from :ref:`Sensor <config-sensor>`.
+
 
 - **model** (*Optional*, int): Manually specify the DHT model, can be
-  one of ``AUTO_DETECT``, ``DHT11``, ``DHT22``, ``DHT22_TYPE2``, ``AM2302``, ``RHT03``, ``SI7021``
+  one of ``AUTO_DETECT``, ``DHT11``, ``DHT22``, ``DHT22_TYPE2``, ``AM2302``, ``RHT03``, ``SI7021``, ``AM2120``
   and helps with some connection issues. Defaults to ``AUTO_DETECT``.  Auto detection doesn't work for the SI7021 chip.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
 
 .. note::
 
-    The default ``accuracy_decimals`` value of the *humidity* levels is ``0``, as the DHT11 for which this was 
-    originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth 
+    The default ``accuracy_decimals`` value of the *humidity* levels is ``0``, as the DHT11 for which this was
+    originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
     to configure them with ``accuracy_decimals: 1``.
-    
+
     If you're seeing lots of invalid temperature/humidity warnings in the logs, try manually setting the
     DHT model with the ``model:`` configuration variable. Other problems could be wrong pull-up resistor values
     on the DATA pin or too long cables.

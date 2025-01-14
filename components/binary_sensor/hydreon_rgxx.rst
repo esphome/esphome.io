@@ -12,12 +12,6 @@ For this sensor to work, a :doc:`/components/sensor/hydreon_rgxx` must be set up
 .. code-block:: yaml
 
     # Example RG-9 entry
-
-    uart:
-      rx_pin: GPIO16
-      tx_pin: GPIO17
-      baud_rate: 9600
-
     sensor:
       - platform: hydreon_rgxx
         model: "RG_9"
@@ -40,27 +34,15 @@ Configuration variables:
 
 - **too_cold** (*Optional*): ``true`` if the sensor reports being too cold. Hydreon only mentions this feature for the RG-9.
 
-  - **name** (**Required**, string): The name for the sensor.
-
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 - **lens_bad** (*Optional*): ``true`` if the sensor reports the lens being bad.
 
-  - **name** (**Required**, string): The name for the sensor.
-
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 - **em_sat** (*Optional*): ``true`` if the sensor reports the Emitter being saturated.
 
-  - **name** (**Required**, string): The name for the sensor.
-
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 
 See Also

@@ -9,7 +9,7 @@ uFire ISE pH sensor
 The ``ufire_ise`` sensor platform allows you to use your uFire ISE pH sensor with
 ESPHome. The :ref:`I²C Bus <i2c>` is
 required to be set up in your configuration for this sensor to work.
-It required also to have an temperature sensor in the liquit tank; this can
+It required also to have an temperature sensor in the liquid tank; this can
 be on the same board or external sensor linked to the uFire ISE pH configuration.
 
 .. figure:: images/ufire_ise.png
@@ -23,7 +23,7 @@ be on the same board or external sensor linked to the uFire ISE pH configuration
       - platform: ufire_ise
         id: ufire_ise_board
         temperature:
-          id: temperature_liquit
+          id: temperature_liquid
           name: Temperature
         ph:
           name: pH
@@ -63,7 +63,7 @@ of the calibration high solution.
       - sensor.ufire_ise_board.calibrate_probe_high:
           id: ufire_ise_board
           solution: 7.0
-          temperature: !lambda "return id(temperature_liquit).state;"
+          temperature: !lambda "return id(temperature_liquid).state;"
 
 Configuration options:
 
@@ -91,7 +91,7 @@ of the calibration low solution.
       - sensor.ufire_ise_board.calibrate_probe_low:
           id: ufire_ise_board
           solution: 4.0
-          temperature: !lambda "return id(temperature_liquit).state;"
+          temperature: !lambda "return id(temperature_liquid).state;"
 
 Configuration options:
 

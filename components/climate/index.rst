@@ -15,6 +15,10 @@ and can be put in different modes like ``HEAT``, ``COOL``, ``HEAT_COOL`` or ``OF
 
     Climate Device UI in Home Assistant.
 
+.. note::
+
+    Not all climate components support all possible features. Check the corresponding documentation page for details on what is supported.
+
 .. _config-climate:
 
 Base Climate Configuration
@@ -30,10 +34,20 @@ All climate platforms in ESPHome inherit from the climate configuration schema. 
           min_temperature: 18
           max_temperature: 25
           temperature_step: 0.1
+          min_humidity: 30%
+          max_humidity: 99%
+      - platform: ...
+        visual:
+          min_temperature: 18
+          max_temperature: 25
+          temperature_step:
+            target_temperature: 0.5
+            current_temperature: 0.1
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the climate device.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the climate device. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -55,6 +69,11 @@ Configuration variables:
     - **target_temperature** (**Required**, float): The granularity for target temperature
     - **current_temperature** (**Required**, float): The granularity for current temperature
 
+  - **min_humidity** (*Optional*, percentage): The minimum humidity the climate device can reach.
+    Used to set the range of the frontend gauge.
+  - **max_humidity** (*Optional*, percentage): The maximum humidity the climate device can reach.
+    Used to set the range of the frontend gauge.
+
 Advanced options:
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
@@ -62,11 +81,12 @@ Advanced options:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 MQTT options:
 
@@ -74,6 +94,8 @@ MQTT options:
   climate device action changes to.
 - **current_temperature_state_topic** (*Optional*, string): The topic to publish
   current temperature changes to.
+- **current_humidity_state_topic** (*Optional*, string): The topic to publish
+  current humidity changes to.
 - **fan_mode_state_topic** (*Optional*, string): The topic to publish
   fan mode changes to.
 - **fan_mode_command_topic** (*Optional*, string): The topic to receive
@@ -102,18 +124,11 @@ MQTT options:
   lower target temperature changes to.
 - **target_temperature_low_command_topic** (*Optional*, string): The topic to receive
   lower target temperature commands on.
+- **target_humidity_state_topic** (*Optional*, string): The topic to publish
+  target humidity changes to.
+- **target_humidity_command_topic** (*Optional*, string): The topic to receive
+  target humidity commands on.
 - All other options from :ref:`MQTT Component <config-mqtt-component>`.
-
-.. code-block:: yaml
-
-    climate:
-      - platform: ...
-        visual:
-          min_temperature: 18
-          max_temperature: 25
-          temperature_step:
-            target_temperature: 0.5
-            current_temperature: 0.1
 
 Climate Automation
 ------------------
@@ -152,6 +167,8 @@ Configuration variables:
   lower target temperature of a climate device with a two-point target temperature.
 - **target_temperature_high** (*Optional*, float, :ref:`templatable <config-templatable>`): Set the
   higher target temperature of a climate device with a two-point target temperature.
+- **target_humidity** (*Optional*, float, :ref:`templatable <config-templatable>`): Set the
+  target humidity of a climate device.
 - **preset** (*Optional*, string, :ref:`templatable <config-templatable>`): Set the preset
   of the climate device. One of ``ECO``, ``AWAY``, ``BOOST``, ``COMFORT``, ``HOME``, ``SLEEP``,
   ``ACTIVITY``.
@@ -181,12 +198,16 @@ advanced stuff.
       id(my_climate).mode
       // Current temperature, type: float (degrees)
       id(my_climate).current_temperature
+      // Current humidity, type: float (percentage)
+      id(my_climate).current_humidity
       // Target temperature, type: float (degrees)
       id(my_climate).target_temperature
       // Lower Target temperature, type: float (degrees)
       id(my_climate).target_temperature_low
       // High Target temperature, type: float (degrees)
       id(my_climate).target_temperature_high
+      // Target humidity, type: float (percentage)
+      id(my_climate).target_humidity
       // Fan mode, type: FanMode (enum)
       id(my_climate).fan_mode
       // Custom Fan mode, type: string

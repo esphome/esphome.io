@@ -34,7 +34,7 @@ To additionally display signal strength in percentage use the :ref:`copy-sensor`
         id: wifi_signal_db
         update_interval: 60s
         entity_category: "diagnostic"
-        
+
       - platform: copy # Reports the WiFi signal strength in %
         source_id: wifi_signal_db
         name: "WiFi Signal Percent"
@@ -47,10 +47,8 @@ To additionally display signal strength in percentage use the :ref:`copy-sensor`
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the WiFi signal sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. warning::

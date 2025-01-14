@@ -1,16 +1,16 @@
-Inkplate 6, 10 and 6 Plus
-=========================
+Inkplate 5, 6, 10 and 6 Plus
+============================
 
 .. seo::
     :description: Instructions for setting up Inkplate E-Paper displays in ESPHome.
     :image: inkplate6.jpg
 
-All-in-one e-paper display ``Inkplate 6``, ``Inkplate 10`` and ``Inkplate 6 Plus``.
+All-in-one e-paper display ``Inkplate 5``, ``Inkplate 6``, ``Inkplate 10`` and ``Inkplate 6 Plus``.
 
-The Inkplate 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
+The Inkplate 5, 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
 recycled from a Kindle e-reader. Its main feature is simplicity.
 
-Learn more at `Inkplate's website <https://inkplate.io/>`__
+Learn more at `Inkplate's documentation website <https://inkplate.readthedocs.io/en/stable/>`__
 
 .. figure:: images/inkplate6.jpg
     :align: center
@@ -144,6 +144,7 @@ Wi-Fi, API, and OTA configuration.
     captive_portal:
 
     ota:
+      platform: esphome
 
     api:
 
@@ -179,7 +180,7 @@ Wi-Fi, API, and OTA configuration.
       - platform: adc
         id: battery_voltage
         update_interval: never
-        attenuation: 11db
+        attenuation: 12db
         pin: 35
       - platform: template
         name: "Inkplate Battery Voltage"
@@ -282,7 +283,7 @@ Inkplate 6 Plus Touchscreen
 ***************************
 
 The Inkplate 6 Plus has a built in touchscreen supported by ESPHome. Note you need to enable pin 12 on the mcp23017 to enable the touchscreen
-Below is a config example with touchscreen power swtich:
+Below is a config example with touchscreen power switch:
 
 .. code-block:: yaml
 
@@ -379,70 +380,27 @@ Below is a config example:
         pca6416a: pca6416a_hub
         number: 5
 
-inkplate 10
+
+Inkplate 5
 ***************************
 
-The Inkplate 20 has a configuration similar to 6, except has 2 expaners and the battery read mosfet is not inverted.  Also some versions have an embedded RTC to aid in clock sync.
+The Inkplate 5 has nearly the same configuration as inkplate 6 v2.
 Below is a config example:
 
 .. code-block:: yaml
 
-  time:
-    - platform: pcf85063
-      id: esptime
-      # repeated synchronization is not necessary unless the external RTC
-      # is much more accurate than the internal clock
-      update_interval: never
-    - platform: homeassistant
-      # instead try to synchronize via network repeatedly ...
-      on_time_sync:
-        then:
-          # ... and update the RTC when the synchronization was successful
-          pcf85063.write_time:
+    # Example minimal configuration entry
+    pca6416a:
+      - id: pca6416a_hub
+        address: 0x20
 
-  pca6416a:
-    - id: pca6416a_hub
-      address: 0x20
-    - id: pca6416a_hub2
-      address: 0x21
-
-  switch:
-    - platform: restart
-      name: "Inkplate Reboot"
-      id: reboot
-
-    - platform: gpio
-      id: battery_read_mosfet
-      pin:
-        pca6416a: pca6416a_hub
-        number: 9
-
-  sensor:
-    - platform: adc
-      id: battery_voltage
-      update_interval: never
-      attenuation: 12db
-      pin: 35
-    - platform: template
-      name: "Inkplate Battery Voltage"
-      unit_of_measurement: "V"
-      accuracy_decimals: 3
-      lambda: |-
-        id(battery_read_mosfet).turn_on();
-        delay(1);
-        float adc = id(battery_voltage).sample();
-        id(battery_read_mosfet).turn_off();
-        return adc;
-      filters:
-        - multiply: 2 # for voltage divider
-
-  display:
-    - platform: inkplate6
+    display:
+    - platform: inkplate5
       id: inkplate_display
       greyscale: true
       partial_updating: false
       update_interval: never
-      model: inkplate_10  
+      model: inkplate_5_v2
 
       ckv_pin: 32
       sph_pin: 33

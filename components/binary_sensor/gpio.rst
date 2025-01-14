@@ -5,7 +5,7 @@ GPIO Binary Sensor
 
 .. seo::
     :description: Instructions for setting up GPIO binary sensors with ESPHome.
-    :image: pin.svg
+    :image: gpio.svg
 
 The GPIO Binary Sensor platform allows you to use any input pin on your
 device as a binary sensor.
@@ -27,8 +27,6 @@ Configuration variables:
 ------------------------
 
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to periodically check.
-- **name** (**Required**, string): The name of the binary sensor.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 Activating internal pullups

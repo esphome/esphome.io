@@ -37,6 +37,7 @@ The tone generator needs a PWM capable output to work with, currently only the
     rtttl:
       output: rtttl_out
       id: my_rtttl
+      gain: 60%
 
 Overview Using the I2S speaker
 ------------------------------
@@ -54,6 +55,7 @@ The tone generator can instead be used with a :doc:`Speaker </components/speaker
     rtttl:
       speaker: my_speaker
       id: my_rtttl
+      gain: 0.8
 
 Configuration variables:
 ------------------------
@@ -62,6 +64,7 @@ Configuration variables:
   this buzzer.
 - **speaker** (**Exclusive**, :ref:`config-id`): The id of the :ref:`speaker <i2s_audio>` to play the song on.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **gain** (*Optional*, Percentage): With this value you can set the volume of the sound.
 - **on_finished_playback** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when playback is finished.
 
@@ -124,7 +127,7 @@ Common beeps
 
 You can do your own beep patterns too! Here's a short collection so you can just use right away or tweak them to your like:
 
-.. code-block:: 
+.. code-block::
 
     two_short:d=4,o=5,b=100:16e6,16e6
     long:d=1,o=5,b=100:e6
@@ -162,7 +165,7 @@ Sample code
 
     output:
       - platform: esp8266_pwm
-        pin: D1
+        pin: GPIOXX
         id: rtttl_out
 
     rtttl:
@@ -171,8 +174,8 @@ Sample code
         - logger.log: 'Song ended!'
 
     api:
-      services:
-        - service: play_rtttl
+      actions:
+        - action: play_rtttl
           variables:
             song_str: string
           then:

@@ -28,22 +28,11 @@ global ``sm16716`` hub and give it an id, and then define the
 
     # Example configuration entry
     sm16716:
-      data_pin: GPIO14
-      clock_pin: GPIO4
+      data_pin: GPIOXX
+      clock_pin: GPIOXX
       num_channels: 3
       num_chips: 1
 
-    # Individual outputs
-    output:
-      - platform: sm16716
-        id: output_red
-        channel: 0
-      - platform: sm16716
-        id: output_green
-        channel: 1
-      - platform: sm16716
-        id: output_blue
-        channel: 2
 
 Configuration variables:
 ************************
@@ -68,13 +57,6 @@ The SM16716 output component exposes a SM16716 channel of a global
 :ref:`sm16716-component` as a float output.
 
 .. code-block:: yaml
-
-    # Example configuration entry
-    sm16716:
-      data_pin: GPIO14
-      clock_pin: GPIO4
-      num_channels: 3
-      num_chips: 1
 
     # Individual outputs
     output:
@@ -111,8 +93,8 @@ A complete configuration for a Feit Electric A19 looks like:
 .. code-block:: yaml
 
     esphome:
-      name: REPLACEME
-      friendly_name: REPLACEME
+      name: GPIOXX
+      friendly_name: GPIOXX
 
     esp8266:
       board: esp01_1m
@@ -126,6 +108,7 @@ A complete configuration for a Feit Electric A19 looks like:
     logger:
 
     ota:
+      platform: esphome
 
     sm16716:
       data_pin: GPIO14
@@ -174,7 +157,7 @@ A complete configuration for a Feit Electric A19 looks like:
     The white LEDs are much brighter than the color LEDs and will fully overpower
     the set color when the white level is set even a little bit high. You will need
     to set the white level to 0 in order to get usable colors from this bulb.
-    
+
 Alternative Costco Feit A19 RGBCT bulb configuration:
 
 .. code-block:: yaml
@@ -224,8 +207,8 @@ Alternative Costco Feit A19 RGBCT bulb configuration:
     power_supply:
       - id: rgb_power
         pin: GPIO13
-    
-    
+
+
 See Also
 --------
 

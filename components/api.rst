@@ -19,6 +19,13 @@ The ESPHome native API is based on a custom TCP protocol using protocol buffers.
 the protocol data structure definitions here: `api.proto <https://github.com/esphome/esphome/blob/dev/esphome/components/api/api.proto>`__
 A Python library that implements this protocol is `aioesphomeapi <https://github.com/esphome/aioesphomeapi>`__.
 
+.. note::
+
+    **Actions** were previously called **Services**. ESPHome changed the name in line with
+    `Home Assistant <https://developers.home-assistant.io/blog/2024/07/16/service-actions/>`__
+    but will continue to support YAML with ``services`` and ``homeassistant.service`` for the foreseeable future.
+    Documentation will only refer to **Actions**.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -60,7 +67,7 @@ Configuration variables:
           document.getElementById("api-key").value = bytesArrToBase64(array);
         </script>
 
-- **services** (*Optional*, list): A list of user-defined services. See :ref:`api-services`.
+- **actions** (*Optional*, list): A list of user-defined actions. See :ref:`api-device-actions`.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
@@ -75,19 +82,34 @@ Configuration variables:
 
 .. _api-actions:
 
-.. note::
-
-    Before a newly added ESPHome device can interact with the Home Assistant API it needs to be allowed to communicate
-    with it. This setting can be found in the ESPHome integration (NOT in the Add-On) by clicking "CONFIGURE" for
-    that device and enabling the "Allow device to make service calls" option.
-
 Actions
 -------
+
+Before using any of the actions below, you'll need to tell Home Assistant to allow your device to
+perform actions.
+
+Open the ESPHome integration page on your Home Assistant instance:
+
+.. raw:: html
+
+    <a href="https://my.home-assistant.io/redirect/integration/?domain=esphome" target="_blank" rel="noreferrer noopener"><img src="https://my.home-assistant.io/badges/integration.svg" alt="Open your Home Assistant instance and show an integration." /></a>
+
+Then:
+
+#. Find your device in the device list
+#. Click the "configure" button next to it
+#. Check the "Allow the device to perform Home Assistant actions" box
+#. Then click "submit".
 
 .. _api-homeassistant_event_action:
 
 ``homeassistant.event`` Action
 ******************************
+
+.. note::
+
+    Be sure to :ref:`follow the instructions above <api-actions>` to tell Home Assistant to allow
+    your device to perform actions.
 
 When using the native API with Home Assistant, you can create events in the Home Assistant event bus
 straight from ESPHome :ref:`Automations <automation>`.
@@ -112,26 +134,30 @@ Configuration variables:
 - **variables** (*Optional*, mapping): Optional variables that can be used in the ``data_template``.
   Values are :ref:`lambdas <config-lambda>` and will be evaluated before sending the request.
 
-.. _api-homeassistant_service_action:
+.. _api-homeassistant_action-action:
 
-``homeassistant.service`` Action
+``homeassistant.action`` Action
 ********************************
 
-When using the native API with Home Assistant, you can create Home Assistant service
-calls straight from ESPHome :ref:`Automations <automation>`.
+.. note::
+
+    Be sure to :ref:`follow the instructions above <api-actions>` to tell Home Assistant to allow
+    your device to perform actions.
+
+When using the native API with Home Assistant, you can perform Home Assistant actions straight from ESPHome :ref:`Automations <automation>`.
 
 .. code-block:: yaml
 
     # In some trigger
     on_...:
       # Simple
-      - homeassistant.service:
-          service: notify.html5
+      - homeassistant.action:
+          action: notify.html5
           data:
             message: Button was pressed
       # With templates and variables
-      - homeassistant.service:
-          service: notify.html5
+      - homeassistant.action:
+          action: notify.html5
           data:
             title: New Humidity
           data_template:
@@ -143,10 +169,10 @@ calls straight from ESPHome :ref:`Automations <automation>`.
 Configuration variables:
 ````````````````````````
 
-- **service** (**Required**, string): The Home Assistant `Service <https://www.home-assistant.io/docs/scripts/service-calls/>`__
-  to call.
-- **data** (*Optional*, mapping): Optional *static* data to pass along with the service call.
-- **data_template** (*Optional*, mapping): Optional template data to pass along with the service call.
+- **action** (**Required**, string): The Home Assistant `Action <https://www.home-assistant.io/docs/scripts/service-calls/>`__
+  to perform.
+- **data** (*Optional*, mapping): Optional *static* data to perform the action with.
+- **data_template** (*Optional*, mapping): Optional template data to perform the action with.
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
 - **variables** (*Optional*, mapping): Optional variables that can be used in the ``data_template``.
   Values are :ref:`lambdas <config-lambda>` and will be evaluated before sending the request.
@@ -162,7 +188,7 @@ the parameters in plain format.
       set_light_rgb:
         alias: 'ESPHome RGB light set'
         sequence:
-        - service: light.turn_on
+        - action: light.turn_on
           data_template:
             entity_id: '{{ light_name }}'
             rgb_color:
@@ -176,8 +202,8 @@ Then, in ESPHome:
 
     # In some trigger
     on_...:
-      - homeassistant.service:
-          service: script.set_light_rgb
+      - homeassistant.action:
+          action: script.set_light_rgb
           data:
             light_name: 'my_light'
             red: '255'
@@ -188,6 +214,11 @@ Then, in ESPHome:
 
 ``homeassistant.tag_scanned`` Action
 ************************************
+
+.. note::
+
+    Be sure to :ref:`follow the instructions above <api-actions>` to tell Home Assistant to allow
+    your device to make action calls.
 
 When using the native API with Home Assistant, you can push tag_scanned to Home Assistant
 straight from ESPHome :ref:`Automations <automation>`.
@@ -264,27 +295,27 @@ if logs are shown remotely.
         then:
           - logger.log: API is connected!
 
-.. _api-services:
+.. _api-device-actions:
 
-User-defined Services
----------------------
+User-defined Actions
+--------------------
 
-It is also possible to get data from Home Assistant to ESPHome with user-defined services.
-When you declare services in your ESPHome YAML file, they will automatically show up in
+It is also possible to get data from Home Assistant to ESPHome with user-defined actions.
+When you declare actions in your ESPHome YAML file, they will automatically show up in
 Home Assistant and you can call them directly.
 
 .. code-block:: yaml
 
     # Example configuration entry
     api:
-      services:
-        - service: start_laundry
+      actions:
+        - action: start_laundry
           then:
             - switch.turn_on: relay
             - delay: 3h
             - switch.turn_off: relay
 
-For example with the configuration seen above, after uploading you will see a service
+For example with the configuration seen above, after uploading you will see an action
 called ``esphome.livingroom_start_laundry`` (livingroom is the node name) which you can
 then call.
 
@@ -294,8 +325,8 @@ Additionally, you can also transmit data from Home Assistant to ESPHome with thi
 
     # Example configuration entry
     api:
-      services:
-        - service: start_effect
+      actions:
+        - action: start_effect
           variables:
             my_brightness: int
             my_effect: string
@@ -306,18 +337,18 @@ Additionally, you can also transmit data from Home Assistant to ESPHome with thi
                 effect: !lambda 'return my_effect;'
 
 Using the ``variables`` key you can tell ESPHome which variables to expect from Home Assistant.
-For example the service seen above would be executed with something like this:
+For example the action seen above would be executed with something like this:
 
 .. code-block:: yaml
 
-    # Example Home Assistant Service Call
-    service: esphome.livingroom_start_effect
+    # Example Home Assistant Action
+    action: esphome.livingroom_start_effect
     data_template:
       my_brightness: "{{ states.brightness.state }}"
       my_effect: "Rainbow"
 
 Then each variable you define in the ``variables`` section is accessible in the automation
-triggered by the user-defined service through the name you gave it in the variables section
+triggered by the user-defined action through the name you gave it in the variables section
 (note: this is a local variable, so do not wrap it in ``id(...)`` to access it).
 
 There are currently 4 types of variables:

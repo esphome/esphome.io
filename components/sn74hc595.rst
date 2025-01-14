@@ -32,10 +32,10 @@ Over GPIO
     # Example configuration entry
     sn74hc595:
       - id: 'sn74hc595_hub'
-        data_pin: D5
-        clock_pin: D8
-        latch_pin: D7
-        oe_pin: D6
+        data_pin: GPIOXX
+        clock_pin: GPIOXX
+        latch_pin: GPIOXX
+        oe_pin: GPIOXX
         sr_count: 2
 
     # Individual outputs
@@ -58,27 +58,35 @@ Configuration variables:
 - **oe_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC595 OE pin
 - **sr_count** (*Optional*, int): Number of daisy-chained shift registers, up-to 256. Defaults to ``1``.
 
-
-Pin configuration variables:
-****************************
-
-- **sn74hc595** (**Required**, :ref:`config-id`): The id of the SN74HC595 component the pin belongs to.
-- **number** (**Required**, int): The pin number.
-- **inverted** (*Optional*, boolean): If all written values should be treated as inverted.
-  Defaults to ``false``.
-
 Over SPI
 --------
 
 .. code-block:: yaml
 
     # Example configuration entry
-    spi:
     sn74hc595:
       - id: 'sn74hc595_hub'
-        latch_pin: D7
-        oe_pin: D6
+        type: spi
+        latch_pin: GPIOXX
+        oe_pin: GPIOXX
         sr_count: 2
+
+
+Configuration variables:
+************************
+
+- **id** (**Required**, :ref:`config-id`): The id to use for this SN74HC595 component.
+- **spi_id** (**Required**, :ref:`SPI Bus Schema <spi>`): The SPI bus to use. This will automatically be set to the ID of the SPI bus if there is only one.
+- **type** (**Required**, string): Must be ``spi``.
+- **latch_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC595 RCLK (ST_CP) pin
+- **oe_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC595 OE pin
+- **sr_count** (*Optional*, int): Number of daisy-chained shift registers, up to 256. Defaults to ``1``.
+
+
+Pin configuration
+-----------------
+
+.. code-block:: yaml
 
     # Individual outputs
     switch:
@@ -90,17 +98,6 @@ Over SPI
           number: 0
           inverted: false
 
-Configuration variables:
-************************
-
-- **id** (**Required**, :ref:`config-id`): The id to use for this SN74HC595 component.
-- **latch_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC595 RCLK (ST_CP) pin
-- **oe_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC595 OE pin
-- **sr_count** (*Optional*, int): Number of daisy-chained shift registers, up to 256. Defaults to ``1``.
-
-
-Pin configuration variables:
-****************************
 
 - **sn74hc595** (**Required**, :ref:`config-id`): The id of the SN74HC595 component of the pin.
 - **number** (**Required**, int): The pin number.

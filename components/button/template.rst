@@ -20,13 +20,11 @@ it will automatically appear in Home Assistant as a button and can be controlled
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the switch.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- All other options from :ref:`Button <config-button>`.
+- All options from :ref:`Button <config-button>`.
 
 See Also
 --------
 
-- :doc:`/guides/automations`
+- :doc:`/automations/index`
 - :doc:`/components/button/index`
 - :ghedit:`Edit`

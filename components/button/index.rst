@@ -40,7 +40,8 @@ All buttons in ESPHome have a name and an optional icon.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the button.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name for the button. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -57,8 +58,9 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options. Set to ``""`` to remove the default entity category.
 - **device_class** (*Optional*, string): The device class for the button.
-  See https://developers.home-assistant.io/docs/core/entity/button/#available-device-classes
+  See https://www.home-assistant.io/integrations/button/#device-class
   for a list of available options.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations:
 

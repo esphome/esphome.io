@@ -53,6 +53,8 @@ Configuration variables:
 
 - **sensor** (**Required**, :ref:`config-id`): The sensor that is used to measure the current
   temperature.
+- **humidity_sensor** (**Optional**, :ref:`config-id`): If specified, this sensor is used to measure the current humidity.
+  This is used for information only and does not influence temperature control.
 - **default_target_temperature** (**Required**, float): The default target temperature (setpoint)
   for the control algorithm. This can be dynamically set in the frontend later.
 - **heat_output** (*Optional*, :ref:`config-id`): The ID of a :ref:`float output <config-output>`
@@ -407,7 +409,6 @@ the calculated PID parameters to help finding good PID values.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the sensor
 - **type** (**Required**, string): The value to monitor. One of
 
   - ``RESULT`` - The resulting value (sum of P, I, and D terms).
@@ -420,6 +421,8 @@ Configuration variables:
   - ``KP`` - The current factor for the proportional term of the PID controller.
   - ``KI`` - The current factor for the integral term of the PID controller.
   - ``KD`` - The current factor for the differential term of the PID controller.
+
+- All other options from :ref:`Sensor <config-sensor>`.
 
 Advanced options:
 

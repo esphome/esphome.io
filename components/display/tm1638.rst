@@ -23,9 +23,9 @@ The module can be powered with 5v DC. To display the colon punctuation use the
     display:
         platform: tm1638
         id: tm1638_display
-        stb_pin: 5
-        clk_pin: 18
-        dio_pin: 23
+        stb_pin: GPIOXX
+        clk_pin: GPIOXX
+        dio_pin: GPIOXX
         intensity: 5
         update_interval: 5s
         lambda: |-
@@ -113,9 +113,9 @@ The following example creates a typical digital clock with the ``:`` colon flash
 
     display:
       platform: tm1638
-      clk_pin: 18
-      dio_pin: 23
-      stb_pin: 5
+      clk_pin: GPIOXX
+      dio_pin: GPIOXX
+      stb_pin: GPIOXX
       update_interval: 500ms
       lambda: |-
           static int i = 0;
@@ -132,16 +132,16 @@ The TM1638 7 Segment Display Keypad & LED Module has 8 LED lights across the top
 
 .. code-block:: yaml
 
-    switch:                 
+    switch:
       - platform: tm1638
         id: TM1638Led1
         led: 0
-        
+
     output:
       - platform: tm1638
         id: TM1638Led2
         led: 1
-    
+
 
 
 Buttons
@@ -163,7 +163,7 @@ The TM1638 7 Segment Display Keypad & LED Module has 8 buttons across the top or
         on_release:
          then:
             - switch.turn_off: TM1638Led1
-                   
+
       - platform: tm1638
         name: "TM1638 Button 2"
         id: TM1638Button2

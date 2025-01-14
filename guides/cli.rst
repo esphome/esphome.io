@@ -39,6 +39,7 @@ ESPHome's command line interface always has the following format
 .. option:: -v|--verbose
 
     Enable verbose esphome logs.
+    Can also be enabled via environment variable ``ESPHOME_VERBOSE=true``.
 
 ``--quiet`` Option
 ------------------
@@ -140,7 +141,7 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
 .. program:: esphome clean-mqtt
 
 The ``esphome clean-mqtt <CONFIG>`` cleans retained MQTT discovery messages from the MQTT broker.
-See :ref:`mqtt-using_with_home_assistant`.
+See :ref:`mqtt-using_with_home_assistant_entities`.
 
 .. option:: --topic TOPIC
 
@@ -197,9 +198,18 @@ The ``esphome dashboard <CONFIG>`` command starts the ESPHome dashboard server f
 through a graphical user interface. This command accepts a configuration directory instead of a
 single configuration file.
 
+.. option:: --address ADDRESS
+
+    Manually set the address to bind to (defaults to 0.0.0.0)
+
 .. option:: --port PORT
 
     Manually set the HTTP port to open connections on (defaults to 6052)
+
+.. option:: --socket SOCKET
+
+    Manually set the unix socket to bind to. If specified along with ``--address`` or ``--port`` the values
+    for those parameters will be ignored. Cannot be used along with ``--systemd-socket``.
 
 .. option:: --username USERNAME
 
@@ -211,7 +221,8 @@ single configuration file.
 
 .. option:: --open-ui
 
-    If set, opens the dashboard UI in a browser once the server is up and running.
+    If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
+    ``--socket``.
 
 ``logs`` Command
 ---------------------

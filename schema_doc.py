@@ -85,10 +85,11 @@ PLATFORMS_TITLES = {
     "Microphone": "microphone",
     "Speaker": "speaker",
     "Alarm Control Panel": "alarm_control_panel",
+    "Event": "event",
 }
 
 CUSTOM_DOCS = {
-    "guides/automations": {
+    "components/globals": {
         "Global Variables": "globals.schemas.CONFIG_SCHEMA",
     },
     "guides/configuration-types": {

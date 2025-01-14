@@ -37,7 +37,7 @@ for more information.
     This page refers to version V3 of the PZEM004T.
     For using the older V1 variant of this sensor please see :doc:`pzem004t <pzem004t>`.
 
-The communication with this integration is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
+The communication with this component is done via a :ref:`UART <uart>` using :ref:`Modbus <modbus>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 

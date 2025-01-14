@@ -22,7 +22,7 @@ ADC in your device to measure a voltage on certain pins.
     # Example configuration entry
     sensor:
       - platform: adc
-        pin: A0
+        pin: GPIOXX
         name: "Living Room Brightness"
         update_interval: 60s
 
@@ -31,13 +31,12 @@ Configuration variables:
 
 - **pin** (**Required**, :ref:`config-pin`): The pin to measure the voltage on.
   Or on the ESP8266 or Raspberry Pi Pico it could alternatively be set to ``VCC``, see :ref:`adc-vcc`.
-- **name** (**Required**, string): The name of the voltage sensor.
 - **attenuation** (*Optional*): Only on ESP32. Specify the ADC
   attenuation to use. See :ref:`adc-esp32_attenuation`. Defaults to ``0db``.
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See :ref:`adc-raw`. Defaults to ``false``.
+- **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if ``attenuation`` is set to ``auto``. Defaults to ``1``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. note::
@@ -62,8 +61,8 @@ ESP32 Attenuation
 -----------------
 
 On the ESP32 the voltage measured with the ADC caps out at ~1.1V by default as the sensing range (attenuation of the ADC) is set to ``0db`` by default.
-Measuring higher voltages requires setting ``attenuation`` to one of the following values: ``0db``, ``2.5db``, ``6db``, ``11db``.
-There's more information `at the manufacturer's website <https://docs.espressif.com/projects/esp-idf/en/v4.4.2/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t>`__.
+Measuring higher voltages requires setting ``attenuation`` to one of the following values: ``0db``, ``2.5db``, ``6db``, ``12db``.
+There's more information `at the manufacturer's website <https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t>`__.
 
 To simplify this, we provide the setting ``attenuation: auto`` for an automatic/seamless transition among scales. `Our implementation
 <https://github.com/esphome/esphome/blob/dev/esphome/components/adc/adc_sensor.cpp>`__ combines all available ranges to allow the best resolution without having to compromise on a specific attenuation.
@@ -117,7 +116,7 @@ For users that don't need a precise voltage reading, the "raw" output option all
       - multiply: 0.00026862 # 1.1/4095, for attenuation 0db
       - multiply: 0.00036630 # 1.5/4095, for attenuation 2.5db
       - multiply: 0.00053724 # 2.2/4095, for attenuation 6db
-      - multiply: 0.00095238 # 3.9/4095, for attenuation 11db
+      - multiply: 0.00095238 # 3.9/4095, for attenuation 12db
       # your existing filters would go here
 
 Note we don't recommend this method as it will change between chips, and newer ESP32 modules have different ranges (i.e. 0-8191); it is better to use the new calibrated voltages and update any existing filters accordingly.
@@ -188,7 +187,7 @@ You can only use as many ADC sensors as your device can support. The ESP8266 onl
 Measuring battery voltage on the Firebeetle ESP32-E
 ---------------------------------------------------
 
-This board has a internal voltage divider and the battery voltage can easily be measured like this using 11dB attenuation
+This board has a internal voltage divider and the battery voltage can easily be measured like this using 12dB attenuation
 on GPIO34.
 
 .. code-block:: yaml
@@ -198,7 +197,8 @@ on GPIO34.
       pin: GPIO34
       accuracy_decimals: 2
       update_interval: 60s
-      attenuation: 11dB
+      attenuation: 12dB
+      samples: 10
       filters:
         - multiply: 2.0  # The voltage divider requires us to multiply by 2
 

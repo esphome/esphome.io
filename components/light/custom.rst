@@ -1,21 +1,27 @@
 Custom Light Output
 ===================
 
+.. seo::
+    :description: Instructions for setting up Custom C++ lights with ESPHome.
+    :image: language-cpp.svg
+    :keywords: C++, Custom
+
 .. warning::
 
-    Custom components are deprecated, not recommended for new configurations
-    and will be removed from ESPHome in a future release.
-    Please look at creating a real ESPHome component and "importing" it into your
-    configuration with :doc:`/components/external_components`.
+    :ref:`Custom Components are deprecated<a_note_about_custom_components>`, not recommended for new configurations and
+    will be removed from ESPHome in the ``2025.1.0`` release. Please look at creating a real ESPHome component and
+    "importing" it into your configuration with :doc:`/components/external_components`.
 
-    You can find some basic documentation on creating your own components
-    at :ref:`contributing_to_esphome`.
+    You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
 
-This integration can be used to create custom lights in ESPHome
-using the C++ (Arduino) API.
+.. warning::
 
-Please first read :doc:`/components/sensor/custom` guide,
-the same principles apply here.
+    While we try to keep the ESPHome YAML configuration options as stable as possible, the ESPHome API is less
+    stable. If something in the APIs needs to be changed in order for something else to work, we will do so.
+
+This component can be used to create custom lights in ESPHome using the C++ (Arduino) API.
+
+Please first read :doc:`/components/sensor/custom` guide, the same principles apply here.
 
 All internal stuff (like effects, transitions etc) is handled by the light core
 and cannot be overridden. Light outputs are only responsible for displaying some state

@@ -52,7 +52,7 @@ minute, the indicator will be on.
 
     switch:
       - platform: gpio
-        pin: GPIO22
+        pin: GPIOXX
         id: led
 
     script:

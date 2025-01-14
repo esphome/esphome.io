@@ -18,15 +18,15 @@ with ESPHome.
 As the communication with the Nextion LCD display is done using UART, you need to have an :ref:`UART bus <uart>`
 in your configuration with ``rx_pin`` both the ``tx_pin`` set to the respective pins on the display.
 The Nextion uses a baud rate of 9600 by default. It may be configured to use a faster speed by adding (for
-example) 
+example)
 
 .. code-block:: c++
 
     baud=115200   // Sets the baud rate to 115200
     bkcmd=0       // Tells the Nextion to not send responses on commands. This is the current default but can be set just in case
 
- 
-  
+
+
 to the ``program.s`` source file (in the Nextion Editor) before the ``page`` line.
 This permits faster communication with the Nextion display and it is highly recommended when using :ref:`uart-hardware_uarts`. Without a hardware uart make sure to set the baud rate to 9600.
 
@@ -36,17 +36,9 @@ The below example configures a UART for the Nextion display to use
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: uart_2
-      rx_pin: GPIO16
-      tx_pin: GPIO17
-      baud_rate: 115200
-
-
     display:
       - platform: nextion
         id: nextion1
-        uart_id: uart_2      
         lambda: |-
           it.set_component_value("gauge", 50);
           it.set_component_text("textview", "Hello World!");
@@ -67,11 +59,17 @@ Configuration variables:
 - **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
 - **wake_up_page** (*Optional*, int): Sets the page to display after waking up
 - **auto_wake_on_touch** (*Optional*, boolean): Sets if Nextion should auto-wake from sleep when touch press occurs.
+- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to ``false``.
+- **skip_connection_handshake** (*Optional*, boolean): Sets whether the initial display connection handshake process is skipped.
+  When set to ``true``, the connection will be established without performing the handshake. This can be useful when using Nextion Simulator.
+  Defaults to ``false``.
 - **on_setup** (*Optional*, :ref:`Action <config-action>`): An action to be performed after ESPHome connects to the Nextion. See :ref:`Nextion Automation <nextion-on_setup>`.
 - **on_sleep** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion goes to sleep. See :ref:`Nextion Automation <nextion-on_sleep>`.
 - **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See :ref:`Nextion Automation <nextion-on_sleep>`.
 - **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See :ref:`Nextion Automation <nextion-on_page>`.
-  
+- **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or release). See :ref:`Nextion Automation <nextion-on_touch>`.
+- **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
+
 .. _display-nextion_lambda:
 
 Rendering Lambda
@@ -111,7 +109,7 @@ Lambda Calls
 ************
 
 Several methods are available for use within :ref:`lambdas <config-lambda>`; these permit advanced functionality beyond simple
-display updates. See the full :apiref:`nextion/nextion.h` for more info. 
+display updates. See the full :apiref:`nextion/nextion.h` for more info.
 
 .. _nextion_upload_tft:
 
@@ -121,10 +119,10 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
   .. code-block:: yaml
 
       api:
-        services:
-          - service: update_nextion
+        actions:
+          - action: update_nextion
             then:
-              - lambda: 'id(nextion1)->upload_tft();' 
+              - lambda: 'id(nextion1)->upload_tft();'
 
 .. _nextion_update_all_components:
 
@@ -157,8 +155,8 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
 
         # Enable Home Assistant API
         api:
-          services:
-            - service: set_nextion_sensor
+          actions:
+            - action: set_nextion_sensor
               variables:
                 nextion_type: int
                 name: string
@@ -166,7 +164,7 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
               then:
                 - lambda: |-
                     id(nextion1).set_nextion_sensor_state(nextion_type,name,state);
-            - service: set_nextion_text
+            - action: set_nextion_text
               variables:
                 name: string
                 state: string
@@ -176,7 +174,7 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
 
 .. _nextion_queue_types:
 
- Queue Types: 
+ Queue Types:
   - SENSOR            0
   - BINARY_SENSOR     1
   - SWITCH            2
@@ -259,12 +257,53 @@ Once you know the page id, it's time to update the components. Two strategies wo
               break;
           }
 
+.. _nextion-on_touch:
+
+``on_touch``
+************
+
+This automation is triggered when a component is pressed or released on the Nextion display.
+
+The following arguments will be available:
+
+  - ``page_id``: Contains the id (integer) of the page where the touch happened.
+
+  - ``component_id``: Contains the id (integer) of the component touched. It's required that the component have "Send Component ID" enabled either for "Touch Press Event" and/or "Touch Release Event".
+
+  - ``touch_event``: It will be ``true`` for a "press" event, or ``false`` for a "release" event.
+
+.. code-block:: yaml
+
+    on_touch:
+      then:
+        lambda: |-
+          ESP_LOGD("nextion.on_touch", "Nextion touch event detected!");
+          ESP_LOGD("nextion.on_touch", "Page Id: %i", page_id);
+          ESP_LOGD("nextion.on_touch", "Component Id: %i", component_id);
+          ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
+
+.. _nextion-on_buffer_overflow:
+
+``on_buffer_overflow``
+**********************
+
+This automation is triggered when the Nextion display reports a serial buffer overflow.
+When this happens, the Nextion's buffer will continue to receive the new instructions, but all previous instructions are lost and the Nextion queue may get out of sync.
+This automation will allow you handle this situation nicelly, like repeating some command to Nextion or restarting the system.
+
+.. code-block:: yaml
+
+    on_buffer_overflow:
+      then:
+        lambda: |-
+          ESP_LOGW("nextion.on_buffer_overflow", "Nextion reported a buffer overflow event!");
+
 .. _nextion_upload_tft_file:
 
 Uploading A TFT File
 --------------------
 This will download the file from the tft_url and will transfer it over the UART to the Nextion.
-Once completed both the ESP and Nextion will reboot. During the upload process esphome will be 
+Once completed both the ESP and Nextion will reboot. During the upload process esphome will be
 unresponsive and no logging will take place. This uses the same protocol as the Nextion editor and
 only updates the changes of the TFT file. If HTTPS/SSL is enabled it will be about 1kB/sec.
 
@@ -277,7 +316,7 @@ To host the TFT file you can use Home Assistant itself or any other web server. 
 
 Home Assistant
 **************
-To host the TFT file from Home Assistant, create a www directory if it doesn't exist in your config 
+To host the TFT file from Home Assistant, create a www directory if it doesn't exist in your config
 directory. You can create a subdirectory for those files as well.
 
 For example if the file is located
@@ -294,8 +333,8 @@ The below NGINX example configuration will serve files out of the /var/www/nexti
 .. code-block:: nginx
 
     server {
-      listen 80;    
-      access_log  /var/log/nginx/nextion_access.log;    
+      listen 80;
+      access_log  /var/log/nginx/nextion_access.log;
       error_log  /var/log/nginx/nextion_error.log;
       root /var/www/nextion;
     }

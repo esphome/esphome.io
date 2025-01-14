@@ -7,7 +7,7 @@ Display Menu
 
 .. _display_menu:
 
-The integration provides a menu primarily intended to be controlled either by a rotary encoder
+The component provides a menu primarily intended to be controlled either by a rotary encoder
 with a button or a five-button joystick controller. It allows to navigate a hierarchy of items
 and submenus with the ability to change the values and execute commands. The menu can
 be activated and deactivated on demand, allowing alternating between using the screen for
@@ -17,8 +17,8 @@ Overview
 --------
 
 This document describes the configuration and automations common for the components implementing
-this integration. At the moment the character based LCD displays are supported using
-the :ref:`lcd_menu <lcd_menu>` integration and an instance of this is used in the configuration
+this component. At the moment the character based LCD displays are supported using
+the :ref:`lcd_menu <lcd_menu>` component and an instance of this is used in the configuration
 examples.
 
 

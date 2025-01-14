@@ -27,7 +27,8 @@ you can always override it.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the binary sensor.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name for the binary sensor. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -35,7 +36,7 @@ Configuration variables:
       you want the binary sensor to use that name, you can set ``name: None``.
 
 - **device_class** (*Optional*, string): The device class for the
-  sensor. See https://developers.home-assistant.io/docs/core/entity/binary-sensor/#available-device-classes
+  sensor. See https://www.home-assistant.io/integrations/binary_sensor/#device-class
   for a list of available options.
 - **icon** (*Optional*, icon): Manually set the icon to use for the binary sensor in the frontend.
 - **filters** (*Optional*, list): A list of filters to apply on the binary sensor values such as
@@ -66,14 +67,15 @@ Advanced options:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **publish_initial_state** (*Optional*, boolean): If true, then the sensor will publish its initial state at boot or when
   HA first connects, depending on the platform.  This means that any applicable triggers will be run. Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
 - If MQTT enabled, all other options from :ref:`MQTT Component <config-mqtt-component>`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 .. _binary_sensor-filters:
 
@@ -207,6 +209,16 @@ Configuration variables:
 Specify any :ref:`lambda <config-lambda>` for more complex filters. The input value from
 the binary sensor is ``x`` and you can return ``true`` for ON, ``false`` for OFF, and ``{}`` to stop
 the filter chain.
+
+``settle``
+**********
+
+(**Required**, time, :ref:`templatable <config-templatable>`): When a signal is received, publish the state
+but wait for the received state to remain the same for specified time period before publishing any
+additional state changes. This filter complements the ``delayed_on_off`` filter but publishes value changes at
+the beginning of the delay period.
+When using a lambda call, you should return the delay value in milliseconds.
+**Useful for debouncing binary switches**.
 
 Binary Sensor Automation
 ------------------------
