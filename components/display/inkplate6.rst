@@ -378,6 +378,95 @@ Below is a config example:
       vcom_pin:
         pca6416a: pca6416a_hub
         number: 5
+
+inkplate 10
+***************************
+
+The Inkplate 20 has a configuration similar to 6, except has 2 expaners and the battery read mosfet is not inverted.  Also some versions have an embedded RTC to aid in clock sync.
+Below is a config example:
+
+.. code-block:: yaml
+
+  time:
+    - platform: pcf85063
+      id: esptime
+      # repeated synchronization is not necessary unless the external RTC
+      # is much more accurate than the internal clock
+      update_interval: never
+    - platform: homeassistant
+      # instead try to synchronize via network repeatedly ...
+      on_time_sync:
+        then:
+          # ... and update the RTC when the synchronization was successful
+          pcf85063.write_time:
+
+  pca6416a:
+    - id: pca6416a_hub
+      address: 0x20
+    - id: pca6416a_hub2
+      address: 0x21
+
+  switch:
+    - platform: restart
+      name: "Inkplate Reboot"
+      id: reboot
+
+    - platform: gpio
+      id: battery_read_mosfet
+      pin:
+        pca6416a: pca6416a_hub
+        number: 9
+
+  sensor:
+    - platform: adc
+      id: battery_voltage
+      update_interval: never
+      attenuation: 12db
+      pin: 35
+    - platform: template
+      name: "Inkplate Battery Voltage"
+      unit_of_measurement: "V"
+      accuracy_decimals: 3
+      lambda: |-
+        id(battery_read_mosfet).turn_on();
+        delay(1);
+        float adc = id(battery_voltage).sample();
+        id(battery_read_mosfet).turn_off();
+        return adc;
+      filters:
+        - multiply: 2 # for voltage divider
+
+  display:
+    - platform: inkplate6
+      id: inkplate_display
+      greyscale: true
+      partial_updating: false
+      update_interval: never
+      model: inkplate_10  
+
+      ckv_pin: 32
+      sph_pin: 33
+      gmod_pin:
+        pca6416a: pca6416a_hub
+        number: 1
+      gpio0_enable_pin:
+        pca6416a: pca6416a_hub
+        number: 8
+      oe_pin:
+        pca6416a: pca6416a_hub
+        number: 0
+      spv_pin:
+        pca6416a: pca6416a_hub
+        number: 2
+      powerup_pin:
+        pca6416a: pca6416a_hub
+        number: 4
+      wakeup_pin:
+        pca6416a: pca6416a_hub
+        number: 3
+      vcom_pin:
+        pca6416a: pca6416a_hub
+        number: 5
         
 See Also
 --------
