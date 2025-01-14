@@ -451,8 +451,10 @@ Below is a config example:
     pca6416a:
       - id: pca6416a_hub
         address: 0x20
+        # Primary expander for display control and additional I/O
       - id: pca6416a_hub2
         address: 0x21
+        # Secondary expander for additional I/O
 
     switch:
       - platform: restart
@@ -476,13 +478,17 @@ Below is a config example:
         unit_of_measurement: "V"
         accuracy_decimals: 3
         lambda: |-
+          // Enable MOSFET to connect battery voltage divider
           id(battery_read_mosfet).turn_on();
-          delay(1);
+          // Wait for voltage to stabilize
+          delay(5);
+          // Sample ADC value
           float adc = id(battery_voltage).sample();
+          // Disable MOSFET to save power
           id(battery_read_mosfet).turn_off();
           return adc;
         filters:
-          - multiply: 2 # for voltage divider
+          - multiply: 2 # Compensate for voltage divider (1:2 ratio)
 
     display:
       - platform: inkplate6
