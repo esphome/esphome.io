@@ -427,10 +427,10 @@ Below is a config example:
         number: 5
         
 
-inkplate 10
+Inkplate 10
 ***************************
 
-The Inkplate 20 has a configuration similar to 5 and 6, except has 2 expaners and the battery read mosfet is not inverted.  Also some versions have an embedded RTC to aid in clock sync.
+The Inkplate 10 has a configuration similar to 5 and 6, except it has 2 expanders and the battery read MOSFET is not inverted. Also, some versions have an embedded RTC to aid in clock sync.
 Below is a config example:
 
 .. code-block:: yaml
