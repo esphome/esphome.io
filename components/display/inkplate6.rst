@@ -457,10 +457,6 @@ Below is a config example:
         # Secondary expander for additional I/O
 
     switch:
-      - platform: restart
-        name: "Inkplate Reboot"
-        id: reboot
-
       - platform: gpio
         id: battery_read_mosfet
         pin:
