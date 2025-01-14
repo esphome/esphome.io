@@ -5,33 +5,40 @@ Nextion TFT LCD Display
     :description: Instructions for setting up Nextion TFT LCD displays
     :image: nextion.jpg
 
-The ``nextion`` display platform allows you to use Nextion LCD displays (`datasheet <https://nextion.itead.cc/resources/datasheets/>`__,
-`iTead <https://www.itead.cc/display/nextion.html>`__)
+The ``nextion`` display platform allows you to use Nextion LCD displays
+(`datasheet <https://nextion.itead.cc/resources/datasheets/>`__, `iTead <https://www.itead.cc/display/nextion.html>`__)
 with ESPHome.
 
 .. figure:: images/nextion-full.jpg
     :align: center
     :width: 75.0%
 
-    Nextion LCD Display.
+    Nextion display
 
-As the communication with the Nextion LCD display is done using UART, you need to have an :ref:`UART bus <uart>`
-in your configuration with ``rx_pin`` both the ``tx_pin`` set to the respective pins on the display.
-The Nextion uses a baud rate of 9600 by default. It may be configured to use a faster speed by adding (for
-example)
+Communication with the Nextion display is done via a serial interface, so you'll need to have a :ref:`uart`
+in your configuration with both ``rx_pin`` and ``tx_pin`` configured. These pins must then be connected to the
+respective pins on the display.
+
+Nextion displays use a baud rate of 9600 by default. You may configure the Nextion display to use a higher speed by
+editing the ``program.s`` source file in the Nextion Editor. For example:
 
 .. code-block:: c++
 
-    baud=115200   // Sets the baud rate to 115200
+    baud=115200   // Sets the baud rate to 115200; for other supported rates, see https://nextion.tech/instruction-set/
     bkcmd=0       // Tells the Nextion to not send responses on commands. This is the current default but can be set just in case
 
+This permits faster communication with the Nextion display and it is highly recommended when using
+:ref:`uart-hardware_uarts`.
 
+.. warning::
 
-to the ``program.s`` source file (in the Nextion Editor) before the ``page`` line.
-This permits faster communication with the Nextion display and it is highly recommended when using :ref:`uart-hardware_uarts`. Without a hardware uart make sure to set the baud rate to 9600.
+    **We highly recommend using only** :ref:`uart-hardware_uarts` **with Nextion displays.**
+    
+    *Use of software UARTs is known to result in unpredictable/inconsistent behavior.*
 
-
-The below example configures a UART for the Nextion display to use
+    If you **must** use a software UART, note that baud rates greater than 9600 are extremely likely to cause problems.
+    
+    In short, avoid using software UARTs with Nextion displays.
 
 .. code-block:: yaml
 
@@ -46,41 +53,53 @@ The below example configures a UART for the Nextion display to use
 Configuration variables:
 ------------------------
 
-- **uart_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`UART bus <uart>` you wish to use for this display.
-  Use this if you want to use multiple UART buses at once.
-- **brightness** (*Optional*, percentage): Set display brightness in %. Defaults to ``100%``
-- **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the nextion display.
-  See :ref:`display-nextion_lambda` for more information. This is typically empty. The individual components for the Nextion will handle almost all features needed for updating
+- **uart_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`uart` you wish to use for this display. Specify this
+  when you have multiple UART configurations.
+- **brightness** (*Optional*, percentage): When specified, the display brightness will be set to this value at boot.
+- **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the Nextion
+  display. See :ref:`display-nextion_lambda` for more information. This is typically empty. The individual components
+  for the Nextion will handle almost all functions needed for updating display elements.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to call the lambda to update the display.
   Defaults to ``5s``.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **tft_url** (*Optional*, string): The URL to download the TFT file from for updates. See :ref:`Nextion Upload <nextion_upload_tft>`.
+- **tft_url** (*Optional*, string): The URL from which to download the TFT file for display firmware updates (Nextion
+  OTA). See :ref:`Nextion Upload <nextion_upload_tft>`.
 - **touch_sleep_timeout** (*Optional*, int): Sets internal No-touch-then-sleep timer in seconds.
-- **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
-- **wake_up_page** (*Optional*, int): Sets the page to display after waking up
-- **auto_wake_on_touch** (*Optional*, boolean): Sets if Nextion should auto-wake from sleep when touch press occurs.
-- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to ``false``.
-- **skip_connection_handshake** (*Optional*, boolean): Sets whether the initial display connection handshake process is skipped.
-  When set to ``true``, the connection will be established without performing the handshake. This can be useful when using Nextion Simulator.
-  Defaults to ``false``.
-- **on_setup** (*Optional*, :ref:`Action <config-action>`): An action to be performed after ESPHome connects to the Nextion. See :ref:`Nextion Automation <nextion-on_setup>`.
-- **on_sleep** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion goes to sleep. See :ref:`Nextion Automation <nextion-on_sleep>`.
-- **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See :ref:`Nextion Automation <nextion-on_sleep>`.
-- **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See :ref:`Nextion Automation <nextion-on_page>`.
-- **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or release). See :ref:`Nextion Automation <nextion-on_touch>`.
-- **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
+- **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (The Nextion will
+  display page 0 upon start-up by default).
+- **wake_up_page** (*Optional*, int): Sets the page to display after waking up.
+- **auto_wake_on_touch** (*Optional*, boolean): If set to ``true``, the Nextion will be configured to wake from sleep
+  when touched.
+- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the
+  display. Defaults to ``false``.
+- **skip_connection_handshake** (*Optional*, boolean): Sets whether the initial display connection handshake process is
+  skipped. When set to ``true``, the connection will be established without performing the handshake. This can be
+  useful when using Nextion Simulator. Defaults to ``false``.
+- **on_setup** (*Optional*, :ref:`Action <config-action>`): An action to be performed after ESPHome connects to the
+  Nextion. See :ref:`Nextion Automation <nextion-on_setup>`.
+- **on_sleep** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion goes to sleep.
+  See :ref:`Nextion Automation <nextion-on_sleep>`.
+- **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See
+  :ref:`Nextion Automation <nextion-on_sleep>`.
+- **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See
+  :ref:`Nextion Automation <nextion-on_page>`.
+- **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or
+  release). See :ref:`Nextion Automation <nextion-on_touch>`.
+- **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion
+  reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
 
 .. _display-nextion_lambda:
 
 Rendering Lambda
 ----------------
 
-With Nextion displays, a dedicated chip on the display itself does the whole rendering. ESPHome can only
-send *instructions* to the display to tell it *how* to render something and *what* to render.
+Nextion displays have a dedicated processor built directly into the display to perform all rendering. ESPHome simply
+sends *instructions* to the display to tell it *how* to render something and/or *what* to render.
 
-First, you need to use the `Nextion Editor <https://nextion.tech/nextion-editor/>`__ to
-create a display file and insert it using the SD card slot. Then, in the rendering ``lambda``, you can use the various API calls
-to populate data on the display:
+First, you need to use the `Nextion Editor <https://nextion.tech/nextion-editor/>`__ to create a "TFT" display file and
+"install" it onto the display, typically via an SD card onto which you'll copy the "TFT" file and then insert into the
+display for installation/updating. Then, in the rendering ``lambda``, you can use the various API calls to populate the
+display with data:
 
 .. code-block:: yaml
 
@@ -100,29 +119,22 @@ to populate data on the display:
 
 .. note::
 
-    Although you can use the rendering lambda most, if not all, updates to the Nextion can be handled by the individual Nextion components. **See Below**
+    Although you can use the rendering lambda, most, if not all, updates to the Nextion can be handled by the
+    individual Nextion components/platforms. **See Below**
 
-Please see :ref:`display-printf` for a quick introduction into the ``printf`` formatting rules and
-:ref:`display-strftime` for an introduction into the ``strftime`` time formatting.
+See :ref:`display-printf` for a quick introduction to the ``printf`` formatting rules and :ref:`display-strftime` for
+an introduction to ``strftime`` time formatting.
 
-Lambda Calls
-************
+Using Lambdas
+*************
 
-Several methods are available for use within :ref:`lambdas <config-lambda>`; these permit advanced functionality beyond simple
-display updates. See the full :apiref:`nextion/nextion.h` for more info.
+Several methods are available for use within :ref:`lambdas <config-lambda>`; these permit advanced functionality beyond
+simple display updates. There are too many to cover here; please see the :apiref:`nextion/nextion.h` for more detail.
+The list below calls out a few commonly-used methods:
 
 .. _nextion_upload_tft:
 
-- ``upload_tft``: Start the upload process. See :ref:`nextion_upload_tft_file`
-
-The developer tools in Home Assistant can be used to trigger the update. The below code block is an example on how to set this up.
-  .. code-block:: yaml
-
-      api:
-        actions:
-          - action: update_nextion
-            then:
-              - lambda: 'id(nextion1)->upload_tft();'
+- ``upload_tft``: Start the process to upload a new TFT file to the Nextion; see :ref:`nextion_upload_tft_file` below.
 
 .. _nextion_update_all_components:
 
@@ -134,7 +146,9 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
 
 .. _update_components_by_prefix:
 
-- ``update_components_by_prefix(std::string page)``: This will send the current state of any **component_name** matching the prefix. Some settings like background color need to be resent on page change. This is a good hook for that.
+- ``update_components_by_prefix(std::string page)``: This will send the current state of any **component_name**
+  matching the prefix. Some settings like background color need to be resent on page change; this is a good hook to use
+  for that.
 
   .. code-block:: c++
 
@@ -142,14 +156,15 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
 
 .. _set_nextion_sensor_state:
 
-- ``set_nextion_sensor_state(NextionQueueType queue_type, std::string name, float state);`` : Sets the sensor state. See :ref:`Queue Types <nextion_queue_types>`
-- ``set_nextion_sensor_state(int queue_type, std::string name, float state);`` : Sets the sensor state. See :ref:`Queue Types <nextion_queue_types>`
+- Set various sensor states (See :ref:`Queue Types <nextion_queue_types>` below):
 
-- ``set_nextion_text_state(std::string name, std::string state);`` : Sets the text sensor state
+  - ``set_nextion_sensor_state(NextionQueueType queue_type, std::string name, float state);``
+  - ``set_nextion_sensor_state(int queue_type, std::string name, float state);``
+  - ``set_nextion_text_state(std::string name, std::string state);``
 
 .. note::
 
-    Below is a method for HASS to send updates to the Nextion by code.
+    The example below demonstrates how to define a user-API so Home Assistant can send updates to the Nextion by code.
 
     .. code-block:: yaml
 
@@ -174,35 +189,50 @@ The developer tools in Home Assistant can be used to trigger the update. The bel
 
 .. _nextion_queue_types:
 
- Queue Types:
-  - SENSOR            0
-  - BINARY_SENSOR     1
-  - SWITCH            2
-  - TEXT_SENSOR       3
-  - WAVEFORM_SENSOR   4
-  - NO_RESULT         5
+**Queue Types**
+
+.. list-table::
+    :header-rows: 1
+    :width: 60%
+
+    * - Type
+      - Value
+    * - ``SENSOR``
+      - ``0``
+    * - ``BINARY_SENSOR``
+      - ``1``
+    * - ``SWITCH``
+      - ``2``
+    * - ``TEXT_SENSOR``
+      - ``3``
+    * - ``WAVEFORM_SENSOR``
+      - ``4``
+    * - ``NO_RESULT``
+      - ``5``
 
 .. _display-nextion_automation:
 
-Nextion Automation
-------------------
+Nextion Automations
+-------------------
 
-With Nextion displays, it's possible to define several automation actions. Depending on your setup, you may or may not need to use some of them.
+Triggers
+********
+
+Several :ref:`actions-trigger` are available for use with your Nextion display.
 
 .. _nextion-on_setup:
 
 ``on_setup``
-************
+^^^^^^^^^^^^
 
-This automation will be triggered once ESP establishes a connection with Nextion. This happens after a boot up and may take some
-noticeable time (e.g. hundreds of milliseconds) to establish a connection over UART. Typical use scenario for this automation is choosing of the initial
-page to display depending on some runtime conditions or simply showing a page with a non-zero index (Nextion shows page 0 by default and ESPHome will
-use ``start_up_page`` on connection, if set).
+This automation will be triggered when a connection is established with the Nextion display. This happens after boot
+and it may take some time (hundreds of milliseconds). It could be used to change some display element once start-up is
+complete. For example:
 
 .. code-block:: yaml
 
     wifi:
-      ap: {} # This spawns an AP with the device name and mac address with no password.
+      ap:  # Spawn an AP with the device name and MAC address with no password
 
     captive_portal:
 
@@ -211,148 +241,192 @@ use ``start_up_page`` on connection, if set).
         id: disp
         on_setup:
           then:
-            lambda: |-
-              // Check if WiFi hot-spot is configured
-              if (wifi::global_wifi_component->has_sta()) {
-                // Show the main page
-                id(disp).goto_page("main_page");
-              } else {
-                // Show WiFi Access Point QR code for captive portal, see https://qifi.org/
-                id(disp).goto_page("wifi_qr_page");
-              }
+            - lambda: |-
+                // Check if WiFi hot-spot is configured
+                if (wifi::global_wifi_component->has_sta()) {
+                  // Show the main page
+                  id(disp).goto_page("main_page");
+                } else {
+                  // Show WiFi Access Point QR code for captive portal, see https://qifi.org/
+                  id(disp).goto_page("wifi_qr_page");
+                }
 
 .. _nextion-on_sleep:
 
-``on_sleep / on_wake``
-**********************
+``on_sleep``/``on_wake``
+^^^^^^^^^^^^^^^^^^^^^^^^
 
-The action is called before and after Nextion goes to sleep mode. Nextion is not responsive while in sleep mode. Use these triggers to prepare your code
-for that and :ref:`force-update <nextion_update_all_components>` the on-screen content once it's back.
+These automations will be triggered upon sleep or upon wake (respectively). The Nextion does not accept commands or
+updates while in sleep mode; these triggers may be used to cope with this. For example, you could use them to
+:ref:`force an update <nextion_update_all_components>`, refreshing the display's content upon wake-up.
 
 .. _nextion-on_page:
 
 ``on_page``
-***********
+^^^^^^^^^^^
 
-This automation is triggered when a page is changed on the Nextion display. This includes both ESP and Nextion initiated page changes.
-ESP initiates a page change by calling ``goto_page("page_name")`` or ``goto_page(page_id)`` function. Nextion can change pages as a reaction to user's activity (e.g. clicks) or using a timer.
-In either case, this automation can be helpful to update on-screen controls for the newly displayed page.
+This automation is triggered when the page is changed on display. This includes both ESPHome-initiated and
+Nextion-initiated page changes. ESPHome initiates a page change by calling either the ``goto_page("page_name")`` or
+``goto_page(page_id)`` functions. The Nextion itself can also change pages as a reaction to user activity (touching
+some display UI element) or by using a timer. In either case, this automation can be useful to update on-screen
+controls for the newly displayed page.
 
-If you fully own your Nextoin HMI design and follow the best practice of setting the components' vscope to global in the Nextion Editor, you'll probably never need this trigger.
-However, if this is not the case and all / some of your UI components have local visibility scope, ``on_page`` will be your remedy. Here you can initiate updates of the relevant components.
+If you fully own your Nextion HMI design and follow the best practice of setting ``vscope`` to "global" for UI
+components you've defined in the Nextion Editor, you'll probably never need this trigger. However, if this is not the
+case and some/all of your UI components have their ``vscope`` set to "local", ``on_page`` will be your remedy -- it
+enables you to initiate updates of the relevant components.
 
-Before actually updating components, you need to understand which page Nextion was switched to. ``x`` argument will contain a page id integer.
-Once you know the page id, it's time to update the components. Two strategies would be possible. The first one is to use :ref:`Nextion Sensors <nextion_sensor>` for every UI field and use one of the
-:ref:`update functions <nextion_update_all_components>`. The second is to manually set component text or value for each field:
+Before updating components, you need to know which page the Nextion is displaying. The ``x`` argument will contain an
+integer which indicates the current page ID number.
 
-.. code-block:: yaml
+Given the page ID, the appropriate components can be updated. Two strategies are be possible:
 
-    on_page:
-      then:
-        lambda: |-
-          switch (x) {
-            case 0x02: // wifi_qr_page
-              // Manually trigger update for controls on page 0x02 here
-              id(disp).set_component_text_printf("qr_wifi", "WIFI:T:nopass;S:%s;P:;;", wifi::global_wifi_component->get_ap().get_ssid().c_str());
-              break;
-          }
+- Use :ref:`Nextion Sensors <nextion_sensor>` for every UI field and use one of the
+  :ref:`update functions <nextion_update_all_components>`.
+- Manually set component text or value for each field:
+
+  .. code-block:: yaml
+
+      on_page:
+        then:
+          - lambda: |-
+              switch (x) {
+                case 0x02: // wifi_qr_page
+                  // Manually trigger update for controls on page 0x02 here
+                  id(disp).set_component_text_printf("qr_wifi", "WIFI:T:nopass;S:%s;P:;;", wifi::global_wifi_component->get_ap().get_ssid().c_str());
+                  break;
+              }
 
 .. _nextion-on_touch:
 
 ``on_touch``
-************
+^^^^^^^^^^^^
 
 This automation is triggered when a component is pressed or released on the Nextion display.
 
 The following arguments will be available:
 
-  - ``page_id``: Contains the id (integer) of the page where the touch happened.
-
-  - ``component_id``: Contains the id (integer) of the component touched. It's required that the component have "Send Component ID" enabled either for "Touch Press Event" and/or "Touch Release Event".
-
+  - ``page_id``: Contains the ID (integer) of the page where the touch happened.
+  - ``component_id``: Contains the ID (integer) of the component touched. **You must have "Send Component ID" enabled
+    for "Touch Press Event" and/or "Touch Release Event" for the UI element in your HMI configuration in the**
+    `Nextion Editor <https://nextion.tech/nextion-editor/>`__.
   - ``touch_event``: It will be ``true`` for a "press" event, or ``false`` for a "release" event.
 
 .. code-block:: yaml
 
     on_touch:
       then:
-        lambda: |-
-          ESP_LOGD("nextion.on_touch", "Nextion touch event detected!");
-          ESP_LOGD("nextion.on_touch", "Page Id: %i", page_id);
-          ESP_LOGD("nextion.on_touch", "Component Id: %i", component_id);
-          ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
+        - lambda: |-
+            ESP_LOGD("nextion.on_touch", "Nextion touch event detected!");
+            ESP_LOGD("nextion.on_touch", "Page ID: %i", page_id);
+            ESP_LOGD("nextion.on_touch", "Component ID: %i", component_id);
+            ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
 
 .. _nextion-on_buffer_overflow:
 
 ``on_buffer_overflow``
-**********************
+^^^^^^^^^^^^^^^^^^^^^^
 
-This automation is triggered when the Nextion display reports a serial buffer overflow.
-When this happens, the Nextion's buffer will continue to receive the new instructions, but all previous instructions are lost and the Nextion queue may get out of sync.
-This automation will allow you handle this situation nicelly, like repeating some command to Nextion or restarting the system.
+This automation is triggered when the Nextion display reports a serial buffer overflow. When this happens, the
+Nextion's buffer will continue to receive the new instructions, but all previous instructions are lost and the Nextion
+queue may get out of sync.
+
+This automation will allow you to gracefully handle this situation; for example, you could repeat some command/update
+to the Nextion or restart the system.
 
 .. code-block:: yaml
 
     on_buffer_overflow:
       then:
-        lambda: |-
-          ESP_LOGW("nextion.on_buffer_overflow", "Nextion reported a buffer overflow event!");
+        - lambda: |-
+            ESP_LOGW("nextion.on_buffer_overflow", "Nextion reported a buffer overflow event!");
+
+Actions
+*******
+
+.. _nextion-set_brightness:
+
+``display.nextion.set_brightness``
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can use this :ref:`action<actions-action>` to set the brightness of the Nextion's backlight.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - display.nextion.set_brightness: 50%
+
+Or, if you happen to have multiple Nextion displays connected, you may need to use the long form:
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - display.nextion.set_brightness:
+            id: nextion1
+            brightness: 50%
 
 .. _nextion_upload_tft_file:
 
 Uploading A TFT File
 --------------------
-This will download the file from the tft_url and will transfer it over the UART to the Nextion.
-Once completed both the ESP and Nextion will reboot. During the upload process esphome will be
-unresponsive and no logging will take place. This uses the same protocol as the Nextion editor and
-only updates the changes of the TFT file. If HTTPS/SSL is enabled it will be about 1kB/sec.
+
+This will use the file specified for ``tft_url`` to update ("OTA") the Nextion.
+
+Once completed, both ESPHome and the Nextion will reboot. ESPHome will be unresponsive during the upload process and no
+logging or other :doc:`automations</automations/index>` will occur. This process uses the same protocol as the
+`Nextion Editor <https://nextion.tech/nextion-editor/>`__ and only transfers required portions of the TFT file.
 
 .. warning::
 
-    If :ref:`uart-hardware_uarts` are not available then inconsistent results WILL occur. Lowering the speed to 9600 baud may help.
+    *Use of software UARTs is known to result in unpredictable/inconsistent behavior and will likely result in the
+    update process failing.*
 
+    If you experience problems with the update process and are using a software UART (for example, on the ESP8266), you
+    should switch to an ESP32 or supported variant which has more available :ref:`uart-hardware_uarts`.
 
-To host the TFT file you can use Home Assistant itself or any other web server. HTTPS, while always recommended on any network, will greatly reduce the upload speed.
+You can use Home Assistant itself or any other web server to host the TFT file. When using HTTPS (generally
+recommended), you may notice reduced upload speeds as the encryption consumes more resources on the microcontroller.
+
+We suggest using a :doc:`/components/button/template` to trigger this process. For example:
+
+.. code-block:: yaml
+
+    button:
+      - platform: template
+        id: update_nextion_button
+        name: Update Nextion
+        entity_category: diagnostic
+        on_press:
+          then:
+            - lambda: 'id(nextion1)->upload_tft();'
 
 Home Assistant
 **************
-To host the TFT file from Home Assistant, create a www directory if it doesn't exist in your config
-directory. You can create a subdirectory for those files as well.
 
-For example if the file is located
-under your configuration directory ``www/tft/default.tft`` the URL to access it will be
-``http(s)://your_home_assistant_url:port/local/tft/default.tft``
+To host the TFT file from Home Assistant, create a ``www`` directory (if it doesn't already exist) in your ``config``
+directory. If you wish, you may also create a subdirectory for your TFT files.
 
-NGINX
-*****
-
-`NGINX <https://www.nginx.com/>`__
-
-The below NGINX example configuration will serve files out of the /var/www/nextion directory.
-
-.. code-block:: nginx
-
-    server {
-      listen 80;
-      access_log  /var/log/nginx/nextion_access.log;
-      error_log  /var/log/nginx/nextion_error.log;
-      root /var/www/nextion;
-    }
-
-
+For example, if the file is located in your configuration directory ``www/tft/default.tft``, the URL to access it will
+be ``http(s)://your_home_assistant_url:port/local/tft/default.tft``
 
 Components
 ----------
-This library supports a few different components allowing communication back and forth from HA <-> MCU <-> Nextion.
+
+This library supports a few different components allowing communication between Home Assistant, ESPHome and Nextion.
 
 .. note::
 
-    If the Nextion is sleeping or if the component was set to be hidden, it will not update its components even if updates are sent.
-    After the Nextion wakes up, all components will send their states to the Nextion to get around this.
+    If the Nextion is sleeping or if the component was set to be hidden, it will not update its components even if
+    updates are sent. To work around this, after the Nextion wakes up, all components will send their states to the
+    Nextion.
 
-With the exception of the :doc:`../binary_sensor/nextion` that has the ``page_id``/``component_id`` options configured, the example below illustrates:
+With the exception of the :doc:`../binary_sensor/nextion` that has the ``page_id``/``component_id`` options configured,
+the example below illustrates:
+
  - Polling the Nextion for updates
- - Dynamic updates sent from the Nextion to the ESP device
+ - Dynamic updates sent from the Nextion to ESPHome
 
  .. code-block:: yaml
 
@@ -368,7 +442,8 @@ With the exception of the :doc:`../binary_sensor/nextion` that has the ``page_id
          update_interval: 1s
 
 
-Note that the first one requires a custom protocol to be included in the Nextion display's code/configuration. See the individual components for more detail.
+Note that the first one requires a custom protocol to be included in the Nextion display's HMI code/configuration. See
+the individual components (linked below) for more detail.
 
 See Also
 --------

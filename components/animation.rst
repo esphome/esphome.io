@@ -12,6 +12,7 @@ It adds additional lambda methods: ``next_frame()``, ``prev_frame()`` and ``set_
       - file: "animation.gif"
         id: my_animation
         resize: 100x100
+        type: RGB565
 
 The animation can be rendered just like the image component with the ``image()`` function of the display component.
 
@@ -50,18 +51,15 @@ Configuration variables:
   in your display code.
 - **resize** (*Optional*, string): If set, this will resize all the frames to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
-- **type** (*Optional*): Specifies how to encode each frame internally. Defaults to ``BINARY``.
+- **type** (**Required**): Specifies how to encode image internally. See the :ref:`image component <display-image>` for more information.
 
   - ``BINARY``: Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
-    per pixel, 8 pixels per byte.
-  - ``TRANSPARENT_BINARY``: One color, any pixel that is fully transparent will not be drawn, and any other pixel
-    will be the on color. Uses 1 bit per pixel, 8 pixels per byte.
+    per pixel, 8 pixels per byte. Only ``chroma_key`` transparency is available.
   - ``GRAYSCALE``: Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
-  - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel.
-  - ``RGB24``: Full RGB color stored. Uses 3 bytes per pixel.
-  - ``RGBA``: Full RGB color stored. Uses 4 bytes per pixel. Any pixel with an alpha value < 127 will not be drawn.
+  - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel.
+  - ``RGB``: Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
 
-- **use_transparency** (*Optional*): If set the alpha channel of the input image will be taken into account, and pixels with alpha < 127 will not be drawn. For image types without explicit alpha channel, the color (0, 0, 1) (very dark blue) will be mapped to black, to be able to store transparency information within the image. Explicitly transparent types (``TRANSPARENT_BINARY`` and ``RGBA``) default to ``True`` and cannot be set to ``False``; other types default to ``False``.
+- **use_transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``. See discussion on transparency in the :ref:`image component <display-image>`.
 - **loop** (*Optional*): If you want to loop over a subset of your animation (e.g. a fire animation where the fire "starts", then "burns" and "dies") you can specify some frames to loop over.
 
   - **start_frame** (*Optional*, int): The frame to loop back to when ``end_frame`` is reached. Defaults to the first frame in the animation.
@@ -83,4 +81,3 @@ Actions:
 
   - **id** (**Required**, :ref:`config-id`): The ID of the animation to animate.
   - **frame** (**Required**, int): The frame index to show next.
-
