@@ -428,7 +428,7 @@ Below is a config example:
         
 
 Inkplate 10
-***************************
+***********
 
 The Inkplate 10 has a configuration similar to 5 and 6, except it has 2 expanders and the battery read MOSFET is not inverted. Also, some versions have an embedded RTC to aid in clock sync.
 Below is a config example:
