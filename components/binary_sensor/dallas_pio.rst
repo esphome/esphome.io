@@ -8,18 +8,21 @@ Dallas PIO Binary Sensor
 
 The ``dallas_pio`` component allows you to use 
 `DS2413 <https://www.adafruit.com/product/1551>`__
-(`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2413.pdf>`__)
-and similar 1-Wire PIO binary sensors.  A :ref:`1-Wire bus <one_wire>` is
-required to be set up in your configuration for this sensor to work.
+(`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2413.pdf>`__),
+`DS2406`
+(`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2406.pdf>`__),
+`DS2408`
+(`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2408.pdf>`__)
+and similar 1-Wire Dallas adressable switches PIO as ESPHome binary sensors.  A :ref:`Dallas PIO <dallas_pio>` is
+required to be set up in your configuration for this binary sensor to work.
 
 .. code-block:: yaml
 
     # Example configuration entry
     binary_sensor:
       - platform: dallas_pio
-        address: 0xfe10055073e122ba
-        name: ds2413 binary sensor test
-        id: ds2413_binary_sensor_test
+        name: ds2413 binary sensor
+        id: ds2413_binary_sensor
         pin:
           number: PIOA
           mode:
@@ -31,9 +34,10 @@ required to be set up in your configuration for this sensor to work.
 Configuration variables:
 ************************
 
-- **address** (*Optional*, int): The address of the sensor. Required if there is more than one device on the bus.
-- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The
-  PIO pin to use for the switch.
+- **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the switch.
+  PIOA, PIOB for DS2413 or DS2406 and P0 to P7 for DS2408.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the binary sensors should be checked.
   Defaults to 1 second.
 - **dallas_pio_id** (*Optional*, string): The ID of the dallas pio to use.
