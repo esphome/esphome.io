@@ -43,6 +43,5 @@ See Also
 - :doc:`/components/binary_sensor/index`
 - :doc:`/components/switch/index`
 - :doc:`/components/one_wire`
-- :ghedit:`Edit`
 - :apiref:`dallas_pio/dallas_pio.h`
 - :ghedit:`Edit`
