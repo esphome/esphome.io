@@ -15,6 +15,7 @@ The ``dallas_pio`` component allows you to use
 (`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2408.pdf>`__)
 and similar 1-Wire Dallas adressable switches PIO as ESPHome switch.  A :ref:`Dallas PIO <dallas_pio>` is
 required to be set up in your configuration for this binary sensor to work.
+
 .. code-block:: yaml
 
     # Example configuration entry
