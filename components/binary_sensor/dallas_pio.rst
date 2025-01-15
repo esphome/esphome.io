@@ -22,13 +22,13 @@ required to be set up in your configuration for this binary sensor to work.
     binary_sensor:
       - platform: dallas_pio
         name: ds2413 binary sensor
+        dallas_pio_id: ds2413_ic1
         id: ds2413_binary_sensor
         pin:
           number: PIOA
           mode:
             input: true
           inverted: true  
-        dallas_pio_id: ds2413_ic1
         update_interval: 1s
 
 Configuration variables:
@@ -36,11 +36,11 @@ Configuration variables:
 
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **dallas_pio_id** (*Required*, string): The ID of the dallas pio to use.
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the switch.
   PIOA, PIOB for DS2413 or DS2406 and P0 to P7 for DS2408.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the binary sensors should be checked.
   Defaults to 1 second.
-- **dallas_pio_id** (*Optional*, string): The ID of the dallas pio to use.
 - All other options from :ref:`Binary Sensor <config-binary-sensor>`.
 
 See Also
