@@ -1,3 +1,5 @@
+.. _dallas_pio:
+
 Dallas PIO
 ==========
 
