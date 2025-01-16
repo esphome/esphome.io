@@ -6,24 +6,36 @@ ES7210
     :image: es7210.svg
     :keywords: ES7210, Audio, ADC, I2S, ESP32
 
-The ``es7210`` platform allows your ESPHome devices to use the ES7210 high performance four channels audio ADC (`datasheet <http://www.everest-semi.com/pdf/ES7210%20PB.pdf>`__).
+The ``es7210`` platform allows your ESPHome devices to use the ES7210 high performance four channel audio ADC
+(`datasheet <http://www.everest-semi.com/pdf/ES7210%20PB.pdf>`__).
 This allows attached microphones to be used as a microphone input via :doc:`/components/microphone/i2s_audio`.
+
 The :ref:`I²C bus <i2c>` is required in your configuration as this is used to communicate with the ES7210.
 
 .. code-block:: yaml
 
     # Example configuration entry
-    es7210:
+    audio_adc:
+      - platform: es7210
 
 .. _config-es7210:
 
 Configuration variables:
 ------------------------
-- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of ``16bit``, ``24bit``, or ``32bit``. Defaults to ``16bit``.
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of ``16bit``, ``24bit`` or ``32bit``.
+  Defaults to ``16bit``.
+- **mic_gain** (*Optional*, enum): The gain applied to the ADC microphones. One of ``0DB``, ``3DB``, ``6DB``, ``9DB``,
+  ``12DB``, ``15DB``, ``18DB``, ``21DB``, ``24DB``, ``27DB``, ``30DB``, ``33DB``, ``34.5DB``, ``36DB``, or ``37.5DB``.
+  Defaults to ``24DB``.
 - **sample_rate** (*Optional*, positive integer): I2S sample rate. Defaults to ``16000``.
-- **mic_gain** (*Optional*, enum): The gain applied to the ADC microphones. One of ``0DB``, ``3DB``, ``6DB``, ``9DB``, ``12DB``, ``15DB``, ``18DB``, ``21DB``, ``24DB``, ``27DB``, ``30DB``, ``33DB``, ``34.5DB``, ``36DB``, or ``37.5DB``. Defaults to ``24DB``.
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to ``0x40``.
 - **i2c_id** (*Optional*): The ID of the :ref:`I²C bus <i2c>` the ES7210 is connected to.
+- All other options from :ref:`Audio ADC <config-audio_adc>`.
+
+Automations
+-----------
+
+All :ref:`Audio ADC Automations <automations-audio_adc>` are supported by this platform.
 
 Configuration Examples
 ----------------------
