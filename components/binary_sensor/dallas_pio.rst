@@ -41,7 +41,7 @@ Configuration variables:
   PIOA, PIOB for DS2413 or DS2406 and P0 to P7 for DS2408.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the binary sensors should be checked.
   Defaults to 1 second.
-- All other options from :ref:`Binary Sensor <config-binary-sensor>`.
+- All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 See Also
 --------
