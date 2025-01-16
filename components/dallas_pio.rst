@@ -31,11 +31,14 @@ Configuration variables:
 ************************
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
-- **reference** (*Optional*, string): The dallas reference of adressable switch among DS2413 (default), DS2406 or DS2408 (to be implemented).
+- **reference** (*Optional*, string): The dallas reference of adressable switch among DS2413 (default), DS2406 or DS2408 (see warning note below).
 - **address** (*Required*, int): The address of the sensor. Required if there is more than one device on the bus.
 - **crc** (*Optional*, bool): Use CRC if true. (default false, only for DS2406).
 - **one_wire_id** (*Required*, :ref:`config-id`): Manually specify the ID used for code generation.  Required if you have multiple busses.
 
+.. warning::
+
+    The component is not yet usable for DS2408 ! It is planned for future release.
 
 See Also
 --------
