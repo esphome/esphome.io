@@ -17,8 +17,11 @@ The ``uptime`` text sensor provides a human-readable representation the time sin
 Configuration variables:
 ------------------------
 
-- **update_interval** (*Optional*, :ref:`config-time`): The sensor reporting interval. Defaults to ``60s``.
+- **update_interval** (*Optional*, :ref:`config-time`): The sensor reporting interval. Defaults to ``30s``.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
+
+The resolution of the reported uptime will be determined by the update interval. For example, if the update interval is set to 30 seconds (the default), the uptime will be reported in minutes. Faster updates will result in seconds being reported.
+
 
 See Also
 --------
