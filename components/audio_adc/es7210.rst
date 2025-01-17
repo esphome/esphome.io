@@ -22,6 +22,7 @@ The :ref:`I²C bus <i2c>` is required in your configuration as this is used to c
 
 Configuration variables:
 ------------------------
+
 - **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. One of ``16bit``, ``24bit`` or ``32bit``.
   Defaults to ``16bit``.
 - **mic_gain** (*Optional*, enum): The gain applied to the ADC microphones. One of ``0DB``, ``3DB``, ``6DB``, ``9DB``,
@@ -44,10 +45,11 @@ Configuration Examples
 
 .. code-block:: yaml
 
-    es7210:
-      id: es7210_adc
-      bits_per_sample: 16bit
-      sample_rate: 16000
+    audio_adc:
+      - platform: es7210
+        id: es7210_adc
+        bits_per_sample: 16bit
+        sample_rate: 16000
 
     i2s_audio:
       - id: i2s_audio_bus
