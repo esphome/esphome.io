@@ -49,8 +49,8 @@ Not Recommended
 These microcontrollers do not support Bluetooth/BLE. If you're designing/building products which you might wish to
 brand as :doc:`/guides/made_for_esphome`, avoid using them.
 
-Additional Points to Consider
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Additional Considerations
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - These recommendations are primarily for people who are starting from scratch and/or are new to ESPHome.
 - A lot of people already have a drawer full of ESP8266 boards -- we're not trying to stop you from using them! That
@@ -63,7 +63,7 @@ Additional Points to Consider
   - have roughly 5x the amount of RAM.
 
     - Some components require more RAM than is available on the ESP8266 -- (large) displays and
-      :doc:`some sensors</components/sensor/bme68x_bsec2>` are known to regularly provoke issues/crashes.
+      :doc:`some sensors</components/sensor/bme68x_bsec2>` are known to regularly provoke issues/crashes on ESP8266s.
     - Workarounds are often available, but it's not reasonable to assume that a given workaround will work forever,
       especially when  :doc:`vendor-provided/maintained libraries are required</components/sensor/bme68x_bsec2>`.
 
@@ -74,10 +74,10 @@ Additional Points to Consider
 
     More RAM and/or flash memory means you can have bigger/more complex ESPHome configurations.
 
-  If saving a dollar or so on a cheaper microcontroller is tempting, keep in mind that you'll just have to buy another,
-  different/"better" board when you realize that the cheaper one doesn't meet the needs of your project. This approach
-  ultimately ends up costing **more.** If you *can*, spend that little bit extra to get a board which will have better
-  longevity and work for more of your projects!
+  If saving a dollar or so on a cheaper microcontroller is tempting, keep in mind that *you'll just have to buy yet
+  another, different/"better" board when you realize that the cheaper one doesn't meet the needs of your project(s).*
+  This approach ultimately ends up costing **more.** If you *can*, spend that little bit extra to get a board which
+  will have better longevity and work for more of your projects!
 
 - *What about the ESP32-C6/ESP32-H2/[latest Espressif chip]/RP2040/RP2350?*
 
@@ -86,29 +86,15 @@ Additional Points to Consider
 
 - We'll update our recommendations here as support is added/matures for newer microcontrollers.
 
-.. _usb-installation-troubleshooting:
+.. _faq-usb_installation:
 
-I can't get installation over USB to work
------------------------------------------
-
-There are a number of reasons this may happen. Some of the most common causes of this are:
-
-- You are **not using a USB data cable.** To reduce cost, many USB cables are designed for *battery charging only* and
-  they are not capable of establishing the data connection required to communicate with your board.
-- ESPHome depends on your computer's operating system (OS) to enable the programming tool (``esptool.py``, for example)
-  to communicate with your microcontroller board; you may need to :ref:`install appropriate drivers<esphome-phy-con-drv>`.
-- If you're trying to install ESPHome onto your device from within a Docker container, be sure you are mounting the
-  device into your container using ``--device=/dev/ttyUSB0``.
-
-After confirming that none of the points above are causing the issue, it's time to focus on your microcontroller
-itself. Read on!
-
-Installing ESPHome onto your device
------------------------------------
+How do I install ESPHome onto my device?
+----------------------------------------
 
 You can use the :ref:`ESPHome Device Builder<installing-esphome-device-builder>` directly; after editing your device's
 configuration to your liking, click "INSTALL" and follow the prompts. Note that the first time you install ESPHome onto
-a (new) device, you need to connect it with a (USB) cable.
+a (new) device, you need to connect it with a (USB) cable; this installation method requires a browser that supports
+WebSerial, like Google Chrome or Microsoft Edge.
 
 If you prefer the more manual way:
 
@@ -134,8 +120,11 @@ If you prefer the more manual way:
 
 .. _esphome-esptool:
 
-Using ``esptool``
------------------
+What is ``esptool``?
+--------------------
+
+``esptool`` is a command-line/terminal application which can be used to perform a variety of tasks on Espressif
+microcontrollers. It's not the most user-friendly approach, but it's quite powerful and can be useful if you get stuck.
 
 .. note::
 
@@ -164,15 +153,32 @@ This will install ("flash") your binary (ESPHome) onto your microcontroller.
 
     esptool --port /dev/ttyUSB0 write_flash 0x0 your_node_firmware.bin
 
-Troubleshooting
-~~~~~~~~~~~~~~~
+.. _faq-usb_troubleshooting:
+
+I can't get installation over USB to work
+-----------------------------------------
+
+There are a number of reasons this may happen.
+
+Common Issues
+~~~~~~~~~~~~~
+
+- You are **not using a USB data cable.** To reduce cost, many USB cables are designed for *battery charging only* and
+  they are not capable of establishing the data connection required to communicate with your board.
+- ESPHome depends on your computer's operating system (OS) to enable the programming tool (``esptool.py``, for example)
+  to communicate with your microcontroller board; you may need to :ref:`install appropriate drivers<esphome-phy-con-drv>`.
+- If you're trying to install ESPHome onto your device from within a Docker container, be sure you are mounting the
+  device into your container using ``--device=/dev/ttyUSB0``.
+
+``esptool`` Troubleshooting
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you're just seeing ``Connecting....____....`` on the screen and installation ("flashing") fails:
 
 - Verify that the name of the device's port has not changed; this can happen if you disconnect and then reconnect it
   too quickly (for example, it might change from ``/dev/ttyUSB0`` to ``/dev/ttyUSB1``).
-- If you're using an external USB-to-serial adapter, double-check that the wires are connected correctly. The receive
-  (RX) line from the adapter should be connected to the transmit (TX) line of your board (and vice-versa for the other
+- If you're using an external USB-to-serial adapter, confirm that the wires are connected correctly. The receive (RX)
+  line from the adapter should be connected to the transmit (TX) line of your board (and vice-versa for the other
   wire).
 - Some devices may require you to keep ``GPIO0`` and ``GND`` connected at least until flashing has begun.
 - Some devices may require you to power-cycle them to restart programming mode after erasing flash; they won't
@@ -187,68 +193,68 @@ transfer. Don't worry -- just try again, perhaps with a reduced baud rate for sa
 
     esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x0 your_node_firmware.bin
 
-If you *still* can't get it to work, you might want to revisit :ref:`usb-installation-troubleshooting` above.
+If you *still* can't get it to work, you might want to revisit :ref:`faq-usb_troubleshooting` above.
 
 Tips for using ESPHome
 ----------------------
 
-1. ESPHome supports (most of) `Home Assistant's YAML configuration directives
-   <https://www.home-assistant.io/docs/configuration/splitting_configuration/>`__ like ``!include`` and ``!secret``.
-   This allows you to store your secrets (for example, Wi-Fi passwords and API keys) in a file called ``secrets.yaml``,
-   as long as this file is in the same directory as your ESPHome configuration file.
+- ESPHome supports (most of) `Home Assistant's YAML configuration directives
+  <https://www.home-assistant.io/docs/configuration/splitting_configuration/>`__ like ``!include`` and ``!secret``.
+  This allows you to store your secrets (for example, Wi-Fi passwords and API keys) in a file called ``secrets.yaml``,
+  as long as this file is in the same directory as your ESPHome configuration file.
 
-   We've enhanced ESPHome's ``!include`` directive such that it accepts a list of variables that can be substituted
-   within the included file. For example:
+  We've enhanced ESPHome's ``!include`` directive such that it accepts a list of variables that can be substituted
+  within the included file. For example:
 
-   .. code-block:: yaml
+  .. code-block:: yaml
 
-       binary_sensor:
-         - platform: gpio
-           id: button1
-           pin: GPIOXX
-           on_multi_click: !include { file: on-multi-click.yaml, vars: { id: 1 } } # inline syntax
-         - platform: gpio
-           id: button2
-           pin: GPIOXX
-           on_multi_click: !include
-             # multi-line syntax
-             file: on-multi-click.yaml
-             vars:
-               id: 2
+      binary_sensor:
+        - platform: gpio
+          id: button1
+          pin: GPIOXX
+          on_multi_click: !include { file: on-multi-click.yaml, vars: { id: 1 } } # inline syntax
+        - platform: gpio
+          id: button2
+          pin: GPIOXX
+          on_multi_click: !include
+            # multi-line syntax
+            file: on-multi-click.yaml
+            vars:
+              id: 2
 
-   ``on-multi-click.yaml``:
+  ``on-multi-click.yaml``:
 
-   .. code-block:: yaml
+  .. code-block:: yaml
 
-       - timing: !include click-single.yaml
-         then:
-           - mqtt.publish:
-               topic: ${device_name}/button${id}/status
-               payload: single
-       - timing: !include click-double.yaml
-         then:
-           - mqtt.publish:
-               topic: ${device_name}/button${id}/status
-               payload: double
+      - timing: !include click-single.yaml
+        then:
+          - mqtt.publish:
+              topic: ${device_name}/button${id}/status
+              payload: single
+      - timing: !include click-double.yaml
+        then:
+          - mqtt.publish:
+              topic: ${device_name}/button${id}/status
+              payload: double
 
-2. You can use :doc:`/components/substitutions` to build on the examples above and reduce repetition in your
-   configuration files.
+- You can use :doc:`/components/substitutions` to build on the examples above and reduce repetition in your
+  configuration files.
 
-3. If you want to see how ESPHome interprets your configuration, run:
+- If you want to see how ESPHome interprets your configuration, run:
 
-   .. code-block:: bash
+  .. code-block:: bash
 
-       esphome config livingroom.yaml
+      esphome config livingroom.yaml
 
-4. To view the logs from your ESPHome node without uploading, run:
+- To view the logs from your ESPHome node without uploading, run:
 
-   .. code-block:: bash
+  .. code-block:: bash
 
-       esphome logs livingroom.yaml
+      esphome logs livingroom.yaml
 
-5. You can always find the source ESPHome generates in the ``<NODE_NAME>/src/`` directory.
+- You can always find the source ESPHome generates in the ``<NODE_NAME>/src/`` directory.
 
-6. You can view the full list of command line interface options here: :doc:`/guides/cli`
+- You can view the full list of command line interface options here: :doc:`/guides/cli`
 
 .. |secret| replace:: ``!secret``
 .. _secret: https://www.home-assistant.io/docs/configuration/secrets/
@@ -269,8 +275,8 @@ That's no good. Here are some steps that resolve some problems:
 
 .. _faq-bug_report:
 
-How to report an issue
-----------------------
+How do I report an issue?
+-------------------------
 
 ESPHome is a big project and many aspects are in general use and known to work well. That said, some parts are less
 frequently used and, as such, less tested. We try our best to test as much as we can, but we simply don't have every
@@ -281,13 +287,13 @@ to track and (hopefully/eventually) fix issues.
 When filing an issue, it's important to be as descriptive as possible -- but do avoid excessive extraneous information.
 If you want the issue you're experiencing to be fixed quickly:
 
-1.  **Just writing "X doesn't work" or "X gives bug" is not helpful!!!** Seriously, how do you expect
-    help given just that information?
-2.  Provide a snippet of the code/configuration which triggers the issue; we'll likely want to try to reproduce it.
-    Please read `How to create a Minimal, Complete, and Verifiable example <https://stackoverflow.com/help/mcve>`__.
-3.  If it's a hardware communication issue (such as with an I²C or SPI device), try setting the
-    :ref:`log level <logger-log_levels>` to ``VERY_VERBOSE`` as it may provide better insight into what is going on.
-4.  Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
+- **Just writing "X doesn't work" or "X gives bug" is not helpful!!!** Seriously, how do you expect help given just
+  that information?
+- Provide a snippet of the code/configuration which triggers the issue; we'll likely want to try to reproduce it.
+  Please read `How to create a Minimal, Complete, and Verifiable example <https://stackoverflow.com/help/mcve>`__.
+- If it's a hardware communication issue (such as with an I²C or SPI device), try setting the
+  :ref:`log level <logger-log_levels>` to ``VERY_VERBOSE`` as it may provide better insight into what is going on.
+- Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
 
 You can find our issue tracker `on GitHub <https://github.com/esphome/issues/issues>`__.
 
@@ -528,8 +534,8 @@ Docker Compose example:
     2. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
 
     Alternatively, you can configure the :ref:`ESPHome Device Builder<installing-esphome-device-builder>` to use ICMP
-    pings to check the status of the device with the Home Assistant add-on ``"status_use_ping": true,`` option or with
-    Docker: ``-e ESPHOME_DASHBOARD_USE_PING=true``.
+    pings to check the status of devices by setting ``"status_use_ping": true`` or, with Docker:
+    ``-e ESPHOME_DASHBOARD_USE_PING=true``
 
     See also https://github.com/esphome/issues/issues/641#issuecomment-534156628.
 
@@ -555,7 +561,7 @@ If you disable mDNS, expect the following repercussions:
   if you want to see the online/offline status of your nodes, you may configure the ESPHome Device Builder to ping each
   node instead. See the :ref:`notes in the Docker Reference section <docker-reference-notes>` for more information.
 
-Can Configuration Files Be Recovered From The Device?
+Can configuration files be recovered from the device?
 -----------------------------------------------------
 
 ESPHome YAML configuration files are not stored on ESPHome devices. If you lost your configuration(s), there's no way
@@ -607,7 +613,7 @@ resistors and are not safe on strapping pins.
 If you are absolutely sure that your use of strapping pins is safe and you want to suppress the warning, you can add
 ``ignore_strapping_warning: true`` to the relevant pin configuration(s).
 
-How can I test a Pull Request?
+How can I test a pull request?
 ------------------------------
 
 By leveraging the :doc:`/components/external_components` feature, it's possible to test most pull requests by simply
