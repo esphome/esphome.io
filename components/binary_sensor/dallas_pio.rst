@@ -73,6 +73,7 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **dallas_pio_id** (*Required*, string): The ID of the dallas pio to use.
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the binary sensor.
+
 Options:
   - **number**: The pin to use. For DS2413 or DS2406, use `PIOA` or `PIOB`. For DS2408, use `P0` to `P7`.
   - **mode**:
