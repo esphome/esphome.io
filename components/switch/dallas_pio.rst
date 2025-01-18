@@ -73,11 +73,11 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **dallas_pio_id** (*Required*, string): The ID of the dallas pio to use.
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the switch.
-  Options:
+Options:
   - **number**: The pin to use. For DS2413 or DS2406, use `PIOA` or `PIOB`. For DS2408, use `P0` to `P7`.
   - **mode**: 
-    - `output: true`: Configure the pin as an output (default)
-    - `output: false`: not allowed (switch acts necessarily as an output).
+      - `output: true`: Configure the pin as an output (default)
+      - `output: false`: not allowed (switch acts necessarily as an output).
   - **inverted**: Set to `true` to interpret a high signal as low (active-low). Useful for devices where a low voltage signifies an active state. Defaults to `false`.
 - **inverted** (*Optional*, bool): Switch inverted if true (default: false).
 - All other options from :ref:`Switch <config-switch>`.
