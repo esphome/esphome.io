@@ -2,7 +2,7 @@ Dallas PIO Binary Sensor
 ========================
 
 .. seo::
-    :description: Instructions for setting up Dallas 1-Wire PIO adressable switch as ESPHome binary sensor
+    :description: Instructions for setting up Dallas 1-Wire PIO addressable switch as ESPHome binary sensor
     :image: dallas.jpg
     :keywords: Dallas, ds2413, ds2406, ds2408, onewire
 
@@ -13,7 +13,7 @@ The ``dallas_pio`` component allows you to use
 (`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2406.pdf>`__),
 `DS2408`
 (`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2408.pdf>`__)
-and similar 1-Wire Dallas adressable switches PIO as ESPHome binary sensors.  A :ref:`Dallas PIO <dallas_pio>` is
+and similar 1-Wire Dallas addressable switches PIO as ESPHome binary sensors.  A :ref:`Dallas PIO <dallas_pio>` is
 required to be set up in your configuration for this binary sensor to work.
 
 .. code-block:: yaml
