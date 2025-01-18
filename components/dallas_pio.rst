@@ -28,11 +28,12 @@ The ``dallas_pio`` component allows you to use
 and similar 1-Wire addressable switches.  A :ref:`1-Wire bus <one_wire>` is
 required to be set up in your configuration for this sensor to work.
 
-### Example Configuration
+Example Configuration
+*********************
 
 Below are configuration examples for different Dallas devices.
 
-#### Single DS2413 on One-Wire Bus
+**Single DS2413 on One-Wire Bus**
 
 .. code-block:: yaml
 
@@ -44,7 +45,7 @@ Below are configuration examples for different Dallas devices.
         address: 0xfe10055073e122ba
         one_wire_id: OneWireBus1
 
-#### Multiple Devices (DS2413 and DS2408) on the Same Bus
+**Multiple Devices (DS2413 and DS2408) on the Same Bus**
 
 .. code-block:: yaml
 
