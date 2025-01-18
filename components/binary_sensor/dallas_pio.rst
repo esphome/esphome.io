@@ -16,11 +16,12 @@ The ``dallas_pio`` component allows you to use
 and similar 1-Wire Dallas addressable switches PIO as ESPHome binary sensors.  A :ref:`Dallas PIO <dallas_pio>` is
 required to be set up in your configuration for this binary sensor to work.
 
-### Example Configuration
+Example Configuration
+*********************
 
 Below are configuration examples for different Dallas devices, including DS2408 with P0-P7 pin usage.
 
-#### Single DS2413 on One-Wire Bus
+**Single DS2413 on One-Wire Bus**
 
 .. code-block:: yaml
 
@@ -37,7 +38,7 @@ Below are configuration examples for different Dallas devices, including DS2408 
           inverted: true            # Invert the signal (true = active-low, false = active-high)
         update_interval: 1s         # How often the sensor should poll the pin's state
 
-#### Multiple Devices (DS2413 and DS2408) on the Same Bus
+**Multiple Devices (DS2413 and DS2408) on the Same Bus**
 
 .. code-block:: yaml
 
