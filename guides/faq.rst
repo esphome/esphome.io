@@ -140,7 +140,7 @@ Using ``esptool``
 .. note::
 
     Before using ``esptool``, make sure you know which serial port your board/serial adapter is connected to!
-    
+
     - In Linux, you can use the ``dmesg`` command after you plug the device into the USB port to see the name of the
       (new) serial port.
     - In Windows, look in the Device Manager to see if a new serial port appears when you plug it in and note the (new)
@@ -340,7 +340,7 @@ That aside, if you want to install the ``dev`` version of ESPHome:
 - From ``pip``:
 
   .. code-block:: bash
- 
+
       pip3 install https://github.com/esphome/esphome/archive/dev.zip``
 
 - From docker, use the `ghcr.io/esphome/esphome:dev <https://github.com/esphome/esphome/pkgs/container/esphome/>`__
