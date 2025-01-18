@@ -341,7 +341,7 @@ That aside, if you want to install the ``dev`` version of ESPHome:
 
   .. code-block:: bash
 
-      pip3 install https://github.com/esphome/esphome/archive/dev.zip``
+      pip3 install https://github.com/esphome/esphome/archive/dev.zip
 
 - From docker, use the `ghcr.io/esphome/esphome:dev <https://github.com/esphome/esphome/pkgs/container/esphome/>`__
   image.
