@@ -80,6 +80,7 @@ Options:
       - `input: true`: Configure the pin as an input (default)
       - `input: false`: not allowed (binary sensor acts necessarily as an input).
   - **inverted**: Set to `true` to interpret a high signal as low (active-low). Useful for devices where a low voltage signifies an active state. Defaults to `false`.
+
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the binary sensors should be checked. Defaults to 1 second.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
