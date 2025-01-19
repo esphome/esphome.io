@@ -56,12 +56,11 @@ Additional Considerations
 - A lot of people already have a drawer full of ESP8266 boards -- we're not trying to stop you from using them! That
   said, *don't buy any more of them* and *consider our recommendations above* as you buy new devices. 😉
 - *"...But the [ESP8266 board] is cheaper!!!"*...well, you get what you pay for. Compared with the ESP8266, all ESP32s
-  and variants:
+  and variants have:
 
-  - have a better, more complete set of hardware peripherals, keeping the processor core(s) free to maximize
-    performance.
-  - have more GPIO pins.
-  - have roughly 5x the amount of RAM.
+  - a better, more complete set of hardware peripherals, keeping the processor core(s) free to maximize performance.
+  - more GPIO pins.
+  - roughly 5x the amount of RAM.
 
     - Some components require more RAM than is available on the ESP8266 -- (large) displays and
       :doc:`some sensors</components/sensor/bme68x_bsec2>` are known to regularly provoke issues/crashes on ESP8266s.
@@ -69,10 +68,10 @@ Additional Considerations
       especially if you *want* to update your devices regularly but depend on
       :doc:`vendor-provided/maintained libraries for some functionality</components/sensor/bme68x_bsec2>`.
 
-  - have significantly more flash memory:
+  - significantly more flash memory.
 
-    - most ESP8266 boards have just 1 or 2 MBs; meanwhile...
-    - most ESP32s and variants have at least 4 MBs, but some have 8, 16 or even 32 MBs!
+    - Most ESP8266 boards have just 1 or 2 MBs; meanwhile...
+    - Most ESP32s and variants have at least 4 MBs, but some have 8, 16 or even 32 MBs!
 
     More RAM and/or flash memory means you can have bigger/more complex ESPHome configurations.
 
