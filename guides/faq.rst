@@ -58,7 +58,8 @@ Additional Considerations
 - *"...But the [ESP8266 board] is cheaper!!!"*...well, you get what you pay for. Compared with the ESP8266, all ESP32s
   and variants:
 
-  - have a better, more complete set of hardware peripherals.
+  - have a better, more complete set of hardware peripherals, keeping the processor core(s) free to maximize
+    performance.
   - have more GPIO pins.
   - have roughly 5x the amount of RAM.
 
