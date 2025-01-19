@@ -66,7 +66,8 @@ Additional Considerations
     - Some components require more RAM than is available on the ESP8266 -- (large) displays and
       :doc:`some sensors</components/sensor/bme68x_bsec2>` are known to regularly provoke issues/crashes on ESP8266s.
     - Workarounds are often available, but it's not reasonable to assume that a given workaround will work forever,
-      especially when  :doc:`vendor-provided/maintained libraries are required</components/sensor/bme68x_bsec2>`.
+      especially if you *want* to update your devices regularly but depend on
+      :doc:`vendor-provided/maintained libraries for some functionality</components/sensor/bme68x_bsec2>`.
 
   - have significantly more flash memory:
 
