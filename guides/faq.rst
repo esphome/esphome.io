@@ -24,12 +24,15 @@ Recommended
   - An update to the original ESP32 with a slightly modified set of hardware peripherals.
   - Has a built-in USB peripheral/interface (as opposed to relying on an external USB-to-serial chip)
   - Has instruction set extensions which make it a better fit for applications which require some form of machine
-    learning (:doc:`/components/voice_assistant`, for example).
+    learning (:doc:`/components/micro_wake_word`, for example).
 
 - **ESP32-C3**
 
   - Generally intended (`per Espressif <https://www.espressif.com/en/news/ESP32_C3>`__) to replace the well-known ESP8266.
-  - Use if you're worried that the ESP32(-Sx) is "too powerful".
+  - Use if:
+  
+    - You're worried that the ESP32(-Sx) is "too powerful".
+    - You need a lower-power device than the ESP32(-Sx) family offers.
 
 Not Recommended
 ~~~~~~~~~~~~~~~
@@ -39,15 +42,9 @@ Not Recommended
   - It's over ten years old and is *quite lacking* in terms of built-in hardware peripherals.
   - Use an ESP32-C3 when you're thinking you need to use an ESP8266 because the ESP32(-Sx) is "too powerful" or
     "overkill".
+  - Does not meet the requirements of :doc:`/guides/made_for_esphome`.
   - The original NodeMCU, D1-Mini and ESP-01 are examples of boards which utilize an ESP8266; note that there are
     (pin-compatible) versions of these boards available which instead utilize a more modern ESP32 or variant.
-
-- **ESP32-S2**
-
-  - Similar to the ESP32 and ESP32-S3, but...
-
-These microcontrollers do not support Bluetooth/BLE. If you're designing/building products which you might wish to
-brand as :doc:`/guides/made_for_esphome`, avoid using them.
 
 Additional Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~~~
