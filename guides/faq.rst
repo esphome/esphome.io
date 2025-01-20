@@ -17,7 +17,7 @@ Recommended
 - **ESP32**
 
   - Best supported/most mature
-  - Includes a great set of on-board hardware peripherals, so it's very capable and very flexible.
+  - Includes a great set of built-in hardware peripherals, so it's very capable and very flexible.
 
 - **ESP32-S3**
 
