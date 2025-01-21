@@ -740,6 +740,7 @@ Audio ADC Components
 
     Audio ADC Core, components/audio_adc/index, audio_adc.svg
     ES7210, components/audio_adc/es7210, es7210.svg
+    ES7243E, components/audio_adc/es7243e, es7243e.svg
 
 Audio DAC Components
 --------------------
