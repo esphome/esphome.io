@@ -1169,28 +1169,6 @@ Miscellaneous Components
     Sun, components/sun, weather-sunny.svg, dark-invert
     Tuya MCU, components/tuya, tuya.png
 
-Custom Components
------------------
-
-**Note:** :ref:`Custom Components are deprecated<a_note_about_custom_components>` in favor of :doc:`components/external_components`!
-
-.. imgtable::
-
-    Generic Custom Component, custom/custom_component, language-cpp.svg, dark-invert
-
-    Custom Binary Sensor, components/binary_sensor/custom, language-cpp.svg, dark-invert
-    Custom Climate, components/climate/custom, language-cpp.svg, dark-invert
-    Custom Cover, components/cover/custom, language-cpp.svg, dark-invert
-    Custom Light, components/light/custom, language-cpp.svg, dark-invert
-    Custom Output, components/output/custom, language-cpp.svg, dark-invert
-    Custom Sensor, components/sensor/custom, language-cpp.svg, dark-invert
-    Custom Switch, components/switch/custom, language-cpp.svg, dark-invert
-    Custom Text Sensor, components/text_sensor/custom, language-cpp.svg, dark-invert
-
-    Custom I²C Component, custom/i2c, language-cpp.svg, dark-invert
-    Custom SPI Component, custom/spi, language-cpp.svg, dark-invert
-    Custom UART Component, custom/uart, language-cpp.svg, dark-invert
-
 .. _cookbook:
 
 Cookbook
@@ -1233,6 +1211,5 @@ documentation for others to copy. See :doc:`Contributing </guides/contributing>`
     cookbook/index
     guides/index
     changelog/index
-    custom/index
     images/index
     projects/index
