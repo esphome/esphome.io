@@ -94,6 +94,13 @@ Default UART GPIO Pins
       - N/A
       - N/A
       - 18/19
+    * - ESP32-C6
+      - TX: 16, RX: 17
+      - N/A
+      - Undefined
+      - N/A
+      - N/A
+      - 12/13
     * - ESP32-S2
       - TX: 43, RX: 44
       - N/A
@@ -134,6 +141,9 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
       - ``UART0``
       - ``UART0``
     * - ESP32-C3
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP32-C6
       - ``USB_CDC``
       - ``USB_SERIAL_JTAG``
     * - ESP32-S2
