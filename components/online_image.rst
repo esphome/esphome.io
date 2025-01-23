@@ -11,7 +11,11 @@ With this component you can define images that will be downloaded, decoded and d
 
 .. note::
 
-    Currently only images in PNG format are supported.
+    Current supported formats:
+
+    - PNG
+
+    - BMP images, currently only binary uncompressed images are supported
 
 .. warning::
 
@@ -35,6 +39,7 @@ Configuration variables
 - **format** (**Required**): The format that the image is encoded with.
 
   - ``PNG``: The image on the server is encoded in PNG format.
+  - ``BMP``: The image on the server is encoded in BMP format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
 - **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
