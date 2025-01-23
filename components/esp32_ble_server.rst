@@ -138,6 +138,7 @@ Descriptors are optional and are used to provide additional information about a 
 
 Configuration variables:
 
+- **id** (*Optional*, string): An ID to refer to this descriptor in automations.
 - **uuid** (*Required*, string, int): The UUID of the descriptor.
 - **value** (*Required*, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`ble_server.descriptor.set_value` action.
 
