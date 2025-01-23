@@ -34,8 +34,6 @@ control the colors in the :ref:`light control actions <light-turn_on_action>`, y
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the light.
 - **pin_a** (**Required**, :ref:`config-id`): The id of the first float :ref:`output` to use for this light.
 - **pin_b** (**Required**, :ref:`config-id`): The id of the second float :ref:`output` to use for this light.
 - All other options from :ref:`Light <config-light>`.

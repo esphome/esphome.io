@@ -66,42 +66,31 @@ Configuration variables:
 
 - **pm_1_0** (*Optional*): The information for the **Weight Concentration** sensor for fine particles up to 1μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_2_5** (*Optional*): The information for the **Weight Concentration** sensor for fine particles up to 2.5μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_4_0** (*Optional*): The information for the **Weight Concentration** sensor for coarse particles up to 4μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_10_0** (*Optional*): The information for the **Weight Concentration** sensor for coarse particles up to 10μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **auto_cleaning_interval** (*Optional*): Reads/Writes the interval in seconds of the periodic fan-cleaning.
 
 - **temperature** (*Optional*): Temperature.Note only available with Sen54 or Sen55. The sensor will be ignored on unsupported models.
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): Relative Humidity. Note only available with Sen54 or Sen55. The sensor will be ignored on unsupported models.
 
-- **voc** (*Optional*): VOC Index. Note only available with Sen54 or Sen55. The sensor will be ignored on unsupported models.
+  - All options from :ref:`Sensor <config-sensor>`.
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **voc** (*Optional*): VOC Index. Note only available with Sen54 or Sen55. The sensor will be ignored on unsupported models.
 
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters. For more details see `Engineering Guidelines for SEN5x <https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf>`__
 
@@ -115,9 +104,6 @@ Configuration variables:
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **nox** (*Optional*): NOx Index. Note: Only available with Sen55. The sensor will be ignored on unsupported models.
-
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
   - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.For more details see `Engineering Guidelines for SEN5x <https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf>`__
 

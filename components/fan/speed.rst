@@ -23,7 +23,6 @@ supports speed settings.
 Configuration variables:
 ------------------------
 
-- **name** (*Optional*, string): The name for this fan.
 - **output** (**Required**, :ref:`config-id`): The id of the :ref:`float output <output>` to use for this fan.
 - **oscillation_output** (*Optional*, :ref:`config-id`): The id of the
   :ref:`output <output>` to use for the oscillation state of this fan. Default is empty.
@@ -32,7 +31,6 @@ Configuration variables:
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. The value is used
   to calculate the percentages for each speed. E.g. ``2`` means that you have 50% and 100% while ``100``
   will allow 1% increments in the output. Defaults to ``100``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **preset_modes** (*Optional*): A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set`).
 - All other options from :ref:`Fan Component <config-fan>`.
 

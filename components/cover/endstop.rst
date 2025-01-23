@@ -47,7 +47,6 @@ current position of the cover.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the cover.
 - **open_action** (**Required**, :ref:`Action <config-action>`): The action that should
   be performed when the remote requests the cover to be opened.
 - **open_duration** (**Required**, :ref:`config-time`): The amount of time it takes the cover
@@ -63,10 +62,9 @@ Configuration variables:
   :ref:`Binary Sensor <config-binary_sensor>` that turns on when the closed position is reached.
 
 - **stop_action** (**Required**, :ref:`Action <config-action>`): The action that should
-  be performed when the remote requests the cover to be closed or an endstop is reached.
+  be performed when the remote requests the cover to stop or an endstop is reached.
 - **max_duration** (*Optional*, :ref:`config-time`): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional endstops.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Cover <config-cover>`.
 
 See Also

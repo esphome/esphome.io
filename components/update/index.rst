@@ -21,8 +21,14 @@ install it on its own.
 Configuration variables:
 ------------------------
 
-- **name** (*Optional*, string): The name to use for the update component.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the update entity. At least one of **id** and **name** must be specified.
+
+  .. note::
+
+      If you have a :ref:`friendly_name <esphome-configuration_variables>` set for your device and
+      you want the light to use that name, you can set ``name: None``.
+
 - **device_class** (*Optional*, string): The device class for the update entity. See
   https://www.home-assistant.io/integrations/binary_sensor/#device-class for a list of available options.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend
@@ -32,8 +38,8 @@ Configuration variables:
 - **icon** (*Optional*, icon): The icon to use for the update entity in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Specifying an ``id`` without a ``name`` will
-  implicitly set this to true.
 - **on_update_available** (*Optional*, :ref:`Action <config-action>`): An automation to perform when an update is available.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations
 -----------

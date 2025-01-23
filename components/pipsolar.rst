@@ -242,6 +242,8 @@ Not all possible switches are exposed as they lead to the possibility to make se
           name: inverter0_output_source_priority_solar
         output_source_priority_battery:
           name: inverter0_output_source_priority_battery
+        output_source_priority_hybrid:
+          name: inverter0_output_source_priority_hybrid
         input_voltage_range:
           name: inverter0_input_voltage_range
         pv_ok_condition_for_parallel:
@@ -256,6 +258,7 @@ All sensors are normal text sensors... so all text sensor variables are working 
 - **output_source_priority_utility** (*Optional*): output source priority utility
 - **output_source_priority_solar** (*Optional*): output source priority solar
 - **output_source_priority_battery** (*Optional*): output source priority battery
+- **output_source_priority_hybrid** (*Optional*): output source priority hybrid
 - **input_voltage_range** (*Optional*): input voltage range
 - **pv_ok_condition_for_parallel** (*Optional*): pv ok condition for parallel
 - **pv_power_balance** (*Optional*): pv power balance

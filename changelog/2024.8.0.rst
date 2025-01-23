@@ -1,0 +1,321 @@
+ESPHome 2024.8.0 - 21st August 2024
+===================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.8.0.
+    :image: /_static/changelog-2024.8.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    LVGL Graphics, components/lvgl/index, lvgl.png
+    Online Image, components/online_image, image-sync-outline.svg, dark-invert
+    APDS9306, components/sensor/apds9306, apds9306.png
+
+    Home Assistant Number, components/number/homeassistant, home-assistant.svg, dark-invert
+    Home Assistant Switch, components/switch/homeassistant, home-assistant.svg, dark-invert
+    BME68x via BSEC2, components/sensor/bme68x_bsec2, bme680.jpg
+
+    M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
+    LYWSD02MMC, components/sensor/xiaomi_ble.html#lywsd02mmc, xiaomi_mijia_logo.jpg
+
+Light and Versatile Embedded Graphics Library
+---------------------------------------------
+
+Or LVGL for short, has been worked on by :ghuser:`clydebarrow` (and multiple other users doing testing and documentation etc)
+for quite some time now and is finally ready for releasing this month. It is a very powerful graphics library that
+is able to be configured almost completely in YAML (There are some places that will require lambdas/c++).
+The :doc:`documentation </components/lvgl/index>` is very extensive and hopefully we see
+some awesome dashboards being made with it.
+
+Online Image
+------------
+
+:ghuser:`guillempages` created a new :doc:`online_image </components/online_image>` component that allows your ESPHome device to download
+images from the internet while it is running and show them on your display. This can also be combined with the new LVGL
+component to show dynamic images for your dashboard.
+
+Home Assistant Switch & Number
+------------------------------
+
+New platforms have been added for ``switch`` and ``number`` to allow importing of state and controlling
+of switches and numbers that exist in Home Assistant (or another device via Home Assistant).
+This greatly simplifies controlling remote entities and will hopefully be extended to other platforms.
+
+Thank you for your support
+--------------------------
+
+We would like to thank all Home Assistant Cloud subscribers for their support. It allows `Nabu Casa <https://nabucasa.com/>`__ to
+employ two developers to maintain and further develop the ESPHome project.
+
+Release 2024.8.1 - August 28
+----------------------------
+
+- [lvgl] Bug fixes :esphomepr:`7338` by :ghuser:`clydebarrow`
+- [core] Clean build if the loaded integrations changed :esphomepr:`7344` by :ghuser:`clydebarrow`
+- [lvgl] Fix race condition involving numbers, switches etc. :esphomepr:`7345` by :ghuser:`clydebarrow`
+- [api] Fix sending the ``once`` flag on ha entity subscription :esphomepr:`7357` by :ghuser:`jesserockz`
+
+Release 2024.8.2 - September 3
+------------------------------
+
+- [datetime] Fix templated args :esphomepr:`7368` by :ghuser:`jesserockz`
+- Enable IPv6 when manual IPv4 is enabled :esphomepr:`7381` by :ghuser:`HeMan`
+- [core] Only clean build files with esp-idf :esphomepr:`7388` by :ghuser:`jesserockz`
+
+Release 2024.8.3 - September 3
+------------------------------
+
+- Bump Dockerfile dependencies :esphomepr:`7386` by :ghuser:`jesserockz`
+
+Full list of changes
+--------------------
+
+New Features
+^^^^^^^^^^^^
+
+- [update] Implement ``update.perform`` action and ``update.is_available`` condition :esphomepr:`7165` by :ghuser:`jesserockz` (new-feature)
+
+New Components
+^^^^^^^^^^^^^^
+
+- Feature/m5angle8: Add support for m5angle8 input device :esphomepr:`6799` by :ghuser:`rnauber` (new-integration)
+- APDS9306 Ambient Light Sensor :esphomepr:`6709` by :ghuser:`aodrenah` (new-integration)
+- [lvgl] base implementation :esphomepr:`7116` by :ghuser:`clydebarrow` (new-integration)
+- Add runtime online image support :esphomepr:`4710` by :ghuser:`guillempages` (new-integration)
+- [bme68x_bsec2_i2c] BME68X Temperature+Pressure+Humidity+Gas Sensor via BSEC2 :esphomepr:`4585` by :ghuser:`neffs` (new-integration)
+- Add support for LYWSD02MMC Xiaomi device :esphomepr:`7080` by :ghuser:`juanluss31` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- [homeassistant] Native switch entity import and control :esphomepr:`7018` by :ghuser:`Links2004` (new-platform)
+- [homeassistant] Native number entity import and control :esphomepr:`6455` by :ghuser:`landonr` (new-platform)
+- Correct offset calibration  :esphomepr:`7228` by :ghuser:`descipher` (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Remove deprecated argument parser :esphomepr:`7151` by :ghuser:`jesserockz` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- remove extra number from pronto :esphomepr:`7263` by :ghuser:`ssieb`
+- [api] Bump noise-c library version :esphomepr:`7288` by :ghuser:`clydebarrow`
+- fix some small rtttl issues :esphomepr:`6817` by :ghuser:`nielsnl68`
+- Fix overflow in ESPColorCorrection object :esphomepr:`7268` by :ghuser:`g-kiss`
+- [validation] Allow ``maybe_simple_value`` to not have default key in complex value :esphomepr:`7294` by :ghuser:`jesserockz`
+- [network] Always allow ``enable_ipv6: false`` :esphomepr:`7291` by :ghuser:`dwmw2`
+- Revert "[validation] Allow ``maybe_simple_value`` to not have default key in complex value" :esphomepr:`7305` by :ghuser:`jesserockz`
+- [lvgl] Bug fixes  :esphomepr:`7300` by :ghuser:`clydebarrow`
+- [speaker] Fix header includes :esphomepr:`7304` by :ghuser:`nielsnl68`
+- [microphone] Fix header includes :esphomepr:`7310` by :ghuser:`jesserockz`
+- Fix RP2040 Neopixel flickering issue :esphomepr:`7307` by :ghuser:`deCodeIt`
+- add the ability to add more idf components to an existing setup :esphomepr:`7302` by :ghuser:`nielsnl68`
+- Fix waveshare 2.13" epaper stride calculation error :esphomepr:`7303` by :ghuser:`serialx`
+- [rtttl] fix STOPPED state :esphomepr:`7323` by :ghuser:`NewoPL`
+
+All changes
+^^^^^^^^^^^
+
+- [wifi] Fix EAP for IDF 5.1+, add test :esphomepr:`7061` by :ghuser:`kbx81`
+- jsn_sr04t component: AJ_SR04M compatibility mode in checksum calculation :esphomepr:`7044` by :ghuser:`soeffi`
+- [CI] compile entire web_server during tests :esphomepr:`7084` by :ghuser:`tomaszduda23`
+- [CI] Add more ``improv_serial`` tests :esphomepr:`7081` by :ghuser:`kbx81`
+- Bump docker/build-push-action from 6.3.0 to 6.4.0 in /.github/actions/build-image :esphomepr:`7089` by :ghuser:`dependabot[bot]`
+- [CI] add web_server v1 test :esphomepr:`7090` by :ghuser:`tomaszduda23`
+- [wifi] Hostname may not be set as expected on Arduino platform :esphomepr:`7050` by :ghuser:`NewoPL`
+- Add host uart support for MacOS :esphomepr:`7095` by :ghuser:`clydebarrow`
+- Bump docker/build-push-action from 6.4.0 to 6.4.1 in /.github/actions/build-image :esphomepr:`7102` by :ghuser:`dependabot[bot]`
+- [code-quality] Add some ruff configuration :esphomepr:`7103` by :ghuser:`jesserockz`
+- [web_server] move v1 code to separate file :esphomepr:`7091` by :ghuser:`tomaszduda23`
+- [validation] Add ``host`` to ``require_framework_version`` :esphomepr:`7107` by :ghuser:`jesserockz`
+- [code-quality] Tidy up some duplicate CONFIG_SCHEMA assignments :esphomepr:`7106` by :ghuser:`jesserockz`
+- Move MQTT ip discovery to deticated config option. :esphomepr:`6673` by :ghuser:`Links2004`
+- Feature/m5angle8: Add support for m5angle8 input device :esphomepr:`6799` by :ghuser:`rnauber` (new-integration)
+- use cache to build tests for compoenents :esphomepr:`7059` by :ghuser:`tomaszduda23`
+- [modbus_controller] Add on_command_sent trigger :esphomepr:`7078` by :ghuser:`leejoow`
+- [ili9xxx] Rework delay handling :esphomepr:`7115` by :ghuser:`clydebarrow`
+- Inherit `esp32_ble_beacon` from `esp32_ble` :esphomepr:`6908` by :ghuser:`jpbede`
+- APDS9306 Ambient Light Sensor :esphomepr:`6709` by :ghuser:`aodrenah` (new-integration)
+- Bump docker/build-push-action from 6.4.1 to 6.5.0 in /.github/actions/build-image :esphomepr:`7119` by :ghuser:`dependabot[bot]`
+- Bump docker/setup-qemu-action from 3.1.0 to 3.2.0 :esphomepr:`7120` by :ghuser:`dependabot[bot]`
+- Bump docker/login-action from 3.2.0 to 3.3.0 :esphomepr:`7121` by :ghuser:`dependabot[bot]`
+- Bump docker/setup-buildx-action from 3.4.0 to 3.5.0 :esphomepr:`7122` by :ghuser:`dependabot[bot]`
+- [fan] fix initial FanCall to properly set speed :esphomepr:`7113` by :ghuser:`kr0ner`
+- Added ruff to pre-commit hooks :esphomepr:`7124` by :ghuser:`clydebarrow`
+- Update webserver local assets to 20240724-013115 :esphomepr:`7126` by :ghuser:`esphomebot`
+- [http_request] Allow configure buffer size on ESP-IDF :esphomepr:`7125` by :ghuser:`dentra`
+- Give more info on import errors. :esphomepr:`7128` by :ghuser:`clydebarrow`
+- [lvgl] base implementation :esphomepr:`7116` by :ghuser:`clydebarrow` (new-integration)
+- Bump aioesphomeapi to 24.6.2 and cryptography to 43.0.0 :esphomepr:`7131` by :ghuser:`bdraco`
+- [dependabot] Group docker action bumps into single PR :esphomepr:`7133` by :ghuser:`jesserockz`
+- Add ``--version`` handler to cli :esphomepr:`7150` by :ghuser:`jesserockz`
+- [code-quality] Organise ethernet related imports :esphomepr:`7152` by :ghuser:`jesserockz`
+- [code-quality] Organise wifi related imports :esphomepr:`7153` by :ghuser:`jesserockz`
+- [code-quality] Organise core imports :esphomepr:`7149` by :ghuser:`jesserockz`
+- Remove deprecated argument parser :esphomepr:`7151` by :ghuser:`jesserockz` (breaking-change)
+- Move ``CONF_ON_ERROR`` to const.py :esphomepr:`7156` by :ghuser:`jesserockz`
+- [code-quality] Organise esp32 imports :esphomepr:`7154` by :ghuser:`jesserockz`
+- Add microAmp and milliAmp to defined units :esphomepr:`7157` by :ghuser:`FreeBear-nc`
+- Bump docker/setup-buildx-action from 3.5.0 to 3.6.1 in the docker-actions group :esphomepr:`7159` by :ghuser:`dependabot[bot]`
+- LVGL stage 2 :esphomepr:`7129` by :ghuser:`clydebarrow`
+- [pid] Add get_min_integral() and get_max_integral() :esphomepr:`7162` by :ghuser:`FreeBear-nc`
+- [code-quality] Organise bluetooth related imports :esphomepr:`7155` by :ghuser:`jesserockz`
+- http_request watchdog as a component :esphomepr:`7161` by :ghuser:`oarcher`
+- [touchscreen] Allow binary sensor to have multiple pages in config :esphomepr:`7112` by :ghuser:`jesserockz`
+- [matrix_keypad] Add `pin->setup()` to rows and cols :esphomepr:`7163` by :ghuser:`AAllport`
+- [update] Implement ``update.perform`` action and ``update.is_available`` condition :esphomepr:`7165` by :ghuser:`jesserockz` (new-feature)
+- [lvgl] PR stage 3 :esphomepr:`7160` by :ghuser:`clydebarrow`
+- [api] ``homeassistant.action`` replaces ``homeassistant.service`` :esphomepr:`7171` by :ghuser:`jesserockz`
+- ade7953_spi wrong size specified in read_array call :esphomepr:`7172` by :ghuser:`SimoPk`
+- Bump improv library to 1.2.4 :esphomepr:`7174` by :ghuser:`jesserockz`
+- Implement 'round to nearest multiple' filter :esphomepr:`7142` by :ghuser:`MrEbbinghaus`
+- git ignore managed_components :esphomepr:`7180` by :ghuser:`oarcher`
+- [core] Eliminate nuisance messages from `build_codeowners` :esphomepr:`7185` by :ghuser:`clydebarrow`
+- [code-quality] More portable shebangs :esphomepr:`7189` by :ghuser:`jesserockz`
+- Add support for doing update entity refresh/check via API. :esphomepr:`7190` by :ghuser:`jesserockz`
+- [lvgl] Stage 4 :esphomepr:`7166` by :ghuser:`clydebarrow`
+- [esp32_improv] Update Improv library to reference new repo/version :esphomepr:`7195` by :ghuser:`kahrendt`
+- hydreon_rgxx: Fix parsing of data line :esphomepr:`7192` by :ghuser:`domob1812`
+- Remove outdated version block :esphomepr:`7177` by :ghuser:`tomaszduda23`
+- [lvgl] Stage 5 :esphomepr:`7191` by :ghuser:`clydebarrow`
+- socket: socket::set_sockaddr() for IPv4 addresses in IPv6 builds :esphomepr:`7196` by :ghuser:`dwmw2`
+- Adds MQTT component to Alarm Control panel component :esphomepr:`7188` by :ghuser:`heythisisnate`
+- [lvgl] Final stage :esphomepr:`7184` by :ghuser:`clydebarrow`
+- Move ``CONF_BACKGROUND_COLOR`` and ``CONF_FOREGROUND_COLOR`` to const.py :esphomepr:`7202` by :ghuser:`jesserockz`
+- [helpers] Set default flags of ExternalRAMAllocator to ALLOW_FAILURE :esphomepr:`7201` by :ghuser:`jesserockz`
+- Add runtime online image support :esphomepr:`4710` by :ghuser:`guillempages` (new-integration)
+- Update i2s_audio_speaker.cppi2s_audio/speaker: Fix fallthrough compiler warning :esphomepr:`7167` by :ghuser:`Mimoja`
+- Move CONF_ITEMS/CONF_FONT/CONF_TEXT to const.py :esphomepr:`7204` by :ghuser:`jesserockz`
+- [lvgl] Fix compile error when using encoder with buttons only. :esphomepr:`7203` by :ghuser:`clydebarrow`
+- Revert "Add null GPIO pin " :esphomepr:`6621` by :ghuser:`jesserockz`
+- [remote_transmitter] Change default carrier_frequency to valid value :esphomepr:`7176` by :ghuser:`iannisimo`
+- [code-quality] Organise script imports :esphomepr:`7198` by :ghuser:`jesserockz`
+- [max31856] Use cv.frequency as validator :esphomepr:`7212` by :ghuser:`jesserockz`
+- [code-quality] Organise base entities imports :esphomepr:`7208` by :ghuser:`tomaszduda23`
+- [spi] Remove ``SPIDelegateDummy`` :esphomepr:`7215` by :ghuser:`jesserockz`
+- [code-quality] Apply ruff linting suggestions :esphomepr:`7206` by :ghuser:`tomaszduda23`
+- [code-quality] Organise logger imports :esphomepr:`7205` by :ghuser:`tomaszduda23`
+- [code-quality] Apply ruff linting suggestions to core :esphomepr:`7207` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy sprinkler :esphomepr:`7222` by :ghuser:`tomaszduda23`
+- [code-quality] __attribute__((packed)) :esphomepr:`7221` by :ghuser:`tomaszduda23`
+- hx711: Check for DOUT going high after a reading :esphomepr:`7214` by :ghuser:`dwmw2`
+- [mqtt] Add extended device info :esphomepr:`7194` by :ghuser:`dentra`
+- [code-quality] NOLINT readability-identifier-naming :esphomepr:`7220` by :ghuser:`tomaszduda23`
+- [code-quality] Organise time imports :esphomepr:`7219` by :ghuser:`tomaszduda23`
+- [lvgl] Fix set state on updates :esphomepr:`7227` by :ghuser:`clydebarrow`
+- add missing override :esphomepr:`7231` by :ghuser:`tomaszduda23`
+- Add text_align_to_string :esphomepr:`7243` by :ghuser:`MrMDavidson`
+- [sml] Fixed crashing sml parser :esphomepr:`7235` by :ghuser:`eNBeWe`
+- Allow project name and version as improv_serial identity :esphomepr:`7248` by :ghuser:`AzonInc`
+- [lvgl] Implement default group for encoders :esphomepr:`7242` by :ghuser:`clydebarrow`
+- [bme68x_bsec2_i2c] BME68X Temperature+Pressure+Humidity+Gas Sensor via BSEC2 :esphomepr:`4585` by :ghuser:`neffs` (new-integration)
+- [code-quality] clang-tidy media_player :esphomepr:`7238` by :ghuser:`tomaszduda23`
+- Bump docker/build-push-action from 6.5.0 to 6.6.1 in /.github/actions/build-image :esphomepr:`7232` by :ghuser:`dependabot[bot]`
+- fix build error :esphomepr:`7229` by :ghuser:`tomaszduda23`
+- adjust to new python pre-commit hooks :esphomepr:`7178` by :ghuser:`tomaszduda23`
+- add windows script/setup.bat :esphomepr:`7140` by :ghuser:`nielsnl68`
+- [code-quality] add NOLINT haier_base :esphomepr:`7236` by :ghuser:`tomaszduda23`
+- [code-quality] clang-tidy bedjet :esphomepr:`7251` by :ghuser:`tomaszduda23`
+- fix name conflict with zephyr macro :esphomepr:`7252` by :ghuser:`tomaszduda23`
+- [code-quality] Apply ruff linting suggestions :esphomepr:`7239` by :ghuser:`tomaszduda23`
+- Add support for LYWSD02MMC Xiaomi device :esphomepr:`7080` by :ghuser:`juanluss31` (new-integration)
+- [code-quality] fix clang-tidy web server :esphomepr:`7230` by :ghuser:`tomaszduda23`
+- [test][web_server] Rejig test for v3 :esphomepr:`7110` by :ghuser:`RFDarter`
+- [api] Error log when NONE Update command is sent :esphomepr:`7247` by :ghuser:`oarcher`
+- [api] Add new flag to request state/attribute once from HA only :esphomepr:`7258` by :ghuser:`jesserockz`
+- [homeassistant] Add ``HOME_ASSISTANT_IMPORT_CONTROL_SCHEMA`` :esphomepr:`7259` by :ghuser:`jesserockz`
+- [const] Add some units for future use and adjust case :esphomepr:`7260` by :ghuser:`nkinnan`
+- [online_image] add option to show placeholder while downloading :esphomepr:`7083` by :ghuser:`guillempages`
+- [lvgl] Add initial_focus for encoders :esphomepr:`7256` by :ghuser:`clydebarrow`
+- [code-quality] fix order in esphome/const.py :esphomepr:`7267` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy network :esphomepr:`7266` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy core optional :esphomepr:`7265` by :ghuser:`tomaszduda23`
+- [code-quality] Fix variable naming in base_light_effects :esphomepr:`7237` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy mqtt :esphomepr:`7253` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy wifi related :esphomepr:`7254` by :ghuser:`tomaszduda23`
+- Bump docker/build-push-action from 6.6.1 to 6.7.0 in /.github/actions/build-image :esphomepr:`7269` by :ghuser:`dependabot[bot]`
+- [CI] Dont run full CI on ``build-image`` action changes :esphomepr:`7270` by :ghuser:`jesserockz`
+- Implement ByteBuffer :esphomepr:`6878` by :ghuser:`clydebarrow`
+- Add min and max brightness parameters for Light dim_relative Action :esphomepr:`6971` by :ghuser:`PaoloTK`
+- [homeassistant] Native switch entity import and control :esphomepr:`7018` by :ghuser:`Links2004` (new-platform)
+- [homeassistant] Native number entity import and control :esphomepr:`6455` by :ghuser:`landonr` (new-platform)
+- [lvgl] Rework events to avoid feedback loops :esphomepr:`7262` by :ghuser:`clydebarrow`
+- Add `color_filter_opa` style property :esphomepr:`7276` by :ghuser:`clydebarrow`
+- [code-quality] fix clang-tidy wake_on_lan :esphomepr:`7275` by :ghuser:`tomaszduda23`
+- [code-quality] fix readability-braces-around-statements :esphomepr:`7273` by :ghuser:`tomaszduda23`
+- [mqtt] fix missing initializer in MQTTClientComponent::disable_discovery :esphomepr:`7271` by :ghuser:`oarcher`
+- [code-quality] fix readability-named-parameter :esphomepr:`7272` by :ghuser:`tomaszduda23`
+- support illuminance for airthings wave plus device :esphomepr:`5203` by :ghuser:`MadMonkey87`
+- [micro_wake_word] Bump ESPMicroSpeechFeatures version to 1.1.0 :esphomepr:`7249` by :ghuser:`kahrendt`
+- Implement the finish() method and action. implement the is_stopped condition :esphomepr:`7255` by :ghuser:`nielsnl68`
+- Correct offset calibration  :esphomepr:`7228` by :ghuser:`descipher` (new-platform)
+- remove extra number from pronto :esphomepr:`7263` by :ghuser:`ssieb`
+- [api] Bump noise-c library version :esphomepr:`7288` by :ghuser:`clydebarrow`
+- fix some small rtttl issues :esphomepr:`6817` by :ghuser:`nielsnl68`
+- Fix overflow in ESPColorCorrection object :esphomepr:`7268` by :ghuser:`g-kiss`
+- [validation] Allow ``maybe_simple_value`` to not have default key in complex value :esphomepr:`7294` by :ghuser:`jesserockz`
+- [network] Always allow ``enable_ipv6: false`` :esphomepr:`7291` by :ghuser:`dwmw2`
+- Revert "[validation] Allow ``maybe_simple_value`` to not have default key in complex value" :esphomepr:`7305` by :ghuser:`jesserockz`
+- [lvgl] Bug fixes  :esphomepr:`7300` by :ghuser:`clydebarrow`
+- [speaker] Fix header includes :esphomepr:`7304` by :ghuser:`nielsnl68`
+- [microphone] Fix header includes :esphomepr:`7310` by :ghuser:`jesserockz`
+- Fix RP2040 Neopixel flickering issue :esphomepr:`7307` by :ghuser:`deCodeIt`
+- add the ability to add more idf components to an existing setup :esphomepr:`7302` by :ghuser:`nielsnl68`
+- Fix waveshare 2.13" epaper stride calculation error :esphomepr:`7303` by :ghuser:`serialx`
+- [rtttl] fix STOPPED state :esphomepr:`7323` by :ghuser:`NewoPL`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

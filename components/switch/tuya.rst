@@ -35,8 +35,6 @@ Based on this, you can create the switch as follows:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the switch.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the switch.
 - All other options from :ref:`Switch <config-switch>`.
 

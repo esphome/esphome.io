@@ -29,7 +29,6 @@ Configuration variables
 ------------------------
 
 - **pin** (**Required**, :ref:`config-pin`): The pin to count pulses on.
-- **name** (**Required**, string): The name of the sensor.
 
 - **internal_filter** (*Optional*, :ref:`config-time`): If a pulse shorter than this   time is detected, it is discarded. Defaults to ``13us``.
 

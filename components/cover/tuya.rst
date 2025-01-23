@@ -31,8 +31,6 @@ Now you can create the cover.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the cover.
 - **control_datapoint** (*Optional*, int): The datapoint id number for sending control commands.
 - **position_datapoint** (**Required**, int): The datapoint id number of the cover position value.
 - **position_report_datapoint** (*Optional*, int): The datapoint id number of the cover position report value, if separate from position_datapoint.

@@ -49,8 +49,6 @@ Based on this, you can create the fan as follows:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the fan.
 - **speed_datapoint** (**Required**, int): The datapoint id number of the fan speed.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the fan switch.
 - **oscillation_datapoint** (*Optional*, int): The datapoint id number of the oscillation

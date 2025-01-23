@@ -18,6 +18,10 @@ LEDs, or any others with a similar interface - SPI, 8 bits per colour and BGR or
 .. code-block:: yaml
 
     # Example configuration entry
+    spi:
+      mosi_pin: GPIO06
+      clk_pin: GPIO07
+
     light:
       - platform: spi_led_strip
         num_leds: 30
@@ -35,10 +39,7 @@ perceived intensity of different colors will generally vary. This can be done by
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the light.
 - **num_leds** (*Optional*, int): The number of LEDs attached. The default is 1.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz``, ``5MHz``, ``2MHz``, ``1MHz`` (default), ``200kHz``, ``75kHz`` or ``1kHz``.
 - All other options from :ref:`Light <config-light>`.
 

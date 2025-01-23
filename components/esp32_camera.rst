@@ -74,6 +74,8 @@ Frame Settings:
   Up to 60Hz is possible (with reduced frame sizes), but beware of overheating. Defaults to ``10 fps``.
 - **idle_framerate** (*Optional*, float): The framerate to capture images at when no client
   is requesting a full stream. Defaults to ``0.1 fps``.
+- **frame_buffer_count** (*Optional*, int): The number of frame buffers to use when reading from the camera sensor.
+  Must be between 1 and 2.  Defaults to ``1``.
 
 Image Settings:
 

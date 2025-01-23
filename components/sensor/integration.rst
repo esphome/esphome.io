@@ -29,7 +29,6 @@ Configuration variables:
 ------------------------
 
 - **sensor** (**Required**, :ref:`config-id`): The ID of the sensor to integrate over time.
-- **name** (**Required**, string): The name of the integration sensor.
 - **time_unit** (**Required**, string): The time unit to integrate with, one of
   ``ms``, ``s``, ``min``, ``h`` or ``d``.
 - **integration_method** (*Optional*, string): The integration method to use. One of
@@ -37,7 +36,6 @@ Configuration variables:
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so
   that the value can be restored upon power cycle or reboot.
   Warning: this option can wear out your flash. Defaults to ``false``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. _sensor-integration-reset_action:

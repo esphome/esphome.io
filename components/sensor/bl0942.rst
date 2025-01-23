@@ -16,31 +16,18 @@ to some pins on your board and the baud rate set to 4800 with 1 stop bit.
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: uart_bus
-      tx_pin: TX
-      rx_pin: RX
-      baud_rate: 4800
-      stop_bits: 1
-
     sensor:
       - platform: bl0942
-        uart_id: uart_bus
         voltage:
           name: 'BL0942 Voltage'
         current:
           name: 'BL0942 Current'
         power:
           name: 'BL0942 Power'
-          filters:
-            multiply: -1
         energy:
           name: 'BL0942 Energy'
         frequency:
           name: "BL0942 Frequency"
-          accuracy_decimals: 2
-
-        update_interval: 60s
 
 Configuration variables:
 ------------------------
@@ -49,7 +36,7 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **current** (*Optional*): The current value of the sensor in Amperes. All options from
   :ref:`Sensor <config-sensor>`.
-- **power** (*Optional*): The (active) power value of the sensor in Watts. Note that some power meters will report this in negative values (probably wired backwards), so you may want to use a filter to multiply it by -1. All options from :ref:`Sensor <config-sensor>`. 
+- **power** (*Optional*): The (active) power value of the sensor in Watts. Note that some power meters will report this in negative values (probably wired backwards), so you may want to use a filter to multiply it by -1. All options from :ref:`Sensor <config-sensor>`.
 - **energy** (*Optional*): Use the energy value of the sensor in kWh.
   All options from :ref:`Sensor <config-sensor>`.
 - **frequency** (*Optional*): The frequency value of the sensor in Hertz. All options from
@@ -59,6 +46,75 @@ Configuration variables:
   sensor. Defaults to ``60s``.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
   to use multiple UART buses.
+- **line_frequency** (*Optional*, string): The nominal AC line frequency of the supply voltage. One of ``50Hz``, ``60Hz``. Defaults to ``50Hz``.
+- **address** (*Optional*, int): The address of the BL0942 from its strapping pins. Defaults to ``0``.
+- **reset** (*Optional*, boolean): Whether to reset the BL0942 chip on startup, resetting all internal counters. Defaults to ``true``.
+- **current_reference** (*Optional*, float): The calibration parameter for current readings. Defaults to ``251213.46469622``.
+- **voltage_reference** (*Optional*, float): The calibration parameter for voltage readings. Defaults to ``15873.35944299``.
+- **power_reference** (*Optional*, float): The calibration parameter for power readings. Defaults to ``596.0`` unless either ``current_reference`` or ``voltage_reference`` are explicitly set, in which case it is calculated. See :ref:`bl0942-calibration` for more details.
+- **energy_reference** (*Optional*, float): The calibration parameter for cumulative energy readings. Defaults to ``3304.61127328`` unless any of ``current_reference``, ``voltage_reference`` or ``power_reference`` are explicitly set, in which case it is calculated. See :ref:`bl0942-calibration` for more details.
+
+
+.. _bl0942-calibration:
+
+Calibration
+-----------
+
+There are two fundamental calibration parameters which are dependent on the hardware: ``voltage_reference`` and ``current_reference``.  These can be determined by using an accurate voltage and current meter with a simple resistive load.
+
+The ``power_reference`` value can be derived from those, and will be roughly ``voltage_reference`` * ``current_reference`` * 3537 / (305978 * 73989).
+
+The ``energy_reference`` value can be derived as roughly ``power_reference`` * 3600000 / 419430.4.
+
+For compatibility with existing configurations, if no reference values are set then the original defaults will be used, despite the power and energy calibration not being entirely consistent.
+
+If converting Tuya devices, the factory calibration values can often be obtained from the original firmware. For example, they may be found in DPS parameters 22-25, or the `voltage_coe` and related options.
+
+An example from a Tongou DIN rail power meter unit. The result from ``tinytuya wizard`` included:
+
+.. code-block:: json
+
+    {
+        "code": "voltage_coe",
+        "value": 15968
+    },
+    {
+        "code": "electric_coe",
+        "value": 12418
+    },
+    {
+        "code": "power_coe",
+        "value": 3091
+    },
+    {
+        "code": "electricity_coe",
+        "value": 2653
+    },
+
+
+Noting that the ``electric_coe`` value (DPS 23) should be multiplied by ten, and the ``power_coe`` value should be divided by ten, this results in the following configuration:
+
+.. code-block:: yaml
+
+    voltage_reference: 15968    # DPS 21
+    current_reference: 124180   # DPS 22 * 10
+    power_reference: 309.1      # DPS 23 / 10
+    energy_reference: 2653      # DPS 24
+
+Alternatively, the values may be found on the flash of the unit without obtaining
+the Tuya keys for local communication. They can be found in the "key value store"
+partition. The same device as in the above example had the following (before
+flashing ESPHome) at offset ``0x001d5000``:
+
+.. code-block::
+
+    001d5000  60 3e 00 00 82 30 00 00  13 0c 00 00 5d 0a 00 00  |`>...0......]...|
+
+The hex values 0x3e60, 0x3082, 0xc13 and 0xa5d seen there correspond to the four
+DPS values reported by the running Tuya firmware.
+
+The formulas above for deriving ``power_reference`` and ``energy_reference`` can be
+used as a sanity check for the values found from the firmware.
 
 See Also
 --------

@@ -37,6 +37,8 @@ Configuration:
 - **media_player** (*Optional*, :ref:`config-id`): The :doc:`media_player </components/media_player/index>` to use
   to output the response. Cannot be used with ``speaker`` above.
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to ``false``.
+- **conversation_timeout** (*Optional*, :ref:`config-time`): How long to wait before resetting the ``conversation_id``
+  sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defauls to ``300s``.
 - **on_intent_start** (*Optional*, :ref:`Automation <automation>`): An automation to perform when intent processing starts.
 - **on_intent_end** (*Optional*, :ref:`Automation <automation>`): An automation to perform when intent processing ends.
 - **on_listening** (*Optional*, :ref:`Automation <automation>`): An automation to

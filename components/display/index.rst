@@ -11,14 +11,33 @@ engine. Fundamentally, there are these types of displays:
 - Character displays like :doc:`7-Segment displays <max7219>` or
   :doc:`LCD displays <lcd_display>`.
 - Serial displays like :doc:`nextion` that have their own processors for graphics rendering.
-- Graphical binary displays which can toggle ON/OFF any pixel, like :doc:`E-Paper <waveshare_epaper>`,
-
+- Graphical displays with fully addressable pixels, like :doc:`E-Paper <waveshare_epaper>`,
   :doc:`OLED <ssd1306>` or :doc:`TFT <ili9xxx>` displays.
 
-For graphical displays, which offer the greatest flexibility, there are two options:
+For graphical displays, which offer the greatest flexibility, there are two options for displaying content:
 
 - ESPHome's :ref:`own rendering engine <display-engine>`
 - :doc:`LVGL </components/lvgl/index>` - Light and Versatile Graphics Library
+
+.. _display-configuration:
+
+Configuration variables:
+************************
+
+All display components inherit these configuration variables.
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Required if there are multiple displays.
+- **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``1s``.
+- **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
+  See :ref:`display-engine` for more information.
+
+All *graphical* displays also inherit these configuration variables.
+
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to ``true`` if a lambda or pages are configured, false otherwise.
+- **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to ``false``. If set, any code in the ``lambda`` config option will be ignored.
+- **rotation** (*Optional*, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to ``0``.
+- **pages** (*Optional*, list): Pages configuration - see below.
+
 
 .. _display-engine:
 
@@ -105,6 +124,13 @@ Now that you know a bit more about ESPHome's coordinate system, let's draw some 
           it.circle(20, 40, 10);
           // ... and the same thing filled again
           it.filled_circle(20, 75, 10);
+
+          // Ring and half-ring. First draw the circle with a hole in it
+          // at [75,75] with inner raduis of 20 and outer of 30
+          it.filled_ring(75, 75, 30, 20);
+          // and a "gauge": half-ring that is partially filled.
+          // Same position and size but 80% filled left to right
+          it.filled_gauge(75, 75, 30, 20, 80);
 
           // Triangles... Let's draw the outline of a triangle from the [x,y] coordinates of its three points
           // [25,5], [100,5], [80,25]

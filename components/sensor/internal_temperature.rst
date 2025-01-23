@@ -28,10 +28,8 @@ temperature sensor of the ESP32, RP2040 and BK72XX chip.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the temperature sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also

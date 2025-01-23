@@ -30,15 +30,11 @@ Configuration variables:
 
 - **temperature** (*Optional*): Temperature.
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): Relative Humidity.
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **precision** (*Optional*, string): The measurement precision, either ``High``, ``Med`` or ``Low``. Default is ``High``.
 - **heater_max_duty** (*Optional*, float): The maximum duty cycle of the heater (limited to ``0.05``). Default is ``0.0``, i.e. heater off.

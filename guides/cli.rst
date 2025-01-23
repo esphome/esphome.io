@@ -39,6 +39,7 @@ ESPHome's command line interface always has the following format
 .. option:: -v|--verbose
 
     Enable verbose esphome logs.
+    Can also be enabled via environment variable ``ESPHOME_VERBOSE=true``.
 
 ``--quiet`` Option
 ------------------

@@ -52,7 +52,7 @@ The :ref:`I²C <i2c>` is required to be set up in your configuration for this se
       model: bme680
       operating_age: 28d
       sample_rate: LP
-      voltage: 3.3V
+      supply_voltage: 3.3V
 
 
 

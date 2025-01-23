@@ -33,15 +33,11 @@ Configuration variables:
 
 - **eco2** (**Required**): The information for the CO₂eq. sensor.
 
-  - **name** (**Required**, string): The name for the CO₂eq sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **tvoc** (**Required**): The information for the total Volatile Organic Compounds sensor.
 
-  - **name** (**Required**, string): The name for the TVOC sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **store_baseline** (*Optional*, boolean): Store the sensor baselines persistently when calculated or updated.
   Defaults to yes.
@@ -62,15 +58,11 @@ Advanced:
 
 - **eco2_baseline** (*Optional*): The information for the CO₂eq. baseline value sensor. Baseline value is published in decimals.
 
-  - **name** (**Required**, string): The name for the CO₂eq baseline value sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **tvoc_baseline** (*Optional*): The information for the TVOC baseline value sensor. Baseline value is published in decimals.
 
-  - **name** (**Required**, string): The name for the TVOC baseline value sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **compensation** (*Optional*): The block containing sensors used for compensation. Both values must be supplied in order to be able to generate the absolute humidity to be reported to the sensor.
 

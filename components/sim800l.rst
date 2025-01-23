@@ -76,9 +76,7 @@ Configuration variables:
 
 - **rssi** (*Optional*): The informed Received signal strength indication (RSSI) in dBm.
 
-  - **name** (**Required**, string): The name for the rssi sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 
 Binary Sensor
@@ -95,9 +93,7 @@ Configuration variables:
 
 - **registered** (*Optional*): Indicates if the SIM800L has successfully registered in the cellular network.
 
-  - **name** (**Required**, string): The name for the registered binary sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 .. _sim800l-on_sms_received:
 

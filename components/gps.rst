@@ -49,39 +49,27 @@ Configuration variables:
 ------------------------
 - **latitude** (*Optional*): Include the Latitude as a sensor
 
-  - **name** (**Required**, string): The name to give the latitude sensor
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **longitude** (*Optional*): Include the Longitude as a sensor
 
-  - **name** (**Required**, string): The name to give the longitude sensor
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **speed** (*Optional*): Include the measured speed as a sensor
 
-  - **name** (**Required**, string): The name to give the speed sensor
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **course** (*Optional*): Include the measured course as a sensor
 
-  - **name** (**Required**, string): The name to give the course sensor
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **altitude** (*Optional*): Include the measured altitude as a sensor
 
-  - **name** (**Required**, string): The name to give the altitude sensor
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **satellites** (*Optional*): Include the number of tracking satellites being used as a sensor
 
-  - **name** (**Required**, string): The name to give the tracking satellites sensor
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 See Also
 --------

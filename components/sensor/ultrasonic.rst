@@ -46,7 +46,6 @@ Configuration variables:
   periodically send the trigger pulse to.
 - **echo_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The input pin on which to
   wait for the echo.
-- **name** (**Required**, string): The name of the sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
 - All other options from :ref:`Sensor <config-sensor>`.

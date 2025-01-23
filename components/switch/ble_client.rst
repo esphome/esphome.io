@@ -35,7 +35,6 @@ Configuration variables:
 ------------------------
 
 - **ble_client_id** (**Required**, :ref:`config-id`): ID of the associated BLE client.
-- **id** (*Optional*, :ref:`config-id`): The ID to use for code generation, and for reference by dependent components.
 - All other options from :ref:`Switch <config-switch>`.
 
 See Also

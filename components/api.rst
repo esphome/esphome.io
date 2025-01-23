@@ -19,6 +19,13 @@ The ESPHome native API is based on a custom TCP protocol using protocol buffers.
 the protocol data structure definitions here: `api.proto <https://github.com/esphome/esphome/blob/dev/esphome/components/api/api.proto>`__
 A Python library that implements this protocol is `aioesphomeapi <https://github.com/esphome/aioesphomeapi>`__.
 
+.. note::
+
+    **Actions** were previously called **Services**. ESPHome changed the name in line with
+    `Home Assistant <https://developers.home-assistant.io/blog/2024/07/16/service-actions/>`__
+    but will continue to support YAML with ``services`` and ``homeassistant.service`` for the foreseeable future.
+    Documentation will only refer to **Actions**.
+
 .. code-block:: yaml
 
     # Example configuration entry

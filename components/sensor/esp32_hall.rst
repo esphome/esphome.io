@@ -36,10 +36,8 @@ by the hall sensor.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the hall effect sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. warning::

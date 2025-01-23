@@ -83,9 +83,7 @@ Binary Sensor
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the enrolling binary sensor.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+- All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 
 Sensor

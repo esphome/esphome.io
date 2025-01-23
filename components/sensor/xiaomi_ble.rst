@@ -559,7 +559,7 @@ Required:
 - **mac_address** (MAC Address): The MAC address of the device.
 - **bindkey** (string, 32 characters, case insensitive): The key to decrypt the BLE advertisements for encrypted sensor types
 
-Optional with **name**, **id** (:ref:`config-id`) and all other options from :ref:`Sensor <config-sensor>`:
+All options from :ref:`Sensor <config-sensor>` are supported for:
 
 - **temperature**
 - **humidity**

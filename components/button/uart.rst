@@ -22,8 +22,6 @@ The ``uart`` button platform allows you to send a pre-defined sequence of bytes 
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (*Optional*, string): The name for the button.
 - **data** (**Required**, string or list of bytes): The data to send via UART. Either an ASCII string
   or a list of bytes.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART hub.

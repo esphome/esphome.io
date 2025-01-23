@@ -15,6 +15,7 @@ Configuration variables:
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the number.
 - **animated** (*Optional*, boolean): Whether to set the value of the widget with an animation (if supported by the widget). Defaults to ``true``.
+- **update_on_release** (*Optional*, boolean): By default the number will publish a new value each time the value of the associated widget changes. If this option is ``true`` then the value will only be published when touch is released.
 - All other variables from :ref:`Number <config-number>`.
 
 Example:

@@ -53,7 +53,7 @@ Newer Haier models using a module called ESP32-for-Haier. It is an ESP32 single-
 
 Also, you can use any other ESP32, ESP8266, or an RPI pico W board. In this case, you will need to cut the original wire or make a connector yourself (the board has a JST SM04B-GHS-TB connector)
 
-This component requires a :ref:`uart` to be setup.
+This component requires a :ref:`UART bus <uart>` to be setup.
 
 .. code-block:: yaml
 
@@ -65,7 +65,6 @@ This component requires a :ref:`uart` to be setup.
         name: Haier AC
         uart_id: ac_port
         wifi_signal: true
-        beeper: true
         display: true
         visual:
           min_temperature: 16 °C
@@ -85,7 +84,6 @@ This component requires a :ref:`uart` to be setup.
         - BOTH
       supported_presets:
         - AWAY
-        - ECO
         - BOOST
         - SLEEP
       on_alarm_start:
@@ -111,10 +109,8 @@ This component requires a :ref:`uart` to be setup.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, :ref:`config-id`): ID of the UART port to communicate with AC.
 - **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: ``hon`` or ``smartair2``. The default value is ``smartair2``.
-- **name** (**Required**, string): The name of the climate device.
 - **wifi_signal** (*Optional*, boolean): If ``true`` - send wifi signal level to AC.
 - **answer_timeout** (*Optional*, :ref:`config-time`): Responce timeout. The default value is ``200ms``.
 - **alternative_swing_control** (*Optional*, boolean): (supported by smartAir2 only) If ``true`` - use alternative values to control swing mode. Use only if the original control method is not working for your AC.
@@ -126,7 +122,7 @@ Configuration variables:
 - **beeper** (*Optional*, boolean): Can be used to disable beeping on commands from AC. Supported only by hOn protocol.
 - **supported_modes** (*Optional*, list): Can be used to disable some of AC modes. Possible values: ``'OFF'``, ``HEAT_COOL``, ``COOL``, ``HEAT``, ``DRY``, ``FAN_ONLY``.
 - **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: ``'OFF'``, ``VERTICAL``, ``HORIZONTAL``, ``BOTH``.
-- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: ``AWAY``, ``BOOST``, ``COMFORT``. Possible values for hOn are: ``AWAY``, ``ECO``, ``BOOST``, ``SLEEP``. ``AWAY`` preset can be enabled only in ``HEAT`` mode, it is disabled by default.
+- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: ``AWAY``, ``BOOST``, ``COMFORT``. Possible values for hOn are: ``AWAY``, ``BOOST``, ``SLEEP``. ``AWAY`` preset can be enabled only in ``HEAT`` mode, it is disabled by default.
 - **on_alarm_start** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC activates a new alarm. See :ref:`haier-on_alarm_start`.
 - **on_alarm_end** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See :ref:`haier-on_alarm_end`.
 - **on_status_message** (*Optional*, :ref:`Automation <automation>`): Automation to perform when status message received from AC. See :ref:`haier-on_status_message`.
@@ -345,6 +341,7 @@ See Also
 - :doc:`Haier Climate Binary Sensors </components/binary_sensor/haier>`
 - :doc:`Haier Climate Text Sensors </components/text_sensor/haier>`
 - :doc:`Haier Climate Buttons </components/button/haier>`
+- :doc:`Haier Climate Switches </components/switch/haier>`
 - :doc:`/components/climate/index`
-- :apiref:`haier/climate/haier.h`
+- :apiref:`haier/climate/haier_base.h`
 - :ghedit:`Edit`

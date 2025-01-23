@@ -54,7 +54,6 @@ See :doc:`/components/display/nextion` for setting up the display
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
 - **nextion_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the Nextion display.
 - **component_name** (*Optional*, string): Manually specify the name of the Nextion component.
 - **variable_name** (*Optional*, string): Manually specify the name of the Nextion variable.
@@ -95,6 +94,50 @@ should be prefixed with the page name (page0/page1 or whatever you have changed 
 *Example*
 
 ``component_name: page0.humidity``
+
+.. _sensor-nextion-publish_action:
+
+``sensor.nextion.publish`` Action
+---------------------------------
+
+You can also publish a state to a Nextion sensor from elsewhere in your YAML file
+with the ``sensor.nextion.publish`` action.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: nextion
+        id: nextion_sensor
+        ...
+    # in some trigger
+    on_...:
+      - sensor.nextion.publish:
+          id: nextion_sensor
+          state: 100.0
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+      # Templated
+      - sensor.nextion.publish:
+          id: nextion_sensor
+          state: !lambda 'return 100.0;'
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+
+Configuration variables:
+
+- **id** (**Required**, :ref:`config-id`): The ID of the Nextion sensor.
+- **state** (**Required**, string, :ref:`templatable <config-templatable>`): The float state to publish.
+- **publish_state** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Home Assistant.
+  Default is true.
+- **send_to_nextion** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Nextion
+  display which will update component. Default is true.
+
+.. note::
+
+    This action can also be written in lambdas. See :ref:`nextion_sensor_lambda_calls`
 
 .. _nextion_sensor_lambda_calls:
 

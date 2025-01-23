@@ -49,7 +49,6 @@ instructions for setting up this platform.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
 - **mac_address** (*Optional*, MAC Address): The MAC address to track for this
   sensor. Note that exactly one of ``mac_address``, ``irk``, ``service_uuid`` or ``ibeacon_uuid``
   must be present.
@@ -67,7 +66,6 @@ Configuration variables:
   same building.
 - **ibeacon_minor** (*Optional*, int): The iBeacon minor identifier of the beacon that needs
   to be tracked. Usually used to identify beacons within an iBeacon group.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also

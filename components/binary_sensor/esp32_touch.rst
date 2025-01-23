@@ -141,8 +141,6 @@ Configuration variables:
    events on.
 -  **threshold** (**Required**, ``int``): The threshold to use to detect touch events. See
    :ref:`esp32-finding-thresholds` below for help determining this value.
--  **name** (**Required**, string): The name of the binary sensor.
--  **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 -  **wakeup_threshold** (*Optional*, ``int``): The threshold to use to detect touch events to wake-up from deep sleep.
    See :ref:`esp32-finding-thresholds` below for help determining this value. Touch pad sensors that should trigger a
    wake-up from deep sleep must specify this value. The :ref:`deep_sleep-component` must also be configured to enable

@@ -26,7 +26,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The binary sensor that should be mirrored.
-- **name** (**Required**, string): The name of the binary sensor.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 Copy Button
@@ -44,7 +43,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The button that should be mirrored.
-- **name** (**Required**, string): The name of the button.
 - All other options from :ref:`Button <config-button>`.
 
 Copy Cover
@@ -62,7 +60,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The cover that should be mirrored.
-- **name** (**Required**, string): The name of the cover.
 - All other options from :ref:`Cover <config-cover>`.
 
 Copy Fan
@@ -80,7 +77,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The fan that should be mirrored.
-- **name** (**Required**, string): The name of the fan.
 - All other options from :ref:`Fan <config-fan>`.
 
 Copy Lock
@@ -98,7 +94,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The lock that should be mirrored.
-- **name** (**Required**, string): The name of the lock.
 - All other options from :ref:`Lock <config-lock>`.
 
 Copy Number
@@ -116,7 +111,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The number that should be mirrored.
-- **name** (**Required**, string): The name of the number.
 - All other options from :ref:`Number <config-number>`.
 
 Copy Select
@@ -134,7 +128,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The select that should be mirrored.
-- **name** (**Required**, string): The name of the select.
 - All other options from :ref:`Select <config-select>`.
 
 .. _copy-sensor:
@@ -154,7 +147,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The sensor that should be mirrored.
-- **name** (**Required**, string): The name of the sensor.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 Copy Switch
@@ -172,7 +164,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The switch that should be mirrored.
-- **name** (**Required**, string): The name of the switch.
 - All other options from :ref:`Switch <config-switch>`.
 
 Copy Text Sensor
@@ -190,7 +181,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The text sensor that should be mirrored.
-- **name** (**Required**, string): The name of the text sensor.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 Copy Text
@@ -208,7 +198,6 @@ Configuration variables:
 ************************
 
 - **source_id** (**Required**, :ref:`config-id`): The text that should be mirrored.
-- **name** (**Required**, string): The name of the number.
 - All other options from :ref:`Text <config-text>`.
 
 See Also

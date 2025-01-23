@@ -60,14 +60,12 @@ Based on this, you can create the climate device as follows:
           eco:
             datapoint: 5
             temperature: 28
-        
+
 
 
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the climate device.
 - **supports_heat** (*Optional*, boolean): Specifies if the device has a heating mode. Defaults to ``true``.
 - **supports_cool** (*Optional*, boolean): Specifies if the device has a cooling mode. Defaults to ``false``.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the climate switch (device on/off).

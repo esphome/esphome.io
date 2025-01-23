@@ -71,205 +71,139 @@ Configuration variables:
 
 - **energy_delivered_tariff1** (*Optional*): Energy Consumed Tariff 1.
 
-  - **name** (**Required**, string): The name for the energy_delivered_tariff1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **energy_delivered_tariff2** (*Optional*): Energy Consumed Tariff 2.
 
-  - **name** (**Required**, string): The name for the energy_delivered_tariff2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **energy_returned_tariff1** (*Optional*): Energy Produced Tariff 1.
 
-  - **name** (**Required**, string): The name for the energy_returned_tariff1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **energy_returned_tariff2** (*Optional*): Energy Produced Tariff 2.
 
-  - **name** (**Required**, string): The name for the energy_returned_tariff2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_delivered** (*Optional*): Power Consumed.
 
-  - **name** (**Required**, string): The name for the power_delivered sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_returned** (*Optional*): Power Produced.
 
-  - **name** (**Required**, string): The name for the power_returned sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_failures** (*Optional*): Electricity Failures.
 
-  - **name** (**Required**, string): The name for the electricity_failures sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_long_failures** (*Optional*): Long Electricity Failures.
 
-  - **name** (**Required**, string): The name for the electricity_long_failures sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_sags_l1** (*Optional*): Number of voltage sags in phase L1.
 
-  - **name** (**Required**, string): The name for the electricity_sags_l1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_sags_l2** (*Optional*): Number of voltage sags in phase L2.
 
-  - **name** (**Required**, string): The name for the electricity_sags_l2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_sags_l3** (*Optional*): Number of voltage sags in phase L3.
 
-  - **name** (**Required**, string): The name for the electricity_sags_l3 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_swells_l1** (*Optional*): Number of voltage swells in phase L1.
 
-  - **name** (**Required**, string): The name for the electricity_swells_l1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_swells_l2** (*Optional*): Number of voltage swells in phase L2.
 
-  - **name** (**Required**, string): The name for the electricity_swells_l2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **electricity_swells_l3** (*Optional*): Number of voltage swells in phase L3.
 
-  - **name** (**Required**, string): The name for the electricity_swells_l3 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **voltage_l1** (*Optional*): Voltage Phase 1.
 
-  - **name** (**Required**, string): The name for the voltage_l1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **voltage_l2** (*Optional*): Voltage Phase 2.
 
-  - **name** (**Required**, string): The name for the voltage_l2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **voltage_l3** (*Optional*): Voltage Phase 3.
 
-  - **name** (**Required**, string): The name for the voltage_l3 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **current_l1** (*Optional*): Current Phase 1.
 
-  - **name** (**Required**, string): The name for the current_l1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **current_l2** (*Optional*): Current Phase 2.
 
-  - **name** (**Required**, string): The name for the current_l2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **current_l3** (*Optional*): Current Phase 3.
 
-  - **name** (**Required**, string): The name for the current_l3 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_delivered_l1** (*Optional*): Power Consumed Phase 1.
 
-  - **name** (**Required**, string): The name for the power_delivered_l1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_delivered_l2** (*Optional*): Power Consumed Phase 2.
 
-  - **name** (**Required**, string): The name for the power_delivered_l2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_delivered_l3** (*Optional*): Power Consumed Phase 3.
 
-  - **name** (**Required**, string): The name for the power_delivered_l3 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_returned_l1** (*Optional*): Power Produced Phase 1.
 
-  - **name** (**Required**, string): The name for the power_returned_l1 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_returned_l2** (*Optional*): Power Produced Phase 2.
 
-  - **name** (**Required**, string): The name for the power_returned_l2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **power_returned_l3** (*Optional*): Power Produced Phase 3.
 
-  - **name** (**Required**, string): The name for the power_returned_l3 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **gas_delivered** (*Optional*): Gas Consumed.
 
-  - **name** (**Required**, string): The name for the gas_delivered sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 Belgium
 
 - **gas_delivered_be** (*Optional*): Gas Consumed Belgium.
 
-  - **name** (**Required**, string): The name for the gas_delivered_be sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **active_energy_import_current_average_demand** (*Optional*): Current Average Quarterly Demand for Peak Tarrif Belgium.
 
-  - **name** (**Required**, string): The name for the active_energy_import_current_average_demand sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **active_energy_import_maximum_demand_running_month** (*Optional*): Current Month's Maximum Quarterly Demand for Peak Tarrif Belgium.
 
-  - **name** (**Required**, string): The name for the active_energy_import_maximum_demand_running_month sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **active_energy_import_maximum_demand_last_13_months** (*Optional*): 13 Month Maximum Quarterly Demand for Peak Tarrif Belgium.
 
-  - **name** (**Required**, string): The name for the active_energy_import_maximum_demand_last_13_months sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 Luxembourg
 
 - **energy_delivered_lux** (*Optional*): Energy Consumed Luxembourg
 
-  - **name** (**Required**, string): The name for the energy_delivered_lux sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **energy_returned_lux** (*Optional*): Energy Produced Luxembourg
 
-  - **name** (**Required**, string): The name for the energy_returned_lux sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 Text Sensor
 -----------
@@ -278,79 +212,60 @@ Configuration variables:
 
 - **identification** (*Optional*): DSMR Identification
 
-  - **name** (**Required**, string): The name for the identification text sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **p1_version** (*Optional*): DSMR Version
 
-  - **name** (**Required**, string): The name for the p1_version text sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **timestamp** (*Optional*): Timestamp
 
-   - **name** (**Required**, string): The name for the timestamp sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **electricity_tariff** (*Optional*): The current tariff. According to the specs value
   '0001' means 'normal tariff' and value '0002' means 'low tariff'. Your meter may report differently.
 
-   - **name** (**Required**, string): The name for the electricity_tariff sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **electricity_failure_log** (*Optional*): Electricity Failure Log
 
-   - **name** (**Required**, string): The name for the electricity_failure_log sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **message_short** (*Optional*): Message Short
 
-   - **name** (**Required**, string): The name for the message_short sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **message_long** (*Optional*): Message Long
 
-   - **name** (**Required**, string): The name for the message_long sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **gas_equipment_id** (*Optional*): Gas Equipment ID.
 
-   - **name** (**Required**, string): The name for the gas_equipment_id sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **water_equipment_id** (*Optional*): Water Equipment ID
 
-   - **name** (**Required**, string): The name for the water_equipment_id sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **sub_equipment_id** (*Optional*): Sub Equipment ID
 
-   - **name** (**Required**, string): The name for the sub_equipment_id sensor.
-   - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-   - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 - **gas_delivered_text** (*Optional*): A text sensor which unformatted gas data. You need to
   apply a custom parsing of this value depending on your meter format.
 
-  - **name** (**Required**, string): The name for the p1_version text sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
+
+- **telegram** (*Optional*): The (decrypted) unparsed telegram, marked as internal sensor. 
+  Can also be used to trigger an action based on the last values. 
+
   - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 Belgium
 
 - **p1_version_be** (*Optional*): DSMR Version Belgium
 
-  - **name** (**Required**, string): The name for the p1_version_be text sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Text Sensor <config-text_sensor>`.
+  - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 Older DSMR meters support
 -------------------------
@@ -473,6 +388,42 @@ actually make it work, serial logging must be disabled to keep the hardware UART
     uart:
       pin: GPIO13
       baud_rate: 115200
+
+Bridging support / raw telegram logging
+---------------------------------------
+
+You can use another uart to supply another P1 receiver with the same telegram. See configuration sample as used for bridging.
+
+.. code-block:: yaml
+
+    # define multiple uart's
+    uart:
+      - id: p1_uart
+        rx_pin:
+          number: 4
+          inverted: true
+        baud_rate: 115200
+        rx_buffer_size: 1700
+      - id: p1_bridge_uart
+        tx_pin:
+          number: 10
+        baud_rate: 115200
+
+    # link input uart to dsmr
+    dsmr:
+      uart_id: p1_uart
+      max_telegram_length: 1700
+
+    # log the telegram and pass telegram to p1_bridge_uart 
+    text_sensor:
+      - platform: dsmr
+        telegram:
+          name: "telegram"
+          on_value:
+            then:
+              - lambda: |-
+                  ESP_LOGV("dsrm", "telegram: %s", x.c_str());
+                  p1_bridge_uart->write_str(x.c_str());
 
 See Also
 --------

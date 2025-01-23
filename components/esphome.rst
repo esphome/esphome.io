@@ -45,9 +45,9 @@ Advanced options:
   as default one in case it is mounted to it.
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See :ref:`esphome-platformio_options`.
-- **includes** (*Optional*, list of files): A list of C/C++ files to include in the main (auto-generated) sketch file
-  for custom components. The paths in this list are relative to the directory where the YAML configuration file
-  is in. See :ref:`esphome-includes`.
+- **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) ``main`` file.
+  The paths in this list are relative to the directory where the YAML configuration file is located. See
+  :ref:`esphome-includes`.
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
   :ref:`esphome-libraries`.
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
@@ -100,10 +100,9 @@ is already set up. You can however change this using the ``priority`` parameter.
     esphome:
       # ...
       on_boot:
-        priority: 600
-        # ...
-        then:
-          - switch.turn_off: switch_1
+        - priority: 600
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -138,9 +137,9 @@ too many WiFi/MQTT connection attempts, Over-The-Air updates being applied or th
     esphome:
       # ...
       on_shutdown:
-        priority: 700
-        then:
-          - switch.turn_off: switch_1
+        - priority: 700
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -222,9 +221,8 @@ This option behaves differently depending on what the included file is pointing 
 ``libraries``
 -------------
 
-With the ``libraries`` option it is possible to include libraries in the PlatformIO project. These libraries will then
-be compiled into the resulting firmware, and can be used in code from :ref:`lambdas <config-lambda>` and from
-custom components.
+The ``libraries`` option allows you to include libraries in the PlatformIO project. These libraries will then be
+compiled into the resulting firmware and may be used by :ref:`lambdas <config-lambda>`.
 
 .. code-block:: yaml
 

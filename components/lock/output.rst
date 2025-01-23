@@ -27,8 +27,6 @@ Configuration variables:
 ------------------------
 
 - **output** (**Required**, :ref:`config-id`): The ID of the output component to use.
-- **name** (**Required**, string): The name for the lock.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Lock <config-lock>`.
 
 See Also

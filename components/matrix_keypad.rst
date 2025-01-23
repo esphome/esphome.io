@@ -34,6 +34,8 @@ Component
         - pin: GPIOXX
       keys: "123A456B789C*0#D"
       has_diodes: false
+      on_key:
+        - lambda: ESP_LOGI("KEY", "key %d pressed", x);
 
 
 Configuration variables:
@@ -79,6 +81,13 @@ Configuration variables:
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 Either the ``row`` and ``col`` parameters, or the ``key`` parameter has to be provided.
+
+
+Automations:
+------------
+
+- **on_key** (*Optional*, :ref:`Automation <automation>`): An automation to perform
+  when a key has been pressed. The key is in a variable called ``x``.
 
 
 .. note::

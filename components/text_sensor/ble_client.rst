@@ -33,7 +33,6 @@ Configuration variables:
 - **service_uuid** (**Required**, UUID): UUID of the service on the device.
 - **characteristic_uuid** (**Required**, UUID): UUID of the service's characteristic to query.
 - **descriptor_uuid** (*Optional*, UUID): UUID of the characteristic's descriptor to query.
-- **id** (*Optional*, :ref:`config-id`): The ID to use for code generation, and for reference by dependent components.
 - **notify** (*Optional*, boolean): Instruct the server to send notifications for this
   characteristic. Defaults to ``false``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to poll the device. Defaults to ``60s``.

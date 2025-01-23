@@ -9,8 +9,12 @@ Component/Hub
 -------------
 .. _ld2410-component:
 
-The ``ld2410`` sensor platform allows you to use HI-LINK LD2410 motion and presence sensor
-(`datasheet and user manual <https://drive.google.com/drive/folders/1p4dhbEJA3YubyIjIIC7wwVsSo8x29Fq-?spm=a2g0o.detail.1000023.17.93465697yFwVxH>`__) with ESPHome.
+The ``ld2410`` sensor platform allows you to use HI-LINK LD2410 motion and presence sensors with ESPHome.
+There are three variants with similar communication protocols:
+
+- LD2410 (`datasheet and user manual <https://drive.google.com/drive/folders/1lCQv3mfHJ3XKXzweeHPFnJ_8_D_EWEKk>`__)
+- LD2410B (`datasheet and user manual <https://drive.google.com/drive/folders/16zI-fium_BZeP08EyQke0rWp0BJTMvw3>`__)
+- LD2410C (`datasheet and user manual <https://drive.google.com/drive/folders/1ypOlacBmmFXY6lDQ0f1hEJFmczNe-0WG>`__)
 
 The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work, ``parity`` and ``stop_bits`` **must be** respectively ``NONE`` and ``1``.
 Use of hardware UART pins is highly recommended, in order to support the out-of-the-box 256000 baud rate of the LD2410 sensor.
@@ -521,7 +525,7 @@ For easy calibration process, you can use the following custom manual card.
       - type: horizontal-stack
         cards:
           - type: entity
-            entity: 'binary_sensor.DEVICE_gpio_out_pin_presence'
+            entity: 'binary_sensor.DEVICE_gpio_out_pin_presence_status'
             name: gpio presence
             state_color: true
           - type: entity
