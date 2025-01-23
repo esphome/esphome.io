@@ -161,7 +161,7 @@ Values can be of different types and are used to define the value of a character
               # String value
               value:
                 data: "Hello, World!"
-                type: encoded_string
+                type: string
                 string_encoding: utf-8
             - uuid: # ...
               # Integer value
