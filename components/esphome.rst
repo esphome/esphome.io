@@ -209,8 +209,8 @@ The ``includes`` option is only a helper option that does that for you.
 
 This option behaves differently depending on what the included file is pointing at:
 
- - If the include is in the form ``<mylib>`` or ``"<mylib>"``, a header in the form of ``#include <mylib>``
-   is added at the beginning of the ``main.cpp`` file.
+ - If the include string is written as <mylib> or "<mylib>", the line ``#include <mylib>`` is
+   added to the beginning of the ``main.cpp`` file.
  - If the include string is pointing at a directory, the entire directory tree is copied into the
    src/ folder.
  - If the include string points to a header file (.h, .hpp, .tcc), it is copied in the src/ folder
