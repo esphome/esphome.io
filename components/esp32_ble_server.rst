@@ -36,8 +36,8 @@ Configuration variables:
 ------------------------
 
 - **manufacturer** (*Optional*, :ref:`esp32_ble_server-value`): The name of the manufacturer/firmware creator. Defaults to ``ESPHome``.
-- **model** (*Optional*, :ref:`esp32_ble_server-value`): The model name of the device. Defaults to the project's name defined in the :ref:`core configuration <esphome-esphome_creators_project>` if present, otherwise to the friendly name of the ``board`` chosen in the :ref:`core configuration <esphome-configuration_variables>`.
-- **firmware_version** (*Optional*, :ref:`esp32_ble_server-value`): The firmware version of the device. Defaults to the project's version defined in the :ref:`core configuration <esphome-esphome_creators_project>` if present, otherwise to the ESPHome version.
+- **model** (*Optional*, :ref:`esp32_ble_server-value`): The model name of the device. Defaults to the project's name defined in the :ref:`core configuration <esphome-creators_project>` if present, otherwise to the friendly name of the ``board`` chosen in the :ref:`core configuration <esphome-configuration_variables>`.
+- **firmware_version** (*Optional*, :ref:`esp32_ble_server-value`): The firmware version of the device. Defaults to the project's version defined in the :ref:`core configuration <esphome-creators_project>` if present, otherwise to the ESPHome version.
 - **manufacturer_data** (*Optional*, list of bytes): The manufacturer-specific data to include in the advertising
   packet. Should be a list of bytes, where the first two are the little-endian representation of the 16-bit
   manufacturer ID as assigned by the Bluetooth SIG.
@@ -107,7 +107,7 @@ Configuration variables:
 - **description** (*Optional*, :ref:`esp32_ble_server-value`): The description of the characteristic (:ref:`templatable <config-templatable>` values are not allowed). It will add a ``CUD`` descriptor (0x2901) to the characteristic with the value of the description.
 - **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to ``false``.
 - **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to ``false``.
-- **broadcast** (*Optional*, boolean): If the characteristic should be broadcasted. Defaults to ``false``.
+- **broadcast** (*Optional*, boolean): If the characteristic should be broadcast. Defaults to ``false``.
 - **notify** (*Optional*, boolean): If the characteristic should be notifiable. If ``true``, a ``CCCD`` descriptor will be automatically added to the characteristic. Defaults to ``false``.
 - **indicate** (*Optional*, boolean): If the characteristic should be indicated. If ``true``, a ``CCCD`` descriptor will be automatically added to the characteristic. Defaults to ``false``.
 - **write_no_response** (*Optional*, boolean): If the characteristic should be writable without a response. Defaults to ``false``.
@@ -140,7 +140,7 @@ Configuration variables:
 
 - **id** (*Optional*, string): An ID to refer to this descriptor in automations.
 - **uuid** (*Required*, string, int): The UUID of the descriptor.
-- **value** (*Required*, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`ble_server.descriptor.set_value` action.
+- **value** (*Required*, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`esp32_ble_server-characteristic-set_value` action.
 
 
 .. _esp32_ble_server-value:
@@ -247,6 +247,8 @@ This action sends a NOTIFY message to the client.
 Configuration variables:
 - **id** (*Required*, string): The ID of the characteristic to notify the client about (must have the ``notify`` property).
 
+
+.. _esp32_ble_server-characteristic-set_value:
 
 ``ble_server.descriptor.set_value`` Action
 ----------------------------------------------
