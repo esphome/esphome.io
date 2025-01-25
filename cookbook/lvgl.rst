@@ -2284,6 +2284,7 @@ If detected then call a script, in this case to change the page.
         then:
           - lvgl.page.previous  
 
+See Also
 --------
 
 - :doc:`/components/lvgl/index`
