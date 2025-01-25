@@ -2226,7 +2226,64 @@ In the example below, pixel training is done four times for a half an hour every
 
 You can combine it with the previous example to turn off the backlight, so the users don't actually notice this.
 
-See Also
+.. _lvgl-cookbook-swipe:
+
+Detect a Swipe
+--------------
+
+Use the touch screen on_update trigger to detect that a swipe has occurred.  This swipe can then trigger page forward or back actions or used to increase or decrease brightness.
+
+Setting a binary sensor that is turned on if the swipe occurs in a specific area stops accidental triggering when pressing buttons.
+
+.. code-block:: yaml
+
+    binary_sensor:
+      - platform: touchscreen
+        name: swipe_area_block
+        id: swipe_area
+        x_min: 0
+        y_min: 0
+        y_max: 100
+        x_max: 300
+
+This sets the swipe area to a block from the top left corner to 100 pixels down and 300 pixels across.  This will only turn on the binary sensor if the swipe occurs in this area.  
+
+Use x_org and x_prev to detect horizontal swipes and y_org and y_prev for vertical swipes.
+
+.. code-block:: yaml
+
+    touchscreen:
+      ...
+      on_update:
+        - lambda: |-
+            for (auto touch: touches)  {
+              ESP_LOGI("touch_on_update", "state=%d x=%d, y=%d, x_prev=%d, y_prev=%d, x_org=%d, y_org=%d", touch.state, touch.x, touch.y,touch.x_prev,touch.y_prev,touch.x_org,touch.y_org);
+              if ((touch.state == 6) && (id(swipe_area).state)) {
+                if ((touch.x_org - touch.x_prev) > 100) {
+                  ESP_LOGI("touch_on_update", "Swipe detected: RIGHT to LEFT");
+                  id(swipe_left).execute();
+                }
+                if ((touch.x_prev - touch.x_org) > 100) {
+                  ESP_LOGI("touch_on_update", "Swipe detected: LEFT to RIGHT");
+                  id(swipe_right).execute();
+                }
+              }
+            }
+
+
+Adjust the > 100 value to the distance you want to detect the swipe. Lower will increase the sensitivity.
+If detected then call a script, in this case to change the page.
+
+.. code-block:: yaml
+
+    script:
+      - id: swipe_left
+        then:
+          - lvgl.page.next
+      - id: swipe_right
+        then:
+          - lvgl.page.previous  
+
 --------
 
 - :doc:`/components/lvgl/index`
