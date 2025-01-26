@@ -39,7 +39,7 @@ There are several already made boards which are compatible with this component, 
           mode:
             input: true
           inverted: yes
-
+        max_dimmer: 0.9
     light:
       - platform: monochromatic
         output: dimmer1
@@ -56,6 +56,7 @@ Configuration variables:
 - **method** (*Optional*): Set the method for dimming, can be:
 
   - ``leading pulse``: (default) a short pulse to trigger a triac.
+  - ``leading pulse double``: trigger the triac twice, if the zero crossing sensor does not fire twice
   - ``leading``: gate pin driven high until the zero cross is detected
   - ``trailing``: gate pin driven high from zero cross until dim period, this method
     is suitable for mosfet dimmers only.
@@ -64,6 +65,7 @@ Configuration variables:
   Try to use this for dimmable LED lights, it might help turning on at low brightness
   levels. On Halogen lamps it might show at initial flicker. Defaults to ``false``.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **max_dimmer** (*Optional*): Limit the dimming between this number and 99%. See below.
 - All other options from :ref:`Output <config-output>`.
 
 Dimming lights with phase control can be tricky, the minimum level your light turns on
@@ -71,6 +73,14 @@ might be different from other lights, also the perceived light level might not c
 to the percentage output set to the light, to try to minimize these behaviors you can
 tweak the values ``min_power`` from this output component and also ``gamma_correct`` from
 the monochromatic light.
+
+Some dimmers, such as the Etekcity ESWD16, trigger the zero crossing pin only on the rising crossing
+and not the falling one.  In those cases, use ``leading pulse double`` to trigger the triac twice, once
+in the first half of the cycle and again in the second half.
+
+Certain dimmers do not dim correctly between numbers directly below 100% and a lower number. Use the
+``max_dimmer`` setting to clamp the dimming to a maximum as it approaches 100%.  At 100%, the gate
+will be held on and the dimming clamp will switch off.
 
 See Also
 --------
