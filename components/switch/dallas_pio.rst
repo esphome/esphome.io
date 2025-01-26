@@ -14,7 +14,7 @@ The ``dallas_pio`` component allows you to use
 `DS2408`
 (`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2408.pdf>`__)
 and similar 1-Wire Dallas addressable switches PIO as ESPHome switch.  A :ref:`Dallas PIO <dallas_pio>` is
-required to be set up in your configuration for this binary sensor to work.
+required to be set up in your configuration for this switch to work.
 
 .. warning::
 
@@ -36,11 +36,11 @@ Below are configuration examples for different Dallas devices, including DS2408 
         dallas_pio_id: ds2413_ic1  # Reference to the Dallas PIO component
         id: ds2413_switch          # Optional ID for internal reference
         pin:
-          number: PIOB             # Pin to use on the Dallas device (PIOA/PIOB for DS2413/DS2406, P0-P7 for DS2408)
+          number: PIOB             # Pin number: DS2413/DS2406 use PIOA/PIOB (2 pins), DS2408 uses P0-P7 (8 pins)
           mode:                    # Configuration of the pin's behavior
             output: true           # If set, must be true to output values to the pin
-          inverted: true           # Invert the signal (true = active-low, false = active-high)
-        inverted: false            # Invert the switch
+          inverted: true           # Hardware level inversion (true = active-low, false = active-high)
+        inverted: false            # Logical level inversion of the switch state
 
 **Multiple Devices (DS2413 and DS2408) on the Same Bus**
 
@@ -82,11 +82,11 @@ Configuration variables:
 Options:
   - **number**: The pin to use. For DS2413 or DS2406, use `PIOA` or `PIOB`. For DS2408, use `P0` to `P7`.
   - **mode**: 
-      - `output: true`: Configure the pin as an output (default)
-      - `output: false`: not allowed (switch acts necessarily as an output).
+      - `output: true`: Configure the pin as an output (default and required for switch functionality)
+      - `output: false`: Not allowed as switches must be able to control the pin state
   - **inverted**: Set to `true` to interpret a high signal as low (active-low). Useful for devices where a low voltage signifies an active state. Defaults to `false`.
 
-- **inverted** (*Optional*, bool): Switch inverted if true (default: false).
+- **inverted** (*Optional*, bool): Invert the logical state of the switch. When true, ON in ESPHome means OFF on the device and vice versa (default: false).
 - All other options from :ref:`Switch <config-switch>`.
 
 See Also
