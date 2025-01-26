@@ -16,6 +16,10 @@ The ``dallas_pio`` component allows you to use
 and similar 1-Wire Dallas addressable switches PIO as ESPHome switch.  A :ref:`Dallas PIO <dallas_pio>` is
 required to be set up in your configuration for this binary sensor to work.
 
+.. warning::
+
+    **DS2408**: don't forget to put a pull up resistor to Vcc on the RSTZ pin to enable writing to ports P0 to P7 !  
+
 Example Configuration
 *********************
 
