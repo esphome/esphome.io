@@ -93,5 +93,5 @@ See Also
 - :apiref:`dallas_pio/binary_sensor.h`
 - :doc:`/components/dallas_pio`
 - :doc:`/components/switch/dallas_pio`
-- :doc:`/components/onewire`
+- :doc:`/components/one_wire`
 - :ghedit:`Edit`
