@@ -8,16 +8,6 @@ Dallas PIO
     :image: dallas_pio.jpg
     :keywords: Dallas, PIO, DS2413, DS2406, DS2408, onewire, 1-wire
 
-.. warning::
-
-    **Warning**: This component is currently implemented for the DS2406 and DS2408 but has not yet been fully tested.  
-    - It may contain bugs or limitations.  
-    - Ensure proper testing in your environment before deploying in production.  
-    - Known issues: None reported yet.  
-
-    **Feedback Needed**:  
-    Please test this component with your hardware and report issues or share feedback on GitHub.
-
 The ``dallas_pio`` component allows you to use 
 `DS2413 <https://www.adafruit.com/product/1551>`__
 (`datasheet <https://datasheets.maximintegrated.com/en/ds/DS2413.pdf>`__),
@@ -63,7 +53,7 @@ Below are configuration examples for different Dallas devices.
         address: 0x1234567812345628
         one_wire_id: OneWireBus1
 
-#### Address Format
+**Address Format**
 
 The `address` parameter specifies the unique 1-Wire address of the device. This address is an 8-byte hexadecimal value (e.g., `0xfe10055073e122ba`) and can typically be obtained using a 1-Wire bus scanner or through the Dallas 1-Wire library.
 
