@@ -74,13 +74,15 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **dallas_pio_id** (*Required*, string): The ID of the dallas pio to use.
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the binary sensor.
-
-Options:
-  - **number**: The pin to use. For DS2413 or DS2406, use `PIOA` or `PIOB`. For DS2408, use `P0` to `P7`.
-  - **mode**:
-      - `input: true`: Configure the pin as an input (default)
-      - `input: false`: not allowed (binary sensor acts necessarily as an input).
-  - **inverted**: Set to `true` to interpret a high signal as low (active-low). Useful for devices where a low voltage signifies an active state. Defaults to `false`.
+   - **number**: (*Required*, string): Specifies which physical pin to use:
+      - For DS2413/DS2406: Use ``PIOA`` or ``PIOB``
+      - For DS2408: Use ``P0`` through ``P7``
+   - **mode** (*Optional*):
+      - Must be configured as ``input: true`` for binary sensor functionality (default)
+      - Other modes are not supported as binary sensors require input capability
+   - **inverted**: Controls the pin's signal polarity:
+      - ``true``: Active-low (useful with pull-up configurations)
+      - ``false``: Active-high (default)
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the binary sensors should be checked. Defaults to 1 second.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
@@ -89,4 +91,7 @@ See Also
 --------
 
 - :apiref:`dallas_pio/binary_sensor.h`
+- :doc:`/components/dallas_pio`
+- :doc:`/components/switch/dallas_pio`
+- :doc:`/components/onewire`
 - :ghedit:`Edit`
