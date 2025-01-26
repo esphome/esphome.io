@@ -18,7 +18,7 @@ required to be set up in your configuration for this switch to work.
 
 .. warning::
 
-    **DS2408**: don't forget to put a pull up resistor to Vcc on the RSTZ pin to enable writing to ports P0 to P7 !  
+    **DS2408**: A pull-up resistor (typically 4.7kΩ) must be connected between the RSTZ pin and Vcc to enable writing to ports P0-P7. Without this pull-up resistor, the output pins will remain in high-impedance state. !  
 
 Example Configuration
 *********************
@@ -76,16 +76,17 @@ Configuration variables:
 
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
-- **dallas_pio_id** (*Required*, string): The ID of the dallas pio to use.
-- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the switch.
-
-Options:
-  - **number**: The pin to use. For DS2413 or DS2406, use `PIOA` or `PIOB`. For DS2408, use `P0` to `P7`.
-  - **mode**: 
-      - `output: true`: Configure the pin as an output (default and required for switch functionality)
-      - `output: false`: Not allowed as switches must be able to control the pin state
-  - **inverted**: Set to `true` to interpret a high signal as low (active-low). Useful for devices where a low voltage signifies an active state. Defaults to `false`.
-
+- **dallas_pio_id** (*Required*, string): The ID of the dallas pio to use
+- **pin** (*Required*, :ref:`Pin Schema <config-pin_schema>`): The PIO pin to use for the switch.
+   - **number** (*Required*, string): Specifies which physical pin to use:
+      - For DS2413/DS2406: Use ``PIOA`` or ``PIOB``
+      - For DS2408: Use ``P0`` through ``P7``
+   - **mode** (*Optional*):
+      - Must be configured as ``output: true`` for switch functionality (default)
+      - Other modes are not supported as switches require output capability
+   - **inverted** (*Optional*, bool): Controls the pin's signal polarity:
+      - ``true``: Active-low (useful with pull-up configurations)
+      - ``false``: Active-high (default)
 - **inverted** (*Optional*, bool): Invert the logical state of the switch. When true, ON in ESPHome means OFF on the device and vice versa (default: false).
 - All other options from :ref:`Switch <config-switch>`.
 
@@ -93,4 +94,7 @@ See Also
 --------
 
 - :apiref:`dallas_pio/switch.h`
+- :doc:`/components/dallas_pio`
+- :doc:`/components/binary_sensor/dallas_pio`
+- :doc:`/components/onewire`
 - :ghedit:`Edit`
