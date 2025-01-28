@@ -19,7 +19,8 @@ General-purpose I²C device component that can be used to communicate with hardw
       then:
         - lambda: !lambda |-
             id(i2cdev).write_byte(0x00, 0x12);
-            if (auto b = id(i2cdev).read_byte(0x01)) {
+            if (auto opt_b = id(i2cdev).read_byte(0x01)) { // true if byte read
+              auto b = opt_b.value(); // b is the byte read
               // TODO
             }
 
