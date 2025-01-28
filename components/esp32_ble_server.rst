@@ -5,9 +5,8 @@ BLE Server
     :description: Instructions for setting up Bluetooth LE GATT Server in ESPHome.
     :image: bluetooth.svg
 
-The ``esp32_ble_server`` component in ESPHome sets up a simple BLE GATT server that exposes the device name,
-manufacturer and board. This component allows other components to create their own services to expose
-data and control.
+The ``esp32_ble_server`` component in ESPHome sets up a  BLE GATT server that exposes the device name,
+manufacturer and board. BLE GATT services and characteristics can be added to the server to expose data and control.
 
 .. warning::
 
@@ -78,7 +77,8 @@ Configuration variables:
 Characteristic Configuration
 ----------------------------
 
-Characteristics expose data and control for a BLE service. Characteristics can have multiple descriptors to provide additional information about the characteristic. Each characteristic can have multiple descriptors.
+Characteristics expose data and control for a BLE service. Each characteristic has a value that may be readable and or writable, and may permit a client to subscribe to notifications.
+Characteristics can also have multiple descriptors to provide additional information about the characteristic.
 
 .. code-block:: yaml
 
@@ -104,12 +104,12 @@ Configuration variables:
 
 - **id** (*Optional*, string): An ID to refer to this characteristic in automations.
 - **uuid** (*Required*, string, int): The UUID of the characteristic.
-- **description** (*Optional*, :ref:`esp32_ble_server-value`): The description of the characteristic (:ref:`templatable <config-templatable>` values are not allowed). It will add a ``CUD`` descriptor (0x2901) to the characteristic with the value of the description.
+- **description** (*Optional*, :ref:`esp32_ble_server-value`): The description of the characteristic - not templatable. It will add a ``CUD`` descriptor (0x2901) to the characteristic with the value of the description.
 - **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to ``false``.
 - **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to ``false``.
 - **broadcast** (*Optional*, boolean): If the characteristic should be broadcast. Defaults to ``false``.
-- **notify** (*Optional*, boolean): If the characteristic should be notifiable. If ``true``, a ``CCCD`` descriptor will be automatically added to the characteristic. Defaults to ``false``.
-- **indicate** (*Optional*, boolean): If the characteristic should be indicated. If ``true``, a ``CCCD`` descriptor will be automatically added to the characteristic. Defaults to ``false``.
+- **notify** (*Optional*, boolean): If the characteristic supports notifications. If ``true``, a ``CCCD`` descriptor will be automatically added to the characteristic. Defaults to ``false``.
+- **indicate** (*Optional*, boolean): If the characteristic supports indications. If ``true``, a ``CCCD`` descriptor will be automatically added to the characteristic. Defaults to ``false``.
 - **write_no_response** (*Optional*, boolean): If the characteristic should be writable without a response. Defaults to ``false``.
 - **value** (*Optional*, :ref:`esp32_ble_server-value`): The value of the characteristic.
 - **descriptors** (*Optional*, list of :ref:`esp32_ble_server-descriptor`): A list of descriptors to expose in this characteristic.
@@ -121,7 +121,7 @@ Configuration variables:
 Descriptor Configuration
 ------------------------
 
-Descriptors are optional and are used to provide additional information about a characteristic.
+Descriptors are optional and are used to provide additional information (metadata) about a characteristic.
 
 .. code-block:: yaml
 
@@ -149,6 +149,8 @@ Value Configuration
 -------------------
 
 Values can be of different types and are used to define the value of a characteristic or descriptor.
+The value of a characteristic is templatable. If the value is templated, the template will be evaluated each time the characteristic is read, or a notification is triggered. The value of a descriptor is not templatable as it is expected to be static.
+
 
 .. code-block:: yaml
 
@@ -159,6 +161,7 @@ Values can be of different types and are used to define the value of a character
             - uuid: # ...
               # Simple value (auto-detect type)
               value: "Hello, World!"
+            - uuid: # ...
               # String value
               value:
                 data: "Hello, World!"
@@ -215,7 +218,7 @@ With this configuration option you can write complex automations that are trigge
 ``ble_server.characteristic.set_value`` Action
 ----------------------------------------------
 
-This action sets the value of a characteristic.
+This action sets the value of a characteristic. A characteristic may not have a set_value action if it also has a templated value in its configuration.
 
 .. code-block:: yaml
 
@@ -235,7 +238,7 @@ Configuration variables:
 ``ble_server.characteristic.notify`` Action
 -------------------------------------------
 
-This action sends a NOTIFY message to the client.
+This action triggers a notification to the client. The value sent will be the current value of the characteristic, or the value from evaluation of the template, if present.
 
 .. code-block:: yaml
 
