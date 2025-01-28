@@ -140,7 +140,7 @@ Configuration variables:
 
 - **id** (*Optional*, string): An ID to refer to this descriptor in automations.
 - **uuid** (*Required*, string, int): The UUID of the descriptor.
-- **value** (*Required*, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`esp32_ble_server-characteristic-set_value` action.
+- **value** (*Required*, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`esp32_ble_server-descriptor-set_value` action.
 
 
 .. _esp32_ble_server-value:
@@ -251,7 +251,7 @@ Configuration variables:
 - **id** (*Required*, string): The ID of the characteristic to notify the client about (must have the ``notify`` property).
 
 
-.. _esp32_ble_server-characteristic-set_value:
+.. _esp32_ble_server-descriptor-set_value:
 
 ``ble_server.descriptor.set_value`` Action
 ----------------------------------------------
