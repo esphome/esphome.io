@@ -14,7 +14,7 @@ Belling BL0940 Energy Monitor
       - Images/screenshots/example configs of this device being used in action.
 
 The ``bl0940`` sensor platform allows you to use BL0940 energy monitors sensors with
-ESPHome. These are used in some Tuya-devices (e.g. the power metering BW-SHP10)
+ESPHome. These are used in some Tuya-devices (e.g. the power metering BW-SHP10) and the Vaiotech Rowi2 Smart Plug
 
 The communication with this component is done via a :ref:`UART <uart>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
@@ -50,6 +50,12 @@ to some pins on your board and the baud rate set to 4800 with 1 stop bit.
 Configuration variables:
 ------------------------
 
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
+  to use multiple UART buses.
+- **tuya_mode** (*Optional*, boolean): Whether to use the tuya configuration from initial implementation. 
+  Defaults to ``true`` to prevent breaking change.
+- **read_command** (*Optional*): The byte used for the read commands when communicating with the BL0940. By default, it is set to ``0x58`` or ``0x50`` in ``tuya_mode``.
+- **write_command** (*Optional*): byte used for the write commands when communicating with the BL0940. By default, it is set to ``0xA8`` or ``0xA0`` in ``tuya_mode``.
 - **voltage** (*Optional*): The voltage value of the sensor in Volts.
   All options from :ref:`Sensor <config-sensor>`.
 - **current** (*Optional*): The current value of the sensor in Amperes. All options from
@@ -64,8 +70,73 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
-  to use multiple UART buses.
+
+- **reference_voltage** (*Optional*, float): The calibration parameter for Vref. Defaults to ``1.218``.
+- **resistor_shunt** (*Optional*, float): The calibration parameter for RL. Defaults to ``1``.
+- **resistor_one** (*Optional*, float): The calibration parameter for R1. Defaults to ``0.51``.
+- **resistor_two** (*Optional*, float): The calibration parameter for R2. Defaults to ``1950``. 
+
+- **voltage_reference** (*Optional*, float): The calibration parameter for voltage readings. Defaults to ``266013.136288998`` as calculated using schema defaults.
+- **current_reference** (*Optional*, float): The calibration parameter for current readings. Defaults to ``17158.9201389365`` as calculated using schema defaults.
+- **power_reference** (*Optional*, float): The calibration parameter for power readings. Defaults to ``713.104696500825`` as calculated using schema defaults.
+- **energy_reference** (*Optional*, float): The calibration parameter for cumulative energy readings. Defaults to ``6120.6267056536`` as calculated using schema defaults.
+
+.. _bl0940-calibration:
+
+Calibration
+-----------
+
+There are two fundamental calibration parameters which are dependent on the hardware design: ``voltage_reference`` and ``current_reference``.  
+
+These can be determined by inspecting the actual hardware design or by using an accurate voltage and current meter with a simple resistive load
+
+Available calibration options:
+
+.. code-block:: yaml
+
+    # schematic option defaults
+    reference_voltage: 1.218  # Vref = 1.218
+    resistor_shunt: 1         # RL = 1 mΩ
+    resistor_one: 0.51        # R1 = 0.51 kΩ
+    resistor_two: 1950        # R2 = 5 x 390 kΩ -> 1950 kΩ
+
+Default values are based on `BL0940_APPNote_TSSOP14_V1.04_EN.pdf <https://www.belling.com.cn/media/file_object/bel_product/BL0940/guide/BL0940_APPNote_TSSOP14_V1.04_EN.pdf>`__.
+
+By default all the reference values will be calculated using the above values in the exact order shown below.
+
+.. code-block:: cpp
+
+    this->voltage_reference_ = 79931 / this->vref_ * (this->r_one_ * 1000) / (this->r_one_ + this->r_two_);
+    this->current_reference_ = 324004 * this->r_shunt_ / this->vref_;
+    
+    // if voltage reference and current_reference have been configured
+    this->power_reference_ = this->voltage_reference_ * this->current_reference_ * 4046 / 324004 / 79931;
+    // if not, we use this formula based on provided formula in the specification
+    this->power_reference_ = 4046 * this->r_shunt_ * this->r_one_ * 1000 / this->vref_ / this->vref_ / (this->r_one_ + this->r_two_);
+    
+    this->energy_reference_ = this->power_reference_ * 3600000 / (1638.4 * 256);
+
+If ``tuya_mode`` is enabled the reference values will be set according to initial implementation.
+
+.. code-block:: cpp
+
+    this->voltage_reference_ = 33000;
+    this->current_reference_ = 275000;
+    this->power_reference_   = 1430;
+    this->energy_reference_  = 3.6e6 / 297;
+
+Any of the reference values is configurable and will take presedence over the calculated or predefined values.
+
+Theoreticaly configuring ``voltage_reference`` and ``current_reference`` should be enough to calibrate the sensors but for completeness ``power_reference`` and ``energy_reference`` are also configurable.
+
+.. code-block:: yaml
+
+    # custom references
+    voltage_reference: 17158.9201389365
+    current_reference: 266013.136288998
+    power_reference:   713.104696500825
+    energy_reference:  6120.6267056536
+
 
 See Also
 --------
