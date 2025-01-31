@@ -7,7 +7,7 @@ Speaker Audio Media Player
 
 The ``speaker`` media player platform allows you to play on-device and online audio media via :doc:`speaker components </components/speaker/index>`.
 
-This platform benefits greatly from having PSRAM. See the :ref:`performance section <speaker_media_player-performance>` for details.
+This platform greatly benefits from having external PSRAM. See the :ref:`performance section <speaker_media_player-performance>` for details.
 
 It natively supports decoding ``FLAC``, ``MP3``, and ``WAV`` audio files. Home Assistant (since version 2024.10) can proxy any media it sends and transcode it to a specified format and sample rate to minimize the device's computational load.
 
@@ -81,6 +81,7 @@ This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/
 It adds a switch for playing an on-device file for an alarm notification. Any playing media is ducked while the alarm is activated. After the alarm is turned off, the media ducking will gradually stop.
 
 .. code-block:: yaml
+
     i2s_audio:
         i2s_lrclk_pin: GPIOXX
         i2s_bclk_pin: GPIOXX
@@ -158,7 +159,7 @@ Automations
 .. _speaker_media_player-play_on_device_media_file:
 
 ``speaker_media_player.play_on_device_media_file`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will play a on-device media file.
 
