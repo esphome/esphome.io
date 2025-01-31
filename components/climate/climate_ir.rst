@@ -180,7 +180,7 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
 
 Hitachi AC344 are used by Hitachi AC with payload length 344 bits.
 
-- **horizontal_default** (*Optional*, string): Default position when horizontal swing is off. Default to ``middle``.
+- **horizontal_position** (*Optional*, string): Default position when horizontal swing is off. Default to ``middle``.
 
   - Options are: ``left_max``, ``left``, ``middle``, ``right``, ``right_max``
 - **mildewproof** (*Optional*, boolean): Mildewproof control for cool mode. Default to ``False``.
@@ -229,7 +229,7 @@ Hitachi AC344 are used by Hitachi AC with payload length 344 bits.
       - platform: hitachi_ac344
         name: "AC"
         sensor: room_temperature
-        horizontal_default: "right"
+        horizontal_position: "right"
         mildewproof: True
         custom_cool:
           temperature: 28
