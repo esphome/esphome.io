@@ -1052,6 +1052,7 @@ Speaker Components
     Speaker Core, components/speaker/index, speaker.svg, dark-invert
     I2S Speaker, components/speaker/i2s_audio, i2s_audio.svg
     Mixer Speaker, components/speaker/mixer, mixer.svg
+    Mixer Speaker, components/speaker/mixer, mixer.svg
     Resampler Speaker, components/speaker/resampler, waveform.svg
 
 Switch Components
