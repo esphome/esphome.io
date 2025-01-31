@@ -1,0 +1,122 @@
+Speaker Audio Media Player
+==========================
+
+.. seo::
+    :description: Instructions for setting up a speaker media player in ESPHome.
+    :image: speaker.svg
+
+The ``speaker`` media player platform allows you to play on-device and online audio media via :doc:`speaker components </components/speaker/index>`.
+
+This platform benefits greatly from having PSRAM. See the :ref:`performance section <speaker_media_player-performance>` for details.
+
+It natively supports decoding ``FLAC``, ``MP3``, and ``WAV`` audio files. Home Assistant (since version 2024.10) can proxy any media it sends and transcode it to a specified format and sample rate to minimize the device's computational load.
+
+It supports two different audio pipelines: announcement and media. Each audio pipeline must output to a unique speaker. Use a :doc:`mixer speaker </components/speaker/mixer>` component to create two different speakers that output to a single audio speaker.
+
+Note :ref:`media player actions <media_player-actions>` only affect the media stream. Use the :ref:`stop stream <speaker_media_player-stop_stream>` action to stop an announcement.
+
+On-device files built directly into the firmware are played without a network connection. Encode on-device files with the configured sample rate, 1 or 2 channels, and 16 bits per sample.
+
+This platform only works on ESP32 based chips using the :ref:`esp32-espidf_framework`.
+
+.. warning::
+
+    Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+
+    **Crashes are likely to occur** if you include too many additional components in your device's
+    configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+    combination with Voice Assistant and/or other audio components.
+
+.. code-block:: yaml
+
+    # Example minimal configuration entry
+    media_player:
+      - platform: speaker
+        announcement_pipeline:
+          speaker: announcment_spk_id
+
+Configuration variables:
+------------------------
+
+- **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
+
+  - **speaker** (**Required**, :ref:`config-id`): The :doc:`speaker </components/speaker/index>` to output the audio.
+  - **format** (**Optional**, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of ``FLAC``, ``MP3``, ``WAV``, or ``NONE``. ``NONE`` disables transcoding in Home Assistant. Defaults to ``FLAC``.
+  - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured ``speaker`` component. Defaults to the speaker's sample rate.
+  - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either ``1`` or ``2``. Defaults to the speaker's number of channels.
+
+- **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the ``announcement_pipeline``.
+- **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between ``4000`` and ``4000000``. Defaults to ``1000000``.
+- **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to ``true``.
+- **task_stack_in_psram** (*Optional* boolean): Run the audio tasks in external memory. Defaults to ``false``.
+- **volume_increment** (*Optional*, percentage): Increment amount that the ``media_player.volume_up`` and ``media_player.volume_down`` actions will increase or decrease volume by. Defaults to ``5%``.
+- **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to ``0%``.
+- **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to ``100%``.
+- **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
+    - **id** (**Required**, :ref:`config-id`): Unique ID for the file.
+    - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
+- **on_mute** (*Optional*, :ref:`Automation <automation>`): An automation to perform when muted.
+- **on_unmute** (*Optional*, :ref:`Automation <automation>`): An automation to perform when unmuted.
+- **on_volume** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the volume is changed.
+- All other options from :ref:`Media Player <config-media_player>`
+
+.. _speaker_media_player-performance:
+
+Performance
+-----------
+
+Decoding audio files is CPU and memory intensive. PSRAM external memory is strongly recommended. To use the component on a memory constrained device, define only the announcement pipeline, decrease the buffer size, set ``codec_support_enabled`` to false, and set the pipeline transcode setting format to ``WAV`` with a low sample rate and only 1 channel.
+
+In general, decoding FLAC has the lowest CPU usage, but requires a strong WiFi connection. Decoding MP3 requires less data to be sent over WiFi but is more CPU intensive to decode. Decoding WAV is only recommended at low sample rates if streamed over a network connection.
+
+Increasing the buffer size may reduce stuttering, but do not set it to the entire size of the external memory. Each pipeline allocates the configured amount, and this setting also does not take into account other smaller buffers allocated throughout the audio stack.
+
+Automations
+-----------
+
+.. _speaker_media_player-play_on_device_media_file:
+
+``speaker_media_player.play_on_device_media_file`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will play a on-device media file.
+
+.. code-block:: yaml
+
+    on_...:
+      # Simple
+      - speaker_media_player.play_on_device_media_file: file_id
+
+      # Full
+      - speaker_media_player.play_on_device_media_file:
+          media_file: wake_word_trigger_sound
+          announcement: true
+
+Configuration variables:
+
+- **media_file** (**Required**, :ref:`config-id`): The ID of the media file.
+- **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to ``false``.
+
+.. _speaker_media_player-stop_stream:
+
+``speaker_media_player.stop_stream`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will stop either the media or announcement stream immediately.
+
+.. code-block:: yaml
+
+    on_...:
+      - speaker_media_player.stop_stream: announcement
+
+Configuration variables:
+
+- **stream** (**Required**, enum): Which audio stream to stop. One of ``announcement`` or ``media``.
+
+
+See also
+--------
+
+- :doc:`/components/speaker/index`
+- :doc:`index`
+- :ghedit:`Edit`

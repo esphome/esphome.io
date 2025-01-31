@@ -45,6 +45,8 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options. Set to ``""`` to remove the default entity category.
 
+.. _media_player-actions:
+
 Media Player Actions
 --------------------
 
