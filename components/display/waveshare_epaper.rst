@@ -132,7 +132,7 @@ Configuration variables:
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in`` and ``2.90inv2`` models, you have the option to only
+  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in``, ``2.90inv2`` and ``gdew029t5`` models, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to ``30`` on the described models and a full update for
   all other models.
 - **reset_duration** (*Optional*, :ref:`config-time`): Duration for the display reset operation. Defaults to ``200ms``.
