@@ -21,13 +21,13 @@ This platform only works on ESP32 based chips.
 
 .. code-block:: yaml
 
-  # Example configuration entry
-  speaker:
-    - platform: mixer
-      output_speaker: speaker_id
-      source_speakers:
-        - id: announcement_mixer_input_speaker_id
-        - id: media_mixer_input_speaker_id
+    # Example configuration entry
+    speaker:
+      - platform: mixer
+        output_speaker: speaker_id
+        source_speakers:
+          - id: announcement_mixer_input_speaker_id
+          - id: media_mixer_input_speaker_id
 
 Configuration variables:
 ------------------------
