@@ -174,7 +174,7 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
         sensor: room_temperature
         model: yan
 
-.. _hitachi_ir:
+.. _hitachi_ac344:
 
 ``hitachi_ac344`` **Climate**:
 
