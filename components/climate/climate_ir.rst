@@ -37,8 +37,9 @@ submit a feature request (see FAQ).
 +---------------------------------------+---------------------+----------------------+
 | :ref:`GREE<gree_ir>`                  | ``gree``            |                      |
 +---------------------------------------+---------------------+----------------------+
-| Hitachi                               | ``hitachi_ac344``,  | yes                  |
-|                                       | ``hitachi_ac424``   |                      |
+| :ref:`Hitachi AC344<hitachi_ac344>`   | ``hitachi_ac344``   | yes                  |
++---------------------------------------+---------------------+----------------------+
+| Hitachi AC424                         | ``hitachi_ac424``   | yes                  |
 +---------------------------------------+---------------------+----------------------+
 | :ref:`LG<climate_ir_lg>`              | ``climate_ir_lg``   | yes                  |
 +---------------------------------------+---------------------+----------------------+
@@ -172,6 +173,79 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
         name: "AC"
         sensor: room_temperature
         model: yan
+
+.. _hitachi_ir:
+
+``hitachi_ac344`` **Climate**:
+
+Hitachi AC344 are used by Hitachi AC with payload length 344 bits.
+
+- **horizontal_default** (*Optional*, string): Default position when horizontal swing is off. Default to ``middle``.
+
+  - Options are: ``left_max``, ``left``, ``middle``, ``right``, ``right_max``
+- **mildewproof** (*Optional*, boolean): Mildewproof control for cool mode. Default to ``False``.
+
+  - Options are: ``True``, ``False``
+- **custom_cool** (Optional): Custom cool mode with designated temperature, swing, and fan mode
+  
+  - **temperature** (*Optional*, int): Target temperature. Default to 28
+  - **swing** (*Optional*, string): Horizontal setting. Default to "horizontal"
+  
+    - Options are: ``horizontal``, ``off``
+  - **fan_mode** (*Optional*, string): Fan mode setting. Default to "auto"
+  
+    - Options are: ``auto``, ``low``, ``medium``, ``high``, ``quiet``
+- **custom_heat** (Optional): Custom heat mode with designated temperature, swing, and fan mode
+  
+  - **temperature** (*Optional*, int): Target temperature. Default to 24
+  - **swing** (*Optional*, string): Horizontal setting. Default to "off"
+  
+    - Options are: ``horizontal``, ``off``
+  - **fan_mode** (*Optional*, string): Fan mode setting. Default to "auto"
+  
+    - Options are: ``auto``, ``low``, ``medium``, ``high``, ``quiet``
+- **custom_dry** (Optional): Custom dry mode with designated temperature, swing, and fan mode
+  
+  - **temperature** (*Optional*, int): Target temperature. Default to 28
+  - **swing** (*Optional*, string): Horizontal setting. Default to "horizontal"
+  
+    - Options are: ``horizontal``, ``off``
+  - **fan_mode** (*Optional*, string): Fan mode setting. Default to "low"
+  
+    - Options are: ``auto``, ``low``, ``medium``, ``high``, ``quiet``
+- **custom_fan_only** (Optional): Custom fan_only mode with designated swing and fan mode
+  
+  - **swing** (*Optional*, string): Horizontal setting. Default to "off"
+  
+    - Options are: ``horizontal``, ``off``
+  - **fan_mode** (*Optional*, string): Fan mode setting. Default to "low"
+  
+    - Options are: ``auto``, ``low``, ``medium``, ``high``, ``quiet``
+    
+.. code-block:: yaml
+
+    # Example configuration entry
+    climate:
+      - platform: hitachi_ac344
+        name: "AC"
+        sensor: room_temperature
+        horizontal_default: "right"
+        mildewproof: True
+        custom_cool:
+          temperature: 28
+          swing: "horizontal"
+          fan_mode: "auto"
+        custom_heat:
+          temperature: 24
+          swing: "off"
+          fan_mode: "auto"
+        custom_dry:
+          temperature: 28
+          swing: "horizontal"
+          fan_mode: "low"
+        custom_fan_only:
+          swing: "off"
+          fan_mode: "low"
 
 .. _midea_ir:
 
