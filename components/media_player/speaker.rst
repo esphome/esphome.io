@@ -71,6 +71,87 @@ In general, decoding FLAC has the lowest CPU usage, but requires a strong WiFi c
 
 Increasing the buffer size may reduce stuttering, but do not set it to the entire size of the external memory. Each pipeline allocates the configured amount, and this setting also does not take into account other smaller buffers allocated throughout the audio stack.
 
+.. _speaker_media_player-examples:
+
+Example Configuration
+---------------------
+
+This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/i2s_audio>` configured with a 48000 Hz sample rate. It uses a ``mixer`` speaker component to handle combining the two differnet pipelines, and it uses ``resampler`` speaker components to ensure the source speakers uses the same sample rate.
+
+It adds a switch for playing an on-device file for an alarm notification. Any playing media is ducked while the alarm is activated. After the alarm is turned off, the media ducking will gradually stop.
+
+.. code-block:: yaml
+    i2s_audio:
+        i2s_lrclk_pin: GPIOXX
+        i2s_bclk_pin: GPIOXX
+    speaker:
+      - platform: i2s_audio
+        id: speaker_id
+        dac_type: external
+        i2s_dout_pin: GPIOXX
+        sample_rate: 48000
+      - platform: mixer
+        id: mixer_speaker_id
+        output_speaker: speaker_id
+        source_speakers:
+          - id: announcement_spk_mixer_input
+          - id: media_spk_mixer_input
+      - platform: resampler
+        id: media_spk_resampling_input
+        output_speaker: media_spk_mixer_input
+      - platform: resampler
+        id: announcement_spk_resampling_input
+        output_speaker: announcement_spk_mixer_input
+    media_player:
+      - platform: speaker
+        name: "Speaker Media Player"
+        id: speaker_media_player_id
+        media_pipeline:
+            speaker: media_spk_resampling_input
+            num_channels: 2
+        announcement_pipeline:
+            speaker: announcement_spk_resampling_input
+            num_channels: 1
+        files:
+          - id: alarm_sound
+            file: alarm.flac # Placed in the yaml directory. Should be encoded with a 48000 Hz sample rate, mono or stereo audio, and 16 bits per sample.
+    switch:
+      - platform: template
+        name: "Ring Timer"
+        id: timer_ringing
+        optimistic: true
+        restore_mode: ALWAYS_OFF
+        on_turn_off:
+            # Stop playing the alarm
+            - speaker_media_player.stop_stream: announcement
+            # Stop ducking the media stream over 2 seconds
+            - mixer_speaker.apply_ducking:
+                id: media_spk_mixer_input
+                decibel_reduction: 0
+                duration: 2.0s
+        on_turn_on:
+            # Duck media audio by 20 decibels instantly
+            - mixer_speaker.apply_ducking:
+                id: media_spk_mixer_input
+                decibel_reduction: 20
+                duration: 0.0s
+            - while:
+                condition:
+                    switch.is_on: timer_ringing
+                then:
+                    # Play the alarm sound as an announcement
+                    - speaker_media_player.play_on_device_media_file:
+                        media_file: alarm_sound
+                        announcement: true
+                    # Wait until the alarm sound starts playing
+                    - wait_until:
+                        media_player.is_announcing:
+                    # Wait until the alarm sound stops playing
+                    - wait_until:
+                        not:
+                          media_player.is_announcing:
+
+
 Automations
 -----------
 
