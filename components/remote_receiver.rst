@@ -64,6 +64,7 @@ Configuration variables:
   - **sony**: Decode and dump Sony infrared codes.
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
+  - **toto**: Decode and dump Toto infrared codes.
 
 - **tolerance** (*Optional*, int, :ref:`config-time` or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to ``25%``.
@@ -225,6 +226,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_mirage** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Mirage remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::MirageData`
+  is passed to the automation for use in lambdas.
+- **on_toto** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Toto remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::TotoData`
   is passed to the automation for use in lambdas.
 
 .. code-block:: yaml
@@ -485,6 +489,12 @@ Remote code selection (exactly one of these has to be included):
   - **code** (**Required**, 14-bytes list): The code to listen for, see
     :ref:`transmitter description <remote_transmitter-transmit_mirage>` for more info. Usually you only need to copy
     this directly from the dumper output.
+
+- **toto**: Trigger on a decoded Toto remote code with the given data.
+
+  - **command** (**Required**, int): The 1-byte Toto command code to trigger on. Range is 0 to 0xFF.
+  - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+  - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
 
 .. note::
 
