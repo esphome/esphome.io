@@ -1022,6 +1022,7 @@ Output Components
     TLC5947, components/output/tlc5947, tlc5947.jpg
     TLC5971, components/output/tlc5971, tlc5971.jpg
     X9C Potentiometer, components/output/x9c, x9c.jpg
+    MCP4461 Potentiometer, components/output/mcp4461. mcp4461.jpg
 
 Select Components
 -----------------
