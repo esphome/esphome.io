@@ -1006,6 +1006,7 @@ Output Components
     GP8403, components/output/gp8403, gp8403.svg
     GPIO Output, components/output/gpio, gpio.svg
     LibreTiny PWM, components/output/libretiny_pwm, pwm.png
+    MCP4461 Potentiometer, components/output/mcp4461, mcp4461.jpg
     MCP4725, components/output/mcp4725, mcp4725.jpg
     MCP4728, components/output/mcp4728, mcp4728.jpg
     MCP47A1, components/output/mcp47a1, mcp47a1.svg
@@ -1022,7 +1023,6 @@ Output Components
     TLC5947, components/output/tlc5947, tlc5947.jpg
     TLC5971, components/output/tlc5971, tlc5971.jpg
     X9C Potentiometer, components/output/x9c, x9c.jpg
-    MCP4461 Potentiometer, components/output/mcp4461, mcp4461.jpg
 
 Select Components
 -----------------
