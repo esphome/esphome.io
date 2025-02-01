@@ -108,14 +108,15 @@ Tap count for 7/8bit digipot/rheostat devices is usually 100/257. Minimum settin
 This example shows how to use this with simple numeric slider (0-256 non-decimal numbers shown)
 If initial_value configuration variable is not used, you can use
 
-esphome:  
-  on_boot:
-    priority: 100
-    then:
-      - number.set:
-          id: digipot_volatile_0
-          value: !lambda |-
-            return id(digipot_wiper_0).get_wiper_level();
+.. code-block:: yaml
+    esphome:  
+      on_boot:
+        priority: 100
+        then:
+          - number.set:
+              id: digipot_volatile_0
+              value: !lambda |-
+                return id(digipot_wiper_0).get_wiper_level();
 
 See Also
 --------
