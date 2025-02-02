@@ -117,6 +117,66 @@ If initial_value configuration variable is not used, you can use
               value: !lambda |-
                 return id(digipot_wiper_0).get_wiper_level();
 
+Public Lambda functions:
+------------------------
+
+For mcp4461 component (not the wiper):
+**************************************
+
+- (uint16_t) get_status_register():
+    returns uint16_t status register contents
+- (uint16_t) get_wiper_level(uint8_t wiper):
+    returns current value of specified wiper (0-7)
+- (void) set_wiper_level(uint8_t wiper, uint16_t value):
+    set wiper level, accepted value-range is 0 - 256
+- (void) enable_wiper(uint8_t wiper):
+    enable given wiper, only valid for volatile wipers (0-3)
+- (void) disable_wiper(uint8_t wiper):
+    disable given wiper, only valid for volatile wipers (0-3)
+- (void) increase_wiper(uint8_t wiper):
+    increase given wiper, only valid for volatile wipers (0-3)
+- (void) decrease_wiper(uint8_t wiper):
+    decrease given wiper, only valid for volatile wipers (0-3)
+- (uint8_t) get_terminal_register(uint8_t terminal_connector):
+    get terminal register data for given terminal connector (0/1)
+- (void) set_terminal_register(uint8_t terminal_connector, uint8_t terminal_register_value):
+    set terminal register data for given terminal connector (0/1)
+- (void) update_terminal_register(uint8_t terminal_connector):
+    update terminal register states for given terminal connector (0/1)
+- (void) enable_terminal(uint8_t wiper, char terminal):
+    enable terminal (one of ['a','b','w','h']) of given volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+- (void) disable_terminal(uint8_t wiper, char terminal):
+    disable terminal (one of ['a','b','w','h']) of given volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+- (uint16_t) get_eeprom_value(uint8_t location):
+    get current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
+- (void) set_eeprom_value(uint8_t location, uint16_t value):
+    set current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
+
+For the output (the wiper):
+**************************************
+- (void) write_state(float state):
+    expects value in range 0.00 to 0.256, higher values will be clamped to max value
+- (uint16_t) get_wiper_level():
+    returns current value of this output (wiper)
+- (void) save_level():
+    save current level of this output to it`s respective nonvolatile one, only valid for volatile wipers (0-3)
+- (void) enable_wiper():
+    enable this output (wiper), only valid for volatile wipers (0-3)
+- (void) disable_wiper():
+    disable this output (wiper), only valid for volatile wipers (0-3)
+- (void) increase_wiper():
+    increase this output (wiper), only valid for volatile wipers (0-3)
+- (void) decrease_wiper():
+    decrease this output (wiper), only valid for volatile wipers (0-3)
+- (void) enable_terminal(char terminal):
+    enable terminal (one of ['a','b','w','h']) of this volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+- (void) disable_terminal(char terminal):
+    disable terminal (one of ['a','b','w','h']) of this volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+
 See Also
 --------
 
