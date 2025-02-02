@@ -82,6 +82,8 @@ Configuration variables:
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
+      "ESP32-C6", "2, 3"
+      "ESP32-H2", "2, 3"
 
 - **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. Only used on ESP32 platform. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
@@ -498,7 +500,7 @@ Remote code selection (exactly one of these has to be included):
           tolerance: 60%
           filter: 4us
           idle: 4ms
-       
+
         remote_transmitter:
           pin: 1
           carrier_duty_percent: 100%
