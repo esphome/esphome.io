@@ -1,0 +1,185 @@
+MCP4461 Component
+=================
+
+.. seo::
+    :description: Instructions for setting up MCP4461 outputs on the ESP.
+    :image: mcp4461.jpg
+
+.. _mcp4461-component:
+
+The MCP4461 output component enables the use of an 8‑bit external quad digital potentiometer/rheostat via I²C. See the `MCP4461 Datasheet <https://www.microchip.com/en-us/product/mcp4461>`__ for more information.
+Device default address is ``0x2C``.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+
+    # Set a global I²C connection
+    i2c:
+      sda: 21
+      scl: 22
+      scan: true
+
+    # Set the component with default (address: 0x2C / global I²C)
+    mcp4461:
+      - id: mcp4461_output
+
+Configuration variables:
+------------------------
+
+- **id** (*Optional*, :ref:`config-id`): The id to use for this output component.
+- **address** (*Optional*, int): Manually specify the I2C address of
+  the digipot. Defaults to ``0x2C``.
+- **disable_wiper_0** (*Optional*, bool): Disable wiper 0. Defaults to ``false``.
+- **disable_wiper_1** (*Optional*, bool): Disable wiper 1. Defaults to ``false``.
+- **disable_wiper_2** (*Optional*, bool): Disable wiper 2. Defaults to ``false``.
+- **disable_wiper_3** (*Optional*, bool): Disable wiper 3. Defaults to ``false``.
+  
+MCP4461 Output
+**************
+
+The MCP4461 output component exposes 8 MCP4461 (wiper-)channels of a global :ref:`MCP4461 <mcp4461-component>` as float outputs.
+
+.. code-block:: yaml
+
+    # Individual outputs
+    # A-D are volatile wipers 0-3
+    # E-H are nonvolatile wipers 0-3
+    # (AE, BF, CG, DH belonging together)
+    output:
+    - platform: mcp4461
+      id: digipot_channel_0
+      mcp4461_id: mcp4461_output
+      channel: A
+    - platform: mcp4461
+      id: digipot_channel_1
+      mcp4461_id: mcp4461_output
+      channel: B
+    - platform: mcp4461
+      id: digipot_channel_2
+      mcp4461_id: mcp4461_output
+      channel: C
+    - platform: mcp4461
+      id: digipot_channel_3
+      mcp4461_id: mcp4461_output
+      channel: D
+    - platform: mcp4461
+      id: digipot_channel_4
+      mcp4461_id: mcp4461_output
+      channel: E
+    - platform: mcp4461
+      id: digipot_channel_5
+      mcp4461_id: mcp4461_output
+      channel: F
+    - platform: mcp4461
+      id: digipot_channel_6
+      mcp4461_id: mcp4461_output
+      channel: G
+    - platform: mcp4461
+      id: digipot_channel_7
+      mcp4461_id: mcp4461_output
+      channel: H
+
+    on_...:
+      then:
+        - output.set_level:
+            id: digipot_channel_0
+            level: !lambda return static_cast<float>(x / 1000);
+
+Configuration variables:
+------------------------
+
+- **id** (**Required**, :ref:`config-id`): The id to use for this output component.
+- **mcp4461_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the
+  :ref:`MCP4461 <mcp4461-component>`.
+  Use this if you have multiple MCP4461 ICs you want to use at the same time.
+- **channel** (**Required**, string): Choose the channel of this MCP4461 output component.
+  One of ``A``, ``B``, ``C``, ``D``,``E``, ``F``, ``G`` or ``H``.
+- **enable** (**Optional**, bool): Set to ``false`` if terminal "HW" shall be disabled by default. Defaults to ``true``
+- **terminal_a** (**Optional**, bool): Set to ``false`` if terminal "A" shall be disabled on boot. Defaults to ``true``
+- **terminal_b** (**Optional**, bool): Set to ``false`` if terminal "B" shall be disabled on boot. Defaults to ``true``
+- **terminal_w** (**Optional**, bool): Set to ``false`` if terminal "W" shall be disabled on boot. Defaults to ``true``
+  
+- All other options from :ref:`Output <config-output>`.
+
+Tap count for 7/8bit digipot/rheostat devices is usually 100/257. Minimum setting for the output is 0.000, maximum is 0.256
+This example shows how to use this with simple numeric slider (0-256 non-decimal numbers shown)
+If initial_value configuration variable is not used, you can use
+
+.. code-block:: yaml
+
+    esphome:  
+      on_boot:
+        priority: 100
+        then:
+          - number.set:
+              id: digipot_volatile_0
+              value: !lambda |-
+                return id(digipot_wiper_0).get_wiper_level();
+
+Public Lambda functions:
+------------------------
+
+For mcp4461 component (not the wiper):
+**************************************
+
+- (uint16_t) get_status_register():
+    returns uint16_t status register contents
+- (uint16_t) get_wiper_level(uint8_t wiper):
+    returns current value of specified wiper (0-7)
+- (void) set_wiper_level(uint8_t wiper, uint16_t value):
+    set wiper level, accepted value-range is 0 - 256
+- (void) enable_wiper(uint8_t wiper):
+    enable given wiper, only valid for volatile wipers (0-3)
+- (void) disable_wiper(uint8_t wiper):
+    disable given wiper, only valid for volatile wipers (0-3)
+- (void) increase_wiper(uint8_t wiper):
+    increase given wiper, only valid for volatile wipers (0-3)
+- (void) decrease_wiper(uint8_t wiper):
+    decrease given wiper, only valid for volatile wipers (0-3)
+- (uint8_t) get_terminal_register(uint8_t terminal_connector):
+    get terminal register data for given terminal connector (0/1)
+- (void) set_terminal_register(uint8_t terminal_connector, uint8_t terminal_register_value):
+    set terminal register data for given terminal connector (0/1)
+- (void) update_terminal_register(uint8_t terminal_connector):
+    update terminal register states for given terminal connector (0/1)
+- (void) enable_terminal(uint8_t wiper, char terminal):
+    enable terminal (one of ['a','b','w','h']) of given volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+- (void) disable_terminal(uint8_t wiper, char terminal):
+    disable terminal (one of ['a','b','w','h']) of given volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+- (uint16_t) get_eeprom_value(uint8_t location):
+    get current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
+- (void) set_eeprom_value(uint8_t location, uint16_t value):
+    set current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
+
+For the output (the wiper):
+**************************************
+- (void) write_state(float state):
+    expects value in range 0.00 to 0.256, higher values will be clamped to max value
+- (uint16_t) get_wiper_level():
+    returns current value of this output (wiper)
+- (void) save_level():
+    save current level of this output to it`s respective nonvolatile one, only valid for volatile wipers (0-3)
+- (void) enable_wiper():
+    enable this output (wiper), only valid for volatile wipers (0-3)
+- (void) disable_wiper():
+    disable this output (wiper), only valid for volatile wipers (0-3)
+- (void) increase_wiper():
+    increase this output (wiper), only valid for volatile wipers (0-3)
+- (void) decrease_wiper():
+    decrease this output (wiper), only valid for volatile wipers (0-3)
+- (void) enable_terminal(char terminal):
+    enable terminal (one of ['a','b','w','h']) of this volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+- (void) disable_terminal(char terminal):
+    disable terminal (one of ['a','b','w','h']) of this volatile wiper (0-3).
+    'h' is also used for general enable/disable of wiper
+
+See Also
+--------
+
+- :doc:`/components/output/index`
+- :apiref:`mcp4461/mcp4461.h`
+- :ghedit:`Edit`
