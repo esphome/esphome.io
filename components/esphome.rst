@@ -46,8 +46,8 @@ Advanced options:
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See :ref:`esphome-platformio_options`.
 - **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) ``main`` file.
-  The paths in this list are relative to the directory where the YAML configuration file is located. See
-  :ref:`esphome-includes`.
+  The paths in this list are relative to the directory where the YAML configuration file is located or ``<...>`` includes.
+  See :ref:`esphome-includes`.
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
   :ref:`esphome-libraries`.
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
@@ -205,9 +205,12 @@ The ``includes`` option is only a helper option that does that for you.
       # ...
       includes:
         - my_switch.h
+        - <mylib.h>
 
 This option behaves differently depending on what the included file is pointing at:
 
+ - If the include string is written as <mylib> or "<mylib>", the line ``#include <mylib>`` is
+   added to the beginning of the ``main.cpp`` file.
  - If the include string is pointing at a directory, the entire directory tree is copied into the
    src/ folder.
  - If the include string points to a header file (.h, .hpp, .tcc), it is copied in the src/ folder
