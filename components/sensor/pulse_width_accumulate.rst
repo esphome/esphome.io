@@ -45,7 +45,7 @@ counter preventing overflow at 71.58 minutes. Sensor accuracy is determined by t
      * Frequency, expected 1666.67 Hz, Observed mean 1666.57 Hz, standard deviation=0.50 Hz
      * On-time. Expected based on time stamps 7666 s. Observed 7665.97 s  
   - Test Condition #3 (random 1 to 10 min pulses, random 1 to 10 sec delay, 1 min polling, 452 samples)
-     * On-time. Expected based on millis() based generation algorithm output 18404.0 s. Observed 18405.0 s
+     * On-time. Expected based on millis() generation algorithm output 18404.0 s. Observed 18405.0 s
 
 .. figure:: images/kernel_25.png
     :align: center
