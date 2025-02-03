@@ -7,7 +7,7 @@ Pulse Width Sensor
 
 
 The ``pulse_width_accumulate`` sensor allows you to sum the total on-time of 
-a GPIO input. For example, this can be used to externally measure the on-time 
+a GPIO input. For example, this can be used to externally measure the total on-time 
 of a rapidly switched MOSFET or TRIAC. The sensor zeros itself every polling 
 interval.  Units of measurement are on-time seconds per update interval.
 An optional frequency sensor is also provided.
@@ -15,10 +15,12 @@ An optional frequency sensor is also provided.
 .. Note::
 
     Threshold stability values were experimentally determined for an ESP32 DevKit-v4:
-   - Minimum pulse width: ≥ 25 µs
-   - Minimum pulse width delay: ≥ 75 µs
+   - Minimum pulse width: 25 µs
+   - Minimum pulse width delay: 75 µs
    - Maximum implied frequency: ~10 kHz
-   - Maximum polling window: 71.58 minutes (see text below)         
+   - Maximum pulse width: infinite 
+   - Maximum polling time: <71.58 minutes (see text below) 
+   - Minimum polling time: 1 second        
 
 .. code-block:: yaml
 
@@ -35,14 +37,21 @@ An optional frequency sensor is also provided.
 
   Important implementation details:
 
-  1. The polling function resets the microsecond counter to prevent overflow at 71.58 minutes
-  2. Sensor accuracy is a function of the input signal frequency: 
-    - Test Condition #1 (25 µs pulses, 75 µs delay, 1 sec polling, 27380 samples):
-      * Frequency. Expected 10 kHz. Observed mean 9980.5 Hz. Standard deviation=5.5 Hz
-      * On-time. Expected based on time stamps 6846.75 s. Observed 6844.33 s
-    - Test Condition #2 (300 µs pulses, 300 µs delay, 1 min polling, 289 samples):
-      * Frequency, expected 1666.67 Hz, Observed mean 1666.57 Hz, standard deviation=0.08 Hz
-      * On-time. Expected based on time stamps 8640 s. Observed 8639.98 s  
+  1. Both Falling-edge-interrupts, and the polling function reset the microsecond 
+  counter preventing overflow at 71.58 minutes. 
+  2. Sensor accuracy is determined by the input signal frequency, for example: 
+    - Test Condition #1 (25 µs pulses, 75 µs delay, 1 sec polling, 20379 samples):
+      * Frequency. Expected 10 kHz. Observed mean 9998.2 Hz. Standard deviation=0.9 Hz
+      * On-time. Expected based on time stamps 5094.25 s. Observed 5094.87 s (see figure below)
+    - Test Condition #2 (300 µs pulses, 300 µs delay, 1 sec polling, 15333 samples):
+      * Frequency, expected 1666.67 Hz, Observed mean 1666.57 Hz, standard deviation=0.50 Hz
+      * On-time. Expected based on time stamps 7666 s. Observed 7665.97 s  
+    - Test Condition #3 (random 1s to 10 min pulses, random 1 s to 1 min delay, 1 min polling, 289 samples):
+      * On-time. Expected based on generation algorighm 8640 s. Observed 8639.98 s 
+
+.. figure:: images/kernel_25.png
+    :align: center
+    :width: 80.0%
       
 
 Configuration variables:
