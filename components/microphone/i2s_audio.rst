@@ -59,14 +59,14 @@ External ADC
 
   .. note::
 
-      PDM microphones are only supported on ESP32 and ESP32-S3.
+      PDM microphones are only supported on ESP32 and ESP32-S3 by the legacy I²S driver.
 
 Internal ADC
 ------------
 
   .. note::
 
-      Internal ADC microphones are only supported on a regular ESP32, not the variants.
+      Internal ADC microphones are only supported by the legacy I²S driver on a regular ESP32, not the variants.
 
 - **adc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The GPIO pin to use for the ADC input.
 
