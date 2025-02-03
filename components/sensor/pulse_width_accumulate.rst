@@ -10,16 +10,17 @@ The ``pulse_width_accumulate`` sensor allows you to sum the total on-time of
 a GPIO input. For example, this can be used to externally measure the total on-time 
 of a rapidly switched MOSFET or TRIAC. The sensor zeros itself every polling 
 interval.  Units of measurement are on-time seconds per update interval.
-An optional frequency sensor is also provided.
+This sensor offers very similar functionality and performance to the ``duty cycle``, 
+and ``pulse counter`` sensors, but uses the same GPIO.
 
 .. Note::
 
-    Threshold stability values were experimentally determined for an ESP32 DevKit-v4:
+    Threshold stability values on an ESP32 DevKit-v4:
    - Minimum pulse width: 25 µs
    - Minimum pulse width delay: 75 µs
    - Maximum implied frequency: ~10 kHz
    - Maximum pulse width: infinite 
-   - Maximum polling time: <71.58 minutes (see text below) 
+   - Maximum polling time: ~71 minutes (see text below) 
    - Minimum polling time: 1 second        
 
 .. code-block:: yaml
@@ -37,7 +38,7 @@ An optional frequency sensor is also provided.
 
   Important implementation details:
 
-  1. Both Falling-edge-interrupts, and the polling function reset the microsecond 
+  1. Edge interrupts, and the polling function both reset the microsecond 
   counter preventing overflow at 71.58 minutes. 
   2. Sensor accuracy is determined by the input signal frequency, for example: 
     - Test Condition #1 (25 µs pulses, 75 µs delay, 1 sec polling, 20379 samples):
@@ -46,8 +47,8 @@ An optional frequency sensor is also provided.
     - Test Condition #2 (300 µs pulses, 300 µs delay, 1 sec polling, 15333 samples):
       * Frequency, expected 1666.67 Hz, Observed mean 1666.57 Hz, standard deviation=0.50 Hz
       * On-time. Expected based on time stamps 7666 s. Observed 7665.97 s  
-    - Test Condition #3 (random 1s to 10 min pulses, random 1 s to 1 min delay, 1 min polling, 289 samples):
-      * On-time. Expected based on generation algorighm 8640 s. Observed 8639.98 s 
+    - Test Condition #3 (random 1s to 10 min pulses, random 1 s to 1 min delay, 1 min polling, XX samples):
+      * On-time. Expected based on generation algorithm output 18404.0 s. Observed 18405.0 s (gen algo used inaccurate millis() function)
 
 .. figure:: images/kernel_25.png
     :align: center
@@ -69,8 +70,9 @@ See Also
 --------
 
 - :ref:`sensor-filters`
+- :doc:`/components/sensor/pulse_meter`
+- :doc:`/components/sensor/pulse_counter`
+- :doc:`/components/sensor/duty_cycle`
 - :apiref:`pulse_width_accumulate/pulse_width_accumulate.h`
-- :apiref:`pulse_width/pulse_width.h`
-- :apiref:`pulse_meter/pulse_meter_sensor.h`
 - :ghedit:`Edit`
 
