@@ -66,6 +66,7 @@ Advanced options:
   See :ref:`esphome-min_version`.
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
+- **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
 
 Old-style platform options, which have been moved to the platform-specific :doc:`esp32 </components/esp32>` and
 :doc:`esp8266 </components/esp8266>` sections but are still accepted here for compatibility reasons (usage not
