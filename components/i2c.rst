@@ -44,7 +44,7 @@ Configuration variables:
 
 .. note::
 
-    If the device can support multiple I²C buses (ESP32 has 2, ESP8266 does not support more than one) these buses need to be defined as below and sensors need to be setup specifying the correct bus:
+    If the device can support multiple I²C buses these buses need to be defined as below and sensors need to be setup specifying the correct bus:
 
     .. code-block:: yaml
 
