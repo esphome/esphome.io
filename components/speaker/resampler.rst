@@ -3,7 +3,7 @@ Resampler Speaker
 
 .. seo::
     :description: Instructions for setting up resampler speakers in ESPHome.
-    :image: resampler.svg
+    :image: waveform.svg
 
 The ``resampler`` speaker platform allows you to convert the sample rate of an audio stream and output it to another :doc:`speaker component </components/speaker/index>`.
 
