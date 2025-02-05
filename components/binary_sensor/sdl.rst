@@ -25,4 +25,5 @@ Example:
 See Also
 --------
 - :doc:`Host Platform </components/host>`
+- :ref:`SDL display <sdl>`
 - :ghedit:`Edit`
