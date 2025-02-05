@@ -295,8 +295,6 @@ if logs are shown remotely.
         then:
           - logger.log: API is connected!
 
-The lambda equivalent for this is ``id(api_id).is_connected()``.
-
 .. _api-device-actions:
 
 User-defined Actions
