@@ -13,8 +13,6 @@ It natively supports decoding ``FLAC``, ``MP3``, and ``WAV`` audio files. Home A
 
 It supports two different audio pipelines: announcement and media. Each audio pipeline must output to a unique speaker. Use a :doc:`mixer speaker </components/speaker/mixer>` component to create two different speakers that output to a single audio speaker.
 
-Note :ref:`media player actions <media_player-actions>` only affect the media stream. Use the :ref:`stop stream <speaker_media_player-stop_stream>` action to stop an announcement.
-
 On-device files built directly into the firmware are played without a network connection. Encode on-device files with the configured sample rate, 1 or 2 channels, and 16 bits per sample.
 
 This platform only works on ESP32 based chips using the :ref:`esp32-espidf_framework`.
@@ -124,9 +122,9 @@ It adds a switch for playing an on-device file for an alarm notification. Any pl
         restore_mode: ALWAYS_OFF
         on_turn_off:
             # Stop playing the alarm
-            - speaker_media_player.stop_stream: announcement
-            # Stop ducking the media stream over 2 seconds
-            - mixer_speaker.apply_ducking:
+            - media_player.stop:
+                announcement: true
+            - mixer_speaker.apply_ducking:  # Stop ducking the media stream over 2 seconds
                 id: media_spk_mixer_input
                 decibel_reduction: 0
                 duration: 2.0s
@@ -178,22 +176,6 @@ Configuration variables:
 
 - **media_file** (**Required**, :ref:`config-id`): The ID of the media file.
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to ``false``.
-
-.. _speaker_media_player-stop_stream:
-
-``speaker_media_player.stop_stream`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-This action will stop either the media or announcement stream immediately.
-
-.. code-block:: yaml
-
-    on_...:
-      - speaker_media_player.stop_stream: announcement
-
-Configuration variables:
-
-- **stream** (**Required**, enum): Which audio stream to stop. One of ``announcement`` or ``media``.
 
 
 See also
