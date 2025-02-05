@@ -651,6 +651,7 @@ Core
     Home Assistant, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
     Status, components/binary_sensor/status, server-network.svg, dark-invert
     Switch, components/binary_sensor/switch, electric-switch.svg, dark-invert
+    Host SDL2 display, components/display/sdl, sdl.png
 
 Capacitive Touch
 ****************

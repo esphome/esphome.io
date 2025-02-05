@@ -1,5 +1,5 @@
 SDL Binary Sensor
-==================
+=================
 
 .. seo::
     :description: Instructions for setting up an SDL keyboard binary sensor.
@@ -10,7 +10,7 @@ The sensor will be true when the key is pressed.
 Configuration variables:
 ------------------------
 
-- **key** (**Required**): The ID of an `SDL key <https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html>`.
+- **key** (**Required**): The ID of an `SDL key <https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html>`_.
 - All other variables from :ref:`Binary Sensor <config-binary_sensor>`.
 
 Example:
