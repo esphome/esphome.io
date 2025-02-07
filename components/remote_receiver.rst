@@ -64,6 +64,7 @@ Configuration variables:
   - **sony**: Decode and dump Sony infrared codes.
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
+  - **toto**: Decode and dump Toto infrared codes.
 
 - **tolerance** (*Optional*, int, :ref:`config-time` or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to ``25%``.
@@ -225,6 +226,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_mirage** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Mirage remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::MirageData`
+  is passed to the automation for use in lambdas.
+- **on_toto** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Toto remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::TotoData`
   is passed to the automation for use in lambdas.
 
 .. code-block:: yaml
@@ -486,6 +490,12 @@ Remote code selection (exactly one of these has to be included):
     :ref:`transmitter description <remote_transmitter-transmit_mirage>` for more info. Usually you only need to copy
     this directly from the dumper output.
 
+- **toto**: Trigger on a decoded Toto remote code with the given data.
+
+  - **command** (**Required**, int): The 1-byte Toto command code to trigger on. Range is 0 to 0xFF.
+  - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+  - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+
 .. note::
 
     The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56khz) and are very similar.
@@ -518,7 +528,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    For the Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
+    For the black Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
     `this hack <https://github.com/xoseperez/espurna/wiki/Hardware-Itead-Sonoff-RF-Bridge---Direct-Hack>`__
     created by the GitHub user wildwiz. Then use this configuration for the remote receiver/transmitter hubs:
 
@@ -532,7 +542,25 @@ Remote code selection (exactly one of these has to be included):
           pin: 5
           carrier_duty_percent: 100%
 
+    There's also a software `"hack" <https://github.com/mightymos/RF-Bridge-OB38S003>`__ that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
+    rendering the hardware hack uncessary. This software passthrough mode can be used for the OB38S003 (white) and EFM8BB1 (black) sonoff RF bridge. Then use this configuration for the remote receiver/transmitter hubs:
 
+    .. code-block:: yaml
+
+        remote_receiver:
+          pin:
+            # sonoff and wemos board
+            number: GPIO3
+            mode:
+              input: true
+              pullup: false
+          tolerance: 60%
+          filter: 4us
+          idle: 4ms
+       
+        remote_transmitter:
+          pin: 1
+          carrier_duty_percent: 100%
 
 See Also
 --------
