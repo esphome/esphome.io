@@ -1,0 +1,37 @@
+DC01 PM2.5 Sensor
+=======================================
+
+.. seo::
+    :description: Instructions for setting up DC01 particulate matter sensor
+
+The ``dc01`` sensor platform allows you to use your DC01 particulate matter sensor with ESPHome.
+
+It is a very cheap (read: inaccurate) optical (infrared LED and phototransistor) sensor suitable for detecting fine particulate matter like dust and smoke. There are many much better sensors on the market and `supported by ESPHome </search.html?q=Particulate>`__, but this is one of the most common and cheapest ones you will find.
+
+To use this sensor, you must declare a uart at 9600 baud using a supported rx pin for your platform and connect it accordingly to the tx pin of the DC01. This sensor reports PM2.5 concentration every second, so you may want to use the throttle or other aggregating feature to reduce data volume if desired. 
+
+.. code-block:: yaml
+
+    uart:
+      rx_pin: GPIO13
+      baud_rate: 9600
+        
+    sensor:
+      - platform: dc01
+        name: 'Indoor PM2.5'
+
+- All other options from :ref:`Sensor <config-sensor>`.
+
+
+See Also
+--------
+
+- Amazon listing: https://www.amazon.com/dp/B0DBST3BSS
+- datasheet images:
+- https://web.archive.org/web/20250202185205/https://ae01.alicdn.com/kf/S12edf1d7f7c64ce7a7e438032c3f9d49d.png
+- https://web.archive.org/web/20240929213700/https://ae01.alicdn.com/kf/S293cc7fc3c21428cb08d9cec0b18a2210.png
+- https://web.archive.org/web/20240929213700/https://ae01.alicdn.com/kf/S9c261502e9264a638a12ff80e7da7739h.png
+- https://web.archive.org/web/20240929213700/https://ae01.alicdn.com/kf/S6b4bae0b6f2c4257a10a230ca93cd23fu.png
+- :ref:`sensor-filters`
+- :apiref:`dc01/dc01.h`
+- :ghedit:`Edit`
