@@ -32,7 +32,7 @@ This platform only works on ESP32 based chips.
 Configuration variables:
 ------------------------
 
-- **output_speaker** (**Required**, :ref:`config-id`): The :doc:`speaker </components/speaker/index>` to output the resampled audio.
+- **output_speaker** (**Required**, :ref:`config-id`): The :doc:`speaker </components/speaker/index>` to output the mixed audio.
 - **source_speakers** (**Required**, list): A list of source speaker inputs. Must have at least 2 and at most 8 speakers.
 
     - **buffer_duration** (*Optional*, :ref:`config-time`): The duration of the internal ring buffer. Larger values can reduce stuttering but use more memory. Defaults to ``100ms``.
@@ -52,7 +52,7 @@ Automations
 ``mixer_speaker.apply_ducking`` Action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-This action ducks (reduces the volume) of the media stream.
+This action ducks (reduces the volume of) the media stream.
 
 .. code-block::
 
