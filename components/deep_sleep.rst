@@ -48,6 +48,11 @@ Configuration variables:
   - **touch_wakeup_reason** (*Optional*, :ref:`config-time`): run duration if woken up by touch.
 
 - **sleep_duration** (*Optional*, :ref:`config-time`): The time duration to stay in deep sleep mode.
+
+.. note::
+
+    ESP8266s have a max limit for sleep_duration based on the variable type used to store this in the hardware itself.  Using a larger number that causes overflow will give unexpected results (node may stop reporting, but still be connected to wifi, for example).  A safe value is approximately 3.5 hours, but can depend on hardware, so if you are not seeing the battery performance results you are expecting from deep sleep, this may be the cause.
+
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, :ref:`esp32-touch-binary-sensor` must be configured properly.
 - **wakeup_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Only on ESP32. A pin to wake up to once
