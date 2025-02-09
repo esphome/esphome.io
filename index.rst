@@ -76,6 +76,11 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
                     </a>
                 </li>
                 <li>
+                    <a class="reference" href="https://devices.esphome.io/">
+                        Device configuration examples
+                    </a>
+                </li>
+                <li>
                     <a class="reference" href="/guides/creators.html">
                         Sharing ESPHome devices
                     </a>
@@ -508,6 +513,14 @@ Environmental
     TMP117, components/sensor/tmp117, tmp117.jpg, Temperature
     XGZP68xx Series, components/sensor/xgzp68xx, 6897d.jpg, Differential Pressure
 
+Health/Safety
+*************
+
+.. imgtable::
+
+    Seeed Studio MR60BHA2 mmWave, components/seeed_mr60bha2, seeed_mr60bha2.jpg, Breathing & heartbeat detection
+    Seeed Studio MR60FDA2 mmWave, components/seeed_mr60fda2, seeed_mr60fda2.jpg, Presence & Fall detection
+
 Light
 *****
 
@@ -637,6 +650,7 @@ Core
     GPIO, components/binary_sensor/gpio, gpio.svg
     Home Assistant, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
     Status, components/binary_sensor/status, server-network.svg, dark-invert
+    Switch, components/binary_sensor/switch, electric-switch.svg, dark-invert
 
 Capacitive Touch
 ****************
@@ -1039,6 +1053,7 @@ Switch Components
     Factory Reset Switch, components/switch/factory_reset, restart-alert.svg, dark-invert
     Generic Output Switch, components/switch/output, upload.svg, dark-invert
     GPIO Switch, components/switch/gpio, gpio.svg
+    H-bridge Switch, components/switch/hbridge, hbridge-relay.jpg
     LVGL Widget, components/switch/lvgl, lvgl_c_swi.png
     Modbus Switch, components/switch/modbus_controller, modbus.png
     Nextion Switch, components/switch/nextion, nextion.jpg
@@ -1185,10 +1200,20 @@ Cookbook
     Arduino Port Extender, cookbook/arduino_port_extender, arduino_logo.svg
     EHMTX a matrix status/text display, cookbook/ehmtx, ehmtx.jpg
 
+.. _device_database:
+
+Device Database
+---------------
+
+You will find configurations for specific devices in our `ESPHome Devices <https://devices.esphome.io/>`__ database.
+
+.. _contributing:
+
+Contributing
+------------
+
 Do you have other awesome automations or cool setups? Please feel free to add them to the
 documentation for others to copy. See :doc:`Contributing </guides/contributing>`.
-
-If you'd like to share configurations for specific devices, please contribute to our `ESPHome Devices <https://devices.esphome.io/>`__ database.
 
 .. toctree::
     :hidden:

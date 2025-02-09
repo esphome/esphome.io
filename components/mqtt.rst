@@ -106,6 +106,7 @@ Configuration variables:
 - **on_json_message** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a JSON message on a specific MQTT topic is received. See :ref:`mqtt-on_json_message`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **publish_nan_as_none** (*Optional*, bool): Publish ``None`` instead of ``NaN`` to handle Unknown/Unavailable sensor states in Home Assistant. Defaults to ``false``.
 
 .. _mqtt-message:
 

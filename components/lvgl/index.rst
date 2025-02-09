@@ -10,13 +10,20 @@ embedded graphics library to create beautiful UIs for any MCU, MPU and display t
 
 .. figure:: /components/lvgl/images/lvgl_main_screenshot.png
 
+Prerequisites
+-------------
+
 To use LVGL with a :ref:`display <display-hw>` in ESPHome, you'll need an ESP32 or RP2040. PSRAM is not a strict requirement but it is generally recommended, especially for large color displays.
 
-The graphic display should be configured with ``auto_clear_enabled: false`` and ``update_interval: never``, and should not have any ``lambda`` set.
+The graphic display should be configured with ``auto_clear_enabled: false`` and should not have any ``lambda`` set. The LVGL component will take care of the display rendering. For most displays, the ``update_interval`` should be set to ``never``, but note that some displays such as OLED and ePaper will need the update interval set to a suitable value.
 
 For interactivity, a :doc:`Touchscreen </components/touchscreen/index>` (capacitive highly preferred), a :doc:`/components/sensor/rotary_encoder` or a custom keypad made up from discrete :doc:`Binary Sensors </components/binary_sensor/index>` can be used.
 
 Check out the detailed examples in :ref:`the Cookbook <lvgl-cookbook>` which demonstrate a number of ways you can integrate your environment with LVGL and ESPHome.
+
+
+TL;DR
+-----
 
 To get started, it is sufficient to add a display and an empty LVGL configuration. If neither ``pages`` nor ``widgets`` is specified, then a default "hello world" page will be shown.
 
@@ -24,6 +31,26 @@ To get started, it is sufficient to add a display and an empty LVGL configuratio
 
     # Example minimal configuration entry
     lvgl:
+
+    display:
+      - platform: ...
+        # ...
+        auto_clear_enabled: false
+        update_interval: never
+
+To make LVGL your own you will need to add widgets to the display. For example, to show a label with the text "Hello World!" in the center of the screen:
+
+.. code-block:: yaml
+
+    lvgl:
+      widgets:
+        - label:
+            align: CENTER
+            text: 'Hello World!'
+
+
+
+Now read on to learn more about the configuration options and how to customize your LVGL display.
 
 Basics
 ------
@@ -125,7 +152,7 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to ``true``. "Interacts" means to release a touch or button, or rotate an encoder.
-- **color_depth** (*Optional*, string): The color deph at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
+- **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
 - **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. Default is ``100%`` (or ``1.0``). For devices without PSRAM, the recommended value is ``25%``.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: ``TRACE``, ``INFO``, ``WARN``, ``ERROR``, ``USER``, ``NONE``. Defaults to ``WARN``.
@@ -325,7 +352,7 @@ You can adjust the appearance of widgets by changing their foreground, backgroun
 - **pad_right** (*Optional*, int16): Set the padding on the right, in pixels.
 - **pad_row** (*Optional*, int16): Set the padding between the rows of the children elements, in pixels.
 - **pad_column** (*Optional*, int16): Set the padding between the columns of the children elements, in pixels.
-- **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 = pill shaped widget (true circle if it has same width and height).
+- **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 (max) = pill shaped widget (true circle if it has same width and height, radius then should be set to half the width/height).
 - **shadow_color** (*Optional*, :ref:`color <lvgl-color>`): Color used to create a drop shadow under the widget. Defaults to ``0`` (black).
 - **shadow_ofs_x** (*Optional*, int16): Horizontal offset of the shadow, in pixels. Defaults to ``0``.
 - **shadow_ofs_y** (*Optional*, int16): Vertical offset of the shadow, in pixels. Defaults to ``0``.

@@ -469,7 +469,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    For the Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
+    For the black Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
     `this hack <https://github.com/xoseperez/espurna/wiki/Hardware-Itead-Sonoff-RF-Bridge---Direct-Hack>`__
     created by the GitHub user wildwiz. Then use this configuration for the remote receiver/transmitter hubs:
 
@@ -483,7 +483,25 @@ Remote code selection (exactly one of these has to be included):
           pin: 5
           carrier_duty_percent: 100%
 
+    There's also a software `"hack" <https://github.com/mightymos/RF-Bridge-OB38S003>`__ that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
+    rendering the hardware hack uncessary. This software passthrough mode can be used for the OB38S003 (white) and EFM8BB1 (black) sonoff RF bridge. Then use this configuration for the remote receiver/transmitter hubs:
 
+    .. code-block:: yaml
+
+        remote_receiver:
+          pin:
+            # sonoff and wemos board
+            number: GPIO3
+            mode:
+              input: true
+              pullup: false
+          tolerance: 60%
+          filter: 4us
+          idle: 4ms
+       
+        remote_transmitter:
+          pin: 1
+          carrier_duty_percent: 100%
 
 See Also
 --------

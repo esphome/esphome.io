@@ -100,10 +100,9 @@ is already set up. You can however change this using the ``priority`` parameter.
     esphome:
       # ...
       on_boot:
-        priority: 600
-        # ...
-        then:
-          - switch.turn_off: switch_1
+        - priority: 600
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -138,9 +137,9 @@ too many WiFi/MQTT connection attempts, Over-The-Air updates being applied or th
     esphome:
       # ...
       on_shutdown:
-        priority: 700
-        then:
-          - switch.turn_off: switch_1
+        - priority: 700
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
