@@ -42,7 +42,8 @@ beyond the basic SPI connections, and a reasonable amount of RAM, it is not well
 
 .. note::
 
-    Use of 16 bit colors requires double the amount of RAM as 8 bit, and may need PSRAM to be available.
+    The default color depth is 16 bit (RGB565). 8 bit color is also supported, but the color palette must be set to one of the available options.
+    Use of 16 bit colors requires twice the amount of RAM as 8 bit, and may not be usable unless PSRAM is available.
 
 
 .. figure:: images/ili9341-full.jpg
@@ -88,14 +89,15 @@ All :ref:`graphical display configuration<display-configuration>` options are av
     pins wired to GPIOs.
 
 
-- **color_palette** (*Optional*): The type of color pallet that will be used in the ESP's internal 8-bits-per-pixel buffer.  This can be used to improve color depth quality of the image.  For example if you know that the display will only be showing grayscale images, the clarity of the display can be improved by targeting the available colors to monochrome only.  Options are:
+- **color_palette** (*Optional*): When using 8 bit colors, this controls the type of color palette that will be used in the ESP's internal 8-bits-per-pixel buffer.  This can be used to improve color depth quality of the image.  For example if you know that the display will only be showing grayscale images, the clarity of the display can be improved by targeting the available colors to monochrome only.  Options are:
 
-  - ``NONE`` (default)
-  - ``GRAYSCALE``
-  - ``IMAGE_ADAPTIVE``
+  - ``NONE`` (*default*) Colors will be 16 bit RGB565
+  - ``8BIT`` Colors will be 8 bit RGB332
+  - ``GRAYSCALE`` Colors will be 8 bit grayscale
+  - ``IMAGE_ADAPTIVE`` Colors will be 8 bit and the color palette will be generated from the images in the ``color_palette_images`` list below.
 
 - **color_order** (*Optional*): Should be one of ``bgr`` (default) or ``rgb``.
-- **color_palette_images** (*Optional*): A list of image files that will be used to generate the color pallet for the display.  This should only be used in conjunction with ``-color_palette: IMAGE_ADAPTIVE`` above.  The images will be analysed at compile time and a custom color pallet will be created based on the most commonly occuring colors.  A typical setting would be a sample image that represented the fully populated display.  This can significantly improve the quality of displayed images.  Note that these images are not stored on the ESP device, just the 256byte color pallet created from them.
+- **color_palette_images** (*Optional*): A list of image files that will be used to generate the color palette for the display.  This should only be used in conjunction with ``color_palette: IMAGE_ADAPTIVE``.  The images will be analysed at compile time and a custom color palette will be created based on the most commonly occuring colors.  A typical setting would be a sample image that represented the fully populated display.  This can significantly improve the quality of displayed images.  Note that these images are not stored on the ESP device, just the 256byte color palette created from them.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g ``320x240``) or with separate config keys. If not provided the dimensions will be determined by the model selected.
 
     - **height** (**Required**, int): Specifies height of display in pixels.
@@ -225,7 +227,7 @@ To configure a dimmable backlight:
         id: back_light
         restore_mode: ALWAYS_ON
 
-To configure an image adaptive color pallet to show greater than 8 bit color depth with a RAM limited screen buffer:
+To configure an image adaptive color palette to show greater than 8 bit color depth with a RAM limited screen buffer:
 
 .. code-block:: yaml
 

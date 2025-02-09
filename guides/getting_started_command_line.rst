@@ -240,6 +240,8 @@ directory where you want to store your configurations):
 
 After that, you will be able to access the ESPHome Device Builder at ``localhost:6052``.
 
+Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
+
 .. figure:: images/dashboard_states.png
 
 See Also
