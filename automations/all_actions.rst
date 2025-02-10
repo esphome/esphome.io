@@ -36,6 +36,7 @@
 - **micro_wake_word:** ``start``, ``stop``
 - **microphone:** ``capture``, ``stop_capture``
 - **midea_ac:** ``beeper_off``, ``beeper_on``, ``display_toggle``, ``follow_me``, ``power_off``, ``power_on``, ``power_toggle``, ``swing_step``
+- **mixer_speaker:** ``apply_ducking``
 - **mqtt:** ``publish``, ``publish_json``
 - **number:** ``decrement``, ``increment``, ``operation``, ``set``, ``to_max``, ``to_min``
 - **output:** ``set_level``, ``turn_off``, ``turn_on``
