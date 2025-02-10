@@ -9,13 +9,13 @@ Component
 ---------
 .. _ld2450-component:
 
-The ``ld2450`` component allows you to use `HLK-LD2450 <https://www.hlktech.net/index.php?id=1157>`__ human presence and motion detection and tracking radar module with ESPHome.
+The ``ld2450`` component allows you to use the `HLK-LD2450 <https://www.hlktech.net/index.php?id=1157>`__ human presence, motion detection and tracking radar module with ESPHome.
 
 `HLK-LD2450 Official Datasheet and user manuals <https://drive.google.com/drive/folders/1aItrdziwnEqI-ovDWf24Lj6ioALaljFA?usp=sharing>`__
 
-Motion target tracking involves real-time tracking of the position of a moving target within a specific area, enabling distance, angle, and speed measurements of the target. 
+Target tracking involves real-time tracking of the position of a (moving) target within a specific area, enabling measurement of the target's distance, angle and speed (relative to the sensor).
 The LD2450 is a sensor module for motion target tracking within the Hi-link 24G millimeter-wave radar series. This module features simplified 24 GHz radar sensor hardware and intelligent algorithm firmware.
-It is is mainly used in general indoor scenarios such as homes, offices and hotels to enable the location tracking of moving human targets.
+It's primarily intended for use indoors to enable the location tracking of moving human targets.
 
 .. _ld2450-mobile-apps:
 
@@ -38,29 +38,17 @@ Use of hardware UART pins is highly recommended, in order to support the out-of-
 
 .. code-block:: yaml
 
-    # uart configuration
-    uart:
-      id: uart_ld2450
-      tx_pin: 17
-      rx_pin: 21
-      baud_rate: 256000
-      parity: NONE
-      stop_bits: 1
-
-.. code-block:: yaml
-
     # ld2450 configuration
     ld2450:
       id: ld2450_radar
-      uart_id: uart_ld2450
       throttle: 1000ms
 
 Configuration variables:
 ************************
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this :doc:`ld2450` component if you need multiple components.
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
-  to use multiple UART buses.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this :doc:`ld2450` component.
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` to use.
+  Required if you have multiple UARTs configured.
 - **throttle** (*Optional*, int): Time in milliseconds to control the rate of data updates. Defaults to ``1000ms``.
 
 
@@ -86,7 +74,7 @@ The ``ld2450`` binary sensor offers presence states for the targets.
 Configuration variables:
 ************************
 
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
 - **has_target** (*Optional*): True if either target is still or in movement.
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
 - **has_moving_target** (*Optional*): True if a moving target is detected.
@@ -176,8 +164,8 @@ The ``ld2450`` sensor provides you with information about the states and attribu
 Configuration variables:
 ************************
 
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
-- **target_count** (*Optional*, int): Total targets detected, whether they are stationary or in motion..
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
+- **target_count** (*Optional*, int): Total targets detected, whether they are stationary or in motion.
   All options from :ref:`Sensor <config-sensor>`.
 - **still_target_count** (*Optional*, int): Count of stationary targets.
   All options from :ref:`Sensor <config-sensor>`.
@@ -200,7 +188,7 @@ Configuration variables:
 
 - **zone_N** (*Optional*): Target count details in the defined :ref:`zones<ld2450-number>` (N = 1 to 3). A maximum of 3 zones: ``zone_1``, ``zone_2``, ``zone_3``.
 
-    - **target_count** (*Optional*, int): Total targets detected in the zone, whether they are stationary or in motion..
+    - **target_count** (*Optional*, int): Total targets detected in the zone, whether they are stationary or in motion.
       All options from :ref:`Sensor <config-sensor>`.
     - **still_target_count** (*Optional*, int): Count of stationary targets in the zone.
       All options from :ref:`Sensor <config-sensor>`.
@@ -282,7 +270,7 @@ The ``ld2450`` number allows you to control the presence timeout and zone area c
 Configuration variables:
 ************************
 
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
 - **presence_timeout** (**Required**, int): The duration, in seconds, for which the :ref:`presence states<ld2450-binary-sensors>` will persist even after the detection is cleared. Default is ``5`` seconds.
   All options from :ref:`Number <config-number>`.
 - **zone_N** (*Optional*): Configuration of the zone (N = 1 to 3), defined as a rectangular area. A maximum of 3 Zones can be configured: ``zone_1``, ``zone_2``, ``zone_3``. The zone coordinates consists of x1 y1 (Near-Left) to x2 y2 (Far-Right) relative to the ``ld2450`` sensor.
@@ -314,8 +302,8 @@ The ``ld2450`` button allows you to perfrom ``restart`` and ``factory reset`` ac
 Configuration variables:
 ************************
 
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
-- **factory_reset** (*Optional*): "This command is used to reset the ``ld2450`` to its default values."
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
+- **factory_reset** (*Optional*): Resets the ``ld2450`` to its factory default configuration/values.
   All options from :ref:`Button <config-button>`.
 - **restart** (*Optional*): Restart the ``ld2450`` device.
   All options from :ref:`Button <config-button>`.
@@ -346,19 +334,20 @@ The ``ld2450`` text sensor allows you to get information about your :doc:`ld2450
 
 Configuration variables:
 ************************
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
+
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
 - **version** (*Optional*): The ``ld2450`` firmware version.
   All options from :ref:`Text Sensor <config-text_sensor>`.
-- **mac_address** (*Optional*): The ``ld2450`` Bluetooth mac address.
+- **mac_address** (*Optional*): The ``ld2450`` Bluetooth MAC address.
   All options from :ref:`Text Sensor <config-text_sensor>`.
 - **target_N** (*Optional*): Targets (N = 1 to 3). A maximum of 3 targets can be detected: ``target_1``, ``target_2``, ``target_3``.
 
-    - **direction** (*Optional*): Direction of the target relative to the ``ld2450`` sensor. Possible values are: ``Stationary``, ``Moving away``, ``Coming closer``, ``NA``.
+    - **direction** (*Optional*): Direction of the target relative to the ``ld2450`` sensor. Possible values are: ``Stationary``, ``Moving away``, ``Approaching``, ``NA``.
       All options from :ref:`Sensor <config-sensor>`.
 
 
 Select
------------
+------
 
 The ``ld2450`` select allows you to control ``baud rate`` and ``zone type`` of your :doc:`ld2450`.
 
@@ -377,7 +366,7 @@ The ``ld2450`` select allows you to control ``baud rate`` and ``zone type`` of y
 Configuration variables:
 ************************
 
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
 - **baud_rate** (*Optional*): Control the UART serial port baud rate. Defaults to ``256000``.
   Once changed, all sensors will stop working until a fresh install with an updated :ref:`UART Component <uart>` configuration.
   All options from :ref:`Select <config-select>`.
@@ -398,28 +387,20 @@ Here is the complete example configuration for :doc:`ld2450`.
     esp32:
       board: wemos_d1_mini32
 
-    improv_serial:
-
     logger:
-
-    debug:
 
     api:
 
     ota:
+      - platform: esphome
 
     wifi:
       ap:
 
-    captive_portal:
-
-    web_server:
-      port: 80
-
     uart:
       id: uart_ld2450
-      tx_pin: 17
-      rx_pin: 21
+      tx_pin: GPIOXX
+      rx_pin: GPIOXX
       baud_rate: 256000
       parity: NONE
       stop_bits: 1
