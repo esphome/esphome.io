@@ -115,6 +115,8 @@ Sensor component
           name: Temperature Living Room
         external_temperature:
           name: Floor Temperature Living Room
+        target_temperature:
+          name: Thermostat Target Temperature Living Room
 
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,6 +129,8 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **external_temperature** (*Optional*): A sensor reading the current external temperature the thermostat reports.
   This comes from an optionally attached external temperature sensor that can measure the floor or outdoor temperature.
+  All options from :ref:`Sensor <config-sensor>`.
+- **target_temperature** (*Optional*): A sensor reading the currently set target temperature the thermostat reports.
   All options from :ref:`Sensor <config-sensor>`.
 
 
