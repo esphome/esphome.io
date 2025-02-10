@@ -139,7 +139,7 @@ It adds a switch for playing an on-device file for an alarm notification. Any pl
                     switch.is_on: timer_ringing
                 then:
                     # Play the alarm sound as an announcement
-                    - speaker_media_player.play_on_device_media_file:
+                    - media_player.speaker.play_on_device_media_file:
                         media_file: alarm_sound
                         announcement: true
                     # Wait until the alarm sound starts playing
@@ -154,9 +154,9 @@ It adds a switch for playing an on-device file for an alarm notification. Any pl
 Automations
 -----------
 
-.. _speaker_media_player-play_on_device_media_file:
+.. _media_player-speaker-play_on_device_media_file:
 
-``speaker_media_player.play_on_device_media_file`` Action
+``media_player.speaker.play_on_device_media_file`` Action
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will play a on-device media file.
@@ -165,10 +165,10 @@ This action will play a on-device media file.
 
     on_...:
       # Simple
-      - speaker_media_player.play_on_device_media_file: file_id
+      - media_player.speaker.play_on_device_media_file: file_id
 
       # Full
-      - speaker_media_player.play_on_device_media_file:
+      - media_player.speaker.play_on_device_media_file:
           media_file: wake_word_trigger_sound
           announcement: true
 
