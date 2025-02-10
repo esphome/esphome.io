@@ -6,8 +6,8 @@ ADC128S102 8-Channel 12-Bit A/D Converter
     :keywords: ADC128S102
     :image: adc128s102.png
 
-The ADC128S102 is a low-power, eight-channel CMOS 12-bit analog-to-digital converter specified for conversion 
-throughput rates of 500 ksps to 1 MSPS. The converter is based on a successive-approximation register architecture 
+The ADC128S102 is a low-power, eight-channel CMOS 12-bit analog-to-digital converter specified for conversion
+throughput rates of 500 ksps to 1 MSPS. The converter is based on a successive-approximation register architecture
 with an internal track-and-hold circuit.
 
 .. figure:: images/adc128s102.png
@@ -31,15 +31,8 @@ sensors for your projects.
 
     # Example configuration entry
     adc128s102:
-      cs_pin: GPIO15
+      cs_pin: GPIOXX
       id: my_adc
-
-    sensor:
-      - platform: adc128s102           # Attached to pin 0 of the ADC128S102.
-        update_interval: 1s
-        adc128s102_id: my_adc
-        id: freezer_temp_source
-        channel: 0                     # ADC128S102 channel
 
 Configuration variables:
 - **id** (**Required**, :ref:`config-id`): The id to use for this ADC128S102 component.
@@ -51,6 +44,15 @@ Sensor
 The ``adc128s102`` sensor allows you to use your ADC128S102 12-Bit A/D Converter sensors with ESPHome.
 First, setup a :ref:`ADC128S102 Hub <adc128s102-component>` for your ADC128S102 sensor and then use this
 sensor platform to create individual sensors that will report the voltage to Home Assistant.
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: adc128s102           # Attached to pin 0 of the ADC128S102.
+        update_interval: 1s
+        adc128s102_id: my_adc
+        id: freezer_temp_source
+        channel: 0                     # ADC128S102 channel
 
 Configuration variables:
 

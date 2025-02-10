@@ -10,8 +10,7 @@ The ``bang_bang`` climate platform allows you to regulate a value with a
 
 .. note::
 
-    A number of people have asked about the behavior of the bang-bang controller. In version 1.15, a
-    :doc:`thermostat <thermostat>` component was added which behaves more like a common thermostat; it is
+    The :doc:`thermostat <thermostat>` component behaves more like a common thermostat; it is
     essentially two bang-bang controllers in one. Please see the `Bang-bang vs. Thermostat`_ section below
     if you are not sure which is appropriate for your application.
 

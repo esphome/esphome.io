@@ -203,6 +203,7 @@ spares I/Os.
     api:
 
     ota:
+      platform: esphome
 
     # define i2c device
     # for an ESP8266 SDA is D2 and goes to Arduino's A4
@@ -324,5 +325,4 @@ spares I/Os.
 See Also
 --------
 
-- :doc:`/devices/nodemcu_esp8266`
 - :ghedit:`Edit`

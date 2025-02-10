@@ -10,9 +10,9 @@ TM1651 Battery Display
 Battery Display
 ---------------
 
-The ``tm1651`` display platform allows you to use battery display units based on TM1651 chip, like
-`this one <https://aliexpress.com/item/32811491559.html>`__
-with ESPHome. Currently integration supports level and brightness setting. All updates can be made via lambda expressions.
+The ``tm1651`` display platform allows you to use battery display units based on the TM1651 chip such as
+`this one <https://www.aliexpress.com/item/32811491559.html>`__ with ESPHome. This component supports the level
+and brightness settings. All updates can be made via lambda expressions.
 
 .. figure:: images/tm1651-battery-display.jpg
     :align: center
@@ -22,8 +22,8 @@ with ESPHome. Currently integration supports level and brightness setting. All u
 
     tm1651:
         id: tm1651_battery
-        clk_pin: D6
-        dio_pin: D5
+        clk_pin: GPIOXX
+        dio_pin: GPIOXX
 
 Configuration variables:
 ************************
@@ -133,14 +133,14 @@ You also can control this component with lambda expressions
 .. code-block:: yaml
 
     api:
-      services:
-        - service: battery_level
+      actions:
+        - action: battery_level
           variables:
             level: int
           then:
             - lambda: |-
                 id(tm1651_battery).set_level(level);
-        - service: battery_brightness
+        - action: battery_brightness
           variables:
             brightness: int
           then:

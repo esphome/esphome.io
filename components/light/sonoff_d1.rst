@@ -22,8 +22,7 @@ ESP8266 side. Bi-directional symmetric request / response protocol is implemente
 between ESP8266 and MCU. ``sonoff_d1`` component implements this protocol and
 translates between HA light commands and serial messages.
 
-For detailed instructions on how to replace the stock firmware with ESPHome see :doc:`/devices/sonoff_s20`.
-You will need to locate GPIO0 pin and serial port. Photos below should help.
+To replace the stock firmware with ESPHome you will need to locate GPIO0 pin and serial port. Photos below should help.
 
 .. figure:: images/sonoff_d1_gpio0.jpg
     :align: center
@@ -72,6 +71,7 @@ This component is useless for devices other than Sonoff D1 dimmer.
 
     # Make sure you can upload new firmware OTA
     ota:
+      platform: esphome
 
     # D1 dimmer uses hardware serial port on the default pins @ 9600 bps
     uart:
@@ -94,8 +94,6 @@ This component is useless for devices other than Sonoff D1 dimmer.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the light.
 - **use_rm433_remote** (*Optional*, boolean): Set to ``True`` if your setup uses Sonoff RM433
   or any other radio remote control. Properly setting this parameter allows the platform to
   identify what to do with incoming UART commands. RF chip is known to catch random commands

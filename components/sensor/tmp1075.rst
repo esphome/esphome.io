@@ -45,8 +45,6 @@ to the specified pins.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the temperature sensor.
-- **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for lambdas/multiple sensors.
 - **address** (*Optional*, int): The I²C address of the sensor.
   See :ref:`I²C Addresses <tmp1075_i2c_addresses>` for more information. Defaults to ``0x48``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check
@@ -57,12 +55,13 @@ Configuration variables:
   checks the sensor. Possible values are ``27.5ms``, ``55ms``, ``110ms``, and
   ``220ms``. Defaults to ``27.5ms``.
 - **alert** (*Optional*): Configure the alert pin behaviour.
-  
+
     - **function** (*Optional*, enum): Function of the alert pin, either ``comparator`` or ``interrupt``. Defaults to ``comparator``.
     - **polarity** (*Optional*, enum): Polarity of the alert pin, either ``active_high`` or ``active_low``. Defaults to ``active_high``.
     - **limit_low** (*Optional*, int): Lower temperature limit, in °C. Defaults to ``-128`` (the lowest possible limit value).
     - **limit_high** (*Optional*, int): Higher temperature limit, in °C. Defaults to ``127.9375`` (the highest possible limit value).
     - **fault_count** (*Optional*, int): Number of measurements. required for the alert pin to act. Must be between ``1`` and ``4``, inclusive. Defaults to ``1``.
+- All other options from :ref:`Sensor <config-sensor>`.
 
 .. _tmp1075_i2c_addresses:
 

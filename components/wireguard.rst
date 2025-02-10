@@ -6,12 +6,12 @@ WireGuard Component
 
 .. seo::
     :description: Instructions to setup WireGuard for your ESP board.
-    :keywords: WireGuard, VPN, ESP32
+    :keywords: WireGuard, VPN
 
 |wireguard|_ is an extremely simple yet fast and modern VPN that utilizes
 state-of-the-art cryptography. This component uses a **custom**
 implementation not developed by original authors and currently
-available for **ESP32 platform only**.
+available for ESP32, ESP8266 and BK72xx microcontrollers *only*.
 
   Please note that *"WireGuard" and the "WireGuard" logo are
   registered trademarks of Jason A. Donenfeld.* See
@@ -47,7 +47,8 @@ adding the following to your configuration:
       peer_endpoint: wg.server.example
       peer_public_key: EeFfGgHh...=
 
-      # Optional netmask (this is the default if omitted)
+      # Optional netmask (this is the default, no outgoing traffic 
+      # will pass through the tunnel if omitted)
       netmask: 255.255.255.255
 
       # Optional endpoint port (WireGuard default if omitted)
@@ -145,7 +146,7 @@ Configuration variables
 Static routes and outgoing connections
 --------------------------------------
 
-Currently there is no way on ESP32 devices to configure static routes for
+Currently there is no way on ESP devices to configure static routes for
 network interfaces, so the ``peer_allowed_ips`` list is used only to allow
 (or drop) packets that pass through the VPN tunnel, not to define static
 routes for remote hosts.

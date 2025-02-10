@@ -21,8 +21,8 @@ Configuration variables:
 
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin CS is connected to. For the 6 channel meter main board, this will always be 5 and 4. For the add-on boards a jumper can be selected for each CS pin, but default to 0 and 16.
 - **line_frequency** (**Required**, string): The AC line frequency of the supply voltage. One of ``50Hz``, ``60Hz``.
-- **meter_constant** (**Required**, float): The number of pulses per kWh. The ATM90E26 internally works based on pulses and 
-  this value converts a pulse into Wh, which are emitted as ``forward_active_energy`` etc. Matching it against an existing 
+- **meter_constant** (**Required**, float): The number of pulses per kWh. The ATM90E26 internally works based on pulses and
+  this value converts a pulse into Wh, which are emitted as ``forward_active_energy`` etc. Matching it against an existing
   meter is useful in that it allows visual confirmation for some devices that blink an LED for each pulse. Common values are
   1000 pulses/kWh, 1666.66 pulses/kWh, or 3200 pulses/kWh. See also **gain_metering** which determines after how much energy
   a pulse is emitted.
@@ -111,13 +111,13 @@ Keeping the calibration values at the top of your yaml might make editing easier
       metering_cal: '7481'   # default: 7481 - Calibrate this to match your meter based on the CF1 (CFx) pulse.
 
     spi:
-      clk_pin: 18
-      miso_pin: 19
-      mosi_pin: 23
+      clk_pin: GPIOXX
+      miso_pin: GPIOXX
+      mosi_pin: GPIOXX
 
     sensor:
         - platform: atm90e26
-            cs_pin: 5
+            cs_pin: GPIOXX
             voltage:
                 name: House Voltage
                 accuracy_decimals: 1

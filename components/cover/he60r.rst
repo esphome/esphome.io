@@ -26,8 +26,8 @@ below for a sample hardware interface.
         baud_rate: 1200
         parity: even
         stop_bits: 1
-        tx_pin: REPLACEME
-        rx_pin: REPLACEME
+        tx_pin: GPIOXX
+        rx_pin: GPIOXX
 
     cover:
       platform: he60r
@@ -72,9 +72,9 @@ Note that this circuit inverts the TX line. A configuration for this would look 
         parity: even
         stop_bits: 1
         tx_pin:
-          number: REPLACEME
+          number: GPIOXX
           inverted: true
-        rx_pin: REPLACEME
+        rx_pin: GPIOXX
 
     cover:
       platform: he60r
@@ -84,7 +84,7 @@ Note that this circuit inverts the TX line. A configuration for this would look 
     binary_sensor:
       - platform: gpio
         pin:
-          number: REPLACEME
+          number: GPIOXX
           inverted: true
           mode:
             input: true

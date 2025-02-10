@@ -10,6 +10,7 @@ ILI9xxx TFT LCD Series
 Models
 ------
 With this display driver you can control the following displays:
+  - GC9A01A
   - ILI9341
   - ILI9342
   - ILI9481
@@ -20,6 +21,7 @@ With this display driver you can control the following displays:
   - M5STACK
   - S3BOX
   - S3BOX_LITE
+  - ST7735
   - ST7796
   - ST7789V
   - TFT 2.4
@@ -34,12 +36,15 @@ This component is the successor of the ILI9341 component supporting more display
 families.
 
 The ``ILI9xxx`` display platform allows you to use
-ILI9341 (`datasheet <https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf>`__,
-`Aliexpress <https://www.aliexpress.com/af/Ili9341.html>`__) and other
+ILI9341 (`datasheet <https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf>`__) and other
 displays from the same chip family with ESPHome. As this is a somewhat higher resolution display and requires additional pins
 beyond the basic SPI connections, and a reasonable amount of RAM, it is not well suited for the ESP8266.
 
-**Note:** use of 16 bit colors requires double the amount of RAM as 8 bit, and may need PSRAM to be available.
+.. note::
+
+    The default color depth is 16 bit (RGB565). 8 bit color is also supported, but the color palette must be set to one of the available options.
+    Use of 16 bit colors requires twice the amount of RAM as 8 bit, and may not be usable unless PSRAM is available.
+
 
 .. figure:: images/ili9341-full.jpg
     :align: center
@@ -54,39 +59,45 @@ beyond the basic SPI connections, and a reasonable amount of RAM, it is not well
     display:
       - platform: ili9xxx
         model: ili9341
-        dc_pin: 27
-        reset_pin: 33
-        lambda: |-
-          it.fill(COLOR_BLACK);
-          it.print(0, 0, id(my_font), id(my_red), TextAlign::TOP_LEFT, "Hello World!");
+        dc_pin: GPIOXX
+        reset_pin: GPIOXX
+        invert_colors: false
+        show_test_card: true
 
 Configuration variables:
 ************************
+
+All :ref:`graphical display configuration<display-configuration>` options are available, plus the following.
 
 - **model** (**Required**): The model of the display. Options are:
 
   - ``M5STACK``, ``TFT 2.4``, ``TFT 2.4R``, ``S3BOX``, ``S3BOX_LITE``, ``WSPICOLCD``
   - ``ILI9341``, ``ILI9342``, ``ILI9486``, ``ILI9488``, ``ILI9488_A`` (alternative gamma configuration for ILI9488)
   - ``ILI9481``, ``ILI9481-18`` (18 bit mode)
-  - ``ST7789V``, ``ST7796``
+  - ``ST7789V``, ``ST7796``, ``ST7735``
+  - ``GC9A01A``, ``CUSTOM``
+
 
 - **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.
-- **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
-  See :ref:`display-engine` for more information.
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``5s``.
-- **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display in each loop (''true'', default),
-  or to keep the existing display content (must overwrite explicitly, e.g., only on data change).
-- **pages** (*Optional*, list): Show pages instead of a single lambda. See :ref:`display-pages`.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **color_palette** (*Optional*): The type of color pallet that will be used in the ESP's internal 8-bits-per-pixel buffer.  This can be used to improve color depth quality of the image.  For example if you know that the display will only be showing grayscale images, the clarity of the display can be improved by targeting the available colors to monochrome only.  Options are:
+- **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
 
-  - ``NONE`` (default)
-  - ``GRAYSCALE``
-  - ``IMAGE_ADAPTIVE``
+
+.. note::
+
+    A DC pin is always required, the CS pin and RESET pin will only be needed if the specific board has those
+    pins wired to GPIOs.
+
+
+- **color_palette** (*Optional*): When using 8 bit colors, this controls the type of color palette that will be used in the ESP's internal 8-bits-per-pixel buffer.  This can be used to improve color depth quality of the image.  For example if you know that the display will only be showing grayscale images, the clarity of the display can be improved by targeting the available colors to monochrome only.  Options are:
+
+  - ``NONE`` (*default*) Colors will be 16 bit RGB565
+  - ``8BIT`` Colors will be 8 bit RGB332
+  - ``GRAYSCALE`` Colors will be 8 bit grayscale
+  - ``IMAGE_ADAPTIVE`` Colors will be 8 bit and the color palette will be generated from the images in the ``color_palette_images`` list below.
 
 - **color_order** (*Optional*): Should be one of ``bgr`` (default) or ``rgb``.
-- **color_palette_images** (*Optional*): A list of image files that will be used to generate the color pallet for the display.  This should only be used in conjunction with ``-color_palette: IMAGE_ADAPTIVE`` above.  The images will be analysed at compile time and a custom color pallet will be created based on the most commonly occuring colors.  A typical setting would be a sample image that represented the fully populated display.  This can significantly improve the quality of displayed images.  Note that these images are not stored on the ESP device, just the 256byte color pallet created from them.
+- **color_palette_images** (*Optional*): A list of image files that will be used to generate the color palette for the display.  This should only be used in conjunction with ``color_palette: IMAGE_ADAPTIVE``.  The images will be analysed at compile time and a custom color palette will be created based on the most commonly occuring colors.  A typical setting would be a sample image that represented the fully populated display.  This can significantly improve the quality of displayed images.  Note that these images are not stored on the ESP device, just the 256byte color palette created from them.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g ``320x240``) or with separate config keys. If not provided the dimensions will be determined by the model selected.
 
     - **height** (**Required**, int): Specifies height of display in pixels.
@@ -94,10 +105,8 @@ Configuration variables:
     - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
     - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
-- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of ``80MHz``, ``40MHz`` (default), ``20MHz``, ``10MHz``, ``5MHz``, ``2MHz``, ``1MHz``, ``200kHz``, ``75kHz`` or ``1kHz``. If you have multiple ILI9xxx displays they must all use the same **data_rate**.
-- **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is ``MODE0`` but some displays require ``MODE3``.
-- **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the displays have this option set automatically to true and can't be changed.
-- **18bit_mode** (*Optional*): With this boolean option you can manual enable or disable the 18 bit color mode.
+- **invert_colors** (**Required**): Specifies whether the display colors should be inverted. Options are ``true`` or ``false`` - if you are unsure, use ``false`` and change if the colors are not as expected.
+- **pixel_mode** (*Optional*): Allows forcing the display into 18 or 16 bit mode. Options are ``18bit`` or ``16bit``. If unspecified, the pixel mode will be determined by the model choice. Not all displays will work in both modes.
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of ``0°``, ``90°``, ``180°``, or ``270°``. This option cannot be used with ``transform``.
 - **transform** (*Optional*): Transform the display presentation using hardware. All defaults are ``false``. This option cannot be used with ``rotation``.
 
@@ -105,14 +114,45 @@ Configuration variables:
    - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
    - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
 
+.. note::
 
-**Note:** To rotate the display in hardware use one of the following combinations - with 90 and 270 rotations you
-will also need to use `dimensions:` to swap the height and width (see example below.)
-
+    The ``rotation`` variable will do a software based rotation.
+    It is better to use the ``transform`` option to rotate the display in hardware. Use one of the following combinations:
     - 90 degrees - use ``swap_xy`` with ``mirror_x``
     - 180 degrees - use ``mirror_x`` with ``mirror_y``
     - 270 degrees - use ``swap_xy`` with ``mirror_y``
 
+    With 90 and 270 rotations you will also need to swap the ``height`` and ``width`` in ``dimensions`` (see example below.
+
+
+
+- **init_sequence** (*Optional*): Allows custom initialisation sequences to be added. See below for more information.
+
+
+To modify the SPI setting see :ref:`SPI bus <spi>` . The default **data_rate** is set to ``40MHz`` and the **spi_mode** mode is ``MODE0`` but some displays require ``MODE3`` (*).
+
+**Note:** The maximum achievable data rate will depend on the chip type (e.g. ESP32 vs ESP32-S3) the pins used (on ESP32 using the default SPI pins allows higher rates) and the connection type (on-board connections will support higher rates than long cables or DuPont wires.) If in doubt, start with a low speed and test higher rates to find what works. A MISO pin should preferably not be specified, as this will limit the maximum rate in some circumstances, and is not required if the SPI bus is used only for the display.
+
+Additional inititialisation sequences
+*************************************
+
+The ``init_sequence`` option allows additional configuration of the driver chip. Provided commands will be sent to the
+driver chip in addition to, and after the chosen model's pre-defined commands. It requires a list of byte sequences:
+
+.. code-block:: yaml
+
+    init_sequence:
+      - [ 0xD0, 0x07, 0x42, 0x18]
+      - [ 0xD1, 0x00, 0x07, 0x10]
+
+
+
+Each entry represents a single-byte command followed by zero or more data bytes.
+
+CUSTOM model
+************
+
+The ``CUSTOM`` model selection is provided for otherwise unsupported displays, and requires both ``dimensions:`` and ``init_sequence:`` to be specfied. There is no pre-defined init sequence.
 
 Configuration examples
 **********************
@@ -128,8 +168,6 @@ height 320 and width 480 into portrait. Note that the dimensions are those of th
     dimensions:
       height: 480
       width: 320
-
-
 
 
 To utilize the color capabilities of this display module, you'll likely want to add a ``color:`` section to your
@@ -178,18 +216,18 @@ To configure a dimmable backlight:
     # Define a PWM output on the ESP32
     output:
       - platform: ledc
-        pin: 32
-        id: gpio_32_backlight_pwm
+        pin: GPIOXX
+        id: backlight_pwm
 
     # Define a monochromatic, dimmable light for the backlight
     light:
       - platform: monochromatic
-        output: gpio_32_backlight_pwm
+        output: backlight_pwm
         name: "Display Backlight"
         id: back_light
         restore_mode: ALWAYS_ON
 
-To configure an image adaptive color pallet to show greater than 8 bit color depth with a RAM limited screen buffer:
+To configure an image adaptive color palette to show greater than 8 bit color depth with a RAM limited screen buffer:
 
 .. code-block:: yaml
 
@@ -202,8 +240,8 @@ To configure an image adaptive color pallet to show greater than 8 bit color dep
     display:
       - platform: ili9xxx
         model: ili9341
-        dc_pin: 4
-        reset_pin: 22
+        dc_pin: GPIOXX
+        reset_pin: GPIOXX
         rotation: 90
         id: tft_ha
         color_palette: IMAGE_ADAPTIVE
@@ -231,8 +269,9 @@ This config rotates the display into landscape mode using the driver chip.
           mirror_x: false
           mirror_y: true
         color_order: bgr
+        invert_colors: true
         data_rate: 80MHz
-        cs_pin: 10
+        cs_pin: GPIOXX
         dc_pin: GPIO13
         reset_pin: GPIO9
 

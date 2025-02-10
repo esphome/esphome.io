@@ -13,11 +13,11 @@ for a short period of time, the close/open action begins.
 
     switch:
       - platform: gpio
-        pin: D3
+        pin: GPIOXX
         name: "Garage Door Open Switch"
         id: open_switch
       - platform: gpio
-        pin: D4
+        pin: GPIOXX
         name: "Garage Door Close Switch"
         id: close_switch
     cover:
@@ -44,7 +44,7 @@ for a short period of time, the close/open action begins.
 See Also
 --------
 
-- :doc:`/guides/automations`
+- :doc:`/automations/index`
 - :doc:`/components/switch/gpio`
 - :doc:`/components/cover/template`
 - :ghedit:`Edit`

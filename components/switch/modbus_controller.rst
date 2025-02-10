@@ -11,8 +11,6 @@ and requires :doc:`/components/modbus_controller` to be configured.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
 - **register_type** (**Required**): type of the modbus register.
 
     - ``coil``: Coils are 1-bit registers (on/off values) that are used to control discrete outputs. They may be read and/or written. Modbus *Function Code 1 (Read Coil Status)* will be used.
@@ -48,7 +46,7 @@ Configuration variables:
   See :ref:`modbus_custom_command` how to use ``custom_command``
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. For holding input registers, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using ``address: 2`` / ``offset: 0`` or ``address: 0`` / ``offset 2``.
 - **restore_mode** (*Optional*): See :ref:`Switch <config-switch>`, since this configuration variable is inherited. The default value for this setting is ``DISABLED`` (recommended).
-  ``DISABLED`` leaves the initial state up to the hardware: usually the state lives in the device and ESPHome does not need to remember it. The switch frontend will show an undetermined 
+  ``DISABLED`` leaves the initial state up to the hardware: usually the state lives in the device and ESPHome does not need to remember it. The switch frontend will show an undetermined
   state until the real state is retrieved from the device on the next refresh. Use any other setting if a reboot of your ESPHome device is tied to a reboot of the modbus device.
 
 

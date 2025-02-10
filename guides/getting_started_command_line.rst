@@ -40,7 +40,7 @@ If you want to use `docker-compose` instead, here's a sample file:
         privileged: true
         network_mode: host
         environment:
-          - USERNAME=test 
+          - USERNAME=test
           - PASSWORD=ChangeMe
 
 .. note::
@@ -107,7 +107,7 @@ GPIO switch </components/switch/gpio>` to our app.
     switch:
       - platform: gpio
         name: "Living Room Dehumidifier"
-        pin: 5
+        pin: GPIO5
 
 The configuration format should hopefully immediately seem similar to
 you. ESPHome has tried to keep it as close to Home Assistant’s
@@ -144,10 +144,15 @@ to your docker command to map a local USB device. Docker on Mac will not be able
 
     docker run --rm --privileged -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/esphome run livingroom.yaml
 
-Now when you go to the Home Assistant "Integrations" screen (under "Configuration" panel), you
+
+.. note::
+
+    Alternatively, you can flash the binary using :ref:`ESPHome Web or esptool <esphome-esptool>`.
+
+Now when you go to the Home Assistant **Integrations** screen (under **Configuration** panel), you
 should see the ESPHome device show up in the discovered section (although this can take up to 5 minutes).
-Alternatively, you can manually add the device by clicking "CONFIGURE" on the ESPHome integration
-and entering "<NODE_NAME>.local" as the host.
+Alternatively, you can manually add the device by clicking **CONFIGURE** on the ESPHome integration
+and entering ``<NODE_NAME>.local`` as the host.
 
 .. figure:: /components/switch/images/gpio-ui.png
     :align: center
@@ -186,7 +191,7 @@ for docker you need to supply an additional parameter:
 
 .. code-block:: bash
 
-    esphome livingroom.yaml run
+    esphome run livingroom.yaml
     # On docker
     docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome run livingroom.yaml
 
@@ -206,21 +211,24 @@ want new features, please either create a new issue on the `GitHub issue
 tracker <https://github.com/esphome/issues/issues>`__ or find us on the
 `Discord chat <https://discord.gg/KhAMKrd>`__ (also make sure to read the :doc:`FAQ <faq>`).
 
-Bonus: ESPHome dashboard
-------------------------
+.. _esphome-device-builder-docker:
 
-ESPHome features a dashboard that you can use to easily manage your nodes
-from a nice web interface. It was primarily designed for
-:doc:`the Home Assistant add-on <getting_started_hassio>`, but also works with a simple command.
+Bonus: ESPHome Device Builder
+-----------------------------
 
-To start the ESPHome dashboard, simply start ESPHome with the following command
-(with ``config/`` pointing to a directory where you want to store your configurations)
+The ESPHome Device Builder allows you to easily manage your nodes from a nice web interface. It was primarily designed
+as a :doc:`Home Assistant add-on <getting_started_hassio>`, but can run in docker independently from Home Assistant.
+
+To start the ESPHome Device Builder, simply start ESPHome with the following command (with ``config/`` pointing to a
+directory where you want to store your configurations):
 
 .. code-block:: bash
 
     # Install dashboard dependencies
     pip install tornado esptool
-    esphome dashboard config/
+
+    # Start the dashboard
+    esphome dashboard config
 
     # On Docker, host networking mode is required for online status indicators
     docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
@@ -230,7 +238,9 @@ To start the ESPHome dashboard, simply start ESPHome with the following command
     docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
 
-After that, you will be able to access the dashboard through ``localhost:6052``.
+After that, you will be able to access the ESPHome Device Builder at ``localhost:6052``.
+
+Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 
 .. figure:: images/dashboard_states.png
 

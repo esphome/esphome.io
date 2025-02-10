@@ -73,12 +73,10 @@ calibration parameter:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the sensor.
 - **sensor** (**Required**, :ref:`config-id`): The sensor to read the resistance values from
   to convert to temperature readings.
 - **calibration** (**Required**, float): The calibration parameters of the sensor - see above
   for more details.
-- **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 Self-Heating

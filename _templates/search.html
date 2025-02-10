@@ -1,0 +1,36 @@
+<!-- docs/_templates/search.html -->
+{% extends "page.html" %}
+
+{%- block htmltitle -%}
+<title>{{ _("Search") }} - {{ docstitle }}</title>
+{%- endblock htmltitle -%}
+
+{% block content %}
+<h1>{{ _("Search") }}</h1>
+<div id="search"></div>
+{% endblock %}
+
+{% block scripts -%}
+{{ super() }}
+{%- endblock scripts %}
+
+{% block extra_styles -%}
+{{ super() }}
+  <style type="text/css">
+    #search form input[type="text"] {
+      box-sizing: border-box;
+      width: 100%;
+      line-height: 2em;
+      padding-inline: 0.6em;
+      font-size: 1.2rem;
+      border-radius: 0.05rem;
+      border: 2px solid var(--color-foreground-border);
+      border-bottom-color: 2px solid var(--color-foreground-secondary);
+      transition: border-color 20ms ease;
+    }
+    #search form input[type="text"]:focus {
+      border-color: var(--color-foreground-primary);
+    }
+  </style>
+{%- endblock extra_styles %}
+

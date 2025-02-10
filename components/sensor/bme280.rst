@@ -9,9 +9,11 @@ BME280 Temperature+Pressure+Humidity Sensor
 The ``bme280`` sensor platform allows you to use your BME280
 (`datasheet <https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf>`__,
 `Adafruit`_) temperature, pressure and humidity sensors with ESPHome. The sensor
-is used in *Forced Mode* where measurement is performed and then 
+is used in *Forced Mode* where measurement is performed and then
 the sensor returns to sleep mode until next measurement. The :ref:`I²C <i2c>` or :ref:`SPI <spi>` is
 required to be set up in your configuration for this sensor to work.
+
+**Note:** In :ref:`I²C <i2c>` mode pulling CSB to 3V is recommended, in order to avoid ``[E][sensor.bme280:155]: Communication with BME280 failed!`` error. See the *Connection diagram* chapter in datasheet above.
 
 .. figure:: images/bme280-full.jpg
     :align: center
@@ -28,13 +30,10 @@ required to be set up in your configuration for this sensor to work.
       - platform: bme280_i2c
         temperature:
           name: "BME280 Temperature"
-          oversampling: 16x
         pressure:
           name: "BME280 Pressure"
         humidity:
           name: "BME280 Humidity"
-        address: 0x77
-        update_interval: 60s
 
 
     # Example configuration entry SPI
@@ -42,48 +41,48 @@ required to be set up in your configuration for this sensor to work.
       - platform: bme280_spi
         temperature:
           name: "BME280 Temperature"
-          oversampling: 16x
         pressure:
           name: "BME280 Pressure"
         humidity:
           name: "BME280 Humidity"
-        cs_pin: GPIO5
-        update_interval: 60s
+        cs_pin: GPIOXX
 
 Configuration variables:
 ------------------------
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature
-    sensor.
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See :ref:`Oversampling Options <bme280-oversampling>`.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **pressure** (*Optional*): The information for the pressure sensor.
 
-  - **name** (**Required**, string): The name for the pressure sensor.
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See :ref:`Oversampling Options <bme280-oversampling>`.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - All other options from :ref:`Sensor <config-sensor>`.
 
-- **humidity** (*Optional*): The information for the pressure sensor.
+- **humidity** (*Optional*): The information for the humidity sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See :ref:`Oversampling Options <bme280-oversampling>`.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - All other options from :ref:`Sensor <config-sensor>`.
 
-- **address** (*Optional*, int): Manually specify the I²C address of
-  the sensor. Defaults to ``0x77``. Another address can be ``0x76``.
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   ``OFF``, ``2x``, ``4x``, ``16x``. Defaults to ``OFF``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
+
+
+I²C Configuration variables:
+
+- **address** (*Optional*, int): Manually specify the I²C address of
+  the sensor. Defaults to ``0x77``. Another address can be ``0x76``.
+
+SPI Configuration variables:
+
+- **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin of the BME280 sensor.
+
 
 .. _bme280-oversampling:
 

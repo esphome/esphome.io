@@ -28,12 +28,6 @@ The ``rgb`` light platform creates an RGB light from 3 :ref:`float output compon
         green: output_component2
         blue: output_component3
 
-    # Example output entry
-    output:
-      - platform: esp8266_pwm
-        id: output_component1
-        pin: D1
-      # Repeat for green and blue output
 
 Color Correction
 ----------------
@@ -54,9 +48,8 @@ perceived intensity of different colors will generally vary. This can be done by
 
     # Example output entry
     output:
-      - platform: esp8266_pwm
+      - platform: ...
         id: output_component1
-        pin: D1
         max_power: 80%
       # Repeat for green and blue output
 
@@ -67,12 +60,9 @@ perceived intensity of different colors will generally vary. This can be done by
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the light.
 - **red** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the red channel.
 - **green** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the green channel.
 - **blue** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the blue channel.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Light <config-light>`.
 
 See Also

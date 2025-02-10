@@ -409,7 +409,6 @@ the calculated PID parameters to help finding good PID values.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the sensor
 - **type** (**Required**, string): The value to monitor. One of
 
   - ``RESULT`` - The resulting value (sum of P, I, and D terms).
@@ -422,6 +421,8 @@ Configuration variables:
   - ``KP`` - The current factor for the proportional term of the PID controller.
   - ``KI`` - The current factor for the integral term of the PID controller.
   - ``KD`` - The current factor for the differential term of the PID controller.
+
+- All other options from :ref:`Sensor <config-sensor>`.
 
 Advanced options:
 

@@ -52,44 +52,9 @@ simply press -/+ buttons on the counter and look for `Standard mode` or
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: uart_bus
-      rx_pin: GPIO3
-      tx_pin: GPIO1
-      baud_rate: 1200
-      parity: EVEN
-      data_bits: 7
-
     teleinfo:
       id: myteleinfo
-      update_interval: 60s
-      historical_mode: true
 
-    sensor:
-      - platform: teleinfo
-        tag_name: "HCHC"
-        name: "hchc"
-        unit_of_measurement: "Wh"
-        icon: mdi:flash
-        teleinfo_id: myteleinfo
-      - platform: teleinfo
-        tag_name: "HCHP"
-        name: "hchp"
-        unit_of_measurement: "Wh"
-        icon: mdi:flash
-        teleinfo_id: myteleinfo
-      - platform: teleinfo
-        tag_name: "PAPP"
-        name: "papp"
-        unit_of_measurement: "VA"
-        icon: mdi:flash
-        teleinfo_id: myteleinfo
-
-    text_sensor:
-      - platform: teleinfo
-        tag_name: "OPTARIF"
-        name: "optarif"
-        teleinfo_id: myteleinfo
 
 Configuration variables:
 ------------------------
@@ -112,17 +77,45 @@ In teleinfo platform:
 Sensor
 ******
 
+.. code-block:: yaml
+
+    sensor:
+      - platform: teleinfo
+        tag_name: "HCHC"
+        name: "hchc"
+        unit_of_measurement: "Wh"
+        icon: mdi:flash
+        teleinfo_id: myteleinfo
+      - platform: teleinfo
+        tag_name: "HCHP"
+        name: "hchp"
+        unit_of_measurement: "Wh"
+        icon: mdi:flash
+        teleinfo_id: myteleinfo
+      - platform: teleinfo
+        tag_name: "PAPP"
+        name: "papp"
+        unit_of_measurement: "VA"
+        icon: mdi:flash
+        teleinfo_id: myteleinfo
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
 - **teleinfo_id** (*Optional*, :ref:`config-id`): Specify the ID of used hub.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 Text Sensor
 ***********
 
+.. code-block:: yaml
+
+    text_sensor:
+      - platform: teleinfo
+        tag_name: "OPTARIF"
+        name: "optarif"
+        teleinfo_id: myteleinfo
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
 - **teleinfo_id** (*Optional*, :ref:`config-id`): Specify the ID of used hub.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 

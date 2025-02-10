@@ -11,17 +11,31 @@ Once configured, you can use any of the 8 pins for your projects. Up-to 256 shif
 to provide more pins, without using more GPIO pins on the controller. They are linked by connecting pin Q of the closer
 shift register to the pin QH of the next shift register.
 
-
 .. code-block:: yaml
 
     # Example configuration entry
     sn74hc165:
       - id: sn74hc165_hub
-        clock_pin: GPIO16
-        data_pin: GPIO17
-        load_pin: GPIO4
-        clock_inhibit_pin: GPIO18
+        clock_pin: GPIOXX
+        data_pin: GPIOXX
+        load_pin: GPIOXX
+        clock_inhibit_pin: GPIOXX
         sr_count: 2
+
+Configuration variables:
+************************
+
+- **id** (**Required**, :ref:`config-id`): The id to use for this SN74HC165 component.
+- **data_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Serial Output (QH) input.
+- **clock_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Clock (CLK) pin.
+- **load_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Load input (SH/LD) pin.
+- **clock_inhibit_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Clock Inhibit (CLK INH) pin. The use of it is optional, as it can be directly connected to ground.
+- **sr_count** (*Optional*, int): Number of daisy-chained shift registers, up-to 256. Defaults to ``1``.
+
+Pin configuration variables:
+****************************
+
+.. code-block:: yaml
 
     # Individual inputs
     binary_sensor:
@@ -34,21 +48,7 @@ shift register to the pin QH of the next shift register.
           inverted: false
 
 
-Configuration variables:
-************************
-
-- **id** (**Required**, :ref:`config-id`): The id to use for this SN74HC165 component.
-- **data_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Serial Output (QH) input.
-- **clock_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Clock (CLK) pin
-- **load_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Load input (SH/LD) pin
-- **clock_inhibit_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Pin connected to SN74HC165 Clock Inhibit (CLK INH) pin
-- **sr_count** (*Optional*, int): Number of daisy-chained shift registers, up-to 256. Defaults to ``1``.
-
-
-Pin configuration variables:
-****************************
-
-- **SN74HC165** (**Required**, :ref:`config-id`): The id of the SN74HC165 component of the pin.
+- **sn74hc165** (**Required**, :ref:`config-id`): The id of the SN74HC165 component of the pin.
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If received value should be treated as inverted.
   Defaults to ``false``.
@@ -59,7 +59,6 @@ Pin configuration variables:
 
 See Also
 --------
-
 
 - :doc:`binary_sensor/gpio`
 - :apiref:`SN74HC165/SN74HC165.h`

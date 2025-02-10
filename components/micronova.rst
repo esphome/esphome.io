@@ -18,7 +18,7 @@ The :ref:`UART <uart>` must be configured with a baud rate 1200, 8 data bits, 2 
 
     Also, switching your stove on or off can behave different on the various MicroNova flavours.
 
-    Use this integration at your own risk.
+    Use this component at your own risk.
 
 Connecting your stove
 ---------------------
@@ -55,7 +55,7 @@ Component/Hub
 .. code-block:: yaml
 
     micronova:
-      enable_rx_pin: REPLACEME
+      enable_rx_pin: GPIOXX
 
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~

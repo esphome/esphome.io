@@ -16,24 +16,13 @@ with ESPHome.
 
     Havells On Grid Solar Inverter.
 
-The communication with this integration is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
-You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
+The communication with this component is done via a :ref:`UART <uart>` using :ref:`Modbus <modbus>`.
+You must therefore have a ``uart:`` and ``modbus:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      - id: modbus_uart
-        baud_rate: 9600
-        tx_pin: GPIO1
-        rx_pin: GPIO3
-
-
-    modbus:
-      uart_id: modbus_uart
-      flow_control_pin: GPIO4
-
     sensor:
       - platform: havells_solar
         update_interval: 60s

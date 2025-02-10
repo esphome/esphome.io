@@ -8,7 +8,7 @@ ATM90E32 Power Sensor
 
 The ``atm90e32`` sensor platform allows you to use your ATM90E32 voltage/current and power sensors
 (`datasheet <http://ww1.microchip.com/downloads/en/devicedoc/Atmel-46003-SE-M90E32AS-Datasheet.pdf>`__) with
-ESPHome. This sensor is commonly found in CircuitSetup 2 and 6 channel energy meters.
+ESPHome. This sensor is commonly found in CircuitSetup 2 and 6 channel energy meters and the `Gelidus Research <https://www.gelidus.ca/>`__ 2 channel power meter.
 
 Communication with the device is done via an :ref:`SPI bus <spi>`, so you need to have an ``spi:`` entry in your configuration
 with both ``mosi_pin`` and ``miso_pin`` set.
@@ -50,6 +50,12 @@ Configuration variables:
     :ref:`Sensor <config-sensor>`.
   - **power_factor** (*Optional*): Use the power factor value on this phase. All options from
     :ref:`Sensor <config-sensor>`.
+  - **phase_angle** (*Optional*): Use the phase angle value on this phase in degrees. All options from
+    :ref:`Sensor <config-sensor>`.
+  - **peak_current** (*Optional*): Use the peak current value on this phase in amperes. All options from
+    :ref:`Sensor <config-sensor>`.
+  - **harmonic_power** (*Optional*): Use the harmonic power value on this phase. All options from
+    :ref:`Sensor <config-sensor>`.
   - **gain_voltage** (*Optional*, int): Voltage gain to scale the low voltage AC power pack to household mains feed.
     Defaults to ``7305``.
   - **gain_ct** (*Optional*, int): CT clamp calibration for this phase.
@@ -61,8 +67,9 @@ Configuration variables:
 
 - **phase_b** (*Optional*): The configuration options for the 2nd phase. Same options as 1st phase.
 - **phase_c** (*Optional*): The configuration options for the 3rd phase. Same options as 1st phase.
-- **frequency** (*Optional*): Use the frequenycy value calculated by the meter. All options from
+- **frequency** (*Optional*): Use the frequency value calculated by the meter. All options from
   :ref:`Sensor <config-sensor>`.
+- **peak_current_signed** (*Optional*, boolean): Control the peak current output as signed or absolute. Defaults to ``false``.
 - **chip_temperature** (*Optional*): Use the chip temperature value. All options from
   :ref:`Sensor <config-sensor>`.
 - **gain_pga** (*Optional*, string): The gain for the CT clamp, ``2X`` for 100A, ``4X`` for 100A - 200A. One of ``1X``, ``2X``, ``4X``.
@@ -72,14 +79,40 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 - **spi_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`SPI Component <spi>` if you want
   to use multiple SPI buses.
+- **enable_offset_calibration** (*Optional*, boolean): If true it enables fine grained offset noise 0 level calibration for voltage and
+  current sensors. Buttons are required to operate the calibration feature. With multiple atm90e32 sensors each one is enabled
+  individually and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` when more than one is defined. Offset calibration should only be used
+  when DC supply noise causes non 0 current or voltage readings. Calibration can only be performed when all voltage and current inputs are at a 0 value.
+
+Button
+------
+
+.. code-block:: yaml
+
+    button:
+      - platform: atm90e32
+        id: chip1
+        run_offset_calibration:
+          name: "Chip1 - Run Offset Calibration"
+        clear_offset_calibration:
+          name: "Chip1 - Clear Offset Calibration"
+
+Configuration variables:
+
+- **id** (*Optional*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
+- **run_offset_calibration** (*Optional*): A button to run the offset calibration.
+  All options from :ref:`Button <config-button>`.
+- **clear_offset_calibration** (*Optional*): A button to clear the offset calibration.
+  All options from :ref:`Button <config-button>`.
 
 Calibration
 -----------
 
-This sensor needs calibration to show correct values. The default gain configuration is set to use the `SCT-013-000 <https://amzn.to/2E0KVvo>`__
-current transformers, and the `Jameco Reliapro 9v AC transformer <https://amzn.to/2XcWJjI>`__.
+This sensor needs calibration to show correct values. The default gain configuration is set to use the
+`SCT-013-000 <https://www.amazon.com/gp/product/B075541WVT>`__
+current transformers, and the `Jameco Reliapro 9v AC transformer <https://www.amazon.com/gp/product/B00B886CWS>`__.
 A load which uses a known amount of current can be used to calibrate. For for a more accurate calibration use a
-`Kill-A-Watt <https://amzn.to/2TXT7jx>`__ meter or similar, mains voltages can fluctuate depending on grid load.
+`Kill-A-Watt <https://www.amazon.com/gp/product/B00009MDBU>`__ meter or similar, mains voltages can fluctuate depending on grid load.
 
 Voltage
 ^^^^^^^
@@ -127,7 +160,7 @@ repeated for each one.
 
 Here are common current calibration values for the **Split Single Phase Energy Meter** when **gain_pga** is set to ``4X``:
    - 200A/100mA SCT-024: 12597
-   
+
 Here are common current calibration values for the **Split Single Phase Energy Meter** when **gain_pga** is set to ``2X``:
    - 20A/25mA SCT-006: 10170
    - 100A/50mA SCT-013-000: 25498
@@ -148,7 +181,7 @@ Active Energy
 The ATM90E32 chip has a high-precision built-in ability to count the amount of consumed energy on a per-phase basis.
 For each phase both the Forward and Reverse active energy is counted in watt-hours.
 Forward Active Energy is used to count consumed energy, whereas Reverse Active Energy is used to count exported energy
-(e.g. with solar pv installations).
+(e.g. with solar PV installations).
 The counters are reset every time a given active energy value is read from the ATM90E32 chip.
 
 Current implementation targets users who retrieve the energy values with a regular interval and store them in
@@ -161,7 +194,7 @@ a time-series-database, e.g. InfluxDB.
     sensor:
     #IC1 Main
       - platform: atm90e32
-        cs_pin: 5
+        cs_pin: GPIOXX
         phase_a:
           forward_active_energy:
             name: ${disp_name} ct1 FAWattHours
@@ -172,28 +205,27 @@ a time-series-database, e.g. InfluxDB.
             id: ct1RAWattHours
             state_topic: ${disp_name}/ct1/reverse_active_energy
 
-If the power, power_factor, reactive_power, forward_active_energy, or reverse_active_energy configuraion variables
+If the power, power_factor, reactive_power, forward_active_energy, or reverse_active_energy configuration variables
 are used, care must be taken to ensure that the line ATM90E32's voltage is from is the same phase as the current
 transformer is installed on.  This is significant in split-phase or multi phase installations.  On a house with 240
-split-phase wiring (very common in the US), one simple test is to reverse the orentation of the current transformer
+split-phase wiring (very common in the US), one simple test is to reverse the orientation of the current transformer
 on a line. If the power factor doesn't change sign, it is likely that the voltage fed to the ATM90E32 is from the other
 phase.
 
-The CircuitSetup Expandable 6 channel board can easilly handle this situation by cutting the jumpers JP12/13 to
-allow a seperate VA2 to be input on the J3 pads. Make sure that current taps connected to CT 1-3 are on the phase
+The CircuitSetup Expandable 6 channel board can easily handle this situation by cutting the jumpers JP12/13 to
+allow a separate VA2 to be input on the J3 pads. Make sure that current taps connected to CT 1-3 are on the phase
 from which VA is fed (the barrel jack) and the taps connected to CT3-6 are on the phase from which VA2 is fed. See
 the CicuitSetup repo for more details on this.
 
-If a mulit board stack is being used, remember to cut JP12/13 on all boards and to feed VA2 to each board. VA is
+If a multi board stack is being used, remember to cut JP12/13 on all boards and to feed VA2 to each board. VA is
 fed to all boards through the stacking headers. Another detail is that each voltage transformer needs to have the
 same polarity; getting this backwards will be just like having it on the wrong phase.
 
-Note that the current measurement is the RMS value so is always positive. They only way to determine directon is to
-look at the power factor. If there are only largly resistive loads and no power sources, (PF almost 1), it is simpler
+Note that the current measurement is the RMS value so is always positive. They only way to determine direction is to
+look at the power factor. If there are only largely resistive loads and no power sources, (PF almost 1), it is simpler
 to just create a template sensor that computes power from Irms*Vrms and ignore all these details. On the other
-hand, one might be surprised how reactive some loads are and the CirciuitSetup designs are able to 
+hand, one might be surprised how reactive some loads are and the CirciuitSetup designs are able to
 handle these situations well.
-
 
 Additional Examples
 -------------------
@@ -202,13 +234,13 @@ Additional Examples
 
     # Example configuration entry for split single phase meter
     spi:
-      clk_pin: 18
-      miso_pin: 19
-      mosi_pin: 23
+      clk_pin: GPIOXX
+      miso_pin: GPIOXX
+      mosi_pin: GPIOXX
 
     sensor:
       - platform: atm90e32
-        cs_pin: 5
+        cs_pin: GPIOXX
         phase_a:
           voltage:
             name: "EMON Line Voltage A"
@@ -252,6 +284,7 @@ Additional Examples
     sensor:
       - platform: atm90e32
         cs_pin: 5
+        id: chip1 #Optional
         phase_a:
           voltage:
             name: "EMON Line Voltage A"
@@ -281,8 +314,10 @@ Additional Examples
         current_phases: 3
         gain_pga: 1X
         update_interval: 60s
+        enable_offset_calibration: True
       - platform: atm90e32
         cs_pin: 4
+        id: chip2 #Optional
         phase_a:
           current:
             name: "EMON CT4 Current"
@@ -308,6 +343,14 @@ Additional Examples
         current_phases: 3
         gain_pga: 1X
         update_interval: 60s
+
+    button:
+      - platform: atm90e32
+        id: chip1
+        run_offset_calibration:
+          name: "Chip1 - Run Offset Calibration"
+        clear_offset_calibration:
+          name: "Chip1 - Clear Offset Calibration"
 
 
 .. code-block:: yaml
@@ -457,6 +500,60 @@ Additional Examples
           - multiply: 0.001
         unit_of_measurement: kWh
 
+Harmonic Power
+--------------
+
+Harmonic power in AC systems refers to deviations from the ideal sinusoidal waveform, caused by multiples of the
+fundamental frequency. It results from non-linear loads and can lead to issues like voltage distortion, equipment
+overheating, and miss operation of protective devices. The ATM90E32 can output advanced harmonic power measurements
+providing important analysis data for monitoring power anomalies on the bus.
+
+**Harmonic Power Example:**
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: atm90e32
+        phase_a:
+          harmonic_power:
+            name: ${disp_name} CT1 Harmonic Power
+
+Phase Angle
+-----------
+
+Phase angle in AC systems represents the angular displacement of a sinusoidal waveform from a reference point.
+It's a measure of timing difference between voltage and current. Phase angle is crucial for power factor assessment
+and efficient power transfer. This advanced measurement function is available with an ATM90E32.
+
+**Phase Angle Example:**
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: atm90e32
+        phase_a:
+          phase_angle:
+            name: ${disp_name} L1 Phase Angle
+
+Peak Current
+------------
+
+Peak current in AC systems refers to the maximum value of the alternating current waveform. It signifies the highest
+magnitude reached during each cycle of the sinusoidal waveform. Peak current is relevant for sizing components and
+assessing the capacity of electrical equipment in the system. This advanced measurement is available from the ATM90E32.
+Peak current can be displayed in signed or unsigned format using a boolean parameter which spans all phases.
+The default is false which is unsigned.
+
+**Peak Current Example:**
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: atm90e32
+        phase_a:
+          peak_current:
+            name: ${disp_name} CT1 Peak Current
+      peak_current_signed: True
 
 See Also
 --------

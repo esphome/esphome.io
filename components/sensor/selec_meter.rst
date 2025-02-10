@@ -16,7 +16,7 @@ with ESPHome.
 
     Selec EM2M Energy Monitor.
 
-The communication with this integration is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
+The communication with this component is done via a :ref:`UART <uart>` using :ref:`Modbus <modbus>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 

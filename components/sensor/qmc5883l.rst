@@ -33,6 +33,10 @@ configuration for this sensor to work.
           name: "QMC5883L Field Strength Z"
         heading:
           name: "QMC5883L Heading"
+        temperature:
+          name: "QMC5883L Temperature"
+          filters:
+            - offset: 34.0
         range: 200uT
         oversampling: 512x
         update_interval: 60s
@@ -40,7 +44,7 @@ configuration for this sensor to work.
 Configuration variables:
 ------------------------
 
-- **address** (*Optional*, int): Manually specify the  I²c address of the sensor. Defaults to ``0x1E``.
+- **address** (*Optional*, int): Manually specify the  I²c address of the sensor. Defaults to ``0x0D``.
 - **field_strength_x** (*Optional*): The field strength in microtesla along the X-Axis. All options from
   :ref:`Sensor <config-sensor>`.
 - **field_strength_y** (*Optional*): The field strength in microtesla along the Y-Axis. All options from
@@ -48,6 +52,10 @@ Configuration variables:
 - **field_strength_z** (*Optional*): The field strength in microtesla along the Z-Axis. All options from
   :ref:`Sensor <config-sensor>`.
 - **heading** (*Optional*): The heading of the sensor in degrees. All options from
+  :ref:`Sensor <config-sensor>`.
+- **temperature** (*Optional*): The temperature of the sensor. Per the datasheet:
+  "Temperature sensor gain is factory-calibrated, but its offset has not been compensated, only relative
+  temperature value is accurate". Above example has an offset that you need to calibrate. All options from
   :ref:`Sensor <config-sensor>`.
 - **range** (*Optional*): The range parameter for the sensor.
 - **oversampling** (*Optional*): The oversampling parameter for the sensor.

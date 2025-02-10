@@ -6,7 +6,7 @@ BME280 Environment
     :image: bme280.jpg
     :keywords: BME280
 
-The :doc:`/components/sensor/bme280` is a simple temperature, humidity, and pressure sensor with communication over :ref:`I²C <i2c>`.
+The :doc:`/components/sensor/bme280` is a simple temperature, humidity, and pressure sensor with communication over :ref:`I²C <i2c>` or :ref:`SPI <spi>`.
 With some simple math it is possible to either determine the height of the sensor, or the current pressure at sea level.
 This guide can be applied to any sensor measuring temperature and pressure at the same time, like the
 :doc:`/components/sensor/bmp280`, or :doc:`/components/sensor/bme680`.
@@ -17,11 +17,12 @@ This guide can be applied to any sensor measuring temperature and pressure at th
 
 The first step is to connect the sensor as described :doc:`here </components/sensor/bme280>`.
 After validating the sensor is working, we can proceed and add some formulas.
+In the example below, modify ``platform: bme280`` as appropriate for your hardware (either ``bme280_i2c`` or ``bme280_spi``). See :doc:`/components/sensor/bme280` for specific details.
 
 .. code-block:: yaml
 
     sensor:
-      - platform: bme280
+      - platform: bme280_i2c
         temperature:
           name: "BME280 Temperature"
           id: bme280_temperature

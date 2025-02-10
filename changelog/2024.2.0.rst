@@ -1,0 +1,281 @@
+ESPHome 2024.2.0 - 21st February 2024
+=====================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.2.0.
+    :image: /_static/changelog-2024.2.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 4
+
+    micro Wake Word, components/micro_wake_word, voice-assistant.svg, dark-invert
+    AS5600, components/sensor/as5600, as5600.jpg
+    ST7567, components/display/st7567, st7567.jpg
+    BME280 SPI, components/sensor/bme280, bme280.jpg
+    VEML3235, components/sensor/veml3235, veml3235.jpg
+    Honeywell HIH I2C, components/sensor/honeywell_hih_i2c, honeywellhih.jpg
+    Combination, components/sensor/combination, function.svg, dark-invert
+
+micro Wake Word
+---------------
+
+ESPHome implements an on-device wake word detection framework from `microWakeWord <https://github.com/kahrendt/microWakeWord>`__.
+See the :doc:`component documentation </components/micro_wake_word>` for details on how to use it.
+
+Check out the live stream replay below for more details about how it works and came to be.
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/NQIv3nsu7dE"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+
+
+BME280 changes
+--------------
+
+:ghuser:`apbodrov` has added support for the BME280 sensor over SPI. This change is a breaking change for any existing configurations using
+the BME280 over I2C as the platform name has been changed from ``bme280`` to ``bme280_i2c``. There are no other configuration changes required
+to continue using the BME280 over I2C. See the :doc:`component documentation </components/sensor/bme280>` for the latest configuration variables.
+
+
+CSE7766 changes
+---------------
+
+:ghuser:`ssieb` has changed the CSE7766 sensor from appearing to be a polling component.
+It has a high update rate, so if you don't want to send a lot of data to HA, you can
+add the :ref:`throttle_average <sensor-filters>` filter
+with the time period you were using for the update interval (the default is 60s) to each
+sensor.  The example in the sensor doc page has been updated to show this.
+
+
+Release 2024.2.1 - February 26
+------------------------------
+
+- Add missing timeout to "async_request" :esphomepr:`6267` by :ghuser:`jesserockz`
+- Bump zeroconf timeout to 3000 :esphomepr:`6270` by :ghuser:`jesserockz`
+- web_server: Add a position property for cover entities that have the supports position trait :esphomepr:`6269` by :ghuser:`DanielBaulig`
+- allow multiple emc2101 :esphomepr:`6272` by :ghuser:`ssieb`
+- Fix RP2040 SPI pin validation :esphomepr:`6277` by :ghuser:`kbx81`
+- dashboard: move storage json update to a background task in edit save :esphomepr:`6280` by :ghuser:`bdraco`
+- make output optional for speed fan :esphomepr:`6274` by :ghuser:`ssieb`
+- fix throttle average nan handling :esphomepr:`6275` by :ghuser:`ssieb`
+- Fix thermostat supplemental actions :esphomepr:`6282` by :ghuser:`kbx81`
+
+Release 2024.2.2 - March 6
+--------------------------
+
+- CSE7766: Fix energy calculation :esphomepr:`6286` by :ghuser:`puuu`
+- handling with the negative temperature in the sensor tmp102 :esphomepr:`6316` by :ghuser:`FlyingFeng2021`
+- fix tmp102 negative calculation :esphomepr:`6320` by :ghuser:`ssieb`
+- auto load output for now :esphomepr:`6309` by :ghuser:`ssieb`
+- Add wake word phrase to voice assistant start command :esphomepr:`6290` by :ghuser:`jesserockz`
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- feat: add AS5600 component/sensor :esphomepr:`5174` by :ghuser:`ammmze` (new-integration)
+- Support for ST7567 display 128x64 (I2C, SPI) :esphomepr:`5952` by :ghuser:`latonita` (new-integration)
+- BME280 SPI :esphomepr:`5538` by :ghuser:`apbodrov` (new-integration) (breaking-change)
+- Add support for VEML3235 lux sensor :esphomepr:`5959` by :ghuser:`kbx81` (new-integration)
+- Add support of Honeywell HumidIcon (I2C HIH series) Temperature & Humidity sensor :esphomepr:`5730` by :ghuser:`Benichou34` (new-integration)
+- Add combination sensor and remove absorbed kalman_combinator component :esphomepr:`5438` by :ghuser:`kahrendt` (new-integration) (breaking-change)
+- Add micro_wake_word component :esphomepr:`6136` by :ghuser:`kahrendt` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- PMSx003 add relevant device and state classes to default config :esphomepr:`5633` by :ghuser:`wheimbigner` (breaking-change)
+- BME280 SPI :esphomepr:`5538` by :ghuser:`apbodrov` (new-integration) (breaking-change)
+- convert cse7766 to non-polling :esphomepr:`6095` by :ghuser:`ssieb` (breaking-change)
+- Add combination sensor and remove absorbed kalman_combinator component :esphomepr:`5438` by :ghuser:`kahrendt` (new-integration) (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- AUTO_LOAD ``sensor`` for ``shelly_dimmer`` :esphomepr:`6223` by :ghuser:`kbx81`
+- Add more debugging logs to microWakeWord :esphomepr:`6238` by :ghuser:`kahrendt`
+- Fix to RF receiver for Drayton Digistat heating controller :esphomepr:`6235` by :ghuser:`marshn`
+- WRGB Use correct multiplier :esphomepr:`6237` by :ghuser:`mhetzi`
+- Add optional minimum esphome version to microWakeWord manifest :esphomepr:`6240` by :ghuser:`jesserockz`
+- Fix xl9535 pin reads :esphomepr:`6242` by :ghuser:`jesserockz`
+- hold interrupt disable for dallas one-wire :esphomepr:`6244` by :ghuser:`ssieb`
+- Fix tm1651 enum :esphomepr:`6248` by :ghuser:`kbx81`
+- Clear UART read buffer before sending next command :esphomepr:`6200` by :ghuser:`fototakas`
+- Voice Assistant: add on_idle trigger and fix nevermind :esphomepr:`6141` by :ghuser:`synesthesiam`
+- Tuya Fan component fix to handle enum datapoint type :esphomepr:`6135` by :ghuser:`sibowler`
+
+All changes
+^^^^^^^^^^^
+
+- Bump esptool from 4.6.2 to 4.7.0 :esphomepr:`5935` by :ghuser:`dependabot[bot]`
+- Bump actions/download-artifact from 3.0.2 to 4.0.0 :esphomepr:`5936` by :ghuser:`dependabot[bot]`
+- Bump build-image action versions :esphomepr:`5954` by :ghuser:`jesserockz`
+- Revert "Bump build-image action versions" :esphomepr:`5955` by :ghuser:`jesserockz`
+- Revert "Bump actions/download-artifact from 3.0.2 to 4.0.0" :esphomepr:`5956` by :ghuser:`jesserockz`
+- Bump zeroconf from 0.130.0 to 0.131.0 :esphomepr:`5967` by :ghuser:`dependabot[bot]`
+- Add ability to lock to set mode :esphomepr:`5924` by :ghuser:`ysmilda`
+- feat: add AS5600 component/sensor :esphomepr:`5174` by :ghuser:`ammmze` (new-integration)
+- Add default substitutions for package includes :esphomepr:`5752` by :ghuser:`mknjc`
+- Add gradient option to addressable color wipe effect :esphomepr:`5689` by :ghuser:`lifeisafractal`
+- Added alarm processing for Haier component (hOn protocol) :esphomepr:`5965` by :ghuser:`paveldn`
+- Allow haier remote protocol to use lambdas :esphomepr:`5898` by :ghuser:`catlee`
+- PMSx003 add relevant device and state classes to default config :esphomepr:`5633` by :ghuser:`wheimbigner` (breaking-change)
+- Add waveshare 2.7in V2 model :esphomepr:`5903` by :ghuser:`gumulka`
+- Add support for waveshare 2.9in B V3 version :esphomepr:`5902` by :ghuser:`gumulka`
+- Fix pin reuse in test1 :esphomepr:`5978` by :ghuser:`jesserockz`
+- Add Waveshare 1.47in 172x320 to ST7789v component  :esphomepr:`5884` by :ghuser:`mrtoy-me`
+- (fingerprint_grow) Added on_finger_scan_invalid automation. :esphomepr:`5885` by :ghuser:`RubenNL`
+- Alarm panel: Add changes to support enhanced features :esphomepr:`5671` by :ghuser:`hwstar`
+- support default pins for adafruit esp32 feather v2 :esphomepr:`5482` by :ghuser:`sbrudenell`
+- Bug: Unwanted change resistance in x9c component :esphomepr:`5483` by :ghuser:`fizista`
+- Improvements to RF receiver for Drayton Digistat heating controller  :esphomepr:`5504` by :ghuser:`marshn`
+- Reduce memory usage with StringRef in MQTT Components :esphomepr:`5719` by :ghuser:`kahrendt`
+- Nextion allow underscore on names :esphomepr:`5979` by :ghuser:`edwardtfn`
+- Add Keeloq RF protocol :esphomepr:`5511` by :ghuser:`marshn`
+- Add a Binary Sensor Filter for state settling :esphomepr:`5900` by :ghuser:`cottsay`
+- Lint the script folder files :esphomepr:`5991` by :ghuser:`jesserockz`
+- web_server support for home assistant like styling :esphomepr:`5854` by :ghuser:`afarago`
+- [Touchscreen] Add expire of touch record. :esphomepr:`5986` by :ghuser:`Fabian-Schmidt`
+- Support for ST7567 display 128x64 (I2C, SPI) :esphomepr:`5952` by :ghuser:`latonita` (new-integration)
+- Add constants used by multiple display drivers to global const.py :esphomepr:`6033` by :ghuser:`clydebarrow`
+- Nextion queue size :esphomepr:`6029` by :ghuser:`edwardtfn`
+- Ble client additions and fixes :esphomepr:`5277` by :ghuser:`clydebarrow`
+- HaierProtocol library updated to 0.9.25 to fix the answer_timeout bug :esphomepr:`6015` by :ghuser:`paveldn`
+- GT911 touchscreen: Fix bug causing touch button release to fail :esphomepr:`6042` by :ghuser:`clydebarrow`
+- Display: Introduce `draw_pixels_at()` method for fast block display rendering :esphomepr:`6034` by :ghuser:`clydebarrow`
+- clang-format and clang-tidy scripts: More robust algorithm to find correct executable :esphomepr:`6041` by :ghuser:`clydebarrow`
+- Don't crash with invalid adc pin :esphomepr:`6059` by :ghuser:`ssieb`
+- Add questionmark to default glyphs. :esphomepr:`6053` by :ghuser:`RubenNL`
+- pylontech: fix voltage_low and voltage_high wrong unit :esphomepr:`6060` by :ghuser:`functionpointer`
+- Bump flake8 from 6.1.0 to 7.0.0 :esphomepr:`6058` by :ghuser:`dependabot[bot]`
+- Nextion enable upload from https when using esp-idf :esphomepr:`6051` by :ghuser:`edwardtfn`
+- Extends UART change at runtime to ESP8266 :esphomepr:`6019` by :ghuser:`edwardtfn`
+- Nextion draw QR code at runtime :esphomepr:`6027` by :ghuser:`edwardtfn`
+- Extend i2s config options :esphomepr:`6056` by :ghuser:`Hadatko`
+- Add getter for image data_start :esphomepr:`6036` by :ghuser:`clydebarrow`
+- Bump hypothesis to 6.92.1 :esphomepr:`6011` by :ghuser:`bdraco`
+- Bump recommended ESP32 IDF to 4.4.6 :esphomepr:`6048` by :ghuser:`bdraco`
+- Bump pytest from 7.4.3 to 7.4.4 :esphomepr:`6046` by :ghuser:`dependabot[bot]`
+- dashboard: refactor ping implementation to be more efficient :esphomepr:`6002` by :ghuser:`bdraco`
+- Bump pytest-asyncio from 0.23.2 to 0.23.3 :esphomepr:`6047` by :ghuser:`dependabot[bot]`
+- Bump black from 23.12.0 to 23.12.1 :esphomepr:`6018` by :ghuser:`dependabot[bot]`
+- Run python tests on windows and macos :esphomepr:`6010` by :ghuser:`bdraco`
+- BME280 SPI :esphomepr:`5538` by :ghuser:`apbodrov` (new-integration) (breaking-change)
+- Actions to enable and disable WireGuard connection :esphomepr:`5690` by :ghuser:`droscy`
+- hydreon_rgxx - fix missing cg.add(var.set_model(...)) :esphomepr:`6065` by :ghuser:`mrtoy-me`
+- Bump pillow to 10.2.0. :esphomepr:`6091` by :ghuser:`pfrenssen`
+- convert cse7766 to non-polling :esphomepr:`6095` by :ghuser:`ssieb` (breaking-change)
+- Use touch state from ft63x6 driver. :esphomepr:`6055` by :ghuser:`nielsnl68`
+- update script/setup so it works fine on windows  :esphomepr:`6087` by :ghuser:`nielsnl68`
+- add Pico-ResTouch-LCD-3.5 :esphomepr:`6078` by :ghuser:`nielsnl68`
+- Revert "add Pico-ResTouch-LCD-3.5" :esphomepr:`6098` by :ghuser:`nielsnl68`
+- Add triangle shapes to display component :esphomepr:`6096` by :ghuser:`mathieu-mp`
+- Fingerprint_grow: Trigger on finger scan start and on finger scan misplaced :esphomepr:`6003` by :ghuser:`alexborro`
+- Add continuous option to the graph :esphomepr:`6093` by :ghuser:`ssieb`
+- Add NFC binary sensor platform :esphomepr:`6068` by :ghuser:`kbx81`
+- Socket: Add recvfrom method to receive UDP with source address. :esphomepr:`6103` by :ghuser:`clydebarrow`
+- Add support for VEML3235 lux sensor :esphomepr:`5959` by :ghuser:`kbx81` (new-integration)
+- CV: tidy up Schema wrapper :esphomepr:`6105` by :ghuser:`jesserockz`
+- Add support X.509 client certificates for MQTT. :esphomepr:`5778` by :ghuser:`h2zero`
+- Fix color observation for triangle outline in display component :esphomepr:`6107` by :ghuser:`mathieu-mp`
+- Add support of Honeywell HumidIcon (I2C HIH series) Temperature & Humidity sensor :esphomepr:`5730` by :ghuser:`Benichou34` (new-integration)
+- Proposal: Test yaml for each component :esphomepr:`5398` by :ghuser:`Fabian-Schmidt`
+- WiFi fast_connect: save/load BSSID and channel for faster connect from sleep :esphomepr:`5931` by :ghuser:`rguca`
+- Fixes Waveshare 7.5in B V2 and V3 :esphomepr:`6079` by :ghuser:`Pofilo`
+- Add combination sensor and remove absorbed kalman_combinator component :esphomepr:`5438` by :ghuser:`kahrendt` (new-integration) (breaking-change)
+- Bump platformio from 6.1.11 to 6.1.13 :esphomepr:`6086` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 3.3.2 to 4.0.0 :esphomepr:`6110` by :ghuser:`dependabot[bot]`
+- Enable networking and some other components on host platform :esphomepr:`6114` by :ghuser:`clydebarrow`
+- Fix time component for host platform :esphomepr:`6118` by :ghuser:`clydebarrow`
+- Add quad spi features :esphomepr:`5925` by :ghuser:`clydebarrow`
+- add AM2120 device type :esphomepr:`6115` by :ghuser:`alexbuit`
+- Add support for Waveshare EPD 2.13" V3 :esphomepr:`5363` by :ghuser:`clydebarrow`
+- OTA 2 which confirm each written chunk :esphomepr:`6066` by :ghuser:`tomaszduda23`
+- Remove optional<> for pointer types :esphomepr:`6120` by :ghuser:`kroimon`
+- Improve temperature precision in BME280 and BMP280 :esphomepr:`6124` by :ghuser:`jxl77`
+- Nextion TFT upload IDF memory optimization :esphomepr:`6128` by :ghuser:`edwardtfn`
+- Add support for Pico-ResTouch-LCD-3.5 to ili9xxx driver :esphomepr:`6129` by :ghuser:`clydebarrow`
+- Ensure filename is shown when YAML raises an error :esphomepr:`6139` by :ghuser:`bdraco`
+- ILI9XXX: Restore offset usage in set_addr_window :esphomepr:`6147` by :ghuser:`clydebarrow`
+- Minimum 1 for full_update_every to prevent IntegerDivideByZero. :esphomepr:`6150` by :ghuser:`RubenNL`
+- Support tri-color waveshare eink displays 2.7inch B and B V2 :esphomepr:`4238` by :ghuser:`rnauber`
+- Synchronise Device Classes from Home Assistant :esphomepr:`6158` by :ghuser:`esphomebot`
+- dfrobot_sen0395: Use setLatency instead of outputLatency :esphomepr:`5665` by :ghuser:`jfroy`
+- Add some components to the new testing framework (A part 1) :esphomepr:`6142` by :ghuser:`kbx81`
+- WRGB or RGBW? WS2814 :esphomepr:`6164` by :ghuser:`mhetzi`
+- Add some components to the new testing framework (A part 2) :esphomepr:`6162` by :ghuser:`kbx81`
+- Bump aioesphomeapi to 21.0.2 :esphomepr:`6188` by :ghuser:`bdraco`
+- Add some components to the new testing framework (B) :esphomepr:`6173` by :ghuser:`kbx81`
+- Add "transformer_active" flag for use in effects. :esphomepr:`6157` by :ghuser:`TikiBill`
+- CSE7766: fix power and current measurements at low loads :esphomepr:`6180` by :ghuser:`twasilczyk`
+- host platform: improvements and bugfixes :esphomepr:`6137` by :ghuser:`clydebarrow`
+- WLED Sync fix and BK72XX support :esphomepr:`6190` by :ghuser:`ChuckMash`
+- Add missing vector.h for lightwaverf :esphomepr:`6196` by :ghuser:`kbx81`
+- Add some components to the new testing framework (C) :esphomepr:`6174` by :ghuser:`kbx81`
+- update docstrings in cpp_generator.py :esphomepr:`6212` by :ghuser:`nielsnl68`
+- Fixed group mask logic for WLED Sync fix :esphomepr:`6193` by :ghuser:`ChuckMash`
+- Add micro_wake_word component :esphomepr:`6136` by :ghuser:`kahrendt` (new-integration)
+- AUTO_LOAD ``sensor`` for ``shelly_dimmer`` :esphomepr:`6223` by :ghuser:`kbx81`
+- Add more debugging logs to microWakeWord :esphomepr:`6238` by :ghuser:`kahrendt`
+- Fix to RF receiver for Drayton Digistat heating controller :esphomepr:`6235` by :ghuser:`marshn`
+- WRGB Use correct multiplier :esphomepr:`6237` by :ghuser:`mhetzi`
+- Add optional minimum esphome version to microWakeWord manifest :esphomepr:`6240` by :ghuser:`jesserockz`
+- Fix xl9535 pin reads :esphomepr:`6242` by :ghuser:`jesserockz`
+- hold interrupt disable for dallas one-wire :esphomepr:`6244` by :ghuser:`ssieb`
+- Fix tm1651 enum :esphomepr:`6248` by :ghuser:`kbx81`
+- Clear UART read buffer before sending next command :esphomepr:`6200` by :ghuser:`fototakas`
+- Voice Assistant: add on_idle trigger and fix nevermind :esphomepr:`6141` by :ghuser:`synesthesiam`
+- Tuya Fan component fix to handle enum datapoint type :esphomepr:`6135` by :ghuser:`sibowler`
+
+Past Changelogs
+---------------
+
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

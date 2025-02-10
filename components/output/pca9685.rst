@@ -44,7 +44,7 @@ global ``pca9685`` hub and give it an id, and then define the
     output:
         # generate PWM from ESP32 ledc
       - platform: ledc
-        pin: 25
+        pin: GPIOXX
         id: extclk
         min_power: 1
         frequency: 40MHz
@@ -58,7 +58,7 @@ Configuration variables:
 
 -  **frequency** (*Optional*, float): The frequency to let the
    component drive all PWM outputs at. Must be in range from 24Hz to
-   1525.88Hz. Default ``1000Hz``.
+   1525.88Hz. Defaults to ``1000Hz``.
 -  **external_clock_input** (*Optional*, bool): Enable external clock input. PRE_SCALE register will by set to 3. Default to ``false``.
 -  **address** (*Optional*, int): The I²C address of the driver.
    Defaults to ``0x40``.
@@ -96,7 +96,7 @@ Configuration variables:
 ************************
 
 - **id** (**Required**, :ref:`config-id`): The id to use for this output component.
-- **channel** (**Required**, int): Chose the channel of the PCA9685 of
+- **channel** (**Required**, int): Choose the channel of the PCA9685 of
   this output component. Must be in range from 0 to 15.
 - **pca9685_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the
   :ref:`PCA9685 hub <pca9685-component>`.
@@ -118,10 +118,10 @@ This output can be used for different PWM functions. E.g. output for light, fan 
       - platform: pca9685
         channel: 0
         id: pwm01
-        
+
     light:
-      - platform: monochromatic 
-        name: 'main light' 
+      - platform: monochromatic
+        name: 'main light'
         output: pwm01
 
 See Also

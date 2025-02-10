@@ -12,8 +12,8 @@ in which case this is not needed.
 
 .. warning::
 
-    If you enable MQTT and you do *not* use the "native API" for Home Assistant, you must
-    remove the ``api:`` line from your ESPHome configuration, otherwise the ESP will
+    If you enable MQTT and you do *not* use the :doc:`/components/api`, you must
+    remove the ``api:`` configuration or set ``reboot_timeout: 0s``, otherwise the ESP will
     reboot every 15 minutes because no client connected to the native API.
 
 .. code-block:: yaml
@@ -34,14 +34,19 @@ Configuration variables:
 ------------------------
 
 - **broker** (**Required**, string): The host of your MQTT broker.
+- **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to ``true``.
 - **port** (*Optional*, int): The port to connect to. Defaults to 1883.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
 - **password** (*Optional*, string): The password to use for
   authentication. Empty (the default) means no authentication.
+- **clean_session** (*Optional*, boolean): Whether the broker will clean
+  the MQTT session after disconnect. Defaults to ``false``.
 - **client_id** (*Optional*, string): The client id to use for opening
   connections. See :ref:`mqtt-defaults` for more information.
-- **discovery** (*Optional*, boolean): If Home Assistant automatic
+- **discover_ip** (*Optional*, boolean): If Home Assistant automatic device
+  discovery should be enabled. Defaults to ``true``.
+- **discovery** (*Optional*, boolean): If Home Assistant automatic entity
   discovery should be enabled. Defaults to ``true``.
 - **discovery_retain** (*Optional*, boolean): Whether to retain MQTT
   discovery messages so that entities are added automatically on Home
@@ -101,6 +106,7 @@ Configuration variables:
 - **on_json_message** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a JSON message on a specific MQTT topic is received. See :ref:`mqtt-on_json_message`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **publish_nan_as_none** (*Optional*, bool): Publish ``None`` instead of ``NaN`` to handle Unknown/Unavailable sensor states in Home Assistant. Defaults to ``false``.
 
 .. _mqtt-message:
 
@@ -137,10 +143,93 @@ Configuration options:
 -  **retain** (*Optional*, boolean): If the published message should
    have a retain flag on or not. Defaults to ``true``.
 
-.. _mqtt-using_with_home_assistant:
 
-Using with Home Assistant
--------------------------
+.. _mqtt-device_discovery:
+
+MQTT device discovery
+---------------------
+
+The ESPHome device will respond to the following MQTT topics if ``mqtt.discover_ip`` is enabled.
+
+- ``esphome/discover`` (All ESPHome device will answer)
+- ``esphome/ping/<APP_NAME>``
+
+The response will be sent to ``esphome/discover/<APP_NAME>`` and is a JSON encoded message.
+
+The MQTT device discovery is currently used for:
+
+- ESPHome dashboard (online / offline status)
+- ESPHome CLI (IP discovery; used to view logs and perform OTA uploads)
+- Home Assistant device discovery
+
+Example Payload:
+
+.. code-block:: json
+
+    {
+      "ip": "192.168.0.122",
+      "name": "esp32-test",
+      "friendly_name": "Test Device",
+      "port": 6053,
+      "version": "2024.4.1",
+      "mac": "84fce6123456",
+      "platform": "ESP32",
+      "board": "esp32-c3-devkitm-1",
+      "network": "wifi",
+      "api_encryption": "Noise_NNpsk0_25519_ChaChaPoly_SHA256"
+    }
+
+
+JSON keys:
+
+-  **ip** (**Required**, ip): The IP address of the ESPHome device.
+-  **name** (**Required**, string): Name of the device (``esphome.name``).
+-  **mac** (**Required**, string): MAC address of the device.
+-  **board** (**Required**, string): Board used for the device.
+-  **version** (**Required**, string): ESPHome version.
+-  **port** (*Optional*, port): Port of the ESPHome API (if enabled).
+-  **ipX** (*Optional*, ip): Additional IP addresses (X is a number starting at 1).
+-  **friendly_name** (*Optional*, string): Friendly name of the device (``esphome.friendly_name``).
+-  **platform** (*Optional*, string): Platform of the device (e.g. ESP32 or ESP8266)
+-  **network** (*Optional*, string): Network type.
+-  **project_name** (*Optional*, string): ``esphome.project.name``.
+-  **project_version** (*Optional*, string): ``esphome.project.version``.
+-  **project_version** (*Optional*, string): ``dashboard_import.package_import_url``.
+-  **api_encryption** (*Optional*, string): API encryption type.
+
+.. _mqtt-using_device_discovery_with_home_assistant:
+
+Using device discovery with Home Assistant
+------------------------------------------
+
+MQTT can be used to automatically discover the ESPHome devices in Home Assistant.
+This allows Home Assistant to find the ESPHome device and connect
+to it via the ESPHome API which allows the usage
+of more features then MQTT entity discovery alone (e.g. Bluetooth Proxy, Voice Assistant).
+
+This can be achieved by enabling ``api`` and ``mqtt`` with ``mqtt.discover_ip`` enabled.
+It may makes sense to disable ``mqtt.discovery`` since there will be no need to use the
+MQTT entity discovery if Home Assistant will connect to the ESPHome API.
+
+Example configuration:
+
+.. code-block:: yaml
+
+    api:
+      encryption:
+        key: "<secret>"
+
+    mqtt:
+      broker: 10.0.0.2
+      username: livingroom
+      password: !secret mqtt_password
+      discovery: False # disable entity discovery
+      discover_ip: True # enable device discovery
+
+.. _mqtt-using_with_home_assistant_entities:
+
+Using with Home Assistant MQTT entities
+---------------------------------------
 
 Using ESPHome with Home Assistant is easy, simply setup an MQTT
 broker (like `mosquitto <https://mosquitto.org/>`__) and point both your
@@ -184,12 +273,11 @@ Home Assistant generates entity names for all discovered devices based on entity
 entity name (e.g. ``sensor.uptime``). Numeric suffixes are appended to entity names when
 multiple devices use the same name for a sensor, making it harder to distinguish between
 similar sensors on different devices. Home Assistant 2021.12 allows MQTT devices to change
-this behaviour by specifying ``object_id`` discovery attribute which replaces the sensor
+this behaviour by specifying the ``object_id`` discovery attribute which replaces the sensor
 name part of the generated entity name. Setting ``discovery_object_id_generator: device_name``
-in ESPHome MQTT integration configuration will cause Home Assistant to include device name
+in the ESPHome MQTT component configuration will cause Home Assistant to include device name
 in the generated entity names (e.g. ``sensor.uptime`` becomes ``sensor.<device name>_uptime``),
 making it easier to distinguish the entities in various entity lists.
-
 
 .. _mqtt-defaults:
 
@@ -266,7 +354,7 @@ then run the ``mqtt-fingerprint`` script of ESPHome to get the certificate:
 
 .. code-block:: bash
 
-    esphome livingroom.yaml mqtt-fingerprint
+    esphome mqtt-fingerprint livingroom.yaml
     > SHA1 Fingerprint: a502ff13999f8b398ef1834f1123650b3236fc07
     > Copy above string into mqtt.ssl_fingerprints section of livingroom.yaml
 
@@ -353,6 +441,7 @@ MQTT can have some overrides for specific options.
 
     name: "Component Name"
     # Optional variables:
+    qos: 1
     retain: true
     availability:
       topic: livingroom/status
@@ -366,26 +455,29 @@ Configuration variables:
 
 -  **name** (**Required**, string): The name to use for the MQTT
    Component.
+-  **qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/) level for publishing. Defaults to 0.
 -  **retain** (*Optional*, boolean): If all MQTT state messages should
    be retained. Defaults to ``true``.
 -  **discovery** (*Optional*, boolean): Manually enable/disable
    discovery for a component. Defaults to the global default.
+-  **subscribe_qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+   level advertised in discovery for subscribing (only if discovery is enabled). Defaults to 0.
 -  **availability** (*Optional*): Manually set what should be sent to
    Home Assistant for showing entity availability. Default derived from
    :ref:`global birth/last will message <mqtt-last_will_birth>`.
 -  **state_topic** (*Optional*, string): The topic to publish state
    updates to. Defaults to
    ``<TOPIC_PREFIX>/<COMPONENT_TYPE>/<COMPONENT_NAME>/state``.
-   
-   ESPHome will always publish a manually configured state topic, even if 
-   the component is internal. Use ``null`` to disable publishing the 
+
+   ESPHome will always publish a manually configured state topic, even if
+   the component is internal. Use ``null`` to disable publishing the
    component's state.
 -  **command_topic** (*Optional*, string): The topic to subscribe to for
    commands from the remote. Defaults to
    ``<TOPIC_PREFIX>/<COMPONENT_TYPE>/<COMPONENT_NAME>/command``.
-   
-   ESPHome will always subscribe to a manually configured command topic, 
-   even if the component is internal. Use ``null`` to disable subscribing 
+
+   ESPHome will always subscribe to a manually configured command topic,
+   even if the component is internal. Use ``null`` to disable subscribing
    to the component's command topic.
 -  **command_retain** (*Optional*, boolean): Whether MQTT command messages
    sent to the device should be retained or not. Default to ``false``.
@@ -642,6 +734,57 @@ Configuration options:
         id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
           root["something"] = id(my_sensor).state;
         });
+
+``mqtt.disable`` Action
+-----------------------
+
+This action turns off the MQTT component on demand.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - mqtt.disable:
+
+.. note::
+
+    The configuration option ``enable_on_boot`` can be set to ``false`` if you do not want MQTT to be enabled on boot.
+
+
+``mqtt.enable`` Action
+----------------------
+
+This action turns on the MQTT component on demand.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - mqtt.enable:
+
+.. note::
+
+    The configuration option ``enable_on_boot`` can be set to ``false`` if you do not want MQTT to be enabled on boot.
+    ``mqtt.enable`` can be useful for custom setups. For example, if the broker name is negotiated dynamically and saved in a global variable.
+
+.. code-block:: yaml
+
+    mqtt:
+      id: mqtt_id
+      broker: ""
+      enable_on_boot: False
+
+    globals:
+      - id: broker_address
+        type: std::string
+        restore_value: yes
+        max_restore_data_length: 24
+        initial_value: '"192.168.1.2"'
+
+    on_...:
+      then:
+        - lambda: !lambda id(mqtt_id).set_broker_address(id(broker_address));
+        - mqtt.enable:
 
 .. _mqtt-connected_condition:
 

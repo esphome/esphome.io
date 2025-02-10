@@ -12,14 +12,14 @@ on graphical displays. This offers the user an interactive method to display
 labels, control entities like ``switch``, ``select``, ``number``  available locally on the 
 ESPHome node, without the requirement of a network connection.
 
-.. figure:: images/graphical_display_menu.jpg
+.. figure:: images/graphical_display_menu.png
     :align: center
     :width: 60.0%
 
 Overview
 --------
 
-The integration implements the :ref:`Display Menu <display_menu>` integration providing
+The component implements the :ref:`Display Menu <display_menu>` component providing
 a hierarchical menu primarily intended to be controlled either by a rotary encoder
 with a button or a five-button joystick controller.
 
@@ -34,7 +34,7 @@ engine such as :doc:`E-Paper displays </components/display/waveshare_epaper>` or
       display: my_display_component
       on_redraw:
         then:
-          component.update: my_dispay_component
+          component.update: my_display_component
       active: false
       mode: rotary
       items:
@@ -194,7 +194,7 @@ The below example is a more complete example showing how you might use a rotary 
       display: my_display_component
       on_redraw:
         then:
-          component.update: my_dispay_component
+          component.update: my_display_component
       active: false
       mode: rotary
       items:

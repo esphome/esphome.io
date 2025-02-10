@@ -1,0 +1,68 @@
+name: Component Image Generator
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  prepare:
+    name: Prepare
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '@esphomebot generate image')
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.get_component.outputs.name }}
+      name_lower: ${{ steps.get_component.outputs.name_lower }}
+      comment_id: ${{ steps.create-comment.outputs.result }}
+    steps:
+      - name: Comment
+        id: create-comment
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const result = await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `@${context.actor} Generating image...`
+            })
+            return result.data.id
+
+      - name: Get Component name
+        id: get_component
+        run: |-
+          comment="${{ github.event.comment.body }}"
+          component=$(echo $comment | sed -n 's/^@esphomebot generate image //p')
+          echo "name=$component" >> $GITHUB_OUTPUT
+          echo "name_lower=${component,,}" >> $GITHUB_OUTPUT
+
+  generate:
+    name: Generate
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '@esphomebot generate image')
+    runs-on: ubuntu-latest
+    needs: prepare
+    steps:
+      - name: Generate
+        uses: esphome/component-image-generator@v1.0.0
+        with:
+          component: ${{ needs.prepare.outputs.name }}
+
+      - name: Upload
+        uses: actions/upload-artifact@v4.6.0
+        id: upload-artifact
+        with:
+          name: ${{ needs.prepare.outputs.name }}
+          path: ${{ needs.prepare.outputs.name_lower }}.svg
+
+      - name: Update Comment
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ needs.prepare.outputs.comment_id }},
+              body: `@${context.actor} Here is the image for the component ${{ steps.upload-artifact.outputs.artifact-url }}`
+            })

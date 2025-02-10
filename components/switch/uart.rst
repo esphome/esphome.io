@@ -11,10 +11,6 @@ The ``uart`` switch platform allows you to send a pre-defined sequence of bytes 
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      baud_rate: 9600
-      tx_pin: D0
-
     switch:
       - platform: uart
         name: "UART String Output"
@@ -35,8 +31,6 @@ The ``uart`` switch platform allows you to send a pre-defined sequence of bytes 
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (*Optional*, string): The name for the switch.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART hub.
 - **data** (*Optional*, string or list of bytes): The data to send via UART. Either an ASCII string
   or a list of bytes or one or both of the following nested options (see example above).

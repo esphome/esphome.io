@@ -13,7 +13,7 @@ The ``max6956`` exists in 2 versions 20 or 28 ports, depending on the packaging.
 Once configured, you can use any of the 20 or 28 pins for your projects. Within ESPHome they emulate a real internal GPIO pin
 and can therefore be used with many of ESPHome's components such as the GPIO binary sensor or GPIO switch. Interrupt-on-change for inputs is not possible.
 
-Pins can also be individualy configured as led driver and used with Light components. Current value can be set globaly or for each pin, through 16 possible levels. Driving RGB 
+Pins can also be individualy configured as led driver and used with Light components. Current value can be set globaly or for each pin, through 16 possible levels. Driving RGB
 led requires 3 pins.
 
 Any option accepting a :ref:`Pin Schema <config-pin_schema>` can theoretically be used.
@@ -48,7 +48,7 @@ Configuration variables:
 - **brightness_global** (*Optional*): Set the value of the current to be sink by all pins configured as led driver.
   Defaults to ``0``
 - **brightness_mode** (*Optional*): Define if the current to be sink will be confgured globaly or per pin configured as led driver.
-  Defaults to ``global``  
+  Defaults to ``global``
 
 
 Binary Sensor Example
@@ -58,19 +58,7 @@ Binary Sensor Example
 
 .. code-block:: yaml
 
-    # Example configuration : pin as input with pullup
-    i2c:
-      id: bus_a
-      sda: GPIO13
-      scl: GPIO16
-      scan: false
-
-    max6956:
-      - id: max6956_1
-        address: 0x40
-        i2c_id: bus_a
-
-    # Individual input
+    # Example configuration
     binary_sensor:
       - platform: gpio
         name: "MaxIn Pin 4"
@@ -78,7 +66,7 @@ Binary Sensor Example
         pin:
           max6956: max6956_1
           number: 4
-          mode: 
+          mode:
             input: true
             pullup: true
           inverted: False
@@ -91,18 +79,7 @@ Switch Example
 
 .. code-block:: yaml
 
-    # Example configuration : pin as output
-    i2c:
-      id: bus_a
-      sda: GPIO13
-      scl: GPIO16
-
-      max6956:
-        - id: max6956_1
-          address: 0x40
-          i2c_id: bus_a
-
-      # Individual output
+    # Example configuration
       switch:
         - platform: gpio
           name: "MaxIn Pin 8"
@@ -110,9 +87,9 @@ Switch Example
           pin:
             max6956: max6956_1
             number: 8
-            mode: 
+            mode:
               output: true
-            inverted: False 
+            inverted: False
 
 
 Led driver Example
@@ -126,8 +103,8 @@ Led driver Example
     # Example configuration : pin as led driver, current globaly
     i2c:
       id: bus_a
-      sda: GPIO13
-      scl: GPIO16
+      sda: GPIOXX
+      scl: GPIOXX
 
     switch:
       - platform: template
@@ -153,7 +130,7 @@ Led driver Example
           - max6956.set_brightness_global:
               id: max6956_1
               brightness_global: !lambda return x;
-        
+
     max6956:
       - id: max6956_1
         address: 0x40
@@ -166,7 +143,7 @@ Led driver Example
       - platform: max6956
         pin: 4
         id: maxOut_pin4
-        
+
     #led binded to output
     light:
       - platform: monochromatic
@@ -178,8 +155,8 @@ Led driver Example
     # Example configuration : pin as led driver, current managed individualy (RBG led)
     i2c:
       id: bus_a
-      sda: GPIO13
-      scl: GPIO16
+      sda: GPIOXX
+      scl: GPIOXX
 
     max6956:
       - id: max6956_1
@@ -229,7 +206,7 @@ Led driver Example
           - output.set_level:
               id: maxOut_pin4
               level: !lambda return x/100;
-          
+
       - platform: template
         name: "Number Green"
         id: number_LedGreen
@@ -256,7 +233,7 @@ Led driver Example
         on_value:
           - output.set_level:
               id: maxOut_pin6
-              level: !lambda return x/100;        
+              level: !lambda return x/100;
     output:
       - platform: max6956
         pin: 4
@@ -275,7 +252,7 @@ Led driver Example
         gamma_correct: 1
         red: maxOut_pin4
         green: maxOut_pin5
-        blue: maxOut_pin6  
+        blue: maxOut_pin6
 
 
 

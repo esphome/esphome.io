@@ -68,11 +68,12 @@ Configuration variables:
   significantly increase the database size. Defaults to ``false``.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations:
 
@@ -111,27 +112,25 @@ MQTT Options:
 Sensor Filters
 --------------
 
-ESPHome allows you to do some basic pre-processing of
-sensor values before they’re sent to Home Assistant. This is for example
-useful if you want to apply some average over the last few values.
+ESPHome lets you pre-process sensor values before sending them to Home Assistant. This is useful, for example, if you want to apply an average to the last few readings.
 
-There are a lot of filters that sensors support. You define them by adding a ``filters``
-block in the sensor configuration (at the same level as ``platform``; or inside each sensor block
-for platforms with multiple sensors)
+Many filters are available for sensors, which you can define by adding a ``filters`` block in the sensor configuration (at the same level as ``platform`` or within each sensor block for platforms with multiple sensors).
 
-Filters are processed in the order they are defined in your configuration.
+Filters are applied in the order they are defined in your configuration.
 
 .. code-block:: yaml
 
     # Example filters:
     filters:
       - offset: 2.0
-      - multiply: 1.2
+      - multiply: !lambda return 1.2;
       - calibrate_linear:
           - 0.0 -> 0.0
           - 40.0 -> 45.0
           - 100.0 -> 102.5
-      - filter_out: 42.0
+      - filter_out:
+          - 42.0
+          - 43.0
       - median:
           window_size: 5
           send_every: 5
@@ -161,7 +160,7 @@ Filters are processed in the order they are defined in your configuration.
 ``offset``
 **********
 
-Adds a constant value to each sensor value.
+Adds a value to each sensor value. The value may be a constant or a lambda returning a float.
 
 .. code-block:: yaml
 
@@ -171,11 +170,12 @@ Adds a constant value to each sensor value.
       filters:
         - offset: 2.0
         - multiply: 1.2
+        - offset: !lambda return id(some_sensor).state;
 
 ``multiply``
 ************
 
-Multiplies each value by a constant value.
+Multiplies each value by a templatable value.
 
 .. _sensor-filter-calibrate_linear:
 
@@ -259,6 +259,20 @@ degree with a least squares solver.
       filters:
         - filter_out: 85.0
 
+A list of values may be supplied, and values are templatable:
+
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    - platform: wifi_signal
+      # ...
+      filters:
+        - filter_out:
+            - 85.0
+            - !lambda return id(some_sensor).state;
+
+
 ``clamp``
 *********
 
@@ -293,6 +307,27 @@ Rounds the value to the given decimal places.
     - platform: ...
       filters:
         - round: 1 # will round to 1 decimal place
+
+
+
+``round_to_multiple_of``
+************************
+
+Rounds the value to the nearest multiple. Takes a float greater than zero.
+
+.. code-block:: yaml
+
+    - platform: ...
+      filters:
+        - round_to_multiple_of: 10
+        # 123 -> 120
+        # 126 -> 130
+
+    - platform: ...
+      filters:
+        - round_to_multiple_of: 0.25
+        # 3.1415 -> 3.25
+        # 1.6180 -> 1.5
 
 
 ``quantile``
@@ -520,7 +555,7 @@ of the input values.
 ************
 
 After the first value has been sent, if no subsequent value is published within the
-``specified time period``, send a value which defaults to ``NaN``.
+``specified time period``, send a templatable value which defaults to ``NaN``.
 Especially useful when data is derived from some other communication
 channel, e.g. a serial port, which can potentially be interrupted.
 
@@ -531,7 +566,7 @@ channel, e.g. a serial port, which can potentially be interrupted.
       - timeout: 10s  # sent value will be NaN
       - timeout:
           timeout: 10s
-          value: 0
+          value: !lambda return 0;
 
 ``debounce``
 ************
@@ -603,7 +638,7 @@ To prevent values from being published, return ``{}``:
 .. code-block:: yaml
 
     filters:
-      - lambda: !lambda |-
+      - lambda: |-
           if (x < 10) return {};
           return x-10;
 
@@ -644,7 +679,7 @@ with ``x``.
 .. code-block:: yaml
 
     sensor:
-      - platform: dallas
+      - platform: dht
         # ...
         on_value:
           then:
@@ -672,7 +707,7 @@ So for example ``above: 5`` with no below would mean the range from 5 to positiv
 .. code-block:: yaml
 
     sensor:
-      - platform: dallas
+      - platform: dht
         # ...
         on_value_range:
           - below: 5.0
@@ -704,7 +739,7 @@ trigger with ``x``.
 .. code-block:: yaml
 
     sensor:
-      - platform: dallas
+      - platform: dht
         # ...
         on_raw_value:
           then:

@@ -21,10 +21,14 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
 
     sensor:
       - platform: ltr390
-        uv:
+        uv_index:
           name: "UV Index"
+        uv:
+          name: "UV Sensor Counts"
         light:
           name: "Light"
+        ambient_light:
+          name: "Light Sensor Counts"
 
 Configuration variables:
 ------------------------
@@ -33,19 +37,41 @@ Configuration variables:
 - **uv** (*Optional*): Sensor counts for the UV sensor (#). All options from :ref:`Sensor <config-sensor>`.
 - **light** (*Optional*): Lux of ambient light (lx). All options from :ref:`Sensor <config-sensor>`.
 - **ambient_light** (*Optional*): Sensor counts for the Ambient light sensor (#). All options from :ref:`Sensor <config-sensor>`.
-- **gain** (*Optional*, string): Adjusts the sensitivity of the sensor. A larger value means higher sensitivity. See table below for details. Default is ``"X3"``.
-- **resolution** (*Optional*, int): ADC resolution. Higher resolutions require longer sensor integration times. See table below for details. Default is ``18``.
+- **gain** (*Optional*, string): Adjusts the sensitivity of the sensor. A larger value means higher sensitivity. Default is ``"X18"``, see table below for options.
+- **resolution** (*Optional*, int): ADC resolution. Higher resolutions require longer sensor integration times. Default is ``20``, see table below for options.
 - **window_correction_factor** (*Optional*, float): Window correction factor. Use larger values when using under tinted windows. Default is ``1.0``, must be ``>= 1.0``.
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Default is ``0x53``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``. It is recommended that the update interval is at least 1 second since updates can take up to 800ms when using a high resolution value.
+
+Granular control over gain and resolution
+.........................................
+By default, the ``gain`` and ``resolution`` parameters set same values for both ALS and UV measurements. In real life scenarios there might be significant
+differences in the light intensity and UV index, so it is recommended to use different gain and resolution values for ALS and for UV sensor to avoid saturation.
+See the example below, where the gain and resolution are set to different values for ALS and UV sensors.:
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: ltr390
+        uv:
+          name: "UV Sensor Counts"
+        ambient_light:
+          name: "Light Sensor Counts"
+        gain:
+          ambient_light: X9
+          uv: X3
+        resolution:
+          ambient_light: 18
+          uv: 13
+
 
 Lux and UVI Formulas
 --------------------
 
 .. math::
 
-    \text{lux} = \frac{0.6 \times \text{als}}{\text{gain} \times \text{int}} \times \text{wfac}
+    \text{lux} = \frac{0.6 \times \text{als}}{\text{gain} \times \frac{\text{int}}{100} } \times \text{wfac}
 
 .. math::
 
@@ -53,11 +79,22 @@ Lux and UVI Formulas
 
 where:
 
-- ``als`` and ``uv`` are the sensor values
-- ``gain`` is the amount of gain, see the table below for details
-- ``int`` is the integration time in 100s of ms and is tied to the resolution, see the table below for details
-- ``sensitivity`` has the value ``2300`` and is the sensor's count per UVI
-- ``wfac`` is the window correction factor
+- ``als`` and ``uv`` are the sensor values.
+- ``gain`` is the sensor gain, see the table below for details.
+- ``int`` is the integration time in ms and is tied to the resolution, see the table below for details.
+- ``sensitivity`` is the sensor's count per UVI. See note below for details.
+- ``wfac`` is the window correction factor.
+
+It is recommended to use the defaults of ``X18`` gain and resolution of 20 bits when UV Index sensing is required since
+the data sheet only provides accurate conversion formula for this combination. The UVI value is linearly scaled from
+this reference point when using other combinations of gain and resolution, which may be slightly inaccurate. The scaling
+formula is:
+
+.. math::
+
+    \text{sensitivity} = 2300 \times \frac{\text{gain}}{18} \times \frac{\text{int}}{400}
+
+where :math:`2300` is the sensor count per UVI at the default configuration.
 
 Gain
 ----
@@ -66,7 +103,7 @@ Gain
     :widths: 25 25
     :header-rows: 1
 
-    * - Gain Parameter
+    * - Configuration value
       - gain
     * - X1
       - 1
@@ -83,28 +120,28 @@ Gain
 Resolution
 ----------
 
-.. list-table:: Resolution
+.. list-table::
     :widths: 25 25 10
     :header-rows: 1
 
-    * - Resolution Parameter (bits)
+    * - Configuration value
+      - Resolution (bits)
       - Integration Time (ms)
-      - int
     * - 16
+      - 16
       - 25
-      - 0.25
     * - 17
+      - 17
       - 50
-      - 0.5
     * - 18
+      - 18
       - 100
-      - 1
     * - 19
+      - 19
       - 200
-      - 2
     * - 20
+      - 20
       - 400
-      - 4
 
 See Also
 --------

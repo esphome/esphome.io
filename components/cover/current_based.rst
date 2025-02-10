@@ -62,7 +62,6 @@ operation circuit (typically caused by welded relays).
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the cover.
 - **open_sensor** (**Required**, :ref:`config-id`): The open current sensor.
 - **open_action** (**Required**, :ref:`Action <config-action>`): The action that should
   be performed when the remote requests the cover to be opened.
@@ -95,7 +94,6 @@ Configuration variables:
 - **malfunction_action** (*Optional*, :ref:`Action <config-action>`): The action that should
   be performed when relay malfunction is detected. Malfunction may require device servicing. You can use this action
   to notify other systems about this situation
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Cover <config-cover>`.
 
 Use with Shelly 2.5
@@ -134,7 +132,7 @@ Configuration example:
       scl: GPIO14
 
     sensor:
-      - platform: ade7953
+      - platform: ade7953_i2c
         irq_pin: GPIO16
         voltage:
           name: Shelly 2.5 Mains Voltage

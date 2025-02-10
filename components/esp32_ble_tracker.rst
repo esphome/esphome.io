@@ -14,7 +14,7 @@ the MAC address of a device and track it using ESPHome.
 .. warning::
 
     The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-    
+
     **Crashes are likely to occur** if you include too many additional components in your device's
     configuration. Memory-intensive components such as :doc:`/components/voice_assistant` and other
     audio components are most likely to cause issues.
@@ -26,15 +26,15 @@ the MAC address of a device and track it using ESPHome.
 
     binary_sensor:
       - platform: ble_presence
-        mac_address: AC:37:43:77:5F:4C
+        mac_address: XX:XX:XX:XX:XX:XX
         name: "ESP32 BLE Presence Google Home Mini"
 
     sensor:
       - platform: ble_rssi
-        mac_address: AC:37:43:77:5F:4C
+        mac_address: XX:XX:XX:XX:XX:XX
         name: "BLE Google Home Mini RSSI value"
       - platform: xiaomi_hhccjcy01
-        mac_address: 94:2B:FF:5C:91:61
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Xiaomi MiFlora Temperature"
         moisture:
@@ -46,7 +46,7 @@ the MAC address of a device and track it using ESPHome.
         battery_level:
           name: "Xiaomi MiFlora Battery Level"
       - platform: xiaomi_lywsdcgq
-        mac_address: 7A:80:8E:19:36:BA
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Xiaomi MiJia Temperature"
         humidity:
@@ -116,9 +116,9 @@ This automation will be triggered when a Bluetooth advertising is received. A va
 
     esp32_ble_tracker:
       on_ble_advertise:
-        - mac_address: 
-            - 11:11:11:11:11:11
-            - 22:22:22:22:22:22
+        - mac_address:
+            - XX:XX:XX:XX:XX:XX
+            - XX:XX:XX:XX:XX:XX
           then:
             - lambda: |-
                 ESP_LOGD("ble_adv", "New BLE device");
@@ -159,7 +159,7 @@ variable ``x`` of type ``std::vector<uint8_t>`` is passed to the automation for 
 
     esp32_ble_tracker:
       on_ble_manufacturer_data_advertise:
-        - mac_address: 11:22:33:44:55:66
+        - mac_address: XX:XX:XX:XX:XX:XX
           manufacturer_id: 0590
           then:
             - lambda: |-
@@ -190,7 +190,7 @@ variable ``x`` of type ``std::vector<uint8_t>`` is passed to the automation for 
 
     esp32_ble_tracker:
       on_ble_service_data_advertise:
-        - mac_address: 11:22:33:44:55:66
+        - mac_address: XX:XX:XX:XX:XX:XX
           service_uuid: 181A
           then:
             - lambda: 'id(ble_sensor).publish_state(x[0]);'
@@ -263,6 +263,29 @@ Stops the bluetooth scanning. It can be started again with the above start scan 
 
     on_...:
       - esp32_ble_tracker.stop_scan:
+
+Use on single-core chips
+------------------------
+
+On dual-core devices the WiFi component runs on core 1, while this component runs on core 0.
+When using this component on single core chips such as the ESP32-C3 both WiFi and ``ble_tracker`` must run on
+the same core, and this has been known to cause issues when connecting to WiFi. A work-around for this is to
+enable the tracker only while the native API is connected. The following config will achieve this:
+
+.. code-block:: yaml
+
+    esp32_ble_tracker:
+      scan_parameters:
+        continuous: false
+
+    api:
+      encryption:
+        key: !secret encryption_key
+      on_client_connected:
+        - esp32_ble_tracker.start_scan:
+           continuous: true
+      on_client_disconnected:
+        - esp32_ble_tracker.stop_scan:
 
 See Also
 --------

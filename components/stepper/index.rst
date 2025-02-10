@@ -45,12 +45,12 @@ Put this code into the configuration file on ESPHome for this device.
     stepper:
       - platform: a4988
         id: my_stepper
-        step_pin: D0
-        dir_pin: D1
+        step_pin: GPIOXX
+        dir_pin: GPIOXX
         max_speed: 250 steps/s
 
         # Optional:
-        sleep_pin: D2
+        sleep_pin: GPIOXX
         acceleration: inf
         deceleration: inf
 
@@ -78,7 +78,7 @@ Configuration variables:
           - platform: a4988
             # ...
             dir_pin:
-              number: D1
+              number: GPIOXX
               inverted: true
 
 ULN2003 Component
@@ -92,10 +92,10 @@ Put this code into the configuration file on ESPHome for this device.
     stepper:
       - platform: uln2003
         id: my_stepper
-        pin_a: D0
-        pin_b: D1
-        pin_c: D2
-        pin_d: D3
+        pin_a: GPIOXX
+        pin_b: GPIOXX
+        pin_c: GPIOXX
+        pin_d: GPIOXX
         max_speed: 250 steps/s
 
         # Optional:
@@ -153,7 +153,7 @@ Configuration options:
 
 .. warning::
 
-    This turns the stepper to an absolute position! To have the servo move *relative* to the current
+    This turns the stepper to an absolute position! To have the stepper motor move *relative* to the current
     position, first reset the current position and then set the target to the relative value.
 
     .. code-block:: yaml
@@ -273,7 +273,7 @@ Configuration variables:
 Home Assistant Configuration
 ----------------------------
 
-The easiest way to control your stepper from Home Assistant is to add a ``number`` to your ESPHome 
+The easiest way to control your stepper from Home Assistant is to add a ``number`` to your ESPHome
 configuration. See :ref:`Number <config-number>` for more information.
 
 .. code-block:: yaml

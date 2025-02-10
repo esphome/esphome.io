@@ -30,7 +30,7 @@ In some cases only **TX** or **RX** exists as the device at the other end only a
     On the ESP32, this component uses the hardware UART units and is thus very accurate. On the ESP8266 however,
     ESPHome has to use a software implementation as there are no other hardware UART units available other than the
     ones used for logging. Therefore the UART data on the ESP8266 can have occasional data glitches especially with
-    higher baud rates. 
+    higher baud rates.
 
 .. note::
 
@@ -38,21 +38,25 @@ In some cases only **TX** or **RX** exists as the device at the other end only a
     for the data being sent. This could cause unexpected issues if you are using the Software UART and have devices that
     explicity check the parity. Most likely you will need to flip the ``parity`` flag in YAML.
 
+.. note::
+
+    UART implementation for the host platform does not use TX and RX pins but port names.
 
 .. code-block:: yaml
 
     # Example configuration entry
     uart:
-      tx_pin: 1
-      rx_pin: 3
+      tx_pin: GPIOXX
+      rx_pin: GPIOXX
       baud_rate: 9600
 
 Configuration variables:
 ------------------------
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
-- **tx_pin** (*Optional*, :ref:`config-pin`): The pin to send data to from the ESP's perspective. Use the full pin schema and set ``inverted: true`` to invert logic levels.
-- **rx_pin** (*Optional*, :ref:`config-pin`): The pin to receive data on from the ESP's perspective. Use the full pin schema and set ``inverted: true`` to invert logic levels.
+- **tx_pin** (*Optional*, :ref:`config-pin`): The pin to send data to from the ESP's perspective. Use the full pin schema and set ``inverted: true`` to invert logic levels. Not supported by host platform.
+- **rx_pin** (*Optional*, :ref:`config-pin`): The pin to receive data on from the ESP's perspective. Use the full pin schema and set ``inverted: true`` to invert logic levels. Not supported by host platform.
+- **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an integration that needs to read big payloads from UART. Defaults to ``256``.
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
 - **parity** (*Optional*): The parity used on the UART bus. Options: ``NONE``, ``EVEN``, ``ODD``. Defaults to ``NONE``.
@@ -74,7 +78,7 @@ be accurate at higher baud rates.
 logger and leave others available. If you have configured the logger to use a different hardware UART, the pins
 used for hardware sharing change accordingly.
 
-The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-S3, ESP32-C3, ESP32-S2, etc) may have fewer UARTs (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes. 
+The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-S3, ESP32-C3, ESP32-S2, etc) may have fewer UARTs (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
 
 The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. ``UART0`` may
 use either ``tx_pin: GPIO1`` and ``rx_pin: GPIO3``, or ``tx_pin: GPIO15`` and ``rx_pin: GPIO13``. ``UART1`` must
@@ -257,6 +261,20 @@ Below are the methods to read current settings and modify them dynamically:
       id(my_uart).set_baud_rate(uint32_t baud_rate);
 
 This flexibility allows for dynamic adaptation to different communication requirements, enhancing the versatility of your ESPHome setup.
+
+UART component with the host platform
+-------------------------------------
+
+Since the host platform does not have physical UART pins, the UART component is implemented using Unix-style ports. Instead of using pins,
+you can specify the port name to use. This implementation also supports components that have ``require_tx`` and ``require_rx`` options such as 
+smt100 etc.
+
+.. code-block:: yaml
+
+    # Example configuration entry for host platform
+    uart:
+      baud_rate: 9600
+      port: "/dev/ttyUSB0"
 
 See Also
 --------

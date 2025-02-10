@@ -21,7 +21,7 @@ after the last output has been disabled.
     # Example configuration entry
     power_supply:
       - id: 'power_supply1'
-        pin: 13
+        pin: GPIOXX
 
 Configuration variables:
 ------------------------

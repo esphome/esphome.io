@@ -47,7 +47,7 @@ Clockless FastLED lights differ from the
     light:
       - platform: fastled_clockless
         chipset: WS2811
-        pin: GPIO23
+        pin: GPIOXX
         num_leds: 60
         rgb_order: BRG
         name: "FastLED WS2811 Light"
@@ -55,7 +55,6 @@ Clockless FastLED lights differ from the
 Configuration variables:
 ************************
 
-- **name** (**Required**, string): The name of the light.
 - **chipset** (**Required**, string): Set a chipset to use.
   See :ref:`fastled_clockless-chipsets` for options.
 - **pin** (**Required**, :ref:`config-pin`): The pin for the data line of the FastLED light.
@@ -67,8 +66,6 @@ Configuration variables:
 - **max_refresh_rate** (*Optional*, :ref:`config-time`):
   A time interval used to limit the number of commands a light can handle per second. For example
   16ms will limit the light to a refresh rate of about 60Hz. Defaults to the default value for the used chipset.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Light <config-light>`.
 
 .. _fastled_clockless-chipsets:
@@ -126,8 +123,8 @@ whereas the clockless lights only need a single pin.
     light:
       - platform: fastled_spi
         chipset: WS2801
-        data_pin: GPIO23
-        clock_pin: GPIO22
+        data_pin: GPIOXX
+        clock_pin: GPIOXX
         num_leds: 60
         rgb_order: BRG
         name: "FastLED SPI Light"
@@ -135,7 +132,6 @@ whereas the clockless lights only need a single pin.
 Configuration variables:
 ************************
 
-- **name** (**Required**, string): The name of the light.
 - **chipset** (**Required**, string): Set a chipset to use. See :ref:`fastled_spi-chipsets` for options.
 - **data_pin** (**Required**, :ref:`config-pin`): The pin for the data line of the FastLED light.
 - **clock_pin** (**Required**, :ref:`config-pin`): The pin for the clock line of the FastLED light.
@@ -150,7 +146,6 @@ Configuration variables:
 - **data_rate** (*Optional*, frequency): The data rate to use for shifting data to the light. Can help if you
   have long cables or slow level-shifters.
 - **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Light <config-light>`.
 
 .. _fastled_spi-chipsets:

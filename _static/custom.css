@@ -1,3 +1,9 @@
+/* provide this to be queried in JS. Sadly can't be used in media-queries just yet*/
+
+:root {
+  --mobile-width-stop: 875;
+}
+
 .row-odd {
   background-color: #f3f6f6;
 }
@@ -240,9 +246,103 @@ a:hover code {
   background: none;
 }
 
+/* don't underline links that contain an image and nothing else */
+a:has(> img:only-child) {
+  border-bottom: none;
+}
+
 div.body p, div.body dd, div.body li, div.body blockquote {
   hyphens: none;
 }
+.pagefind-ui__form {
+    width: 100%;
+    max-width: 300px;
+    left: auto;
+    right: auto;
+    position: relative;
+}
+
+.pagefind-modular-list-excerpt, .pagefind-modular-list-title {
+    color: #111111 !important;
+}
+
+.search-results {
+    background-color: #f8f8f8;
+    box-shadow: 0 6px 10px rgb(0 0 0 / 0.2);
+    position: fixed;
+    z-index: 1500;
+    padding-right: 6px;
+    padding-left: 6px;
+    border-radius: 12px;
+    overflow: auto;
+    width: 0;
+    height: fit-content;
+    max-width: 650px;
+    transition: height, width 0.1s ease-in-out;
+    display: none;
+}
+
+.sphinx-tabs-tab {
+  line-height: 20px;
+}
+
+/* New branding changes */
+
+div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6, div.sphinxsidebar h3, div.sphinxsidebar h4, div.admonition p.admonition-title {
+  font-family: Figtree, system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+  font-weight: 600;
+}
+
+div.body h1 {
+  font-size: 2.5rem;
+}
+
+body {
+  font-family: "Instrument Sans", system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.01rem;
+}
+
+div.body p, div.body dd, div.body li {
+  line-height: 1.6;
+}
+
+div.sphinxsidebar h3 {
+  line-height: 1.25;
+}
+
+div.sphinxsidebar li {
+  line-height: 1.5;
+  margin-bottom: .25rem;
+}
+
+div.sphinxsidebar input {
+  font-family: "Instrument Sans", system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+}
+
+.pagefind-ui__form {
+  margin-bottom: 1rem;
+}
+
+
+img.logo {
+  content: url("/_static/logo-text-on-light.svg");
+}
+
+@media screen and (max-width: 875px) {
+  /* hide search result thumbnails on mobile */
+  .pagefind-modular-list-thumb {
+    width: 0;
+  }
+  /* reduce height of search box */
+  .pagefind-modular-input-wrapper {
+    scale: 90%;
+  }
+  .logo {
+    scale: 60%;
+  }
+}
+
 
 /* dark theme */
 @media (prefers-color-scheme: dark) {
@@ -264,7 +364,21 @@ div.body p, div.body dd, div.body li, div.body blockquote {
     background-color: #212121;
   }
 
-  img.dark-invert, img.logo {
+  .sphinx-tabs-panel {
+    background: #212121;
+  }
+  
+  .sphinx-tabs-tab {
+    color: #3fc3ff !important;
+    background: #212121 !important;
+    margin: 0 !important;
+  }
+
+  img.logo {
+    content: url("/_static/logo-text-on-dark.svg");
+  }
+  
+  img.dark-invert {
     filter: invert(1);
   }
 
@@ -338,5 +452,26 @@ div.body p, div.body dd, div.body li, div.body blockquote {
   dt:target, span.highlighted {
     background-color: #8e8129;
   }
+
+  .search-results {
+    background-color: #313131;
+    box-shadow: 0 6px 10px rgb(0 0 0 / 0.8);
+  }
+  .pagefind-modular-list-excerpt, .pagefind-modular-list-title {
+      color: #eeeeee !important;
+  }
+
+  .pagefind-ui__form, .pagefind-modular-input, .search-results {
+    color: #ececec !important;
+  }
+
+  :root {
+    --pagefind-ui-primary: #eeeeee;
+    --pagefind-ui-text: #eeeeee;
+    --pagefind-ui-background: #152028;
+    --pagefind-ui-border: #152028;
+    --pagefind-ui-tag: #152028;
+  }
+
 
 }

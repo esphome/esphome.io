@@ -36,7 +36,7 @@ need to do conversion again within the frontend if you use Fahrenheit.
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:aa:bb:cc
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: my_anova
 
     climate:
@@ -48,8 +48,6 @@ need to do conversion again within the frontend if you use Fahrenheit.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the climate device.
 - **ble_client_id** (**Required**, :ref:`config-id`): The ID of the BLE Client.
 - **unit_of_measurement** (**Required**, string): Units to use on the device display. 'c' or 'f'.
 - All other options from :ref:`Climate <config-climate>`.

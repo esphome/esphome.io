@@ -10,7 +10,6 @@ registers.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the Select.
 - **address** (**Required**, int): The start address of the first or only register
   of the Select  (can be decimal or hexadecimal).
 - **optionsmap** (**Required**, Map[str, int]): Provide a mapping from options (str) of
@@ -38,7 +37,6 @@ Configuration variables:
 - **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are
   grouped together and requested in one range. Setting this to ``true`` enforces the start of a new
   range at that address.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): Lambda to be evaluated every update interval
   to get the current option of the select.
 
@@ -57,7 +55,7 @@ Configuration variables:
 
 - **write_lambda** (*Optional*, :ref:`lambda <config-lambda>`): Lambda to be evaluated on every update
   of the Sensor, before the new value is written to the modbus registers.
-- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* 
+- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)*
   is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to ``true``.
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the Modbus Select will immediately update the reported state. Defaults

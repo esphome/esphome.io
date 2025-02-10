@@ -26,7 +26,7 @@ The MCP23S08 component (`datasheet <http://ww1.microchip.com/downloads/en/Device
     # Example configuration entry
     mcp23s08:
       - id: 'mcp23s08_hub'
-        cs_pin: D8
+        cs_pin: GPIOXX
         deviceaddress: 0
 
     # Individual outputs
@@ -94,7 +94,7 @@ binary sensor or GPIO switch.
     # Example configuration entry
     mcp23s17:
       - id: 'mcp23s17_hub'
-        cs_pin: D8
+        cs_pin: GPIOXX
         deviceaddress: 0
 
     # Individual outputs
