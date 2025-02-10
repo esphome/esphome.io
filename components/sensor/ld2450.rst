@@ -9,13 +9,17 @@ Component
 ---------
 .. _ld2450-component:
 
-The ``ld2450`` component allows you to use the `HLK-LD2450 <https://www.hlktech.net/index.php?id=1157>`__ human presence, motion detection and tracking radar module with ESPHome.
+The ``ld2450`` component allows you to use the `HLK-LD2450 <https://www.hlktech.net/index.php?id=1157>`__ human
+presence, motion detection and tracking radar module with ESPHome.
 
-`HLK-LD2450 Official Datasheet and user manuals <https://drive.google.com/drive/folders/1aItrdziwnEqI-ovDWf24Lj6ioALaljFA?usp=sharing>`__
+Target tracking involves real-time tracking of the position of a (moving) target within a specific area, enabling
+measurement of the target's distance, angle and speed (relative to the sensor).
 
-Target tracking involves real-time tracking of the position of a (moving) target within a specific area, enabling measurement of the target's distance, angle and speed (relative to the sensor).
-The LD2450 is a sensor module for motion target tracking within the Hi-link 24G millimeter-wave radar series. This module features simplified 24 GHz radar sensor hardware and intelligent algorithm firmware.
-It's primarily intended for use indoors to enable the location tracking of moving human targets.
+The LD2450 is a sensor module for motion target tracking within the Hi-link 24G millimeter-wave radar series. This
+module features simplified 24 GHz radar sensor hardware and intelligent algorithm firmware. It's primarily intended
+for use indoors to enable the location tracking of moving human targets.
+
+`HLK-LD2450 official data sheet and user manuals <https://drive.google.com/drive/folders/1aItrdziwnEqI-ovDWf24Lj6ioALaljFA?usp=sharing>`__
 
 .. _ld2450-mobile-apps:
 
@@ -25,7 +29,8 @@ It's primarily intended for use indoors to enable the location tracking of movin
 
 .. note::
 
-    Ensure that the LD2450 firmware version is ``V2.02.23090617`` or later for proper integration functionality. You can use the :ref:`HLKRadarTool mobile app<ld2450-mobile-apps>` to update the firmware.
+    Ensure that the LD2450 firmware version is ``V2.02.23090617`` or later for proper integration functionality. You
+    can use the :ref:`HLKRadarTool mobile app<ld2450-mobile-apps>` to update the firmware.
 
 .. figure:: images/ld2450.png
     :align: center
@@ -33,8 +38,9 @@ It's primarily intended for use indoors to enable the location tracking of movin
 
     HLK-LD2450 radar module
 
-The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work, ``parity`` and ``stop_bits`` **must be** respectively ``NONE`` and ``1``.
-Use of hardware UART pins is highly recommended, in order to support the out-of-the-box 256000 baud rate of the LD2450 sensor.
+The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work, ``parity`` and
+``stop_bits`` **must be** respectively ``NONE`` and ``1``. Use of hardware a UART is highly recommended in order to
+properly support the default 256000 baud rate of the LD2450 module.
 
 .. code-block:: yaml
 
@@ -171,29 +177,34 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **moving_target_count** (*Optional*, int): Count of moving targets.
   All options from :ref:`Sensor <config-sensor>`.
-- **target_N** (*Optional*): Details about the targets (N = 1 to 3). A maximum of 3 targets can be detected: ``target_1``, ``target_2``, ``target_3``.
+- **target_N** (*Optional*): Details about the targets (N = 1 to 3). A maximum of 3 targets can be detected:
+  ``target_1``, ``target_2``, ``target_3``.
 
-    - **x** (*Optional*, int): Distance in ``millimeter (mm)`` of the target from the ``ld2450`` sensor along the X-axis (negative for left side of the sensor, positive for right side of the sensor). The ``ld2450`` module can detect targets from -3000 to 3000 mm in ``X`` direction.
-      All options from :ref:`Sensor <config-sensor>`.
-    - **y** (*Optional*, int): Distance in ``millimeter (mm)`` of the target from the ``ld2450`` sensor in the Y direction (near/far). The ``ld2450`` module can detect targets from 0 to 6000 mm in ``Y`` direction.
+    - **x** (*Optional*, int): Distance in ``millimeter (mm)`` of the target from the ``ld2450`` sensor along the
+      X-axis (negative for left side of the sensor, positive for right side of the sensor). The ``ld2450`` module can
+      detect targets from -3000 to 3000 mm in ``X`` direction. All options from :ref:`Sensor <config-sensor>`.
+    - **y** (*Optional*, int): Distance in ``millimeter (mm)`` of the target from the ``ld2450`` sensor in the Y
+      direction (near/far). The ``ld2450`` module can detect targets from 0 to 6000 mm in ``Y`` direction.
       All options from :ref:`Sensor <config-sensor>`.
     - **speed** (*Optional*, int): Speed of the moving target in ``mm/s``.
       All options from :ref:`Sensor <config-sensor>`.
     - **angle** (*Optional*, int): Angle of target in ``degrees (°)`` relative to the ``ld2450`` sensor.
       All options from :ref:`Sensor <config-sensor>`.
-    - **distance** (*Optional*, int): Distance in ``millimeter (mm)`` of the target from the ``ld2450`` sensor along the X-axis (negative for left side of the sensor, positive for right side of the sensor).
-      All options from :ref:`Sensor <config-sensor>`.
+    - **distance** (*Optional*, int): Distance in ``millimeter (mm)`` of the target from the ``ld2450`` sensor along
+      the X-axis (negative for left side of the sensor, positive for right side of the sensor). All options from
+      :ref:`Sensor <config-sensor>`.
     - **resolution** (*Optional*, int): The ``ld2450`` target detection range resolution in ``millimeter (mm)``.
       All options from :ref:`Sensor <config-sensor>`.
 
-- **zone_N** (*Optional*): Target count details in the defined :ref:`zones<ld2450-number>` (N = 1 to 3). A maximum of 3 zones: ``zone_1``, ``zone_2``, ``zone_3``.
+- **zone_N** (*Optional*): Target count details in the defined :ref:`zones<ld2450-number>` (N = 1 to 3). A maximum of
+  three zones: ``zone_1``, ``zone_2``, ``zone_3``.
 
     - **target_count** (*Optional*, int): Total targets detected in the zone, whether they are stationary or in motion.
       All options from :ref:`Sensor <config-sensor>`.
-    - **still_target_count** (*Optional*, int): Count of stationary targets in the zone.
-      All options from :ref:`Sensor <config-sensor>`.
-    - **moving_target_count** (*Optional*, int): Count of moving targets in the zone.
-      All options from :ref:`Sensor <config-sensor>`.
+    - **still_target_count** (*Optional*, int): Count of stationary targets in the zone. All options from
+      :ref:`Sensor <config-sensor>`.
+    - **moving_target_count** (*Optional*, int): Count of moving targets in the zone. All options from
+      :ref:`Sensor <config-sensor>`.
 
 .. _ld2450-switch:
 
@@ -217,12 +228,12 @@ The ``ld2450`` switch allows you to control your :doc:`ld2450` ``Bluetooth`` and
 Configuration variables:
 ************************
 
-- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are using multiple components.
-- **bluetooth** (*Optional*): Turn on/off the bluetooth adapter. Defaults to ``true``.
-  All options from :ref:`Switch <config-switch>`.
-- **multi_target** (*Optional*): Turn on/off the Multi Target Tracking option.
-  All options from :ref:`Switch <config-switch>`.
-
+- **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component if you are
+  using multiple components.
+- **bluetooth** (*Optional*): Turn on/off the bluetooth adapter. Defaults to ``true``. All options from
+  :ref:`Switch <config-switch>`.
+- **multi_target** (*Optional*): Turn on/off the Multi Target Tracking option. All options from
+  :ref:`Switch <config-switch>`.
 
 .. _ld2450-number:
 
@@ -271,18 +282,23 @@ Configuration variables:
 ************************
 
 - **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
-- **presence_timeout** (**Required**, int): The duration, in seconds, for which the :ref:`presence states<ld2450-binary-sensors>` will persist even after the detection is cleared. Default is ``5`` seconds.
-  All options from :ref:`Number <config-number>`.
-- **zone_N** (*Optional*): Configuration of the zone (N = 1 to 3), defined as a rectangular area. A maximum of 3 Zones can be configured: ``zone_1``, ``zone_2``, ``zone_3``. The zone coordinates consists of x1 y1 (Near-Left) to x2 y2 (Far-Right) relative to the ``ld2450`` sensor.
+- **presence_timeout** (**Required**, int): The duration, in seconds, for which the
+  :ref:`presence states<ld2450-binary-sensors>` will persist even after the detection is cleared. Default is ``5``
+  seconds. All options from :ref:`Number <config-number>`.
+- **zone_N** (*Optional*): Configuration of the zone (N = 1 to 3), defined as a rectangular area. A maximum of three
+  zones can be configured: ``zone_1``, ``zone_2``, ``zone_3``. The zone coordinates consist of x1, y1 (near-left) to
+  x2, y2 (far-right) relative to the ``ld2450`` sensor.
     
-    - **x1** (*Optional*, int): Start X coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along the X-axis (negative for left side (-3000) of the sensor, positive for right side (3000) of the sensor).
+    - **x1** (*Optional*, int): Start X coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
+      the X-axis (negative for left side (-3000) of the sensor, positive for right side (3000) of the sensor).
       All options from :ref:`Number <config-number>`.
-    - **y1** (*Optional*, int): Start Y coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along the Y-axis, values range from 0 to 6000.
-      All options from :ref:`Sensor <config-sensor>`.
-    - **x2** (*Optional*, int): End X coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along the X-axis (negative for left side (-3000) of the sensor, positive for right side (3000) of the sensor).
-      All options from :ref:`Number <config-number>`.
-    - **y1** (*Optional*, int): Start Y coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along the Y-axis, values range from 0 to 6000.
-      All options from :ref:`Sensor <config-sensor>`.
+    - **y1** (*Optional*, int): Start Y coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
+      the Y-axis, values range from 0 to 6000. All options from :ref:`Sensor <config-sensor>`.
+    - **x2** (*Optional*, int): End X coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
+      the X-axis (negative for left side (-3000) of the sensor, positive for right side (3000) of the sensor). All
+      options from :ref:`Number <config-number>`.
+    - **y1** (*Optional*, int): Start Y coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
+      the Y-axis, values range from 0 to 6000. All options from :ref:`Sensor <config-sensor>`.
 
 Button
 ------
@@ -305,8 +321,7 @@ Configuration variables:
 - **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
 - **factory_reset** (*Optional*): Resets the ``ld2450`` to its factory default configuration/values.
   All options from :ref:`Button <config-button>`.
-- **restart** (*Optional*): Restart the ``ld2450`` device.
-  All options from :ref:`Button <config-button>`.
+- **restart** (*Optional*): Restart the ``ld2450`` device. All options from :ref:`Button <config-button>`.
 
 Text Sensor
 -----------
@@ -340,10 +355,11 @@ Configuration variables:
   All options from :ref:`Text Sensor <config-text_sensor>`.
 - **mac_address** (*Optional*): The ``ld2450`` Bluetooth MAC address.
   All options from :ref:`Text Sensor <config-text_sensor>`.
-- **target_N** (*Optional*): Targets (N = 1 to 3). A maximum of 3 targets can be detected: ``target_1``, ``target_2``, ``target_3``.
+- **target_N** (*Optional*): Targets (N = 1 to 3). A maximum of 3 targets can be detected: ``target_1``, ``target_2``,
+  ``target_3``.
 
-    - **direction** (*Optional*): Direction of the target relative to the ``ld2450`` sensor. Possible values are: ``Stationary``, ``Moving away``, ``Approaching``, ``NA``.
-      All options from :ref:`Sensor <config-sensor>`.
+    - **direction** (*Optional*): Direction of the target relative to the ``ld2450`` sensor. Possible values are:
+      ``Stationary``, ``Moving away``, ``Approaching``, ``NA``. All options from :ref:`Sensor <config-sensor>`.
 
 
 Select
@@ -367,11 +383,13 @@ Configuration variables:
 ************************
 
 - **ld2450_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2450` component.
-- **baud_rate** (*Optional*): Control the UART serial port baud rate. Defaults to ``256000``.
-  Once changed, all sensors will stop working until a fresh install with an updated :ref:`UART Component <uart>` configuration.
-  All options from :ref:`Select <config-select>`.
-- **zone_type** (*Optional*): Control the Zone detection modes. It can be set to ``Disabled``, ``Detection``, or ``Filter``. Selecting the ``Disabled`` option will disable zone area detection. ``Detection`` mode is used to detect only targets in the specified area, while ``Filter`` mode can be used to exclude an area from detection.
-  All options from :ref:`Select <config-select>`.
+- **baud_rate** (*Optional*): Control the UART serial port baud rate. Defaults to ``256000``. Once changed, all sensors
+  will stop working until a fresh install with an updated :ref:`UART Component <uart>` configuration. All options from
+  :ref:`Select <config-select>`.
+- **zone_type** (*Optional*): Control the zone detection modes. It can be set to ``Disabled``, ``Detection`` or
+  ``Filter``. Selecting the ``Disabled`` option will disable zone area detection. ``Detection`` mode is used to detect
+  only targets in the specified area, while ``Filter`` mode can be used to exclude an area from detection. All options
+  from :ref:`Select <config-select>`.
 
 Example configuration:
 ----------------------
