@@ -58,7 +58,7 @@ Configuration variables:
 - **on_volume** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the volume is changed.
 - All other options from :ref:`Media Player <config-media_player>`
 
-.. _speaker_media_player-examples:
+.. _media_player-speaker-examples:
 
 Example Configuration
 ---------------------
