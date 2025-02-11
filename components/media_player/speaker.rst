@@ -63,7 +63,7 @@ Configuration variables:
 Example Configuration
 ---------------------
 
-This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/i2s_audio>` configured with a 48000 Hz sample rate. It uses a ``mixer`` speaker component to handle combining the two differnet pipelines, and it uses ``resampler`` speaker components to ensure the source speakers uses the same sample rate.
+This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/i2s_audio>` configured with a 48000 Hz sample rate. It uses a ``mixer`` speaker component to handle combining the two different pipelines, and it uses ``resampler`` speaker components to ensure the source speakers uses the same sample rate.
 
 It adds a switch for playing an on-device file for an alarm notification. Any playing media is ducked while the alarm is activated. After the alarm is turned off, the media ducking will gradually stop.
 
