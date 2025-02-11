@@ -1190,7 +1190,7 @@ To display a boot image with a spinner animation which disappears automatically 
         id: boot_logo
         resize: 200x200
         type: RGB565
-        use_transparency: true
+        use_transparency: alpha_channel
 
     lvgl:
       ...
@@ -2204,7 +2204,6 @@ In the example below, pixel training is done four times for a half an hour every
               then:
                 - lvgl.resume:
                 - lvgl.widget.redraw:
-                - delay: 1s
           - lvgl.pause:
               show_snow: true
         turn_off_action:
@@ -2214,8 +2213,6 @@ In the example below, pixel training is done four times for a half an hour every
               then:
                 - lvgl.resume:
                 - lvgl.widget.redraw:
-                - delay: 1s
-                - lvgl.pause:
 
     touchscreen:
       - platform: ...

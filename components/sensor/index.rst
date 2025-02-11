@@ -112,15 +112,11 @@ MQTT Options:
 Sensor Filters
 --------------
 
-ESPHome allows you to do some basic pre-processing of
-sensor values before they’re sent to Home Assistant. This is for example
-useful if you want to apply some average over the last few values.
+ESPHome lets you pre-process sensor values before sending them to Home Assistant. This is useful, for example, if you want to apply an average to the last few readings.
 
-There are a lot of filters that sensors support. You define them by adding a ``filters``
-block in the sensor configuration (at the same level as ``platform``; or inside each sensor block
-for platforms with multiple sensors)
+Many filters are available for sensors, which you can define by adding a ``filters`` block in the sensor configuration (at the same level as ``platform`` or within each sensor block for platforms with multiple sensors).
 
-Filters are processed in the order they are defined in your configuration.
+Filters are applied in the order they are defined in your configuration.
 
 .. code-block:: yaml
 

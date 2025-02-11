@@ -44,7 +44,7 @@ Configuration variables:
 
 .. note::
 
-    If the device can support multiple I²C buses (ESP32 has 2, ESP8266 does not support more than one) these buses need to be defined as below and sensors need to be setup specifying the correct bus:
+    If the device can support multiple I²C buses these buses need to be defined as below and sensors need to be setup specifying the correct bus:
 
     .. code-block:: yaml
 
@@ -58,11 +58,12 @@ Configuration variables:
             sda: GPIOXX
             scl: GPIOXX
             scan: true
-       # Sensors should be specified as follows
-       - platform: bme680
-         i2c_id: bus_b
-         address: 0x76
-         # ...
+        # Sensors should be specified as follows
+        sensor:
+          - platform: bme680
+            i2c_id: bus_b
+            address: 0x76
+        # ...
 
 For I²C multiplexing see :doc:`/components/tca9548a`.
 
