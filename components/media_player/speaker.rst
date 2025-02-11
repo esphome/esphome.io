@@ -179,6 +179,15 @@ Configuration variables:
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to ``false``.
 
 
+Troubleshooting
+---------------
+
+If you can't hear anything, check whether your hardware requires a GPIO pin to be high or low to enable the speaker. Verify you have the correct speaker channel configured: try setting it to stereo if you are unsure which channels are available.
+
+If the audio quality is poor, check your speaker settings. Experiment with the bits per sample, channels, and sample rate settings. In general, higher sample rates improve audio quality: try using ``44100`` Hz or ``48000`` Hz instead of ``16000`` Hz.
+
+While you are troubleshooting, simplify your setup as much as possible . Only configure the ``announcement_pipeline`` and do not use ``resampler`` or ``mixer`` speakers.
+
 See also
 --------
 
