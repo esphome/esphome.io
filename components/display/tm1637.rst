@@ -167,6 +167,43 @@ To connect multiple TM1636 displays you need as many control lines as you have d
 
     Two TM1637 displays on only 2 control lines
 
+When using the pins more than once, the configuration must reflect the fact:
+
+
+.. code-block:: yaml
+
+
+    display:
+      - platform: tm1637
+        setup_priority: 1
+        id: lcd1
+        clk_pin: 
+          number: GPIO3
+          allow_other_uses: true
+        dio_pin: 
+          number: GPIO4
+          allow_other_uses: true
+        inverted: false
+        intensity: 7
+        update_interval: 100ms
+        length: 6
+        # reversed: true
+    
+      - platform: tm1637
+        setup_priority: 2
+        id: lcd2
+        clk_pin: 
+          number: GPIO4
+          allow_other_uses: true
+        dio_pin: 
+          number: GPIO3
+          allow_other_uses: true
+        inverted: False
+        intensity: 7
+        update_interval: 1s
+        length: 6
+
+
 When using more than 2 devices like 3 or more you add a control-line for the Dio pin and share this with the next display Clk pin.
 The last displays Dio pin shares the Clk pin of the first display. 
 
