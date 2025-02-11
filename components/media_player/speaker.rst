@@ -83,6 +83,7 @@ It adds a switch for playing an on-device file for an alarm notification. Any pl
     i2s_audio:
         i2s_lrclk_pin: GPIOXX
         i2s_bclk_pin: GPIOXX
+        sample_rate: 48000
     speaker:
       - platform: i2s_audio
         id: speaker_id
