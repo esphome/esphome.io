@@ -856,6 +856,7 @@ Display Hardware Platforms
     TM1651 Battery Display, components/tm1651, tm1651_battery_display.jpg
     Waveshare E-Paper, components/display/waveshare_epaper, waveshare_epaper.jpg
     Host SDL2 display, components/display/sdl, sdl.png
+    i8080, components/display/i8080, st7789v2.jpg
 
 Electromechanical
 -----------------
