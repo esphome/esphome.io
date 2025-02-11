@@ -857,6 +857,24 @@ This :ref:`condition <common_conditions>` checks if LVGL is in the paused state 
             then:
               - lvgl.resume:
 
+``lvgl.page.is_showing``
+************************
+
+This :ref:`condition <common_conditions>` checks if the nominated page is the one currently showing.
+
+- **id** (**Required**): The ID of the page to check. May be supplied as a simple value.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      then:
+        - if:
+            condition:
+              lvgl.page.is_showing: main_page
+            then:
+              - logger.log: "Main page is showing"
+
 Triggers
 --------
 
