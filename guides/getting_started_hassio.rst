@@ -29,6 +29,8 @@ Note that there are two "parts" to ESPHome:
 The ESPHome Device Builder provides a simple web user interface (UI) which allows you to create, edit and install your
 device configurations onto your devices.
 
+.. _installing-esphome-device-builder:
+
 Installing ESPHome Device Builder
 ---------------------------------
 

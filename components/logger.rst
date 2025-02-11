@@ -12,6 +12,10 @@ serial port and through MQTT topics (if there is an MQTT client in the
 configuration). By default, all logs with a severity ``DEBUG`` or higher will be shown.
 Increasing the log level severity (to e.g ``INFO`` or ``WARN``) can help with the performance of the application and memory size.
 
+.. note::
+
+    The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the :ref:`log levels <logger-log_levels>` section.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -25,6 +29,7 @@ Configuration variables:
    UART port. Defaults to ``115200``. Set to ``0`` to disable logging via UART.
 -  **level** (*Optional*, string): The global log level. Any log message
    with a lower severity will not be shown. Defaults to ``DEBUG``.
+-  **initial_level** (*Optional*, string): The initial log level, which may be varied at run time. Defaults to the same value as ``level``.
 -  **logs** (*Optional*, mapping): Manually set the log level for a
    specific component or tag. See :ref:`Manual Log Levels for more
    information <logger-manual_tag_specific_levels>`.
@@ -258,6 +263,25 @@ Configuration options:
 -  **tag** (*Optional*, string): The tag (seen in front of the message in the logs) to print the message
    with. Defaults to ``main``.
 
+``logger.set_level`` Action
+---------------------------
+
+Set the log level at runtime. The level can only be set to a level that is no less severe than the global log level.
+
+- **level** (**Required**, string): The new log level to set.
+- **tag** (*Optional*, string): The tag to set the log level for. If not set, the global log level will be set.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - logger.set_level: INFO
+
+        - logger.set_level:
+            level: DEBUG
+            tag: mqtt.client
+
+
 Logger Automation
 -----------------
 
@@ -291,5 +315,6 @@ See Also
 --------
 
 - :doc:`/components/uart`
+- :doc:`/components/select/logger`
 - :apiref:`logger/logger.h`
 - :ghedit:`Edit`
