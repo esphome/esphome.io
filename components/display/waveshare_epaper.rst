@@ -9,9 +9,9 @@ The ``waveshare_epaper`` display platform allows you to use
 some E-Paper displays sold by `Waveshare <https://www.waveshare.com/product/displays/e-paper.htm>`__
 with ESPHome. The 2.13" `TTGO module <https://github.com/lewisxhe/TTGO-EPaper-Series>`__ and the
 `Waveshare Cloud Module <https://www.waveshare.com/wiki/2.13inch_e-Paper_Cloud_Module>`__ with an ESP32
-on the board are supported as well. Depending on your specific revision of the TTGO board you might need to try out the ``-b73`` or ``-b1`` 
+on the board are supported as well. Depending on your specific revision of the TTGO board you might need to try out the ``-b73`` or ``-b1``
 version (see below).
-The 1.54" `Good Display gdew0154m09 <https://www.good-display.com/product/206.html>`__ 
+The 1.54" `Good Display gdew0154m09 <https://www.good-display.com/product/206.html>`__
 as used in the `M5Stack Core Ink <https://shop.m5stack.com/products/m5stack-esp32-core-ink-development-kit1-54-elnk-display>`__
 is also supported.
 Similar modules sold by other vendors might also work but not have been tested yet.
@@ -105,6 +105,7 @@ Configuration variables:
 
   - ``1.54in``
   - ``1.54inv2``
+  - ``1.54inv2-b`` - Black/White/Red
   - ``2.13in`` - not tested
   - ``2.13in-ttgo`` - T5_V2.3 tested. Also works for Wemos D1 Mini ePaper Shield 2.13 1.0.0 "LOLIN"
   - ``2.13in-ttgo-b73`` - T5_V2.3 with B73 display tested
@@ -120,22 +121,27 @@ Configuration variables:
   - ``2.90in``
   - ``2.90in-dke``
   - ``2.90inv2``
-  - ``2.90inv2-r2`` - 2.9in V2 display, but with different initialization and full/partial display refresh management than ``2.90inv2`` 
+  - ``2.90inv2-r2`` - 2.9in V2 display, but with different initialization and full/partial display refresh management than ``2.90inv2``
   - ``2.90in-b`` - B/W rendering only
   - ``2.90in-bV3`` - B/W rendering only
   - ``4.20in``
   - ``4.20in-bV2`` - B/W rendering only
+  - ``gdey042t81`` - GoodDisplay GDEY042T81 4.2" B/W
+  - ``4.20in-bV2-bwr`` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - ``5.83in``
   - ``5.83inv2``
   - ``7.30in-f`` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
   - ``7.50in``
   - ``7.50in-bV2`` - also supports v3, B/W rendering only
   - ``7.50in-bV3`` - display with the '(V3)' sticker on the back, B/W rendering only
+  - ``7.50in-bV3-bwr`` - display with the '(V3)' sticker on the back, BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - ``7.50in-bc`` - display with version sticker '(C)' on the back, B/W rendering only
   - ``7.50inV2`` - Can't use with an ESP8266 as it runs out of RAM
   - ``7.50inV2alt`` (alternative version to the above ``7.50inV2``)
+  - ``7.50inV2p`` - Support for partial refresh and fast refresh (Only suitable for ``7.50inV2`` models manufactured after September 2023)
   - ``7.50in-hd-b`` - Can't use with an ESP8266 as it runs out of RAM
-  - ``gdew029t5`` - GooDisplay GDEW029T5, as used on the AdaFruit MagTag (previously incorrectly referred to as GDEY029T94)
+  - ``gdey029t94`` - GooDisplay GDEY029t94, as used in the monochrome 2.9inch display from seeedstudio
+  - ``gdew029t5`` - GooDisplay GDEW029T5, as used on the AdaFruit MagTag
   - ``1.54in-m5coreink-m09`` - GoodDisplay gdew0154m09, as used in the M5Stack Core Ink
   - ``13.3in-k`` - 13.3in, with the K model, 960x680, B/W rendering only
 
@@ -152,7 +158,7 @@ Configuration variables:
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in`` and ``2.90inv2`` models, you have the option to only
+  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in``, ``2.90inv2``,  ``7.50inV2p`` and ``gdew029t5`` models, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to ``30`` on the described models and a full update for
   all other models.
 - **reset_duration** (*Optional*, :ref:`config-time`): Duration for the display reset operation. Defaults to ``200ms``.

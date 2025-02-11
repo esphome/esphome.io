@@ -59,6 +59,50 @@ should be prefixed with the page name (page0/page1 or whatever you have changed 
 
 ``component_name: page0.r0``
 
+.. _switch-nextion-publish_action:
+
+``switch.nextion.publish`` Action
+---------------------------------
+
+You can also publish a state to a Nextion switch from elsewhere in your YAML file
+with the ``switch.nextion.publish`` action.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: nextion
+        id: nextion_switch
+        ...
+    # in some trigger
+    on_...:
+      - switch.nextion.publish:
+          id: nextion_switch
+          state: true
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+      # Templated
+      - switch.nextion.publish:
+          id: nextion_switch
+          state: !lambda 'return true;'
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+
+Configuration options:
+
+- **id** (**Required**, :ref:`config-id`): The ID of the Nextion switch.
+- **state** (**Required**, string, :ref:`templatable <config-templatable>`): The boolean state to publish.
+- **publish_state** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Home Assistant.
+  Default is true.
+- **send_to_nextion** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Nextion
+  display which will update component. Default is true.
+
+.. note::
+
+    This action can also be written in lambdas. See :ref:`nextion_switch_lambda_calls`
+
 .. _nextion_switch_lambda_calls:
 
 Lambda Calls

@@ -11,7 +11,13 @@ With this component you can define images that will be downloaded, decoded and d
 
 .. note::
 
-    Currently only images in PNG format are supported.
+    Current supported formats:
+
+    - BMP images, currently only binary uncompressed images are supported
+
+    - JPEG images, currently only baseline images (no progressive support)
+
+    - PNG images
 
 .. warning::
 
@@ -34,26 +40,26 @@ Configuration variables
   in your display code.
 - **format** (**Required**): The format that the image is encoded with.
 
+  - ``BMP``: The image on the server is encoded in BMP format.
+  - ``JPEG``: The image on the server is encoded in JPEG format.
   - ``PNG``: The image on the server is encoded in PNG format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
 - **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
   This placeholder image will **not** be resized; regardless of the ``resize`` option value for the ``online_image``.
-- **type** (*Optional*): Specifies how to encode image internally. Defaults to ``BINARY``.
+- **type** (*Required*): Specifies how to encode image internally.
 
   - ``BINARY``: Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
-    per pixel, 8 pixels per byte.
-  - ``TRANSPARENT_BINARY``: One color, any pixel that is fully transparent will not be drawn, and any other pixel
-    will be the on color. Uses 1 bit per pixel, 8 pixels per byte.
+    per pixel, 8 pixels per byte. Only ``chroma_key`` transparency is available.
   - ``GRAYSCALE``: Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
-  - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel.
-  - ``RGB24``: Full RGB color stored. Uses 3 bytes per pixel.
-  - ``RGBA``: Full RGB color stored. Uses 4 bytes per pixel. Any pixel with an alpha value < 127 will not be drawn.
-- **use_transparency** (*Optional*, boolean): If set the alpha channel of the input image will be taken into account,
-  and pixels with alpha < 127 will not be drawn. For image types without explicit alpha channel,
-  the color (0, 0, 1) (very dark blue) will be mapped to black, to be able to store transparency information
-  within the image. Explicitly transparent types (``TRANSPARENT_BINARY`` and ``RGBA``) default to ``true`` and cannot be set to ``false``; other types default to ``false``.
+  - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel
+  - ``RGB``: Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
+- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``. See the discussion on transparency in the  :ref:`image component <display-image>`.
 - **update_interval** (*Optional*, int): Redownload the image when the specified time has elapsed. Defaults to ``never`` (i.e. the update component action needs to be called manually).
+
+Advanced options:
+
+- **buffer_size** (*Optional*, int): Explicitly specify the size of the buffer where the image chunks are being downloaded while decoding. The default value (65536) should be OK for most use cases, but you can try to reduce the size for slow connections, to avoid watchdog timeouts.
 
 Automations
 -----------
