@@ -1,11 +1,15 @@
+.. _ili9xxx:
+
 ILI9xxx TFT LCD Series
 ======================
+
+This component implements a driver for displays using the MIPI-DBI protocol, in particular the ILI9xxx series of display drivers,
+however it is also compatible with other displays using the same protocol. It supports both SPI and I80 bus types.
 
 .. seo::
     :description: Instructions for setting up ILI9xxx like TFT LCD display drivers.
     :image: ili9341.jpg
 
-.. _ili9xxx:
 
 Models
 ------
@@ -32,8 +36,6 @@ More display drivers will come in the future.
 
 Usage
 -----
-This component is the successor of the ILI9341 component supporting more display driver chips from the ILI and related
-families.
 
 The ``ILI9xxx`` display platform allows you to use
 ILI9341 (`datasheet <https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf>`__) and other
@@ -78,7 +80,11 @@ All :ref:`graphical display configuration<display-configuration>` options are av
   - ``GC9A01A``, ``CUSTOM``
 
 
-- **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin.
+- **bus_type** (*Optional*): The bus type to use. Options are ``SPI`` (default) or ``I80``.
+- **spi_id** (*Optional*, ID): The ID of the SPI bus to use for bus type ``SPI``. May be omitted if only one SPI bus is available.
+- **i80_id** (*Optional*, ID): The ID of the I80 bus to use for bus type ``I80``. May be omitted if only one I80 bus is available.
+- **data_rate** (*Optional*): The SPI or I80 bus data rate. Default is ``40MHz`` for SPI, ``2MHz`` for I80.
+- **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin. Specified here only for ``SPI`` bus type.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.
 - **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
 
@@ -130,6 +136,7 @@ All :ref:`graphical display configuration<display-configuration>` options are av
 
 
 To modify the SPI setting see :ref:`SPI bus <spi>` . The default **data_rate** is set to ``40MHz`` and the **spi_mode** mode is ``MODE0`` but some displays require ``MODE3`` (*).
+For I80 bus configuration see :ref:`I80 bus <i80>`.
 
 **Note:** The maximum achievable data rate will depend on the chip type (e.g. ESP32 vs ESP32-S3) the pins used (on ESP32 using the default SPI pins allows higher rates) and the connection type (on-board connections will support higher rates than long cables or DuPont wires.) If in doubt, start with a low speed and test higher rates to find what works. A MISO pin should preferably not be specified, as this will limit the maximum rate in some circumstances, and is not required if the SPI bus is used only for the display.
 
@@ -295,5 +302,7 @@ See Also
 --------
 
 - :doc:`index`
+- :doc:`/components/i80`
+- :doc:`/components/spi`
 - :apiref:`ili9xxx/ili9xxx_display.h`
 - :ghedit:`Edit`
