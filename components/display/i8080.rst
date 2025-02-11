@@ -1,0 +1,103 @@
+i8080 TFT LCD Display Interface
+===============================
+
+.. seo::
+    :description: Instructions for setting up the i8080 TFT LCD display interface based on the ESP-IDF LCD/CAM interface.
+
+.. _i8080:
+
+Models
+------
+This this display driver, you can control the following display chipsets:
+  - ST7789V2
+  - NT35510
+
+Note, the above chipsets are currently built into the ESP-IDF framework / drivers.
+
+Usage
+-----
+This component depends on the ESP-IDF framework and requires an ESP32 chip with PSRAM. This is because the component will
+initialize the display buffer within the PSRAM to support DMA transfer to the TFT chipset.  This component is similar to the
+ili9xxx component, but utilizes an 8 or 16 bit parallel interface between the MCU and the display chipset.
+
+.. code-block:: yaml
+
+    # Example minimum configuration of the i8080 component
+    display:
+      - platform: i8080
+        model: st7789
+        dc_pin: GPIO17
+        cs_pin: GPIO21
+        wr_pin: GPIO13
+        data_pins:
+          - GPIO6
+          - GPIO7
+          - GPIO15
+          - GPIO16
+          - GPIO10
+          - GPIO9
+          - GPIO46
+          - GPIO3
+        invert_colors: false
+        show_test_card: true
+
+Configuration Variables:
+************************
+
+All :ref:`graphical display configuration<display-configuration>` options are available, plus the following.
+
+- **model** (**Required**): The model of the display. Options are:
+
+  - ``ST7789``, ``NT35510``
+
+- **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin.
+- **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
+- **wr_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The WR pin.
+- **data_pins** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Parallel bus data pins, list of 8 or 16 pins.
+- **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.
+- **rd_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RD pin.
+
+.. note::
+
+    The RD pin is optional and not currently used, but if provided, will be configured to "pull up" the pin.  This is necessary
+    for some devices, that have the RD pin hardwired to the MCU.
+
+- **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g ``320x240``) or with separate config keys. If not provided the dimensions will be determined by the model selected.
+
+    - **height** (**Required**, int): Specifies height of display in pixels.
+    - **width** (**Required**, int): Specifies width of display.
+    - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
+    - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
+
+- **invert_colors** (**Required**): Specifies whether the display colors should be inverted. Options are ``true`` or ``false`` - if you are unsure, use ``false`` and change if the colors are not as expected.
+- **color_order** (*Optional*): Should be one of ``bgr`` (default) or ``rgb``.
+- **color_depth** (*Optional*): Should be one of ``16BIT`` (default) or ``8BIT``. 
+
+.. note::
+    Not all chipsets support both color depths.
+
+- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of ``0°``, ``90°``, ``180°``, or ``270°``. This option cannot be used with ``transform``.
+- **transform** (*Optional*): Transform the display presentation using hardware. All defaults are ``false``. This option cannot be used with ``rotation``.
+
+   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
+   - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
+   - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
+
+.. note::
+
+    The ``rotation`` variable will do a software based rotation.
+    It is better to use the ``transform`` option to rotate the display in hardware. Use one of the following combinations:
+    - 90 degrees - use ``swap_xy`` with ``mirror_x``
+    - 180 degrees - use ``mirror_x`` with ``mirror_y``
+    - 270 degrees - use ``swap_xy`` with ``mirror_y``
+
+    With 90 and 270 rotations you will also need to swap the ``height`` and ``width`` in ``dimensions`` (see Configuration examples in :ref:`ili9xxx component <ili9xxx>`)
+
+- **frequency** (*Optional*): Clock rate for the display bus, in Hz.  Default is 4 MHz.
+
+See Also
+--------
+
+- :doc:`index`
+- :apiref:`i8080/i8080_display.h`
+- :ghedit:`Edit`
