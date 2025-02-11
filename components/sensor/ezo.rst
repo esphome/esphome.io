@@ -42,7 +42,6 @@ Configuration variables:
 - **address** (**Required**, int): Specify the I²C address of the sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 Automation triggers:

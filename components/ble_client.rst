@@ -459,8 +459,8 @@ Secure connection with a dynamically generated passkey:
 .. code-block:: yaml
 
     api:
-      services:
-        - service: passkey_reply
+      actions:
+        - action: passkey_reply
           variables:
             passkey: int
           then:
@@ -468,7 +468,7 @@ Secure connection with a dynamically generated passkey:
             - ble_client.passkey_reply:
                 id: my_ble_client
                 passkey: !lambda return passkey;
-        - service: numeric_comparison_reply
+        - action: numeric_comparison_reply
           variables:
             accept: bool
           then:

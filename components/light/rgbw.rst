@@ -64,15 +64,12 @@ the ``color_mode`` option of the :ref:`light control actions <light-turn_on_acti
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the light.
 - **red** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the red channel.
 - **green** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the green channel.
 - **blue** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the blue channel.
 - **white** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for the white channel.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
 - **color_interlock** (*Optional*, boolean): When enabled, this will prevent white leds being on at the same
   time as RGB leds. See :ref:`rgbw_color_interlock` for more information. Defaults to ``false``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Light <config-light>`.
 
 See Also

@@ -48,7 +48,7 @@ submit a feature request (see FAQ).
 +---------------------------------------+---------------------+----------------------+
 | Noblex                                | ``noblex``          | yes                  |
 +---------------------------------------+---------------------+----------------------+
-| TCL112, Fuego                         | ``tcl112``          | yes                  |
+| Electrolux, TCL, Fuego                | ``tcl112``          | yes                  |
 +---------------------------------------+---------------------+----------------------+
 | :ref:`Toshiba<toshiba>`               | ``toshiba``         | yes                  |
 +---------------------------------------+---------------------+----------------------+
@@ -88,7 +88,6 @@ controller unit.
 Configuration Variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the climate device.
 - **sensor** (*Optional*, :ref:`config-id`): The sensor that is used to measure the ambient
   temperature. This is only for reporting the current temperature in the frontend.
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to ``true``.
@@ -99,7 +98,6 @@ Configuration Variables:
 
 **Advanced Options**
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **transmitter_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the remote transmitter.
 
 **Specific configuration variables:**
@@ -164,6 +162,7 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
   - ``yaa``
   - ``yac``
   - ``yac1fb9``
+  - ``yx1ff``
 
 .. code-block:: yaml
 
@@ -200,10 +199,14 @@ These air conditioners support two protocols: Midea and Coolix. Therefore, when 
 
 ``mitsubishi`` **Climate**:
 
+.. note::
+
+    - When using this component with Mitsubishi units that only support cooling mode, the Off command may not work. Set **supports_heat** to ``false`` to resolve that issue.
+
 - **set_fan_mode** (*Optional*, string): Select the fan modes desired or that are supported on your remote. Defaults to ``3levels``
 
-  - Options are: ``3levels`` , ``4levels``, ``quiet_4levels``. 
-  
+  - Options are: ``3levels`` , ``4levels``, ``quiet_4levels``.
+
     - ``3levels``; Low [fan speed 1], Medium [2], High [3]
     - ``4levels``; Low [1], Middle [2], Medium [3], High [4]
     - ``quiet_4levels``; Low [1], Middle [2], Medium [3], High [4], Quiet [5]
@@ -211,10 +214,10 @@ These air conditioners support two protocols: Midea and Coolix. Therefore, when 
 - **supports_dry** (*Optional*, boolean): Enables setting dry mode for this unit. Defaults to ``false``.
 - **supports_fan_only** (*Optional*, boolean): Enables setting fan only mode for this unit. Confirm that mode is supported on your remote. Defaults to ``false``.
 
-- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Defaults to ``middle``. 
+- **horizontal_default** (*Optional*, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Defaults to ``middle``.
 
   - Options are: ``left``, ``middle-left``, ``middle``, ``middle-right``, ``right``, ``auto``
-- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing. Defaults to ``middle``. 
+- **vertical_default** (*Optional*, string): What to default to when the AC unit's vertical direction is *not* set to swing. Defaults to ``middle``.
 
   - Options are: ``down``, ``middle-down``, ``middle``, ``middle-up``, ``up``, ``auto``
 
@@ -246,7 +249,7 @@ These air conditioners support two protocols: Midea and Coolix. Therefore, when 
 
 .. note::
 
-    - While they are identified as separate models here, the ``RAC-PT1411HWRU-C`` and ``RAC-PT1411HWRU-C`` are
+    - While they are identified as separate models here, the ``RAC-PT1411HWRU-C`` and ``RAC-PT1411HWRU-F`` are
       in fact the same physical model/unit. They are separated here only because different IR codes are used
       depending on the desired unit of measurement. This only affects how temperature is displayed on the unit itself.
 
@@ -335,13 +338,13 @@ Arduino-HeatpumpIR
 
 The ``heatpumpir`` platform supports dozens of manufacturers and hundreds of AC units by utilising the `Arduino-HeatpumpIR library <https://github.com/ToniA/arduino-heatpumpir>`__.
 
-This platform compiles only under ``arduino`` framework or LibreTiny, and should only be used if your AC unit is not supported by any of the other (native) platforms from above. No support can be provided for Arduino-HeatpumpIR, because it is a third party library. 
+This platform compiles only under ``arduino`` framework or LibreTiny, and should only be used if your AC unit is not supported by any of the other (native) platforms from above. No support can be provided for Arduino-HeatpumpIR, because it is a third party library.
 
 This platform utilises the library's generic one-size-fits-all API, which might not line up perfectly with all of the supported AC units. For example, some AC units have more fan speed options than what the generic API supports.
 
 Additional configuration must be specified for this platform:
 
-- **protocol** (**Required**, string): Choose one of Arduino-HeatpumpIR's supported protcols: 
+- **protocol** (**Required**, string): Choose one of Arduino-HeatpumpIR's supported protcols:
     ``airway``, ``aux``, ``ballu``, ``bgh_aud``, ``carrier_mca``, ``carrier_nqv``, ``carrier_qlima_1``, ``carrier_qlima_1``, ``daikin``,
     ``daikin_arc417``, ``daikin_arc480``, ``electroluxyal``, ``fuego``, ``fujitsu_awyz``, ``gree``, ``greeyaa``, ``greeyac``, ``greeyan``,
     ``greeyap``, ``greeyt``, ``hisense_aud``, ``hitachi``, ``hyundai``, ``ivt``, ``midea``, ``mitsubishi_fa``, ``mitsubishi_fd``,

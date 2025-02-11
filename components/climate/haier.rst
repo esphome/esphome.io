@@ -53,7 +53,7 @@ Newer Haier models using a module called ESP32-for-Haier. It is an ESP32 single-
 
 Also, you can use any other ESP32, ESP8266, or an RPI pico W board. In this case, you will need to cut the original wire or make a connector yourself (the board has a JST SM04B-GHS-TB connector)
 
-This component requires a :ref:`uart` to be setup.
+This component requires a :ref:`UART bus <uart>` to be setup.
 
 .. code-block:: yaml
 
@@ -61,11 +61,10 @@ This component requires a :ref:`uart` to be setup.
     climate:
       - platform: haier
         id: haier_ac
-        protocol: hOn
+        protocol: hon
         name: Haier AC
         uart_id: ac_port
         wifi_signal: true
-        beeper: true
         display: true
         visual:
           min_temperature: 16 °C
@@ -85,7 +84,6 @@ This component requires a :ref:`uart` to be setup.
         - BOTH
       supported_presets:
         - AWAY
-        - ECO
         - BOOST
         - SLEEP
       on_alarm_start:
@@ -111,25 +109,23 @@ This component requires a :ref:`uart` to be setup.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, :ref:`config-id`): ID of the UART port to communicate with AC.
-- **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: hon or smartair2. The default value is smartair2.
-- **name** (**Required**, string): The name of the climate device.
-- **wifi_signal** (*Optional*, boolean): If true - send wifi signal level to AC.
-- **answer_timeout** (*Optional*, :ref:`config-time`): Responce timeout. The default value is 200ms.
-- **alternative_swing_control** (*Optional*, boolean): (supported by smartAir2 only) If true - use alternative values to control swing mode. Use only if the original control method is not working for your AC.
-- **status_message_header_size** (*Optional*, int): (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variations. Use only if you are sure what you are doing. The default value: 0.
-- **control_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use bigger packets. The default value: 10.
-- **sensors_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the sensor packet of the status message. Can help with some models of ACs that have bigger sensor packet. The default value: 22, minimum value: 18.
-- **control_method** (*Optional*, list): (supported only by hOn) Defines control method (should be supported by AC). Supported values: MONITOR_ONLY - no control, just monitor status, SET_GROUP_PARAMETERS - set all AC parameters with one command (default method), SET_SINGLE_PARAMETER - set each parameter individually (this method is supported by some new ceiling ACs like AD71S2SM3FA)
+- **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: ``hon`` or ``smartair2``. The default value is ``smartair2``.
+- **wifi_signal** (*Optional*, boolean): If ``true`` - send wifi signal level to AC.
+- **answer_timeout** (*Optional*, :ref:`config-time`): Responce timeout. The default value is ``200ms``.
+- **alternative_swing_control** (*Optional*, boolean): (supported by smartAir2 only) If ``true`` - use alternative values to control swing mode. Use only if the original control method is not working for your AC.
+- **status_message_header_size** (*Optional*, int): (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variations. Use only if you are sure what you are doing. The default value: ``0``.
+- **control_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use bigger packets. The default value: ``10``.
+- **sensors_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the sensor packet of the status message. Can help with some models of ACs that have bigger sensor packet. The default value: ``22``, minimum value: ``18``.
+- **control_method** (*Optional*, list): (supported only by hOn) Defines control method (should be supported by AC). Supported values: ``MONITOR_ONLY`` - no control, just monitor status, ``SET_GROUP_PARAMETERS`` - set all AC parameters with one command (default method), ``SET_SINGLE_PARAMETER`` - set each parameter individually (this method is supported by some new ceiling ACs like AD71S2SM3FA)
 - **display** (*Optional*, boolean): Can be used to set the AC display off.
 - **beeper** (*Optional*, boolean): Can be used to disable beeping on commands from AC. Supported only by hOn protocol.
-- **supported_modes** (*Optional*, list): Can be used to disable some of AC modes. Possible values: 'OFF', HEAT_COOL, COOL, HEAT, DRY, FAN_ONLY
-- **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: 'OFF', VERTICAL, HORIZONTAL, BOTH
-- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: AWAY, BOOST, COMFORT. Possible values for hOn are: AWAY, ECO, BOOST, SLEEP. AWAY preset can be enabled only in HEAT mode, it is disabled by default
-- **on_alarm_start** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC activates a new alarm. See :ref:`haier-on_alarm_start`
-- **on_alarm_end** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See :ref:`haier-on_alarm_end`
-- **on_status_message** (*Optional*, :ref:`Automation <automation>`): Automation to perform when status message received from AC. See :ref:`haier-on_status_message`
+- **supported_modes** (*Optional*, list): Can be used to disable some of AC modes. Possible values: ``'OFF'``, ``HEAT_COOL``, ``COOL``, ``HEAT``, ``DRY``, ``FAN_ONLY``.
+- **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: ``'OFF'``, ``VERTICAL``, ``HORIZONTAL``, ``BOTH``.
+- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: ``AWAY``, ``BOOST``, ``COMFORT``. Possible values for hOn are: ``AWAY``, ``BOOST``, ``SLEEP``. ``AWAY`` preset can be enabled only in ``HEAT`` mode, it is disabled by default.
+- **on_alarm_start** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC activates a new alarm. See :ref:`haier-on_alarm_start`.
+- **on_alarm_end** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See :ref:`haier-on_alarm_end`.
+- **on_status_message** (*Optional*, :ref:`Automation <automation>`): Automation to perform when status message received from AC. See :ref:`haier-on_status_message`.
 - All other options from :ref:`Climate <config-climate>`.
 
 Automations
@@ -140,12 +136,12 @@ Automations
 ``on_alarm_start`` Trigger
 **************************
 
-This automation will be triggered when a new alarm is activated by AC. The error code of the alarm will be given in the variable ``code`` (``uint8_t``), error message in the variable ``message`` (``const char *``). Those variables can be used in :ref:`lambdas <config-lambda>`
+This automation will be triggered when a new alarm is activated by AC. The error code of the alarm will be given in the variable ``code`` (``uint8_t``), error message in the variable ``message`` (``const char *``). Those variables can be used in :ref:`lambdas <config-lambda>`.
 
 .. code-block:: yaml
 
     climate:
-      - protocol: hOn
+      - protocol: hon
         on_alarm_start:
           then:
             - logger.log:
@@ -158,12 +154,12 @@ This automation will be triggered when a new alarm is activated by AC. The error
 ``on_alarm_end`` Trigger
 ************************
 
-This automation will be triggered when a previously activated alarm is deactivated by AC. The error code of the alarm will be given in the variable ``code`` (``uint8_t``), error message in the variable ``message`` (``const char *``). Those variables can be used in :ref:`lambdas <config-lambda>`
+This automation will be triggered when a previously activated alarm is deactivated by AC. The error code of the alarm will be given in the variable ``code`` (``uint8_t``), error message in the variable ``message`` (``const char *``). Those variables can be used in :ref:`lambdas <config-lambda>`.
 
 .. code-block:: yaml
 
     climate:
-      - protocol: hOn
+      - protocol: hon
         on_alarm_end:
           then:
             - logger.log:
@@ -176,13 +172,13 @@ This automation will be triggered when a previously activated alarm is deactivat
 ``on_status_message`` Trigger
 *****************************
 
-This automation will be triggered when component receives new status packet from AC. Raw message binary (without header and checksum) will be provided in the variable ``data`` (``const char *``), message length in the variable ``data_size`` (``uint8_t``). Those variables can be used in :ref:`lambdas <config-lambda>`
+This automation will be triggered when component receives new status packet from AC. Raw message binary (without header and checksum) will be provided in the variable ``data`` (``const char *``), message length in the variable ``data_size`` (``uint8_t``). Those variables can be used in :ref:`lambdas <config-lambda>`.
 This trigger can be used to support some features that unique for the model and not supported by others.
 
 .. code-block:: yaml
 
     climate:
-      - protocol: hOn
+      - protocol: hon
         on_status_message:
           then:
             - logger.log:
@@ -226,7 +222,7 @@ This action toggles AC power
 ``climate.haier.display_on`` Action
 ***********************************
 
-This action turns the AC display on
+This action turns the AC display on.
 
 .. code-block:: yaml
 
@@ -237,7 +233,7 @@ This action turns the AC display on
 ``climate.haier.display_off`` Action
 ************************************
 
-This action turns the AC display off
+This action turns the AC display off.
 
 .. code-block:: yaml
 
@@ -248,7 +244,7 @@ This action turns the AC display off
 ``climate.haier.health_on`` Action
 **********************************
 
-Turn on health mode (`UV light sterilization <https://www.haierhvac.eu/en/node/1809>`__)
+Turn on health mode (`UV light sterilization <https://www.haierhvac.eu/en/node/1809>`__).
 
 .. code-block:: yaml
 
@@ -259,7 +255,7 @@ Turn on health mode (`UV light sterilization <https://www.haierhvac.eu/en/node/1
 ``climate.haier.health_off`` Action
 ***********************************
 
-Turn off health mode
+Turn off health mode.
 
 .. code-block:: yaml
 
@@ -270,7 +266,7 @@ Turn off health mode
 ``climate.haier.beeper_on`` Action
 **********************************
 
-(supported only by hOn) This action enables beep feedback on every command sent to AC
+(supported only by hOn) This action enables beep feedback on every command sent to AC.
 
 .. code-block:: yaml
 
@@ -281,7 +277,7 @@ Turn off health mode
 ``climate.haier.beeper_off`` Action
 ***********************************
 
-(supported only by hOn) This action disables beep feedback on every command sent to AC (keep in mind that this will not work for IR remote commands)
+(supported only by hOn) This action disables beep feedback on every command sent to AC (keep in mind that this will not work for IR remote commands).
 
 .. code-block:: yaml
 
@@ -305,7 +301,7 @@ Turn off health mode
 ``climate.haier.set_horizontal_airflow`` Action
 ***********************************************
 
-(supported only by hOn) Set direction for horizontal airflow if the horizontal swing is disabled. Possible values: Max_Left, Left, Center, Right, Max_Right.
+(supported only by hOn) Set direction for horizontal airflow if the horizontal swing is disabled. Possible values: ``Max_Left``, ``Left``, ``Center``, ``Right``, ``Max_Right``.
 
 .. code-block:: yaml
 
@@ -318,7 +314,7 @@ Turn off health mode
 ``climate.haier.start_self_cleaning`` Action
 ********************************************
 
-(supported only by hOn) Start `self-cleaning <https://www.haier.com/in/blogs/beat-the-summer-heat-with-haier-self-cleaning-ac.shtml>`__
+(supported only by hOn) Start `self-cleaning <https://www.haier.com/in/blogs/beat-the-summer-heat-with-haier-self-cleaning-ac.shtml>`__.
 
 .. code-block:: yaml
 
@@ -329,7 +325,7 @@ Turn off health mode
 ``climate.haier.start_steri_cleaning`` Action
 *********************************************
 
-(supported only by hOn) Start 56°C steri-cleaning
+(supported only by hOn) Start 56°C steri-cleaning.
 
 .. code-block:: yaml
 
@@ -345,6 +341,7 @@ See Also
 - :doc:`Haier Climate Binary Sensors </components/binary_sensor/haier>`
 - :doc:`Haier Climate Text Sensors </components/text_sensor/haier>`
 - :doc:`Haier Climate Buttons </components/button/haier>`
+- :doc:`Haier Climate Switches </components/switch/haier>`
 - :doc:`/components/climate/index`
-- :apiref:`haier/climate/haier.h`
+- :apiref:`haier/climate/haier_base.h`
 - :ghedit:`Edit`

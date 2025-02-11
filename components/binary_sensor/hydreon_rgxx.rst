@@ -34,27 +34,15 @@ Configuration variables:
 
 - **too_cold** (*Optional*): ``true`` if the sensor reports being too cold. Hydreon only mentions this feature for the RG-9.
 
-  - **name** (**Required**, string): The name for the sensor.
-
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 - **lens_bad** (*Optional*): ``true`` if the sensor reports the lens being bad.
 
-  - **name** (**Required**, string): The name for the sensor.
-
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 - **em_sat** (*Optional*): ``true`` if the sensor reports the Emitter being saturated.
 
-  - **name** (**Required**, string): The name for the sensor.
-
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 
 See Also

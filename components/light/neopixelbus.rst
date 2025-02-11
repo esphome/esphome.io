@@ -37,10 +37,7 @@ Configuration variables:
 
 **Base Options:**
 
-- **name** (**Required**, string): The name of the light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **num_leds** (**Required**, int): The number of LEDs attached.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
 
 **Type Options:**
 
@@ -86,8 +83,6 @@ If you have one line, only specify ``pin``, otherwise specify both ``clock_pin``
 - **pin** (**Required**, :ref:`config-pin`): The pin for the data line of the light.
 - **clock_pin** (**Required**, :ref:`config-pin`): The pin for the clock line of the light, for two-wire lights.
 - **data_pin** (**Required**, :ref:`config-pin`): The pin for the data line of the light, for two-wire lights.
-
-**Advanced Options:**
 
 - All other options from :ref:`Light <config-light>`.
 

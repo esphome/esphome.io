@@ -55,7 +55,7 @@ Configuration variables:
   - **probability_cutoff** (*Optional*, percentage): The probability cutoff for voice activity detection.
     If the probability is below this value, then no wake word will be accepted.
     A larger value reduces the number of false accepts but increases the number of false rejections.
-  - **sliding_window_size** (*Optional*, int): The size of the sliding window for voice activity detection. The maximum of the probabilities in the sliding window is compared to ``probability_cutoff`` to determine if voice activity is detected.
+  - **sliding_window_size** (*Optional*, int): The size of the sliding window average for voice activity detection. The average probability is compared to ``probability_cutoff`` to determine if voice activity is detected.
 
 
 The ``probability_cutoff`` and ``sliding_window_size`` are provided by the JSON file but can be overridden in YAML. A default VAD model is provided with the ``vad`` configuration variables, but a different model can be overridden in YAML.

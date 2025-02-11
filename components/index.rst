@@ -26,6 +26,9 @@ Components
     touchscreen/index
     lock/index
     display_menu/index
+    lvgl/index
+    audio_adc/index
+    audio_dac/index
     media_player/index
     microphone/index
     speaker/index

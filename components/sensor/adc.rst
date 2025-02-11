@@ -31,14 +31,18 @@ Configuration variables:
 
 - **pin** (**Required**, :ref:`config-pin`): The pin to measure the voltage on.
   Or on the ESP8266 or Raspberry Pi Pico it could alternatively be set to ``VCC``, see :ref:`adc-vcc`.
-- **name** (**Required**, string): The name of the voltage sensor.
 - **attenuation** (*Optional*): Only on ESP32. Specify the ADC
   attenuation to use. See :ref:`adc-esp32_attenuation`. Defaults to ``0db``.
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See :ref:`adc-raw`. Defaults to ``false``.
 - **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if ``attenuation`` is set to ``auto``. Defaults to ``1``.
+- **sampling_mode** (*Optional*): Sampling method to use when multiple samples are taken. 
+
+  - ``avg`` average of all samples (**Default**)
+  - ``min`` minimal value from all samples
+  - ``max`` maximal value from all samples
+
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. note::
@@ -63,7 +67,7 @@ ESP32 Attenuation
 -----------------
 
 On the ESP32 the voltage measured with the ADC caps out at ~1.1V by default as the sensing range (attenuation of the ADC) is set to ``0db`` by default.
-Measuring higher voltages requires setting ``attenuation`` to one of the following values: ``0db``, ``2.5db``, ``6db``, ``11db``.
+Measuring higher voltages requires setting ``attenuation`` to one of the following values: ``0db``, ``2.5db``, ``6db``, ``12db``.
 There's more information `at the manufacturer's website <https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t>`__.
 
 To simplify this, we provide the setting ``attenuation: auto`` for an automatic/seamless transition among scales. `Our implementation

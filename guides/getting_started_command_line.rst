@@ -211,21 +211,24 @@ want new features, please either create a new issue on the `GitHub issue
 tracker <https://github.com/esphome/issues/issues>`__ or find us on the
 `Discord chat <https://discord.gg/KhAMKrd>`__ (also make sure to read the :doc:`FAQ <faq>`).
 
-Bonus: ESPHome dashboard
-------------------------
+.. _esphome-device-builder-docker:
 
-ESPHome features a dashboard that you can use to easily manage your nodes
-from a nice web interface. It was primarily designed for
-:doc:`the Home Assistant add-on <getting_started_hassio>`, but also works with a simple command.
+Bonus: ESPHome Device Builder
+-----------------------------
 
-To start the ESPHome dashboard, simply start ESPHome with the following command
-(with ``config/`` pointing to a directory where you want to store your configurations)
+The ESPHome Device Builder allows you to easily manage your nodes from a nice web interface. It was primarily designed
+as a :doc:`Home Assistant add-on <getting_started_hassio>`, but can run in docker independently from Home Assistant.
+
+To start the ESPHome Device Builder, simply start ESPHome with the following command (with ``config/`` pointing to a
+directory where you want to store your configurations):
 
 .. code-block:: bash
 
     # Install dashboard dependencies
-    pip install tornado esptool\
-     esphome dashboard config
+    pip install tornado esptool
+
+    # Start the dashboard
+    esphome dashboard config
 
     # On Docker, host networking mode is required for online status indicators
     docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
@@ -235,7 +238,9 @@ To start the ESPHome dashboard, simply start ESPHome with the following command
     docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
 
 
-After that, you will be able to access the dashboard through ``localhost:6052``.
+After that, you will be able to access the ESPHome Device Builder at ``localhost:6052``.
+
+Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 
 .. figure:: images/dashboard_states.png
 

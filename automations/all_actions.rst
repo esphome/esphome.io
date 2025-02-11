@@ -32,10 +32,12 @@
 - **logger:** ``log``
 - **max6956:** ``set_brightness_global``, ``set_brightness_mode``
 - **media_player:** ``pause``, ``play``, ``play_media``, ``stop``, ``toggle``, ``volume_down``, ``volume_set``, ``volume_up``
+- **media_player.speaker:** ``play_on_device_media_file``
 - **mhz19:** ``abc_disable``, ``abc_enable``, ``calibrate_zero``
 - **micro_wake_word:** ``start``, ``stop``
 - **microphone:** ``capture``, ``stop_capture``
 - **midea_ac:** ``beeper_off``, ``beeper_on``, ``display_toggle``, ``follow_me``, ``power_off``, ``power_on``, ``power_toggle``, ``swing_step``
+- **mixer_speaker:** ``apply_ducking``
 - **mqtt:** ``publish``, ``publish_json``
 - **number:** ``decrement``, ``increment``, ``operation``, ``set``, ``to_max``, ``to_min``
 - **output:** ``set_level``, ``turn_off``, ``turn_on``
@@ -57,7 +59,7 @@
 - **senseair:** ``abc_disable``, ``abc_enable``, ``abc_get_period``, ``background_calibration``, ``background_calibration_result``
 - **servo:** ``detach``, ``write``
 - **sim800l:** ``connect``, ``dial``, ``disconnect``, ``send_sms``, ``send_ussd``
-- **speaker:** ``play``, ``stop``
+- **speaker:** ``play``, ``stop``, ``finish``, ``volume_set``
 - **sprinkler:** ``clear_queued_valves``, ``next_valve``, ``pause``, ``previous_valve``, ``queue_valve``, ``resume``, ``resume_or_start_full_cycle``, ``set_divider``, ``set_multiplier``, ``set_repeat``, ``set_valve_run_duration``, ``shutdown``, ``start_from_queue``, ``start_full_cycle``, ``start_single_valve``
 - **sps30:** ``start_fan_autoclean``
 - **stepper:** ``report_position``, ``set_acceleration``, ``set_deceleration``, ``set_speed``, ``set_target``

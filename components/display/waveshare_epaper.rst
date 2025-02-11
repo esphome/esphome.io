@@ -83,6 +83,7 @@ Configuration variables:
 
   - ``1.54in``
   - ``1.54inv2``
+  - ``1.54inv2-b`` - Black/White/Red
   - ``2.13in`` - not tested
   - ``2.13in-ttgo`` - T5_V2.3 tested. Also works for Wemos D1 Mini ePaper Shield 2.13 1.0.0 "LOLIN"
   - ``2.13in-ttgo-b73`` - T5_V2.3 with B73 display tested
@@ -108,6 +109,7 @@ Configuration variables:
   - ``7.50in``
   - ``7.50in-bV2`` - also supports v3, B/W rendering only
   - ``7.50in-bV3`` - display with the '(V3)' sticker on the back, B/W rendering only
+  - ``7.50in-bV3-bwr`` - display with the '(V3)' sticker on the back, BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - ``7.50in-bc`` - display with version sticker '(C)' on the back, B/W rendering only
   - ``7.50inV2`` - Can't use with an ESP8266 as it runs out of RAM
   - ``7.50inV2alt`` (alternative version to the above ``7.50inV2``)
@@ -130,7 +132,7 @@ Configuration variables:
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in`` and ``2.90inv2`` models, you have the option to only
+  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in``, ``2.90inv2`` and ``gdew029t5`` models, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to ``30`` on the described models and a full update for
   all other models.
 - **reset_duration** (*Optional*, :ref:`config-time`): Duration for the display reset operation. Defaults to ``200ms``.

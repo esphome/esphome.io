@@ -46,21 +46,15 @@ Configuration variables:
 - **data_pin** (**Required**, :ref:`config-pin`): The pin where the data bus is connected.
 - **co2** (*Optional*): The information for the CO2 sensor.
 
-  - **name** (**Required**, string): The name for the CO2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): The information for the humidity sensor
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.

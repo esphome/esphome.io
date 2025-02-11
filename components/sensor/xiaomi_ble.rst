@@ -4,7 +4,7 @@ Xiaomi Mijia BLE Sensors
 .. seo::
     :description: Instructions for setting up Xiaomi Mi Home (Mijia) bluetooth-based sensors in ESPHome.
     :image: xiaomi_mijia_logo.jpg
-    :keywords: Xiaomi, Mi Home, Mijia, BLE, Bluetooth, HHCCJCY01, GCLS002, HHCCPOT002, LYWSDCGQ, LYWSD02, CGG1, LYWSD03MMC, CGD1, JQJCY01YM, MUE4094RT, WX08ZM, MHO, C401, MHOC401
+    :keywords: Xiaomi, Mi Home, Mijia, BLE, Bluetooth, HHCCJCY01, GCLS002, HHCCPOT002, LYWSDCGQ, LYWSD02, LYWSD02MMC, CGG1, LYWSD03MMC, CGD1, JQJCY01YM, MUE4094RT, WX08ZM, MHO, C401, MHOC401
 
 The ``xiaomi_ble`` sensor platform lets you track the output of Xiaomi Bluetooth Low Energy devices using the :doc:`/components/esp32_ble_tracker`. This component will track, for example, the temperature, humidity, moisture, conductivity, illuminance, formaldehyde, mosquito tablet and battery level of the device every time the sensor sends out a BLE broadcast. Contrary to other implementations, ``xiaomi_ble`` listens passively to advertisement packets and does not pair with the device. Hence ESPHome has no impact on battery life. Thus, if you only use such sensors, you can safely set ``scan_parameters.active: false`` in ``esp32_ble_tracker`` configuration, to save from spamming your RF environment with useless scan requests.
 
@@ -142,6 +142,26 @@ Configuration example:
           name: "LYWSD02 Humidity"
         battery_level:
           name: "LYWSD02 Battery Level"
+
+LYWSD02MMC
+**********
+
+Hygro thermometer, rectangular body, e-ink display, broadcasts temperature, humidity and battery level. Encrypted.
+
+Configuration example:
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: xiaomi_lywsd02mmc
+        mac_address: "A4:C1:38:54:5E:18"
+        bindkey: "2529d8e0d23150a588675cc54ad48400"
+        temperature:
+          name: "LYWSD02MMC Temperature"
+        humidity:
+          name: "LYWSD02MMC Humidity"
+        battery_level:
+          name: "LYWSD02MMC Battery Level"
 
 CGG1
 ****
@@ -539,7 +559,7 @@ Required:
 - **mac_address** (MAC Address): The MAC address of the device.
 - **bindkey** (string, 32 characters, case insensitive): The key to decrypt the BLE advertisements for encrypted sensor types
 
-Optional with **name**, **id** (:ref:`config-id`) and all other options from :ref:`Sensor <config-sensor>`:
+All options from :ref:`Sensor <config-sensor>` are supported for:
 
 - **temperature**
 - **humidity**

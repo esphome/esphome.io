@@ -1087,38 +1087,38 @@ memory use.
 Expose Sprinkler Controller Actions via user-API
 ************************************************
 
-This configuration snippet illustrates how user-defined ESPHome API services may be used to expose
+This configuration snippet illustrates how user-defined ESPHome API actions may be used to expose
 various sprinkler controller actions to the front end. This could be useful to change settings
 and/or trigger sprinkler controller actions using automations.
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_multiplier
+      actions:
+        - action: set_multiplier
           variables:
             multiplier: float
           then:
             - sprinkler.set_multiplier:
                 id: lawn_sprinkler_ctrlr
                 multiplier: !lambda 'return multiplier;'
-        - service: start_full_cycle
+        - action: start_full_cycle
           then:
             - sprinkler.start_full_cycle: lawn_sprinkler_ctrlr
-        - service: start_single_valve
+        - action: start_single_valve
           variables:
             valve: int
           then:
             - sprinkler.start_single_valve:
                 id: lawn_sprinkler_ctrlr
                 valve_number: !lambda 'return valve;'
-        - service: next_valve
+        - action: next_valve
           then:
             - sprinkler.next_valve: lawn_sprinkler_ctrlr
-        - service: previous_valve
+        - action: previous_valve
           then:
             - sprinkler.previous_valve: lawn_sprinkler_ctrlr
-        - service: shutdown
+        - action: shutdown
           then:
             - sprinkler.shutdown: lawn_sprinkler_ctrlr
 

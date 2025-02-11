@@ -31,22 +31,16 @@ Configuration variables:
 
 - **co2** (*Optional*): The information for the CO₂ sensor.
 
-  - **name** (**Required**, string): The name for the CO₂eq sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature** (*Optional*): The information for the Temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 
 - **humidity** (*Optional*): The information for the Humidity sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature_offset** (*Optional*, float):  The temperature offset can depend
   on various factors such as the SCD4x measurement mode, self-heating of close
@@ -105,13 +99,13 @@ As of April 2022 the average fresh air Co² concentration is 419 ppm.
             value: 419   # outside average April 2022
             id: my_scd41
 
-value can also be a template, for example to define a Home Assistant calibration service:
+value can also be a template, for example to define a Home Assistant calibration action:
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: calibrate_co2_value
+      actions:
+        - action: calibrate_co2_value
           variables:
             co2_ppm: int
           then:
@@ -166,8 +160,8 @@ This example creates a service `set_ambient_pressure` that can be called from Ho
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_ambient_pressure
+      actions:
+        - action: set_ambient_pressure
           variables:
             pressure_mbar: int
           then:

@@ -61,91 +61,57 @@ Configuration variables:
   device.
 - **humidity** (*Optional*): The information for the humidity sensor
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pressure** (*Optional*): The information for the pressure sensor.
 
-  - **name** (**Required**, string): The name for the pressure sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **acceleration** (*Optional*): The information for the acceleration
   sensor.
 
-  - **name** (**Required**, string): The name for the acceleration sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **acceleration_x** (*Optional*): The information for the acceleration x
   sensor.
 
-  - **name** (**Required**, string): The name for the acceleration x sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **acceleration_y** (*Optional*): The information for the acceleration y
   sensor.
 
-  - **name** (**Required**, string): The name for the acceleration y sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **acceleration_z** (*Optional*): The information for the acceleration z
   sensor.
 
-  - **name** (**Required**, string): The name for the acceleration z sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **battery_voltage** (*Optional*): The information for the battery voltage
   sensor.
 
-  - **name** (**Required**, string): The name for the battery voltage sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **tx_power** (*Optional*): The information for the transmit power
   sensor
 
-  - **name** (**Required**, string): The name for the transmit power sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
   - Only available if RAWv2 protocol is used.
 
 - **movement_counter** (*Optional*): The information for the movement count
   sensor
 
-  - **name** (**Required**, string): The name for the movement count sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
   - Only available if RAWv2 protocol is used.
 
 - **measurement_sequence_number** (*Optional*): The information for the
   measurement sequence number sensor
 
-  - **name** (**Required**, string): The name for the measurement sequence
-    number sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use
-    in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
   - Only available if RAWv2 protocol is used.
 
 Setting Up Devices

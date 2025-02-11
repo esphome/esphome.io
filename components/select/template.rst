@@ -25,7 +25,6 @@ using :ref:`lambdas <config-lambda>`.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the Select.
 - **options** (**Required**, list): The list of options this Select has.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the current option of the select.
@@ -42,7 +41,6 @@ Configuration variables:
 - **initial_option** (*Optional*, string): The option to set the option to on setup if not
   restored with ``restore_value``.
   Cannot be used with ``lambda``. Defaults to the first option in the ``options`` list.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Select <config-select>`.
 
 .. note::

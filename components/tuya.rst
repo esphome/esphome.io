@@ -140,5 +140,6 @@ See Also
 - :doc:`/components/binary_sensor/tuya`
 - :doc:`/components/sensor/tuya`
 - :doc:`/components/text_sensor/tuya`
+- :doc:`/components/number/tuya`
 - :apiref:`tuya/tuya.h`
 - :ghedit:`Edit`

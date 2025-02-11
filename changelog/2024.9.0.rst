@@ -1,0 +1,242 @@
+ESPHome 2024.9.0 - 18th September 2024
+======================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.9.0.
+    :image: /_static/changelog-2024.9.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    UDP, components/udp, udp.svg
+    StatsD, components/statsd, connection.svg
+    BL0906, components/sensor/bl0906, bl0906.png
+    CH422G, components/ch422g, ch422g.svg
+    BMP280 SPI, components/sensor/bmp280, bmp280.jpg
+    LTR501 & LTR301 & LTR558, components/sensor/ltr501, ltr501.jpg
+
+UDP & StatsD Components
+-----------------------
+
+This release brings two new data driven components to ESPHome.
+
+The first is the :doc:`UDP Component </components/udp>` which allows direct communication between ESPHome
+devices over the local network. To start off, only sensor and binary sensor data can be transmitted, and
+hopefully more entity types will be supported in the future.
+
+Next is the :doc:`StatsD Component </components/statsd>` which allows you to send sensor data
+directly to a statsd server for monitoring.
+
+
+Breaking Changes
+----------------
+
+There are a few breaking changes this release that will require changes in YAML if you are
+using the affected components. Please make sure to check the list below for details about each one.
+The documentation is always the best place to find the most up-to-date information on configuration for
+any given component found in ESPHome.
+
+
+Thank you for your support
+--------------------------
+
+Did you know that Jesse and Keith both are employed at `Nabu Casa <https://nabucasa.com/>`__ to work full-time on ESPHome?
+Yep, that's possible thanks to everyone who subscribes to Home Assistant Cloud. Thank you!
+
+
+Release 2024.9.1 - September 23
+-------------------------------
+
+- Copy active wake words to message :esphomepr:`7481` by :ghuser:`synesthesiam`
+
+
+Release 2024.9.2 - October 1
+----------------------------
+
+- fix bl0906 reset energy action :esphomepr:`7488` by :ghuser:`ssieb`
+- [config_validation] Fix bug with extras on schemas :esphomepr:`7497` by :ghuser:`jesserockz`
+- Prevent rp2040 randomly breaking the build :esphomepr:`7507` by :ghuser:`nkinnan`
+- [rp2040] Always use maxgerhardt platform fork :esphomepr:`7514` by :ghuser:`jesserockz`
+
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add support for BL0906 energy meter :esphomepr:`7339` by :ghuser:`tarontop` (new-integration)
+- [udp] Implement UDP sensor broadcast :esphomepr:`6865` by :ghuser:`clydebarrow` (new-integration)
+- CH422G support :esphomepr:`7356` by :ghuser:`jesterret` (new-integration)
+- Add StatsD component :esphomepr:`6642` by :ghuser:`Links2004` (new-integration)
+- Add support for using BMP280 with SPI :esphomepr:`7053` by :ghuser:`ademuri` (new-integration) (breaking-change)
+- LTR-501, LTR-301, LTR-558 Series of Lite-On Light (ALS) and Proximity(PS) sensors :esphomepr:`6262` by :ghuser:`latonita` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- [ili9xxx] Make `invert_colors` required :esphomepr:`7292` by :ghuser:`gvdhoven` (breaking-change)
+- Add support for using BMP280 with SPI :esphomepr:`7053` by :ghuser:`ademuri` (new-integration) (breaking-change)
+- Move I2S config settings the the base i2sAudio files. Phase 1 :esphomepr:`7183` by :ghuser:`nielsnl68` (breaking-change)
+- [i2s_audio] Add more options to speakers and microphones :esphomepr:`7306` by :ghuser:`pyos` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- [voice-assistant] Dont error on ``no_wake_word`` timeout error with streaming wake word :esphomepr:`7435` by :ghuser:`jesserockz`
+- Improve manufacturer data tracing to identify BLE devices a bit easie… :esphomepr:`7332` by :ghuser:`tomer-w`
+- Add sample_bytes to media player supported format :esphomepr:`7451` by :ghuser:`synesthesiam`
+- [docker] Bump git from 1:2.39.2-1.1 to 1:2.39.5-0+deb12u1 :esphomepr:`7452` by :ghuser:`jesserockz`
+- Add voice assistant configuration messages :esphomepr:`7445` by :ghuser:`synesthesiam`
+- Dont replace project name spaces with underlines :esphomepr:`7455` by :ghuser:`jesserockz`
+- Add voice assistant methods for configuration :esphomepr:`7459` by :ghuser:`synesthesiam`
+
+All changes
+^^^^^^^^^^^
+
+- [code-quality] fix performance-unnecessary-value-param :esphomepr:`7274` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy prometheus :esphomepr:`7284` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy ota :esphomepr:`7282` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy e131 :esphomepr:`7281` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy wireguard :esphomepr:`7287` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy improv_serial :esphomepr:`7283` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy captive_portal :esphomepr:`7280` by :ghuser:`tomaszduda23`
+- Add HMAC-MD5 support for authenticating OTA updates :esphomepr:`7200` by :ghuser:`dwmw2` (new-integration)
+- [const] Add UNIT_LITRE :esphomepr:`7317` by :ghuser:`Roving-Ronin`
+- [code-quality] fix clang-tidy socket :esphomepr:`7285` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy cstddef :esphomepr:`7324` by :ghuser:`tomaszduda23`
+- Add output source priority "hybrid" :esphomepr:`7322` by :ghuser:`syssi`
+- Enable verbose mode from env ESPHOME_VERBOSE or --verbose :esphomepr:`6987` by :ghuser:`ptr727`
+- Tuya Number: allow to set hidden datapoints :esphomepr:`7024` by :ghuser:`szupi-ipuzs`
+- feat: Expand ByteBuffer :esphomepr:`7316` by :ghuser:`Rapsssito`
+- [ledc] Tweak fix in #6997 :esphomepr:`7336` by :ghuser:`kbx81`
+- [ledc] Fix maximum brightness on ESP-IDF 5.1 :esphomepr:`7342` by :ghuser:`clydebarrow`
+- [lvgl] Bug fixes: :esphomepr:`7341` by :ghuser:`clydebarrow`
+- [const] Move ``CONF_LINE_FREQUENCY`` to const.py :esphomepr:`7351` by :ghuser:`jesserockz`
+- bl0942: Fix init sequence, add address and line_frequency options :esphomepr:`7250` by :ghuser:`dwmw2`
+- Add supported formats to media player :esphomepr:`7318` by :ghuser:`synesthesiam`
+- Add reset to esp32_rmt_led_strip :esphomepr:`7354` by :ghuser:`angelnu`
+- [ili9xxx] Make `invert_colors` required :esphomepr:`7292` by :ghuser:`gvdhoven` (breaking-change)
+- Add WS2811 to esp32_rmt_led_strip :esphomepr:`7353` by :ghuser:`angelnu`
+- [lvgl] Add lvgl.widget.focus action and related triggers. :esphomepr:`7315` by :ghuser:`clydebarrow`
+- esp32_can: suppress compiler warning :esphomepr:`7372` by :ghuser:`mrk-its`
+- Add support for BL0906 energy meter :esphomepr:`7339` by :ghuser:`tarontop` (new-integration)
+- [platformio] Add environments for ESP-IDF 5.3 for development :esphomepr:`7371` by :ghuser:`clydebarrow`
+- [lvgl] Bug fixes :esphomepr:`7370` by :ghuser:`clydebarrow`
+- [bytebuffer] Use existing bit_cast operations. :esphomepr:`7374` by :ghuser:`clydebarrow`
+- Bump actions/setup-python from 5.1.0 to 5.2.0 :esphomepr:`7375` by :ghuser:`dependabot[bot]`
+- Bump actions/setup-python from 5.1.1 to 5.2.0 in /.github/actions/restore-python :esphomepr:`7376` by :ghuser:`dependabot[bot]`
+- [gt911] Add  reset pin config :esphomepr:`7373` by :ghuser:`clydebarrow`
+- [st7701s] Add delay feature in init sequences :esphomepr:`7343` by :ghuser:`clydebarrow`
+- Add now required `invert_colors` option to test files referencing ili9xxx :esphomepr:`7367` by :ghuser:`clydebarrow`
+- esp32_can: make queue lengths configurable :esphomepr:`7361` by :ghuser:`mrk-its`
+- [code-quality] fix clang-tidy web_server and web_server_base :esphomepr:`7286` by :ghuser:`tomaszduda23`
+- Update MiCS Values :esphomepr:`7173` by :ghuser:`TrevorSchirmer`
+- Tuya Number: allow restoring value of hidden datapoints :esphomepr:`7346` by :ghuser:`szupi-ipuzs`
+- [udp] Implement UDP sensor broadcast :esphomepr:`6865` by :ghuser:`clydebarrow` (new-integration)
+- update logs for bluetooth proxy :esphomepr:`7382` by :ghuser:`tomaszduda23`
+- [font] Make display an auto-load, not a dependency :esphomepr:`7366` by :ghuser:`clydebarrow`
+- CH422G support :esphomepr:`7356` by :ghuser:`jesterret` (new-integration)
+- [rpi_dpi_rgb] Add enable_pin and reset_display method to driver :esphomepr:`7383` by :ghuser:`lboue`
+- Bump actions/upload-artifact from 4.3.4 to 4.4.0 :esphomepr:`7379` by :ghuser:`dependabot[bot]`
+- Fix build for esp32h2 using esp-idf 5.3 :esphomepr:`7393` by :ghuser:`mrene`
+- Bump mDNS and follow ruff's suggestions :esphomepr:`7308` by :ghuser:`HeMan`
+- Bump rp2040 Arduino platform and framework :esphomepr:`7134` by :ghuser:`HeMan`
+- [gree] Add support for YX1FF remote :esphomepr:`7298` by :ghuser:`dangreco`
+- [modbus_controller] Allow duplicate command config :esphomepr:`7311` by :ghuser:`0x3333`
+- Better support for task blocking ring buffer reads and writes :esphomepr:`7390` by :ghuser:`kahrendt`
+- Bump pypa/gh-action-pypi-publish from 1.9.0 to 1.10.0 :esphomepr:`7395` by :ghuser:`dependabot[bot]`
+- [api] Remove id from ``MediaPlayerSupportedFormat`` :esphomepr:`7406` by :ghuser:`jesserockz`
+- Drop max BLE client connections limitation :esphomepr:`7088` by :ghuser:`syssi`
+- [bl0942] loop and overflow cleanup :esphomepr:`7358` by :ghuser:`dwmw2`
+- Bump peter-evans/create-pull-request from 6.1.0 to 7.0.0 :esphomepr:`7405` by :ghuser:`dependabot[bot]`
+- Bump pypa/gh-action-pypi-publish from 1.10.0 to 1.10.1 :esphomepr:`7404` by :ghuser:`dependabot[bot]`
+- Voice assist improvement - configurable conversation_id timeout :esphomepr:`7385` by :ghuser:`jeffc`
+- Support BL0942 calibration :esphomepr:`7299` by :ghuser:`dwmw2`
+- [micro_wake_word] Remove duplicated download code :esphomepr:`7401` by :ghuser:`jesserockz`
+- Add StatsD component :esphomepr:`6642` by :ghuser:`Links2004` (new-integration)
+- [homeassistant-switch] Support different entity domains :esphomepr:`7331` by :ghuser:`jesserockz`
+- Add support for using BMP280 with SPI :esphomepr:`7053` by :ghuser:`ademuri` (new-integration) (breaking-change)
+- Add voice assistant announce :esphomepr:`7377` by :ghuser:`synesthesiam`
+- [lvgl] Msgbox fixes and enhancements :esphomepr:`7380` by :ghuser:`clydebarrow`
+- libretiny: Allow specifying version of explicitly imported sources :esphomepr:`7408` by :ghuser:`dwmw2`
+- [libretiny] Report version 1.7.0 for 'dev' and 'latest' :esphomepr:`7415` by :ghuser:`dwmw2`
+- LTR-501, LTR-301, LTR-558 Series of Lite-On Light (ALS) and Proximity(PS) sensors :esphomepr:`6262` by :ghuser:`latonita` (new-integration)
+- Fix armv7 container builds :esphomepr:`7426` by :ghuser:`jesserockz`
+- [gh-actions] Don't produce docker build summaries :esphomepr:`7430` by :ghuser:`jesserockz`
+- Add BK72xx support to require_framework_version() :esphomepr:`7409` by :ghuser:`dwmw2`
+- Switch IPv6 platform check to use require_framework_version() :esphomepr:`7410` by :ghuser:`dwmw2`
+- [bl0942] Improve energy reporting :esphomepr:`7428` by :ghuser:`dwmw2`
+- [rpi_dpi_rgb] Add bounce_buffer config for ESP-IDF 5.x :esphomepr:`7423` by :ghuser:`clydebarrow`
+- [LVGL] Add color gradients :esphomepr:`7427` by :ghuser:`clydebarrow`
+- [dsmr] Add internal 'telegram' text_sensor to support bridging :esphomepr:`6841` by :ghuser:`marcovaneck`
+- Pull in new AsyncTCP for IPv6 on BK72xx :esphomepr:`7431` by :ghuser:`dwmw2`
+- Bump LibreTiny recommended version to 1.7.0 :esphomepr:`7432` by :ghuser:`dwmw2`
+- Enable IPv6 support for BK72xx :esphomepr:`7398` by :ghuser:`dwmw2`
+- Move I2S config settings the the base i2sAudio files. Phase 1 :esphomepr:`7183` by :ghuser:`nielsnl68` (breaking-change)
+- Implement all supported thermocouple types for MAX31856 :esphomepr:`7218` by :ghuser:`ArkanStasarik`
+- [i2s_audio] Add more options to speakers and microphones :esphomepr:`7306` by :ghuser:`pyos` (breaking-change)
+- [uponor_smatrix] Modifies sending algorithm :esphomepr:`7326` by :ghuser:`skasi7`
+- User configurable frame buffer. :esphomepr:`7360` by :ghuser:`ajwahab`
+- [Modbus Controller] Added preference to change command retries :esphomepr:`7312` by :ghuser:`0x3333`
+- [voice-assistant] Dont error on ``no_wake_word`` timeout error with streaming wake word :esphomepr:`7435` by :ghuser:`jesserockz`
+- Improve manufacturer data tracing to identify BLE devices a bit easie… :esphomepr:`7332` by :ghuser:`tomer-w`
+- Add sample_bytes to media player supported format :esphomepr:`7451` by :ghuser:`synesthesiam`
+- [docker] Bump git from 1:2.39.2-1.1 to 1:2.39.5-0+deb12u1 :esphomepr:`7452` by :ghuser:`jesserockz`
+- Add voice assistant configuration messages :esphomepr:`7445` by :ghuser:`synesthesiam`
+- Dont replace project name spaces with underlines :esphomepr:`7455` by :ghuser:`jesserockz`
+- Add voice assistant methods for configuration :esphomepr:`7459` by :ghuser:`synesthesiam`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.8.0`
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

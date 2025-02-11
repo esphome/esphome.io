@@ -8,7 +8,7 @@
 - **fan:** ``is_off``, ``is_on``
 - **light:** ``is_off``, ``is_on``
 - **lock:** ``is_locked``, ``is_unlocked``
-- **media_player:** ``is_idle``, ``is_playing``
+- **media_player:** ``is_announcing``, ``is_idle``, ``is_paused``, ``is_playing``
 - **micro_wake_word:** ``is_running``
 - **microphone:** ``is_capturing``
 - **mqtt:** ``connected``

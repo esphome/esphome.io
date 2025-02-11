@@ -30,10 +30,7 @@ The ``monochromatic`` light platform creates a simple brightness-only light from
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the light.
 - **output** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for this light.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Light <config-light>`.
 
 See Also

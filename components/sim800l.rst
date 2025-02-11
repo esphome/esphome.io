@@ -76,9 +76,7 @@ Configuration variables:
 
 - **rssi** (*Optional*): The informed Received signal strength indication (RSSI) in dBm.
 
-  - **name** (**Required**, string): The name for the rssi sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 
 Binary Sensor
@@ -95,9 +93,7 @@ Configuration variables:
 
 - **registered** (*Optional*): Indicates if the SIM800L has successfully registered in the cellular network.
 
-  - **name** (**Required**, string): The name for the registered binary sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  - All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 .. _sim800l-on_sms_received:
 
@@ -249,8 +245,8 @@ on Home Assistant and will also setup a service so you can send messages and dia
 .. code-block:: yaml
 
     api:
-      services:
-        - service: send_sms
+      actions:
+        - action: send_sms
           variables:
             recipient: string
             message: string
@@ -258,19 +254,19 @@ on Home Assistant and will also setup a service so you can send messages and dia
             - sim800l.send_sms:
                 recipient: !lambda 'return recipient;'
                 message: !lambda 'return message;'
-        - service: dial
+        - action: dial
           variables:
             recipient: string
           then:
             - sim800l.dial:
                 recipient: !lambda 'return recipient;'
-        - service: connect
+        - action: connect
           then:
             - sim800l.connect
-        - service: disconnect
+        - action: disconnect
           then:
             - sim800l.disconnect
-        - service: send_ussd
+        - action: send_ussd
           variables:
             ussdCode: string
           then:
@@ -324,11 +320,11 @@ To trigger the automation from Home Assistant you can invoke the service with th
     automation:
       # ...
       action:
-      - service: esphome.livingroom_send_sms
+      - action: esphome.livingroom_send_sms
         data:
           recipient: "+15551234567"
           message: "Hello World!"
-      - service: esphome.livingroom_dial
+      - action: esphome.livingroom_dial
         data:
           recipient: "+15551234567"
 
@@ -340,7 +336,7 @@ Relay management commands received from an authorized sender:
     sim800l:
       on_sms_received:
         - lambda: |-
-            if ( (id(sms_sender).state == "+79991234567") && ( (id(sms_message).state == "relay_1_on") OR (id(sms_message).state == "Relay_1_on") ) ) {
+            if ( (id(sms_sender).state == "+79991234567") && ( (id(sms_message).state == "relay_1_on") || (id(sms_message).state == "Relay_1_on") ) ) {
               id(relay_1).turn_on();
             }
     switch:

@@ -94,8 +94,6 @@ This component is useless for devices other than Sonoff D1 dimmer.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the light.
 - **use_rm433_remote** (*Optional*, boolean): Set to ``True`` if your setup uses Sonoff RM433
   or any other radio remote control. Properly setting this parameter allows the platform to
   identify what to do with incoming UART commands. RF chip is known to catch random commands

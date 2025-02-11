@@ -77,6 +77,7 @@ Configuration variables:
 - **pclk_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PCLK pin.
 - **hsync_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The Horizontal sync pin.
 - **vsync_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The Vertical sync pin.
+- **enable_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The ENABLE pin.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.
 - **hsync_pulse_width** (*Optional*, int): The horizontal sync pulse width.
 - **hsync_front_porch** (*Optional*, int): The horizontal front porch length.
@@ -85,7 +86,7 @@ Configuration variables:
 - **vsync_front_porch** (*Optional*, int): The vertical front porch length.
 - **vsync_back_porch** (*Optional*, int): The vertical back porch length.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``5s``.
-- **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display in each loop (''true'', default),
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to ``true`` if a lambda or pages are configured, false otherwise.
   or to keep the existing display content (must overwrite explicitly, e.g., only on data change).
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See :ref:`display-pages`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
@@ -119,7 +120,6 @@ Waveshare ESP32-S3 Touch 4.3
 
     display:
       - platform: rpi_dpi_rgb
-        auto_clear_enabled: false
         color_order: RGB
         pclk_frequency: 16MHz
         dimensions:
@@ -170,7 +170,6 @@ Makerfabs 4.3" 800x480 display
     display:
       - platform: rpi_dpi_rgb
         update_interval: never
-        auto_clear_enabled: false
         id: rpi_display
         color_order: RGB
         rotation: 90

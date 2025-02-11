@@ -36,21 +36,15 @@ Configuration variables:
 
 - **co2** (*Optional*): The information for the CO₂ sensor.
 
-  - **name** (**Required**, string): The name for the CO₂eq sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature** (*Optional*): The information for the Temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): The information for the Humidity sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature_offset** (*Optional*, float): Temperature and humidity
   offsets may occur when operating the sensor in end-customer
@@ -90,7 +84,7 @@ Manual calibration:
           then:
             - scd30.force_recalibration_with_reference:
                 value: !lambda 'return id(co2_cal).state;'
-    
+
     number:
       - platform: template
         name: "CO2 calibration value"

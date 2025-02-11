@@ -51,15 +51,11 @@ Configuration variables:
 - **pin** (**Required**, :ref:`config-pin`): The pin where the DHT bus is connected.
 - **temperature** (**Required**): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (**Required**): The information for the humidity sensor
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 
 - **model** (*Optional*, int): Manually specify the DHT model, can be

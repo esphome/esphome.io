@@ -36,7 +36,6 @@ Possible return values for the optional lambda:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the switch.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated repeatedly to get the current state of the switch.
 - **turn_on_action** (*Optional*, :ref:`Action <config-action>`): The action that should
@@ -49,7 +48,6 @@ Configuration variables:
 - **assumed_state** (*Optional*, boolean): Whether the true state of the switch is not known.
   This will make the Home Assistant frontend show buttons for both ON and OFF actions, instead
   of hiding one of them when the switch is ON/OFF. Defaults to ``false``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Switch <config-switch>`.
 
 .. _switch-template-publish_action:
