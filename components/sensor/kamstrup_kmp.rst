@@ -99,7 +99,7 @@ lines to the pins configured under the uart section in the config file.
 
     Optical reader schematic
 
-To safe energy, the optical interface of the Kamstrup meter is not active by default.
+To save energy, the optical interface of the Kamstrup meter is not active by default.
 To activate the interface, press a button on the device. The interface will now be
 available for a few minutes. To keep the interface alive, magnets must be placed
 around the LED / photo diode. The image below shows the arrangement. The green

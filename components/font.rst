@@ -52,12 +52,13 @@ Next, create a ``font:`` section in your configuration:
         size: 28
         bpp: 4
         glyphs: [
-          a,A,á,Á,e,E,é,É,
+          0123456789aAáÁeEéÉ,
           (,),+,-,_,.,°,•,µ,
-          "\u0020", #space
-          "\u0021", #!
-          "\u0022", #"
-          "\u0027", #'
+          "\u0020", # space
+          "\u002C", # ,
+          "\u0021", # !
+          "\u0022", # "
+          "\u0027", # '
           ]
 
       - file: "fonts/RobotoCondensed-Regular.ttf"

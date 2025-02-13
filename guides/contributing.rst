@@ -1042,14 +1042,14 @@ this can be a handy alternative to implementing a state machine.
 A Note About Custom Components
 ******************************
 
-*"I read that custom components are deprecated...so now what do I do???"*
+*"I read that support for custom components was removed...so now what do I do???"*
 
-ESPHome's "custom component" mechanism is a holdover from Home Assistant's feature by the same name. It existed before
+ESPHome's "custom component" mechanism was a holdover from Home Assistant's feature by the same name. It existed before
 :doc:`/components/external_components` and offered a way to "hack in" support for devices which were not officially
 supported by ESPHome.
 
-Why are Custom Components Deprecated?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why were Custom Components Removed?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There are several reasons for this change.
 

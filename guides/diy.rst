@@ -6,7 +6,7 @@ DIY Examples
     :image: earth.svg
 
 This is a curated list of awesome creations with ESPHome containing various
-custom components, blog posts, videos and sample configurations. It should serve as a means of
+external components, blog posts, videos and sample configurations. It should serve as a means of
 finding inspiration for new projects and finding other ESPHome-enthusiasts on the web.
 
 This page purposefully has little moderation. Found something great or have something to share?
@@ -16,7 +16,7 @@ unless it's truly exceptional, etc.
 
 .. warning::
 
-    These configurations and custom components are *not officially maintained* by the
+    These configurations and external components are *not officially maintained* by the
     ESPHome team. If an API changes or there's a breaking change, it's up to the author to update
     the post.
 
