@@ -43,7 +43,7 @@ The output level is a percentage of the board supply voltage (VDD_A) - generally
 Configuration variables:
 ------------------------
 
-- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to use DAC on. On ESP32 S2 pins 17 and 18. On any other ESP32 pins 25 and 26.
+- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to use DAC on. See above for valid pin numbers.
 - **id** (**Required**, :ref:`config-id`): The id to use for this output component.
 - All other options from :ref:`Output <config-output>`.
 
