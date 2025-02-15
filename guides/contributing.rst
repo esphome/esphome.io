@@ -998,6 +998,13 @@ Next, there's a special method - ``cg.add`` - that you will often use. ``cg.add(
 C++ declared in the parentheses of ``cg.add()`` will be added to the generated code. Note that, if you do not call
 "add" to insert a piece of code explicitly, it will not be added to the ``main.cpp`` file!
 
+.. _yaml_tests:
+
+YAML Tests
+**********
+
+Work in progress...
+
 .. _runtime:
 
 Runtime
