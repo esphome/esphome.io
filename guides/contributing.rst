@@ -888,7 +888,7 @@ After you've :ref:`set up a development environment <setup_dev_env>`, you will h
 All components are in the "components" folder. Each component is in its own subfolder which contains the Python code
 (``.py``) and the C++ code (``.h`` and ``.cpp``).
 
-The "components" folder inside "tests" folder contains test configurations used to test build components across different platforms. It is structured similarly to the "components" folder, with subdirectories for each component.
+The "components" folder inside "tests" folder contains test configuration files (``.yaml``) used to test build components across different platforms. It is structured similarly to the "components" folder, with subdirectories for each component.
 
 Consider a YAML configuration file containing the following:
 
@@ -1003,9 +1003,9 @@ C++ declared in the parentheses of ``cg.add()`` will be added to the generated c
 YAML Test Configuration Files
 *****************************
 
-The `common.yaml` file is a shared configuration file that defines settings used by multiple test configurations for different platforms. This helps to reduce duplication and ensures test consistency across different platforms.
+The ``common.yaml`` file is a shared configuration file that defines settings used by multiple test configurations for different platforms. This helps to reduce duplication and ensures test consistency across different platforms.
 
-Example `common.yaml` content:
+Example ``common.yaml`` content:
 
 .. code-block:: yaml
 
@@ -1022,9 +1022,9 @@ Example `common.yaml` content:
           name: DHT12 Humidity
         update_interval: 15s
 
-To use `common.yaml` in a test configuration, YAML substitutions and insertion operator are used (see :doc:`/components/substitutions`). This allows the test YAML file to reference and include the shared configuration.
+To use ``common.yaml`` in a test configuration, YAML substitutions and insertion operator are used (see :doc:`/components/substitutions`). This allows the test YAML file to reference and include the shared configuration.
 
-Example `test.esp32-ard.yaml` content:
+Example ``test.esp32-ard.yaml`` content:
 
 .. code-block:: yaml
 
@@ -1034,7 +1034,7 @@ Example `test.esp32-ard.yaml` content:
 
     <<: !include common.yaml
 
-By including `common.yaml`, all test configurations maintain the same structure while allowing flexibility for platform-specific substitutions such as pin assignments. This approach simplifies managing multiple test cases across different hardware platforms.
+By including ``common.yaml``, all test configurations maintain the same structure while allowing flexibility for platform-specific substitutions such as pin assignments. This approach simplifies managing multiple test cases across different hardware platforms.
 
 .. _runtime:
 
