@@ -28,21 +28,25 @@ MAX3232-based transceivers have been tested and work well.
 
 If you have multiple batteries you need to connect to the master battery's console port.
 
-.. list-table:: Pylontech RJ45 Console Port (US2000C, US3000C)
+.. list-table:: Pylontech RJ45 Console Port (US2000C, US3000C, US5000C)
     :header-rows: 1
 
     * - RJ45 Pin
       - Function
       - Connect to
+      - *Usual* wire
     * - 3
       - Pylontech TX
       - ESPHome RX via transceiver
+      - White/green
     * - 6
       - Pylontech RX
       - ESPHome TX via transceiver
+      - Green
     * - 8
       - GND
       - GND
+      - Brown
 
 .. figure:: images/rj45_pinout.jpg
     :align: center
