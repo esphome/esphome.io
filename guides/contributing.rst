@@ -499,7 +499,7 @@ adhere to the following order:
 - **imgtable**: ESPHome uses a custom RST directive to show the table on the front page (see
   `index.rst <https://github.com/esphome/esphome-docs/blob/current/index.rst>`__). New pages need to be added to the
   ``imgtable`` list. The syntax is CSV with <PAGE NAME>, <FILE NAME> (without RST), <IMAGE> (in the top-level
-  ``images/`` directory), <COMMENT> (optional; short text to describe the component). The aspect ratio of these images
+  ``images/`` ), <COMMENT> (optional; short text to describe the component). The aspect ratio of these images
   should be 8:10 (or 10:8) but exceptions are possible.
 
   Because these images are served on the main page, they need to be compressed heavily. SVGs are preferred over JPGs
@@ -562,7 +562,7 @@ you can modify and create branches on.
     git clone https://github.com/<YOUR_GITHUB_USERNAME>/<REPO_NAME>.git
     # For example: git clone https://github.com/OttoWinter/esphome.git
 
-    # To continue you now need to enter the directory you created above
+    # To continue you now need to enter the  you created above
     cd <REPO_NAME>
     # For example: cd esphome
 
@@ -873,9 +873,22 @@ After you've :ref:`set up a development environment <setup_dev_env>`, you will h
     │   │   ├── restart_switch.h
     │   │   ├── switch.py
     │  ...
+    ├── tests
+    │   ├── components
+    │   │   ├── dht12
+    │   │   │   ├── common.yaml
+    │   │   │   ├── test.esp32-ard.yaml
+    │   │   │   ├── test.esp32-c3-ard.yaml
+    │   │   │   ├── test.esp32-c3-idf.yaml
+    │   │   │   ├── test.esp32-idf.yaml
+    │   │   │   ├── test.esp8266-ard.yaml
+    │   │   │   ├── test.rp2040-ard.yaml
+    │  ...
 
 All components are in the "components" folder. Each component is in its own subfolder which contains the Python code
 (``.py``) and the C++ code (``.h`` and ``.cpp``).
+
+The "tests" folder contains test configurations used to test build components across different platforms. It is structured similarly to the "components" folder, with subdirectories for each component under test.
 
 Consider a YAML configuration file containing the following:
 
