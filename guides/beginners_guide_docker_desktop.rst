@@ -10,17 +10,22 @@ This guide is for people who are not so tech-orientated but wish to get their fe
 Docker Desktop
 --------------
 
-Probably the easiest way to start with ESPHome, especially when you're not familiar with Home Assistant, is to start with Docker Desktop.
+Probably the easiest way to start with ESPHome, especially when you're not familiar with Home Assistant,
+is to start with Docker Desktop.
 
-Docker Desktop can run Linux containers like ESPHome very well, although it may be slow on under-powered machines like "just for work" notebooks.
+Docker Desktop can run Linux containers like ESPHome very well,
+although it may be slow on under-powered machines like "just for work" notebooks.
 
-Running the command-line version of ESPHome might be enjoyable for the Linux-savvy but can be a headache, especially when it comes to Python and its dependencies.
-The Docker version of ESPHome will take care of all the dependencies and make it a lot easier to at least get started with ESPHome.
+Running the command-line version of ESPHome might be enjoyable for the Linux-savvy but can be a headache,
+especially when it comes to Python and its dependencies.
+The Docker version of ESPHome will take care of all the dependencies
+and make it a lot easier to at least get started with ESPHome.
 
 Prepare Location for Docker and ESPHome Files
 ---------------------------------------------
 
-You will need to make folders where Docker can use config files for ESPHome (and other containers).  This makes it painless to update the ESPHome container.
+You will need to make folders where Docker can use config files for ESPHome (and other containers).
+This makes it painless to update the ESPHome container.
 
 I recommend something easy to find. Here are examples for different operating systems:
 
@@ -33,9 +38,11 @@ Choose any location that's easy for you to find and remember.
 Install Docker Desktop
 ----------------------
 
-Download and install the appropriate version of Docker Desktop from `the official site <https://www.docker.com/products/docker-desktop/>`__.
-On Windows, this will also install any needed dependencies like WSL (Windows Subsystem for Linux).  On Mac, it will make sure you have
-Apple Virtualization Framework.  You should accept any required other installs.
+Download and install the appropriate version of Docker Desktop from
+`the official site <https://www.docker.com/products/docker-desktop/>`__.
+On Windows, this will also install any needed dependencies like WSL (Windows Subsystem for Linux).
+On Mac, it will make sure you have Apple Virtualization Framework.
+You should accept any required other installs.
 
 If you have installation issues, please refer to the docker documentation for
 
@@ -43,8 +50,9 @@ If you have installation issues, please refer to the docker documentation for
 `Linux <https://docs.docker.com/desktop/install/linux/>`__, or
 `Mac <https://docs.docker.com/desktop/install/mac-install/>`__.
 
-Please note that although Docker Desktop is not particularly large, containers like ESPHome can be. And the compilation of ESPHome binaries
-can take up a lot of space, too. You might be okay with 5GB free space but 10GB or more is highly recommended as a minimum since building
+Please note that although Docker Desktop is not particularly large, containers like ESPHome can be.
+And the compilation of ESPHome binaries can take up a lot of space, too.
+You might be okay with 5GB free space but 10GB or more is highly recommended as a minimum since building
 binaries can also take up space.
 
 If Docker asks you to login, you can skip this.
@@ -54,16 +62,20 @@ Docker may also require a reboot to finalize the installation.
 Add the ESPHome container
 -------------------------
 
-In Docker Desktop, you first to need to download the ESPHome image.  Click ``Images`` and then ``Search images to run``.
+In Docker Desktop, you first to need to download the ESPHome image.
+Click ``Images`` and then ``Search images to run``.
 
 .. figure:: images/noob_docker_1.png
     :align: center
     :width: 95.0%
     :alt: Docker Desktop window with circle around "Images" and "Search images to run"
 
-Type ``esphome`` in the search box.  The official ESPHome image belongs to the DockerHub member ``esphome`` so it should appear at the top as ``esphome/esphome``.
+Type ``esphome`` in the search box.
+The official ESPHome image belongs to the DockerHub member ``esphome``
+so it should appear at the top as ``esphome/esphome``.
 
-Next to that image, you can select the version but unless you have a specific problem, the ``latest`` is the best to use.  Click ``Pull`` to download the image.
+Next to that image, you can select the version but unless you have a specific problem,
+the ``latest`` is the best to use.  Click ``Pull`` to download the image.
 
 It will take a few moments to download the image.
 
@@ -72,14 +84,16 @@ It will take a few moments to download the image.
     :width: 95.0%
     :alt: Docker Desktop search window with circle around "esphome" in the search box, a circle around "esphome/esphome", and a circle around "Pull"
 
-Click on ``Images`` again and it should now show that you have the image ``esphome/esphome`` ready to use.  Click the ``Run`` button.
+Click on ``Images`` again and it should now show that you have the image ``esphome/esphome`` ready to use.
+Click the ``Run`` button.
 
 .. figure:: images/noob_docker_3.png
     :align: center
     :width: 95.0%
     :alt: Docker Desktop window with circle around "Images" and "Run" button
 
-Before actually running, expand the optional settings. Give the container a name like ``esphome`` (you can use capital letters here if you like).
+Before actually running, expand the optional settings.
+Give the container a name like ``esphome`` (you can use capital letters here if you like).
 Also, set the port to use to access the GUI.  The default is ``6052``.
 
 .. note::
@@ -87,9 +101,12 @@ Also, set the port to use to access the GUI.  The default is ``6052``.
     If port 6052 is already in use on your system, you can use a different port number.
     Just remember to use the new port number when accessing the ESPHome dashboard in your browser.
 
-In the ``Volumes`` options, enter the locations ``Host path`` (set to the location created earlier) and ``Container path`` (Set to ``/config`` - it **MUST** be exactly like this).
-Also, add an environment variable called ``TZ`` and set to your local timezone.  If you're not sure what yours is called, check
-`Wikipedia <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_ under ``TZ identifier``.  Canonical-types are best.
+In the ``Volumes`` options, enter the locations ``Host path`` (set to the location created earlier)
+and ``Container path`` (Set to ``/config`` - it **MUST** be exactly like this).
+Also, add an environment variable called ``TZ`` and set to your local timezone.
+If you're not sure what yours is called, check
+`Wikipedia <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_ under ``TZ identifier``.
+Canonical-types are best.
 
 After all that is done, click ``Run`` and the container will start.
 
@@ -119,7 +136,8 @@ Go back to the Containers tab to manage the ESPHome container and ``Open with br
     :width: 95.0%
     :alt: Docker Desktop showing running containers with a circle around "Containers" and another circle around ⋮ and an arrow pointing to "Open with browser"
 
-The gear in the top right corner allows you to manage Docker Desktop settings.  Docker usually is not set to start with Windows but you can change that if you like.
+The gear in the top right corner allows you to manage Docker Desktop settings.
+Docker usually is not set to start with Windows but you can change that if you like.
 
 You can also update Docker Desktop itself by clicking on the gear and then clicking on ``Software updates``.
 
@@ -128,14 +146,18 @@ You can also update Docker Desktop itself by clicking on the gear and then click
     :width: 95.0%
     :alt: Docker Desktop showing running containers with circles around the Settings gear icon and the Run icon and the delete icon
 
-Also when starting Docker Desktop again, you may also need to run the container again using this screen.  When it is running the run ``▶`` icon will change to a stop ``⯀`` icon.
+Also when starting Docker Desktop again, you may also need to run the container again using this screen.
+When it is running the run ``▶`` icon will change to a stop ``⯀`` icon.
 
 .. note::
 
-    Also in this screen are options to stop and delete the container.  You **MUST** stop the container AND delete the container before updating the ESPHome image.
+    Also in this screen are options to stop and delete the container.
+    You **MUST** stop the container AND delete the container before updating the ESPHome image.
 
-To update the ESPHome container (so you can run the latest version of ESPHome), click ``Settings`` then three dots ``⋮``,
-and select ``Pull``.  Docker Desktop will check if there is a new ``latest`` image to pull. If there is, it will download it.
+To update the ESPHome container (so you can run the latest version of ESPHome),
+click ``Settings`` then three dots ``⋮``, and select ``Pull``.
+Docker Desktop will check if there is a new ``latest`` image to pull.
+If there is, it will download it.
 If not, it will tell you ``Image is up to date``.
 
 .. figure:: images/noob_docker_8.png
@@ -143,13 +165,15 @@ If not, it will tell you ``Image is up to date``.
     :width: 95.0%
     :alt: Docker Desktop showing Images with a circle around "Images" and another circle around ⋮ and an arrow pointing to "Pull"
 
-You will have to recreate the container as illustrated above.  As long as you you point to the correct folder with your ESPHome ``config`` files,
+You will have to recreate the container as illustrated above.
+As long as you you point to the correct folder with your ESPHome ``config`` files,
 your configuration and all your device files will remain unchanged.
 
 Automatically Update the ESPHome Container
 ******************************************
 
-If you wish to automate the process (without deleting your esphome container or even stopping it), there's an easier way.
+If you wish to automate the process (without deleting your esphome container or even stopping it),
+there's an easier way.
 
 Search for images to add, enter ``adamus1red/ouroboros`` (the original is ``pyouroboros/ouroboros`` but it hasn't been updated in years),
 ``Pull`` the image, then ``Run`` with these options:
@@ -167,8 +191,8 @@ As before, we need to specify some optional settings.
     :width: 95.0%
     :alt: Docker Desktop showing Run a New Container named "ouroboros" with "Host Path" and "Container Path" set and 4 environment variables
 
-Because Ouroboros needs access to Docker's core, we should enter ``/var/run/docker.sock`` as the Container Path but where docker.sock resides
-on your computer depends on the operating system you are using.
+Because Ouroboros needs access to Docker's core, we should enter ``/var/run/docker.sock``
+as the Container Path but where docker.sock resides on your computer depends on the operating system you are using.
 
 .. tabs::
 
@@ -192,8 +216,10 @@ on your computer depends on the operating system you are using.
 
 Also, set 4 environment variables (use the ``+`` to add more) ``SELF_UPDATE`` : ``true`` and ``CLEANUP`` : ``true`` and ``RUN_ONCE`` : ``true`` and ``LATEST`` : ``true``.
 
-Now, to automatically update all containers, just run the ``ouroboros`` container.  It will automatically stop a container, pull the ``latest`` image,
-and restart the container with your previous settings.  It will do this to all existing containers. Then, it will stop.
+Now, to automatically update all containers, just run the ``ouroboros`` container.
+It will automatically stop a container, pull the ``latest`` image,
+and restart the container with your previous settings.
+It will do this to all existing containers. Then, it will stop.
 
 .. note::
 
