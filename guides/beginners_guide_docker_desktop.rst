@@ -166,9 +166,8 @@ If not, it will tell you ``Image is up to date``.
     :alt: Docker Desktop showing Images with a circle around "Images" and another circle around ⋮ and an arrow pointing to "Pull"
 
 You will have to recreate the container as illustrated above.
-As long as you you point to the correct folder with your ESPHome ``config`` files,
+As long as you point to the correct folder with your ESPHome ``config`` files,
 your configuration and all your device files will remain unchanged.
-
 Automatically Update the ESPHome Container
 ******************************************
 
