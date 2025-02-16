@@ -51,6 +51,7 @@ The MCP4461 output component exposes 8 MCP4461 (wiper-)channels of a global :ref
       id: digipot_channel_0
       mcp4461_id: mcp4461_output
       channel: A
+      initial_value: 0.128 // always initialize volatile wiper 0 with wiper @ medium resistance range on start
     - platform: mcp4461
       id: digipot_channel_1
       mcp4461_id: mcp4461_output
@@ -94,8 +95,8 @@ Configuration variables:
   :ref:`MCP4461 <mcp4461-component>`.
   Use this if you have multiple MCP4461 ICs you want to use at the same time.
 - **channel** (**Required**, string): Choose the channel of this MCP4461 output component.
-  One of ``A``, ``B``, ``C``, ``D``,``E``, ``F``, ``G`` or ``H``.
-- **enable** (**Optional**, bool): Set to ``false`` if terminal "HW" shall be disabled by default. Defaults to ``true``
+  One of ``A``, ``B``, ``C``, ``D``, ``E``, ``F``, ``G`` or ``H``.
+- **initial_value** (**Optional**, float): Set initial wiper value, valid range is ``0.000 - 0.256``
 - **terminal_a** (**Optional**, bool): Set to ``false`` if terminal "A" shall be disabled on boot. Defaults to ``true``
 - **terminal_b** (**Optional**, bool): Set to ``false`` if terminal "B" shall be disabled on boot. Defaults to ``true``
 - **terminal_w** (**Optional**, bool): Set to ``false`` if terminal "W" shall be disabled on boot. Defaults to ``true``
@@ -120,48 +121,22 @@ If initial_value configuration variable is not used, you can use
 Public Lambda functions:
 ------------------------
 
-For mcp4461 component (not the wiper):
+For mcp4461 component itself (not the wiper!):
 **************************************
 
-- (uint16_t) get_status_register():
-    returns uint16_t status register contents
-- (uint16_t) get_wiper_level(uint8_t wiper):
-    returns current value of specified wiper (0-7)
-- (void) set_wiper_level(uint8_t wiper, uint16_t value):
-    set wiper level, accepted value-range is 0 - 256
-- (void) enable_wiper(uint8_t wiper):
-    enable given wiper, only valid for volatile wipers (0-3)
-- (void) disable_wiper(uint8_t wiper):
-    disable given wiper, only valid for volatile wipers (0-3)
-- (void) increase_wiper(uint8_t wiper):
-    increase given wiper, only valid for volatile wipers (0-3)
-- (void) decrease_wiper(uint8_t wiper):
-    decrease given wiper, only valid for volatile wipers (0-3)
-- (uint8_t) get_terminal_register(uint8_t terminal_connector):
-    get terminal register data for given terminal connector (0/1)
-- (void) set_terminal_register(uint8_t terminal_connector, uint8_t terminal_register_value):
-    set terminal register data for given terminal connector (0/1)
-- (void) update_terminal_register(uint8_t terminal_connector):
-    update terminal register states for given terminal connector (0/1)
-- (void) enable_terminal(uint8_t wiper, char terminal):
-    enable terminal (one of ['a','b','w','h']) of given volatile wiper (0-3).
-    'h' is also used for general enable/disable of wiper
-- (void) disable_terminal(uint8_t wiper, char terminal):
-    disable terminal (one of ['a','b','w','h']) of given volatile wiper (0-3).
-    'h' is also used for general enable/disable of wiper
 - (uint16_t) get_eeprom_value(uint8_t location):
-    get current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
+    get current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 ! // ToDO maybe improve eeprom usage
 - (void) set_eeprom_value(uint8_t location, uint16_t value):
     set current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
 
 For the output (the wiper):
 **************************************
-- (void) write_state(float state):
+- (void) write_state(float state): // (protected, override, default frontend function)
     expects value in range 0.00 to 0.256, higher values will be clamped to max value
-- (uint16_t) get_wiper_level():
-    returns current value of this output (wiper)
-- (void) save_level():
-    save current level of this output to it`s respective nonvolatile one, only valid for volatile wipers (0-3)
+- (float) read_state(): // returns current wiper state, without (!) updating internal wiper state of output
+    returns current hw state of this wiper // NOT the internal state of the output
+- (float) update_state():
+    returns current value of this output (wiper) & updates internal state of output to this fetched value
 - (void) enable_wiper():
     enable this output (wiper), only valid for volatile wipers (0-3)
 - (void) disable_wiper():
