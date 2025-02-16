@@ -44,6 +44,8 @@ Configuration variables:
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "0, 1, 2, 3"
       "ESP32-C3", "0, 1"
+      "ESP32-C6", "0, 1"
+      "ESP32-H2", "0, 1"
 
 -  **id** (*Optional*, :ref:`config-id`): Manually specify
    the ID used for code generation. Use this if you have multiple remote transmitters.
