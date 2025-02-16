@@ -20,7 +20,7 @@ It's hooked up to an ESP32 via a UART Tx pin on GPIO12 and powered via a relay c
 Uni-directional commands are sent from the ESP32 to the MCU.
 ``lanbon_l8_hd`` component implements this protocol and translates between HA light commands and serial messages.
 
-To replace the stock firmware with ESPHome, see BlackAdder's instruction on [how to flash custom firmware](https://blakadder.com/lanbon-L8-custom-firmware/).
+To replace the stock firmware with ESPHome, see BlackAdder's instruction on `how to flash custom firmware <https://blakadder.com/lanbon-L8-custom-firmware/>`__.
 
 Before using this component, make sure:
 
