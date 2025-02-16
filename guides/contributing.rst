@@ -1042,14 +1042,14 @@ this can be a handy alternative to implementing a state machine.
 A Note About Custom Components
 ******************************
 
-*"I read that custom components are deprecated...so now what do I do???"*
+*"I read that support for custom components was removed...so now what do I do???"*
 
-ESPHome's "custom component" mechanism is a holdover from Home Assistant's feature by the same name. It existed before
+ESPHome's "custom component" mechanism was a holdover from Home Assistant's feature by the same name. It existed before
 :doc:`/components/external_components` and offered a way to "hack in" support for devices which were not officially
 supported by ESPHome.
 
-Why are Custom Components Deprecated?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why were Custom Components Removed?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There are several reasons for this change.
 
@@ -1168,9 +1168,11 @@ ESPHome's maintainers work hard to maintain a high standard for its code. We try
 
 - Components **must** use the provided abstractions like ``sensor``, ``switch``, etc. Components specifically should
   **not** directly access other components -- for example, to publish to MQTT topics.
-- Implementations for new devices should contain reference links for the datasheet and other sample implementations.
+- Implementations for new devices should contain reference links for the data sheet and other sample implementations.
 - If you have used ``delay()`` or constructed code which blocks for a duration longer than ten milliseconds, be sure to
   read :ref:`delays_in_code`.
+- Do **not** use ``sstream``/``stringstream`` to format variables into strings. This library bloats the compiled binary
+  by over 200 kilobytes (KBs) which causes problems for devices with small amounts (1-4 MB) of flash memory.
 - Comments in code should be used as appropriate, such as to help explain some complexity or to provide a brief summary
   of what a class, method, etc. is doing. PRs which include large blocks of commented-out code will not be accepted.
   Single lines of commented code may be useful from time to time (for example, to call out something which was
