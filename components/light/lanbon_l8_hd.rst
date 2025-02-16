@@ -32,6 +32,11 @@ This component is intended only for use with Lanbon L8-HD dimmers.
 
 .. code-block:: yaml
 
+    # Relay controlling power to the dimmer
+    output:
+      - platform: gpio
+          pin: GPIO27
+          id: powerRelay
 
     # UART used by the dimmer
     uart:
@@ -52,6 +57,7 @@ This component is intended only for use with Lanbon L8-HD dimmers.
           id: local_dimmer
           restore_mode: ALWAYS_OFF
           gamma_correct: 0.0
+          enable_pin: powerRelay
 
 See https://devices.esphome.io/devices/lanbon_l8 for a complete configuration example for this device, including
 the screen backlight and RGB moodlight.
