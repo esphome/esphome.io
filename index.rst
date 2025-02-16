@@ -941,6 +941,7 @@ Light Components
     ESP32 RMT, components/light/esp32_rmt_led_strip, color_lens.svg, dark-invert
     FastLED Light, components/light/fastled, color_lens.svg, dark-invert
     H-bridge Light, components/light/hbridge, brightness-medium.svg, dark-invert
+    Lanbon L8-HD Dimmer, components/light/lanbon_l8_hd, lanbon_l8.jpg
     Light Partition, components/light/partition, color_lens.svg, dark-invert
     LightWaveRF, components/lightwaverf, brightness-medium.svg, dark-invert
     LVGL widget, components/light/lvgl, lvgl_c_lig.png
