@@ -62,7 +62,7 @@ Docker may also require a reboot to finalize the installation.
 Add the ESPHome container
 -------------------------
 
-In Docker Desktop, you first to need to download the ESPHome image.
+In Docker Desktop, you first need to download the ESPHome image.
 Click ``Images`` and then ``Search images to run``.
 
 .. figure:: images/noob_docker_1.png
