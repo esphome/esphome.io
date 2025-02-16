@@ -57,10 +57,9 @@ ESP32 IDF configuration variables:
       "ESP32-H2", "192 symbols", "48 symbols"
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
-- **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
-- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``one_wire``
-  mode is ``true`` or ``pin`` is inverted.
+- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``pin``
+  is set to inverted or open-drain.
 
 ESP32 Arduino configuration variables:
 **************************************
@@ -928,6 +927,30 @@ Configuration variables:
 
 - **code** (**Required**, list): The 14 byte Mirage code to send.
 - All other options from :ref:`remote_transmitter-transmit_action`.
+
+.. _remote_transmitter-transmit_toto:
+
+``remote_transmitter.transmit_toto`` **Action**
+
+This :ref:`action <config-action>` sends a Toto infrared remote code to a remote transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_toto:
+          command: 0xED  # Set water and seat temperature
+          rc_code_1: 0x0 # Water heater off
+          rc_code_2: 0x0 # Seat heater off
+          # Repeats 3 times at a 32ms interval by default
+
+Configuration variables:
+
+- **command** (**Required**, int): The 1-byte Toto command code to send. Range is 0 to 0xFF.
+- **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
+- **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+   - **Note**: Toto remotes repeat all codes three times at a 32ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
+
 
 .. _remote_transmitter-rc_switch-protocol:
 
