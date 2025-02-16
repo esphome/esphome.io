@@ -13,14 +13,14 @@ Use this component to integrate a Lanbon L8-HD dimmer into ESPHome / Home Assist
     :align: center
     :width: 100.0%
 
-    Lanbon L8 switch/dimmer, US/EU versions . Image by `Lanbon <https://www.lanbon.cn/l8-dimmer-switch/5337809>`__.
+    Lanbon L8 switch/dimmer, US/EU versions . Image by `Lanbon <https://www.lanbon.cn/l8-dimmer-switch/53378091>`__.
 
 The Lanbon L8-HD uses another MCU for light dimming.
 It's hooked up to an ESP32 via a UART Tx pin on GPIO12 and powered via a relay controlled by GPIO27.
 Uni-directional commands are sent from the ESP32 to the MCU.
 ``lanbon_l8_hd`` component implements this protocol and translates between HA light commands and serial messages.
 
-To replace the stock firmware with ESPHome, follow the detailed instructions kindly provided by `blackadder <https://blakadder.com/lanbon-L8-custom-firmware/>`.
+To replace the stock firmware with ESPHome, see BlackAdder's instruction on [how to flash custom firmware](https://blakadder.com/lanbon-L8-custom-firmware/).
 
 Before using this component, make sure:
 
