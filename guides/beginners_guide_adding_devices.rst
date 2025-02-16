@@ -308,7 +308,7 @@ Perhaps you have two identical bulbs and you want to name them differently.  Jus
       project_name: "athom.rgbww-light"
       project_version: "1.0"
 
-Substitutions are incredible common among YAMLs you find online and they're almost always placed at the top.
+Substitutions are very common among YAMLs you find online and they're almost always placed at the top.
 
   .. collapse:: The Order of Sections
 
@@ -346,7 +346,7 @@ so that you don't have to search for it to change it.
       Both are acceptable but curly brackets are used to avoid errors so it's best to use curly brackets.
 
 There are definitely some edits needed. As of February 2025, ESPHome will no longer support the ``platform`` section.
-We need to remove the lines that refer to the ``board``and  ``platform``. There is a new section for that.
+We need to remove the lines that refer to the ``board`` and ``platform``. There is a new section for that.
 But before we get to that, what does ``name_add_mac_suffix: true`` do?
 Let's check the documentation regarding :doc:`ESPHome Core Configuration </components/esphome>`.
 
@@ -380,7 +380,7 @@ For the purposes of our Athom bulb, we will need this section:
     esp8266:
       board: esp8285
 
-In some cases, rather than using an ESP8266, you may need to specify ESP32 as so:
+In some cases, rather than using an ESP8266, you may need to specify ESP32 like this:
 
 .. code-block:: yaml
 
@@ -404,7 +404,8 @@ For ESP8266 boards you can consult the
 For ESP32 boards you can consult
 `platformio/espressif32 boards list <https://registry.platformio.org/platforms/platformio/espressif32/boards>`__.
 
-You can also read more configuration of the :doc:`ESP8266 Platform </components/esp8266>`
+You can also read more about the configuration of the
+:doc:`ESP8266 Platform </components/esp8266>`
 and the :doc:`ESP32 Platform </components/esp32>`.
 
 api:
@@ -426,10 +427,12 @@ and copy and paste the encryption key that was generated when the initial YAML w
       encryption:
         key: "<YOUR_ENCRYPTION_KEY>"
 
-If you don't have Home Assistant, you should just delete this section. If left in, the device will continuously
-try to make a connection to Home Assistant and reboot every 15 minutes to re-attempt making the connection.
+If you don't have Home Assistant, you should just delete this entire section.
+If left in, the device will continuously try to make a connection to Home Assistant
+and reboot every 15 minutes to re-attempt making the connection.
 
-Also, you don't necessarily need encryption.  It just adds an additional layer of protection to your devices.
+Also, you don't necessarily need encryption.
+It just adds an additional layer of protection to your devices.
 
 ota:
 ^^^^
@@ -475,10 +478,11 @@ web_server:
 
 This section creates a :doc:`web server </components/web_server>`
 on the device so you can access and control the device using the mDNS or IP address.
-Chances are good that the web address will match what we made the `name:` earlier
-(which refers to the substitution `device-name`).
+Chances are good that the web address will match what we made the ``name:`` earlier
+(which refers to the substitution ``device-name``).
 So after flashing the new firmware, we should be able to go to
-`http://living-room-light.local <http://living-room-light.local>`__ and control the light bulb.
+`http://living-room-light.local <http://living-room-light.local>`__ and control the light bulb
+through it's WebUI.
 
 .. collapse:: Note About mDNS
 
