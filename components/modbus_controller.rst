@@ -64,6 +64,8 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
+.. _modbus_controller-offline_skip_updates:
+
 - **offline_skip_updates** (*Optional*, integer): When a slave doesn't respond to a command, it is
   marked as offline, you can specify how many updates will be skipped while it is offline. If using a bus with multiple
   slaves, this avoids waiting for timeouts allowing to read other slaves in the same bus. When the slave
@@ -96,6 +98,8 @@ Configuration variables:
 Automations:
 
 - **on_command_sent** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus command has been sent. See :ref:`modbus_controller-on_command_sent`
+- **on_online** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes online. See :ref:`modbus_controller-on_online`
+- **on_offline** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes offline. See :ref:`modbus_controller-on_offline`
 
 Example Client
 --------------
@@ -200,7 +204,7 @@ The following code allows a ModBUS client to read a sensor value from your ESPHo
         unit_of_measurement: V
         filters:
           - multiply: 0.1
-    
+
 
 Check out the various Modbus components available at the bottom of the document in the :ref:`modbusseealso` section. They can be directly defined *(inline)* under the ``modbus_controller`` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
 
@@ -738,7 +742,7 @@ Automation
 ``on_command_sent``
 *******************
 
-This automation will be triggered when a command has been sent by the `modbus_controller`. In :ref:`Lambdas <config-lambda>` 
+This automation will be triggered when a command has been sent by the `modbus_controller`. In :ref:`Lambdas <config-lambda>`
 you can get the function code in ``function_code`` and the register address in ``address``.
 
 .. code-block:: yaml
@@ -749,6 +753,40 @@ you can get the function code in ``function_code`` and the register address in `
         on_command_sent:
           then:
             - number.increment: modbus_commands
+
+.. _modbus_controller-on_online:
+
+``on_online``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``online``, after been ``offline``. In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_online:
+          then:
+            - logger.log: "Controller back online!"
+
+.. _modbus_controller-on_offline:
+
+``on_offline``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``offline`` (See :ref:`offline_skip_updates <modbus_controller-offline_skip_updates>`). In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_offline:
+          then:
+            - logger.log: "Controller goes offline!"
 
 See Also
 --------

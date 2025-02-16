@@ -9,8 +9,8 @@ Custom Text Sensor
 .. warning::
 
     :ref:`Custom Components are deprecated<a_note_about_custom_components>`, not recommended for new configurations and
-    will be removed from ESPHome in a future release. Please look at creating a real ESPHome component and "importing"
-    it into your configuration with :doc:`/components/external_components`.
+    will be removed from ESPHome in the ``2025.1.0`` release. Please look at creating a real ESPHome component and
+    "importing" it into your configuration with :doc:`/components/external_components`.
 
     You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
 
