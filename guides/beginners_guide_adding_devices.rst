@@ -404,8 +404,8 @@ For ESP8266 boards you can consult the
 For ESP32 boards you can consult
 `platformio/espressif32 boards list <https://registry.platformio.org/platforms/platformio/espressif32/boards>`__.
 
-You can also read more configuration of the :doc:`ESP8266 Platform </components/esp8266.html>`
-and the :doc:`ESP32 Platform </components/esp32.html>`.
+You can also read more configuration of the :doc:`ESP8266 Platform </components/esp8266>`
+and the :doc:`ESP32 Platform </components/esp32>`.
 
 api:
 ^^^^
