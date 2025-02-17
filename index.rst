@@ -979,6 +979,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
+    Speaker, components/media_player/speaker, speaker.svg
 
 Microphone Components
 ---------------------
@@ -1054,6 +1055,7 @@ Speaker Components
 
     Speaker Core, components/speaker/index, speaker.svg, dark-invert
     I2S Speaker, components/speaker/i2s_audio, i2s_audio.svg
+    Mixer Speaker, components/speaker/mixer, mixer.svg
     Resampler Speaker, components/speaker/resampler, waveform.svg, dark-invert
 
 Switch Components
