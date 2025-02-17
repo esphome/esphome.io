@@ -474,6 +474,7 @@ Environmental
     ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
     ENS210, components/sensor/ens210, ens210.jpg, Temperature & Humidity
     HDC1080, components/sensor/hdc1080, hdc1080.jpg, Temperature & Humidity
+    HDC2010, components/sensor/hdc2010, hdc2010.jpg, Temperature & Humidity
     HHCCJCY10 (MiFlora Pink), components/sensor/xiaomi_hhccjcy10, xiaomi_hhccjcy10.jpg, Soil moisture & Temperature & Light
     Honeywell ABP, components/sensor/honeywellabp, honeywellabp.jpg, Pressure & Temperature
     Honeywell ABP2 I2C, components/sensor/honeywellabp2_i2c, honeywellabp.jpg, Pressure & Temperature
