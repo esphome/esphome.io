@@ -65,12 +65,9 @@ find the wireless network.
 
 .. warning::
 
-    Although it is theoretically possible for an ESP-based device to use a 5Ghz or 6Ghz wireless network,
-    there are not many ESP-based devices that actually support those ranges.
-    Most ESP-based devices only support the 2.4Ghz range.
-    Although you should have no issues using the same SSID name for 2.4Ghz and 5Ghz, if you encounter any issues
-    with a device maintaining its connection, you may want to consider using a different SSID name
-    or guest network on the 2.4Ghz band for your IOT devices.
+    Supported Espressif microcontrollers only support the 2.4 Ghz frequency range for Wi-Fi.
+
+    If you're experiencing connectivity issues, see our :ref:`FAQ <wifi-problems>`.
 
 OTA
 ***
