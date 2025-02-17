@@ -413,6 +413,7 @@ Contributors
 - `DanielV (@dala318) <https://github.com/dala318>`__
 - `Dale Higgs (@dale3h) <https://github.com/dale3h>`__
 - `damanti-me (@damanti-me) <https://github.com/damanti-me>`__
+- `Damien (@Dams51) <https://github.com/Dams51>`__
 - `Justin Grover (@dancingcactus) <https://github.com/dancingcactus>`__
 - `Dan C Williams (@dancwilliams) <https://github.com/dancwilliams>`__
 - `Dan Greco (@dangreco) <https://github.com/dangreco>`__
@@ -863,6 +864,7 @@ Contributors
 - `Ivo-tje (@Ivo-tje) <https://github.com/Ivo-tje>`__
 - `Jouni Paulus (@j-paulus) <https://github.com/j-paulus>`__
 - `J0RD4N300 (@J0RD4N300) <https://github.com/J0RD4N300>`__
+- `Jacob Carrell (@JacobCarrell) <https://github.com/JacobCarrell>`__
 - `jacobswe (@jacobswe) <https://github.com/jacobswe>`__
 - `Fredrik Gustafsson (@jagheterfredrik) <https://github.com/jagheterfredrik>`__
 - `Jan Harkes (@jaharkes) <https://github.com/jaharkes>`__
@@ -1137,6 +1139,7 @@ Contributors
 - `Luciano Martin (@lucianomartin) <https://github.com/lucianomartin>`__
 - `Joakim Sørensen (@ludeeus) <https://github.com/ludeeus>`__
 - `ludrao (@ludrao) <https://github.com/ludrao>`__
+- `Luis Manuel Suarez (@luismasg) <https://github.com/luismasg>`__
 - `Luiz Correia (@luizcorreia) <https://github.com/luizcorreia>`__
 - `luk1803 (@luk1803) <https://github.com/luk1803>`__
 - `luka6000 (@luka6000) <https://github.com/luka6000>`__
@@ -1178,6 +1181,7 @@ Contributors
 - `manonfgoo (@manonfgoo) <https://github.com/manonfgoo>`__
 - `Manuel Kasper (@manuelkasper) <https://github.com/manuelkasper>`__
 - `Manuel Díez (@manutenfruits) <https://github.com/manutenfruits>`__
+- `Dániel Márai (@maraid) <https://github.com/maraid>`__
 - `marcelolcosta (@marcelolcosta) <https://github.com/marcelolcosta>`__
 - `Marcel van der Veldt (@marcelveldt) <https://github.com/marcelveldt>`__
 - `Marc (@MarcHagen) <https://github.com/MarcHagen>`__
@@ -1749,6 +1753,7 @@ Contributors
 - `Jordan W. Cobb (@skykingjwc) <https://github.com/skykingjwc>`__
 - `slimeinacloak (@slimeinacloak) <https://github.com/slimeinacloak>`__
 - `Sebastian Lövdahl (@slovdahl) <https://github.com/slovdahl>`__
+- `Smartpadza (@Smartpadza) <https://github.com/Smartpadza>`__
 - `smischny (@smischny) <https://github.com/smischny>`__
 - `Jacob Masen-Smith (@smithjacobj) <https://github.com/smithjacobj>`__
 - `John Mueller (@softplus) <https://github.com/softplus>`__
@@ -2075,4 +2080,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated February 12, 2025.*
+*This page was last updated February 17, 2025.*

@@ -22,6 +22,82 @@ ESPHome 2025.2.0 - 19th February 2025
     Mixer Speaker, components/speaker/mixer, mixer.svg
     Resampler Speaker, components/speaker/resampler, waveform.svg, dark-invert
 
+**🎉 Happy New Year! 🎉**
+
+We're kicking off 2025 with a number of updates, several of which are focused on removing old code. Unfortunately,
+this means we have a few breaking changes, but this work helps keep ESPHome more maintainable in the long-run.
+
+Join us below for the ESPHome New Year Release Party.
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/HtG3fjAO96c"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+
+Removal of "old style" Platform Configuration
+---------------------------------------------
+
+`Three years ago <https://github.com/esphome/esphome/pull/2303>`__, we added support for using
+`ESP-IDF <https://github.com/espressif/esp-idf/>`__ directly (as an alternative to Arduino). This brought about a
+number of benefits and a new syntax was introduced to facilitate greater flexibility when specifying and configuring
+your microcontroller/board.
+
+In this release, we've removed support for the "old style" of configuring your microcontroller/board. If you're still
+using it, you'll need to update your configurations to use the new style. A brief explanation is
+`here <https://github.com/esphome/esphome/pull/8118>`__, but for more detail, please see the
+:ref:`documentation for your microcontroller platform <devices>`.
+
+Removal of Custom Components
+----------------------------
+
+Custom components were deprecated over a year ago and, as promised, support for them was removed in this release. We
+encourage all developers to migrate their custom components to :doc:`/components/external_components`. Please see
+:ref:`a_note_about_custom_components` for a detailed explanation and next steps.
+
+Removal of ``armv7`` Docker Support
+-----------------------------------
+
+ESPHome no longer supports ``armv7`` hardware. This is due to both waning support as it relates to tooling and
+performance reasons. We strongly recommend moving to a more modern architecture, especially if you're using the ESPHome
+Device Builder to build/compile firmware for your devices.
+
+``esp32_rmt`` Updates
+---------------------
+
+Components which utilize the RMT hardware found on the ESP32 and its variants have been updated to use the new
+interface available in `ESP-IDF <https://github.com/espressif/esp-idf/>`__ versions 5 and above. This eliminates
+related warnings seen in the compiler logs while building ESPHome configurations. In most cases, you won't notice any
+difference, but this change could result in some issues, particularly for :doc:`/components/external_components`. You
+may need to make a minor change or two in your device configurations; the configuration validator will tell you if this
+is necessary as you update your devices.
+
+Audio Components
+----------------
+
+This release includes support for a number of new audio-related components/hardware. These are primarily aimed at
+supporting hardware found in Espressif's S3-Box series of products, eliminating the need to use the
+`ESP-ADF <https://github.com/espressif/esp-adf/>`__ and thus offering better integration with ESPHome in general. If
+you're using an S3-Box (or one of the variants), we strongly recommend updating your device either OTA or by using our
+:doc:`/projects/index` web installer. If you have "taken control" of or "adopted" your S3-Box, we strongly recommend
+updating your device's local configuration based on our updated configuration files found
+`here <https://github.com/esphome/wake-word-voice-assistants>`__.
+
+In addition, new ``speaker`` components have been introduced to provide more advanced functionality when using
+:doc:`/components/voice_assistant`. These components extend our work to help you create the ultimate personal voice
+assistant hardware.
+
+Image Components
+----------------
+
+This release adds support for alpha-blending images when using LVGL. To facilitate this, the ``use_transparency``
+configuration variable in :doc:`/components/image` and related components was renamed to ``transparency`` and changed
+from a boolean to an enum; in addition, the ``type`` configuration variable is now mandatory. See the
+:doc:`/components/image` documentation for more detail.
+
+Finally, the :doc:`/components/online_image` was updated to add support for both BMP and JPEG image formats.
 
 Full list of changes
 --------------------
@@ -59,6 +135,24 @@ Breaking Changes
 - [custom] Remove platforms :esphomepr:`8119` by :ghuser:`kbx81` (breaking-change)
 - Remove arm/v7 container image support :esphomepr:`8194` by :ghuser:`jesserockz` (breaking-change)
 - [esp32_rmt] Set pull-up and open-drain modes based on pin schema :esphomepr:`8178` by :ghuser:`swoboda1337` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- [core] Ignore dot-prefixed config entries when looking for target platform :esphomepr:`8240` by :ghuser:`jesserockz`
+- Bump zeroconf to 0.144.1 :esphomepr:`8238` by :ghuser:`bdraco`
+- [core] Fix ``config_dir`` for dashboard :esphomepr:`8242` by :ghuser:`jesserockz`
+- [cse7766] Remove ``stream`` dependency :esphomepr:`7720` by :ghuser:`gabest11`
+- [graph] Remove ``stream`` dependency :esphomepr:`8243` by :ghuser:`kbx81`
+- [modbus_controller] Remove `stream` dependency :esphomepr:`8244` by :ghuser:`kbx81`
+- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
+- [logger] Fix bug causing global log level to be overwritten :esphomepr:`8248` by :ghuser:`swoboda1337`
+- Add support for the DAC on the S2 :esphomepr:`8030` by :ghuser:`maraid`
+- Fix crash when storage file doesnt exist yet :esphomepr:`8249` by :ghuser:`jesserockz`
+- don't crash on null pages :esphomepr:`8254` by :ghuser:`ssieb`
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
+- Bump zeroconf to 0.144.3 :esphomepr:`8253` by :ghuser:`bdraco`
+- DHT platform now supports modules with inbuilt external resistor :esphomepr:`8257` by :ghuser:`deCodeIt`
 
 All changes
 ^^^^^^^^^^^
@@ -239,6 +333,20 @@ All changes
 - GDEY042T81 e-paper displays support :esphomepr:`8061` by :ghuser:`mgruener`
 - Add support for Waveshare 7.3" ACeP 7-Color display :esphomepr:`6380` by :ghuser:`NeilSCGH`
 - Bump esphome-dashboard to 20250212.0 :esphomepr:`8235` by :ghuser:`jesserockz`
+- [core] Ignore dot-prefixed config entries when looking for target platform :esphomepr:`8240` by :ghuser:`jesserockz`
+- Bump zeroconf to 0.144.1 :esphomepr:`8238` by :ghuser:`bdraco`
+- [core] Fix ``config_dir`` for dashboard :esphomepr:`8242` by :ghuser:`jesserockz`
+- [cse7766] Remove ``stream`` dependency :esphomepr:`7720` by :ghuser:`gabest11`
+- [graph] Remove ``stream`` dependency :esphomepr:`8243` by :ghuser:`kbx81`
+- [modbus_controller] Remove `stream` dependency :esphomepr:`8244` by :ghuser:`kbx81`
+- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
+- [logger] Fix bug causing global log level to be overwritten :esphomepr:`8248` by :ghuser:`swoboda1337`
+- Add support for the DAC on the S2 :esphomepr:`8030` by :ghuser:`maraid`
+- Fix crash when storage file doesnt exist yet :esphomepr:`8249` by :ghuser:`jesserockz`
+- don't crash on null pages :esphomepr:`8254` by :ghuser:`ssieb`
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
+- Bump zeroconf to 0.144.3 :esphomepr:`8253` by :ghuser:`bdraco`
+- DHT platform now supports modules with inbuilt external resistor :esphomepr:`8257` by :ghuser:`deCodeIt`
 
 Past Changelogs
 ---------------

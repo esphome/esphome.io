@@ -57,10 +57,9 @@ ESP32 IDF configuration variables:
       "ESP32-H2", "192 symbols", "48 symbols"
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
-- **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
-- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``one_wire``
-  mode is ``true`` or ``pin`` is inverted.
+- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``pin``
+  is set to inverted or open-drain.
 
 ESP32 Arduino configuration variables:
 **************************************
@@ -74,6 +73,8 @@ ESP32 Arduino configuration variables:
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "0, 1, 2, 3"
       "ESP32-C3", "0, 1"
+      "ESP32-C6", "0, 1"
+      "ESP32-H2", "0, 1"
 
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.

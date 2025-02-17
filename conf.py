@@ -45,6 +45,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "sphinx_toolbox.collapse",
     "tables",
+    "sphinx_copybutton",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

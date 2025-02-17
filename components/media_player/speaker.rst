@@ -7,7 +7,7 @@ Speaker Audio Media Player
 
 The ``speaker`` media player platform allows you to play on-device and online audio media via :doc:`speaker components </components/speaker/index>`.
 
-This platform greatly benefits from having external PSRAM. See the :ref:`performance section <speaker_media_player-performance>` for details.
+This platform greatly benefits from having external PSRAM. See the :ref:`performance section <media_player-speaker-performance>` for details.
 
 It natively supports decoding ``FLAC``, ``MP3``, and ``WAV`` audio files. Home Assistant (since version 2024.10) can proxy any media it sends and transcode it to a specified format and sample rate to minimize the device's computational load.
 
@@ -58,23 +58,12 @@ Configuration variables:
 - **on_volume** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the volume is changed.
 - All other options from :ref:`Media Player <config-media_player>`
 
-.. _speaker_media_player-performance:
-
-Performance
------------
-
-Decoding audio files is CPU and memory intensive. PSRAM external memory is strongly recommended. To use the component on a memory constrained device, define only the announcement pipeline, decrease the buffer size, set ``codec_support_enabled`` to false, and set the pipeline transcode setting format to ``WAV`` with a low sample rate and only 1 channel.
-
-In general, decoding FLAC has the lowest CPU usage, but requires a strong WiFi connection. Decoding MP3 requires less data to be sent over WiFi but is more CPU intensive to decode. Decoding WAV is only recommended at low sample rates if streamed over a network connection.
-
-Increasing the buffer size may reduce stuttering, but do not set it to the entire size of the external memory. Each pipeline allocates the configured amount, and this setting also does not take into account other smaller buffers allocated throughout the audio stack.
-
-.. _speaker_media_player-examples:
+.. _media_player-speaker-examples:
 
 Example Configuration
 ---------------------
 
-This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/i2s_audio>` configured with a 48000 Hz sample rate. It uses a ``mixer`` speaker component to handle combining the two differnet pipelines, and it uses ``resampler`` speaker components to ensure the source speakers uses the same sample rate.
+This example outputs audio to an  :doc:`I²S Audio Speaker </components/speaker/i2s_audio>` configured with a 48000 Hz sample rate. It uses a ``mixer`` speaker component to handle combining the two different pipelines, and it uses ``resampler`` speaker components to ensure the source speakers uses the same sample rate.
 
 It adds a switch for playing an on-device file for an alarm notification. Any playing media is ducked while the alarm is activated. After the alarm is turned off, the media ducking will gradually stop.
 
@@ -83,6 +72,7 @@ It adds a switch for playing an on-device file for an alarm notification. Any pl
     i2s_audio:
         i2s_lrclk_pin: GPIOXX
         i2s_bclk_pin: GPIOXX
+        sample_rate: 48000
     speaker:
       - platform: i2s_audio
         id: speaker_id
@@ -176,11 +166,39 @@ Configuration variables:
 
 - **media_file** (**Required**, :ref:`config-id`): The ID of the media file.
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to ``false``.
+- **enqueue** (*Optional*, boolean): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to ``false``.
 
+.. _media_player-speaker-performance:
+
+Performance
+-----------
+
+Decoding audio files is CPU and memory intensive. PSRAM external memory is strongly recommended. To use the component on a memory constrained device, define only the announcement pipeline, decrease the buffer size, set ``codec_support_enabled`` to false, and set the pipeline transcode setting format to ``WAV`` with a low sample rate and only 1 channel.
+
+In general, decoding FLAC has the lowest CPU usage, but requires a strong WiFi connection. Decoding MP3 requires less data to be sent over WiFi but is more CPU intensive to decode. Decoding WAV is only recommended at low sample rates if streamed over a network connection.
+
+Increasing the buffer size may reduce stuttering, but do not set it to the entire size of the external memory. Each pipeline allocates the configured amount, and this setting also does not take into account other smaller buffers allocated throughout the audio stack.
+
+Only set ``task_stack_in_psram`` to true if you have many components configured and your logs show that memory allocation failed. It is slower, especially if your PSRAM doesn't support ``octal`` mode.
+
+.. _media_player-speaker-troubleshooting:
+
+Troubleshooting
+---------------
+
+While you are troubleshooting, simplify your setup as much as possible . Only configure the ``announcement_pipeline`` and do not use ``resampler`` or ``mixer`` speakers.
+
+If you can't hear anything, check whether your hardware requires a GPIO pin to be high or low to enable the speaker. Verify you have the correct speaker channel configured: try setting your speaker configuration to stereo if you are unsure which channels are available.
+
+If the audio quality is poor, check your output speaker configuration. Experiment with the bits per sample, channels, and sample rate settings. In general, higher sample rates improve audio quality: try using ``44100`` Hz or ``48000`` Hz instead of ``16000`` Hz.
+
+If there is a noticeable delay before a pause command takes effect, reduce the buffer duration in the output speaker. Be sure to adjust both the hardware speaker component settings and the ``mixer`` speaker component settings, if used.
 
 See also
 --------
 
 - :doc:`/components/speaker/index`
+- :doc:`/components/speaker/mixer`
+- :doc:`/components/speaker/resampler`
 - :doc:`index`
 - :ghedit:`Edit`
