@@ -5,7 +5,7 @@ Beginner's Guide to Installing ESPHome on Docker Desktop
     :description: A step-by-step beginner's guide to installing and running ESPHome on Docker Desktop, with detailed instructions for Windows, Mac, and Linux users.
     :image: docker-mark-blue.svg
 
-This guide is for people who are not so tech-orientated but wish to get their feet wet with ESPHome.
+This guide is for people who are unfamiliar with ESPHome, but need Docker to begin.
 
 Docker Desktop
 --------------
@@ -14,7 +14,7 @@ Probably the easiest way to start with ESPHome, especially when you're not famil
 is to start with Docker Desktop.
 
 Docker Desktop can run Linux containers like ESPHome very well,
-although it may be slow on under-powered machines like "just for work" notebooks.
+although it may be slow on under-powered machines like lower-performance laptops.
 
 Running the command-line version of ESPHome might be enjoyable for the Linux-savvy but can be a headache,
 especially when it comes to Python and its dependencies.
@@ -106,7 +106,7 @@ and ``Container path`` (Set to ``/config`` - it **MUST** be exactly like this).
 Also, add an environment variable called ``TZ`` and set to your local timezone.
 If you're not sure what yours is called, check
 `Wikipedia <https://en.wikipedia.org/wiki/List_of_tz_database_time_zones>`_ under ``TZ identifier``.
-Canonical-types are best.
+Try to use a TZ indentifier that is listed under "Type" as "Canonical".
 
 After all that is done, click ``Run`` and the container will start.
 
