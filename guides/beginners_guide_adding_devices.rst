@@ -699,5 +699,6 @@ See Also
 
 - :doc:`ESPHome index </index>`
 - :doc:`getting_started_hassio`
+- :ref:`FAQ`
 - :doc:`diy`
 - :ghedit:`Edit`
