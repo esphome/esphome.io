@@ -22,12 +22,14 @@ This guide is for people who are unfamiliar with ESPHome and wish to learn the b
 Setting up your Secrets
 -----------------------
 
-A ``Secrets`` file can be used to hold things that you wish to remain secret. So, you can copy and paste a YAML
-from your own code to share with others, without the worry of leaking details about your home network, such as your
-SSID name and password.
+The ``secrets.yaml`` file is where you'll store information that you don't want to accidentally share or otherwise
+hard-code into your device's YAML configuration file(s). It's also useful because it provides a single place in which
+to store common values; this way, if you need to change one of them, you won't need to update every individual device's
+file, which can save you a lot of time when you have many devices!
 
-These elements can be re-used in all of your YAMLs, so it also makes copying and pasting YAML code from other
-sources (such as Github) much easier as well.
+When you keep these secret values in a separate file, you can confidently copy and paste YAML from your files and share
+it with others. You don't need to worry about accidentally sharing the details of your home network, such as your Wi-Fi
+SSID name and password.
 
 Click here in the ESPHome Dashboard to edit ``Secrets``.
 
