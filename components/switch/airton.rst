@@ -28,5 +28,6 @@ Configuration variables:
 See Also
 --------
 
-- :doc:`Airton IR Remote Climate </components/climate/haier>`
+- :doc:`Airton IR Remote Climate </components/climate/climate_ir>`
+- :doc:`Airton IR Remote Select </components/select/airton>`
 - :ghedit:`Edit`

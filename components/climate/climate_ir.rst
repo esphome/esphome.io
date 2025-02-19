@@ -110,7 +110,7 @@ Configuration Variables:
 
 The ``airton`` climate and protocol is implemented by RD1A1 remote command, and is present at least in Airton branded units and also in Ferroli's Aster lineup.
 
-To expose additional functionality you shall use a switch component with the platform ``airton``: check out :doc:`Airton IR Remote Climate Switch </components/switch/airton>`.
+To expose additional functionality you shall use a switch and/or selection components with the platform ``airton``: check out :doc:`Airton IR Remote Climate Switch </components/switch/airton>` and :doc:`Airton IR Remote Climate Select </components/select/airton>`.
 
 .. _climate_ir_lg:
 
