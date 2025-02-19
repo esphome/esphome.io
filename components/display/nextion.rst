@@ -238,7 +238,7 @@ This automation is triggered when a page is changed on the Nextion display. This
 ESP initiates a page change by calling ``goto_page("page_name")`` or ``goto_page(page_id)`` function. Nextion can change pages as a reaction to user's activity (e.g. clicks) or using a timer.
 In either case, this automation can be helpful to update on-screen controls for the newly displayed page.
 
-If you fully own your Nextoin HMI design and follow the best practice of setting the components' vscope to global in the Nextion Editor, you'll probably never need this trigger.
+If you fully own your Nextion HMI design and follow the best practice of setting the components' vscope to global in the Nextion Editor, you'll probably never need this trigger.
 However, if this is not the case and all / some of your UI components have local visibility scope, ``on_page`` will be your remedy. Here you can initiate updates of the relevant components.
 
 Before actually updating components, you need to understand which page Nextion was switched to. ``x`` argument will contain a page id integer.

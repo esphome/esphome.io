@@ -76,6 +76,11 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
                     </a>
                 </li>
                 <li>
+                    <a class="reference" href="https://devices.esphome.io/">
+                        Device configuration examples
+                    </a>
+                </li>
+                <li>
                     <a class="reference" href="/guides/creators.html">
                         Sharing ESPHome devices
                     </a>
@@ -1195,10 +1200,20 @@ Cookbook
     Arduino Port Extender, cookbook/arduino_port_extender, arduino_logo.svg
     EHMTX a matrix status/text display, cookbook/ehmtx, ehmtx.jpg
 
+.. _device_database:
+
+Device Database
+---------------
+
+You will find configurations for specific devices in our `ESPHome Devices <https://devices.esphome.io/>`__ database.
+
+.. _contributing:
+
+Contributing
+------------
+
 Do you have other awesome automations or cool setups? Please feel free to add them to the
 documentation for others to copy. See :doc:`Contributing </guides/contributing>`.
-
-If you'd like to share configurations for specific devices, please contribute to our `ESPHome Devices <https://devices.esphome.io/>`__ database.
 
 .. toctree::
     :hidden:
