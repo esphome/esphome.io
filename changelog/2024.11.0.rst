@@ -34,9 +34,55 @@ actually compile anything.
 OpenTherm
 ---------
 
-This release brings :doc:`/components/opentherm` support to ESPHome. Please see the :doc:`documentation </components/opentherm>` for detailed information about
-it and how to use it.
+This release brings :doc:`/components/opentherm` support to ESPHome. Please see the
+:doc:`documentation </components/opentherm>` for detailed information about it and how to use it.
 
+ESPHome ``armv7`` Docker Support
+--------------------------------
+
+We will be retiring ESPHome's Docker support for ``armv7`` hardware in the February 2025 release.
+
+This is due to both waning support as it relates to tooling and performance reasons. We strongly recommend moving to a
+more modern architecture, especiallly if you're using the ESPHome Device Compiler to build/compile firmware for your
+devices.
+
+Release 2024.11.1 - November 22
+-------------------------------
+
+- [http_request] Fix within context with parameters. (Bugfix) :esphomepr:`7790` by :ghuser:`clydebarrow`
+- [rtttl] Clamp gain between 0 and 1 :esphomepr:`7793` by :ghuser:`jesserockz`
+- [speaker] Add missing auto-load for ``audio`` :esphomepr:`7794` by :ghuser:`jesserockz`
+- [qspi_dbi] Fix garbled graphics on RM690B0 :esphomepr:`7795` by :ghuser:`manuelkasper`
+- Check for min_version earlier in validation :esphomepr:`7797` by :ghuser:`spuder`
+- Fix for OTA mode not activating in safe_mode when OTA section has an on_xxxx action  :esphomepr:`7796` by :ghuser:`Dilbert66`
+- Ensure storage I/O for ignored devices runs in the executor :esphomepr:`7792` by :ghuser:`bdraco`
+
+Release 2024.11.2 - November 27
+-------------------------------
+
+- [lvgl] Bugfixes :esphomepr:`7803` by :ghuser:`clydebarrow`
+- [docker] Leave run-time required libraries installed. :esphomepr:`7804` by :ghuser:`clydebarrow`
+- [qspi_dbi] Fix init sequences (Bugfix) :esphomepr:`7805` by :ghuser:`clydebarrow`
+- fix modbus crashing when bad data returned :esphomepr:`7810` by :ghuser:`ssieb`
+- [Modbus Controller] Fix issue #6477. Online automation triggering Offline :esphomepr:`7801` by :ghuser:`0x3333`
+- [fix] Status sensor does not check if required network component is missing :esphomepr:`7734` by :ghuser:`rvalitov`
+- keypad binary sensors should be initially off :esphomepr:`7808` by :ghuser:`ssieb`
+- fix 32 char SSIDs :esphomepr:`7834` by :ghuser:`ssieb`
+- [honeywell] use warning instead of failing :esphomepr:`7862` by :ghuser:`ssieb`
+
+Release 2024.11.3 - December 6
+------------------------------
+
+- [opentherm] Fix out of memory errors on ESP8266 :esphomepr:`7835` by :ghuser:`olegtarasov`
+- fix local time timestamp calculation :esphomepr:`7807` by :ghuser:`ssieb`
+- [online_image]Don't access decoder if not initialized :esphomepr:`7882` by :ghuser:`guillempages`
+- Add IRAM_ATTR to all functions used during interrupts on esp8266 chips. :esphomepr:`7840` by :ghuser:`FreeBear-nc`
+- [st7920] Remove unnecessary warning when drawing outside display bounds :esphomepr:`7868` by :ghuser:`jesserockz`
+- Fix recalc_timestamp_utc :esphomepr:`7894` by :ghuser:`RouNNdeL`
+- Cast port to int for ota pushing :esphomepr:`7888` by :ghuser:`jesserockz`
+- [lvgl] Bugfixes :esphomepr:`7896` by :ghuser:`clydebarrow`
+- [lvgl] Fix msgbox content :esphomepr:`7912` by :ghuser:`clydebarrow`
+- [esp32] Fix crash with empty `platformio_options:` value :esphomepr:`7920` by :ghuser:`clydebarrow`
 
 Full list of changes
 --------------------
@@ -72,6 +118,7 @@ Breaking Changes
 - [http_request] Always return defined server response status :esphomepr:`7689` by :ghuser:`clydebarrow` (breaking-change)
 - [touchscreen] Calibration fixes :esphomepr:`7704` by :ghuser:`clydebarrow` (breaking-change)
 - [spi_device] rename mode to spi_mode :esphomepr:`7724` by :ghuser:`clydebarrow` (breaking-change)
+- Update UNIT_VOLT_AMPS_REACTIVE = "var" (Currently 'VAR') :esphomepr:`7643` by :ghuser:`Roving-Ronin` (breaking-change)
 
 Beta Changes
 ^^^^^^^^^^^^
@@ -82,6 +129,10 @@ Beta Changes
 - Fix reactive power unit of measurement from VAR to var :esphomepr:`7757` by :ghuser:`felipecrs`
 - Disable bluetooth proxy during update :esphomepr:`7695` by :ghuser:`jzucker2`
 - ld2420: fix typo in log message :esphomepr:`7758` by :ghuser:`bfabio`
+- TuyaFan control should use oscillation_type :esphomepr:`7776` by :ghuser:`pethans`
+- Bump esphome-dashboard to 20241118.0 :esphomepr:`7782` by :ghuser:`jesserockz`
+- [http_request] Feed watchdog timeout around http request functions :esphomepr:`7786` by :ghuser:`jesserockz`
+- Bump esphome-dashboard to 20241120.0 :esphomepr:`7787` by :ghuser:`jesserockz`
 
 All changes
 ^^^^^^^^^^^
@@ -186,6 +237,16 @@ All changes
 - [core] Ring buffer write functions use const pointer parameter :esphomepr:`7750` by :ghuser:`kahrendt`
 - [Modbus Controller] Added `on_online` and `on_offline` automation :esphomepr:`7417` by :ghuser:`0x3333`
 - Updated dfplayer logging to be more user-friendly :esphomepr:`7740` by :ghuser:`solarkennedy`
+- Fix temperature and humidity for bme680 with bsec2 :esphomepr:`7728` by :ghuser:`luar123`
+- [i2s_audio] Bugfix: Adjust I2S speaker setup priority :esphomepr:`7759` by :ghuser:`kahrendt`
+- Update UNIT_VOLT_AMPS_REACTIVE = "var" (Currently 'VAR') :esphomepr:`7643` by :ghuser:`Roving-Ronin` (breaking-change)
+- Fix reactive power unit of measurement from VAR to var :esphomepr:`7757` by :ghuser:`felipecrs`
+- Disable bluetooth proxy during update :esphomepr:`7695` by :ghuser:`jzucker2`
+- ld2420: fix typo in log message :esphomepr:`7758` by :ghuser:`bfabio`
+- TuyaFan control should use oscillation_type :esphomepr:`7776` by :ghuser:`pethans`
+- Bump esphome-dashboard to 20241118.0 :esphomepr:`7782` by :ghuser:`jesserockz`
+- [http_request] Feed watchdog timeout around http request functions :esphomepr:`7786` by :ghuser:`jesserockz`
+- Bump esphome-dashboard to 20241120.0 :esphomepr:`7787` by :ghuser:`jesserockz`
 
 Past Changelogs
 ---------------

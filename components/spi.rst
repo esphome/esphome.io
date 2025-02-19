@@ -152,7 +152,7 @@ SPI modes:
 ----------
 
 SPI devices operate in one of four modes as per the table below. The choice of mode is dictated by the requirements
-of the speficic peripheral chip.
+of the specific peripheral chip.
 
 .. csv-table:: Supported Modes
     :header: "Mode", "Clock Idle Polarity", "Clock Phase", "Data shifted on", "Data sampled on"

@@ -37,7 +37,6 @@ Blog Posts & Videos
 - `Sonoff 4CH Irrigation Controller with Nextion Display <https://github.com/bruxy70/Irrigation-with-display>`__ by :ghuser:`bruxy70`
 - `Automated Bathroom Ventilation <https://www.youtube.com/watch?v=weBDnmrQYOs>`__ by `Intermittent Technology <https://intermit.tech>`__
 - `ESPHome MP3 Sound Machine <https://selfhostedhome.com/esp8266-mp3-sound-machine/>`__ by `Self Hosted Home <https://selfhostedhome.com>`__
-- `ESP32 Camera+ESP8266 PIR <https://www.dopebuild.com/i-am-sorry-dave-i-am-unable-to-do-that/>`__ by `Dave Richer <https://dopebuild.com/>`__
 - `Detecting Sound with ESP8266 <https://thibmaek.com/posts/detecting-sound-level-using-esp8266-and-esphome>`__ by `Thibault Maekelbergh <https://thibmaek.com>`__
 - `SW420 Vibration Sensor with Remote Notifications <https://github.com/rmooreID/Home-Assistant-Appliance-Monitor/>`__ by :ghuser:`rmooreID`
 - `DIY Irrigation Controller (with Internal Scheduler + Lovelace UI) <https://brianhanifin.com/posts/diy-irrigation-controller-esphome-home-assistant/>`__ by :ghuser:`BrianHanifin`
