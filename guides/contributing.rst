@@ -851,7 +851,7 @@ the ESPHome core via the defined interfaces (like ``Sensor``, ``BinarySensor`` a
 Directory Structure
 *******************
 
-After you've :ref:`set up a development environment <setup_dev_env>`, you will have a folder structure like this:
+After you've :ref:`set up a development environment <setup_dev_env>`, you will have a directory structure like this:
 
 .. code-block:: text
 
@@ -873,9 +873,24 @@ After you've :ref:`set up a development environment <setup_dev_env>`, you will h
     │   │   ├── restart_switch.h
     │   │   ├── switch.py
     │  ...
+    ├── tests
+    │   ├── components
+    │   │   ├── dht12
+    │   │   │   ├── common.yaml
+    │   │   │   ├── test.esp32-ard.yaml
+    │   │   │   ├── test.esp32-c3-ard.yaml
+    │   │   │   ├── test.esp32-c3-idf.yaml
+    │   │   │   ├── test.esp32-idf.yaml
+    │   │   │   ├── test.esp8266-ard.yaml
+    │   │   │   ├── test.rp2040-ard.yaml
+    │  ...
 
-All components are in the "components" folder. Each component is in its own subfolder which contains the Python code
-(``.py``) and the C++ code (``.h`` and ``.cpp``).
+All components are in the "components" directory. Each component is in its own subdirectory which contains the Python
+code (``.py``) and the C++ code (``.h`` and ``.cpp``).
+
+In the "tests" directory, a second "components" directory contains configuration files (``.yaml``) used to perform test
+builds of each component. It's structured similarly to the "components" directory mentioned above, with subdirectories
+for each component.
 
 Consider a YAML configuration file containing the following:
 
@@ -886,23 +901,19 @@ Consider a YAML configuration file containing the following:
     sensor:
       - platform: hello2
 
-In both cases, ESPHome will automatically look for corresponding entries in the "components" folder and find the
+In both cases, ESPHome will automatically look for corresponding entries in the "components" directory and find the
 directory with the given name. In this example, the first entry causes ESPHome to look for the
 ``esphome/components/hello1/__init__.py`` file and the second entry tells ESPHome to look for
 ``esphome/components/hello2/sensor.py`` or ``esphome/components/hello2/sensor/__init__.py``.
 
 Let's leave what's written in those files for :ref:`the next section <config_validation>`, but for now you should also
-know that, whenever a component is loaded, all the C++ source files in the folder of the component are automatically
-copied into the generated PlatformIO project. All you need to do is add the C++ source files in the component's folder
+know that, whenever a component is loaded, all the C++ source files in the directory of the component are automatically
+copied into the generated PlatformIO project. All you need to do is add the C++ source files in the component's directory
 and the ESPHome core will copy them with no additional code required by the component developer.
 
 .. note::
 
     For testing, you can use :doc:`/components/external_components`.
-
-    ESPHome also has a ``custom_components`` mechanism like `Home Assistant does
-    <https://developers.home-assistant.io/docs/creating_component_index>`__. Note, however, that
-    **custom components are deprecated** in favor of :doc:`/components/external_components`.
 
 .. _config_validation:
 
@@ -1014,6 +1025,102 @@ the provided methods.
 
 Finally, your component must have a ``dump_config`` method that prints the complete user configuration.
 
+.. _test_configurations:
+
+Test Configurations
+*******************
+
+Each (new) component/platform must have tests. This enables our CI system to perform a test build of the
+component/platform to ensure it compiles without any errors. The test file(s) should incorporate the new
+component/platform itself as well as all :doc:`automations</automations/actions>` it implements.
+
+Overview
+^^^^^^^^
+
+The tests aim to test compilation of the code for each processor architecture:
+
+- Xtensa (ESP8266, original ESP32 and S-series)
+- RISC-V (ESP32 C-series)
+- ARM (RP2040)
+
+...and for each supported framework:
+
+- Arduino
+- `ESP-IDF <https://github.com/espressif/esp-idf/>`__
+
+There should be *at least one test* for each framework/architecture combination. We can probably go without saying it,
+but some framework/architecture combinations are simply not supported/possible, so tests for those are impossible and,
+as such, are (naturally) omitted.
+
+General Structure
+^^^^^^^^^^^^^^^^^
+
+We try to structure the tests in a way so as to minimize repetition. Let's look at the ``dht12`` sensor platform as an
+example:
+
+First, you'll find a ``common.yaml`` file which contains this:
+
+.. code-block:: yaml
+
+    i2c:
+      - id: i2c_dht12
+        scl: ${scl_pin}
+        sda: ${sda_pin}
+
+    sensor:
+      - platform: dht12
+        temperature:
+          name: DHT12 Temperature
+        humidity:
+          name: DHT12 Humidity
+        update_interval: 15s
+
+It's a shared configuration file that defines common settings used across all hardware platforms. Having a "common"
+file like this minimizes duplication and ensures test consistency across all platforms.
+
+To use ``common.yaml`` in a test configuration, YAML substitutions and the insertion operator are used (see
+:doc:`/components/substitutions`). This allows the test YAML file to reference and include the shared configuration.
+For the ``dht12`` platform, one of the test files is named ``test.esp32-ard.yaml`` and it contains this:
+
+.. code-block:: yaml
+
+    substitutions:
+      scl_pin: GPIO16
+      sda_pin: GPIO17
+
+    <<: !include common.yaml
+
+By including ``common.yaml``, all test configurations maintain the same structure while allowing flexibility for
+platform-specific substitutions such as pin assignments. This approach simplifies managing multiple test cases across
+different hardware platforms.
+
+Which Tests Do I Need?
+^^^^^^^^^^^^^^^^^^^^^^
+
+We require a test for each framework/architecture combination the component/platform supports. *Most*
+components/platforms include the following test files:
+
+- ``test.esp32-ard.yaml`` - ESP32 (Xtensa)/Arduino
+- ``test.esp32-idf.yaml`` - ESP32 (Xtensa)/IDF
+- ``test.esp32-c3-ard.yaml`` - ESP32-C3 (RISC-V)/Arduino
+- ``test.esp32-c3-idf.yaml`` - ESP32-C3 (RISC-V)/IDF
+- ``test.esp8266-ard.yaml`` - ESP8266 (Xtensa)/Arduino
+- ``test.rp2040-ard.yaml`` - RP2040 (ARM)/Arduino
+
+In cases where the component/platform implements support for some microcontroller-specific hardware component, tests
+should be added to/omitted from the list above as appropriate. The :doc:`/components/sensor/adc` is one example of this.
+
+Running the Tests
+^^^^^^^^^^^^^^^^^
+
+You can run the tests locally simply by invoking the test script:
+
+.. code-block:: shell
+
+    script/test_build_components -e compile -c dht12
+
+Our CI will also run this script when you create or update your pull request (PR).
+
 .. _delays_in_code:
 
 A Note About Delays in Code
@@ -1042,14 +1149,14 @@ this can be a handy alternative to implementing a state machine.
 A Note About Custom Components
 ******************************
 
-*"I read that custom components are deprecated...so now what do I do???"*
+*"I read that support for custom components was removed...so now what do I do???"*
 
-ESPHome's "custom component" mechanism is a holdover from Home Assistant's feature by the same name. It existed before
+ESPHome's "custom component" mechanism was a holdover from Home Assistant's feature by the same name. It existed before
 :doc:`/components/external_components` and offered a way to "hack in" support for devices which were not officially
 supported by ESPHome.
 
-Why are Custom Components Deprecated?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Why were Custom Components Removed?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 There are several reasons for this change.
 
@@ -1168,9 +1275,11 @@ ESPHome's maintainers work hard to maintain a high standard for its code. We try
 
 - Components **must** use the provided abstractions like ``sensor``, ``switch``, etc. Components specifically should
   **not** directly access other components -- for example, to publish to MQTT topics.
-- Implementations for new devices should contain reference links for the datasheet and other sample implementations.
+- Implementations for new devices should contain reference links for the data sheet and other sample implementations.
 - If you have used ``delay()`` or constructed code which blocks for a duration longer than ten milliseconds, be sure to
   read :ref:`delays_in_code`.
+- Do **not** use ``sstream``/``stringstream`` to format variables into strings. This library bloats the compiled binary
+  by over 200 kilobytes (KBs) which causes problems for devices with small amounts (1-4 MB) of flash memory.
 - Comments in code should be used as appropriate, such as to help explain some complexity or to provide a brief summary
   of what a class, method, etc. is doing. PRs which include large blocks of commented-out code will not be accepted.
   Single lines of commented code may be useful from time to time (for example, to call out something which was
