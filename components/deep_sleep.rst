@@ -46,6 +46,8 @@ Configuration variables:
   - **default** (**Required**, :ref:`config-time`): default run duration for timer wakeup and any unspecified wakeup reason.
   - **gpio_wakeup_reason** (*Optional*, :ref:`config-time`): run duration if woken up by GPIO.
   - **touch_wakeup_reason** (*Optional*, :ref:`config-time`): run duration if woken up by touch.
+  - **ext1_wakeup_reason** (*Optional*, :ref:`config-time`): run duration if woken up by ext1.
+
 
 - **sleep_duration** (*Optional*, :ref:`config-time`): The time duration to stay in deep sleep mode.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
