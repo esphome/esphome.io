@@ -106,7 +106,8 @@ ESP32 IDF configuration variables:
   ``filter_symbols``. Useful for filtering out short bursts of noise.
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to
   ``1000000``.
-- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
+  the DMA buffer size and can be set to a large value.
 
 ESP32 Arduino configuration variables:
 **************************************
