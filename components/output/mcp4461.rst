@@ -85,7 +85,58 @@ The MCP4461 output component exposes 8 MCP4461 (wiper-)channels of a global :ref
       then:
         - output.set_level:
             id: digipot_channel_0
-            level: !lambda return static_cast<float>(x / 1000);
+            level: !lambda return static_cast<float>(x / 256); // using a uint16_t in range 0-256
+                   // !lambda return x; - if x is float in range 0.0-1.0, will be multiplied with 256 internally to get integer taps value
+
+    
+    interval:
+      // read current hardware wiper state to variable without updating output-channel state
+      - interval: 5s
+      // update wiper state every 10s (potentiometer usage)
+      - interval: 10s
+          then:
+            - lambda: |-
+                float current_state;
+                current_state = id(digipot_wiper_0).read_state();
+                return;
+
+    button:
+      - platform: template
+        id: increment_wiper_0_button
+        name: "Increment wiper 0"
+        on_press:
+          then:
+            - lambda: |-
+                id(digipot_channel_0).increase_wiper(); // increase taps by one for wiper 0
+                return;
+
+      - platform: template
+        id: enable_wiper_0_button
+        name: "Enable wiper 0"
+        on_press:
+          then:
+            - lambda: |-
+                id(digipot_channel_0).turn_on(); // same as id(digipot_wiper_0).enable_wiper() and id(digipot_wiper_0).enable_terminal('h')
+                return;
+
+
+      - platform: template
+        id: enable_wiper_0_terminal_a_button
+        name: "Enable wiper 0 terminal A"
+        on_press:
+          then:
+            - lambda: |-
+                id(digipot_channel_0).enable_terminal('a'); // available terminals are { 'h', 'a', 'b', 'w' }
+                return;
+
+      - platform: template
+        id: disable_wiper_0_terminal_a_button
+        name: "Disable wiper 0 terminal A"
+        on_press:
+          then:
+            - lambda: |-
+                id(digipot_channel_0).disable_terminal('a'); // available terminals are { 'h', 'a', 'b', 'w' }
+                return;
 
 Configuration variables:
 ------------------------
@@ -103,9 +154,13 @@ Configuration variables:
   
 - All other options from :ref:`Output <config-output>`.
 
-Tap count for 7/8bit digipot/rheostat devices is usually 100/257. Minimum setting for the output is 0.000, maximum is 0.256
-This example shows how to use this with simple numeric slider (0-256 non-decimal numbers shown)
-If initial_value configuration variable is not used, you can use
+Tap count for 7/8bit digipot/rheostat devices is usually 100/257.
+For MCP4461, valid output states in range from 0 - 1.0 will be multiplied internally with 256 to get integer tap count in range [0-256]
+
+This example shows how to use this with simple numeric slider (0-256 integer numbers in frontend)
+Fetch current wiper state:
+If initial_value configuration variable is not used, you can use read_state() / update_state() to fetch current state on boot time. Potentiometer usage (not rheostat)
+can be realized the same way in update block.
 
 .. code-block:: yaml
 
@@ -116,46 +171,17 @@ If initial_value configuration variable is not used, you can use
           - number.set:
               id: digipot_volatile_0
               value: !lambda |-
-                return id(digipot_wiper_0).get_wiper_level();
+                uint16_t wiper_level = id(digipot_wiper_0).read_state();
+                return wiper_level;
 
-Public Lambda functions:
-------------------------
+          - lambda: |-
+              id(digipot_wiper_0).update_state();
 
-For mcp4461 component itself (not the wiper!):
-**********************************************
-
-- (uint16_t) get_eeprom_value(uint8_t location):
-    get current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 ! // ToDo improve eeprom usage
-- (void) set_eeprom_value(uint8_t location, uint16_t value):
-    set current eeprom user data value of given eeprom-userdata-location (0-4) // 5x 9bits, max int val = 511 !
-
-For the output (the wiper):
-***************************
-
-- (void) write_state(float state): // (protected, override, default frontend function)
-    expects value in range 0.00 to 0.256, higher values will be clamped to max value
-- (float) read_state(): // returns current wiper state, without (!) updating internal wiper state of output
-    returns current hw state of this wiper // NOT the internal state of the output
-- (float) update_state():
-    returns current value of this output (wiper) & updates internal state of output to this fetched value
-- (void) enable_wiper():
-    enable this output (wiper), only valid for volatile wipers (0-3)
-- (void) disable_wiper():
-    disable this output (wiper), only valid for volatile wipers (0-3)
-- (void) increase_wiper():
-    increase this output (wiper), only valid for volatile wipers (0-3)
-- (void) decrease_wiper():
-    decrease this output (wiper), only valid for volatile wipers (0-3)
-- (void) enable_terminal(char terminal):
-    enable terminal (one of ['a','b','w','h']) of this volatile wiper (0-3).
-    'h' is also used for general enable/disable of wiper
-- (void) disable_terminal(char terminal):
-    disable terminal (one of ['a','b','w','h']) of this volatile wiper (0-3).
-    'h' is also used for general enable/disable of wiper
 
 See Also
 --------
 
 - :doc:`/components/output/index`
+- :doc:`/components/output/mcp4461.rst`
 - :apiref:`mcp4461/mcp4461.h`
 - :ghedit:`Edit`
