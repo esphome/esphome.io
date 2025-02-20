@@ -19,6 +19,8 @@ With this component you can define images that will be downloaded, decoded and d
 
     - PNG images
 
+    - WEBP images and animations
+
 .. warning::
 
     This component requires a fair amount of RAM; both for downloading the image, and for storing the decoded image. It might work on devices without PSRAM, but there is no guarantee.
@@ -43,6 +45,7 @@ Configuration variables
   - ``BMP``: The image on the server is encoded in BMP format.
   - ``JPEG``: The image on the server is encoded in JPEG format.
   - ``PNG``: The image on the server is encoded in PNG format.
+  - ``WEBP``: The image on the server is encoded in WEBP format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
 - **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
@@ -69,6 +72,19 @@ Automations
 A good example for that is to update the display component after the download succeeded.
 
 - **on_error** (*Optional*, :ref:`Automation <automation>`): An automation to perform when an error happened during download or decode.
+
+.. note::
+
+    For animated images, the same actions for :doc:`Animation </components/animation>` can be used. For example:
+
+    .. code-block:: yaml
+
+        interval:
+          - interval: 1s
+              then:
+                animation.next_frame: my_online_image
+
+    If the image is not an animation, the animation actions will have no effect.
 
 Actions
 -------
