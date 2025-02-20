@@ -39,8 +39,6 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **pm_10_0** (*Optional*): Mass of particles with a diameter of 10 micrometres or less (μg/m^3).
   All options from :ref:`Sensor <config-sensor>`.
-- **pm_10_0** (*Optional*): Mass of particles with a diameter of 10 micrometres or less (μg/m^3).
-  All options from :ref:`Sensor <config-sensor>`.
 - **pmc_0_3** (*Optional*): Count of particles with diameter > 0.3 um in 0.1 L of air (#/0.1L).
   All options from :ref:`Sensor <config-sensor>`.
 - **pmc_0_5** (*Optional*): Count of particles with diameter > 0.5 um in 0.1 L of air (#/0.1L).

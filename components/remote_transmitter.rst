@@ -73,6 +73,8 @@ ESP32 Arduino configuration variables:
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "0, 1, 2, 3"
       "ESP32-C3", "0, 1"
+      "ESP32-C6", "0, 1"
+      "ESP32-H2", "0, 1"
 
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.
@@ -941,7 +943,7 @@ This :ref:`action <config-action>` sends a Toto infrared remote code to a remote
           command: 0xED  # Set water and seat temperature
           rc_code_1: 0x0 # Water heater off
           rc_code_2: 0x0 # Seat heater off
-          # Repeats 3 times at a 32ms interval by default
+          # Repeats 3 times at a 36ms interval by default
 
 Configuration variables:
 
@@ -949,7 +951,7 @@ Configuration variables:
 - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
 - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
 - All other options from :ref:`remote_transmitter-transmit_action`.
-   - **Note**: Toto remotes repeat all codes three times at a 32ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
+   - **Note**: Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
 
 
 .. _remote_transmitter-rc_switch-protocol:
