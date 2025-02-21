@@ -267,6 +267,7 @@ buttons.
         y_min: 0
         y_max: 100
         page_id: home_page_id
+        use_raw: true
 
 Configuration variables:
 ************************
@@ -280,6 +281,9 @@ Configuration variables:
   Cannot be used with ``pages``.
 - **pages** (*Optional*, list of :ref:`config-id`): Only trigger this binary sensor if the display is showing one of these pages.
   Cannot be used with ``page_id``.
+- **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and this extra area is
+  used for touch buttons. Set this to `true` to and use the lambda from the Calibration section above to find the
+  correct min/max for your screen: touch the corners of each button area and look for the `x_raw` and `y_raw` values.
 
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
