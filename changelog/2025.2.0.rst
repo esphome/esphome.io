@@ -110,6 +110,19 @@ from a boolean to an enum; in addition, the ``type`` configuration variable is n
 
 Finally, the :doc:`/components/online_image` was updated to add support for both BMP and JPEG image formats.
 
+ILI9XXX Display Component
+-------------------------
+
+There are two changes to the :doc:`/components/display/ili9xxx` component. Previously the component automatically loaded
+the ``psram`` component - this has been removed, and you must now explicitly include the
+``psram`` component in your configuration if your display requires it. The bit-depth defaults to 16 bit as before, but
+there is no attempt to automatically fallback to 8 bit if insufficient memory is available. You must now explicitly
+select 8-bit mode with the ``color_palette`` configuration variable if required.
+
+The symptoms caused by these changes are likely to be a blank screen or a screen that is not displaying correctly. Check
+the runtime logs for any errors or warnings that may indicate the cause of the issue, specifically memory allocation
+failures.
+
 Full list of changes
 --------------------
 

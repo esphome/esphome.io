@@ -42,9 +42,14 @@ beyond the basic SPI connections, and a reasonable amount of RAM, it is not well
 
 .. note::
 
-    The default color depth is 16 bit (RGB565). 8 bit color is also supported, but the color palette must be set to one of the available options.
+    PSRAM is not automatically enabled on the ESP32 (this changed with the 2025.2 release.) If PSRAM is available, you
+    should enable it with the :doc:`PSRAM configuration </components/psram>`.
     Use of 16 bit colors requires twice the amount of RAM as 8 bit, and may not be usable unless PSRAM is available.
 
+.. note::
+
+    The default color depth is 16 bit (RGB565). 8 bit color is also supported, but the color palette must be set to one of the available options.
+    Use of 16 bit colors requires twice the amount of RAM as 8 bit, and may not be usable unless PSRAM is available.
 
 .. figure:: images/ili9341-full.jpg
     :align: center
