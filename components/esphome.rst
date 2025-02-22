@@ -267,7 +267,7 @@ Adjusting flash writes
 
 - **flash_write_interval** (*Optional*, :ref:`config-time`): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
-  written to the flash and wearing it out. Defaults to ``1min``.
+  written to the flash and wearing it out. Defaults to ``1min``. Set to ``never`` to disable this feature.
 
 As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
 due to quickly changing components. In the past, when components such as ``light``, ``switch``, ``fan`` and ``globals``
@@ -279,7 +279,7 @@ A safety feature has thus been implemented to mitigate issues resulting from the
 the state is first stored in memory before being flushed to flash after the ``flash_write_interval`` has passed. This
 results in fewer flash writes, preserving the flash health.
 
-This behavior can be disabled by setting ``flash_write_interval`` to ``0s`` to immediately commit the state to flash,
+This behavior can be modified by setting ``flash_write_interval`` to ``0s`` to commit the changes to flash as soon as possible,
 however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
 
 For :doc:`ESP8266 </components/esp8266>`, ``restore_from_flash`` must also be set to ``true`` for states to be written to flash.

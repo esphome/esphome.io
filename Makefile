@@ -1,5 +1,5 @@
 ESPHOME_PATH = ../esphome
-ESPHOME_REF = dev
+ESPHOME_REF = 2025.2.0
 PAGEFIND_VERSION=1.1.1
 PAGEFIND=pagefind
 NET_PAGEFIND=../pagefindbin/pagefind

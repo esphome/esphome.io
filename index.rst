@@ -178,6 +178,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Improv via Serial, components/improv_serial, improv.svg, dark-invert
     Interval, components/interval, description.svg, dark-invert
     JSON, components/json, json.svg, dark-invert
+    XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
 
 ESPHome Configuration
@@ -604,6 +605,7 @@ Motion
     BMI160, components/sensor/bmi160, bmi160.jpg, Accelerometer & Gyroscope
     LD2410, components/sensor/ld2410, ld2410.jpg, Motion & Presence
     LD2420, components/sensor/ld2420, ld2420.jpg, Motion & Presence
+    LD2450, components/sensor/ld2450, ld2450.png, Motion & Presence
     MPU6050, components/sensor/mpu6050, mpu6050.jpg, Accelerometer & Gyroscope
     MPU6886, components/sensor/mpu6886, mpu6886.jpg, Accelerometer & Gyroscope
     RuuviTag, components/sensor/ruuvitag, ruuvitag.jpg, Temperature & Humidity & Accelerometer
@@ -651,6 +653,7 @@ Core
     Home Assistant, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
     Status, components/binary_sensor/status, server-network.svg, dark-invert
     Switch, components/binary_sensor/switch, electric-switch.svg, dark-invert
+    Host SDL2, components/binary_sensor/sdl, sdl.png
 
 Capacitive Touch
 ****************
@@ -707,6 +710,7 @@ Presence Detection
     DFRobot mmWave Radar, components/dfrobot_sen0395, dfrobot_sen0395.jpg
     LD2410, components/sensor/ld2410, ld2410.jpg
     LD2420, components/sensor/ld2420, ld2420.jpg
+    LD2450, components/sensor/ld2450, ld2450.png
     Seeed Studio MR24HPC1 mmWave, components/seeed_mr24hpc1, seeed-mr24hpc1.jpg
 
 Miscellaneous
@@ -976,6 +980,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
+    Speaker, components/media_player/speaker, speaker.svg
 
 Microphone Components
 ---------------------
@@ -1051,6 +1056,8 @@ Speaker Components
 
     Speaker Core, components/speaker/index, speaker.svg, dark-invert
     I2S Speaker, components/speaker/i2s_audio, i2s_audio.svg
+    Mixer Speaker, components/speaker/mixer, mixer.svg
+    Resampler Speaker, components/speaker/resampler, waveform.svg, dark-invert
 
 Switch Components
 -----------------
