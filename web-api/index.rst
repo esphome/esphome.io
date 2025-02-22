@@ -320,6 +320,33 @@ method is ``set``. The following parameter can be used:
 
 For example POST ``/number/desired_delay/set?value=24`` will set the number to 24.
 
+Alarm Control Panel
+*******************
+
+The current state of an Alarm Control Panel can be retrieved by a GET request to ``alarm_control_panel/my_alarm``
+which may yield:
+
+.. code-block:: json
+
+    {
+      "id": "alarm-control-panel-my_alarm",
+      "state": "ARMED_AWAY",
+      "value": 2
+    }
+
+-  **id**: The ID of the alarm control panel, prefixed with ``alarm-control-panel-``.
+-  **state**: ``DISARMED``, ``ARMED_HOME``, ``ARMED_AWAY``, ``ARMED_NIGHT``, ``ARMED_VACATION``, 
+   ``ARMED_CUSTOM_BYPASS``, ``PENDING``, ``ARMING``, ``DISARMING``, or ``TRIGGERED``.
+-  **value**: Current state as number. See the ``AlarmControlPanelState`` enum.
+
+A POST request allows arming and disarming the alarm control panel. Available methods are ``arm_away``, ``arm_home``,
+``arm_night``, ``arm_vacation`` and ``disarm``. The ``code`` parameter may be given if the alarm control panel requires
+a code for disarming or arming. For example, a POST to ``alarm_control_panel/my_alarm/disarm?code=1234`` would attempt to
+disarm the alarm control panel named "My Alarm" using the code 1234.
+
+A valid POST request will always return a 200 OK status response. This does not indicate that the alarm was armed or
+disarmed successfully. It only indicates that the command was received and processed by the web server.
+
 See Also
 --------
 
