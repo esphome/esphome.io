@@ -1116,6 +1116,7 @@ Touchscreen Components
     AXS15231, components/touchscreen/axs15231, axs15231.svg
     CST226, components/touchscreen/cst226, t4-s3.jpg
     CST816, components/touchscreen/cst816, cst816.jpg
+    CHSC6X, components/touchscreen/chsc6x, chsc6x.png
     EKTF2232, components/touchscreen/ektf2232, ektf2232.svg, Inkplate 6 Plus
     FT63X6, components/touchscreen/ft63x6, wt32-sc01.png
     GT911, components/touchscreen/gt911, esp32_s3_box_3.png
