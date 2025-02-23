@@ -68,6 +68,10 @@ For best results, keep the wires as short as possible.
 Internal DAC
 ************
 
+  .. note::
+
+      Internal DAC speakers are only supported by the legacy I²S driver on a regular ESP32, not the variants.
+
 - **mode** (**Required**, enum): The channel mode of the internal DAC.
 
   - ``left``
