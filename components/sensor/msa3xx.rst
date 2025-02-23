@@ -15,7 +15,7 @@ The ``msa3xx`` sensor platform allows you to use your MSA301 and MSA311 tri-axia
 low-g accelerometers (`datasheet <https://cdn-shop.adafruit.com/product-files/5309/MSA311-V1.1-ENG.pdf>`__) 
 with ESPHome. The :ref:`I²C <i2c>` is required to be set up in your configuration for this sensor to work.
 
-MSA301 and MSA311 are almost identical sensors.  The only difference is the ADC resolution. MSA311 has fixed 
+MSA301 and MSA311 are almost identical sensors. The only difference is the ADC resolution. MSA311 has fixed 
 12-bits resolution while MSA301 ADC is 14-bits and it can be configured to do 8, 10, 12, or 14 bits measurements.
 
 This component provides acceleration data in m/s², orientation information, and tap detection. XYZ axes can be
@@ -55,13 +55,14 @@ Base Configuration:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval for updating acceleration sensors.
   Defaults to ``10s``.
 - **range** (*Optional*, string): The range of the sensor measurements. One of ``2G``, ``4G``, ``8G``, ``16G``. 
-  Defaults to ``2G``  which means it picks up accelerations between ``-2g`` and ``2g``.
-- **resolution** (*Optional*, int): For ``msa301`` only. The ADC resolution of the sensor in bits. ``8``, ``10``, ``12``, ``14``. Defaults to ``14``.
+  Defaults to ``2G`` which means it picks up accelerations between ``-2g`` and ``2g``.
+- **resolution** (*Optional*, int): The ADC resolution of the sensor in bits. Supported values for ``msa301`` are ``8``, ``10``, ``12``, ``14`` (*default*). 
+  For ``msa311`` the only resolution supported is ``12`` (and it is *default*).
 - **calibration** (*Optional*):
 
   - **offset_x** (*Optional*, float): X-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to ``0``.
   - **offset_y** (*Optional*, float): Y-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to ``0``.
-  - **offset_Z** (*Optional*, float): Z-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to ``0``.
+  - **offset_z** (*Optional*, float): Z-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to ``0``.
 
 - **transform** (*Optional*):
 
@@ -79,13 +80,13 @@ For every sensor **name** is required. All other options from :ref:`Binary Senso
 Shorthand notation also can be used.
 
 .. code-block:: yaml
-
+  
     binary_sensor:
       - platform: msa3xx
-        tap: Single tap         # shorthand notation for the sensor
-        double_tap: Double tap  # -- "" -- 
-        active:                 # regular notation for the sensor to be able
-          name: Active          # to use filters and other options
+        tap: Single tap          # shorthand notation for the sensor
+        double_tap: Double tap   # -- "" -- 
+        active:                  # regular notation for the sensor to be able
+          name: Active           # to use filters and other options
           filters: 
             - delayed_off: 5000ms # example of prolongation of movement detection signal
 
