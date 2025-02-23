@@ -1,0 +1,423 @@
+ESPHome 2025.2.0 - 19th February 2025
+=====================================
+
+.. seo::
+    :description: Changelog for ESPHome 2025.2.0.
+    :image: /_static/changelog-2025.2.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    Audio ADC Core, components/audio_adc/index, audio_adc.svg
+    XXTEA, components/xxtea, xxtea.svg
+    Host SDL2 Keyboard, components/binary_sensor/sdl, sdl.png
+
+    ES7210, components/audio_adc/es7210, es7210.svg
+    ES7243E, components/audio_adc/es7243e, es7243e.svg
+    ES8156, components/audio_dac/es8156, es8156.svg
+
+    Speaker Media Player, components/media_player/speaker, speaker.svg, dark-invert
+    Mixer Speaker, components/speaker/mixer, mixer.svg
+    Resampler Speaker, components/speaker/resampler, waveform.svg, dark-invert
+
+**🎉 Happy New Year! 🎉**
+
+We're kicking off 2025 with a number of updates, several of which are focused on removing old code. Unfortunately,
+this means we have a few breaking changes, but this work helps keep ESPHome more maintainable in the long-run.
+
+Join us below for the ESPHome New Year Release Party.
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/HtG3fjAO96c"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+
+Removal of "old style" Platform Configuration
+---------------------------------------------
+
+`Three years ago <https://github.com/esphome/esphome/pull/2303>`__, we added support for using
+`ESP-IDF <https://github.com/espressif/esp-idf/>`__ directly (as an alternative to Arduino). This brought about a
+number of benefits and a new syntax was introduced to facilitate greater flexibility when specifying and configuring
+your microcontroller/board.
+
+In this release, we've removed support for the "old style" of configuring your microcontroller/board. If you're still
+using it, you'll need to update your configurations to use the new style. A brief explanation is
+`here <https://github.com/esphome/esphome/pull/8118>`__, but for more detail, please see the
+:ref:`documentation for your microcontroller platform <devices>`.
+
+Removal of Custom Components
+----------------------------
+
+Custom components were deprecated over a year ago and, as promised, support for them was removed in this release. We
+encourage all developers to migrate their custom components to :doc:`/components/external_components`. Please see
+:ref:`a_note_about_custom_components` for a detailed explanation and next steps.
+
+Removal of ``armv7`` Docker Support
+-----------------------------------
+
+ESPHome no longer supports ``armv7`` hardware. This is due to both waning support as it relates to tooling and
+performance reasons. We strongly recommend moving to a more modern architecture, especially if you're using the ESPHome
+Device Builder to build/compile firmware for your devices.
+
+``esp32_rmt`` Updates
+---------------------
+
+Components which utilize the RMT hardware found on the ESP32 and its variants have been updated to use the new
+interface available in `ESP-IDF <https://github.com/espressif/esp-idf/>`__ versions 5 and above. This eliminates
+related warnings seen in the compiler logs while building ESPHome configurations. In most cases, you won't notice any
+difference, but this change could result in some issues, particularly for :doc:`/components/external_components`. You
+may need to make a minor change or two in your device configurations; the configuration validator will tell you if this
+is necessary as you update your devices.
+
+Audio Components
+----------------
+
+This release includes support for a number of new audio-related components/hardware. These are primarily aimed at
+supporting hardware found in Espressif's S3-Box series of products, eliminating the need to use the
+`ESP-ADF <https://github.com/espressif/esp-adf/>`__ and thus offering better integration with ESPHome in general. If
+you're using an S3-Box (or one of the variants), we strongly recommend updating your device either OTA or by using our
+:doc:`/projects/index` web installer. If you have "taken control" of or "adopted" your S3-Box, we strongly recommend
+updating your device's local configuration based on our updated configuration files found
+`here <https://github.com/esphome/wake-word-voice-assistants>`__.
+
+In addition, new ``speaker`` components have been introduced to provide more advanced functionality when using
+:doc:`/components/voice_assistant`. These components extend our work to help you create the ultimate personal voice
+assistant hardware.
+
+The new :doc:`speaker media player </components/media_player/speaker>` component adds several features for building
+a well-rounded audio device. It supports playing two different streams of audio: one for announcements and another
+for music.
+
+The new :doc:`mixer speaker </components/speaker/mixer>` component lets you combine the two streams. The mixer
+even supports audio ducking, so you can lower the volume of the music while your announcement plays!
+
+Image Components
+----------------
+
+This release adds support for alpha-blending images when using LVGL. To facilitate this, the ``use_transparency``
+configuration variable in :doc:`/components/image` and related components was renamed to ``transparency`` and changed
+from a boolean to an enum; in addition, the ``type`` configuration variable is now mandatory. See the
+:doc:`/components/image` documentation for more detail.
+
+Finally, the :doc:`/components/online_image` was updated to add support for both BMP and JPEG image formats.
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- [es7210] add support for es7210 ADC :esphomepr:`8007` by :ghuser:`kahrendt` (new-integration)
+- [audio_adc] Add new ``audio_adc`` component :esphomepr:`8094` by :ghuser:`kbx81` (new-integration)
+- [es8156] Add support for ES8156 audio DAC :esphomepr:`8085` by :ghuser:`kbx81` (new-integration)
+- [es7243e] Add support for ES7243E audio ADC :esphomepr:`8098` by :ghuser:`kbx81` (new-integration)
+- [esp32_ble_server] Create custom services, characteristics and descriptors :esphomepr:`7009` by :ghuser:`Rapsssito` (new-integration)
+- [resampler] Media Player Components PR7 :esphomepr:`8169` by :ghuser:`kahrendt` (new-integration)
+- [mixer] Media Player Components PR8 :esphomepr:`8170` by :ghuser:`kahrendt` (new-integration)
+- [xxtea] Extract encryption functions to separate component :esphomepr:`8183` by :ghuser:`clydebarrow` (new-integration)
+- [logger] Add runtime level select :esphomepr:`8222` by :ghuser:`clydebarrow` (new-integration)
+- [speaker] Media Player Components PR9 :esphomepr:`8171` by :ghuser:`kahrendt` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- [uptime] Add text_sensor :esphomepr:`8028` by :ghuser:`clydebarrow` (new-platform)
+- Add: Human Presence and Target Count to the Seeed Studio MR60BHA2 :esphomepr:`8010` by :ghuser:`limengdu` (new-platform)
+- [sdl] Implement binary sensors from keystrokes :esphomepr:`8207` by :ghuser:`bdm310` (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- [esp32_rmt] Updates for IDF 5+ :esphomepr:`7770` by :ghuser:`swoboda1337` (breaking-change)
+- [lvgl] remove default state :esphomepr:`8038` by :ghuser:`clydebarrow` (breaking-change)
+- [nextion] Brightness control tweaks :esphomepr:`8027` by :ghuser:`kbx81` (breaking-change)
+- [image] Transparency changes; code refactor :esphomepr:`7908` by :ghuser:`clydebarrow` (breaking-change)
+- [ili9xxx] psram and 8 bit changes :esphomepr:`8084` by :ghuser:`clydebarrow` (breaking-change)
+- [core] Remove old style platform configuration :esphomepr:`8118` by :ghuser:`jesserockz` (breaking-change)
+- [custom] Remove platforms :esphomepr:`8119` by :ghuser:`kbx81` (breaking-change)
+- Remove arm/v7 container image support :esphomepr:`8194` by :ghuser:`jesserockz` (breaking-change)
+- [esp32_rmt] Set pull-up and open-drain modes based on pin schema :esphomepr:`8178` by :ghuser:`swoboda1337` (breaking-change)
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
+- [core] Ignore dot-prefixed config entries when looking for target platform :esphomepr:`8240` by :ghuser:`jesserockz`
+- Bump zeroconf to 0.144.1 :esphomepr:`8238` by :ghuser:`bdraco`
+- [core] Fix ``config_dir`` for dashboard :esphomepr:`8242` by :ghuser:`jesserockz`
+- [cse7766] Remove ``stream`` dependency :esphomepr:`7720` by :ghuser:`gabest11`
+- [graph] Remove ``stream`` dependency :esphomepr:`8243` by :ghuser:`kbx81`
+- [modbus_controller] Remove `stream` dependency :esphomepr:`8244` by :ghuser:`kbx81`
+- [logger] Fix bug causing global log level to be overwritten :esphomepr:`8248` by :ghuser:`swoboda1337`
+- Add support for the DAC on the S2 :esphomepr:`8030` by :ghuser:`maraid`
+- Fix crash when storage file doesnt exist yet :esphomepr:`8249` by :ghuser:`jesserockz`
+- don't crash on null pages :esphomepr:`8254` by :ghuser:`ssieb`
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
+- Bump zeroconf to 0.144.3 :esphomepr:`8253` by :ghuser:`bdraco`
+- DHT platform now supports modules with inbuilt external resistor :esphomepr:`8257` by :ghuser:`deCodeIt`
+- Replace glyphsets with esphome_glyphsets :esphomepr:`8261` by :ghuser:`bdraco`
+- Bump aioesphomeapi to 29.1.0 :esphomepr:`8105` by :ghuser:`bdraco`
+- Bump openssh-client to 1:9.2p1-2+deb12u4 to fix docker builds :esphomepr:`8269` by :ghuser:`bdraco`
+- Increase default repeat delay for Toto remote transmitter protocol :esphomepr:`8265` by :ghuser:`G-Two`
+- Bump zeroconf to 0.145.1 :esphomepr:`8267` by :ghuser:`bdraco`
+
+All changes
+^^^^^^^^^^^
+
+- [rotary_encoder] Fix volatile increment/decrement deprecation warnings :esphomepr:`7958` by :ghuser:`edwardtfn`
+- [pulse_counter] Fix volatile increment/decrement deprecation warnings :esphomepr:`7954` by :ghuser:`edwardtfn`
+- [nextion] Publishes `is_connected()` :esphomepr:`7961` by :ghuser:`edwardtfn`
+- Fix adc channel for ESP32-H2 :esphomepr:`7964` by :ghuser:`luar123`
+- [nextion] Remove ``_internal`` from non-protected functions :esphomepr:`7656` by :ghuser:`edwardtfn`
+- [opentherm] Message ordering, on-the-fly message editing, code improvements :esphomepr:`7903` by :ghuser:`olegtarasov`
+- [debug] Detailed reset reason :esphomepr:`7729` by :ghuser:`edwardtfn`
+- [uart] Use ``SOC_UART_NUM`` as number of uarts instead of ``UART_NUM_MAX`` :esphomepr:`7967` by :ghuser:`jesserockz`
+- [ci] Dont run main ci suite on docker files :esphomepr:`7966` by :ghuser:`jesserockz`
+- Bump docker/setup-buildx-action from 3.7.1 to 3.8.0 in the docker-actions group :esphomepr:`7969` by :ghuser:`dependabot[bot]`
+- [core] Add c6 and h2 to split default :esphomepr:`7974` by :ghuser:`swoboda1337`
+- [midea] Add Fahrenheit support to `midea_ac.follow_me` action :esphomepr:`7762` by :ghuser:`DjordjeMandic`
+- [esp32_rmt] Updates for IDF 5+ :esphomepr:`7770` by :ghuser:`swoboda1337` (breaking-change)
+- [qspi_dbi] Bugfix and new features :esphomepr:`7979` by :ghuser:`clydebarrow`
+- [helpers] Provide calls to get free heap and largest available block. :esphomepr:`7978` by :ghuser:`clydebarrow`
+- Bump actions/upload-artifact from 4.4.3 to 4.5.0 :esphomepr:`7981` by :ghuser:`dependabot[bot]`
+- [esp32_ble] do not skip events if queue is blocked :esphomepr:`7960` by :ghuser:`tomaszduda23`
+- [ble_client, bluetooth_proxy, esp32_ble_client, esp32_ble_tracker] fix ble proxy stop working :esphomepr:`7901` by :ghuser:`tomaszduda23`
+- [esp32_rmt] IDF 5+ update fixes :esphomepr:`8002` by :ghuser:`swoboda1337`
+- Initialize esp32_rmt_led_strip buffer :esphomepr:`8036` by :ghuser:`pzich`
+- [addressable_light] Remove rmt channel from idf tests :esphomepr:`7987` by :ghuser:`clydebarrow`
+- Remove rmt channel from idf tests :esphomepr:`8054` by :ghuser:`clydebarrow`
+- Fixed comment typo in light_color_values.h :esphomepr:`8050` by :ghuser:`samunemeth`
+- Fix braceless else statements :esphomepr:`7799` by :ghuser:`pzich`
+- Enable udp to work (on ipv4) when ipv6 is enabled :esphomepr:`8060` by :ghuser:`HeMan`
+- Update sprinkler.cpp :esphomepr:`7996` by :ghuser:`jotaj91`
+- [lvgl] remove default state :esphomepr:`8038` by :ghuser:`clydebarrow` (breaking-change)
+- [lvgl] fix bg_image_src :esphomepr:`8005` by :ghuser:`clydebarrow`
+- [lgvl] disp_bg_image and disp_bg_opa changes :esphomepr:`8025` by :ghuser:`clydebarrow`
+- [spi_led_strip] Fix priority :esphomepr:`8021` by :ghuser:`clydebarrow`
+- [config] Early check for required version :esphomepr:`8000` by :ghuser:`clydebarrow`
+- [lvgl] Implement `lvgl.page.is_showing:` condition :esphomepr:`8055` by :ghuser:`clydebarrow`
+- [display] auto_clear_enabled defaults  :esphomepr:`7986` by :ghuser:`clydebarrow`
+- Convert IPAddress to use Pythonmodule ipaddress :esphomepr:`8072` by :ghuser:`HeMan`
+- Add log level env var :esphomepr:`7604` by :ghuser:`briancw`
+- [spi] relay on KEY_TARGET_PLATFORM as the other platforms does :esphomepr:`8066` by :ghuser:`tomaszduda23`
+- Bump actions/upload-artifact from 4.5.0 to 4.6.0 :esphomepr:`8058` by :ghuser:`dependabot[bot]`
+- Bump peter-evans/create-pull-request from 7.0.5 to 7.0.6 :esphomepr:`8024` by :ghuser:`dependabot[bot]`
+- Bump docker/setup-qemu-action from 3.2.0 to 3.3.0 in the docker-actions group :esphomepr:`8052` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 6.10.0 to 6.11.0 in /.github/actions/build-image :esphomepr:`8053` by :ghuser:`dependabot[bot]`
+- Allow CONF_RMT_CHANNEL parameter for IDF 4.X :esphomepr:`8035` by :ghuser:`gnumpi`
+- [esp32] Fix arch_get_cpu_freq_hz :esphomepr:`8047` by :ghuser:`swoboda1337`
+- Fix Waveshare 7in5bv3bwr image quality in BWR mode :esphomepr:`8043` by :ghuser:`zbikmarc`
+- [json] use correct formatting :esphomepr:`8039` by :ghuser:`clydebarrow`
+- [nextion] Brightness control tweaks :esphomepr:`8027` by :ghuser:`kbx81` (breaking-change)
+- [image] Transparency changes; code refactor :esphomepr:`7908` by :ghuser:`clydebarrow` (breaking-change)
+- Added VERY_VERBOSE dfplayer printing :esphomepr:`8026` by :ghuser:`solarkennedy`
+- [core] fix comment for crc8 function in helpers.h :esphomepr:`8016` by :ghuser:`DjordjeMandic`
+- [debug] Add framework type to debug info :esphomepr:`8013` by :ghuser:`edwardtfn`
+- [debug] Add ESP32 partition table logging to `dump_config` :esphomepr:`8012` by :ghuser:`edwardtfn`
+- [psram] Improve total PSRAM display in logs by using rounded KB values :esphomepr:`8008` by :ghuser:`edwardtfn`
+- Use ESPHome logo on readme page according to theme (light/dark) :esphomepr:`7992` by :ghuser:`dougiteixeira`
+- Fix compile errors with pioarduino/platform-espressif32:  wifi_component_esp32_arduino.cpp  :esphomepr:`7998` by :ghuser:`bitflippersanonymous`
+- Include esp_mac.h and C++20 str_startswith/str_ends :esphomepr:`7999` by :ghuser:`bitflippersanonymous`
+- [esp32_wifi] Enhance WiFi component with TCPIP core locking. :esphomepr:`7997` by :ghuser:`bitflippersanonymous`
+- add missing include in base_automation.h :esphomepr:`8001` by :ghuser:`nielsnl68`
+- Fixed topic when mac is used :esphomepr:`7988` by :ghuser:`Hadatko`
+- web_server: Adds REST API POST endpoints to arm and disarm :esphomepr:`7985` by :ghuser:`heythisisnate`
+- [lvgl] fix tests :esphomepr:`8075` by :ghuser:`clydebarrow`
+- Allow external libraries to use ESP_LOGx macros :esphomepr:`8078` by :ghuser:`kroimon`
+- [uptime] Add text_sensor :esphomepr:`8028` by :ghuser:`clydebarrow` (new-platform)
+- [image] Fix mdi images :esphomepr:`8082` by :ghuser:`clydebarrow`
+- [ili9xxx] psram and 8 bit changes :esphomepr:`8084` by :ghuser:`clydebarrow` (breaking-change)
+- [spi] Restore ``SPIDelegateDummy`` :esphomepr:`8019` by :ghuser:`clydebarrow`
+- [lvgl] fix lvgl.widget.update and friends :esphomepr:`8087` by :ghuser:`clydebarrow`
+- fix(web_server/fan): send speed update values even when fan is off :esphomepr:`8086` by :ghuser:`distante`
+- [es7210] add support for es7210 ADC :esphomepr:`8007` by :ghuser:`kahrendt` (new-integration)
+- [event] Store ``last_event_type`` in class :esphomepr:`8088` by :ghuser:`jesserockz`
+- [prometheus] Select, media_player, and number prometheus metrics :esphomepr:`7895` by :ghuser:`jzucker2`
+- Bump docker/build-push-action from 6.11.0 to 6.12.0 in /.github/actions/build-image :esphomepr:`8090` by :ghuser:`dependabot[bot]`
+- Revert "Add resistance_sampler interface for config validation" :esphomepr:`8093` by :ghuser:`clydebarrow`
+- Fix running pre-commit on Windows :esphomepr:`8095` by :ghuser:`stellar-aria`
+- Remove black-formatter from pre-commit hooks :esphomepr:`8097` by :ghuser:`stellar-aria`
+- Increase Daly-BMS coltage cells from 16 to 18 cells :esphomepr:`8057` by :ghuser:`j-sepul`
+- [image]Rename option "use_transparency" :esphomepr:`8113` by :ghuser:`guillempages`
+- [online_image] Use RAMAllocator :esphomepr:`8114` by :ghuser:`guillempages`
+- Fixed incorrect display dimension :esphomepr:`8110` by :ghuser:`Duckle29`
+- Update defines.h for esp-idf 5.1.5 :esphomepr:`8117` by :ghuser:`jesserockz`
+- [audio_adc] Add new ``audio_adc`` component :esphomepr:`8094` by :ghuser:`kbx81` (new-integration)
+- [uptime] Cosmetic improvements for uptime text_sensor :esphomepr:`8101` by :ghuser:`clydebarrow`
+- [es8156] Add support for ES8156 audio DAC :esphomepr:`8085` by :ghuser:`kbx81` (new-integration)
+- [esp32_touch] Fix deprecated warning :esphomepr:`8092` by :ghuser:`swoboda1337`
+- [core] Remove old style platform configuration :esphomepr:`8118` by :ghuser:`jesserockz` (breaking-change)
+- Bump actions/stale from 9.0.0 to 9.1.0 :esphomepr:`8120` by :ghuser:`dependabot[bot]`
+- [custom] Remove platforms :esphomepr:`8119` by :ghuser:`kbx81` (breaking-change)
+- Add: Human Presence and Target Count to the Seeed Studio MR60BHA2 :esphomepr:`8010` by :ghuser:`limengdu` (new-platform)
+- [es7243e] Add support for ES7243E audio ADC :esphomepr:`8098` by :ghuser:`kbx81` (new-integration)
+- [debug] fix debug_esp32 printf for partition size and address :esphomepr:`8122` by :ghuser:`fightforlife`
+- [esp32] Set logger default interface for C6 :esphomepr:`8126` by :ghuser:`kbx81`
+- [core] add support for custom platform :esphomepr:`7616` by :ghuser:`tomaszduda23`
+- Add verbose logging for pulse width calculation in pulse_meter :esphomepr:`8124` by :ghuser:`DjordjeMandic`
+- [ads1115] Add sample rate control :esphomepr:`8102` by :ghuser:`brambo123`
+- Fix mqtt climate step rounding :esphomepr:`8121` by :ghuser:`olemmela`
+- [spi] Fix data type in bitbash transfer_() :esphomepr:`8125` by :ghuser:`oliv3r`
+- [online_image] Add binary bmp support :esphomepr:`8116` by :ghuser:`jesserockz`
+- [online_image] Code Improvements :esphomepr:`8130` by :ghuser:`guillempages`
+- Update mdns for ESP-IDF :esphomepr:`8145` by :ghuser:`HeMan`
+- Include Bluetooth connection slot allocations in connections free message :esphomepr:`8148` by :ghuser:`bdraco`
+- [esp32_ble_server] Create custom services, characteristics and descriptors :esphomepr:`7009` by :ghuser:`Rapsssito` (new-integration)
+- [online_image] Add JPEG support to online_image :esphomepr:`8127` by :ghuser:`guillempages`
+- [logger] Ensure PRIu32 and friends are available :esphomepr:`8155` by :ghuser:`clydebarrow`
+- Fix forgotten uses of use_transparency :esphomepr:`8115` by :ghuser:`kroimon`
+- Add multicast support to udp component :esphomepr:`8051` by :ghuser:`HeMan`
+- [display] Properly handle case of auto_clear_enabled: false :esphomepr:`8156` by :ghuser:`clydebarrow`
+- [esp32_rmt] Increase default symbols in led strip and remove IRAM config :esphomepr:`8133` by :ghuser:`swoboda1337`
+- [climate] Accept °K as intended :esphomepr:`8134` by :ghuser:`oliv3r`
+- Bump docker/build-push-action from 6.12.0 to 6.13.0 in /.github/actions/build-image :esphomepr:`8136` by :ghuser:`dependabot[bot]`
+- Bump pypa/gh-action-pypi-publish from 1.12.3 to 1.12.4 :esphomepr:`8137` by :ghuser:`dependabot[bot]`
+- Bump actions/setup-python from 5.3.0 to 5.4.0 :esphomepr:`8154` by :ghuser:`dependabot[bot]`
+- Bump actions/setup-python from 5.3.0 to 5.4.0 in /.github/actions/restore-python :esphomepr:`8153` by :ghuser:`dependabot[bot]`
+- [remote_transmitter] Fix issues with 32bit rollover on esp8266 and libretiny :esphomepr:`8056` by :ghuser:`swoboda1337`
+- Use abspath for config path dir :esphomepr:`8044` by :ghuser:`NicoIIT`
+- [remote_base] Add default value for offset in is_valid :esphomepr:`8159` by :ghuser:`swoboda1337`
+- feat(core): Add support for <...> includes :esphomepr:`8132` by :ghuser:`Rapsssito`
+- Bump zeroconf to 0.143.0 :esphomepr:`8104` by :ghuser:`bdraco`
+- [i2s_audio] Media Player Components PR1 :esphomepr:`8163` by :ghuser:`kahrendt`
+- [audio, i2s_audio, speaker] Media Player Components PR2 :esphomepr:`8164` by :ghuser:`kahrendt`
+- [audio] Media Player Components PR3 :esphomepr:`8165` by :ghuser:`kahrendt`
+- Add virtual get_flags() to GPIOPin and implementation in InternalGPIOPin derivatives :esphomepr:`8151` by :ghuser:`DjordjeMandic`
+- Make get_flags() in GPIOPin mandatory :esphomepr:`8182` by :ghuser:`DjordjeMandic`
+- [audio] Media Player Components PR4 :esphomepr:`8166` by :ghuser:`kahrendt`
+- [audio] Media Player Components PR5 :esphomepr:`8167` by :ghuser:`kahrendt`
+- [audio] Media Player Components PR6 :esphomepr:`8168` by :ghuser:`kahrendt`
+- Remove arm/v7 container image support :esphomepr:`8194` by :ghuser:`jesserockz` (breaking-change)
+- [resampler] Media Player Components PR7 :esphomepr:`8169` by :ghuser:`kahrendt` (new-integration)
+- [mixer] Media Player Components PR8 :esphomepr:`8170` by :ghuser:`kahrendt` (new-integration)
+- [CI] Consolidate some tests (A) :esphomepr:`8184` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (B) :esphomepr:`8185` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (C) :esphomepr:`8186` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (D) :esphomepr:`8189` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (E) :esphomepr:`8191` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (F) :esphomepr:`8195` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (G) :esphomepr:`8196` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (H) :esphomepr:`8198` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (K, L) :esphomepr:`8201` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (M) :esphomepr:`8202` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (I, J) :esphomepr:`8200` by :ghuser:`kbx81`
+- [i2c] Workaround for i2c on s2 :esphomepr:`8188` by :ghuser:`swoboda1337`
+- [lvgl] add  triggers for swipe gestures :esphomepr:`8190` by :ghuser:`clydebarrow`
+- [xxtea] Extract encryption functions to separate component :esphomepr:`8183` by :ghuser:`clydebarrow` (new-integration)
+- [lvgl] Make layouts work properly on base display :esphomepr:`8193` by :ghuser:`clydebarrow`
+- [preferences] Better handling of flash_write_interval :esphomepr:`8199` by :ghuser:`clydebarrow`
+- [CI] Consolidate some tests (N, O, P) :esphomepr:`8204` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (Q, R) :esphomepr:`8205` by :ghuser:`kbx81`
+- [prometheus] Add update entity to prometheus metrics :esphomepr:`8173` by :ghuser:`jzucker2`
+- [uponor_smatrix] add target temperature as sensor :esphomepr:`7745` by :ghuser:`janschroeter`
+- [sdl] Implement binary sensors from keystrokes :esphomepr:`8207` by :ghuser:`bdm310` (new-platform)
+- Bump the docker-actions group with 2 updates :esphomepr:`8215` by :ghuser:`dependabot[bot]`
+- [esp32_rmt] Set pull-up and open-drain modes based on pin schema :esphomepr:`8178` by :ghuser:`swoboda1337` (breaking-change)
+- Add Toto protocol to remote receiver and transmitter :esphomepr:`8177` by :ghuser:`G-Two`
+- Markdown tweaks/updates :esphomepr:`8211` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (S) :esphomepr:`8206` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (U, V, W, X, Y, Z) :esphomepr:`8210` by :ghuser:`kbx81`
+- [CI] Consolidate some tests (T) :esphomepr:`8208` by :ghuser:`kbx81`
+- [online_image]Pin specific version of JPEG library :esphomepr:`8217` by :ghuser:`guillempages`
+- [logger] Add runtime level select :esphomepr:`8222` by :ghuser:`clydebarrow` (new-integration)
+- [online_image] Set Accept header :esphomepr:`8216` by :ghuser:`candrews`
+- [waveshare_epaper] Rationalise and complete tests :esphomepr:`8221` by :ghuser:`clydebarrow`
+- Fix pref conflict of WiFi creds and fast_connect :esphomepr:`8219` by :ghuser:`QRPp`
+- Don't activate venv in devcontainer :esphomepr:`8128` by :ghuser:`kroimon`
+- Add ADC sampling method option :esphomepr:`8131` by :ghuser:`blind-oracle`
+- [ota] Increase socket timeout earlier in OTA script :esphomepr:`8129` by :ghuser:`swoboda1337`
+- [speaker] Media Player Components PR9 :esphomepr:`8171` by :ghuser:`kahrendt` (new-integration)
+- Add partial update of GDEW029T5 e-paper display :esphomepr:`8162` by :ghuser:`mystster`
+- Add waveshare 2.9inch e-Paper HAT (D) :esphomepr:`7906` by :ghuser:`TataGEEK`
+- [http_request]Use std::string for headers :esphomepr:`8225` by :ghuser:`guillempages`
+- [online_image] Improve error handling :esphomepr:`8212` by :ghuser:`guillempages`
+- [speaker] Bugfix: Ensure all audio is played after completely decoding a file :esphomepr:`8231` by :ghuser:`kahrendt`
+- [voice_assistant] Add announce support :esphomepr:`8232` by :ghuser:`kahrendt`
+- [prometheus] Adding valve entity metrics :esphomepr:`8223` by :ghuser:`jzucker2`
+- Added Waveshare e-paper display model "7.50inv2p" to the waveshare_epaper component. :esphomepr:`7751` by :ghuser:`tmpeh`
+- added Waveshare BWR Mode for the 4.2in Display :esphomepr:`7995` by :ghuser:`itpcc`
+- Add GDEY029T94 support  :esphomepr:`7931` by :ghuser:`danielkoek`
+- GDEY042T81 e-paper displays support :esphomepr:`8061` by :ghuser:`mgruener`
+- Add support for Waveshare 7.3" ACeP 7-Color display :esphomepr:`6380` by :ghuser:`NeilSCGH`
+- Bump esphome-dashboard to 20250212.0 :esphomepr:`8235` by :ghuser:`jesserockz`
+- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
+- [core] Ignore dot-prefixed config entries when looking for target platform :esphomepr:`8240` by :ghuser:`jesserockz`
+- Bump zeroconf to 0.144.1 :esphomepr:`8238` by :ghuser:`bdraco`
+- [core] Fix ``config_dir`` for dashboard :esphomepr:`8242` by :ghuser:`jesserockz`
+- [cse7766] Remove ``stream`` dependency :esphomepr:`7720` by :ghuser:`gabest11`
+- [graph] Remove ``stream`` dependency :esphomepr:`8243` by :ghuser:`kbx81`
+- [modbus_controller] Remove `stream` dependency :esphomepr:`8244` by :ghuser:`kbx81`
+- [logger] Fix bug causing global log level to be overwritten :esphomepr:`8248` by :ghuser:`swoboda1337`
+- Add support for the DAC on the S2 :esphomepr:`8030` by :ghuser:`maraid`
+- Fix crash when storage file doesnt exist yet :esphomepr:`8249` by :ghuser:`jesserockz`
+- don't crash on null pages :esphomepr:`8254` by :ghuser:`ssieb`
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
+- Bump zeroconf to 0.144.3 :esphomepr:`8253` by :ghuser:`bdraco`
+- DHT platform now supports modules with inbuilt external resistor :esphomepr:`8257` by :ghuser:`deCodeIt`
+- Replace glyphsets with esphome_glyphsets :esphomepr:`8261` by :ghuser:`bdraco`
+- Bump aioesphomeapi to 29.1.0 :esphomepr:`8105` by :ghuser:`bdraco`
+- Bump openssh-client to 1:9.2p1-2+deb12u4 to fix docker builds :esphomepr:`8269` by :ghuser:`bdraco`
+- Increase default repeat delay for Toto remote transmitter protocol :esphomepr:`8265` by :ghuser:`G-Two`
+- Bump zeroconf to 0.145.1 :esphomepr:`8267` by :ghuser:`bdraco`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.12.0`
+- :doc:`2024.11.0`
+- :doc:`2024.10.0`
+- :doc:`2024.9.0`
+- :doc:`2024.8.0`
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

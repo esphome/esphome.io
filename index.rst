@@ -76,6 +76,11 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
                     </a>
                 </li>
                 <li>
+                    <a class="reference" href="https://devices.esphome.io/">
+                        Device configuration examples
+                    </a>
+                </li>
+                <li>
                     <a class="reference" href="/guides/creators.html">
                         Sharing ESPHome devices
                     </a>
@@ -173,6 +178,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Improv via Serial, components/improv_serial, improv.svg, dark-invert
     Interval, components/interval, description.svg, dark-invert
     JSON, components/json, json.svg, dark-invert
+    XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
 
 ESPHome Configuration
@@ -599,6 +605,7 @@ Motion
     BMI160, components/sensor/bmi160, bmi160.jpg, Accelerometer & Gyroscope
     LD2410, components/sensor/ld2410, ld2410.jpg, Motion & Presence
     LD2420, components/sensor/ld2420, ld2420.jpg, Motion & Presence
+    LD2450, components/sensor/ld2450, ld2450.png, Motion & Presence
     MPU6050, components/sensor/mpu6050, mpu6050.jpg, Accelerometer & Gyroscope
     MPU6886, components/sensor/mpu6886, mpu6886.jpg, Accelerometer & Gyroscope
     MSA301, components/sensor/msa3xx, msa301.jpg, Accelerometer
@@ -648,6 +655,7 @@ Core
     Home Assistant, components/binary_sensor/homeassistant, home-assistant.svg, dark-invert
     Status, components/binary_sensor/status, server-network.svg, dark-invert
     Switch, components/binary_sensor/switch, electric-switch.svg, dark-invert
+    Host SDL2, components/binary_sensor/sdl, sdl.png
 
 Capacitive Touch
 ****************
@@ -704,6 +712,7 @@ Presence Detection
     DFRobot mmWave Radar, components/dfrobot_sen0395, dfrobot_sen0395.jpg
     LD2410, components/sensor/ld2410, ld2410.jpg
     LD2420, components/sensor/ld2420, ld2420.jpg
+    LD2450, components/sensor/ld2450, ld2450.png
     Seeed Studio MR24HPC1 mmWave, components/seeed_mr24hpc1, seeed-mr24hpc1.jpg
 
 Miscellaneous
@@ -730,6 +739,15 @@ Alarm Control Panel Components
     Alarm Control Panel Core, components/alarm_control_panel/index, alarm-panel.svg, dark-invert
     Template Alarm Control Panel, components/alarm_control_panel/template, description.svg, dark-invert
 
+Audio ADC Components
+--------------------
+
+.. imgtable::
+
+    Audio ADC Core, components/audio_adc/index, audio_adc.svg
+    ES7210, components/audio_adc/es7210, es7210.svg
+    ES7243E, components/audio_adc/es7243e, es7243e.svg
+
 Audio DAC Components
 --------------------
 
@@ -737,6 +755,7 @@ Audio DAC Components
 
     Audio DAC Core, components/audio_dac/index, audio_dac.svg
     AIC3204, components/audio_dac/aic3204, aic3204.svg
+    ES8156, components/audio_dac/es8156, es8156.svg
     ES8311, components/audio_dac/es8311, es8311.svg
 
 Button Components
@@ -963,6 +982,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
+    Speaker, components/media_player/speaker, speaker.svg
 
 Microphone Components
 ---------------------
@@ -1038,6 +1058,8 @@ Speaker Components
 
     Speaker Core, components/speaker/index, speaker.svg, dark-invert
     I2S Speaker, components/speaker/i2s_audio, i2s_audio.svg
+    Mixer Speaker, components/speaker/mixer, mixer.svg
+    Resampler Speaker, components/speaker/resampler, waveform.svg, dark-invert
 
 Switch Components
 -----------------
@@ -1157,28 +1179,6 @@ Miscellaneous Components
     Sun, components/sun, weather-sunny.svg, dark-invert
     Tuya MCU, components/tuya, tuya.png
 
-Custom Components
------------------
-
-**Note:** :ref:`Custom Components are deprecated<a_note_about_custom_components>` in favor of :doc:`components/external_components`!
-
-.. imgtable::
-
-    Generic Custom Component, custom/custom_component, language-cpp.svg, dark-invert
-
-    Custom Binary Sensor, components/binary_sensor/custom, language-cpp.svg, dark-invert
-    Custom Climate, components/climate/custom, language-cpp.svg, dark-invert
-    Custom Cover, components/cover/custom, language-cpp.svg, dark-invert
-    Custom Light, components/light/custom, language-cpp.svg, dark-invert
-    Custom Output, components/output/custom, language-cpp.svg, dark-invert
-    Custom Sensor, components/sensor/custom, language-cpp.svg, dark-invert
-    Custom Switch, components/switch/custom, language-cpp.svg, dark-invert
-    Custom Text Sensor, components/text_sensor/custom, language-cpp.svg, dark-invert
-
-    Custom I²C Component, custom/i2c, language-cpp.svg, dark-invert
-    Custom SPI Component, custom/spi, language-cpp.svg, dark-invert
-    Custom UART Component, custom/uart, language-cpp.svg, dark-invert
-
 .. _cookbook:
 
 Cookbook
@@ -1197,10 +1197,20 @@ Cookbook
     Arduino Port Extender, cookbook/arduino_port_extender, arduino_logo.svg
     EHMTX a matrix status/text display, cookbook/ehmtx, ehmtx.jpg
 
+.. _device_database:
+
+Device Database
+---------------
+
+You will find configurations for specific devices in our `ESPHome Devices <https://devices.esphome.io/>`__ database.
+
+.. _contributing:
+
+Contributing
+------------
+
 Do you have other awesome automations or cool setups? Please feel free to add them to the
 documentation for others to copy. See :doc:`Contributing </guides/contributing>`.
-
-If you'd like to share configurations for specific devices, please contribute to our `ESPHome Devices <https://devices.esphome.io/>`__ database.
 
 .. toctree::
     :hidden:
@@ -1211,6 +1221,5 @@ If you'd like to share configurations for specific devices, please contribute to
     cookbook/index
     guides/index
     changelog/index
-    custom/index
     images/index
     projects/index

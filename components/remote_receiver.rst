@@ -64,6 +64,7 @@ Configuration variables:
   - **sony**: Decode and dump Sony infrared codes.
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
+  - **toto**: Decode and dump Toto infrared codes.
 
 - **tolerance** (*Optional*, int, :ref:`config-time` or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to ``25%``.
@@ -119,6 +120,8 @@ ESP32 Arduino configuration variables:
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
+      "ESP32-C6", "2, 3"
+      "ESP32-H2", "2, 3"
 
 - **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
@@ -139,7 +142,7 @@ Automations:
   ABB-Welcome code has been decoded. A variable ``x`` of type :apiclass:`remote_base::ABBWelcomeData`
   is passed to the automation for use in lambdas.
 - **on_aeha** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  AEHA remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::AEHAData`
+  AEHA remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::AEHAData`
   is passed to the automation for use in lambdas.
 - **on_byronsx** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Byron SX doorbell RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::ByronSXData`
@@ -151,7 +154,7 @@ Automations:
   CanalSatLD remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::CanalSatLDData`
   is passed to the automation for use in lambdas.
 - **on_coolix** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Coolix remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::CoolixData`
+  Coolix remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::CoolixData`
   is passed to the automation for use in lambdas.
 - **on_dish** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   dish network remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::DishData`
@@ -170,13 +173,13 @@ Automations:
   KeeLoq RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::KeeloqData`
   is passed to the automation for use in lambdas.
 - **on_haier** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Haier remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::HaierData`
+  Haier remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::HaierData`
   is passed to the automation for use in lambdas.
 - **on_lg** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   LG remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::LGData`
   is passed to the automation for use in lambdas.
 - **on_magiquest** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  MagiQuest wand remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::MagiQuestData`
+  MagiQuest wand remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::MagiQuestData`
   is passed to the automation for use in lambdas.
 - **on_midea** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Midea remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::MideaData`
@@ -185,7 +188,7 @@ Automations:
   NEC remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::NECData`
   is passed to the automation for use in lambdas.
 - **on_nexa** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Nexa RF code has been decoded. A variable ``x`` of type :apiclass:`remote_base::NexaData`
+  Nexa RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::NexaData`
   is passed to the automation for use in lambdas.
 - **on_panasonic** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Panasonic remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::PanasonicData`
@@ -225,6 +228,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_mirage** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Mirage remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::MirageData`
+  is passed to the automation for use in lambdas.
+- **on_toto** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Toto remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::TotoData`
   is passed to the automation for use in lambdas.
 
 .. code-block:: yaml
@@ -486,6 +492,12 @@ Remote code selection (exactly one of these has to be included):
     :ref:`transmitter description <remote_transmitter-transmit_mirage>` for more info. Usually you only need to copy
     this directly from the dumper output.
 
+- **toto**: Trigger on a decoded Toto remote code with the given data.
+
+  - **command** (**Required**, int): The 1-byte Toto command code to trigger on. Range is 0 to 0xFF.
+  - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+  - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+
 .. note::
 
     The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56khz) and are very similar.
@@ -518,7 +530,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    For the Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
+    For the black Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
     `this hack <https://github.com/xoseperez/espurna/wiki/Hardware-Itead-Sonoff-RF-Bridge---Direct-Hack>`__
     created by the GitHub user wildwiz. Then use this configuration for the remote receiver/transmitter hubs:
 
@@ -532,7 +544,25 @@ Remote code selection (exactly one of these has to be included):
           pin: 5
           carrier_duty_percent: 100%
 
+    There's also a software `"hack" <https://github.com/mightymos/RF-Bridge-OB38S003>`__ that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
+    rendering the hardware hack uncessary. This software passthrough mode can be used for the OB38S003 (white) and EFM8BB1 (black) sonoff RF bridge. Then use this configuration for the remote receiver/transmitter hubs:
 
+    .. code-block:: yaml
+
+        remote_receiver:
+          pin:
+            # sonoff and wemos board
+            number: GPIO3
+            mode:
+              input: true
+              pullup: false
+          tolerance: 60%
+          filter: 4us
+          idle: 4ms
+
+        remote_transmitter:
+          pin: 1
+          carrier_duty_percent: 100%
 
 See Also
 --------
