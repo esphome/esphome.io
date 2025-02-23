@@ -18,7 +18,7 @@ ESPHome 2025.2.0 - 19th February 2025
     ES7243E, components/audio_adc/es7243e, es7243e.svg
     ES8156, components/audio_dac/es8156, es8156.svg
 
-    Speaker, components/media_player/speaker, speaker.svg
+    Speaker Media Player, components/media_player/speaker, speaker.svg, dark-invert
     Mixer Speaker, components/speaker/mixer, mixer.svg
     Resampler Speaker, components/speaker/resampler, waveform.svg, dark-invert
 
@@ -89,6 +89,13 @@ In addition, new ``speaker`` components have been introduced to provide more adv
 :doc:`/components/voice_assistant`. These components extend our work to help you create the ultimate personal voice
 assistant hardware.
 
+The new :doc:`speaker media player </components/media_player/speaker>` component adds several features for building
+a well-rounded audio device. It supports playing two different streams of audio: one for announcements and another
+for music.
+
+The new :doc:`mixer speaker </components/speaker/mixer>` component lets you combine the two streams. The mixer
+even supports audio ducking, so you can lower the volume of the music while your announcement plays!
+
 Image Components
 ----------------
 
@@ -135,17 +142,18 @@ Breaking Changes
 - [custom] Remove platforms :esphomepr:`8119` by :ghuser:`kbx81` (breaking-change)
 - Remove arm/v7 container image support :esphomepr:`8194` by :ghuser:`jesserockz` (breaking-change)
 - [esp32_rmt] Set pull-up and open-drain modes based on pin schema :esphomepr:`8178` by :ghuser:`swoboda1337` (breaking-change)
+- [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
 
 Beta Changes
 ^^^^^^^^^^^^
 
+- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
 - [core] Ignore dot-prefixed config entries when looking for target platform :esphomepr:`8240` by :ghuser:`jesserockz`
 - Bump zeroconf to 0.144.1 :esphomepr:`8238` by :ghuser:`bdraco`
 - [core] Fix ``config_dir`` for dashboard :esphomepr:`8242` by :ghuser:`jesserockz`
 - [cse7766] Remove ``stream`` dependency :esphomepr:`7720` by :ghuser:`gabest11`
 - [graph] Remove ``stream`` dependency :esphomepr:`8243` by :ghuser:`kbx81`
 - [modbus_controller] Remove `stream` dependency :esphomepr:`8244` by :ghuser:`kbx81`
-- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
 - [logger] Fix bug causing global log level to be overwritten :esphomepr:`8248` by :ghuser:`swoboda1337`
 - Add support for the DAC on the S2 :esphomepr:`8030` by :ghuser:`maraid`
 - Fix crash when storage file doesnt exist yet :esphomepr:`8249` by :ghuser:`jesserockz`
@@ -153,6 +161,11 @@ Beta Changes
 - [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
 - Bump zeroconf to 0.144.3 :esphomepr:`8253` by :ghuser:`bdraco`
 - DHT platform now supports modules with inbuilt external resistor :esphomepr:`8257` by :ghuser:`deCodeIt`
+- Replace glyphsets with esphome_glyphsets :esphomepr:`8261` by :ghuser:`bdraco`
+- Bump aioesphomeapi to 29.1.0 :esphomepr:`8105` by :ghuser:`bdraco`
+- Bump openssh-client to 1:9.2p1-2+deb12u4 to fix docker builds :esphomepr:`8269` by :ghuser:`bdraco`
+- Increase default repeat delay for Toto remote transmitter protocol :esphomepr:`8265` by :ghuser:`G-Two`
+- Bump zeroconf to 0.145.1 :esphomepr:`8267` by :ghuser:`bdraco`
 
 All changes
 ^^^^^^^^^^^
@@ -333,13 +346,13 @@ All changes
 - GDEY042T81 e-paper displays support :esphomepr:`8061` by :ghuser:`mgruener`
 - Add support for Waveshare 7.3" ACeP 7-Color display :esphomepr:`6380` by :ghuser:`NeilSCGH`
 - Bump esphome-dashboard to 20250212.0 :esphomepr:`8235` by :ghuser:`jesserockz`
+- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
 - [core] Ignore dot-prefixed config entries when looking for target platform :esphomepr:`8240` by :ghuser:`jesserockz`
 - Bump zeroconf to 0.144.1 :esphomepr:`8238` by :ghuser:`bdraco`
 - [core] Fix ``config_dir`` for dashboard :esphomepr:`8242` by :ghuser:`jesserockz`
 - [cse7766] Remove ``stream`` dependency :esphomepr:`7720` by :ghuser:`gabest11`
 - [graph] Remove ``stream`` dependency :esphomepr:`8243` by :ghuser:`kbx81`
 - [modbus_controller] Remove `stream` dependency :esphomepr:`8244` by :ghuser:`kbx81`
-- [online_image]Fix reset if buffer not allocated :esphomepr:`8236` by :ghuser:`guillempages`
 - [logger] Fix bug causing global log level to be overwritten :esphomepr:`8248` by :ghuser:`swoboda1337`
 - Add support for the DAC on the S2 :esphomepr:`8030` by :ghuser:`maraid`
 - Fix crash when storage file doesnt exist yet :esphomepr:`8249` by :ghuser:`jesserockz`
@@ -347,6 +360,11 @@ All changes
 - [scd30] Increase minimal CONF_UPDATE_INTERVAL from 1 to 2 seconds :esphomepr:`8256` by :ghuser:`DjordjeMandic` (breaking-change)
 - Bump zeroconf to 0.144.3 :esphomepr:`8253` by :ghuser:`bdraco`
 - DHT platform now supports modules with inbuilt external resistor :esphomepr:`8257` by :ghuser:`deCodeIt`
+- Replace glyphsets with esphome_glyphsets :esphomepr:`8261` by :ghuser:`bdraco`
+- Bump aioesphomeapi to 29.1.0 :esphomepr:`8105` by :ghuser:`bdraco`
+- Bump openssh-client to 1:9.2p1-2+deb12u4 to fix docker builds :esphomepr:`8269` by :ghuser:`bdraco`
+- Increase default repeat delay for Toto remote transmitter protocol :esphomepr:`8265` by :ghuser:`G-Two`
+- Bump zeroconf to 0.145.1 :esphomepr:`8267` by :ghuser:`bdraco`
 
 Past Changelogs
 ---------------

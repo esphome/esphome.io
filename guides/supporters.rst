@@ -693,6 +693,7 @@ Contributors
 - `Florian Trück (@ftrueck) <https://github.com/ftrueck>`__
 - `functionpointer (@functionpointer) <https://github.com/functionpointer>`__
 - `Gábor Kiss (@g-kiss) <https://github.com/g-kiss>`__
+- `G-Two (@G-Two) <https://github.com/G-Two>`__
 - `mr G1K (@G1K) <https://github.com/G1K>`__
 - `Aljaž Srebrnič (@g5pw) <https://github.com/g5pw>`__
 - `Alex Hermann (@gaaf) <https://github.com/gaaf>`__
@@ -1537,6 +1538,7 @@ Contributors
 - `Dave (@pow4all) <https://github.com/pow4all>`__
 - `pplucky (@pplucky) <https://github.com/pplucky>`__
 - `Peter Provost (@PProvost) <https://github.com/PProvost>`__
+- `pre-commit-ci[bot] (@pre-commit-ci[bot]) <https://github.com/pre-commit-ci[bot]>`__
 - `Q. Marchi (@preeefix) <https://github.com/preeefix>`__
 - `PricelessToolkit (@PricelessToolkit) <https://github.com/PricelessToolkit>`__
 - `Francesco Ciocchetti (@primeroz) <https://github.com/primeroz>`__
@@ -2080,4 +2082,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated February 17, 2025.*
+*This page was last updated February 19, 2025.*
