@@ -47,6 +47,12 @@ Flashing this bootloader requires an SWD connection, for which a programmer is n
 Flashing with Adafruit nRF52 Bootloader
 ---------------------------------------
 
+For flashing via a flash drive.
+
+1. Connect the board to the PC via USB.
+2. Quickly short the reset pin to ground twice.
+3. Copy the UF2 package to the flash drive.
+
 This bootloader supports updates over USB CDC.
 
 1. Connect the board to the PC via USB.
