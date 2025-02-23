@@ -59,7 +59,7 @@ External ADC
 
   .. note::
 
-      PDM microphones are only supported on ESP32 and ESP32-S3 by the legacy I²S driver.
+      PDM microphones are only supported on ESP32 and ESP32-S3.
 
 Internal ADC
 ------------
