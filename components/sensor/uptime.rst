@@ -24,13 +24,14 @@ Configuration variables:
   - ``seconds`` (*default*): A simple counter.
   - ``timestamp``: presents the time ESPHome last booted up. Requires a :doc:`/components/time/index`.
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **update_interval** (*Optional*, :ref:`config-time`): The sensor reporting interval. Defaults to ``60s``.
   Valid only with ``type: seconds``.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also
 --------
 
+- :doc:`/components/text_sensor/uptime`
 - :ref:`sensor-filters`
 - :apiref:`uptime/uptime_sensor.h`
 - :ghedit:`Edit`
