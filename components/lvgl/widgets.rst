@@ -243,7 +243,7 @@ The animation image is similar to the normal ``image`` widget. The main differen
     - **src** (*Optional*, list of :ref:`images <display-image>`): A list of IDs of existing image configurations to be loaded as frames of the animation.
     - **auto_start** (*Optional*, boolean): Start the animation playback automatically after update. Defaults to ``true``.
     - **duration** (*Optional*, :ref:`Time <config-time>`): Total duration of a playback cycle (each frame is displayed for an equal amount of time). This will apply to the next playback loop.
-    - **repeat_count** (*Optional*, int16 or *forever*): The number of times playback should be repeated.
+    - **repeat_count** (*Optional*, int16 or *forever*): The number of times playback should be repeated. Defaults to ``forever``.
     - Some style options from :ref:`lvgl-styling` for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Triggers:**
