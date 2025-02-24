@@ -90,8 +90,7 @@ Configuration variables:
 - **pclk_frequency** (*Optional*): Set the pixel clock speed. Default is 8MHz.
 - **pclk_inverted** (*Optional* bool): If the pclk is active negative (default is True)
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``5s``.
-- **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display in each loop (''true'', default),
-  or to keep the existing display content (must overwrite explicitly, e.g., only on data change).
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to ``true`` if a lambda or pages are configured, false otherwise.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See :ref:`display-pages`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **color_order** (*Optional*): Should be one of ``bgr`` (default) or ``rgb``.
@@ -139,7 +138,6 @@ Seeed Sensecap Indicator
 
     display:
       - platform: st7701s
-        auto_clear_enabled: false
         update_interval: never
         spi_mode: MODE3
         color_order: RGB
