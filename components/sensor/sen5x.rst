@@ -5,7 +5,7 @@ Sen5x Series Environmental sensor
     :description: Instructions for setting up Sen5x Series Environmental sensor for PM, RH/T, VOC, and NOx measurements.
     :image: sen54.jpg
 
-The ``sen5x`` sensor platform allows you to use your Sensirion `SEN50 <https://sensirion.com/products/catalog/SEN50/>`__, `SEN54 <https://sensirion.com/products/catalog/SEN54/>`__ and `SEN55 <https://sensirion.com/products/catalog/SEN55/>`__ Environmental sensor (`datasheet <https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf>`__) sensors with ESPHome.
+The ``sen5x`` and ``sen66`` sensor platform allows you to use your Sensirion `SEN50 <https://sensirion.com/products/catalog/SEN50/>`__, `SEN54 <https://sensirion.com/products/catalog/SEN54/>`__ , `SEN55 <https://sensirion.com/products/catalog/SEN55/>`__ and `SEN66 <https://sensirion.com/products/catalog/SEN66/>`__ Environmental sensor (`datasheet <https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf>`__)(`sen66 datasheet <https://sensirion.com/media/documents/FAFC548D/670CCB6F/Sensirion_Datasheet_SEN6x.pdf>`__) sensors with ESPHome.
 The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. Only I²C communication is implemented in this component.
 
@@ -90,6 +90,10 @@ Configuration variables:
 
   - All options from :ref:`Sensor <config-sensor>`.
 
+- **co2** (*Optional*): Carbon dioxide. Note only applies to Sen66. The sensor will be ignored on unsupported models.
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **voc** (*Optional*): VOC Index. Note only available with Sen54 or Sen55. The sensor will be ignored on unsupported models.
 
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters. For more details see `Engineering Guidelines for SEN5x <https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf>`__
@@ -138,7 +142,7 @@ Configuration variables:
   Medium and high accelerations are particularly indicated for air quality monitors which are subjected to large temperature changes. Low acceleration is advised for stationary devices not subject to large variations in temperature
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to ``0x69``.
+  Defaults to ``0x69``.But for Sen66 the default is 0x6b
 
 .. note::
 
