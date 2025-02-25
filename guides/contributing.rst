@@ -18,7 +18,6 @@ Contributing to ``esphome-docs``
 .. image:: /images/logo-docs.svg
     :align: center
     :width: 60.0%
-    :class: dark-invert
 
 Our documentation can always be improved. We rely on contributions from our users to do so. If you notice an issue (for
 example, spelling/grammar mistakes) or if you want to share your awesome new setup, we encourage you to submit a pull
