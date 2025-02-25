@@ -7,7 +7,7 @@ BL0939 Power Sensor
     :keywords: bl0939, Sonoff Dual R3 v2
 
 The ``bl0939`` sensor platform allows you to use your BL0939 voltage/current/power and energy
-sensors with ESPHome. This sensor is commonly found in Sonoff Dual R3 v2.
+sensors with ESPHome. This sensor has two modes, one is direct connection measurement mode, the other is current transformer measurement mode. This sensor is commonly found in Sonoff Dual R3 v2(direct measurement mode) and Seeed XIAO Power Monitor(Current transformer measurement mode).
 
 .. note::
 
@@ -22,6 +22,7 @@ Additionally, you need to set the baud rate to 4800, parity to ``NONE`` and stop
     # Example configuration entry
     sensor:
       - platform: bl0939
+        mode: 'current_transformer_mode'
         voltage:
           name: 'BL0939 Voltage'
         current_1:
@@ -45,7 +46,7 @@ Additionally, you need to set the baud rate to 4800, parity to ``NONE`` and stop
 
 Configuration variables:
 ------------------------
-
+- **mode** (*Optional*): Select the working mode,divided into ``direct_measurement_mode`` and ``current_transformer_mode``. If this item is not filled in, the default is direct measurement mode.
 - **voltage** (*Optional*): Use the voltage value of the sensor in V (RMS).
   All options from :ref:`Sensor <config-sensor>`.
 - **current_1** (*Optional*): Use the current value of the channel 1 in amperes. All options from
