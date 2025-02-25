@@ -150,8 +150,8 @@ You will find all :doc:`ESPHome documentation here<docs>`.
 Contributing
 ------------
 
-Do you have other awesome automations or cool setups? Please feel free to add them to the
-documentation for others to copy. See :doc:`Contributing </guides/contributing>`.
+ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see
+:doc:`Contributing </guides/contributing>`.
 
 .. toctree::
     :hidden:
