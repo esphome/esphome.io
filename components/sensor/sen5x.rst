@@ -142,7 +142,7 @@ Configuration variables:
   Medium and high accelerations are particularly indicated for air quality monitors which are subjected to large temperature changes. Low acceleration is advised for stationary devices not subject to large variations in temperature
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to ``0x69``.But for Sen66 the default is 0x6b
+  Defaults to ``0x69``.But for Sen66 the default is ``0x6b``
 
 .. note::
 
