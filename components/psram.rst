@@ -6,7 +6,8 @@ PSRAM
     :image: psram.svg
 
 This component enables and configures PSRAM if/when available on ESP32 modules/boards.
-It is automatically loaded and enabled by components that require it.
+It is automatically loaded and enabled by some, but not all components that require it.
+For instance it is not enabled automatically in the ``ili9xxx`` display driver.
 
 PSRAM is only available on the ESP32.
 
