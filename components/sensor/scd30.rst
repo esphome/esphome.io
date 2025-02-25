@@ -66,7 +66,7 @@ Configuration variables:
   Defaults to ``0x61``.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-  sensor. Defaults to ``60s``.
+  sensor. Available range: [2 … 1800]. Defaults to ``60s``.
 
 
 Manual calibration:
