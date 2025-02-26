@@ -57,12 +57,16 @@ Custom components were deprecated over a year ago and, as promised, support for 
 encourage all developers to migrate their custom components to :doc:`/components/external_components`. Please see
 :ref:`a_note_about_custom_components` for a detailed explanation and next steps.
 
-Removal of ``armv7`` Docker Support
------------------------------------
+Removal of ``armv7`` support
+----------------------------
 
-ESPHome no longer supports ``armv7`` hardware. This is due to both waning support as it relates to tooling and
+ESPHome no longer supports the 32-bit  ``armv7`` architecture. This is due to both waning support as it relates to tooling and
 performance reasons. We strongly recommend moving to a more modern architecture, especially if you're using the ESPHome
 Device Builder to build/compile firmware for your devices.
+
+- The toolchains required for compiling ESPHome are dropping support for armv7, so if the toolchain is not available, ESPHome can't do the compile.
+- Building on armv7 is very slow and is likely to crash due to lack of RAM, which is not a good user experience.
+- ESPHome can be installed anywhere you can run Docker or Python pip, which will provide a better experience with much faster compiling.
 
 ``esp32_rmt`` Updates
 ---------------------
@@ -104,7 +108,33 @@ configuration variable in :doc:`/components/image` and related components was re
 from a boolean to an enum; in addition, the ``type`` configuration variable is now mandatory. See the
 :doc:`/components/image` documentation for more detail.
 
+The default presentation for binary images has changed in part due to the new transparency support. This may result
+in images appearing to have inverted colors for example on e-ink displays. There is a new configuration variable, ``invert_alpha``, which can be used to
+switch black and white pixels if necessary to restore the previous behaviour.
+
 Finally, the :doc:`/components/online_image` was updated to add support for both BMP and JPEG image formats.
+
+ILI9XXX Display Component
+-------------------------
+
+There are two changes to the :doc:`/components/display/ili9xxx` component. Previously the component automatically loaded
+the ``psram`` component - this has been removed, and you must now explicitly include the
+``psram`` component in your configuration if your display requires it. The bit-depth defaults to 16 bit as before, but
+there is no attempt to automatically fallback to 8 bit if insufficient memory is available. You must now explicitly
+select 8-bit mode with the ``color_palette`` configuration variable if required.
+
+The symptoms caused by these changes are likely to be a blank screen or a screen that is not displaying correctly. Check
+the runtime logs for any errors or warnings that may indicate the cause of the issue, specifically memory allocation
+failures.
+
+Release 2025.2.1 - February 26
+------------------------------
+
+- Bump aioesphomeapi to 29.1.1 :esphomepr:`8274` by :ghuser:`bdraco`
+- Fix BLE max notifications with ESP-IDF 5.x :esphomepr:`8301` by :ghuser:`bdraco`
+- Update webserver local assets to 20250224-195901 :esphomepr:`8312` by :ghuser:`esphomebot`
+- Fix bluetooth race when disconnect called while still connecting :esphomepr:`8297` by :ghuser:`bdraco`
+- [esp32_touch] Fix variants, add tests for variants :esphomepr:`8320` by :ghuser:`kbx81`
 
 Full list of changes
 --------------------
