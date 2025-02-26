@@ -687,6 +687,7 @@ Often known as "tag" or "card" readers within the community.
     PN716X, components/pn7160, pn716x.jpg
     RC522, components/binary_sensor/rc522, rc522.jpg
     RDM6300, components/binary_sensor/rdm6300, rdm6300.jpg
+    ws18x0, components/binary_sensor/ws18x0_uart, ws18x0_side.jpg
     Wiegand Reader, components/wiegand, wiegand.jpg
 
 Touchscreen
