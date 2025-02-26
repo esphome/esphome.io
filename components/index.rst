@@ -291,6 +291,7 @@ Distance
     Ultrasonic Sensor, components/sensor/ultrasonic, ultrasonic.jpg, Acoustic distance
     VL53L0x, components/sensor/vl53l0x, vl53l0x.jpg, IR optical distance
     Zio Ultrasonic Sensor, components/sensor/zio_ultrasonic, zio_ultrasonic.jpg, Acoustic distance
+    GL-R01 Time of Flight Sensor, components/sensor/gl_r01_i2c, gl_r01.jpg, IR optical distance
 
 Electricity
 ***********
