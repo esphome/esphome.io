@@ -1,5 +1,5 @@
 GL-R01 I²C - Time Of Flight Mini LiDAR Laser Ranging Sensor
-===========================================
+===========================================================
 
 The ``GL-R01 I²C`` sensor platform allows you to use your GL-R01 I²C
 Time Of Flight Mini LiDAR Laser Ranging sensor with ESPHome.
