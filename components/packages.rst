@@ -98,11 +98,11 @@ them locally with their own substitution value.
       remote_package_files2:
         url: https://github.com/esphome/non-existant-repo
         files:
-          - name: file1.yml
+          - path: file1.yml
             vars:
               a: 1
               b: 2
-          - name: file1.yml #Same file can be specified multiple times with different vars.
+          - path: file1.yml #Same file can be specified multiple times with different vars.
             vars:
               a: 3
               b: 4
@@ -118,7 +118,11 @@ For each package:
 - **url** (**Required**, string): The URL for the repository.
 - **username** (*Optional*, string): Username to be used for authentication, if required.
 - **password** (*Optional*, string): Password to be used for authentication, if required.
-- **files** (**Required**, list of strings or list of ``{ name, vars }``): List of files to include.
+- **files** (**Required**): List of files to include. Can be one of:
+  
+  - list of file paths
+  - list of objects containing ``path`` and ``vars``
+
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
 - **refresh** (*Optional*, :ref:`config-time`): The interval at which the content from the repository should be refreshed.
 
