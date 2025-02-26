@@ -391,6 +391,7 @@ Digital Signals
 
     Duty Cycle, components/sensor/duty_cycle, percent.svg, dark-invert
     Pulse Counter, components/sensor/pulse_counter, pulse.svg, dark-invert
+    Pulse Counter ULP, components/sensor/pulse_counter_ulp, pulse.svg, dark-invert
     Pulse Meter, components/sensor/pulse_meter, pulse.svg, dark-invert
     Pulse Width, components/sensor/pulse_width, pulse.svg, dark-invert
 
