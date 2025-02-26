@@ -14,7 +14,7 @@ GL-R01 is sold in three versions - IIC (I²C), UART Automatic and UART Controlle
 This integration supports only IIC (I²C) version at the moment.
 The :ref:`I²C <i2c>` is required to be set up in your configuration for this sensor to work.
 
-.. figure:: images/gl_r01.png
+.. figure:: images/gl_r01.jpg
     :align: center
     :width: 50.0%
 
