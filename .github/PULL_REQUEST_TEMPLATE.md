@@ -3,7 +3,9 @@
 
 **Related issue (if applicable):** fixes <link to issue>
 
-**Pull request in [esphome](https://github.com/esphome/esphome) with YAML changes (if applicable):** esphome/esphome#<esphome PR number goes here>
+**Pull request in [esphome](https://github.com/esphome/esphome) with YAML changes (if applicable):** 
+
+- esphome/esphome#<esphome PR number goes here>
 
 ## Checklist:
 
