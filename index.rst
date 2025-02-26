@@ -49,6 +49,11 @@ or MQTT.
                         by migrating from Tasmota
                     </a>
                 </li>
+                <li>
+                    <a class="reference" href="/guides/faq.html">
+                        FAQ and Tips
+                    </a>
+                </li>
             </ul>
             <div class="example highlight">
                 <pre>
@@ -63,18 +68,13 @@ or MQTT.
             <h3 class="guide-card-title">Next steps</h3>
             <ul>
                 <li>
-                    <a class="reference" href="/guides/faq.html">
-                        FAQ and Tips
+                    <a class="reference" href="/components/index.html">
+                        Documentation
                     </a>
                 </li>
                 <li>
                     <a class="reference" href="/automations/index.html">
                         Automations
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/guides/diy.html">
-                        DIY Examples
                     </a>
                 </li>
                 <li>
@@ -85,6 +85,11 @@ or MQTT.
                 <li>
                     <a class="reference" href="https://devices.esphome.io/">
                         Device configuration examples
+                    </a>
+                </li>
+                <li>
+                    <a class="reference" href="/guides/diy.html">
+                        DIY Examples
                     </a>
                 </li>
                 <li>
@@ -102,31 +107,40 @@ or MQTT.
         <div class="guide-card">
             <h3 class="guide-card-title">Keeping up</h3>
             <ul>
-                <li>
-                    <a class="reference" href="https://discord.gg/KhAMKrd" target="_blank">
-                        Discord
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="https://community.home-assistant.io/c/esphome/" target="_blank">
-                        Forums
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/changelog/index.html">
-                        Changelog
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/guides/supporters.html">
-                        Supporters
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/guides/contributing.html">
-                        Contributing
-                    </a>
-                </li>
+                <li>What's new?</li>
+                <ul>
+                    <li>
+                        <a class="reference" href="/changelog/index.html">
+                            Changelog
+                        </a>
+                    </li>
+                </ul>
+                <li>Community/Social</li>
+                <ul>
+                    <li>
+                        <a class="reference" href="https://discord.gg/KhAMKrd" target="_blank">
+                            Discord
+                        </a>
+                    </li>
+                    <li>
+                        <a class="reference" href="https://community.home-assistant.io/c/esphome/" target="_blank">
+                            Forums
+                        </a>
+                    </li>
+                </ul>
+                <li>Development</li>
+                <ul>
+                    <li>
+                        <a class="reference" href="/guides/contributing.html">
+                            Contributing
+                        </a>
+                    </li>
+                    <li>
+                        <a class="reference" href="/guides/supporters.html">
+                            Supporters
+                        </a>
+                    </li>
+                </ul>
             </ul>
         </div>
     </div>
@@ -143,7 +157,7 @@ You will find configurations for specific devices in our `ESPHome Devices <https
 Documentation
 -------------
 
-You will find all :doc:`ESPHome documentation here<docs>`.
+You will find all :doc:`ESPHome documentation here<components/index>`.
 
 .. _contributing:
 
@@ -151,12 +165,11 @@ Contributing
 ------------
 
 ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see
-:doc:`Contributing </guides/contributing>`.
+:doc:`Contributing <guides/contributing>`.
 
 .. toctree::
     :hidden:
 
-    docs
     web-api/index
     automations/index
     components/index
