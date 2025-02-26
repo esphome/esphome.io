@@ -168,7 +168,8 @@ html_sidebars = {
         "searchbox.html",
         "localtoc.html",
         "contact.html",
-    ]
+    ],
+    "index": []
 }
 
 
