@@ -11,4 +11,4 @@
     or
   - [ ] I am merging into `current` because this is a fix, change and/or adjustment in the current documentation and is not for a new component or feature.
 
-  - [ ] Link added in `/index.rst` when creating new documents for new components or cookbook.
+  - [ ] Link added in `/components/index.rst` when creating new documents for new components or cookbook.
