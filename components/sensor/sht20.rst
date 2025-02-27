@@ -7,7 +7,10 @@ SHT20 Temperature+Humidity Sensor
 
 The ``sht20`` Temperature+Humidity sensor allows you to use your SHT20
 (`datasheet <https://sensirion.com/resource/datasheet/sht20>`__,
-`Sensirion`_) I²C-based sensor with ESPHome.
+`Sensirion`_) I²C-based sensor with ESPHome. The :ref:`I²C Bus <i2c>`
+is required to be set up in your configuration for this sensor to work.
+
+.. _Sensirion: https://sensirion.com/products/catalog/SHT20/
 
 .. code-block:: yaml
 
