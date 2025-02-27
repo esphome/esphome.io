@@ -80,7 +80,7 @@ For every sensor **name** is required. All other options from :ref:`Binary Senso
 Shorthand notation also can be used.
 
 .. code-block:: yaml
-  
+
     binary_sensor:
       - platform: msa3xx
         tap: Single tap          # shorthand notation for the sensor
@@ -209,6 +209,7 @@ Using both MSA301 and MSA311 at the same time
 Should you wish to use both sensors in the same configuration, you can do so by specifying ID for each sensor.
 
 .. code-block:: yaml
+
     msa3xx:
       - id: my_msa301_sensor
         type: msa301
