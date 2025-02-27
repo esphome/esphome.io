@@ -492,6 +492,8 @@ Motion
     LD2420, components/sensor/ld2420, ld2420.jpg, Motion & Presence
     MPU6050, components/sensor/mpu6050, mpu6050.jpg, Accelerometer & Gyroscope
     MPU6886, components/sensor/mpu6886, mpu6886.jpg, Accelerometer & Gyroscope
+    MSA301, components/sensor/msa3xx, msa301.jpg, Accelerometer
+    MSA311, components/sensor/msa3xx, msa311.jpg, Accelerometer
     RuuviTag, components/sensor/ruuvitag, ruuvitag.jpg, Temperature & Humidity & Accelerometer
     Seeed Studio MR24HPC1 mmWave, components/seeed_mr24hpc1, seeed-mr24hpc1.jpg, Motion & Presence
 
