@@ -94,6 +94,21 @@ them locally with their own substitution value.
         files: [file1.yml, file2.yml]  # optional; if not specified, all files will be included
         ref: main  # optional
         refresh: 1d  # optional
+      
+      remote_package_files2:
+        url: https://github.com/esphome/non-existant-repo
+        files:
+          - path: file1.yml
+            vars:
+              a: 1
+              b: 2
+          - path: file1.yml #Same file can be specified multiple times with different vars.
+            vars:
+              a: 3
+              b: 4
+          - file2.yml
+        ref: main  # optional
+        refresh: 1d  # optional
 
 Configuration variables:
 ------------------------
@@ -103,7 +118,11 @@ For each package:
 - **url** (**Required**, string): The URL for the repository.
 - **username** (*Optional*, string): Username to be used for authentication, if required.
 - **password** (*Optional*, string): Password to be used for authentication, if required.
-- **files** (**Required**, list of strings): List of files to include.
+- **files** (**Required**): List of files to include. Can be one of:
+  
+  - list of file paths
+  - list of objects containing ``path`` and ``vars``
+
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
 - **refresh** (*Optional*, :ref:`config-time`): The interval at which the content from the repository should be refreshed.
 

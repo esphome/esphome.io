@@ -13,9 +13,11 @@ With this component you can define images that will be downloaded, decoded and d
 
     Current supported formats:
 
-    - PNG
-
     - BMP images, currently only binary uncompressed images are supported
+
+    - JPEG images, currently only baseline images (no progressive support)
+
+    - PNG images
 
 .. warning::
 
@@ -38,8 +40,9 @@ Configuration variables
   in your display code.
 - **format** (**Required**): The format that the image is encoded with.
 
-  - ``PNG``: The image on the server is encoded in PNG format.
   - ``BMP``: The image on the server is encoded in BMP format.
+  - ``JPEG``: The image on the server is encoded in JPEG format.
+  - ``PNG``: The image on the server is encoded in PNG format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
 - **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
@@ -53,6 +56,10 @@ Configuration variables
   - ``RGB``: Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
 - **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``. See the discussion on transparency in the  :ref:`image component <display-image>`.
 - **update_interval** (*Optional*, int): Redownload the image when the specified time has elapsed. Defaults to ``never`` (i.e. the update component action needs to be called manually).
+
+Advanced options:
+
+- **buffer_size** (*Optional*, int): Explicitly specify the size of the buffer where the image chunks are being downloaded while decoding. The default value (65536) should be OK for most use cases, but you can try to reduce the size for slow connections, to avoid watchdog timeouts.
 
 Automations
 -----------
