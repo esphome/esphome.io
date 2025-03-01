@@ -460,6 +460,11 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    esp32:
+      board: esp32-s3-devkitc-1
+      framework:
+        type: arduino
+
     external_components:
       - source:
           type: git
