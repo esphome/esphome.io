@@ -41,7 +41,8 @@ Configuration variables:
   Defaults to the framework defaults (``100us`` on ``esp32`` with ``esp-idf``, ``50ms`` on ``esp32`` with ``Arduino``,
   ``1s`` on ``esp8266`` and ``1s`` on ``rp2040``). Maximum on ``esp-idf`` is 13ms.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this I²C bus if you need multiple I²C buses.
-- **setup_priority** (*Optional*, float): Manually specify the priority of the I2C bus during setup. Defaults to ``1000.0``. Maximum value is ``1000.0``  
+- **setup_priority** (*Optional*, float): Manually specify the priority of the I2C bus during setup. Defaults to ``1000.0``.
+
 .. note::
 
     If the device can support multiple I²C buses these buses need to be defined as below and sensors need to be setup specifying the correct bus:
