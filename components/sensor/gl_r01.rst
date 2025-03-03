@@ -33,13 +33,7 @@ The :ref:`I²C <i2c>` is required to be set up in your configuration for this se
 Configuration variables:
 ------------------------
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to trigger measurement. 
-  Result will be read after ``min_read_interval`` has passed after triggering.
-  Shouldn't be less than ``min_read_interval``. Defaults to ``60s``.
-
-- **min_read_interval** (*Optional*, :ref:`config-time`): The minimum interval between triggering measurement at ``update_interval``
-  and reading measurement result. Adjust only if you've got warning ``Invalid measurement received!`` in logs. 
-  Defaults to ``40ms`` as stated in datasheet and is minimum allowed value that user can set in configuration. 
+- **update_interval** (*Optional*, :ref:`config-time`): The interval to trigger measurement and update sensor.
 
 - All other options from :ref:`Sensor <config-sensor>`.
 
