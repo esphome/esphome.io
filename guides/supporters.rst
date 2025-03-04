@@ -183,6 +183,7 @@ Contributors
 - `B48D81EFCC (@B48D81EFCC) <https://github.com/B48D81EFCC>`__
 - `Florian Mösch (@badbadc0ffee) <https://github.com/badbadc0ffee>`__
 - `Baden (@baden03) <https://github.com/baden03>`__
+- `badrpc (@badrpc) <https://github.com/badrpc>`__
 - `Marco Tombesi (@baggior) <https://github.com/baggior>`__
 - `Ken Baker (@bakerkj) <https://github.com/bakerkj>`__
 - `balk77 (@balk77) <https://github.com/balk77>`__
@@ -488,6 +489,7 @@ Contributors
 - `Davide Depau (@depau) <https://github.com/depau>`__
 - `dependabot[bot] (@dependabot[bot]) <https://github.com/dependabot[bot]>`__
 - `Joeri Colman (@depuits) <https://github.com/depuits>`__
+- `dergib22 (@dergib22) <https://github.com/dergib22>`__
 - `Mike La Spina (@descipher) <https://github.com/descipher>`__
 - `Stephan Martin (@designer2k2) <https://github.com/designer2k2>`__
 - `Destix (@Destix) <https://github.com/Destix>`__
@@ -585,6 +587,7 @@ Contributors
 - `Maxime Michel (@Egglestron) <https://github.com/Egglestron>`__
 - `Eike (@ei-ke) <https://github.com/ei-ke>`__
 - `Elazar Leibovich (@elazarl) <https://github.com/elazarl>`__
+- `Mike Eldridge (@eldridge) <https://github.com/eldridge>`__
 - `Michael Jahn (@electr1cBugaloo) <https://github.com/electr1cBugaloo>`__
 - `electrofun-smart (@electrofun-smart) <https://github.com/electrofun-smart>`__
 - `Eli (@eli-xciv) <https://github.com/eli-xciv>`__
@@ -1102,6 +1105,7 @@ Contributors
 - `Ludovic BOUÉ (@lboue) <https://github.com/lboue>`__
 - `lcavalli (@lcavalli) <https://github.com/lcavalli>`__
 - `Luis del Valle (@ldelvalleh) <https://github.com/ldelvalleh>`__
+- `Luis Rodriguez (@ldrrp) <https://github.com/ldrrp>`__
 - `Craig Fletcher (@leakypixel) <https://github.com/leakypixel>`__
 - `Dominik Wagenknecht (@LeDominik) <https://github.com/LeDominik>`__
 - `leejoow (@leejoow) <https://github.com/leejoow>`__
@@ -1987,6 +1991,7 @@ Contributors
 - `Austin (@vidplace7) <https://github.com/vidplace7>`__
 - `Vincèn (@vincegre) <https://github.com/vincegre>`__
 - `Virage Laboratories (@viragelabs) <https://github.com/viragelabs>`__
+- `Virusmater (@Virusmater) <https://github.com/Virusmater>`__
 - `Vishnu Mohanan (@vishnumaiea) <https://github.com/vishnumaiea>`__
 - `VitaliyKurokhtin (@VitaliyKurokhtin) <https://github.com/VitaliyKurokhtin>`__
 - `voed (@voed) <https://github.com/voed>`__
@@ -2090,4 +2095,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated February 26, 2025.*
+*This page was last updated March 3, 2025.*
