@@ -62,7 +62,7 @@ Configuration variables:
 - **source** (*Optional*, string): The PlatformIO package or repository to use for framework. This can be used to use a
   custom or patched version of the framework.
 - **platform_version** (*Optional*, string): The version of the
-  `platformio/espressif32 <https://github.com/platformio/platform-espressif32/releases/>`__ package to use.
+  `pioarduino/espressif32 <https://github.com/pioarduino/platform-espressif32/releases>`__ package to use.
 - **advanced** (*Optional*, mapping): See :ref:`esp32-advanced_configuration` below.
 
 .. _esp32-espidf_framework:
@@ -96,7 +96,7 @@ Configuration variables:
 - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to
   use a custom or patched version of the framework.
 - **platform_version** (*Optional*, string): The version of the
-  `platformio/espressif32 <https://github.com/platformio/platform-espressif32/releases/>`__ package to use.
+  `pioarduino/espressif32 <https://github.com/pioarduino/platform-espressif32/releases/>`__ package to use.
 - **sdkconfig_options** (*Optional*, mapping): Custom sdkconfig
   `compiler options <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options>`__
   to set in the ESP-IDF project.
