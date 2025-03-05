@@ -964,7 +964,7 @@ This :ref:`action <config-action>` sends a Lidl Auriol weather station data to a
     on_...:
       - remote_transmitter.transmit_lidl_auriol:
           id: 240
-          battery_level: 1
+          battery_level: true
           channel: 0
           temperature: 21
           rain: 10
