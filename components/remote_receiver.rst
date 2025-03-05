@@ -65,6 +65,7 @@ Configuration variables:
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
+  - **lidl_auriol**: Decode and dump Lidl Weather Station data.
 
 - **tolerance** (*Optional*, int, :ref:`config-time` or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to ``25%``.
@@ -231,6 +232,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_toto** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Toto remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::TotoData`
+  is passed to the automation for use in lambdas.
+- **on_lidl_auriol** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Lidl Auriol weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::LidlAuriolData`
   is passed to the automation for use in lambdas.
 
 .. code-block:: yaml
@@ -497,6 +501,14 @@ Remote code selection (exactly one of these has to be included):
   - **command** (**Required**, int): The 1-byte Toto command code to trigger on. Range is 0 to 0xFF.
   - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
   - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
+
+- **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data.
+
+  - **id** (**Required**, int): 8-bit identifier, unique to the sensor.
+  - **batter_level** (*Optional*, bool): false when the battery is low.
+  - **channel** (*Optional*, int): RF channel.
+  - **temperature** (*Optional*, int): Measured temperature.
+  - **rain** (*Optional*, int): Measured rain delta, in mm.
 
 .. note::
 
