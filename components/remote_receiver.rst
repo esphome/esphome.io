@@ -505,10 +505,10 @@ Remote code selection (exactly one of these has to be included):
 - **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data.
 
   - **id** (**Required**, int): 8-bit identifier, unique to the sensor.
-  - **batter_level** (*Required*, bool): false when the battery is low.
+  - **battery_level** (*Required*, bool): false when the battery is low.
   - **channel** (*Required*, int): RF channel.
   - **temperature** (*Required*, int): Measured temperature.
-  - **rain** (*Required*, int): Measured rain delta, in mm.
+  - **rain** (*Required*, int): Measured rain delta (impulses).
 
 .. note::
 
