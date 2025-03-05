@@ -1,3 +1,0 @@
-Store YAML Component
-====================
-
