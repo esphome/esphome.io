@@ -1040,6 +1040,30 @@ Configuration variables:
 
     Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables.
 
+.. _remote_transmitter-transmit_lidl_auriol:
+
+``remote_transmitter.transmit_lidl_auriol`` **Action**
+
+This :ref:`action <config-action>` sends a Lidl Auriol weather station data to a remote transmitter and to the receiver station.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_lidl_auriol:
+          id: 240
+          battery_level: 1
+          channel: 0
+          temperature: 21
+          rain: 10
+          # Repeats 7 times
+
+Configuration variables:
+
+- **id** (**Required**, int): 8-bit identifier, unique to the sensor.
+- **battery_level** (*Required*, boolean): false when the battery is low.
+- **channel** (*Required*, int): RF channel (no effect).
+- **temperature** (*Required*, float): Measured temperature.
+- **rain** (*Required*, int): Measured rain delta (impulses).
 
 .. _remote_transmitter-rc_switch-protocol:
 
