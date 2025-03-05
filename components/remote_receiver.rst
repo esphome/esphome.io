@@ -235,7 +235,7 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_lidl_auriol** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Lidl Auriol weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::LidlAuriolData`
-  is passed to the automation for use in lambdas.
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 
 .. code-block:: yaml
 
@@ -505,10 +505,10 @@ Remote code selection (exactly one of these has to be included):
 - **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data.
 
   - **id** (**Required**, int): 8-bit identifier, unique to the sensor.
-  - **batter_level** (*Optional*, bool): false when the battery is low.
-  - **channel** (*Optional*, int): RF channel.
-  - **temperature** (*Optional*, int): Measured temperature.
-  - **rain** (*Optional*, int): Measured rain delta, in mm.
+  - **batter_level** (*Required*, bool): false when the battery is low.
+  - **channel** (*Required*, int): RF channel.
+  - **temperature** (*Required*, int): Measured temperature.
+  - **rain** (*Required*, int): Measured rain delta, in mm.
 
 .. note::
 
