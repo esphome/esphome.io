@@ -131,6 +131,12 @@ This action makes the given deep sleep component enter deep sleep immediately.
             id: deep_sleep_1
             sleep_duration: 20min
 
+    # Sleep duration is also templatable
+    on_...:
+      then:
+        - deep_sleep.enter:
+            id: deep_sleep_1
+            sleep_duration: !lambda "return 20 * 60 * 1000;"
 
     # ESP32 can sleep until a specific time of day.
     on_...:
@@ -142,7 +148,7 @@ This action makes the given deep sleep component enter deep sleep immediately.
 
 Configuration options:
 
-- **sleep_duration** (*Optional*, :ref:`templatable <config-templatable>`, :ref:`config-time`): The time duration to stay in deep sleep mode.
+- **sleep_duration** (*Optional*, :ref:`templatable <config-templatable>`, :ref:`config-time`): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
 - **until** (*Optional*, string): The time of day to wake up. Only on ESP32.
 - **time_id** (*Optional*, :ref:`config-id`): The ID of the time component to use for the ``until`` option. Only on ESP32.
 
