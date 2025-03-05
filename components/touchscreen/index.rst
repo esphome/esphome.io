@@ -7,16 +7,8 @@ Touchscreen Components
 
 The ``touchscreen`` component contains the base code for most touchscreen driver components
 available in ESPHome and is responsible for passing the touch events to
-``binary_sensors`` with the ``touchscreen`` platform.
+``binary_sensors`` with the ``touchscreen`` platform. It is also used by the LVGL component.
 
-.. warning::
-
-    As of version **2023.12** the way how the touchscreen component has changed a bit.
-    The following variables are now obsolite:
-    *  **rotation** is (temporary) removed in favor the *new* **transform:**
-    *  **size_x_y** is moved inside the **transform:** and renamed to **size_xy**
-    *  **report_interval** is removed in favor of using the **update_interval**
-    The display id is only just to calculate the touch position reletive to the displays *height* and *width*
 
 .. _config-touchscreen:
 
@@ -33,9 +25,6 @@ Base Touchscreen Configuration
           mirror_x: false
           mirror_y: false
           swap_xy: false
-        calibration:
-          x_max: 240
-          y_max: 320
 
         on_touch:
           then:
@@ -50,26 +39,26 @@ Base Touchscreen Configuration
 Configuration variables:
 ************************
 - **display** (*Required*, :ref:`config-id`): The display to use this touchscreen with.
-- **transform** (*Optional*): Transform the touchscreen presentation using hardware. All defaults are ``false``.
+- **transform** (*Optional*): Transform the reported position to match the display.
 
     - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
     - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
     - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
 
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the touchscreen. Defaults to ``never``. **NOTE:** Set this to ``50ms`` when you dont have set the **interupt_pin**.
-- **touch_timeout** (*Optional*, :ref:`config-time`): The time to automatically check if touch was released. Defaults to ``never``.
-- **calibration** (*Optional*): When the touchscreen is not given the right configuration settings. You can set them here.
+- **update_interval** (*Optional*, :ref:`config-time`): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to ``50ms``.
+- **touch_timeout** (*Optional*, :ref:`config-time`): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
+- **calibration** (*Optional*): Some touchscreens require calibration on a per-device basis.
 
-    - **x_min** (*Optional*, int): The raw value corresponding to the left
+    - **x_min** (**Required**, int): The raw value corresponding to the left
       (or top if ``swap_xy`` is specified) edge of the touchscreen. See :ref:`touchscreen-calibration`
-      for the process to calibrate the touchscreen. Defaults to ``0``.
-    - **x_max** (*Optional*, int): The raw value corresponding to the right
-      (or bottom if ``swap_xy`` is specified) edge of the touchscreen. Defaults to ``0``.
-    - **y_min** (*Optional*, int): The raw value corresponding to the top
-      (or left if ``swap_xy`` is specified) edge of the touchscreen. Defaults to ``0``.
-    - **y_max** (*Optional*, int): The raw value corresponding to the bottom
-      (or right if ``swap_xy`` is specified) edge of the touchscreen. Defaults to ``0``.
+      for the process to calibrate the touchscreen.
+    - **x_max** (**Required**, int): The raw value corresponding to the right
+      (or bottom if ``swap_xy`` is specified) edge of the touchscreen.
+    - **y_min** (**Required**, int): The raw value corresponding to the top
+      (or left if ``swap_xy`` is specified) edge of the touchscreen.
+    - **y_max** (**Required**, int): The raw value corresponding to the bottom
+      (or right if ``swap_xy`` is specified) edge of the touchscreen.
 
 
 - **on_touch** (*Optional*, :ref:`Automation <automation>`): An automation to perform
@@ -103,22 +92,17 @@ The integer members for the touch positions below are in relation to the display
 Calibration
 -----------
 
-For most of the touchscreen drivers the dimensions of the touchscreen are automatically set when the driver is setup.
-In some cases like for the **XPT2046** this can be different per used display panel.
-Then you can set the values using the **calibrate** values.
+For most touchscreen drivers the dimensions of the touchscreen are automatically set from the display driver to match the screen size.
+In some cases such as the :ref:`XPT2046 <xpt2046-component>` (a resistive touch screen) the reported values bear no relation to the actual screen size.
+The ``calibration`` configuration can be used to manually calibrate the touchscreen.
 
 To match the point of the touch to the display coordinates the touch screen has to be calibrated.
-The touchscreen component returns raw values in the 0 to 4095 range. Those raw values are available
-as the ``x_raw`` and ``y_raw`` member variables and for example write them out as in the example
-:ref:`touchscreen-on_touch`. The goal of the calibration is to identify the raw values corresponding
+The touchscreen component returns raw values in the calibration range. Those raw values are available
+as the ``x_raw`` and ``y_raw`` member variables. The goal of the calibration is to identify the raw values corresponding
 to the edges of the screen.
 
 The calibration assumes a display oriented in a way that you will be using it, i.e. your
 :ref:`display-engine` component has to have the [0,0] logical coordinate at the top left.
-
-.. note::
-
-    Do not set any calibration values nor ``transform`` settings.
 
 .. code-block:: yaml
 
@@ -138,11 +122,6 @@ The calibration assumes a display oriented in a way that you will be using it, i
 
 Get a stylus or a similar object, run the project and touch the corners of the screen at
 the edge pixels. Repeat several times and note minimum and maximum x and y raw values.
-
-.. warning::
-
-    As long the calibrate settings are not correctly set, the ``x`` and ``y`` coordinates are not calculated.
-
 
 .. code-block:: none
 

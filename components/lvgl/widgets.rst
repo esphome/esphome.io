@@ -60,7 +60,6 @@ The properties below are common to all widgets.
 
 - **state** (*Optional*, dict): Widgets or their (sub)parts can have have states, which support separate styling. These state styles inherit from the theme, but can be locally set or overridden within style definitions. Can be one of:
     - **checked** (*Optional*, boolean): Toggled or checked state.
-    - **default** (*Optional*, boolean): Normal, released state.
     - **disabled** (*Optional*, boolean): Disabled state (also usable with :ref:`shorthand <lvgl-automation-shorthands>` actions ``lvgl.widget.enable`` and ``lvgl.widget.disable``).
     - **edited** (*Optional*, boolean): Edit by an encoder.
     - **focus_key** (*Optional*, boolean): Focused via keypad or encoder but *not* via touch screen.
@@ -240,8 +239,8 @@ The animation image is similar to the normal ``image`` widget. The main differen
     - **id** (**Required**): The ID or a list of IDs of animimg widgets which you want stop.
 
 - ``lvgl.animimg.update`` :ref:`action <actions-action>` can be used to change ``repeat_count`` and ``duration``, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags. ``src`` and ``auto_start`` cannot be updated at runtime.
-    - **id** (**Required**): The ID or a list of IDs of animimg widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of animimg widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
@@ -306,12 +305,13 @@ If the ``adv_hittest`` :ref:`flag <lvgl-widget-flags>` is enabled the arc can be
 **Actions:**
 
 - ``lvgl.arc.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of arc widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of arc widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the knob changes the value of the arc. The new value is returned in the variable ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the arc value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the arc value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -347,7 +347,7 @@ If the ``adv_hittest`` :ref:`flag <lvgl-widget-flags>` is enabled the arc can be
 
 .. note::
 
-    The ``on_value`` trigger is sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a :ref:`universal interaction trigger <lvgl-automation-triggers>` like ``on_release``, to get the ``x`` variable once after the interaction has completed.
+    The ``on_value`` and ``on_change`` triggers are sent as the arc knob is dragged or changed with keys. The event is sent *continuously* while the arc knob is being dragged; this generally has a negative effect on performance. To mitigate this, consider using a :ref:`universal interaction trigger <lvgl-automation-triggers>` like ``on_release``, to get the ``x`` variable once after the interaction has completed.
 
 The ``arc`` can be also integrated as a :doc:`Number </components/number/lvgl>` or :doc:`Sensor </components/sensor/lvgl>` component.
 
@@ -381,8 +381,8 @@ Not only the end, but also the start value of the bar can be set, which changes 
 **Actions:**
 
 - ``lvgl.bar.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of bar widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of bar widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
@@ -429,7 +429,8 @@ A notable state is ``checked`` (boolean) which can have different styles applied
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated after clicking. If ``checkable`` is ``true``, the boolean variable ``x``, representing the checked state, may be used by lambdas within this trigger.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated after clicking. If ``checkable`` is ``true``, the boolean variable ``x``, representing the checked state, may be used by lambdas within this trigger.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the checked value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers.
 
 **Example:**
@@ -511,12 +512,12 @@ The button matrix widget is a lightweight way to display multiple buttons in row
 **Actions:**
 
 - ``lvgl.buttonmatrix.update`` :ref:`action <actions-action>` updates the item styles and properties specified in the specific ``state``, ``items`` options.
-    - **id** (**Required**): The ID or a list of IDs of buttonmatrix widgets which you want update.
-    - Widget styles or properties from ``state``, ``items`` options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of buttonmatrix widgets to be updated.
+    - Widget styles or properties from ``state``, ``items`` options above, to be updated.
 
 - ``lvgl.matrix.button.update`` :ref:`action <actions-action>` updates the button styles and properties specified in the specific ``control``, ``width`` and ``selected`` options.
-    - **id** (**Required**): The ID or a list of IDs of matrix buttons which you want update.
-    - Widget styles or properties from ``control``, ``width`` and ``selected`` options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of matrix buttons to be updated.
+    - Widget styles or properties from ``control``, ``width`` and ``selected`` options above, to be updated.
 
 **Triggers:**
 
@@ -624,13 +625,14 @@ The checkbox widget is made internally from a *tick box* and a label. When the c
 **Actions:**
 
 - ``lvgl.checkbox.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of checkbox widgets which you want update.
+    - **id** (**Required**): The ID or a list of IDs of checkbox widgets to be updated.
     - **text** (*Optional*, :ref:`text-property`): Text to display beside the checkbox.
-    - Widget styles or properties from the specific options above, which you want update.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
-``on_value`` :ref:`trigger <actions-trigger>` is activated when toggling the checkbox. The boolean variable ``x``, representing the checkbox's state, may be used by lambdas within this trigger.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when interactively toggling the checkbox. The boolean variable ``x``, representing the checkbox's state, may be used by lambdas within this trigger.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the checkbox is toggled, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -689,18 +691,20 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 - **indicator** (*Optional*, dict): Styles for the dropdown symbol.
 - **options** (**Required**, list): The list of available options in the drop-down.
 - **selected_index** (*Optional*, int8): The index of the item you wish to be selected.
+- **selected_text** (*Optional*, string): The text of the item you wish to be selected.
 - **symbol** (*Optional*, dict): A symbol (typically an chevron) is shown in dropdown list. If ``dir`` of the drop-down list is ``LEFT`` the symbol will be shown on the left, otherwise on the right. Choose a different :ref:`symbol <lvgl-fonts>` from those built-in or from your own customized font.
 - Style options from :ref:`lvgl-styling` for the background of the button. Uses the typical background properties and :ref:`lvgl-widget-label` text properties for the text on it. ``text_font`` can be used to set the font of the button part, including the symbol.
 
 **Actions:**
 
 - ``lvgl.dropdown.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of dropdown widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of dropdown widgets to update.
+    - Widget styles or properties from the specific options above to update.
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated only when you select an item from the list. The new selected index is returned in the variable ``x``. The :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers also apply, and they also return the selected index in ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated only when the user selects an item from the list. The new selected index is returned in the variable ``x``. The :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers also apply, and they also return the selected index in ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - ``on_cancel`` :ref:`trigger <actions-trigger>` is also activated when you close the dropdown without selecting an item from the list. The currently selected index is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
@@ -772,8 +776,8 @@ Images are the basic widgets used to display images.
 **Actions:**
 
 - ``lvgl.image.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags. Updating the ``src`` option changes the image at runtime.
-    - **id** (**Required**): The ID or a list of IDs of image widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of image widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
@@ -800,7 +804,7 @@ Images are the basic widgets used to display images.
 
 .. note::
 
-    Currently ``RGB565`` type images are supported, with transparency using the optional parameter ``use_transparency`` set to ``true``. See :ref:`display-image` for how to load an image for rendering in ESPHome.
+    Currently ``RGB565`` type images are supported, with transparency using the optional parameter ``use_transparency`` set. See :ref:`display-image` for how to load an image for rendering in ESPHome.
 
 .. tip::
 
@@ -912,9 +916,9 @@ A label is the basic widget type that is used to display text.
 **Actions:**
 
 - ``lvgl.label.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of label widgets which you want update.
+    - **id** (**Required**): The ID or a list of IDs of label widgets to be updated.
     - **text** (*Optional*, :ref:`text-property`): Text to display on the button.
-    - Widget styles or properties from the specific options above, which you want update.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
@@ -967,8 +971,8 @@ The LED widgets are either circular or rectangular widgets whose brightness can 
 **Actions:**
 
 - ``lvgl.led.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of led widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of led widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
@@ -1247,6 +1251,50 @@ You can use it as a parent container for other widgets. By default, it catches t
         widgets:
           - ...
 
+.. _lvgl-widget-qrcode:
+
+``qrcode``
+----------
+
+Use this widget to generate and display a QR-code containing a string at run time.
+
+**Configuration variables:**
+
+- **text** (**Required**, string): The string to be encoded in the QR.
+- **size** (**Required**, int16): Set the desired size of the QR-code (in pixels). QR-codes with less data are smaller, but they scaled by an integer number to best fit to the given size.
+- **light_color** (*Optional*, :ref:`color <lvgl-color>`): Color for the light areas of the QR. Defaults to white.
+- **dark_color** (*Optional*, :ref:`color <lvgl-color>`): Color for the dark areas of the QR. Defaults to black.
+- Style options from :ref:`lvgl-styling`.
+
+**Actions:**
+
+- ``lvgl.qrcode.update`` :ref:`action <actions-action>` updates the widget's ``text`` property to display a new QR-code.
+    - **id** (**Required**): The ID of the qrcode widget to be updated.
+    - **text** (**Required**): The new text to be encoded and displayed.
+
+**Triggers:**
+
+- :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers.
+
+**Example:**
+
+.. code-block:: yaml
+
+    # Example widget:
+    - qrcode:
+        id: lv_qr
+        size: 100
+        light_color: whitesmoke
+        dark_color: steelblue
+        text: esphome.io
+
+    # Example action:
+    on_...:
+      then:
+        - lvgl.qrcode.update:
+            id: lv_qr
+            text: home-assistant.io
+
 .. _lvgl-widget-roller:
 
 ``roller``
@@ -1263,6 +1311,7 @@ Roller allows you to simply select one option from a list by scrolling.
 - **mode** (*Optional*, enum): Option to make the roller circular. ``NORMAL`` or ``INFINITE``, defaults to ``NORMAL``.
 - **options** (**Required**, list): The list of available options in the roller.
 - **selected_index** (*Optional*, int8): The index of the item you wish to be selected.
+- **selected_text** (*Optional*, string): The text of the item you wish to be selected.
 - **selected** (*Optional*, list): Settings for the selected *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize. The selected option in the middle. Besides the typical background properties it uses the :ref:`lvgl-widget-label` text style properties to change the appearance of the text in the selected area.
 - **visible_row_count** (*Optional*, int8): The number of visible rows.
 - Style options from :ref:`lvgl-styling`. The background of the roller uses all the typical background properties and :ref:`lvgl-widget-label` style properties. ``text_line_space`` adjusts the space between the options.
@@ -1270,12 +1319,14 @@ Roller allows you to simply select one option from a list by scrolling.
 **Actions:**
 
 - ``lvgl.roller.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of roller widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+- **id** (**Required**): The ID or a list of IDs of roller widgets to be updated.
+- **animated** (*Optional*, boolean): Animate the indicator when the bar changes value. Defaults to ``true``.
+- All the other roller options as listed above.
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when you select an item from the list. The new selected index is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated only when the user selects an item from the list. The new selected index is returned in the variable ``x``. The :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers also apply, and they also return the selected index in ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated the selection changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the selected index in ``x``.
 
 **Example:**
@@ -1305,8 +1356,8 @@ Roller allows you to simply select one option from a list by scrolling.
         ...
         on_value:
           - logger.log:
-              format: "Selected index is: %d"
-              args: [ x ]
+              format: "Selected index is: %d, text is: %s"
+              args: [x, text.c_str()]
 
 The ``roller`` can be also integrated as :doc:`Select </components/select/lvgl>` component.
 
@@ -1336,12 +1387,13 @@ Normally, the slider can be adjusted either by dragging the knob, or by clicking
 **Actions:**
 
 - ``lvgl.slider.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of slider widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of slider widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the knob changes the value of the slider. The new value is returned in the variable ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the slider value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the slider value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -1411,8 +1463,8 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 **Actions:**
 
 - ``lvgl.spinbox.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of spinbox widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of spinbox widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 - ``lvgl.spinbox.increment`` :ref:`action <actions-action>` increases the value by one ``step`` configured above.
     - **id** (**Required**): The ID of the spinbox widget which you want to increment.
@@ -1422,7 +1474,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the knob changes the value of the arc. The new value is returned in the variable ``x``.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the spinbox value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -1485,8 +1537,8 @@ The Spinner widget is a spinning arc over a ring.
 **Actions:**
 
 - ``lvgl.spinner.update`` :ref:`action <actions-action>` updates the widget styles and properties for the *indicator* part (anything other than the properties that apply commonly to all widgets), just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
-    - **id** (**Required**): The ID or a list of IDs of spinner widgets which you want update.
-    - Widget styles or properties from the specific options above, which you want update.
+    - **id** (**Required**): The ID or a list of IDs of spinner widgets to be updated.
+    - Widget styles or properties from the specific options above, to be updated.
 
 **Triggers:**
 
@@ -1530,7 +1582,8 @@ The switch looks like a little slider and can be used to turn something on and o
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when toggling the switch. The boolean variable ``x``, representing the switch's state, may be used by lambdas within this trigger.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the switch value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the switch value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers which also return the value in ``x``.
 
 **Example:**
@@ -1588,7 +1641,8 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
 
 **Triggers:**
 
-- ``on_value`` :ref:`trigger <actions-trigger>` is activated when displayed tab changes. The new value is returned in the variable ``tab`` as the ID of the now-visible tab.
+- ``on_value`` :ref:`trigger <actions-trigger>` is activated when the tab value changes, either by user interaction or programmatically. The new value is returned in the variable ``x``.
+- ``on_change`` :ref:`trigger <actions-trigger>` is activated when the tab value is changed by user interaction. The new value is returned in the variable ``x``.
 - :ref:`interaction <lvgl-automation-triggers>` LVGL event triggers.
 
 **Example:**
@@ -1655,7 +1709,7 @@ The textarea is an extended label widget which displays a cursor and allows the 
 **Actions:**
 
 - ``lvgl.textarea.update`` :ref:`action <actions-action>` updates the widget's ``text`` property, to replace the entire text content.
-    - **id** (**Required**): The ID or a list of IDs of textarea widgets which you want update.
+    - **id** (**Required**): The ID or a list of IDs of textarea widgets to be updated.
     - **text** (*Optional*, :ref:`text-property`): The text to replace the textarea content.
 
 **Triggers:**
@@ -1706,7 +1760,7 @@ The ``textarea`` can be also integrated as :doc:`Text </components/text/lvgl>` o
 
 The tileview is a container object whose elements, called tiles, can be arranged in grid form. A user can navigate between the tiles by dragging or swiping. Any direction can be disabled on the tiles individually to not allow moving from one tile to another.
 
-If the Tile view is screen sized, the user interface resembles what you may have seen on smartwatches.
+If the tileview is screen sized, the user interface resembles what you may have seen on smartwatches. The tileview has parts ``main`` and ``scrollbar``.
 
 **Configuration variables:**
 
@@ -1785,7 +1839,7 @@ Several universal actions are also available for all widgets, these are outlined
 
 This powerful :ref:`action <actions-action>` allows changing/updating any widget's common :ref:`style property <lvgl-styling>`, state (templatable) or :ref:`flag <lvgl-widget-flags>` on the fly.
 
-- **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL which you want update.
+- **id** (**Required**): The ID or a list of IDs of widgets configured in LVGL to be updated.
 - The widget's common :ref:`style property <lvgl-styling>`, state (templatable) or :ref:`flag <lvgl-widget-flags>`.
 
 .. code-block:: yaml
@@ -1855,7 +1909,7 @@ These :ref:`actions <actions-action>` are shorthands for toggling the ``disabled
 Triggers
 ********
 
-Specific triggers like ``on_value`` are available for certain widgets; they are described above in their respective section.
+Specific triggers like ``on_value`` and ``on_change``` are available for certain widgets; they are described above in their respective section.
 Some universal triggers are also available for all of the widgets:
 
 ESPHome implements as universal triggers the following interaction events generated by LVGL:
@@ -1871,6 +1925,13 @@ ESPHome implements as universal triggers the following interaction events genera
 - ``on_scroll``: The widget was scrolled.
 - ``on_focus``:  The widget is focused.
 - ``on_defocus``: The widget is unfocused.
+- ``on_gesture``: A swipe gesture has been detected
+- ``on_swipe_left``: A left swipe gesture has been detected
+- ``on_swipe_right``: A right swipe gesture has been detected
+- ``on_swipe_up``: An upwards swipe gesture has been detected
+- ``on_swipe_down``: A downwards swipe gesture has been detected
+- ``on_swipe_top``: Synonym for ``on_swipe_up``
+- ``on_swipe_bottom``: Synonym for ``on_swipe_down``
 - ``on_all_events``: Will be triggered on any event sent to the widget - this is useful for debugging.
 
 These triggers can be applied directly to any widget in the LVGL configuration, *given that the widget itself supports generating such events*. For the widgets having a value, the triggers return the current value in variable ``x``; this variable may be used in lambdas defined within those triggers.

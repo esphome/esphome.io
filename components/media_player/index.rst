@@ -45,6 +45,8 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options. Set to ``""`` to remove the default entity category.
 
+.. _media_player-actions:
+
 Media Player Actions
 --------------------
 
@@ -101,6 +103,10 @@ This action pauses the current playback.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action stops the current playback.
+
+Configuration variables:
+
+**announcement** (**Optional**, boolean): Whether to target announcements or regular media files, if supported by the media player. Defaults to ``false``.
 
 .. _media_player-toggle:
 
@@ -253,6 +259,36 @@ This condition checks if the media player is playing media.
       if:
         condition:
           media_player.is_playing:
+
+.. _media_player-is_paused_condition:
+
+``media_player.is_paused`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is paused.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_paused:
+
+.. _media_player-is_announcing_condition:
+
+``media_player.is_announcing`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is playing an announcement.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_announcing:
 
 Play media in order
 -------------------
