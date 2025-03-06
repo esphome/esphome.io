@@ -644,6 +644,8 @@ To prevent values from being published, return ``{}``:
 
 .. include:: sensor-filter-to_ntc_resistance.rst
 
+.. include:: sensor-filter-to_ntc_temperature.rst
+
 Example: Converting Celsius to Fahrenheit
 -----------------------------------------
 
