@@ -9,8 +9,8 @@
       for Home Automation. Just write a simple YAML configuration file and get your own customized firmware.
     :image: logo.svg
 
-.. image:: images/logo-text.svg
-    :class: logo
+.. raw:: html
+    :file: images/logo-text.svg
 
 ESPHome is a system which allows you to turn common microcontrollers into smart home devices.
 

@@ -831,10 +831,8 @@ Note that you can use this procedure for other branches, too, such as ``next`` o
 Contributing to ESPHome
 -----------------------
 
-.. image:: /images/logo-text.svg
-    :align: center
-    :width: 60.0%
-    :class: dark-invert
+.. raw:: html
+    :file: ../images/logo-text.svg
 
 This is a guide to contributing to the ESPHome codebase. ESPHome uses two languages for its project: Python and C++.
 
