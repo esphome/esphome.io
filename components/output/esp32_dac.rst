@@ -10,7 +10,9 @@ converter of the ESP32. Unlike the :doc:`/components/output/ledc`, which can sim
 signal by using a fast switching frequency, the hardware DAC can output a *real* analog signal with
 no need for additional filtering.
 
-The DAC spans across two pins, each on its own channel: GPIO25 (Channel 1) and GPIO26 (Channel 2).
+The DAC spans across two pins, each on its own channel: 
+  - ESP32: GPIO25 (Channel 0) and GPIO26 (Channel 1).
+  - ESP32 S2: GPIO17 (Channel 0) and GPIO18 (Channel 1).
 
 The output level is a percentage of the board supply voltage (VDD_A) - generally this will be 3.3 V.
 
@@ -41,8 +43,7 @@ The output level is a percentage of the board supply voltage (VDD_A) - generally
 Configuration variables:
 ------------------------
 
-- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to use DAC on. Only GPIO25
-  and GPIO26 are supported.
+- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to use DAC on. See above for valid pin numbers.
 - **id** (**Required**, :ref:`config-id`): The id to use for this output component.
 - All other options from :ref:`Output <config-output>`.
 

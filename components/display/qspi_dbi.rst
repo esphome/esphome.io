@@ -70,8 +70,8 @@ Configuration variables:
 - **enable_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The display enable pin.
 - **brightness** (*Optional*, int): A brightness value in the range 0-255
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``5s``.
-- **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display in each loop (''true'', default),
-  or to keep the existing display content (must overwrite explicitly, e.g., only on data change).
+- **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display data before each lambda call,
+  or to keep the existing display content (must overwrite explicitly, e.g., only on data change). Defaults to ``true`` if a lambda or pages are configured, false otherwise.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See :ref:`display-pages`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **color_order** (*Optional*): Should be one of ``rgb`` (default) or ``bgr``.
@@ -137,8 +137,6 @@ Lilygo T4-S3
         cs_pin: 11
         reset_pin: 13
         enable_pin: 9
-        update_interval: never
-        auto_clear_enabled: false
 
     psram:
       mode: octal

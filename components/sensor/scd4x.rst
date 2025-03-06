@@ -6,7 +6,7 @@ SCD4X CO₂, Temperature and Relative Humidity Sensor
     :image: scd4x.jpg
 
 The ``scd4x`` sensor platform  allows you to use your Sensirion SCD4X CO₂
-(`datasheet <https://sensirion.com/media/documents/E0F04247/631EF271/CD_DS_SCD40_SCD41_Datasheet_D1.pdf>`__) sensors with ESPHome.
+(`datasheet <https://sensirion.com/media/documents/48C4B7FB/66E05452/CD_DS_SCD4x_Datasheet_D1.pdf>`__) sensors with ESPHome.
 The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for this sensor to work.
 
 .. figure:: images/scd4x.jpg
