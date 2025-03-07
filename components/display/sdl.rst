@@ -100,6 +100,7 @@ See Also
 --------
 
 - :ref:`SDL touchscreen <sdl_touchscreen>`
+- :doc:`SDL binary sensor </components/binary_sensor/sdl>`
 - :doc:`index`
 - :apiref:`sdl/sdl_esphome.h`
 - :ghedit:`Edit`

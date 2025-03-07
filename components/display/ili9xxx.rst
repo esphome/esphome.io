@@ -11,6 +11,7 @@ Models
 ------
 With this display driver you can control the following displays:
   - GC9A01A
+  - GC9D01N
   - ILI9341
   - ILI9342
   - ILI9481
@@ -42,9 +43,14 @@ beyond the basic SPI connections, and a reasonable amount of RAM, it is not well
 
 .. note::
 
-    The default color depth is 16 bit (RGB565). 8 bit color is also supported, but the color palette must be set to one of the available options.
+    PSRAM is not automatically enabled on the ESP32 (this changed with the 2025.2 release.) If PSRAM is available, you
+    should enable it with the :doc:`PSRAM configuration </components/psram>`.
     Use of 16 bit colors requires twice the amount of RAM as 8 bit, and may not be usable unless PSRAM is available.
 
+.. note::
+
+    The default color depth is 16 bit (RGB565). 8 bit color is also supported, but the color palette must be set to one of the available options.
+    Use of 16 bit colors requires twice the amount of RAM as 8 bit, and may not be usable unless PSRAM is available.
 
 .. figure:: images/ili9341-full.jpg
     :align: center
@@ -75,7 +81,7 @@ All :ref:`graphical display configuration<display-configuration>` options are av
   - ``ILI9341``, ``ILI9342``, ``ILI9486``, ``ILI9488``, ``ILI9488_A`` (alternative gamma configuration for ILI9488)
   - ``ILI9481``, ``ILI9481-18`` (18 bit mode)
   - ``ST7789V``, ``ST7796``, ``ST7735``
-  - ``GC9A01A``, ``CUSTOM``
+  - ``GC9A01A``, ``GC9D01N``, ``CUSTOM``
 
 
 - **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin.

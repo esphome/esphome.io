@@ -33,11 +33,11 @@ This permits faster communication with the Nextion display and it is highly reco
 .. warning::
 
     **We highly recommend using only** :ref:`uart-hardware_uarts` **with Nextion displays.**
-    
+
     *Use of software UARTs is known to result in unpredictable/inconsistent behavior.*
 
     If you **must** use a software UART, note that baud rates greater than 9600 are extremely likely to cause problems.
-    
+
     In short, avoid using software UARTs with Nextion displays.
 
 .. code-block:: yaml
