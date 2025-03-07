@@ -235,7 +235,7 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_lidl_auriol** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Lidl Auriol weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::LidlAuriolData`
-  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA. The sensor repeats the 52-bit code seven times, it is a good idea to add a throttle filter. The sync word starts with low and only 4ms, set remote_receiver idle time smaller than that, like 3ms.
 
 .. code-block:: yaml
 
