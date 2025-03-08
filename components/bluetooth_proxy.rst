@@ -119,7 +119,7 @@ This configuration is for an Olimex ESP32-PoE-ISO board with an Ethernet connect
 
     bluetooth_proxy:
       active: true
-      max_connections: 3
+      connection_slots: 3
 
 
 See Also
