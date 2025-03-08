@@ -58,7 +58,8 @@ Configuration variables:
   - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel.
   - ``RGB``: Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
 
-- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``. See discussion on transparency below.
+- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``.  Binary images do not support ``alpha_channel``. See discussion on transparency below.
+- **invert_alpha** (*Optional*, boolean): Applicable to binary and grayscale only, this will invert the colors, i.e. make black white and vice versa. Useful for e-ink displays. Defaults to ``false``.
 
 - **dither** (*Optional*): Specifies which dither method used to process the image, only used in GRAYSCALE and BINARY type image. Defaults to ``NONE``. You can read more about it `here <https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=Dither#PIL.Image.Image.convert>`__ and `here <https://en.wikipedia.org/wiki/Dither>`__.
 
@@ -165,8 +166,8 @@ as the additional parameters.
 Transparency options
 --------------------
 
-By default transparency is not used. If ``transparency: chroma_key`` is set then a specific colour (0, 1, 0) will be used to replace any transparent or partially transparent portions of the image. This will not be drawn when rendering the image, allowing the background to be visible.
+By default transparency is not used. If ``transparency: chroma_key`` is set then a specific colour will be used to replace any transparent or partially transparent portions of the image. This will not be drawn when rendering the image, allowing the background to be visible.
 
-If ``transparency: alpha_channel`` is set, then each pixel of the image will be assigned an additional byte with a transparency value. This is useful mainly when using :doc:`LVGL </components/lvgl/index>` as the ``alpha_channel`` transparency will enable smooth blending of transparent images with the background.
+If ``transparency: alpha_channel`` is set, then each pixel of the image will be assigned an additional byte with a transparency value. This is useful mainly when using :doc:`LVGL </components/lvgl/index>` as the ``alpha_channel`` transparency will enable smooth blending of transparent images with the background. This choice is not available for binary images.
 When using the display lambda image drawing functions these will draw or not draw the pixel, no blending with the background will be done.
-The ``BINARY`` format only permits ``chroma_key`` transparency, which effectively turns the image into an alpha mask with one bit per pixel. GRAYSCALE images with transparency store the alpha channel only, and remain 1 byte per pixel.
+The ``BINARY`` format with ``chroma_key`` transparency effectively turns the image into an alpha mask with one bit per pixel. GRAYSCALE images with transparency store the alpha channel only, and remain 1 byte per pixel.
