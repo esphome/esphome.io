@@ -91,7 +91,7 @@ Configuration variables:
   Each configured slot consumes ~1KB of RAM. It is recommended not to exceed ``5``
   connections slots to avoid memory issues. Defaults to ``3``.
   This can only be adjusted when using the ``esp-idf`` framework up to a maximum of ``9``.
-  This value cannot exceed the total number of ``max_connections`` for the
+  This value cannot exceed the total number of ``connection_slots`` for the
   :doc:`bluetooth_proxy` component combined with the total
   configured :doc:`ble_client` instances.
 
