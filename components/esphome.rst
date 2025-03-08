@@ -67,17 +67,6 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 
-Old-style platform options, which have been moved to the platform-specific :doc:`esp32 </components/esp32>` and
-:doc:`esp8266 </components/esp8266>` sections but are still accepted here for compatibility reasons (usage not
-recommended for new projects):
-
-- **platform** (**Required**, string): The platform used, either ``esp8266`` or ``esp32``.
-- **board** (**Required**, string): The board used, see
-  :doc:`esp32 </components/esp32>` and :doc:`esp8266 </components/esp8266>` for more information.
-- **arduino_version** (*Optional*, string): The version of the Arduino framework to compile the project against.
-- **esp8266_restore_from_flash** (*Optional*, boolean): For ESP8266s, whether to store some persistent preferences in flash
-  memory.
-
 Automations:
 
 - **on_boot** (*Optional*, :ref:`Automation <automation>`): An automation to perform

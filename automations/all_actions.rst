@@ -32,6 +32,7 @@
 - **logger:** ``log``
 - **max6956:** ``set_brightness_global``, ``set_brightness_mode``
 - **media_player:** ``pause``, ``play``, ``play_media``, ``stop``, ``toggle``, ``volume_down``, ``volume_set``, ``volume_up``
+- **media_player.speaker:** ``play_on_device_media_file``
 - **mhz19:** ``abc_disable``, ``abc_enable``, ``calibrate_zero``
 - **micro_wake_word:** ``start``, ``stop``
 - **microphone:** ``capture``, ``stop_capture``
