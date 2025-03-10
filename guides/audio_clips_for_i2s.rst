@@ -22,7 +22,7 @@ It is possible to create sound clips to include in your build to use with I²S s
 
 .. code-block:: console
 
-    xxd -i startup_again.raw startup.c
+    xxd -i startup_again.raw startup.h
 
 - The resulting file needs a modification in the start line:
   Open in an editor and change
