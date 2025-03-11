@@ -235,7 +235,7 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_lidl_auriol** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Lidl Auriol weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::LidlAuriolData`
-  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA. The sensor repeats the 52-bit code seven times, it is a good idea to add a throttle filter. The sync word starts with low and is only 4ms, set remote_receiver idle time smaller than that, like 3ms.
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 
 .. code-block:: yaml
 
@@ -502,13 +502,18 @@ Remote code selection (exactly one of these has to be included):
   - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
   - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
 
-- **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data.
+- **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data. Multiple stations are supported, not all fields are valid for all models.
 
-  - **id** (**Required**, int): 8-bit identifier, unique to the sensor.
-  - **battery_level** (*Required*, bool): false when the battery is low.
-  - **channel** (*Required*, int): RF channel.
-  - **temperature** (*Required*, int): Measured temperature.
-  - **rain** (*Required*, int): Measured rain delta (impulses).
+  - **model** (**Required**, string): Model number.
+  - **id** (**Optional**, int): 8-bit identifier, unique to the sensor.
+  - **battery_level** (*Optional*, float): Most models only send a one bit value. Mapped to 0 or 100 percent.
+  - **channel** (*Optional*, int): RF channel.
+  - **temperature** (*Optional*, float): Measured temperature.
+  - **humidity** (*Optional*, float): Measured humidity.
+  - **rain** (*Optional*, int): Measured rain in mm.
+  - **wind_direction_degrees** (*Optional*, int): Wind direction.
+  - **wind_speed** (*Optional*, float): Average wind speed.
+  - **wind_gust** (*Optional*, float): Wind gust speed.
 
 .. note::
 
