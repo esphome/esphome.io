@@ -957,26 +957,31 @@ Configuration variables:
 
 ``remote_transmitter.transmit_lidl_auriol`` **Action**
 
-This :ref:`action <config-action>` sends a Lidl Auriol weather station data to a remote transmitter and to the receiver station.
+This :ref:`action <config-action>` sends a Lidl Auriol weather station data to the receiver station.
 
 .. code-block:: yaml
 
     on_...:
       - remote_transmitter.transmit_lidl_auriol:
+          model: '4LD631'
           id: 240
-          battery_level: true
+          battery_level: 100
           channel: 0
-          temperature: 21
+          temperature: 21.5
           rain: 10
-          # Repeats 7 times
 
 Configuration variables:
 
-- **id** (**Required**, int): 8-bit identifier, unique to the sensor.
-- **battery_level** (*Required*, boolean): false when the battery is low.
-- **channel** (*Required*, int): RF channel (no effect).
-- **temperature** (*Required*, float): Measured temperature.
-- **rain** (*Required*, int): Measured rain delta (impulses).
+- **model** (**Required**, string): Model number.
+- **id** (**Optional**, int): 8-bit identifier, unique to the sensor.
+- **battery_level** (*Optional*, float): 0 to 100 percent. Most models only expect a one bit value. Below 25 will be mapped to 0.
+- **channel** (*Optional*, int): RF channel.
+- **temperature** (*Optional*, float): Measured temperature.
+- **humidity** (*Optional*, float): Measured humidity.
+- **rain** (*Optional*, int): Measured rain in mm.
+- **wind_direction_degrees** (*Optional*, int): Wind direction.
+- **wind_speed** (*Optional*, float): Average wind speed.
+- **wind_gust** (*Optional*, float): Wind gust speed.
 
 .. _remote_transmitter-rc_switch-protocol:
 
