@@ -12,15 +12,26 @@ is required to be set up in your configuration for this sensor to work.
 
 .. _Sensirion: https://sensirion.com/products/catalog/SHT20/
 
+.. figure:: images/sht20boxed-full.jpg
+    :align: center
+    :width: 50.0%
+
+    The SHT20 is currently available in various ready-made packages for different
+    applications.
+
+.. figure:: images/temperature-humidity.png
+    :align: center
+    :width: 80.0%
+
 .. code-block:: yaml
 
     # Example configuration entry
     sensor:
       - platform: sht20
         temperature:
-          name: "Greenhouse Temperature"
+          name: "Living Room Temperature"
         humidity:
-          name: "Greenhouse Humidity"
+          name: "Living Room Humidity"
         update_interval: 60s
 
 Configuration variables:
