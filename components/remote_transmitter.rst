@@ -943,7 +943,7 @@ This :ref:`action <config-action>` sends a Toto infrared remote code to a remote
           command: 0xED  # Set water and seat temperature
           rc_code_1: 0x0 # Water heater off
           rc_code_2: 0x0 # Seat heater off
-          # Repeats 3 times at a 32ms interval by default
+          # Repeats 3 times at a 36ms interval by default
 
 Configuration variables:
 
@@ -951,7 +951,7 @@ Configuration variables:
 - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
 - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
 - All other options from :ref:`remote_transmitter-transmit_action`.
-   - **Note**: Toto remotes repeat all codes three times at a 32ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
+   - **Note**: Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
 
 
 .. _remote_transmitter-rc_switch-protocol:
