@@ -502,10 +502,10 @@ Remote code selection (exactly one of these has to be included):
   - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
   - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
 
-- **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data. Multiple stations are supported, not all fields are valid for all models.
+- **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data. Not all fields are valid for all models.
 
   - **model** (**Required**, string): Model number.
-  - **id** (**Optional**, int): 8-bit identifier, unique to the sensor.
+  - **id** (*Optional*, int): 8-bit identifier, unique to the sensor.
   - **battery_level** (*Optional*, float): Most models only send a one bit value. Mapped to 0 or 100 percent.
   - **channel** (*Optional*, int): RF channel.
   - **temperature** (*Optional*, float): Measured temperature.
