@@ -974,7 +974,7 @@ Configuration variables:
 
 - **model** (**Required**, string): Model number.
 - **id** (**Optional**, int): 8-bit identifier, unique to the sensor.
-- **battery_level** (*Optional*, float): 0 to 100 percent. Most models only expect a one bit value. Below 25 will be mapped to 0.
+- **battery_level** (*Optional*, float): 0 to 100, as a percentage. Most stations only expect a single bit value, 1 to indicate that the battery is still good. Putting anything below 25 here will be mapped to 0.
 - **channel** (*Optional*, int): RF channel.
 - **temperature** (*Optional*, float): Measured temperature.
 - **humidity** (*Optional*, float): Measured humidity.
