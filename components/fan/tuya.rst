@@ -58,6 +58,7 @@ Configuration variables:
 - **direction_datapoint** (*Optional*, int): The datapoint id number of the direction
   switch. Supported by some ceiling fans.
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to ``3``.
+- **preset_modes** (*Optional*): A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set`).
 - All other options from :ref:`Fan <config-fan>`.
 
 .. note::
