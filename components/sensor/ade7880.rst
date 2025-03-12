@@ -9,16 +9,6 @@ The ``ade7880`` sensor platform allows you to use ADE7880
 voltage/current/power sensors (`datasheet`_) with ESPHome. This sensor
 chip is commonly found in Shelly 3EM and 3EM Pro devices.
 
-Communication with the chip is over an :ref:`I2C bus <i2c>`, so
-you need to have an ``i2c:`` entry in your configuration with both
-``sda`` and ``scl`` set. It is also recommended to set the I2C
-``frequency`` to ``200kHz`` or higher, if the board containing the
-chip can support it (this speed has been verified to work in the
-Shelly 3EM). While this is not necessary, if a significant number of
-the ``ade7880`` individual sensors (e.g. more than six) are enabled,
-the time consumed by the I2C transactions can be substantial and
-result in warning messages in the ESPHome logs.
-
 The ADE7880 chip can measure up to three power phases, along with a
 neutral. Current can be measured on all four inputs, while voltage and
 power can be measured on the power phases. Current is measured using
@@ -27,6 +17,24 @@ CT clamps.
 While the chip is designed for 3-phase AC power, the phase inputs are
 independent of each other, so the chip can be used with single-phase
 and two-phase AC power circuits as well (or a mixture of them).
+
+Communication with the chip is over ether an :ref:`I²C bus <i2c>` or
+an :ref:`SPI Bus <spi>`.
+
+For communication over I²C, use ``platform: ade7880_i2c``. You need to
+have an ``i2c:`` entry in your configuration with both ``sda`` and
+``scl`` set. It is also recommended to set the I²C ``frequency`` to
+``200kHz`` or higher, if the board containing the chip can support it
+(this speed has been verified to work in the Shelly 3EM). While this
+is not necessary, if a significant number of the ``ade7880``
+individual sensors (e.g. more than six) are enabled, the time consumed
+by the I²C transactions can be substantial and result in warning
+messages in the ESPHome logs.
+
+For communication over SPI, use `platform: ade7880_spi``. You need to
+have an ``spi:`` entry in your configuration with ``clk_pin``,
+``mosi_pin``, and ``miso_pin`` set, as well as ``cs_pin`` configured
+in the sensor component.
 
 Instantaneous vs. Accumulated Sensors
 -------------------------------------
@@ -68,7 +76,7 @@ Configuration Variables
   it to initiate a 'hardware reset' of the chip when needed; if this
   pin is not configured, the component will attempt to initiate a
   'software reset' of the chip when needed, but this could fail if the
-  chip is not responding properly to the I2C bus.
+  chip is not responding properly to the I²C or the SPI bus.
 
 - **frequency** (*Optional*, string): The AC line frequency of the
   supply voltage. The supported range is ``45Hz`` to
@@ -156,9 +164,17 @@ Configuration Variables
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to report the sensor values. Defaults to ``60s``.
 
-- **i2c_id** (*Optional*, :ref:`config-id`): Specify the ID of the
-  :ref:`I2C Component <i2c>` if your configuration includes multiple
-  I2C buses.
+- **i2c_id** (*Optional*, :ref:`config-id`): Manually specify the ID
+  of the :ref:`I²C Component <i2c>` if you want to use multiple I²C
+  buses.
+
+- **spi_id** (*Optional*, :ref:`config-id`): Manually specify the ID
+  of the :ref:`SPI Component <spi>` if you want to use multiple SPI
+  buses.
+
+- **cs_pin** (**Required for SPI**, :ref:`Pin Schema
+  <config-pin_schema>`): The GPIO pin that the ADE7880's SS input is
+  connected to, if your configuration uses SPI for communication.
 
 Calibration
 -----------
@@ -184,11 +200,14 @@ provided for each sensor variable will be the sensor's name
 (optionally prefixed with the phase name, if it has been
 configured).
 
+In the examples below, modify ``platform: ade7880`` as appropriate for
+your hardware (either ``ade7880_i2c`` or ``ade7880_spi``).
+
 .. code-block:: yaml
 
     # Example simple sensor configuration mode
     sensor:
-      - platform: ade7880
+      - platform: ade7880_i2c
         irq0_pin:
           number: GPIOXX
         irq1_pin:
@@ -215,7 +234,7 @@ Heater Current', etc.
 
     # Example detailed sensor configuration mode
     sensor:
-      - platform: ade7880
+      - platform: ade7880_i2c
         irq0_pin:
           number: GPIOXX
         irq1_pin:
@@ -247,7 +266,7 @@ configuration mode.
 
     # Example full platform configuration
     sensor:
-      - platform: ade7880
+      - platform: ade7880_i2c
         irq0_pin:
           number: GPIOXX
         irq1_pin:
@@ -304,7 +323,7 @@ See Also
 --------
 
 - :ref:`sensor-filters`
-- :apiref:`ade7880/ade7880.h`
+- :apiref:`ade7880_base/ade7880_base.h`
 - :ghedit:`Edit`
 
 .. _datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ADE7880.pdf
