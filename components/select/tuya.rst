@@ -40,6 +40,7 @@ Based on this, you can create the select as follows:
       - platform: "tuya"
         name: "Sensor selection"
         enum_datapoint: 2
+        data_type: enum
         optimistic: true
         options:
           0: Internal
@@ -55,7 +56,7 @@ Configuration variables:
   all values have to be unique.
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the Select will immediately update the reported state.
-
+- **data_type** (*Optional*, enum): Set the backing data type, one of: ``enum`` or ``int``. Defaults to ``enum``.
 - All other options from :ref:`Select <config-select>`.
 
 
