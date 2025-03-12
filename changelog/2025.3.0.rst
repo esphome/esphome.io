@@ -1,0 +1,162 @@
+ESPHome 2025.3.0 - 19th March 2025
+==================================
+
+.. seo::
+    :description: Changelog for ESPHome 2025.3.0.
+    :image: /_static/changelog-2025.3.0.png
+    :author: Keith Burzinski
+    :author_twitter: @kbx81
+
+.. imgtable::
+    :columns: 3
+
+    LD2450, components/sensor/ld2450, ld2450.png
+    CHSC6X, components/touchscreen/chsc6x, chsc6x.png
+    MSA301/MSA311, components/sensor/msa3xx, msa301.jpg
+
+    Tormatic/Novoferm, components/cover/tormatic, tormatic.png
+
+Our second release of 2025 is a bit smaller -- Jesse is away, so we are a bit short-staffed. 😅
+
+Even so, we do still have a few new additions (as above), so we thought we'd proceed with a release just the same.
+Of note, the long-awaited :doc:`/components/sensor/ld2450` has landed; as there are now a few products available with
+this sensor, it seemed about time to get it baked in. That said, I'll keep it short. Happy hacking!
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- [ld2450] Add new component :esphomepr:`5674` by :ghuser:`hareeshmu` (new-integration)
+- Adding support for chsc6x touch controller :esphomepr:`8258` by :ghuser:`kkosik20` (new-integration)
+- MSA311 and MSA301 accelerometer support :esphomepr:`6795` by :ghuser:`latonita` (new-integration)
+- Cover component for Tormatic and Novoferm garage doors :esphomepr:`5933` by :ghuser:`ti-mo` (new-integration)
+- [io_bus] Initial implementation :esphomepr:`8227` by :ghuser:`clydebarrow` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- [mlx90393] Fix inverted gain and resolution. Expose temperature_compensation and hallconf. :esphomepr:`7635` by :ghuser:`functionpointer` (breaking-change)
+- [touchscreen] Axis swap bugfix :esphomepr:`8376` by :ghuser:`clydebarrow` (breaking-change)
+- [cst816] Remove binary sensor :esphomepr:`8377` by :ghuser:`clydebarrow` (breaking-change)
+
+All changes
+^^^^^^^^^^^
+
+- [modbus_controller] Extend tests :esphomepr:`8245` by :ghuser:`kbx81`
+- Switch to native arm runners for docker CI :esphomepr:`8262` by :ghuser:`bdraco`
+- Use the process CPU count to determine how many children to create :esphomepr:`8268` by :ghuser:`bdraco`
+- Bump actions/cache from 4.2.0 to 4.2.1 in /.github/actions/restore-python :esphomepr:`8273` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.2.0 to 4.2.1 :esphomepr:`8271` by :ghuser:`dependabot[bot]`
+- Ruff format for CI :esphomepr:`8276` by :ghuser:`stellar-aria`
+- [ld2450] Add new component :esphomepr:`5674` by :ghuser:`hareeshmu` (new-integration)
+- Bump docker/build-push-action from 6.13.0 to 6.14.0 in /.github/actions/build-image :esphomepr:`8281` by :ghuser:`dependabot[bot]`
+- Finish up transition from black-format to ruff :esphomepr:`8294` by :ghuser:`stellar-aria`
+- [core, dashboard] load external component to get get_download_types :esphomepr:`8139` by :ghuser:`tomaszduda23`
+- [ota] set USE_OTA_VERSION 2 in defines :esphomepr:`8299` by :ghuser:`tomaszduda23`
+- [socket] add connect method :esphomepr:`8308` by :ghuser:`kahrendt`
+- Bump peter-evans/create-pull-request from 7.0.6 to 7.0.7 :esphomepr:`8314` by :ghuser:`dependabot[bot]`
+- Bump actions/upload-artifact from 4.6.0 to 4.6.1 :esphomepr:`8295` by :ghuser:`dependabot[bot]`
+- [api] ensure fair network sharing + prevent lost state changes via deferred publish at high event load :esphomepr:`7547` by :ghuser:`nkinnan`
+- ili9xxx: Add support for GC9D01N circle display :esphomepr:`8302` by :ghuser:`rforro`
+- web_server: ensure fair network sharing + prevent lost state changes via deferred publish at high event load :esphomepr:`7538` by :ghuser:`nkinnan`
+- [i2c] python code style :esphomepr:`8311` by :ghuser:`tomaszduda23`
+- Adding support for chsc6x touch controller :esphomepr:`8258` by :ghuser:`kkosik20` (new-integration)
+- [core] make upload_program more generic :esphomepr:`8321` by :ghuser:`tomaszduda23`
+- [i2c] Fix i2c issue on idf 5.3 :esphomepr:`8283` by :ghuser:`swoboda1337`
+- [core] SplitDefault unit test :esphomepr:`8324` by :ghuser:`tomaszduda23`
+- Add option to include vars in remote packages :esphomepr:`7606` by :ghuser:`pszafer`
+- [ld2450] Fix for "unknown" sensor states :esphomepr:`8305` by :ghuser:`kbx81`
+- Update arduino-heatpumpir and add new protocol for Panasonic AC :esphomepr:`8309` by :ghuser:`barchasse38`
+- MSA311 and MSA301 accelerometer support :esphomepr:`6795` by :ghuser:`latonita` (new-integration)
+- Include the bluetooth mac address in the device info when proxy is enabled :esphomepr:`8203` by :ghuser:`bdraco`
+- dashboard: Implement automatic ping fallback :esphomepr:`8263` by :ghuser:`bdraco`
+- [ld2450] Fix misplaced ``ifdef`` and related logic :esphomepr:`8335` by :ghuser:`kbx81`
+- Bump the docker-actions group with 2 updates :esphomepr:`8330` by :ghuser:`dependabot[bot]`
+- Bump actions/download-artifact from 4.1.8 to 4.1.9 :esphomepr:`8331` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 6.14.0 to 6.15.0 in /.github/actions/build-image :esphomepr:`8332` by :ghuser:`dependabot[bot]`
+- [mlx90393] Fix inverted gain and resolution. Expose temperature_compensation and hallconf. :esphomepr:`7635` by :ghuser:`functionpointer` (breaking-change)
+- [font] Use freetype instead of Pillow for font rendering :esphomepr:`8300` by :ghuser:`clydebarrow`
+- Bump actions/cache from 4.2.1 to 4.2.2 :esphomepr:`8336` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.2.1 to 4.2.2 in /.github/actions/restore-python :esphomepr:`8337` by :ghuser:`dependabot[bot]`
+- [zeroconf] Ruff formatting :esphomepr:`8338` by :ghuser:`jesserockz`
+- [nrf52, core] unified way how all platforms handle SplitDefault :esphomepr:`7715` by :ghuser:`tomaszduda23`
+- Cover component for Tormatic and Novoferm garage doors :esphomepr:`5933` by :ghuser:`ti-mo` (new-integration)
+- [io_bus] Initial implementation :esphomepr:`8227` by :ghuser:`clydebarrow` (new-integration)
+- [tmp1075] fix component for TMP1075N :esphomepr:`8317` by :ghuser:`ssieb`
+- Bump docker/setup-qemu-action from 3.5.0 to 3.6.0 in the docker-actions group :esphomepr:`8346` by :ghuser:`dependabot[bot]`
+- [dashboard] Rename trash/delete to archive :esphomepr:`8357` by :ghuser:`jesserockz`
+- [helpers] Allow RAMAllocator to be told the size of the object manually :esphomepr:`8356` by :ghuser:`jesserockz`
+- [ld2450] fix null exception & zone target_count not published :esphomepr:`8348` by :ghuser:`mistic100`
+- [bmp085] Fix error in read of pressure :esphomepr:`8359` by :ghuser:`gusdleon`
+- [udp] fix clang tidy :esphomepr:`8351` by :ghuser:`tomaszduda23`
+- [i2s_audio] Bugfix: Speaker incorrectly delays when sending data :esphomepr:`8361` by :ghuser:`kahrendt`
+- Initialise h-bridge switch to requested initial state :esphomepr:`8363` by :ghuser:`AnyOldName3`
+- [lvgl] Fix initialisation race condition (Bugfix) :esphomepr:`8369` by :ghuser:`clydebarrow`
+- [time] fix recalc_timestamp_local :esphomepr:`8239` by :ghuser:`qraynaud`
+- allow touchscreen buttons outside of display dimensions :esphomepr:`8296` by :ghuser:`zendes`
+- [touchscreen] Axis swap bugfix :esphomepr:`8376` by :ghuser:`clydebarrow` (breaking-change)
+- [cst816] Remove binary sensor :esphomepr:`8377` by :ghuser:`clydebarrow` (breaking-change)
+- Revert "[io_bus] Initial implementation" :esphomepr:`8384` by :ghuser:`clydebarrow`
+- Bump aioesphomeapi to 29.5.1 :esphomepr:`8364` by :ghuser:`bdraco`
+- Bump esptool to 4.8.1latest :esphomepr:`8367` by :ghuser:`shvmm`
+- Bump zeroconf to 0.146.1 :esphomepr:`8365` by :ghuser:`bdraco`
+- mcp2515: Add missing CFG1 assignment to be able to use 50kbps with a 16MHz crystal. :esphomepr:`8375` by :ghuser:`djasper-ha`
+
+Past Changelogs
+---------------
+
+- :doc:`2025.2.0`
+- :doc:`2024.12.0`
+- :doc:`2024.11.0`
+- :doc:`2024.10.0`
+- :doc:`2024.9.0`
+- :doc:`2024.8.0`
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

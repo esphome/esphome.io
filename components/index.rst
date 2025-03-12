@@ -4,7 +4,8 @@
     :description: ESPHome main documentation
     :image: logo-docs.svg
 
-.. image:: /images/logo-docs.svg
+.. raw:: html
+    :file: ../images/logo-docs.svg
 
 This page is an index of all of the hardware components and platforms ESPHome currently supports.
 
