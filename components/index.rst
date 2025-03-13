@@ -385,6 +385,7 @@ Environmental
     SCD4X, components/sensor/scd4x, scd4x.jpg, CO2 & Temperature & Humidity
     SDP3x / SDP800 Series, components/sensor/sdp3x, sdp31.jpg, Pressure
     SFA30, components/sensor/sfa30, sfa30.jpg, Formaldehyde
+    SHT20, components/sensor/sht20, sht20boxed.jpg, Temperature & Humidity
     SHT3X-D, components/sensor/sht3xd, sht3xd.jpg, Temperature & Humidity
     SHT4X, components/sensor/sht4x, sht4x.jpg, Temperature & Humidity
     SHTCx, components/sensor/shtcx, shtc3.jpg, Temperature & Humidity
