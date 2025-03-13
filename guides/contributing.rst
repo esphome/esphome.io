@@ -831,10 +831,8 @@ Note that you can use this procedure for other branches, too, such as ``next`` o
 Contributing to ESPHome
 -----------------------
 
-.. image:: /images/logo-text.svg
-    :align: center
-    :width: 60.0%
-    :class: dark-invert
+.. raw:: html
+    :file: ../images/logo-text.svg
 
 This is a guide to contributing to the ESPHome codebase. ESPHome uses two languages for its project: Python and C++.
 
@@ -1274,9 +1272,11 @@ ESPHome's maintainers work hard to maintain a high standard for its code. We try
 
 - Components **must** use the provided abstractions like ``sensor``, ``switch``, etc. Components specifically should
   **not** directly access other components -- for example, to publish to MQTT topics.
-- Implementations for new devices should contain reference links for the datasheet and other sample implementations.
+- Implementations for new devices should contain reference links for the data sheet and other sample implementations.
 - If you have used ``delay()`` or constructed code which blocks for a duration longer than ten milliseconds, be sure to
   read :ref:`delays_in_code`.
+- Do **not** use ``sstream``/``stringstream`` to format variables into strings. This library bloats the compiled binary
+  by over 200 kilobytes (KBs) which causes problems for devices with small amounts (1-4 MB) of flash memory.
 - Comments in code should be used as appropriate, such as to help explain some complexity or to provide a brief summary
   of what a class, method, etc. is doing. PRs which include large blocks of commented-out code will not be accepted.
   Single lines of commented code may be useful from time to time (for example, to call out something which was
