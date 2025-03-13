@@ -12,7 +12,7 @@ is required to be set up in your configuration for this sensor to work.
 
 .. _Sensirion: https://sensirion.com/products/catalog/SHT20/
 
-.. figure:: images/sht20boxed-full.jpg
+.. figure:: images/sht20-full.jpg
     :align: center
     :width: 50.0%
 
