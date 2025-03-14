@@ -65,7 +65,11 @@ Configuration variables:
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
-  - **lidl_auriol**: Decode and dump Lidl Weather Station data.
+  - **weather_station_2032**: Decode and dump WS2032 weather station data.
+  - **weather_station_4ld631**: Decode and dump Lidl 4LD631 weather station data.
+  - **weather_station_h10515**: Decode and dump Lidl H10515/DCF weather station data.
+  - **weather_station_l08037a**: Decode and dump Lidl L08037A weather station data.
+  - **weather_station_nexus**: Decode and dump Nexus weather station data.
 
 - **tolerance** (*Optional*, int, :ref:`config-time` or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to ``25%``.
@@ -233,8 +237,20 @@ Automations:
 - **on_toto** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Toto remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::TotoData`
   is passed to the automation for use in lambdas.
-- **on_lidl_auriol** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Lidl Auriol weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::LidlAuriolData`
+- **on_weather_station_2032** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  WS2032 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
+- **on_weather_station_4ld631** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+   4LD631 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
+- **on_weather_station_h10515** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+   H10515/DCF weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
+- **on_weather_station_l08037a** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+   L08037A weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
+- **on_weather_station_nexus** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Nexus weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
   is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 
 .. code-block:: yaml
@@ -502,18 +518,11 @@ Remote code selection (exactly one of these has to be included):
   - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
   - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
 
-- **lidl_auriol**: Trigger on a decoded Lidl Auriol weather station data. Not all fields are valid for all models.
-
-  - **model** (**Required**, string): Model number.
-  - **id** (*Optional*, int): 8-bit identifier, unique to the sensor.
-  - **battery_level** (*Optional*, float): Most models only send a one bit value. Mapped to 0 or 100 percent.
-  - **channel** (*Optional*, int): RF channel.
-  - **temperature** (*Optional*, float): Measured temperature.
-  - **humidity** (*Optional*, float): Measured humidity.
-  - **rain** (*Optional*, int): Measured rain in mm.
-  - **wind_direction_degrees** (*Optional*, int): Wind direction.
-  - **wind_speed** (*Optional*, float): Average wind speed.
-  - **wind_gust** (*Optional*, float): Wind gust speed.
+- **weather_station_2032**: Trigger on a decoded WS2032 weather station data.
+- **weather_station_4ld631**: Trigger on a decoded Lidl 4LD631 weather station data.
+- **weather_station_h10515**: Trigger on a decoded Lidl H10515/DCF weather station data.
+- **weather_station_l08037a**: Trigger on a decoded Lidl L08037A weather station data.
+- **weather_station_nexus**: Trigger on a decoded Nexus weather station data.
 
 .. note::
 
