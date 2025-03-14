@@ -68,6 +68,7 @@ Configuration variables:
   - **weather_station_2032**: Decode and dump WS2032 weather station data.
   - **weather_station_4ld631**: Decode and dump Lidl 4LD631 weather station data.
   - **weather_station_h10515**: Decode and dump Lidl H10515/DCF weather station data.
+  - **weather_station_h13726**: Decode and dump Lidl H13726 weather station data.
   - **weather_station_l08037a**: Decode and dump Lidl L08037A weather station data.
   - **weather_station_nexus**: Decode and dump Nexus weather station data.
 
@@ -521,6 +522,7 @@ Remote code selection (exactly one of these has to be included):
 - **weather_station_2032**: Trigger on a decoded WS2032 weather station data.
 - **weather_station_4ld631**: Trigger on a decoded Lidl 4LD631 weather station data.
 - **weather_station_h10515**: Trigger on a decoded Lidl H10515/DCF weather station data.
+- **weather_station_h13726**: Trigger on a decoded Lidl H13726 weather station data.
 - **weather_station_l08037a**: Trigger on a decoded Lidl L08037A weather station data.
 - **weather_station_nexus**: Trigger on a decoded Nexus weather station data.
 
