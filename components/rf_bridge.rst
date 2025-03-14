@@ -21,6 +21,8 @@ which is 19200bps.
     :align: center
     :width: 60.0%
 
+    Sonoff RF Bridge 433, version R1 or R2 V1.0
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -345,8 +347,8 @@ Home Assistant as events and will also setup a service so you can send codes wit
 .. code-block:: yaml
 
     api:
-      services:
-        - service: send_rf_code
+      actions:
+        - action: send_rf_code
           variables:
             sync: int
             low: int
@@ -358,7 +360,7 @@ Home Assistant as events and will also setup a service so you can send codes wit
                 low: !lambda 'return low;'
                 high: !lambda 'return high;'
                 code: !lambda 'return code;'
-        - service: learn
+        - action: learn
           then:
             - rf_bridge.learn
 
@@ -391,7 +393,7 @@ To trigger the automation from Home Assistant you can invoke the service with th
     automation:
       # ...
       action:
-      - service: esphome.rf_bridge_send_rf_code
+      - action: esphome.rf_bridge_send_rf_code
         data:
           sync: 0x700
           low: 0x800

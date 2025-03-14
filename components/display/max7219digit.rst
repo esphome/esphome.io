@@ -5,7 +5,7 @@ MAX7219 Digit Display
     :description: Instructions for setting up MAX7219 Digit displays.
     :image: max7219digit.jpg
 
-The ``max7219`` display platform allows you to use MAX7219 digit with ESPHome. Please note that this integration
+The ``max7219`` display platform allows you to use MAX7219 digit with ESPHome. Please note that this component
 is *only* for the digit "matrix" display, for the 7 segment display see :doc:`max7219`.
 
 .. figure:: images/max7219digit.png
@@ -14,7 +14,7 @@ is *only* for the digit "matrix" display, for the 7 segment display see :doc:`ma
 
     MAX7219 Digit Display.
 
-As the communication with the MAX7219 Digit is done using SPI for this integration, you need
+As the communication with the MAX7219 Digit is done using SPI for this component, you need
 to have an :ref:`SPI bus <spi>` in your configuration with both the **mosi_pin** set (miso_pin is not required).
 Connect VCC to 3.3V (the manufacturer recommends 4+ V, but 3.3V seems to work fine), DIN to your ``mosi_pin`` and
 CS to your set ``cs_pin`` and finally GND to GND.

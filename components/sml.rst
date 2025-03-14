@@ -26,7 +26,9 @@ mature solution can be found `here
 <https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-ttl-ausgang>`_ (in German).
 There are plenty of other examples and ready to buy solutions on the web.
 
-Configuration
+.. _sml-platform:
+
+Component/Hub
 -------------
 
 As the communciation with the sensor is done using UART, you need to have the :ref:`UART bus <uart>`
@@ -36,17 +38,29 @@ smart meter. If you see checksum errors in the log try changing the interface pa
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: uart_bus
-      rx_pin: GPIO3
-      baud_rate: 9600
-      data_bits: 8
-      parity: NONE
-      stop_bits: 1
-
     sml:
       id: mysml
       uart_id: uart_bus
+      on_data:
+        - lambda: !lambda |-
+            if (valid) {
+              id(mqttclient).publish("gridmeter/sensor/sml/state", format_hex(bytes));
+            } else {
+              id(mqttclient).publish("gridmeter/sensor/sml/error", format_hex(bytes));
+            }
+
+
+
+Configuration variables:
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
+  to use multiple UART buses.
+
+Sensor
+------
+
+.. code-block:: yaml
 
     sensor:
       - platform: sml
@@ -61,6 +75,18 @@ smart meter. If you see checksum errors in the log try changing the interface pa
         filters:
           - multiply: 0.0001
 
+- **obis_code** (*Required*, string): Specify the OBIS code you want to retrieve data for from the device.
+  The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
+- **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
+- **sml_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`SML platform <sml-platform>`
+- All other options from :ref:`Sensor <config-sensor>`.
+
+
+Text Sensor
+-----------
+
+.. code-block:: yaml
+
     text_sensor:
       - platform: sml
         name: "Manufacturer"
@@ -69,37 +95,28 @@ smart meter. If you see checksum errors in the log try changing the interface pa
         obis_code: "129-129:199.130.3"
         format: text
 
-
-Configuration variables:
-------------------------
-
-.. _sml-platform:
-
-SML platform
-************
-
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
-  to use multiple UART buses.
-
-Sensor
-******
-
-- **obis_code** (*Required*, string): Specify the OBIS code you want to retrieve data for from the device.
-  The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
-- **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
-- **sml_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`SML platform <sml-platform>`
-- All other options from :ref:`Sensor <config-sensor>`.
-
-Text Sensor
-***********
-
 - **obis_code** (*Required*, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`SML platform <sml-platform>`
 - **format** (*Optional*, string): Override the automatic interpretation of the transmitted binary data value. Possible values (`int`, `uint`, `bool`, `hex`, `text`).
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
+
+
+Automations:
+------------
+
+- **on_data** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  SML message is received. See :ref:`sml-on-data`.
+
+.. _sml-on-data:
+
+``on_data`` Trigger
+********************
+
+This automation will be triggered when a valid SML message is received. The variable ``bytes`` (of type
+``std::vector<uint8_t>``) contains the raw sml data including start/end sequence. The variable ``valid``
+(of type ``bool``) contains the result of the checksum verification.
 
 
 Getting OBIS codes and sensor ids

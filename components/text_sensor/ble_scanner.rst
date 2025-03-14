@@ -7,11 +7,22 @@ ESP32 Bluetooth Low Energy Scanner
     :keywords: ESP32
 
 The ``ble_scanner`` text sensor platform lets you track reachable BLE devices.
-See the :ref:`BLE Tracker Configuration variables <config-esp32_ble_tracker>` for
-instructions for setting up scan parameters.
-The sensor platform is similar to :doc:`/components/sensor/ble_rssi` but in contrast to that platform, this text sensor sends out all raw BLE scan information and does not filter devices.
 
-The data this sensor publishes is intended to be processed by the remote (for example an MQTT client) and sends the data in JSON format.
+See the :ref:`BLE Tracker Configuration variables <config-esp32_ble_tracker>` for instructions for setting up scan parameters.
+
+The sensor platform is similar to :doc:`/components/sensor/ble_rssi` but in contrast to that platform, this text
+sensor sends out all raw BLE scan information and does not filter devices.
+
+The data this sensor publishes is intended to be processed by the remote (for example an MQTT client) and sends
+the data in JSON format.
+
+.. warning::
+
+    The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+
+    **Crashes are likely to occur** if you include too many additional components in your device's
+    configuration. Memory-intensive components such as :doc:`/components/voice_assistant` and other
+    audio components are most likely to cause issues.
 
 .. code-block:: yaml
 
@@ -28,7 +39,7 @@ Example json log:
 
     {
         "timestamp":1578254525,
-        "address":"D7:E7:E7:66:DD:33",
+        "address": "XX:XX:XX:XX:XX:XX",
         "rssi":"-80",
         "name":"MI Band 2"
     }
@@ -36,8 +47,7 @@ Example json log:
 Configuration variables:
 ------------------------
 
--  **name** (**Required**, string): The name of the sensor.
-- All other options from :ref:`Text Sensor <config-text_sensor>`.
+- All options from :ref:`Text Sensor <config-text_sensor>`.
 
 See Also
 --------

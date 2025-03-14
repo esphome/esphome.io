@@ -15,7 +15,7 @@ like the one on the ESP32 (see :doc:`ledc`) are preferred.
     # Example configuration entry
     output:
       - platform: esp8266_pwm
-        pin: D1
+        pin: GPIOXX
         frequency: 1000 Hz
         id: pwm_output
 

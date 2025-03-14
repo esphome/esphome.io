@@ -15,7 +15,7 @@ ADE7953 Power Sensor
 
 The ``ade7953`` sensor platform allows you to use ADE7953 single phase energy metering ICs
 (`datasheet <https://www.analog.com/media/en/technical-documentation/data-sheets/ADE7953.pdf>`__)
-with ESPHome. These are commonly found in **Shelly 2.5** devices.
+with ESPHome. These are commonly found in **Shelly** devices.
 
 This sensor can measure voltage and has two channels for reading current and active power (A & B).
 
@@ -23,43 +23,204 @@ This sensor can measure voltage and has two channels for reading current and act
 
     SAFETY HAZARD: Some devices such as Sonoff POWs/Shelly/etc, have the digital GND connected directly to mains voltage so **the GPIOs become LIVE during normal operation**. Our advice is to mark these boards to prevent any use of the dangerous digital pins.
 
-The :ref:`I²C Bus <i2c>` is
-required to be set up in your configuration for this sensor to work.
+The :ref:`I²C Bus <i2c>`
+or :ref:`SPI Bus <spi>`
+is required to be set up in your configuration for this sensor to work.
+
+Over I²C
+--------
 
 .. code-block:: yaml
 
-    # Example configuration entry
+    # Example configuration entry for i2c
     sensor:
-      - platform: ade7953
-        irq_pin: GPIO16
+      - platform: ade7953_i2c
+        irq_pin: GPIOXX
         voltage:
           name: ADE7953 Voltage
+        frequency:
+          name: ADE7953 Frequency
         current_a:
           name: ADE7953 Current A
         current_b:
           name: ADE7953 Current B
+        power_factor_a:
+          name: "ADE7953 Power Factor A"
+        power_factor_b:
+          name: "ADE7953 Power Factor B"
+        apparent_power_a:
+          name: "ADE7953 Apparent Power A"
+        apparent_power_b:
+          name: "ADE7953 Apparent Power B"
         active_power_a:
           name: ADE7953 Active Power A
         active_power_b:
           name: ADE7953 Active Power B
-        update_interval: 60s
+        reactive_power_a:
+          name: "ADE7953 Reactive Power A"
+        reactive_power_b:
+          name: "ADE7953 Reactive Power B"
 
 Configuration variables:
-------------------------
+************************
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to ``0x38``.
 - **irq_pin** (*Optional*, :ref:`config-pin`): The pin connected to the ADE7935 IRQ line (if connected)
-- **voltage** (*Optional*): Use the voltage value of the sensor in volt. All options from
+- **voltage** (*Optional*): Use the voltage value of the sensor in volts. All options from
+  :ref:`Sensor <config-sensor>`.
+- **frequency** (*Optional*): Use the frequency value of the sensor in hertzs. All options from
   :ref:`Sensor <config-sensor>`.
 - **current_a** (*Optional*): Use the current value of the A channel in amperes. All options from
   :ref:`Sensor <config-sensor>`.
 - **current_b** (*Optional*): Use the current value of the B channel in amperes. All options from
   :ref:`Sensor <config-sensor>`.
+- **power_factor_a** (*Optional*): Use the power factor of the A channel in percentage. All options from
+  :ref:`Sensor <config-sensor>`.
+- **power_factor_b** (*Optional*): Use the power factor of the B channel in percentage. All options from
+  :ref:`Sensor <config-sensor>`.
+- **aparent_power_a** (*Optional*): Use the apparent power value of the A channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **aparent_power_b** (*Optional*): Use the apparent power value of the B channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
 - **active_power_a** (*Optional*): Use the power value of the A channel in watts. All options from
   :ref:`Sensor <config-sensor>`.
 - **active_power_b** (*Optional*): Use the power value of the B channel in watts. All options from
   :ref:`Sensor <config-sensor>`.
+- **reactive_power_a** (*Optional*): Use the rective power value of the A channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **reactive_power_b** (*Optional*): Use the rective power value of the B channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **voltage_pga_gain** (*Optional*, mapping): Set the input PGA voltage amplification. Defaults to ``1x``. Possible values are:
+
+  - ``1x``
+  - ``2x``
+  - ``4x``
+  - ``8x``
+  - ``16x``
+  - ``22x``
+
+- **current_pga_gain_a** (*Optional*, mapping): Set the input PGA current amplification of the A channel. Defaults to ``1x``. Possible values are:
+
+  - ``1x``
+  - ``2x``
+  - ``4x``
+  - ``8x``
+  - ``16x``
+  - ``22x``
+
+- **current_pga_gain_b** (*Optional*, mapping): Set input PGA current amplification of the B channel. Defaults to ``1x``. Possible values are:
+
+  - ``1x``
+  - ``2x``
+  - ``4x``
+  - ``8x``
+  - ``16x``
+
+- **voltage_gain** (*Optional*, int): Set the voltage amplification. Defaults to ``0x400000``.
+- **current_gain_a** (*Optional*, int): Set the current amplification of the A channel. Defaults to ``0x400000``.
+- **current_gain_b** (*Optional*, int): Set the current amplification of the B channel. Defaults to ``0x400000``.
+- **active_power_gain_a** (*Optional*, int): Set the active power amplification of the A channel. Defaults to ``0x400000``.
+- **active_power_gain_b** (*Optional*, int): Set the active power amplification of the B channel. Defaults to ``0x400000``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **use_accumulated_energy_registers** (*Optional*, boolean): Use ADE7935 accumulated energy registers instead of instant power registers. These registers store the accumulated energy since the last read and should provide better accuracy for power calculation. Defaults to ``false``.
+
+Over SPI
+--------
+
+.. code-block:: yaml
+
+    # Example configuration entry for SPI
+    sensor:
+      - platform: ade7953_spi
+        cs_pin: GPIOXX
+        irq_pin: GPIOXX
+        voltage:
+          name: "Voltage"
+        frequency:
+          name: ADE7953 Frequency
+        current_a:
+          name: "Current A"
+        current_b:
+          name: "Current B"
+        power_factor_a:
+          name: "Power Factor A"
+        power_factor_b:
+          name: "ADE7953 Power Factor B"
+        apparent_power_a:
+          name: "Apparent Power A"
+        apparent_power_b:
+          name: "Apparent Power B"
+        active_power_a:
+          name: "Power A"
+        active_power_b:
+          name: "Power B"
+        reactive_power_a:
+          name: "Reactive Power A"
+        reactive_power_b:
+          name: "Reactive Power B"
+
+Configuration variables:
+************************
+
+- **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The chip select pin.
+- **irq_pin** (*Optional*, :ref:`config-pin`): The pin connected to the ADE7935 IRQ line (if connected)
+- **voltage** (*Optional*): Use the voltage value of the sensor in volts. All options from
+  :ref:`Sensor <config-sensor>`.
+- **frequency** (*Optional*): Use the frequency value of the sensor in hertzs. All options from
+  :ref:`Sensor <config-sensor>`.
+- **current_a** (*Optional*): Use the current value of the A channel in amperes. All options from
+  :ref:`Sensor <config-sensor>`.
+- **current_b** (*Optional*): Use the current value of the B channel in amperes. All options from
+  :ref:`Sensor <config-sensor>`.
+- **power_factor_a** (*Optional*): Use the power factor of the A channel in percentage. All options from
+  :ref:`Sensor <config-sensor>`.
+- **power_factor_b** (*Optional*): Use the power factor of the B channel in percentage. All options from
+  :ref:`Sensor <config-sensor>`.
+- **aparent_power_a** (*Optional*): Use the apparent power value of the A channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **aparent_power_b** (*Optional*): Use the apparent power value of the B channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **active_power_a** (*Optional*): Use the power value of the A channel in watts. All options from
+  :ref:`Sensor <config-sensor>`.
+- **active_power_b** (*Optional*): Use the power value of the B channel in watts. All options from
+  :ref:`Sensor <config-sensor>`.
+- **reactive_power_a** (*Optional*): Use the rective power value of the A channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **reactive_power_b** (*Optional*): Use the rective power value of the B channel in volt ampers. All options from
+  :ref:`Sensor <config-sensor>`.
+- **voltage_pga_gain** (*Optional*, mapping): Set the input PGA voltage amplification. Defaults to ``1x``. Possible values are:
+
+  - ``1x``
+  - ``2x``
+  - ``4x``
+  - ``8x``
+  - ``16x``
+  - ``22x``
+
+- **current_pga_gain_a** (*Optional*, mapping): Set the input PGA current amplification of the A channel. Defaults to ``1x``. Possible values are:
+
+  - ``1x``
+  - ``2x``
+  - ``4x``
+  - ``8x``
+  - ``16x``
+  - ``22x``
+
+- **current_pga_gain_b** (*Optional*, mapping): Set input PGA current amplification of the B channel. Defaults to ``1x``. Possible values are:
+
+  - ``1x``
+  - ``2x``
+  - ``4x``
+  - ``8x``
+  - ``16x``
+
+- **voltage_gain** (*Optional*, int): Set the voltage amplification. Defaults to ``0x400000``.
+- **current_gain_a** (*Optional*, int): Set the current amplification of the A channel. Defaults to ``0x400000``.
+- **current_gain_b** (*Optional*, int): Set the current amplification of the B channel. Defaults to ``0x400000``.
+- **active_power_gain_a** (*Optional*, int): Set the active power amplification of the A channel. Defaults to ``0x400000``.
+- **active_power_gain_b** (*Optional*, int): Set the active power amplification of the B channel. Defaults to ``0x400000``.
+- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **use_accumulated_energy_registers** (*Optional*, boolean): Use ADE7935 accumulated energy registers instead of instant power registers. These registers store the accumulated energy since the last read and should provide better accuracy for power calculation. Defaults to ``false``.
 
 Use with Shelly 2.5
 -------------------
@@ -84,7 +245,7 @@ Additionally, the device has an ::doc:`NTC temperature sensor <ntc>`.
       scl: GPIO14
 
     sensor:
-      - platform: ade7953
+      - platform: ade7953_i2c
         irq_pin: GPIO16
         voltage:
           name: Shelly Voltage

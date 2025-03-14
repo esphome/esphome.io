@@ -168,6 +168,8 @@ Configuration Variables:
 The thermostat controller uses the sensor to determine whether it should heat or cool.
 
 - **sensor** (**Required**, :ref:`config-id`): The sensor that is used to measure the current temperature.
+- **humidity_sensor** (**Optional**, :ref:`config-id`): If specified, this sensor is used to measure the current humidity.
+  This is used for information only and does not influence temperature control.
 
 Heating and Cooling Actions
 ***************************

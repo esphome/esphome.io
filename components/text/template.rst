@@ -22,8 +22,8 @@ using :ref:`lambdas <config-lambda>`.
 Configuration variables:
 ------------------------
 
-- **min_lenngth** (**Required**, float): The minimum length this text can be.
-- **max_length** (**Required**, float): The maximum length this text can be.
+- **min_length** (*Optional*, int): The minimum length this text can be. Defaults to ``0``.
+- **max_length** (*Optional*, int): The maximum length this text can be. Defaults to ``255``.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the current value of the text.
 - **set_action** (*Optional*, :ref:`Action <config-action>`): The action that should
@@ -36,9 +36,10 @@ Configuration variables:
   Cannot be used with ``lambda``. Defaults to ``false``.
 - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash.
   Cannot be used with ``lambda``. Defaults to ``false``.
-- **initial_value** (*Optional*, float): The value to set the state to on setup if not
+- **initial_value** (*Optional*, String): The value to set the state to on setup if not
   restored with ``restore_value``.
   Cannot be used with ``lambda``.
+  Defaults to the empty string.
 - All other options from :ref:`Text <config-text>`.
 
 

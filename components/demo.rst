@@ -1,12 +1,12 @@
-Demo Integration
-================
+Demo Component
+==============
 
 .. seo::
-    :description: Instructions for setting up the demo integration in ESPHome
+    :description: Instructions for setting up the demo component in ESPHome
     :image: description.svg
 
-The ``demo`` integration can be used for testing to generate sample instances of many
-different integrations (sensors, lights, ...)
+The ``demo`` component can be used for testing to generate sample instances of many
+different components (sensors, lights, ...)
 
 .. figure:: images/demo-ui.png
     :align: center
@@ -20,7 +20,7 @@ different integrations (sensors, lights, ...)
 Configuration variables:
 ------------------------
 
-This integration has no configuration variables
+This component has no configuration variables
 
 See Also
 --------

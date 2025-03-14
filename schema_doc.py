@@ -85,10 +85,11 @@ PLATFORMS_TITLES = {
     "Microphone": "microphone",
     "Speaker": "speaker",
     "Alarm Control Panel": "alarm_control_panel",
+    "Event": "event",
 }
 
 CUSTOM_DOCS = {
-    "guides/automations": {
+    "components/globals": {
         "Global Variables": "globals.schemas.CONFIG_SCHEMA",
     },
     "guides/configuration-types": {
@@ -157,9 +158,6 @@ CUSTOM_DOCS = {
     "components/wifi": {
         "Connecting to Multiple Networks": "wifi.schemas.CONFIG_SCHEMA.schema.config_vars.networks.schema",
         "Enterprise Authentication": "wifi.schemas.EAP_AUTH_SCHEMA",
-    },
-    "custom/custom_component": {
-        "Generic Custom Component": "custom_component.schemas.CONFIG_SCHEMA"
     },
     "components/esp32": {
         "Arduino framework": "esp32.schemas.CONFIG_SCHEMA.schema.config_vars.framework.types.arduino",

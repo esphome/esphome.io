@@ -10,7 +10,7 @@ on any pin.
 
 On the ESP32, this sensor is even highly accurate because it's using the hardware `pulse counter
 peripheral <https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/pcnt.html>`__
-on the ESP32. However, due to the use of the pulse counter peripheral, a maximum of 8 channels can be used! 
+on the ESP32. However, due to the use of the pulse counter peripheral, a maximum of 8 channels can be used!
 
 .. figure:: images/pulse-counter.png
     :align: center
@@ -21,14 +21,13 @@ on the ESP32. However, due to the use of the pulse counter peripheral, a maximum
     # Example configuration entry
     sensor:
       - platform: pulse_counter
-        pin: 12
+        pin: GPIOXX
         name: "Pulse Counter"
 
-Configuration variables:
+Configuration variables
 ------------------------
 
 - **pin** (**Required**, :ref:`config-pin`): The pin to count pulses on.
-- **name** (**Required**, string): The name of the sensor.
 - **count_mode** (*Optional*): Configure how the counter should behave
   on a detected rising edge/falling edge.
 
@@ -38,21 +37,14 @@ Configuration variables:
   - **falling_edge** (*Optional*): What to do when a falling edge is
     detected. One of ``DISABLE``, ``INCREMENT`` and ``DECREMENT``.
     Defaults to ``DISABLE``.
-    
 
 - **use_pcnt** (*Optional*, boolean): Use hardware ``PCNT`` pulse counter. Only supported on ESP32. Defaults to ``true``.
-
 - **internal_filter** (*Optional*, :ref:`config-time`): If a pulse shorter than this
   time is detected, it’s discarded and no pulse is counted. Defaults to ``13us``. On the ESP32, when using the hardware pulse counter
   this value can not be higher than ``13us``, for the ESP8266 or with ``use_pcnt: false`` you can use larger intervals too.
   If you enable this, set up the ``count_mode`` to increase on the falling edge, not leading edge. For S0 pulse meters that are used to meter power consumption 50-100 ms is a reasonable value.
-
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
-
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-
 - **total** (*Optional*): Report the total number of pulses.
-
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. note::
@@ -73,26 +65,25 @@ count the light pulses on a power meter, you can do the following:
     # Example configuration entry
     sensor:
       - platform: pulse_counter
-        pin: 12
+        pin: GPIOXX
         unit_of_measurement: 'kW'
         name: 'Power Meter House'
         filters:
           - multiply: 0.06  # (60s/1000 pulses per kWh)
 
-
 Counting total pulses
 ---------------------
 
-When the total sensor is configured, the pulse_counter also reports the total 
-number of pulses measured. When used on a power meter, this can be used to 
-measure the total consumed energy in kWh. 
+When the total sensor is configured, the pulse_counter also reports the total
+number of pulses measured. When used on a power meter, this can be used to
+measure the total consumed energy in kWh.
 
 .. code-block:: yaml
 
     # Example configuration entry
     sensor:
       - platform: pulse_counter
-        pin: 12
+        pin: GPIOXX
         unit_of_measurement: 'kW'
         name: 'Power Meter House'
         filters:
@@ -113,10 +104,10 @@ trying to match.
 
 .. code-block:: yaml
 
-    # Set pulse counter total from home assistant using this service call:
+    # Set pulse counter total from home assistant using this action:
     api:
-      services:
-        - service: set_pulse_total
+      actions:
+        - action: set_pulse_total
           variables:
             new_pulse_total: int
           then:

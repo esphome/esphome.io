@@ -8,6 +8,8 @@ External Components
 You can easily import community or personal components using the external components feature.
 Bundled components can be overridden using this feature.
 
+You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
+
 .. code-block:: yaml
 
     external_components:
@@ -31,6 +33,14 @@ Bundled components can be overridden using this feature.
           type: local
           path: my_components
 
+      # use a component from a local git repository
+      - source:
+          type: git
+          url: file:///Users/user/path_to_repo
+          ref: my_awesome_branch
+        components: [my_awesome_component]
+
+
 Configuration variables:
 
 - **source**: The location of the components you want to retrieve. See :ref:`external-components_local`
@@ -40,10 +50,11 @@ Configuration variables:
 
   git options:
 
-  - **url** (**Required**, url): HTTP git repository url. See :ref:`external-components_git`.
+  - **url** (**Required**, url): Git repository url. See :ref:`external-components_git`.
   - **ref** (*Optional*, string): Git ref (branch or tag). If not specified the default branch is used.
   - **username** (*Optional*, string): Username for the Git server, if one is required
   - **password** (*Optional*, string): Password for the Git server, if one is required
+  - **path** (*Optional*, string): Path inside the repo, if different from ``components`` or ``esphome/components``
 
   local options:
 
@@ -91,15 +102,15 @@ Given the above example of ``my_components``, the folder structure must look lik
     ├── node2.yaml
     └── my_components
         ├── my_component1
-        │   ├── __init__.py
-        │   ├── component1.cpp
-        │   ├── component1.h
-        │   └── sensor.py
-        └── my_component2
-            ├── __init__.py
-            ├── component2.cpp
-            ├── component2.h
-            └── switch.py
+        │   ├── __init__.py
+        │   ├── component1.cpp
+        │   ├── component1.h
+        │   └── sensor.py
+        └── my_component2
+            ├── __init__.py
+            ├── component2.cpp
+            ├── component2.h
+            └── switch.py
 
 
 ..   _external-components_git:
@@ -111,6 +122,8 @@ Retrieving components from git is the easiest way to use components not included
 The source components should be inside a ``components`` folder or inside an ``esphome/components``
 folder. The latter makes sharing a component from a forked ESPHome repository easier.
 
+The url to the repository may be remote (``http:`` or ``https:`` scheme) or local (``file:`` scheme with an absolute path.)
+
 Example of git repositories
 ***************************
 
@@ -119,16 +132,16 @@ For repositories where you share one or a few components:
 .. code-block:: text
 
     components
-    ├── my_component1
-    │   ├── __init__.py
-    │   ├── component1.cpp
-    │   ├── component1.h
-    │   └── sensor.py
-    └── my_component2
-        ├── __init__.py
-        ├── component2.cpp
-        ├── component2.h
-        └── switch.py
+    ├── my_component1
+    │   ├── __init__.py
+    │   ├── component1.cpp
+    │   ├── component1.h
+    │   └── sensor.py
+    └── my_component2
+        ├── __init__.py
+        ├── component2.cpp
+        ├── component2.h
+        └── switch.py
     example_component1.yaml        <- not required but recommended
     README.md
 
@@ -140,17 +153,17 @@ repository:
 
     esphome
     ├── components
-    │   ├── my_component1
-    │   │   ├── __init__.py
-    │   │   ├── component1.cpp
-    │   │   ├── component1.h
-    │   │   └── sensor.py
-    │   ├── my_component2
-    │   │   ├── __init__.py
-    │   │   ├── component2.cpp
-    │   │   ├── component2.h
-    │   │   └── switch.py
-    │  ...
+    │   ├── my_component1
+    │   │   ├── __init__.py
+    │   │   ├── component1.cpp
+    │   │   ├── component1.h
+    │   │   └── sensor.py
+    │   ├── my_component2
+    │   │   ├── __init__.py
+    │   │   ├── component2.cpp
+    │   │   ├── component2.h
+    │   │   └── switch.py
+    │  ...
     ...
 
 HTTP git repositories in general are supported with this configuration:
@@ -161,6 +174,10 @@ HTTP git repositories in general are supported with this configuration:
       source:
         type: git
         url: http://repository_url/
+        ref: branch_or_tag
+      source:
+        type: git
+        url: file:///Users/user/path_to_repo
         ref: branch_or_tag
 
 The source field accepts a short hand **github://** resource:

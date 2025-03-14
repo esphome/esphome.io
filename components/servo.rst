@@ -9,7 +9,7 @@ The ``servo`` component allows you to use servo motors with ESPHome. Servos are
 motor controllers that contain all the electronics necessary for driving the motor and provide
 a simple PWM interface to control the motor.
 
-This integration works with both continuous-rotation and absolute servos and has a similar
+This component works with both continuous-rotation and absolute servos and has a similar
 interface to the Arduino Servo library.
 
 First, create an :ref:`output component <output>` (here ``esp8266_pwm``) for the pin the
@@ -34,7 +34,7 @@ only operate in this frequency range.
     output:
       - platform: esp8266_pwm
         id: pwm_output
-        pin: D1
+        pin: GPIOXX
         frequency: 50 Hz
 
 Configuration variables:
@@ -56,7 +56,7 @@ Advanced Options:
   This is useful if you have an absolute servo motor and it goes back to its 0 position at startup.
   Defaults to ``false``.
 - **auto_detach_time** (*Optional*, :ref:`config-time`): The time after reaching the target value when the servo will be detached`, if set to zero, servo will not be detached. Defaults to ``0s``.
-- **transition_length** (*Optional*, :ref:`config-time`): The time needed for a full movement (-1.0 to 1.0). This will effectively limit the speed of the servo, the larger the value, the slowest the servo will move. Defaults to `` 0s``
+- **transition_length** (*Optional*, :ref:`config-time`): The time needed for a full movement (-1.0 to 1.0). This will effectively limit the speed of the servo, the larger the value, the slowest the servo will move. Defaults to ``0s``.
   This can slow down the servo to avoid loud noises or just make the movement not jerking.
 
 .. note::
@@ -141,7 +141,7 @@ this will make the servo motor stop immediately and disable its active control.
 Home Assistant Configuration
 ----------------------------
 
-The easiest way to control your servo from Home Assistant is to add a ``number`` to your ESPHome 
+The easiest way to control your servo from Home Assistant is to add a ``number`` to your ESPHome
 configuration. See :ref:`Number <config-number>` for more information.
 
 .. code-block:: yaml

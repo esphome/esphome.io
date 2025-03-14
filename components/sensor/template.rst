@@ -32,12 +32,10 @@ Possible return values for the lambda:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the new value of the sensor
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Set to ``never`` to disable updates. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. _sensor-template-publish_action:
@@ -80,6 +78,37 @@ Configuration options:
     .. code-block:: cpp
 
         id(template_sens).publish_state(42.0);
+
+Useful Template Sensors
+-----------------------
+
+Here are some useful sensors for debugging and tracking Bluetooth proxies.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: template
+        name: "Bluetooth Proxy Connections Limit"
+        id: bluetooth_proxy_connections_limit
+        icon: "mdi:bluetooth-settings"
+        update_interval: 30s
+        entity_category: "diagnostic"
+        lambda: |-
+          int limit = bluetooth_proxy::global_bluetooth_proxy->get_bluetooth_connections_limit();
+          ESP_LOGD("bluetooth_proxy_sensor", "Current connections limit => %d", limit);
+          return limit;
+
+      - platform: template
+        name: "Bluetooth Proxy Connections Free"
+        id: bluetooth_proxy_connections_free
+        icon: "mdi:bluetooth-settings"
+        update_interval: 30s
+        entity_category: "diagnostic"
+        lambda: |-
+          int free = bluetooth_proxy::global_bluetooth_proxy->get_bluetooth_connections_free();
+          ESP_LOGD("bluetooth_proxy_sensor", "Current connections free => %d", free);
+          return free;
 
 See Also
 --------

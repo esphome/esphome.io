@@ -24,7 +24,7 @@ ESPHome.
     The PZEM-004, however, is still working (and selling) with this protocol and does not use modbus.
     For using the newer V3 variant of this sensor please see :doc:`pzemac <pzemac>`.
 
-The communication with this integration is done over a :ref:`UART bus <uart>`.
+The communication with this component is done via a :ref:`UART <uart>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 

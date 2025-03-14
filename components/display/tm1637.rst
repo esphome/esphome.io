@@ -46,8 +46,6 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``1s``.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
-.. _display-tm1637_lambda:
-
 Binary Sensor
 -------------
 
@@ -78,6 +76,8 @@ Configuration variables:
 - **key** (**Required**, integer): The keycode for the connected key (Seg0 = 0, Seg1 = 1 etc,). Range is from
   0 to 15.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+
+.. _display-tm1637_lambda:
 
 Rendering Lambda
 ----------------
@@ -124,7 +124,7 @@ segment of the previous position will be enabled.
           // Result: "S 42"
 
           // Print the current time
-          it.strftime("%H.%M");
+          it.strftime("%H.%M", id(homeassistant_time).now());
           // Result for 10:06:42 -> "10:06" on a display with : and "10.06" on a display with .
 
 Please see :ref:`display-printf` for a quick introduction into the ``printf`` formatting rules and

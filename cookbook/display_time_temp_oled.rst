@@ -99,14 +99,14 @@ Note your ``address`` and ``model`` might be different, use the scan option to f
 .. code-block:: yaml
 
     i2c:
-      sda: D1
-      scl: D2
+      sda: GPIOXX
+      scl: GPIOXX
       scan: false
 
     display:
       - platform: ssd1306_i2c
         model: "SH1106 128x64"
-        reset_pin: D0
+        reset_pin: GPIOXX
         address: 0x3C
         lambda: |-
           // Print "Mitt Smarta Hus" in top center.
@@ -148,7 +148,7 @@ Below follows an example that replaces the "Mitt smarta hem" top printout with t
     display:
       - platform: ssd1306_i2c
         model: "SH1106 128x64"
-        reset_pin: D0
+        reset_pin: GPIOXX
         address: 0x3C
         lambda: |-
           // Print "Alarm State: <state>" in top center

@@ -31,8 +31,6 @@ Now you can create the cover.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the cover.
 - **control_datapoint** (*Optional*, int): The datapoint id number for sending control commands.
 - **position_datapoint** (**Required**, int): The datapoint id number of the cover position value.
 - **position_report_datapoint** (*Optional*, int): The datapoint id number of the cover position report value, if separate from position_datapoint.
@@ -40,12 +38,13 @@ Configuration variables:
 - **min_value** (*Optional*, int): The lowest position value, meaning cover closed. Defaults to 0.
 - **max_value** (*Optional*, int): the highest position value, meaning cover opened. Defaults to 255.
 - **invert_position** (*Optional*, boolean): Sets the direction of travel to be inverted, if direction_datapoint is configured.
+- **invert_position_report** (*Optional*, boolean): Invert reported position percentages calculated from `min_value` and `max_value` i.e. 70% becomes 30%.  Defaults to false.
 - All other options from :ref:`Cover <config-cover>`.
 
 Supported devices
 -----------------
 
-Tuya cover devices known to be supported by this integration:
+Tuya cover devices known to be supported by this component:
 
 - Tuya ``M515EGWT`` (motor for bead chain roller blinds)
 

@@ -3,7 +3,7 @@ GPIO Output
 
 .. seo::
     :description: Instructions for setting up binary outputs for GPIO pins.
-    :image: pin.svg
+    :image: gpio.svg
 
 The GPIO output component is quite simple: It exposes a single GPIO pin
 as an output component. Note that output components are **not** switches and
@@ -14,7 +14,7 @@ will not show up in Home Assistant. See :doc:`/components/switch/gpio`.
     # Example configuration entry
     output:
       - platform: gpio
-        pin: D1
+        pin: GPIOXX
         id: gpio_d1
 
 Configuration variables:
