@@ -250,13 +250,13 @@ Automations:
   WS2032 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
   is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 - **on_weather_station_4ld631** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-   4LD631 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  4LD631 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
   is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 - **on_weather_station_h10515** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-   H10515/DCF weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  H10515/DCF weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
   is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 - **on_weather_station_l08037a** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-   L08037A weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+  L08037A weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
   is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
 - **on_weather_station_nexus** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Nexus weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
