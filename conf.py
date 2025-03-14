@@ -145,7 +145,6 @@ html_context = {
     "custom_css_hash": custom_css_hash,
 }
 
-html_logo = "images/logo-text.svg"
 html_copy_source = True
 html_show_sourcelink = False
 html_last_updated_fmt = None
