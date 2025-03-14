@@ -24,11 +24,13 @@ in which case this is not needed.
       username: livingroom
       password: !secret mqtt_password
 
-
 .. note::
 
     Support for esp-idf is still experminental. Please report issues you have with mqtt using the esp-idf framework.
 
+.. note::
+
+    As of ESPHome 2025.2.2, support for MQTT is "only available on ['esp32', 'esp8266', 'bk72xx']".
 
 Configuration variables:
 ------------------------
