@@ -68,7 +68,7 @@ Configuration variables:
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
   - **weather_station_2032**: Decode and dump WS2032 weather station data.
-  - **weather_station_4ld631**: Decode and dump Lidl 4LD631 weather station data.
+  - **weather_station_4ld**: Decode and dump Lidl 4LD weather station data.
   - **weather_station_h10515**: Decode and dump Lidl H10515/DCF weather station data.
   - **weather_station_h13726**: Decode and dump Lidl H13726 weather station data.
   - **weather_station_l08037a**: Decode and dump Lidl L08037A weather station data.
@@ -247,21 +247,17 @@ Automations:
 - **on_toto** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Toto remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::TotoData`
   is passed to the automation for use in lambdas.
-- **on_weather_station_2032** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  WS2032 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
+
+- **on_weather_station_<model>** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  <model> weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
   is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
-- **on_weather_station_4ld631** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  4LD631 weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
-  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
-- **on_weather_station_h10515** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  H10515/DCF weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
-  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
-- **on_weather_station_l08037a** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  L08037A weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
-  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
-- **on_weather_station_nexus** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Nexus weather station data has been decoded. A variable ``x`` of type :apistruct:`remote_base::WeatherStationData`
-  is passed to the automation for use in lambdas. Create template sensors to pass them further to HA.
+
+  - **on_weather_station_2032**: WS2032 weather station.
+  - **on_weather_station_4ld**: Lidl Auriol 4LD5661/4LD5972/4LD6313/4LD6654.
+  - **on_weather_station_h10515**: Lidl H10515/DCF.
+  - **on_weather_station_h13726**: Lidl Auriol H13726, Ventus WS155, Hama EWS 1500, Meteoscan W155/W160, Unitec W186-F.
+  - **on_weather_station_l08037a**: Lidl 40782 L08037A.
+  - **on_weather_station_nexus**: Nexus weather station.
 
 .. code-block:: yaml
 
@@ -538,7 +534,7 @@ Remote code selection (exactly one of these has to be included):
   - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
 
 - **weather_station_2032**: Trigger on a decoded WS2032 weather station data.
-- **weather_station_4ld631**: Trigger on a decoded Lidl 4LD631 weather station data.
+- **weather_station_4ld**: Trigger on a decoded Lidl 4LD weather station data.
 - **weather_station_h10515**: Trigger on a decoded Lidl H10515/DCF weather station data.
 - **weather_station_h13726**: Trigger on a decoded Lidl H13726 weather station data.
 - **weather_station_l08037a**: Trigger on a decoded Lidl L08037A weather station data.
