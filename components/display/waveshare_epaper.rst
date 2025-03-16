@@ -128,6 +128,7 @@ Configuration variables:
   - ``4.20in-bV2`` - B/W rendering only
   - ``gdey042t81`` - GoodDisplay GDEY042T81 4.2" B/W
   - ``4.20in-bV2-bwr`` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
+  - ``5.65in-f`` - 5.65in 7-color display (black, white, red, yellow, blue, green, and orange)
   - ``5.83in``
   - ``5.83inv2``
   - ``7.30in-f`` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
@@ -147,7 +148,7 @@ Configuration variables:
 
 .. warning::
 
-    The BUSY pin on the ``gdew0154m09``, the ``Waveshare 7.30in-f`` and the ``Waveshare 7.50in V2`` models must be inverted to prevent permanent display damage. Set the busy pin to ``inverted: true`` in the config. 
+    The BUSY pin on the ``gdew0154m09``, the ``Waveshare 5.65in-f``, the ``Waveshare 7.30in-f`` and the ``Waveshare 7.50in V2`` models must be inverted to prevent permanent display damage. Set the busy pin to ``inverted: true`` in the config. 
 
 - **busy_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The BUSY pin. Defaults to not connected.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin. Defaults to not connected.
