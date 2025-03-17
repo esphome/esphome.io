@@ -47,7 +47,7 @@ Configuration variables:
 
 .. code-block:: yaml
 
-     measuring range of the sensor
+    measuring range of the sensor
             kpa           k 
        131 < P ≤ 262     32
         65 < P ≤ 131     64
