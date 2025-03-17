@@ -1,5 +1,5 @@
 Sencoch Semiconductor GZP68xx / CFSensor XGZP68xx Series Differential Pressure Sensor
-=====================================================
+=====================================================================================
 
 .. seo::
     :description: Instructions for setting up the CFSensor XGZP68xx Series Differential Pressure sensor.
