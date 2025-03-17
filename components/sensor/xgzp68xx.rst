@@ -43,21 +43,21 @@ Configuration variables:
 
 - **temperature** (*Optional*): All options from :ref:`Sensor <config-sensor>`.
 - **pressure** (*Optional*): All options from :ref:`Sensor <config-sensor>`.
-- **k_value** (*Optional*, int): The K value comes from the following table. Pressure is intrensically an analog value, and these I2C digital sensors have an internal ADC to convert the signal.  The k-value is used to configure the algorithm used by the ADC to the range of pressure.  It will default to 4096 if not specified, which is appropriate for a sensor measuring a maximum pressure in the window of +/- 1-2 kPa.
+- **k_value** (*Optional*, int): The K value comes from the following table. Pressure is intrinsically an analog value, and these I2C digital sensors have an internal ADC to convert the signal.  The k-value is used to configure the algorithm used by the ADC to the range of pressure.  It will default to 4096 if not specified, which is appropriate for a sensor measuring a maximum pressure in the window of +/- 1-2 kPa.
 
 .. code-block:: yaml
 
      measuring range of the sensor
             kpa           k 
-        131 < P ≤ 262     32
-         65 < P ≤ 131     64
-         32 < P ≤ 65     128
-         16 < P ≤ 32     256
-          8 < P ≤ 16     512
-          4 < P ≤ 8     1024
-          2 ≤ P ≤ 4     2048
-          1 ≤ P < 2     4096
-              P < 1     8192
+       131 < P ≤ 262     32
+        65 < P ≤ 131     64
+        32 < P ≤ 65     128
+        16 < P ≤ 32     256
+         8 < P ≤ 16     512
+         4 < P ≤ 8     1024
+         2 ≤ P ≤ 4     2048
+         1 ≤ P < 2     4096
+             P < 1     8192
 
     So for example, when measuring -30~80kpa, P=80kpa and the k value is 64.
     
