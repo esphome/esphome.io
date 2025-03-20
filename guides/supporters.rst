@@ -857,6 +857,7 @@ Contributors
 - `Lorenzo Ortiz (@Infinitte) <https://github.com/Infinitte>`__
 - `Dom (@Ing-Dom) <https://github.com/Ing-Dom>`__
 - `Samir El Benna (@ingbenna) <https://github.com/ingbenna>`__
+- `Ingenegr (@Ingenegr) <https://github.com/Ingenegr>`__
 - `Ingo Becker (@ingobecker) <https://github.com/ingobecker>`__
 - `Ingurum (@Ingurum) <https://github.com/Ingurum>`__
 - `Marc J (@InvncibiltyCloak) <https://github.com/InvncibiltyCloak>`__
@@ -2101,4 +2102,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated March 16, 2025.*
+*This page was last updated March 19, 2025.*
