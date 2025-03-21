@@ -131,10 +131,11 @@ Configuration variables:
 
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the font later
   in your display code.
-- **size** (*Optional*, int): The size of the font in pt (not pixel!).
-  If you want to use the same font in different sizes, create two font objects. Note: *size* is ignored
-  by bitmap fonts. Defaults to ``20``.
+- **size** (*Optional*, int): The desired size of the font. This will be the size (height) of the font in pixels
+  when rendered. If you want to use the same font in different sizes, create two font objects.
+  Defaults to ``20`` for scalable fonts and the first available size for bitmap fonts. Requesting a size that is not available in a bitmap-only font will result in an error.
 - **bpp** (*Optional*, int): The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be ``1``, ``2``, ``4``, ``8``. Defaults to ``1``.
+  If set to 1 and the font has a bitmap version available at the requested size, that will be used. Otherwise the font will be rendered from the vector representation.
 - **glyphsets** (*Optional*, list): A list of glyphsets you plan to use. Defaults to
   ``GF_Latin_Kernel``, which contains the basic characters and necessary punctuation and symbols for
   the English language. ``GF_Latin_Core`` is a more extended set that includes glyphs for the
