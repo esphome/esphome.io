@@ -251,6 +251,8 @@ This automation will be triggered when all touches are released from the touchsc
 At this point of time it has no extra arguments.
 
 
+.. _touchscreen_binary_sensor:
+
 Binary Sensor
 -------------
 
