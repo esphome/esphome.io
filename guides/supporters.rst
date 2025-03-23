@@ -442,6 +442,7 @@ Contributors
 - `Aliasghar Dashkhaneh (@dashkhaneh) <https://github.com/dashkhaneh>`__
 - `Sylwester (@DatanoiseTV) <https://github.com/DatanoiseTV>`__
 - `Anthony Uk (@dataway) <https://github.com/dataway>`__
+- `Martin Kleine (@datenzar) <https://github.com/datenzar>`__
 - `Datortarps (@Datortarp5) <https://github.com/Datortarp5>`__
 - `Dav-id (@dav-id-org) <https://github.com/dav-id-org>`__
 - `DAVe3283 (@DAVe3283) <https://github.com/DAVe3283>`__
@@ -960,6 +961,7 @@ Contributors
 - `Jonathan Martens (@jmartens) <https://github.com/jmartens>`__
 - `jmichiel (@jmichiel) <https://github.com/jmichiel>`__
 - `JMoratelli (@JMoratelli) <https://github.com/JMoratelli>`__
+- `JMyrng (@JMyrng) <https://github.com/JMyrng>`__
 - `Jonathas Barbosa (@jnthas) <https://github.com/jnthas>`__
 - `jochenvg (@jochenvg) <https://github.com/jochenvg>`__
 - `joederpoliveira (@joederpoliveira) <https://github.com/joederpoliveira>`__
@@ -2102,4 +2104,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated March 19, 2025.*
+*This page was last updated March 22, 2025.*
