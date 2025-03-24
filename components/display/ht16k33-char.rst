@@ -197,7 +197,7 @@ A list of supported characters is given for each device. If you place a non-supp
 
 .. collapse:: Adafruit 1.2" 4-Digit 7-Segment
 
-   Large 7 segment displays from `Adafruit <https://www.adafruit.com/product/1270>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is supposedly `here <https://learn.adafruit.com/assets/122068>`__. However, as of this writing (3/2025) that wiring diagram appears to be incorrect. Based on my testing, the display is actually wired similar to their `smaller displays <https://learn.adafruit.com/assets/108790>`__, with the exception of the decimal points and colons.
+    Large 7 segment displays from `Adafruit <https://www.adafruit.com/product/1270>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is supposedly `here <https://learn.adafruit.com/assets/122068>`__. However, as of this writing (3/2025) that wiring diagram appears to be incorrect. Based on my testing, the display is actually wired similar to their `smaller displays <https://learn.adafruit.com/assets/108790>`__, with the exception of the decimal points and colons.
   
     Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_1.2IN`` or ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``.
 
@@ -205,31 +205,31 @@ A list of supported characters is given for each device. If you place a non-supp
 
     .. collapse:: Supported Characters
 
-          - All numerals (0-9)
-          - `` (a blank space)``
-          - ``A``
-          - ``b``
-          - ``C``
-          - ``c``
-          - ``d``
-          - ``E``
-          - ``F``
-          - ``G``
-          - ``H``
-          - ``h``
-          - ``I``
-          - ``J``
-          - ``L``
-          - ``N``
-          - ``O (Capitol letter O)``
-          - ``o (Lower case letter o)``
-          - ``P``    
-          - ``r``
-          - ``S``
-          - ``t``
-          - ``U``
-          - ``u``
-          - ``Y``
+        - All numerals (0-9)
+        - `` (a blank space)``
+        - ``A``
+        - ``b``
+        - ``C``
+        - ``c``
+        - ``d``
+        - ``E``
+        - ``F``
+        - ``G``
+        - ``H``
+        - ``h``
+        - ``I``
+        - ``J``
+        - ``L``
+        - ``N``
+        - ``O (Capitol letter O)``
+        - ``o (Lower case letter o)``
+        - ``P``    
+        - ``r``
+        - ``S``
+        - ``t``
+        - ``U``
+        - ``u``
+        - ``Y``
 
     Aside from the standard characters, this display also has:
   
@@ -301,41 +301,41 @@ A list of supported characters is given for each device. If you place a non-supp
 
     .. collapse:: Supported Characters
 
-          - All upper case english characters (A-Z)
-          - All lower case english characters (a-z)
-          - All numerals (0-9)
-          - `` (a blank space)``
-          - ``!``
-          - ``"``
-          - ``#``
-          - ``$``
-          - ``%``
-          - ``&``
-          - ``'``
-          - ``(``
-          - ``)``
-          - ``*``
-          - ``+``
-          - ``,``
-          - ``-``
-          - ``/``
-          - ``:``
-          - ``;``
-          - ``<``
-          - ``=``
-          - ``>``
-          - ``?``
-          - ``@``
-          - ``[``
-          - ``\``
-          - ``]``
-          - ``^``
-          - ``_``
-          - ``\```
-          - ``{``
-          - ``|``
-          - ``}``
-          - ``~``
+        - All upper case english characters (A-Z)
+        - All lower case english characters (a-z)
+        - All numerals (0-9)
+        - `` (a blank space)``
+        - ``!``
+        - ``"``
+        - ``#``
+        - ``$``
+        - ``%``
+        - ``&``
+        - ``'``
+        - ``(``
+        - ``)``
+        - ``*``
+        - ``+``
+        - ``,``
+        - ``-``
+        - ``/``
+        - ``:``
+        - ``;``
+        - ``<``
+        - ``=``
+        - ``>``
+        - ``?``
+        - ``@``
+        - ``[``
+        - ``\``
+        - ``]``
+        - ``^``
+        - ``_``
+        - ``\```
+        - ``{``
+        - ``|``
+        - ``}``
+        - ``~``
 
     Aside from the standard characters, this display also has:
   
