@@ -18,20 +18,25 @@ capable of driving arbitrary arrays of LEDs, but that configuration is not suppo
 This component supports scrolling messages and spanning the message across multiple displays. It is
 based on the excellent `ht16k33-alpha library <https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha>`__, but generalized for a wider range of character based devices.
 
-.. _supported_devices:
+.. _currently_supported_devices:
 
-Supported Devices:
+Currently Supported Devices:
 -----------------------------------------
 
-Because there are many different ways to wire up the driver to the display, only some configurations
-of the chip are supported. The driver was written so that other configurations could be added easily
-if you want to add support for other devices.
+See :ref:`ht16k33-char_device_details` for more info on these devices and instructions for adding support for new devices.
 
-Currently supported devices:
-
- * `Adafruit 1.2" 4-Digit 7-Segment <https://www.adafruit.com/product/1270>`__
- * `Adafruit 0.56" 4-Digit 7-Segment <https://www.adafruit.com/product/878>`__
- * `Adafruit 0.54" 4-Digit 14-Segment <https://www.adafruit.com/product/1911>`__
++------------------------------------------------------------------------------------+--------------------------------------+
+| Device                                                                             | Device ID(s)                         |
++====================================================================================+======================================+
+| `Adafruit 1.2" 4-Digit 7-Segment <https://www.adafruit.com/product/1270>`__        | ``ADAFRUIT_7SEGMENT_1.2IN``          |
+|                                                                                    | ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``  |
++------------------------------------------------------------------------------------+--------------------------------------+
+| `Adafruit 0.56" 4-Digit 7-Segment <https://www.adafruit.com/product/878>`__        | ``ADAFRUIT_7SEGMENT_.56IN``          |
+|                                                                                    | ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``  |
++------------------------------------------------------------------------------------+--------------------------------------+
+| `Adafruit 0.54" 4-Digit 14-Segment <https://www.adafruit.com/product/1911>`__      | ``ADAFRUIT_14_SEG``                  |
+|                                                                                    | ``ADAFRUIT_14_SEG_FLIPPED``          |
++------------------------------------------------------------------------------------+--------------------------------------+
 
 Prerequisites:
 -----------------------------------------
@@ -55,22 +60,22 @@ An example configuration YAML is shown below.
 
     display:
       - platform: ht16k33_char
-        device: ADAFRUIT_7SEGMENT_.56IN
-        address: 0x70
+        device: ADAFRUIT_14_SEG
+        address: 0x71
         buffer_size: 12
         scroll: true
         continuous: false
         secondary_displays:
           - address: 0x70
         lambda: |-
-          it.print(0, "1234567890", true);
+          it.print(0, true, "ESP Home");
 
 Configuration variables:
 -----------------------------------------
 
 - **device** (*Required*): The type of device attached. 
 
-  - Choses the device type. Available types are shown in the :ref:`supported_devices`.
+  - Choses the device type. Available types are shown in the :ref:`currently_supported_devices`.
 
 - **address** (*Optional*): The address of the base HT16k33.
 
@@ -78,7 +83,7 @@ Configuration variables:
   - If you have multiple display drivers, this should be the address of the first display.
   - Defaults to 0x70
 
-- **buffer_size** (*Optional*): The size of the character buffer.
+- **buffer_size** (*Optional*): The size of the character buffer. The length of this buffer is the longest message you can display.
 
   - This should be at minimum the number of characters of the display you are using. 
   - You can make it longer if you want to scroll messages that are longer than the display can show all at once.
@@ -123,45 +128,50 @@ Configuration variables:
 Using Lambda
 -----------------------------
 
-The HT16k33-char component implements a cut down version of the lambda used in other displays.
+The HT16k33-char component implements a simplified version of the lambda used in other displays.
 In the lambda you're passed a variable called ``it`` as with all other displays. In this case 
 however, ``it`` is the HT16k33 instance.
 
-Commands in lambda to place things on the display:
+Commands available in lambda to place characters on the display:
+*******************************************************************
 
-  - ``it.print(start_pos, string, clear_buffer)``: Prints a string to the buffer.
+  - ``it.print(start_pos, clear_buffer, string)``: Prints a string to the buffer.
 
     - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
     - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+    - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
 
-  - ``it.print(string, clear_buffer)``: Prints a string to the start of the buffer. Similar to the more general print function, but places the `string` at the begining of the buffer.
+  - ``it.print(clear_buffer, string)``: Prints a string to the start of the buffer.
+
+    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+    - *string*: A char string of the message to place in the buffer. If the message is longer than the buffer, it will be truncated to fit.
+
   - ``it.printf(start_pos, clear_buffer, <standard printf arguments>)``: Implements printf to place a formatted string into the buffer.
 
-    - ``start_pos``: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - ``clear_buffer``: Whether to clear the buffer before placing the message. Set to ``true`` to clear the buffer before adding the new message.
+    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to ``true`` to clear the buffer before adding the new message.
     - The rest of the arguments of this function will be passed to the printf function to generate a formatted string.
-    - TODO: Link to somewhere that gives basics on how to use printf.
 
   - ``it.strftime(start_pos, clear_buffer, format, time)`` : Generate a time string using strftime. TODO: A link to the strfrime man page?
 
-    - ``start_pos``: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - ``clear_buffer``: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - ``format``: the formatting string expected by `strftime()`.
-    - ``time`` an ESPTime object of the time you want to display.
+    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+    - *format*: the formatting string expected by `strftime()`.
+    - *time* an ESPTime object of the time you want to display.
 
   - ``it.clock_display(time, start_pos, clear_buffer, show_leading_zero, use_am_pm)``: A simplified function that will display the time in the format HOUR:MINUTE.
 
-    - ``time`` an ESPTime object of the time you want to display.
-    - ``start_pos``: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
-    - ``clear_buffer``: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
-    - ``show_leading_zero``: Whether to show the leading 0 (for example in 01:30). Set to `true` to show the leading zero.
-    - ``use_am_pm``: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
+    - *time* an ESPTime object of the time you want to display.
+    - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
+    - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
+    - *show_leading_zero*: Whether to show the leading 0 (for example in 01:30). Set to `true` to show the leading zero.
+    - *use_am_pm*: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
     
 Other commands avaialable in lambda:
+*******************************************************************
 
   - ``it.blank()``: Clears the display memory. This will turn off all digits. Not technically the same as turning off the device, but the result is the same.
-  - ``it.brightness(value)``: Sets the display brightness to `value`. Must be between 0-15. Note: setting the brightness to 0 will not turn off the display. It will set it to minimum brightness of 1/16 duty cycle.
+  - ``it.brightness(value)``: Sets the display brightness to `value`. Must be between 0-15. Note: setting the brightness to 0 will not turn off the display. It will set it to minimum brightness of 1/16 duty cycle. If you want to turn off the display, use ``blank()``, ``display_off()``, or ``display_standby()``
   - ``it.set_blink(blink_state)``: Set the blink state of the device. The HT16k33 is capable of blinking the display independently of the CPU. Valid values for `blink_state` are:
 
     - ``0``: No blinking
@@ -181,7 +191,7 @@ Please see :ref:`display-printf` for a quick introduction into the ``printf`` fo
 Device details
 ------------------------
 
-More information on supported devices. Note that the only thing that is device specific is how the LEDs are wired to the driver chip. If you have another board that is wired the same way as one of the supported devices, you can use that device type and it should work fine.
+Note that the only thing that is device specific is how the LEDs are wired to the driver chip. If you have another board that is wired the same way as one of the supported devices, you can use that device type and it should work fine.
 
 A list of supported characters is given for each device. If you place a non-supported character in the buffer, the device will display a blank space when trying to display that character.
 
