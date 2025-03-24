@@ -234,13 +234,18 @@ A list of supported characters is given for each device. If you place a non-supp
     Aside from the standard characters, this display also has:
   
       - A colon before the first digit. The two leds can be controlled independently.
-        - Use the character ``'`` or ``\``` to light the upper LED.
+
+        - Use the character ``'`` or ````` to light the upper LED.
         - Use the character ``.`` to light the lower LED.
         - Use the character ``:`` to light both LEDs.
+
       - A colon between digit 2 and 3. These two LEDs are wired together.
+
         -Use the character ``:`` to light these LEDs.
+
       - A LED on the top side of the display between digits 3 and 4.
-        - Use the character ``'`` or ``\``` to light this LED.
+
+        - Use the character ``'`` or ````` to light this LED.
 
     These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
@@ -283,10 +288,14 @@ A list of supported characters is given for each device. If you place a non-supp
     Aside from the standard characters, this display also has:
   
       - A decimal point after each digit
+
         - Use the ``.`` character to turn on a decimal point.
         - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
+
       - A colon between digit 2 and 3. These two LEDs are wired together.
+
         -Use the character ``:`` to light these LEDs.
+
       - Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
 
     These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
@@ -340,6 +349,7 @@ A list of supported characters is given for each device. If you place a non-supp
     Aside from the standard characters, this display also has:
   
       - A decimal point after each digit
+
         - Use the ``.`` character to turn on a decimal point.
         - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
 
