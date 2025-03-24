@@ -2,7 +2,7 @@ HT16K33 Character Based Displays
 ======================================
 
 .. seo::
-    :description: Instructions for setting up a HT16K33 character displays.
+    :description: Instructions for setting up HT16K33 character displays.
     :image: ht16k33-char.jpg
 
 The ``ht16k33`` display platform allows you to use a character display that is driven by a HT16k33
