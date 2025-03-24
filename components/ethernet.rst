@@ -19,7 +19,8 @@ This component and the Wi-Fi component may **not** be used simultaneously, even 
       type: LAN8720
       mdc_pin: GPIOXX
       mdio_pin: GPIOXX
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIOXX
       phy_addr: 0
 
       # Optional manual IP
@@ -64,13 +65,12 @@ RMII configuration variables:
   Usually this is ``GPIO23``.
 - **mdio_pin** (**Required**, :ref:`config-pin`): The MDIO pin of the board.
   Usually this is ``GPIO18``.
+- **clk_pin** (**Required**, :ref:`config-pin`): The RMII clock pin.
 - **clk_mode** (*Optional*, string): The clock mode of the data lines. See your board's
   datasheet for more details. Must be one of the following values:
 
-  - ``GPIO0_IN`` (Default) - External clock
-  - ``GPIO0_OUT`` - Internal clock
-  - ``GPIO16_OUT`` - Internal clock
-  - ``GPIO17_OUT`` - Internal clock
+  - ``CLK_EXT_IN`` (Default) - External clock
+  - ``CLK_OUT`` - Internal clock
 
 - **phy_addr** (*Optional*, int): The PHY addr type of the Ethernet controller. Defaults to 0.
 - **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet initialization.
@@ -158,13 +158,14 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk_mode: CLK_OUT
+      clk_pin: GPIO17
       phy_addr: 0
       power_pin: GPIO12
 
 .. note::
 
-    WROVER version of Olimex POE cards change CLK to ping GPIO0, configuration must be `clk_mode: GPIO0_OUT`.
+    WROVER version of Olimex POE cards change CLK to pin GPIO0.
 
 
 **Olimex ESP32-EVB**:
@@ -175,7 +176,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIO0
       phy_addr: 0
 
 **Olimex ESP32-GATEWAY** and **LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A**:
@@ -186,7 +188,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk_mode: CLK_OUT
+      clk_pin: GPIO17
       phy_addr: 0
 
 **LILYGO TTGO T-Internet ESP32-WROVER-E LAN8270**:
@@ -197,7 +200,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_OUT
+      clk_mode: CLK_OUT
+      clk_pin: GPIO0
       phy_addr: 0
       power_pin: GPIO04
 
@@ -209,7 +213,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIO0
       phy_addr: 1
       power_pin: GPIO16
 
@@ -221,7 +226,8 @@ Configuration examples
       type: IP101
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIO0
       phy_addr: 1
       power_pin: GPIO5
 
@@ -233,7 +239,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk_mode: CLK_OUT
+      clk_pin: GPIO17
       phy_addr: 1
       power_pin: GPIO5
 
@@ -246,7 +253,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO16
       mdio_pin: GPIO17
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIO0
       phy_addr: 0
 
     # for board rev.7 and up
@@ -254,7 +262,8 @@ Configuration examples
       type: RTL8201
       mdc_pin: GPIO16
       mdio_pin: GPIO17
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIO0
       phy_addr: 0
       phy_registers:
         - address: 0x10
@@ -292,7 +301,8 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk_mode: CLK_OUT
+      clk_pin: GPIO17
       phy_addr: 1
 
 **LILYGO T-ETH-Lite ESP32**:
@@ -303,7 +313,8 @@ Configuration examples
       type: RTL8201
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk_mode: CLK_EXT_IN
+      clk_pin: GPIO0
       phy_addr: 0
       power_pin: GPIO12
 
