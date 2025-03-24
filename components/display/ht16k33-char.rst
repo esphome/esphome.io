@@ -197,153 +197,153 @@ A list of supported characters is given for each device. If you place a non-supp
 
 .. collapse:: Adafruit 1.2" 4-Digit 7-Segment
 
-  Large 7 segment displays from `Adafruit <https://www.adafruit.com/product/1270>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is supposedly `here <https://learn.adafruit.com/assets/122068>`__. However, as of this writing (3/2025) that wiring diagram appears to be incorrect. Based on my testing, the display is actually wired similar to their `smaller displays <https://learn.adafruit.com/assets/108790>`__, with the exception of the decimal points and colons.
+   Large 7 segment displays from `Adafruit <https://www.adafruit.com/product/1270>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is supposedly `here <https://learn.adafruit.com/assets/122068>`__. However, as of this writing (3/2025) that wiring diagram appears to be incorrect. Based on my testing, the display is actually wired similar to their `smaller displays <https://learn.adafruit.com/assets/108790>`__, with the exception of the decimal points and colons.
   
-  Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_1.2IN`` or ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``.
+    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_1.2IN`` or ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``.
 
-  I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
+    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
 
-  .. collapse:: Supported Characters
+    .. collapse:: Supported Characters
 
-      - All numerals (0-9)
-      - `` (a blank space)``
-      - ``A``
-      - ``b``
-      - ``C``
-      - ``c``
-      - ``d``
-      - ``E``
-      - ``F``
-      - ``G``
-      - ``H``
-      - ``h``
-      - ``I``
-      - ``J``
-      - ``L``
-      - ``N``
-      - ``O (Capitol letter O)``
-      - ``o (Lower case letter o)``
-      - ``P``    
-      - ``r``
-      - ``S``
-      - ``t``
-      - ``U``
-      - ``u``
-      - ``Y``
+          - All numerals (0-9)
+          - `` (a blank space)``
+          - ``A``
+          - ``b``
+          - ``C``
+          - ``c``
+          - ``d``
+          - ``E``
+          - ``F``
+          - ``G``
+          - ``H``
+          - ``h``
+          - ``I``
+          - ``J``
+          - ``L``
+          - ``N``
+          - ``O (Capitol letter O)``
+          - ``o (Lower case letter o)``
+          - ``P``    
+          - ``r``
+          - ``S``
+          - ``t``
+          - ``U``
+          - ``u``
+          - ``Y``
 
-  Aside from the standard characters, this display also has:
+    Aside from the standard characters, this display also has:
   
-    - A colon before the first digit. The two leds can be controlled independently.
-      - Use the character ``'`` or ``\``` to light the upper LED.
-      - Use the character ``.`` to light the lower LED.
-      - Use the character ``:`` to light both LEDs.
-    - A colon between digit 2 and 3. These two LEDs are wired together.
-      -Use the character ``:`` to light these LEDs.
-    - A LED on the top side of the display between digits 3 and 4.
-      - Use the character ``'`` or ``\``` to light this LED.
+      - A colon before the first digit. The two leds can be controlled independently.
+        - Use the character ``'`` or ``\``` to light the upper LED.
+        - Use the character ``.`` to light the lower LED.
+        - Use the character ``:`` to light both LEDs.
+      - A colon between digit 2 and 3. These two LEDs are wired together.
+        -Use the character ``:`` to light these LEDs.
+      - A LED on the top side of the display between digits 3 and 4.
+        - Use the character ``'`` or ``\``` to light this LED.
 
-  These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
 .. collapse:: Adafruit 0.56" 4-Digit 7-Segment
 
-  Small 7 segment displays from `Adafruit <https://www.adafruit.com/product/865>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is `here <https://learn.adafruit.com/assets/108790>`__.
+    Small 7 segment displays from `Adafruit <https://www.adafruit.com/product/865>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is `here <https://learn.adafruit.com/assets/108790>`__.
   
-  Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_.56IN`` or ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``.
+    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_.56IN`` or ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``.
 
-  I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list. Writing an unsupported character to the buffer will result in a blank space being displayed for that character on the display.
+    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list. Writing an unsupported character to the buffer will result in a blank space being displayed for that character on the display.
 
-  .. collapse:: Supported Characters
+    .. collapse:: Supported Characters
 
-      - All numerals (0-9)
-      - `` (a blank space)``
-      - ``A``
-      - ``b``
-      - ``C``
-      - ``c``
-      - ``d``
-      - ``E``
-      - ``F``
-      - ``G``
-      - ``H``
-      - ``h``
-      - ``I``
-      - ``J``
-      - ``L``
-      - ``N``
-      - ``O (Capitol letter O)``
-      - ``o (Lower case letter o)``
-      - ``P``    
-      - ``r``
-      - ``S``
-      - ``t``
-      - ``U``
-      - ``u``
-      - ``Y``
+        - All numerals (0-9)
+        - `` (a blank space)``
+        - ``A``
+        - ``b``
+        - ``C``
+        - ``c``
+        - ``d``
+        - ``E``
+        - ``F``
+        - ``G``
+        - ``H``
+        - ``h``
+        - ``I``
+        - ``J``
+        - ``L``
+        - ``N``
+        - ``O (Capitol letter O)``
+        - ``o (Lower case letter o)``
+        - ``P``    
+        - ``r``
+        - ``S``
+        - ``t``
+        - ``U``
+        - ``u``
+        - ``Y``
 
-  Aside from the standard characters, this display also has:
+    Aside from the standard characters, this display also has:
   
-    - A decimal point after each digit
-      - Use the ``.`` character to turn on a decimal point.
-      - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
-    - A colon between digit 2 and 3. These two LEDs are wired together.
-      -Use the character ``:`` to light these LEDs.
-    - Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
+      - A decimal point after each digit
+        - Use the ``.`` character to turn on a decimal point.
+        - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
+      - A colon between digit 2 and 3. These two LEDs are wired together.
+        -Use the character ``:`` to light these LEDs.
+      - Note that while it is technically possible to turn on both the decimal point after digit 2 and the colon after digit 2, I did not implement that in this code. If you try to do this, the first character you set will be displayed and the next one will be interpreted as an invalid character at position 3.
 
-  These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
 .. collapse:: Adafruit 0.54" 4-Digit 14-Segment
 
-  Small 14 segment displays from `Adafruit <https://www.adafruit.com/product/1911>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is `here <https://learn.adafruit.com/assets/114463>`__.
+    Small 14 segment displays from `Adafruit <https://www.adafruit.com/product/1911>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is `here <https://learn.adafruit.com/assets/114463>`__.
   
-  Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_14_SEG`` or ``ADAFRUIT_14_SEG_FLIPPED``.
+    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_14_SEG`` or ``ADAFRUIT_14_SEG_FLIPPED``.
 
-  I have implemented most of the basic alphanumeric characters and punctuation. Some of them are a bit of a strech to display on these devices, but they are generally readable.
+    I have implemented most of the basic alphanumeric characters and punctuation. Some of them are a bit of a strech to display on these devices, but they are generally readable.
 
-  .. collapse:: Supported Characters
+    .. collapse:: Supported Characters
 
-      - All upper case english characters (A-Z)
-      - All lower case english characters (a-z)
-      - All numerals (0-9)
-      - `` (a blank space)``
-      - ``!``
-      - ``"``
-      - ``#``
-      - ``$``
-      - ``%``
-      - ``&``
-      - ``'``
-      - ``(``
-      - ``)``
-      - ``*``
-      - ``+``
-      - ``,``
-      - ``-``
-      - ``/``
-      - ``:``
-      - ``;``
-      - ``<``
-      - ``=``
-      - ``>``
-      - ``?``
-      - ``@``
-      - ``[``
-      - ``\``
-      - ``]``
-      - ``^``
-      - ``_``
-      - ``\```
-      - ``{``
-      - ``|``
-      - ``}``
-      - ``~``
+          - All upper case english characters (A-Z)
+          - All lower case english characters (a-z)
+          - All numerals (0-9)
+          - `` (a blank space)``
+          - ``!``
+          - ``"``
+          - ``#``
+          - ``$``
+          - ``%``
+          - ``&``
+          - ``'``
+          - ``(``
+          - ``)``
+          - ``*``
+          - ``+``
+          - ``,``
+          - ``-``
+          - ``/``
+          - ``:``
+          - ``;``
+          - ``<``
+          - ``=``
+          - ``>``
+          - ``?``
+          - ``@``
+          - ``[``
+          - ``\``
+          - ``]``
+          - ``^``
+          - ``_``
+          - ``\```
+          - ``{``
+          - ``|``
+          - ``}``
+          - ``~``
 
-  Aside from the standard characters, this display also has:
+    Aside from the standard characters, this display also has:
   
-    - A decimal point after each digit
-      - Use the ``.`` character to turn on a decimal point.
-      - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
+      - A decimal point after each digit
+        - Use the ``.`` character to turn on a decimal point.
+        - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
 
-  These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
 Special Thanks
 -----------------------------------------
