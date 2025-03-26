@@ -29,7 +29,7 @@ Configuration variables:
 - **rx_queue_len** (**Optional**, int): Length of RX queue.
 - **tx_queue_len** (**Optional**, int): Length of TX queue, 0 to disable.
 - **tx_enqueue_timeout** (**Optional**, :ref:`config-time`): Maximum time to wait when the TX queue is full before
-  dropping the message (by default, this is set to the time it takes to send 10 CAN messages at the given baud rate).
+  dropping the message (by default, this is set to the time it takes to send 10 CAN messages at the given bit rate).
 - All other options from :ref:`Canbus <config-canbus>`.
 
 .. _esp32-can-bit-rate:
