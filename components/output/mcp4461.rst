@@ -8,19 +8,10 @@ MCP4461 Component
 .. _mcp4461-component:
 
 The MCP4461 output component enables the use of an 8‑bit external quad digital potentiometer/rheostat via I²C. See the `MCP4461 Datasheet <https://www.microchip.com/en-us/product/mcp4461>`__ for more information.
-Device default address is ``0x2C``.
 
 .. code-block:: yaml
 
     # Example configuration entry
-
-    # Set a global I²C connection
-    i2c:
-      sda: 21
-      scl: 22
-      scan: true
-
-    # Set the component with default (address: 0x2C / global I²C)
     mcp4461:
       - id: mcp4461_output
 
@@ -51,7 +42,7 @@ The MCP4461 output component exposes 8 MCP4461 (wiper-)channels of a global :ref
       id: digipot_channel_0
       mcp4461_id: mcp4461_output
       channel: A
-      initial_value: 0.128 // always initialize volatile wiper 0 with wiper @ medium resistance range on start
+      initial_value: 0.128  # always initialize volatile wiper 0 with wiper @ medium resistance range on start
     - platform: mcp4461
       id: digipot_channel_1
       mcp4461_id: mcp4461_output
@@ -81,63 +72,6 @@ The MCP4461 output component exposes 8 MCP4461 (wiper-)channels of a global :ref
       mcp4461_id: mcp4461_output
       channel: H
 
-    on_...:
-      then:
-        - output.set_level:
-            id: digipot_channel_0
-            level: !lambda return static_cast<float>(x / 256); // using a uint16_t in range 0-256
-                   // !lambda return x; - if x is float in range 0.0-1.0,
-                   // will be multiplied with 256 internally to get integer taps value
-
-    
-    interval:
-      // read current hardware wiper state to variable without updating output-channel state
-      - interval: 5s
-      // update wiper state every 10s (potentiometer usage)
-      - interval: 10s
-          then:
-            - lambda: |-
-                float current_state;
-                current_state = id(digipot_wiper_0).read_state();
-                return;
-
-    button:
-      - platform: template
-        id: increment_wiper_0_button
-        name: "Increment wiper 0"
-        on_press:
-          then:
-            - lambda: |-
-                id(digipot_channel_0).increase_wiper(); // increase taps by one for wiper 0
-                return;
-
-      - platform: template
-        id: enable_wiper_0_button
-        name: "Enable wiper 0"
-        on_press:
-          then:
-            - lambda: |-
-                id(digipot_channel_0).turn_on(); // same as id(digipot_wiper_0).enable_wiper() and id(digipot_wiper_0).enable_terminal('h')
-                return;
-
-
-      - platform: template
-        id: enable_wiper_0_terminal_a_button
-        name: "Enable wiper 0 terminal A"
-        on_press:
-          then:
-            - lambda: |-
-                id(digipot_channel_0).enable_terminal('a'); // available terminals are { 'h', 'a', 'b', 'w' }
-                return;
-
-      - platform: template
-        id: disable_wiper_0_terminal_a_button
-        name: "Disable wiper 0 terminal A"
-        on_press:
-          then:
-            - lambda: |-
-                id(digipot_channel_0).disable_terminal('a'); // available terminals are { 'h', 'a', 'b', 'w' }
-                return;
 
 Configuration variables:
 ------------------------
@@ -152,16 +86,18 @@ Configuration variables:
 - **terminal_a** (**Optional**, bool): Set to ``false`` if terminal "A" shall be disabled on boot. Defaults to ``true``
 - **terminal_b** (**Optional**, bool): Set to ``false`` if terminal "B" shall be disabled on boot. Defaults to ``true``
 - **terminal_w** (**Optional**, bool): Set to ``false`` if terminal "W" shall be disabled on boot. Defaults to ``true``
-  
-- All other options from :ref:`Output <config-output>`.
+- All other configuration variables from :ref:`Output <config-output>`.
 
-Tap count for 7/8bit digipot/rheostat devices is usually 100/257.
-For MCP4461, valid output states in range from 0 - 1.0 will be multiplied internally with 256 to get integer tap count in range [0-256]
+The tap count for 7 and 8-bit digipot/rheostat devices is usually 100/257.
 
-This example shows how to use this with simple numeric slider (0-256 integer numbers in frontend)
-Fetch current wiper state:
-If initial_value configuration variable is not used, you can use read_state() / update_state() to fetch current state on boot time. Potentiometer usage (not rheostat)
-can be realized the same way in update block.
+For the MCP4461, valid output states in range from 0 - 1.0 will be multiplied internally by 256 to get the integer tap
+count in range [0-256].
+
+.. note::
+
+    If you do not specify the ``initial_value`` configuration variable, you can use ``read_state()`` and
+    ``update_state()`` to fetch the current state at boot. The potentiometer (not rheostat) can be handled in the same
+    way. See the example below.
 
 .. code-block:: yaml
 
