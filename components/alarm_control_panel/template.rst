@@ -56,7 +56,7 @@ Configuration variables:
 Trigger Modes
 -------------
 
-Each binary sensor "zone" supports 3 trigger modes. The 3 trigger modes are:
+Each binary sensor "zone" supports 4 trigger modes. The modes are:
 
 - delayed
 - instant
