@@ -84,7 +84,7 @@ This :ref:`action <config-action>` sends a GET request.
     on_...:
       - http_request.get:
           url: https://esphome.io
-          headers:
+          request_headers:
             Content-Type: application/json
           on_response:
             then:
@@ -99,7 +99,7 @@ This :ref:`action <config-action>` sends a GET request.
 **Configuration variables:**
 
 - **url** (**Required**, string, :ref:`templatable <config-templatable>`): URL to which to send the request.
-- **headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
 - **collect_headers** (*Optional*, list of strings): List of the names of HTTP headers to collect from the response.
 - **capture_response** (*Optional*, boolean): when set to ``true``, the response data will be captured and placed into
   the ``body`` variable as a ``std::string`` for use in :ref:`lambdas <config-lambda>`. Defaults to ``false``.
@@ -120,7 +120,7 @@ This :ref:`action <config-action>` sends a POST request.
     on_...:
       - http_request.post:
           url: https://esphome.io
-          headers:
+          request_headers:
             Content-Type: application/json
           json:
             key: value
@@ -147,7 +147,7 @@ This :ref:`action <config-action>` sends a request.
       - http_request.send:
           method: PUT
           url: https://esphome.io
-          headers:
+          request_headers:
             Content-Type: application/json
           body: "Some data"
 
@@ -222,7 +222,7 @@ Templatable values
       - http_request.post:
           url: !lambda |-
             return ((std::string) "https://esphome.io?state=" + id(my_sensor).state).c_str();
-          headers:
+          request_headers:
             X-Custom-Header: !lambda |-
               return ((std::string) "Value-" + id(my_sensor).state).c_str();
           body: !lambda |-
