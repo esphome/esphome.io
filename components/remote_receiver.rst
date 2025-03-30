@@ -71,6 +71,9 @@ Configuration variables:
   - **weather_station_h13726**: Decode and dump Lidl H13726 weather station data.
   - **weather_station_l08037a**: Decode and dump Lidl L08037A weather station data.
   - **weather_station_nexus**: Decode and dump Nexus weather station data.
+  - **weather_station_z32171**: Decode and dump Z32171 weather station data.
+  - **weather_station_z31743**: Decode and dump Z31743 weather station data.
+  - **weather_station_ahfl**: Decode and dump AHFL weather station data.
 
 - **tolerance** (*Optional*, int, :ref:`config-time` or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to ``25%``.
@@ -249,6 +252,9 @@ Automations:
   - **on_weather_station_h13726**: Lidl Auriol H13726, Ventus WS155, Hama EWS 1500, Meteoscan W155/W160, Unitec W186-F.
   - **on_weather_station_l08037a**: Lidl 40782 L08037A.
   - **on_weather_station_nexus**: Nexus weather station.
+  - **on_weather_station_z32171**: Z32171 weather station.
+  - **on_weather_station_z31743**: Z31743 weather station.
+  - **on_weather_station_ahfl**: AHFL weather station.
 
 .. code-block:: yaml
 
@@ -521,6 +527,9 @@ Remote code selection (exactly one of these has to be included):
 - **weather_station_h13726**: Trigger on a decoded Lidl H13726 weather station data.
 - **weather_station_l08037a**: Trigger on a decoded Lidl L08037A weather station data.
 - **weather_station_nexus**: Trigger on a decoded Nexus weather station data.
+- **weather_station_z32171**: Trigger on a decoded Z32171 weather station data.
+- **weather_station_z31743**: Trigger on a decoded Z31743 weather station data.
+- **weather_station_ahfl**: Trigger on a decoded AHFL weather station data.
 
 .. note::
 
