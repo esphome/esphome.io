@@ -110,5 +110,8 @@ Text Sensor
 See Also
 --------
 
+- `Mk2PVRouter documentation <https://fredm67.github.io/Mk2PVRouter/>`__
+- `Mk2PVRouter FW single phase <https://github.com/FredM67/PVRouter-1-phase>`__
+- `Mk2PVRouter FW three phase <https://github.com/FredM67/PVRouter-3-phase>`__
 - :apiref:`mk2pvrouter/mk2pvrouter.h`
 - :ghedit:`Edit`
