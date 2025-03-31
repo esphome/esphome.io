@@ -73,8 +73,8 @@ Sensor
 
   .. note::
 
-     The available tags are defined in the Mk2PVRouter diverter's program and depend on its configuration.
-     Please refer to your diverter's documentation or configuration to determine the tags available for your setup.
+      The available tags are defined in the Mk2PVRouter diverter's program and depend on its configuration.
+      Please refer to your diverter's documentation or configuration to determine the tags available for your setup.
 
 - All other options from :ref:`Sensor <config-sensor>`.
 
