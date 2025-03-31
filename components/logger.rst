@@ -47,10 +47,14 @@ Advanced settings:
 -  **on_message** (*Optional*, :ref:`Automation <automation>`): An action to be
    performed when a message is to be logged. The variables ``int level``, ``const char* tag`` and
    ``const char* message`` are available for lambda processing.
--  **deassert_rts_dtr** (*Optional*, boolean): Deasserts RTS/DTR when opening
-   log over UART. This is useful if RTS/DTR signals are directly connected to
-   the reset pin or strapping pins. Note: Deassert typically means high on TTL
-   level since RTS/DTR are usually low active signals. Defaults to ``false``.
+-  **deassert_rts_dtr** (*Optional*, boolean): Causes ESPHome to sequentially drive DTR and RTS false after opening
+   a serial logging connection. Defaults to ``false``.
+   Many ESP boards use these signals to reset the chip or enter
+   bootloader mode, and the effect of setting this option will be
+   to reset the chip in application mode after opening the serial port, thus ensuring that all log messages
+   from the boot process are captured.
+   Note: Deassert typically means a TTL high level
+   level since RTS/DTR are usually low active signals.
 
 .. _logger-hardware_uarts:
 
