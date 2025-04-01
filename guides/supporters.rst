@@ -114,6 +114,7 @@ Contributors
 - `Kieren  (@ando023) <https://github.com/ando023>`__
 - `András Bíró (@andrasbiro) <https://github.com/andrasbiro>`__
 - `Andre (@andre68723) <https://github.com/andre68723>`__
+- `Andreas Brett (@andreasbrett) <https://github.com/andreasbrett>`__
 - `Andreas Hergert (@andreashergert1984) <https://github.com/andreashergert1984>`__
 - `Andres Vahter (@andresv) <https://github.com/andresv>`__
 - `Andrew J.Swan (@andrewjswan) <https://github.com/andrewjswan>`__
@@ -1627,6 +1628,7 @@ Contributors
 - `Robin Pronk (@rfpronk) <https://github.com/rfpronk>`__
 - `Pavels Veretennikovs (@rfvermut) <https://github.com/rfvermut>`__
 - `Robert Gabrielson (@rgabrielson11) <https://github.com/rgabrielson11>`__
+- `Rob Gray (@rgr4y) <https://github.com/rgr4y>`__
 - `Rafael Goes (@rgriffogoes) <https://github.com/rgriffogoes>`__
 - `rheinz (@rheinz) <https://github.com/rheinz>`__
 - `Rhys79 (@Rhys79) <https://github.com/Rhys79>`__
@@ -2106,4 +2108,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated March 25, 2025.*
+*This page was last updated March 31, 2025.*
