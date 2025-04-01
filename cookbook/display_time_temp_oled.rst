@@ -97,6 +97,7 @@ Define the Fonts
 
 
 - (Optional) You can also use Google fonts with the ``gfonts://`` scheme instead of including font files.
+- Find out more in the :doc:`/components/font` documentation.
 
 .. code-block:: yaml
 
@@ -126,8 +127,8 @@ Note your ``address`` and ``model`` might be different, use the scan option to f
       sda: GPIOXX
       scl: GPIOXX
       scan: false
-      // manually setting the frequency to a higher rate may avoid long component updates
-      // frequency: 300kHz
+      # manually setting the frequency to a higher rate may avoid long component updates
+      # frequency: 300kHz
 
     display:
       - platform: ssd1306_i2c
@@ -178,7 +179,7 @@ Below follows an example that replaces the "Time and Temperature" top printout w
         address: 0x3C
         lambda: |-
           // Print "Alarm State: <state>" in top center
-          it.printf(64, 0, id(font1), TextAlign::TOP_CENTER, "Alarm State: %s", id(alarm_state).state.c_str());
+          it.printf(64, 0, id(small), TextAlign::TOP_CENTER, "Alarm State: %s", id(alarm_state).state.c_str());
 
 
 See Also
