@@ -1026,6 +1026,14 @@ The line widget is capable of drawing straight lines between a set of points.
 
 By default, the Line widget width and height dimensions are set to ``SIZE_CONTENT``. This means it will automatically set its size to fit all the points. If the size is set explicitly, parts of the line may not be visible.
 
+The points list may be defined with constants in the form ``x, y`` or as a list of dictionaries with ``x`` and ``y`` keys. The latter allows for more complex point definitions, such as using a lambda function to calculate the coordinates.
+
+**Actions:**
+
+- ``lvgl.line.update`` :ref:`action <actions-action>` updates the points and any style properties.
+    - **id** (**Required**): The ID or a list of IDs of lines to update.
+    - **points** (**Required**): A point list as described above.
+
 **Example:**
 
 .. code-block:: yaml
@@ -1036,7 +1044,8 @@ By default, the Line widget width and height dimensions are set to ``SIZE_CONTEN
           - 5, 5
           - 70, 70
           - 120, 10
-          - 180, 60
+          - x: !lambda return random_uint32() % 100;
+            y: !lambda return random_uint32() % 100;
           - 230, 15
         line_width: 8
         line_color: 0x0000FF
