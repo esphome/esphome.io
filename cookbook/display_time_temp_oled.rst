@@ -45,7 +45,7 @@ Get the time from Home Assistant to sync the onboard real-time clock.
 Getting Temperature
 *******************
 
-Next, we want to get one temperature sensor and the weather forecast imported from Home Assistant.
+Next, we want to get one temperature sensor and the `weather forecast <https://www.home-assistant.io/integrations/weather/>`_ imported from Home Assistant.
 
 I named them ``inside_temperature`` and ``outside_temperature``. You will use those references later.
 
@@ -96,7 +96,7 @@ Define the Fonts
         size: 14
 
 
-- You can also use Google fonts with the ``gfonts://`` scheme.
+- (Optional) You can also use Google fonts with the ``gfonts://`` scheme instead of including font files.
 
 .. code-block:: yaml
 
