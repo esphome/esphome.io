@@ -37,6 +37,7 @@ Configuration variables:
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): SPI chip select pin.
 - **rst_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Reset pin.
 - **dio0_pin** (**Optional**, :ref:`Pin Schema <config-pin_schema>`): Digital IO pin 0.
+- **auto_cal** (**Optional**, bool): Enable automatic image calibration on temperature changes. Defaults to `true`.
 - **frequency** (**Required**, int): Frequency in Hz of the transceiver.
 - **modulation** (**Required**, enum): Modulation can be ``OOK``, ``FSK`` or ``LORA```.
 - **pa_pin** (**Optional**, enum): Transmitter output pin, can be ``BOOST`` or ``RFO``.
@@ -121,6 +122,15 @@ Automations:
 Actions:
 --------
 
+``sx127x.run_image_cal`` **Action**
+
+This :ref:`action <config-action>` runs the ``sx127x`` image calibration.
+
+.. code-block:: yaml
+
+    on_...:
+      - sx127x.run_image_cal
+
 ``sx127x.set_mode_tx`` **Action**
 
 This :ref:`action <config-action>` sets the ``sx127x`` mode to tx.
@@ -138,6 +148,15 @@ This :ref:`action <config-action>` sets the ``sx127x`` mode to rx.
 
     on_...:
       - sx127x.set_mode_rx
+
+``sx127x.set_mode_sleep`` **Action**
+
+This :ref:`action <config-action>` sets the ``sx127x`` mode to sleep.
+
+.. code-block:: yaml
+
+    on_...:
+      - sx127x.set_mode_sleep
 
 ``sx127x.set_mode_standby`` **Action**
 
