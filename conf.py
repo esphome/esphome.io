@@ -62,7 +62,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "ESPHome"
-copyright = "2022, Nabu Casa"
+copyright = "2025, Open Home Foundation"
 html_show_copyright = False
 html_show_sphinx = False
 author = "ESPHome"
