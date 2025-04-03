@@ -504,21 +504,54 @@ This :ref:`action <config-action>` sends an NEC infrared remote code to a remote
     does not automatically generate parity bits or pad values to 2 bytes. For example, to send command ``0x0``, you
     need to use ``0xFF00`` (``0x00`` being the command and ``0xFF`` being the logical inverse).
 
+.. note::
+
+    The ``command_repeats`` option has been renamed to ``repeats``. The old implementation defined the number of times
+    the command bytes were sent in a single transmission.
+    The new ``repeats`` option specifies the number of NEC repeat codes sent after the initial frame containing the
+    address and command. The default is ``0`` for the NEC protocol. For NEC1, set ``repeats`` to ``1``. NEC2, which
+    retransmits the entire frame instead of sending repeat codes, is not yet supported.
+
+.. warning::
+
+    **Watchdog Timer (WDT) Resets and Transmission Limitations**
+
+    Sending many NEC repeat codes in quick succession may cause a **WDT reset**, as IR transmission is blocking and
+    doesn't feed the watchdog. A **repeat count higher than 20** may cause instability and should be used with caution.
+
+    Encoding with ``type: repeats_only`` requires ``repeats > 0``; otherwise, the transmitted signal will be empty.
+
 .. code-block:: yaml
 
     on_...:
       - remote_transmitter.transmit_nec:
           address: 0x1234
           command: 0x78AB
-          command_repeats: 1
+          repeats: 1
+          type: frame_with_repeats
 
 Configuration variables:
 
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
 - **command** (**Required**, int): The 16-bit NEC command to send.
-- **command_repeats** (*Optional*, int): The number of times the command bytes are sent in one transmission.
-  Defaults to `1`.
+- **repeats** (*Optional*, int): The number of NEC repeat codes sent after the main frame. Defaults to ``0`` for ``NEC``.
+  Use ``1`` for ``NEC1``. Higher values can be used to simulate a button hold effect.
+- **type** (*Optional*, string): Defines the transmission type. Can be ``frame_with_repeats`` or ``repeats_only``.
+  Defaults to ``frame_with_repeats``.
 - All other options from :ref:`remote_transmitter-transmit_action`.
+
+Configuration option ``type`` can be set to either ``frame_with_repeats`` or ``repeats_only``:
+- ``frame_with_repeats``: Sends a frame with address and command, followed by repeat codes if specified. (``Default``)
+- ``repeats_only``: Ignores the provided address and command values (which are still required in the configuration)
+  and sends only repeat codes. This can be useful for advanced functionality or avoiding WDT reset issues.
+
+Defining ``USE_REMOTE_TRANSMITTER_NEC_FULL_LEN`` **ensures that a space is appended after the last repeat or frame**.
+This guarantees a consistent delay between transmissions. Without this definition, spaces are added between repeat
+codes, but not after the last repeat or single frame. Enabling this option ensures uniform timing. While this enforces
+the required IR silence, it also blocks the loop for additional ``40ms-96ms``. This behavior is usually not an issue
+unless transmissions start immediately after each other, which is why it is **disabled by default**. A practical use
+case is when calling multiple NEC transmit actions sequentially without adding a delay between them,
+ensuring proper timing and preventing overlapping signals.
 
 ``remote_transmitter.transmit_nexa`` **Action**
 
