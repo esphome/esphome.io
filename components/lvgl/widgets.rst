@@ -1925,6 +1925,13 @@ ESPHome implements as universal triggers the following interaction events genera
 - ``on_scroll``: The widget was scrolled.
 - ``on_focus``:  The widget is focused.
 - ``on_defocus``: The widget is unfocused.
+- ``on_gesture``: A swipe gesture has been detected
+- ``on_swipe_left``: A left swipe gesture has been detected
+- ``on_swipe_right``: A right swipe gesture has been detected
+- ``on_swipe_up``: An upwards swipe gesture has been detected
+- ``on_swipe_down``: A downwards swipe gesture has been detected
+- ``on_swipe_top``: Synonym for ``on_swipe_up``
+- ``on_swipe_bottom``: Synonym for ``on_swipe_down``
 - ``on_all_events``: Will be triggered on any event sent to the widget - this is useful for debugging.
 
 These triggers can be applied directly to any widget in the LVGL configuration, *given that the widget itself supports generating such events*. For the widgets having a value, the triggers return the current value in variable ``x``; this variable may be used in lambdas defined within those triggers.
