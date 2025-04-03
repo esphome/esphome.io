@@ -38,6 +38,7 @@ Configuration variables:
 
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin CS is connected to. For the 6 channel meter main board, this will always be 5 and 4. For the add-on boards a jumper can be selected for each CS pin, but default to 0 and 16.
 - **line_frequency** (**Required**, string): The AC line frequency of the supply voltage. One of ``50Hz``, ``60Hz``.
+- **id** (*Optional*, :ref:`config-id`): Needed if there is more than one atm90e32 chip and you have buttons defined for calibration
 - **phase_a** (*Optional*): The configuration options for the 1st phase.
 
   - **voltage** (*Optional*): Use the voltage value of this phase in V (RMS).
@@ -117,17 +118,40 @@ Button
     button:
       - platform: atm90e32
         id: chip1
+        run_gain_calibration:
+          name: "Run Gain Calibration"
+        clear_gain_calibration:
+          name: "Clear Gain Calibration"
         run_offset_calibration:
-          name: "Chip1 - Run Offset Calibration"
+          name: "Run Offset Calibration"
         clear_offset_calibration:
-          name: "Chip1 - Clear Offset Calibration"
+          name: "Clear Offset Calibration"
+        run_power_offset_calibration:
+          name: "Run Power Offset Calibration"
+        clear_power_offset_calibration:
+          name: "Clear Power Offset Calibration"
 
 Configuration variables:
 
 - **id** (*Optional*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
-- **run_offset_calibration** (*Optional*): A button to run the offset calibration.
+- **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``reference_current`` and ``reference_voltage``
+  should be defined. ``enable_gain_calibration`` must be ``True``. These values can be permanently stored in ``gain_voltage`` 
+  and ``gain_ct``.
   All options from :ref:`Button <config-button>`.
-- **clear_offset_calibration** (*Optional*): A button to clear the offset calibration.
+- **clear_gain_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
+  values defined under ``gain_voltage`` and ``gain_ct``.
+  All options from :ref:`Button <config-button>`.
+- **run_offset_calibration** (*Optional*): A button to run the offset calibration. ``enable_offset_calibration`` must be ``True``. 
+  These values can be permanently stored in ``offset_voltage`` and ``offset_current``.
+  All options from :ref:`Button <config-button>`.
+- **clear_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
+  values defined under ``offset_voltage`` and ``offset_current``.
+  All options from :ref:`Button <config-button>`.
+- **run_power_offset_calibration** (*Optional*): A button to run the power offset calibration. ``enable_offset_calibration`` must be ``True``. 
+  These values can be permanently stored in ``offset_active_power`` and ``offset_reactive_power``. 
+  All options from :ref:`Button <config-button>`.
+- **clear_power_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
+  values defined under ``offset_active_power`` and ``offset_reactive_power``.
   All options from :ref:`Button <config-button>`.
 
 Calibration
