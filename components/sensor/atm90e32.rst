@@ -17,7 +17,7 @@ The ATM90E32 IC can measure up to three AC voltages although typically only one
 voltage measurement would be used for the mains electricity phase of a
 household. Three current measurements are read via CT clamps.
 
-The `CircuitSetup Split Single Phase Energy Meter <https://circuitsetup.us/index.php/product/split-single-phase-real-time-whole-house-energy-meter-v1-2/>`__ can read 2 current channels and 1 (expandable to 2) voltage channel.
+The `CircuitSetup Split Single Phase Energy Meter <https://circuitsetup.us/product/split-single-phase-real-time-whole-house-energy-meter-v1-2/>`__ can read 2 current channels and 1 (expandable to 2) voltage channel.
 
 .. figure:: images/atm90e32-cs-2chan-full.jpg
     :align: center
@@ -25,7 +25,7 @@ The `CircuitSetup Split Single Phase Energy Meter <https://circuitsetup.us/index
 
     CircuitSetup Split Single Phase Real Time Whole House Energy Meter.
 
-The `CircuitSetup 6-Channel Energy Monitor <https://circuitsetup.us/index.php/product/expandable-6-channel-esp32-energy-meter/>`__ can read 6 current channels and 2 voltage channels at a time, this board has two ATM90E32 ICs and requires two sensors to be configured in ESPHome.
+The `CircuitSetup 6-Channel Energy Monitor <https://circuitsetup.us/product/expandable-6-channel-esp32-energy-meter/>`__ can read 6 current channels and 2 voltage channels at a time, this board has two ATM90E32 ICs and requires two sensors to be configured in ESPHome.
 
 .. figure:: images/atm90e32-cs-6chan-full.jpg
     :align: center
@@ -56,10 +56,25 @@ Configuration variables:
     :ref:`Sensor <config-sensor>`.
   - **harmonic_power** (*Optional*): Use the harmonic power value on this phase. All options from
     :ref:`Sensor <config-sensor>`.
-  - **gain_voltage** (*Optional*, int): Voltage gain to scale the low voltage AC power pack to household mains feed.
+  - **phase_status** (*Optional*): Status output for this phase. Can alert of over current (65.53A), over voltage, 
+    voltage sag (votlage high/low based on ``line_frequency``), and phase loss
+  - **reference_current** (*Optional*, float): Input for fine grained gain calibration for a known current 
+    of the circuit a CT is measuring. It is used to calculate the value for ``gain_ct``. All options from 
+    :ref:`Template Number <template-number>`
+  - **gain_voltage** (*Optional*, int): Voltage gain to scale the low voltage AC transformer to household mains feed.
     Defaults to ``7305``.
   - **gain_ct** (*Optional*, int): CT clamp calibration for this phase.
     Defaults to ``27961``.
+  - **offset_voltage** (*Optional*, int): The voltage offset obtained using the offset calibration feature when current and voltage are 0
+    Defaults to ``0``
+  - **offset_current** (*Optional*, int): The current offset obtained using the offset calibration feature when current and voltage are 0
+    Defaults to ``0``
+  - **offset_active_power** (*Optional*, int): The active power offset obtained using the power offset calibration feature when current is 0
+    and a voltage transformer is plugged in and calibrated.
+    Defaults to ``0``
+  - **offset_reactive_power** (*Optional*, int): The reactive power offset obtained using the power offset calibration feature when current is 0
+    and a voltage transformer is plugged in and calibrated.
+    Defaults to ``0``
   - **forward_active_energy** (*Optional*): Use the forward active energy value on this phase in watt-hours.
     All options from :ref:`Sensor <config-sensor>`.
   - **reverse_active_energy** (*Optional*): Use the reverse active energy value on this phase in watt-hours.
@@ -69,20 +84,30 @@ Configuration variables:
 - **phase_c** (*Optional*): The configuration options for the 3rd phase. Same options as 1st phase.
 - **frequency** (*Optional*): Use the frequency value calculated by the meter. All options from
   :ref:`Sensor <config-sensor>`.
+- **freq_status** (*Optional*): Outputs if the frequency is too high or low based on ``line_frequency``.
 - **peak_current_signed** (*Optional*, boolean): Control the peak current output as signed or absolute. Defaults to ``false``.
 - **chip_temperature** (*Optional*): Use the chip temperature value. All options from
   :ref:`Sensor <config-sensor>`.
-- **gain_pga** (*Optional*, string): The gain for the CT clamp, ``2X`` for 100A, ``4X`` for 100A - 200A. One of ``1X``, ``2X``, ``4X``.
-  Defaults to ``2X`` which is suitable for the popular SCT-013-000 clamp.
+- **reference_voltage** (*Optional*, float): Input for fine grained gain calibration of a known voltage of the voltage reference. 
+  It is used to calculate the value for ``gain_voltage``. All options from 
+  :ref:`Template Number <template-number>`
+- **gain_pga** (*Optional*, string): Increase this when the output of the CT clamp is too low and ``gain_ct`` is maxed out. One of ``1X``, 
+  ``2X``, ``4X``. Defaults to ``1X``, which is suitable for the popular SCT-013-000 clamp.
 - **current_phases** (*Optional*): The number of phases the meter has, ``2`` or, ``3``
   The 6 Channel Expandable Energy Meter should be set to ``3``, and the Split Single Phase meter should be set to ``2``. Defaults to ``3``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 - **spi_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`SPI Component <spi>` if you want
   to use multiple SPI buses.
-- **enable_offset_calibration** (*Optional*, boolean): If true it enables fine grained offset noise 0 level calibration for voltage and
-  current sensors. Buttons are required to operate the calibration feature. With multiple atm90e32 sensors each one is enabled
-  individually and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` when more than one is defined. Offset calibration should only be used
-  when DC supply noise causes non 0 current or voltage readings. Calibration can only be performed when all voltage and current inputs are at a 0 value.
+- **enable_gain_calibration** (*Optional*, boolean): If true this enables gain calibration for voltage, ``gain_voltage``, and current, ``gain_ct``,
+  based on the values entered in the corresponding voltage, ``reference_voltage``, and current, ``reference_current``, reference fields. With 
+  multiple atm90e32 sensors each one is enabled individually, and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` 
+  when more than one is defined. After running, the values are stored in chip memory.
+- **enable_offset_calibration** (*Optional*, boolean): If true this enables fine grained offset noise 0 level calibration for voltage, 
+  ``offset_voltage``, and current sensors, ``offset_current``, & power offset for active, ``offset_active_power``, and reactive power, 
+  ``offset_reactive_power``. Buttons are required to operate the calibration feature. With multiple atm90e32 sensors each one is 
+  enabled individually, and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` when more than one is defined. 
+  After running, the values are stored in chip memory. Offset calibration can only be performed when all voltage and current 
+  inputs are at a 0 value. USB power is recommended. For power offset calibration, only a voltage transformer should be connected.
 
 Button
 ------
