@@ -104,6 +104,7 @@ See Also
 --------
 
 - :ref:`sensor-filters`
+- :doc:`vl53l1x`
 - :apiref:`vl53l0x/vl53l0x_sensor.h`
 - `vl53l0x-arduino library <https://github.com/pololu/vl53l0x-arduino/>`__ by `Pololu <https://github.com/pololu>`__
 - :ghedit:`Edit`
