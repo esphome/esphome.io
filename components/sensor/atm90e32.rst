@@ -29,7 +29,7 @@ The `CircuitSetup 6-Channel Energy Meter <https://circuitsetup.us/product/expand
 
 .. figure:: images/atm90e32-cs-6chan-full.jpg
     :align: center
-    :width: 25.0%
+    :width: 50.0%
 
     CircuitSetup Expandable 6 Channel ESP32 Energy Meter Main Board.
 
@@ -38,7 +38,8 @@ Configuration variables:
 
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin CS is connected to. For the 6 channel meter main board, this will always be 5 and 4. For the add-on boards a jumper can be selected for each CS pin, but default to 0 and 16.
 - **line_frequency** (**Required**, string): The AC line frequency of the supply voltage. One of ``50Hz``, ``60Hz``.
-- **id** (*Optional*, :ref:`config-id`): Needed if there is more than one atm90e32 chip and you have buttons defined for calibration
+- **
+- **id** (*Optional*, :ref:`config-id`): Needed if there is more than one ATM90E32 chip and you have buttons defined for calibration
 - **phase_a** (*Optional*): The configuration options for the 1st phase.
 
   - **voltage** (*Optional*): Use the voltage value of this phase in V (RMS).
@@ -62,9 +63,9 @@ Configuration variables:
   - **reference_current** (*Optional*, float): Input for fine grained gain calibration for a known current 
     of the circuit a CT is measuring. It is used to calculate the value for ``gain_ct``. All options from 
     :ref:`Template Number <template-number>`
-  - **gain_voltage** (*Optional*, int): Voltage gain to scale the low voltage AC transformer to household mains feed.
+  - **gain_voltage** (*Optional*, int): Voltage gain value to scale the low voltage AC transformer to household mains feed.
     Defaults to ``7305``.
-  - **gain_ct** (*Optional*, int): CT clamp calibration for this phase.
+  - **gain_ct** (*Optional*, int): CT clamp calibration value for this phase.
     Defaults to ``27961``.
   - **offset_voltage** (*Optional*, int): The voltage offset obtained using the offset calibration feature when current and voltage are 0
     Defaults to ``0``
@@ -81,17 +82,14 @@ Configuration variables:
   - **reverse_active_energy** (*Optional*): Use the reverse active energy value on this phase in watt-hours.
     All options from :ref:`Sensor <config-sensor>`.
 
-- **phase_b** (*Optional*): The configuration options for the 2nd phase. Same options as 1st phase.
-- **phase_c** (*Optional*): The configuration options for the 3rd phase. Same options as 1st phase.
+- **phase_b** (*Optional*): The configuration options for the 2nd phase. Same options as ``phase_a``.
+- **phase_c** (*Optional*): The configuration options for the 3rd phase. Same options as ``phase_a``.
 - **frequency** (*Optional*): Use the frequency value calculated by the meter. All options from
   :ref:`Sensor <config-sensor>`.
 - **freq_status** (*Optional*): Outputs if the frequency is too high or low based on ``line_frequency``.
 - **peak_current_signed** (*Optional*, boolean): Control the peak current output as signed or absolute. Defaults to ``false``.
 - **chip_temperature** (*Optional*): Use the chip temperature value. All options from
   :ref:`Sensor <config-sensor>`.
-- **reference_voltage** (*Optional*, float): Input for fine grained gain calibration of a known voltage of the voltage reference. 
-  It is used to calculate the value for ``gain_voltage``. All options from 
-  :ref:`Template Number <template-number>`
 - **gain_pga** (*Optional*, string): Increase this when the output of the CT clamp is too low and ``gain_ct`` is maxed out. One of ``1X``, 
   ``2X``, ``4X``. Defaults to ``1X``, which is suitable for the popular SCT-013-000 clamp.
 - **current_phases** (*Optional*): The number of phases the meter has, ``2`` or, ``3``
@@ -133,7 +131,7 @@ Calibration Buttons
 
 Configuration variables:
 
-- **id** (*Required*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
+- **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple ATM90E32's configured.
 - **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``enable_gain_calibration`` must be ``True``. 
   These values can be permanently stored in ``gain_voltage`` and ``gain_ct``.
   All options from :ref:`Button <config-button>`.
@@ -153,7 +151,7 @@ Configuration variables:
   values defined under ``offset_active_power`` and ``offset_reactive_power``.
   All options from :ref:`Button <config-button>`.
 
-Calibration Reference Current & Voltage
+Calibration Voltage & Current Reference
 ---------------------------------------
 
 .. code-block:: yaml
@@ -174,10 +172,12 @@ Calibration Reference Current & Voltage
 
 Configuration variables:
 
-- **id** (*Required*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
-- **reference_voltage** (*Optional*): Fields for providing a known reference voltage for calibration of the ``gain_voltage`` parameter.
-  To be used in conjunction with the ``run_gain_calibration`` button. ``enable_gain_calibration`` must be ``True``
+- **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple atm90e32 configured.
+- **reference_voltage** (*Optional*):  Input for fine grained gain calibration of a known voltage of the voltage reference. 
+  It is used to calculate the value for ``gain_voltage``. To be used in conjunction with the ``run_gain_calibration`` button. 
+  ``enable_gain_calibration`` must be ``True``
   Fields default to ``min_value: 100``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
+  All options from :ref:`Template Number <template-number>`
 
   - **phase_a** (*Optional*): The phase this field is assigned to for calibration. All options from :ref:`Number <config-number>`.
   - **phase_b** (*Optional*): The phase this field is assigned to for calibration. If not specified, will take use the value from 
