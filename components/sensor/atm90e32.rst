@@ -110,8 +110,8 @@ Configuration variables:
   After running, the values are stored in chip memory. Offset calibration can only be performed when all voltage and current 
   inputs are at a 0 value. USB power is recommended. For power offset calibration, only a voltage transformer should be connected.
 
-Button
-------
+Calibration Buttons
+-------------------
 
 .. code-block:: yaml
 
@@ -133,7 +133,7 @@ Button
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
+- **id** (*Required*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
 - **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``reference_current`` and ``reference_voltage``
   should be defined. ``enable_gain_calibration`` must be ``True``. These values can be permanently stored in ``gain_voltage`` 
   and ``gain_ct``.
@@ -153,6 +153,33 @@ Configuration variables:
 - **clear_power_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
   values defined under ``offset_active_power`` and ``offset_reactive_power``.
   All options from :ref:`Button <config-button>`.
+
+Calibration Reference Current & Voltage
+---------------------------------------
+
+.. code-block:: yaml
+
+number:
+  - platform: atm90e32
+    id: chip1
+    reference_voltage:
+      phase_a:
+        name: "Ref Voltage 1"
+    reference_current:
+      phase_a:
+        name: "Phase A Ref Current"
+      phase_b:
+        name: "Phase B Ref Current"
+      phase_c:
+        name: "Phase C Ref Current"
+
+Configuration variables:
+
+- **id** (*Required*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
+- **reference_voltage** (*Optional*):
+    - **phase_a** (*Optional*): The phase this field is assigned to. All options from :ref:`Number <config-number>`.
+- **reference_current** (*Optional*): 
+    - **phase_a** (*Optional*): The phase this field is assigned to
 
 Calibration
 -----------
