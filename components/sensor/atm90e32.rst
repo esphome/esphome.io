@@ -134,9 +134,8 @@ Calibration Buttons
 Configuration variables:
 
 - **id** (*Required*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
-- **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``reference_current`` and ``reference_voltage``
-  should be defined. ``enable_gain_calibration`` must be ``True``. These values can be permanently stored in ``gain_voltage`` 
-  and ``gain_ct``.
+- **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``enable_gain_calibration`` must be ``True``. 
+  These values can be permanently stored in ``gain_voltage`` and ``gain_ct``.
   All options from :ref:`Button <config-button>`.
 - **clear_gain_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
   values defined under ``gain_voltage`` and ``gain_ct``.
@@ -176,10 +175,18 @@ number:
 Configuration variables:
 
 - **id** (*Required*, :ref:`config-id`): The ID of the atm90e32 defined above. Required if there are multiple atm90e32 configured.
-- **reference_voltage** (*Optional*):
-    - **phase_a** (*Optional*): The phase this field is assigned to. All options from :ref:`Number <config-number>`.
-- **reference_current** (*Optional*): 
-    - **phase_a** (*Optional*): The phase this field is assigned to
+- **reference_voltage** (*Optional*): Fields for providing a known reference voltage for calibration of the ``gain_voltage`` parameter.
+  Fields default to ``min_value: 100``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
+    - **phase_a** (*Optional*): The phase this field is assigned to for calibration. All options from :ref:`Number <config-number>`.
+    - **phase_b** (*Optional*): The phase this field is assigned to for calibration. If not specified, will take use the value from 
+      ``phase_a``. All options from :ref:`Number <config-number>`.
+    - **phase_c** (*Optional*): The phase this field is assigned to for calibration. If not specified, will take use the value from 
+      ``phase_a``. All options from :ref:`Number <config-number>`.
+- **reference_current** (*Optional*): Fields for providing a known reference current for calibration of the ``gain_ct`` parameter.
+  Fields default to ``min_value: 1``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
+    - **phase_a** (*Optional*): The phase this field is assigned to for calibration. All options from :ref:`Number <config-number>`.
+    - **phase_b** (*Optional*): The phase this field is assigned to for calibration. All options from :ref:`Number <config-number>`.
+    - **phase_c** (*Optional*): The phase this field is assigned to for calibration. All options from :ref:`Number <config-number>`.
 
 Calibration
 -----------
