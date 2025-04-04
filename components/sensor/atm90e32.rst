@@ -152,8 +152,8 @@ Configuration variables:
   values defined under ``offset_active_power`` and ``offset_reactive_power``.
   All options from :ref:`Button <config-button>`.
 
-Calibration Voltage & Current Reference
----------------------------------------
+Calibration Voltage & Current Reference Fields
+----------------------------------------------
 
 .. code-block:: yaml
 
@@ -199,21 +199,28 @@ Configuration variables:
 Calibration
 -----------
 
-This sensor needs calibration to show correct values. The default gain configuration is set to use the
-`SCT-013-000 <https://www.amazon.com/gp/product/B075541WVT>`__
+To obtain more accurate readings, it is recommended to calibrate your voltage and current transformers to the meter. 
+The ESPHome integration supports automatic gain and offset calibration for ATM90E32 meters. **enable_gain_calibration**, 
+**enable_offset_calibration** must be set to True, and **Calibration Buttons**, and **Calibration Voltage & Current Reference Fields** 
+must be configured to use the calibration functions.
+
+The default gain configuration is set to use the `SCT-013-000 <https://www.amazon.com/gp/product/B075541WVT>`__
 current transformers, and the `Jameco Reliapro 9v AC transformer <https://www.amazon.com/gp/product/B00B886CWS>`__.
 A load which uses a known amount of current can be used to calibrate. For for a more accurate calibration use a
-`Kill-A-Watt <https://www.amazon.com/gp/product/B00009MDBU>`__ meter or similar, mains voltages can fluctuate depending on grid load.
+`Kill-A-Watt <https://www.amazon.com/gp/product/B00009MDBU>`__ meter or a multimeter capable of measuring mains voltage. 
+Mains voltages can fluctuate depending on grid load.
 
 Voltage
 ^^^^^^^
 
-Use the expected mains voltage for your region 110V/230V, use a good multimeter, or plug in the Kill-A-Watt and select voltage. See what
-value the ATM90E32 sensor reports for voltage. To adjust the sensor use the calculation:
+Use the expected mains voltage for your region, 110V/230V, use a reliable multimeter, or plug in a Kill-A-Watt and select voltage
+to obtain your true reference voltage. Input this value into the reference voltage field in Home Assistant's device page for the meter.
 
+When clicking on **Run Gain Calibration**, the software does the following calculation:
 ``New gain_voltage = (your voltage reading / ESPHome voltage reading) * existing gain_voltage value``
 
-Update **gain_voltage** for all phases in your ESPHome yaml, recompile and upload. Repeat as necessary.
+The output can be viewed in the ESPHome logs of the meter. The new gain_voltage values are stored in ESP memory. They will be available 
+upon restart, and after OTA updates. You should copy the values to **gain_voltage** for all phases in your ESPHome yaml, recompile and upload.
 
 Here are common voltage calibrations for the **Split Single Energy Meter**:
    For meter <= v1.3:
@@ -236,13 +243,16 @@ Here are common voltage calibrations for the **Expandable 6 Channel Energy Meter
 Current
 ^^^^^^^
 
-Switch on the current load and see what value the ATM90E32 sensor reports for
-current on the selected phase. Using the known or measured current adjust the
-sensor using calculation:
+Hook up a current transformer around the hot wire of a known or measured load, like a space heater or hair dryer. 
+Enter this value into the corresponding reference current field in Home Assistant's device page for the meter. 
+Any reference fields that are left blank will not be calculated.
 
+When clicking on **Run Gain Calibration**, the software does the following calculation:
 ``New gain_ct = (your current reading / ESPHome current reading) * existing gain_ct value``
 
-Update **gain_ct** for the phase in your ESPHome yaml, recompile and upload. Repeat as necessary.
+The output can be viewed in the ESPHome logs of the meter. The new gain_ct values are stored in ESP memory. They will be available 
+upon restart, and after OTA updates. You should copy the values to **gain_ct** for the corresponding phases in your ESPHome yaml, 
+recompile and upload.
 
 It is possible that the two identical CT current sensors will have different
 **gain_ct** numbers due to variances in manufacturing, although it will be
