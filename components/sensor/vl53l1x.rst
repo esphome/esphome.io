@@ -28,8 +28,9 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
 - ``SCL`` connects I2C SCL (clock)
 - ``SDA`` connects I2C SDA (data)
 - ``GPIO1`` is not used by ESPHome
-- ``XSHUT`` connects to free GPIO pin. Enable/disable device. This is optional if there is only one
-  VL53L1X sensor on the I²C bus and the default ``0x29`` address is used. Otherwise this is required.
+- ``XSHUT`` connects to a free GPIO pin. Enable/disable device. If there is only one
+  VL53L1X sensor on the I²C bus and the default ``0x29`` address is used, you can
+  connect this to ``VCC`` via a 10kΩ resistor.
 
 .. code-block:: yaml
 
