@@ -9,12 +9,19 @@
       for Home Automation. Just write a simple YAML configuration file and get your own customized firmware.
     :image: logo.svg
 
-.. image:: /images/logo-text.svg
-    :class: logo
+.. raw:: html
+    :file: images/logo-text.svg
 
-ESPHome is a system to control your microcontrollers by simple yet powerful configuration files and control them remotely through Home Automation systems.
+ESPHome is a system which allows you to turn common microcontrollers into smart home devices.
 
-.. image:: /images/hero.png
+.. image:: images/hero.png
+
+It uses `YAML <https://en.wikipedia.org/wiki/YAML>`__ configuration files and, based on the content of these file(s),
+it creates custom firmware which you can then install directly onto your device.
+
+Hardware defined in the configuration--such as sensors, switches, lights, and so on--will automatically appear in
+`Home Assistant's <http://home-assistant.io>`__ user interface or can be made available via a simple web user interface
+or MQTT.
 
 .. raw:: html
 
@@ -42,6 +49,11 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
                         by migrating from Tasmota
                     </a>
                 </li>
+                <li>
+                    <a class="reference" href="/guides/faq.html">
+                        FAQ and Tips
+                    </a>
+                </li>
             </ul>
             <div class="example highlight">
                 <pre>
@@ -56,8 +68,8 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
             <h3 class="guide-card-title">Next steps</h3>
             <ul>
                 <li>
-                    <a class="reference" href="/guides/faq.html">
-                        FAQ and Tips
+                    <a class="reference" href="/components/index.html">
+                        Documentation
                     </a>
                 </li>
                 <li>
@@ -66,13 +78,18 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
                     </a>
                 </li>
                 <li>
-                    <a class="reference" href="/guides/diy.html">
-                        DIY Examples
+                    <a class="reference" href="/guides/configuration-types.html">
+                        Configuration types
                     </a>
                 </li>
                 <li>
-                    <a class="reference" href="/guides/configuration-types.html">
-                        Configuration types
+                    <a class="reference" href="https://devices.esphome.io/">
+                        Device configuration examples
+                    </a>
+                </li>
+                <li>
+                    <a class="reference" href="/guides/diy.html">
+                        DIY Examples
                     </a>
                 </li>
                 <li>
@@ -90,138 +107,64 @@ ESPHome is a system to control your microcontrollers by simple yet powerful conf
         <div class="guide-card">
             <h3 class="guide-card-title">Keeping up</h3>
             <ul>
-                <li>
-                    <a class="reference" href="https://discord.gg/KhAMKrd" target="_blank">
-                        Discord
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="https://community.home-assistant.io/c/esphome/" target="_blank">
-                        Forums
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/changelog/index.html">
-                        Changelog
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/guides/supporters.html">
-                        Supporters
-                    </a>
-                </li>
-                <li>
-                    <a class="reference" href="/guides/contributing.html">
-                        Contributing
-                    </a>
-                </li>
+                <li>What's new?</li>
+                <ul>
+                    <li>
+                        <a class="reference" href="/changelog/index.html">
+                            Changelog
+                        </a>
+                    </li>
+                </ul>
+                <li>Community/Social</li>
+                <ul>
+                    <li>
+                        <a class="reference" href="https://discord.gg/KhAMKrd" target="_blank">
+                            Discord
+                        </a>
+                    </li>
+                    <li>
+                        <a class="reference" href="https://community.home-assistant.io/c/esphome/" target="_blank">
+                            Forums
+                        </a>
+                    </li>
+                </ul>
+                <li>Development</li>
+                <ul>
+                    <li>
+                        <a class="reference" href="/guides/contributing.html">
+                            Contributing
+                        </a>
+                    </li>
+                    <li>
+                        <a class="reference" href="/guides/supporters.html">
+                            Supporters
+                        </a>
+                    </li>
+                </ul>
             </ul>
         </div>
     </div>
 
-.. _devices:
+.. _device_database:
 
-Supported Microcontrollers
---------------------------
+Device Database
+---------------
 
-.. imgtable::
+You will find configurations for specific devices in our `ESPHome Devices <https://devices.esphome.io/>`__ database.
 
-    ESP32, components/esp32, esp32.svg
-    ESP8266, components/esp8266, esp8266.svg
-    RP2040, components/rp2040, rp2040.svg
-    BK72xx, components/libretiny, bk72xx.svg
-    RTL87xx, components/libretiny, rtl87xx.svg
-    Host, components/host, host.svg, dark-invert
+.. _documentation:
 
-Microcontroller Peripherals
----------------------------
-
-Peripherals which directly support the operation of the microcontroller's processor(s).
-
-.. imgtable::
-
-    PSRAM, components/psram, psram.svg
-    Deep Sleep, components/deep_sleep, hotel.svg, dark-invert
-
-ESPHome Automations
--------------------
-
-*"When this happens, I want it to do that..."*
-
-Automations are how we customize ESPHome devices to respond/behave exactly how you want them to.
-
-.. imgtable::
-
-    Overview, automations/index, description.svg, dark-invert
-    "Actions, Triggers, Conditions", automations/actions, description.svg, dark-invert
-    Templates, automations/templates, description.svg, dark-invert
-
-ESPHome Components
-------------------
-
-ESPHome-specific components or components supporting ESPHome device provisioning post-installation.
-
-.. imgtable::
-
-    Core, components/esphome, cloud-circle.svg, dark-invert
-    Captive Portal, components/captive_portal, wifi-strength-alert-outline.svg, dark-invert
-    Copy, components/copy, content-copy.svg, dark-invert
-    Demo, components/demo, description.svg, dark-invert
-    External Components, components/external_components, external_components.svg, dark-invert
-    Globals, components/globals, description.svg, dark-invert
-    Improv via BLE, components/esp32_improv, improv.svg, dark-invert
-    Improv via Serial, components/improv_serial, improv.svg, dark-invert
-    Interval, components/interval, description.svg, dark-invert
-    JSON, components/json, json.svg, dark-invert
-    Script, components/script, description.svg, dark-invert
-
-ESPHome Configuration
----------------------
-
-Streamline your ESPHome configuration and/or use components provided by other contributors.
-
-.. imgtable::
-
-    External Components, components/external_components, external_components.svg, dark-invert
-    Packages, components/packages, description.svg, dark-invert
-    Substitutions, components/substitutions, description.svg, dark-invert
-
-Network Hardware
-----------------
-
-.. imgtable::
-
-    WiFi, components/wifi, network-wifi.svg, dark-invert
-    ESP32 Ethernet, components/ethernet, ethernet.svg, dark-invert
-
-Network Protocols
------------------
-
-.. imgtable::
-
-    Network Core, components/network, server-network.svg, dark-invert
-    Native API, components/api, server-network.svg, dark-invert
-    MQTT, components/mqtt, mqtt.png
-    HTTP Request, components/http_request, connection.svg, dark-invert
-    mDNS, components/mdns, radio-tower.svg, dark-invert
-    WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
-    StatsD, components/statsd, connection.svg, dark-invert
-    UDP, components/udp, udp.svg
-
-Bluetooth/BLE
+Documentation
 -------------
 
-.. imgtable::
+You will find all :doc:`ESPHome documentation here<components/index>`.
 
-    ESP32 BLE Beacon, components/esp32_ble_beacon, bluetooth.svg, dark-invert
-    ESP32 BLE Client, components/ble_client, bluetooth.svg, dark-invert
-    ESP32 BLE Tracker, components/esp32_ble_tracker, bluetooth.svg, dark-invert
-    Bluetooth Proxy, components/bluetooth_proxy, bluetooth.svg, dark-invert
-    Improv via BLE, components/esp32_improv, improv.svg, dark-invert
+.. _contributing:
 
-Management and Monitoring
--------------------------
+Contributing
+------------
 
+<<<<<<< HEAD
 .. imgtable::
 
     Debug, components/debug, bug-report.svg, dark-invert
@@ -1200,6 +1143,10 @@ Do you have other awesome automations or cool setups? Please feel free to add th
 documentation for others to copy. See :doc:`Contributing </guides/contributing>`.
 
 If you'd like to share configurations for specific devices, please contribute to our `ESPHome Devices <https://devices.esphome.io/>`__ database.
+=======
+ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see
+:doc:`Contributing <guides/contributing>`.
+>>>>>>> upstream/next
 
 .. toctree::
     :hidden:
@@ -1210,6 +1157,5 @@ If you'd like to share configurations for specific devices, please contribute to
     cookbook/index
     guides/index
     changelog/index
-    custom/index
     images/index
     projects/index

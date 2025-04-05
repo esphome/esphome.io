@@ -45,6 +45,8 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options. Set to ``""`` to remove the default entity category.
 
+.. _media_player-actions:
+
 Media Player Actions
 --------------------
 
@@ -101,6 +103,10 @@ This action pauses the current playback.
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action stops the current playback.
+
+Configuration variables:
+
+**announcement** (**Optional**, boolean): Whether to target announcements or regular media files, if supported by the media player. Defaults to ``false``.
 
 .. _media_player-toggle:
 
