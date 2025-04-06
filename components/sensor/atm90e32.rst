@@ -332,6 +332,61 @@ to just create a template sensor that computes power from Irms*Vrms and ignore a
 hand, one might be surprised how reactive some loads are and the CirciuitSetup designs are able to
 handle these situations well.
 
+Harmonic Power
+--------------
+
+Harmonic power in AC systems refers to deviations from the ideal sinusoidal waveform, caused by multiples of the
+fundamental frequency. It results from non-linear loads and can lead to issues like voltage distortion, equipment
+overheating, and miss operation of protective devices. The ATM90E32 can output advanced harmonic power measurements
+providing important analysis data for monitoring power anomalies on the bus.
+
+**Harmonic Power Example:**
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: atm90e32
+        phase_a:
+          harmonic_power:
+            name: ${disp_name} CT1 Harmonic Power
+
+Phase Angle
+-----------
+
+Phase angle in AC systems represents the angular displacement of a sinusoidal waveform from a reference point.
+It's a measure of timing difference between voltage and current. Phase angle is crucial for power factor assessment
+and efficient power transfer. This advanced measurement function is available with an ATM90E32.
+
+**Phase Angle Example:**
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: atm90e32
+        phase_a:
+          phase_angle:
+            name: ${disp_name} L1 Phase Angle
+
+Peak Current
+------------
+
+Peak current in AC systems refers to the maximum value of the alternating current waveform. It signifies the highest
+magnitude reached during each cycle of the sinusoidal waveform. Peak current is relevant for sizing components and
+assessing the capacity of electrical equipment in the system. This advanced measurement is available from the ATM90E32.
+Peak current can be displayed in signed or unsigned format using a boolean parameter which spans all phases.
+The default is false which is unsigned.
+
+**Peak Current Example:**
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: atm90e32
+        phase_a:
+          peak_current:
+            name: ${disp_name} CT1 Peak Current
+      peak_current_signed: True
+
 Additional Examples
 -------------------
 
@@ -381,7 +436,7 @@ Additional Examples
 
 .. code-block:: yaml
 
-    # Example CircuitSetup 6 channel entry
+    #  Example configuration CircuitSetup 6 Channel Energy Meter Main Board with power quality parameters
     substitutions:
       disp_name: energy-meter
       friendly_name: "CircuitSetup Energy Meter"
@@ -445,6 +500,8 @@ Additional Examples
           gain_ct: ${current_cal}    
         frequency:
           name: Frequency 1
+        chip_temperature:
+          name: ${main_meter_name1} Chip Temp
         line_frequency: 60Hz
         gain_pga: 1X
         update_interval: ${update_time}
@@ -457,16 +514,26 @@ Additional Examples
         id: ${main_meter_id2}
         phase_a:
     #this voltage is only needed if monitoring 2 voltages
-          voltage:
-            name: Voltage 2
-            id: ic2Volts
-            accuracy_decimals: 1
+    #     voltage:
+    #       name: Voltage 2
+    #       id: ic2Volts
+    #       accuracy_decimals: 1
           current:
             name: ${ct4_name} Amps
             id: ct4Amps
           power:
             name: ${ct4_name} Watts
             id: ct4Watts
+          reactive_power:
+            name: ${ct4_name} Reactive Power
+          harmonic_power:
+            name: ${ct4_name} Harmonic Power
+          power_factor:
+            name: ${ct4_name} PF
+          phase_angle:
+            name: ${ct4_name} Phase Angle
+          peak_current:
+            name: ${ct4_name} Peak Current
           gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
         phase_b:
@@ -488,8 +555,10 @@ Additional Examples
           gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
     #this is only needed if monitoring 2 voltages
-        frequency:
-          name: Frequency 2
+    #   frequency:
+    #     name: Frequency 2
+        chip_temperature:
+          name: ${main_meter_name2} Chip Temp
         line_frequency: 60Hz
         gain_pga: 1X
         update_interval: ${update_time}
@@ -547,8 +616,8 @@ Additional Examples
           phase_c:
             name: "${ct6_name} Status"
     #this is only needed if monitoring 2 voltages
-        freq_status:
-          name: "Frequency Status 2"
+    #   freq_status:
+    #     name: "Frequency Status 2"
     
     button:
       - platform: atm90e32
@@ -610,19 +679,17 @@ Additional Examples
 
 .. code-block:: yaml
 
-    # Example CircuitSetup 6-channel without jumpers jp9-jp11 joined or < meter v1.4
-    # power is calculated in a template
-
-    substitutions:
-      disp_name: 6C
+    #  Example configuration CircuitSetup 6 Channel Energy Meter Main Board + 1 add-on board
+    
+    substitutions: 
+      disp_name: energy-meter
+      friendly_name: CircuitSetup Energy Meter
       update_time: 10s
-      current_cal: '27961'
-
-    spi:
-      clk_pin: 18
-      miso_pin: 19
-      mosi_pin: 23
+      current_cal: '27518'
+      voltage_cal: '7305'
+    
     sensor:
+    #IC1 Main
       - platform: atm90e32
         cs_pin: 5
         phase_a:
@@ -633,120 +700,190 @@ Additional Examples
           current:
             name: ${disp_name} CT1 Amps
             id: ct1Amps
-          gain_voltage: 7305
+          power:
+            name: ${disp_name} CT1 Watts
+            id: ct1Watts
+          gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
         phase_b:
           current:
             name: ${disp_name} CT2 Amps
             id: ct2Amps
+          power:
+            name: ${disp_name} CT2 Watts
+            id: ct2Watts
+          gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
         phase_c:
           current:
             name: ${disp_name} CT3 Amps
             id: ct3Amps
+          power:
+            name: ${disp_name} CT3 Watts
+            id: ct3Watts
+          gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
         frequency:
-          name: ${disp_name} Freq A
+          name: ${disp_name} Frequency
         line_frequency: 60Hz
-        current_phases: 3
         gain_pga: 1X
         update_interval: ${update_time}
+    #IC2 Main
       - platform: atm90e32
         cs_pin: 4
         phase_a:
-          voltage:
-            name: ${disp_name} Volts B
-            id: ic2Volts
-            accuracy_decimals: 1
           current:
             name: ${disp_name} CT4 Amps
             id: ct4Amps
-          gain_voltage: 7305
+          power:
+            name: ${disp_name} CT4 Watts
+            id: ct4Watts
+          gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
         phase_b:
           current:
             name: ${disp_name} CT5 Amps
             id: ct5Amps
+          power:
+            name: ${disp_name} CT5 Watts
+            id: ct5Watts
+          gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
         phase_c:
           current:
             name: ${disp_name} CT6 Amps
             id: ct6Amps
+          power:
+            name: ${disp_name} CT6 Watts
+            id: ct6Watts
+          gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
-        frequency:
-          name: ${disp_name} Freq B
         line_frequency: 60Hz
-        current_phases: 3
         gain_pga: 1X
         update_interval: ${update_time}
-
-    #Watts per channel
-      - platform: template
-        name: ${disp_name} CT1 Watts
-        id: ct1Watts
-        lambda: return id(ct1Amps).state * id(ic1Volts).state;
-        accuracy_decimals: 0
-        unit_of_measurement: W
-        icon: "mdi:flash-circle"
+    #IC1 AddOn
+      - platform: atm90e32
+        cs_pin: 0
+        phase_a:
+          current:
+            name: ${disp_name} CT7 Amps 
+            id: ct7Amps
+          power:
+            name: ${disp_name} CT7 Watts
+            id: ct7Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_b:
+          current:
+            name: ${disp_name} CT8 Amps
+            id: ct8Amps
+          power:
+            name: ${disp_name} CT8 Watts
+            id: ct8Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_c:
+          current:
+            name: ${disp_name} CT9 Amps
+            id: ct9Amps
+          power:
+            name: ${disp_name} CT9 Watts
+            id: ct9Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        line_frequency: 60Hz
+        gain_pga: 1X
         update_interval: ${update_time}
-      - platform: template
-        name: ${disp_name} CT2 Watts
-        id: ct2Watts
-        lambda: return id(ct2Amps).state * id(ic1Volts).state;
-        accuracy_decimals: 0
-        unit_of_measurement: W
-        icon: "mdi:flash-circle"
+    #IC2 AddOn
+      - platform: atm90e32
+        cs_pin: 16
+        phase_a:
+          current:
+            name: ${disp_name} CT10 Amps
+            id: ct10Amps
+          power:
+            name: ${disp_name} CT10 Watts
+            id: ct10Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_b:
+          current:
+            name: ${disp_name} CT11 Amps
+            id: ct11Amps
+          power:
+            name: ${disp_name} CT11 Watts
+            id: ct11Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_c:
+          current:
+            name: ${disp_name} CT12 Amps
+            id: ct12Amps
+          power:
+            name: ${disp_name} CT12 Watts
+            id: ct12Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        line_frequency: 60Hz
+        gain_pga: 1X
         update_interval: ${update_time}
+        
+    #Total Amps Main
       - platform: template
-        name: ${disp_name} CT3 Watts
-        id: ct3Watts
-        lambda: return id(ct3Amps).state * id(ic1Volts).state;
-        accuracy_decimals: 0
-        unit_of_measurement: W
-        icon: "mdi:flash-circle"
+        name: ${disp_name} Total Amps Main
+        id: totalAmpsMain
+        lambda: return id(ct1Amps).state + id(ct2Amps).state + id(ct3Amps).state + id(ct4Amps).state + id(ct5Amps).state + id(ct6Amps).state ;
+        accuracy_decimals: 2
+        unit_of_measurement: A
+        device_class: current
         update_interval: ${update_time}
+    #Total Amps AddOn
       - platform: template
-        name: ${disp_name} CT4 Watts
-        id: ct4Watts
-        lambda: return id(ct4Amps).state * id(ic2Volts).state;
-        accuracy_decimals: 0
-        unit_of_measurement: W
-        icon: "mdi:flash-circle"
-        update_interval: ${update_time}
-      - platform: template
-        name: ${disp_name} CT5 Watts
-        id: ct5Watts
-        lambda: return id(ct5Amps).state * id(ic2Volts).state;
-        accuracy_decimals: 0
-        unit_of_measurement: W
-        icon: "mdi:flash-circle"
-        update_interval: ${update_time}
-      - platform: template
-        name: ${disp_name} CT6 Watts
-        id: ct6Watts
-        lambda: return id(ct6Amps).state * id(ic2Volts).state;
-        accuracy_decimals: 0
-        unit_of_measurement: W
-        icon: "mdi:flash-circle"
-        update_interval: ${update_time}
+        name: ${disp_name} Total Amps Add-on
+        id: totalAmpsAddOn
+        lambda: return id(ct7Amps).state + id(ct8Amps).state + id(ct9Amps).state + id(ct10Amps).state + id(ct11Amps).state + id(ct12Amps).state ;
+        accuracy_decimals: 2
+        unit_of_measurement: A
+        device_class: current
+        update_interval: ${update_time}      
     #Total Amps
       - platform: template
         name: ${disp_name} Total Amps
         id: totalAmps
-        lambda: return id(ct1Amps).state + id(ct2Amps).state + id(ct3Amps).state + id(ct4Amps).state + id(ct5Amps).state + id(ct6Amps).state ;
+        lambda: return id(totalAmpsMain).state + id(totalAmpsAddOn).state ;
         accuracy_decimals: 2
         unit_of_measurement: A
-        icon: "mdi:flash"
+        device_class: current
+        update_interval: ${update_time}
+        
+    #Total Watts Main
+      - platform: template
+        name: ${disp_name} Total Watts Main
+        id: totalWattsMain
+        lambda: return id(ct1Watts).state + id(ct2Watts).state + id(ct3Watts).state + id(ct4Watts).state + id(ct5Watts).state + id(ct6Watts).state ;
+        accuracy_decimals: 1
+        unit_of_measurement: W
+        device_class: power
+        update_interval: ${update_time}
+    #Total Watts AddOn
+      - platform: template
+        name: ${disp_name} Total Watts Add-on
+        id: totalWattsAddOn
+        lambda: return id(ct7Watts).state + id(ct8Watts).state + id(ct9Watts).state + id(ct10Watts).state + id(ct11Watts).state + id(ct12Watts).state ;
+        accuracy_decimals: 1
+        unit_of_measurement: W
+        device_class: power
         update_interval: ${update_time}
     #Total Watts
       - platform: template
         name: ${disp_name} Total Watts
         id: totalWatts
-        lambda: return id(totalAmps).state * id(ic1Volts).state;
+        lambda: return id(totalWattsMain).state + id(totalWattsAddOn).state ;
         accuracy_decimals: 1
         unit_of_measurement: W
-        icon: "mdi:flash-circle"
+        device_class: power
         update_interval: ${update_time}
+        
     #kWh
       - platform: total_daily_energy
         name: ${disp_name} Total kWh
@@ -754,61 +891,8 @@ Additional Examples
         filters:
           - multiply: 0.001
         unit_of_measurement: kWh
-
-Harmonic Power
---------------
-
-Harmonic power in AC systems refers to deviations from the ideal sinusoidal waveform, caused by multiples of the
-fundamental frequency. It results from non-linear loads and can lead to issues like voltage distortion, equipment
-overheating, and miss operation of protective devices. The ATM90E32 can output advanced harmonic power measurements
-providing important analysis data for monitoring power anomalies on the bus.
-
-**Harmonic Power Example:**
-
-.. code-block:: yaml
-
-    sensor:
-      - platform: atm90e32
-        phase_a:
-          harmonic_power:
-            name: ${disp_name} CT1 Harmonic Power
-
-Phase Angle
------------
-
-Phase angle in AC systems represents the angular displacement of a sinusoidal waveform from a reference point.
-It's a measure of timing difference between voltage and current. Phase angle is crucial for power factor assessment
-and efficient power transfer. This advanced measurement function is available with an ATM90E32.
-
-**Phase Angle Example:**
-
-.. code-block:: yaml
-
-    sensor:
-      - platform: atm90e32
-        phase_a:
-          phase_angle:
-            name: ${disp_name} L1 Phase Angle
-
-Peak Current
-------------
-
-Peak current in AC systems refers to the maximum value of the alternating current waveform. It signifies the highest
-magnitude reached during each cycle of the sinusoidal waveform. Peak current is relevant for sizing components and
-assessing the capacity of electrical equipment in the system. This advanced measurement is available from the ATM90E32.
-Peak current can be displayed in signed or unsigned format using a boolean parameter which spans all phases.
-The default is false which is unsigned.
-
-**Peak Current Example:**
-
-.. code-block:: yaml
-
-    sensor:
-      - platform: atm90e32
-        phase_a:
-          peak_current:
-            name: ${disp_name} CT1 Peak Current
-      peak_current_signed: True
+        device_class: energy
+        state_class: total_increasing
 
 See Also
 --------
