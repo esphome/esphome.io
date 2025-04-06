@@ -23,7 +23,7 @@ based on the excellent `ht16k33-alpha library <https://github.com/ssieb/esphome_
 Currently Supported Devices:
 -----------------------------------------
 
-See :ref:`ht16k33-char_device_details` for more info on these devices and :ref:`ht16k33-char_new_devices:` for instructions on adding support for new devices.
+See :ref:`ht16k33-char_device_details` for more info on these devices and :ref:`ht16k33-char_new_devices` for instructions on adding support for new devices.
 
 +------------------------------------------------------------------------------------+--------------------------------------+
 | Device                                                                             | Device ID(s)                         |
