@@ -114,6 +114,7 @@ Contributors
 - `Kieren  (@ando023) <https://github.com/ando023>`__
 - `András Bíró (@andrasbiro) <https://github.com/andrasbiro>`__
 - `Andre (@andre68723) <https://github.com/andre68723>`__
+- `Andreas Brett (@andreasbrett) <https://github.com/andreasbrett>`__
 - `Andreas Hergert (@andreashergert1984) <https://github.com/andreashergert1984>`__
 - `Andres Vahter (@andresv) <https://github.com/andresv>`__
 - `Andrew J.Swan (@andrewjswan) <https://github.com/andrewjswan>`__
@@ -991,6 +992,7 @@ Contributors
 - `joseph douce (@josephdouce) <https://github.com/josephdouce>`__
 - `JosephTang (@JosephTang) <https://github.com/JosephTang>`__
 - `Joshua Baran  (@joshbaran) <https://github.com/joshbaran>`__
+- `Joshua M. Boniface (@joshuaboniface) <https://github.com/joshuaboniface>`__
 - `Joshua Spence (@joshuaspence) <https://github.com/joshuaspence>`__
 - `joskfg (@joskfg) <https://github.com/joskfg>`__
 - `Joscha Wagner (@jowgn) <https://github.com/jowgn>`__
@@ -1265,6 +1267,7 @@ Contributors
 - `megabitdragon (@megabitdragon) <https://github.com/megabitdragon>`__
 - `MeIchthys (@meichthys) <https://github.com/meichthys>`__
 - `meijerwynand (@meijerwynand) <https://github.com/meijerwynand>`__
+- `Meilily (@meilily) <https://github.com/meilily>`__
 - `Marco  (@Melkor82) <https://github.com/Melkor82>`__
 - `Melopero (@melopero) <https://github.com/melopero>`__
 - `melyux (@melyux) <https://github.com/melyux>`__
@@ -1625,6 +1628,7 @@ Contributors
 - `Robin Pronk (@rfpronk) <https://github.com/rfpronk>`__
 - `Pavels Veretennikovs (@rfvermut) <https://github.com/rfvermut>`__
 - `Robert Gabrielson (@rgabrielson11) <https://github.com/rgabrielson11>`__
+- `Rob Gray (@rgr4y) <https://github.com/rgr4y>`__
 - `Rafael Goes (@rgriffogoes) <https://github.com/rgriffogoes>`__
 - `rheinz (@rheinz) <https://github.com/rheinz>`__
 - `Rhys79 (@Rhys79) <https://github.com/Rhys79>`__
@@ -2104,4 +2108,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated March 22, 2025.*
+*This page was last updated March 31, 2025.*
