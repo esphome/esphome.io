@@ -20,10 +20,17 @@ PSRAM is only available on the ESP32.
 Configuration variables:
 ------------------------
 
-- **mode** (*Optional*): Defines the operating mode the PSRAM should utilize. One of ``quad`` or ``octal``.
-- **speed** (*Optional*, int): The speed at which the PSRAM should operate. One of ``40MHz``, ``80MHz`` or ``120MHz``.
-  Note that ``80MHz`` and ``120MHz`` are not supported on all modules; in addition, ``120MHz`` is considered
-  "experimental" at the time this document was written.
+- **mode** (*Optional*): Defines the operating mode the PSRAM should utilize. One of ``quad`` (default) or ``octal``.
+- **speed** (*Optional*, int): The speed at which the PSRAM should operate. One of ``40MHz`` (default), ``80MHz`` or ``120MHz``.
+
+Restrictions
+------------
+* Not all ESP32 modules have PSRAM available. If you are unsure, consult the datasheet of your module.
+* Not all modules support all modes and speeds.
+* 120MHz is not available with octal mode.
+* If you choose the wrong mode for your board, the PSRAM will not work.
+* Configuring an unsupported speed will usually result in the PSRAM running at the default speed.
+* Typically on ESP32-S3 modules, a 2MB PSRAM will use quad mode, while 8 or 16MB will use octal mode.
 
 See Also
 --------

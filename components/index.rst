@@ -4,7 +4,8 @@
     :description: ESPHome main documentation
     :image: logo-docs.svg
 
-.. image:: /images/logo-docs.svg
+.. raw:: html
+    :file: ../images/logo-docs.svg
 
 This page is an index of all of the hardware components and platforms ESPHome currently supports.
 
@@ -908,6 +909,7 @@ Output Components
     GP8403, components/output/gp8403, gp8403.svg
     GPIO Output, components/output/gpio, gpio.svg
     LibreTiny PWM, components/output/libretiny_pwm, pwm.png
+    MCP4661, components/output/mcp4461, mcp4461.jpg
     MCP4725, components/output/mcp4725, mcp4725.jpg
     MCP4728, components/output/mcp4728, mcp4728.jpg
     MCP47A1, components/output/mcp47a1, mcp47a1.svg
