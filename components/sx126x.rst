@@ -51,7 +51,7 @@ Configuration variables:
 - **frequency** (**Required**, int): Frequency in Hz of the transceiver.
 - **hw_version** (**Required**, enum): Valid values are ``sx1261``, ``sx1262`` or ``sx1268``.
 - **modulation** (**Required**, enum): Modulation can be ``FSK`` or ``LORA``.
-- **pa_power** (**Optional**, int): Transmitter power, range is from 0 to 17 dBm.
+- **pa_power** (**Optional**, int): Transmitter power, range is from -3 to 22 dBm.
 - **pa_ramp** (**Optional**, enum): Transmitter PA ramp, can be ``10us``, ``20us``, ``40us``, ``80us``,
   ``200us``, ``800us``, ``1700us`` or ``3400us``.
 - **rf_switch** (**Required**, bool): Used to indicate if DIO2 controls an external RF switch.
@@ -83,13 +83,13 @@ FSK configuration variables:
   ``11_7kHz``, ``14_6kHz``, ``19_5kHz``, ``23_4kHz``, ``29_3kHz``, ``39_0kHz``, ``46_9kHz``, ``58_6kHz``,
   ``78_2kHz``, ``93_8kHz``, ``117_3kHz``, ``156_2kHz``, ``187_2kHz``, ``234_3kHz``, ``312_0kHz``,
   ``373_6kHz`` or ``467_0kHz``.
-- **payload_length** (**Optional**, int): Length of the packet.
-- **crc_enable** (**Optional**, bool): Enables a 16 bit CRC calculation/check in packet mode.
+- **payload_length** (**Optional**, int): Length of the packet. Maximum length is 256.
+- **crc_enable** (**Optional**, bool): Enables a 16 bit CRC calculation/check.
 - **bitrate** (**Optional**, int): Bit rate of the signal. Normally the inverse of the bit duration,
   eg 1 / 208 us is 4800 bps.
 - **preamble_size** (**Optional**, int): Length of the preamble in bytes to be sent by the transmitter.
 - **preamble_detect** (**Optional**, int): Minimum length of the preamble in bytes required by the receiver.
-  Preamble detector is disabled if the size is 0 and its value capped at 3.
+  Preamble detector is disabled if the size is 0 and its value capped at 4.
 - **sync_value** (**Optional**, list): Synchronization bytes found after the preamble and before the
   payload.
 - **deviation** (**Optional**, int): Transmitter FSK frequency deviation, values range from 0 to 100,000 Hz.
@@ -104,9 +104,9 @@ FSK configuration variables:
 Automations:
 ------------
 
-- **on_packet** (*Optional*, :ref:`Automation <automation>`): An automation to perform in packet mode
-  when a packet has been decoded. Variable x of type ``std::vector<uint8_t>`` and rssi of type ``float``
-  are passed to the automation for use in lambdas. In LoRa mode the variable snr is also available.
+- **on_packet** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a packet has
+  been decoded. Variable x of type ``std::vector<uint8_t>`` and rssi of type ``float`` are passed to the
+  automation for use in lambdas. In LoRa mode the variable snr is also available.
 
 .. code-block:: yaml
 
@@ -169,7 +169,7 @@ This :ref:`action <config-action>` sets the ``sx126x`` mode to standby.
 
 ``sx126x.send_packet`` **Action**
 
-This :ref:`action <config-action>` sends a packet, the ``sx126x`` needs to be in packet mode.
+This :ref:`action <config-action>` sends a packet.
 
 .. code-block:: yaml
 
@@ -224,8 +224,8 @@ LoRa example using an explicit header, spreading factor 7 and coding rate 4/6.
                  data: [0xC5, 0x51, 0x78, 0x82, 0xB7, 0xF9, 0x9C, 0x5C]
 
 
-FSK Mode:
---------------------
+FSK:
+----
 
 FSK example using a bit rate of 4800.
 
