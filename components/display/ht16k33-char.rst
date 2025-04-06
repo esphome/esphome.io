@@ -385,4 +385,4 @@ Special Thanks
 -----------------------------------------
 
  - ssieb and his `ht16k33-alpha library <https://github.com/ssieb/esphome_components/tree/2e82fc3a5acc3d1f4ca6b47cbe656f4217d382ac/components/ht16k33_alpha>`__ that I borrowed heavily from.
- - The authors and contributors for the `MAX7219 component <https://esphome.io/components/display/max7219.html>`__ for providing an additional example.
+ - The authors and contributors for the :doc:`MAX7219 component <max7219>` for providing an additional example.
