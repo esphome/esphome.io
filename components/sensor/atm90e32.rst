@@ -58,11 +58,6 @@ Configuration variables:
     :ref:`Sensor <config-sensor>`.
   - **harmonic_power** (*Optional*): Use the harmonic power value on this phase. All options from
     :ref:`Sensor <config-sensor>`.
-  - **phase_status** (*Optional*): Status output for this phase. Can alert of over current (65.53A), over voltage, 
-    voltage sag (votlage high/low based on ``line_frequency``), and phase loss
-  - **reference_current** (*Optional*, float): Input for fine grained gain calibration for a known current 
-    of the circuit a CT is measuring. It is used to calculate the value for ``gain_ct``. All options from 
-    :ref:`Template Number <template-number>`
   - **gain_voltage** (*Optional*, int): Voltage gain value to scale the low voltage AC transformer to household mains feed.
     Defaults to ``7305``.
   - **gain_ct** (*Optional*, int): CT clamp calibration value for this phase.
@@ -71,11 +66,9 @@ Configuration variables:
     Defaults to ``0``
   - **offset_current** (*Optional*, int): The current offset obtained using the offset calibration feature when current and voltage are 0
     Defaults to ``0``
-  - **offset_active_power** (*Optional*, int): The active power offset obtained using the power offset calibration feature when current is 0
-    and a voltage transformer is plugged in and calibrated.
+  - **offset_active_power** (*Optional*, int): The active power offset obtained using the power offset calibration feature when current is 0 and a voltage transformer is plugged in and calibrated.
     Defaults to ``0``
-  - **offset_reactive_power** (*Optional*, int): The reactive power offset obtained using the power offset calibration feature when current is 0
-    and a voltage transformer is plugged in and calibrated.
+  - **offset_reactive_power** (*Optional*, int): The reactive power offset obtained using the power offset calibration feature when current is 0 and a voltage transformer is plugged in and calibrated.
     Defaults to ``0``
   - **forward_active_energy** (*Optional*): Use the forward active energy value on this phase in watt-hours.
     All options from :ref:`Sensor <config-sensor>`.
@@ -86,7 +79,6 @@ Configuration variables:
 - **phase_c** (*Optional*): The configuration options for the 3rd phase. Same options as ``phase_a``.
 - **frequency** (*Optional*): Use the frequency value calculated by the meter. All options from
   :ref:`Sensor <config-sensor>`.
-- **freq_status** (*Optional*): Outputs if the frequency is too high or low based on ``line_frequency``.
 - **peak_current_signed** (*Optional*, boolean): Control the peak current output as signed or absolute. Defaults to ``false``.
 - **chip_temperature** (*Optional*): Use the chip temperature value. All options from
   :ref:`Sensor <config-sensor>`.
@@ -97,17 +89,8 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 - **spi_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`SPI Component <spi>` if you want
   to use multiple SPI buses.
-- **enable_gain_calibration** (*Optional*, boolean): If true this enables gain calibration for voltage, ``gain_voltage``, and current, ``gain_ct``,
-  based on the values entered in the corresponding voltage, ``reference_voltage``, and current, ``reference_current``, reference fields. With 
-  multiple ATM90E32 sensors each one is enabled individually, and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` 
-  when more than one is defined. After running, the values are stored in chip memory and will be available upson reboot and OTA software updates.
-- **enable_offset_calibration** (*Optional*, boolean): If true this enables fine grained offset noise 0 level calibration for voltage, 
-  ``offset_voltage``, and current sensors, ``offset_current``, & power offset for active, ``offset_active_power``, and reactive power, 
-  ``offset_reactive_power``. Buttons are required to operate the calibration feature. With multiple ATM90E32 sensors each one is 
-  enabled individually, and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` when more than one is defined. 
-  After running, the values are stored in chip memory and will be available upson reboot and OTA software updates. 
-  Offset calibration can only be performed when all voltage and current inputs are at a 0 value. USB power is recommended. 
-  For power offset calibration, only a voltage transformer should be connected.
+- **enable_gain_calibration** (*Optional*, boolean): If true this enables gain calibration for voltage, ``gain_voltage``, and current, ``gain_ct``, based on the values entered in the corresponding voltage, ``reference_voltage``, and current, ``reference_current``,     reference fields. With multiple ATM90E32 sensors each one is enabled individually, and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` when more than one is defined. After running, the values are stored in chip memory and will be available upon reboot and OTA software updates.
+- **enable_offset_calibration** (*Optional*, boolean): If true this enables fine grained offset noise 0 level calibration for voltage, ``offset_voltage``, and current sensors, ``offset_current``, & power offset for active, ``offset_active_power``, and reactive power, ``offset_reactive_power``. Buttons are required to operate the calibration feature. With multiple ATM90E32 sensors each one is enabled individually, and it's buttons are mapped using an id value pair. e.g. ``id: chip1`` when more than one is defined. After running,     the values are stored in chip memory and will be available upson reboot and OTA software updates. Offset calibration can only be performed when all voltage and current inputs are at a 0 value. USB power is recommended. For power offset calibration, only a voltage     transformer should be connected.
 
 Status Fields
 -------------
@@ -130,9 +113,7 @@ Status Fields
 Configuration variables:
 
 - **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple atm90e32 configured.
-- **phase_status** (*Optional*): Reads out certain conditions detected by the meter: Over Current (>=65.53A), Over Voltage/Voltage
-  Sag (calculated based on ``line_frequency`` - 60Hz = 120V, 50Hz = 220V - Sag = less than 78%, Over = greater than 122%),
-  and Phase Loss. If none of these conditions, the output will be "Okay".
+- **phase_status** (*Optional*): Reads out certain conditions detected by the meter: Over Current (>=65.53A), Over Voltage/Voltage Sag (calculated based on ``line_frequency`` - 60Hz = 120V, 50Hz = 220V - Sag = less than 78%, Over = greater than 122%), and Phase Loss. If none of these conditions, the output will be "Okay".
 
   - **phase_a** (*Optional*): Phase A phase status field. All options from :ref:`Text Sensor Component <text-sensor-component>`
   - **phase_b** (*Optional*): Phase B phase status field. All options from :ref:`Text Sensor Component <text-sensor-component>`
