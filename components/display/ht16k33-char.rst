@@ -116,7 +116,6 @@ Configuration variables:
 
       - Ignored in continuous mode.
       - Defaults to ``2s``.
-      - TODO: Can these be 0? Check this...
       
   - If the buffer size is smaller than the number of characters available, the message will not scroll.
   - Defaults to ``false``
