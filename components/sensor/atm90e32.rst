@@ -50,6 +50,8 @@ Configuration variables:
     :ref:`Sensor <config-sensor>`.
   - **reactive_power** (*Optional*): Use the reactive power value on this phase. All options from
     :ref:`Sensor <config-sensor>`.
+  - **apparent_power** (*Optional*): Use the apparent power value on this phase. All options from
+    :ref:`Sensor <config-sensor>`.
   - **power_factor** (*Optional*): Use the power factor value on this phase. All options from
     :ref:`Sensor <config-sensor>`.
   - **phase_angle** (*Optional*): Use the phase angle value on this phase in degrees. All options from
@@ -169,7 +171,11 @@ Calibration Voltage & Current Reference Fields
         id: chip1
         reference_voltage:
           phase_a:
-            name: "Ref Voltage 1"
+            name: "Phase A Ref Voltage"
+          phase_b:
+            name: "Phase B Ref Voltage"
+          phase_c:
+            name: "Phase C Ref Voltage"
         reference_current:
           phase_a:
             name: "Phase A Ref Current"
@@ -441,8 +447,14 @@ Additional Examples
       disp_name: energy-meter
       friendly_name: "CircuitSetup Energy Meter"
       update_time: 60s
-      current_cal: '27518'
-      voltage_cal: '7305'
+      current_cal_ct1: '27518'
+      current_cal_ct2: '27518'
+      current_cal_ct3: '27518'
+      current_cal_ct4: '27518'
+      current_cal_ct5: '27518'
+      current_cal_ct6: '27518'
+      voltage_cal1: '7305'
+      voltage_cal2: '7305'
     
       main_meter_name1: Meter 1-3
       main_meter_name2: Meter 4-6
@@ -454,6 +466,11 @@ Additional Examples
       ct4_name: CT4
       ct5_name: CT5
       ct6_name: CT6
+
+    spi:
+      clk_pin: 18
+      miso_pin: 19
+      mosi_pin: 23
     
     sensor:
     #IC1
@@ -488,8 +505,8 @@ Additional Examples
             name: ${ct1_name} Phase Angle
           peak_current:
             name: ${ct1_name} Peak Current
-          gain_voltage: ${voltage_cal}
-          gain_ct: ${current_cal}
+          gain_voltage: ${voltage_cal1}
+          gain_ct: ${current_cal_ct1}
           offset_voltage: 0
           offset_current: 0
           offset_active_power: 0
@@ -511,8 +528,8 @@ Additional Examples
             name: ${ct2_name} Phase Angle
           peak_current:
             name: ${ct2_name} Peak Current
-          gain_voltage: ${voltage_cal}
-          gain_ct: ${current_cal}
+          gain_voltage: ${voltage_cal1}
+          gain_ct: ${current_cal_ct2}
           offset_voltage: 0
           offset_current: 0
           offset_active_power: 0
@@ -526,6 +543,8 @@ Additional Examples
             id: ct3Watts
           reactive_power:
             name: ${ct3_name} VAR
+          apparent_power:
+            name: ${ct3_name} VA
           harmonic_power:
             name: ${ct3_name} Harmonic Power
           power_factor:
@@ -534,8 +553,8 @@ Additional Examples
             name: ${ct3_name} Phase Angle
           peak_current:
             name: ${ct3_name} Peak Current
-          gain_voltage: ${voltage_cal}
-          gain_ct: ${current_cal}
+          gain_voltage: ${voltage_cal1}
+          gain_ct: ${current_cal_ct3}
           offset_voltage: 0
           offset_current: 0
           offset_active_power: 0
@@ -576,8 +595,8 @@ Additional Examples
             name: ${ct4_name} Phase Angle
           peak_current:
             name: ${ct4_name} Peak Current
-          gain_voltage: ${voltage_cal}
-          gain_ct: ${current_cal}
+          gain_voltage: ${voltage_cal2}
+          gain_ct: ${current_cal_ct4}
           offset_voltage: 0
           offset_current: 0
           offset_active_power: 0
@@ -599,8 +618,8 @@ Additional Examples
             name: ${ct5_name} Phase Angle
           peak_current:
             name: ${ct5_name} Peak Current
-          gain_voltage: ${voltage_cal}
-          gain_ct: ${current_cal}
+          gain_voltage: ${voltage_cal2}
+          gain_ct: ${current_cal_ct5}
           offset_voltage: 0
           offset_current: 0
           offset_active_power: 0
@@ -622,8 +641,8 @@ Additional Examples
             name: ${ct6_name} Phase Angle
           peak_current:
             name: ${ct6_name} Peak Current
-          gain_voltage: ${voltage_cal}
-          gain_ct: ${current_cal}
+          gain_voltage: ${voltage_cal2}
+          gain_ct: ${current_cal_ct6}
           offset_voltage: 0
           offset_current: 0
           offset_active_power: 0
