@@ -307,6 +307,8 @@ Here are common current calibrations for the **Expandable 6 Channel Energy Meter
    - 80A/26.6mA SCT-010: 41996 (note this will saturate at 2^16/10^3 amps)
    - 100A/50ma SCT-013-000: 27961
    - 120A/40mA: SCT-016: 41880
+   - 200A/100mA SCT-024: 27518
+   - 200A/50mA SCT-024: 55036
 
 Active Energy
 ^^^^^^^^^^^^^
@@ -339,8 +341,8 @@ a time-series-database, e.g. InfluxDB.
             state_topic: ${disp_name}/ct1/reverse_active_energy
 
 If the power, power_factor, reactive_power, forward_active_energy, or reverse_active_energy configuration variables
-are used, care must be taken to ensure that the line ATM90E32's voltage is from is the same phase as the current
-transformer is installed on.  This is significant in split-phase or multi phase installations.  On a house with 240
+are used, care must be taken to ensure that the line ATM90E32's voltage is from the same phase as the current
+transformer is installed on. This is significant in split-phase or multi phase installations. On a house with 240
 split-phase wiring (very common in the US), one simple test is to reverse the orientation of the current transformer
 on a line. If the power factor doesn't change sign, it is likely that the voltage fed to the ATM90E32 is from the other
 phase.
@@ -515,6 +517,7 @@ Additional Examples
             id: ct6Watts
           gain_voltage: ${voltage_cal}
           gain_ct: ${current_cal}
+    #this is only needed if monitoring 2 voltages
         frequency:
           name: Frequency 2
         line_frequency: 60Hz
@@ -551,10 +554,6 @@ Additional Examples
         device_class: energy
         state_class: total_increasing
     
-    switch:
-      - platform: restart
-        name: ${friendly_name} Restart
-    
     text_sensor:
       - platform: atm90e32
         id: ${main_meter_id1}
@@ -577,6 +576,7 @@ Additional Examples
             name: "${ct5_name} Status"
           phase_c:
             name: "${ct6_name} Status"
+    #this is only needed if monitoring 2 voltages
         freq_status:
           name: "Frequency Status 2"
     
