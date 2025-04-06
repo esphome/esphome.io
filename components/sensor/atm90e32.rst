@@ -146,23 +146,17 @@ Calibration Buttons
 Configuration variables:
 
 - **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple ATM90E32's configured.
-- **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``enable_gain_calibration`` must be ``True``. 
-  These values can be permanently stored in ``gain_voltage`` and ``gain_ct``.
+- **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``enable_gain_calibration`` must be ``True``. These values can be permanently stored in ``gain_voltage`` and ``gain_ct``.
   All options from :ref:`Button <config-button>`.
-- **clear_gain_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
-  values defined under ``gain_voltage`` and ``gain_ct``.
+- **clear_gain_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or values defined under ``gain_voltage`` and ``gain_ct``.
   All options from :ref:`Button <config-button>`.
-- **run_offset_calibration** (*Optional*): A button to run the offset calibration. ``enable_offset_calibration`` must be ``True``. 
-  These values can be permanently stored in ``offset_voltage`` and ``offset_current``.
+- **run_offset_calibration** (*Optional*): A button to run the offset calibration. ``enable_offset_calibration`` must be ``True``. These values can be permanently stored in ``offset_voltage`` and ``offset_current``.
   All options from :ref:`Button <config-button>`.
-- **clear_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
-  values defined under ``offset_voltage`` and ``offset_current``.
+- **clear_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or values defined under ``offset_voltage`` and ``offset_current``.
   All options from :ref:`Button <config-button>`.
-- **run_power_offset_calibration** (*Optional*): A button to run the power offset calibration. ``enable_offset_calibration`` must be ``True``. 
-  These values can be permanently stored in ``offset_active_power`` and ``offset_reactive_power``. 
+- **run_power_offset_calibration** (*Optional*): A button to run the power offset calibration. ``enable_offset_calibration`` must be ``True``. These values can be permanently stored in ``offset_active_power`` and ``offset_reactive_power``. 
   All options from :ref:`Button <config-button>`.
-- **clear_power_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or 
-  values defined under ``offset_active_power`` and ``offset_reactive_power``.
+- **clear_power_offset_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or values defined under ``offset_active_power`` and ``offset_reactive_power``.
   All options from :ref:`Button <config-button>`.
 
 Calibration Voltage & Current Reference Fields
@@ -187,23 +181,16 @@ Calibration Voltage & Current Reference Fields
 Configuration variables:
 
 - **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple atm90e32 configured.
-- **reference_voltage** (*Optional*): Fine grained gain calibration of a known voltage that a voltage transformer is connected to. 
-  It is used to calculate the value for ``gain_voltage``. To be used in conjunction with the ``run_gain_calibration`` button. 
-  ``enable_gain_calibration`` must be ``True``.
-  Each phase below defaults to ``min_value: 100``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
+- **reference_voltage** (*Optional*): Fine grained gain calibration of a known voltage that a voltage transformer is connected to. It is used to calculate the value for ``gain_voltage``. To be used in conjunction with the ``run_gain_calibration`` button.  ``enable_gain_calibration`` must be ``True``. Each phase below defaults to ``min_value: 100``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
 
   - **phase_a** (*Optional*): Phase A reference voltage field. All options from :ref:`Template Number <template-number>`
   - **phase_b** (*Optional*): Phase B reference voltage field. If not specified, will use the value from 
     ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
     All options from :ref:`Template Number <template-number>`
-  - **phase_c** (*Optional*): Phase C reference voltage field. If not specified, will use the value from 
-    ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
+  - **phase_c** (*Optional*): Phase C reference voltage field. If not specified, will use the value from  ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
     All options from :ref:`Template Number <template-number>`
 
-- **reference_current** (*Optional*):  Fine grained gain calibration for a known current 
-  of the circuit a CT is measuring. It is used to calculate the value for ``gain_ct``. 
-  To be used in conjunction with the ``run_gain_calibration`` button. ``enable_gain_calibration`` must be ``True``
-  Each phase below defaults to ``min_value: 1``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
+- **reference_current** (*Optional*):  Fine grained gain calibration for a known current of the circuit a CT is measuring. It is used to calculate the value for ``gain_ct``. To be used in conjunction with the ``run_gain_calibration`` button. ``enable_gain_calibration`` must be ``True``. Each phase below defaults to ``min_value: 1``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
 
   - **phase_a** (*Optional*): Phase A reference current field. All options from :ref:`Template Number <template-number>`
   - **phase_b** (*Optional*): Phase B reference current field. All options from :ref:`Template Number <template-number>`
@@ -230,6 +217,7 @@ Use the expected mains voltage for your region, 110V/230V, use a reliable multim
 to obtain your true reference voltage. Input this value into the reference voltage field in Home Assistant's device page for the meter.
 
 When clicking on **Run Gain Calibration**, the software does the following calculation:
+
 ``New gain_voltage = (your voltage reading / ESPHome voltage reading) * existing gain_voltage value``
 
 The output can be viewed in the ESPHome logs of the meter. The new gain_voltage values are stored in ESP memory. They will be available 
@@ -261,6 +249,7 @@ Enter this value into the corresponding reference current field in Home Assistan
 Any reference fields that are left blank will not be calculated.
 
 When clicking on **Run Gain Calibration**, the software does the following calculation:
+
 ``New gain_ct = (your current reading / ESPHome current reading) * existing gain_ct value``
 
 The output can be viewed in the ESPHome logs of the meter. The new gain_ct values are stored in ESP memory. They will be available 
