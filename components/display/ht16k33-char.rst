@@ -23,7 +23,7 @@ based on the excellent `ht16k33-alpha library <https://github.com/ssieb/esphome_
 Currently Supported Devices:
 -----------------------------------------
 
-See :ref:`ht16k33-char_device_details` for more info on these devices and instructions for adding support for new devices.
+See :ref:`ht16k33-char_device_details` for more info on these devices and :ref:`ht16k33-char_new_devices:` for instructions on adding support for new devices.
 
 +------------------------------------------------------------------------------------+--------------------------------------+
 | Device                                                                             | Device ID(s)                         |
@@ -50,7 +50,6 @@ that component for details. A basic example of what that looks like is below.
       sda: SDA
       scl: SCL
       scan: true
-      id: bus_a
 
 Configuration Example:
 -----------------------------------------
@@ -85,9 +84,9 @@ Configuration variables:
 
 - **buffer_size** (*Optional*): The size of the character buffer. The length of this buffer is the longest message you can display.
 
-  - This should be at minimum the number of characters of the display you are using. 
+  - This should be, at minimum, the number of characters on the display you are using. 
   - You can make it longer if you want to scroll messages that are longer than the display can show all at once.
-  - If not set, it defaults to 8.
+  - If not set, it defaults to 8. Limited to 255.
 
 - **brightness** (*Optional*): Set the brightness of the display.
 
@@ -159,19 +158,21 @@ Commands available in lambda to place characters on the display:
     - *format*: the formatting string expected by `strftime()`.
     - *time* an ESPTime object of the time you want to display.
 
-  - ``it.clock_display(time, start_pos, clear_buffer, show_leading_zero, use_am_pm)``: A simplified function that will display the time in the format HOUR:MINUTE.
+  - ``it.clock_display(start_pos, clear_buffer, show_leading_zero, use_am_pm, time)``: A simplified function that will display the time in the format HOUR:MINUTE.
 
-    - *time* an ESPTime object of the time you want to display.
     - *start_pos*: The position in the buffer to place the string. Starts at 0 for the first position in the buffer.
     - *clear_buffer*: Whether to clear the buffer before placing the message. Set to `true` to clear the buffer before adding the new message.
     - *show_leading_zero*: Whether to show the leading 0 (for example in 01:30). Set to `true` to show the leading zero.
     - *use_am_pm*: Whether to use 12 or 24 hour time. Set to `true` to convert the time display to 12 hour mode.
+    - *time* an ESPTime object of the time you want to display.
     
 Other commands avaialable in lambda:
 *******************************************************************
 
+  - ``it.brightness(value)``: Sets the display brightness to `value`. Must be between 0-16. Setting to zero turns off the display, setting to 16 is full brightness.
   - ``it.blank()``: Clears the display memory. This will turn off all digits. Not technically the same as turning off the device, but the result is the same.
-  - ``it.brightness(value)``: Sets the display brightness to `value`. Must be between 0-15. Note: setting the brightness to 0 will not turn off the display. It will set it to minimum brightness of 1/16 duty cycle. If you want to turn off the display, use ``blank()``, ``display_off()``, or ``display_standby()``
+  - ``it.display_off(turn_off)``: Takes a boolean to turn the display on or off. Set `turn_off` to `true` to turn off the display.
+  - ``it.display_standby(standby)``: Takes a boolean to put the display in standby mode. Set `standby` to `true` to place the display(s) into standby mode. This is probably a lower power state than just turning off the display, but I have not tested that.
   - ``it.set_blink(blink_state)``: Set the blink state of the device. The HT16k33 is capable of blinking the display independently of the CPU. Valid values for `blink_state` are:
 
     - ``0``: No blinking
@@ -180,11 +181,7 @@ Other commands avaialable in lambda:
     - ``3``: Blink rate of .5Hz
     - Any other value given to this function will turn off the blinking.
 
-  - ``it.display_off(turn_off)``: Takes a boolean to turn the display on or off. Set `turn_off` to `true` to turn off the display.
-  - ``it.display_standby(standby)``: Takes a boolean to put the display in standby mode. Set `standby` to `true` to place the display(s) into standby mode. This is probably a lower power state than just turning off the display, but I have not tested that.
-  
-Please see :ref:`display-printf` for a quick introduction into the ``printf`` formatting rules and
-:ref:`display-strftime` for an introduction into the ``strftime`` time formatting.
+Please see :ref:`display-printf` for a quick introduction into the ``printf`` formatting rules and :ref:`here <strftime>` for an introduction into the ``strftime`` time formatting.
 
 .. _ht16k33-char_device_details:
 
@@ -201,7 +198,7 @@ A list of supported characters is given for each device. If you place a non-supp
   
     Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_1.2IN`` or ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``.
 
-    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
+    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be a standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
 
     .. collapse:: Supported Characters
 
@@ -246,6 +243,8 @@ A list of supported characters is given for each device. If you place a non-supp
       - A LED on the top side of the display between digits 3 and 4.
 
         - Use the character ``'`` or ````` to light this LED.
+    
+    For the flipped version of this display, the `````, ``'``, ``:`` and ``.`` characters work as expected if placed in the correct locations.
 
     These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
@@ -255,7 +254,7 @@ A list of supported characters is given for each device. If you place a non-supp
   
     Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``ADAFRUIT_7SEGMENT_.56IN`` or ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``.
 
-    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list. Writing an unsupported character to the buffer will result in a blank space being displayed for that character on the display.
+    I have implemented a subset of the most useful characters that display properly on a 7 segment display. There does not appear to be and standard for displaying other alphanumeric characters, and I did not implement some of the more esoteric character interpretations. If you need more characters, I suggest using a 14 character device or submitting a PR to add to this list.
 
     .. collapse:: Supported Characters
 
@@ -313,7 +312,7 @@ A list of supported characters is given for each device. If you place a non-supp
         - All upper case english characters (A-Z)
         - All lower case english characters (a-z)
         - All numerals (0-9)
-        - `` (a blank space)``
+        - a blank space
         - ``!``
         - ``"``
         - ``#``
@@ -351,9 +350,36 @@ A list of supported characters is given for each device. If you place a non-supp
       - A decimal point after each digit
 
         - Use the ``.`` character to turn on a decimal point.
-        - Note that if you are using the upside-down version of the display, use ``'`` to light the decimal point that is now at the top of the display.
+        - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal points that are now at the top of the display. The display itself is capable of displaying the ``'`` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for those decimal points.
 
     These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+
+.. _ht16k33-char_new_devices:
+
+Adding New Devices
+------------------------
+
+I tried to structure this library so that it would be (relatively) easy to add other devices. The basic steps to add a new device is:
+
+1. In ``display.py``: Modify the ``HT16K33_DEVICE_TYPES`` dictionary to add a definition for your device.
+
+      * They keys are what the user will put in the YAML file for the ``device`` setting.
+      * The ``CLASS_NAME`` values associated with those keys are the name of the associated
+        class that you will define for this device. The name can be pretty much anything,
+        but make it something unique and descriptive.
+
+2. In the ``esphome\components\ht16k33_char`` folder:
+   Add in a ``.cpp`` and ``.h`` file for your new device. The filename can be pretty much anything,
+   but it is probably best to make it similar to your class name. This is where all the device
+   specific magic happens.
+
+   These files need to define the class you named in #1 above and implement a ``send_to_display()``
+   function inside this class. This function will be given the character buffer and the location
+   in the buffer of the start of the string to display, and it should implement any device specific
+   stuff to make the characters appear on the display the way you want.
+
+3. In this documentation:
+   Update the documentation to describe your added device.
 
 Special Thanks
 -----------------------------------------
