@@ -59,6 +59,16 @@ Configuration variables:
   on vl53l1x to enable/disable sensor. **Required** if not using address ``0x29`` which is the cause if you
   have multiple VL53L1X on the same i2c bus. In this case you have to assign a different pin to each VL53L1X.
 - **timeout** (*Optional*, :ref:`config-time`): Sensor setup timeout. Default to ``50ms``.
+- **region_of_interest** (*Optional*): The region of interest (ROI) is a rectangular area of the sensor's field
+  of view that is used for ranging. The ROI is defined by its center coordinates (x, y) and its width and height.
+  They are specified by the count of SPADs (Single Photon Avalanche Diodes) in the sensor's array. You can specify
+  just the dimensions as *width* **x** *height* (e.g ``8x8``) or all fields with separate config keys.
+
+  - **width** (*Required*, int): Width of the region of interest in SPADs. Range from 4 to 16. Default is 16.
+  - **height** (*Required*, int): Height of the region of interest in SPADs. Range from 4 to 16. Default is 16.
+  - **x_offset** (*Optional*, int): X offset of the region of interest in SPADs. Range from -7 to 8. Default is 0.
+  - **y_offset** (*Optional*, int): Y offset of the region of interest in SPADs. Range from -7 to 8. Default is 0.
+
 - **measurement_timing_budget** (*Optional*, :ref:`config-time`): Timing budget is how long it will take
   measurements to return a single reading. Increasing the timing budget increases the maximum distance the
   device can range and improves the repeatability error. However, average power consumption augments accordingly.
