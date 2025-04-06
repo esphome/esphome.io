@@ -409,234 +409,234 @@ Additional Examples
 
 .. code-block:: yaml
 
-# Example CircuitSetup 6 channel entry
-substitutions:
-  disp_name: energy-meter
-  friendly_name: "CircuitSetup Energy Meter"
-  update_time: 60s
-  current_cal: '27518'
-  voltage_cal: '7305'
-
-  main_meter_name1: Meter 1-3
-  main_meter_name2: Meter 4-6
-  main_meter_id1: meter_main1
-  main_meter_id2: meter_main2
-  ct1_name: CT1
-  ct2_name: CT2
-  ct3_name: CT3
-  ct4_name: CT4
-  ct5_name: CT5
-  ct6_name: CT6
-
-sensor:
-#IC1
-  - platform: atm90e32
-    cs_pin: 5
-    name: ${main_meter_name1}
-    id: ${main_meter_id1}
-    phase_a:
-      voltage:
-        name: Voltage 1
-        id: ic1Volts
-        accuracy_decimals: 1
-      current:
-        name: ${ct1_name} Amps
-        id: ct1Amps
-# The max value for current that the meter can output is 65.535. If you expect to measure current over 65A, 
-# divide the gain_ct by 2 (120A CT) or 4 (200A CT) and multiply the current and power values by 2 or 4 by uncommenting the filter below
-#        filters:
-#          - multiply: 2
-      power:
-        name: ${ct1_name} Watts
-        id: ct1Watts
-#        filters:
-#          - multiply: 2
-      gain_voltage: ${voltage_cal}
-      gain_ct: ${current_cal}
-    phase_b:
-      current:
-        name: ${ct2_name} Amps
-        id: ct2Amps
-      power:
-        name: ${ct2_name} Watts
-        id: ct2Watts
-      gain_voltage: ${voltage_cal}
-      gain_ct: ${current_cal}
-    phase_c:
-      current:
-        name: ${ct3_name} Amps
-        id: ct3Amps
-      power:
-        name: ${ct3_name} Watts
-        id: ct3Watts
-      gain_voltage: ${voltage_cal}
-      gain_ct: ${current_cal}    
-    frequency:
-      name: Frequency 1
-    line_frequency: 60Hz
-    gain_pga: 1X
-    update_interval: ${update_time}
-    enable_offset_calibration: true
-    enable_gain_calibration: true
-#IC2
-  - platform: atm90e32
-    cs_pin: 4
-    name: ${main_meter_name2}
-    id: ${main_meter_id2}
-    phase_a:
-#this voltage is only needed if monitoring 2 voltages
-      voltage:
-        name: Voltage 2
-        id: ic2Volts
-        accuracy_decimals: 1
-      current:
-        name: ${ct4_name} Amps
-        id: ct4Amps
-      power:
-        name: ${ct4_name} Watts
-        id: ct4Watts
-      gain_voltage: ${voltage_cal}
-      gain_ct: ${current_cal}
-    phase_b:
-      current:
-        name: ${ct5_name} CT5 Amps
-        id: ct5Amps
-      power:
-        name: ${ct5_name} CT5 Watts
-        id: ct5Watts
-      gain_voltage: ${voltage_cal}
-      gain_ct: ${current_cal}
-    phase_c:
-      current:
-        name: ${ct6_name} CT6 Amps
-        id: ct6Amps
-      power:
-        name: ${ct6_name} CT6 Watts
-        id: ct6Watts
-      gain_voltage: ${voltage_cal}
-      gain_ct: ${current_cal}
-    frequency:
-      name: Frequency 2
-    line_frequency: 60Hz
-    gain_pga: 1X
-    update_interval: ${update_time}
-    enable_offset_calibration: true
-    enable_gain_calibration: true
-        
-#Total Amps   
-  - platform: template
-    name: ${friendly_name} Total Amps
-    id: totalAmps
-    lambda: return id(ct1Amps).state + id(ct2Amps).state + id(ct3Amps).state + id(ct4Amps).state + id(ct5Amps).state + id(ct6Amps).state ;
-    accuracy_decimals: 2
-    unit_of_measurement: A
-    device_class: current
-    update_interval: ${update_time}         
-#Total Watts
-  - platform: template
-    name: ${friendly_name} Total Watts
-    id: totalWatts
-    lambda: return id(ct1Watts).state + id(ct2Watts).state + id(ct3Watts).state + id(ct4Watts).state + id(ct5Watts).state + id(ct6Watts).state ;
-    accuracy_decimals: 1
-    unit_of_measurement: W
-    device_class: power
-    update_interval: ${update_time}
-#kWh
-  - platform: total_daily_energy
-    name: ${friendly_name} Total kWh
-    power_id: totalWatts
-    filters:
-      - multiply: 0.001
-    unit_of_measurement: kWh
-    device_class: energy
-    state_class: total_increasing
-
-switch:
-  - platform: restart
-    name: ${friendly_name} Restart
-
-text_sensor:
-  - platform: atm90e32
-    id: ${main_meter_id1}
-    phase_status:
-      phase_a:
-        name: "${ct1_name} Status"
-      phase_b:
-        name: "${ct2_name} Status"
-      phase_c:
-        name: "${ct3_name} Status"
-    freq_status:
-      name: "Frequency Status 1"
+    # Example CircuitSetup 6 channel entry
+    substitutions:
+      disp_name: energy-meter
+      friendly_name: "CircuitSetup Energy Meter"
+      update_time: 60s
+      current_cal: '27518'
+      voltage_cal: '7305'
     
-  - platform: atm90e32
-    id: ${main_meter_id2}
-    phase_status:
-      phase_a:
-        name: "${ct4_name} Status"
-      phase_b:
-        name: "${ct5_name} Status"
-      phase_c:
-        name: "${ct6_name} Status"
-    freq_status:
-      name: "Frequency Status 2"
-
-button:
-  - platform: atm90e32
-    id: ${main_meter_id1}
-    run_gain_calibration:
-      name: "Run ${main_meter_name1} Gain Calibration"
-    clear_gain_calibration:
-      name: "Clear ${main_meter_name1} Gain Calibration"
-    run_offset_calibration:
-      name: "Run ${main_meter_name1} Offset Calibration"
-    clear_offset_calibration:
-      name: "Clear ${main_meter_name1} Offset Calibration"
-    run_power_offset_calibration:
-      name: "Run ${main_meter_name1} Power Offset Calibration"
-    clear_power_offset_calibration:
-      name: "Clear ${main_meter_name1} Power Offset Calibration"
-
-  - platform: atm90e32
-    id: ${main_meter_id2}
-    run_gain_calibration:
-      name: "Run ${main_meter_name2} Gain Calibration"
-    clear_gain_calibration:
-      name: "Clear ${main_meter_name2} Gain Calibration"
-    run_offset_calibration:
-      name: "Run ${main_meter_name2} Offset Calibration"
-    clear_offset_calibration:
-      name: "Clear ${main_meter_name2} Offset Calibration"
-    run_power_offset_calibration:
-      name: "Run ${main_meter_name2} Power Offset Calibration"
-    clear_power_offset_calibration:
-      name: "Clear ${main_meter_name2} Power Offset Calibration"
-
-number:
-  - platform: atm90e32
-    id: ${main_meter_id1}
-    reference_voltage:
-      phase_a:
-        name: "Ref Voltage 1"
-    reference_current:
-      phase_a:
-        name: "${ct1_name} Ref Current"
-      phase_b:
-        name: "${ct2_name} Ref Current"
-      phase_c:
-        name: "${ct3_name} Ref Current"
-  
-  - platform: atm90e32
-    id: ${main_meter_id2}
-    reference_voltage:
-      phase_a:
-        name: "Ref Voltage 2"
-    reference_current:
-      phase_a:
-        name: "${ct4_name} Ref Current"
-      phase_b:
-        name: "${ct5_name} Ref Current"
-      phase_c:
-        name: "${ct6_name} Ref Current"
+      main_meter_name1: Meter 1-3
+      main_meter_name2: Meter 4-6
+      main_meter_id1: meter_main1
+      main_meter_id2: meter_main2
+      ct1_name: CT1
+      ct2_name: CT2
+      ct3_name: CT3
+      ct4_name: CT4
+      ct5_name: CT5
+      ct6_name: CT6
+    
+    sensor:
+    #IC1
+      - platform: atm90e32
+        cs_pin: 5
+        name: ${main_meter_name1}
+        id: ${main_meter_id1}
+        phase_a:
+          voltage:
+            name: Voltage 1
+            id: ic1Volts
+            accuracy_decimals: 1
+          current:
+            name: ${ct1_name} Amps
+            id: ct1Amps
+    # The max value for current that the meter can output is 65.535. If you expect to measure current over 65A, 
+    # divide the gain_ct by 2 (120A CT) or 4 (200A CT) and multiply the current and power values by 2 or 4 by uncommenting the filter below
+    #        filters:
+    #          - multiply: 2
+          power:
+            name: ${ct1_name} Watts
+            id: ct1Watts
+    #        filters:
+    #          - multiply: 2
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_b:
+          current:
+            name: ${ct2_name} Amps
+            id: ct2Amps
+          power:
+            name: ${ct2_name} Watts
+            id: ct2Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_c:
+          current:
+            name: ${ct3_name} Amps
+            id: ct3Amps
+          power:
+            name: ${ct3_name} Watts
+            id: ct3Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}    
+        frequency:
+          name: Frequency 1
+        line_frequency: 60Hz
+        gain_pga: 1X
+        update_interval: ${update_time}
+        enable_offset_calibration: true
+        enable_gain_calibration: true
+    #IC2
+      - platform: atm90e32
+        cs_pin: 4
+        name: ${main_meter_name2}
+        id: ${main_meter_id2}
+        phase_a:
+    #this voltage is only needed if monitoring 2 voltages
+          voltage:
+            name: Voltage 2
+            id: ic2Volts
+            accuracy_decimals: 1
+          current:
+            name: ${ct4_name} Amps
+            id: ct4Amps
+          power:
+            name: ${ct4_name} Watts
+            id: ct4Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_b:
+          current:
+            name: ${ct5_name} CT5 Amps
+            id: ct5Amps
+          power:
+            name: ${ct5_name} CT5 Watts
+            id: ct5Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        phase_c:
+          current:
+            name: ${ct6_name} CT6 Amps
+            id: ct6Amps
+          power:
+            name: ${ct6_name} CT6 Watts
+            id: ct6Watts
+          gain_voltage: ${voltage_cal}
+          gain_ct: ${current_cal}
+        frequency:
+          name: Frequency 2
+        line_frequency: 60Hz
+        gain_pga: 1X
+        update_interval: ${update_time}
+        enable_offset_calibration: true
+        enable_gain_calibration: true
+            
+    #Total Amps   
+      - platform: template
+        name: ${friendly_name} Total Amps
+        id: totalAmps
+        lambda: return id(ct1Amps).state + id(ct2Amps).state + id(ct3Amps).state + id(ct4Amps).state + id(ct5Amps).state + id(ct6Amps).state ;
+        accuracy_decimals: 2
+        unit_of_measurement: A
+        device_class: current
+        update_interval: ${update_time}         
+    #Total Watts
+      - platform: template
+        name: ${friendly_name} Total Watts
+        id: totalWatts
+        lambda: return id(ct1Watts).state + id(ct2Watts).state + id(ct3Watts).state + id(ct4Watts).state + id(ct5Watts).state + id(ct6Watts).state ;
+        accuracy_decimals: 1
+        unit_of_measurement: W
+        device_class: power
+        update_interval: ${update_time}
+    #kWh
+      - platform: total_daily_energy
+        name: ${friendly_name} Total kWh
+        power_id: totalWatts
+        filters:
+          - multiply: 0.001
+        unit_of_measurement: kWh
+        device_class: energy
+        state_class: total_increasing
+    
+    switch:
+      - platform: restart
+        name: ${friendly_name} Restart
+    
+    text_sensor:
+      - platform: atm90e32
+        id: ${main_meter_id1}
+        phase_status:
+          phase_a:
+            name: "${ct1_name} Status"
+          phase_b:
+            name: "${ct2_name} Status"
+          phase_c:
+            name: "${ct3_name} Status"
+        freq_status:
+          name: "Frequency Status 1"
+        
+      - platform: atm90e32
+        id: ${main_meter_id2}
+        phase_status:
+          phase_a:
+            name: "${ct4_name} Status"
+          phase_b:
+            name: "${ct5_name} Status"
+          phase_c:
+            name: "${ct6_name} Status"
+        freq_status:
+          name: "Frequency Status 2"
+    
+    button:
+      - platform: atm90e32
+        id: ${main_meter_id1}
+        run_gain_calibration:
+          name: "Run ${main_meter_name1} Gain Calibration"
+        clear_gain_calibration:
+          name: "Clear ${main_meter_name1} Gain Calibration"
+        run_offset_calibration:
+          name: "Run ${main_meter_name1} Offset Calibration"
+        clear_offset_calibration:
+          name: "Clear ${main_meter_name1} Offset Calibration"
+        run_power_offset_calibration:
+          name: "Run ${main_meter_name1} Power Offset Calibration"
+        clear_power_offset_calibration:
+          name: "Clear ${main_meter_name1} Power Offset Calibration"
+    
+      - platform: atm90e32
+        id: ${main_meter_id2}
+        run_gain_calibration:
+          name: "Run ${main_meter_name2} Gain Calibration"
+        clear_gain_calibration:
+          name: "Clear ${main_meter_name2} Gain Calibration"
+        run_offset_calibration:
+          name: "Run ${main_meter_name2} Offset Calibration"
+        clear_offset_calibration:
+          name: "Clear ${main_meter_name2} Offset Calibration"
+        run_power_offset_calibration:
+          name: "Run ${main_meter_name2} Power Offset Calibration"
+        clear_power_offset_calibration:
+          name: "Clear ${main_meter_name2} Power Offset Calibration"
+    
+    number:
+      - platform: atm90e32
+        id: ${main_meter_id1}
+        reference_voltage:
+          phase_a:
+            name: "Ref Voltage 1"
+        reference_current:
+          phase_a:
+            name: "${ct1_name} Ref Current"
+          phase_b:
+            name: "${ct2_name} Ref Current"
+          phase_c:
+            name: "${ct3_name} Ref Current"
+      
+      - platform: atm90e32
+        id: ${main_meter_id2}
+        reference_voltage:
+          phase_a:
+            name: "Ref Voltage 2"
+        reference_current:
+          phase_a:
+            name: "${ct4_name} Ref Current"
+          phase_b:
+            name: "${ct5_name} Ref Current"
+          phase_c:
+            name: "${ct6_name} Ref Current"
 
 .. code-block:: yaml
 
