@@ -29,9 +29,44 @@ sensor:
       name: "Xiaomi Mi Scale Impedance"
 ```
 
+### MJTZC01YM
+
+Xiaomi Body Composition Scale S400 can also measure impedance with 50kHz low frequency and heart rate. It must be first added in the Mijia (Xiaomi Home) app to start sending out advertisement packets containing metrics data, and to display the body fat percentage and heart rate on the scale's screen. It also supports multi-profile if configured in the app.
+
+Since the messages are encrypted, you must provide a bindkey to be able to decrypt them, please see [Other encrypted devices](/components/sensor/xiaomi_ble#other-encrypted-devices).
+
+{{< img src="xiaomi_miscale_s400.jpg" alt="Xiaomi MiScale S400" width="30.0%" class="align-center" >}}
+
+```yaml
+sensor:
+  - platform: xiaomi_miscale
+    mac_address: XX:XX:XX:XX:XX:XX
+    bindkey: 0728974d657a4b60964c1b1677f35f7c
+    weight:
+      name: "Xiaomi Mi Scale Weight"
+      accuracy_decimals: 1
+      # for pounds
+      # filters:
+      #   - multiply: 2.20462
+      # unit_of_measurement: "lb"
+    heart_rate:
+      name: "Xiaomi Mi Scale Heart Rate"
+    impedance:
+      name: "Xiaomi Mi Scale Impedance High"
+    impedance_low:
+      name: "Xiaomi Mi Scale Impedance Low"
+    timestamp:
+      name: "Xiaomi Mi Scale Timestamp"
+    profile_id:
+      name: "Xiaomi Mi Scale Profile ID"
+    allowed_profile_ids:
+      - 1
+```
+
 ## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the scale.
+- **bindkey** (*Optional*, string, 32 characters, case insensitive): The key to decrypt the BLE advertisements messages. **Only required for S400**.
 - **weight** (*Optional*): The information for the weight sensor.
 
   - All options from [Sensor](/components/sensor).
@@ -40,9 +75,27 @@ sensor:
 
   - All options from [Sensor](/components/sensor).
 
+- **impedance_low** (*Optional*): The information for the low frequency impedance sensor. **Only available on S400**
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **clear_impedance** (*Optional*): Clear the impedance information if a weight reading without impedance is received. Defaults to `false`. **Only available on MiScale2**
 
   Useful in the example below if a person steps onto the scale without waiting for the complete measurement. Without setting the flag the impedance reading of the measurement before will be used for the currently measured person.
+
+- **heart_rate** (*Optional*): The information for the heart rate sensor. **Only available on S400**
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
+- **timestamp** (*Optional*): The information for the timestamp sensor, not recommended to use as the built-in RTC drifts quickly without constant syncing with the app. **Only available on S400**
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
+- **profile_id** (*Optional*): The information for the profile ID sensor. **Only available on S400**
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
+- **allowed_profile_ids** (*Optional*, list of uint8): A list of profile ID to be allowed to publish metric states. Any ID (``any``) will be allowed if this parameter is omitted. **Only available on S400**
 
 ### Configuration example with multiple users
 
@@ -98,6 +151,59 @@ sensor:
     unit_of_measurement: 'Ω'
     icon: mdi:omega
     accuracy_decimals: 0
+```
+
+For S400, if you have configured multiple profiles in the Mijia (Xiaomi Home) app:
+
+```yaml
+sensor:
+  - platform: xiaomi_miscale
+    mac_address: XX:XX:XX:XX:XX:XX
+    bindkey: 0728974d657a4b60964c1b1677f35f7c
+    weight:
+      name: "Xiaomi Mi Scale Weight"
+      id: weight_miscale
+    impedance:
+      name: "Xiaomi Mi Scale Impedance High"
+      id: impedance_miscale
+    impedance_low:
+      name: "Xiaomi Mi Scale Impedance Low"
+      id: impedance_low_miscale
+    heart_rate:
+      name: "Xiaomi Mi Scale Heart Rate"
+      id: heart_rate_miscale
+    profile_id:
+      name: "Xiaomi Mi Scale Impedance"
+      on_value:
+        then:
+          - lambda: |-
+              float weight = id(weight_miscale).state;
+              float impedance = id(impedance_miscale).state;
+              float impedance_low = id(impedance_low_miscale).state;
+              uint8_t heart_rate = id(heart_rate_miscale).state;
+
+              switch (int(x)) {
+                case 1:
+                  if (weight)
+                    id(weight_user1).publish_state(weight);
+                  if (impedance)
+                    id(impedance_user1).publish_state(impedance);
+                  if (impedance_low)
+                    id(impedance_low_user1).publish_state(impedance_low);
+                  if (heart_rate)
+                    id(heart_rate_user1).publish_state(heart_rate);
+                  return;
+                case 2:
+                  if (weight)
+                    id(weight_user2).publish_state(weight);
+                  if (impedance)
+                    id(impedance_user2).publish_state(impedance);
+                  if (impedance_low)
+                    id(impedance_low_user2).publish_state(impedance_low);
+                  if (heart_rate)
+                    id(heart_rate_user2).publish_state(heart_rate);
+                  return;
+              }
 ```
 
 ## See Also
