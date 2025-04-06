@@ -45,10 +45,10 @@ Configuration:
 
 - **active** (*Optional*, boolean): Enables proxying active connections. Defaults to ``false``.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to ``true`` when using the ESP-IDF framework.
-- **connection_slots** (*Optional*, int): The maximum BLE connections slots to use.
+- **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM. This can only be adjusted when using
   the ``esp-idf`` framework up to a maximum of ``9``. It is recommended not to exceed ``5``
-  connections slots to avoid memory issues. Defaults to ``3``.
+  connection slots to avoid memory issues. Defaults to ``3``.
   The value must not exceed the total configured ``max_connections``
   for :doc:`esp32_ble_tracker`.
 
