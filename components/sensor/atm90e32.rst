@@ -114,7 +114,7 @@ Status Fields
 
 Configuration variables:
 
-- **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple atm90e32 configured.
+- **id** (*Required*, :ref:`config-id`): The ID of the ``atm90e32`` sensor defined above. Required if using more than one sensor.
 - **phase_status** (*Optional*): Enables per-phase status conditions:
 
   - **phase_a** (*Optional*): Phase A status field. Will report:
@@ -127,7 +127,7 @@ Configuration variables:
   
     - **Phase Loss**: Indicates if the phase has dropped out.
     
-      If no condition is met, the sensor reports ``Okay``. All options from :ref:`Text Sensor <text-sensor-component>`
+      If no condition is met, the sensor reports ``Okay``. All options from :ref:`Text Sensor <config-text_sensor>`
 
   - **phase_b** (*Optional*): Phase B phase status field. Same options as Phase A
   - **phase_c** (*Optional*): Phase C phase status field. Same options as Phase A
@@ -169,7 +169,7 @@ Calibration Buttons
 
 Configuration variables:
 
-- **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple ATM90E32's configured.
+- **id** (*Required*, :ref:`config-id`): The ID of the ``atm90e32`` sensor defined above. Required if using more than one sensor.
 - **run_gain_calibration** (*Optional*): A button to run the gain calibration. ``enable_gain_calibration`` must be ``True``. These values can be permanently stored in ``gain_voltage`` and ``gain_ct``.
   All options from :ref:`Button <config-button>`.
 - **clear_gain_calibration** (*Optional*): A button to clear the gain calibration from flash memory and use default values, or values defined under ``gain_voltage`` and ``gain_ct``.
@@ -208,35 +208,40 @@ Calibration Voltage & Current Reference Fields
 
 Configuration variables:
 
-- **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple atm90e32 configured.
+- **id** (*Required*, :ref:`config-id`): The ID of the ``atm90e32`` sensor defined above. Required if using more than one sensor.
 - **reference_voltage** (*Optional*): Fine grained gain calibration of a known voltage that a voltage transformer is connected to. It is used to calculate the value for ``gain_voltage``. To be used in conjunction with the ``run_gain_calibration`` button.  ``enable_gain_calibration`` must be ``True``. Each phase below defaults to ``min_value: 100``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
 
-  - **phase_a** (*Optional*): Phase A reference voltage field. All options from :ref:`Template Number <template-number>`
-  - **phase_b** (*Optional*): Phase B reference voltage field. If not specified, will use the value from 
-    ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
-    All options from :ref:`Template Number <template-number>`
-  - **phase_c** (*Optional*): Phase C reference voltage field. If not specified, will use the value from  ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
-    All options from :ref:`Template Number <template-number>`
+  - **phase_a** (*Optional*): Phase A reference voltage field. All options from :ref:`Number <config-number>`
+  - **phase_b** (*Optional*): Phase B reference voltage field. If not specified, will use the value from ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
+    All options from :ref:`Number <config-number>`
+  - **phase_c** (*Optional*): Phase C reference voltage field. If not specified, will use the value from ``phase_a`` (CircuitSetup's 6 channel meter has voltage phases tied together).
+    All options from :ref:`Number <config-number>`
 
 - **reference_current** (*Optional*):  Fine grained gain calibration for a known current of the circuit a CT is measuring. It is used to calculate the value for ``gain_ct``. To be used in conjunction with the ``run_gain_calibration`` button. ``enable_gain_calibration`` must be ``True``. Each phase below defaults to ``min_value: 1``, ``max_value: 200``, ``mode: box``, ``optimistic: True``, ``step: 0.1``.
 
-  - **phase_a** (*Optional*): Phase A reference current field. All options from :ref:`Template Number <template-number>`
-  - **phase_b** (*Optional*): Phase B reference current field. All options from :ref:`Template Number <template-number>`
-  - **phase_c** (*Optional*): Phase C reference current field. All options from :ref:`Template Number <template-number>`
+  - **phase_a** (*Optional*): Phase A reference current field. All options from :ref:`Number <config-number>`
+  - **phase_b** (*Optional*): Phase B reference current field. All options from :ref:`Number <config-number>`
+  - **phase_c** (*Optional*): Phase C reference current field. All options from :ref:`Number <config-number>`
 
 Calibration
 -----------
 
-To obtain more accurate readings, it is recommended to calibrate your voltage and current transformers to the meter. 
-The ESPHome integration supports automatic gain and offset calibration for ATM90E32 meters. **enable_gain_calibration**, 
-**enable_offset_calibration** must be set to True, and **Calibration Buttons**, and **Calibration Voltage & Current Reference Fields** 
-must be configured to use the calibration functions.
+To achieve accurate voltage and current readings, it’s recommended to calibrate your voltage transformer and CT clamps.
+ESPHome supports automatic gain and offset calibration for ATM90E32-based meters.
 
-The default gain configuration is set to use the `SCT-013-000 <https://www.amazon.com/gp/product/B075541WVT>`__
-current transformers, and the `Jameco Reliapro 9v AC transformer <https://www.amazon.com/gp/product/B00B886CWS>`__.
+To use these features, ensure:
+
+- ``enable_gain_calibration`` and/or ``enable_offset_calibration`` are set to ``true``.
+- The appropriate **Calibration Buttons** and **Reference Fields** are configured.
+- You use reliable reference devices (Kill-A-Watt, multimeter, known load).
+
+The default configuration is designed for:
+
+- Current transformer: `SCT-013-000 <https://www.amazon.com/gp/product/B075541WVT>`__
+- Voltage transformer: `Jameco Reliapro 9V AC <https://www.amazon.com/gp/product/B00B886CWS>`__
+
 A load which uses a known amount of current can be used to calibrate. For for a more accurate calibration use a
 `Kill-A-Watt <https://www.amazon.com/gp/product/B00009MDBU>`__ meter or a multimeter capable of measuring mains voltage. 
-Mains voltages can fluctuate depending on grid load.
 
 Voltage
 ^^^^^^^
@@ -248,8 +253,9 @@ When clicking on **Run Gain Calibration**, the software does the following calcu
 
 ``New gain_voltage = (your voltage reading / ESPHome voltage reading) * existing gain_voltage value``
 
-The output can be viewed in the ESPHome logs of the meter. The new gain_voltage values are stored in ESP memory. They will be available 
-upon restart, and after OTA updates. You should copy the values to **gain_voltage** for all phases in your ESPHome yaml, recompile and upload.
+The new voltage gain value is saved to ESP flash memory and applied immediately. You can view the result in the ESPHome logs.
+
+Copy the value into ``gain_voltage`` in your YAML config to persist it across reflashes (OTA updates do not erase flash memory).
 
 Here are common voltage calibrations for the **Split Single Energy Meter**:
    For meter <= v1.3:
@@ -280,12 +286,12 @@ When clicking on **Run Gain Calibration**, the software does the following calcu
 
 ``New gain_ct = (your current reading / ESPHome current reading) * existing gain_ct value``
 
-The output can be viewed in the ESPHome logs of the meter. The new gain_ct values are stored in ESP memory. They will be available 
-upon restart, and after OTA updates. You should copy the values to **gain_ct** for the corresponding phases in your ESPHome yaml, 
-recompile and upload.
+The new current gain value is saved to ESP flash memory and applied immediately. You can view the result in the ESPHome logs.
+
+Copy the value into ``gain_ct`` in your YAML config to persist it across reflashes (OTA updates do not erase flash memory).
 
 It is possible that the two identical CT current sensors will have different
-**gain_ct** numbers due to variances in manufacturing, although it will be
+``gain_ct`` numbers due to variances in manufacturing, although it will be
 small. The current calibration can be done once and used on all sensors or
 repeated for each one.
 
