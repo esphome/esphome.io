@@ -39,18 +39,18 @@ Configuration variables:
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin CS is connected to. For the 6 channel meter main board, this will always be 5 and 4. For the add-on boards a jumper can be selected for each CS pin, but default to 0 and 16.
 - **line_frequency** (**Required**, string): The AC line frequency of the supply voltage. One of ``50Hz``, ``60Hz``.
 - **name** (**Optional**, string): The name of the metering chip assigned to these 3 phases.
-- **id** (*Optional*, :ref:`config-id`): Needed if there is more than one ATM90E32 chip and you have buttons defined for calibration
+- **id** (*Optional*, :ref:`config-id`): Required if using more than one ``atm90e32`` chip with buttons for calibration, reference voltage/current fields, and phase status fields
 - **phase_a** (*Optional*): The configuration options for the 1st phase.
 
-  - **voltage** (*Optional*): Use the voltage value of this phase in V (RMS).
+  - **voltage** (*Optional*): Use the voltage value of this phase in volts (RMS).
     All options from :ref:`Sensor <config-sensor>`.
   - **current** (*Optional*): Use the current value of this phase in amperes. All options from
     :ref:`Sensor <config-sensor>`.
   - **power** (*Optional*): Use the power value on this phase in watts. All options from
     :ref:`Sensor <config-sensor>`.
-  - **reactive_power** (*Optional*): Use the reactive power value on this phase. All options from
+  - **reactive_power** (*Optional*): Use the reactive power value on this phase in VAR. All options from
     :ref:`Sensor <config-sensor>`.
-  - **apparent_power** (*Optional*): Use the apparent power value on this phase. All options from
+  - **apparent_power** (*Optional*): Use the apparent power value on this phase in VA. All options from
     :ref:`Sensor <config-sensor>`.
   - **power_factor** (*Optional*): Use the power factor value on this phase. All options from
     :ref:`Sensor <config-sensor>`.
@@ -115,14 +115,36 @@ Status Fields
 Configuration variables:
 
 - **id** (*Required*, :ref:`config-id`): The ID of the ATM90E32 defined above. Required if there are multiple atm90e32 configured.
-- **phase_status** (*Optional*): Reads out certain conditions detected by the meter: Over Current (>=65.53A), Over Voltage/Voltage Sag (calculated based on ``line_frequency`` - 60Hz = 120V, 50Hz = 220V - Sag = less than 78%, Over = greater than 122%), and Phase Loss. If none of these conditions, the output will be "Okay".
+- **phase_status** (*Optional*): Enables per-phase status conditions:
 
-  - **phase_a** (*Optional*): Phase A phase status field. All options from :ref:`Text Sensor Component <text-sensor-component>`
-  - **phase_b** (*Optional*): Phase B phase status field. All options from :ref:`Text Sensor Component <text-sensor-component>`
-  - **phase_c** (*Optional*): Phase C phase status field. All options from :ref:`Text Sensor Component <text-sensor-component>`
+  - **phase_a** (*Optional*): Phase A status field. Will report:
 
-- **freq_status** (*Optional*): Outputs ``HIGH`` or ``LOW`` based on ``line_frequency``. 50Hz will read ``LOW`` when <= 47Hz, and ``HIGH`` when >=53Hz. 
-  60Hz will read ``LOW`` when <= 57Hz, and ``HIGH`` when >=63Hz. Will output ``Normal`` when no conditions are met.
+    - **Over current**: Detected when current ≥ 65.53 A.
+    - **Over voltage / Voltage Sag**: Based on the configured ``line_frequency``. For example:
+  
+      - At ``60Hz`` (120V expected), sag = <78%, over = >122%.
+      - At ``50Hz`` (220V expected), sag = <78%, over = >122%.
+  
+    - **Phase Loss**: Indicates if the phase has dropped out.
+    
+      If no condition is met, the sensor reports ``Okay``. All options from :ref:`Text Sensor <text-sensor-component>`
+
+  - **phase_b** (*Optional*): Phase B phase status field. Same options as Phase A
+  - **phase_c** (*Optional*): Phase C phase status field. Same options as Phase A
+
+- **freq_status** (*Optional*): Reports status based on frequency thresholds:
+
+  - For ``50Hz`` systems:
+
+    - ``LOW`` if frequency ≤ 47Hz
+    - ``HIGH`` if frequency ≥ 53Hz
+
+  - For ``60Hz`` systems:
+
+    - ``LOW`` if frequency ≤ 57Hz
+    - ``HIGH`` if frequency ≥ 63Hz
+
+  If the frequency is within the expected range, the output will be ``Normal``.
 
 Calibration Buttons
 -------------------
