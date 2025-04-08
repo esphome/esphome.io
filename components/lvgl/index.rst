@@ -452,6 +452,32 @@ Feel free to experiment to discover inheritance and precedence of the styles bas
 
 :ref:`lvgl-cookbook-theme` The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
 
+``lvgl.style.update``
+*********************
+
+This :ref:`action <actions-action>` allows changing/updating the properties of a style at run time. This can be used to
+implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
+
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and the values are templatable.components
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    lvgl:
+      style_definitions:
+        - id: my_style
+          bg_color: 0xFFFFFF
+          border_color: 0x000000
+          border_width: 2
+
+    # Action to update the style
+    on_...:
+      - lvgl.style.update:
+          id: my_style
+          properties:
+            bg_color: 0xFF0000
+            border_color: 0x00FF00
+
 .. _lvgl-layouts:
 
 Layouts
