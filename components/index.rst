@@ -107,6 +107,7 @@ Bluetooth/BLE
     ESP32 BLE Beacon, components/esp32_ble_beacon, bluetooth.svg, dark-invert
     ESP32 BLE Client, components/ble_client, bluetooth.svg, dark-invert
     ESP32 BLE Tracker, components/esp32_ble_tracker, bluetooth.svg, dark-invert
+    ESP32 BLE Server, components/esp32_ble_server, bluetooth.svg, dark-invert
     Bluetooth Proxy, components/bluetooth_proxy, bluetooth.svg, dark-invert
     Improv via BLE, components/esp32_improv, improv.svg, dark-invert
 
