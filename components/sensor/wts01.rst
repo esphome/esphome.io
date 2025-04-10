@@ -11,7 +11,7 @@ This is the sensor used in Sonoff TH Elite devices (THR316, THR320, THR316D, THR
 
 The sensor communicates with the microcontroller via :doc:`UART </components/uart>`.
 
-.. figure:: images/wts01.png
+.. figure:: images/wts01-full.png
     :align: center
     :width: 80.0%
 
