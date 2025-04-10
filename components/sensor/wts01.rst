@@ -26,12 +26,17 @@ The sensor communicates with the microcontroller via :doc:`UART </components/uar
       rx_pin: GPIO17
       baud_rate: 9600
 
+    wts01:
+      id: wts01_sensor
+      uart_id: uart_bus
+      update_interval: 15s
+
+
     sensor:
       - platform: wts01
-        uart_id: uart_bus
+        wts01_id: wts01_sensor
         temperature:
           name: "Sonoff TH Elite Temperature"
-        update_interval: 15s
 
 Configuration variables:
 ------------------------
