@@ -60,7 +60,7 @@ Blog Posts & Videos
 - `Stepper motor blinds <https://github.com/tronikos/esphome-blinds>`__ by :ghuser:`tronikos`
 - `Read your water meter or gas meter using a triple-axis magnetometer <https://github.com/tronikos/esphome-magnetometer-water-gas-meter>`__ by :ghuser:`tronikos`
 - `Garage door opener controller for devices with optical encoder <https://github.com/serg987/ESPHomeGarageDoorOpener>`__ by :ghuser:`serg987`
-- `Remote controller RC433 for garage door open <https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en>`_
+- `Remote controller RC433 for garage door open <https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en>`__ by `Lubomir Karlik <https://dedeideas.eu/index.php/en-us/about-me>`_
 
 
 Custom Components & Code
