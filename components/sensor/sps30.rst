@@ -116,7 +116,7 @@ To force the sensor into I²C mode, the SEL pin (Interface Select pin no.4) shou
 
 For better stability, the SDA and SCL lines require suitable pull-up resistors.
 
-Automatic Cleaning:
+Automatic Cleaning
 -------------------
 
 The SPS30 sensor has an automatic fan-cleaning which will accelerate the built-in fan to maximum speed for 10 seconds in order to blow out the dust accumulated inside the fan.
@@ -126,8 +126,8 @@ Disabling of automatic-cleaning or setting a manual interval is not supported at
 
 .. _sps30_start_autoclean_fan_action:
 
-``sps30.start_fan_autoclean`` Action
-------------------------------------
+Manual Cleaning
+---------------
 
 This :ref:`action <config-action>` manually starts fan-cleaning.
 
@@ -137,6 +137,23 @@ This :ref:`action <config-action>` manually starts fan-cleaning.
       then:
         - sps30.start_fan_autoclean: my_sps30
 
+To be able to trigger the fan cleaning feature from Home Assistant, add a button as shown below, and trigger it with a (periodic) automation.
+
+.. code-block:: yaml
+
+    button:
+      - platform: template
+        name: "SPS30 fan clean"
+        on_press:
+          then:
+            - sps30.start_fan_autoclean: my_sps30
+
+    sensor:  
+      - platform: sps30
+        id: "my_sps30"
+        ...
+
+Sensirion recommends cleaning at least once per week.
 
 See Also
 --------
