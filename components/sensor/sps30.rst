@@ -104,17 +104,17 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
 
-Wiring:
+Wiring
 -------
 
 The sensor has a 5 pin JST ZHR type connector, with a 1.5mm pitch. (`Matching connector housing <https://octopart.com/zhr-5-jst-279203>`__, `datasheet <http://www.farnell.com/datasheets/1393424.pdf>`__)
-To force the sensor into I²C mode, the SEL pin (Interface Select pin no.4) should be shorted to ground (pin no.5)
+To force the sensor into I²C mode, the SEL pin (Interface Select, pin no.4) should be shorted to ground (pin no.5)
 
 .. figure:: images/sps30-wiring.png
     :align: center
     :width: 50.0%
 
-For better stability, the SDA and SCL lines require suitable pull-up resistors.
+For better stability, the SDA and SCL lines require suitable pull-up resistors. Sensirion shows 10 kΩ resistors between VDD (5V, pin no.1) and SDA (pin no.2) and SCL (pin no.3) in the manual.
 
 Automatic Cleaning
 -------------------
