@@ -108,7 +108,7 @@ Wiring:
 -------
 
 The sensor has a 5 pin JST ZHR type connector, with a 1.5mm pitch. (`Matching connector housing <https://octopart.com/zhr-5-jst-279203>`__, `datasheet <http://www.farnell.com/datasheets/1393424.pdf>`__)
-To force the sensor into I²C mode, the SEL pin (Interface Select pin no.5) should be shorted to ground (pin no.4)
+To force the sensor into I²C mode, the SEL pin (Interface Select pin no.4) should be shorted to ground (pin no.5)
 
 .. figure:: images/sps30-wiring.png
     :align: center
