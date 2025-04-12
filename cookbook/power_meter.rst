@@ -96,7 +96,7 @@ When the total sensor is configured, ``pulse_meter`` also reports the total numb
           state_class: total_increasing
           accuracy_decimals: 3
           filters:
-            - multiply: 0.0001  # (1/10000 pulses per kWh)
+            - multiply: 0.001  # (1/10000 pulses per kWh)
             # - throttle_average: 10s
             # - filter_out: NaN
 
