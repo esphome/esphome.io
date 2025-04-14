@@ -607,6 +607,146 @@ The button matrix widget is a lightweight way to display multiple buttons in row
 
     The Button Matrix widget supports the :ref:`key_collector` to collect the button presses as key press sequences for further automations. Check out :ref:`lvgl-cookbook-keypad` for an example.
 
+``canvas``
+-------------
+
+The canvas widget provides a surface for custom drawing operations. It allows you to draw shapes, text, images and perform pixel-level manipulations.
+All options are templatable.
+Where a list of points is required, this can be provided in the form of a list of dictionaries, each with templatable ``x`` and ``y`` keys, or as a shorthand ``x,y`` pair (constant integers only.)
+
+.. figure:: /components/lvgl/images/canvas.png
+    :align: center
+
+**Configuration variables:**
+
+- **width** (**Required**, int): Width of the canvas in pixels.
+- **height** (**Required**, int): Height of the canvas in pixels.
+- **transparent** (*Optional*, boolean): Enable alpha channel support. Defaults to ``false``.
+
+**Actions:**
+
+- ``lvgl.canvas.fill`` fills the entire canvas with a color:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **color** (**Required**, :ref:`color <lvgl-color>`): Fill color.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the fill. Defaults to ``COVER``.
+
+- ``lvgl.canvas.set_pixels`` sets individual pixels:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **color** (**Required**, :ref:`color <lvgl-color>`): Pixel color.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the pixels. Defaults to ``COVER``.
+    - **points** (**Required**, list): List of points to set, each with:
+        - **x** (**Required**, int): X coordinate.
+        - **y** (**Required**, int): Y coordinate.
+
+- ``lvgl.canvas.draw_rectangle`` draws a rectangle:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): X coordinate.
+    - **y** (**Required**, int): Y coordinate.
+    - **width** (**Required**, int): Width in pixels
+    - **height** (**Required**, int): Height in pixels
+    - **radius** (*Optional*, int): Corner radius.
+    - **bg_color** (*Optional*, :ref:`color <lvgl-color>`): Background color.
+    - **bg_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Background opacity. Defaults to ``COVER``.
+    - **border_color** (*Optional*, :ref:`color <lvgl-color>`): Border color.
+    - **border_width** (*Optional*, int): Border width.
+    - **border_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Border opacity. Defaults to ``COVER``.
+    - **outline_color** (*Optional*, :ref:`color <lvgl-color>`): Outline color.
+    - **outline_width** (*Optional*, int): Outline width.
+    - **outline_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the outline. Defaults to ``COVER``.
+    - **outline_pad** (*Optional*, int): Padding of the outline. Defaults to ``0``.
+    - **shadow_color** (*Optional*, :ref:`color <lvgl-color>`): Shadow color.
+    - **shadow_width** (*Optional*, int): Shadow width.
+    - **shadow_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the shadow. Defaults to ``COVER``.
+    - **shadow_offset_x** (*Optional*, int): Shadow offset X.
+    - **shadow_offset_y** (*Optional*, int): Shadow offset Y.
+    - **shadow_spread** (*Optional*, int): Shadow spread.
+
+- ``lvgl.canvas.draw_polygon`` draws a polygon:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **points** (**Required**, list): List of points forming the polygon vertices.
+    - Other options as for ``lvgl.canvas.draw_rectangle``.
+
+- ``lvgl.canvas.draw_text`` draws text:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): X coordinate.
+    - **y** (**Required**, int): Y coordinate.
+    - **text** (**Required**, string): Text to draw.
+    - **max_width** (**Required**, int): Max width in pixels.
+    - **align** (*Optional*, enum): Alignment of the text relative to ``x`` and ``max_width``. One of ``LEFT``, ``CENTER``, ``RIGHT``, ``AUTO``.
+    - **color** (*Optional*, :ref:`color <lvgl-color>`): Text color.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Text opacity. Defaults to ``COVER``.
+    - **font** (*Optional*, string): Font to use.
+    - **decor** (*Optional*, list): Choose decorations for the text: ``NONE``, ``UNDERLINE``, ``STRIKETHROUGH`` (multiple can be specified as YAML list). Defaults to ``NONE``.
+    - **letter_space** (*Optional*, int16): Extra character spacing of the text. Defaults to ``0``.
+    - **line_space** (*Optional*, int16): Line spacing of the text. Defaults to ``0``.
+
+- ``lvgl.canvas.draw_line`` draws a line:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **points** (**Required**, list): List of points forming the line, each with:
+        - **x** (**Required**, int): X coordinate.
+        - **y** (**Required**, int): Y coordinate.
+    - **color** (*Optional*, :ref:`color <lvgl-color>`): Line color.
+    - **width** (*Optional*, int): Line width.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Line opacity. Defaults to ``COVER``.
+    - **round_start** (*Optional*, boolean): Round the start of the line. Defaults to ``false``.
+    - **round_end** (*Optional*, boolean): Round the end of the line. Defaults to ``false``.
+
+- ``lvgl.canvas.draw_arc`` draws an arc:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): Center X coordinate.
+    - **y** (**Required**, int): Center Y coordinate.
+    - **radius** (**Required**, int): Arc radius.
+    - **start_angle** (**Required**, 0-360): Start angle.
+    - **end_angle** (**Required**, 0-360): End angle.
+    - **color** (*Optional*, :ref:`color <lvgl-color>`): Arc color.
+    - **width** (*Optional*, int): Arc line width.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Arc opacity. Defaults to ``COVER``.
+    - **rounded** (*Optional*, boolean): Round the start/end of the arc.
+
+- ``lvgl.canvas.draw_image`` draws an image:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): X coordinate.
+    - **y** (**Required**, int): Y coordinate.
+    - **src** (**Required**, string): Image source.
+    - **angle** (*Optional*, 0-360): Rotation angle.
+    - **zoom** (*Optional*, float): Zoom factor 0.1-10.0 (default 1.0)
+    - **pivot_x** (*Optional*, int): X pivot point for rotation.
+    - **pivot_y** (*Optional*, int): Y pivot point for rotation.
+
+.. code-block:: yaml
+
+    # Example widget:
+    - canvas:
+        id: my_canvas
+        width: 240
+        height: 240
+        transparent: false
+
+    # Example drawing actions, executed at startup:
+        on_boot:
+          then:
+            # Fill canvas with white
+            - lvgl.canvas.fill:
+                id: my_canvas
+                color: white
+            # Draw a blue rectangle
+            - lvgl.canvas.draw_rectangle:
+                id: my_canvas
+                x: 10
+                y: 10
+                width: 100
+                height: 50
+                bg_color: blue
+            # Draw some red text
+            - lvgl.canvas.draw_text:
+                id: my_canvas
+                x: 20
+                y: 20
+                text: "Hello World"
+                max_width: 100
+                color: red
+
+
 .. _lvgl-widget-checkbox:
 
 ``checkbox``
@@ -1444,6 +1584,7 @@ The ``slider`` can be also integrated as :doc:`Number </components/number/lvgl>`
 
 See :ref:`lvgl-cookbook-bright` and :ref:`lvgl-cookbook-volume` for examples which demonstrate how to use a slider to control entities in Home Assistant.
 
+.. _lvgl-widget-canvas:
 .. _lvgl-widget-spinbox:
 
 ``spinbox``
