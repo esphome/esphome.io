@@ -172,6 +172,7 @@ Contributors
 - `august huber (@augs) <https://github.com/augs>`__
 - `aus (@aus) <https://github.com/aus>`__
 - `AustinMorris (@AustinMorris) <https://github.com/AustinMorris>`__
+- `Aviad Raviv (@aviadra) <https://github.com/aviadra>`__
 - `Avirsaam (@Avirsaam) <https://github.com/Avirsaam>`__
 - `Arsène von Wyss (@avonwyss) <https://github.com/avonwyss>`__
 - `Andrew Weddle (@aweddle2) <https://github.com/aweddle2>`__
@@ -281,6 +282,7 @@ Contributors
 - `Brian Hanifin (@brianhanifin) <https://github.com/brianhanifin>`__
 - `brianrjones69 (@brianrjones69) <https://github.com/brianrjones69>`__
 - `brickets (@brickets) <https://github.com/brickets>`__
+- `Ruben Brites (@Brites89) <https://github.com/Brites89>`__
 - `Ben Brooks (@brooksben11) <https://github.com/brooksben11>`__
 - `brtchip-tuannguyen (@brtchip-tuannguyen) <https://github.com/brtchip-tuannguyen>`__
 - `Vaclav (@bruxy70) <https://github.com/bruxy70>`__
@@ -1088,6 +1090,7 @@ Contributors
 - `Kuba Szczodrzyński (@kuba2k2) <https://github.com/kuba2k2>`__
 - `Jakub Šimo (@kubik369) <https://github.com/kubik369>`__
 - `Mark Kuchel (@kuchel77) <https://github.com/kuchel77>`__
+- `Kurt Fuchs (@KurtFuchs) <https://github.com/KurtFuchs>`__
 - `kvvoff (@kvvoff) <https://github.com/kvvoff>`__
 - `Ken Davidson (@kwdavidson) <https://github.com/kwdavidson>`__
 - `Kyle Hendricks (@kylehendricks) <https://github.com/kylehendricks>`__
@@ -2108,4 +2111,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated April 9, 2025.*
+*This page was last updated April 15, 2025.*
