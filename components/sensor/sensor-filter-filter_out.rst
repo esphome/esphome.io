@@ -1,7 +1,7 @@
 ``filter_out``
 **************
 
-(**Required**, number): Filter out specific values to be displayed. For example to filter out the value ``85.0``
+(**Required**, number): Filter out specific values to be displayed, e.g., filtering out the value ``85.0``
 
 .. code-block:: yaml
 
