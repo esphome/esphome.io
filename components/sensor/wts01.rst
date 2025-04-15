@@ -6,7 +6,7 @@ WTS01 Temperature Sensor
     :image: wts01.png
     :keywords: WTS01, Sonoff, TH Origin, TH Elite, THR316, THR320, THR316D, THR320D
 
-The ``wts01`` platform allows you to use WTS01 temperature sensors with ESPHome. 
+The ``wts01`` platform allows you to use WTS01 temperature sensors with ESPHome.
 This is the sensor used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices.
 
 For this component to work you need to have set up a UART bus in your configuration - only the RX pin should be necessary.
@@ -27,30 +27,24 @@ The sensor communicates with the microcontroller via :doc:`UART </components/uar
       baud_rate: 9600
 
     # Then you can add the WTS01 sensor
-    wts01:
-      id: wts01_sensor
-
     sensor:
       - platform: wts01
-        wts01_id: wts01_sensor
-        temperature:
-          name: "WTS01 Temperature"
+        name: "WTS01 Temperature"
+        
+        # Other options from the sensor component
+        accuracy_decimals: 0 # default is 1
+        on_value:
+          then:
+            logger.log: "WTS01 sensor value: {{ id(wts01_sensor).get_temperature() }}"
 
 Configuration variables:
 ------------------------
 
-- **wts01** (*Required*): The WTS01 sensor configuration.
-  
-  - **id** (*Required*, :ref:`config-id`): The ID to use for this WTS01 component.
-
 - **sensor** (*Required*): The sensor configuration.
-  
+
   - **platform** (*Required*, string): Must be ``wts01``.
-  - **wts01_id** (*Required*, :ref:`config-id`): The ID of the WTS01 component.
-  - **temperature** (*Required*): The temperature sensor configuration.
-    
-    - **name** (*Required*, string): The name of the temperature sensor.
-    - All other options from :ref:`Sensor <config-sensor>`.
+  - **name** (*Required*, string): The name of the temperature sensor.
+  - All other options from :ref:`Sensor <config-sensor>`.
 
 .. note::
 
