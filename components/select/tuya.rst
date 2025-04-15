@@ -40,7 +40,6 @@ Based on this, you can create the select as follows:
       - platform: "tuya"
         name: "Sensor selection"
         enum_datapoint: 2
-        data_type: enum
         optimistic: true
         options:
           0: Internal
@@ -51,6 +50,9 @@ Configuration variables:
 ------------------------
 
 - **enum_datapoint** (**Required**, int): The enum datapoint id number for the select.
+  At least one of *enum_datapoint* or *int_datapoint* is required.
+- **int_datapoint** (**Required**, int): The int datapoint id number for the select.
+  At least one of *enum_datapoint* or *int_datapoint* is required.
 - **options** (**Required**, Map[int, str]): Provide a mapping from values (int) of
   this Select to options (str) of the *enum_datapoint* and vice versa. All options and
   all values have to be unique.
