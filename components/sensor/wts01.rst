@@ -30,6 +30,7 @@ The sensor communicates with the microcontroller via :doc:`UART </components/uar
     sensor:
       - platform: wts01
         name: "WTS01 Temperature"
+        update_interval: 1s # default is 60s
         
         # Other options from the sensor component
         accuracy_decimals: 0 # default is 1
@@ -44,6 +45,7 @@ Configuration variables:
 
   - **platform** (*Required*, string): Must be ``wts01``.
   - **name** (*Required*, string): The name of the temperature sensor.
+  - **update_interval** (*Optional*, :ref:`Time <config-time>`): The interval to update the temperature reading.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 .. note::
