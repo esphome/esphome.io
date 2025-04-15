@@ -1,9 +1,9 @@
-.. _sensor-calibrate_polynomial:
+.. _sensor-filter-calibrate_polynomial:
 
 ``calibrate_polynomial``
 ************************
 
-Calibrate your sensor values by fitting them to a polynomial functions. This is similar to
+Calibrate your sensor values by fitting them to polynomial functions. This is similar to
 the ``calibrate_linear`` filter, but also allows for higher-order functions like quadratic polynomials.
 
 .. code-block:: yaml
