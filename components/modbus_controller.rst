@@ -9,7 +9,7 @@ Modbus Controller
 The ``modbus_controller`` component creates a RS485 connection to either:
 
 - control a Modbus server (slave) device, letting your ESPHome node to act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
-- let your ESPHome node act as a Modbus server, allowing a ModBUS client to read data (like sensor values) from your ESPHome node.
+- let your ESPHome node act as a Modbus server, allowing a Modbus client to read data (like sensor values) from your ESPHome node.  The Write Single Coil (0x5) command is also supported, allowing your ESPHome node to perform actions based on the binary value written by the Modbus client.
 
 To choose the role, set the ``role`` attribute of the :doc:`/components/modbus` upon which this ``modbus_controller`` component relies. ``client`` is the default.
 
@@ -73,7 +73,8 @@ Configuration variables:
 
 - **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
 
-- **server_registers** (*Optional*): A list of registers that are responded to when acting as a server.
+- **server_registers** (*Optional*): A list of registers responding to Modbus commands 0x3 (Read Holding Registers) or 0x4 (Read Input Registers).  These share one address space and are distinct from ``server_coil_registers``.  NOTE: the underlying ``modbus`` component must be configured for the server role.
+
   - **address** (**Required**, integer): start address of the first register in a range
   - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (MSB first)
 
@@ -94,6 +95,13 @@ Configuration variables:
 
   - **read_lambda** (**Required**, :ref:`lambda <config-lambda>`):
     Lambda that returns the value of this register.
+
+- **server_coil_registers** (*Optional*): A list of registers responding to the modbus command 0x5 (Write Single Coil).  The address space is not shared with the ``server_registers`` option.  NOTE: the underlying ``modbus`` component must be configured for the server role.
+
+  - **address** (**Required**, integer): start address of the first register in a range
+
+  - **write_lambda** (**Required**, :ref:`lambda <config-lambda>`):
+    Lambda that provides the value written to the coil as a bool parameter.  The parameter name is ``state``.
 
 Automations:
 
@@ -159,7 +167,7 @@ The configuration example above creates a ``modbus_controller`` hub talking to a
 Example Server
 --------------
 
-The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from a ModBUS server.
+The following code allows a Modbus client to read a sensor value from your ESPHome node, that the node itself read from a Modbus server. It also allows a Modbus client to write to a coil which changes the state of a GPIO attached relay.
 
 .. code-block:: yaml
 
@@ -190,6 +198,14 @@ The following code allows a ModBUS client to read a sensor value from your ESPHo
             value_type: S_DWORD_R
             read_lambda: |-
               return id(evse_voltage_l1).state;
+        server_coil_registers:
+          - address: 0x0000
+            write_lambda: |-
+              if(state) {
+                id(relay1).turn_on();
+              } else {
+                id(relay1).turn_off();
+              }
 
     sensor:
       - platform: modbus_controller
@@ -205,6 +221,11 @@ The following code allows a ModBUS client to read a sensor value from your ESPHo
         filters:
           - multiply: 0.1
 
+    output:
+      # Define the GPIO output used by the coil register 0x0000
+      - platform: gpio
+        id: relay1
+        pin: GPIO26
 
 Check out the various Modbus components available at the bottom of the document in the :ref:`modbusseealso` section. They can be directly defined *(inline)* under the ``modbus_controller`` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
 
