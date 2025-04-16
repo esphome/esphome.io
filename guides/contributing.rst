@@ -1101,6 +1101,8 @@ components/platforms include the following test files:
 - ``test.esp32-idf.yaml`` - ESP32 (Xtensa)/IDF
 - ``test.esp32-c3-ard.yaml`` - ESP32-C3 (RISC-V)/Arduino
 - ``test.esp32-c3-idf.yaml`` - ESP32-C3 (RISC-V)/IDF
+- ``test.esp32-s3-ard.yaml`` - ESP32-S3 (Xtensa)/Arduino
+- ``test.esp32-s3-idf.yaml`` - ESP32-S3 (Xtensa)/IDF
 - ``test.esp8266-ard.yaml`` - ESP8266 (Xtensa)/Arduino
 - ``test.rp2040-ard.yaml`` - RP2040 (ARM)/Arduino
 
