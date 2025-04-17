@@ -19,6 +19,8 @@ The sensor communicates with the microcontroller via :doc:`UART </components/uar
 
     WTS01 Temperature Sensor
 
+**Basic configuration**
+
 .. code-block:: yaml
 
     # You need to have a UART bus setup in your configuration
@@ -30,13 +32,28 @@ The sensor communicates with the microcontroller via :doc:`UART </components/uar
     sensor:
       - platform: wts01
         name: "WTS01 Temperature"
-        update_interval: 1s # default is 60s
-        
-        # Other options from the sensor component
-        accuracy_decimals: 0 # default is 1
-        on_value:
-          then:
-            logger.log: "WTS01 sensor value: {{ id(wts01_sensor).get_temperature() }}"
+
+**More advanced configurations**
+
+.. code-block:: yaml
+
+    # Throttle updates to the sensor
+    sensor:
+      - platform: wts01
+        name: "WTS01 Temperature"
+        filters:
+          - throttle: 60s
+
+.. code-block:: yaml
+
+    # Convert the temperature to Fahrenheit
+    sensor:
+      - platform: wts01
+        name: "WTS01 Temperature"
+        filters:
+        - lambda: return x * (9.0/5.0) + 32.0;
+        unit_of_measurement: "°F"
+
 
 Configuration variables:
 ------------------------
@@ -45,7 +62,6 @@ Configuration variables:
 
   - **platform** (*Required*, string): Must be ``wts01``.
   - **name** (*Required*, string): The name of the temperature sensor.
-  - **update_interval** (*Optional*, :ref:`Time <config-time>`): The interval to update the temperature reading.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 .. note::
