@@ -159,9 +159,6 @@ CUSTOM_DOCS = {
         "Connecting to Multiple Networks": "wifi.schemas.CONFIG_SCHEMA.schema.config_vars.networks.schema",
         "Enterprise Authentication": "wifi.schemas.EAP_AUTH_SCHEMA",
     },
-    "custom/custom_component": {
-        "Generic Custom Component": "custom_component.schemas.CONFIG_SCHEMA"
-    },
     "components/esp32": {
         "Arduino framework": "esp32.schemas.CONFIG_SCHEMA.schema.config_vars.framework.types.arduino",
         "ESP-IDF framework": "esp32.schemas.CONFIG_SCHEMA.schema.config_vars.framework.types.esp-idf",

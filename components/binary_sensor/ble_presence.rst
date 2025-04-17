@@ -101,7 +101,8 @@ Using the configuration above, first, you should see a ``Starting scan...`` debu
 boot-up. Then, when a BLE device is discovered, you should see messages like
 ``Parse Result:`` together with some information about their MAC address, address type,
 advertised name, Service UUIDs, iBeacon UUIDs, iBeacon major and minor identifiers,
-BLE manufacturer data, RSSI, and other data useful for debugging purposes.
+BLE manufacturer ID and data, RSSI, and other data useful for debugging purposes.
+You can find the official list of manufacturer IDs `here <https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/company_identifiers/company_identifiers.yaml>`__ to help find your device.
 Note that this is useful only during set-up and a less verbose log level
 should be specified afterwards. If you don't see these messages, your device is unfortunately
 currently not supported.

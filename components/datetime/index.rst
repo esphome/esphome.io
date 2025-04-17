@@ -48,9 +48,9 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
-- **time_id** (**Required**, :ref:`config-id`): The ID of the time entity. Automatically set
-  to the ID of a time component if only a single one is defined.
-- If Webserver enabled, ``web_server_sorting_weight`` can be set. See :ref:`Webserver Entity Sorting <config-webserver-sorting>`.
+- **time_id** (**Optional**, :ref:`config-id`): The ID of the time entity. Automatically set
+  to the ID of a time component if only a single one is defined. Required if ``on_time`` is used.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 MQTT Options:
 
@@ -59,7 +59,7 @@ MQTT Options:
 Time and DateTime Options:
 
 - **on_time** (*Optional*, :ref:`automation`): Automation to run when the current datetime or time matches the current state.
-  Only valid on ``time`` or ``datetime`` types.
+  Only valid on ``time`` or ``datetime`` types.  Use of ``on_time`` causes ``time_id`` to be required, ``time_id`` will be automatically assigned if a time source exists in the config, and will cause an invalid configuration if there is no :doc:`/components/time/index` configured.
 
 Automation
 ----------
@@ -288,7 +288,7 @@ For more complex use cases, several methods are available for use on datetimes f
 
       // Within lambda, set the datetime to 2024-12-31 12:34:56
       auto call = id(my_datetime).make_call();
-      call.set_date("2024-12-31 12:34:56");
+      call.set_datetime("2024-12-31 12:34:56");
       call.perform();
 
   Check the API reference for information on the methods that are available for

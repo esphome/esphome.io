@@ -87,6 +87,50 @@ should be prefixed with the page name (page0/page1).
 
 ``nextion_component_name: page0.r0``
 
+.. _binary_sensor-nextion-publish_action:
+
+``binary_sensor.nextion.publish`` Action
+----------------------------------------
+
+You can also publish a state to a Nextion binary sensor from elsewhere in your YAML file
+with the ``binary_sensor.nextion.publish`` action.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    binary_sensor:
+      - platform: nextion
+        id: nextion_bsensor
+        ...
+    # in some trigger
+    on_...:
+      - binary_sensor.nextion.publish:
+          id: nextion_bsensor
+          state: true
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+      # Templated
+      - binary_sensor.nextion.publish:
+          id: nextion_bsensor
+          state: !lambda 'return true;'
+          # These are optional. Defaults to true.
+          publish_state: true
+          send_to_nextion: true
+
+Configuration variables:
+
+- **id** (**Required**, :ref:`config-id`): The ID of the Nextion switch.
+- **state** (**Required**, string, :ref:`templatable <config-templatable>`): The boolean state to publish.
+- **publish_state** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Home Assistant.
+  Default is true.
+- **send_to_nextion** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Nextion
+  display which will update component. Default is true.
+
+.. note::
+
+    This action can also be written in lambdas. See :ref:`nextion_binary_sensor_lambda_calls`
+
 .. _nextion_binary_sensor_lambda_calls:
 
 Lambda Calls

@@ -75,7 +75,7 @@ Advanced options:
   for a list of available options.
   Set to ``""`` to remove the default entity category.
 - If MQTT enabled, all other options from :ref:`MQTT Component <config-mqtt-component>`.
-- If Webserver enabled, ``web_server_sorting_weight`` can be set. See :ref:`Webserver Entity Sorting <config-webserver-sorting>`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 .. _binary_sensor-filters:
 

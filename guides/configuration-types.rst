@@ -162,6 +162,7 @@ There are several ways of doing this. See below examples to see how you can spec
       # for all 'update_interval' options, also
       update_interval: never  # never update
       update_interval: 0ms  # update in every loop() iteration
+      update_interval: always # same as 0ms
 
 See Also
 --------

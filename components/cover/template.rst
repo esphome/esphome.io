@@ -36,15 +36,16 @@ as a cover and can be controlled through the frontend.
 
 Possible return values for the optional lambda:
 
- - ``return COVER_OPEN;`` if the cover should be reported as OPEN.
- - ``return COVER_CLOSED;`` if the cover should be reported as CLOSED.
+ - ``return COVER_OPEN;`` / ``return 1.0f;`` if the cover should be reported as OPEN.
+ - ``return COVER_CLOSED;`` / ``return 0.0f`` if the cover should be reported as CLOSED.
  - ``return {};`` if the last state should be repeated.
+ - A value between ``0.0f`` and ``1.0f`` (inclusive) if ``has_position`` is set to ``true``.
 
 Configuration variables:
 ------------------------
 
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
-  Lambda to be evaluated repeatedly to get the current state of the cover.
+  Lambda to be evaluated repeatedly to get the current state/position of the cover.
 - **open_action** (*Optional*, :ref:`Action <config-action>`): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover to be opened.
 - **close_action** (*Optional*, :ref:`Action <config-action>`): The action that should
@@ -54,9 +55,9 @@ Configuration variables:
 - **toggle_action** (*Optional*, :ref:`Action <config-action>`): The action that should
   be performed when the remote requests to toggle the the cover.
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
-  any command sent to the template cover will immediately update the reported state and no lambda
+  any command sent to the template cover will immediately update the reported state/position and no lambda
   needs to be used. Defaults to ``false``.
-- **assumed_state** (*Optional*, boolean): Whether the true state of the cover is not known.
+- **assumed_state** (*Optional*, boolean): Whether the true state/position of the cover is not known.
   This will make the Home Assistant frontend show buttons for both OPEN and CLOSE actions, instead
   of hiding one of them. Defaults to ``false``.
 - **has_position** (*Optional*, boolean): Whether this cover will publish its position as a floating point number.
@@ -69,7 +70,7 @@ Configuration variables:
 - **position_action** (*Optional*, :ref:`Action <config-action>`): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover be set to a specific
   position. The desired position is available in the lambda in the ``pos`` variable.
-  Useless if `has_position` is not set to ``true``.
+  Used only when ``has_position`` is set to ``true``.
 - All other options from :ref:`Cover <config-cover>`.
 
 .. _cover-template-publish_action:
