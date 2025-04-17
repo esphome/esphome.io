@@ -1071,7 +1071,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
             - **value**: The value in the scale range to show at start.
             - **width**: Needle line width in pixels. Defaults to ``4``.
             - Style options for the *needle line* using the :ref:`lvgl-widget-line` style properties, as well as the background properties from :ref:`lvgl-styling` to draw a square (or circle) on the pivot of the needles. Padding makes the square larger.
-        - **tick_style** (**Optional**): Add tick style modifications:
+        - **tick_style** (*Optional*): Add tick style modifications:
             - **color_end**: :ref:`Color <lvgl-color>` for the gradient end of the ticks.
             - **color_start**: :ref:`Color <lvgl-color>` for the gradient start of the ticks.
             - **end_value**: The value in the scale range to modify the ticks to.

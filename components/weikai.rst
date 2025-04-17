@@ -204,7 +204,7 @@ Configuration variables:
 - **i2c_id** (*Optional*): The I²C Bus ID. Defaults to the default i²c bus.
 - **crystal** (*Optional*): The frequency in Hz of the crystal connected to the chip.
   The default value is 14745600 Hz.
-- **uart** (*Required*): The UART channels.
+- **uart** (**Required**): The UART channels.
 
   - **id** (**Required**, :ref:`config-id`): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.

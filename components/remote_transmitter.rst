@@ -109,18 +109,18 @@ Configuration variables:
   see received messages for more info.
 - **three_byte_address** (**Required**, int): The destination address to send the command to,
   see received messages for more info.
-- **three_byte_address** (**Optional**, boolean): The length of the source and destination address. ``false``
+- **three_byte_address** (*Optional*, boolean): The length of the source and destination address. ``false``
   means two bytes and ``true`` means three bytes. Please check the received messages to see which address length
   is used by your system. For example, ``[XXXX > XXXX]`` appears in the receiver log for two byte addresses and
   ``[XXXXXX > XXXXXX]`` for three byte addresses. Defaults to ``false``.
-- **retransmission** (**Optional**, boolean): Should only be ``true`` if this message has been transmitted
+- **retransmission** (*Optional*, boolean): Should only be ``true`` if this message has been transmitted
   before with the same ``message_id``. Typically, messages are transmitted up to three times with a 1 second
   interval if no reply is received. Defaults to ``false``.
 - **message_type** (**Required**, int): The message type, see dumper output for more info.
   The highest bit indicates a reply.
-- **message_id** (**Optional**, int): The message ID, see dumper output for more info.
+- **message_id** (*Optional*, int): The message ID, see dumper output for more info.
   Defaults to a randomly generated ID if this message is not a reply or retransmission.
-- **data** (**Optional**, 0-7 bytes list): The code to send.
+- **data** (*Optional*, 0-7 bytes list): The code to send.
   Usually you only need to copy this directly from the dumper output. Defaults to ``[]``
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
@@ -346,8 +346,8 @@ Configuration variables:
 
 - **address** (**Required**, int): The 32-bit address to send, see dumper output for more info.
 - **command** (**Required**, int): The 4 bit command/button code to send, see dumper output for more info.
-- **code** (**Optional**, int): The 32 bit encrypted field to send. Defaults to all zeros.
-- **level** (**Optional**, boolean): Low battery level status bit. Defaults to false.
+- **code** (*Optional*, int): The 32 bit encrypted field to send. Defaults to all zeros.
+- **level** (*Optional*, boolean): Low battery level status bit. Defaults to false.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 - A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
 

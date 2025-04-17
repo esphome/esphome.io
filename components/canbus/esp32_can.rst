@@ -26,8 +26,8 @@ Configuration variables:
 
 - **rx_pin** (**Required**, :ref:`Pin <config-pin>`): Receive pin.
 - **tx_pin** (**Required**, :ref:`Pin <config-pin>`): Transmit pin.
-- **rx_queue_len** (**Optional**, int): Length of RX queue.
-- **tx_queue_len** (**Optional**, int): Length of TX queue, 0 to disable.
+- **rx_queue_len** (*Optional*, int): Length of RX queue.
+- **tx_queue_len** (*Optional*, int): Length of TX queue, 0 to disable.
 - All other options from :ref:`Canbus <config-canbus>`.
 
 .. _esp32-can-bit-rate:

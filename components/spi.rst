@@ -77,7 +77,7 @@ For the conventional ``single`` bit bus at least one of ``miso_pin`` or ``mosi_p
 
 For ``quad`` type instead specify ``data_pins``:
 
-- **data_pins** (*Required*, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
+- **data_pins** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
   for the quad SPI output data lines.
 
 

@@ -284,7 +284,6 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         self.json_component = self.file_schema[self.component][
                             "schemas"
                         ].get(self.component.upper() + "_SCHEMA")
-                        pass
                     else:
                         self.json_component = get_component_file(app, self.component)
                         self.json_platform_component = find_platform_component(
@@ -367,9 +366,11 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 self.component,
             ):
                 self.props = self.find_props(
-                    self.json_platform_component
-                    if self.json_platform_component
-                    else self.json_component,
+                    (
+                        self.json_platform_component
+                        if self.json_platform_component
+                        else self.json_component
+                    ),
                     True,
                 )
 
@@ -568,8 +569,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             # Now fill props for the platform element
             try:
                 self.props = self.find_props(self.json_platform_component)
-            except KeyError:
-                raise ValueError("Cannot find platform props")
+            except KeyError as exc:
+                raise ValueError("Cannot find platform props") from exc
 
         elif title_text.endswith("Component") or title_text.endswith("Bus"):
             # if len(path) == 3 and path[2] == 'index':
@@ -601,10 +602,10 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         try:
                             self.props = self.find_props(self.json_component)
                             self.multi_component = None
-                        except KeyError:
+                        except KeyError as exc:
                             raise ValueError(
                                 "Cannot find props for component " + component_name
-                            )
+                            ) from exc
                         return
 
                 # component which are platforms in doc, used by: stepper and canbus, lcd_pcf8574
@@ -618,10 +619,10 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                     try:
                         self.props = self.find_props(self.json_platform_component)
 
-                    except KeyError:
+                    except KeyError as exc:
                         raise ValueError(
-                            f"Cannot find props for platform {self.path[1]} component {self.component_name}"
-                        )
+                            f"Cannot find props for platform {self.path[1]} component {component_name}"
+                        ) from exc
                     return
 
         elif title_text.endswith("Trigger"):
@@ -670,7 +671,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         component_parts[1] + "." + component_parts[0]
                     ][split_text[1].lower()][component_parts[2]]
                 except KeyError:
-                    logger.warn(
+                    logger.warning(
                         f"In {self.docname} cannot found schema of {title_text}"
                     )
                     cv = None
@@ -994,13 +995,14 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                     prop_name = s3.group(1)
                 else:
                     logger.info(
-                        f"In '{self.docname} {self.previous_title_text} Invalid list format: {node.rawsource}"
+                        f"In '{self.docname}.rst:{node.children[0].line} {self.previous_title_text} Invalid list format: {node.rawsource}"
                     )
                 param_type = None
             else:
-                logger.info(
-                    f"In '{self.docname} {self.previous_title_text} Invalid property format: {node.rawsource}"
-                )
+                if "(*Deprecated*)" not in node.rawsource:
+                    logger.info(
+                        f"In '{self.docname}.rst:{node.children[0].line} {self.previous_title_text} Invalid property format: {node.rawsource}"
+                    )
                 return prop_name, False
 
         prop_names = str(prop_name)
