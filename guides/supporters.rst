@@ -182,6 +182,7 @@ Contributors
 - `Nicholas Peters (@Azimath) <https://github.com/Azimath>`__
 - `Daniel (@azrael783) <https://github.com/azrael783>`__
 - `azrdev (@azrdev) <https://github.com/azrdev>`__
+- `b068931cc450442b63f5b3d276ea4297 (@b068931cc450442b63f5b3d276ea4297) <https://github.com/b068931cc450442b63f5b3d276ea4297>`__
 - `B48D81EFCC (@B48D81EFCC) <https://github.com/B48D81EFCC>`__
 - `Florian Mösch (@badbadc0ffee) <https://github.com/badbadc0ffee>`__
 - `Baden (@baden03) <https://github.com/baden03>`__
@@ -304,6 +305,7 @@ Contributors
 - `Cal Howard (@calhoward) <https://github.com/calhoward>`__
 - `callacomp (@callacomp) <https://github.com/callacomp>`__
 - `Callum Gare (@callumgare) <https://github.com/callumgare>`__
+- `Calum McConnell (@calumapplepie) <https://github.com/calumapplepie>`__
 - `Cameron Waldron (@CamW) <https://github.com/CamW>`__
 - `Carlos Gustavo Sarmiento (@carlos-sarmiento) <https://github.com/carlos-sarmiento>`__
 - `Carlos Garcia Saura (@CarlosGS) <https://github.com/CarlosGS>`__
@@ -1216,6 +1218,7 @@ Contributors
 - `maringeph (@maringeph) <https://github.com/maringeph>`__
 - `Mario (@mario-tux) <https://github.com/mario-tux>`__
 - `Mario Di Vece (@mariodivece) <https://github.com/mariodivece>`__
+- `Marius Greuel (@mariusgreuel) <https://github.com/mariusgreuel>`__
 - `Mark Hildreth (@markhildreth) <https://github.com/markhildreth>`__
 - `Mark Schabacker (@markschabacker) <https://github.com/markschabacker>`__
 - `Marek Marczykowski-Górecki (@marmarek) <https://github.com/marmarek>`__
@@ -2111,4 +2114,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated April 15, 2025.*
+*This page was last updated April 17, 2025.*
