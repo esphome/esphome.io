@@ -349,7 +349,7 @@ Additional configuration must be specified for this platform:
     ``daikin_arc417``, ``daikin_arc480``, ``electroluxyal``, ``fuego``, ``fujitsu_awyz``, ``gree``, ``greeyaa``, ``greeyac``, ``greeyan``,
     ``greeyap``, ``greeyt``, ``hisense_aud``, ``hitachi``, ``hyundai``, ``ivt``, ``midea``, ``mitsubishi_fa``, ``mitsubishi_fd``,
     ``mitsubishi_fe``, ``mitsubishi_heavy_fdtc``, ``mitsubishi_heavy_zj``, ``mitsubishi_heavy_zm``, ``mitsubishi_heavy_zmp``, ``mitsubishi_kj``,
-    ``mitsubishi_msc``, ``mitsubishi_msy``, ``mitsubishi_sez``, ``nibe``, ``panasonic_altdke``, ``panasonic_ckp``, ``panasonic_dke``,
+    ``mitsubishi_msc``, ``mitsubishi_msy``, ``mitsubishi_sez``, ``nibe``, ``panasonic_altdke``, ``panasonic_ckp``, ``panasonic_dke``, ``panasonic_eke``,
     ``panasonic_jke``, ``panasonic_lke``, ``panasonic_nke``, ``r51m``, ``samsung_aqv``, ``samsung_aqv12msan``, ``samsung_fjm``, ``sharp``,
     ``toshiba``, ``toshiba_daiseikai``, ``vaillantvai8``, ``zhjg01``, ``zhlt01``
 - **horizontal_default** (**Required**, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Options are: ``left``, ``mleft``, ``middle``, ``mright``, ``right``, ``auto``

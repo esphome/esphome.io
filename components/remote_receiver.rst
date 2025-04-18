@@ -106,7 +106,8 @@ ESP32 IDF configuration variables:
   ``filter_symbols``. Useful for filtering out short bursts of noise.
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to
   ``1000000``.
-- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
+  the DMA buffer size and can be set to a large value.
 
 ESP32 Arduino configuration variables:
 **************************************
@@ -120,6 +121,8 @@ ESP32 Arduino configuration variables:
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
+      "ESP32-C6", "2, 3"
+      "ESP32-H2", "2, 3"
 
 - **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
@@ -140,7 +143,7 @@ Automations:
   ABB-Welcome code has been decoded. A variable ``x`` of type :apiclass:`remote_base::ABBWelcomeData`
   is passed to the automation for use in lambdas.
 - **on_aeha** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  AEHA remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::AEHAData`
+  AEHA remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::AEHAData`
   is passed to the automation for use in lambdas.
 - **on_byronsx** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Byron SX doorbell RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::ByronSXData`
@@ -152,7 +155,7 @@ Automations:
   CanalSatLD remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::CanalSatLDData`
   is passed to the automation for use in lambdas.
 - **on_coolix** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Coolix remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::CoolixData`
+  Coolix remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::CoolixData`
   is passed to the automation for use in lambdas.
 - **on_dish** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   dish network remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::DishData`
@@ -171,13 +174,13 @@ Automations:
   KeeLoq RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::KeeloqData`
   is passed to the automation for use in lambdas.
 - **on_haier** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Haier remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::HaierData`
+  Haier remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::HaierData`
   is passed to the automation for use in lambdas.
 - **on_lg** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   LG remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::LGData`
   is passed to the automation for use in lambdas.
 - **on_magiquest** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  MagiQuest wand remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::MagiQuestData`
+  MagiQuest wand remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::MagiQuestData`
   is passed to the automation for use in lambdas.
 - **on_midea** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Midea remote code has been decoded. A variable ``x`` of type :apiclass:`remote_base::MideaData`
@@ -186,7 +189,7 @@ Automations:
   NEC remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::NECData`
   is passed to the automation for use in lambdas.
 - **on_nexa** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
-  Nexa RF code has been decoded. A variable ``x`` of type :apiclass:`remote_base::NexaData`
+  Nexa RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::NexaData`
   is passed to the automation for use in lambdas.
 - **on_panasonic** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Panasonic remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::PanasonicData`
@@ -557,7 +560,7 @@ Remote code selection (exactly one of these has to be included):
           tolerance: 60%
           filter: 4us
           idle: 4ms
-       
+
         remote_transmitter:
           pin: 1
           carrier_duty_percent: 100%
