@@ -52,7 +52,7 @@ Configuration variables:
 
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
   to use multiple UART buses.
-- **tuya_mode** (*Optional*, boolean): Whether to use the tuya configuration from initial implementation. 
+- **tuya_mode** (*Optional*, boolean): Whether to use the tuya configuration from initial implementation.
   Defaults to ``true`` to prevent breaking change.
 - **read_command** (*Optional*): The byte used for the read commands when communicating with the BL0940. By default, it is set to ``0x58`` or ``0x50`` in ``tuya_mode``.
 - **write_command** (*Optional*): byte used for the write commands when communicating with the BL0940. By default, it is set to ``0xA8`` or ``0xA0`` in ``tuya_mode``.
@@ -74,19 +74,24 @@ Configuration variables:
 - **reference_voltage** (*Optional*, float): The calibration parameter for Vref. Defaults to ``1.218``.
 - **resistor_shunt** (*Optional*, float): The calibration parameter for RL. Defaults to ``1``.
 - **resistor_one** (*Optional*, float): The calibration parameter for R1. Defaults to ``0.51``.
-- **resistor_two** (*Optional*, float): The calibration parameter for R2. Defaults to ``1950``. 
+- **resistor_two** (*Optional*, float): The calibration parameter for R2. Defaults to ``1950``.
 
 - **voltage_reference** (*Optional*, float): The calibration parameter for voltage readings. Defaults to ``266013.136288998`` as calculated using schema defaults.
 - **current_reference** (*Optional*, float): The calibration parameter for current readings. Defaults to ``17158.9201389365`` as calculated using schema defaults.
 - **power_reference** (*Optional*, float): The calibration parameter for power readings. Defaults to ``713.104696500825`` as calculated using schema defaults.
 - **energy_reference** (*Optional*, float): The calibration parameter for cumulative energy readings. Defaults to ``6120.6267056536`` as calculated using schema defaults.
 
+- **voltage_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use for voltage calibration.
+- **current_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use for current calibration.
+- **power_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use to power calibration.
+- **energy_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use to energy calibration.
+
 .. _bl0940-calibration:
 
 Calibration
 -----------
 
-There are two fundamental calibration parameters which are dependent on the hardware design: ``voltage_reference`` and ``current_reference``.  
+There are two fundamental calibration parameters which are dependent on the hardware design: ``voltage_reference`` and ``current_reference``.
 
 These can be determined by inspecting the actual hardware design or by using an accurate voltage and current meter with a simple resistive load
 
@@ -108,12 +113,12 @@ By default all the reference values will be calculated using the above values in
 
     this->voltage_reference_ = 79931 / this->vref_ * (this->r_one_ * 1000) / (this->r_one_ + this->r_two_);
     this->current_reference_ = 324004 * this->r_shunt_ / this->vref_;
-    
+
     // if voltage reference and current_reference have been configured
     this->power_reference_ = this->voltage_reference_ * this->current_reference_ * 4046 / 324004 / 79931;
     // if not, we use this formula based on provided formula in the specification
     this->power_reference_ = 4046 * this->r_shunt_ * this->r_one_ * 1000 / this->vref_ / this->vref_ / (this->r_one_ + this->r_two_);
-    
+
     this->energy_reference_ = this->power_reference_ * 3600000 / (1638.4 * 256);
 
 If ``tuya_mode`` is enabled the reference values will be set according to initial implementation.
@@ -137,6 +142,86 @@ Theoreticaly configuring ``voltage_reference`` and ``current_reference`` should 
     power_reference:   713.104696500825
     energy_reference:  6120.6267056536
 
+Online Calibration
+------------------
+
+It is possible to adjust the sensor readings without need to update sensor configuration using a :doc:`Template Number Component </components/number/template>`.
+
+Calibration factor is calculated in ``%`` based on submitted value from the configured ``calibration`` component.
+
+.. code-block:: cpp
+
+    float BL0940::calculate_calibration_value_(float state) { return (100 + state) / 100; }
+
+When changing calibration values on the UI all calibrated reference values will be recalculated.
+
+``voltage_calibration`` and ``current_calibration`` will affect ``power_reference`` and ``energy_reference`` if they have not been specified manually.
+
+.. figure:: images/bl0940-cal.png
+    :align: center
+    :width: 80.0%
+
+See sample configuration below:
+
+.. code-block:: yaml
+
+  uart:
+    id: uart_bus
+    tx_pin: TX
+    rx_pin: RX
+    baud_rate: 4800
+    stop_bits: 1
+
+  button:
+    - platform: template
+      id: calibration_reset
+      name: "Cal  Reset"
+      entity_category: config
+      icon: "mdi:restart"
+      on_press:
+        - number.set:
+            id: current_calibration_ui
+            value: 0
+        - number.set:
+            id: voltage_calibration_ui
+            value: 0
+        - number.set:
+            id: power_calibration_ui
+            value: 0
+        - number.set:
+            id: energy_calibration_ui
+            value: 0
+
+  number:
+    - platform: template
+      id: current_calibration_ui
+      name: "Cal Current"
+      unit_of_measurement: "%"
+      min_value: -10
+      max_value: 10
+      step: 0.01
+      mode: box
+      update_interval: never
+      optimistic: true
+      restore_value: true
+      initial_value: 0
+      icon: "mdi:percent"
+      entity_category: config
+      # disabled_by_default: true
+    - ...
+
+  sensor:
+    - platform: bl0940
+      uart_id: uart_bus
+      tuya_mode: false
+      resistor_one: 0.5113 # base voltage calibration
+      resistor_shunt: 1.035 # base current calibration
+      current_calibration: current_calibration_ui
+      voltage_calibration: voltage_calibration_ui
+      power_calibration: power_calibration_ui
+      energy_calibration: energy_calibration_ui
+      voltage:
+        ...
 
 See Also
 --------
