@@ -165,63 +165,63 @@ See sample configuration below:
 
 .. code-block:: yaml
 
-  uart:
-    id: uart_bus
-    tx_pin: TX
-    rx_pin: RX
-    baud_rate: 4800
-    stop_bits: 1
+    uart:
+      id: uart_bus
+      tx_pin: TX
+      rx_pin: RX
+      baud_rate: 4800
+      stop_bits: 1
 
-  button:
-    - platform: template
-      id: calibration_reset
-      name: "Cal  Reset"
-      entity_category: config
-      icon: "mdi:restart"
-      on_press:
-        - number.set:
-            id: current_calibration_ui
-            value: 0
-        - number.set:
-            id: voltage_calibration_ui
-            value: 0
-        - number.set:
-            id: power_calibration_ui
-            value: 0
-        - number.set:
-            id: energy_calibration_ui
-            value: 0
+    button:
+      - platform: template
+        id: calibration_reset
+        name: "Cal  Reset"
+        entity_category: config
+        icon: "mdi:restart"
+        on_press:
+          - number.set:
+              id: current_calibration_ui
+              value: 0
+          - number.set:
+              id: voltage_calibration_ui
+              value: 0
+          - number.set:
+              id: power_calibration_ui
+              value: 0
+          - number.set:
+              id: energy_calibration_ui
+              value: 0
 
-  number:
-    - platform: template
-      id: current_calibration_ui
-      name: "Cal Current"
-      unit_of_measurement: "%"
-      min_value: -10
-      max_value: 10
-      step: 0.01
-      mode: box
-      update_interval: never
-      optimistic: true
-      restore_value: true
-      initial_value: 0
-      icon: "mdi:percent"
-      entity_category: config
-      # disabled_by_default: true
-    - ...
+    number:
+      - platform: template
+        id: current_calibration_ui
+        name: "Cal Current"
+        unit_of_measurement: "%"
+        min_value: -10
+        max_value: 10
+        step: 0.01
+        mode: box
+        update_interval: never
+        optimistic: true
+        restore_value: true
+        initial_value: 0
+        icon: "mdi:percent"
+        entity_category: config
+        # disabled_by_default: true
+      - ...
 
-  sensor:
-    - platform: bl0940
-      uart_id: uart_bus
-      tuya_mode: false
-      resistor_one: 0.5113 # base voltage calibration
-      resistor_shunt: 1.035 # base current calibration
-      current_calibration: current_calibration_ui
-      voltage_calibration: voltage_calibration_ui
-      power_calibration: power_calibration_ui
-      energy_calibration: energy_calibration_ui
-      voltage:
-        ...
+    sensor:
+      - platform: bl0940
+        uart_id: uart_bus
+        tuya_mode: false
+        resistor_one: 0.5113 # base voltage calibration
+        resistor_shunt: 1.035 # base current calibration
+        current_calibration: current_calibration_ui
+        voltage_calibration: voltage_calibration_ui
+        power_calibration: power_calibration_ui
+        energy_calibration: energy_calibration_ui
+        voltage:
+          ...
 
 See Also
 --------
