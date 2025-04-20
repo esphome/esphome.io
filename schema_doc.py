@@ -815,9 +815,13 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             self.filled_props = True
             self.current_prop, found = self.update_prop(node, self.props)
             if self.current_prop and not found:
-                logger.info(
-                    f"In '{self.docname} {self.previous_title_text} Cannot find property {self.current_prop}"
-                )
+                self.find_props_previous_title()
+                self.current_prop, found = self.update_prop(node, self.props)
+                if self.current_prop and not found:
+                                    
+                    logger.info(
+                        f"In '{self.docname} {self.previous_title_text} Cannot find property {self.current_prop}"
+                    )
 
         elif self.multi_component:
             # update prop for each component
