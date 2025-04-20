@@ -350,8 +350,8 @@ This action connects to an SSID and password, optionally saving it in persistent
 
 Configuration variables:
 
-- **ssid** (*Required*, string, :ref:`templatable <config-templatable>`): The name of the WiFi access point.
-- **password** (*Required*, string, :ref:`templatable <config-templatable>`): The password of the WiFi access point. Leave empty for no password.
+- **ssid** (**Required**, string, :ref:`templatable <config-templatable>`): The name of the WiFi access point.
+- **password** (**Required**, string, :ref:`templatable <config-templatable>`): The password of the WiFi access point. Leave empty for no password.
 - **save** (*Optional*, boolean, :ref:`templatable <config-templatable>`): If set to ``true``, the SSID and password will be saved in persistent memory. Defaults to ``true``.
 - **timeout** (*Optional*, :ref:`config-time`, :ref:`templatable <config-templatable>`): The time to wait for the connection to be established. Defaults to 30 seconds.
 - **on_connect** (*Optional*, :ref:`Automation <automation>`): An action to be performed when a connection is established.
