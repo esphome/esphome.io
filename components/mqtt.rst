@@ -34,7 +34,8 @@ Configuration variables:
 ------------------------
 
 - **broker** (**Required**, string): The host of your MQTT broker.
-- **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to ``true``.
+- **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to ``true``. 
+  MQTT initialization during boot will wait until wifi is available. See :ref:`mqtt-enable-action` for more information.
 - **port** (*Optional*, int): The port to connect to. Defaults to 1883.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
@@ -785,6 +786,30 @@ This action turns on the MQTT component on demand.
       then:
         - lambda: !lambda id(mqtt_id).set_broker_address(id(broker_address));
         - mqtt.enable:
+
+.. note::
+
+    When MQTT is initialized during boot, initialization will block and wait until a connection is established. This 
+    will prevent other components like ``improv_serial`` from loading. To load all components during boot before WiFi 
+    is configured, set ``enable_on_boot`` to ``false`` and enable MQTT after the boot is complete.
+
+.. code-block:: yaml
+
+    esphome:
+      # ...
+      on_boot:
+        priority: 250
+        then:
+          - delay: 3s
+          - mqtt.enable:
+
+    mqtt:
+      # ...
+      enable_on_boot: False
+
+    wifi:
+
+    improv_serial:
 
 .. _mqtt-connected_condition:
 
