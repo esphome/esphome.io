@@ -56,7 +56,15 @@ Configuration variables:
   sensor. See https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes
   for a list of available options. Set to ``""`` to remove the default state class of a sensor.
 - **icon** (*Optional*, icon): Manually set the icon to use for the sensor in the frontend.
-- **accuracy_decimals** (*Optional*, int): Manually set the number of decimals to use when reporting values. This does not impact the actual value reported to Home Assistant, it just sets the number of decimals to use when displaying it.
+- **accuracy_decimals** (*Optional*, int): Set the number of digits
+  after the decimal point that data consumers should use. While this
+  does not change the value sent across the API, Home Assistant's
+  ESPHome integration will round the value accordingly before using or
+  storing it. The number of digits will also be used to set the
+  entity's default display precision. Thus, one can display fewer
+  decimals, but cannot increase precision of sensor values in Home
+  Assistant. (The default value varies depending on component and
+  sensor.)
 - **filters** (*Optional*): Specify filters to use for some basic
   transforming of values. See :ref:`Sensor Filters <sensor-filters>` for more information.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
