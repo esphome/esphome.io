@@ -35,7 +35,8 @@ Configuration variables:
 
 - **broker** (**Required**, string): The host of your MQTT broker.
 - **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to ``true``. 
-  MQTT initialization during boot will wait until wifi is available. See :ref:`mqtt-enable-action` for more information.
+  If enabled during boot, MQTT initialization will block other components from loading until WiFi becomes available. 
+  See :ref:`mqtt-enable-action` for more information.
 - **port** (*Optional*, int): The port to connect to. Defaults to 1883.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
