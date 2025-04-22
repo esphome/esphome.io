@@ -18,7 +18,6 @@ Contributing to ``esphome-docs``
 .. image:: /images/logo-docs.svg
     :align: center
     :width: 60.0%
-    :class: dark-invert
 
 Our documentation can always be improved. We rely on contributions from our users to do so. If you notice an issue (for
 example, spelling/grammar mistakes) or if you want to share your awesome new setup, we encourage you to submit a pull
@@ -832,10 +831,8 @@ Note that you can use this procedure for other branches, too, such as ``next`` o
 Contributing to ESPHome
 -----------------------
 
-.. image:: /images/logo-text.svg
-    :align: center
-    :width: 60.0%
-    :class: dark-invert
+.. raw:: html
+    :file: ../images/logo-text.svg
 
 This is a guide to contributing to the ESPHome codebase. ESPHome uses two languages for its project: Python and C++.
 
