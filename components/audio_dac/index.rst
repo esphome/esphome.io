@@ -15,6 +15,15 @@ audio via the microcontroller from a range of sources via :doc:`/components/medi
     audio_dac:
       - platform: ...
 
+Platforms
+---------
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    *
+
 .. _config-audio_dac:
 
 Configuration variables:
@@ -55,15 +64,6 @@ Configuration variables:
 - **id** (**Required**, :ref:`config-id`): The ID of the ``audio_dac`` platform.
 - **volume** (**Required**, percentage, :ref:`templatable <config-templatable>`): The desired volume level for the
   output from 0% to 100%.
-
-Platforms
----------
-
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    *
 
 See Also
 --------
