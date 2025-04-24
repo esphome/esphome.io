@@ -136,9 +136,8 @@ to set the **times** to 10 and the **wait_time** to 0s.
 
     **Watchdog Timer (WDT) Resets and Transmission Limitations**
 
-    Sending many NEC repeat codes in quick succession may trigger a **Watchdog Timer reset**,
+    Sending many codes in quick succession may trigger a **Watchdog Timer reset**,
     as IR transmissions are blocking and do not yield to the watchdog.
-    Using a ``times`` value greater than **20** may cause instability and should be used with caution.
 
 .. note::
 
