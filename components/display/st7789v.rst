@@ -35,7 +35,8 @@ to an ESP module.
 
     Displays larger than the 135x240 pixel display on the TTGO T-Display shown require a significant amount of RAM
     to operate correctly. Some ESP devices, such as the ESP8266, do not have sufficient memory to support this display.
-    If you attempt to use this component and experience repeated crashes, this is likely the cause of the issue.
+    If you attempt to use this component and experience repeated out-of-memory (OOM) crashes, this is likely the cause of the issue.
+    Using framebuffer ``fragmentation``
 
 .. code-block:: yaml
 
@@ -83,6 +84,7 @@ If you do specify them they will override any default.
   offset in pixels. This option may not be specified when the ``model`` is not set to "Custom". Defaults depends ``model``.
 - **offset_width** (**Required**, int): When ``model`` is set to "Custom", use this to specify the display's horizontal
   offset in pixels. This option may not be specified when the ``model`` is not set to "Custom". Defaults depends ``model``.
+- **fragmentation** (**Optional**, int): Reduces RAM usage by breaking updates in smaller fragments, with a reduced framebuffer. Enables low-RAM devices, but has a side-effect that ``lambda`` will be called once per fragment (not per frame). Defaults to ``1``.
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The CS pin. Defaults depends ``model``.
 - **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin. Defaults depends ``model``.
 - **reset_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The RESET pin. Defaults depends ``model``.
