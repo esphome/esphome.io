@@ -256,7 +256,8 @@ Binary Sensor
 
 The ``remote_receiver`` binary sensor lets you track when a button on a remote control is pressed.
 
-Each time the pre-defined signal is received, the binary sensor will briefly go ON and then immediately OFF.
+Each time the predefined signal is received, the binary sensor briefly turns ON, then immediately OFF -
+unless the protocol supports repeat codes, like ``NEC``.
 
 .. code-block:: yaml
 

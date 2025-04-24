@@ -132,12 +132,19 @@ Configuration variables:
 If you're looking for the same functionality as is default in the ``rpi_rf`` integration in Home Assistant, you'll want
 to set the **times** to 10 and the **wait_time** to 0s.
 
+.. warning::
+
+    **Watchdog Timer (WDT) Resets and Transmission Limitations**
+
+    Sending many NEC repeat codes in quick succession may trigger a **Watchdog Timer reset**,
+    as IR transmissions are blocking and do not yield to the watchdog.
+    Using a ``times`` value greater than **20** may cause instability and should be used with caution.
+
 .. note::
 
-    For the ``nec`` protocol, the ``wait_time`` option inside ``repeat`` is **not valid**.
-    Timing between frames and repeat codes is handled internally to comply with NEC protocol specifications.
+    For the ``NEC`` action, the ``wait_time`` option inside ``repeat`` is **not valid**.
     The behavior of the ``times`` option depends on the selected NEC transmission type.
-    See NEC action documentation below for more details.
+    See ``NEC`` action documentation below for more details.
 
 .. _remote_transmitter-transmit_abbwelcome:
 
@@ -519,17 +526,10 @@ This :ref:`action <config-action>` sends an NEC infrared remote code to a remote
     a single NEC frame (address + command).
 
     If ``times`` is greater than ``1``, behavior depends on the selected NEC code type.
-
-    Both NEC1 and NEC2 are fully supported. The ``wait_time`` option is no longer used and is handled 
-    internally by the action implementation.
-
-.. warning::
-
-    **Watchdog Timer (WDT) Resets and Transmission Limitations**
-
-    Sending many NEC repeat codes in quick succession may trigger a **Watchdog Timer reset**,
-    as IR transmissions are blocking and do not yield to the watchdog.
-    Using a ``times`` value greater than **20** may cause instability and should be used with caution.
+    Both NEC1 and NEC2 are fully supported.
+    
+    The ``wait_time`` option is no longer used. Timing between frames and repeat codes
+    is handled internally to comply with NEC protocol specifications.
 
 .. code-block:: yaml
 
@@ -546,6 +546,7 @@ Configuration variables:
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
 - **command** (**Required**, int): The 16-bit NEC command to send.
 - **type** (*Optional*, string): Transmission type. One of:
+
   - ``NEC1``: Sends a frame followed by NEC repeat codes if ``times`` > 1.
   - ``NEC2``: Sends the full frame multiple times, no repeat codes.
   - Defaults to ``NEC1``. `More info <http://www.hifi-remote.com/wiki/index.php/NEC>`__
