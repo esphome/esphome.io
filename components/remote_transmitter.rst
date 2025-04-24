@@ -131,6 +131,13 @@ Configuration variables:
 If you're looking for the same functionality as is default in the ``rpi_rf`` integration in Home Assistant, you'll want
 to set the **times** to 10 and the **wait_time** to 0s.
 
+.. note::
+
+    For the ``nec`` protocol, the ``wait_time`` option inside ``repeat`` is **not valid**.
+    Timing between frames and repeat codes is handled internally to comply with NEC protocol specifications.
+    The behavior of the ``times`` option depends on the selected NEC transmission type.
+    See NEC action documentation below for more details.
+
 .. _remote_transmitter-transmit_abbwelcome:
 
 ``remote_transmitter.transmit_abbwelcome`` **Action**
@@ -506,20 +513,22 @@ This :ref:`action <config-action>` sends an NEC infrared remote code to a remote
 
 .. note::
 
-    The ``command_repeats`` option has been renamed to ``repeats``. The old implementation defined the number of times
-    the command bytes were sent in a single transmission.
-    The new ``repeats`` option specifies the number of NEC repeat codes sent after the initial frame containing the
-    address and command. The default is ``0`` for the NEC protocol. For NEC1, set ``repeats`` to ``1``. NEC2, which
-    retransmits the entire frame instead of sending repeat codes, is not yet supported.
+    The ``command_repeats`` option has been removed in favor of the unified ``repeat`` - ``times`` option. 
+    This option defines how many times the NEC code is transmitted. The default is ``1``, which sends 
+    a single NEC frame (address + command).
+
+    If ``times`` is greater than ``1``, behavior depends on the selected NEC code type.
+
+    Both NEC1 and NEC2 are fully supported. The ``wait_time`` option is no longer used and is handled 
+    internally by the action implementation.
 
 .. warning::
 
     **Watchdog Timer (WDT) Resets and Transmission Limitations**
 
-    Sending many NEC repeat codes in quick succession may cause a **WDT reset**, as IR transmission is blocking and
-    doesn't feed the watchdog. A **repeat count higher than 20** may cause instability and should be used with caution.
-
-    Encoding with ``type: repeats_only`` requires ``repeats > 0``; otherwise, the transmitted signal will be empty.
+    Sending many NEC repeat codes in quick succession may trigger a **Watchdog Timer reset**,
+    as IR transmissions are blocking and do not yield to the watchdog.
+    Using a ``times`` value greater than **20** may cause instability and should be used with caution.
 
 .. code-block:: yaml
 
@@ -527,31 +536,19 @@ This :ref:`action <config-action>` sends an NEC infrared remote code to a remote
       - remote_transmitter.transmit_nec:
           address: 0x1234
           command: 0x78AB
-          repeats: 1
-          type: frame_with_repeats
+          type: NEC1
+          repeat:
+            times: 1
 
 Configuration variables:
 
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
 - **command** (**Required**, int): The 16-bit NEC command to send.
-- **repeats** (*Optional*, int): The number of NEC repeat codes sent after the main frame. Defaults to ``0`` for ``NEC``.
-  Use ``1`` for ``NEC1``. Higher values can be used to simulate a button hold effect.
-- **type** (*Optional*, string): Defines the transmission type. Can be ``frame_with_repeats`` or ``repeats_only``.
-  Defaults to ``frame_with_repeats``.
+- **type** (*Optional*, string): Transmission type. One of:
+  - ``NEC1``: Sends a frame followed by NEC repeat codes if ``times`` > 1.
+  - ``NEC2``: Sends the full frame multiple times, no repeat codes.
+  - Defaults to ``NEC1``. `More info <http://www.hifi-remote.com/wiki/index.php/NEC>`__
 - All other options from :ref:`remote_transmitter-transmit_action`.
-
-Configuration option ``type`` can be set to either ``frame_with_repeats`` or ``repeats_only``:
-- ``frame_with_repeats``: Sends a frame with address and command, followed by repeat codes if specified. (``Default``)
-- ``repeats_only``: Ignores the provided address and command values (which are still required in the configuration)
-  and sends only repeat codes. This can be useful for advanced functionality or avoiding WDT reset issues.
-
-Defining ``USE_REMOTE_TRANSMITTER_NEC_FULL_LEN`` **ensures that a space is appended after the last repeat or frame**.
-This guarantees a consistent delay between transmissions. Without this definition, spaces are added between repeat
-codes, but not after the last repeat or single frame. Enabling this option ensures uniform timing. While this enforces
-the required IR silence, it also blocks the loop for additional ``40ms-96ms``. This behavior is usually not an issue
-unless transmissions start immediately after each other, which is why it is **disabled by default**. A practical use
-case is when calling multiple NEC transmit actions sequentially without adding a delay between them,
-ensuring proper timing and preventing overlapping signals.
 
 ``remote_transmitter.transmit_nexa`` **Action**
 

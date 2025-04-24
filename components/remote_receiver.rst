@@ -381,7 +381,7 @@ Remote code selection (exactly one of these has to be included):
   - **command** (**Required**, int): The NEC command to listen for.
   - **timeout** (*Optional*, :ref:`config-time`): The delay before publishing the off state.
     The default is 130 milliseconds, with a valid range between 90 and 170 milliseconds. The timeout resets upon
-    receiving a repeat code.
+    receiving a NEC frame or NEC repeat code.
 
 - **nexa**: Trigger on a decoded Nexa RF code with the given data.
 
