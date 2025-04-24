@@ -225,7 +225,7 @@ The animation image is similar to the normal ``image`` widget. The main differen
 **Configuration variables:**
 
 - **src** (**Required**, list of :ref:`images <display-image>`): A list of IDs of existing image configurations to be loaded as frames of the animation.
-- **auto_start** (*Optional*, boolean): Start the animation playback automatically at boot and when updating the widget. Defaults to ``true``.
+- **auto_start** (*Optional*, boolean): Start the animation playback automatically at boot. Defaults to ``true``.
 - **duration** (**Required**, :ref:`Time <config-time>`): Total duration of a playback cycle (each frame is displayed for an equal amount of time).
 - **repeat_count** (*Optional*, int16 or *forever*): The number of times playback should be repeated. Defaults to ``forever``.
 - Some style options from :ref:`lvgl-styling` for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
@@ -238,9 +238,13 @@ The animation image is similar to the normal ``image`` widget. The main differen
 - ``lvgl.animimg.stop`` :ref:`action <actions-action>` stops the animation playback.
     - **id** (**Required**): The ID or a list of IDs of animimg widgets which you want stop.
 
-- ``lvgl.animimg.update`` :ref:`action <actions-action>` can be used to change ``repeat_count`` and ``duration``, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags. ``src`` and ``auto_start`` cannot be updated at runtime.
+- ``lvgl.animimg.update`` :ref:`action <actions-action>` can be used to change ``repeat_count`` and ``duration``, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of animimg widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - **src** (*Optional*, list of :ref:`images <display-image>`): A list of IDs of existing image configurations to be loaded as frames of the animation.
+    - **auto_start** (*Optional*, boolean): Start the animation playback automatically after update. Defaults to ``true``.
+    - **duration** (*Optional*, :ref:`Time <config-time>`): Total duration of a playback cycle (each frame is displayed for an equal amount of time). This will apply to the next playback loop.
+    - **repeat_count** (*Optional*, int16 or *forever*): The number of times playback should be repeated. Defaults to ``forever``.
+    - Some style options from :ref:`lvgl-styling` for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Triggers:**
 
@@ -293,7 +297,7 @@ The arc consists of a background and a foreground arc. The indicator foreground 
 - **mode** (*Optional*, string): ``NORMAL``: the indicator is drawn from the minimum value to the current. ``REVERSE``: the indicator is drawn counter-clockwise from the maximum value to the current. ``SYMMETRICAL``: the indicator is drawn from the middle point to the current value. Defaults to ``NORMAL``.
 - **rotation** (*Optional*, 0-360): Offset to the 0 degree position. Defaults to ``0.0``.
 - **start_angle** (*Optional*, 0-360): start angle of the arc background (see note). Defaults to ``135``.
-- **value** (**Required**, int8): Actual value of the indicator at start, in ``0``-``100`` range. Defaults to ``0``.
+- **value** (*Optional*, int8): Actual value of the indicator at start, in ``0``-``100`` range. Defaults to ``0``.
 - Any :ref:`Styling <lvgl-styling>` and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
 If the ``adv_hittest`` :ref:`flag <lvgl-widget-flags>` is enabled the arc can be clicked through in the middle. Clicks are recognized only on the ring of the background arc.
@@ -306,7 +310,8 @@ If the ``adv_hittest`` :ref:`flag <lvgl-widget-flags>` is enabled the arc can be
 
 - ``lvgl.arc.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of arc widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - **value** (*Optional*, int8): New value of the indicator.
+    - Any :ref:`Styling <lvgl-styling>` and state-based option to override styles inherited from parent. The arc's size and position will respect the padding style properties.
 
 **Triggers:**
 
@@ -370,19 +375,21 @@ Not only the end, but also the start value of the bar can be set, which changes 
 **Configuration variables:**
 
 - **anim_time** (*Optional*, :ref:`Time <config-time>`): Sets the animation time if the value is set with ``animated: true``.
-- **animated** (*Optional*, boolean): Animate the indicator when the bar changes value. Defaults to ``true``.
+- **animated** (*Optional*, boolean): Animate the indicator on boot to the starting value. Defaults to ``true``.
 - **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize, all the typical background properties.
 - **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to ``100``.
 - **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to ``0``.
 - **mode** (*Optional*, string): ``NORMAL``: the indicator is drawn from the minimum value to the current. ``REVERSE``: the indicator is drawn counter-clockwise from the maximum value to the current. ``SYMMETRICAL``: the indicator is drawn from the middle point to the current value. Defaults to ``NORMAL``.
-- **value** (**Required**, int8): Actual value of the indicator at start, in ``0``-``100`` range. Defaults to ``0``.
+- **value** (*Optional*, int8): Actual value of the indicator at start, in ``min_value``-``max_value`` range. Defaults to ``0``.
 - Style options from :ref:`lvgl-styling`. The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Actions:**
 
 - ``lvgl.bar.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of bar widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - **animated** (*Optional*, boolean): Animate the indicator to the new value. Defaults to ``true``.
+    - **value** (*Optional*, int8): New value of the indicator.
+    - Style options from :ref:`lvgl-styling`. The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Triggers:**
 
@@ -607,6 +614,146 @@ The button matrix widget is a lightweight way to display multiple buttons in row
 
     The Button Matrix widget supports the :ref:`key_collector` to collect the button presses as key press sequences for further automations. Check out :ref:`lvgl-cookbook-keypad` for an example.
 
+``canvas``
+-------------
+
+The canvas widget provides a surface for custom drawing operations. It allows you to draw shapes, text, images and perform pixel-level manipulations.
+All options are templatable.
+Where a list of points is required, this can be provided in the form of a list of dictionaries, each with templatable ``x`` and ``y`` keys, or as a shorthand ``x,y`` pair (constant integers only.)
+
+.. figure:: /components/lvgl/images/canvas.png
+    :align: center
+
+**Configuration variables:**
+
+- **width** (**Required**, int): Width of the canvas in pixels.
+- **height** (**Required**, int): Height of the canvas in pixels.
+- **transparent** (*Optional*, boolean): Enable alpha channel support. Defaults to ``false``.
+
+**Actions:**
+
+- ``lvgl.canvas.fill`` fills the entire canvas with a color:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **color** (**Required**, :ref:`color <lvgl-color>`): Fill color.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the fill. Defaults to ``COVER``.
+
+- ``lvgl.canvas.set_pixels`` sets individual pixels:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **color** (**Required**, :ref:`color <lvgl-color>`): Pixel color.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the pixels. Defaults to ``COVER``.
+    - **points** (**Required**, list): List of points to set, each with:
+        - **x** (**Required**, int): X coordinate.
+        - **y** (**Required**, int): Y coordinate.
+
+- ``lvgl.canvas.draw_rectangle`` draws a rectangle:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): X coordinate.
+    - **y** (**Required**, int): Y coordinate.
+    - **width** (**Required**, int): Width in pixels
+    - **height** (**Required**, int): Height in pixels
+    - **radius** (*Optional*, int): Corner radius.
+    - **bg_color** (*Optional*, :ref:`color <lvgl-color>`): Background color.
+    - **bg_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Background opacity. Defaults to ``COVER``.
+    - **border_color** (*Optional*, :ref:`color <lvgl-color>`): Border color.
+    - **border_width** (*Optional*, int): Border width.
+    - **border_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Border opacity. Defaults to ``COVER``.
+    - **outline_color** (*Optional*, :ref:`color <lvgl-color>`): Outline color.
+    - **outline_width** (*Optional*, int): Outline width.
+    - **outline_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the outline. Defaults to ``COVER``.
+    - **outline_pad** (*Optional*, int): Padding of the outline. Defaults to ``0``.
+    - **shadow_color** (*Optional*, :ref:`color <lvgl-color>`): Shadow color.
+    - **shadow_width** (*Optional*, int): Shadow width.
+    - **shadow_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the shadow. Defaults to ``COVER``.
+    - **shadow_offset_x** (*Optional*, int): Shadow offset X.
+    - **shadow_offset_y** (*Optional*, int): Shadow offset Y.
+    - **shadow_spread** (*Optional*, int): Shadow spread.
+
+- ``lvgl.canvas.draw_polygon`` draws a polygon:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **points** (**Required**, list): List of points forming the polygon vertices.
+    - Other options as for ``lvgl.canvas.draw_rectangle``.
+
+- ``lvgl.canvas.draw_text`` draws text:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): X coordinate.
+    - **y** (**Required**, int): Y coordinate.
+    - **text** (**Required**, string): Text to draw.
+    - **max_width** (**Required**, int): Max width in pixels.
+    - **align** (*Optional*, enum): Alignment of the text relative to ``x`` and ``max_width``. One of ``LEFT``, ``CENTER``, ``RIGHT``, ``AUTO``.
+    - **color** (*Optional*, :ref:`color <lvgl-color>`): Text color.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Text opacity. Defaults to ``COVER``.
+    - **font** (*Optional*, string): Font to use.
+    - **decor** (*Optional*, list): Choose decorations for the text: ``NONE``, ``UNDERLINE``, ``STRIKETHROUGH`` (multiple can be specified as YAML list). Defaults to ``NONE``.
+    - **letter_space** (*Optional*, int16): Extra character spacing of the text. Defaults to ``0``.
+    - **line_space** (*Optional*, int16): Line spacing of the text. Defaults to ``0``.
+
+- ``lvgl.canvas.draw_line`` draws a line:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **points** (**Required**, list): List of points forming the line, each with:
+        - **x** (**Required**, int): X coordinate.
+        - **y** (**Required**, int): Y coordinate.
+    - **color** (*Optional*, :ref:`color <lvgl-color>`): Line color.
+    - **width** (*Optional*, int): Line width.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Line opacity. Defaults to ``COVER``.
+    - **round_start** (*Optional*, boolean): Round the start of the line. Defaults to ``false``.
+    - **round_end** (*Optional*, boolean): Round the end of the line. Defaults to ``false``.
+
+- ``lvgl.canvas.draw_arc`` draws an arc:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): Center X coordinate.
+    - **y** (**Required**, int): Center Y coordinate.
+    - **radius** (**Required**, int): Arc radius.
+    - **start_angle** (**Required**, 0-360): Start angle.
+    - **end_angle** (**Required**, 0-360): End angle.
+    - **color** (*Optional*, :ref:`color <lvgl-color>`): Arc color.
+    - **width** (*Optional*, int): Arc line width.
+    - **opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Arc opacity. Defaults to ``COVER``.
+    - **rounded** (*Optional*, boolean): Round the start/end of the arc.
+
+- ``lvgl.canvas.draw_image`` draws an image:
+    - **id** (**Required**): The ID of the canvas widget.
+    - **x** (**Required**, int): X coordinate.
+    - **y** (**Required**, int): Y coordinate.
+    - **src** (**Required**, string): Image source.
+    - **angle** (*Optional*, 0-360): Rotation angle.
+    - **zoom** (*Optional*, float): Zoom factor 0.1-10.0 (default 1.0)
+    - **pivot_x** (*Optional*, int): X pivot point for rotation.
+    - **pivot_y** (*Optional*, int): Y pivot point for rotation.
+
+.. code-block:: yaml
+
+    # Example widget:
+    - canvas:
+        id: my_canvas
+        width: 240
+        height: 240
+        transparent: false
+
+    # Example drawing actions, executed at startup:
+        on_boot:
+          then:
+            # Fill canvas with white
+            - lvgl.canvas.fill:
+                id: my_canvas
+                color: white
+            # Draw a blue rectangle
+            - lvgl.canvas.draw_rectangle:
+                id: my_canvas
+                x: 10
+                y: 10
+                width: 100
+                height: 50
+                bg_color: blue
+            # Draw some red text
+            - lvgl.canvas.draw_text:
+                id: my_canvas
+                x: 20
+                y: 20
+                text: "Hello World"
+                max_width: 100
+                color: red
+
+
 .. _lvgl-widget-checkbox:
 
 ``checkbox``
@@ -627,7 +774,7 @@ The checkbox widget is made internally from a *tick box* and a label. When the c
 - ``lvgl.checkbox.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of checkbox widgets to be updated.
     - **text** (*Optional*, :ref:`text-property`): Text to display beside the checkbox.
-    - Widget styles or properties from the specific options above, to be updated.
+    - Style options from :ref:`lvgl-styling` for the background of the widget and it uses the text and all the typical background style properties. ``pad_column`` adjusts the spacing between the tick box and the label.
 
 **Triggers:**
 
@@ -699,7 +846,9 @@ The Dropdown widget is built internally from a *button* part and a *list* part (
 
 - ``lvgl.dropdown.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of dropdown widgets to update.
-    - Widget styles or properties from the specific options above to update.
+    - **dir** (*Optional*, str): Where the list part of the dropdown gets created relative to the button part. ``LEFT``, ``RIGHT``, ``BOTTOM``, ``TOP``.
+    - **options** (*Optional*, list): The list of available options in the drop-down.
+    - All other configuration variables from above are optional and have the same function as previously described.
 
 **Triggers:**
 
@@ -762,22 +911,22 @@ Images are the basic widgets used to display images.
 
 **Configuration variables:**
 
-- **angle** (*Optional*, 0-360): Rotation of the image. Defaults to ``0.0``. Needs ``pivot_x`` and ``pivot_y`` to be specified.
+- **angle** (*Optional*, 0-360): Rotation of the image. Defaults to ``0.0``.
 - **antialias** (*Optional*): The quality of the angle or scale transformation. When anti-aliasing is enabled, the transformations are higher quality but slower. Defaults to ``false``.
 - **mode** (*Optional*): Either ``REAL`` or  ``VIRTUAL``. With ``VIRTUAL``, when the image is scaled or rotated, the real coordinates of the image object are not changed. The larger content simply overflows the object's boundaries. It also means the layouts are not affected the by the transformations. With ``REAL``, if the width/height of the object is set to ``SIZE_CONTENT``, the object's size will be set to the scaled and rotated size. If an explicit size is set, the overflowing content will be cropped. Defaults to ``VIRTUAL``.
 - **offset_x** (*Optional*): Add a horrizontal offset to the image position.
 - **offset_y** (*Optional*): Add a vertical offset to the image position.
-- **pivot_x** (*Optional*): Horizontal position of the pivot point of rotation, in pixels, relative to the top left corner of the image.
-- **pivot_y** (*Optional*): Vertical position of the pivot point of rotation, in pixels, relative to the top left corner of the image.
+- **pivot_x** (*Optional*): Horizontal position of the pivot point of rotation, in pixels, relative to the top left corner of the image. Defaults to the center of the image. Must be specified along with ``pivot_y``.
+- **pivot_y** (*Optional*): Vertical position of the pivot point of rotation, in pixels, relative to the top left corner of the image. Defaults to the center of the image. Must be specified along with ``pivot_x``
 - **zoom** (*Optional*, 0.1-10): Zoom of the image.
 - **src** (**Required**, :ref:`image <display-image>`): The ID of an existing image configuration.
 - Some style options from :ref:`lvgl-styling` for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Actions:**
 
-- ``lvgl.image.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags. Updating the ``src`` option changes the image at runtime.
+- ``lvgl.image.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of image widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - All other configuration variables from above are optional and have the same function as previously described. Updating the ``src`` option changes the image at runtime.
 
 **Triggers:**
 
@@ -835,7 +984,8 @@ For styling, the ``keyboard`` widget uses the same settings as :ref:`lvgl-widget
 
 - ``lvgl.keyboard.update`` :ref:`action <actions-action>` updates the properties from the specific options above, plus any from :ref:`lvgl.widget.update <lvgl-automation-actions>`.
     - **id** (**Required**): The ID or a list of IDs of keyboard widgets which you want to update.
-    - Styles or properties to be updated.
+    - **mode** (*Optional*, enum): Keyboard layout to use.
+    - All other configuration variables from above are optional and have the same function as previously described.
 
 **Triggers:**
 
@@ -917,8 +1067,8 @@ A label is the basic widget type that is used to display text.
 
 - ``lvgl.label.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of label widgets to be updated.
-    - **text** (*Optional*, :ref:`text-property`): Text to display on the button.
-    - Widget styles or properties from the specific options above, to be updated.
+    - **text** (*Optional*, :ref:`text-property`): New text to display on the label.
+    - All other configuration variables from above are optional and have the same function as previously described. 
 
 **Triggers:**
 
@@ -972,7 +1122,7 @@ The LED widgets are either circular or rectangular widgets whose brightness can 
 
 - ``lvgl.led.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of led widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - All other configuration variables from above are optional and have the same function as previously described. 
 
 **Triggers:**
 
@@ -1269,7 +1419,7 @@ Use this widget to generate and display a QR-code containing a string at run tim
 
 **Configuration variables:**
 
-- **text** (**Required**, string): The string to be encoded in the QR.
+- **text** (*Optional*, :ref:`text-property`): Text to be encoded in the QR.
 - **size** (**Required**, int16): Set the desired size of the QR-code (in pixels). QR-codes with less data are smaller, but they scaled by an integer number to best fit to the given size.
 - **light_color** (*Optional*, :ref:`color <lvgl-color>`): Color for the light areas of the QR. Defaults to white.
 - **dark_color** (*Optional*, :ref:`color <lvgl-color>`): Color for the dark areas of the QR. Defaults to black.
@@ -1279,7 +1429,8 @@ Use this widget to generate and display a QR-code containing a string at run tim
 
 - ``lvgl.qrcode.update`` :ref:`action <actions-action>` updates the widget's ``text`` property to display a new QR-code.
     - **id** (**Required**): The ID of the qrcode widget to be updated.
-    - **text** (**Required**): The new text to be encoded and displayed.
+    - **text** (*Optional*, :ref:`text-property`): New text to be encoded in the QR.
+    - Style options from :ref:`lvgl-styling`.
 
 **Triggers:**
 
@@ -1329,7 +1480,7 @@ Roller allows you to simply select one option from a list by scrolling.
 
 - ``lvgl.roller.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
 - **id** (**Required**): The ID or a list of IDs of roller widgets to be updated.
-- **animated** (*Optional*, boolean): Animate the indicator when the bar changes value. Defaults to ``true``.
+- **animated** (*Optional*, boolean): Animate the indicator to the new selected value. Defaults to ``true``.
 - All the other roller options as listed above.
 
 **Triggers:**
@@ -1383,12 +1534,12 @@ The slider widget looks like a bar supplemented with a knob. The user can drag t
 **Configuration variables:**
 
 - **anim_time** (*Optional*, :ref:`Time <config-time>`): Sets the animation time if the value is set with ``animated: true``.
-- **animated** (*Optional*, boolean): Animate the indicator when the bar changes value. Defaults to ``true``.
+- **animated** (*Optional*, boolean): Animate the indicator on boot to the starting value. Defaults to ``true``.
 - **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize. The indicator shows the current state of the slider. Also uses all the typical background style properties.
 - **knob** (*Optional*, list): Settings for the knob *part* to control the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize. A rectangle (or circle) is drawn at the current value. Also uses all the typical background properties to describe the knob. By default, the knob is square (with an optional corner radius) with side length equal to the smaller side of the slider. The knob can be made larger with the padding values. Padding values can be asymmetric.
 - **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to ``100``.
 - **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to ``0``.
-- **value** (**Required**, int8): Actual value of the indicator at start, in ``0``-``100`` range. Defaults to ``0``.
+- **value** (*Optional*, int8): Actual value of the indicator at start, in ``min_value``-``max_value`` range. Defaults to ``0``.
 - Any :ref:`Styling <lvgl-styling>` and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
 
 Normally, the slider can be adjusted either by dragging the knob, or by clicking on the slider bar. In the latter case the knob moves to the point clicked and slider value changes accordingly. In some cases it is desirable to set the slider to react on dragging the knob only. This feature is enabled by enabling the ``adv_hittest`` flag.
@@ -1397,7 +1548,9 @@ Normally, the slider can be adjusted either by dragging the knob, or by clicking
 
 - ``lvgl.slider.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of slider widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - **animated** (*Optional*, boolean): Animate the indicator to the new value. Defaults to ``true``.
+    - **value** (*Optional*, int8): New value of the indicator.
+    - Any :ref:`Styling <lvgl-styling>` and state-based option for the background of the slider. Uses all the typical background style properties. Padding makes the indicator smaller in the respective direction.
 
 **Triggers:**
 
@@ -1444,6 +1597,7 @@ The ``slider`` can be also integrated as :doc:`Number </components/number/lvgl>`
 
 See :ref:`lvgl-cookbook-bright` and :ref:`lvgl-cookbook-volume` for examples which demonstrate how to use a slider to control entities in Home Assistant.
 
+.. _lvgl-widget-canvas:
 .. _lvgl-widget-spinbox:
 
 ``spinbox``
@@ -1463,7 +1617,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 - **range_to** (*Optional*, float): The maximum value allowed to set the spinbox to. Defaults to ``100``.
 - **rollover** (*Optional*, boolean): While increasing or decreasing the value, if either the minimum or maximum value is reached with this option enabled, the value will change to the other limit. If disabled, the value will remain at the minimum or maximum value. Defaults to ``false``.
 - **step** (*Optional*, float): The granularity with which the value can be set. Defaults to ``1.0``.
-- **value** (**Required**, float): Actual value to be shown by the spinbox at start.
+- **value** (*Optional*, float): Actual value to be shown by the spinbox at start. Defaults to ``0``.
 
 .. note::
 
@@ -1473,7 +1627,7 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 
 - ``lvgl.spinbox.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of spinbox widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - **value** (**Required**, float): New value of the spinbox.
 
 - ``lvgl.spinbox.increment`` :ref:`action <actions-action>` increases the value by one ``step`` configured above.
     - **id** (**Required**): The ID of the spinbox widget which you want to increment.
@@ -1542,12 +1696,14 @@ The Spinner widget is a spinning arc over a ring.
 - **arc_width** (*Optional*, int16): Set the width of the arcs in pixels.
 - **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize. Draws *another arc using the arc style* properties. Its padding values are interpreted relative to the background arc.
 - **spin_time** (**Required**, :ref:`Time <config-time>`): Duration of one cycle of the spin.
+- Style options from :ref:`lvgl-styling`.
 
 **Actions:**
 
-- ``lvgl.spinner.update`` :ref:`action <actions-action>` updates the widget styles and properties for the *indicator* part (anything other than the properties that apply commonly to all widgets), just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
+- ``lvgl.spinner.update`` :ref:`action <actions-action>`, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of spinner widgets to be updated.
-    - Widget styles or properties from the specific options above, to be updated.
+    - Style options from :ref:`lvgl-styling`.
+    
 
 **Triggers:**
 
@@ -1720,6 +1876,7 @@ The textarea is an extended label widget which displays a cursor and allows the 
 - ``lvgl.textarea.update`` :ref:`action <actions-action>` updates the widget's ``text`` property, to replace the entire text content.
     - **id** (**Required**): The ID or a list of IDs of textarea widgets to be updated.
     - **text** (*Optional*, :ref:`text-property`): The text to replace the textarea content.
+    - All other configuration variables from above are optional and have the same function as previously described. 
 
 **Triggers:**
 
