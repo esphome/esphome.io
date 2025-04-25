@@ -782,6 +782,8 @@ Energy/Solar Management
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
     SML, components/sml, sml.svg
     SUN-GTIL2 inverter, components/sun_gtil2, sun_1000g2.png
+    Growatt Solar, components/sensor/growatt_solar, growatt.jpg
+    Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg
 
 Event Components
 ----------------
