@@ -19,7 +19,7 @@ from docutils import nodes
 #   -d_build/.doctrees-schema
 # will put caches in another dir and not overwrite the ones without schema
 
-SCHEMA_PATH = "../esphome-vscode/server/src/schema/"
+SCHEMA_PATH = "../schema/"
 CONFIGURATION_VARIABLES = "Configuration variables:"
 CONFIGURATION_OPTIONS = "Configuration options:"
 PIN_CONFIGURATION_VARIABLES = "Pin configuration variables:"
