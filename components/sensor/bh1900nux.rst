@@ -5,7 +5,7 @@ BH1900NUX Temperature Sensor
 
 .. seo::
     :description: Instructions for setting up Rohm Semiconductors BH1900NUX Temperature Sensor in ESPHome.
-    :image: bh1900nux-evk-001.jpg
+    :image: bh1900nux-evk-001.png
     :keywords: BH1900NUX, BH1900NUX-TR, BH1900NUX-EVK-001, Rohm Semiconductors
 
 The ``bh1900nux`` sensor platform allows you to use a BH1900NUX
