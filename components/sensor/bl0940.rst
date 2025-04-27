@@ -81,11 +81,6 @@ Configuration variables:
 - **power_reference** (*Optional*, float): The calibration parameter for power readings. Defaults to ``713.104696500825`` as calculated using schema defaults.
 - **energy_reference** (*Optional*, float): The calibration parameter for cumulative energy readings. Defaults to ``6120.6267056536`` as calculated using schema defaults.
 
-- **voltage_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use for voltage calibration.
-- **current_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use for current calibration.
-- **power_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use to power calibration.
-- **energy_calibration** (*Optional*, :ref:`config-id`): The ID of the :doc:`Template Number Component </components/number/template>` to use to energy calibration.
-
 .. _bl0940-calibration:
 
 Calibration
@@ -145,8 +140,55 @@ Theoreticaly configuring ``voltage_reference`` and ``current_reference`` should 
 Online Calibration
 ------------------
 
-It is possible to adjust the sensor readings without need to update sensor configuration using a :doc:`Template Number Component </components/number/template>`.
+It is possible to adjust the sensor readings without need to update sensor configuration using the provided number platform.
 
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: bl0940
+        id: bl0940_id
+        uart_id: uart_bus
+        ...
+
+    number:
+      - platform: bl0940
+        bl0940_id: bl0940_id
+        current_calibration:
+          name: Current Calibration
+        voltage_calibration:
+          name: Voltage Calibration
+        power_calibration:
+          name: Power Calibration
+        energy_calibration:
+          name: Energy Calibration
+
+Configuration variables:
+************************
+- **bl0940_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the `BL0940 Sensor Component`
+- **current_calibration** (*Optional*): Enables current calibration configuration.
+- **voltage_calibration** (*Optional*): Enables voltage calibration configuration.
+- **power_calibration** (*Optional*): Enables power calibration configuration.
+- **energy_calibration** (*Optional*): Enables energy calibration configuration.
+
+Calibration variables:
+**********************
+- **min_value** (Optional, float): The minimum value this number can be. Minimal allowed value is ``-50`` defaults to ``-10``.
+- **max_value** (Optional, float): The maximum value this number can be. Maiximal allowed value is ``50`` defaults to ``10``.
+- **step** (Optional, float): The granularity with which the number can be set. Defaults to ``0.1``.
+- All other options from :ref:`Number <config-number>`.
+
+.. note::
+
+    There are some fixed values defined:
+
+    - **icon**: `ICON_PERCENT`
+    - **unit_of_measurement**: `UNIT_PERCENT`
+    - **mode**: `BOX`
+    - **initial_value**: ``0``
+
+Calibration details:
+********************
 Calibration factor is calculated in ``%`` based on submitted value from the configured ``calibration`` component.
 
 .. code-block:: cpp
@@ -161,7 +203,7 @@ When changing calibration values on the UI all calibrated reference values will 
     :align: center
     :width: 80.0%
 
-See sample configuration below:
+See sample full configuration below:
 
 .. code-block:: yaml
 
@@ -192,36 +234,34 @@ See sample configuration below:
               id: energy_calibration_ui
               value: 0
 
-    number:
-      - platform: template
-        id: current_calibration_ui
-        name: "Cal Current"
-        unit_of_measurement: "%"
-        min_value: -10
-        max_value: 10
-        step: 0.01
-        mode: box
-        update_interval: never
-        optimistic: true
-        restore_value: true
-        initial_value: 0
-        icon: "mdi:percent"
-        entity_category: config
-        # disabled_by_default: true
-      - ...
-
     sensor:
       - platform: bl0940
+        id: bl0940_id
         uart_id: uart_bus
         tuya_mode: false
         resistor_one: 0.5113 # base voltage calibration
         resistor_shunt: 1.035 # base current calibration
-        current_calibration: current_calibration_ui
-        voltage_calibration: voltage_calibration_ui
-        power_calibration: power_calibration_ui
-        energy_calibration: energy_calibration_ui
         voltage:
           ...
+
+    number:
+      - platform: bl0940
+        bl0940_id: bl0940_id # reference to sensor component
+        current_calibration:
+          id: current_calibration_ui
+          name: "Cal Current"
+        voltage_calibration:
+          id: voltage_calibration_ui
+          name: "Cal Voltage"
+        power_calibration:
+          id: power_calibration_ui
+          name: "Cal Power"
+          disabled_by_default: true
+        energy_calibration:
+          id: energy_calibration_ui
+          name: "Cal Energy"
+          disabled_by_default: true
+
 
 See Also
 --------
