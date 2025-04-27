@@ -315,9 +315,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
     def set_component_description(self, description, componentName, platformName=None):
         if platformName is not None:
             platform = get_component_file(self.app, platformName)
-            platform[platformName]["components"][componentName.lower()][
-                "docs"
-            ] = description
+            platform[platformName]["components"][componentName.lower()]["docs"] = (
+                description
+            )
         else:
             core = get_component_file(self.app, "esphome")["core"]
             if componentName in core["components"]:
@@ -385,9 +385,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                     components + ".platform.climate.schemas.CONFIG_SCHEMA"
                     for components in row[1].astext().split("\n")
                 ]
-                CUSTOM_DOCS["components/climate/climate_ir"][
-                    "IR Remote Climate"
-                ] += components_paths
+                CUSTOM_DOCS["components/climate/climate_ir"]["IR Remote Climate"] += (
+                    components_paths
+                )
 
     def depart_document(self, node):
         pass
@@ -541,12 +541,13 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 #     return
                 # self.props_section_title = title_text
 
-                for t in PLATFORMS_TITLES:
+                for t in sorted(PLATFORMS_TITLES, key=len, reverse=True):
                     if title_text.endswith(t):
                         component_name = title_text[
                             0 : len(title_text) - len(t) - 1
                         ].replace(" ", "_")
                         platform_name = PLATFORMS_TITLES[t]
+                        break  # this matches Binary Sensor first than Sensor as PLATFORMS_TITLE is sorted
 
                 if not platform_name:
                     # Some general title which does not locate a component directly
@@ -819,7 +820,6 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 self.find_props_previous_title()
                 self.current_prop, found = self.update_prop(node, self.props)
                 if self.current_prop and not found:
-                                    
                     logger.info(
                         f"In '{self.docname} {self.previous_title_text} Cannot find property {self.current_prop}"
                     )
@@ -952,7 +952,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
 
         markdown = self.getMarkdown(node)
 
-        markdown += f"\n\n*See also: [{self.props_section_title}]({urllib.parse.urljoin(self.app.config.html_baseurl, self.docname +'.html#'+self.title_id)})*"
+        markdown += f"\n\n*See also: [{self.props_section_title}]({urllib.parse.urljoin(self.app.config.html_baseurl, self.docname + '.html#' + self.title_id)})*"
 
         try:
             name_type = markdown[: markdown.index(": ") + 2]
