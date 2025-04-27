@@ -152,7 +152,7 @@ doorbell or opening a door.
 
 Configuration variables:
 
-- **source_address** (**Required**, int):The source address to send the command from,
+- **source_address** (**Required**, int): The source address to send the command from,
   see received messages for more info. For indoor stations the last byte of the address
   represents the apartment number set by the dials on the back of the indoor station and is
   transmitted in hexadecimal format.
