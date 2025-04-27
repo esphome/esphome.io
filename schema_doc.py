@@ -210,7 +210,9 @@ CUSTOM_DOCS = {
     "components/libretiny": {"LibreTiny Platform": "bk72xx.schemas.CONFIG_SCHEMA"},
 }
 
-REQUIRED_OPTIONAL_TYPE_REGEX = r"(\(((\*\*Required\*\*)|(\*Optional\*))(,\s(.*))*)\):\s"
+REQUIRED_OPTIONAL_TYPE_REGEX = (
+    r"(\(((\*\*(Required|Exclusive)\*\*)|(\*Optional\*))(,\s(.*))*)\):\s"
+)
 
 
 def get_node_title(node):
