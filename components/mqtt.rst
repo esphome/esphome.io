@@ -12,8 +12,8 @@ in which case this is not needed.
 
 .. warning::
 
-    If you enable MQTT and you do *not* use the "native API" for Home Assistant, you must
-    remove the ``api:`` line from your ESPHome configuration, otherwise the ESP will
+    If you enable MQTT and you do *not* use the :doc:`/components/api`, you must
+    remove the ``api:`` configuration or set ``reboot_timeout: 0s``, otherwise the ESP will
     reboot every 15 minutes because no client connected to the native API.
 
 .. code-block:: yaml
@@ -34,11 +34,14 @@ Configuration variables:
 ------------------------
 
 - **broker** (**Required**, string): The host of your MQTT broker.
+- **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to ``true``.
 - **port** (*Optional*, int): The port to connect to. Defaults to 1883.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
 - **password** (*Optional*, string): The password to use for
   authentication. Empty (the default) means no authentication.
+- **clean_session** (*Optional*, boolean): Whether the broker will clean
+  the MQTT session after disconnect. Defaults to ``false``.
 - **client_id** (*Optional*, string): The client id to use for opening
   connections. See :ref:`mqtt-defaults` for more information.
 - **discover_ip** (*Optional*, boolean): If Home Assistant automatic device
@@ -103,6 +106,7 @@ Configuration variables:
 - **on_json_message** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a JSON message on a specific MQTT topic is received. See :ref:`mqtt-on_json_message`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **publish_nan_as_none** (*Optional*, bool): Publish ``None`` instead of ``NaN`` to handle Unknown/Unavailable sensor states in Home Assistant. Defaults to ``false``.
 
 .. _mqtt-message:
 
@@ -456,6 +460,8 @@ Configuration variables:
    be retained. Defaults to ``true``.
 -  **discovery** (*Optional*, boolean): Manually enable/disable
    discovery for a component. Defaults to the global default.
+-  **subscribe_qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+   level advertised in discovery for subscribing (only if discovery is enabled). Defaults to 0.
 -  **availability** (*Optional*): Manually set what should be sent to
    Home Assistant for showing entity availability. Default derived from
    :ref:`global birth/last will message <mqtt-last_will_birth>`.
@@ -728,6 +734,57 @@ Configuration options:
         id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
           root["something"] = id(my_sensor).state;
         });
+
+``mqtt.disable`` Action
+-----------------------
+
+This action turns off the MQTT component on demand.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - mqtt.disable:
+
+.. note::
+
+    The configuration option ``enable_on_boot`` can be set to ``false`` if you do not want MQTT to be enabled on boot.
+
+
+``mqtt.enable`` Action
+----------------------
+
+This action turns on the MQTT component on demand.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - mqtt.enable:
+
+.. note::
+
+    The configuration option ``enable_on_boot`` can be set to ``false`` if you do not want MQTT to be enabled on boot.
+    ``mqtt.enable`` can be useful for custom setups. For example, if the broker name is negotiated dynamically and saved in a global variable.
+
+.. code-block:: yaml
+
+    mqtt:
+      id: mqtt_id
+      broker: ""
+      enable_on_boot: False
+
+    globals:
+      - id: broker_address
+        type: std::string
+        restore_value: yes
+        max_restore_data_length: 24
+        initial_value: '"192.168.1.2"'
+
+    on_...:
+      then:
+        - lambda: !lambda id(mqtt_id).set_broker_address(id(broker_address));
+        - mqtt.enable:
 
 .. _mqtt-connected_condition:
 

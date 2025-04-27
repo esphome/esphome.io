@@ -19,7 +19,7 @@ The ESPHome ``WeiKai`` component supports the following WeiKai chips:
 
 It can also be used with evaluation board equipped with these chips, such as:
 
-- `WK2168 Chip Development Board <https://fr.aliexpress.com/item/1005002198759633.html>`__
+- `WK2168 Chip Development Board <https://www.aliexpress.com/item/1005002198759633.html>`__
 - `WK2132 Chip Development Board <https://www.aliexpress.com/item/1005002018579265.html>`__
 - `DFROBOT Gravity: I²C to Dual UART Module <https://www.dfrobot.com/product-2001.html>`__
 

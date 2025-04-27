@@ -32,7 +32,7 @@ Configuration variables:
 ------------------------
 
 - **host** (**Required**, ip): The Host IP of your StatsD Server.
-- **post** (*Optional*, uint16): The Port of your StatsD Server. Defaults to ``8125``.
+- **port** (*Optional*, uint16): The Port of your StatsD Server. Defaults to ``8125``.
 - **prefix** (*Optional*, string): The prefix to automatically prepend every metric with.  Defaults to ``""``.
 - **update_interval** (*Optional*, uint16): How often to send the metrics. Defaults to ``10s``.
 - **sensor** (*Optional*, :ref:`sensors`): A list of sensors to generate metrics for.

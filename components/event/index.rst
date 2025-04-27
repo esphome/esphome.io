@@ -74,6 +74,7 @@ One of ``id`` or ``name`` is required.
 
   See https://www.home-assistant.io/integrations/event/#device-class
   for a list of available options.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations:
 

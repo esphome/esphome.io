@@ -13,7 +13,7 @@ configuration to Home Assistant (the native MAC address is not readily available
 
 .. note::
 
-    HA will not automatically discover an ESPHome instance running on ``host`` using MDNS, and you will need
+    HA will not automatically discover an ESPHome instance running on ``host`` using mDNS, and you will need
     to add it explicitly using the IP address of your host computer.
 
 Many components, especially those interfacing to actual hardware, will not be available when using ``host``. Do not

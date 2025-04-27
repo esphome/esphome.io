@@ -49,19 +49,62 @@ with the following:
 Mac
 ---
 
-There are no tested installation instructions for Mac. ESPHome does support
-Mac & will run with no problem.
+ESPHome supports macOS. There are several ways to install ESPHome on macOS:
 
-Contributions are welcome!
+- Homebrew
+- pip
+- Cloning the repository
 
-The process will likely be similar to Windows. You can install Python from the
-official site, and then install ESPHome with ``pip3 install esphome``.  You can
-then test that things are properly installed with the following:
+
+**Homebrew**
+
+An easy way for installation is via `Homebrew <https://brew.sh/>`_:
+
+.. code-block:: console
+
+    $ brew install esphome
+
+Verify the installation:
 
 .. code-block:: console
 
     $ esphome version
-    Version: 2021.12.3
+    Version: 2024.12.0 
+
+If you encounter any issues with Homebrew installation, please check the
+`ESPHome Homebrew Formula <https://formulae.brew.sh/formula/esphome>`_ page
+for additional information.
+
+.. note::
+
+    Homebrew may not always provide the latest version immediately. Updating Homebrew will 
+    automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to 
+    install ESPHome.
+
+**pip**
+
+For the latest version, use the pip installation. This may be more difficult to set up
+and may need additional dependencies and path settings. Setting up a virtual environment is 
+highly recommended. If you are not familiar with Python virtual environments, Homebrew
+may be easier.
+
+You will require Python 3.9 or newer. While your Mac may have a version of Python installed it may not be up-to-date.
+Python can be installed from the `official site <https://www.python.org/downloads>`_
+or with Homebrew. Once Python is installed, create and activate a virtual environment and install ESPHome with pip:
+
+.. code-block:: console
+
+    $ python3 -m venv venv      # The last argument is the folder in which to install the virtual environment
+    $ source venv/bin/activate  # For bash or compatible shells. If using a different shell, use activate.csh or activate.fish
+    (venv) $ pip install esphome       # Installs ESPHome in the virtual environment
+    (venv) $ esphome version
+
+Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above. When activated you will see ``(venv)`` at the beginning of your prompt.
+
+**Cloning the repository**
+
+For development purposes of ESPhome cloning the repository is recommended.
+See :ref:`setup_dev_env` for more information on setting up a development environment.
 
 Linux
 -----
@@ -120,4 +163,5 @@ See Also
 
 - :doc:`ESPHome index </index>`
 - :doc:`getting_started_command_line`
+- :doc:`contributing`
 - :ghedit:`Edit`

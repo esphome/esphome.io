@@ -5,7 +5,7 @@ LVGL Sensor
     :description: Instructions for setting up an LVGL widget sensor component.
     :image: ../images/lvgl_c_num.png
 
-The ``lvgl`` sensor platform creates a semsor component from an LVGL widget
+The ``lvgl`` sensor platform creates a sensor component from an LVGL widget
 and requires :doc:`LVGL </components/lvgl/index>` to be configured.
 
 Supported widgets are :ref:`lvgl-widget-arc`, :ref:`lvgl-widget-bar`, :ref:`lvgl-widget-slider` and :ref:`lvgl-widget-spinbox`. A single sensor supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome sensor.
@@ -27,7 +27,7 @@ Example:
 
 .. note::
 
-    Widget-specific actions (``lvgl.arc.update``, ``lvgl.bar.update``, ``lvgl.slider.update``, ``lvgl.spinbox.update``, ``lvgl.spinbox.decrement``, ``lvgl.spinbox.increment``) will trigger correspponding component updates to be sent to Home Assistant.
+    Widget-specific actions (``lvgl.arc.update``, ``lvgl.bar.update``, ``lvgl.slider.update``, ``lvgl.spinbox.update``, ``lvgl.spinbox.decrement``, ``lvgl.spinbox.increment``) will trigger corresponding component updates to be sent to Home Assistant.
 
 See Also
 --------

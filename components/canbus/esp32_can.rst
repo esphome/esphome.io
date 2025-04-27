@@ -28,6 +28,8 @@ Configuration variables:
 - **tx_pin** (**Required**, :ref:`Pin <config-pin>`): Transmit pin.
 - **rx_queue_len** (**Optional**, int): Length of RX queue.
 - **tx_queue_len** (**Optional**, int): Length of TX queue, 0 to disable.
+- **tx_enqueue_timeout** (**Optional**, :ref:`config-time`): Maximum time to wait when the TX queue is full before
+  dropping the message (by default, this is set to the time it takes to send 10 CAN messages at the given bit rate).
 - All other options from :ref:`Canbus <config-canbus>`.
 
 .. _esp32-can-bit-rate:
@@ -69,13 +71,13 @@ use a voltage divider here instead.
 
 .. figure:: images/canbus_esp32_5v.png
     :align: center
-    :target: ../_images/canbus_esp32_5v.png
+    :target: /_images/canbus_esp32_5v.png
 
 If you prefer to only have a 3.3V power supply, special 3.3V CAN transceivers are available.
 
 .. figure:: images/canbus_esp32_3v3.png
     :align: center
-    :target: ../_images/canbus_esp32_3v3.png
+    :target: /_images/canbus_esp32_3v3.png
 
 See Also
 --------
