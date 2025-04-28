@@ -1227,11 +1227,21 @@ def handle_component(app, doctree, docname):
         logger.warning(err_str)
 
 
+def sortedDeep(d):
+    if isinstance(d, list):
+        return sorted(sortedDeep(v) for v in d)
+    if isinstance(d, dict):
+        return {k: sortedDeep(d[k]) for k in sorted(d)}
+    return d
+
+
 def build_finished(app, exception):
     # TODO: create report of missing descriptions
 
     for fname, contents in app.files.items():
         f = open(SCHEMA_PATH + fname + ".json", "w", newline="\n")
+        # make sure all is sorted to minimize git diffs
+        contents = sortedDeep(contents)
         if JSON_DUMP_PRETTY:
             f.write(json.dumps(contents, indent=2))
         else:
