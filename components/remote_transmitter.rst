@@ -989,7 +989,7 @@ Configuration variables:
   
 .. note::
   
-  Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
+    Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
 
 
 .. _remote_transmitter-rc_switch-protocol:
