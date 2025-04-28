@@ -55,7 +55,7 @@ Automations:
 
 - **on_redraw** (*Optional*, :ref:`Automation <automation>`): An automation to perform
   when the menu needs to be redrawn. This can be useful if your display has slow refresh rates.
-  For example E-Ink displays that are used with `display_interval: never`
+  For example E-Ink displays that are used with ``display_interval: never``.
 
 Additional configuration is described in the :ref:`Display Menu <display_menu>` component.
 

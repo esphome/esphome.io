@@ -283,7 +283,9 @@ Configuration variables:
   Cannot be used with ``pages``.
 - **pages** (*Optional*, list of :ref:`config-id`): Only trigger this binary sensor if the display is showing one of these pages.
   Cannot be used with ``page_id``.
-- **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and use this extra area for touch buttons. To allow the sensor to register touches outside the display area set this to `true`. The calibration values as above should be set to the display bounds.
+- **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and use this extra 
+  area for touch buttons. To allow the sensor to register touches outside the display area set this to ``true``. 
+  The calibration values as above should be set to the display bounds.
 
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
