@@ -391,7 +391,7 @@ Sure! We are happy to help :) You can contact us here:
 -  ESPHome `issue <https://github.com/esphome/issues/issues>`__ and
    `feature request <https://github.com/esphome/feature-requests/issues>`__ trackers. Preferably only for issues and
    feature requests.
--  **If your inquiry is not regarding support**, you can `e-mail us <mailto:esphome@nabucasa.com>`__.
+-  **If your inquiry is not regarding support**, you can `e-mail us <mailto:esphome@openhomefoundation.org>`__.
 
 .. _wifi-problems:
 

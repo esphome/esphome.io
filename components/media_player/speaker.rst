@@ -39,14 +39,14 @@ Configuration variables:
 - **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
 
   - **speaker** (**Required**, :ref:`config-id`): The :doc:`speaker </components/speaker/index>` to output the audio.
-  - **format** (**Optional**, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of ``FLAC``, ``MP3``, ``WAV``, or ``NONE``. ``NONE`` disables transcoding in Home Assistant. Defaults to ``FLAC``.
+  - **format** (*Optional*, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of ``FLAC``, ``MP3``, ``WAV``, or ``NONE``. ``NONE`` disables transcoding in Home Assistant. Defaults to ``FLAC``.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured ``speaker`` component. Defaults to the speaker's sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either ``1`` or ``2``. Defaults to the speaker's number of channels.
 
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the ``announcement_pipeline``.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between ``4000`` and ``4000000``. Defaults to ``1000000``.
 - **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to ``true``.
-- **task_stack_in_psram** (*Optional* boolean): Run the audio tasks in external memory. Defaults to ``false``.
+- **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to ``false``.
 - **volume_increment** (*Optional*, percentage): Increment amount that the ``media_player.volume_up`` and ``media_player.volume_down`` actions will increase or decrease volume by. Defaults to ``5%``.
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to ``0%``.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to ``100%``.
