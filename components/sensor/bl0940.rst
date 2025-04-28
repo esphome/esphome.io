@@ -6,13 +6,6 @@ Belling BL0940 Energy Monitor
     :image: bl0940.png
     :keywords: BL0940
 
-.. note::
-
-    This page is incomplete and could some work. If you want to contribute, please read the
-    :doc:`contributing guide </guides/contributing>`. This page is missing:
-
-      - Images/screenshots/example configs of this device being used in action.
-
 The ``bl0940`` sensor platform allows you to use BL0940 energy monitors sensors with
 ESPHome. These are used in some Tuya-devices (e.g. the power metering BW-SHP10) and the Vaiotech Rowi2 Smart Plug
 
@@ -165,7 +158,7 @@ It is possible to adjust the sensor readings without need to update sensor confi
 
 Configuration variables:
 ************************
-- **bl0940_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the `BL0940 Sensor Component`
+- **bl0940_id** (*Required*, :ref:`config-id`): Manually specify the ID of the `BL0940 Sensor Component`
 - **current_calibration** (*Optional*): Enables current calibration configuration.
 - **voltage_calibration** (*Optional*): Enables voltage calibration configuration.
 - **power_calibration** (*Optional*): Enables power calibration configuration.
@@ -199,11 +192,36 @@ When changing calibration values on the UI all calibrated reference values will 
 
 ``voltage_calibration`` and ``current_calibration`` will affect ``power_reference`` and ``energy_reference`` if they have not been specified manually.
 
+Reset Calibration:
+******************
+To reset all external calibration values to their initial state you can use the provided calibration reset button
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: bl0940
+        id: bl0940_id
+        uart_id: uart_bus
+        ...
+
+    button:
+      - platform: bl0940
+        bl0940_id: bl0940_id
+        name: Reset Calibration
+
+Configuration variables:
+************************
+- **bl0940_id** (*Required*, :ref:`config-id`): Manually specify the ID of the `BL0940 Sensor Component`
+- All other options from :ref:`Button <config-button>`.
+
 .. figure:: images/bl0940-cal.png
     :align: center
     :width: 80.0%
 
-See sample full configuration below:
+
+Sample full configuration:
+--------------------------
 
 .. code-block:: yaml
 
@@ -215,24 +233,9 @@ See sample full configuration below:
       stop_bits: 1
 
     button:
-      - platform: template
-        id: calibration_reset
+      - platform: bl0940
+        bl0940_id: bl0940_id
         name: "Cal  Reset"
-        entity_category: config
-        icon: "mdi:restart"
-        on_press:
-          - number.set:
-              id: current_calibration_ui
-              value: 0
-          - number.set:
-              id: voltage_calibration_ui
-              value: 0
-          - number.set:
-              id: power_calibration_ui
-              value: 0
-          - number.set:
-              id: energy_calibration_ui
-              value: 0
 
     sensor:
       - platform: bl0940
