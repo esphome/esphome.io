@@ -159,8 +159,6 @@ Configuration variables:
   transmitted in hexadecimal format.
 - **destination_address** (**Required**, int): The destination address to send the command to,
   see received messages for more info.
-- **three_byte_address** (**Required**, int): The destination address to send the command to,
-  see received messages for more info.
 - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. ``false``
   means two bytes and ``true`` means three bytes. Please check the received messages to see which address length
   is used by your system. For example, ``[XXXX > XXXX]`` appears in the receiver log for two byte addresses and
