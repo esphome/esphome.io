@@ -36,6 +36,7 @@ Configuration variables:
   - **abbwelcome**: Decode and dump ABB-Welcome codes. Messages are sent via copper wires. See
     :ref:`transmitter description <remote_transmitter-transmit_abbwelcome>` for more details.
   - **aeha**: Decode and dump AEHA infrared codes.
+  - **beo4**: Decode and dump B&O Beo4 infrared codes.
   - **byronsx**: Decode and dump Byron SX doorbell RF codes.
   - **canalsat**: Decode and dump CanalSat infrared codes.
   - **canalsatld**: Decode and dump CanalSatLD infrared codes.
@@ -144,6 +145,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_aeha** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   AEHA remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::AEHAData`
+  is passed to the automation for use in lambdas.
+- **on_beo4** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  B&O Beo4 infrared remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::Beo4Data`
   is passed to the automation for use in lambdas.
 - **on_byronsx** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Byron SX doorbell RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::ByronSXData`
@@ -297,6 +301,11 @@ Remote code selection (exactly one of these has to be included):
   - **data** (**Required**, 3-35 bytes list): The code to listen for, see
     :ref:`transmitter description <remote_transmitter-transmit_aeha>` for more info. Usually you only need to copy this
     directly from the dumper output.
+
+- **beo4**: Trigger on a decoded B&O Beo4 infrared remote code with the given data.
+
+  - **source** (**Required**, int): The 8-bit source to trigger on, e.g. 0x00=video, 0x01=audio,..., see dumper output for more info.
+  - **command** (**Required**, int): The 8-bit command to listen for, e.g. 0x00=number0, 0x0C=standby,..., see dumper output for more info.
 
 - **byronsx**: Trigger on a decoded Byron SX Doorbell RF remote code with the given data.
 
