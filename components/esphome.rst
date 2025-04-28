@@ -45,7 +45,7 @@ Advanced options:
 - **build_path** (*Optional*, string): Customize where ESPHome will store the build files
   for your node. By default, ESPHome puts the PlatformIO project it uses to build the
   firmware in the ``.esphome/build/<NODE>`` (or into path from ``ESPHOME_BUILD_PATH`` environment variable if specified) directory,
-  but you can customize this behavior using this option. Official docker image automatically use `/build` folder
+  but you can customize this behavior using this option. Official docker image automatically use ``/build`` folder
   as default one in case it is mounted to it.
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See :ref:`esphome-platformio_options`.
