@@ -986,10 +986,10 @@ Configuration variables:
 - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
 - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
 - All other options from :ref:`remote_transmitter-transmit_action`.
-  
+
 .. note::
-  
-    Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables. 
+
+    Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables.
 
 
 .. _remote_transmitter-rc_switch-protocol:
