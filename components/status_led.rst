@@ -9,7 +9,8 @@ The ``status_led`` hooks into all ESPHome components and can indicate the status
 the device. Specifically, it will:
 
 - Blink slowly (about every second) when a **warning** is active. Warnings are active when for
-  example reading a sensor value fails temporarily or the WiFi/MQTT connections are disrupted.
+  example reading a sensor value fails temporarily, the WiFi/MQTT connections are disrupted, or
+  if the native API component is included but no client is connected.
 - Blink quickly (multiple times per second) when an **error** is active. Errors indicate that
   ESPHome has found an error while setting up. In most cases, ESPHome will still try to
   recover from the error and continue with all other operations.
@@ -19,7 +20,7 @@ the device. Specifically, it will:
 
     # Example configuration entry
     status_led:
-      pin: GPIO2
+      pin: GPIOXX
 
 .. note::
 
@@ -41,7 +42,7 @@ Configuration variables:
 
         status_led:
           pin:
-            number: D0
+            number: GPIOXX
             inverted: true
 
 See Also

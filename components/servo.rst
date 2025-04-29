@@ -9,7 +9,7 @@ The ``servo`` component allows you to use servo motors with ESPHome. Servos are
 motor controllers that contain all the electronics necessary for driving the motor and provide
 a simple PWM interface to control the motor.
 
-This integration works with both continuous-rotation and absolute servos and has a similar
+This component works with both continuous-rotation and absolute servos and has a similar
 interface to the Arduino Servo library.
 
 First, create an :ref:`output component <output>` (here ``esp8266_pwm``) for the pin the
@@ -34,7 +34,7 @@ only operate in this frequency range.
     output:
       - platform: esp8266_pwm
         id: pwm_output
-        pin: D1
+        pin: GPIOXX
         frequency: 50 Hz
 
 Configuration variables:
@@ -141,7 +141,7 @@ this will make the servo motor stop immediately and disable its active control.
 Home Assistant Configuration
 ----------------------------
 
-The easiest way to control your servo from Home Assistant is to add a ``number`` to your ESPHome 
+The easiest way to control your servo from Home Assistant is to add a ``number`` to your ESPHome
 configuration. See :ref:`Number <config-number>` for more information.
 
 .. code-block:: yaml

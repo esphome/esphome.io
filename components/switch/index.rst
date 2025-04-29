@@ -22,7 +22,8 @@ Base Switch Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the switch.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the switch. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -59,15 +60,16 @@ Configuration variables:
   when the switch is turned off. See :ref:`switch-on_turn_on_off_trigger`.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
 - **device_class** (*Optional*, string): The device class for the switch.
   See https://www.home-assistant.io/integrations/switch/#device-class
-  for a list of available options. Requires Home Assistant 2022.3 or newer.
+  for a list of available options.
 - If MQTT enabled, All other options from :ref:`MQTT Component <config-mqtt-component>`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 .. _switch-toggle_action:
 

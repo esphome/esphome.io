@@ -7,7 +7,7 @@ AMS AS3935 Franklin Lightning Sensor
     :keywords: as3935
 
 The **AS3935** sensor platform allows you to use your AS3935 sensor
-(`AliExpress`_, `AMS_AS3935`_)
+(`AMS_AS3935`_)
 in order to get notified when a thunderstorm is getting close.
 
 The AS3935 can detect the presence of lightning activity and provide an estimation
@@ -19,7 +19,7 @@ Component/Hub
 
 The AS3935 can be configured to use either the SPI **or** I²C protocol for data communication.
 First choose which communication method you want to use for the sensor, set the SI pin for the appropriate
-level and set up the ESPHome integration for the chosen communication method.
+level and set up the ESPHome component for the chosen communication method.
 
 Module Pins
 -----------
@@ -46,32 +46,21 @@ A1            I²C address selection MSB
 
     AS3935 Lightning Sensor.
 
-.. _AliExpress: https://de.aliexpress.com/af/as3935.html?SearchText=as3935
 .. _AMS_AS3935: https://ams.com/as3935
 
 Over SPI
 --------
 
 The ``as3935_spi`` sensor platform allows you to use your AS3935 sensor
-(`AliExpress`_, `AMS_AS3935`_) in order to get notified when a thunderstorm is getting close.
+(`AMS_AS3935`_) in order to get notified when a thunderstorm is getting close.
 
 
 .. code-block:: yaml
 
-    # Example configuration for SPI (decide for one!)
+    # Example configuration for SPI
     as3935_spi:
-      cs_pin: GPIO12
-      irq_pin: GPIO13
-    # Example lightning and energy sensor
-    sensor:
-      - platform: as3935
-        lightning_energy:
-          name: "Lightning Energy"
-        distance:
-          name: "Distance Storm"
-    binary_sensor:
-      - platform: as3935
-        name: "Storm Alert"
+      cs_pin: GPIOXX
+      irq_pin: GPIOXX
 
 
 Configuration variables:
@@ -112,24 +101,14 @@ Over I²C
 --------
 
 The ``as3935_i2c`` sensor platform allows you to use your AS3935 sensor
-(`AliExpress`_, `AMS_AS3935`_) in order to get notified when a thunderstorm is getting close.
+(`AMS_AS3935`_) in order to get notified when a thunderstorm is getting close.
 
 
 .. code-block:: yaml
 
-    # Example configuration for I²C (decide for one!)
+    # Example configuration for I²C
     as3935_i2c:
-      irq_pin: GPIO12
-    # Example shared configuration
-    sensor:
-      - platform: as3935
-        lightning_energy:
-          name: "Lightning Energy"
-        distance:
-          name: "Distance Storm"
-    binary_sensor:
-      - platform: as3935
-        name: "Storm Alert"
+      irq_pin: GPIOXX
 
 Configuration variables:
 ************************
@@ -173,19 +152,22 @@ Sensor
 
 A sensor platform to read lightning data
 
+.. code-block:: yaml
+
+    sensor:
+      - platform: as3935
+        lightning_energy:
+          name: Lightning Energy
+        distance:
+          name: Distance Storm
+
 Configuration variables:
 
 - **lightning_energy** (*Optional*): Lightning energy value. According to the datasheet this is only a pure value that doesn't have any physical meaning.
-
-  - **name** (**Required**, string): The name for the lightning energy sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **distance** (*Optional*): Distance in km to the front of the storm and not the distance to a lightning strike.
-
-  - **name** (**Required**, string): The name for the distance sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 
 Binary Sensor
@@ -193,11 +175,16 @@ Binary Sensor
 
 Binary sensor that indicates if a lightning strike was detected.
 
+.. code-block:: yaml
+
+    # Example storm alert binary sensor
+    binary_sensor:
+      - platform: as3935
+        name: Storm Alert
+
 Configuration variables:
 
--  **name** (**Required**, string): The name of the binary sensor.
--  **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
--  All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+-  All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 
 See Also
@@ -205,7 +192,6 @@ See Also
 
 - :ref:`sensor-filters`
 - :apiref:`as3935/as3935.h`
-- `AliExpress <https://de.aliexpress.com/af/as3935.html?SearchText=as3935>`__
 - `Data Sheet <https://www.embeddedadventures.com/datasheets/AS3935_Datasheet_EN_v2.pdf>`__
 - `Little Arduino Projects <https://github.com/tardate/LittleArduinoProjects/tree/master/playground/AS3935>`__
 - `AMS AS3935 <https://ams.com/as3935>`__

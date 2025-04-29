@@ -27,6 +27,9 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
         address: 0x40
         shunt_resistance: 0.1 ohm
         max_current: 3.2A
+        # adc time used for both, Bus Voltage and Shunt Voltage
+        adc_time: 140us
+        adc_averaging: 128
         update_interval: 60s
         current:
           name: "INA226 Current"
@@ -37,6 +40,17 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
         shunt_voltage:
           name: "INA226 Shunt Voltage"
 
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: ina226
+        address: 0x40
+        adc_time:
+          voltage: 140us
+          current: 332us
+
+
 Configuration variables:
 ------------------------
 
@@ -45,10 +59,14 @@ Configuration variables:
   Defaults to ``0.1 ohm``.
 - **max_current** (*Optional*, float): The maximum current you are expecting. ESPHome will use this to
   configure the sensor optimally. Defaults to ``3.2A``.
-- **adc_time** (*Optional*, :ref:`config-time`): The time in microseconds to perform a single ADC conversion. 
+- **adc_time** (*Optional*, :ref:`config-time` or both of the following nested options): The time in microseconds to perform a single ADC conversion.
   Defaults to ``1100us``. Valid values are ``140us``, ``204us``, ``332us``, ``588us``, ``1100us``, ``2116us``, 
   ``4156us``, ``8244us``.
-- **adc_averaging** (*Optional*, integer): Selects ADC sample averaging count. Defaults to ``4``. Valid values are 
+
+  - **voltage** (**Required**, :ref:`config-time`): ADC conversion time for Bus Voltage
+  - **current** (**Required**, :ref:`config-time`): ADC conversion time for Shunt Voltage (Current measurement)
+
+- **adc_averaging** (*Optional*, integer): Selects ADC sample averaging count. Defaults to ``4``. Valid values are
   ``1``, ``4``, ``16``, ``64``, ``128``, ``256``, ``512``, ``1024``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 

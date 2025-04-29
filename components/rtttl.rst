@@ -127,7 +127,7 @@ Common beeps
 
 You can do your own beep patterns too! Here's a short collection so you can just use right away or tweak them to your like:
 
-.. code-block:: 
+.. code-block::
 
     two_short:d=4,o=5,b=100:16e6,16e6
     long:d=1,o=5,b=100:e6
@@ -165,7 +165,7 @@ Sample code
 
     output:
       - platform: esp8266_pwm
-        pin: D1
+        pin: GPIOXX
         id: rtttl_out
 
     rtttl:
@@ -174,8 +174,8 @@ Sample code
         - logger.log: 'Song ended!'
 
     api:
-      services:
-        - service: play_rtttl
+      actions:
+        - action: rtttl_play
           variables:
             song_str: string
           then:

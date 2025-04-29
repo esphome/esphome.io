@@ -12,6 +12,32 @@ of the ESP32 as an output component.
 The frequency range of LEDC is from 10Hz to 40MHz - however, higher frequencies require a smaller
 bit depth which means the output is not that accurate for frequencies above ~300kHz.
 
+
+Configuration variables:
+------------------------
+
+- **pin** (**Required**, :ref:`config-pin`): The pin to use LEDC on. Can only be GPIO0-GPIO33.
+- **id** (**Required**, :ref:`config-id`): The id to use for this output component.
+- **frequency** (*Optional*, float): At which frequency to run the LEDC
+  channel’s timer. Defaults to 1000Hz.
+- All other options from :ref:`Output <config-output>`.
+
+Advanced options:
+
+- **channel** (*Optional*, int): Manually set the `LEDC
+  channel <https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/ledc.html#configure-channel>`__
+  to use. Two adjacent channels share the same timer. Defaults to an automatic selection.
+
+Note: When configuring custom frequencies for two or more outputs, ensure that you manually specify
+channel 0, 2, 4, 6 for each output. This will prevent issues that arise from automatic selection,
+which chooses adjacent channels with shared timers. See
+`Issue #3114 <https://github.com/esphome/issues/issues/3114>`__ for more details.
+
+- **phase_angle** (*Optional*, float): Set a phase angle to the other channel of this timer.
+  Range 0-360°, defaults to 0°
+
+Note: this variable is only available for the esp-idf framework
+
 Example Usage For a Light
 *************************
 
@@ -20,8 +46,8 @@ Example Usage For a Light
     # Example configuration entry
     output:
       - platform: ledc
-        pin: GPIO19
-        id: gpio_19
+        pin: GPIOXX
+        id: gpio_
 
     # Example usage in a light
     light:
@@ -62,26 +88,6 @@ Example Usage For a Piezo Buzzer
         - output.set_level:
             id: buzzer
             level: "50%"
-
-Configuration variables:
-------------------------
-
-- **pin** (**Required**, :ref:`config-pin`): The pin to use LEDC on. Can only be GPIO0-GPIO33.
-- **id** (**Required**, :ref:`config-id`): The id to use for this output component.
-- **frequency** (*Optional*, float): At which frequency to run the LEDC
-  channel’s timer. Defaults to 1000Hz.
-- All other options from :ref:`Output <config-output>`.
-
-Advanced options:
-
-- **channel** (*Optional*, int): Manually set the `LEDC
-  channel <https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/ledc.html#configure-channel>`__
-  to use. Two adjacent channels share the same timer. Defaults to an automatic selection.
-
-Note: When configuring custom frequencies for two or more outputs, ensure that you manually specify
-channel 0, 2, 4, 6 for each output. This will prevent issues that arise from automatic selection,
-which chooses adjacent channels with shared timers. See
-`Issue #3114 <https://github.com/esphome/issues/issues/3114>`__ for more details.
 
 Recommended frequencies
 -----------------------

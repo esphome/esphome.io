@@ -28,11 +28,11 @@ our `Bluetooth Proxy installer <https://esphome.github.io/bluetooth-proxies/>`__
     The :doc:`esp32` component should be configured to use the ``esp-idf`` framework, as the ``arduino`` framework
     uses significantly more memory and performs poorly with the Bluetooth proxy enabled. When switching from
     ``arduino`` to ``esp-idf``, make sure to update the device with a serial cable as the partition table is
-    different between the two frameworks as :doc:`ota` updates will not change the partition table.
+    different between the two frameworks as :doc:`/components/ota/index` updates will not change the partition table.
 
     The :doc:`web_server` component should be disabled as the device is likely
     to run out of memory and will malfunction when both components are enabled simultaneously.
-    
+
     Not all devices are supported and ESPHome does not decode or keep a list. To find out if your device is supported,
     please search for it in the `Home Assistant Integrations <https://www.home-assistant.io/integrations/>`__ list.
 
@@ -43,14 +43,16 @@ Configuration:
 
     bluetooth_proxy:
 
-- **active** (*Optional*, boolean): Enables proxying active connections. Defaults to ``false``. Requires Home Assistant 2022.10 or later.
+- **active** (*Optional*, boolean): Enables proxying active connections. Defaults to ``false``.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to ``true`` when using the ESP-IDF framework.
+- **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
+  Each configured slot consumes ~1KB of RAM. This can only be adjusted when using
+  the ``esp-idf`` framework up to a maximum of ``9``. It is recommended not to exceed ``5``
+  connection slots to avoid memory issues. Defaults to ``3``.
+  The value must not exceed the total configured ``max_connections``
+  for :doc:`esp32_ble_tracker`.
 
 The Bluetooth proxy depends on :doc:`esp32_ble_tracker` so make sure to add that to your configuration.
-
-.. note::
-
-    Bluetooth proxy requires Home Assistant 2022.9 or later. ESPHome 2022.12.0 and Home Assistant 2022.12.6 or later is recommended.
 
 Improving reception performance
 -------------------------------
@@ -107,6 +109,7 @@ This configuration is for an Olimex ESP32-PoE-ISO board with an Ethernet connect
     api:
 
     ota:
+      platform: esphome
 
     esp32_ble_tracker:
       scan_parameters:
@@ -116,6 +119,7 @@ This configuration is for an Olimex ESP32-PoE-ISO board with an Ethernet connect
 
     bluetooth_proxy:
       active: true
+      connection_slots: 3
 
 
 See Also

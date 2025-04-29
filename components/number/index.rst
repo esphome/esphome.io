@@ -30,7 +30,8 @@ All numbers in ESPHome have a name and an optional icon.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the number.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name for the number. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -43,20 +44,21 @@ Configuration variables:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
-  of measurement for the number. Requires Home Assistant Core 2021.12 or newer.
+  of measurement for the number.
 - **mode** (*Optional*, string): Defines how the number should be displayed in the frontend.
   See https://developers.home-assistant.io/docs/core/entity/number/#properties
-  for a list of available options. Requires Home Assistant Core 2021.12 or newer.
+  for a list of available options.
   Defaults to ``"auto"``.
 - **device_class** (*Optional*, string): The device class for the number.
   See https://www.home-assistant.io/integrations/number/#device-class
   for a list of available options.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations:
 
@@ -68,6 +70,7 @@ Automations:
 MQTT Options:
 
 - All other options from :ref:`MQTT Component <config-mqtt-component>`.
+
 
 Number Automation
 -----------------

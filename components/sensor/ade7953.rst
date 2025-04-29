@@ -35,7 +35,7 @@ Over I²C
     # Example configuration entry for i2c
     sensor:
       - platform: ade7953_i2c
-        irq_pin: GPIO16
+        irq_pin: GPIOXX
         voltage:
           name: ADE7953 Voltage
         frequency:
@@ -122,75 +122,42 @@ Configuration variables:
 - **active_power_gain_a** (*Optional*, int): Set the active power amplification of the A channel. Defaults to ``0x400000``.
 - **active_power_gain_b** (*Optional*, int): Set the active power amplification of the B channel. Defaults to ``0x400000``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **use_accumulated_energy_registers** (*Optional*, boolean): Use ADE7935 accumulated energy registers instead of instant power registers. These registers store the accumulated energy since the last read and should provide better accuracy for power calculation. Defaults to ``false``.
 
 Over SPI
 --------
 
 .. code-block:: yaml
 
-    # Example configuration entry for SPI (taken from a Shelly Pro 4PM)
+    # Example configuration entry for SPI
     sensor:
       - platform: ade7953_spi
-        cs_pin: GPIO04
-        irq_pin: GPIO35
-        current_pga_gain_a: 2x
-        current_pga_gain_b: 2x
-        current_gain_a: 0x600000
-        current_gain_b: 0x600000
+        cs_pin: GPIOXX
+        irq_pin: GPIOXX
         voltage:
           name: "Voltage"
-          filters:
-          - delta: 1
         frequency:
           name: ADE7953 Frequency
-          filters:
-          - delta: 0.1
         current_a:
           name: "Current A"
-          filters:
-          - delta: 0.01
         current_b:
           name: "Current B"
-          filters:
-          - delta: 0.01
         power_factor_a:
           name: "Power Factor A"
-          filters:
-          - delta: 5
         power_factor_b:
           name: "ADE7953 Power Factor B"
-          filters:
-          - delta: 5
         apparent_power_a:
           name: "Apparent Power A"
-          filters:
-          - delta: 1
         apparent_power_b:
           name: "Apparent Power B"
-          filters:
-          - delta: 1
         active_power_a:
           name: "Power A"
-          id: active_power_1
-          # active_power is inverted, so multiply by -1
-          filters:
-          - multiply: -1
-          - delta: 1
         active_power_b:
           name: "Power B"
-          id: active_power_2
-          # active_power is inverted, so multiply by -1
-          filters:
-          - multiply: -1
-          - delta: 1
         reactive_power_a:
           name: "Reactive Power A"
-          filters:
-          - delta: 1
         reactive_power_b:
           name: "Reactive Power B"
-          filters:
-          - delta: 1
 
 Configuration variables:
 ************************
@@ -253,6 +220,7 @@ Configuration variables:
 - **active_power_gain_a** (*Optional*, int): Set the active power amplification of the A channel. Defaults to ``0x400000``.
 - **active_power_gain_b** (*Optional*, int): Set the active power amplification of the B channel. Defaults to ``0x400000``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **use_accumulated_energy_registers** (*Optional*, boolean): Use ADE7935 accumulated energy registers instead of instant power registers. These registers store the accumulated energy since the last read and should provide better accuracy for power calculation. Defaults to ``false``.
 
 Use with Shelly 2.5
 -------------------

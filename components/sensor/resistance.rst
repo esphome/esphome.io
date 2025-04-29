@@ -60,7 +60,6 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name for the sensor.
 - **sensor** (**Required**, :ref:`config-id`): The sensor to read the voltage values from
   to convert to resistance readings.
 - **configuration** (**Required**, string): The type of circuit, one of ``DOWNSTREAM`` or
@@ -68,7 +67,6 @@ Configuration variables:
 - **resistor** (**Required**, float): The value of the resistor with a constant value.
 
 - **reference_voltage** (*Optional*, float): The reference voltage. Defaults to ``3.3V``.
-- **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also

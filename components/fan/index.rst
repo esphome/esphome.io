@@ -26,7 +26,8 @@ Base Fan Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the fan.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the fan. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -49,11 +50,12 @@ Configuration variables:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 MQTT options:
 
@@ -73,14 +75,20 @@ MQTT options:
 
 Automation triggers:
 
+- **on_state** (*Optional*, :ref:`Action <config-action>`): An automation to perform
+  when the fan state is changed. See :ref:`fan-on_state_trigger`.
 - **on_turn_on** (*Optional*, :ref:`Action <config-action>`): An automation to perform
   when the fan is turned on. See :ref:`fan-on_turn_on_off_trigger`.
 - **on_turn_off** (*Optional*, :ref:`Action <config-action>`): An automation to perform
   when the fan is turned off. See :ref:`fan-on_turn_on_off_trigger`.
+- **on_direction_set** (*Optional*, :ref:`Action <config-action>`): An automation to perform
+  when the fan direction is changed. See :ref:`fan-on_direction_set_trigger`.
+- **on_oscillating_set** (*Optional*, :ref:`Action <config-action>`): An automation to perform
+  when the fan oscillating state is changed. See :ref:`fan-on_oscillating_set_trigger`.
 - **on_speed_set** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the fan speed is set/changed. See :ref:`fan-on_speed_set_trigger`.
+  when the fan speed is changed. See :ref:`fan-on_speed_set_trigger`.
 - **on_preset_set** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the fan preset mode is set/changed. See :ref:`fan-on_preset_set_trigger`.
+  when the fan preset mode is changed. See :ref:`fan-on_preset_set_trigger`.
 
 .. _fan-toggle_action:
 
@@ -175,6 +183,24 @@ This :ref:`condition <config-condition>` passes if the given fan is on or off.
         then:
         - script.execute: my_script
 
+.. _fan-on_state_trigger:
+
+``fan.on_state`` Trigger
+------------------------
+
+This trigger is activated each time the fan state is changed. It will fire when the state is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
+A pointer to the ``Fan`` is available as a variable called ``x``.
+
+.. code-block:: yaml
+
+    fan:
+      - platform: speed # or any other platform
+        # ...
+        on_state:
+        - logger.log:
+            format: "Fan State changed!  Fan Speed is %d!"
+            args: [ x->speed ]
+
 .. _fan-on_turn_on_off_trigger:
 
 ``fan.on_turn_on`` / ``fan.on_turn_off`` Trigger
@@ -193,12 +219,49 @@ if a command to turn the fan on or off already matches the current state.
         on_turn_off:
         - logger.log: "Fan Turned Off!"
 
+.. _fan-on_direction_set_trigger:
+
+``fan.on_direction_set`` Trigger
+--------------------------------
+
+This trigger is activated each time the fan direction is changed. It will fire when the direction is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
+The new direction is available as a variable called ``x``.  (``0`` is FORWARD, ``1`` is REVERSE)
+
+.. code-block:: yaml
+
+    fan:
+      - platform: speed # or any other platform
+        # ...
+        on_direction_set:
+        - logger.log:
+            format: "Fan Direction was changed to %s!"
+            args: [ x == 0 ? "FORWARD" : "REVERSE" ]
+
+.. _fan-on_oscillating_set_trigger:
+
+``fan.on_oscillating_set`` Trigger
+----------------------------------
+
+This trigger is activated each time the fan oscillating state is changed. It will fire when the state is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
+The new oscillating state is available as a variable called ``x``.
+
+.. code-block:: yaml
+
+    fan:
+      - platform: speed # or any other platform
+        # ...
+        on_oscillating_set:
+        - logger.log:
+            format: "Fan Oscillating State was changed to %s!"
+            args: [ ONOFF(x) ]
+
 .. _fan-on_speed_set_trigger:
 
 ``fan.on_speed_set`` Trigger
 ----------------------------
 
 This trigger is activated each time the fan speed is changed. It will fire when the speed is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
+The new speed is available as a variable called ``x``.
 
 .. code-block:: yaml
 
@@ -206,7 +269,9 @@ This trigger is activated each time the fan speed is changed. It will fire when 
       - platform: speed # or any other platform
         # ...
         on_speed_set:
-        - logger.log: "Fan Speed was changed!"
+        - logger.log:
+            format: "Fan Speed was changed to %d!"
+            args: [ x ]
 
 .. _fan-on_preset_set_trigger:
 
@@ -214,6 +279,7 @@ This trigger is activated each time the fan speed is changed. It will fire when 
 -----------------------------
 
 This trigger is activated each time the fan preset mode is changed. It will fire when the preset mode is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
+The new mode is available as a variable called ``x``.
 
 .. code-block:: yaml
 
@@ -221,7 +287,9 @@ This trigger is activated each time the fan preset mode is changed. It will fire
       - platform: speed # or any other platform
         # ...
         on_preset_set:
-          - logger.log: "Fan preset mode was changed!"
+          - logger.log:
+              format: "Fan preset mode was changed to %s!"
+              args: [ x.c_str() ]
 
 Lambda calls
 ------------

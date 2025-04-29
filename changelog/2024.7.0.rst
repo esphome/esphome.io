@@ -1,0 +1,226 @@
+ESPHome 2024.7.0 - 17th July 2024
+=================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.7.0.
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+
+microWakeWord
+-------------
+
+The `micro_wake_word` component has been updated to "version 2".
+This brings the capability to configure multiple models per device and has a ``vad`` model for
+voice activity detection.
+
+The configuration has a breaking change to support these new features.
+
+.. code-block:: yaml
+
+    micro_wake_word:
+      model: okay_nabu
+
+needs to be changed to the following:
+
+.. code-block:: yaml
+
+    micro_wake_word:
+      models:
+        - okay_nabu
+
+Please see the :doc:`Documentation </components/micro_wake_word>` for the full configuration.
+
+Release 2024.7.1 - July 22
+--------------------------
+
+- Prevent rename from deleting new config :esphomepr:`7104` by :ghuser:`acortelyou`
+- [i2s_microphone] Partially revert #7092 so microphone volume doesn't change :esphomepr:`7109` by :ghuser:`kahrendt`
+- [heatpumpir] Fix BK72XX Compile error with IRremoteESP8266 :esphomepr:`6955` by :ghuser:`dianlight`
+- [http_request] allow basic auth for idf  :esphomepr:`7086` by :ghuser:`oarcher`
+- Fixes sml parser to process extended length lists with a number of items that is dividable by 16 :esphomepr:`6148` by :ghuser:`irgendwienet`
+
+Release 2024.7.2 - July 25
+--------------------------
+
+- [http_request] Change default timeout to 4.5s :esphomepr:`7123` by :ghuser:`jesserockz`
+- [http_request] Fix ESP-IDF follow redirect :esphomepr:`7101` by :ghuser:`dentra`
+
+Release 2024.7.3 - August 1
+---------------------------
+
+- [pmwcs3] Add delay after sending REG_READ_START :esphomepr:`7130` by :ghuser:`thevogoncoder`
+- Fix for Mitsubishi units that only support cooling :esphomepr:`7143` by :ghuser:`RubyBailey`
+- [micro_wake_word] Fix VAD detection and modify detection computation :esphomepr:`7164` by :ghuser:`kahrendt`
+
+Full list of changes
+--------------------
+
+New Features
+^^^^^^^^^^^^
+
+- [uptime] Add new timestamp type for uptime sensor :esphomepr:`7029` by :ghuser:`jesserockz` (new-feature)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- [dooya] Flip bit timings :esphomepr:`6947` by :ghuser:`jesserockz` (breaking-change)
+- [modbus_text_sensor] new default ANSI encoding type :esphomepr:`6975` by :ghuser:`dudanov` (breaking-change)
+- [micro_wake_word] Version 2 :esphomepr:`7032` by :ghuser:`kahrendt` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- helpers.cpp: Fix GLIBCXX_RELEASE check < 8 :esphomepr:`7062` by :ghuser:`ferbar`
+- Fix pmsa003i cold boot marked as failed on ESP32 et al :esphomepr:`7064` by :ghuser:`z3liff`
+- [http_request] Fix follow_redirects on arduino :esphomepr:`7054` by :ghuser:`guillempages`
+- [ethernet] Fix compile warning for IPv6 :esphomepr:`7048` by :ghuser:`HeMan`
+- Update webserver local assets to 20240704-081526 :esphomepr:`7041` by :ghuser:`esphomebot`
+- Add braces to if statement to avoid compiler warning. :esphomepr:`7036` by :ghuser:`colmbuckley`
+- [mitsubishi] Fix current temperature :esphomepr:`6909` by :ghuser:`ttaborda`
+- [climate] fix dump output of unsupported features :esphomepr:`7005` by :ghuser:`dudanov`
+- [climate-traits] improved performance :esphomepr:`7006` by :ghuser:`dudanov`
+- Add default icon to restart button :esphomepr:`7076` by :ghuser:`leejoow`
+- Add support for the Gree YAC1FB9 in climate_ir :esphomepr:`7056` by :ghuser:`topeju`
+- add ESP32-C6 support to esp32_can :esphomepr:`7063` by :ghuser:`Adminius`
+- Fix voice assistant crash when no speaker configured :esphomepr:`7075` by :ghuser:`kevdliu`
+- Bump HeatpumpIR, add protocols, remove IRremoteESP8266 :esphomepr:`6996` by :ghuser:`nagyrobi`
+- LTR390 separate ALS and UV gain and resolution :esphomepr:`7026` by :ghuser:`latonita`
+- [improv_serial] Fix linker error created in #6998 :esphomepr:`7082` by :ghuser:`kbx81`
+- [i2s_audio] Allow config for primary/secondary i2s mode :esphomepr:`7092` by :ghuser:`jesserockz`
+- [micro_wake_word] Allow simpler model config :esphomepr:`7094` by :ghuser:`jesserockz`
+- [ota] Print Arduino update errors :esphomepr:`7096` by :ghuser:`jesserockz`
+
+All changes
+^^^^^^^^^^^
+
+- [CI] Update device class sync script for update entities :esphomepr:`6895` by :ghuser:`jesserockz`
+- X9c operation speed :esphomepr:`6898` by :ghuser:`oliverhihn`
+- Bump actions/checkout from 4.1.6 to 4.1.7 :esphomepr:`6900` by :ghuser:`dependabot[bot]`
+- [CI] Allow clang-tidy to see IDF components :esphomepr:`6903` by :ghuser:`kbx81`
+- [esp32_camera] Use newer library version (for #6802) :esphomepr:`6809` by :ghuser:`kbx81`
+- [micro_wake_word] Pin to esp-tflite-micro v1.3.1 :esphomepr:`6906` by :ghuser:`kbx81`
+- VEML7700 Fix GCC build warnings :esphomepr:`6881` by :ghuser:`latonita`
+- IDF 5 fixes for #6802 :esphomepr:`6911` by :ghuser:`kbx81`
+- [CI-ethernet] Add/fix/organize/clean up ethernet component tests :esphomepr:`6916` by :ghuser:`kbx81`
+- [CI-a01nyub] Consolidate test files :esphomepr:`6917` by :ghuser:`kbx81`
+- [CI-api] Test fix for IDF 5+ :esphomepr:`6918` by :ghuser:`kbx81`
+- [CI-http_request] Test fix for IDF 5+ :esphomepr:`6919` by :ghuser:`kbx81`
+- [CI-wireguard] Test file consolidation :esphomepr:`6920` by :ghuser:`kbx81`
+- [CI-esp32_hall] Remove IDF test :esphomepr:`6921` by :ghuser:`kbx81`
+- [CI] Introduce testing for IDF 5 (and other arbitrary framework versions) :esphomepr:`6802` by :ghuser:`kbx81`
+- uart: allow setting the UART id in final_validate_device_schema :esphomepr:`6923` by :ghuser:`paravoid`
+- Bump peter-evans/create-pull-request from 6.0.5 to 6.1.0 :esphomepr:`6935` by :ghuser:`dependabot[bot]`
+- Fix garbled graphics on LILYGO T4-S3 display :esphomepr:`6910` by :ghuser:`manuelkasper`
+- Update cover.h for open() and close() compiler warnings :esphomepr:`6936` by :ghuser:`peter--s`
+- [CI] Add debug component test for LibreTiny :esphomepr:`6945` by :ghuser:`kbx81`
+- [dooya] Flip bit timings :esphomepr:`6947` by :ghuser:`jesserockz` (breaking-change)
+- [qspi_amoled] Fix display remaining blank after update() before setup completion :esphomepr:`6958` by :ghuser:`manuelkasper`
+- Bump docker/build-push-action from 6.0.1 to 6.1.0 in /.github/actions/build-image :esphomepr:`6962` by :ghuser:`dependabot[bot]`
+- Synchronise Device Classes from Home Assistant :esphomepr:`6966` by :ghuser:`esphomebot`
+- [qspi_amoled] Fix clear/fill with rotation :esphomepr:`6960` by :ghuser:`manuelkasper`
+- [script] allow template parameters :esphomepr:`6972` by :ghuser:`ssieb`
+- [haier] climate ID auto generation  :esphomepr:`6949` by :ghuser:`dudanov`
+- [core] Add script to extract actions, conditions, and pin_providers :esphomepr:`6929` by :ghuser:`jesserockz`
+- [external_files] Move common ``download_content`` function to ``external_files.py`` :esphomepr:`6982` by :ghuser:`jesserockz`
+- Do not build mDNS when mDNS is disabled via yaml :esphomepr:`6979` by :ghuser:`Links2004`
+- Bump HeatpumpIR and IRremoteESP8266 :esphomepr:`6948` by :ghuser:`nagyrobi`
+- [CI] Add more mdns and safe_mode tests :esphomepr:`6990` by :ghuser:`kbx81`
+- [CI] Remove old test yamls from CI runs :esphomepr:`6991` by :ghuser:`kbx81`
+- [CI] Update tests to run against IDF 5.1 :esphomepr:`6992` by :ghuser:`kbx81`
+- Bump docker/build-push-action from 6.1.0 to 6.2.0 in /.github/actions/build-image :esphomepr:`6999` by :ghuser:`dependabot[bot]`
+- [tuya] implement command 0x22 - datapoint-async :esphomepr:`6980` by :ghuser:`christiaanderidder`
+- Allow wireguard to bind to PPP interface :esphomepr:`6989` by :ghuser:`droscy`
+- [modbus_text_sensor] new default ANSI encoding type :esphomepr:`6975` by :ghuser:`dudanov` (breaking-change)
+- [CI] Remove old test yaml files :esphomepr:`7002` by :ghuser:`kbx81`
+- Revert "[CI] Update tests to run against IDF 5.1" :esphomepr:`7003` by :ghuser:`jesserockz`
+- Enable devcontainer linters :esphomepr:`7019` by :ghuser:`orland0m`
+- 'uart' and 'improv_serial' need to understand non-UART logger configurations :esphomepr:`6998` by :ghuser:`kpfleming`
+- Make crc8 const-correct :esphomepr:`7027` by :ghuser:`nattgris`
+- [CI] Run all tests when a base test changes :esphomepr:`7010` by :ghuser:`kbx81`
+- [CI] Update tests to run against IDF 5.1 :esphomepr:`7011` by :ghuser:`kbx81`
+- [uptime] Add new timestamp type for uptime sensor :esphomepr:`7029` by :ghuser:`jesserockz` (new-feature)
+- Fix compile errors on ESP32-C6 with W5500 SPI ethernet :esphomepr:`7030` by :ghuser:`LeeHanYeong`
+- Bump docker/setup-buildx-action from 3.3.0 to 3.4.0 :esphomepr:`7043` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 6.2.0 to 6.3.0 in /.github/actions/build-image :esphomepr:`7038` by :ghuser:`dependabot[bot]`
+- Bump docker/setup-qemu-action from 3.0.0 to 3.1.0 :esphomepr:`7039` by :ghuser:`dependabot[bot]`
+- Bump actions/upload-artifact from 4.3.3 to 4.3.4 :esphomepr:`7047` by :ghuser:`dependabot[bot]`
+- Bump actions/download-artifact from 4.1.7 to 4.1.8 :esphomepr:`7046` by :ghuser:`dependabot[bot]`
+- Fix display of update state in webinterfae :esphomepr:`7045` by :ghuser:`leejoow`
+- Haier component update to support more protocol variations :esphomepr:`7040` by :ghuser:`paveldn`
+- Don't test for IPv6 addresses when min_ipv6_addr_count is 0 :esphomepr:`7037` by :ghuser:`colmbuckley`
+- [CI] Allow running specific target test(s) only :esphomepr:`7051` by :ghuser:`tomaszduda23`
+- Bump actions/setup-python from 5.1.0 to 5.1.1 in /.github/actions/restore-python :esphomepr:`7071` by :ghuser:`dependabot[bot]`
+- Fix RC Switch protocol not transmitting correctly via IR :esphomepr:`5411` by :ghuser:`michd`
+- [micro_wake_word] Version 2 :esphomepr:`7032` by :ghuser:`kahrendt` (breaking-change)
+- UART component support added for host platform :esphomepr:`6912` by :ghuser:`paveldn`
+- Configure ap ip for RP2040 :esphomepr:`7065` by :ghuser:`HeMan`
+- helpers.cpp: Fix GLIBCXX_RELEASE check < 8 :esphomepr:`7062` by :ghuser:`ferbar`
+- Fix pmsa003i cold boot marked as failed on ESP32 et al :esphomepr:`7064` by :ghuser:`z3liff`
+- [http_request] Fix follow_redirects on arduino :esphomepr:`7054` by :ghuser:`guillempages`
+- [ethernet] Fix compile warning for IPv6 :esphomepr:`7048` by :ghuser:`HeMan`
+- Update webserver local assets to 20240704-081526 :esphomepr:`7041` by :ghuser:`esphomebot`
+- Add braces to if statement to avoid compiler warning. :esphomepr:`7036` by :ghuser:`colmbuckley`
+- [mitsubishi] Fix current temperature :esphomepr:`6909` by :ghuser:`ttaborda`
+- [climate] fix dump output of unsupported features :esphomepr:`7005` by :ghuser:`dudanov`
+- [climate-traits] improved performance :esphomepr:`7006` by :ghuser:`dudanov`
+- Add default icon to restart button :esphomepr:`7076` by :ghuser:`leejoow`
+- Add support for the Gree YAC1FB9 in climate_ir :esphomepr:`7056` by :ghuser:`topeju`
+- add ESP32-C6 support to esp32_can :esphomepr:`7063` by :ghuser:`Adminius`
+- Fix voice assistant crash when no speaker configured :esphomepr:`7075` by :ghuser:`kevdliu`
+- Bump HeatpumpIR, add protocols, remove IRremoteESP8266 :esphomepr:`6996` by :ghuser:`nagyrobi`
+- LTR390 separate ALS and UV gain and resolution :esphomepr:`7026` by :ghuser:`latonita`
+- [improv_serial] Fix linker error created in #6998 :esphomepr:`7082` by :ghuser:`kbx81`
+- [i2s_audio] Allow config for primary/secondary i2s mode :esphomepr:`7092` by :ghuser:`jesserockz`
+- [micro_wake_word] Allow simpler model config :esphomepr:`7094` by :ghuser:`jesserockz`
+- [ota] Print Arduino update errors :esphomepr:`7096` by :ghuser:`jesserockz`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

@@ -26,19 +26,11 @@ The ``monochromatic`` light platform creates a simple brightness-only light from
         name: "Kitchen Lights"
         output: output_component1
 
-    # Example output entry
-    output:
-      - platform: esp8266_pwm
-        id: output_component1
-        pin: D1
 
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the light.
 - **output** (**Required**, :ref:`config-id`): The id of the float :ref:`output` to use for this light.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Light <config-light>`.
 
 See Also

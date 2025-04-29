@@ -10,6 +10,8 @@ for configuring Wi-Fi on an ESPHome device by using a serial connection to the d
 
 The ``improv_serial`` component requires the serial ``logger`` to be configured.
 
+The ``improv_serial`` component will use the project name and version instead of ESPHomes version whenever it's available.
+
 
 .. code-block:: yaml
 

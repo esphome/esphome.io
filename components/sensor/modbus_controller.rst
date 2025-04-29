@@ -11,8 +11,6 @@ and requires :doc:`/components/modbus_controller` to be configured.
 
 Configuration variables:
 ------------------------
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
 - **register_type** (**Required**): type of the modbus register.
 
     - ``coil``: Coils are 1-bit registers (ON/OFF values) that are used to control discrete outputs. They may be read and/or written. Modbus *Function Code 1 (Read Coil Status)* will be used.

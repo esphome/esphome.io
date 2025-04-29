@@ -5,14 +5,17 @@ Modbus Controller
     :description: Instructions for setting up the Modbus Controller component.
     :image: modbus.png
 
-The ``modbus_controller`` component creates a RS485 connection to control a Modbus server (slave) device, letting your ESPHome node to act as a Modbus client (master).
-You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+
+The ``modbus_controller`` component creates a RS485 connection to either:
+
+- control a Modbus server (slave) device, letting your ESPHome node to act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+- let your ESPHome node act as a Modbus server, allowing a ModBUS client to read data (like sensor values) from your ESPHome node.
+
+To choose the role, set the ``role`` attribute of the :doc:`/components/modbus` upon which this ``modbus_controller`` component relies. ``client`` is the default.
 
 .. figure:: /images/modbus.png
     :align: center
     :width: 25%
-
-The ``modbus_controller`` component relies on the :doc:`/components/modbus`.
 
 
 
@@ -51,7 +54,9 @@ Configuration variables:
 
 - **modbus_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the ``modbus`` hub.
 
-- **address** (**Required**, :ref:`config-id`): The Modbus address of the slave device
+- **address** (**Required**, :ref:`config-id`): The Modbus address of the slave device.
+
+- **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to ``false``.
 
 - **command_throttle** (*Optional*, :ref:`config-time`): minimum time in between 2 requests to the device. Default is ``0ms``.
   Some Modbus slave devices limit the rate of requests from the master, so this allows the interval between requests to be altered.
@@ -59,13 +64,46 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
+.. _modbus_controller-offline_skip_updates:
+
 - **offline_skip_updates** (*Optional*, integer): When a slave doesn't respond to a command, it is
   marked as offline, you can specify how many updates will be skipped while it is offline. If using a bus with multiple
   slaves, this avoids waiting for timeouts allowing to read other slaves in the same bus. When the slave
   responds to a command, it'll be marked online again.
 
-Example
--------
+- **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
+
+- **server_registers** (*Optional*): A list of registers that are responded to when acting as a server.
+  - **address** (**Required**, integer): start address of the first register in a range
+  - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (MSB first)
+
+      - ``U_WORD``: unsigned 16 bit integer from 1 register = 16bit
+      - ``S_WORD``: signed 16 bit integer from 1 register = 16bit
+      - ``U_DWORD``: unsigned 32 bit integer from 2 registers = 32bit
+      - ``S_DWORD``: signed 32 bit integer from 2 registers = 32bit
+      - ``U_DWORD_R``: unsigned 32 bit integer from 2 registers low word first
+      - ``S_DWORD_R``: signed 32 bit integer from 2 registers low word first
+      - ``U_QWORD``: unsigned 64 bit integer from 4 registers = 64bit
+      - ``S_QWORD``: signed 64 bit integer from 4 registers = 64bit
+      - ``U_QWORD_R``: unsigned 64 bit integer from 4 registers low word first
+      - ``S_QWORD_R``: signed 64 bit integer from 4 registers low word first
+      - ``FP32``: 32 bit IEEE 754 floating point from 2 registers
+      - ``FP32_R``: 32 bit IEEE 754 floating point - same as FP32 but low word first
+
+    Defaults to ``U_WORD``.
+
+  - **read_lambda** (**Required**, :ref:`lambda <config-lambda>`):
+    Lambda that returns the value of this register.
+
+Automations:
+
+- **on_command_sent** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus command has been sent. See :ref:`modbus_controller-on_command_sent`
+- **on_online** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes online. See :ref:`modbus_controller-on_online`
+- **on_offline** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes offline. See :ref:`modbus_controller-on_offline`
+
+Example Client
+--------------
+
 The following code creates a ``modbus_controller`` hub talking to a ModBUS device at address ``1`` with ``115200`` bps
 
 ModBUS sensors can be directly defined (inline) under the ``modbus_controller`` hub or as standalone components
@@ -78,7 +116,7 @@ Technically there is no difference between the "inline" and the standard definit
       ...
 
     modbus:
-      flow_control_pin: 5
+      flow_control_pin: GPIOXX
       id: modbus1
 
     modbus_controller:
@@ -118,6 +156,56 @@ Technically there is no difference between the "inline" and the standard definit
 
 The configuration example above creates a ``modbus_controller`` hub talking to a Modbus device at address ``1`` with a baudrate of ``115200`` bps, implementing a sensor, a switch and a text sensor.
 
+Example Server
+--------------
+
+The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from a ModBUS server.
+
+.. code-block:: yaml
+
+    uart:
+      - id: uart_modbus_client
+        tx_pin: 32
+        rx_pin: 34
+      - id: uart_modbus_server
+        tx_pin: 25
+        rx_pin: 35
+
+    modbus:
+      - uart_id: uart_modbus_client
+        id: modbus_client
+      - uart_id: uart_modbus_server
+        id: modbus_server
+        role: server
+
+    modbus_controller:
+      - id: modbus_evse
+        modbus_id: modbus_client
+        address: 0x2
+        update_interval: 5s
+      - modbus_id: modbus_server
+        address: 0x4
+        server_registers:
+          - address: 0x0002
+            value_type: S_DWORD_R
+            read_lambda: |-
+              return id(evse_voltage_l1).state;
+
+    sensor:
+      - platform: modbus_controller
+        id: evse_voltage_l1
+        modbus_controller_id: modbus_evse
+        name: "EVSE voltage L1"
+        register_type: holding
+        address: 0x0000
+        device_class: voltage
+        value_type: S_DWORD_R
+        accuracy_decimals: 1
+        unit_of_measurement: V
+        filters:
+          - multiply: 0.1
+
+
 Check out the various Modbus components available at the bottom of the document in the :ref:`modbusseealso` section. They can be directly defined *(inline)* under the ``modbus_controller`` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
 
 Below you find a few general tips about using Modbus in more advanced scenarios. Applicable component functionalities have links pointing here:
@@ -129,43 +217,43 @@ Bitmasks
 
 Some devices use decimal values in read registers to show multiple binary states occupying only one register address. To decode them, you can use bitmasks according to the table below. The decimal value corresponding to a bit is always double of the previous one in the row. Multiple bits can be represented in a single register by making a sum of all the values corresponding to the bits.
 
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | Alarm  bit | Description      | DEC value | HEX value |
-+============+==================+===========+===========+ 
++============+==================+===========+===========+
 | bit 0      | Binary Sensor 0  | 1         | 1         |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 1      | Binary Sensor 1  | 2         | 2         |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 2      | Binary Sensor 2  | 4         | 4         |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 3      | Binary Sensor 3  | 8         | 8         |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 4      | Binary Sensor 4  | 16        | 10        |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 5      | Binary Sensor 5  | 32        | 20        |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 6      | Binary Sensor 6  | 64        | 40        |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 7      | Binary Sensor 7  | 128       | 80        |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 8      | Binary Sensor 8  | 256       | 100       |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 9      | Binary Sensor 9  | 512       | 200       |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 10     | Binary Sensor 10 | 1024      | 400       |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 11     | Binary Sensor 11 | 2048      | 800       |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 12     | Binary Sensor 12 | 4096      | 1000      |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 13     | Binary Sensor 13 | 8192      | 2000      |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 14     | Binary Sensor 14 | 16384     | 4000      |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 | bit 15     | Binary Sensor 15 | 32768     | 8000      |
-+------------+------------------+-----------+-----------+ 
++------------+------------------+-----------+-----------+
 
-In the example below, register ``15``, holds several binary values. It stores the decimal value ``12288``, which is the sum of ``4096`` + ``8192``, meaning the corresponding bits ``12`` and ``13`` are ``1``, the other bits are ``0``. 
+In the example below, register ``15``, holds several binary values. It stores the decimal value ``12288``, which is the sum of ``4096`` + ``8192``, meaning the corresponding bits ``12`` and ``13`` are ``1``, the other bits are ``0``.
 
 To gather some of these bits as binary sensors in ESPHome, use ``bitmask``:
 
@@ -513,7 +601,7 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
     The code synchronizes the localtime of MCU to the epever controller
     The time is set by writing 12 bytes to register 0x9013.
     Then battery charge settings are sent.
-    
+
     .. code-block:: yaml
 
         esphome:
@@ -565,7 +653,7 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
                       0x04BA,  // 900d Low Volt. Disconnect Volt. 11.8
                       0x04BA   // 900E Discharging Limit Voltage 11.8
                   };
-    
+
                   // Boost and equalization periods
                   std::vector<uint16_t> battery_settings2 = {
                       0x0000,  // 906B Equalize Duration (min.) 0
@@ -574,7 +662,7 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
                   esphome::modbus_controller::ModbusCommandItem set_battery1_command =
                       esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x9000, battery_settings1.size() ,
                                                                                                   battery_settings1);
-    
+
                   esphome::modbus_controller::ModbusCommandItem set_battery2_command =
                       esphome::modbus_controller::ModbusCommandItem::create_write_multiple_command(controller, 0x906B, battery_settings3.size(),
                                                                                                   battery_settings2);
@@ -583,19 +671,19 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
                   delay(200) ;
                   controller->queue_command(set_battery2_command);
                   ESP_LOGI("ModbusLambda", "EPSOLAR Battery set");
-    
+
         uart:
           id: mod_bus
-          tx_pin: 19
-          rx_pin: 18
+          tx_pin: GPIOXX
+          rx_pin: GPIOXX
           baud_rate: 115200
           stop_bits: 1
-    
+
         modbus:
-          #flow_control_pin: 23
+          #flow_control_pin: GPIOXX
           send_wait_time: 200ms
           id: mod_bus_epever
-    
+
         modbus_controller:
           - id: epever
             ## the Modbus device addr
@@ -604,7 +692,7 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
             command_throttle: 0ms
             setup_priority: -10
             update_interval: ${updates}
-    
+
         sensor:
           - platform: modbus_controller
             modbus_controller_id: epever
@@ -617,7 +705,7 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
             accuracy_decimals: 1
             filters:
               - multiply: 0.01
-    
+
           - platform: modbus_controller
             modbus_controller_id: epever
             id: array_rated_current
@@ -629,7 +717,7 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
             accuracy_decimals: 2
             filters:
               - multiply: 0.01
-    
+
           - platform: modbus_controller
             modbus_controller_id: epever
             id: array_rated_power
@@ -643,6 +731,62 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
               - multiply: 0.01
 
 .. _modbusseealso:
+
+.. _modbus_controller-automations:
+
+Automation
+----------
+
+.. _modbus_controller-on_command_sent:
+
+``on_command_sent``
+*******************
+
+This automation will be triggered when a command has been sent by the `modbus_controller`. In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_command_sent:
+          then:
+            - number.increment: modbus_commands
+
+.. _modbus_controller-on_online:
+
+``on_online``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``online``, after been ``offline``. In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_online:
+          then:
+            - logger.log: "Controller back online!"
+
+.. _modbus_controller-on_offline:
+
+``on_offline``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``offline`` (See :ref:`offline_skip_updates <modbus_controller-offline_skip_updates>`). In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_offline:
+          then:
+            - logger.log: "Controller goes offline!"
 
 See Also
 --------

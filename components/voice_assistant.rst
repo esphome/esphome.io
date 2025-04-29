@@ -19,8 +19,8 @@ ESPHome devices with a microphone are able to stream the audio to Home Assistant
     configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
     combination with Voice Assistant and/or other audio components.
 
-Configuration:
---------------
+Configuration variables:
+------------------------
 
 .. code-block:: yaml
 
@@ -37,6 +37,8 @@ Configuration:
 - **media_player** (*Optional*, :ref:`config-id`): The :doc:`media_player </components/media_player/index>` to use
   to output the response. Cannot be used with ``speaker`` above.
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to ``false``.
+- **conversation_timeout** (*Optional*, :ref:`config-time`): How long to wait before resetting the ``conversation_id``
+  sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to ``300s``.
 - **on_intent_start** (*Optional*, :ref:`Automation <automation>`): An automation to perform when intent processing starts.
 - **on_intent_end** (*Optional*, :ref:`Automation <automation>`): An automation to perform when intent processing ends.
 - **on_listening** (*Optional*, :ref:`Automation <automation>`): An automation to
@@ -82,6 +84,19 @@ Configuration:
 - **volume_multiplier** (*Optional*, float): Volume multiplier to apply to the assist pipeline.
   Must be larger than 0. Defaults to 1 (disabled).
 
+- **on_timer_started** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a voice assistant
+  timer has started. The timer is available as ``timer`` of type :apistruct:`voice_assistant::Timer`.
+- **on_timer_finished** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a voice assistant
+  timer has finished. The timer is available as ``timer`` of type :apistruct:`voice_assistant::Timer`.
+- **on_timer_cancelled** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a voice assistant
+  timer has been cancelled. The timer is available as ``timer`` of type :apistruct:`voice_assistant::Timer`.
+- **on_timer_updated** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a voice assistant
+  timer has been updated (paused/resumed/duration changed). The timer is available as ``timer`` of type :apistruct:`voice_assistant::Timer`.
+- **on_timer_tick** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the voice assistant timers
+  tick is triggered.
+  This is called every **1 second** while there are timers on this device.
+  The timers are available as ``timers`` which is a ``std::vector`` (array) of type :apistruct:`voice_assistant::Timer`.
+
 .. _voice_assistant-actions:
 
 Voice Assistant Actions
@@ -89,28 +104,30 @@ Voice Assistant Actions
 
 The following actions are available for use in automations:
 
-``voice_assistant.start``
-^^^^^^^^^^^^^^^^^^^^^^^^^
+``voice_assistant.start`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Listens for one voice command then stops.
 
 Configuration variables:
 
 - **silence_detection** (*Optional*, boolean): Enable silence detection. Defaults to ``true``.
+- **wake_word** (*Optional*, string): The wake word that was used to trigger the voice assistant
+  when using on-device wake word such as :doc:`/components/micro_wake_word`.
 
 Call ``voice_assistant.stop`` to signal the end of the voice command if ``silence_detection`` is set to ``false``.
 
 
-``voice_assistant.start_continuous``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``voice_assistant.start_continuous`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Start listening for voice commands. This will start listening again after
 the response audio has finished playing. Some errors will stop the cycle.
 Call ``voice_assistant.stop`` to stop the cycle.
 
 
-``voice_assistant.stop``
-^^^^^^^^^^^^^^^^^^^^^^^^
+``voice_assistant.stop`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Stop listening for voice commands.
 
@@ -120,8 +137,15 @@ Voice Assistant Conditions
 
 The following conditions are available for use in automations:
 
-- ``voice_assistant.is_running`` - Returns true if the voice assistant is currently running.
-- ``voice_assistant.connected`` - Returns true if the voice assistant is currently connected to Home Assistant.
+``voice_assistant.is_running`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true if the voice assistant is currently running.
+
+``voice_assistant.connected`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true if the voice assistant is currently connected to Home Assistant.
 
 Wake word detection
 -------------------

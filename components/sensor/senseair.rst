@@ -42,9 +42,7 @@ Configuration variables:
 
 - **co2** (**Required**): The CO_2 data from the sensor in parts per million (ppm).
 
-  - **name** (**Required**, string): The name for the CO_2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.

@@ -643,7 +643,8 @@ could easily be added by adding the ``pump_switch_id`` parameter and a :ref:`swi
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -662,7 +663,7 @@ could easily be added by adding the ``pump_switch_id`` parameter and a :ref:`swi
     switch:
       - platform: gpio
         id: garden_sprinkler_valve
-        pin: 5
+        pin: GPIOXX
 
 Single Controller, Three Valves, No Pump
 ****************************************
@@ -673,7 +674,8 @@ This example illustrates a complete, simple three-valve system with no pump/upst
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -707,13 +709,13 @@ This example illustrates a complete, simple three-valve system with no pump/upst
     switch:
       - platform: gpio
         id: lawn_sprinkler_valve_sw0
-        pin: 0
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw1
-        pin: 2
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw2
-        pin: 4
+        pin: GPIOXX
 
 Single Controller, Three Valves, Single Pump
 ********************************************
@@ -724,7 +726,8 @@ This example illustrates a complete three-valve system with a single pump/upstre
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -759,16 +762,16 @@ This example illustrates a complete three-valve system with a single pump/upstre
     switch:
       - platform: gpio
         id: sprinkler_pump_sw
-        pin: 12
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw0
-        pin: 0
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw1
-        pin: 2
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw2
-        pin: 4
+        pin: GPIOXX
 
 Single Controller, Three Latching Valves, Single Latching Pump
 **************************************************************
@@ -788,7 +791,8 @@ a common pump/upstream valve.
 
     esphome:
       name: esp-sprinkler-controller
-      platform: ESP32
+
+    esp32:
       board: featheresp32
 
     wifi:
@@ -832,28 +836,28 @@ a common pump/upstream valve.
     switch:
       - platform: gpio
         id: sprinkler_pump_sw_off
-        pin: 14
+        pin: GPIOXX
       - platform: gpio
         id: sprinkler_pump_sw_on
-        pin: 15
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw0_off
-        pin: 0
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw0_on
-        pin: 2
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw1_off
-        pin: 4
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw1_on
-        pin: 5
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw2_off
-        pin: 12
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw2_on
-        pin: 13
+        pin: GPIOXX
 
 Dual Controller, Five Valves, Two Pumps
 ***************************************
@@ -866,7 +870,8 @@ valves, each of which are shared between the two controllers:
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -925,25 +930,25 @@ valves, each of which are shared between the two controllers:
     switch:
       - platform: gpio
         id: sprinkler_pump_sw0
-        pin: 12
+        pin: GPIOXX
       - platform: gpio
         id: sprinkler_pump_sw1
-        pin: 13
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw0
-        pin: 0
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw1
-        pin: 2
+        pin: GPIOXX
       - platform: gpio
         id: lawn_sprinkler_valve_sw2
-        pin: 4
+        pin: GPIOXX
       - platform: gpio
         id: garden_sprinkler_valve_sw0
-        pin: 14
+        pin: GPIOXX
       - platform: gpio
         id: garden_sprinkler_valve_sw1
-        pin: 15
+        pin: GPIOXX
 
 .. note::
 
@@ -1087,38 +1092,38 @@ memory use.
 Expose Sprinkler Controller Actions via user-API
 ************************************************
 
-This configuration snippet illustrates how user-defined ESPHome API services may be used to expose
+This configuration snippet illustrates how user-defined ESPHome API actions may be used to expose
 various sprinkler controller actions to the front end. This could be useful to change settings
 and/or trigger sprinkler controller actions using automations.
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_multiplier
+      actions:
+        - action: set_multiplier
           variables:
             multiplier: float
           then:
             - sprinkler.set_multiplier:
                 id: lawn_sprinkler_ctrlr
                 multiplier: !lambda 'return multiplier;'
-        - service: start_full_cycle
+        - action: start_full_cycle
           then:
             - sprinkler.start_full_cycle: lawn_sprinkler_ctrlr
-        - service: start_single_valve
+        - action: start_single_valve
           variables:
             valve: int
           then:
             - sprinkler.start_single_valve:
                 id: lawn_sprinkler_ctrlr
                 valve_number: !lambda 'return valve;'
-        - service: next_valve
+        - action: next_valve
           then:
             - sprinkler.next_valve: lawn_sprinkler_ctrlr
-        - service: previous_valve
+        - action: previous_valve
           then:
             - sprinkler.previous_valve: lawn_sprinkler_ctrlr
-        - service: shutdown
+        - action: shutdown
           then:
             - sprinkler.shutdown: lawn_sprinkler_ctrlr
 
@@ -1160,7 +1165,7 @@ How Do I...
 ***********
 
 - **...determine if the sprinkler controller is running?**
-  
+
   Use the method ``optional<size_t> active_valve()`` to check if there is an active valve. If the ``optional`` returned
   ``has_value()``, the sprinkler controller is running and you may use the ``value()`` method to check which specific
   valve is active.
@@ -1225,7 +1230,7 @@ How Do I...
             }
 
 - **...determine the sprinkler controller's multiplier/repeat values?**
-  
+
   Methods of interest in this case are:
 
   - ``float multiplier()``

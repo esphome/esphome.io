@@ -49,8 +49,6 @@ Based on this, you can create the select as follows:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the switch.
 - **enum_datapoint** (**Required**, int): The enum datapoint id number for the select.
 - **options** (**Required**, Map[int, str]): Provide a mapping from values (int) of
   this Select to options (str) of the *enum_datapoint* and vice versa. All options and

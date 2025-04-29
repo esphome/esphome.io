@@ -2,7 +2,7 @@ Grow Fingerprint Reader
 =======================
 
 .. seo::
-    :description: Instructions for setting up Grow Fingerprint Reader integration in ESPHome.
+    :description: Instructions for setting up Grow Fingerprint Reader component in ESPHome.
     :image: fingerprint.svg
 
 The ``fingerprint_grow`` component allows you to use your R307, R503, R503-RGB, ZFM-20, ... fingerprint sensors with ESPHome.
@@ -30,14 +30,13 @@ If available on your reader model, it's recommended to connect 3.3VT (touch indu
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      rx_pin: GPIO13
-      tx_pin: GPIO15
-      baud_rate: 57600
-
-    # Declare Grow Fingerprint Reader
     fingerprint_grow:
-      sensing_pin: GPIO12
+      sensing_pin: GPIOXX
+      sensor_power_pin:
+          number: GPIOXX
+          inverted: true
+      idle_period_to_sleep: 5s
+
       on_finger_scan_start:
         ...
       on_finger_scan_matched:
@@ -66,8 +65,10 @@ Base Configuration:
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART hub.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **sensing_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Pin connected to the reader's finger detection signal (WAKEUP) output.
+- **sensor_power_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): Output pin responsible for toogling the sensor power on and off.
 - **password** (*Optional*, int): Password to use for authentication. Defaults to ``0x00``.
 - **new_password** (*Optional*, int): Sets a new password to use for authentication. See :ref:`fingerprint_grow-set_new_password` for more information.
+- **idle_period_to_sleep** (*Optional*, :ref:`config-time`): The sensor idle period to wait before powering it off (sleep). Defaults to ``5s``. See :ref:`fingerprint_grow-sleep_mode` for more information.
 - **on_finger_scan_start** (*Optional*, :ref:`Automation <automation>`): An action to be performed when the finger touches the sensor. See :ref:`fingerprint_grow-on_finger_scan_start`.
 - **on_finger_scan_matched** (*Optional*, :ref:`Automation <automation>`): An action to be performed when an enrolled fingerprint is scanned. See :ref:`fingerprint_grow-on_finger_scan_matched`.
 - **on_finger_scan_unmatched** (*Optional*, :ref:`Automation <automation>`): An action to be performed when an unknown fingerprint is scanned. See :ref:`fingerprint_grow-on_finger_scan_unmatched`.
@@ -82,51 +83,56 @@ Binary Sensor
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the enrolling binary sensor.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+- All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
-Optional Sensor Configuration:
 
 Sensor
 ------
 
 - **fingerprint_count**: The number of enrolled fingerprints stored on the reader.
-
-  - **name** (**Required**, string): The name for the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **last_finger_id**: The last matched enrolled fingerprint as set by :ref:`fingerprint_grow-on_finger_scan_matched`.
-
-  - **name** (**Required**, string): The name for the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **last_confidence**: The last matched confidence as set by :ref:`fingerprint_grow-on_finger_scan_matched`.
-
-  - **name** (**Required**, string): The name for the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **status**: The integer representation of the internal status register of the reader.
-
-  - **name** (**Required**, string): The name for the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **capacity**: The fingerprint storage capacity of the reader.
-
-  - **name** (**Required**, string): The name for the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **security_level**: The integer representation of the currently configured security level of the reader. Higher security levels reduce the false acceptance rate (FAR) at the expense of increasing the false rejection rate (FRR). Range is 1 (lowest) to 5 (highest).
+  All options from :ref:`Sensor <config-sensor>`.
 
-  - **name** (**Required**, string): The name for the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-  - All other options from :ref:`Sensor <config-sensor>`.
+.. _fingerprint_grow-sleep_mode:
 
+Sleep Mode
+----------
+The sensor idle power consumption is roughly 20mA. If you plan to keep the device running continuously, it is wise to implement the Sleep Mode, which puts the sensor to sleep (power off) a few seconds after the last communication (configurable with ``idle_period_to_sleep``). It can only be implemented along with the Touch Sensing Feature, since it uses the touch feedback to wake up the sensor.
+To implement this feature, you will need one more free GPIO pin to toggle the sensor power on and off and two external components: a 10kOhms resistor and a PNP transistor (like a BC327).
+
+This is a wiring example for the R503 and below you can find the respective configuration:
+
+.. figure:: images/fingeprint_grow-sleep_mode_wiring.jpg
+    :align: center
+    :width: 50.0%
+
+.. code-block:: yaml
+
+    uart:
+      rx_pin: GPIOXX
+      tx_pin: GPIOXX
+      baud_rate: 57600
+
+    fingerprint_grow:
+      sensing_pin: GPIOXX
+      sensor_power_pin:
+          number: GPIOXX
+          inverted: true
+      idle_period_to_sleep: 5s
 
 .. _fingerprint_grow-set_new_password:
 
@@ -158,7 +164,7 @@ The ``new_password:`` configuration option is meant to be compiled, flashed to t
 ``on_finger_scan_start`` Trigger
 ------------------------------------
 
-With this configuration option, you can trigger an automation when a finger is detected touching the sensor. Very useful to indicate to the user via AuraLed that the sensor has detected the finger touch and will perform the scan. This trigger will **only** activate if your fingerprint sensor is configured with the ``sensing_pin`` option. 
+With this configuration option, you can trigger an automation when a finger is detected touching the sensor. Very useful to indicate to the user via AuraLed that the sensor has detected the finger touch and will perform the scan. This trigger will **only** activate if your fingerprint sensor is configured with the ``sensing_pin`` option.
 
 .. code-block:: yaml
 
@@ -467,8 +473,8 @@ All actions
 Test setup
 ----------
 
-With the following code you can quickly setup a node and use Home Assistant's service in the developer tools.
-E.g. for calling ``fingerprint_grow.enroll`` select the service ``esphome.test_node_enroll`` and in service data enter
+With the following code you can quickly setup a node and use Home Assistant's action in the developer tools.
+E.g. for calling ``fingerprint_grow.enroll`` select the action ``esphome.test_node_enroll`` and in action data enter
 
 .. code-block:: json
 
@@ -480,12 +486,12 @@ Sample code
 .. code-block:: yaml
 
     uart:
-      rx_pin: GPIO13
-      tx_pin: GPIO15
+      rx_pin: GPIOXX
+      tx_pin: GPIOXX
       baud_rate: 57600
 
     fingerprint_grow:
-      sensing_pin: GPIO12
+      sensing_pin: GPIOXX
       on_finger_scan_invalid:
         - homeassistant.event:
             event: esphome.test_node_finger_scan_invalid
@@ -519,8 +525,8 @@ Sample code
               finger_id: !lambda 'return finger_id;'
 
     api:
-      services:
-      - service: enroll
+      actions:
+      - action: enroll
         variables:
           finger_id: int
           num_scans: int
@@ -528,16 +534,16 @@ Sample code
           - fingerprint_grow.enroll:
               finger_id: !lambda 'return finger_id;'
               num_scans: !lambda 'return num_scans;'
-      - service: cancel_enroll
+      - action: cancel_enroll
         then:
           - fingerprint_grow.cancel_enroll:
-      - service: delete
+      - action: delete
         variables:
           finger_id: int
         then:
           - fingerprint_grow.delete:
               finger_id: !lambda 'return finger_id;'
-      - service: delete_all
+      - action: delete_all
         then:
           - fingerprint_grow.delete_all:
 

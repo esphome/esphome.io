@@ -17,8 +17,8 @@ This component and the Wi-Fi component may **not** be used simultaneously, even 
     # Example configuration entry for RMII chips
     ethernet:
       type: LAN8720
-      mdc_pin: GPIO23
-      mdio_pin: GPIO18
+      mdc_pin: GPIOXX
+      mdio_pin: GPIOXX
       clk_mode: GPIO0_IN
       phy_addr: 0
 
@@ -33,12 +33,12 @@ This component and the Wi-Fi component may **not** be used simultaneously, even 
     # Example configuration entry for SPI chips
     ethernet:
       type: W5500
-      clk_pin: GPIO19
-      mosi_pin: GPIO21
-      miso_pin: GPIO23
-      cs_pin: GPIO18
-      interrupt_pin: GPIO36
-      reset_pin: GPIO22
+      clk_pin: GPIOXX
+      mosi_pin: GPIOXX
+      miso_pin: GPIOXX
+      cs_pin: GPIOXX
+      interrupt_pin: GPIOXX
+      reset_pin: GPIOXX
 
 Configuration variables:
 ------------------------
@@ -55,6 +55,7 @@ Configuration variables:
   - ``KSZ8081`` (RMII)
   - ``KSZ8081RNA`` (RMII)
   - ``W5500`` (SPI)
+  - ``OPENETH`` (QEMU, ESP-IDF only)
 
 RMII configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -72,6 +73,12 @@ RMII configuration variables:
   - ``GPIO17_OUT`` - Internal clock
 
 - **phy_addr** (*Optional*, int): The PHY addr type of the Ethernet controller. Defaults to 0.
+- **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet initialization.
+
+  - **address** (**Required**, hex): The register address as a hex number (e.g. ``0x10`` for address 16)
+  - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. ``0x1FFA``)
+  - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. ``0x07`` for page 7)
+
 - **power_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
@@ -83,11 +90,30 @@ SPI configuration variables:
 - **miso_pin** (**Required**, :ref:`config-pin`): The SPI MISO pin.
 - **cs_pin** (**Required**, :ref:`config-pin`): The SPI chip select pin.
 - **interrupt_pin** (*Optional*, :ref:`config-pin`): The interrupt pin.
+  This variable is **required** for older frameworks. See below.
 - **reset_pin** (*Optional*, :ref:`config-pin`): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
   Any frequency between `8Mhz` and `80Mhz` is allowed, but the nearest integer division
   of `80Mhz` is used, i.e. `16Mhz` (`80Mhz` / 5) is used when `15Mhz` is configured.
   Default: `26.67Mhz`.
+- **polling_interval** (*Optional*, :ref:`config-time`): If ``interrupt_pin`` is not set,
+  set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
+  Older frameworks may not support this variable. See below for details.
+
+If you are using a framework with the latest version, ESPHome provides
+an SPI-based Ethernet module without interrupt pin.
+Support for SPI polling mode (no interrupt pin) is provided by the following frameworks:
+
+- ESP-IDF 5.3 or later
+- ESP-IDF 5.2.1 and later 5.2.x versions
+- ESP-IDF 5.1.4
+- Arduino-ESP32 3.0.0 or later (**Caution**: PlatformIO does not support these Arduino-ESP32 versions)
+
+When building with frameworks that support SPI polling mode, either ``interrupt_pin``
+or ``polling_interval`` can be set. If you set both, ESPHome will throw an error.
+
+If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
+``interrupt_pin`` is **required** and you cannot set ``polling_interval``.
 
 Advanced common configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -230,10 +256,15 @@ Configuration examples
       mdio_pin: GPIO17
       clk_mode: GPIO0_IN
       phy_addr: 0
+      phy_registers:
+        - address: 0x10
+          value: 0x1FFA
+          page_id: 0x07
+
 
 .. note::
 
-    Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY. Support for RTL8201 is available from ESPHome version 2022.12 upwards.
+    Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY.
 
 
 **OpenHacks LAN8720**:
@@ -264,7 +295,7 @@ Configuration examples
       clk_mode: GPIO17_OUT
       phy_addr: 1
 
-**LILYGO T-ETH-Lite**:
+**LILYGO T-ETH-Lite ESP32**:
 
 .. code-block:: yaml
 
@@ -275,6 +306,14 @@ Configuration examples
       clk_mode: GPIO0_IN
       phy_addr: 0
       power_pin: GPIO12
+
+
+**QEMU qemu-system-xtensa**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: OPENETH
 
 See Also
 --------

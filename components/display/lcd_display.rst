@@ -2,12 +2,12 @@ Character-Based LCD Display
 ===========================
 
 .. seo::
-    :description: Instructions for setting up character-based HD44780 LCD displays.
+    :description: Instructions for setting up character-based HD44780 LCDs.
     :image: lcd.jpg
 
-The ``lcd_pcf8574`` and ``lcd_gpio`` display components allow you to use HD44780-compatible, character-based LCD displays 
-with ESPHome. This integration is only for LCD displays that display individual characters on a screen 
-(usually 8-40 columns and 2-4 rows), and not for LCD displays that can control each pixel individually.
+The ``lcd_pcf8574`` and ``lcd_gpio`` display components allow you to use HD44780-compatible, character-based LCDs
+with ESPHome. This component is only for LCDs that display individual characters on a screen
+(usually 8-40 columns and 2-4 rows), and not for LCDs that can control each pixel individually.
 
 .. figure:: images/lcd-hello_world.jpg
     :align: center
@@ -15,12 +15,12 @@ with ESPHome. This integration is only for LCD displays that display individual 
 
 .. note::
 
-    Multiple versions of the display exist, supporting different character sets: 
-    
+    Multiple versions of the display exist, supporting different character sets:
+
     - HD44780UA00 English-Japanese which includes katakana characters, some Greek letters and mathematical symbols
     - HD44780UA02 English-European which includes Greek, Cyrillic and Western European characters (with some diacritics)
     - HD44780UBxx custom, manufacturer-specific character sets
-    
+
     It is also possible to add eight user-defined characters.
 
 .. _lcd-pcf8574:
@@ -28,7 +28,7 @@ with ESPHome. This integration is only for LCD displays that display individual 
 lcd_pcf8574 Component
 ---------------------
 
-``lcd_pcf8574`` is for LCD displays with a PCF8574 GPIO expander module connected to all the data pins. This has the 
+``lcd_pcf8574`` is for LCD displays with a PCF8574 GPIO expander module connected to all the data pins. This has the
 benefit that you only need to connect two data wires to the ESP instead of the six or ten as with the :ref:`lcd-gpio`.
 The communication happens via :ref:`I²C Bus <i2c>`, you need to have an ``i2c:`` section in your configuration.
 
@@ -65,7 +65,7 @@ Configuration variables:
 
 .. note::
 
-    If you're not seeing anything on the display, try turning the contrast potentiometer around on the 
+    If you're not seeing anything on the display, try turning the contrast potentiometer around on the
     PCF8574 board.
 
 .. _lcd-gpio:
@@ -74,7 +74,7 @@ lcd_gpio Component
 ------------------
 
 The ``lcd_gpio`` version of this component addresses the screen directly and does not employ a GPIO expander module.
-Each of the data pins of the LCD needs a dedicated GPIO pin on the ESP. Connecting the screen this way offers 
+Each of the data pins of the LCD needs a dedicated GPIO pin on the ESP. Connecting the screen this way offers
 faster refresh, especially in conjunction with an :ref:`LCD Menu <lcd_menu>`.
 
 .. figure:: images/lcd_gpio.svg
@@ -90,12 +90,12 @@ faster refresh, especially in conjunction with an :ref:`LCD Menu <lcd_menu>`.
       - platform: lcd_gpio
         dimensions: 20x4
         data_pins:
-          - GPIO32
-          - GPIO33
-          - GPIO5
-          - GPIO17
-        enable_pin: D4
-        rs_pin: D5
+          - GPIOXX
+          - GPIOXX
+          - GPIOXX
+          - GPIOXX
+        enable_pin: GPIOXX
+        rs_pin: GPIOXX
         lambda: |-
           it.print("Hello World!");
 
@@ -105,8 +105,8 @@ Configuration variables:
 - **dimensions** (**Required**, string): The dimensions of the display with ``COLUMNSxROWS``. If you're not
   sure, power the display on, turn contrast high up and just count them.
 - **data_pins** (**Required**, list of :ref:`pins <config-pin_schema>`): A list of the data pins you
-  have hooked up to the LCD. The list can either be 4 items long (operating in 4-bit mode with 
-  either the first 4 data pins connected or the last 4 data pins connected), or 8 items long (when you have 
+  have hooked up to the LCD. The list can either be 4 items long (operating in 4-bit mode with
+  either the first 4 data pins connected or the last 4 data pins connected), or 8 items long (when you have
   connected all 8 data pins).
 - **enable_pin** (**Required**, :ref:`pin <config-pin_schema>`): The pin you have ``E`` (``06``) hooked up to.
 - **rs_pin** (**Required**, :ref:`pin <config-pin_schema>`): The pin you have ``RS`` (``04``) hooked up to.
@@ -118,7 +118,7 @@ Configuration variables:
 
 .. note::
 
-    If you're not seeing anything on the display, make sure you apply ``3.3V`` to the ``VEE`` (``03``) contrast control 
+    If you're not seeing anything on the display, make sure you apply ``3.3V`` to the ``VEE`` (``03``) contrast control
     pin of the board. You can use a potentiometer to make it adjustable.
 
 
@@ -177,7 +177,7 @@ The LCD display has the possibility to define up to eight user defined character
 ``0`` to ``7`` and mirrored at ``8`` to ``15`` (i.e. ``\x08`` can be used instead of the ``\0`` that can
 be problematic in strings). Each character has eight lines of five bits, with the first line on the top
 and the most significant bit on the left, meaning that ``0b10000`` followed by six zeros and a ``0b00001``
-defines a dot at the upper left and lower right of the character. 
+defines a dot at the upper left and lower right of the character.
 
 .. code-block:: yaml
 
@@ -221,7 +221,7 @@ Keep in mind that the display lambda runs for every ``update_interval``, so if t
 it cannot be overridden from other parts.
 
 With the ``lcd_gpio``, the backlight is lit by applying ``Vcc`` to the ``BLA`` (``15``) pin and connect ``BLK`` (``16``)
-pin to ``GND``. The backlight can draw more power than the microcontroller output pins can supply, so it is advisable 
+pin to ``GND``. The backlight can draw more power than the microcontroller output pins can supply, so it is advisable
 to use a transistor as a switch to control the power for the backlight pins.
 
 Below an example for a typical use-case where the backlight is turned on when a motion sensor activates and

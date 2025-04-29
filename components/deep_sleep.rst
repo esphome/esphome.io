@@ -21,7 +21,9 @@ to wake up on any RTC pin (``GPIO0``, ``GPIO2``, ``GPIO4``, ``GPIO12``, ``GPIO13
 ``GPIO15``, ``GPIO25``, ``GPIO26``, ``GPIO27``, ``GPIO32``, ``GPIO39``).
 
 While in deep sleep mode, the node will not do any work and not respond to any network traffic,
-even Over The Air updates.
+even Over The Air updates. If the device's entities are appearing as **Unavailable** while your device is actively
+sleeping, this component was likely added after the device was added to Home Assistant. To prevent this behavior,
+you can remove and re-add the device in Home Assistant.
 
 .. code-block:: yaml
 
@@ -32,8 +34,8 @@ even Over The Air updates.
 
 .. note::
 
-    Some ESP8266s have an onboard USB chip (e.g. D1 mini) on the chips' control line that is connected to the RST pin. This enables the flasher to reboot the ESP when required. This may interfere with deep sleep on some devices and prevent the ESP from waking when it's powered through its USB connector. Powering the ESP from a separate 3.3V source connected to the 3.3V pin and GND will solve this issue. In these cases, using a USB to TTL adapter will allow you to log ESP activity. 
-    
+    Some ESP8266s have an onboard USB chip (e.g. D1 mini) on the chips' control line that is connected to the RST pin. This enables the flasher to reboot the ESP when required. This may interfere with deep sleep on some devices and prevent the ESP from waking when it's powered through its USB connector. Powering the ESP from a separate 3.3V source connected to the 3.3V pin and GND will solve this issue. In these cases, using a USB to TTL adapter will allow you to log ESP activity.
+
 Configuration variables:
 ------------------------
 
@@ -85,6 +87,34 @@ when the deep sleep should start? There are three ways of handling this using th
   then re-configure deep sleep to wake up on a LOW signal and vice versa. Useful in situations when you want to
   use observe the state changes of a pin using deep sleep and the ON/OFF values last longer.
 
+ESP32 Wakeup Cause
+------------------
+
+On the ESP32, the ``esp_sleep_get_wakeup_cause()`` function can be used to check which wakeup source has triggered
+wakeup from sleep mode.
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: template
+        name: "Wakeup Cause"
+        accuracy_decimals: 0
+        lambda: return esp_sleep_get_wakeup_cause();
+
+The following integers are the wakeup causes:
+    - **0** - ``ESP_SLEEP_WAKEUP_UNDEFINED``: In case of deep sleep, reset was not caused by exit from deep sleep
+    - **1** - ``ESP_SLEEP_WAKEUP_ALL``: Not a wakeup cause, used to disable all wakeup sources with esp_sleep_disable_wakeup_source
+    - **2** - ``ESP_SLEEP_WAKEUP_EXT0``: Wakeup caused by external signal using RTC_IO
+    - **3** - ``ESP_SLEEP_WAKEUP_EXT1``: Wakeup caused by external signal using RTC_CNTL
+    - **4** - ``ESP_SLEEP_WAKEUP_TIMER``: Wakeup caused by timer
+    - **5** - ``ESP_SLEEP_WAKEUP_TOUCHPAD``: Wakeup caused by touchpad
+    - **6** - ``ESP_SLEEP_WAKEUP_ULP``: Wakeup caused by ULP program
+    - **7** - ``ESP_SLEEP_WAKEUP_GPIO``: Wakeup caused by GPIO (light sleep only on ESP32, S2 and S3)
+    - **8** - ``ESP_SLEEP_WAKEUP_UART``: Wakeup caused by UART (light sleep only)
+    - **9** - ``ESP_SLEEP_WAKEUP_WIFI``: Wakeup caused by WIFI (light sleep only)
+    - **10** - ``ESP_SLEEP_WAKEUP_COCPU``: Wakeup caused by COCPU int
+    - **11** - ``ESP_SLEEP_WAKEUP_COCPU_TRAP_TRIG``: Wakeup caused by COCPU crash
+    - **12** - ``ESP_SLEEP_WAKEUP_BT``: Wakeup caused by BT (light sleep only)
 
 .. _deep_sleep-enter_action:
 

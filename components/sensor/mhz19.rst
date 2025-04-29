@@ -26,36 +26,23 @@ TX/RX labels are from the perspective of the MH-Z19). Additionally, you need to 
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      rx_pin: GPIO3
-      tx_pin: GPIO1
-      baud_rate: 9600
-
     sensor:
       - platform: mhz19
         co2:
-          name: "MH-Z19 CO2 Value"
+          name: MH-Z19 CO2 Value
         temperature:
-          name: "MH-Z19 Temperature"
-        update_interval: 60s
-        automatic_baseline_calibration: false
+          name: MH-Z19 Temperature
 
 Configuration variables:
 ------------------------
 
 
 - **co2** (**Required**): The CO_2 data from the sensor in parts per million (ppm).
-
-  - **name** (**Required**, string): The name for the CO_2 sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **temperature** (**Required**): The information for the temperature sensor. Please note that this is
   not officially documented in the datasheet and seems to be quite inaccurate.
-
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  All options from :ref:`Sensor <config-sensor>`.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
@@ -70,6 +57,8 @@ Configuration variables:
   Set this value to ``false`` to disable ABC on boot (it's better if you use sensor indoor).
   Set this value to ``true`` to enable ABC on boot.
   Doesn't send calibration command if not set (default sensor logic will be used).
+
+- **warmup_time** (*Optional*, Time): The sensor has a warmup time and before that, it returns bougus readings (eg: 500ppm, 505ppm...). This setting discards readings until the warmup time happened (``NAN`` is returned). The datasheet says preheating takes 1min, but empirical tests have shown it often takes more, so the 75s default should be enough to accomodate for that.
 
 .. figure:: images/mhz19-pins.jpg
     :align: center
@@ -93,13 +82,13 @@ for over 20 minutes and you execute this function.
       then:
         - mhz19.calibrate_zero: my_mhz19_id
 
-You can provide :ref:`service <api-services>` to call it from Home Assistant
+You can provide an :ref:`action <api-device-actions>` to perform from Home Assistant
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: mhz19_calibrate_zero
+      actions:
+        - action: mhz19_calibrate_zero
           then:
             - mhz19.calibrate_zero: my_mhz19_id
 
