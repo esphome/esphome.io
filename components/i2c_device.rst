@@ -27,7 +27,7 @@ General-purpose I²C device component that can be used to communicate with hardw
 Configuration variables:
 ------------------------
 
-- **address** (*Required*, int): I²C address of the device.
+- **address** (**Required**, int): I²C address of the device.
 
 See Also
 --------

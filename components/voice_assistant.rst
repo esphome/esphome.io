@@ -19,8 +19,8 @@ ESPHome devices with a microphone are able to stream the audio to Home Assistant
     configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
     combination with Voice Assistant and/or other audio components.
 
-Configuration:
---------------
+Configuration variables:
+------------------------
 
 .. code-block:: yaml
 
@@ -38,7 +38,7 @@ Configuration:
   to output the response. Cannot be used with ``speaker`` above.
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to ``false``.
 - **conversation_timeout** (*Optional*, :ref:`config-time`): How long to wait before resetting the ``conversation_id``
-  sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defauls to ``300s``.
+  sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to ``300s``.
 - **on_intent_start** (*Optional*, :ref:`Automation <automation>`): An automation to perform when intent processing starts.
 - **on_intent_end** (*Optional*, :ref:`Automation <automation>`): An automation to perform when intent processing ends.
 - **on_listening** (*Optional*, :ref:`Automation <automation>`): An automation to
@@ -104,8 +104,8 @@ Voice Assistant Actions
 
 The following actions are available for use in automations:
 
-``voice_assistant.start``
-^^^^^^^^^^^^^^^^^^^^^^^^^
+``voice_assistant.start`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Listens for one voice command then stops.
 
@@ -118,16 +118,16 @@ Configuration variables:
 Call ``voice_assistant.stop`` to signal the end of the voice command if ``silence_detection`` is set to ``false``.
 
 
-``voice_assistant.start_continuous``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``voice_assistant.start_continuous`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Start listening for voice commands. This will start listening again after
 the response audio has finished playing. Some errors will stop the cycle.
 Call ``voice_assistant.stop`` to stop the cycle.
 
 
-``voice_assistant.stop``
-^^^^^^^^^^^^^^^^^^^^^^^^
+``voice_assistant.stop`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Stop listening for voice commands.
 
@@ -137,8 +137,15 @@ Voice Assistant Conditions
 
 The following conditions are available for use in automations:
 
-- ``voice_assistant.is_running`` - Returns true if the voice assistant is currently running.
-- ``voice_assistant.connected`` - Returns true if the voice assistant is currently connected to Home Assistant.
+``voice_assistant.is_running`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true if the voice assistant is currently running.
+
+``voice_assistant.connected`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Returns true if the voice assistant is currently connected to Home Assistant.
 
 Wake word detection
 -------------------

@@ -63,6 +63,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Improv via Serial, components/improv_serial, improv.svg, dark-invert
     Interval, components/interval, description.svg, dark-invert
     JSON, components/json, json.svg, dark-invert
+    Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
 
@@ -107,6 +108,7 @@ Bluetooth/BLE
     ESP32 BLE Beacon, components/esp32_ble_beacon, bluetooth.svg, dark-invert
     ESP32 BLE Client, components/ble_client, bluetooth.svg, dark-invert
     ESP32 BLE Tracker, components/esp32_ble_tracker, bluetooth.svg, dark-invert
+    ESP32 BLE Server, components/esp32_ble_server, bluetooth.svg, dark-invert
     Bluetooth Proxy, components/bluetooth_proxy, bluetooth.svg, dark-invert
     Improv via BLE, components/esp32_improv, improv.svg, dark-invert
 
@@ -221,6 +223,7 @@ Air Quality
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MiCS-4514, components/sensor/mics_4514, mics_4514.jpg, Gas concentration
     PM1006 Sensor, components/sensor/pm1006, pm1006.jpg, Particulate
+    PM2005 Sensor, components/sensor/pm2005, pm2005.png, Particulate
     PMSA003I, components/sensor/pmsa003i, pmsa003i.jpg, Particulate
     PMSX003, components/sensor/pmsx003, pmsx003.svg, Particulate
     RadonEye BLE, components/sensor/radon_eye_ble, radon_eye_logo.png, Radon
