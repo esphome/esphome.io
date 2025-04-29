@@ -393,6 +393,37 @@ Configuration variables:
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
+.. _remote_transmitter-transmit_gobox:
+
+``remote_transmitter.transmit_gobox`` **Action**
+
+This :ref:`action <config-action>` sends a command to a Go-Box via the IR transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_gobox:
+          code: 0xfa05
+
+Configuration variables:
+
+- **code** (**Required**, int): The command to send. Known commands are:
+  - MENU = 0xaa55,
+  - RETURN = 0x22dd,
+  - UP = 0x0af5,
+  - LEFT = 0x8a75,
+  - RIGHT = 0x48b7,
+  - DOWN = 0xa25d,
+  - OK = 0xc837,
+  - TOGGLE = 0xb847,
+  - PROFILE = 0xfa05
+  - FASTER = 0xf00f,
+  - SLOWER = 0xd02f,
+  - LOUDER = 0xb04f,
+  - SOFTER = 0xf807,
+
+  - All other options from :ref:`remote_transmitter-transmit_action`.
+
 .. _remote_transmitter-transmit_jvc:
 
 ``remote_transmitter.transmit_jvc`` **Action**

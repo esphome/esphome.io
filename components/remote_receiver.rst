@@ -45,6 +45,7 @@ Configuration variables:
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **jvc**: Decode and dump JVC infrared codes.
+  - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
   - **haier**: Decode and dump Haier infrared codes.
   - **lg**: Decode and dump LG infrared codes.
@@ -170,6 +171,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_drayton** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Drayton Digistat RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::DraytonData`
+  is passed to the automation for use in lambdas.
+- **on_gobox** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Go-Box remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::GoboxData`
   is passed to the automation for use in lambdas.
 - **on_jvc** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   JVC remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::JVCData`
@@ -352,6 +356,10 @@ Remote code selection (exactly one of these has to be included):
   - **address** (**Required**, int): The 16-bit ID code to trigger on, see dumper output for more info.
   - **channel** (**Required**, int): The 7-bit switch/channel to listen for.
   - **command** (**Required**, int): The 5-bit command to listen for.
+
+- **gobox**: Trigger on a decoded Go-Box remote code with the given data.
+
+  - **code** (**Required**, int): The Go-Box code to trigger on, see dumper output for more info.
 
 - **jvc**: Trigger on a decoded JVC remote code with the given data.
 
