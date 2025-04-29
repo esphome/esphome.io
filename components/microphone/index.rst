@@ -29,12 +29,12 @@ A microphone source configuration is used by components to ensure that it receiv
 Configuration variables:
 
 - **microphone** (**Required**, :ref:`config-id`): The :doc:`microphone </components/microphone/index>` to use for input.
-- **bits_per_sample** (*Optional*, int): The bits per sample to use as input to the component. 
+- **bits_per_sample** (*Optional*, int): The bits per sample to use as input to the component.
   May be restricted by the component to a specific value.
 - **channels** (*Optional*, list): A list of 0-indexed channel numbers enabling them to use as
-  input to the component. The total amount may be restricted by the component. Defaults to 0, 
+  input to the component. The total amount may be restricted by the component. Defaults to 0,
   the first channel read by the microphone.
-- **gain_factor** (*Optional*, int): The gain factor to apply to audio read from the microphone. Ranges from 1 to 64. 
+- **gain_factor** (*Optional*, int): The gain factor to apply to audio read from the microphone. Ranges from 1 to 64.
   Defaults to 1, no gain.
 
 .. _microphone-actions:
