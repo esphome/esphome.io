@@ -105,12 +105,13 @@ commands have been added to the basic display set.
 This is roughly the code used to display the MAX7219 pictured in the image.
 
 
-    .. note:: 
+Font usage
+**********
+Because 8x8 matrix displays has a limited height of 8 pixels only, the use of TrueType fonts for displaying text 
+is not recommended. While rendering the single characters easily unattractive artifacts will occur. Bitmap-based 
+fonts in `bdf format <https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format>`__  are more suitable. 
+For example 5x7.bdf or 5x8.bdf
 
-    Because 8x8 matrix displays has a limited height of 8 pixels only, the use of TrueType fonts for displaying text 
-    is not recommended. While rendering the single characters easily unattractive artifacts will occur. Bitmap-based 
-    fonts in `bdf format <https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format>`__  are more suitable. 
-    For example 5x7.bdf or 5x8.bdf
 
 
 Scrolling
