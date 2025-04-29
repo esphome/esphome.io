@@ -4,6 +4,11 @@
   --mobile-width-stop: 875;
 }
 
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .row-odd {
   background-color: #f3f6f6;
 }
@@ -288,6 +293,10 @@ div.body p, div.body dd, div.body li, div.body blockquote {
 
 /* New branding changes */
 
+div.body{
+  margin: 0 auto;
+}
+
 div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6, div.sphinxsidebar h3, div.sphinxsidebar h4, div.admonition p.admonition-title {
   font-family: Figtree, system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
   font-weight: 600;
@@ -295,6 +304,51 @@ div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6, di
 
 div.body h1 {
   font-size: 2.5rem;
+}
+
+.custom-footer{
+  border-top: 1px solid #3E4349;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 1rem 0;
+}
+
+.custom-footer .side{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.custom-footer .side:last-child{
+  align-items: flex-end;
+}
+.custom-footer .ohf{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.custom-footer .ohf span{
+  font-size: 12px;
+}
+
+.custom-footer .ohf a{
+  border-bottom: none;
+}
+
+.custom-footer .links{
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+.custom-footer .links a{
+  display: flex;
+  align-items: flex-end;
+}
+
+.custom-footer .link-netlify{
+  font-size: 12px;
 }
 
 body {
@@ -324,11 +378,6 @@ div.sphinxsidebar input {
   margin-bottom: 1rem;
 }
 
-
-img.logo {
-  content: url("/_static/logo-text-on-light.svg");
-}
-
 @media screen and (max-width: 875px) {
   /* hide search result thumbnails on mobile */
   .pagefind-modular-list-thumb {
@@ -346,6 +395,14 @@ img.logo {
 
 /* dark theme */
 @media (prefers-color-scheme: dark) {
+
+  :root{
+    --logo-text-color: #FFFFFF;
+  }
+
+  .custom-footer{
+    border-top: 1px solid #ececec;
+  }
 
   @media screen and (max-width: 875px) {
     div.documentwrapper {
@@ -372,10 +429,6 @@ img.logo {
     color: #3fc3ff !important;
     background: #212121 !important;
     margin: 0 !important;
-  }
-
-  img.logo {
-    content: url("/_static/logo-text-on-dark.svg");
   }
   
   img.dark-invert {
