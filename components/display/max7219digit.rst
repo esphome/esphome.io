@@ -105,7 +105,7 @@ commands have been added to the basic display set.
 This is roughly the code used to display the MAX7219 pictured in the image.
 
 
-  .. note:: 
+    .. note:: 
 
     Because 8x8 matrix displays has a limited height of 8 pixels only, the use of TrueType fonts for displaying text 
     is not recommended. While rendering the single characters easily unattractive artifacts will occur. Bitmap-based 
