@@ -77,21 +77,21 @@ Configuration variables:
   
   - **source** (**Required**, :ref:`config-id` of a :doc:`/components/sensor/index`): The
     sensor id that is used as sample source.
-  - **error** (**Required** - only for ``KALMAN`` type, float, :ref:`templatable <config-templatable>`): 
+  - **error** (**Required**, only for ``KALMAN`` type, float, :ref:`templatable <config-templatable>`): 
     The standard deviation of the sensor's measurements. This works like the ``process_std_dev`` 
     parameter, with low values marking accurate data. If implemented as a template, the 
     measurement is in parameter ``x``.
-  - **coeffecient** (**Required** - only for ``LINEAR`` type, float, :ref:`templatable <config-templatable>`): 
+  - **coeffecient** (**Required**, only for ``LINEAR`` type, float, :ref:`templatable <config-templatable>`): 
     The coeffecient to multiply the sensor's state by before summing all source sensor states.
     If implemented as a template, the measurement is in parameter ``x``.
 
-- **process_std_dev** (**Required** - only for ``KALMAN`` type, float): The standard deviation of the
+- **process_std_dev** (**Required**, only for ``KALMAN`` type, float): The standard deviation of the
   measurement's change per second (e.g. ``1/3600 = 0.000277`` if the
   temperature usually changes at most by one Kelvin per hour). A low value here
   will place high importance on the current state and be slow to respond to
   changes in the measured samples. A high value will update faster, but also be
   more noisy.
-- **std_dev** (*Optional - only for KALMAN type*, :ref:`Sensor <config-sensor>`): A sensor
+- **std_dev** (*Optional*, only for ``KALMAN`` type, :ref:`Sensor <config-sensor>`): A sensor
   that publishes the current standard deviation of the state with each update.
 - All other options from :ref:`Sensor <config-sensor>`.
 

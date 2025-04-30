@@ -45,7 +45,7 @@ Configuration variables
   - ``PNG``: The image on the server is encoded in PNG format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
-- **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
+- **placeholder** (*Optional*, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
   This placeholder image will **not** be resized; regardless of the ``resize`` option value for the ``online_image``.
 - **type** (*Required*): Specifies how to encode image internally.
 

@@ -26,6 +26,7 @@ The training process is described on the `microWakeWord GitHub repository <https
 Configuration variables:
 ------------------------
 
+- **microphone** (**Required**, :ref:`config-microphone-source`): The :doc:`microphone </components/microphone/index>` settings to use for input.
 - **models** (**Required**, list): The models to use.
 
   - **model** (**Required**, string): This can be one of:
@@ -80,6 +81,10 @@ Example usage
 .. code-block:: yaml
 
     micro_wake_word:
+      microphone:
+        microphone: ...
+        channels: 0
+        gain_factor: 4
       vad:
       models:
         - model: okay_nabu

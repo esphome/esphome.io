@@ -36,6 +36,7 @@ Configuration variables:
   - **abbwelcome**: Decode and dump ABB-Welcome codes. Messages are sent via copper wires. See
     :ref:`transmitter description <remote_transmitter-transmit_abbwelcome>` for more details.
   - **aeha**: Decode and dump AEHA infrared codes.
+  - **beo4**: Decode and dump B&O Beo4 infrared codes.
   - **byronsx**: Decode and dump Byron SX doorbell RF codes.
   - **canalsat**: Decode and dump CanalSat infrared codes.
   - **canalsatld**: Decode and dump CanalSatLD infrared codes.
@@ -44,6 +45,7 @@ Configuration variables:
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **jvc**: Decode and dump JVC infrared codes.
+  - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
   - **haier**: Decode and dump Haier infrared codes.
   - **lg**: Decode and dump LG infrared codes.
@@ -145,6 +147,9 @@ Automations:
 - **on_aeha** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   AEHA remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::AEHAData`
   is passed to the automation for use in lambdas.
+- **on_beo4** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  B&O Beo4 infrared remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::Beo4Data`
+  is passed to the automation for use in lambdas.
 - **on_byronsx** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Byron SX doorbell RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::ByronSXData`
   is passed to the automation for use in lambdas.
@@ -166,6 +171,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_drayton** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Drayton Digistat RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::DraytonData`
+  is passed to the automation for use in lambdas.
+- **on_gobox** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Go-Box remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::GoboxData`
   is passed to the automation for use in lambdas.
 - **on_jvc** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   JVC remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::JVCData`
@@ -282,13 +290,13 @@ Remote code selection (exactly one of these has to be included):
 
   - **source_address** (**Required**, int): The source address to trigger on.
   - **destination_address** (**Required**, int): The destination address to trigger on.
-  - **three_byte_address** (**Optional**, boolean): The length of the source and destination address. ``false`` means
+  - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. ``false`` means
     two bytes and ``true`` means three bytes. Defaults to ``false``.
-  - **retransmission** (**Optional**, boolean): ``true`` if the message was re-transmitted. Defaults to ``false``.
+  - **retransmission** (*Optional*, boolean): ``true`` if the message was re-transmitted. Defaults to ``false``.
   - **message_type** (**Required**, int): The message type to trigger on.
-  - **message_id** (**Optional**, int): The random message ID to trigger on, see dumper output for more info. Defaults
+  - **message_id** (*Optional*, int): The random message ID to trigger on, see dumper output for more info. Defaults
     to any ID.
-  - **data** (**Optional**, 0-7 bytes list): The code to listen for. Usually you only need to copy this directly from
+  - **data** (*Optional*, 0-7 bytes list): The code to listen for. Usually you only need to copy this directly from
     the dumper output. Defaults to ``[]``
 
 - **aeha**: Trigger on a decoded AEHA remote code with the given data.
@@ -298,10 +306,15 @@ Remote code selection (exactly one of these has to be included):
     :ref:`transmitter description <remote_transmitter-transmit_aeha>` for more info. Usually you only need to copy this
     directly from the dumper output.
 
+- **beo4**: Trigger on a decoded B&O Beo4 infrared remote code with the given data.
+
+  - **source** (**Required**, int): The 8-bit source to trigger on, e.g. 0x00=video, 0x01=audio,..., see dumper output for more info.
+  - **command** (**Required**, int): The 8-bit command to listen for, e.g. 0x00=number0, 0x0C=standby,..., see dumper output for more info.
+
 - **byronsx**: Trigger on a decoded Byron SX Doorbell RF remote code with the given data.
 
   - **address** (**Required**, int): The 8-bit ID code to trigger on, see dumper output for more info.
-  - **command** (**Optional**, int): The 4-bit command to listen for. If omitted, will match on any command.
+  - **command** (*Optional*, int): The 4-bit command to listen for. If omitted, will match on any command.
 
 - **canalsat**: Trigger on a decoded CanalSat remote code with the given data.
 
@@ -343,6 +356,10 @@ Remote code selection (exactly one of these has to be included):
   - **address** (**Required**, int): The 16-bit ID code to trigger on, see dumper output for more info.
   - **channel** (**Required**, int): The 7-bit switch/channel to listen for.
   - **command** (**Required**, int): The 5-bit command to listen for.
+
+- **gobox**: Trigger on a decoded Go-Box remote code with the given data.
+
+  - **code** (**Required**, int): The Go-Box code to trigger on, see dumper output for more info.
 
 - **jvc**: Trigger on a decoded JVC remote code with the given data.
 
@@ -403,7 +420,7 @@ Remote code selection (exactly one of these has to be included):
   - **data** (**Required**, string): The code to listen for, see
     :ref:`transmitter description <remote_transmitter-transmit_raw>` for more info. Usually you only need to copy this
     directly from the dumper output.
-  - **delta** (**Optional**, integer): This parameter allows you to manually specify the allowed difference
+  - **delta** (*Optional*, integer): This parameter allows you to manually specify the allowed difference
     between what Pronto code is specified, and what IR signal has been sent by the remote control.
 
 - **raw**: Trigger on a raw remote code with the given code.
