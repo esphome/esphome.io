@@ -6,8 +6,8 @@ and everybody can contribute to it to make this project awesome. This list conta
 submitted patches that have made it into the `ESPHome organization's <https://github.com/esphome>`__ repositories.
 
 ESPHome is led by `Jesse Hills (@jesserockz) <https://github.com/jesserockz>`__,
-who is funded to work on ESPHome full-time by the `Open Home Foundation <https://www.openhomefoundation.org/>`__.
-To help fund development of ESPHome, support the `Open Home Foundation <https://www.openhomefoundation.org/>`__.
+who is funded to work on ESPHome full-time by `Nabu Casa <https://www.nabucasa.com>`__.
+To help fund development of ESPHome, subscribe to `Home Assistant Cloud by Nabu Casa <https://www.nabucasa.com>`__.
 
 ESPHome was originally founded by `Otto Winter (@OttoWinter) <https://github.com/OttoWinter>`__.
 
@@ -172,6 +172,7 @@ Contributors
 - `august huber (@augs) <https://github.com/augs>`__
 - `aus (@aus) <https://github.com/aus>`__
 - `AustinMorris (@AustinMorris) <https://github.com/AustinMorris>`__
+- `Aviad Raviv (@aviadra) <https://github.com/aviadra>`__
 - `Avirsaam (@Avirsaam) <https://github.com/Avirsaam>`__
 - `Arsène von Wyss (@avonwyss) <https://github.com/avonwyss>`__
 - `Andrew Weddle (@aweddle2) <https://github.com/aweddle2>`__
@@ -181,6 +182,7 @@ Contributors
 - `Nicholas Peters (@Azimath) <https://github.com/Azimath>`__
 - `Daniel (@azrael783) <https://github.com/azrael783>`__
 - `azrdev (@azrdev) <https://github.com/azrdev>`__
+- `b068931cc450442b63f5b3d276ea4297 (@b068931cc450442b63f5b3d276ea4297) <https://github.com/b068931cc450442b63f5b3d276ea4297>`__
 - `B48D81EFCC (@B48D81EFCC) <https://github.com/B48D81EFCC>`__
 - `Florian Mösch (@badbadc0ffee) <https://github.com/badbadc0ffee>`__
 - `Baden (@baden03) <https://github.com/baden03>`__
@@ -200,6 +202,7 @@ Contributors
 - `batchmanfr (@batchmanfr) <https://github.com/batchmanfr>`__
 - `bazuchan (@bazuchan) <https://github.com/bazuchan>`__
 - `Viktr (@BbIKTOP) <https://github.com/BbIKTOP>`__
+- `bdm310 (@bdm310) <https://github.com/bdm310>`__
 - `J. Nick Koston (@bdraco) <https://github.com/bdraco>`__
 - `Maxim Ocheretianko (@bearpawmaxim) <https://github.com/bearpawmaxim>`__
 - `beaudeanadams (@beaudeanadams) <https://github.com/beaudeanadams>`__
@@ -243,6 +246,7 @@ Contributors
 - `Paul Blacknell (@blacknell) <https://github.com/blacknell>`__
 - `blackshoals (@blackshoals) <https://github.com/blackshoals>`__
 - `blacktirion (@blacktirion) <https://github.com/blacktirion>`__
+- `Blake Robertson (@blak3r) <https://github.com/blak3r>`__
 - `blakadder (@blakadder) <https://github.com/blakadder>`__
 - `Branimir Lambov (@blambov) <https://github.com/blambov>`__
 - `bleeisme (@bleeisme) <https://github.com/bleeisme>`__
@@ -281,6 +285,7 @@ Contributors
 - `Brian Hanifin (@brianhanifin) <https://github.com/brianhanifin>`__
 - `brianrjones69 (@brianrjones69) <https://github.com/brianrjones69>`__
 - `brickets (@brickets) <https://github.com/brickets>`__
+- `Ruben Brites (@Brites89) <https://github.com/Brites89>`__
 - `Ben Brooks (@brooksben11) <https://github.com/brooksben11>`__
 - `brtchip-tuannguyen (@brtchip-tuannguyen) <https://github.com/brtchip-tuannguyen>`__
 - `Vaclav (@bruxy70) <https://github.com/bruxy70>`__
@@ -302,7 +307,9 @@ Contributors
 - `Cal Howard (@calhoward) <https://github.com/calhoward>`__
 - `callacomp (@callacomp) <https://github.com/callacomp>`__
 - `Callum Gare (@callumgare) <https://github.com/callumgare>`__
+- `Calum McConnell (@calumapplepie) <https://github.com/calumapplepie>`__
 - `Cameron Waldron (@CamW) <https://github.com/CamW>`__
+- `Craig Andrews (@candrews) <https://github.com/candrews>`__
 - `Carlos Gustavo Sarmiento (@carlos-sarmiento) <https://github.com/carlos-sarmiento>`__
 - `Carlos Garcia Saura (@CarlosGS) <https://github.com/CarlosGS>`__
 - `Carlos Ruiz (@CarlosRDomin) <https://github.com/CarlosRDomin>`__
@@ -644,6 +651,7 @@ Contributors
 - `Fabian Muehlberger (@fabianmuehlberger) <https://github.com/fabianmuehlberger>`__
 - `Federico Ariel Castagnini (@facastagnini) <https://github.com/facastagnini>`__
 - `C W (@fake-name) <https://github.com/fake-name>`__
+- `Kouvaris Theofanis (@faniskou) <https://github.com/faniskou>`__
 - `Florian idB (@fbeek) <https://github.com/fbeek>`__
 - `Fabian Bläse (@fblaese) <https://github.com/fblaese>`__
 - `Fabian Berthold (@fbrthld) <https://github.com/fbrthld>`__
@@ -705,6 +713,7 @@ Contributors
 - `Gábor Kiss (@g-kiss) <https://github.com/g-kiss>`__
 - `G-Two (@G-Two) <https://github.com/G-Two>`__
 - `mr G1K (@G1K) <https://github.com/G1K>`__
+- `g4bri3lDev (@g4bri3lDev) <https://github.com/g4bri3lDev>`__
 - `Aljaž Srebrnič (@g5pw) <https://github.com/g5pw>`__
 - `Alex Hermann (@gaaf) <https://github.com/gaaf>`__
 - `Gabe Cook (@gabe565) <https://github.com/gabe565>`__
@@ -1088,6 +1097,7 @@ Contributors
 - `Kuba Szczodrzyński (@kuba2k2) <https://github.com/kuba2k2>`__
 - `Jakub Šimo (@kubik369) <https://github.com/kubik369>`__
 - `Mark Kuchel (@kuchel77) <https://github.com/kuchel77>`__
+- `Kurt Fuchs (@KurtFuchs) <https://github.com/KurtFuchs>`__
 - `kvvoff (@kvvoff) <https://github.com/kvvoff>`__
 - `Ken Davidson (@kwdavidson) <https://github.com/kwdavidson>`__
 - `Kyle Hendricks (@kylehendricks) <https://github.com/kylehendricks>`__
@@ -1128,6 +1138,7 @@ Contributors
 - `Lewis Baker (@lewissbaker) <https://github.com/lewissbaker>`__
 - `Leon Loopik (@Lewn) <https://github.com/Lewn>`__
 - `Luca Gugelmann (@lgugelmann) <https://github.com/lgugelmann>`__
+- `Lucas Hartmann (@lhartmann) <https://github.com/lhartmann>`__
 - `Lubos Horacek (@lhoracek) <https://github.com/lhoracek>`__
 - `Liionboy (@Liionboy) <https://github.com/Liionboy>`__
 - `Juraj Liso (@LiJu09) <https://github.com/LiJu09>`__
@@ -1213,6 +1224,7 @@ Contributors
 - `maringeph (@maringeph) <https://github.com/maringeph>`__
 - `Mario (@mario-tux) <https://github.com/mario-tux>`__
 - `Mario Di Vece (@mariodivece) <https://github.com/mariodivece>`__
+- `Marius Greuel (@mariusgreuel) <https://github.com/mariusgreuel>`__
 - `Mark Hildreth (@markhildreth) <https://github.com/markhildreth>`__
 - `Mark Schabacker (@markschabacker) <https://github.com/markschabacker>`__
 - `Marek Marczykowski-Górecki (@marmarek) <https://github.com/marmarek>`__
@@ -1238,6 +1250,7 @@ Contributors
 - `Matteo Franceschini (@matteofranceschini) <https://github.com/matteofranceschini>`__
 - `Matthew Mazzanti (@matthewmazzanti) <https://github.com/matthewmazzanti>`__
 - `matthias882 (@matthias882) <https://github.com/matthias882>`__
+- `Matthijs Bos (@matthijsbos) <https://github.com/matthijsbos>`__
 - `Mattia Baldani (@mattibal) <https://github.com/mattibal>`__
 - `mattsgreen (@mattsgreen) <https://github.com/mattsgreen>`__
 - `Matus Ivanecky (@maty535) <https://github.com/maty535>`__
@@ -1923,6 +1936,7 @@ Contributors
 - `Tim Savage (@timsavage) <https://github.com/timsavage>`__
 - `Tinkerfish (@tinkerfish) <https://github.com/tinkerfish>`__
 - `TJ Horner (@tjhorner) <https://github.com/tjhorner>`__
+- `Theodore Ni (@tjni) <https://github.com/tjni>`__
 - `Max Efremov (@Tmin10) <https://github.com/Tmin10>`__
 - `Christian (@Tntdruid) <https://github.com/Tntdruid>`__
 - `Lars R. (@TNTLarsn) <https://github.com/TNTLarsn>`__
@@ -2108,4 +2122,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated March 31, 2025.*
+*This page was last updated April 29, 2025.*
