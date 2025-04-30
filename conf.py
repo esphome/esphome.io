@@ -24,7 +24,6 @@ import hashlib
 import os
 import sys
 
-
 sys.path.append(os.path.abspath("_extensions"))
 
 # -- General configuration ------------------------------------------------
@@ -161,16 +160,37 @@ html_static_path = ["_static"]
 #
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
-html_sidebars = {
-    "**": [
-        # 'about.html',
-        "searchbox.html",
-        "localtoc.html",
-        "contact.html",
-    ],
-    "index": []
-}
 
+index_link_pages = [
+    "automations",
+    "changelog",
+    "cookbook",
+    "guides",
+    "projects",
+    "web-api",
+]
+
+index_sidebar = [
+    "logo.html",
+    "searchbox.html",
+    "localtoc.html",
+    "contact.html",
+]
+
+html_sidebars = {f"{k}/**": index_sidebar for k in index_link_pages}
+
+html_sidebars.update(
+    {
+        "components/**": [
+            "logo-components.html",
+            "searchbox.html",
+            "localtoc.html",
+            "contact.html",
+        ],
+        "components/index": index_sidebar,
+        "index": [],
+    }
+)
 
 
 # -- Options for HTMLHelp output ------------------------------------------
