@@ -4,7 +4,7 @@
     :google-site-verification: Q5q5TFbCofxA8-cSa1Frv5Hj4RopF5zwEZf_zaNHqf4
 
 .. seo::
-    :description: ESPHome - Smart Home Made Simple. ESPHome turns ESP8266, ESP32 and RP2040 microcontrollers into fully-featured smart home devices.
+    :description: ESPHome - Smart Home Made Simple. ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.
     :image: logo.svg
 
 .. raw:: html
@@ -74,10 +74,25 @@
     <div class="hero-container">
         <div class="hero-content">
             <h1>Smart Home Made Simple</h1>
-            <p>Turn your ESP8266, ESP32 or RP2040 boards into powerful smart home devices with simple YAML configuration</p>
+            <p>Turn your ESP32, ESP8266, or RP2040 boards into powerful smart home devices with simple YAML configuration</p>
         </div>
         <div class="hero-image">
             <img src="_images/hero.png" alt="ESPHome devices" />
+        </div>
+    </div>
+
+Quick Links
+===========
+
+.. raw:: html
+
+    <div class="cta-container">
+        <div class="cta-content">
+            <div class="cta-buttons">
+                <a href="/guides/getting_started_hassio.html" class="btn btn-primary">Installation Guide</a>
+                <a href="/components/index.html" class="btn btn-secondary">Browse Components</a>
+                <a href="https://devices.esphome.io/" class="btn btn-secondary">Device Database</a>
+            </div>
         </div>
     </div>
 
@@ -114,23 +129,6 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-shield-alt"></i></div><div class="feature-text">Local Control</div>
             <p>Devices work locally without cloud dependencies</p>
-        </div>
-    </div>
-
-Ready to get started?
-=====================
-
-Join thousands of smart home enthusiasts building custom devices with ESPHome.
-
-.. raw:: html
-
-    <div class="cta-container">
-        <div class="cta-content">
-            <div class="cta-buttons">
-                <a href="/guides/getting_started_hassio.html" class="btn btn-primary">Installation Guide</a>
-                <a href="/components/index.html" class="btn btn-secondary">Browse Components</a>
-                <a href="https://devices.esphome.io/" class="btn btn-secondary">Device Database</a>
-            </div>
         </div>
     </div>
 
@@ -173,8 +171,8 @@ Which microcontrollers does ESPHome support?
     <div class="feature-grid">
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-microchip"></i></div>
-            <div class="feature-text">Espressif ESP8266/ESP32</div>
-            <p>Wide support for ESP8266 and ESP32 microcontrollers, the heart of many IoT projects.</p>
+            <div class="feature-text">Espressif ESP32 and ESP8266</div>
+            <p>Wide support for ESP32 and ESP8266 microcontrollers, the heart of many IoT projects.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fa-brands fa-raspberry-pi"></i></div>
@@ -357,6 +355,23 @@ Join the Community
                     <i aria-hidden="true" class="fab fa-twitter"></i>
                     <span>Twitter</span>
                 </a>
+        </div>
+    </div>
+
+Ready to get started?
+=====================
+
+Join thousands of smart home enthusiasts building custom devices with ESPHome.
+
+.. raw:: html
+
+    <div class="cta-container">
+        <div class="cta-content">
+            <div class="cta-buttons">
+                <a href="/guides/getting_started_hassio.html" class="btn btn-primary">Installation Guide</a>
+                <a href="/components/index.html" class="btn btn-secondary">Browse Components</a>
+                <a href="https://devices.esphome.io/" class="btn btn-secondary">Device Database</a>
+            </div>
         </div>
     </div>
 
