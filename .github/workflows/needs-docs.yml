@@ -21,5 +21,14 @@ jobs:
             const hasParent = labels.find(label => label.name === 'has-parent');
             const current = labels.find(label => label.name === 'current');
             if (hasParent && current) {
-              core.setFailed('Pull request has parent code PR but is targetting current. Please change the target branch to next.');
+              core.setFailed('Pull request has a linked PR in https://github.com/esphome/esphome but is targeting current. Please change the target branch to next.');
             }
+
+            const reviewMessage = 'Pull request has a linked PR in https://github.com/esphome/esphome but is targeting current. Please change the target branch to next.';
+            await github.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              event: 'REQUEST_CHANGES',
+              body: reviewMessage
+            });
