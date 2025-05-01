@@ -77,7 +77,8 @@ Microphone Triggers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This trigger will fire when new data is received from the microphone.
-The data is available as a ``std::vector<int16_t>`` in the variable ``x``.
+The data is available as a ``std::vector<uint8_t>`` in the variable ``x``.
+This data is the raw microphone audio and includes all the read bits per sample and channels.
 
 .. code-block:: yaml
 
