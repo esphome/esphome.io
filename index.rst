@@ -16,6 +16,7 @@
         <nav class="sticky-nav">
             <div class="nav-logo">
                 <a href="/"><img src="_images/logo.svg" alt="ESPHome Logo" height="30"></a>
+                <a class="release-date" href="/changelog/" title="Latest version 2025.4.1 released April 29, 2025">2025.4.1</a>
             </div>
             <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
                 <span></span>
