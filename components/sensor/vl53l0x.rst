@@ -72,9 +72,6 @@ Configuration variables:
   on vl53l0x to enable/disable sensor. **Required** if not using address ``0x29`` which is the cause if you
   have multiple VL53L0X on the same i2c bus. In this case you have to assign a different pin to each VL53L0X.
 - **timeout** (*Optional*, :ref:`config-time`): Sensor setup timeout. Default to ``10ms``.
-- **timing_budget** (*Optional*, :ref:`config-time`): Set the timing budget the sensor will use for a single range measurement. 
-  Range is from 20000us - 4294967295us, inclusive. The timing budget allows the user to trade off speed for accuracy.
-  If not specified, the default timing budget is 33000us.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 
