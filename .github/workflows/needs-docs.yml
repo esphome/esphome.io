@@ -21,14 +21,20 @@ jobs:
             const hasParent = labels.find(label => label.name === 'has-parent');
             const current = labels.find(label => label.name === 'current');
             if (hasParent && current) {
-              core.setFailed('Pull request has a linked PR in https://github.com/esphome/esphome but is targeting current. Please change the target branch to next.');
-            }
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: ['wrong-base-branch']
+              });
 
-            const reviewMessage = 'Pull request has a linked PR in https://github.com/esphome/esphome but is targeting current. Please change the target branch to next.';
-            await github.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              event: 'REQUEST_CHANGES',
-              body: reviewMessage
-            });
+              await github.rest.pulls.createReview({
+                pull_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                event: 'REQUEST_CHANGES',
+                body: "As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the 'next' branch and rebase."
+              });
+
+              core.setFailed('As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the 'next' branch and rebase.');
+            }
