@@ -55,7 +55,7 @@ Configuration variables:
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use to define the information to be displayed.
   See :ref:`display-pvvx_mithermometer_lambda` for more information.
 - **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display data before each lambda call,
-  or to keep the existing display content (must overwrite explicitly, e.g., only on data change). Defaults to ``true``.
+  or to keep the existing display content (must overwrite explicitly, e.g., only on data change). Defaults to ``true`` if a lambda or pages are configured, false otherwise.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
 .. _display-pvvx_mithermometer_lambda:

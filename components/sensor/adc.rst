@@ -35,6 +35,12 @@ Configuration variables:
   attenuation to use. See :ref:`adc-esp32_attenuation`. Defaults to ``0db``.
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See :ref:`adc-raw`. Defaults to ``false``.
 - **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if ``attenuation`` is set to ``auto``. Defaults to ``1``.
+- **sampling_mode** (*Optional*): Sampling method to use when multiple samples are taken. 
+
+  - ``avg`` average of all samples (**Default**)
+  - ``min`` minimal value from all samples
+  - ``max`` maximal value from all samples
+
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
 - All other options from :ref:`Sensor <config-sensor>`.
