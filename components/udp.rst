@@ -56,6 +56,8 @@ Configuration variables:
 - **port** (*Optional*, int): The destination UDP port number to use. Defaults to ``18511``.
 - **addresses** (*Optional*, list of IPv4 addresses): One or more IP addresses to broadcast data to. Defaults to ``255.255.255.255``
   which is the local network broadcast address.
+- **listen_address** (*Optional*, IPv4 address): Changes to multicast, adding an address to listen to. Defaults to no multicast address, just
+  local network broadcast address ``255.255.255.255``. **NOTE**: Adding a multicast address stops it from listening on the broadcast address.
 - **sensors** (*Optional*, list): A list of sensor IDs to be broadcast. Each entry may be just the sensor id, or may set a different id to be broadcast.
 
   - **id** (**Required**, :ref:`config-id`): The id of the sensor to be used
@@ -114,8 +116,8 @@ attacks on the encryption much more difficult. This is enabled in the provider c
 
 For further protection a ``ping-pong`` (or challenge-response) facility is available, which can be enabled in the
 consumer configuration. The consumer periodically generates a 32 bit random number (a *nonce* aka "Number used Once")
-and broadcasts it as a *ping*. Any provider receiving this nonce will include it in any future encrypted broadcasts as 
-*pong*. The consumer expects to get back its most recently transmitted *ping* in any packets it receives, and will reject 
+and broadcasts it as a *ping*. Any provider receiving this nonce will include it in any future encrypted broadcasts as
+*pong*. The consumer expects to get back its most recently transmitted *ping* in any packets it receives, and will reject
 any that do not contain it.
 
 Use of the ping-pong feature will add to network traffic and the size of the transmitted packets (a single packet may
@@ -263,7 +265,7 @@ the port specified in the ``udp_external`` configuration:
           - humi_rooma
           - humi_roomb
           - humi_roomc
-    
+
       - id: udp_external
         update_interval: 60s
         encryption: "Muddy Waters"
@@ -284,9 +286,34 @@ the port specified in the ``udp_external`` configuration:
         provider: remote-node
         remote_id: binary_sensor_unlock_me
         on_press:
-          - lambda: |- 
+          - lambda: |-
               ESP_LOGI("main", "d command to binary_sensor_unlock");
 
+The example below shows two devices communicating via multicast:
+
+.. code-block:: yaml
+
+    # Device 1
+    binary_sensor:
+      - platform: gpio
+        pin: D2
+        id: binary_sensor_door
+
+    udp:
+      - id: mc_external
+        address:
+          - 239.0.60.53
+        binary_sensors:
+          - binary_sensor_door
+
+    # Device 2
+    binary_sensor:
+      - platform: udp
+        id: remote_door_sensor
+        remote_id: mc_external
+
+    udp:
+      listen_addresses: 239.0.60.53
 
 .. [#f1] As known in 2024.06.
 

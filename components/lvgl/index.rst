@@ -10,13 +10,20 @@ embedded graphics library to create beautiful UIs for any MCU, MPU and display t
 
 .. figure:: /components/lvgl/images/lvgl_main_screenshot.png
 
+Prerequisites
+-------------
+
 To use LVGL with a :ref:`display <display-hw>` in ESPHome, you'll need an ESP32 or RP2040. PSRAM is not a strict requirement but it is generally recommended, especially for large color displays.
 
-The graphic display should be configured with ``auto_clear_enabled: false`` and ``update_interval: never``, and should not have any ``lambda`` set.
+The graphic display should be configured with ``auto_clear_enabled: false`` and should not have any ``lambda`` set. The LVGL component will take care of the display rendering. For most displays, the ``update_interval`` should be set to ``never``, but note that some displays such as OLED and ePaper will need the update interval set to a suitable value.
 
 For interactivity, a :doc:`Touchscreen </components/touchscreen/index>` (capacitive highly preferred), a :doc:`/components/sensor/rotary_encoder` or a custom keypad made up from discrete :doc:`Binary Sensors </components/binary_sensor/index>` can be used.
 
 Check out the detailed examples in :ref:`the Cookbook <lvgl-cookbook>` which demonstrate a number of ways you can integrate your environment with LVGL and ESPHome.
+
+
+TL;DR
+-----
 
 To get started, it is sufficient to add a display and an empty LVGL configuration. If neither ``pages`` nor ``widgets`` is specified, then a default "hello world" page will be shown.
 
@@ -24,6 +31,26 @@ To get started, it is sufficient to add a display and an empty LVGL configuratio
 
     # Example minimal configuration entry
     lvgl:
+
+    display:
+      - platform: ...
+        # ...
+        auto_clear_enabled: false
+        update_interval: never
+
+To make LVGL your own you will need to add widgets to the display. For example, to show a label with the text "Hello World!" in the center of the screen:
+
+.. code-block:: yaml
+
+    lvgl:
+      widgets:
+        - label:
+            align: CENTER
+            text: 'Hello World!'
+
+
+
+Now read on to learn more about the configuration options and how to customize your LVGL display.
 
 Basics
 ------
@@ -125,13 +152,14 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to ``true``. "Interacts" means to release a touch or button, or rotate an encoder.
-- **color_depth** (*Optional*, string): The color deph at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
+- **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
 - **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. Default is ``100%`` (or ``1.0``). For devices without PSRAM, the recommended value is ``25%``.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: ``TRACE``, ``INFO``, ``WARN``, ``ERROR``, ``USER``, ``NONE``. Defaults to ``WARN``.
 - **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either ``big_endian`` or ``little_endian``. Defaults to ``big_endian``.
 - **disp_bg_color** (*Optional*, :ref:`color <lvgl-color>`): Solid color used to fill the background. Can be changed at runtime with the ``lvgl.update`` action.
-- **disp_bg_image** (*Optional*, :ref:`image <display-image>`):  The ID of an existing image configuration, to be used as background wallpaper. To change the image at runtime use the ``lvgl.update`` action. Also see :ref:`lvgl-widget-image` for a note regarding supported image formats.
+- **disp_bg_image** (*Optional*, :ref:`image <display-image>`):  The ID of an existing image configuration, to be used as background wallpaper. To change the image at runtime use the ``lvgl.update`` action. Also see :ref:`lvgl-widget-image` for a note regarding supported image formats. May also be set to ``none`` to clear the background image.`
+- **disp_bg_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the background image or color of the display.
 - **default_font** (*Optional*, ID): The ID of the :ref:`font <lvgl-fonts>` used by default to render the text or symbols. Defaults to LVGL's internal ``montserrat_14`` if not specified.
 - **style_definitions** (*Optional*, list): A batch of style definitions to use in LVGL widget's ``styles`` configuration. See :ref:`below <lvgl-theme>` for more details.
 - **gradients** (*Optional*, list): A list of gradient definitions to use in *bg_grad* styles. See :ref:`below <lvgl-gradients>` for more details.
@@ -167,7 +195,23 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 See :ref:`lvgl-cookbook-navigator` in the Cookbook for an example which demonstrates how to implement a page navigation bar at the bottom of the screen.
 
-.. _lgvgl-multi-conf:
+
+Choosing a buffer size
+**********************
+
+The ``buffer_size`` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is ``320 * 240 * 2`` bytes (for RGB565) = ``153600`` bytes. If you set the buffer size to ``50%``,
+then the buffer will be ``76800`` bytes. If you set it to ``25%``, then the buffer will be ``38400`` bytes. The default value is ``100%``.
+
+When using larger displays on devices with limited RAM (i.e. no PSRAM), you may need to reduce the buffer size to avoid running out of RAM.
+A failure to allocate a buffer will result in an error message in the log and the LVGL component being marked "Failed".
+
+Generally speaking a larger buffer will provide better performance, but the effect of reducing the buffer size from 100% is not as bad as you might think. The LVGL library is designed to be efficient and will only redraw the parts of the screen that have changed.
+
+A buffer size less than 100% can also be useful when PSRAM *is* available to *improve* performance. In this case a buffer size of 12% is recommended, and it will be allocated in internal
+RAM if possible, which will increase the speed of display redraws, since internal RAM is much faster to access than PSRAM.
+This may however reduce the internal RAM available for other components. A buffer size greater than 25% will be always allocated in PSRAM if available.
+
+.. _lvgl-multi-conf:
 
 
 Multiple LVGL configurations
@@ -325,7 +369,7 @@ You can adjust the appearance of widgets by changing their foreground, backgroun
 - **pad_right** (*Optional*, int16): Set the padding on the right, in pixels.
 - **pad_row** (*Optional*, int16): Set the padding between the rows of the children elements, in pixels.
 - **pad_column** (*Optional*, int16): Set the padding between the columns of the children elements, in pixels.
-- **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 = pill shaped widget (true circle if it has same width and height).
+- **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 (max) = pill shaped widget (true circle if it has same width and height, radius then should be set to half the width/height).
 - **shadow_color** (*Optional*, :ref:`color <lvgl-color>`): Color used to create a drop shadow under the widget. Defaults to ``0`` (black).
 - **shadow_ofs_x** (*Optional*, int16): Horizontal offset of the shadow, in pixels. Defaults to ``0``.
 - **shadow_ofs_y** (*Optional*, int16): Vertical offset of the shadow, in pixels. Defaults to ``0``.
@@ -423,6 +467,32 @@ So the precedence happens like this: state based styles override the locally spe
 Feel free to experiment to discover inheritance and precedence of the styles based on states between the nested widgets.
 
 :ref:`lvgl-cookbook-theme` The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
+
+``lvgl.style.update``
+*********************
+
+This :ref:`action <actions-action>` allows changing/updating the properties of a style at run time. This can be used to
+implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
+
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and the values are templatable.components
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    lvgl:
+      style_definitions:
+        - id: my_style
+          bg_color: 0xFFFFFF
+          border_color: 0x000000
+          border_width: 2
+
+    # Action to update the style
+    on_...:
+      - lvgl.style.update:
+          id: my_style
+          properties:
+            bg_color: 0xFF0000
+            border_color: 0x00FF00
 
 .. _lvgl-layouts:
 
@@ -829,6 +899,24 @@ This :ref:`condition <common_conditions>` checks if LVGL is in the paused state 
             then:
               - lvgl.resume:
 
+``lvgl.page.is_showing``
+************************
+
+This :ref:`condition <common_conditions>` checks if the nominated page is the one currently showing.
+
+- **id** (**Required**): The ID of the page to check. May be supplied as a simple value.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      then:
+        - if:
+            condition:
+              lvgl.page.is_showing: main_page
+            then:
+              - logger.log: "Main page is showing"
+
 Triggers
 --------
 
@@ -873,6 +961,12 @@ This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is paused.
 *************
 
 This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is resumed. This can be used to perform any desired actions when the screen is unlocked, such as turning on the display backlight.
+
+
+``on_boot``
+*************
+
+This :ref:`trigger <lvgl-automation-triggers>` is triggered after LVGL has been setup. It is also available on any widget, but the timing is the same.
 
 
 See Also

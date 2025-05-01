@@ -28,19 +28,27 @@ MAX3232-based transceivers have been tested and work well.
 
 If you have multiple batteries you need to connect to the master battery's console port.
 
-.. list-table:: Pylontech RJ45 Console Port (US2000C, US3000C)
+.. list-table:: Pylontech RJ45 Console Port (US2000C, US3000C, US5000C)
     :header-rows: 1
 
     * - RJ45 Pin
+      - TIA-568B Color
+      - TIA-568A Color
       - Function
       - Connect to
     * - 3
+      - White/Green
+      - White/Orange
       - Pylontech TX
       - ESPHome RX via transceiver
     * - 6
+      - Green
+      - Orange
       - Pylontech RX
       - ESPHome TX via transceiver
     * - 8
+      - Brown
+      - Brown
       - GND
       - GND
 
@@ -135,7 +143,7 @@ Text Sensor
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **pylontech_id** (**Optional**): Manually specify the ID of the pylontech instance if there are multiple.
+- **pylontech_id** (*Optional*): Manually specify the ID of the pylontech instance if there are multiple.
 - **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
 - **base_state** (*Optional*): Base state. Usually reads ``Dischg``, ``Charge`` or ``Idle``. All options from :ref:`Text Sensor <config-text_sensor>`.
 - **voltage_state** (*Optional*): Voltage state. Usually reads ``Normal``. All options from :ref:`Text Sensor <config-text_sensor>`.
