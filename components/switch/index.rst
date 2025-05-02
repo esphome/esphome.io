@@ -110,6 +110,26 @@ This action turns a switch with the given ID off when executed.
       then:
         - switch.turn_off: relay_1
 
+.. _switch-control_action:
+
+``switch.control`` Action
+*************************
+
+This action controls a switch with the given ID when executed.
+It is similar to the ``switch.turn_on`` and ``switch.turn_off`` actions,
+but it can be used in complex lambda expressions.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - switch.control:
+            id: my_switch
+            state: true  # turn on
+        - switch.control:
+            id: my_switch
+            state: false  # turn off
+
 .. _switch-is_on_condition:
 .. _switch-is_off_condition:
 
@@ -155,8 +175,8 @@ advanced stuff (see the full API Reference for more info).
         // Switch is OFF, do something else here
       }
 
-- ``turn_off()``/``turn_on()``: Manually turn the switch ON/OFF from code.
-  Similar to the ``switch.turn_on`` and ``switch.turn_off`` actions,
+- ``turn_off()``/``turn_on()``/``toggle()``: Manually turn or toggle the switch ON/OFF from code.
+  Similar to the ``switch.turn_on``, ``switch.turn_off`` and ``switch.toggle`` actions,
   but can be used in complex lambda expressions.
 
   .. code-block:: yaml
@@ -165,6 +185,13 @@ advanced stuff (see the full API Reference for more info).
       id(my_switch).turn_on();
       // Toggle the switch
       id(my_switch).toggle();
+    
+- ``control()``: Control the switch from code. Useful when setting the state by reading another value.
+
+  .. code-block:: yaml
+
+      id(my_switch).control(true); // turn on
+      id(my_switch).control(false); // turn off
 
 .. _switch-on_turn_on_off_trigger:
 
