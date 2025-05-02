@@ -65,6 +65,20 @@ and will be available in the ``on_data`` trigger.
 
 This action will stop capturing audio data from the microphone.
 
+.. _microphone-mute:
+
+``microphone.mute`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will apply a software mute to the audio data from the microphone before passing it to any listening components.
+
+.. _microphone-unmute:
+
+``microphone.unmute`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will disable applying a software mute initiated with ``microphone.mute``.
+
 
 .. _microphone-triggers:
 
@@ -77,7 +91,8 @@ Microphone Triggers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This trigger will fire when new data is received from the microphone.
-The data is available as a ``std::vector<int16_t>`` in the variable ``x``.
+The data is available as a ``std::vector<uint8_t>`` in the variable ``x``.
+This data is the raw microphone audio and includes all the read bits per sample and channels.
 
 .. code-block:: yaml
 
@@ -111,6 +126,13 @@ Configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This condition will check if the microphone is currently capturing audio data.
+
+.. _microphone-is_muted:
+
+``microphone.is_muted`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition will check if the microphone is currently apply a software mute.
 
 
 Platforms
