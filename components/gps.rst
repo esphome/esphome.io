@@ -31,6 +31,7 @@ in your configuration - only the RX pin should be necessary.
         name: "Longitude"
       altitude:
         name: "Altitude"
+      update_interval: 1s # default is 20s
 
     # GPS as time source
     time:
@@ -70,6 +71,12 @@ Configuration variables:
 - **satellites** (*Optional*): Include the number of tracking satellites being used as a sensor
 
   - All options from :ref:`Sensor <config-sensor>`.
+
+- **hdop** (*Optional*): Include the measured HDOP (Horizontal Dilution Of Precision) as a sensor
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
+- **update_interval** (*Optional*, :ref:`config-time`): The interval of sensor updates. Defaults to  ``20s``.
 
 See Also
 --------
