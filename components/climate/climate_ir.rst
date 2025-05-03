@@ -155,7 +155,7 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
 
 ``gree`` **Climate**:
 
-- **model** (*Required*, string): GREE has a few different protocols depending on model. One of these will work for you.
+- **model** (**Required**, string): GREE has a few different protocols depending on model. One of these will work for you.
 
   - ``generic``
   - ``yan``
