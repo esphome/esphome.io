@@ -5,7 +5,7 @@ Serial Shift Register Multiplexed Displays
     :description: Instructions for setting up a serial shift register based display.
     :image: serial_multiplexed_display.jpg
 
-The ``serial_shift_register`` display platform allows you to use (for now) two different kinds of serial shift registers to drive segment displays with ESPHome.
+The ``serial_multiplexed_display`` display platform allows you to use (for now) two different kinds of serial shift registers to drive segment displays with ESPHome.
 
 .. figure:: images/serial_multiplexed_display.jpg
     :align: center
