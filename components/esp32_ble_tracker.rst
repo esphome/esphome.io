@@ -94,6 +94,10 @@ Configuration variables:
   This value cannot exceed the total number of ``connection_slots`` for the
   :doc:`bluetooth_proxy` component combined with the total
   configured :doc:`ble_client` instances.
+- **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
+  briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
+  which can improve reliability. Has no effect if the ``wifi`` component is not configured. 
+  Defaults to ``true``.
 
 Automations:
 
