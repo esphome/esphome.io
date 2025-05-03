@@ -104,7 +104,7 @@ ESP32 IDF configuration variables:
   limited to ``rmt_symbols``.
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   ``filter_symbols``. Useful for filtering out short bursts of noise.
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 
@@ -500,7 +500,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56khz) and are very similar.
+    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 

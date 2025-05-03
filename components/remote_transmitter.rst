@@ -56,7 +56,7 @@ ESP32 IDF configuration variables:
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
 
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``pin``
   is set to inverted or open-drain.
@@ -234,7 +234,7 @@ This :ref:`action <config-action>` sends a CanalSat infrared remote code to a re
 
 .. note::
 
-    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56khz) and are very similar.
+    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 .. code-block:: yaml
@@ -262,7 +262,7 @@ This :ref:`action <config-action>` sends a CanalSatLD infrared remote code to a 
 
 .. note::
 
-    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56khz) and are very similar.
+    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 .. code-block:: yaml
