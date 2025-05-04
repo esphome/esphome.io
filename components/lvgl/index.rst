@@ -195,7 +195,23 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 See :ref:`lvgl-cookbook-navigator` in the Cookbook for an example which demonstrates how to implement a page navigation bar at the bottom of the screen.
 
-.. _lgvgl-multi-conf:
+
+Choosing a buffer size
+**********************
+
+The ``buffer_size`` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is ``320 * 240 * 2`` bytes (for RGB565) = ``153600`` bytes. If you set the buffer size to ``50%``,
+then the buffer will be ``76800`` bytes. If you set it to ``25%``, then the buffer will be ``38400`` bytes. The default value is ``100%``.
+
+When using larger displays on devices with limited RAM (i.e. no PSRAM), you may need to reduce the buffer size to avoid running out of RAM.
+A failure to allocate a buffer will result in an error message in the log and the LVGL component being marked "Failed".
+
+Generally speaking a larger buffer will provide better performance, but the effect of reducing the buffer size from 100% is not as bad as you might think. The LVGL library is designed to be efficient and will only redraw the parts of the screen that have changed.
+
+A buffer size less than 100% can also be useful when PSRAM *is* available to *improve* performance. In this case a buffer size of 12% is recommended, and it will be allocated in internal
+RAM if possible, which will increase the speed of display redraws, since internal RAM is much faster to access than PSRAM.
+This may however reduce the internal RAM available for other components. A buffer size greater than 25% will be always allocated in PSRAM if available.
+
+.. _lvgl-multi-conf:
 
 
 Multiple LVGL configurations
@@ -451,6 +467,32 @@ So the precedence happens like this: state based styles override the locally spe
 Feel free to experiment to discover inheritance and precedence of the styles based on states between the nested widgets.
 
 :ref:`lvgl-cookbook-theme` The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
+
+``lvgl.style.update``
+*********************
+
+This :ref:`action <actions-action>` allows changing/updating the properties of a style at run time. This can be used to
+implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
+
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and the values are templatable.components
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    lvgl:
+      style_definitions:
+        - id: my_style
+          bg_color: 0xFFFFFF
+          border_color: 0x000000
+          border_width: 2
+
+    # Action to update the style
+    on_...:
+      - lvgl.style.update:
+          id: my_style
+          properties:
+            bg_color: 0xFF0000
+            border_color: 0x00FF00
 
 .. _lvgl-layouts:
 
@@ -919,6 +961,12 @@ This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is paused.
 *************
 
 This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is resumed. This can be used to perform any desired actions when the screen is unlocked, such as turning on the display backlight.
+
+
+``on_boot``
+*************
+
+This :ref:`trigger <lvgl-automation-triggers>` is triggered after LVGL has been setup. It is also available on any widget, but the timing is the same.
 
 
 See Also
