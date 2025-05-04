@@ -28,6 +28,7 @@ Configuration variables
 ------------------------
 
 - **pin** (**Required**, :ref:`config-pin`): The pin to count pulses on.
+- **dir_pin** (*Optional*, :ref:`config-pin`): The pin for changing the direction of counting.
 - **count_mode** (*Optional*): Configure how the counter should behave
   on a detected rising edge/falling edge.
 
