@@ -99,6 +99,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
+    Packet Transport, components/packet_transport/index, packet_transport.svg
 
 Bluetooth/BLE
 -------------
@@ -1130,4 +1131,5 @@ ESPHome depends on and welcomes contributions from our community. If you'd like 
     text/index
     update/index
     valve/index
+    packet_transport/index
     *
