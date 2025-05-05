@@ -74,7 +74,7 @@ Configuration variables:
 - **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
 
 - **server_registers** (*Optional*): A list of registers that are responded to when acting as a server.
-  - **address** (**Required**, integer): start address of the first register in a range
+  - **address** (**Required**, integer): start address of the first register in a range. Address ranges must not overlap.
   - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (MSB first)
 
       - ``U_WORD``: unsigned 16 bit integer from 1 register = 16bit
