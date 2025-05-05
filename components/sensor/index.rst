@@ -642,6 +642,9 @@ To prevent values from being published, return ``{}``:
           if (x < 10) return {};
           return x-10;
 
+.. include:: sensor-filter-to_ntc_resistance.rst
+
+.. include:: sensor-filter-to_ntc_temperature.rst
 
 Example: Converting Celsius to Fahrenheit
 -----------------------------------------

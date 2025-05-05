@@ -240,7 +240,8 @@ Configuration variables:
 Number
 ------
 
-The ``ld2450`` number allows you to control the presence timeout and zone area configuration of your :doc:`ld2450`.
+The ``ld2450`` number platform allows you to control the presence timeout and zone area configuration of your
+:doc:`ld2450`.
 
 .. code-block:: yaml
 
@@ -277,7 +278,6 @@ The ``ld2450`` number allows you to control the presence timeout and zone area c
           y2:
             name: Zone-3 Y2
 
-
 Configuration variables:
 ************************
 
@@ -285,20 +285,19 @@ Configuration variables:
 - **presence_timeout** (**Required**, int): The duration, in seconds, for which the
   :ref:`presence states<ld2450-binary-sensors>` will persist even after the detection is cleared. Default is ``5``
   seconds. All options from :ref:`Number <config-number>`.
-- **zone_N** (*Optional*): Configuration of the zone (N = 1 to 3), defined as a rectangular area. A maximum of three
-  zones can be configured: ``zone_1``, ``zone_2``, ``zone_3``. The zone coordinates consist of x1, y1 (near-left) to
-  x2, y2 (far-right) relative to the ``ld2450`` sensor.
-    
-    - **x1** (*Optional*, int): Start X coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
-      the X-axis (negative for left side (-3000) of the sensor, positive for right side (3000) of the sensor).
-      All options from :ref:`Number <config-number>`.
-    - **y1** (*Optional*, int): Start Y coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
-      the Y-axis, values range from 0 to 6000. All options from :ref:`Sensor <config-sensor>`.
-    - **x2** (*Optional*, int): End X coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
-      the X-axis (negative for left side (-3000) of the sensor, positive for right side (3000) of the sensor). All
-      options from :ref:`Number <config-number>`.
-    - **y1** (*Optional*, int): Start Y coordinate in ``millimeter (mm)`` of the zone from the ``ld2450`` sensor along
-      the Y-axis, values range from 0 to 6000. All options from :ref:`Sensor <config-sensor>`.
+- **zone_N** (*Optional*): Configuration for the zone (N = 1 to 3), defined as a rectangular area in front of and
+  relative to the sensor. A maximum of three zones can be configured: ``zone_1``, ``zone_2``, ``zone_3``. The zone
+  coordinates consist of ``x1``, ``y1`` (near-left) to ``x2``, ``y2`` (far-right) and are specified in
+  **millimeters (mm)**.
+
+    - **x1** (**Required**, int): Start X coordinate of the zone along the X-axis. Range is from -3000 (far left) to 3000
+      (far right). All options from :ref:`Number <config-number>`.
+    - **y1** (**Required**, int): Start Y coordinate of the zone along the Y-axis. Range is 0 (closest) to 6000
+      (furthest). All options from :ref:`Number <config-number>`.
+    - **x2** (**Required**, int): End X coordinate of the zone along the X-axis. Range is from -3000 (far left) to 3000
+      (far right). All options from :ref:`Number <config-number>`.
+    - **y2** (**Required**, int): End Y coordinate of the zone along the Y-axis. Range is 0 (closest) to 6000
+      (furthest). All options from :ref:`Number <config-number>`.
 
 Button
 ------
@@ -360,7 +359,6 @@ Configuration variables:
 
     - **direction** (*Optional*): Direction of the target relative to the ``ld2450`` sensor. Possible values are:
       ``Stationary``, ``Moving away``, ``Approaching``, ``NA``. All options from :ref:`Sensor <config-sensor>`.
-
 
 Select
 ------

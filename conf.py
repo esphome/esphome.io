@@ -95,6 +95,7 @@ exclude_patterns = [
     "ENV",
     ".venv",
     ".env",
+    "components/sensor/sensor-filter-*.rst",
 ]
 
 html_extra_path = [
