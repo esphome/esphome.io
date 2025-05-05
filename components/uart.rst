@@ -8,7 +8,7 @@ UART Bus
     :image: uart.svg
     :keywords: UART, serial bus
 
-UART is a common serial protocol for a lot of devices. For example, when uploading a binary to your ESP
+UART is a common serial protocol for many devices. For example, when uploading a binary to your ESP
 you have probably used UART to access the chip. UART (or for Arduino often also called Serial) usually
 consists of 2 pins:
 
@@ -21,9 +21,12 @@ perspective these two pins are switched (i.e. *it* sends on pin B and receives o
 need to try with the two pins switched if it doesn't work immediately.
 
 Additionally, each UART bus can operate at different speeds (baud rates), so ESPHome needs to know what speed to
-receive/send data at using the ``baud_rate`` option. The most common baud rates are 9600 and 115200.
+receive/send data at using the ``baud_rate`` option. Two common baud rates are 9600 and 115200.
 
 In some cases only **TX** or **RX** exists as the device at the other end only accepts data or sends data.
+
+The UART component may be used as a platform for the :ref:`packet-transport` component, enabling sensor data to be sent
+directly from one ESPHome node to another over a UART bus. When using RS485 this can operate in a multi-drop configuration.
 
 .. note::
 
@@ -280,5 +283,6 @@ See Also
 --------
 
 - :doc:`/components/logger`
+- :doc:`/components/packet_transport/uart`
 - :apiref:`uart/uart.h`
 - :ghedit:`Edit`

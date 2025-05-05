@@ -9,7 +9,7 @@ UDP Component
     :keywords: UDP
 
 This component allows reception and transmission of data over a network using the `User Datagram Protocol (UDP) <https://en.wikipedia.org/wiki/User_Datagram_Protocol>`_.
-In conjunction with the :ref:`packet_transport <packet-transport>` component, it can be used to broadcast sensor data.
+In conjunction with the :ref:`packet-transport` it can be used to broadcast sensor data.
 
 .. code-block:: yaml
 
@@ -63,7 +63,7 @@ To trigger an action when data is received on the UDP port, use the ``on_receive
 Examples
 --------
 
-See the :ref:`packet_transport <packet-transport>` component for examples of how to use this component.
+See the :ref:`packet-transport` for examples of how to use this component.
 
 A more complex example is shown below:
 
@@ -123,6 +123,7 @@ the port specified in the ``transport_external`` configuration:
 See Also
 --------
 
+- :doc:`/components/packet_transport/udp`
 - :doc:`/components/binary_sensor/packet_transport`
 - :doc:`/components/sensor/packet_transport`
 - :ref:`automation`

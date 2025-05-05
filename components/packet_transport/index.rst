@@ -10,8 +10,8 @@ Packet Transport Component
 
 The purpose of this component is to allow ESPHome nodes to directly communicate with each over a communication channel.
 It permits the state of sensors and binary sensors to be transmitted from one node to another, without the need for a
-central server or broker. The actual transport channel is provided by another component. Currently the only supported
-transport is :doc:`/components/udp`
+central server or broker. The actual transport channel is provided by another component. Currently the supported
+transports are :doc:`/components/udp` and :doc:`/components/uart`.
 
 Nodes may be *providers* which transmit or broadcast sensor data, or *consumers* which receive sensor data from one or more
 providers. A node may be both a provider and a consumer. Optional security is provided by one or more of:
@@ -19,6 +19,10 @@ providers. A node may be both a provider and a consumer. Optional security is pr
 - encryption using a shared secret key
 - a rolling code
 - a challenge-response (ping-pong) key
+
+Example Configuration
+---------------------
+
 
 .. code-block:: yaml
 
@@ -34,20 +38,19 @@ providers. A node may be both a provider and a consumer. Optional security is pr
         - sensor_id1
         - id: sensor_id2
           broadcast_id: different_id
-
       providers:
-        - name: some-device-name
-          encryption: "REPLACEME with some key"
+        - name: device1-name
+          encryption: "REPLACEME"
 
     sensor:
       - platform: packet_transport
-        provider: some-device-name
+        provider: device1-name
         id: local_sensor_id
         remote_id: some_sensor_id
 
     binary_sensor:
       - platform: packet_transport
-        provider: unencrypted-device
+        provider: device2-name
         id: other_binary_sensor_id  # also used as remote_id
 
 
@@ -78,8 +81,8 @@ Configuration variables:
 
 Wherever a provider name is required, this should be the node name configured in the ``esphome:`` block.
 
-This component supports multiple configurations, making it possible to differentiate between consumers when providing data to them.
-When receiving data in such a configuration, sensors need an ``transport_id`` configuration item to know where to expect data to come from.
+This component supports multiple configurations, making it possible to differentiate between consumers when providing data to them, or providers if they are multiple.
+When receiving data in such a configuration, sensors need a ``transport_id`` configuration item to know where to expect data to come from.
 
 Reliability
 -----------
@@ -239,11 +242,51 @@ encryption and a rolling code to a remote host.
         provider: st7735s
         id: wifi_signal_sensor
 
+In the example below we differentiate channels we establish over UDP, by providing multiple configuration keys.
+We provide the value of ``sensor_to_provide`` encrypted, to a node with a specific IP address, and we receive the
+state of ``relay1_sensor`` from tne node named ``device-1`` without any encryption.
 
-.. [#f1] As known in 2024.06.
+.. code-block:: yaml
+
+    udp:
+      - id: udp_output
+        addresses:
+          - 192.168.1.78 # the IP of the specific node to provide the sensor value to
+      - id: udp_input
+    
+    packet_transport:
+      - platform: udp
+        id: transport_output
+        udp_id: udp_output
+        encryption: !secret your_encryption_key
+        sensors:
+          - sensor_to_provide
+      - platform: udp
+        id: transport_input
+        udp_id: udp_input
+        providers:
+          - name: device-1
+    
+    sensor:
+      - platform: ...
+        id: sensor_to_provide
+    
+    binary_sensor:
+      - platform: packet_transport
+        transport_id: transport_input
+        provider: device-1
+        remote_id: relay1_sensor
+
+.. [#f1] As known in 2025.02.
 
 See Also
 --------
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    *
 
 - :doc:`/components/binary_sensor/packet_transport`
 - :doc:`/components/sensor/packet_transport`
