@@ -129,6 +129,13 @@ but it can be used in complex lambda expressions.
         - switch.control:
             id: my_switch
             state: false  # turn off
+        - switch.control:
+            id: my_switch
+            state: !lambda "return id(my_sensor).state;"  # templated
+
+Configuration variables:
+  - **id** (*Required*, string): The ID of the switch to control.
+  - **state** (*Required*, boolean, :ref:`templatable <config-templatable>`): The state to set the switch to. You can set it based on another sensors value with a template.
 
 .. _switch-is_on_condition:
 .. _switch-is_off_condition:
