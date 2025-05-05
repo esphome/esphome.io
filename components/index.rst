@@ -99,6 +99,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
+    Packet Transport, components/packet_transport/index, packet_transport.svg
 
 Bluetooth/BLE
 -------------
@@ -119,6 +120,7 @@ Management and Monitoring
 
     Debug, components/debug, bug-report.svg, dark-invert
     Logger, components/logger, file-document-box.svg, dark-invert
+    Syslog, components/syslog, file-document-box.svg, dark-invert
     Prometheus, components/prometheus, prometheus.svg
     StatsD, components/statsd, connection.svg, dark-invert
     Safe Mode, components/safe_mode, restart-alert.svg, dark-invert
@@ -1130,4 +1132,5 @@ ESPHome depends on and welcomes contributions from our community. If you'd like 
     text/index
     update/index
     valve/index
+    packet_transport/index
     *

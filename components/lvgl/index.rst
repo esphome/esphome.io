@@ -241,12 +241,27 @@ Colors can be specified anywhere in the LVGL configuration either by referencing
 
 You may also use any of the `standard CSS color names <https://developer.mozilla.org/en-US/docs/Web/CSS/named-color>`__, e.g. ``springgreen``.
 
+When using a lambda to provide a color you should use the ``lv_color_hex`` function, for example:
+
+.. code-block:: yaml
+
+    label:
+      text: 'Hello World!'
+      color: !lambda return lv_color_hex(0xFF0000);
+
 .. _lvgl-opacity:
 
 Opacity
 *******
 
-Various parts of the widgets (like background, borders etc.) support opacity. It can be overridden with a string: ``TRANSP`` for fully transparent, ``COVER`` for fully opaque, or percentage between ``0%`` and ``100%``. Actual default values depend on widget specifics.
+Various parts of the widgets (like background, borders etc.) support opacity. It can be specified in one of several ways:
+
+- As a string:  ``TRANSP`` for fully transparent, ``COVER`` for fully opaque
+- As a floating point value in the range 0.0-1.0
+- As a percentage between ``0%`` and ``100%``.
+- From a lambda - return an integer in the range 0-255.
+
+Default values depend on widget specifics.
 
 .. _lvgl-fonts:
 
@@ -329,7 +344,25 @@ LVGL follows CSS's `border-box model <https://developer.mozilla.org/en-US/docs/W
 
 You can adjust the appearance of widgets by changing their foreground, background, border color and/or font. Some widgets allow for more complex styling, effectively changing all or part of their appearance.
 
-**Styling variables:**
+Using Lambdas for Styling
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Most LVGL style and widget properties can be set as either constant values or lambdas (which will be evaluated at run time).
+When using lambdas, the returned value must be of the type and within the range expected by the native LVGL library, which may not be the same
+as is used in YAML. This applies particularly to any value represented as a floating point number - the LVGL library does not use
+floating point, instead uses scaled integers. Properties with the following native types should be noted:
+
+- **opacity** LVGL opacity is an integer between 0 and 255.
+- **brightness** Similarly, an integer from 0 to 255.
+- **angle** LVGL angles are represented in 1/10 degree, so usually in the range 0 - 3600.
+- **color** LVGL uses an internal color type - to construct a color in a lambda use ``lv_color_hex(0xRRGGBB)``.
+- **zoom** Zoom levels should be multiplied by 256 (valid range is 0 to 2560, corresponding to 0-10.0).
+- **percentage** To convert a fractional value to a percentage, use ``lv_pct(value * 100)``
+
+Style properties
+^^^^^^^^^^^^^^^^
+
+These style properties may be applied to any widget, though not all widgets use all of them.
 
 - **bg_color** (*Optional*, :ref:`color <lvgl-color>`): Color for the background of the widget. Defaults to ``0xFFFFFF`` (white).
 - **bg_grad** (*Optional*, :ref:`gradient <lvgl-gradients>`): A gradient to apply to the background.
@@ -389,9 +422,7 @@ You can adjust the appearance of widgets by changing their foreground, backgroun
 Themes
 ******
 
-The widgets support lots of :ref:`lvgl-styling` to customize their appearance and behavior.
-
-You can configure a global theme for all widgets at the top level with the ``theme`` configuration variable. In the example below, all the ``arc``, ``slider`` and ``button`` widgets will, by default, use the styles and properties defined here. A combination of styles and :ref:`states <lvgl-widgetproperty-state>` can be chosen for every widget.
+You can configure a global theme for all widgets of a given type at the top level with the ``theme:`` configuration variable. In the example below, all the ``arc``, ``slider`` and ``button`` widgets will, by default, use the styles and properties defined here. A combination of styles and :ref:`states <lvgl-widgetproperty-state>` can be chosen for every widget.
 
 .. code-block:: yaml
 
@@ -474,7 +505,7 @@ Feel free to experiment to discover inheritance and precedence of the styles bas
 This :ref:`action <actions-action>` allows changing/updating the properties of a style at run time. This can be used to
 implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
 
-The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and the values are templatable.components
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and can be constants or lambdas.
 
 .. code-block:: yaml
 
@@ -695,9 +726,10 @@ Several actions are available for the LVGL component itself, these are outlined 
 ``lvgl.widget.redraw``
 **********************
 
-This :ref:`action <actions-action>` redraws the entire screen, or optionally only a widget on it.
+This :ref:`action <actions-action>` redraws the entire screen, or optionally only selected widgets. It does not change
+any widget properties. It is mostly useful to redraw the screen after resuming LVGL from the paused state.
 
-- **id** (*Optional*): The ID of a widget configured in LVGL which you want to redraw; if omitted, the entire screen will be redrawn.
+- **id** (*Optional*): The ID (or a list of IDs) of a widget configured in LVGL which you want to redraw; if omitted, the entire screen will be redrawn.
 - **lvgl_id** (*Optional*): The ID of the LVGL instance to redraw.
 
 .. code-block:: yaml
@@ -706,6 +738,31 @@ This :ref:`action <actions-action>` redraws the entire screen, or optionally onl
       then:
         - lvgl.widget.redraw:
             lvgl_id: lvgl1  # optional when only one LVGL instance is configured
+
+
+.. _lvgl-refresh-action:
+
+``lvgl.widget.refresh``
+***********************
+
+This :ref:`action <actions-action>` re-evaluates all properties specified with lambdas in the specified widget's configuration. This offers
+an alternative technique to using the ``lvgl.widget.update`` action, which updates specified properties.
+
+- **id** (**Required**): The ID of a widget configured in LVGL to refresh (may also be a list of widgets).
+
+Only properties with lambdas are refreshed. A build-time error will be raised if the widget has no lambda properties.
+
+.. code-block:: yaml
+
+    widgets:
+      - label:
+          id: label1
+          text: !lambda return id(text_sensor).state;
+
+    on_...:
+      then:
+        - lvgl.widget.refresh: label1 # will update the label text using the lambda.
+
 
 .. _lvgl-pause-action:
 
