@@ -1089,8 +1089,8 @@ Cookbook
 Contributing
 ------------
 
-ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see
-:doc:`Contributing </guides/contributing>`.
+ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see our
+`developer site <https://developers.esphome.io>`__.
 
 .. toctree::
     :glob:
