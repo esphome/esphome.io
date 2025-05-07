@@ -206,10 +206,10 @@ Filters are applied in the order they are defined in your configuration.
 Example: Converting Celsius to Fahrenheit
 -----------------------------------------
 
-While I personally don’t like the Fahrenheit temperature scale, I do
+While I personally don't like the Fahrenheit temperature scale, I do
 understand that having temperature values appear in the Fahrenheit unit
 is quite useful to some users. ESPHome uses the Celsius temperature
-unit internally, and I’m not planning on making converting between the
+unit internally, and I'm not planning on making converting between the
 two simple (😉), but you can use this filter to convert Celsius values to
 Fahrenheit.
 
