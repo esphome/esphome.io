@@ -38,7 +38,7 @@ Configuration variables:
 - **min_value** (*Optional*, int): The lowest position value, meaning cover closed. Defaults to 0.
 - **max_value** (*Optional*, int): the highest position value, meaning cover opened. Defaults to 255.
 - **invert_position** (*Optional*, boolean): Sets the direction of travel to be inverted, if direction_datapoint is configured.
-- **invert_position_report** (*Optional*, boolean): Invert reported position percentages calculated from `min_value` and `max_value` i.e. 70% becomes 30%.  Defaults to false.
+- **invert_position_report** (*Optional*, boolean): Invert reported position percentages calculated from ``min_value`` and ``max_value`` i.e. 70% becomes 30%.  Defaults to false.
 - All other options from :ref:`Cover <config-cover>`.
 
 Supported devices
