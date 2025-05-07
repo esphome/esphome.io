@@ -51,7 +51,7 @@
                         <a href="/changelog/">Changelog</a>
                         <a href="https://discord.gg/KhAMKrd">Discord</a>
                         <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
-                        <a href="/guides/contributing.html">Contributing</a>
+                        <a href="https://developers.esphome.io">Development</a>
                         <a href="/guides/supporters.html">Supporters</a>
                     </div>
                 </div>
