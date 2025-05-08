@@ -745,13 +745,13 @@ Display Hardware Platforms
     PVVX MiThermometer, components/display/pvvx_mithermometer, xiaomi_lywsd03mmc.jpg
     Quad SPI Displays, components/display/qspi_dbi, t4-s3.jpg
     RPI_DPI_RGB, components/display/rpi_dpi_rgb, waveshare_touch-s3.jpg
+    Serial Multiplexed Displays, components/display/serial_multiplexed_display, serial_multiplexed_display.jpg
     SSD1306, components/display/ssd1306, ssd1306.jpg
     SSD1322, components/display/ssd1322, ssd1322.jpg
     SSD1325, components/display/ssd1325, ssd1325.jpg
     SSD1327, components/display/ssd1327, ssd1327.jpg
     SSD1331, components/display/ssd1331, ssd1331.jpg
     SSD1351, components/display/ssd1351, ssd1351.jpg
-    Serial Multiplexed Displays, components/display/serial_multiplexed_display, serial_multiplexed_display.jpg
     ST7567, components/display/st7567, st7567.jpg
     ST7701S, components/display/st7701s, indicator.jpg
     ST7735, components/display/st7735, st7735.jpg
