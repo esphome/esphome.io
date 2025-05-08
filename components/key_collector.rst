@@ -97,7 +97,7 @@ If there is more than one key collector, you will need to provide the ``id`` of 
         - key_collector.enable:
 
 ``key_collector.disable`` Action
--------------------------------
+--------------------------------
 
 This action deactivates a ``key_collector``.  It will stop accepting keys and will clear any already collected ones.
 If there is more than one key collector, you will need to provide the ``id`` of the one to disable.
