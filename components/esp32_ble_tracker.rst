@@ -87,7 +87,7 @@ Configuration variables:
     asked to start a scan (with start_scan action). Defaults to ``true``.
   - **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
     briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
-    which can improve reliability. Has no effect if the ``wifi`` component is not configured. 
+    which can improve reliability. Only available if ``wifi`` component is configured.
     Defaults to ``true``.
 
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this ESP32 BLE Hub.
