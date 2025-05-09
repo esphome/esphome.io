@@ -37,7 +37,7 @@ Configuration variables:
 The following table lists the bit rates supported by the component for ESP32 variants:
 
 =================== ======= ========== ========== ========== ========== ==========
-bit_rate            ESP32   ESP32-S2   ESP32-S3   ESP32-C3   ESP32-C6   ESP32-H2
+bit_rate            ESP32   ESP32-C3   ESP32-C6   ESP32-H2   ESP32-S2   ESP32-S3
 =================== ======= ========== ========== ========== ========== ==========
 1KBPS                        x          x          x          x          x
 5KBPS                        x          x          x          x          x
