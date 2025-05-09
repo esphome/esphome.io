@@ -51,7 +51,7 @@
                         <a href="/changelog/">Changelog</a>
                         <a href="https://discord.gg/KhAMKrd">Discord</a>
                         <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
-                        <a href="/guides/contributing.html">Contributing</a>
+                        <a href="https://developers.esphome.io">Development</a>
                         <a href="/guides/supporters.html">Supporters</a>
                     </div>
                 </div>
@@ -177,7 +177,7 @@ Which microcontrollers does ESPHome support?
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fa-brands fa-raspberry-pi"></i></div>
             <div class="feature-text">RP2040</div>
-            <p>Support for Raspberry Pi’s RP2040 microcontroller.</p>
+            <p>Support for Raspberry Pi's RP2040 microcontroller.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-bolt"></i></div>
@@ -265,7 +265,7 @@ Here's a simple example of an ESPHome configuration file:
     wifi:
       ssid: !secret wifi_ssid
       password: !secret wifi_password
-      
+
       # Enable fallback hotspot if WiFi connection fails
       ap:
 

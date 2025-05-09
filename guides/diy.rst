@@ -61,6 +61,7 @@ Blog Posts & Videos
 - `Read your water meter or gas meter using a triple-axis magnetometer <https://github.com/tronikos/esphome-magnetometer-water-gas-meter>`__ by :ghuser:`tronikos`
 - `Garage door opener controller for devices with optical encoder <https://github.com/serg987/ESPHomeGarageDoorOpener>`__ by :ghuser:`serg987`
 - `An IoT clock designed for children <https://github.com/chrisns/childrens-clock>`__ by :ghuser:`chrisns`
+- `Remote controller RC433 for garage door open <https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en>`__ by `lubomirkarlik <https://dedeideas.eu/index.php/en-us/about-me>`__
 
 Custom Components & Code
 ------------------------

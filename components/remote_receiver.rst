@@ -94,17 +94,17 @@ ESP32 IDF configuration variables:
       :header: "ESP32 Variant", "Memory Size", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-S2", "256 symbols", "64 symbols"
+      "ESP32-S3", "384 symbols", "48 symbols"
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to ``rmt_symbols``.
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   ``filter_symbols``. Useful for filtering out short bursts of noise.
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 
@@ -117,11 +117,11 @@ ESP32 Arduino configuration variables:
       :header: "ESP32 Variant", "Channels"
 
       "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
       "ESP32-C6", "2, 3"
       "ESP32-H2", "2, 3"
+      "ESP32-S2", "0, 1, 2, 3"
+      "ESP32-S3", "4, 5, 6, 7"
 
 - **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
@@ -500,7 +500,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56khz) and are very similar.
+    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 
