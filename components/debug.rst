@@ -40,6 +40,8 @@ ESP heap memory (free space, maximum free block size and fragmentation level) an
           name: "Loop Time"
         psram:
           name: "Free PSRAM"
+        cpu_frequency:
+          name: "CPU Frequency"
 
     # Logger must be at least debug (default)
     logger:
@@ -88,6 +90,8 @@ Configuration variables:
 - **loop_time** (*Optional*): Reports the longest time between successive iterations of the main loop. All options from :ref:`Sensor <config-sensor>`.
 
 - **psram** (*Optional*): Reports the free PSRAM in bytes. Only available on ESP32. All options from :ref:`Sensor <config-sensor>`.
+
+- **cpu_frequency** (*Optional*): Reports the CPU frequency in Hz. All options from :ref:`Sensor <config-sensor>`.
 
 See Also
 --------
