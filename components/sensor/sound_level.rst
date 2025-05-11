@@ -1,5 +1,5 @@
 Sound Level Sensor
-===========================================
+==================
 
 .. seo::
     :description: Instructions for setting up microphone sound level sensors with ESPHome
@@ -35,11 +35,11 @@ Configuration variables:
 - **passive** (**Required**, boolean). Whether passive mode is enabled. See :ref:`Passive Mode <sound_level-passive>`.
 - **peak** (*Optional*): The information for the peak loudness sensor.
 
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **rms** (*Optional*): The information for the Root Mean Square loudness sensor.
 
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 .. _sound_level-passive:
 
