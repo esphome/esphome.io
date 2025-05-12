@@ -40,8 +40,8 @@ Advanced settings:
 -  **tx_buffer_size** (*Optional*, int): The size of the buffer used
    for log messages. Decrease this if you’re having memory problems.
    Defaults to ``512``.
--  **buffer_size** (*Optional*, int): **ESP32 only**: The size of the internal thread-safe ring buffer for log messages.
-   This helps prevent API disconnections when multiple threads attempt to log simultaneously.
+-  **task_log_buffer_size** (*Optional*, int): **ESP32 only**: The size of the internal thread-safe ring buffer for task log messages.
+   This prevents API disconnections when multiple threads attempt to log simultaneously.
    Set to ``0`` to disable the log buffer. Defaults to ``576``.
 -  **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
    the specific processor/chip and framework you are using. See the :ref:`table below <logger-default_hardware_interfaces>`.
