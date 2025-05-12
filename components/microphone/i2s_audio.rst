@@ -49,6 +49,7 @@ Configuration variables:
 - **use_apll** (*Optional*, boolean): I2S using APLL as main I2S clock, enable it to get accurate clock. Defaults to ``false``.
 - **i2s_mode** (*Optional*, enum): The I²S mode to use. One of ``primary`` (clock driven by the host) or ``secondary`` (clock driven by the attached device). Defaults to ``primary``.
 - **i2s_audio_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`I²S Audio <i2s_audio>` you wish to use for this microphone.
+- **correct_dc_offset** (*Optional*, boolean): Corrects a DC offset for microphones where the audio signal's average amplitude is not 0. Defaults to ``false``.
 - All other options from :ref:`Microphone <config-microphone>`
 
 External ADC
