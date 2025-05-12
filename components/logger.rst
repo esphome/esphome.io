@@ -42,7 +42,7 @@ Advanced settings:
    Defaults to ``512``.
 -  **task_log_buffer_size** (*Optional*, int): **ESP32 only**: The size of the internal thread-safe ring buffer for task log messages.
    This prevents API disconnections when multiple threads attempt to log simultaneously.
-   Set to ``0`` to disable the log buffer. Defaults to ``576``.
+   Set to ``0`` to disable the log buffer. Defaults to ``768B``.
 -  **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
    the specific processor/chip and framework you are using. See the :ref:`table below <logger-default_hardware_interfaces>`.
 -  **esp8266_store_log_strings_in_flash** (*Optional*, boolean): If set to false, disables storing
