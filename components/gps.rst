@@ -31,7 +31,6 @@ in your configuration - only the RX pin should be necessary.
         name: "Longitude"
       altitude:
         name: "Altitude"
-      update_interval: 1s # default is 20s
 
     # GPS as time source
     time:
