@@ -13,7 +13,10 @@ With this component you can define images that will be downloaded, decoded and d
 
     Current supported formats:
 
-    - BMP images, currently only binary uncompressed images are supported
+    - BMP images
+
+      - 1-bit / binary / black and white
+      - 24-bit / RGB
 
     - JPEG images, currently only baseline images (no progressive support)
 
