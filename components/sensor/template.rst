@@ -79,6 +79,37 @@ Configuration options:
 
         id(template_sens).publish_state(42.0);
 
+Useful Template Sensors
+-----------------------
+
+Here are some useful sensors for debugging and tracking Bluetooth proxies.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: template
+        name: "Bluetooth Proxy Connections Limit"
+        id: bluetooth_proxy_connections_limit
+        icon: "mdi:bluetooth-settings"
+        update_interval: 30s
+        entity_category: "diagnostic"
+        lambda: |-
+          int limit = bluetooth_proxy::global_bluetooth_proxy->get_bluetooth_connections_limit();
+          ESP_LOGD("bluetooth_proxy_sensor", "Current connections limit => %d", limit);
+          return limit;
+
+      - platform: template
+        name: "Bluetooth Proxy Connections Free"
+        id: bluetooth_proxy_connections_free
+        icon: "mdi:bluetooth-settings"
+        update_interval: 30s
+        entity_category: "diagnostic"
+        lambda: |-
+          int free = bluetooth_proxy::global_bluetooth_proxy->get_bluetooth_connections_free();
+          ESP_LOGD("bluetooth_proxy_sensor", "Current connections free => %d", free);
+          return free;
+
 See Also
 --------
 

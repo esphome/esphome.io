@@ -245,8 +245,8 @@ on Home Assistant and will also setup a service so you can send messages and dia
 .. code-block:: yaml
 
     api:
-      services:
-        - service: send_sms
+      actions:
+        - action: send_sms
           variables:
             recipient: string
             message: string
@@ -254,19 +254,19 @@ on Home Assistant and will also setup a service so you can send messages and dia
             - sim800l.send_sms:
                 recipient: !lambda 'return recipient;'
                 message: !lambda 'return message;'
-        - service: dial
+        - action: dial
           variables:
             recipient: string
           then:
             - sim800l.dial:
                 recipient: !lambda 'return recipient;'
-        - service: connect
+        - action: connect
           then:
             - sim800l.connect
-        - service: disconnect
+        - action: disconnect
           then:
             - sim800l.disconnect
-        - service: send_ussd
+        - action: send_ussd
           variables:
             ussdCode: string
           then:
@@ -320,11 +320,11 @@ To trigger the automation from Home Assistant you can invoke the service with th
     automation:
       # ...
       action:
-      - service: esphome.livingroom_send_sms
+      - action: esphome.livingroom_send_sms
         data:
           recipient: "+15551234567"
           message: "Hello World!"
-      - service: esphome.livingroom_dial
+      - action: esphome.livingroom_dial
         data:
           recipient: "+15551234567"
 

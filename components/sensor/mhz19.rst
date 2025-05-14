@@ -82,13 +82,13 @@ for over 20 minutes and you execute this function.
       then:
         - mhz19.calibrate_zero: my_mhz19_id
 
-You can provide :ref:`service <api-services>` to call it from Home Assistant
+You can provide an :ref:`action <api-device-actions>` to perform from Home Assistant
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: mhz19_calibrate_zero
+      actions:
+        - action: mhz19_calibrate_zero
           then:
             - mhz19.calibrate_zero: my_mhz19_id
 

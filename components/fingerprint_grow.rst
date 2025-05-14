@@ -473,8 +473,8 @@ All actions
 Test setup
 ----------
 
-With the following code you can quickly setup a node and use Home Assistant's service in the developer tools.
-E.g. for calling ``fingerprint_grow.enroll`` select the service ``esphome.test_node_enroll`` and in service data enter
+With the following code you can quickly setup a node and use Home Assistant's action in the developer tools.
+E.g. for calling ``fingerprint_grow.enroll`` select the action ``esphome.test_node_enroll`` and in action data enter
 
 .. code-block:: json
 
@@ -525,8 +525,8 @@ Sample code
               finger_id: !lambda 'return finger_id;'
 
     api:
-      services:
-      - service: enroll
+      actions:
+      - action: enroll
         variables:
           finger_id: int
           num_scans: int
@@ -534,16 +534,16 @@ Sample code
           - fingerprint_grow.enroll:
               finger_id: !lambda 'return finger_id;'
               num_scans: !lambda 'return num_scans;'
-      - service: cancel_enroll
+      - action: cancel_enroll
         then:
           - fingerprint_grow.cancel_enroll:
-      - service: delete
+      - action: delete
         variables:
           finger_id: int
         then:
           - fingerprint_grow.delete:
               finger_id: !lambda 'return finger_id;'
-      - service: delete_all
+      - action: delete_all
         then:
           - fingerprint_grow.delete_all:
 

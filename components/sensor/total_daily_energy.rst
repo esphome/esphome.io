@@ -69,12 +69,30 @@ Some sensors such as the :doc:`HLW8012 <hlw8012>` expose their power sensor with
             - multiply: 0.001
           unit_of_measurement: kW
 
+Lifetime instead of Daily
+-------------------------
+
+For a more-generic version of this component which does not reset every midnight, see :doc:`integration`, which can provide device-lifetime values instead of daily values with the following example settings:
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: integration
+        name: 'Total Energy'
+        sensor: my_power
+        time_unit: h
+        restore: true
+        state_class: total_increasing
+        device_class: energy
+
 See Also
 --------
 
 - :ref:`sensor-filters`
 - :doc:`hlw8012`
 - :doc:`cse7766`
+- :doc:`integration`
 - :doc:`/components/sensor/pulse_counter`
 - :doc:`/components/sensor/pulse_meter`
 - :doc:`/components/time/homeassistant`

@@ -6,12 +6,12 @@ Key collector component
 .. seo::
     :description: Key collector component
 
-The ``key_collector`` component collects key presses from
-components like :ref:`matrix_keypad` or ``wiegand``. It allows you to process
-key sequences and treat them as one, for example to allow inputting of 
-a PIN code or a passkey. The component outputs the result of the keypress
-sequence as a variable usable in automations.
-
+The ``key_collector`` component collects key presses from components
+like :ref:`matrix_keypad`, :doc:`Wiegand keypad </components/wiegand>`
+or LVGL :ref:`Button Matrix <lvgl-widget-buttonmatrix>`, :ref:`Keyboard <lvgl-widget-keyboard>`
+widgets. It allows you to process key sequences and treat them as one, for
+example to allow inputting of a PIN code or a passkey. The component outputs
+the result of the keypress sequence as a variable usable in automations.
 
 Component
 ---------
@@ -61,6 +61,7 @@ Configuration variables:
 - **allowed_keys** (*Optional*, string): Keys allowed to be used. If not specified, then any otherwise 
   unused keys will be allowed.
 - **timeout** (*Optional*, :ref:`config-time`): Timeout after which to cancel building the sequence and delete all the keys.
+- **enable_on_boot** (*Optional*, boolean): If enabled, this key collector will be enabled on boot. Defaults to ``true``.
 
 At least one of ``end_keys`` or ``max_length`` have to be specified. The rest are optional.
 If both ``end_keys`` and ``max_length`` are specified, then once ``max_length`` keys are collected, no more will be
@@ -83,6 +84,30 @@ Automations:
   if the timeout happens. The current sequence of pressed keys is placed in a ``vector<uint8_t>`` variable ``x``
   and ``start`` holds the start key that activated this sequence or else ``0``.
 
+``key_collector.enable`` Action
+-------------------------------
+
+This action activates a ``key_collector``.  It will start accepting keys.
+If there is more than one key collector, you will need to provide the ``id`` of the one to enable.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - key_collector.enable:
+
+``key_collector.disable`` Action
+--------------------------------
+
+This action deactivates a ``key_collector``.  It will stop accepting keys and will clear any already collected ones.
+If there is more than one key collector, you will need to provide the ``id`` of the one to disable.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - key_collector.disable:
+
 Lambda:
 -------
 
@@ -92,7 +117,7 @@ See Also
 --------
 
 - :doc:`/components/matrix_keypad`
-
-.. - :doc:`/components/wiegand`
-
+- :doc:`/components/wiegand`
+- :ref:`LVGL Button Matrix widget <lvgl-widget-buttonmatrix>`
+- :ref:`LVGL Keyboard widget <lvgl-widget-keyboard>`
 - :ghedit:`Edit`
