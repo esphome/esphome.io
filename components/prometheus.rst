@@ -42,6 +42,35 @@ Configuration variables:
             static_configs:
               - targets: [<ip or node_name.local>]
 
+Supported ESPHome Components
+----------------------------
+
+-  Sensor
+-  Binary Sensor
+-  Fan
+-  Light
+-  Cover
+-  Switch
+-  Lock
+-  Text Sensor
+-  Number
+-  Select
+-  Media Player
+-  Update
+-  Valve
+-  Climate
+
+Supported Prometheus Labels
+---------------------------
+
+The following labels are supported in all Prometheus metrics. Some metrics may have more labels.
+
+-  entity id
+-  entity name
+-  entity friendly name
+-  area
+-  node name
+
 Metric Relabeling
 -----------------
 
