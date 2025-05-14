@@ -99,7 +99,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
-    Packet Transport, components/packet_transport/index, packet_transport.svg
+    Packet Transport, components/packet_transport/index, packet_transport.svg, dark-invert
 
 Bluetooth/BLE
 -------------
@@ -731,6 +731,7 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg
     ILI9342, components/display/ili9xxx, ili9342.svg

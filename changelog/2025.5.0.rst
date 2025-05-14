@@ -1,0 +1,363 @@
+ESPHome 2025.5.0 - 21st May 2025
+================================
+
+.. seo::
+    :description: Changelog for ESPHome 2025.5.0.
+    :image: /_static/changelog-2025.5.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    PM2005 Sensor, components/sensor/pm2005, pm2005.png
+    Mapping, components/mapping, mapping.svg, dark-invert
+    Packet Transport, components/packet_transport/index, packet_transport.svg, dark-invert
+    Syslog, components/syslog, file-document-box.svg, dark-invert
+    Sound Level, components/sensor/sound_level, waveform.svg, dark-invert
+    MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
+
+Voice Assistant
+---------------
+
+We have implemented all of the new features developed for the Voice Preview Edition!
+The voice assistant component supports starting conversations from Home Assistant and
+continuing conversations without needing to reactivate the wake word.
+Additionally, microWakeWord supports enabling and disabling models via yaml actions.
+The voice assistant component, through Home Assistant, can also change the active
+on-device wake word. If you use our prebuilt voice assistant firmwares, then you
+will receive an update notification automatically in Home Assistant adding support
+for these new features!
+
+If you have taken control or created your own voice assistant configuration, you may
+need to adjust them to support these new features. Please see the newly updated
+examples in our wake word voice assistant firmware repository to get started.
+
+It is now easier to configure and use microphones. Multiple components can
+simultaneously read from one microphone. Each individual component using a microphone
+can also set their own specific gain level or specify which microphone channel to use.
+Microphone settings are validated at compilation, and most settings are converted,
+if necessary, without any extra configuration. Your existing YAML files should still
+build without any adjustments. However, if your microphone was previously configured
+to use 32 bits per sample, then you should add a gain factor of 4 to match
+ESPHome's previous behavior. For example:
+
+.. code-block:: yaml
+
+    voice_assistant:
+      microphone:
+        microphone: echo_microphone
+        gain_factor: 4
+
+
+Packet Transport
+----------------
+
+The :doc:`/components/packet_transport/index` has been added to allow ESPHome devices to directly communicate with each other.
+There are two platforms available in this release: :doc:`/components/packet_transport/uart` and :doc:`/components/packet_transport/udp`.
+
+
+HTTP Request
+------------
+
+The :doc:`/components/http_request` actions have had the ``headers`` config variable renamed to ``request_headers`` in order to differentiate
+it from the new ``collect_headers`` config variable allowing you to collect and access the response headers in automations.
+
+
+ATM90E32
+--------
+
+For energy meters that use the :doc:`atm90e32 </components/sensor/atm90e32>` energy metering chip, like from CircuitSetup,
+and Gelidus Research, support was added for semi-automatic gain & offset calibration, and status messages for each
+phase & frequency. An apparent power sensor was also added.
+
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add CUBIC PM2005/PM2105 Laser Particle Sensor Module :esphomepr:`8292` by :ghuser:`andrewjswan` (new-integration)
+- [mapping] Implement yaml-configured maps :esphomepr:`8333` by :ghuser:`clydebarrow` (new-integration)
+- [const] Create component-level const repository :esphomepr:`8385` by :ghuser:`clydebarrow` (new-integration)
+- [packet_transport] Extract packet encoding functionality :esphomepr:`8187` by :ghuser:`clydebarrow` (new-integration) (breaking-change)
+- [uart] Add packet_transport platform :esphomepr:`8214` by :ghuser:`clydebarrow` (new-integration)
+- [syslog] Implement logging via syslog :esphomepr:`8637` by :ghuser:`clydebarrow` (new-integration)
+- [sound_level] Add a new sound level sensor :esphomepr:`8737` by :ghuser:`kahrendt` (new-integration)
+- [mipi_spi] New display driver for MIPI DBI devices :esphomepr:`8383` by :ghuser:`clydebarrow` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- [cst226] Add support for cst226 binary sensor :esphomepr:`8381` by :ghuser:`clydebarrow` (new-platform)
+- ATM90E32 Semi-automatic calibration & Status fields :esphomepr:`8529` by :ghuser:`CircuitSetup` (new-platform) (breaking-change)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- [http_request] Ability to get response headers :esphomepr:`8224` by :ghuser:`candrews` (breaking-change)
+- [i2s_audio, microphone, micro_wake_word, voice_assistant] Use microphone source to process incoming audio :esphomepr:`8645` by :ghuser:`kahrendt` (breaking-change)
+- [binary_sensor] initial state refactor :esphomepr:`8648` by :ghuser:`clydebarrow` (breaking-change)
+- [packet_transport] Extract packet encoding functionality :esphomepr:`8187` by :ghuser:`clydebarrow` (new-integration) (breaking-change)
+- ATM90E32 Semi-automatic calibration & Status fields :esphomepr:`8529` by :ghuser:`CircuitSetup` (new-platform) (breaking-change)
+
+All changes
+^^^^^^^^^^^
+
+.. collapse:: Show
+    :open:
+
+    - [esp32] Allow pioarduino version 5.3.3 and 5.5.0 :esphomepr:`8526` by :ghuser:`swoboda1337`
+    - Update setup to make .temp directory :esphomepr:`8558` by :ghuser:`calumapplepie`
+    - [core] make require_framework_version generic :esphomepr:`8412` by :ghuser:`tomaszduda23`
+    - Add support for Waveshare 5.65" ACeP 7-Color display :esphomepr:`8557` by :ghuser:`nhjschulz`
+    - [ci] Pin codecov action to v5.4.0 :esphomepr:`8564` by :ghuser:`jesserockz`
+    - [lvgl] Small buffers in internal RAM :esphomepr:`8523` by :ghuser:`clydebarrow`
+    - Use python3 in place of python, as some systems don't emulate the former :esphomepr:`8568` by :ghuser:`calumapplepie`
+    - Add typing to protobuf code generator :esphomepr:`8541` by :ghuser:`bdraco`
+    - fix typo `USE_ESP32_VARIANT_ESP32H6` :esphomepr:`8580` by :ghuser:`ximex`
+    - [prometheus] Add climate metrics :esphomepr:`8247` by :ghuser:`jzucker2`
+    - [api] Allow noise encryption key to be set at runtime :esphomepr:`7296` by :ghuser:`kbx81`
+    - [esp32_rmt_led_strip] Add use_dma option :esphomepr:`8270` by :ghuser:`swoboda1337`
+    - Add CUBIC PM2005/PM2105 Laser Particle Sensor Module :esphomepr:`8292` by :ghuser:`andrewjswan` (new-integration)
+    - [uptime] Add format config for text_sensor :esphomepr:`8304` by :ghuser:`clydebarrow`
+    - [mapping] Implement yaml-configured maps :esphomepr:`8333` by :ghuser:`clydebarrow` (new-integration)
+    - [analog_threshold] Make thresholds templatable :esphomepr:`8452` by :ghuser:`clydebarrow`
+    - [internal_temperature] Add p4 ifdefs :esphomepr:`8484` by :ghuser:`swoboda1337`
+    - Sort resolved IP addresses for dashboard :esphomepr:`8536` by :ghuser:`dwmw2`
+    - Remove duplicate co2 and pressure constants :esphomepr:`8583` by :ghuser:`mgiacomelli`
+    - [remote_receiver] Filtering fixes :esphomepr:`7777` by :ghuser:`swoboda1337`
+    - [psram] Add version check to fix 5.3.2 :esphomepr:`8588` by :ghuser:`swoboda1337`
+    - Bump esp-idf to 5.1.6 :esphomepr:`8566` by :ghuser:`bdraco`
+    - Update const.py - Add UNIT_MEGAJOULE = "MJ" :esphomepr:`8594` by :ghuser:`Roving-Ronin`
+    - Implement `min_power` for component `ac_dimmer` using method `trailing` :esphomepr:`8472` by :ghuser:`VasilKalchev`
+    - Rewrite BLE scanner to use a state machine :esphomepr:`8601` by :ghuser:`bdraco`
+    - [http_request] Ability to get response headers :esphomepr:`8224` by :ghuser:`candrews` (breaking-change)
+    - [sht4x] Reduce warn spam, added communication check in setup :esphomepr:`8250` by :ghuser:`DjordjeMandic`
+    - Schema gen action :esphomepr:`8593` by :ghuser:`glmnet`
+    - [i2s_audio, i2s_audio_microphone, i2s_audio_speaker] Add basic support for new esp-idf 5.x.x i2s driver. :esphomepr:`8181` by :ghuser:`luar123`
+    - fix schema-gen-ci failures :esphomepr:`8621` by :ghuser:`glmnet`
+    - replace `http` with `https` :esphomepr:`8628` by :ghuser:`ximex`
+    - [docker] Use new base container image :esphomepr:`8582` by :ghuser:`jesserockz`
+    - [i2s_audio] Microphone reads in loop for callbacks shouldn't ever delay :esphomepr:`8625` by :ghuser:`kahrendt`
+    - [micro_wake_word] Use microphone callback and avoid unnecessary allocation attempts :esphomepr:`8626` by :ghuser:`kahrendt`
+    - [voice_assisant] support start/continue conversation and deallocate buffers :esphomepr:`8610` by :ghuser:`kahrendt`
+    - [voice_assistant] Use mic callback and remove esp_adf code :esphomepr:`8627` by :ghuser:`kahrendt`
+    - [const] Create component-level const repository :esphomepr:`8385` by :ghuser:`clydebarrow` (new-integration)
+    - [http_request] Implement for host platform :esphomepr:`8040` by :ghuser:`clydebarrow`
+    - Take advantage of clipping to speed image drawing. :esphomepr:`8630` by :ghuser:`lhartmann`
+    - [touchscreen] Clear interrupt flag before reading touch data. :esphomepr:`8632` by :ghuser:`raineth`
+    - [mdns] Support templatable config options for MDNS extra services :esphomepr:`8606` by :ghuser:`heythisisnate`
+    - Fix support for ESP32-H2 in deep_sleep :esphomepr:`8290` by :ghuser:`baal86`
+    - [const] Move CONF_GAIN_FACTOR to const.py :esphomepr:`8646` by :ghuser:`jesserockz`
+    - [http_request] Fix request headers :esphomepr:`8644` by :ghuser:`jesserockz`
+    - add beo4_protocol to remote_base component :esphomepr:`8307` by :ghuser:`aanban`
+    - Ensure new const file stays in order :esphomepr:`8642` by :ghuser:`jesserockz`
+    - [audio, microphone] Add MicrophoneSource helper class :esphomepr:`8641` by :ghuser:`kahrendt`
+    - [pmsx003] Refactor Imports, Extract Constants, Improve Data Handling & Logging :esphomepr:`8344` by :ghuser:`ximex`
+    - Add code to send/receive GoBox infrared control messages. :esphomepr:`7554` by :ghuser:`cvwillegen`
+    - [bluetooth_proxy] Allow changing active/passive via api :esphomepr:`8649` by :ghuser:`jesserockz`
+    - [pmsa003i] code improvements :esphomepr:`8485` by :ghuser:`ximex`
+    - [adc] sort variants and add links to reference implementations :esphomepr:`8327` by :ghuser:`ximex`
+    - [i2s_audio, microphone, micro_wake_word, voice_assistant] Use microphone source to process incoming audio :esphomepr:`8645` by :ghuser:`kahrendt` (breaking-change)
+    - [debug] Fix compile errors when using the ESP32-C2 :esphomepr:`7474` by :ghuser:`d51x`
+    - [canbus] Add callback for use by other components :esphomepr:`8578` by :ghuser:`clydebarrow`
+    - [i2s_audio] Move microphone reads into a task :esphomepr:`8651` by :ghuser:`kahrendt`
+    - Only warn if the component blocked for a longer time than the last time :esphomepr:`8064` by :ghuser:`numo68`
+    - [micro_wake_word] add new VPE features :esphomepr:`8655` by :ghuser:`kahrendt`
+    - [microphone] Bugfix: protect against starting mic if already started :esphomepr:`8656` by :ghuser:`kahrendt`
+    - Bump FastLed version to 3.9.16 :esphomepr:`8402` by :ghuser:`andrewjswan`
+    - [gree] Add support for YAG remotes :esphomepr:`7418` by :ghuser:`sarthurdev`
+    - Add a function to return the I2C address from an I2CDevice object :esphomepr:`8454` by :ghuser:`ilikecake`
+    - Fix second scrolling run ussue :esphomepr:`8347` by :ghuser:`asergunov`
+    - [alarm_control_panel] Allow sensor to trigger when alarm disarmed :esphomepr:`7746` by :ghuser:`nworbneb`
+    - Component pca9685 - phase_begin always set to zero :esphomepr:`8379` by :ghuser:`uae007`
+    - [remote_base] Fix compile error on IDF :esphomepr:`8664` by :ghuser:`kbx81`
+    - [defines] Fix USE_MICRO_WAKE_WORD position :esphomepr:`8663` by :ghuser:`jesserockz`
+    - Adding timing budget support for vl53l0x :esphomepr:`7991` by :ghuser:`lastradanet`
+    - Daikin IR Climate Remote Target Temperature and Fan Modes :esphomepr:`7946` by :ghuser:`bcpearce`
+    - [i2c] Allow buffers in PSRAM :esphomepr:`8640` by :ghuser:`clydebarrow`
+    - Fix CONFIG_LWIP_TCP_RCV_SCALE and CONFIG_TCP_WND_DEFAULT :esphomepr:`8425` by :ghuser:`rwrozelle`
+    - support self-signed cert in mqtt :esphomepr:`8650` by :ghuser:`scaiper`
+    - [binary_sensor] initial state refactor :esphomepr:`8648` by :ghuser:`clydebarrow` (breaking-change)
+    - Add to_ntc_resistance|temperature sensor filter (esphome/feature-requests#2967) :esphomepr:`7898` by :ghuser:`rhabacker`
+    - [esp32, debug] Add ``cpu_frequency`` config option and debug sensor :esphomepr:`8542` by :ghuser:`clydebarrow`
+    - [voice_assistant] voice assistant can configure enabled wake words :esphomepr:`8657` by :ghuser:`kahrendt`
+    - [mlx90393] Add verification for register contents :esphomepr:`8279` by :ghuser:`functionpointer`
+    - Check for missed pulse_meter ISRs in the main loop :esphomepr:`6126` by :ghuser:`TrentHouliston`
+    - [debug] add missing header :esphomepr:`8666` by :ghuser:`kahrendt`
+    - [microphone] Add software mute and fix wrong type for automations :esphomepr:`8667` by :ghuser:`kahrendt`
+    - [micro_wake_word] Clarify spectrogram features calculation :esphomepr:`8669` by :ghuser:`kahrendt`
+    - Add UNIT_MILLIVOLT :esphomepr:`8665` by :ghuser:`DJTerentjev`
+    - Added Banking support to tca9555, fixed input bug :esphomepr:`8003` by :ghuser:`mobrembski`
+    - Add GDEY0583T81 support :esphomepr:`8668` by :ghuser:`myllyja`
+    - [climate] Fix typo and use ``this->`` :esphomepr:`8678` by :ghuser:`ximex`
+    - Add CONF_CONTINUOUS to const.py :esphomepr:`8682` by :ghuser:`ilikecake`
+    - unify lowercase `x` in hexadecimal values :esphomepr:`8686` by :ghuser:`ximex`
+    - [climate_ir_lg] use `this->` :esphomepr:`8687` by :ghuser:`ximex`
+    - [packet_transport] Extract packet encoding functionality :esphomepr:`8187` by :ghuser:`clydebarrow` (new-integration) (breaking-change)
+    - [esp32_ble_server] Add appearance advertising field :esphomepr:`8672` by :ghuser:`clydebarrow`
+    - [packages] Allow list instead of dict for packages :esphomepr:`8688` by :ghuser:`clydebarrow`
+    - [lvgl] Add refresh action to re-evaluate initial widget properties :esphomepr:`8675` by :ghuser:`clydebarrow`
+    - [image] Support the other Pictogrammers icon sets `memory:` and `mdil:` :esphomepr:`8676` by :ghuser:`clydebarrow`
+    - [uart] Add packet_transport platform :esphomepr:`8214` by :ghuser:`clydebarrow` (new-integration)
+    - [debug] Show source of last software reboot :esphomepr:`8595` by :ghuser:`clydebarrow`
+    - [syslog] Implement logging via syslog :esphomepr:`8637` by :ghuser:`clydebarrow` (new-integration)
+    - [cst226] Add support for cst226 binary sensor :esphomepr:`8381` by :ghuser:`clydebarrow` (new-platform)
+    - [nextion] Adds a command pacer with `command_spacing` attribute :esphomepr:`7948` by :ghuser:`edwardtfn`
+    - [arduino] Always include Arduino.h for Arduino :esphomepr:`8693` by :ghuser:`clydebarrow`
+    - [audio, microphone] Quantization Improvements :esphomepr:`8695` by :ghuser:`kahrendt`
+    - [micro_wake_word] Experimental cutoff adjustments and uses mic sample rate :esphomepr:`8702` by :ghuser:`kahrendt`
+    - [mics_4514] Add default device class to CO sensor :esphomepr:`8710` by :ghuser:`jesserockz`
+    - [i2s_audio, mixer, resampler, speaker] Simplify duration played callback :esphomepr:`8703` by :ghuser:`kahrendt`
+    - [packet_transport] Make some arguments const :esphomepr:`8700` by :ghuser:`clydebarrow`
+    - Reserve buffer space to avoid frequent realloc when generating protobuf messages :esphomepr:`8707` by :ghuser:`bdraco`
+    - Preallocate Buffer Space for ESP32-CAM :esphomepr:`8712` by :ghuser:`bdraco`
+    - Correct Protobuf Wire Type for `encode_fixed64` :esphomepr:`8713` by :ghuser:`bdraco`
+    - Avoid Reallocation When Sending Logging Messages :esphomepr:`8714` by :ghuser:`bdraco`
+    - Reserve space in the frame helper when we know in advance how much we need :esphomepr:`8716` by :ghuser:`bdraco`
+    - Require reserve_size in create_buffer to reduce realloc overhead :esphomepr:`8715` by :ghuser:`bdraco`
+    - [key_collector] enable/disable :esphomepr:`8718` by :ghuser:`ssieb`
+    - Increase zeroconf timeout to 10 seconds :esphomepr:`8670` by :ghuser:`bdraco`
+    - Consolidate ``write_raw_`` implementation to reduce code duplication :esphomepr:`8717` by :ghuser:`bdraco`
+    - Improve BLE Connection Reliability by Enabling Software Coexistence :esphomepr:`8683` by :ghuser:`bdraco`
+    - Optimize bluetooth_proxy memory copy and reduce reallocs :esphomepr:`8723` by :ghuser:`bdraco`
+    - ATM90E32 Semi-automatic calibration & Status fields :esphomepr:`8529` by :ghuser:`CircuitSetup` (new-integration) (breaking-change)
+    - [api] Synchronise api.proto between repos :esphomepr:`8720` by :ghuser:`jesserockz`
+    - [valve] Tidy up template publish action location :esphomepr:`8731` by :ghuser:`jesserockz`
+    - [valve] Move to use ``valve_schema(..)`` instead of ``VALVE_SCHEMA`` :esphomepr:`8730` by :ghuser:`jesserockz`
+    - [lock] Tidy up template publish action and lockstate locations :esphomepr:`8729` by :ghuser:`jesserockz`
+    - [update] Move to use ``update_schema(..)`` instead of ``UPDATE_SCHEMA`` :esphomepr:`8726` by :ghuser:`jesserockz`
+    - [text] Move to use ``text_schema(..)`` instead of ``TEXT_SCHEMA`` :esphomepr:`8727` by :ghuser:`jesserockz`
+    - [lock] Move to use ``lock_schema(..)`` instead of ``LOCK_SCHEMA`` :esphomepr:`8728` by :ghuser:`jesserockz`
+    - [config] Use ``cv.UNDEFINED`` instead of adhoc ``_UNDEF`` objects :esphomepr:`8725` by :ghuser:`jesserockz`
+    - [audio, microphone] - Allow MicrophoneSource to passively capture/optimization :esphomepr:`8732` by :ghuser:`kahrendt`
+    - [audio] Bump esp-audio-libs to version 1.1.4 for speed optimizations :esphomepr:`8739` by :ghuser:`kahrendt`
+    - [i2s_audio] Fix: Slot bit-width for ESP32 variant :esphomepr:`8738` by :ghuser:`kahrendt`
+    - [voice_assistant] Bugfix: Properly detect states where mic is running :esphomepr:`8745` by :ghuser:`kahrendt`
+    - [sound_level] Add a new sound level sensor :esphomepr:`8737` by :ghuser:`kahrendt` (new-integration)
+    - [one_wire][dallas_temp] adjust timings and reduce disabled interrupts :esphomepr:`8744` by :ghuser:`ssieb`
+    - MQTT: fan direction control added :esphomepr:`8022` by :ghuser:`mbronk`
+    - [config] Add entity schema consts with deprecation log :esphomepr:`8747` by :ghuser:`jesserockz`
+    - Fix ESP32 API Disconnects Caused by Concurrent Logger Writes :esphomepr:`8736` by :ghuser:`bdraco`
+    - [vscode] provide version to editor :esphomepr:`8752` by :ghuser:`glmnet`
+    - [i2s_audio] Correct a microphone with a DC offset signal :esphomepr:`8751` by :ghuser:`kahrendt`
+    - [config] Deprecate other ``*_SCHEMA`` constants :esphomepr:`8748` by :ghuser:`jesserockz`
+    - [opentherm] Update to use schema methods :esphomepr:`8756` by :ghuser:`jesserockz`
+    - [factory_reset] Use switch_schema method :esphomepr:`8757` by :ghuser:`jesserockz`
+    - [sprinkler] Use number_schema method :esphomepr:`8759` by :ghuser:`jesserockz`
+    - [tm1638] Use switch_schema method :esphomepr:`8758` by :ghuser:`jesserockz`
+    - [airthings] Remove unnecessary schema :esphomepr:`8760` by :ghuser:`jesserockz`
+    - [ble_client] Use text_sensor_schema method :esphomepr:`8761` by :ghuser:`jesserockz`
+    - [sml] Use text_sensor_schema method :esphomepr:`8762` by :ghuser:`jesserockz`
+    - [udp, syslog] fix clang tidy :esphomepr:`8755` by :ghuser:`tomaszduda23`
+    - Avoid iterating clients twice in the api_server loop :esphomepr:`8733` by :ghuser:`bdraco`
+    - [clang] clang tidy support with zephyr :esphomepr:`8352` by :ghuser:`tomaszduda23`
+    - Fix missing recursion guard release on ESP8266 :esphomepr:`8766` by :ghuser:`bdraco`
+    - [schema] Deploy schema after release workflow finished :esphomepr:`8767` by :ghuser:`jesserockz`
+    - [config] Deprecate more ``*_SCHEMA`` constants :esphomepr:`8763` by :ghuser:`jesserockz`
+    - [gps] Add hdop sensor :esphomepr:`8680` by :ghuser:`realzoulou`
+    - In case of proto-diff show changes and archive generated :esphomepr:`8698` by :ghuser:`dala318`
+    - [climate] Fix climate_schema :esphomepr:`8772` by :ghuser:`jesserockz`
+    - Tuya Select - Add int_datapoint option :esphomepr:`8393` by :ghuser:`Cossid`
+    - [select] Tidy schema generation :esphomepr:`8775` by :ghuser:`jesserockz`
+    - [demo] Clean up schema deprecations, add test :esphomepr:`8771` by :ghuser:`jesserockz`
+    - [template] Use alarm_control_panel_schema method :esphomepr:`8764` by :ghuser:`jesserockz`
+    - [cover] Update components to use ``cover_schema(...)`` :esphomepr:`8770` by :ghuser:`jesserockz`
+    - [switch] Fix schema generation :esphomepr:`8774` by :ghuser:`jesserockz`
+    - [esp32] improve `gpio` :esphomepr:`8709` by :ghuser:`ximex`
+    - [text_sensor] Fix schema generation :esphomepr:`8773` by :ghuser:`jesserockz`
+    - [audio] Fix: Decoder stops unnecessarily after a potential failure is detected. :esphomepr:`8776` by :ghuser:`gnumpi`
+    - [esp32][esp8266] use low-level pin control for ISR gpio :esphomepr:`8743` by :ghuser:`ssieb`
+    - [online_image] Support 24 bit bmp images :esphomepr:`8612` by :ghuser:`jesserockz`
+    - [mipi_spi] New display driver for MIPI DBI devices :esphomepr:`8383` by :ghuser:`clydebarrow` (new-integration)
+
+Dependency Changes
+^^^^^^^^^^^^^^^^^^
+
+.. collapse:: Show
+
+    - Bump ruff from 0.11.2 to 0.11.4 :esphomepr:`8538` by :ghuser:`dependabot[bot]`
+    - Bump pytest-cov from 6.0.0 to 6.1.1 :esphomepr:`8537` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.4 to 0.11.5 :esphomepr:`8546` by :ghuser:`dependabot[bot]`
+    - Bump codecov/codecov-action from 5.4.0 to 5.4.2 :esphomepr:`8572` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 29.10.0 to 30.0.1 :esphomepr:`8579` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.5 to 0.11.6 :esphomepr:`8587` by :ghuser:`dependabot[bot]`
+    - Bump actions/download-artifact from 4.2.1 to 4.3.0 :esphomepr:`8617` by :ghuser:`dependabot[bot]`
+    - Bump docker/build-push-action from 6.15.0 to 6.16.0 in /.github/actions/build-image :esphomepr:`8619` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.6 to 0.11.7 :esphomepr:`8615` by :ghuser:`dependabot[bot]`
+    - Bump setuptools from 78.1.0 to 79.0.1 :esphomepr:`8614` by :ghuser:`dependabot[bot]`
+    - Bump actions/setup-python from 5.5.0 to 5.6.0 :esphomepr:`8618` by :ghuser:`dependabot[bot]`
+    - Bump actions/setup-python from 5.5.0 to 5.6.0 in /.github/actions/restore-python :esphomepr:`8616` by :ghuser:`dependabot[bot]`
+    - Bump setuptools from 79.0.1 to 80.3.1 :esphomepr:`8696` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 30.0.1 to 30.1.0 :esphomepr:`8652` by :ghuser:`dependabot[bot]`
+    - Bump pylint from 3.3.6 to 3.3.7 :esphomepr:`8706` by :ghuser:`dependabot[bot]`
+    - Bump yamllint from 1.37.0 to 1.37.1 :esphomepr:`8705` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.7 to 0.11.8 :esphomepr:`8721` by :ghuser:`dependabot[bot]`
+    - Bump puremagic from 1.28 to 1.29 :esphomepr:`8722` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 30.1.0 to 30.2.0 :esphomepr:`8734` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.8 to 0.11.9 :esphomepr:`8735` by :ghuser:`dependabot[bot]`
+    - Bump zeroconf from 0.146.5 to 0.147.0 :esphomepr:`8754` by :ghuser:`dependabot[bot]`
+    - Bump setuptools from 80.3.1 to 80.4.0 :esphomepr:`8753` by :ghuser:`dependabot[bot]`
+
+Past Changelogs
+---------------
+
+.. collapse:: Show
+
+    - :doc:`2025.4.0`
+    - :doc:`2025.3.0`
+    - :doc:`2025.2.0`
+    - :doc:`2024.12.0`
+    - :doc:`2024.11.0`
+    - :doc:`2024.10.0`
+    - :doc:`2024.9.0`
+    - :doc:`2024.8.0`
+    - :doc:`2024.7.0`
+    - :doc:`2024.6.0`
+    - :doc:`2024.5.0`
+    - :doc:`2024.4.0`
+    - :doc:`2024.3.0`
+    - :doc:`2024.2.0`
+    - :doc:`2023.12.0`
+    - :doc:`2023.11.0`
+    - :doc:`2023.10.0`
+    - :doc:`2023.9.0`
+    - :doc:`2023.8.0`
+    - :doc:`2023.7.0`
+    - :doc:`2023.6.0`
+    - :doc:`2023.5.0`
+    - :doc:`2023.4.0`
+    - :doc:`2023.3.0`
+    - :doc:`2023.2.0`
+    - :doc:`2022.12.0`
+    - :doc:`2022.11.0`
+    - :doc:`2022.10.0`
+    - :doc:`2022.9.0`
+    - :doc:`2022.8.0`
+    - :doc:`2022.6.0`
+    - :doc:`2022.5.0`
+    - :doc:`2022.4.0`
+    - :doc:`2022.3.0`
+    - :doc:`2022.2.0`
+    - :doc:`2022.1.0`
+    - :doc:`2021.12.0`
+    - :doc:`2021.11.0`
+    - :doc:`2021.10.0`
+    - :doc:`2021.9.0`
+    - :doc:`2021.8.0`
+    - :doc:`v1.20.0`
+    - :doc:`v1.19.0`
+    - :doc:`v1.18.0`
+    - :doc:`v1.17.0`
+    - :doc:`v1.16.0`
+    - :doc:`v1.15.0`
+    - :doc:`v1.14.0`
+    - :doc:`v1.13.0`
+    - :doc:`v1.12.0`
+    - :doc:`v1.11.0`
+    - :doc:`v1.10.0`
+    - :doc:`v1.9.0`
+    - :doc:`v1.8.0`
+    - :doc:`v1.7.0`
