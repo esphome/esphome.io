@@ -17,10 +17,38 @@ ESPHome 2025.5.0 - 21st May 2025
     Sound Level, components/sensor/sound_level, waveform.svg, dark-invert
     MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
 
-Audio
------
+Voice Assistant
+---------------
 
-To be written...
+We have implemented all of the new features developed for the Voice Preview Edition!
+The voice assistant component supports starting conversations from Home Assistant and
+continuing conversations without needing to reactivate the wake word.
+Additionally, microWakeWord supports enabling and disabling models via yaml actions.
+The voice assistant component, through Home Assistant, can also change the active
+on-device wake word. If you use our prebuilt voice assistant firmwares, then you
+will receive an update notification automatically in Home Assistant adding support
+for these new features!
+
+If you have taken control or created your own voice assistant configuration, you may
+need to adjust them to support these new features. Please see the newly updated
+examples in our wake word voice assistant firmware repository to get started.
+
+It is now easier to configure and use microphones. Multiple components can
+simultaneously read from one microphone. Each individual component using a microphone
+can also set their own specific gain level or specify which microphone channel to use.
+Microphone settings are validated at compilation, and most settings are converted,
+if necessary, without any extra configuration. Your existing YAML files should still
+build without any adjustments. However, if your microphone was previously configured
+to use 32 bits per sample, then you should add a gain factor of 4 to match
+ESPHome's previous behavior. For example:
+
+.. code-block:: yaml
+
+    voice_assistant:
+      microphone:
+        microphone: echo_microphone
+        gain_factor: 4
+
 
 Packet Transport
 ----------------
@@ -39,7 +67,7 @@ it from the new ``collect_headers`` config variable allowing you to collect and 
 ATM90E32
 --------
 
-For energy meters that use the :doc:`atm90e32 /components/sensor/atm90e32` energy metering chip, like from CircuitSetup,
+For energy meters that use the :doc:`atm90e32 </components/sensor/atm90e32>` energy metering chip, like from CircuitSetup,
 and Gelidus Research, support was added for semi-automatic gain & offset calibration, and status messages for each
 phase & frequency. An apparent power sensor was also added.
 
