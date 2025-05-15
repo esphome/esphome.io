@@ -79,4 +79,4 @@ See Also
 
 - :doc:`esphome`
 - :ghedit:`Edit`
-- `Guidelines for Adafruit Memory Map <https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map>`__
+- `Guidelines for Adafruit Bootloader Memory Map <https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map>`__
