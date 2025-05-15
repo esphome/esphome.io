@@ -26,27 +26,25 @@ required to be set up in your configuration for this sensor to work.
     sensor:
       - platform: shtcx
         temperature:
-          name: "Living Room Temperature"
+          name: "Temperature"
         humidity:
-          name: "Living Room Humidity"
-        address: 0x70
-        update_interval: 60s
+          name: "Humidity"
 
 Configuration variables:
 ------------------------
 
-- **temperature** (**Required**): The information for the temperature sensor.
+- **temperature** (*Optional*): The information for the temperature sensor.
 
   - All options from :ref:`Sensor <config-sensor>`.
 
-- **humidity** (**Required**): The information for the humidity sensor.
+- **humidity** (*Optional*): The information for the humidity sensor.
 
   - All options from :ref:`Sensor <config-sensor>`.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to ``0x70``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-  sensor. Defaults to ``60s``.
+sensor. Defaults to ``60s``.
 
 See Also
 --------
