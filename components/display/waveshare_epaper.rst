@@ -130,6 +130,7 @@ Configuration variables:
   - ``4.20in-bV2-bwr`` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - ``5.83in``
   - ``5.83inv2``
+  - ``gdey0583t81`` - GoodDisplay GDEY0583T81 5.83" B/W
   - ``7.30in-f`` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
   - ``7.50in``
   - ``7.50in-bV2`` - also supports v3, B/W rendering only
@@ -141,7 +142,7 @@ Configuration variables:
   - ``7.50inV2p`` - Support for partial refresh and fast refresh (Only suitable for ``7.50inV2`` models manufactured after September 2023)
   - ``7.50in-hd-b`` - Can't use with an ESP8266 as it runs out of RAM
   - ``gdey029t94`` - GooDisplay GDEY029t94, as used in the monochrome 2.9inch display from seeedstudio
-  - ``gdew029t5`` - GooDisplay GDEW029T5, as used on the AdaFruit MagTag
+  - ``gdew029t5`` - GooDisplay GDEW029T5, as used on the AdaFruit MagTag and Pimoroni Badger
   - ``1.54in-m5coreink-m09`` - GoodDisplay gdew0154m09, as used in the M5Stack Core Ink
   - ``13.3in-k`` - 13.3in, with the K model, 960x680, B/W rendering only
 

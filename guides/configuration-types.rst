@@ -5,7 +5,7 @@ Configuration Types
     :description: Documentation of different configuration types in ESPHome
     :image: settings.svg
 
-ESPHome’s configuration files have several configuration types. This
+ESPHome's configuration files have several configuration types. This
 page describes them.
 
 .. _config-id:
@@ -22,7 +22,7 @@ ID twice.
 
 Because ESPHome converts your configuration into C++ code and the
 IDs are in reality just C++ variable names, they must also adhere to
-C++’s naming conventions. `C++ Variable
+C++'s naming conventions. `C++ Variable
 names <https://venus.cs.qc.cuny.edu/~krishna/cs111/lectures/D3_C++_Variables.pdf>`__
 …
 

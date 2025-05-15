@@ -53,7 +53,7 @@ Configuration variables:
 
 - **sensor** (**Required**, :ref:`config-id`): The sensor that is used to measure the current
   temperature.
-- **humidity_sensor** (**Optional**, :ref:`config-id`): If specified, this sensor is used to measure the current humidity.
+- **humidity_sensor** (*Optional*, :ref:`config-id`): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
 - **default_target_temperature** (**Required**, float): The default target temperature (setpoint)
   for the control algorithm. This can be dynamically set in the frontend later.
