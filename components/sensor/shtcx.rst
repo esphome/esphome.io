@@ -44,7 +44,7 @@ Configuration variables:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to ``0x70``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-sensor. Defaults to ``60s``.
+  sensor. Defaults to ``60s``.
 
 See Also
 --------
