@@ -20,7 +20,8 @@ This component contains platform-specific options for the NRF52 platform.
 Configuration variables:
 ------------------------
 
-- **board** (*Required*, string): The board type. Valid options are ``adafruit_feather_nrf52840`` and ``adafruit_itsybitsy_nrf52840``. Other boards should work with those configuration as well.
+- **board** (*Required*, string): The board type. Valid options are ``adafruit_feather_nrf52840``,  ``adafruit_itsybitsy_nrf52840``, ``xiao_ble``. Other boards should work with those configuration as well.
+- **bootloader** (*Optional*, string): Bootloader type. Valid options are ``mcuboot``, ``adafruit``, ``adafruit_nrf52_sd132``, ``adafruit_nrf52_sd140_v6``, ``adafruit_nrf52_sd140_v7``. Default value depends on board type.
 
 Getting Started
 ---------------
@@ -78,3 +79,4 @@ See Also
 
 - :doc:`esphome`
 - :ghedit:`Edit`
+- `Guidelines for Adafruit Memory Map <https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map>`__
