@@ -31,7 +31,7 @@ Configuration variables:
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. The value is used
   to calculate the percentages for each speed. E.g. ``2`` means that you have 50% and 100% while ``100``
   will allow 1% increments in the output. Defaults to ``100``.
-- **preset_modes** (*Optional*): A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set`).
+- **preset_modes** (*Optional*): A list of preset modes for this fan. Preset modes can be used in automations (i.e. ``on_preset_set``).
 - All other options from :ref:`Fan Component <config-fan>`.
 
 See Also

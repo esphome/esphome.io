@@ -71,7 +71,7 @@ Measuring higher voltages requires setting ``attenuation`` to one of the followi
 There's more information `at the manufacturer's website <https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t>`__.
 
 To simplify this, we provide the setting ``attenuation: auto`` for an automatic/seamless transition among scales. `Our implementation
-<https://github.com/esphome/esphome/blob/dev/esphome/components/adc/adc_sensor.cpp>`__ combines all available ranges to allow the best resolution without having to compromise on a specific attenuation.
+<https://github.com/esphome/esphome/blob/dev/esphome/components/adc/adc_sensor_esp32.cpp>`__ combines all available ranges to allow the best resolution without having to compromise on a specific attenuation.
 
 .. note::
 

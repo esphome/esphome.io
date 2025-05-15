@@ -452,6 +452,32 @@ Feel free to experiment to discover inheritance and precedence of the styles bas
 
 :ref:`lvgl-cookbook-theme` The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
 
+``lvgl.style.update``
+*********************
+
+This :ref:`action <actions-action>` allows changing/updating the properties of a style at run time. This can be used to
+implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
+
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and the values are templatable.components
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    lvgl:
+      style_definitions:
+        - id: my_style
+          bg_color: 0xFFFFFF
+          border_color: 0x000000
+          border_width: 2
+
+    # Action to update the style
+    on_...:
+      - lvgl.style.update:
+          id: my_style
+          properties:
+            bg_color: 0xFF0000
+            border_color: 0x00FF00
+
 .. _lvgl-layouts:
 
 Layouts
@@ -507,7 +533,7 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
         - ``END``: means right horizontally and bottom vertically.
         - ``CENTER``: simply center.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to ``flex_align_track``.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to ``flex_align_track``.
 
     - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
@@ -571,7 +597,7 @@ Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_ali
         - ``CENTER``: simply center.
         - ``STRETCH``: stretch the widget to the cell in the respective direction. Does not apply to ``grid_column_align``, ``grid_row_align``.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line.
 
 .. code-block:: yaml
@@ -919,6 +945,12 @@ This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is paused.
 *************
 
 This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is resumed. This can be used to perform any desired actions when the screen is unlocked, such as turning on the display backlight.
+
+
+``on_boot``
+*************
+
+This :ref:`trigger <lvgl-automation-triggers>` is triggered after LVGL has been setup. It is also available on any widget, but the timing is the same.
 
 
 See Also

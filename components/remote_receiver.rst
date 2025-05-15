@@ -94,17 +94,17 @@ ESP32 IDF configuration variables:
       :header: "ESP32 Variant", "Memory Size", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-S2", "256 symbols", "64 symbols"
+      "ESP32-S3", "384 symbols", "48 symbols"
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to ``rmt_symbols``.
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   ``filter_symbols``. Useful for filtering out short bursts of noise.
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
 
@@ -117,11 +117,11 @@ ESP32 Arduino configuration variables:
       :header: "ESP32 Variant", "Channels"
 
       "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
       "ESP32-C6", "2, 3"
       "ESP32-H2", "2, 3"
+      "ESP32-S2", "0, 1, 2, 3"
+      "ESP32-S3", "4, 5, 6, 7"
 
 - **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
@@ -281,13 +281,13 @@ Remote code selection (exactly one of these has to be included):
 
   - **source_address** (**Required**, int): The source address to trigger on.
   - **destination_address** (**Required**, int): The destination address to trigger on.
-  - **three_byte_address** (**Optional**, boolean): The length of the source and destination address. ``false`` means
+  - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. ``false`` means
     two bytes and ``true`` means three bytes. Defaults to ``false``.
-  - **retransmission** (**Optional**, boolean): ``true`` if the message was re-transmitted. Defaults to ``false``.
+  - **retransmission** (*Optional*, boolean): ``true`` if the message was re-transmitted. Defaults to ``false``.
   - **message_type** (**Required**, int): The message type to trigger on.
-  - **message_id** (**Optional**, int): The random message ID to trigger on, see dumper output for more info. Defaults
+  - **message_id** (*Optional*, int): The random message ID to trigger on, see dumper output for more info. Defaults
     to any ID.
-  - **data** (**Optional**, 0-7 bytes list): The code to listen for. Usually you only need to copy this directly from
+  - **data** (*Optional*, 0-7 bytes list): The code to listen for. Usually you only need to copy this directly from
     the dumper output. Defaults to ``[]``
 
 - **aeha**: Trigger on a decoded AEHA remote code with the given data.
@@ -300,7 +300,7 @@ Remote code selection (exactly one of these has to be included):
 - **byronsx**: Trigger on a decoded Byron SX Doorbell RF remote code with the given data.
 
   - **address** (**Required**, int): The 8-bit ID code to trigger on, see dumper output for more info.
-  - **command** (**Optional**, int): The 4-bit command to listen for. If omitted, will match on any command.
+  - **command** (*Optional*, int): The 4-bit command to listen for. If omitted, will match on any command.
 
 - **canalsat**: Trigger on a decoded CanalSat remote code with the given data.
 
@@ -402,7 +402,7 @@ Remote code selection (exactly one of these has to be included):
   - **data** (**Required**, string): The code to listen for, see
     :ref:`transmitter description <remote_transmitter-transmit_raw>` for more info. Usually you only need to copy this
     directly from the dumper output.
-  - **delta** (**Optional**, integer): This parameter allows you to manually specify the allowed difference
+  - **delta** (*Optional*, integer): This parameter allows you to manually specify the allowed difference
     between what Pronto code is specified, and what IR signal has been sent by the remote control.
 
 - **raw**: Trigger on a raw remote code with the given code.
@@ -500,7 +500,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56khz) and are very similar.
+    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 
