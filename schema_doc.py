@@ -144,6 +144,9 @@ CUSTOM_DOCS = {
         "1-Wire Bus": ["one_wire.schemas"],
         "GPIO": "gpio.platform.one_wire.schemas.CONFIG_SCHEMA",
     },
+    "components/ota/index": {
+        "Over-the-Air Updates": "ota.schemas.BASE_OTA_SCHEMA",
+    },
     "components/output/index": {
         "Base Output Configuration": "output.schemas.FLOAT_OUTPUT_SCHEMA",
     },
