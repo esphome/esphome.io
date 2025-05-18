@@ -63,6 +63,9 @@ submit a feature request (see FAQ).
 | :ref:`Arduino-HeatpumpIR<heatpumpir>` | ``heatpumpir``      |                      |
 | library                               |                     |                      |
 +---------------------------------------+---------------------+----------------------+
+| Sanyo                                 | ``climate_ir_sanyo``| yes                  |
++---------------------------------------+---------------------+----------------------+
+
 
 This component requires that you have configured a :doc:`/components/remote_transmitter`.
 
