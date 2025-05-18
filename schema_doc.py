@@ -253,9 +253,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 self.component = docname[11:]
                 if not self.custom_doc or self.custom_doc.get("_LoadSchema", True):
                     self.file_schema = get_component_file(app, self.component)
-                    self.json_component = self.file_schema[self.component]["schemas"][
-                        "CONFIG_SCHEMA"
-                    ]
+                    schemas = self.file_schema[self.component]["schemas"]
+                    # e.g. one_wire has no CONFIG_SCHEMA
+                    self.json_component = schemas.get("CONFIG_SCHEMA")
             elif self.path[1] == "display_menu":  # weird folder naming
                 if self.path[2] == "index":
                     # weird component name mismatch
