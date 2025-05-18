@@ -90,6 +90,7 @@ PLATFORMS_TITLES = {
 }
 
 CUSTOM_DOCS = {
+    "automations/actions": {},
     "components/globals": {
         "Global Variables": "globals.schemas.CONFIG_SCHEMA",
     },
