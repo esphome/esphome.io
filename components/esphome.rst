@@ -250,14 +250,19 @@ this option. If they are used by another library, they should be listed before t
 
 .. _preferences-flash_write_interval:
 
-Adjusting flash writes
-------------------------
+Preferences Component
+---------------------
+
+This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
+state of a light or the accumulated energy used by an appliance.
 
 .. code-block:: yaml
 
     # Example configuration entry
     preferences:
       flash_write_interval: 1min
+
+Configuration variables:
 
 - **flash_write_interval** (*Optional*, :ref:`config-time`): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
