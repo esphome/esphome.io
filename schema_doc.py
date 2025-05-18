@@ -91,14 +91,12 @@ PLATFORMS_TITLES = {
 
 CUSTOM_DOCS = {
     "automations/actions": {},
-    "components/globals": {
-        "Global Variables": "globals.schemas.CONFIG_SCHEMA",
+    # audio adc and audio dac needed because they don't define CONFIG_SCHEMA but they document it
+    "components/audio_adc/index": {
+        "Audio ADC Core": ["audio_adc.__IGNORE_SCHEMA"],
     },
-    "guides/configuration-types": {
-        "Pin Schema": [
-            "esp32.pin.schema",
-            "esp8266.pin.schema",
-        ],
+    "components/audio_dac/index": {
+        "Audio DAC Core": ["audio_dac.__IGNORE_SCHEMA"],
     },
     "components/binary_sensor/index": {
         "Binary Sensor Filters": "binary_sensor.registry.filter",
@@ -113,6 +111,9 @@ CUSTOM_DOCS = {
         "Fonts": "font.schemas.CONFIG_SCHEMA",
         "Color": "color.schemas.CONFIG_SCHEMA",
         "Animation": "animation.schemas.CONFIG_SCHEMA",
+    },
+    "components/globals": {
+        "Global Variables": "globals.schemas.CONFIG_SCHEMA",
     },
     "components/light/index": {
         "Base Light Configuration": [
@@ -213,6 +214,12 @@ CUSTOM_DOCS = {
         "Generic SPI device component:": "spi_device.schemas.CONFIG_SCHEMA"
     },
     "components/libretiny": {"LibreTiny Platform": "bk72xx.schemas.CONFIG_SCHEMA"},
+    "guides/configuration-types": {
+        "Pin Schema": [
+            "esp32.pin.schema",
+            "esp8266.pin.schema",
+        ],
+    },
 }
 
 REQUIRED_OPTIONAL_TYPE_REGEX = (
@@ -432,6 +439,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         self.set_component_description(desc, c.split(".")[0])
 
                 return
+            else:
+                self.multi_component = None
 
             json_component = self.find_component(self.custom_doc[title_text])
             if not json_component:
@@ -836,6 +845,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             found_any = False
             self.current_prop = None
             for c in self.multi_component:
+                if c.endswith("__IGNORE_SCHEMA"):
+                    continue
                 props = self.find_props(self.find_component(c))
                 self.current_prop, found = self.update_prop(node, props)
                 if self.current_prop and found:
