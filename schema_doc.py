@@ -139,6 +139,10 @@ CUSTOM_DOCS = {
         "MQTT Component Base Configuration": "core.schemas.MQTT_COMMAND_COMPONENT_SCHEMA",
         "MQTTMessage": "mqtt.schemas.MQTT_MESSAGE_BASE",
     },
+    "components/one_wire": {
+        "1-Wire Bus": ["one_wire.schemas"],
+        "GPIO": "gpio.platform.one_wire.schemas.CONFIG_SCHEMA",
+    },
     "components/output/index": {
         "Base Output Configuration": "output.schemas.FLOAT_OUTPUT_SCHEMA",
     },
