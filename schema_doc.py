@@ -984,7 +984,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
 
         if ntr:
             prop_name = ntr.group(1)
-            param_type = ntr.group(7)
+            param_type = ntr.group(8)
         else:
             s2 = re.search(
                 FULL_ITEM_PROP_NAME_TYPE_REGEX,
