@@ -100,10 +100,12 @@ Image Settings:
     - ``2560x1600`` (WQXGA, 8:5)
     - ``1080x1920`` (Portrait FHD, 9:16)
     - ``2560x1920`` (QSXGA, 4:3)
+    - ``2592×1944`` (5MP, 4:3)
 
 
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
-  From 10 (best) to 63 (worst). Defaults to ``10``.
+  - **For Mega CCM sensor:** ``0`` (high quality), ``1`` (medium quality), ``2`` (low quality).
+  - **For other sensors:** From 10 (best) to 63 (worst). Defaults to ``10``.
 - **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically. Defaults to ``true``.
 - **horizontal_mirror** (*Optional*, boolean): Whether to mirror the image horizontally. Defaults to ``true``.
 - **contrast** (*Optional*, int): The contrast to apply to the picture, from -2 to 2. Defaults to ``0``.
@@ -277,6 +279,27 @@ Configuration examples
       href_pin: GPIO26
       pixel_clock_pin: GPIO21
       reset_pin: GPIO15
+
+**M5Stack CamS3 5MP**:
+
+.. code-block:: yaml
+
+    # Example configuration entry as per https://docs.m5stack.com/en/unit/Unit-CAMS3%205MP
+    esp32_camera:
+      name: camera
+      external_clock:
+        pin: GPIO11
+        frequency: 20MHz
+      i2c_pins:
+        sda: GPIO17
+        scl: GPIO41
+      data_pins: [GPIO6, GPIO15, GPIO16, GPIO7, GPIO5, GPIO10, GPIO4, GPIO13]
+      vsync_pin: GPIO42
+      href_pin: GPIO18
+      pixel_clock_pin: GPIO12
+      reset_pin: GPIO21
+      resolution: 5MP
+      jpeg_quality: 0
 
 **Wrover Kit Boards**:
 
