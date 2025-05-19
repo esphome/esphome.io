@@ -298,7 +298,7 @@ Configuration examples
       href_pin: GPIO18
       pixel_clock_pin: GPIO12
       reset_pin: GPIO21
-      resolution: 5MP
+      resolution: 2592x1944
       jpeg_quality: 0
 
 **Wrover Kit Boards**:
