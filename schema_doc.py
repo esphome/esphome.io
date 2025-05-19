@@ -150,6 +150,9 @@ CUSTOM_DOCS = {
     "components/output/index": {
         "Base Output Configuration": "output.schemas.FLOAT_OUTPUT_SCHEMA",
     },
+    "components/packet_transport/index": {
+        "Packet Transport Component": "packet_transport.schemas.TRANSPORT_SCHEMA",
+    },
     "components/remote_transmitter": {
         "Remote Transmitter Actions": "remote_base.schemas.BASE_REMOTE_TRANSMITTER_SCHEMA",
     },
