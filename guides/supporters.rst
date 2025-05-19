@@ -440,6 +440,7 @@ Contributors
 - `Daniel O'Connor (@DanielO) <https://github.com/DanielO>`__
 - `Daniel Rheinbay (@danielrheinbay) <https://github.com/danielrheinbay>`__
 - `DanielRobertAppel (@DanielRobertAppel) <https://github.com/DanielRobertAppel>`__
+- `Daniël Schenk (@danielschenk) <https://github.com/danielschenk>`__
 - `Daniel Schramm (@danielschramm) <https://github.com/danielschramm>`__
 - `Danilo Campos (@daniloc) <https://github.com/daniloc>`__
 - `Daniel Martin Gonzalez (@danimart1991) <https://github.com/danimart1991>`__
@@ -1063,6 +1064,7 @@ Contributors
 - `kghandi (@kghandi) <https://github.com/kghandi>`__
 - `Khoi Hoang (@khoih-prog) <https://github.com/khoih-prog>`__
 - `AngeloGioacchino Del Regno (@kholk) <https://github.com/kholk>`__
+- `kikuchan (@kikuchan) <https://github.com/kikuchan>`__
 - `Albert Gouws (@KiLLeRRaT) <https://github.com/KiLLeRRaT>`__
 - `Kilowatt (@Kilowatt-W) <https://github.com/Kilowatt-W>`__
 - `kimonm (@kimonm) <https://github.com/kimonm>`__
@@ -1158,6 +1160,7 @@ Contributors
 - `Luis Andrade (@llluis) <https://github.com/llluis>`__
 - `loadrunner42 (@loadrunner42) <https://github.com/loadrunner42>`__
 - `Lazar Obradovic (@lobradov) <https://github.com/lobradov>`__
+- `A. Lochotzke (@lochotzke) <https://github.com/lochotzke>`__
 - `Lode Vermeiren (@lodev) <https://github.com/lodev>`__
 - `Barry Loong (@loongyh) <https://github.com/loongyh>`__
 - `Michael Bisbjerg (@LordMike) <https://github.com/LordMike>`__
@@ -1850,6 +1853,7 @@ Contributors
 - `sud33p (@sud33p) <https://github.com/sud33p>`__
 - `sumirati (@sumirati) <https://github.com/sumirati>`__
 - `Sun Xiang yu (@sun-xiangyu) <https://github.com/sun-xiangyu>`__
+- `Jannik (@SuperPlusUser) <https://github.com/SuperPlusUser>`__
 - `Hans Svedåker (@svedaker) <https://github.com/svedaker>`__
 - `sveip (@sveip) <https://github.com/sveip>`__
 - `Penny Wood (@Swamp-Ig) <https://github.com/Swamp-Ig>`__
@@ -2134,4 +2138,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated May 12, 2025.*
+*This page was last updated May 19, 2025.*

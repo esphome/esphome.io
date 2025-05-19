@@ -65,6 +65,9 @@ IDF configuration variables:
       "ESP32-S2", "256 symbols", "64 symbols"
       "ESP32-S3", "384 symbols", "48 symbols"
 
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
+  the DMA buffer size and can be set to a large value.
+
 Arduino configuration variables:
 ********************************
 

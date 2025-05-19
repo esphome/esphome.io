@@ -203,6 +203,10 @@ Filters are applied in the order they are defined in your configuration.
 
 .. include:: sensor-filter-timeout.rst
 
+.. include:: sensor-filter-to_ntc_resistance.rst
+
+.. include:: sensor-filter-to_ntc_temperature.rst
+
 Example: Converting Celsius to Fahrenheit
 -----------------------------------------
 

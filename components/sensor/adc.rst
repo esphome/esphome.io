@@ -35,7 +35,7 @@ Configuration variables:
   attenuation to use. See :ref:`adc-esp32_attenuation`. Defaults to ``0db``.
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See :ref:`adc-raw`. Defaults to ``false``.
 - **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if ``attenuation`` is set to ``auto``. Defaults to ``1``.
-- **sampling_mode** (*Optional*): Sampling method to use when multiple samples are taken. 
+- **sampling_mode** (*Optional*): Sampling method to use when multiple samples are taken.
 
   - ``avg`` average of all samples (**Default**)
   - ``min`` minimal value from all samples
@@ -95,9 +95,18 @@ ESP32 pins
     * - ESP32
       - GPIO32 - GPIO39
       - GPIO0, GPIO2, GPIO4, GPIO12 - GPIO15, GPIO25 - GPIO27
+    * - ESP32-C2
+      - GPIO0 - GPIO4
+      - GPIO5
     * - ESP32-C3
       - GPIO0 - GPIO4
       - GPIO5
+    * - ESP32-C6
+      - GPIO0 - GPIO6
+      - no ``ADC2``
+    * - ESP32-H2
+      - GPIO1 - GPIO5
+      - no ``ADC2``
     * - ESP32-S2
       - GPIO1 - GPIO10
       - GPIO11 - GPIO20
