@@ -440,6 +440,7 @@ Contributors
 - `Daniel O'Connor (@DanielO) <https://github.com/DanielO>`__
 - `Daniel Rheinbay (@danielrheinbay) <https://github.com/danielrheinbay>`__
 - `DanielRobertAppel (@DanielRobertAppel) <https://github.com/DanielRobertAppel>`__
+- `Daniël Schenk (@danielschenk) <https://github.com/danielschenk>`__
 - `Daniel Schramm (@danielschramm) <https://github.com/danielschramm>`__
 - `Danilo Campos (@daniloc) <https://github.com/daniloc>`__
 - `Daniel Martin Gonzalez (@danimart1991) <https://github.com/danimart1991>`__
@@ -1159,6 +1160,7 @@ Contributors
 - `Luis Andrade (@llluis) <https://github.com/llluis>`__
 - `loadrunner42 (@loadrunner42) <https://github.com/loadrunner42>`__
 - `Lazar Obradovic (@lobradov) <https://github.com/lobradov>`__
+- `A. Lochotzke (@lochotzke) <https://github.com/lochotzke>`__
 - `Lode Vermeiren (@lodev) <https://github.com/lodev>`__
 - `Barry Loong (@loongyh) <https://github.com/loongyh>`__
 - `Michael Bisbjerg (@LordMike) <https://github.com/LordMike>`__
@@ -2136,4 +2138,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated May 14, 2025.*
+*This page was last updated May 19, 2025.*
