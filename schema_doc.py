@@ -763,17 +763,19 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
         self.previous_title_text = node.astext()
         self.title_id = node.parent["ids"][0]
 
-    def find_props_previous_title(self):
+    def find_props_previous_title(self, fail_silently=False):
         comp = self.json_component or self.json_platform_component
         if comp:
-            props = self.find_props(comp)
+            props = self.find_props(comp, fail_silently)
 
             if self.previous_title_text in props:
                 prop = props[self.previous_title_text]
                 if prop:
-                    self.props = self.find_props(prop)
+                    self.props = self.find_props(prop, fail_silently)
                 else:
                     # return fake dict so better errors are printed
+                    if fail_silently:
+                        return  # do not lose original props
                     self.props = {"__": "none"}
 
     def visit_Text(self, node):
@@ -839,7 +841,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             self.filled_props = True
             self.current_prop, found = self.update_prop(node, self.props)
             if self.current_prop and not found:
-                self.find_props_previous_title()
+                self.find_props_previous_title(True)
                 self.current_prop, found = self.update_prop(node, self.props)
                 if self.current_prop and not found:
                     logger.info(
