@@ -668,6 +668,7 @@ Contributors
 - `ferbulous (@ferbulous) <https://github.com/ferbulous>`__
 - `Federico Ferretti (@ferrets6) <https://github.com/ferrets6>`__
 - `FeuerSturm (@FeuerSturm) <https://github.com/FeuerSturm>`__
+- `Fexiven (@Fexiven) <https://github.com/Fexiven>`__
 - `Florian Golemo (@fgolemo) <https://github.com/fgolemo>`__
 - `Federico G. Schwindt (@fgsch) <https://github.com/fgsch>`__
 - `Frank Riley (@fhriley) <https://github.com/fhriley>`__
@@ -2139,4 +2140,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated May 19, 2025.*
+*This page was last updated May 21, 2025.*
