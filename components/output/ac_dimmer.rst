@@ -43,7 +43,7 @@ There are several already made boards which are compatible with this component, 
     light:
       - platform: monochromatic
         output: dimmer1
-        name: Dimmerized Light
+        name: Dimmable Light
 
 Configuration variables:
 ------------------------

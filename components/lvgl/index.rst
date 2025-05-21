@@ -580,7 +580,7 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
         - ``END``: means right horizontally and bottom vertically.
         - ``CENTER``: simply center.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to ``flex_align_track``.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to ``flex_align_track``.
 
     - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
@@ -644,7 +644,7 @@ Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_ali
         - ``CENTER``: simply center.
         - ``STRETCH``: stretch the widget to the cell in the respective direction. Does not apply to ``grid_column_align``, ``grid_row_align``.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line.
 
 .. code-block:: yaml

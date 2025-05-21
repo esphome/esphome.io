@@ -99,7 +99,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
-    Packet Transport, components/packet_transport/index, packet_transport.svg
+    Packet Transport, components/packet_transport/index, packet_transport.svg, dark-invert
 
 Bluetooth/BLE
 -------------
@@ -480,6 +480,7 @@ Miscellaneous
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
     Rotary Encoder, components/sensor/rotary_encoder, rotary_encoder.jpg
     SMT100, components/sensor/smt100, smt100.jpg, Moisture & Temperature
+    Sound Level, components/sensor/sound_level, waveform.svg, dark-invert
     Tuya Sensor, components/sensor/tuya, tuya.png
     TX20, components/sensor/tx20, tx20.jpg, Wind speed & Wind direction
     uFire EC sensor, components/sensor/ufire_ec, ufire_ec.png, EC & Temperature
@@ -729,6 +730,7 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg
     ILI9342, components/display/ili9xxx, ili9342.svg
@@ -1093,8 +1095,8 @@ Cookbook
 Contributing
 ------------
 
-ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see
-:doc:`Contributing </guides/contributing>`.
+ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see our
+`developer site <https://developers.esphome.io>`__.
 
 .. toctree::
     :glob:
