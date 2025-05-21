@@ -34,7 +34,7 @@ help:
 	sphinx-build -M help . _build $(O)
 
 net-html:
-	sed -i 's@{{API_DOCS_URL}}@'"$API_DOCS_URL"'@' _redirects
+	sed -i 's@{{API_DOCS_URL}}@'"${API_DOCS_URL}"'@' _redirects
 	sphinx-build -M html . _build -j auto -n $(O)
 	mkdir -p _pagefind/pagefind
 	${NET_PAGEFIND}
