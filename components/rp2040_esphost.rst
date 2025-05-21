@@ -60,10 +60,10 @@ The guide is written for Windows, but similar steps also apply for building on L
 
     .. code-block:: yaml
 
-      # Main RP2040 platform component
-      rp2040:
-        board: ...
-        watchdog_timeout: 0s
+        # Main RP2040 platform component
+        rp2040:
+          board: ...
+          watchdog_timeout: 0s
 
     Disabling it is currently the only option, since the watchdog doesn't allow setting timeouts longer than about
     8 seconds.
