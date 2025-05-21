@@ -34,11 +34,11 @@ help:
 	sphinx-build -M help . _build $(O)
 
 net-html:
+	sed -i 's@{{API_DOCS_URL}}@'"$API_DOCS_URL"'@' _redirects
 	sphinx-build -M html . _build -j auto -n $(O)
 	mkdir -p _pagefind/pagefind
 	${NET_PAGEFIND}
 	sphinx-build -M html . _build -j auto -n $(O) -Dhtml_extra_path=_redirects,_pagefind
-	sed -i 's@{{API_DOCS_URL}}@'"$API_DOCS_URL"'@' _redirects
 
 pagefind-binary:
 	mkdir -p ../pagefindbin
