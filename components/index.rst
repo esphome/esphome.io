@@ -85,6 +85,7 @@ Network Hardware
 
     WiFi, components/wifi, network-wifi.svg, dark-invert
     ESP32 Ethernet, components/ethernet, ethernet.svg, dark-invert
+    RP2040 ESPHost, components/rp2040_esphost, rp2040_esphost.svg, dark-invert
 
 Network Protocols
 -----------------
