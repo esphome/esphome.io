@@ -668,6 +668,7 @@ Contributors
 - `ferbulous (@ferbulous) <https://github.com/ferbulous>`__
 - `Federico Ferretti (@ferrets6) <https://github.com/ferrets6>`__
 - `FeuerSturm (@FeuerSturm) <https://github.com/FeuerSturm>`__
+- `Fexiven (@Fexiven) <https://github.com/Fexiven>`__
 - `Florian Golemo (@fgolemo) <https://github.com/fgolemo>`__
 - `Federico G. Schwindt (@fgsch) <https://github.com/fgsch>`__
 - `Frank Riley (@fhriley) <https://github.com/fhriley>`__
@@ -2050,6 +2051,7 @@ Contributors
 - `WallyCZ (@WallyCZ) <https://github.com/WallyCZ>`__
 - `walzing (@walzing) <https://github.com/walzing>`__
 - `warpzone (@warpzone) <https://github.com/warpzone>`__
+- `Kent Gibson (@warthog618) <https://github.com/warthog618>`__
 - `John "Warthog9" Hawley (@warthog9) <https://github.com/warthog9>`__
 - `Warwick Bruce Chapman (@warwickchapman) <https://github.com/warwickchapman>`__
 - `Wauter (@Wauter) <https://github.com/Wauter>`__
@@ -2138,4 +2140,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated May 19, 2025.*
+*This page was last updated May 21, 2025.*

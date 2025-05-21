@@ -20,6 +20,16 @@ ESPHome 2025.5.0 - 21st May 2025
 Voice Assistant
 ---------------
 
+|voice_pe_website| is Home Assistant's first official voice assistant hardware.
+It was designed from the ground up to give the best experience possible with Assist,
+Home Assistant's built-in voice assistant software. With advanced mics and audio processing,
+it can run fully locally in the home. Voice Preview Edition was built to run ESPHome,
+and like any ESPHome device, can be fully customized.
+
+.. |voice_pe_website| raw:: html
+
+   <a href="https://www.home-assistant.io/voice-pe/" target="_blank">Home Assistant Voice Preview Edition</a>
+
 We have implemented all of the new features developed for the Voice Preview Edition!
 The voice assistant component supports starting conversations from Home Assistant and
 continuing conversations without needing to reactivate the wake word.
@@ -107,9 +117,8 @@ Breaking Changes
 
 - [http_request] Ability to get response headers :esphomepr:`8224` by :ghuser:`candrews` (breaking-change)
 - [i2s_audio, microphone, micro_wake_word, voice_assistant] Use microphone source to process incoming audio :esphomepr:`8645` by :ghuser:`kahrendt` (breaking-change)
-- [binary_sensor] initial state refactor :esphomepr:`8648` by :ghuser:`clydebarrow` (breaking-change)
 - [packet_transport] Extract packet encoding functionality :esphomepr:`8187` by :ghuser:`clydebarrow` (new-integration) (breaking-change)
-- ATM90E32 Semi-automatic calibration & Status fields :esphomepr:`8529` by :ghuser:`CircuitSetup` (new-platform) (breaking-change)
+- ATM90E32 Semi-automatic calibration & Status fields :esphomepr:`8529` by :ghuser:`CircuitSetup` (new-integration) (breaking-change)
 
 Beta Changes
 ^^^^^^^^^^^^
@@ -121,6 +130,7 @@ Beta Changes
 - Fix release to pypi :esphomepr:`8789` by :ghuser:`jesserockz`
 - [climate] Update components to use ``climate_schema(...)`` :esphomepr:`8788` by :ghuser:`jesserockz`
 - Bump esphome-dashboard to 20250514.0 :esphomepr:`8790` by :ghuser:`jesserockz`
+- Avoid protobuf message construction when tx buffer is full :esphomepr:`8787` by :ghuser:`bdraco`
 - Update some sensor schemas to be Optional :esphomepr:`8803` by :ghuser:`jesserockz`
 - Use fixed buffer for plaintext protocol like noise protocol :esphomepr:`8800` by :ghuser:`bdraco`
 - Optimize protobuf varint decoder for ESPHome use case :esphomepr:`8791` by :ghuser:`bdraco`
@@ -136,6 +146,18 @@ Beta Changes
 - Reduce number of calls to fetch time in the main loop :esphomepr:`8804` by :ghuser:`bdraco`
 - Refactor API frame helpers to enable buffer reuse :esphomepr:`8825` by :ghuser:`bdraco`
 - Bump docker/build-push-action from 6.16.0 to 6.17.0 in /.github/actions/build-image :esphomepr:`8810` by :ghuser:`dependabot[bot]`
+- Update esp32-camera library version :esphomepr:`8832` by :ghuser:`Fexiven`
+- Fix api doc homepage :esphomepr:`8836` by :ghuser:`jesserockz`
+- Deploy doxygen docs to netlify :esphomepr:`8837` by :ghuser:`jesserockz`
+- [release] Fix output value :esphomepr:`8839` by :ghuser:`jesserockz`
+- [release] Don't wait for docker to be finished before deploying schema :esphomepr:`8838` by :ghuser:`jesserockz`
+- Fix API connection sending ping too early after connection establishment :esphomepr:`8840` by :ghuser:`bdraco`
+- Fix ethernet connection timeout issue caused by incorrect time value during setup :esphomepr:`8841` by :ghuser:`bdraco`
+- [docker] Update pip on build :esphomepr:`8835` by :ghuser:`jesserockz`
+- [api-docs] Run using netlify builders :esphomepr:`8842` by :ghuser:`jesserockz`
+- Fix #ifdefs :esphomepr:`8853` by :ghuser:`clydebarrow`
+- [at581x] Fix issue with methods not being public :esphomepr:`8852` by :ghuser:`gpambrozio`
+- [api-docs] Move netlify.toml to root :esphomepr:`8861` by :ghuser:`jesserockz`
 
 All changes
 ^^^^^^^^^^^
@@ -314,6 +336,7 @@ All changes
     - Fix release to pypi :esphomepr:`8789` by :ghuser:`jesserockz`
     - [climate] Update components to use ``climate_schema(...)`` :esphomepr:`8788` by :ghuser:`jesserockz`
     - Bump esphome-dashboard to 20250514.0 :esphomepr:`8790` by :ghuser:`jesserockz`
+    - Avoid protobuf message construction when tx buffer is full :esphomepr:`8787` by :ghuser:`bdraco`
     - Update some sensor schemas to be Optional :esphomepr:`8803` by :ghuser:`jesserockz`
     - Use fixed buffer for plaintext protocol like noise protocol :esphomepr:`8800` by :ghuser:`bdraco`
     - Optimize protobuf varint decoder for ESPHome use case :esphomepr:`8791` by :ghuser:`bdraco`
@@ -328,6 +351,18 @@ All changes
     - Fix ESP32 console logging corruption and message loss in multi-task :esphomepr:`8806` by :ghuser:`bdraco`
     - Reduce number of calls to fetch time in the main loop :esphomepr:`8804` by :ghuser:`bdraco`
     - Refactor API frame helpers to enable buffer reuse :esphomepr:`8825` by :ghuser:`bdraco`
+    - Update esp32-camera library version :esphomepr:`8832` by :ghuser:`Fexiven`
+    - Fix api doc homepage :esphomepr:`8836` by :ghuser:`jesserockz`
+    - Deploy doxygen docs to netlify :esphomepr:`8837` by :ghuser:`jesserockz`
+    - [release] Fix output value :esphomepr:`8839` by :ghuser:`jesserockz`
+    - [release] Don't wait for docker to be finished before deploying schema :esphomepr:`8838` by :ghuser:`jesserockz`
+    - Fix API connection sending ping too early after connection establishment :esphomepr:`8840` by :ghuser:`bdraco`
+    - Fix ethernet connection timeout issue caused by incorrect time value during setup :esphomepr:`8841` by :ghuser:`bdraco`
+    - [docker] Update pip on build :esphomepr:`8835` by :ghuser:`jesserockz`
+    - [api-docs] Run using netlify builders :esphomepr:`8842` by :ghuser:`jesserockz`
+    - Fix #ifdefs :esphomepr:`8853` by :ghuser:`clydebarrow`
+    - [at581x] Fix issue with methods not being public :esphomepr:`8852` by :ghuser:`gpambrozio`
+    - [api-docs] Move netlify.toml to root :esphomepr:`8861` by :ghuser:`jesserockz`
 
 Dependency Changes
 ^^^^^^^^^^^^^^^^^^
