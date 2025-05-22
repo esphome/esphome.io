@@ -215,6 +215,7 @@ Air Quality
     AGS10, components/sensor/ags10, ags10.jpg, Volatile Organic Compound Sensor
     AirThings BLE, components/sensor/airthings_ble, airthings_logo.png, Radon, CO2, Volatile organics
     CCS811, components/sensor/ccs811, ccs811.jpg, CO2 & Volatile organics
+    CM1106, components/sensor/cm1106, cm1106.png, CO2
     EE895, components/sensor/ee895, EE895.png,  CO2 & Temperature & Pressure
     ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
     GCJA5, components/sensor/gcja5, gcja5.svg, Particulate
