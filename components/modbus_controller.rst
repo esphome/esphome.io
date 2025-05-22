@@ -253,6 +253,7 @@ Some devices use decimal values in read registers to show multiple binary states
 | bit 15     | Binary Sensor 15 | 32768     | 8000      |
 +------------+------------------+-----------+-----------+
 
+When ``bitmask`` is specified, resulting value is right-shifted by the position of its (bitmask) lowest set bit.
 In the example below, register ``15``, holds several binary values. It stores the decimal value ``12288``, which is the sum of ``4096`` + ``8192``, meaning the corresponding bits ``12`` and ``13`` are ``1``, the other bits are ``0``.
 
 To gather some of these bits as binary sensors in ESPHome, use ``bitmask``:
