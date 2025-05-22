@@ -1796,6 +1796,7 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
     - **widgets** (**Required**, list): A list of :doc:`/components/lvgl/widgets` to be drawn on the tab, as children.
 - **tab_style** (*Optional*): Style settings for the tabs.
     - **items** (*Optional*, dict): Settings for the items *part*, the buttons all use the text and typical background style properties except translations and transformations.
+- **content_style** (*Optional*): Style settings for the content area.
 
 **Actions:**
 
