@@ -173,6 +173,19 @@
         alt="ESP32-S3-BOX-3"
       />
     </label>
+    <label>
+      <input
+        type="radio"
+        name="voice-device"
+        class="device-option"
+        value="home-assistant-voice"
+        data-manifest-root="https://firmware.esphome.io/home-assistant-voice-pe"
+      />
+      <img
+        src="/_static/projects/voice-assistant/home-assistant-voice.png"
+        alt="Home Assistant Voice: Preview Edition"
+      />
+    </label>
   </div>
 
   <div class="hidden info esp32-s3-box-3">
@@ -213,17 +226,6 @@
   <div class="question-prompt">Start the installation:</div>
   <esp-web-install-button></esp-web-install-button>
 
-  <div class="question-prompt">Configure Home Assistant:</div>
-  <p>
-    Follow
-    <a
-      href="https://www.home-assistant.io/voice_control/thirteen-usd-voice-remote/"
-      target="_blank"
-      >this tutorial</a
-    >
-    to configure Home Assistant to use your new voice assistant.
-  </p>
-
   <div class="hidden info esp32-s3-box-3">
     <h3>ESP32-S3-BOX-3</h3>
     <p>
@@ -263,6 +265,17 @@
           href="https://www.aliexpress.com/item/1005003299332198.html?aff_platform=portals-tool&sk=_A8G2YF&aff_trace_key=90326d2a90444b4887632f62dd533ce4-1654058373639-07963-_A8G2YF&terminal_id=c5517a8c9bb44b4fb32147398fbc2576&aff_fcid=90326d2a90444b4887632f62dd533ce4-1654058373639-07963-_A8G2YF&tt=CPS_NORMAL&aff_fsk=_A8G2YF"
           >AliExpress</a
         >
+      </li>
+    </ul>
+  </div>
+
+  <div class="hidden info home-assistant-voice">
+    <h3>Home Assistant Voice: Preview Edition</h3>
+    <p>Our official voice assistant hardware created for ESPHome. Includes advanced voice processing and a beautiful design.</p>
+    <p>Learn more & buy</p>
+    <ul>
+      <li>
+        <a href="https://www.home-assistant.io/voice-pe/">Home Assistant</a>
       </li>
     </ul>
   </div>
@@ -808,7 +821,7 @@
   document.querySelectorAll("input.device-option").forEach((radio) =>
     radio.addEventListener("change", () => {
       const typeRoot = radio.closest(".type");
-      const manifestRoot = typeRoot.dataset.manifestRoot;
+      const manifestRoot = radio.dataset.manifestRoot || typeRoot.dataset.manifestRoot;
       if (manifestRoot) {
         const button = typeRoot.querySelector("esp-web-install-button");
 
