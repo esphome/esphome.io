@@ -24,6 +24,8 @@ Configuration variables:
 - **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of ``2MB``,
   ``4MB``, ``8MB``, ``16MB`` or ``32MB``. Defaults to ``4MB``. **Warning: specifying a size larger than that available
   on your board will cause the ESP32 to fail to boot.**
+- **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of ``40MHz``, ``80MHz``, ``160MHz`` or ``240MHz``. Defaults to
+  ``160MHz``. Not all values are available for all chips.
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
   partitioning scheme to be used. When not specified, partitions are automatically generated based on ``flash_size``.
 - **variant** (*Optional*, string): The variant of the ESP32 that is used on this board. One of ``esp32``,
@@ -112,6 +114,9 @@ Advanced Configuration
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   ``Base MAC address from BLK0 of EFUSE CRC error``. **Valid only on original ESP32 with** ``esp-idf`` **framework.**
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable
+  experimental features in the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features
+  may cause instability or other issues.
 
 GPIO Pin Numbering
 ------------------

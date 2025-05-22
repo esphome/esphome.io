@@ -190,7 +190,7 @@ Configuration variables:
 
     Besides **memory_location** and **memory_address** you must specify a specific **memory_data** parameter.
 
-    - **memory_data** (*Required*): The hex value to be written to the **memory_location** and **memory_address**.
+    - **memory_data** (**Required**): The hex value to be written to the **memory_location** and **memory_address**.
 
 Switches
 --------

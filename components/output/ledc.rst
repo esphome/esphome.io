@@ -19,7 +19,7 @@ Configuration variables:
 - **pin** (**Required**, :ref:`config-pin`): The pin to use LEDC on. Can only be GPIO0-GPIO33.
 - **id** (**Required**, :ref:`config-id`): The id to use for this output component.
 - **frequency** (*Optional*, float): At which frequency to run the LEDC
-  channel’s timer. Defaults to 1000Hz.
+  channel's timer. Defaults to 1000Hz.
 - All other options from :ref:`Output <config-output>`.
 
 Advanced options:
