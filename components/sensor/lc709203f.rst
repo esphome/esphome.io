@@ -10,7 +10,7 @@ The ``lc709203f`` sensor platform allows you to use a LC709203F
 (`datasheet <https://cdn-learn.adafruit.com/assets/assets/000/094/597/original/LC709203F-D.PDF>`__) 
 battery monitor with ESPHome. This device is available as a 
 `standalone sensor <https://www.adafruit.com/product/4712>`__ and it is also one of the battery
-monitor chips used on their `ESP32 Feather <https://www.adafruit.com/product/5477>`__ dev boards.
+monitor chips used on the `ESP32 Feather <https://www.adafruit.com/product/5477>`__ dev boards.
 
 .. image:: images/LC709203f_product_image.jpg
     :width: 30.0%
@@ -71,22 +71,14 @@ Configuration variables:
   - see :ref:`pack-size-and-voltage` for help if you don't know your pack voltage.
   - see :ref:`pack-voltage` for more information on how this value is used.
 
-- **battery_voltage** (*Optional*): The setup information for the voltage sensor.
-
-  - Standard options from :ref:`Sensor <config-sensor>`.
-  - **name** (*Optional*): I suggest setting this one.
+- **battery_voltage** (*Optional*): Configuration for the voltage sensor. All options from :ref:`sensor <config-sensor>`.
   
-- **battery_level** (*Optional*): The setup information for the battery level sensor.
+- **battery_level** (*Optional*): Configuration for the battery level sensor. All options from :ref:`Sensor <config-sensor>`.
 
-  - Standard options from :ref:`Sensor <config-sensor>`.
-  - **name** (*Optional*): I suggest setting this one.
-
-- **temperature** (*Optional*): The setup information for the battery temperature sensor.
+- **temperature** (*Optional*): Configuration for the battery temperature sensor.
   
-  - **thermistor_b_constant** (*Optional*): The B-constant of the thermistor. Defaults 
-    to `0x0BA6` but if you are using a thermistor, you should really change this.
-  - Standard options from :ref:`Sensor <config-sensor>`.
-  - **name** (*Optional*): I suggest setting this one.
+  - **b_constant** (*Required*): The B-constant of the thermistor you are using.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
@@ -105,8 +97,7 @@ When properly set up, the sensor will report values to Home Assistant as shown:
 Pack Size and Nominal Voltage
 -----------------------------------------
 
-If you don't know the pack size and nominal voltage of your battery, it is typically written
-on the battery as shown below.
+The pack size and nominal voltage of your battery is typically printed on the battery as shown below.
 
 .. image:: images/LC709203f_battery_markings.jpg
     :align: center
@@ -117,8 +108,8 @@ on the battery as shown below.
 Pack Voltage
 -----------------------------------------
 
-When setting up the device. You will need to set the nominal pack voltage of the device. This 
-is used internally to make the sensor more accurate. The nominal voltage is used to set the 
+You will need to configure your device with the correct nominal pack voltage. This
+is used by the IC to improve the sensor's accuracy. The nominal voltage is used to set the 
 ``change of the parameter`` register per table 8 in the datasheet.
 
 .. image:: images/LC709203f_battery_profiles.jpg
@@ -140,8 +131,8 @@ the device as shown in figure 2 of the datasheet.
     :align: center
     :width: 70.0%
 
-Special Thanks
------------------------------------------
+Acknowledgments
+---------------
 
 Special thanks to the authors and contributors for the MAX17043 and BME680 sensor components
 that I used extensively to learn how to create this component. Also, thanks to the authors of the `Adafruit LC709203F Arduino library <https://github.com/adafruit/Adafruit_LC709203F>`__ for example code showing how the communication and CRC calculations are done.
