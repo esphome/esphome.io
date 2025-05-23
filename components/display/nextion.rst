@@ -33,11 +33,11 @@ This permits faster communication with the Nextion display and it is highly reco
 .. warning::
 
     **We highly recommend using only** :ref:`uart-hardware_uarts` **with Nextion displays.**
-    
+
     *Use of software UARTs is known to result in unpredictable/inconsistent behavior.*
 
     If you **must** use a software UART, note that baud rates greater than 9600 are extremely likely to cause problems.
-    
+
     In short, avoid using software UARTs with Nextion displays.
 
 .. code-block:: yaml
@@ -87,6 +87,9 @@ Configuration variables:
   release). See :ref:`Nextion Automation <nextion-on_touch>`.
 - **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion
   reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
+- **command_spacing** (*Optional*, :ref:`config-time`): Sets the minimum time between commands sent to the Nextion display.
+  A higher value can help prevent buffer overflows but will result in slower interface updates.
+  Range is ``0-255ms``. Defaults to ``0ms`` (disabled).
 
 .. _display-nextion_lambda:
 

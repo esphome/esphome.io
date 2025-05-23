@@ -23,6 +23,7 @@ the MAC address of a device and track it using ESPHome.
 
     # Example configuration entry
     esp32_ble_tracker:
+      max_connections: 3
 
     binary_sensor:
       - platform: ble_presence
@@ -84,8 +85,19 @@ Configuration variables:
     you can save power and RF pollution by setting it to ``false``. Defaults to ``true``.
   - **continuous** (*Optional*, boolean): Whether to scan continuously (forever) or to only scan when
     asked to start a scan (with start_scan action). Defaults to ``true``.
+  - **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
+    briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
+    which can improve reliability. Only available if ``wifi`` component is configured.
+    Defaults to ``true``.
 
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this ESP32 BLE Hub.
+- **max_connections** (*Optional*, int): The maximum number of BLE connection slots to use.
+  Each configured slot consumes ~1KB of RAM. It is recommended not to exceed ``5``
+  connection slots to avoid memory issues. Defaults to ``3``.
+  This can only be adjusted when using the ``esp-idf`` framework up to a maximum of ``9``.
+  This value cannot exceed the total number of ``connection_slots`` for the
+  :doc:`bluetooth_proxy` component combined with the total
+  configured :doc:`ble_client` instances.
 
 Automations:
 
