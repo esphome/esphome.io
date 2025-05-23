@@ -168,7 +168,7 @@ Configuration Variables:
 The thermostat controller uses the sensor to determine whether it should heat or cool.
 
 - **sensor** (**Required**, :ref:`config-id`): The sensor that is used to measure the current temperature.
-- **humidity_sensor** (**Optional**, :ref:`config-id`): If specified, this sensor is used to measure the current humidity.
+- **humidity_sensor** (*Optional*, :ref:`config-id`): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
 
 Heating and Cooling Actions
@@ -303,7 +303,7 @@ experience and automation.
 
 - **preset**: (*Optional*, list)
 
-  - **name** (*Required*, string): Name of the preset. If this is one of the *standard* presets (``eco``, ``away``,
+  - **name** (**Required**, string): Name of the preset. If this is one of the *standard* presets (``eco``, ``away``,
     ``boost``, ``comfort``, ``home``, ``sleep``, or ``activity``) it is considered a *standard* preset. Any other
     string will make the preset a *custom* preset. *Standard* and *custom* presets are functionally equivalent,
     the only difference is that when switching the mode via :ref:`climate.control Action <climate-control_action>`
