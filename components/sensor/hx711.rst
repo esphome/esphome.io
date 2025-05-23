@@ -32,6 +32,7 @@ and ``CLK`` (or ``SCK``) to free GPIO pins.
         clk_pin: D1
         gain: 128
         settling_time: 400ms
+        settle_on_boot: true
         update_interval: 60s
 
 Configuration variables:
@@ -45,8 +46,10 @@ Configuration variables:
     - ``64`` (Channel A, gain 64)
     - ``128`` (Channel A, gain 128)
 
-- **settling_time** (*Optional*, :ref:`config-time`): The settling time after power-up, gain, or channel changes. Defaults to ``400ms``. Minimum ``0ms``, maximum ``65535ms``.
-
+- **settling_time** (*Optional*, :ref:`config-time`): The settling time after power-up, gain, or channel changes.
+  Defaults to ``400ms``. Minimum ``0ms``, maximum ``65535ms``.
+- **settle_on_boot** (*Optional*, boolean): Whether to apply the configured settling time on startup.
+  Defaults to ``true``. Set to ``false`` if the HX711 is already settled externally or to reduce startup delay.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 
 - All other options from :ref:`Sensor <config-sensor>`.
