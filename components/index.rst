@@ -85,6 +85,7 @@ Network Hardware
 
     WiFi, components/wifi, network-wifi.svg, dark-invert
     ESP32 Ethernet, components/ethernet, ethernet.svg, dark-invert
+    ESP32 Hosted, components/esp32_hosted, network-wifi.svg, dark-invert
 
 Network Protocols
 -----------------
