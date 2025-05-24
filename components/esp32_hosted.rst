@@ -7,7 +7,7 @@ ESP32 Hosted
     :keywords: WiFi, Bluetooth, Hosted, ESP32
 
 ESP32 Hosted (`ESP-Hosted-MCU <https://github.com/espressif/esp-hosted-mcu>`__) is a
-solution that allows you to use ESP32 modules as a communication co-processors. This
+solution that allows you to use ESP32 modules as communication co-processors. This
 solution provides wireless connectivity (Wi-Fi and Bluetooth) to the host module,
 enabling it to communicate with other devices.
 
