@@ -42,6 +42,12 @@ Configuration variables:
 
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for actions.
 
+- **automatic_baseline_calibration** (*Optional*, boolean): CM1106 has automatic calibration procedure.
+  The automatic calibration cycle is the first 24 hours after powered on, and then the sensor will enter regular 15 days calibration cycle.
+  Set this value to ``false`` to disable ABC on boot (it's better if you use sensor indoor).
+  Set this value to ``true`` to enable ABC on boot.
+  Doesn't send calibration command if not set (default sensor logic will be used).
+
 .. _cm1106-calibrate_zero_action:
 
 ``cm1106.calibrate_zero`` Action
@@ -68,7 +74,6 @@ You can provide an :ref:`action <api-device-actions>` to perform from Home Assis
           then:
             - cm1106.calibrate_zero: my_cm1106_id
 
-
 Examples:
 
 Button to start the calibration process:
@@ -83,25 +88,31 @@ Button to start the calibration process:
           then:
             - cm1106.calibrate_zero: my_cm1106_id
 
-Pseudo-automatic calibration by CO2 value:
+.. _cm1106-abc_enable_action:
+
+``cm1106.abc_enable`` Action
+---------------------------
+
+This :ref:`action <config-action>` enables automatic baseline calibration on the sensor with the given ID.
 
 .. code-block:: yaml
 
-    binary_sensor:
-      - platform: template
-        id: co2_calibration
-        lambda: |-
-          if (id(co2sensor).state < 400) {
-            return true;
-          } else {
-            return false;
-          }
-        filters:
-          - delayed_on: 15min
-        on_press:
-          then:
-            - cm1106.calibrate_zero: my_cm1106_id
-        internal: true
+    on_...:
+      then:
+        - cm1106.abc_enable: my_cm1106_id
+
+.. _cm1106-abc_disable_action:
+
+``cm1106.abc_disable`` Action
+----------------------------
+
+This :ref:`action <config-action>` disables automatic baseline calibration on the sensor with the given ID.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - cm1106.abc_disable: my_cm1106_id
 
 See Also
 --------
