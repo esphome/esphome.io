@@ -6,9 +6,10 @@ ESP32 Hosted
     :image: network-wifi.svg
     :keywords: WiFi, Bluetooth, Hosted, ESP32
 
-ESP32 Hosted is a solution that allows you to use ESP32 modules as a communication
-co-processors. This solution provides wireless connectivity (Wi-Fi and Bluetooth) to
-the host module, enabling it to communicate with other devices.
+ESP32 Hosted (`ESP-Hosted-MCU <https://github.com/espressif/esp-hosted-mcu>`__) is a
+solution that allows you to use ESP32 modules as a communication co-processors. This
+solution provides wireless connectivity (Wi-Fi and Bluetooth) to the host module,
+enabling it to communicate with other devices.
 
 .. code-block:: yaml
 
@@ -32,8 +33,8 @@ the host module, enabling it to communicate with other devices.
 Configuration variables:
 ------------------------
 
-- **variant** (*Required*, string): The variant of the co-processor ESP32 that is used by the
-  host. One of ``ESP32``, ``ESP32S2``, ``ESP32S3``, ``ESP32C2``, ``ESP32C3`` and ``ESP32C6``. 
+- **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
+  host. One of ``ESP32``, ``ESP32S2``, ``ESP32S3``, ``ESP32C2``, ``ESP32C3`` and ``ESP32C6``.
 - **clk_pin** (*Optional*, :ref:`config-pin`): The SDIO clock pin.
 - **cmd_pin** (*Optional*, :ref:`config-pin`): The SDIO command pin.
 - **d0_pin** (*Optional*, :ref:`config-pin`): The SDIO d0 pin.
@@ -42,7 +43,7 @@ Configuration variables:
 - **d3_pin** (*Optional*, :ref:`config-pin`): The SDIO d3 pin.
 - **slot** (*Optional*, int): The SDIO slot number. Defaults to 1.
 - **reset_pin** (*Optional*, :ref:`config-pin`): The reset pin of the co-processor.
-- **active_high** (*Optional*, boolean): If enabled, the co-processor is active when reset is 
+- **active_high** (*Optional*, boolean): If enabled, the co-processor is active when reset is
   high. If disabled, the co-processor is active when reset is low. Defaults to ``true``.
 
 See Also
@@ -51,4 +52,5 @@ See Also
 - :doc:`wifi`
 - :doc:`network`
 - :doc:`ethernet`
+- `ESP-Hosted-MCU <https://github.com/espressif/esp-hosted-mcu>`__ by `Espressif Systems <https://www.espressif.com/>`__
 - :ghedit:`Edit`
