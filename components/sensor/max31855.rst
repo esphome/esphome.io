@@ -30,6 +30,7 @@ Connect ``GND`` to ``GND``, ``VCC`` to ``3.3V`` and the other three ``MISO`` (or
         name: "Living Room Temperature"
         cs_pin: D2
         update_interval: 60s
+        ignore_faults: false
 
 Configuration variables:
 ------------------------
@@ -41,6 +42,7 @@ Configuration variables:
   - All options from :ref:`Sensor <config-sensor>`.
 
 - **spi_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`SPI Component <spi>` if you want to use multiple SPI buses.
+- **ignore_faults** (*Optional*, boolean): If set to ``false``, the sensor will report a ``nan`` value on VCC or ground faults and report a fault warning. If set to ``true``, the faults are ignored (because they are a common occurence with high temperatures and low-cost break-out boards) and the temperature reading is reported as normal. Disconnect faults are never ignored. Defaults to ``false``.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also
