@@ -366,4 +366,5 @@ See Also
 - :doc:`ESPHome index </index>`
 - :doc:`getting_started_command_line`
 - :doc:`getting_started_hassio`
+- :doc:`beginners_guide_adding_devices`
 - :ghedit:`Edit`

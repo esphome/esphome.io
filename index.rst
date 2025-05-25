@@ -213,6 +213,17 @@ Getting started with ESPHome is easy. Choose the method that works best for you:
             <a href="/guides/getting_started_hassio.html" class="btn btn-primary">Detailed Instructions</a>
         </div>
         <div class="getting-started-card">
+            <h3>Adding Devices to the UI</h3>
+            <p>For beginners who need some help adding their first device.</p>
+            <ol>
+                <li>Install the Home Assistant Add-on or Docker container</li>
+                <li>Open the ESPHome Device Builder in your browser</li>
+                <li>Create a new device configuration</li>
+                <li>Compile and upload to your device</li>
+            </ol>
+            <a href="/guides/beginners_guide_adding_devices.html" class="btn btn-primary">Detailed Instructions</a>
+        </div>
+        <div class="getting-started-card">
             <h3>Command Line</h3>
             <p>For advanced users who prefer working with the command line.</p>
             <ol>

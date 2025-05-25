@@ -211,6 +211,8 @@ components you need there. If you're having any problems or want to request new 
 issue on the `GitHub issue tracker <https://github.com/esphome/issues/issues>`__ or find us on the
 `Discord chat <https://discord.gg/KhAMKrd>`__. Be sure to read the :doc:`FAQ <faq>`, as well!
 
+If you need a more detailed walk-through, look at the :doc:`beginners_guide_adding_devices`.
+
 See Also
 --------
 
