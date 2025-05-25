@@ -85,6 +85,10 @@ Configuration variables:
     you can save power and RF pollution by setting it to ``false``. Defaults to ``true``.
   - **continuous** (*Optional*, boolean): Whether to scan continuously (forever) or to only scan when
     asked to start a scan (with start_scan action). Defaults to ``true``.
+  - **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
+    briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
+    which can improve reliability. Only available if ``wifi`` component is configured.
+    Defaults to ``true``.
 
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this ESP32 BLE Hub.
 - **max_connections** (*Optional*, int): The maximum number of BLE connection slots to use.

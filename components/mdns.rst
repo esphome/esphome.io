@@ -50,5 +50,5 @@ Configuration variables:
 
   - **service** (**Required**, string): Name of extra service.
   - **protocol** (**Required**, string): Protocol of service (_udp or _tcp).
-  - **port** (*Optional*, int): Port number of extra service.
-  - **txt** (*Optional*, mapping): Additional text records to add to service.
+  - **port** (*Optional*, :ref:`templatable <config-templatable>`, int): Port number of extra service.
+  - **txt** (*Optional*, mapping): Additional text records to add to service. Values are :ref:`templatable <config-templatable>`.

@@ -6,7 +6,7 @@ Audio ADC Core
     :image: i2s_audio.svg
     :keywords: Audio, ADC, I2S, ESP32
 
-The `audio_adc` component allows your ESPHome devices to use audio ADC hardware components, allowing the
+The ``audio_adc`` component allows your ESPHome devices to use audio ADC hardware components, allowing the
 capture/recording of audio via the microcontroller from a range of sources.
 
 .. code-block:: yaml
