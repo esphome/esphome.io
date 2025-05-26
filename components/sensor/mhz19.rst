@@ -37,10 +37,10 @@ Configuration variables:
 ------------------------
 
 
-- **co2** (**Required**): The CO_2 data from the sensor in parts per million (ppm).
+- **co2** (*Optional*): The CO_2 data from the sensor in parts per million (ppm).
   All options from :ref:`Sensor <config-sensor>`.
 
-- **temperature** (**Required**): The information for the temperature sensor. Please note that this is
+- **temperature** (*Optional*): The information for the temperature sensor. Please note that this is
   not officially documented in the datasheet and seems to be quite inaccurate.
   All options from :ref:`Sensor <config-sensor>`.
 

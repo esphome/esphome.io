@@ -65,7 +65,7 @@ A solution that has been tested on ESP32 at 800kHz, is to increase the I²C time
       sda: 21
       scl: 22
       scan: true
-      frequency: 800khz
+      frequency: 800kHz
       timeout: 10ms
 
 See Also

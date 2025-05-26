@@ -41,7 +41,7 @@ using :ref:`lambdas <config-lambda>`.
 Configuration variables:
 ------------------------
 
-- **type** (*Required*, enum): The type of the datetime. Can be one of ``date`` or ``time``.
+- **type** (**Required**, enum): The type of the datetime. Can be one of ``date`` or ``time``.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the current value of the datetime.
 - **set_action** (*Optional*, :ref:`Action <config-action>`): The action that should

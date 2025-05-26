@@ -183,6 +183,14 @@ class Translator(nodes.NodeVisitor):
     def depart_note(self, node):
         pass
 
+    def unknown_visit(self, node):
+        text = node.astext()
+        if text.startswith(":apistruct:"):
+            pass
+
+    def unknown_departure(self, node):
+        pass
+
 
 class MDWriter(writers.Writer):
     """GitHub-flavored markdown writer"""
