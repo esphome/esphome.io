@@ -67,6 +67,12 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **sub_devices** (*Optional*, :ref:`esphome-sub_devices`): A virtual sub-device to group entries under.
+
+  - **id** (**Required**, string): Specify the ID for code generation.
+  - **name** (**Required**, string): The name for the sub device.
+  - **area** (*Optional*, string): The suggested area for the sub device.
+
 
 Automations:
 
@@ -358,6 +364,33 @@ Minimum ESPHome version
 This allows YAML files to specify the minimum version of ESPHome required to compile.
 This is useful in the case of packages where a published package might use features only
 available in a newer version of ESPHome. This allows for a more friendly error message.
+
+.. _esphome-sub_devices:
+
+Sub Devices
+-----------
+
+ESPHome has support for createting sub devices in configuration where individual entities
+can be grouped to. The grouping has no direct effect on the functionality of the entities,
+but it can be used to group entities together in the Home Assistant UI. This is useful for
+example when you have a mix sensors on one device that are related to different physical
+devices.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    esphome:
+      # ...
+      sub_devices:
+        - id: dev_livingroom
+          name: Livingroom climate 
+          # Optional variables:
+          area: Living Room
+
+    sensor:
+      # ...
+      device_id: dev_livingroom
+
 
 See Also
 --------

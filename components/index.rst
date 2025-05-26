@@ -66,7 +66,6 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
-    Sub Devices, components/devices, home-assistant.svg, dark-invert
 
 ESPHome Configuration
 ---------------------
