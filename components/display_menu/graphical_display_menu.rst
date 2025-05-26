@@ -12,14 +12,14 @@ on graphical displays. This offers the user an interactive method to display
 labels, control entities like ``switch``, ``select``, ``number``  available locally on the 
 ESPHome node, without the requirement of a network connection.
 
-.. figure:: images/graphical_display_menu.jpg
+.. figure:: images/graphical_display_menu.png
     :align: center
     :width: 60.0%
 
 Overview
 --------
 
-The integration implements the :ref:`Display Menu <display_menu>` integration providing
+The component implements the :ref:`Display Menu <display_menu>` component providing
 a hierarchical menu primarily intended to be controlled either by a rotary encoder
 with a button or a five-button joystick controller.
 
@@ -34,7 +34,7 @@ engine such as :doc:`E-Paper displays </components/display/waveshare_epaper>` or
       display: my_display_component
       on_redraw:
         then:
-          component.update: my_dispay_component
+          component.update: my_display_component
       active: false
       mode: rotary
       items:
@@ -45,7 +45,7 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **display** (*Optional*, :ref:`config-id`): ID of the display to render to. See 
   :ref:`drawing_modes` for more details
-- **font** (:ref:`Font <display-fonts>`): Specifies the font to use
+- **font** (**Required**, :ref:`Font <display-fonts>`): Specifies the font to use
 - **foreground_color** (*Optional*, :ref:`config-color`): Specifies the foreground color to use.
   Defaults to COLOR_ON
 - **background_color** (*Optional*, :ref:`config-color`): Specifies the background color to use.
@@ -55,7 +55,7 @@ Automations:
 
 - **on_redraw** (*Optional*, :ref:`Automation <automation>`): An automation to perform
   when the menu needs to be redrawn. This can be useful if your display has slow refresh rates.
-  For example E-Ink displays that are used with `display_interval: never`
+  For example E-Ink displays that are used with ``display_interval: never``.
 
 Additional configuration is described in the :ref:`Display Menu <display_menu>` component.
 
@@ -194,7 +194,7 @@ The below example is a more complete example showing how you might use a rotary 
       display: my_display_component
       on_redraw:
         then:
-          component.update: my_dispay_component
+          component.update: my_display_component
       active: false
       mode: rotary
       items:

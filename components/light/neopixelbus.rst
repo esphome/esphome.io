@@ -18,7 +18,7 @@ in ESPHome for individually addressable lights like NeoPixel or WS2812.
 It is very similar to the :doc:`fastled` platform.
 In fact, most addressable lights are supported through both light platforms. The
 difference is that they use different libraries: while the fastled platform uses
-the `FastLED <https://github.com/FastLED/FastLED>`__ library, this integration uses
+the `FastLED <https://github.com/FastLED/FastLED>`__ library, this component uses
 the `NeoPixelBus <https://github.com/Makuna/NeoPixelBus/>`__ library internally.
 
 .. code-block:: yaml
@@ -28,7 +28,7 @@ the `NeoPixelBus <https://github.com/Makuna/NeoPixelBus/>`__ library internally.
       - platform: neopixelbus
         type: GRB
         variant: WS2811
-        pin: GPIO23
+        pin: GPIOXX
         num_leds: 60
         name: "NeoPixel Light"
 
@@ -37,10 +37,7 @@ Configuration variables:
 
 **Base Options:**
 
-- **name** (**Required**, string): The name of the light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **num_leds** (**Required**, int): The number of LEDs attached.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light.
 
 **Type Options:**
 
@@ -87,8 +84,6 @@ If you have one line, only specify ``pin``, otherwise specify both ``clock_pin``
 - **clock_pin** (**Required**, :ref:`config-pin`): The pin for the clock line of the light, for two-wire lights.
 - **data_pin** (**Required**, :ref:`config-pin`): The pin for the data line of the light, for two-wire lights.
 
-**Advanced Options:**
-
 - All other options from :ref:`Light <config-light>`.
 
 .. warning::
@@ -129,12 +124,12 @@ settings vary by method:
 - **esp8266_uart**: An alternative method for ESP8266s that uses the UART peripheral to send data.
   Available on pin GPIO1 for bus 0, and GPIO2 for bus 1. Additional options:
 
-  - **bus** (*Optional*, int): The UART bus to use. If 0, the logger ``baud_rate`` option must 
+  - **bus** (*Optional*, int): The UART bus to use. If 0, the logger ``baud_rate`` option must
     be set to 0 and logs over USB/serial won't work.
   - **async** (*Optional*, boolean): Use an asynchronous transfer. Defaults to ``false``. If enabled,
     the logger must be disabled even if bus 1 is used.
 
-- **esp32_i2s**: The recommended method for ESP32, but not available on the ESP32-S3 or ESP32-C3.
+- **esp32_i2s**: The recommended method for ESP32, but not available on the ESP32-C3 or ESP32-S3.
   Available on all output pins. Additional options:
 
   - **bus** (*Optional*): The I2S bus to use. The ESP32 has bus 0 or 1 available, but the ESP32-S2 only bus 0.
@@ -143,7 +138,7 @@ settings vary by method:
 - **esp32_rmt**: An alternative method for ESP32 that uses the RMT peripheral to send data.
   Available on all output pins. Additional options:
 
-  - **channel** (*Optional*): The RMT channel to use. The ESP32 has channels 0-7, ESP32-S2 0-3, ESP32-S3 0-3, and ESP32-C3 0-1.
+  - **channel** (*Optional*): The RMT channel to use. The ESP32 has channels 0-7, ESP32-C3 0-1, ESP32-S2 0-3 and ESP32-S3 0-3.
     Defaults to 6 on ESP32, and 1 on other ESP32 variants.
 
 The following method is available only for two-wire chips (specify ``data_pin`` and ``clock_pin``):
@@ -154,7 +149,7 @@ The following method is available only for two-wire chips (specify ``data_pin`` 
   - **bus** (*Optional*, string): On ESP32s the SPI bus to be used can be selected. One of ``vspi`` and ``hspi``.
   - **speed** (*Optional*, int): The frequency to send data with. Defaults to ``10MHz``. One of
     ``40MHz``, ``20MHz``, ``10MHz``, ``5MHz``, ``2MHz``, ``1MHz``, ``500KHz``.
-  
+
   On ESP8266 only GPIO13 can be used for ``data_pin`` and only GPIO14 can be used for ``clock_pin``.
 
 The ``method`` key also accepts a short-hand syntax consisting of a single value for historic reasons. Usage of

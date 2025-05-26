@@ -22,19 +22,8 @@ Using an inexpensive RF transmitter and receiver you can control your devices vi
 
     # Specify the two pins to connect the receiver and transmitter
     lightwaverf:
-      read_pin: 13
-      write_pin: 14
-
-    # Create a switch to trigger a light
-    switch:
-      - platform: template
-        name: "Turn off sofa"
-        id: light_off_ceiling_sofa
-        turn_on_action:
-          lightwaverf.send_raw:
-            code:  [0x04, 0x00, 0x00, 0x00, 0x0f, 0x03, 0x0d, 0x09, 0x08, 0x08]
-            name: "Sofa"
-            repeat: 1
+      read_pin: GPIOXX
+      write_pin: GPIOXX
 
 
 Note: To gather the RAW codes from the remote, setup the ``read_pin`` and observe in the logs the printing of the codes.

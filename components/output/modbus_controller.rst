@@ -2,17 +2,15 @@ Modbus Controller Output
 ========================
 
 .. seo::
-    :description: Instructions for setting up a modbus_controller device sensor.
+    :description: Instructions for setting up a modbus_controller device output.
 
-The ``modbus_controller`` platform creates a output from a modbus_controller.
+The ``modbus_controller`` platform creates an output from a modbus_controller. The goal is to write a value to a modbus register on a device.
 
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
-- **address** (**Required**, int): start address of the first register in a range
-- **value_type** (**Required**): data type of the modbus register data. The default data type for modbus is a 16 bit integer in big endian format (MSB first)
+- **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
+- **value_type** (**Required**): data type of the modbus register data. The default data type for modbus is a 16 bit integer in big endian format (MSB first).
 
     - ``U_WORD`` (unsigned 16 bit integer from 1 register = 16bit)
     - ``S_WORD`` (signed 16 bit integer from 1 register = 16bit)
@@ -27,14 +25,19 @@ Configuration variables:
     - ``FP32`` (32 bit IEEE 754 floating point from 2 registers)
     - ``FP32_R`` (32 bit IEEE 754 floating point - same as FP32 but low word first)
 
+- **register_type** (*Optional*): 
+    - ``coil``: Write Coil - Write the ON/OFF status of a discrete coil in the device with *Function Code 5 or 15*. This will create a binary output.
+    - ``holding``: Write Holding Registers - write contents of holding registers in the device with *Function Code 6 or 16*. This will create a float output.
+
+- **multiply** (*Optional*, float): multiply the incoming value with this factor before writing it to the device. Ignored if ``write_lambda`` is defined. Only valid for ``register_type: holding``.
+- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to ``true``.
 - **write_lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda is evaluated before the modbus write command is created. The value is passed in as ``float x`` and an empty vector is passed in as ``std::vector<uint16_t>&payload``.
   You can directly define the payload by adding data to payload then the return value is ignored and the content of payload is used.
 
   Parameters passed into the lambda
 
-  - **x** (float): The float value to be sent to the modbus device for ``register_type: holding``
-  - **x** (bool): The boolean value to be sent to the modbus device for ``register_type: coil``
+  - **x** (float or bool): The float value to be sent to the modbus device for ``register_type: holding`` or the boolean value to be sent to the modbus device for ``register_type: coil``
   - **payload** (```std::vector<uint16_t>&payload```):
 
     - for ``register_type: holding``: empty vector for the payload. The lamdba can add 16 bit raw modbus register words.
@@ -49,41 +52,51 @@ Configuration variables:
   - ``return <anything>; and fill payload with data`` if the payload is added from the lambda then these 16 bit words will be sent
   - ``return {};`` if you don't want write the command to the device (or do it from the lambda).
 
-- **register_type** (*Optional*): ``coil`` to create a binary outout or ``holding`` to create a float output.
-- **multiply** (*Optional*, float): multiply the new value with this factor before sending the requests. Ignored if lambda is defined. Only valid for ``register_type: holding``.
-- **offset** (*Optional*, int): only required for uncommon response encodings
-  offset from start address in bytes. If more than one register is read a modbus read registers command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type
-- **use_write_multiple** (*Optional*, boolean): By default the modbus command ``Preset Single Registers`` (function code 6) is used for setting the holding register if only 1 register is set. If your device only supports ``Preset Multiple Registers`` (function code 16) set this option to true.
+- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
 All other options from :ref:`Output <config-output>`.
 
 
-**Example**
+Example:
+--------
 
 .. code-block:: yaml
 
     output:
-        - platform: modbus_controller
-            modbus_controller_id: epever
-            id: battery_capacity_output
-            write_lambda: |-
-              ESP_LOGD("main","Modbus Output incoming value = %f",x);
-              uint16_t b_capacity = x ;
-              payload.push_back(b_capacity);
-              return x * 1.0 ;
-            address: 0x9001
-            value_type: U_WORD
+      - platform: modbus_controller
+        modbus_controller_id: modbus1
+        address: 2048
+        register_type: holding
+        value_type: U_WORD
+        multiply: 1000
 
 
+**The same with lambda:**
+
+.. code-block:: yaml
+
+    output:
+      - platform: modbus_controller
+        modbus_controller_id: modbus1
+        address: 2048
+        value_type: U_WORD
+        write_lambda: |-
+          ESP_LOGD("main","Modbus Output incoming value = %f",x);
+          uint16_t value = x ;
+          payload.push_back(value);
+          return x * 1000 ;
 
 
 See Also
 --------
+- :doc:`/components/modbus`
 - :doc:`/components/modbus_controller`
 - :doc:`/components/sensor/modbus_controller`
 - :doc:`/components/binary_sensor/modbus_controller`
 - :doc:`/components/switch/modbus_controller`
-- :doc:`/components/text_sensor/modbus_controller`
 - :doc:`/components/number/modbus_controller`
+- :doc:`/components/select/modbus_controller`
+- :doc:`/components/text_sensor/modbus_controller`
 - https://www.modbustools.com/modbus.html
 - :ghedit:`Edit`

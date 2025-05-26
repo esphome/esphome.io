@@ -30,7 +30,7 @@ the :ref:`I²C Bus <i2c>` and connect the sensor to the pins specified there.
 .. code-block:: yaml
 
     as5600:
-      dir_pin: 22
+      dir_pin: GPIOXX
       start_position: 0deg
       range: 180deg
 
@@ -39,7 +39,7 @@ Configuration variables:
 
 - **dir_pin** (*Optional*, int): The pin connected to the AS5600's direction pin.
   See :ref:`Direction <as5600_direction>` for more information.
-- **direction** (*Optional*, string): The direction that the magnet should rotate to increase values. 
+- **direction** (*Optional*, string): The direction that the magnet should rotate to increase values.
   Used in combination with the **dir_pin**.
 
   - ``clockwise`` (default)
@@ -57,7 +57,7 @@ Configuration variables:
   - ``lsb2``
   - ``lsb3``
 
-- **power_mode** (*Optional*, string): The power mode to run the sensor. Note: When **watchdog** is enabled, 
+- **power_mode** (*Optional*, string): The power mode to run the sensor. Note: When **watchdog** is enabled,
   it will switch the device to ``low3`` when there is not much change in position.
 
   - ``nominal`` (default)
@@ -65,7 +65,7 @@ Configuration variables:
   - ``low2``
   - ``low3``
 
-- **watchdog** (*Optional*, boolean): Whether to enable the watchdog that puts the the chip in to 
+- **watchdog** (*Optional*, boolean): Whether to enable the watchdog that puts the the chip in to
   low power mode 3. Check the datasheet for more information.
   Defaults to ``off``.
 - **slow_filter** (*Optional*, string): See datasheet.
@@ -98,9 +98,9 @@ Direction
 
 The AS5600 has ``direction`` pin that controls which rotation direction will cause the position value to **increase**.
 This pin should be pulled low for clockwise, and pulled high for counterclockwise. If left floating, you are likely
-to encounter erratic behavior. 
+to encounter erratic behavior.
 
-If you would like the ESP controller to pull that pin high or low, you may configure the ``dir_pin`` and optionally, the 
+If you would like the ESP controller to pull that pin high or low, you may configure the ``dir_pin`` and optionally, the
 ``direction`` option to have the ESP controller pull the pin high or low.
 
 .. _as5600_position_range:
@@ -136,7 +136,7 @@ For example, let's say we have the following component config:
       start_position: 90deg
       range: 180deg
       direction: clockwise
-      dir_pin: 22
+      dir_pin: GPIOXX
 
 - If the magnet north was at the right side of the chip (i.e. 1024 / 90deg raw position), the scaled position would report a value of ``0``.
 - If the magnet north was at the bottom of the chip (i.e. 2048 / 180deg raw position), the scaled position would report a value of ``2048``.
@@ -147,7 +147,7 @@ For example, let's say we have the following component config:
 .. note::
 
     You may specify an ``end_position`` that is less than the ``start_position``. When doing so, the allowable range will start at the
-    ``start_position`` and continue through to the highest position value (i.e. ``4095``) and then continue from ``0`` until it reaches 
+    ``start_position`` and continue through to the highest position value (i.e. ``4095``) and then continue from ``0`` until it reaches
     the ``end_position``.
 
 
@@ -180,7 +180,7 @@ sensor platform to create individual sensors that will report the position to Ho
 .. code-block:: yaml
 
     as5600:
-      dir_pin: 22
+      dir_pin: GPIOXX
 
     sensor:
       - platform: as5600

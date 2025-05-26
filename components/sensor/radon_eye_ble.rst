@@ -29,7 +29,7 @@ The device will then listen for nearby devices, and display a message like this 
 .. code-block:: text
 
     [D][radon_eye_ble:017]:
-    Found Radon Eye RD200 device Name: FR:R20:SN1234      (MAC: 01:02:03:04:05:06)
+    Found Radon Eye RD200 device Name: FR:R20:SN1234      (MAC: XX:XX:XX:XX:XX:XX)
 
 Once the device is found, remove the ``radon_eye_ble`` device tracker from your configuration and
 take note of the device MAC address, and use it when configuring a sensor below.
@@ -61,7 +61,7 @@ Configuration example:
     esp32_ble_tracker:
 
     ble_client:
-      - mac_address: 01:02:03:04:05:06
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: radon_eye_ble_id
 
     sensor:
@@ -80,7 +80,7 @@ Here is an example to use pCi/L (to match the value on the device display):
     esp32_ble_tracker:
 
     ble_client:
-      - mac_address: 01:02:03:04:05:06
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: radon_eye_ble_id
 
     sensor:
@@ -99,4 +99,3 @@ Here is an example to use pCi/L (to match the value on the device display):
           accuracy_decimals: 2
           filters:
             - lambda: return x / 37;
-

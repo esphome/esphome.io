@@ -27,7 +27,7 @@ The following table shows the currently supported models of Vbus devices.
     "Dux H3214","deltasol_bs_2009","427B", "Pump 2 unsupported"
     "DeltaSol C","deltasol_c","4212"
     "DeltaSol CS2","deltasol_cs2","1121"
-    "DeltaSol CS2 Plus","deltasol_cs2_plus","2211"
+    "DeltaSol CS Plus","deltasol_cs_plus","2211"
 
 The ``Config Value`` should be used for the ``model`` parameter in your ``sensor`` and ``binary_sensor`` entries.
 
@@ -74,16 +74,8 @@ Component
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: resol
-      rx_pin: GPIO3
-      baud_rate: 9600
-
     vbus:
       uart_id: resol
-
-    logger:
-      baud_rate: 0 # disable uart logger on ESP8266
 
 .. warning::
 
@@ -234,7 +226,7 @@ Configuration variables:
 - **source** (**Required**): The address corresponding to ``your device model`` (see below).
 - **command** (**Required**): The ``command`` corresponding to your device (see below).
 - **sensors** (**Required**): A list of :ref:`Sensor <config-sensor>` definitions that include a ``lambda`` to do the decoding and return a ``float`` value.
-  
+
 - **lambda** (**Required**, :ref:`lambda <config-lambda>`): Code to parse a value from the incoming data packets and return it.
   The data packet is in a ``std::vector<uint8_t>`` called ``x``.
 

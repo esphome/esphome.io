@@ -20,8 +20,6 @@ You can create the binary sensor as follows:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the binary sensor.
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the binary sensor.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 

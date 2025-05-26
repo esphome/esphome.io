@@ -26,17 +26,9 @@ ESPHome configuration
 
 .. code-block:: yaml
 
-    esphome:
-      name: esp_infostrip
-
-    esp8266:
-      board: d1_mini
-
-    # TODO -> add your personal wifi, logging, api, ota settings here
-
     uart:
-      rx_pin: 4
-      tx_pin: 5
+      rx_pin: GPIOXX
+      tx_pin: GPIOXX
       baud_rate: 9600
 
     sensor:
@@ -57,7 +49,7 @@ ESPHome configuration
       - platform: fastled_clockless
         chipset: WS2812B
         id: light_fastled
-        pin: D4
+        pin: GPIOXX
         num_leds: 4
         rgb_order: GRB
         name: "Infostrip"
@@ -119,7 +111,7 @@ The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is don
           above: 1000
       condition: []
       action:
-        - service: light.turn_on
+        - action: light.turn_on
           data:
           color_name: red
           entity_id: light.pl2
@@ -133,7 +125,7 @@ The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is don
           below: 800
       condition: []
       action:
-        - service: light.turn_off
+        - action: light.turn_off
           entity_id: light.pl2
           mode: single
     - alias: "State Light Mapping"
@@ -142,7 +134,7 @@ The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is don
       # You can also match on interval. This will match every 5 minutes
       minutes: "/5"
       action:
-        - service: light.turn_on
+        - action: light.turn_on
           data_template:
           entity_id: light.pl1
           brightness_pct: 30

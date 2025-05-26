@@ -8,8 +8,8 @@ Peacefair PZEM-004T V3 Energy Monitor
 
 .. note::
 
-    This page is incomplete and could use some work. If you want to contribute, please read the
-    :doc:`contributing guide </guides/contributing>`. This page is missing:
+    This page is incomplete and could use some work. If you want to contribute, please see our
+    `developer site <https://developers.esphome.io>`__. This page is missing:
 
       - Images/screenshots/example configs of this device being used in action.
 
@@ -37,7 +37,7 @@ for more information.
     This page refers to version V3 of the PZEM004T.
     For using the older V1 variant of this sensor please see :doc:`pzem004t <pzem004t>`.
 
-The communication with this integration is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
+The communication with this component is done via a :ref:`UART <uart>` using :ref:`Modbus <modbus>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 

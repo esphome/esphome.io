@@ -28,12 +28,10 @@ Possible return values for the lambda:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the text sensor.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the new value of the text sensor
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   text sensor. Set to ``never`` to disable updates. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 .. _text_sensor-template-publish_action:
@@ -76,6 +74,42 @@ Configuration options:
     .. code-block:: cpp
 
         id(template_text).publish_state("Hello World");
+
+Useful Template Sensors
+-----------------------
+
+Here are some useful text sensors for debugging and tracking project info.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    text_sensor:
+      - platform: template
+        name: "ESPHome Project Version"
+        id: esphome_project_version_text_short
+        icon: "mdi:information-box"
+        entity_category: "diagnostic"
+        update_interval: 600s
+        lambda: |-
+          return { ESPHOME_PROJECT_VERSION };
+
+      - platform: template
+        name: "ESPHome Project Version Detailed"
+        id: esphome_project_version_text_detailed
+        icon: "mdi:information-box"
+        entity_category: "diagnostic"
+        update_interval: 600s
+        lambda: |-
+          return { ESPHOME_PROJECT_VERSION " " + App.get_compilation_time() };
+
+      - platform: template
+        name: "ESPHome Project Name"
+        id: esphome_project_name
+        icon: "mdi:information-box"
+        entity_category: "diagnostic"
+        update_interval: 600s
+        lambda: |-
+          return { ESPHOME_PROJECT_NAME };
 
 See Also
 --------
