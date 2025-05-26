@@ -44,6 +44,17 @@ Configuration variables:
     - ``64`` (Channel A, gain 64)
     - ``128`` (Channel A, gain 128)
 
+- **settling_time** (*Optional*, :ref:`config-time`): Time to wait after changing ADC parameters (e.g., power or gain) 
+  before taking a new reading. This helps ensure stable measurements. Defaults to ``400ms``.
+- **power_down_after_reading** (*Optional*, boolean): If set to ``true``, the HX711 will be powered down after each 
+  reading to save power. It will be powered up again automatically for the next measurement. Defaults to ``false``.
+- **measurement_ready_timeout** (*Optional*, :ref:`config-time`): Timeout for HX711 to signal that a measurement is 
+  ready. If the DOUT pin does not go low within this time, the component is marked as failed. Defaults to ``2000ms``.
+- **channel_b** (*Optional*): Enables reading from Channel B in addition to the primary measurement. If ``gain: 32`` 
+  is already selected, the same value will be reported on both sensors.
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
 
 - All other options from :ref:`Sensor <config-sensor>`.
