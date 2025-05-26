@@ -2,8 +2,8 @@
 
 import argparse
 import re
-from dataclasses import dataclass
 import sys
+from dataclasses import dataclass
 
 
 @dataclass
@@ -54,10 +54,6 @@ def write_version(version: Version):
         "Makefile",
         r"ESPHOME_REF = .*",
         f"ESPHOME_REF = {version}" if not version.dev else "ESPHOME_REF = dev",
-    )
-    # PROJECT_NUMBER         = 1.14.4
-    sub(
-        "Doxygen", r"PROJECT_NUMBER         = .*", f"PROJECT_NUMBER         = {version}"
     )
     # version = '1.14'
     sub("conf.py", r'version = ".*"', f'version = "{version.major}.{version.minor}"')

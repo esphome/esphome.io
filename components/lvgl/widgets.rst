@@ -1237,7 +1237,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
             - **value**: The value in the scale range to show at start.
             - **width**: Needle line width in pixels. Defaults to ``4``.
             - **opa**: Opacity of the needle. Defaults to 100%.
-        - **tick_style** (**Optional**): Add tick style modifications:
+        - **tick_style** (*Optional*): Add tick style modifications:
             - **color_end**: :ref:`Color <lvgl-color>` for the gradient end of the ticks.
             - **color_start**: :ref:`Color <lvgl-color>` for the gradient start of the ticks.
             - **end_value**: The value in the scale range to modify the ticks to.
@@ -1796,6 +1796,7 @@ The tabs are indexed (zero-based) in the order they appear in the configuration 
     - **widgets** (**Required**, list): A list of :doc:`/components/lvgl/widgets` to be drawn on the tab, as children.
 - **tab_style** (*Optional*): Style settings for the tabs.
     - **items** (*Optional*, dict): Settings for the items *part*, the buttons all use the text and typical background style properties except translations and transformations.
+- **content_style** (*Optional*): Style settings for the content area.
 
 **Actions:**
 

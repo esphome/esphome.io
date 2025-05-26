@@ -162,8 +162,8 @@ Configuration variables:
 - **temperature** (**Required**, float, :ref:`templatable <config-templatable>`):  
   Sets the value of an internal temperature sensor. The value will be **clamped** to the range:  
 
-  - `0 °C to 37 °C` when ``use_fahrenheit`` is ``false``.  
-  - `32 °F to 99 °F` when ``use_fahrenheit`` is ``true``.
+  - *0 °C to 37 °C* when ``use_fahrenheit`` is ``false``.  
+  - *32 °F to 99 °F* when ``use_fahrenheit`` is ``true``.
 
 - **use_fahrenheit** (*Optional*, boolean, :ref:`templatable <config-templatable>`):  
   Specifies if the ``temperature`` value is in Fahrenheit. When set to ``true``, the temperature is parsed and sent in Fahrenheit. Defaults to ``false`` (Celsius).

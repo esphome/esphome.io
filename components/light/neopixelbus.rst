@@ -129,7 +129,7 @@ settings vary by method:
   - **async** (*Optional*, boolean): Use an asynchronous transfer. Defaults to ``false``. If enabled,
     the logger must be disabled even if bus 1 is used.
 
-- **esp32_i2s**: The recommended method for ESP32, but not available on the ESP32-S3 or ESP32-C3.
+- **esp32_i2s**: The recommended method for ESP32, but not available on the ESP32-C3 or ESP32-S3.
   Available on all output pins. Additional options:
 
   - **bus** (*Optional*): The I2S bus to use. The ESP32 has bus 0 or 1 available, but the ESP32-S2 only bus 0.
@@ -138,7 +138,7 @@ settings vary by method:
 - **esp32_rmt**: An alternative method for ESP32 that uses the RMT peripheral to send data.
   Available on all output pins. Additional options:
 
-  - **channel** (*Optional*): The RMT channel to use. The ESP32 has channels 0-7, ESP32-S2 0-3, ESP32-S3 0-3, and ESP32-C3 0-1.
+  - **channel** (*Optional*): The RMT channel to use. The ESP32 has channels 0-7, ESP32-C3 0-1, ESP32-S2 0-3 and ESP32-S3 0-3.
     Defaults to 6 on ESP32, and 1 on other ESP32 variants.
 
 The following method is available only for two-wire chips (specify ``data_pin`` and ``clock_pin``):
