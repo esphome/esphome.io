@@ -8,7 +8,9 @@ HX711 Load Cell Amplifier
 
 The ``hx711`` sensor platform allows you to use your HX711
 load cell amplifier
-(`datasheet <https://www.mouser.com/ds/2/813/hx711_english-1022875.pdf>`__, `SparkFun`_) with ESPHome
+(`datasheet`_, `SparkFun`_) with ESPHome
+
+.. _datasheet: https://www.mouser.com/ds/2/813/hx711_english-1022875.pdf
 
 .. figure:: images/hx711-full.jpg
     :align: center
@@ -23,14 +25,14 @@ Connect ``GND`` to ``GND``, ``VCC`` to ``3.3V`` and the other two ``DOUT`` (or `
 and ``CLK`` (or ``SCK``) to free GPIO pins.
 
 The HX711 includes a secondary input channel (Channel B) which can be accessed by setting the ``gain`` to ``32``.
-According to the datasheet, instead of connecting another load cell to Channel B, it may be used for monitoring 
+According to the `datasheet`_, instead of connecting another load cell to Channel B, it may be used for monitoring 
 the power supply voltage or performing other measurements. This makes Channel B a convenient option for 
 simple diagnostics or system monitoring in addition to weight measurements on Channel A.
 Reporting both Channel A and Channel B values is supported by enabling the optional ``channel_b`` sensor.
 
 For power-saving applications, the HX711 is automatically powered down during device shutdown or reboot,
-so there is no need to manually call :ref:`hx711.power_down <hx711-action_power_down>`` in those cases.
-This makes it particularly suitable for use with :doc:`deep_sleep`` or :doc:`shutdown`.
+so there is no need to manually call :ref:`hx711.power_down <hx711-action_power_down>` in those cases.
+This makes it particularly suitable for use with :doc:`/components/deep_sleep` or :doc:`/components/button/shutdown`.
 
 .. code-block:: yaml
 
@@ -58,8 +60,8 @@ Configuration variables:
     - ``128`` (Channel A, gain 128)
 
 - **settling_time** (*Optional*, :ref:`config-time`): Time to wait after changing ADC parameters (e.g., power or gain) 
-  before taking a new reading. Taken from the datasheet: "Settling time refers to the time from power up, reset, 
-  input channel change and gain change to valid stable output data.". Defaults to ``400ms``.
+  before taking a new reading. Taken from the `datasheet`_: ``Settling time refers to the time from power up, reset, 
+  input channel change and gain change to valid stable output data.``. Defaults to ``400ms``.
 - **power_down_after_reading** (*Optional*, boolean): If set to ``true``, the HX711 will be powered down after each 
   reading to save power. It will be powered up again automatically for the next measurement. Defaults to ``false``.
 - **measurement_ready_timeout** (*Optional*, :ref:`config-time`): Timeout for HX711 to signal that a measurement is 
@@ -140,7 +142,7 @@ Configuration variables:
 Manually powers up the HX711 from sleep mode and resumes its operation.
 This also resumes polling by internally calling :ref:`component.resume <component-resume_action>`.
 
-Use this action after calling :ref:`hx711.power_down <hx711-action_power_down>`` to 
+Use this action after calling :ref:`hx711.power_down <hx711-action_power_down>` to 
 re-enable the sensor and continue measurements.
 
 .. note::
@@ -191,11 +193,11 @@ See Also
 --------
 
 - :ref:`sensor-filters`
-- :doc:`actions`
-- :doc:`templates`
+- :doc:`/automations/actions`
+- :doc:`/automations/templates`
 - :doc:`adc`
-- :doc:`deep_sleep`
-- :doc:`shutdown`
+- :doc:`/components/deep_sleep`
+- :doc:`/components/button/shutdown`
 - :apiref:`API Reference: HX711 <hx711/hx711.h>`
 - `HX711 Library <https://github.com/bogde/HX711>`__ by `@bogde <https://github.com/bogde>`__
 - :ghedit:`Edit`
