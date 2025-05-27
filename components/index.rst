@@ -63,6 +63,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Improv via Serial, components/improv_serial, improv.svg, dark-invert
     Interval, components/interval, description.svg, dark-invert
     JSON, components/json, json.svg, dark-invert
+    Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
 
@@ -98,6 +99,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
+    Packet Transport, components/packet_transport/index, packet_transport.svg, dark-invert
 
 Bluetooth/BLE
 -------------
@@ -107,6 +109,7 @@ Bluetooth/BLE
     ESP32 BLE Beacon, components/esp32_ble_beacon, bluetooth.svg, dark-invert
     ESP32 BLE Client, components/ble_client, bluetooth.svg, dark-invert
     ESP32 BLE Tracker, components/esp32_ble_tracker, bluetooth.svg, dark-invert
+    ESP32 BLE Server, components/esp32_ble_server, bluetooth.svg, dark-invert
     Bluetooth Proxy, components/bluetooth_proxy, bluetooth.svg, dark-invert
     Improv via BLE, components/esp32_improv, improv.svg, dark-invert
 
@@ -117,6 +120,7 @@ Management and Monitoring
 
     Debug, components/debug, bug-report.svg, dark-invert
     Logger, components/logger, file-document-box.svg, dark-invert
+    Syslog, components/syslog, file-document-box.svg, dark-invert
     Prometheus, components/prometheus, prometheus.svg
     StatsD, components/statsd, connection.svg, dark-invert
     Safe Mode, components/safe_mode, restart-alert.svg, dark-invert
@@ -156,6 +160,8 @@ Hardware Peripheral Interfaces/Busses
     OpenTherm, components/opentherm, opentherm.png
     SPI Bus, components/spi, spi.svg
     UART, components/uart, uart.svg
+    USB Host, components/usb_host, usb.svg
+    USB UART, components/usb_uart, usb.svg
 
 I/O Expanders/Multiplexers
 --------------------------
@@ -211,6 +217,7 @@ Air Quality
     AGS10, components/sensor/ags10, ags10.jpg, Volatile Organic Compound Sensor
     AirThings BLE, components/sensor/airthings_ble, airthings_logo.png, Radon, CO2, Volatile organics
     CCS811, components/sensor/ccs811, ccs811.jpg, CO2 & Volatile organics
+    CM1106, components/sensor/cm1106, cm1106.png, CO2
     EE895, components/sensor/ee895, EE895.png,  CO2 & Temperature & Pressure
     ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
     GCJA5, components/sensor/gcja5, gcja5.svg, Particulate
@@ -221,6 +228,7 @@ Air Quality
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MiCS-4514, components/sensor/mics_4514, mics_4514.jpg, Gas concentration
     PM1006 Sensor, components/sensor/pm1006, pm1006.jpg, Particulate
+    PM2005 Sensor, components/sensor/pm2005, pm2005.png, Particulate
     PMSA003I, components/sensor/pmsa003i, pmsa003i.jpg, Particulate
     PMSX003, components/sensor/pmsx003, pmsx003.svg, Particulate
     RadonEye BLE, components/sensor/radon_eye_ble, radon_eye_logo.png, Radon
@@ -475,6 +483,7 @@ Miscellaneous
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
     Rotary Encoder, components/sensor/rotary_encoder, rotary_encoder.jpg
     SMT100, components/sensor/smt100, smt100.jpg, Moisture & Temperature
+    Sound Level, components/sensor/sound_level, waveform.svg, dark-invert
     Tuya Sensor, components/sensor/tuya, tuya.png
     TX20, components/sensor/tx20, tx20.jpg, Wind speed & Wind direction
     uFire EC sensor, components/sensor/ufire_ec, ufire_ec.png, EC & Temperature
@@ -724,6 +733,7 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg
     ILI9342, components/display/ili9xxx, ili9342.svg
@@ -909,6 +919,7 @@ Output Components
     GP8403, components/output/gp8403, gp8403.svg
     GPIO Output, components/output/gpio, gpio.svg
     LibreTiny PWM, components/output/libretiny_pwm, pwm.png
+    MCP4661, components/output/mcp4461, mcp4461.jpg
     MCP4725, components/output/mcp4725, mcp4725.jpg
     MCP4728, components/output/mcp4728, mcp4728.jpg
     MCP47A1, components/output/mcp47a1, mcp47a1.svg
@@ -1087,8 +1098,8 @@ Cookbook
 Contributing
 ------------
 
-ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see
-:doc:`Contributing </guides/contributing>`.
+ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see our
+`developer site <https://developers.esphome.io>`__.
 
 .. toctree::
     :glob:
@@ -1126,4 +1137,5 @@ ESPHome depends on and welcomes contributions from our community. If you'd like 
     text/index
     update/index
     valve/index
+    packet_transport/index
     *
