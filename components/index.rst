@@ -7,7 +7,21 @@
 .. raw:: html
     :file: ../images/logo-docs.svg
 
-This page is an index of all of the hardware components and platforms ESPHome currently supports.
+This is the top-level ESPHome documentation index. Browse the tables below, use the sidebar menu, or the search
+function to find the information you're looking for.
+
+ESPHome Configuration
+---------------------
+
+ESPHome is configured in YAML files - use these links for basic and advanced
+information about ESPHome configuration files.
+
+.. imgtable::
+
+    YAML Configuration, guides/yaml, description.svg, dark-invert
+    Packages, components/packages, description.svg, dark-invert
+    Substitutions, components/substitutions, description.svg, dark-invert
+    External Components, components/external_components, external_components.svg, dark-invert
 
 .. _devices:
 
@@ -66,17 +80,6 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
-
-ESPHome Configuration
----------------------
-
-Streamline your ESPHome configuration and/or use components provided by other contributors.
-
-.. imgtable::
-
-    External Components, components/external_components, external_components.svg, dark-invert
-    Packages, components/packages, description.svg, dark-invert
-    Substitutions, components/substitutions, description.svg, dark-invert
 
 Network Hardware
 ----------------
@@ -160,6 +163,8 @@ Hardware Peripheral Interfaces/Busses
     OpenTherm, components/opentherm, opentherm.png
     SPI Bus, components/spi, spi.svg
     UART, components/uart, uart.svg
+    USB Host, components/usb_host, usb.svg
+    USB UART, components/usb_uart, usb.svg
 
 I/O Expanders/Multiplexers
 --------------------------
@@ -215,6 +220,7 @@ Air Quality
     AGS10, components/sensor/ags10, ags10.jpg, Volatile Organic Compound Sensor
     AirThings BLE, components/sensor/airthings_ble, airthings_logo.png, Radon, CO2, Volatile organics
     CCS811, components/sensor/ccs811, ccs811.jpg, CO2 & Volatile organics
+    CM1106, components/sensor/cm1106, cm1106.png, CO2
     EE895, components/sensor/ee895, EE895.png,  CO2 & Temperature & Pressure
     ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
     GCJA5, components/sensor/gcja5, gcja5.svg, Particulate
