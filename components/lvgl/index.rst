@@ -393,6 +393,8 @@ These style properties may be applied to any widget, though not all widgets use 
     - ``INTERNAL``
 - **clip_corner** (*Optional*, boolean): If set to ``true``, overflowing content will be clipped off by the widget's rounded corners (``radius`` > ``0``).
 - **color_filter_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to ``TRANSP``.
+- **image_recolor** (*Optional*, :ref:`color <lvgl-color>`): Color to mix with every pixel of an image Note that ``image_recolor_opa`` defaults to TRANSP, so it must also be set.
+- **image_recolor_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the image recoloring.
 - **outline_width** (*Optional*, int16): Set the width of the outline in pixels. Defaults to ``0``.
 - **outline_color** (*Optional*, :ref:`color <lvgl-color>`): Color used to draw an outline around the widget. Defaults to ``0`` (black).
 - **outline_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the outline of the widget. Defaults to ``COVER``.
