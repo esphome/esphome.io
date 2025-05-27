@@ -98,6 +98,7 @@ Custom Components & Code
 - `Rheem Econet Water Heater and Furnace Controller <https://github.com/esphome-econet/esphome-econet>`__ by `ESPHome-econet <https://github.com/esphome-econet>`__
 - `Garage Door Opener with position control using a relay and one or two reed sensors <https://github.com/tronikos/esphome-gdo>`__ by :ghuser:`tronikos`
 - `Medisana BS440 (and propably more scales) <https://github.com/bwynants/weegschaal>`__ by `bwynants <https://github.com/bwynants>`__
+- `Novy Pureline Pro extractor hood <https://github.com/bwynants/purelinepro>`__ by `bwynants <https://github.com/bwynants>`__
 
 Sample Configurations
 ---------------------
