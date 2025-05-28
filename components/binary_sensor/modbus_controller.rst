@@ -69,5 +69,5 @@ See Also
 - :doc:`/components/select/modbus_controller`
 - :doc:`/components/text_sensor/modbus_controller`
 - https://www.modbustools.com/modbus.html
-- :apiclass:`:modbus_controller::ModbusBinarySensor`
+- :apiclass:`modbus_controller::ModbusBinarySensor`
 - :ghedit:`Edit`
