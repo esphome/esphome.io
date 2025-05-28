@@ -14,6 +14,7 @@ Configuration variables:
 ------------------------
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the select.
+- **restore_value**: (*Optional*, bool) Restore the value of the select from non-volatile memory when the device is restarted. Defaults to ``false``.
 - All other variables from :ref:`Select <config-select>`.
 
 Example:

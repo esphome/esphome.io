@@ -645,5 +645,5 @@ See Also
 --------
 
 - :doc:`ESPHome index </index>`
-- :doc:`contributing`
+- `Developer site <https://developers.esphome.io>`__
 - :ghedit:`Edit`
