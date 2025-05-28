@@ -1,20 +1,24 @@
-UDP Sensor
-==========
+Packet Transport Sensor
+=======================
 
 .. seo::
-    :description: Instructions for setting up a UDP sensor.
-    :image: udp.svg
+    :description: Instructions for setting up a packet transport sensor.
+    :image: packet_transport.svg
 
-The ``udp`` sensor platform allows you to receive numeric sensor data directly from another ESPHome node.
+The ``packet_transport`` sensor platform allows you to receive numeric sensor data directly from another ESPHome node.
+It requires a ``packet_transport`` component to be configured.
 
 .. code-block:: yaml
 
     # Example configuration entry
     sensor:
-      - platform: udp
+      - platform: packet_transport
         id: temperature_id
         provider: thermometer
         remote_id: temp_id
+
+     packet_transport:
+       - platform: ...
 
 Configuration variables
 -----------------------
@@ -42,8 +46,8 @@ configured.
 See Also
 --------
 
-- :doc:`/components/udp`
+- :doc:`/components/packet_transport/index`
 - :doc:`/components/binary_sensor/index`
+- :doc:`/components/udp`
 - :ref:`automation`
-- :apiref:`udp/udp_component.h`
 - :ghedit:`Edit`

@@ -13,7 +13,7 @@ single or dual-wire data bus at speeds up to 1Mbps.
 CAN is an International Standardization Organization (ISO) defined serial communications bus originally
 developed for the automotive industry to replace the complex wiring harness with a two-wire bus. The
 specification calls for high immunity to electrical interference and the ability to self-diagnose and repair
-data errors. These features have led to CAN’s popularity in a variety of industries including building
+data errors. These features have led to CAN's popularity in a variety of industries including building
 automation, medical, and manufacturing.
 
 The current ESPHome implementation supports single frame data transfer. In this way you may send and
@@ -59,7 +59,7 @@ Each ``canbus`` platform extends the following configuration schema:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **can_id** (**Required**, int): default *CAN ID* used for transmitting frames.
 - **use_extended_id** (*Optional*, boolean): Identifies the type of ``can_id``:
-  
+
   - ``false``: Standard 11-bit IDs *(default)*
   - ``true``: Extended 29-bit IDs
 
@@ -190,7 +190,7 @@ The CAN bus can transmit frames by means of the ``canbus.send`` action. There ar
   CAN bus platforms defined in your configuration.
 - **can_id** (*Optional*, int): Allows overriding the ``can_id`` configured for the CAN bus device.
 - **use_extended_id** (*Optional*, boolean): Identifies the type of ``can_id``:
-  
+
   - ``false``: Standard 11-bit IDs *(default)*
   - ``true``: Extended 29-bit IDs
 

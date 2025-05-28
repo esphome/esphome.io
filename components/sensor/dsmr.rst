@@ -9,7 +9,7 @@ Component/Hub
 -------------
 
 The DSMR component connects to Dutch Smart Meters which comply to DSMR (Dutch Smart Meter
-Requirements), also known as ‘Slimme meter’ or ‘P1 port’.
+Requirements), also known as 'Slimme meter' or 'P1 port'.
 
 This component supports plain non encrypted telegrams and also encrypted as used in Luxembourg.
 In case your equipment has encryption you must get a 32 character long encryption key from your energy company.
@@ -256,8 +256,8 @@ Configuration variables:
 
   - All options from :ref:`Text Sensor <config-text_sensor>`.
 
-- **telegram** (*Optional*): The (decrypted) unparsed telegram, marked as internal sensor. 
-  Can also be used to trigger an action based on the last values. 
+- **telegram** (*Optional*): The (decrypted) unparsed telegram, marked as internal sensor.
+  Can also be used to trigger an action based on the last values.
 
   - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
@@ -414,7 +414,7 @@ You can use another uart to supply another P1 receiver with the same telegram. S
       uart_id: p1_uart
       max_telegram_length: 1700
 
-    # log the telegram and pass telegram to p1_bridge_uart 
+    # log the telegram and pass telegram to p1_bridge_uart
     text_sensor:
       - platform: dsmr
         telegram:

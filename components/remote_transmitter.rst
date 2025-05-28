@@ -50,14 +50,15 @@ ESP32 IDF configuration variables:
       :header: "ESP32 Variant", "Memory Size", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-S2", "256 symbols", "64 symbols"
+      "ESP32-S3", "384 symbols", "48 symbols"
 
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
-- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to ``1000000``.
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
+  the DMA buffer size and can be set to a large value.
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``pin``
   is set to inverted or open-drain.
 
@@ -70,11 +71,11 @@ ESP32 Arduino configuration variables:
       :header: "ESP32 Variant", "Channels"
 
       "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "0, 1, 2, 3"
       "ESP32-C3", "0, 1"
       "ESP32-C6", "0, 1"
       "ESP32-H2", "0, 1"
+      "ESP32-S2", "0, 1, 2, 3"
+      "ESP32-S3", "0, 1, 2, 3"
 
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.
@@ -205,6 +206,25 @@ Configuration variables:
 AEHA refers to the Association for Electric Home Appliances in Japan, a format used by Panasonic and many other
 companies.
 
+.. _remote_transmitter-transmit_beo4:
+
+``remote_transmitter.transmit_beo4`` **Action**
+
+This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_beo4:
+          source: '0x01'
+          command: '0x0d'
+
+Configuration variables:
+
+- **source** (**Required**, int): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
+- **command** (**Required**, int): The command to send, e.g. 0x01=num1, 0x0d=mute,...,  see dumper output for more info.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+
 .. _remote_transmitter-transmit_byronsx:
 
 ``remote_transmitter.transmit_byronsx`` **Action**
@@ -234,7 +254,7 @@ This :ref:`action <config-action>` sends a CanalSat infrared remote code to a re
 
 .. note::
 
-    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56khz) and are very similar.
+    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 .. code-block:: yaml
@@ -262,7 +282,7 @@ This :ref:`action <config-action>` sends a CanalSatLD infrared remote code to a 
 
 .. note::
 
-    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56khz) and are very similar.
+    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 .. code-block:: yaml
@@ -372,6 +392,37 @@ Configuration variables:
 - **channel** (**Required**, int): The switch/channel to send, between 0 and 127 inclusive.
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from :ref:`remote_transmitter-transmit_action`.
+
+.. _remote_transmitter-transmit_gobox:
+
+``remote_transmitter.transmit_gobox`` **Action**
+
+This :ref:`action <config-action>` sends a command to a Go-Box via the IR transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_gobox:
+          code: 0xfa05
+
+Configuration variables:
+
+- **code** (**Required**, int): The command to send. Known commands are:
+  - MENU = 0xaa55,
+  - RETURN = 0x22dd,
+  - UP = 0x0af5,
+  - LEFT = 0x8a75,
+  - RIGHT = 0x48b7,
+  - DOWN = 0xa25d,
+  - OK = 0xc837,
+  - TOGGLE = 0xb847,
+  - PROFILE = 0xfa05
+  - FASTER = 0xf00f,
+  - SLOWER = 0xd02f,
+  - LOUDER = 0xb04f,
+  - SOFTER = 0xf807,
+
+  - All other options from :ref:`remote_transmitter-transmit_action`.
 
 .. _remote_transmitter-transmit_jvc:
 
