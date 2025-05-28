@@ -124,7 +124,7 @@ The default automatic-cleaning interval is 168 hours (1 week) of uninterrupted u
 Disabling of automatic-cleaning or setting a manual interval is not supported at the moment.
 
 
-.. _sps30_start_autoclean_fan_action:
+.. _sps30-start_fan_autoclean_action:
 
 Manual Cleaning
 ---------------
