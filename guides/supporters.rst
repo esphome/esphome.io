@@ -701,6 +701,7 @@ Contributors
 - `Frank Langtind (@frankiboy1) <https://github.com/frankiboy1>`__
 - `Frankster-NL (@Frankster-NL) <https://github.com/Frankster-NL>`__
 - `frauhottelmann (@frauhottelmann) <https://github.com/frauhottelmann>`__
+- `Joe Groocock (@frebib) <https://github.com/frebib>`__
 - `Fredrik Erlandsson (@fredrike) <https://github.com/fredrike>`__
 - `freeasabeer (@freeasabeer) <https://github.com/freeasabeer>`__
 - `FreeBear-nc (@FreeBear-nc) <https://github.com/FreeBear-nc>`__
@@ -1645,6 +1646,7 @@ Contributors
 - `Regev Brody (@regevbr) <https://github.com/regevbr>`__
 - `Rei Vilo (@rei-vilo) <https://github.com/rei-vilo>`__
 - `Alex Reid (@reidprojects) <https://github.com/reidprojects>`__
+- `Devon G. Redekopp (@Renegade605) <https://github.com/Renegade605>`__
 - `RenierM26 (@RenierM26) <https://github.com/RenierM26>`__
 - `Reuben (@reubn) <https://github.com/reubn>`__
 - `RFDarter (@RFDarter) <https://github.com/RFDarter>`__
@@ -1653,6 +1655,7 @@ Contributors
 - `Robert Gabrielson (@rgabrielson11) <https://github.com/rgabrielson11>`__
 - `Rob Gray (@rgr4y) <https://github.com/rgr4y>`__
 - `Rafael Goes (@rgriffogoes) <https://github.com/rgriffogoes>`__
+- `Ralf Habacker (@rhabacker) <https://github.com/rhabacker>`__
 - `rheinz (@rheinz) <https://github.com/rheinz>`__
 - `Rhys79 (@Rhys79) <https://github.com/Rhys79>`__
 - `richardhopton (@richardhopton) <https://github.com/richardhopton>`__
@@ -2140,4 +2143,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated May 21, 2025.*
+*This page was last updated May 27, 2025.*
