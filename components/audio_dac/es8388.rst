@@ -3,11 +3,8 @@ ES8388
 
 .. seo::
     :description: Instructions for using ESPHome's es8388 audio DAC platform to play media from your devices and to configure microphone inputs.
+    :image: es8388.svg
     :keywords: ES8388, Audio, DAC, I2S, ESP32
-
-Component
----------
-.. _config-es8388-component:
 
 The ``es8388`` component allows your ESPHome devices to use the es8388 low power audio codec (`datasheet <http://www.everest-semi.com/pdf/ES8388%20DS.pdf>`__)
 This allows the playback of audio through two channel high performance audio DAC output via the microcontroller from a range of sources via :doc:`/components/speaker/index` or
@@ -17,8 +14,10 @@ It also allows your ESPHome devices to use the ``es8388``  high performance two 
 
 This allows attached microphones to be used as a microphone input via :doc:`/components/microphone/i2s_audio`.
 
-
 The :ref:`I²C bus <i2c>` is required in your configuration as this is used to communicate with the es8388.
+
+Audio DAC
+---------
 
 .. code-block:: yaml
 
@@ -26,10 +25,8 @@ The :ref:`I²C bus <i2c>` is required in your configuration as this is used to c
     audio_dac:
      - platform: es8388
 
-
-
 Configuration variables:
-------------------------
+************************
 - **address** (*Optional*, int): The I²C address of the driver. Defaults to ``0x10``.
 - **i2c_id** (*Optional*): The ID of the :ref:`I²C bus <i2c>` the ES8388 is connected to.
 - All other options from :ref:`Audio DAC <config-audio_dac>`.
@@ -54,20 +51,28 @@ Configuration variables:
 ************************
 
 - **es8388_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`es8388` component.
-- **dac_output** (*Required*): Control the DAC Audio output. Defaults to ``LINE1``. It can be set to ``LINE1``, ``LINE2`` or
-  ``BOTH``. All options from :ref:`Select <config-select>`.
-- **adc_input_mic** (*Required*): Control the ADC Mic Input. It can be set to ``LINE1``, ``LINE2`` or
-  ``DIFFERENCE``. All options from :ref:`Select <config-select>`.
+- **dac_output** (*Optional*): Control the DAC Audio output.
 
-Example configuration:
-----------------------
+  - ``LINE1`` (default)
+  - ``LINE2``
+  - ``BOTH``
 
-Here is the complete example configuration for :doc:`es8388`.
+  All options from :ref:`Select <config-select>`.
+
+- **adc_input_mic** (*Optional*): Control the ADC Mic Input.
+
+  - ``LINE1`` (default)
+  - ``LINE2``
+  - ``DIFFERENCE``
+
+  All options from :ref:`Select <config-select>`.
+
 
 Automations
 -----------
 
 All :ref:`Audio DAC Automations <automations-audio_dac>` are supported by this platform.
+
 
 Configuration Examples
 ----------------------
