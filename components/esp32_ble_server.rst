@@ -225,7 +225,7 @@ This action sets the value of a characteristic. A characteristic may not have a 
 
     on_...:
       then:
-        - ble_server.characteristic_set_value:
+        - ble_server.characteristic.set_value:
             id: test_write_characteristic
             value: [0, 1, 2]
 
@@ -245,7 +245,7 @@ This action triggers a notification to the client. The value sent will be the cu
 
     on_...:
       then:
-        - ble_server.characteristic_notify:
+        - ble_server.characteristic.notify:
             id: test_notify_characteristic
 
 Configuration variables:
@@ -263,7 +263,7 @@ This action sets the value of a descriptor.
 
     on_...:
       then:
-        - ble_server.descriptor:
+        - ble_server.descriptor.set_value:
             id: test_write_descriptor
             value: [0, 1, 2]
 
