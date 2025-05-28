@@ -90,6 +90,19 @@ For energy meters that use the :doc:`atm90e32 </components/sensor/atm90e32>` ene
 and Gelidus Research, support was added for semi-automatic gain & offset calibration, and status messages for each
 phase & frequency. An apparent power sensor was also added.
 
+Release 2025.5.1 - May 27
+-------------------------
+
+- [core] Add some missing includes :esphomepr:`8864` by :ghuser:`jesserockz`
+- [tuya_select] - Fix datapoint config error. :esphomepr:`8871` by :ghuser:`Cossid`
+- [online_image] Allocate pngle manually to potentially use psram :esphomepr:`8354` by :ghuser:`jesserockz`
+- [lvgl] Improve error messages from text validation :esphomepr:`8872` by :ghuser:`clydebarrow`
+- [micro_wake_word] avoid duplicated detections from same event :esphomepr:`8877` by :ghuser:`kahrendt`
+- [speaker] ensure the pipeline returns an error state before returning its stopped :esphomepr:`8878` by :ghuser:`kahrendt`
+- [logger] Fix options in select :esphomepr:`8875` by :ghuser:`jesserockz`
+- [esp32] Fix building on IDF 4 :esphomepr:`8892` by :ghuser:`kbx81`
+- [api] Fix crash with gcc compiler on host :esphomepr:`8902` by :ghuser:`jesserockz`
+- [web_server] Fix download list where external_components has a substitution value :esphomepr:`8911` by :ghuser:`jesserockz`
 
 Full list of changes
 --------------------
@@ -123,41 +136,43 @@ Breaking Changes
 Beta Changes
 ^^^^^^^^^^^^
 
-- [media_player] Deprecate ``MEDIA_PLAYER_SCHEMA`` :esphomepr:`8784` by :ghuser:`jesserockz`
-- [schema] Get component name if available for deprecation warning :esphomepr:`8785` by :ghuser:`jesserockz`
-- [fan] Update components to use ``fan_schema(...)`` :esphomepr:`8786` by :ghuser:`jesserockz`
-- Improve batching of BLE advertisements for better airtime efficiency :esphomepr:`8778` by :ghuser:`bdraco`
-- Fix release to pypi :esphomepr:`8789` by :ghuser:`jesserockz`
-- [climate] Update components to use ``climate_schema(...)`` :esphomepr:`8788` by :ghuser:`jesserockz`
-- Bump esphome-dashboard to 20250514.0 :esphomepr:`8790` by :ghuser:`jesserockz`
-- Avoid protobuf message construction when tx buffer is full :esphomepr:`8787` by :ghuser:`bdraco`
-- Update some sensor schemas to be Optional :esphomepr:`8803` by :ghuser:`jesserockz`
-- Use fixed buffer for plaintext protocol like noise protocol :esphomepr:`8800` by :ghuser:`bdraco`
-- Optimize protobuf varint decoder for ESPHome use case :esphomepr:`8791` by :ghuser:`bdraco`
-- Logger Recursion Guard per Task on ESP32 :esphomepr:`8765` by :ghuser:`bdraco`
-- [log] improve/refactor ``log`` :esphomepr:`8708` by :ghuser:`ximex`
-- [gps] update lib, improve code/tests/config :esphomepr:`8768` by :ghuser:`ximex`
-- Fix ESP32 Camera class inheritance :esphomepr:`8811` by :ghuser:`bdraco`
-- [sen5x] Fix validation for values read from hardware :esphomepr:`8769` by :ghuser:`kbx81`
-- Fix the case of single error :esphomepr:`8824` by :ghuser:`asergunov`
-- Revert "[binary_sensor] initial state refactor" :esphomepr:`8828` by :ghuser:`clydebarrow`
-- Fix misspelling of climate in climate_ir.climate_ir_with_receiver_schema :esphomepr:`8829` by :ghuser:`warthog618`
-- Fix ESP32 console logging corruption and message loss in multi-task :esphomepr:`8806` by :ghuser:`bdraco`
-- Reduce number of calls to fetch time in the main loop :esphomepr:`8804` by :ghuser:`bdraco`
-- Refactor API frame helpers to enable buffer reuse :esphomepr:`8825` by :ghuser:`bdraco`
-- Bump docker/build-push-action from 6.16.0 to 6.17.0 in /.github/actions/build-image :esphomepr:`8810` by :ghuser:`dependabot[bot]`
-- Update esp32-camera library version :esphomepr:`8832` by :ghuser:`Fexiven`
-- Fix api doc homepage :esphomepr:`8836` by :ghuser:`jesserockz`
-- Deploy doxygen docs to netlify :esphomepr:`8837` by :ghuser:`jesserockz`
-- [release] Fix output value :esphomepr:`8839` by :ghuser:`jesserockz`
-- [release] Don't wait for docker to be finished before deploying schema :esphomepr:`8838` by :ghuser:`jesserockz`
-- Fix API connection sending ping too early after connection establishment :esphomepr:`8840` by :ghuser:`bdraco`
-- Fix ethernet connection timeout issue caused by incorrect time value during setup :esphomepr:`8841` by :ghuser:`bdraco`
-- [docker] Update pip on build :esphomepr:`8835` by :ghuser:`jesserockz`
-- [api-docs] Run using netlify builders :esphomepr:`8842` by :ghuser:`jesserockz`
-- Fix #ifdefs :esphomepr:`8853` by :ghuser:`clydebarrow`
-- [at581x] Fix issue with methods not being public :esphomepr:`8852` by :ghuser:`gpambrozio`
-- [api-docs] Move netlify.toml to root :esphomepr:`8861` by :ghuser:`jesserockz`
+.. collapse:: Show
+
+    - [media_player] Deprecate ``MEDIA_PLAYER_SCHEMA`` :esphomepr:`8784` by :ghuser:`jesserockz`
+    - [schema] Get component name if available for deprecation warning :esphomepr:`8785` by :ghuser:`jesserockz`
+    - [fan] Update components to use ``fan_schema(...)`` :esphomepr:`8786` by :ghuser:`jesserockz`
+    - Improve batching of BLE advertisements for better airtime efficiency :esphomepr:`8778` by :ghuser:`bdraco`
+    - Fix release to pypi :esphomepr:`8789` by :ghuser:`jesserockz`
+    - [climate] Update components to use ``climate_schema(...)`` :esphomepr:`8788` by :ghuser:`jesserockz`
+    - Bump esphome-dashboard to 20250514.0 :esphomepr:`8790` by :ghuser:`jesserockz`
+    - Avoid protobuf message construction when tx buffer is full :esphomepr:`8787` by :ghuser:`bdraco`
+    - Update some sensor schemas to be Optional :esphomepr:`8803` by :ghuser:`jesserockz`
+    - Use fixed buffer for plaintext protocol like noise protocol :esphomepr:`8800` by :ghuser:`bdraco`
+    - Optimize protobuf varint decoder for ESPHome use case :esphomepr:`8791` by :ghuser:`bdraco`
+    - Logger Recursion Guard per Task on ESP32 :esphomepr:`8765` by :ghuser:`bdraco`
+    - [log] improve/refactor ``log`` :esphomepr:`8708` by :ghuser:`ximex`
+    - [gps] update lib, improve code/tests/config :esphomepr:`8768` by :ghuser:`ximex`
+    - Fix ESP32 Camera class inheritance :esphomepr:`8811` by :ghuser:`bdraco`
+    - [sen5x] Fix validation for values read from hardware :esphomepr:`8769` by :ghuser:`kbx81`
+    - Fix the case of single error :esphomepr:`8824` by :ghuser:`asergunov`
+    - Revert "[binary_sensor] initial state refactor" :esphomepr:`8828` by :ghuser:`clydebarrow`
+    - Fix misspelling of climate in climate_ir.climate_ir_with_receiver_schema :esphomepr:`8829` by :ghuser:`warthog618`
+    - Fix ESP32 console logging corruption and message loss in multi-task :esphomepr:`8806` by :ghuser:`bdraco`
+    - Reduce number of calls to fetch time in the main loop :esphomepr:`8804` by :ghuser:`bdraco`
+    - Refactor API frame helpers to enable buffer reuse :esphomepr:`8825` by :ghuser:`bdraco`
+    - Bump docker/build-push-action from 6.16.0 to 6.17.0 in /.github/actions/build-image :esphomepr:`8810` by :ghuser:`dependabot[bot]`
+    - Update esp32-camera library version :esphomepr:`8832` by :ghuser:`Fexiven`
+    - Fix api doc homepage :esphomepr:`8836` by :ghuser:`jesserockz`
+    - Deploy doxygen docs to netlify :esphomepr:`8837` by :ghuser:`jesserockz`
+    - [release] Fix output value :esphomepr:`8839` by :ghuser:`jesserockz`
+    - [release] Don't wait for docker to be finished before deploying schema :esphomepr:`8838` by :ghuser:`jesserockz`
+    - Fix API connection sending ping too early after connection establishment :esphomepr:`8840` by :ghuser:`bdraco`
+    - Fix ethernet connection timeout issue caused by incorrect time value during setup :esphomepr:`8841` by :ghuser:`bdraco`
+    - [docker] Update pip on build :esphomepr:`8835` by :ghuser:`jesserockz`
+    - [api-docs] Run using netlify builders :esphomepr:`8842` by :ghuser:`jesserockz`
+    - Fix #ifdefs :esphomepr:`8853` by :ghuser:`clydebarrow`
+    - [at581x] Fix issue with methods not being public :esphomepr:`8852` by :ghuser:`gpambrozio`
+    - [api-docs] Move netlify.toml to root :esphomepr:`8861` by :ghuser:`jesserockz`
 
 All changes
 ^^^^^^^^^^^
