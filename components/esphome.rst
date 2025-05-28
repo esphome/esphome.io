@@ -30,9 +30,13 @@ Configuration variables:
   characters, digits and hyphens, and can be at most 24 characters long by default, or 31
   characters long if ``name_add_mac_suffix`` is ``false``.
   See :ref:`esphome-changing_node_name`.
-- **friendly_name** (*Optional*, string): This is the name sent to the frontend. It is used
-  by Home Assistant as the integration name, device name, and is automatically prefixed to entities
-  where necessary.
+- **friendly_name** (*Optional*, string):
+  This name is sent to the frontend and used by Home Assistant as  
+  the integration and device name. It also gets prefixed to entity  
+  names when needed. While optional, leaving it out can result in  
+  less intuitive names and a less polished experience in Home  
+  Assistant. Setting a ``friendly_name`` helps keep things clear,  
+  consistent, and easier to manage.
 - **area** (*Optional*, string): This is the area sent to the frontend. It is used
   by Home Assistant as the area / zone which the node belongs to.
 
@@ -41,13 +45,13 @@ Advanced options:
 - **build_path** (*Optional*, string): Customize where ESPHome will store the build files
   for your node. By default, ESPHome puts the PlatformIO project it uses to build the
   firmware in the ``.esphome/build/<NODE>`` (or into path from ``ESPHOME_BUILD_PATH`` environment variable if specified) directory,
-  but you can customize this behavior using this option. Official docker image automatically use `/build` folder
+  but you can customize this behavior using this option. Official docker image automatically use ``/build`` folder
   as default one in case it is mounted to it.
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See :ref:`esphome-platformio_options`.
-- **includes** (*Optional*, list of files): A list of C/C++ files to include in the main (auto-generated) sketch file
-  for custom components. The paths in this list are relative to the directory where the YAML configuration file
-  is in. See :ref:`esphome-includes`.
+- **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) ``main`` file.
+  The paths in this list are relative to the directory where the YAML configuration file is located or ``<...>`` includes.
+  See :ref:`esphome-includes`.
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
   :ref:`esphome-libraries`.
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
@@ -66,17 +70,7 @@ Advanced options:
   See :ref:`esphome-min_version`.
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
-
-Old-style platform options, which have been moved to the platform-specific :doc:`esp32 </components/esp32>` and
-:doc:`esp8266 </components/esp8266>` sections but are still accepted here for compatibility reasons (usage not
-recommended for new projects):
-
-- **platform** (**Required**, string): The platform used, either ``esp8266`` or ``esp32``.
-- **board** (**Required**, string): The board used, see
-  :doc:`esp32 </components/esp32>` and :doc:`esp8266 </components/esp8266>` for more information.
-- **arduino_version** (*Optional*, string): The version of the Arduino framework to compile the project against.
-- **esp8266_restore_from_flash** (*Optional*, boolean): For ESP8266s, whether to store some persistent preferences in flash
-  memory.
+- **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
 
 Automations:
 
@@ -100,10 +94,9 @@ is already set up. You can however change this using the ``priority`` parameter.
     esphome:
       # ...
       on_boot:
-        priority: 600
-        # ...
-        then:
-          - switch.turn_off: switch_1
+        - priority: 600
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -138,9 +131,9 @@ too many WiFi/MQTT connection attempts, Over-The-Air updates being applied or th
     esphome:
       # ...
       on_shutdown:
-        priority: 700
-        then:
-          - switch.turn_off: switch_1
+        - priority: 700
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -206,9 +199,12 @@ The ``includes`` option is only a helper option that does that for you.
       # ...
       includes:
         - my_switch.h
+        - <mylib.h>
 
 This option behaves differently depending on what the included file is pointing at:
 
+ - If the include string is written as <mylib> or "<mylib>", the line ``#include <mylib>`` is
+   added to the beginning of the ``main.cpp`` file.
  - If the include string is pointing at a directory, the entire directory tree is copied into the
    src/ folder.
  - If the include string points to a header file (.h, .hpp, .tcc), it is copied in the src/ folder
@@ -222,9 +218,8 @@ This option behaves differently depending on what the included file is pointing 
 ``libraries``
 -------------
 
-With the ``libraries`` option it is possible to include libraries in the PlatformIO project. These libraries will then
-be compiled into the resulting firmware, and can be used in code from :ref:`lambdas <config-lambda>` and from
-custom components.
+The ``libraries`` option allows you to include libraries in the PlatformIO project. These libraries will then be
+compiled into the resulting firmware and may be used by :ref:`lambdas <config-lambda>`.
 
 .. code-block:: yaml
 
@@ -255,8 +250,11 @@ this option. If they are used by another library, they should be listed before t
 
 .. _preferences-flash_write_interval:
 
-Adjusting flash writes
-------------------------
+Preferences Component
+---------------------
+
+This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
+state of a light or the accumulated energy used by an appliance.
 
 .. code-block:: yaml
 
@@ -264,9 +262,11 @@ Adjusting flash writes
     preferences:
       flash_write_interval: 1min
 
+Configuration variables:
+
 - **flash_write_interval** (*Optional*, :ref:`config-time`): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
-  written to the flash and wearing it out. Defaults to ``1min``.
+  written to the flash and wearing it out. Defaults to ``1min``. Set to ``never`` to disable this feature.
 
 As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
 due to quickly changing components. In the past, when components such as ``light``, ``switch``, ``fan`` and ``globals``
@@ -278,7 +278,7 @@ A safety feature has thus been implemented to mitigate issues resulting from the
 the state is first stored in memory before being flushed to flash after the ``flash_write_interval`` has passed. This
 results in fewer flash writes, preserving the flash health.
 
-This behavior can be disabled by setting ``flash_write_interval`` to ``0s`` to immediately commit the state to flash,
+This behavior can be modified by setting ``flash_write_interval`` to ``0s`` to commit the changes to flash as soon as possible,
 however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
 
 For :doc:`ESP8266 </components/esp8266>`, ``restore_from_flash`` must also be set to ``true`` for states to be written to flash.

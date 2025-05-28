@@ -6,7 +6,7 @@ DIY Examples
     :image: earth.svg
 
 This is a curated list of awesome creations with ESPHome containing various
-custom components, blog posts, videos and sample configurations. It should serve as a means of
+external components, blog posts, videos and sample configurations. It should serve as a means of
 finding inspiration for new projects and finding other ESPHome-enthusiasts on the web.
 
 This page purposefully has little moderation. Found something great or have something to share?
@@ -16,7 +16,7 @@ unless it's truly exceptional, etc.
 
 .. warning::
 
-    These configurations and custom components are *not officially maintained* by the
+    These configurations and external components are *not officially maintained* by the
     ESPHome team. If an API changes or there's a breaking change, it's up to the author to update
     the post.
 
@@ -61,6 +61,8 @@ Blog Posts & Videos
 - `Read your water meter or gas meter using a triple-axis magnetometer <https://github.com/tronikos/esphome-magnetometer-water-gas-meter>`__ by :ghuser:`tronikos`
 - `Garage door opener controller for devices with optical encoder <https://github.com/serg987/ESPHomeGarageDoorOpener>`__ by :ghuser:`serg987`
 - `An IoT clock designed for children <https://github.com/chrisns/childrens-clock>`__ by :ghuser:`chrisns`
+- `Remote controller RC433 for garage door open <https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en>`__ by `lubomirkarlik <https://dedeideas.eu/index.php/en-us/about-me>`__
+- `How to create an ESPHome external component <https://medium.com/@vinsce/create-an-esphome-external-component-part-1-introduction-config-validation-and-code-generation-e0389e674bd6>`__ by :ghuser:`vinsce`
 
 Custom Components & Code
 ------------------------
@@ -97,6 +99,7 @@ Custom Components & Code
 - `Rheem Econet Water Heater and Furnace Controller <https://github.com/esphome-econet/esphome-econet>`__ by `ESPHome-econet <https://github.com/esphome-econet>`__
 - `Garage Door Opener with position control using a relay and one or two reed sensors <https://github.com/tronikos/esphome-gdo>`__ by :ghuser:`tronikos`
 - `Medisana BS440 (and propably more scales) <https://github.com/bwynants/weegschaal>`__ by `bwynants <https://github.com/bwynants>`__
+- `Novy Pureline Pro extractor hood <https://github.com/bwynants/purelinepro>`__ by `bwynants <https://github.com/bwynants>`__
 
 Sample Configurations
 ---------------------

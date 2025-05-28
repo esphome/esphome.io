@@ -6,7 +6,7 @@ Audio DAC Core
     :image: i2s_audio.svg
     :keywords: Audio, DAC, I2S, ESP32
 
-The `audio_dac` component allows your ESPHome devices to use audio DAC hardware components, allowing the playback of
+The ``audio_dac`` component allows your ESPHome devices to use audio DAC hardware components, allowing the playback of
 audio via the microcontroller from a range of sources via :doc:`/components/media_player/index`.
 
 .. code-block:: yaml
@@ -14,6 +14,15 @@ audio via the microcontroller from a range of sources via :doc:`/components/medi
     # Example configuration entry
     audio_dac:
       - platform: ...
+
+Platforms
+---------
+
+.. toctree::
+    :maxdepth: 1
+    :glob:
+
+    *
 
 .. _config-audio_dac:
 
@@ -55,15 +64,6 @@ Configuration variables:
 - **id** (**Required**, :ref:`config-id`): The ID of the ``audio_dac`` platform.
 - **volume** (**Required**, percentage, :ref:`templatable <config-templatable>`): The desired volume level for the
   output from 0% to 100%.
-
-Platforms
----------
-
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    *
 
 See Also
 --------
