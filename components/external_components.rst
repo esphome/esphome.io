@@ -8,7 +8,8 @@ External Components
 You can easily import community or personal components using the external components feature.
 Bundled components can be overridden using this feature.
 
-You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
+If you want to create your own components/platforms for ESPHome, please see our
+`developer site <https://developers.esphome.io>`__.
 
 .. code-block:: yaml
 

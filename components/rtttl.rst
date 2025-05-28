@@ -175,7 +175,7 @@ Sample code
 
     api:
       actions:
-        - action: play_rtttl
+        - action: rtttl_play
           variables:
             song_str: string
           then:

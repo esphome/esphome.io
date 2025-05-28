@@ -33,7 +33,7 @@ All display components inherit these configuration variables.
 
 All *graphical* displays also inherit these configuration variables.
 
-- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to ``true``.
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to ``true`` if a lambda or pages are configured, false otherwise.
 - **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to ``false``. If set, any code in the ``lambda`` config option will be ignored.
 - **rotation** (*Optional*, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to ``0``.
 - **pages** (*Optional*, list): Pages configuration - see below.

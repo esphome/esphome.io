@@ -35,10 +35,11 @@ Configuration variables:
 
 - **channel** (*Optional*, enum): The channel of the speaker. One of ``left``, ``right``, ``mono``, or ``stereo``. If ``stereo``, the input data should be twice as big,
   with each right sample followed by a left sample. ``left`` and ``right`` mute the unused channel, while ``mono`` plays the same samples on both. Defaults to ``mono``.
-- **sample_rate** (*Optional*, positive integer): I2S sample rate. Defaults to ``16000``.
-- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples. Note that while set to ``24bit`` or ``32bit``, the samples
-  will be scaled up from 16bit before being forwarded. One of ``8bit``, ``16bit``, ``24bit``, or ``32bit``. Defaults to ``16bit``.
-- **bits_per_channel** (*Optional*, enum): The bit depth of the audio channels. See the datasheet of your I2S device for details. Defaults to ``bits_per_sample``.
+- **sample_rate** (*Optional*, positive integer): I2S sample rate. If in ``primary`` I²S mode the sample rate of the audio stream is used. Defaults to ``16000``.
+- **bits_per_sample** (*Optional*, enum): The bit depth of the audio samples sent to the DAC. One of ``8bit``, ``16bit``, ``24bit``, or ``32bit``. Defaults to ``16bit``.
+- **bits_per_channel** (*Optional*, enum): The bit depth of the audio channels. This is what is actually send to the DAC and needs to be equal or larger than ``bits_per_sample``.
+  See the datasheet of your I2S device for details. Defaults to ``bits_per_sample``. Setting is ignored if the legacy driver is not used.
+- **mclk_multiple** (*Optional*, enum): The multiple of the MCLK frequency to the sample rate. Must be divisible by 3 if using 24 bits per sample. One of ``128``, ``256``, ``384``, ``512``. Defaults to ``256``.
 - **use_apll** (*Optional*, boolean): I2S using APLL as main I2S clock, enable it to get accurate clock. Defaults to ``false``.
 - **i2s_mode** (*Optional*, enum): The I²S mode to use. One of ``primary`` (clock driven by the host) or ``secondary`` (clock driven by the attached device). Defaults to ``primary``.
 - **i2s_audio_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`I²S Audio <i2s_audio>` you wish to use for this speaker.
@@ -48,7 +49,7 @@ Configuration variables:
   - ``stand_msb``
   - ``stand_pcm_short``
   - ``stand_pcm_long``
-  - ``stand_max``
+  - ``stand_max`` (only with legacy driver)
   - ``i2s_msb``
   - ``i2s_lsb``
   - ``pcm``
@@ -67,6 +68,10 @@ For best results, keep the wires as short as possible.
 
 Internal DAC
 ************
+
+  .. note::
+
+      Internal DAC speakers are only supported by the legacy I²S driver on a regular ESP32, not the variants.
 
 - **mode** (**Required**, enum): The channel mode of the internal DAC.
 
