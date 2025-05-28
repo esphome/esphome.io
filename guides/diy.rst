@@ -62,6 +62,7 @@ Blog Posts & Videos
 - `Garage door opener controller for devices with optical encoder <https://github.com/serg987/ESPHomeGarageDoorOpener>`__ by :ghuser:`serg987`
 - `An IoT clock designed for children <https://github.com/chrisns/childrens-clock>`__ by :ghuser:`chrisns`
 - `Remote controller RC433 for garage door open <https://dedeideas.eu/index.php/en-us/rc433-pre-home-assistant-en>`__ by `lubomirkarlik <https://dedeideas.eu/index.php/en-us/about-me>`__
+- `How to create an ESPHome external component <https://medium.com/@vinsce/create-an-esphome-external-component-part-1-introduction-config-validation-and-code-generation-e0389e674bd6>`__ by :ghuser:`vinsce`
 
 Custom Components & Code
 ------------------------
@@ -98,6 +99,7 @@ Custom Components & Code
 - `Rheem Econet Water Heater and Furnace Controller <https://github.com/esphome-econet/esphome-econet>`__ by `ESPHome-econet <https://github.com/esphome-econet>`__
 - `Garage Door Opener with position control using a relay and one or two reed sensors <https://github.com/tronikos/esphome-gdo>`__ by :ghuser:`tronikos`
 - `Medisana BS440 (and propably more scales) <https://github.com/bwynants/weegschaal>`__ by `bwynants <https://github.com/bwynants>`__
+- `Novy Pureline Pro extractor hood <https://github.com/bwynants/purelinepro>`__ by `bwynants <https://github.com/bwynants>`__
 
 Sample Configurations
 ---------------------
