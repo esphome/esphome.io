@@ -127,8 +127,8 @@ See Also
 --------
 
 - :doc:`index`
-- :http_request api ref:`http_request/http_request.h`
-- :json_util api ref:`json/json_util.h`
+- :apiref:`http_request/http_request.h`
+- :apiref:`json/json_util.h`
 - `ArduinoJson <https://arduinojson.org/>`__
 - :ghedit:`Edit`
 
