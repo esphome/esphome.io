@@ -31,7 +31,7 @@ Example 1: Relatively complex JSON
        "street_address": "42 Nowhere Street",
        "city": "Fort Qu'Appelle",
        "state": "Saskatchewan",
-       "postal_code": "S0G 1S0"
+       "postal_code": "S0G 1S0",
        "country": "Canada"
      },
      "phone_numbers": [
