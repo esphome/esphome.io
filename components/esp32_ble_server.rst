@@ -36,6 +36,7 @@ Configuration variables:
 
 - **manufacturer** (*Optional*, :ref:`esp32_ble_server-value`): The name of the manufacturer/firmware creator. Defaults to ``ESPHome``.
 - **model** (*Optional*, :ref:`esp32_ble_server-value`): The model name of the device. Defaults to the project's name defined in the :ref:`core configuration <esphome-creators_project>` if present, otherwise to the friendly name of the ``board`` chosen in the :ref:`core configuration <esphome-configuration_variables>`.
+- **appearance** (*Optional*, int): Sets the `appearance <https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/core/appearance_values.yaml>`_ of the device (included in advertising data.) Defaults to ``0``.
 - **firmware_version** (*Optional*, :ref:`esp32_ble_server-value`): The firmware version of the device. Defaults to the project's version defined in the :ref:`core configuration <esphome-creators_project>` if present, otherwise to the ESPHome version.
 - **manufacturer_data** (*Optional*, list of bytes): The manufacturer-specific data to include in the advertising
   packet. Should be a list of bytes, where the first two are the little-endian representation of the 16-bit
@@ -67,7 +68,7 @@ Services are the main way to expose data and control over BLE. Services communic
 
 Configuration variables:
 
-- **uuid** (*Required*, string, int): The UUID of the service.
+- **uuid** (**Required**, string, int): The UUID of the service.
 - **advertise** (*Optional*, boolean): If the service should be advertised. Defaults to ``false``.
 - **characteristics** (*Optional*, list of :ref:`esp32_ble_server-characteristic`): A list of characteristics to expose in this service.
 
@@ -103,7 +104,7 @@ Characteristics can also have multiple descriptors to provide additional informa
 Configuration variables:
 
 - **id** (*Optional*, string): An ID to refer to this characteristic in automations.
-- **uuid** (*Required*, string, int): The UUID of the characteristic.
+- **uuid** (**Required**, string, int): The UUID of the characteristic.
 - **description** (*Optional*, :ref:`esp32_ble_server-value`): The description of the characteristic - not templatable. It will add a ``CUD`` descriptor (0x2901) to the characteristic with the value of the description.
 - **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to ``false``.
 - **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to ``false``.
@@ -139,8 +140,8 @@ Descriptors are optional and are used to provide additional information (metadat
 Configuration variables:
 
 - **id** (*Optional*, string): An ID to refer to this descriptor in automations.
-- **uuid** (*Required*, string, int): The UUID of the descriptor.
-- **value** (*Required*, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`esp32_ble_server-descriptor-set_value` action.
+- **uuid** (**Required**, string, int): The UUID of the descriptor.
+- **value** (**Required**, :ref:`esp32_ble_server-value`): The value of the descriptor. :ref:`templatable <config-templatable>` values are not allowed. In order to set the value of a descriptor dynamically, use the :ref:`esp32_ble_server-descriptor-set_value` action.
 
 
 .. _esp32_ble_server-value:
@@ -188,10 +189,10 @@ The value of a characteristic is templatable. If the value is templated, the tem
 
 Configuration variables:
 
-- **data** (*Required*, string, int, float, boolean, list of bytes, :ref:`templatable <config-templatable>`): The value of the characteristic or descriptor. For :ref:`templatable <config-templatable>` values, the lambda function must return a ``std::vector<uint8_t>`` (you may use the ``bytebuffer::ByteBuffer`` helper class to transform different data types into a byte array). The value is computed each time the characteristic is read.
+- **data** (**Required**, string, int, float, boolean, list of bytes, :ref:`templatable <config-templatable>`): The value of the characteristic or descriptor. For :ref:`templatable <config-templatable>` values, the lambda function must return a ``std::vector<uint8_t>`` (you may use the ``bytebuffer::ByteBuffer`` helper class to transform different data types into a byte array). The value is computed each time the characteristic is read.
 - **type** (*Optional*, string): The C++ type of the value. The available values are ``uint8_t``, ``uint16_t``, ``uint32_t``, ``uint64_t``, ``int8_t``, ``int16_t``, ``int32_t``, ``int64_t``, ``float``, ``double`` and ``string``. It must be defined if the value is not :ref:`templatable <config-templatable>`.
 - **endianness** (*Optional*, string): The endianness of the value. Can be ``BIG`` or ``LITTLE``. Defaults to ``LITTLE``.
-- **string_encoding** (*Optional*, string): The encoding of the string. Only applicable if the type is ``string``. The conversion is done in Python before compilation, so the encoding must be a valid [Python encoding](https://docs.python.org/3/library/codecs.html#standard-encodings). Defaults to ``utf-8``.
+- **string_encoding** (*Optional*, string): The encoding of the string. Only applicable if the type is ``string``. The conversion is done in Python before compilation, so the encoding must be a valid `Python encoding <https://docs.python.org/3/library/codecs.html#standard-encodings>`_. Defaults to ``utf-8``.
 
 
 .. _esp32_ble_server-characteristic-on_write:
@@ -231,8 +232,8 @@ This action sets the value of a characteristic. A characteristic may not have a 
 
 Configuration variables:
 
-- **id** (*Required*, string): The ID of the characteristic to set the value of.
-- **value** (*Required*, :ref:`esp32_ble_server-value`): The new value of the characteristic.
+- **id** (**Required**, string): The ID of the characteristic to set the value of.
+- **value** (**Required**, :ref:`esp32_ble_server-value`): The new value of the characteristic.
 
 
 ``ble_server.characteristic.notify`` Action
@@ -248,7 +249,7 @@ This action triggers a notification to the client. The value sent will be the cu
             id: test_notify_characteristic
 
 Configuration variables:
-- **id** (*Required*, string): The ID of the characteristic to notify the client about (must have the ``notify`` property).
+- **id** (**Required**, string): The ID of the characteristic to notify the client about (must have the ``notify`` property).
 
 
 .. _esp32_ble_server-descriptor-set_value:
@@ -269,8 +270,8 @@ This action sets the value of a descriptor.
 
 Configuration variables:
 
-- **id** (*Required*, string): The ID of the descriptor to set the value of.
-- **value** (*Required*, :ref:`esp32_ble_server-value`): The new value of the descriptor.
+- **id** (**Required**, string): The ID of the descriptor to set the value of.
+- **value** (**Required**, :ref:`esp32_ble_server-value`): The new value of the descriptor.
 
 
 See Also

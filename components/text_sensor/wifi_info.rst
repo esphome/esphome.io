@@ -39,10 +39,11 @@ via text sensors.
 Configuration variables:
 ------------------------
 
-- **ip_address** (*Optional*): Expose the IP Address of the ESP as a text sensor. All options from
-  :ref:`Text Sensor <config-text_sensor>`.
-- **address_0-address_4** (*Optional*): With dual stack (IPv4 and IPv6) the device will have at least two IP addresses -- often more. To report all addresses the configuration may have up to five sub-sensors. All options from
-  :ref:`Text Sensor <config-text_sensor>`.
+- **ip_address** (*Optional*): Expose the IP Address of the ESP as a text sensor.
+  All options from :ref:`Text Sensor <config-text_sensor>`.
+- **address_0** (*Optional*): With dual stack (IPv4 and IPv6) the device will have at least two IP addresses, often more. 
+  To report all addresses the configuration may have up to five sub-sensors **address_0** to **address_4**. 
+  All options from :ref:`Text Sensor <config-text_sensor>`.
 - **ssid** (*Optional*): Expose the SSID of the currently connected WiFi network as a text sensor. All options from
   :ref:`Text Sensor <config-text_sensor>`.
 - **bssid** (*Optional*): Expose the BSSID of the currently connected WiFi network as a text sensor. All options from
