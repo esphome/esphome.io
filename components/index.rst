@@ -654,6 +654,7 @@ Audio DAC Components
     AIC3204, components/audio_dac/aic3204, aic3204.svg
     ES8156, components/audio_dac/es8156, es8156.svg
     ES8311, components/audio_dac/es8311, es8311.svg
+    ES8388, components/audio_dac/es8388, es8388.svg
 
 Button Components
 -----------------
