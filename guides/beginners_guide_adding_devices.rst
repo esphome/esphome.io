@@ -17,8 +17,6 @@ This guide is for people who are unfamiliar with ESPHome and wish to learn the b
     If running Home Assistant in Docker, get ESPHome by following instructions in the first part of
     :doc:`getting_started_command_line`.
 
-    Or if not running Docker or Home Assistant at all, you can try :doc:`beginners_guide_docker_desktop`.
-
 Setting up your Secrets
 -----------------------
 
@@ -430,8 +428,7 @@ If you don't have Home Assistant, you should just delete this entire section.
 If left in, the device will continuously try to make a connection to Home Assistant
 and reboot every 15 minutes to re-attempt making the connection.
 
-Also, you don't necessarily need encryption.
-It just adds an additional layer of protection to your devices.
+You don't necessarily need encryption. It just adds an additional layer of protection to your devices.
 
 ota:
 ^^^^
