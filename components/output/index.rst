@@ -129,7 +129,7 @@ This action sets the float output to the given level when executed.
 .. _output-set_min_power_action:
 
 ``output.set_min_power`` Action
-***************************
+*******************************
 
 This action sets the minimum output power level for the specified float output platform. 
 It allows you to dynamically adjust the ``min_power`` configuration variable at runtime.
@@ -160,7 +160,7 @@ It allows you to dynamically adjust the ``min_power`` configuration variable at 
 .. _output-set_max_power_action:
 
 ``output.set_max_power`` Action
-***************************
+*******************************
 
 This action sets the maximum output power level for the specified float output platform. 
 It allows you to dynamically adjust the ``max_power`` configuration variable at runtime.
