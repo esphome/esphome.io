@@ -22,7 +22,7 @@ Common use cases include:
 - Rendering sensor values and text as overlays
 - Displaying images via Home Assistant or local web servers
 
-.. figure:: /images/camera_overlay.png
+.. figure:: /images/camera_overlay.jpg
     :align: center
 
     Synthetic camera with overlays displayed in Home Assistant
