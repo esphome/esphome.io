@@ -12,8 +12,6 @@ and requires :doc:`/components/modbus_controller` to be configured.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
 - **register_type** (**Required**): type of the modbus register.
 
     - ``coil``: Coils are 1-bit registers (ON/OFF values) that are used to control discrete outputs. Read and Write access. Modbus *Function Code 1 (Read Coil Status)* will be used.
@@ -71,5 +69,5 @@ See Also
 - :doc:`/components/select/modbus_controller`
 - :doc:`/components/text_sensor/modbus_controller`
 - https://www.modbustools.com/modbus.html
-- :apiclass:`:modbus_controller::ModbusBinarySensor`
+- :apiclass:`modbus_controller::ModbusBinarySensor`
 - :ghedit:`Edit`

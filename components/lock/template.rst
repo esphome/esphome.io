@@ -45,7 +45,6 @@ Possible return values for the optional lambda:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the lock.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated repeatedly to get the current state of the lock.
 - **lock_action** (*Optional*, :ref:`Action <config-action>`): The action that should
@@ -58,7 +57,6 @@ Configuration variables:
 - **assumed_state** (*Optional*, boolean): Whether the true state of the lock is not known.
   This will make the Home Assistant frontend show buttons for both LOCK and UNLOCK actions, instead
   of hiding one of them when the lock is LOCKED/UNLOCKED. Defaults to ``false``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Lock <config-lock>`.
 
 .. _lock-template-publish_action:

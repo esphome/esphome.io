@@ -10,7 +10,7 @@ The ultrasonic distance sensor allows you to use simple ultrasonic
 sensors like the HC-SR04
 (`datasheet <https://www.electroschematics.com/wp-content/uploads/2013/07/HC-SR04-datasheet-version-2.pdf>`__,
 `SparkFun <https://www.sparkfun.com/products/13959>`__) with ESPHome
-to measure distances. These sensors usually can’t measure anything more
+to measure distances. These sensors usually can't measure anything more
 than about two meters and may sometimes make some annoying clicking
 sounds.
 
@@ -46,7 +46,6 @@ Configuration variables:
   periodically send the trigger pulse to.
 - **echo_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The input pin on which to
   wait for the echo.
-- **name** (**Required**, string): The name of the sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
 - All other options from :ref:`Sensor <config-sensor>`.

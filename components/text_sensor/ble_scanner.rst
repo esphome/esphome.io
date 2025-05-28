@@ -47,8 +47,7 @@ Example json log:
 Configuration variables:
 ------------------------
 
--  **name** (**Required**, string): The name of the sensor.
-- All other options from :ref:`Text Sensor <config-text_sensor>`.
+- All options from :ref:`Text Sensor <config-text_sensor>`.
 
 See Also
 --------

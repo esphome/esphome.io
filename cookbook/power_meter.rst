@@ -108,8 +108,8 @@ Using this action, you are able to reset/set the total pulse count. This can be 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_total
+      actions:
+        - action: set_total
           variables:
             new_total: int
           then:
@@ -137,7 +137,7 @@ Additionally you can also calculate the total daily energy generated, for which 
         filters:
           # Multiplication factor from W to kW is 0.001
           - multiply: 0.001
-    
+
     time:
       - platform: homeassistant
         id: homeassistant_time

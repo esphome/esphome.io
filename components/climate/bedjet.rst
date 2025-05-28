@@ -109,8 +109,6 @@ setting the mode and target temperature.
 Configuration variables:
 ************************
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the climate device.
 - **bedjet_id** (**Required**, :ref:`config-id`): The ID of the Bedjet component.
 - **heat_mode** (*Optional*, string): The primary heating mode to use for ``HVACMode.HEAT``:
 
@@ -148,8 +146,6 @@ When the BedJet is already on, turning the Fan component off will set the BedJet
 Configuration variables:
 ************************
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the fan device.
 - **bedjet_id** (**Required**, :ref:`config-id`): The ID of the Bedjet component.
 - Other options from :ref:`Fan <config-fan>`.
 

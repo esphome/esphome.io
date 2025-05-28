@@ -39,6 +39,7 @@ ESPHome's command line interface always has the following format
 .. option:: -v|--verbose
 
     Enable verbose esphome logs.
+    Can also be enabled via environment variable ``ESPHOME_VERBOSE=true``.
 
 ``--quiet`` Option
 ------------------
@@ -75,6 +76,12 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
     Manually specify the upload port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
     to perform an OTA.
 
+.. option:: --upload_speed BAUD_RATE
+
+    The upload speed for serial flashing defaults to 460800 or as set with the environment variable ``ESPHOME_UPLOAD_SPEED``.
+    This can be overridden in the platformio options on a per-config
+    basis, or set with this option at the time of uploading.
+
 .. option:: --no-logs
 
     Disable starting log view.
@@ -98,6 +105,11 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
 .. option:: --host-port HOST_PORT
 
     Specify the host port to use for legacy Over the Air uploads.
+
+.. option:: --reset
+
+    If set, reset the device before starting the logs. May also be configured with the environment variable
+    ``ESPHOME_SERIAL_LOGGING_RESET=true``.
 
 ``config`` Command
 ------------------
@@ -130,6 +142,12 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
     Manually specify the upload port/IP address to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
     to perform an OTA.
 
+.. option:: --upload_speed BAUD_RATE
+
+    The upload speed for serial flashing defaults to 460800 or as set with the environment variable ``ESPHOME_UPLOAD_SPEED``.
+    This can be overridden in the platformio options on a per-config
+    basis, or set with this option at the time of uploading.
+
 .. option:: --host-port HOST_PORT
 
     Specify the host port to use for legacy Over the Air uploads.
@@ -140,7 +158,7 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
 .. program:: esphome clean-mqtt
 
 The ``esphome clean-mqtt <CONFIG>`` cleans retained MQTT discovery messages from the MQTT broker.
-See :ref:`mqtt-using_with_home_assistant`.
+See :ref:`mqtt-using_with_home_assistant_entities`.
 
 .. option:: --topic TOPIC
 
@@ -250,6 +268,11 @@ The ``esphome logs <CONFIG>`` command validates the configuration and shows all 
 
     Manually specify a serial port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``.
 
+.. option:: --reset
+
+    If set, reset the device before starting the logs. May also be configured with the environment variable
+    ``ESPHOME_SERIAL_LOGGING_RESET=true``.
+
 Using Bash or ZSH auto-completion
 ---------------------------------
 
@@ -262,4 +285,3 @@ You can register ESPHome for auto-completion by adding the following to your ~/.
     eval "$(register-python-argcomplete esphome)"
 
 For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`__ documentation.
-

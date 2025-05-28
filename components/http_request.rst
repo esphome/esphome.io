@@ -22,7 +22,7 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to ``true``.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to ``3``.
-- **timeout** (*Optional*, :ref:`config-time`): Timeout for request. Defaults to ``5s``.
+- **timeout** (*Optional*, :ref:`config-time`): Timeout for request. Defaults to ``4.5s``.
 - **useragent** (*Optional*, string): User-Agent header for requests. Defaults to
   ``ESPHome/<version> (https://esphome.io)`` where ``<version>`` is the version of ESPHome the device is running.
   For example: ``ESPHome/2024.6.0 (https://esphome.io)``
@@ -35,6 +35,11 @@ Configuration variables:
   May be useful on slow connections or connections with high latency. **Do not change this value unless you are
   experiencing device reboots due to watchdog timeouts;** doing so may prevent the device from rebooting due to a
   legitimate problem. **Only available on ESP32 and RP2040**.
+
+**For the ESP32 when using ESP-IDF:**
+
+- **buffer_size_rx** (*Optional*, integer): Change HTTP receive buffer size. Defaults to ``512``.
+- **buffer_size_tx** (*Optional*, integer): Change HTTP transmit buffer size. Defaults to ``512``.
 
 **For the ESP8266:**
 
@@ -62,6 +67,17 @@ Configuration variables:
 
     **We strongly recommend using hardware which properly supports TLS/SSL.**
 
+**For the host platform:**
+
+ - **ca_certificate_path** (*Optional*, file path): Path to a CA certificate bundle. Not required on MacOS (the inbuilt CA bundle is used and SSL enabled by default).
+   On Linux this is required to enable SSL.
+
+    .. note::
+
+        To use SSL on Linux you must have the ``libssl-dev`` package installed (e.g. ``sudo apt install libssl-dev``).
+        A typical value on Linux for ``ca_certificate_path`` would be ``/etc/ssl/certs/ca-certificates.crt``.
+
+
 HTTP Request Actions
 --------------------
 
@@ -79,7 +95,7 @@ This :ref:`action <config-action>` sends a GET request.
     on_...:
       - http_request.get:
           url: https://esphome.io
-          headers:
+          request_headers:
             Content-Type: application/json
           on_response:
             then:
@@ -94,12 +110,14 @@ This :ref:`action <config-action>` sends a GET request.
 **Configuration variables:**
 
 - **url** (**Required**, string, :ref:`templatable <config-templatable>`): URL to which to send the request.
-- **headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
+- **collect_headers** (*Optional*, list of strings): List of the names of HTTP headers to collect from the response.
 - **capture_response** (*Optional*, boolean): when set to ``true``, the response data will be captured and placed into
   the ``body`` variable as a ``std::string`` for use in :ref:`lambdas <config-lambda>`. Defaults to ``false``.
 - **max_response_buffer_size** (*Optional*, integer): The maximum buffer size to be used to store the response.
   Defaults to ``1 kB``.
 - **on_response** (*Optional*, :ref:`Automation <automation>`): An automation to perform after the request is received.
+- **on_error** (*Optional*, :ref:`Automation <automation>`): An automation to perform if the request cannot be completed.
 
 .. _http_request-post_action:
 
@@ -113,7 +131,7 @@ This :ref:`action <config-action>` sends a POST request.
     on_...:
       - http_request.post:
           url: https://esphome.io
-          headers:
+          request_headers:
             Content-Type: application/json
           json:
             key: value
@@ -140,7 +158,7 @@ This :ref:`action <config-action>` sends a request.
       - http_request.send:
           method: PUT
           url: https://esphome.io
-          headers:
+          request_headers:
             Content-Type: application/json
           body: "Some data"
 
@@ -157,9 +175,15 @@ This :ref:`action <config-action>` sends a request.
 This automation will be triggered when the HTTP request is complete.
 The following variables are available for use in :ref:`lambdas <config-lambda>`:
 
-- ``response`` as a pointer to ``HttpContainer`` object which contains ``content_length``, ``status_code`` and ``duration_ms``.
+- ``response`` as a pointer to ``HttpContainer`` object which contains `content_length``, ``status_code`` and ``duration_ms``.
+- ``std::string get_response_header(const std::string &header_name)`` to read response headers (only headers with names specified in the ``collect_headers`` are available).
 - ``body`` as ``std::string`` which contains the response body when ``capture_response``
   (see :ref:`http_request-get_action`) is set to ``true``.
+
+    .. note::
+
+        The ``status_code`` should be checked before using the ``body`` variable. A successful response will usually have
+        a status code of ``200``. Server errors such as "not found" (404) or "internal server error" (500) will have an appropriate status code, and may contain an error message in the ``body`` variable.
 
 .. code-block:: yaml
 
@@ -167,15 +191,32 @@ The following variables are available for use in :ref:`lambdas <config-lambda>`:
       then:
         - http_request.get:
             url: https://esphome.io
+            collect_headers:
+              - Content-Type
             on_response:
               then:
                 - logger.log:
-                    format: "Response status: %d, Duration: %u ms"
+                    format: "Response status: %d, Duration: %u ms, Content-Type: %s"
                     args:
                       - response->status_code
                       - response->duration_ms
+                      - response->get_response_header("Content-Type").c_str()
                 - lambda: |-
-                    ESP_LOGD(TAG, "Response status: %d, Duration: %u ms", response->status_code, response->duration_ms);
+                    ESP_LOGD(TAG, "Response status: %d, Duration: %u ms, Content-Type: %s", response->status_code, response->duration_ms, response->get_response_header("Content-Type").c_str());
+            on_error:
+              then:
+                - logger.log: "Request failed!"
+
+
+.. _http_request-on_error:
+
+``on_error`` Trigger
+-----------------------
+
+This automation will be triggered when the HTTP request fails to complete. This may be e.g. when the network is not available,
+or the server is not reachable. This will *not* be triggered if the request
+completes, even if the response code is not 200. No information on the type of error is available and no variables
+are available for use in :ref:`lambdas <config-lambda>`. See example usage above.
 
 
 .. _http_request-examples:
@@ -192,7 +233,7 @@ Templatable values
       - http_request.post:
           url: !lambda |-
             return ((std::string) "https://esphome.io?state=" + id(my_sensor).state).c_str();
-          headers:
+          request_headers:
             X-Custom-Header: !lambda |-
               return ((std::string) "Value-" + id(my_sensor).state).c_str();
           body: !lambda |-
@@ -241,6 +282,10 @@ can assign values to keys by using the ``root["KEY_NAME"] = VALUE;`` syntax as s
 
 GET values from a JSON body response
 ************************************
+If you want to retrieve the value for the vol key and assign it to a template sensor or number component whose id is
+set to player_volume you can do this, but note that checking for the presence of the key will prevent difficult-to-read
+error messages:
+
 
 This example assumes that the server returns a response as a JSON object similar to this:
 ``{"status":"play","vol":"42","mute":"0"}``
@@ -256,16 +301,30 @@ whose ``id`` is  set to ``player_volume``:
         capture_response: true
         on_response:
           then:
-            - lambda: |-
-                json::parse_json(body, [](JsonObject root) -> bool {
-                    id(player_volume).publish_state(root["vol"]);
-                    return true;
-                });
-
+            - if:
+                condition:
+                    lambda: return response->status_code == 200;
+                then:
+                    - lambda: |-
+                        json::parse_json(body, [](JsonObject root) -> bool {
+                            if (root["vol"]) {
+                                id(player_volume).publish_state(root["vol"]);
+                                return true;
+                            }
+                            else {
+                              ESP_LOGI(TAG,"No 'vol' key in this json!");
+                              return false;
+                            }
+                        });
+                else:
+                    - logger.log:
+                        format: "Error: Response status: %d, message %s"
+                        args: [ 'response->status_code', 'body.c_str()' ]
 
 See Also
 --------
 
 - :doc:`index`
 - :apiref:`http_request/http_request.h`
+- :doc:`/components/json`
 - :ghedit:`Edit`

@@ -121,7 +121,6 @@ The maximum amount of observations/channels supported is 64.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
 - **type** (**Required**, string): The sensor type. Should be one of: ``BAYESIAN``, ``GROUP``, or ``SUM``.
 - **channels** (**Required for GROUP or SUM types**): A list of channels that are mapped to certain values.
 

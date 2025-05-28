@@ -22,7 +22,8 @@ Base Switch Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the switch.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the switch. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -68,7 +69,7 @@ Configuration variables:
   See https://www.home-assistant.io/integrations/switch/#device-class
   for a list of available options.
 - If MQTT enabled, All other options from :ref:`MQTT Component <config-mqtt-component>`.
-- If Webserver enabled, ``web_server_sorting_weight`` can be set. See :ref:`Webserver Entity Sorting <config-webserver-sorting>`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 .. _switch-toggle_action:
 
@@ -142,6 +143,17 @@ advanced stuff (see the full API Reference for more info).
       // Within lambda, make the switch report a specific state
       id(my_switch).publish_state(false);
       id(my_switch).publish_state(true);
+
+  .. note::
+
+      Keep in mind that this does not change the actual state of the switch. It only
+      changes the state in the frontend and the internal state. If you want to
+      change the actual state of the switch, you need to call ``turn_on()``, 
+      ``turn_off()`` or ``toggle()``.
+
+      For example, if you are using a :doc:`/components/switch/gpio`, calling ``publish_state()`` will
+      not change the GPIO pin level. To do that, you need to call ``turn_on()``, 
+      ``turn_off()`` or ``toggle()``. The same applies to other switch platforms.
 
 - ``state``: Retrieve the current state of the switch.
 

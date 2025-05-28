@@ -10,8 +10,6 @@ and requires :doc:`/components/modbus_controller` to be configured.
 
 Configuration variables:
 ------------------------
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
 - **register_type** (**Required**): type of the modbus register.
 
     - ``coil``: Coils are 1-bit registers (on/off values) that are used to control discrete outputs. They may be read and/or written. Modbus *Function Code 1 (Read Coil Status)* will be used.
@@ -53,7 +51,7 @@ Configuration variables:
   - ``return <std::string>;`` the new value for the sensor.
   - ``return {};`` uses the parsed value for the state (same as ``return x;``).
 
-- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. 
+- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type.
 - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 Example:

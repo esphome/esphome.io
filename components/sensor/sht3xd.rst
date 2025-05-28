@@ -35,15 +35,11 @@ Configuration variables:
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): The information for the humidity sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to ``0x44``. For SHT3x, an alternate address can be ``0x45`` while SHT85 supports only address ``0x44``
@@ -69,7 +65,7 @@ A solution that has been tested on ESP32 at 800kHz, is to increase the I²C time
       sda: 21
       scl: 22
       scan: true
-      frequency: 800khz
+      frequency: 800kHz
       timeout: 10ms
 
 See Also

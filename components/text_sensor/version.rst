@@ -21,15 +21,13 @@ was compiled against as a text sensor.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the text sensor.
 - **hide_timestamp** (*Optional*, boolean): Allows you to hide the compilation timestamp from the version string. Defaults to ``false``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 Disabling the compilation timestamp:
 ------------------------------------
 
-.. code-block:: yaml    
+.. code-block:: yaml
 
     # Example configuration entry
     text_sensor:

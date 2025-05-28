@@ -41,7 +41,6 @@ Possible return values for the optional lambda:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the valve.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated repeatedly to get the current state of the valve.
 - **open_action** (*Optional*, :ref:`Action <config-action>`): The action that should be performed when the remote
@@ -65,7 +64,6 @@ Configuration variables:
 - **position_action** (*Optional*, :ref:`Action <config-action>`): The action that should be performed when the remote
   (like Home Assistant's frontend) requests the valve be set to a specific position. The desired position is available
   in the lambda in the ``pos`` variable. Requires ``has_position`` (above) to be set to ``true``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Valve <config-valve>`.
 
 .. _valve-template-publish_action:

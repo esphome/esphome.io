@@ -11,6 +11,12 @@ The ``esp32_hall`` sensor platform allows you to use the integrated
 ESP32 chip to measure the magnitude and direction of magnetic field around the
 chip (with quite poor accuracy).
 
+.. warning::
+
+    Espressif has `removed support <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/migration-guides/release-5.x/5.0/peripherals.html?highlight=hall_sensor_read#api-changes>`__
+    for the ESP32's Hall sensor in IDF 5; for this reason, support for this component is
+    likely to be removed in a future release.
+
 Please make sure that nothing is connected to pins ``GPIO36`` and ``GPIO39`` if this
 component is enabled, as those pins are used for the internal low-noise amplifier used
 by the hall sensor.
@@ -30,10 +36,8 @@ by the hall sensor.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the hall effect sensor.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval
   to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 .. warning::

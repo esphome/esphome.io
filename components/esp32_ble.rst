@@ -11,7 +11,7 @@ can run.
 .. warning::
 
     The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-    
+
     **Crashes are likely to occur** if you include too many additional components in your device's
     configuration. Memory-intensive components such as :doc:`/components/voice_assistant` and other
     audio components are most likely to cause issues.
@@ -35,6 +35,11 @@ Configuration variables:
     - ``display_yes_no`` - A display to show PIN codes and buttons to confirm or deny the connection
 
 - **enable_on_boot** (*Optional*, boolean): If enabled, the BLE interface will be enabled on boot. Defaults to ``true``.
+
+- **name** (*Optional*, string): The name of the BLE device.
+    - Defaults to the hostname of the device.
+    - Must be 20 characters or less.
+    - Must be 13 characters or less when using ``name_add_mac_suffix: true`` - :ref:`esphome-mac_suffix`.
 
 ``ble.disable`` Action
 -----------------------

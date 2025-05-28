@@ -8,14 +8,44 @@ Display Component
 The ``display`` component houses ESPHome's powerful rendering and display
 engine. Fundamentally, there are these types of displays:
 
-- Text based displays like :doc:`7-Segment displays <max7219>` or
+- Character displays like :doc:`7-Segment displays <max7219>` or
   :doc:`LCD displays <lcd_display>`.
-- Graphical serial displays like :doc:`nextion` that have their own processors for rendering.
-- Graphical binary displays which can toggle ON/OFF any pixel, like :doc:`E-Paper <waveshare_epaper>`,
+- Serial displays like :doc:`nextion` that have their own processors for graphics rendering.
+- Graphical displays with fully addressable pixels, like :doc:`E-Paper <waveshare_epaper>`,
   :doc:`OLED <ssd1306>` or :doc:`TFT <ili9xxx>` displays.
 
-For the last type, ESPHome has a powerful rendering engine that can do
-many things like draw some basic shapes, print text with any font you want, or even show images.
+For graphical displays, which offer the greatest flexibility, there are two options for displaying content:
+
+- ESPHome's :ref:`own rendering engine <display-engine>`
+- :doc:`LVGL </components/lvgl/index>` - Light and Versatile Graphics Library
+
+.. _display-configuration:
+
+Configuration variables:
+************************
+
+All display components inherit these configuration variables.
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Required if there are multiple displays.
+- **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``1s``.
+- **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
+  See :ref:`display-engine` for more information.
+
+All *graphical* displays also inherit these configuration variables.
+
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to ``true`` if a lambda or pages are configured, false otherwise.
+- **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to ``false``. If set, any code in the ``lambda`` config option will be ignored.
+- **rotation** (*Optional*, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to ``0``.
+- **pages** (*Optional*, list): Pages configuration - see below.
+
+
+.. _display-engine:
+
+Display Rendering Engine
+------------------------
+
+ESPHome's own powerful rendering engine can handle many common tasks such as drawing basic shapes,
+printing text with fonts of your choice, or even rendering images.
 
 To achieve all this flexibility displays tie in directly into ESPHome's :ref:`lambda system <config-lambda>`.
 So when you want to write some text or sensor values to the screen you will be writing in C++ code
@@ -23,11 +53,6 @@ using an API that is designed to
 
 - be simple and to be used without programming experience
 - but also be flexible enough to work with more complex tasks like displaying an analog clock.
-
-.. _display-engine:
-
-Display Rendering Engine
-------------------------
 
 In this section we will be discussing how to use ESPHome's display rendering engine from ESPHome
 and some basic commands. Please note that this only applies to displays that can control each pixel
@@ -99,6 +124,13 @@ Now that you know a bit more about ESPHome's coordinate system, let's draw some 
           it.circle(20, 40, 10);
           // ... and the same thing filled again
           it.filled_circle(20, 75, 10);
+
+          // Ring and half-ring. First draw the circle with a hole in it
+          // at [75,75] with inner raduis of 20 and outer of 30
+          it.filled_ring(75, 75, 30, 20);
+          // and a "gauge": half-ring that is partially filled.
+          // Same position and size but 80% filled left to right
+          it.filled_gauge(75, 75, 30, 20, 80);
 
           // Triangles... Let's draw the outline of a triangle from the [x,y] coordinates of its three points
           // [25,5], [100,5], [80,25]
@@ -459,364 +491,6 @@ Configuration variables:
 
 RGB displays use red, green, and blue, while grayscale displays may use white.
 
-.. _display-graphs:
-
-Graph Component
----------------
-
-You can display a graph of a sensor value(s) using this component. The states used for the graph are stored in
-memory at the time the sensor updates and will be lost when the device reboots.
-
-Examples:
-
-.. figure:: images/display_rendering_graph.png
-    :align: center
-
-Graph component with options for grids, border and line-types.
-
-.. code-block:: yaml
-
-    graph:
-      # Show bare-minimum auto-ranged graph
-      - id: single_temperature_graph
-        sensor: my_temperature
-        duration: 1h
-        width: 151
-        height: 51
-      # Show multi-trace graph
-      - id: multi_temperature_graph
-        duration: 1h
-        x_grid: 10min
-        y_grid: 1.0     # degC/div
-        width: 151
-        height: 51
-        traces:
-          - sensor: my_inside_temperature
-            line_type: DASHED
-            line_thickness: 2
-            color: my_red
-          - sensor: my_outside_temperature
-            line_type: SOLID
-            continuous: true
-            line_thickness: 3
-            color: my_blue
-          - sensor: my_beer_temperature
-            line_type: DOTTED
-            line_thickness: 2
-            color: my_green
-
-Configuration variables:
-
-- **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the graph later
-  in your display code.
-- **width** (**Required**, int): The graph width in pixels
-- **height** (**Required**, int): The graph height in pixels
-- **duration** (**Required**, :ref:`config-time`): The total graph history duration.
-- **border** (*Optional*, boolean): Specifies if a border will be drawn around the graph. Default is True.
-- **x_grid** (*Optional*): Specifies the time per division. If not specified, no vertical grid will be drawn.
-- **y_grid** (*Optional*, float): Specifies the number of units per division. If not specified, no horizontal grid will be drawn.
-- **max_range** (*Optional*): Specifies the maximum Y-axis range.
-- **min_range** (*Optional*): Specifies the minimum Y-axis range.
-- **max_value** (*Optional*): Specifies the maximum Y-axis value.
-- **min_value** (*Optional*): Specifies the minimum Y-axis value.
-- **traces** (*Optional*): Use this to specify more than a single trace.
-
-Trace specific fields:
-
-- **sensor** (*Optional*, :ref:`config-id`): The sensor value to plot
-- **line_thickness** (*Optional*): Defaults to 3
-- **line_type** (*Optional*): Specifies the plot line-type. Can be one of the following: ``SOLID``, ``DOTTED``, ``DASHED``. Defaults to ``SOLID``.
-- **continuous** (*Optional*): connects the individual points to make a continuous line.  Defaults to ``false``.
-- **color** (*Optional*): Sets the color of the sensor trace.
-
-And then later in code:
-
-.. code-block:: yaml
-
-    display:
-      - platform: ...
-        # ...
-        pages:
-          - id: page1
-            lambda: |-
-              // Draw the graph at position [x=10,y=20]
-              it.graph(10, 20, id(single_temperature_graph));
-          - id: page2
-            lambda: |-
-              // Draw the graph at position [x=10,y=20]
-              it.graph(10, 20, id(multi_temperature_graph), my_yellow);
-
-    color:
-      - id: my_red
-        red: 100%
-        green: 0%
-        blue: 0%
-      - id: my_green
-        red: 0%
-        green: 100%
-        blue: 0%
-      - id: my_blue
-        red: 0%
-        green: 0%
-        blue: 100%
-      - id: my_yellow
-        red: 100%
-        green: 100%
-        blue: 0%
-.. note::
-
-    Here are some things to note:
-    - Setting ``y_grid`` will expand any specified range to the nearest multiple of grid spacings.
-    - Axis labels are currently not possible without manually placing them.
-    - The grid and border color is set with it.graph(), while the traces are defined separately.
-
-
-.. _display-qrcode:
-
-QR Code Component
------------------
-
-Use this component to generate a QR-code containing a string on the device, which can then be drawn on compatible displays.
-
-.. code-block:: yaml
-
-    qr_code:
-      - id: homepage_qr
-        value: esphome.io
-
-Configuration variables:
-
-- **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the QR-code later
-  in your display code.
-- **value** (**Required**, string): The string which you want to encode in the QR-code.
-- **ecc** (*Optional*, string): The error correction code level you want to use. Defaults to ``LOW``. You can use one of the following values:
-
-  - ``LOW``: The QR Code can tolerate about 7% erroneous codewords
-  - ``MEDIUM``: The QR Code can tolerate about 15% erroneous codewords
-  - ``QUARTILE``: The QR Code can tolerate about 25% erroneous codewords
-  - ``HIGH``: The QR Code can tolerate about 30% erroneous codewords
-
-To draw the QR-code, call the ``it.qr_code`` function from your render lambda:
-
-.. code-block:: yaml
-
-    display:
-      - platform: ...
-        # ...
-        pages:
-          - id: page1
-            lambda: |-
-              // Draw the QR-code at position [x=50,y=0] with white color and a 2x scale
-              it.qr_code(50, 0, id(homepage_qr), Color(255,255,255), 2);
-
-              // Draw the QR-code in the center of the screen with white color and a 2x scale
-              auto size = id(homepage_qr).get_size() * 2; // Multiply by scale
-              auto x = (it.get_width() / 2) - (size / 2);
-              auto y = (it.get_height() / 2) - (size / 2);
-              it.qr_code(x, y, id(homepage_qr), Color(255,255,255), 2);
-
-
-.. _display-image:
-
-Images
-------
-
-Use this component to store graphical images on the device, you can then draw the images on compatible displays.
-
-.. code-block:: yaml
-
-    image:
-      - file: "image.png"
-        id: my_image
-        resize: 100x100
-
-.. code-block:: yaml
-
-    image:
-      - file: mdi:alert-outline
-        id: alert
-        resize: 80x80
-
-.. code-block:: yaml
-
-    image:
-      - file: https://esphome.io/_images/logo.png
-        id: esphome_logo
-        resize: 200x162
-
-Configuration variables:
-
-- **file** (**Required**, string):
-
-  - **Local files**: The path (relative to where the .yaml file is) of the image file.
-  - **Material Design Icons**: Specify the `Material Design Icon <https://pictogrammers.com/library/mdi/>`_
-    id in the format ``mdi:icon-name``, and that icon will automatically be downloaded and added to the configuration.
-  - **Remote files**: The URL of the image file.
-
-- **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
-  in your display code.
-- **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
-  and preserve the aspect ratio.
-- **type** (*Optional*): Specifies how to encode image internally. Defaults to ``BINARY`` for local images and ``TRANSPARENT_BINARY`` for MDIs.
-
-  - ``BINARY``: Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
-    per pixel, 8 pixels per byte.
-  - ``TRANSPARENT_BINARY``: One color, any pixel that is fully transparent will not be drawn, and any other pixel
-    will be the on color. Uses 1 bit per pixel, 8 pixels per byte.
-  - ``GRAYSCALE``: Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
-  - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel.
-  - ``RGB24``: Full RGB color stored. Uses 3 bytes per pixel.
-  - ``RGBA``: Full RGB color stored. Uses 4 bytes per pixel. Any pixel with an alpha value < 127 will not be drawn.
-
-- **use_transparency** (*Optional*): If set the alpha channel of the input image will be taken into account, and pixels with alpha < 127 will not be drawn. For image types without explicit alpha channel, the color (0, 0, 1) (very dark blue) will be mapped to black, to be able to store transparency information within the image. Explicitly transparent types (``TRANSPARENT_BINARY`` and ``RGBA``) default to ``True`` and cannot be set to ``False``; other types default to ``False``.
-
-- **dither** (*Optional*): Specifies which dither method used to process the image, only used in GRAYSCALE and BINARY type image. Defaults to ``NONE``. You can read more about it `here <https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=Dither#PIL.Image.Image.convert>`__ and `here <https://en.wikipedia.org/wiki/Dither>`__.
-
-  - ``NONE``: Every pixel convert to its nearest color.
-  - ``FLOYDSTEINBERG``: Uses Floyd-Steinberg dither to approximate the original image luminosity levels.
-
-.. note::
-
-    To use images you will need to have the python ``pillow`` package installed.
-    If you're running this as a Home Assistant add-on or with the official ESPHome docker image, it should already be
-    installed. Otherwise you need to install it using ``pip install pillow``.
-    Additionally, if you want to use SVG images (including MDI images), you will additionally need to have the python ``cairosvg`` package installed.
-    If you're running this as a Home Assistant add-on or with the official ESPHome docker image, it should also already be
-    installed. Otherwise you need to install it using ``pip install cairosvg``.
-
-And then later in code:
-
-.. code-block:: yaml
-
-    display:
-      - platform: ...
-        # ...
-        lambda: |-
-          // Draw the image my_image at position [x=0,y=0]
-          it.image(0, 0, id(my_image));
-
-By default, ESPHome will *align* the image at the top left. That means if you enter the coordinates
-``[0,10]`` for your image, the top left of the image will be at ``[0,10]``. If you want to draw some
-image at the right side of the display, it is however sometimes useful to choose a different **image alignment**.
-When you enter ``[0,10]`` you're really telling ESPHome that it should position the **anchor point** of the image
-at ``[0,10]``. When using a different alignment, like ``TOP_RIGHT``, the image will be positioned left of the anchor
-pointed, so that, as the name implies, the anchor point is a the *top right* corner of the image.
-
-.. code-block:: yaml
-
-    display:
-      - platform: ...
-        # ...
-        lambda: |-
-          // Aligned on left by default
-          it.image(0, 0, id(my_image));
-
-          // Aligned on right edge
-          it.image(it.get_width(), 0, id(my_image), ImageAlign::TOP_RIGHT);
-
-For binary images the ``image`` method accepts two additional color parameters which can
-be supplied to modify the color used to represent the on and off bits respectively. e.g.
-
-.. code-block:: yaml
-
-    display:
-      - platform: ...
-        # ...
-        lambda: |-
-          // Draw the image my_image at position [x=0,y=0]
-          // with front color red and back color blue
-          it.image(0, 0, id(my_image), id(red), id(blue));
-
-          // Aligned on right edge
-          it.image(it.get_width(), 0, id(my_image), ImageAlign::TOP_RIGHT, id(red), id(blue));
-
-You can also use this to invert images in two colors display, use ``COLOR_OFF`` then ``COLOR_ON``
-as the additional parameters.
-
-Animation
----------
-
-Allows to use animated images on displays. Animation inherits all options from the image component.
-It adds additional lambda methods: ``next_frame()``, ``prev_frame()`` and ``set_frame()`` to change the shown picture of a gif.
-
-.. code-block:: yaml
-
-    animation:
-      - file: "animation.gif"
-        id: my_animation
-        resize: 100x100
-
-The animation can be rendered just like the image component with the ``image()`` function of the display component.
-
-To show the next frame of the animation call ``id(my_animation).next_frame()``, to show the previous picture use ``id(my_animation).prev_frame()``. To show a specific picture use ``id(my_animation).set_frame(int frame)``.
-This can be combined with all Lambdas:
-
-.. code-block:: yaml
-
-    display:
-      - platform: ...
-        # ...
-        lambda: |-
-          //Ingress shown animation Frame.
-          id(my_animation).next_frame();
-          // Draw the animation my_animation at position [x=0,y=0]
-          it.image(0, 0, id(my_animation), COLOR_ON, COLOR_OFF);
-
-Additionally, you can use the ``animation.next_frame``, ``animation.prev_frame`` or ``animation.set_frame`` actions.
-
-.. note::
-
-    To draw the next animation independent of Display draw cycle use an interval:
-
-    .. code-block:: yaml
-
-        interval:
-          - interval: 5s
-              then:
-                animation.next_frame: my_animation
-
-
-Configuration variables:
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-- **file** (**Required**, string): The path (relative to where the .yaml file is) of the gif file.
-- **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the animation later
-  in your display code.
-- **resize** (*Optional*, string): If set, this will resize all the frames to fit inside the given dimensions ``WIDTHxHEIGHT``
-  and preserve the aspect ratio.
-- **type** (*Optional*): Specifies how to encode each frame internally. Defaults to ``BINARY``.
-
-  - ``BINARY``: Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
-    per pixel, 8 pixels per byte.
-  - ``TRANSPARENT_BINARY``: One color, any pixel that is fully transparent will not be drawn, and any other pixel
-    will be the on color. Uses 1 bit per pixel, 8 pixels per byte.
-  - ``GRAYSCALE``: Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
-  - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel.
-  - ``RGB24``: Full RGB color stored. Uses 3 bytes per pixel.
-  - ``RGBA``: Full RGB color stored. Uses 4 bytes per pixel. Any pixel with an alpha value < 127 will not be drawn.
-
-- **use_transparency** (*Optional*): If set the alpha channel of the input image will be taken into account, and pixels with alpha < 127 will not be drawn. For image types without explicit alpha channel, the color (0, 0, 1) (very dark blue) will be mapped to black, to be able to store transparency information within the image. Explicitly transparent types (``TRANSPARENT_BINARY`` and ``RGBA``) default to ``True`` and cannot be set to ``False``; other types default to ``False``.
-- **loop** (*Optional*): If you want to loop over a subset of your animation (e.g. a fire animation where the fire "starts", then "burns" and "dies") you can specify some frames to loop over.
-
-  - **start_frame** (*Optional*, int): The frame to loop back to when ``end_frame`` is reached. Defaults to the first frame in the animation.
-  - **end_frame** (*Optional*, int): The last frame to show in the loop; when this frame is reached it will loop back to ``start_frame``. Defaults to the last frame in the animation.
-  - **repeat** (*Optional*, int): Specifies how many times the loop will run. When the count is reached, the animation will continue with the next frame after ``end_frame``, or restart from the beginning if ``end_frame`` was the last frame. Defaults to "loop forever".
-
-Actions:
-^^^^^^^^
-
-- **animation.next_frame**: Moves the animation to the next frame. This is equivalent to the ``id(my_animation).next_frame();`` lambda call.
-
-  - **id** (**Required**, :ref:`config-id`): The ID of the animation to animate.
-
-- **animation.prev_frame**: Moves the animation to the previous frame. This is equivalent to the ``id(my_animation).prev_frame();`` lambda call.
-
-  - **id** (**Required**, :ref:`config-id`): The ID of the animation to animate.
-
-- **animation.set_frame**: Moves the animation to a specific frame. This is equivalent to the ``id(my_animation).set_frame(frame);`` lambda call.
-
-  - **id** (**Required**, :ref:`config-id`): The ID of the animation to animate.
-  - **frame** (**Required**, int): The frame index to show next.
 
 .. _display-pages:
 
@@ -963,7 +637,13 @@ See Also
 --------
 
 - :apiref:`display/display_buffer.h`
+- :doc:`LVGL </components/lvgl/index>`
 - :ref:`Fonts <display-fonts>`
+- :ref:`Graph Component <display-graphs>`
+- :ref:`QR Code Component <display-qrcode>`
+- :ref:`Image Component <display-image>`
+- :ref:`Animation Component <display-animation>`
+- :ref:`Online Image <online_image>`
 - :ghedit:`Edit`
 
 .. toctree::

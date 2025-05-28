@@ -4,7 +4,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         curl \
         git \
         make \
-        doxygen \
         openssh-client \
         software-properties-common \
         && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/*
@@ -31,7 +30,7 @@ WORKDIR /workspaces/esphome-docs
 ENV PATH="${PATH}:/home/esphome/.local/bin"
 
 COPY requirements.txt ./
-RUN pip3 install --no-cache-dir --no-binary :all: -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 EXPOSE 8000
 
