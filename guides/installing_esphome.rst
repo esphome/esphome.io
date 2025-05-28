@@ -103,8 +103,8 @@ Any time you want to use ESPHome, you will need to have activated the virtual en
 
 **Cloning the repository**
 
-For development purposes of ESPhome cloning the repository is recommended.
-See :ref:`setup_dev_env` for more information on setting up a development environment.
+For development purposes, we recommend cloning the repository. See our
+`developer site <https://developers.esphome.io>`__ for more information on setting up a development environment.
 
 Linux
 -----
@@ -163,5 +163,5 @@ See Also
 
 - :doc:`ESPHome index </index>`
 - :doc:`getting_started_command_line`
-- :doc:`contributing`
+- `Developer site <https://developers.esphome.io>`__
 - :ghedit:`Edit`
