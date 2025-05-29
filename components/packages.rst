@@ -223,6 +223,17 @@ To remove captive portal for a specific device:
 
     captive_portal: !remove
 
+To remove only an attribute for a specific device:
+
+.. code-block:: yaml
+
+    packages:
+      common: !include common.yaml  # see above
+
+    sensor:
+      - id: !extend uptime_sensor
+        update_interval: !remove
+
 See Also
 --------
 

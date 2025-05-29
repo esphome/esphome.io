@@ -786,6 +786,8 @@ Energy/Solar Management
 
 .. imgtable::
 
+    Growatt Solar, components/sensor/growatt_solar, growatt.jpg
+    Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg
     PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
     Power Supply, components/power_supply, power.svg, dark-invert
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
@@ -878,7 +880,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
-    Speaker, components/media_player/speaker, speaker.svg
+    Speaker, components/media_player/speaker, speaker.svg, dark-invert
 
 Microphone Components
 ---------------------
