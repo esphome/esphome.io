@@ -281,7 +281,7 @@ allows for a lot of flexibility.
 
 .. code-block:: cpp
 
-    # For example, in a display object
+    // For example, in a display object
     it.strftime(0, 0, id(font), "%Y-%m-%d %H:%M", id(time).now());
 
 The strftime will parse the format string (here ``"%Y-%m-%d %H:%M"``) and match anything beginning with

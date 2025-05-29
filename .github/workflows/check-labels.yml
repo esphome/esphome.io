@@ -1,0 +1,40 @@
+name: Check labels
+
+on:
+  pull_request_target:
+    types: [labeled, unlabeled]
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check labels
+        uses: actions/github-script@v7.0.1
+        with:
+          script: |
+            const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const hasParent = labels.find(label => label.name === "has-parent");
+            const current = labels.find(label => label.name === "current");
+            if (hasParent && current) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: ["wrong-base-branch"]
+              });
+
+              await github.rest.pulls.createReview({
+                pull_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                event: "REQUEST_CHANGES",
+                body: "As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the `next` branch and rebase."
+              });
+
+              core.setFailed("As this is a feature matched with a PR in https://github.com/esphome/esphome, please target your PR to the 'next' branch and rebase.");
+            }

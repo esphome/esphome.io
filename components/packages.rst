@@ -19,8 +19,12 @@ override substitutions with the same name in a package.
 Dictionaries are merged key-by-key. Lists of components are merged by component ID (if specified). Other lists are
 merged by concatenation. All other configuration values are replaced with the later value.
 
-ESPHome uses ``!include`` to "bring in" packages; this is a syntax brought over from
-`Home Assistant's YAML configuration directives <https://www.home-assistant.io/docs/configuration/splitting_configuration/>`__.
+ESPHome uses ``!include`` to "bring in" packages from other files; this feature is described in :ref:`yaml-include`.
+
+The ``packages:`` key may have a value that is a list of valid package references, or a mapping of keys to package references.
+When a mapping is used, the keys are for reference only and have no significance in themselves.
+Where only a single package reference is required, it may be used directly rather than in a list.
+Examples of all formats are shown below.
 
 Local Packages
 --------------
@@ -34,9 +38,9 @@ definitions from main configuration file.
 .. code-block:: yaml
 
     # In config.yaml
-    packages:
-      wifi: !include common/wifi.yaml
-      device_base: !include common/device_base.yaml
+    packages:   # as a list
+      - !include common/wifi.yaml
+      - !include common/device_base.yaml
 
     api:
       actions:
@@ -84,7 +88,7 @@ them locally with their own substitution value.
 
 .. code-block:: yaml
 
-    # Git repo examples
+    # Git repo examples as a mapping
     packages:
       # shorthand form github://username/repository/[folder/]file-path.yml[@branch-or-tag]
       remote_package_shorthand: github://esphome/non-existant-repo/file1.yml@main
@@ -92,6 +96,21 @@ them locally with their own substitution value.
       remote_package_files:
         url: https://github.com/esphome/non-existant-repo
         files: [file1.yml, file2.yml]  # optional; if not specified, all files will be included
+        ref: main  # optional
+        refresh: 1d  # optional
+      
+      remote_package_files2:
+        url: https://github.com/esphome/non-existant-repo
+        files:
+          - path: file1.yml
+            vars:
+              a: 1
+              b: 2
+          - path: file1.yml #Same file can be specified multiple times with different vars.
+            vars:
+              a: 3
+              b: 4
+          - file2.yml
         ref: main  # optional
         refresh: 1d  # optional
 
@@ -103,7 +122,11 @@ For each package:
 - **url** (**Required**, string): The URL for the repository.
 - **username** (*Optional*, string): Username to be used for authentication, if required.
 - **password** (*Optional*, string): Password to be used for authentication, if required.
-- **files** (**Required**, list of strings): List of files to include.
+- **files** (**Required**): List of files to include. Can be one of:
+  
+  - list of file paths
+  - list of objects containing ``path`` and ``vars``
+
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
 - **refresh** (*Optional*, :ref:`config-time`): The interval at which the content from the repository should be refreshed.
 
@@ -168,8 +191,8 @@ For example, to set a specific update interval on a common uptime sensor that is
 
 .. code-block:: yaml
 
-    packages:
-      common: !include common.yaml
+    # only one package is included here, no need for a list
+    packages: !include common.yaml
 
     sensor:
       - id: !extend uptime_sensor
@@ -187,8 +210,7 @@ For example, to remove a common uptime sensor that is shared between configurati
 
 .. code-block:: yaml
 
-    packages:
-      common: !include common.yaml  # see above
+    packages: !include common.yaml  # see above
 
     sensor:
       - id: !remove uptime_sensor
@@ -197,8 +219,7 @@ To remove captive portal for a specific device:
 
 .. code-block:: yaml
 
-    packages:
-      common: !include common.yaml  # see above
+    packages: !include common.yaml  # see above
 
     captive_portal: !remove
 

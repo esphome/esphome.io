@@ -10,13 +10,20 @@ embedded graphics library to create beautiful UIs for any MCU, MPU and display t
 
 .. figure:: /components/lvgl/images/lvgl_main_screenshot.png
 
+Prerequisites
+-------------
+
 To use LVGL with a :ref:`display <display-hw>` in ESPHome, you'll need an ESP32 or RP2040. PSRAM is not a strict requirement but it is generally recommended, especially for large color displays.
 
-The graphic display should be configured with ``auto_clear_enabled: false`` and ``update_interval: never``, and should not have any ``lambda`` set.
+The graphic display should be configured with ``auto_clear_enabled: false`` and should not have any ``lambda`` set. The LVGL component will take care of the display rendering. For most displays, the ``update_interval`` should be set to ``never``, but note that some displays such as OLED and ePaper will need the update interval set to a suitable value.
 
 For interactivity, a :doc:`Touchscreen </components/touchscreen/index>` (capacitive highly preferred), a :doc:`/components/sensor/rotary_encoder` or a custom keypad made up from discrete :doc:`Binary Sensors </components/binary_sensor/index>` can be used.
 
 Check out the detailed examples in :ref:`the Cookbook <lvgl-cookbook>` which demonstrate a number of ways you can integrate your environment with LVGL and ESPHome.
+
+
+TL;DR
+-----
 
 To get started, it is sufficient to add a display and an empty LVGL configuration. If neither ``pages`` nor ``widgets`` is specified, then a default "hello world" page will be shown.
 
@@ -24,6 +31,26 @@ To get started, it is sufficient to add a display and an empty LVGL configuratio
 
     # Example minimal configuration entry
     lvgl:
+
+    display:
+      - platform: ...
+        # ...
+        auto_clear_enabled: false
+        update_interval: never
+
+To make LVGL your own you will need to add widgets to the display. For example, to show a label with the text "Hello World!" in the center of the screen:
+
+.. code-block:: yaml
+
+    lvgl:
+      widgets:
+        - label:
+            align: CENTER
+            text: 'Hello World!'
+
+
+
+Now read on to learn more about the configuration options and how to customize your LVGL display.
 
 Basics
 ------
@@ -125,13 +152,14 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to ``true``. "Interacts" means to release a touch or button, or rotate an encoder.
-- **color_depth** (*Optional*, string): The color deph at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
-- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. Default is ``100%`` (or ``1.0``). For devices without PSRAM, the recommended value is ``25%``.
+- **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
+- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is ``100%`` with runtime fallback to ``12%`` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is ``25%``.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: ``TRACE``, ``INFO``, ``WARN``, ``ERROR``, ``USER``, ``NONE``. Defaults to ``WARN``.
 - **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either ``big_endian`` or ``little_endian``. Defaults to ``big_endian``.
 - **disp_bg_color** (*Optional*, :ref:`color <lvgl-color>`): Solid color used to fill the background. Can be changed at runtime with the ``lvgl.update`` action.
-- **disp_bg_image** (*Optional*, :ref:`image <display-image>`):  The ID of an existing image configuration, to be used as background wallpaper. To change the image at runtime use the ``lvgl.update`` action. Also see :ref:`lvgl-widget-image` for a note regarding supported image formats.
+- **disp_bg_image** (*Optional*, :ref:`image <display-image>`):  The ID of an existing image configuration, to be used as background wallpaper. To change the image at runtime use the ``lvgl.update`` action. Also see :ref:`lvgl-widget-image` for a note regarding supported image formats. May also be set to ``none`` to clear the background image.`
+- **disp_bg_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the background image or color of the display.
 - **default_font** (*Optional*, ID): The ID of the :ref:`font <lvgl-fonts>` used by default to render the text or symbols. Defaults to LVGL's internal ``montserrat_14`` if not specified.
 - **style_definitions** (*Optional*, list): A batch of style definitions to use in LVGL widget's ``styles`` configuration. See :ref:`below <lvgl-theme>` for more details.
 - **gradients** (*Optional*, list): A list of gradient definitions to use in *bg_grad* styles. See :ref:`below <lvgl-gradients>` for more details.
@@ -167,7 +195,25 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 See :ref:`lvgl-cookbook-navigator` in the Cookbook for an example which demonstrates how to implement a page navigation bar at the bottom of the screen.
 
-.. _lgvgl-multi-conf:
+
+Choosing a buffer size
+**********************
+
+The ``buffer_size`` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is ``320 * 240 * 2`` bytes (for RGB565) = ``153600`` bytes. If you set the buffer size to ``50%``,
+then the buffer will be ``76800`` bytes. If you set it to ``25%``, then the buffer will be ``38400`` bytes. The default value is ``100%``.
+
+When using larger displays on devices with limited RAM (i.e. no PSRAM), you may want to reduce the buffer size to avoid running out of RAM.
+If not specified, the buffer size will be 100%, but a fallback
+at runtime to 12% will be attempted if a full size buffer fails. If a specific buffer size is set, the fallback will not be attempted.
+A failure to allocate a buffer will result in an error message in the log and the LVGL component being marked "Failed".
+
+Generally speaking a larger buffer will provide better performance, but the effect of reducing the buffer size from 100% is not as bad as you might think. The LVGL library is designed to be efficient and will only redraw the parts of the screen that have changed.
+
+A buffer size less than 100% can also be useful when PSRAM *is* available to *improve* performance. In this case a buffer size of 12% is recommended, and it will be allocated in internal
+RAM if possible, which will increase the speed of display redraws, since internal RAM is much faster to access than PSRAM.
+This may however reduce the internal RAM available for other components. A buffer size greater than 25% will be always allocated in PSRAM if available.
+
+.. _lvgl-multi-conf:
 
 
 Multiple LVGL configurations
@@ -197,12 +243,27 @@ Colors can be specified anywhere in the LVGL configuration either by referencing
 
 You may also use any of the `standard CSS color names <https://developer.mozilla.org/en-US/docs/Web/CSS/named-color>`__, e.g. ``springgreen``.
 
+When using a lambda to provide a color you should use the ``lv_color_hex`` function, for example:
+
+.. code-block:: yaml
+
+    label:
+      text: 'Hello World!'
+      color: !lambda return lv_color_hex(0xFF0000);
+
 .. _lvgl-opacity:
 
 Opacity
 *******
 
-Various parts of the widgets (like background, borders etc.) support opacity. It can be overridden with a string: ``TRANSP`` for fully transparent, ``COVER`` for fully opaque, or percentage between ``0%`` and ``100%``. Actual default values depend on widget specifics.
+Various parts of the widgets (like background, borders etc.) support opacity. It can be specified in one of several ways:
+
+- As a string:  ``TRANSP`` for fully transparent, ``COVER`` for fully opaque
+- As a floating point value in the range 0.0-1.0
+- As a percentage between ``0%`` and ``100%``.
+- From a lambda - return an integer in the range 0-255.
+
+Default values depend on widget specifics.
 
 .. _lvgl-fonts:
 
@@ -285,7 +346,25 @@ LVGL follows CSS's `border-box model <https://developer.mozilla.org/en-US/docs/W
 
 You can adjust the appearance of widgets by changing their foreground, background, border color and/or font. Some widgets allow for more complex styling, effectively changing all or part of their appearance.
 
-**Styling variables:**
+Using Lambdas for Styling
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Most LVGL style and widget properties can be set as either constant values or lambdas (which will be evaluated at run time).
+When using lambdas, the returned value must be of the type and within the range expected by the native LVGL library, which may not be the same
+as is used in YAML. This applies particularly to any value represented as a floating point number - the LVGL library does not use
+floating point, instead uses scaled integers. Properties with the following native types should be noted:
+
+- **opacity** LVGL opacity is an integer between 0 and 255.
+- **brightness** Similarly, an integer from 0 to 255.
+- **angle** LVGL angles are represented in 1/10 degree, so usually in the range 0 - 3600.
+- **color** LVGL uses an internal color type - to construct a color in a lambda use ``lv_color_hex(0xRRGGBB)``.
+- **zoom** Zoom levels should be multiplied by 256 (valid range is 0 to 2560, corresponding to 0-10.0).
+- **percentage** To convert a fractional value to a percentage, use ``lv_pct(value * 100)``
+
+Style properties
+^^^^^^^^^^^^^^^^
+
+These style properties may be applied to any widget, though not all widgets use all of them.
 
 - **bg_color** (*Optional*, :ref:`color <lvgl-color>`): Color for the background of the widget. Defaults to ``0xFFFFFF`` (white).
 - **bg_grad** (*Optional*, :ref:`gradient <lvgl-gradients>`): A gradient to apply to the background.
@@ -314,6 +393,8 @@ You can adjust the appearance of widgets by changing their foreground, backgroun
     - ``INTERNAL``
 - **clip_corner** (*Optional*, boolean): If set to ``true``, overflowing content will be clipped off by the widget's rounded corners (``radius`` > ``0``).
 - **color_filter_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to ``TRANSP``.
+- **image_recolor** (*Optional*, :ref:`color <lvgl-color>`): Color to mix with every pixel of an image Note that ``image_recolor_opa`` defaults to TRANSP, so it must also be set.
+- **image_recolor_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the image recoloring.
 - **outline_width** (*Optional*, int16): Set the width of the outline in pixels. Defaults to ``0``.
 - **outline_color** (*Optional*, :ref:`color <lvgl-color>`): Color used to draw an outline around the widget. Defaults to ``0`` (black).
 - **outline_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the outline of the widget. Defaults to ``COVER``.
@@ -325,7 +406,7 @@ You can adjust the appearance of widgets by changing their foreground, backgroun
 - **pad_right** (*Optional*, int16): Set the padding on the right, in pixels.
 - **pad_row** (*Optional*, int16): Set the padding between the rows of the children elements, in pixels.
 - **pad_column** (*Optional*, int16): Set the padding between the columns of the children elements, in pixels.
-- **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 = pill shaped widget (true circle if it has same width and height).
+- **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 (max) = pill shaped widget (true circle if it has same width and height, radius then should be set to half the width/height).
 - **shadow_color** (*Optional*, :ref:`color <lvgl-color>`): Color used to create a drop shadow under the widget. Defaults to ``0`` (black).
 - **shadow_ofs_x** (*Optional*, int16): Horizontal offset of the shadow, in pixels. Defaults to ``0``.
 - **shadow_ofs_y** (*Optional*, int16): Vertical offset of the shadow, in pixels. Defaults to ``0``.
@@ -345,9 +426,7 @@ You can adjust the appearance of widgets by changing their foreground, backgroun
 Themes
 ******
 
-The widgets support lots of :ref:`lvgl-styling` to customize their appearance and behavior.
-
-You can configure a global theme for all widgets at the top level with the ``theme`` configuration variable. In the example below, all the ``arc``, ``slider`` and ``button`` widgets will, by default, use the styles and properties defined here. A combination of styles and :ref:`states <lvgl-widgetproperty-state>` can be chosen for every widget.
+You can configure a global theme for all widgets of a given type at the top level with the ``theme:`` configuration variable. In the example below, all the ``arc``, ``slider`` and ``button`` widgets will, by default, use the styles and properties defined here. A combination of styles and :ref:`states <lvgl-widgetproperty-state>` can be chosen for every widget.
 
 .. code-block:: yaml
 
@@ -424,6 +503,32 @@ Feel free to experiment to discover inheritance and precedence of the styles bas
 
 :ref:`lvgl-cookbook-theme` The Cookbook contains an example which demonstrates how to implement a gradient style for your widgets.
 
+``lvgl.style.update``
+*********************
+
+This :ref:`action <actions-action>` allows changing/updating the properties of a style at run time. This can be used to
+implement dynamic themes, e.g. light/dark mode, or to change the appearance of widgets based on user interaction.
+
+The action takes a style ID and a dictionary of properties to update. The properties can be any of the style properties listed above, and can be constants or lambdas.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    lvgl:
+      style_definitions:
+        - id: my_style
+          bg_color: 0xFFFFFF
+          border_color: 0x000000
+          border_width: 2
+
+    # Action to update the style
+    on_...:
+      - lvgl.style.update:
+          id: my_style
+          properties:
+            bg_color: 0xFF0000
+            border_color: 0x00FF00
+
 .. _lvgl-layouts:
 
 Layouts
@@ -479,7 +584,7 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
         - ``END``: means right horizontally and bottom vertically.
         - ``CENTER``: simply center.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to ``flex_align_track``.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to ``flex_align_track``.
 
     - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
@@ -543,7 +648,7 @@ Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_ali
         - ``CENTER``: simply center.
         - ``STRETCH``: stretch the widget to the cell in the respective direction. Does not apply to ``grid_column_align``, ``grid_row_align``.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line.
 
 .. code-block:: yaml
@@ -625,9 +730,10 @@ Several actions are available for the LVGL component itself, these are outlined 
 ``lvgl.widget.redraw``
 **********************
 
-This :ref:`action <actions-action>` redraws the entire screen, or optionally only a widget on it.
+This :ref:`action <actions-action>` redraws the entire screen, or optionally only selected widgets. It does not change
+any widget properties. It is mostly useful to redraw the screen after resuming LVGL from the paused state.
 
-- **id** (*Optional*): The ID of a widget configured in LVGL which you want to redraw; if omitted, the entire screen will be redrawn.
+- **id** (*Optional*): The ID (or a list of IDs) of a widget configured in LVGL which you want to redraw; if omitted, the entire screen will be redrawn.
 - **lvgl_id** (*Optional*): The ID of the LVGL instance to redraw.
 
 .. code-block:: yaml
@@ -636,6 +742,31 @@ This :ref:`action <actions-action>` redraws the entire screen, or optionally onl
       then:
         - lvgl.widget.redraw:
             lvgl_id: lvgl1  # optional when only one LVGL instance is configured
+
+
+.. _lvgl-refresh-action:
+
+``lvgl.widget.refresh``
+***********************
+
+This :ref:`action <actions-action>` re-evaluates all properties specified with lambdas in the specified widget's configuration. This offers
+an alternative technique to using the ``lvgl.widget.update`` action, which updates specified properties.
+
+- **id** (**Required**): The ID of a widget configured in LVGL to refresh (may also be a list of widgets).
+
+Only properties with lambdas are refreshed. A build-time error will be raised if the widget has no lambda properties.
+
+.. code-block:: yaml
+
+    widgets:
+      - label:
+          id: label1
+          text: !lambda return id(text_sensor).state;
+
+    on_...:
+      then:
+        - lvgl.widget.refresh: label1 # will update the label text using the lambda.
+
 
 .. _lvgl-pause-action:
 
@@ -829,6 +960,24 @@ This :ref:`condition <common_conditions>` checks if LVGL is in the paused state 
             then:
               - lvgl.resume:
 
+``lvgl.page.is_showing``
+************************
+
+This :ref:`condition <common_conditions>` checks if the nominated page is the one currently showing.
+
+- **id** (**Required**): The ID of the page to check. May be supplied as a simple value.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      then:
+        - if:
+            condition:
+              lvgl.page.is_showing: main_page
+            then:
+              - logger.log: "Main page is showing"
+
 Triggers
 --------
 
@@ -873,6 +1022,12 @@ This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is paused.
 *************
 
 This :ref:`trigger <lvgl-automation-triggers>` is triggered when LVGL is resumed. This can be used to perform any desired actions when the screen is unlocked, such as turning on the display backlight.
+
+
+``on_boot``
+*************
+
+This :ref:`trigger <lvgl-automation-triggers>` is triggered after LVGL has been setup. It is also available on any widget, but the timing is the same.
 
 
 See Also
