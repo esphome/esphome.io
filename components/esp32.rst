@@ -118,6 +118,18 @@ Advanced Configuration
   experimental features in the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features
   may cause instability or other issues.
 
+**LWIP Optimization Options (ESP-IDF only):**
+
+The following options are available under the ``advanced`` section when using the ESP-IDF framework to disable unused
+LWIP (Lightweight IP) features and save flash memory:
+
+- **enable_lwip_dhcp_server** (*Optional*, boolean): Enable DHCP server functionality. Only needed if the device will act
+  as a DHCP server. Defaults to ``false``.
+- **enable_lwip_mdns_queries** (*Optional*, boolean): Enable mDNS query support in the DNS resolver. ESPHome uses its own
+  mDNS implementation, so this is rarely needed. Defaults to ``false``.
+- **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
+  interfaces. Defaults to ``false``.
+
 GPIO Pin Numbering
 ------------------
 
