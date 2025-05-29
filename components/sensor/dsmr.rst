@@ -177,6 +177,10 @@ Configuration variables:
 
   - All options from :ref:`Sensor <config-sensor>`.
 
+- **water_delivered** (*Optional*): Water Consumed.
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
 Belgium
 
 - **gas_delivered_be** (*Optional*): Gas Consumed Belgium.
