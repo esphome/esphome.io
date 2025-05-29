@@ -6,12 +6,12 @@ RF Bridge Component
     :image: rf_bridge.jpg
     :keywords: RF Bridge
 
-The ``RF Bridge`` Component provides the ability to send and receive 433MHz signals (like RF remotes/key fobs) using radio microcontrollers founds on RF bridge devices ( eg. Sonoff RF bridge).
+The ``RF Bridge`` component provides the ability to send and receive 433MHz signals (like RF remotes/key fobs) using radio microcontrollers found on RF bridge devices ( eg. Sonoff RF bridge).
 
 * The black Sonoff RF Bridge (R1, R2 V1.0) has an ESP8266 (for WIFI/ESPHome) and an embedded EFM8BB1 microcontroller (433 MHz). 
 * The white Sonoff RF Bridge (R2 V2.0) has ESP8266 and an embedded OB38S003 microcontroller (433 MHz). 
 
-This component implements the communication protocol between the ESP8266 and the firmware of ``EFM8BB1`` or ``OB38S003``. 
+This component implements a communication protocol between the ESP8266 and the firmware of ``EFM8BB1`` or ``OB38S003``. 
 The radio microcontroller is connected to the ESP8266 via the
 :doc:`UART bus </components/uart>`. The uart bus must be configured at the same speed of the module
 which is 19200bps.
@@ -49,7 +49,7 @@ which is 19200bps.
 
 Configuration variables:
 ------------------------
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the RF bridge. Used for code generation and event tracking in home assistant. 
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the RF bridge. Usefull for event tracking in home assistant. 
 - **on_code_received** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a code is received. See :ref:`rf_bridge-on_code_received`.
 
@@ -171,7 +171,7 @@ Configuration options:
 ``rf_bridge.send_raw`` Action
 -----------------------------
 
-Send a raw command to the onboard radio chip. The OEM RF firmware is able to send raw only for standard signals (usually short), for other signals (B0 transmit), Portisch or Mightymos fimrware is needed.
+Send a raw command to the onboard radio chip. The OEM RF firmware is able to raw send only standard signals (usually short), for other signals (B0 transmit), flashing the RF chip with Portisch or Mightymos fimrware is needed.
 
 
 This can be used to send raw RF codes in automations, mainly for protocols that are not supported.
@@ -331,7 +331,7 @@ The raw data will be available in the log and can later be used with :ref:`rf_br
 .. note::
 
     There seems to be an overflow problem in Portisch firmware and after a short while, the bucket sniffing stops.
-    You should re-call the action to reset and start sniffing again.
+    You should re-call the action to reset and start sniffing again. This issue is fixed in Mightmos firmware.
 
 .. code-block:: yaml
 
