@@ -130,6 +130,7 @@ Configuration variables:
   - ``4.20in-bV2-bwr`` - BWR rendering enabled (uses double the amount of RAM for the display buffer as B/W rendering)
   - ``5.83in``
   - ``5.83inv2``
+  - ``gdey0583t81`` - GoodDisplay GDEY0583T81 5.83" B/W
   - ``7.30in-f`` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
   - ``7.50in``
   - ``7.50in-bV2`` - also supports v3, B/W rendering only

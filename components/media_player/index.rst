@@ -106,7 +106,7 @@ This action stops the current playback.
 
 Configuration variables:
 
-**announcement** (**Optional**, boolean): Whether to target announcements or regular media files, if supported by the media player. Defaults to ``false``.
+**announcement** (*Optional*, boolean): Whether to target announcements or regular media files, if supported by the media player. Defaults to ``false``.
 
 .. _media_player-toggle:
 

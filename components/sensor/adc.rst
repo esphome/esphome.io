@@ -35,7 +35,7 @@ Configuration variables:
   attenuation to use. See :ref:`adc-esp32_attenuation`. Defaults to ``0db``.
 - **raw** (*Optional*): Allows to read the raw ADC output without any conversion or calibration. See :ref:`adc-raw`. Defaults to ``false``.
 - **samples** (*Optional*): The amount of ADC readings to take per sensor update. On the ESP32 this value is ignored if ``attenuation`` is set to ``auto``. Defaults to ``1``.
-- **sampling_mode** (*Optional*): Sampling method to use when multiple samples are taken. 
+- **sampling_mode** (*Optional*): Sampling method to use when multiple samples are taken.
 
   - ``avg`` average of all samples (**Default**)
   - ``min`` minimal value from all samples
@@ -71,7 +71,7 @@ Measuring higher voltages requires setting ``attenuation`` to one of the followi
 There's more information `at the manufacturer's website <https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t>`__.
 
 To simplify this, we provide the setting ``attenuation: auto`` for an automatic/seamless transition among scales. `Our implementation
-<https://github.com/esphome/esphome/blob/dev/esphome/components/adc/adc_sensor.cpp>`__ combines all available ranges to allow the best resolution without having to compromise on a specific attenuation.
+<https://github.com/esphome/esphome/blob/dev/esphome/components/adc/adc_sensor_esp32.cpp>`__ combines all available ranges to allow the best resolution without having to compromise on a specific attenuation.
 
 .. note::
 
@@ -95,9 +95,18 @@ ESP32 pins
     * - ESP32
       - GPIO32 - GPIO39
       - GPIO0, GPIO2, GPIO4, GPIO12 - GPIO15, GPIO25 - GPIO27
+    * - ESP32-C2
+      - GPIO0 - GPIO4
+      - GPIO5
     * - ESP32-C3
       - GPIO0 - GPIO4
       - GPIO5
+    * - ESP32-C6
+      - GPIO0 - GPIO6
+      - no ``ADC2``
+    * - ESP32-H2
+      - GPIO1 - GPIO5
+      - no ``ADC2``
     * - ESP32-S2
       - GPIO1 - GPIO10
       - GPIO11 - GPIO20
