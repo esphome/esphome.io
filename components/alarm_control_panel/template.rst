@@ -24,26 +24,26 @@ managed alarm control panel.
 Configuration variables:
 ------------------------
 
-- **codes** (*Optional*, list of string): A list of codes for disarming the alarm, if *requires_code_to_arm* set to true then for arming the alarm too.
-- **requires_code_to_arm** (*Optional*, boolean): Code required for arming the alarm, *codes* must be provided.
-- **arming_away_time** (*Optional*, :ref:`config-time`): The exit delay before the alarm is armed to away mode. Defaults to ``0s``.
-- **arming_home_time** (*Optional*, :ref:`config-time`): The exit delay before the alarm is armed to home mode.
-- **arming_night_time** (*Optional*, :ref:`config-time`): The exit delay before the alarm is armed to night mode.
+- **codes** (*Optional*, list of string): A list of codes for disarming the alarm, if *requires_code_to_arm* is set to true then for arming the alarm too.
+- **requires_code_to_arm** (*Optional*, boolean): A code required for arming the alarm. **codes** must be defined.
+- **arming_away_time** (*Optional*, :ref:`config-time`): The exit delay when the alarm is armed to away mode. Defaults to ``0s``.
+- **arming_home_time** (*Optional*, :ref:`config-time`): The exit delay when the alarm is armed to home mode.
+- **arming_night_time** (*Optional*, :ref:`config-time`): The exit delay when the alarm is armed to night mode.
 - **pending_time** (*Optional*, :ref:`config-time`): The entry delay before the alarm is triggered. Defaults to ``0s``.
 - **trigger_time** (*Optional*, :ref:`config-time`): The time after a triggered alarm before resetting to previous state if the sensors are cleared/off. Defaults to ``0s``.
-- **binary_sensors** (*Optional*, *list*): A list of binary sensors the panel should use. Each consists of:
+- **binary_sensors** (*Optional*, *list*): A list of binary sensors the panel should use as zones. Each consists of:
 
   - **input** (**Required**, string): The id of the binary sensor component
   - **bypass_armed_home** (*Optional*, boolean): This binary sensor will not trigger the alarm when in ``armed_home`` state.
   - **bypass_armed_night** (*Optional*, boolean): This binary sensor will not trigger the alarm when in ``armed_night`` state.
-  - **bypass_auto** (*Optional*, boolean): This binary sensor will be automatically bypassed if left on/open at the time of arming.
-  - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor. One of ``delayed``, ``instant``, or ``delayed_follower``. (``delayed`` is the default if not specified)
-  - **chime** (*Optional*, boolean): When set ``true``, the chime callback will be called whenever the sensor goes from closed to open. (``false`` is the default if not specified)
+  - **bypass_auto** (*Optional*, boolean): This binary sensor will be automatically bypassed if faulted at the time of arming.
+  - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor. One of ``delayed``, ``delayed_follower``, ``instant`` or ``instant_always``. (``delayed`` is the default if not specified)
+  - **chime** (*Optional*, boolean): The chime callback will be called whenever the sensor goes from ``OFF`` to ``ON``.
 
 - **restore_mode** (*Optional*, enum):
 
-  - ``ALWAYS_DISARMED`` (Default): Always start in ``disarmed`` state.
-  - ``RESTORE_DEFAULT_DISARMED``: Restore state or default to ``disarmed`` state if no saved state was found.
+  - ``ALWAYS_DISARMED`` (Default): Always start in ``DISARMED`` state.
+  - ``RESTORE_DEFAULT_DISARMED``: Restore state or default to ``DISARMED`` state if no saved state was found.
 
 - All other options from :ref:`Alarm Control Panel <config-alarm_control_panel>`
 
@@ -57,62 +57,97 @@ Configuration variables:
 Trigger Modes
 -------------
 
-Each binary sensor "zone" supports 3 trigger modes. The 3 trigger modes are:
+A binary sensor acts as a zone for the alarm. The sensor is *faulted*, and will potentially trigger the alarm, when it changes to the ``ON`` state.
+In some circumstances, a sensor may be bypassed and will not trigger the alarm when faulted.
 
-- delayed
+Each binary sensor/zone must be in one of the following trigger modes:
+
 - instant
+- instant_always
+- delayed *(the default)*
 - delayed_follower
 
-The ``delayed`` trigger mode is typically specified for exterior doors where entry is required to access an alarm keypad or other arm/disarm method. If the alarm panel is armed, and a zone set to ``delayed`` is "faulted" (i.e. the zone state is ``true``) the alarm state will change from the ``armed`` state to the ``pending`` state. During the ``pending`` state, the user has a preset time to disarm the alarm before it changes to the ``triggered`` state. This is the default trigger mode if not specified.
+The ``instant`` trigger mode will immediately trigger the alarm, unless it is in the ``DISARMED`` state.
+The ``instant`` trigger mode is typically used for exterior zones (e.g. windows, and glass break detectors).
 
-The ``instant`` trigger mode is typically used for exterior zones (e.g. windows, and glass break detectors).  If the alarm control panel is armed, a fault on this type of zone will cause the alarm to go from the ``armed`` state directly to the ``triggered`` state.
+The ``instant_always`` trigger mode will immediately trigger the alarm, independent of the current state.
+The ``instant_always`` trigger mode is typically used for continuously monitored zones (e.g. smoke detectors).
 
-The ``delayed_follower`` trigger mode is typically specifed for interior passive infared (PIR) or microwave sensors. One of two things happen when a ``delayed_follower`` zone is faulted:
+The ``delayed`` trigger mode provides a delay period before the armed alarm is triggered, allowing for it to be disarmed in the interim.
+The ``delayed`` trigger mode is typically specified for exterior doors where entry is required to access an alarm keypad or other arm/disarm method.
+This is the default trigger mode if not otherwise specified.
 
-1. When the alarm panel is in the armed state, a fault on a zone with ``delayed_follower`` specified will cause the alarm control panel to go directly to the ``triggered`` state.
-
-2. When the alarm panel is in the pending state, a fault on a zone with ``delayed_follower`` specified will remain in the ``pending`` state.
-
-The ``delayed_follower`` trigger mode offers better protection if someone enters a premises via an unprotected window or door. If there is a PIR guarding the main hallway, it will cause an instant trigger of the alarm panel as someone
-entered the premises in a unusual manner. Likewise, if someone enters the premises though a door set to the ``delayed`` trigger mode, and then triggers the PIR, the alarm will stay in the ``pending`` state until either they disarm the alarm, or
-the pending timer expires.
+The ``delayed_follower`` trigger mode allows for the definition of a path through the premises from a ``delayed``
+entry zone, through ``delayed_follower`` zones,  to a point where the alarm  may be disarmed, such as an alarm keypad or other arm/disarm method.
+This is typically also the path out of the premises when the alarm is armed.
+If the premises is entered via the ``delayed`` entry zone then the alarm enters the ``PENDING`` state and any
+``delayed_follower`` zone faults are ignored.
+If the premises is not entered via the ``delayed`` entry zone then the ``delayed_follower`` zone behaves as though it
+were an ``instant`` zone.
 
 .. _template_alarm_control_panel-state_flow:
 
 State Flow:
 -----------
 
-1. The alarm starts in ``DISARMED`` state
-2. When the ``arm_...`` method is invoked
+1. The alarm starts in ``DISARMED`` state.
+2. When in the ``DISARMED`` state and the ``arm_...`` method is invoked:
 
-  a. ``arming_..._time`` is greater than 0 the state is ``ARMING``
-  b. ``arming_..._time`` is 0 or after the delay the state is ``ARMED_...``
+  - If ``arming_..._time`` is greater than zero the next state is ``ARMING``.
+  - If ``arming_..._time`` is zero the next state is ``ARMED_...``.
 
-3. When the alarm is tripped by a sensor state changing to ``on`` or ``alarm_control_panel_pending_action`` invoked
+  The ``arm_...`` method does not allow arming from states other than ``DISARMED``.
 
-  1. If trigger_mode is set to ``delayed``:
+3. When in the ``ARMING`` state, after the ``arming_..._time`` delay the next state is ``ARMED_...``.
 
-    1. ``pending_time`` greater than 0 the state is ``PENDING``
-    2. ``pending_time`` is 0 or after the ``pending_time`` delay the state is ``TRIGGERED``
+4. The alarm can be triggered by a faulted zone:
 
-  2. If trigger_mode is set to ``instant``:
+  1. If **trigger_mode** is set to ``instant``:
 
-    1. The state is set to ``TRIGGERED``
+    - If the current state is not ``DISARMED`` the next state is ``TRIGGERED``.
+    - If the current state is ``DISARMED`` the fault is ignored and the alarm will stay in that
+      state.
 
-  3. If the trigger_mode is set to ``interior_follower``:
+  2. If **trigger_mode** is set to ``instant_always``:
 
-    1. If the current state is ``ARMED_...`` the state will be set to ``TRIGGERED``
-    2. If the current state is ``PENDING`` then nothing will happen and it will stay in the ``PENDING`` state.
+    - The next state is ``TRIGGERED``.
 
-4. If ``trigger_time`` greater than 0 and no sensors are ``on`` after ``trigger_time`` delay
-   the state returns to ``ARM_...``
+  3. If **trigger_mode** is set to ``delayed``:
+
+    - If the current state is ``ARMED_...``:
+
+      - If **pending_time** greater than 0 the next state is ``PENDING``.
+      - If **pending_time** is 0 the next state is ``TRIGGERED``.
+
+    - If the current state is not ``ARMED_...`` the fault is ignored and the alarm will stay in that
+      state.
+
+  4. If the **trigger_mode** is set to ``delayed_follower``:
+
+    - If the current state is ``ARMED_...`` the next state is ``TRIGGERED``.
+    - If the current state is not ``ARMED_...`` the fault is ignored and the alarm will stay in that
+      state.
+
+  Bypassed zones do not trigger state transitions.
+
+5. When in the ``PENDING`` state, after the **pending_time** delay the next state is ``TRIGGERED``.
+
+6. When in the ``TRIGGERED`` state, if **trigger_time** greater than zero and no zones are faulted after **trigger_time**
+   delay the state returns to the preceding ``ARMED_...`` state.
+
+Other state transitions may be forced by ``alarm_control_panel`` actions, such as the
+:ref:`alarm_control_panel_pending_action` or the :ref:`alarm_control_panel_triggered_action`, and of course the
+:ref:`alarm_control_panel_disarm_action` which disarms the alarm.
 
 .. note::
 
     Although the interface supports all arming modes only ``away``, ``home`` and ``night`` have been implemented for now.
-    ``arm_...`` is for either ``arm_away`` or ``arm_home``
-    ``arming_..._time`` is for either ``arming_away_time``, ``arming_home_time``, or ``arming_night_time``
-    ``ARMED_...`` is for either ``ARMED_AWAY``, ``ARMED_HOME``, or ``ARMED_NIGHT``
+
+    ``arm_...`` means one of ``arm_away``, ``arm_home`` or ``arm_night``.
+
+    **arming_..._time** means one of **arming_away_time**, **arming_home_time**, or **arming_night_time**.
+
+    ``ARMED_...`` means one of ``ARMED_AWAY``, ``ARMED_HOME``, or ``ARMED_NIGHT``.
 
 
 Example:
