@@ -1,0 +1,303 @@
+ESPHome 2024.11.0 - 20th November 2024
+======================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.11.0.
+    :image: /_static/changelog-2024.11.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    AXS15231, components/touchscreen/axs15231, axs15231.svg
+    ES8311, components/audio_dac/es8311, es8311.svg
+    i2c_device, components/i2c_device, i2c.svg
+    MAX17043, components/sensor/max17043, max17043.jpg
+    OpenTherm, components/opentherm, opentherm.png
+    TC74, components/sensor/tc74, tc74.jpg
+
+
+ESPHome has grown over time and become more friendly for vendors to create and pre-install ESPHome onto devices
+they sell / give away / provide. We are seeing more devices with ESPHome pre-installed, and we are so happy to
+see how accessible it is becoming for regular Home Assistant users (not just developers or tech-savvy people) to
+get their hands on a device that; A, works out of the box, B, works locally, and C can be fully customized by
+the person who bought it if they choose to do so.
+Because there are now more devices you can buy and do not have to install ESPHome onto yourself, we have made some
+updates to allow ignoring these discovered devices from the ESPHome Dashboard as for most of these devices, you
+don't actually need to **take control** and write and manage your own firmware for them.
+
+Further to this, we have slightly changed the identity of ESPHome as an add-on in Home Assistant. It is now called
+**ESPHome Device Compiler**, because that is what it does, and most people do not need it if they are not going to
+actually compile anything.
+
+OpenTherm
+---------
+
+This release brings :doc:`/components/opentherm` support to ESPHome. Please see the
+:doc:`documentation </components/opentherm>` for detailed information about it and how to use it.
+
+ESPHome ``armv7`` Docker Support
+--------------------------------
+
+We will be retiring ESPHome's Docker support for ``armv7`` hardware in the February 2025 release.
+
+This is due to both waning support as it relates to tooling and performance reasons. We strongly recommend moving to a
+more modern architecture, especiallly if you're using the ESPHome Device Compiler to build/compile firmware for your
+devices.
+
+Release 2024.11.1 - November 22
+-------------------------------
+
+- [http_request] Fix within context with parameters. (Bugfix) :esphomepr:`7790` by :ghuser:`clydebarrow`
+- [rtttl] Clamp gain between 0 and 1 :esphomepr:`7793` by :ghuser:`jesserockz`
+- [speaker] Add missing auto-load for ``audio`` :esphomepr:`7794` by :ghuser:`jesserockz`
+- [qspi_dbi] Fix garbled graphics on RM690B0 :esphomepr:`7795` by :ghuser:`manuelkasper`
+- Check for min_version earlier in validation :esphomepr:`7797` by :ghuser:`spuder`
+- Fix for OTA mode not activating in safe_mode when OTA section has an on_xxxx action  :esphomepr:`7796` by :ghuser:`Dilbert66`
+- Ensure storage I/O for ignored devices runs in the executor :esphomepr:`7792` by :ghuser:`bdraco`
+
+Release 2024.11.2 - November 27
+-------------------------------
+
+- [lvgl] Bugfixes :esphomepr:`7803` by :ghuser:`clydebarrow`
+- [docker] Leave run-time required libraries installed. :esphomepr:`7804` by :ghuser:`clydebarrow`
+- [qspi_dbi] Fix init sequences (Bugfix) :esphomepr:`7805` by :ghuser:`clydebarrow`
+- fix modbus crashing when bad data returned :esphomepr:`7810` by :ghuser:`ssieb`
+- [Modbus Controller] Fix issue #6477. Online automation triggering Offline :esphomepr:`7801` by :ghuser:`0x3333`
+- [fix] Status sensor does not check if required network component is missing :esphomepr:`7734` by :ghuser:`rvalitov`
+- keypad binary sensors should be initially off :esphomepr:`7808` by :ghuser:`ssieb`
+- fix 32 char SSIDs :esphomepr:`7834` by :ghuser:`ssieb`
+- [honeywell] use warning instead of failing :esphomepr:`7862` by :ghuser:`ssieb`
+
+Release 2024.11.3 - December 6
+------------------------------
+
+- [opentherm] Fix out of memory errors on ESP8266 :esphomepr:`7835` by :ghuser:`olegtarasov`
+- fix local time timestamp calculation :esphomepr:`7807` by :ghuser:`ssieb`
+- [online_image]Don't access decoder if not initialized :esphomepr:`7882` by :ghuser:`guillempages`
+- Add IRAM_ATTR to all functions used during interrupts on esp8266 chips. :esphomepr:`7840` by :ghuser:`FreeBear-nc`
+- [st7920] Remove unnecessary warning when drawing outside display bounds :esphomepr:`7868` by :ghuser:`jesserockz`
+- Fix recalc_timestamp_utc :esphomepr:`7894` by :ghuser:`RouNNdeL`
+- Cast port to int for ota pushing :esphomepr:`7888` by :ghuser:`jesserockz`
+- [lvgl] Bugfixes :esphomepr:`7896` by :ghuser:`clydebarrow`
+- [lvgl] Fix msgbox content :esphomepr:`7912` by :ghuser:`clydebarrow`
+- [esp32] Fix crash with empty `platformio_options:` value :esphomepr:`7920` by :ghuser:`clydebarrow`
+
+Full list of changes
+--------------------
+
+New Features
+^^^^^^^^^^^^
+
+- Support ignoring discovered devices from the dashboard :esphomepr:`7665` by :ghuser:`jesserockz` (new-feature)
+- [media_player] Add new media player conditions :esphomepr:`7667` by :ghuser:`kahrendt` (new-feature)
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add TC74 temperature sensor :esphomepr:`7460` by :ghuser:`sethgirvan` (new-integration)
+- Add support for Analog Devices MAX17043 battery fuel gauge :esphomepr:`7522` by :ghuser:`blacknell` (new-integration)
+- [speaker, i2s_audio] I2S Speaker implementation using a ring buffer :esphomepr:`7605` by :ghuser:`kahrendt` (new-integration)
+- [axs15231] Touchscreen driver :esphomepr:`7592` by :ghuser:`clydebarrow` (new-integration)
+- i2c_device :esphomepr:`7641` by :ghuser:`gabest11` (new-integration)
+- [es8311] Add es8311 dac component :esphomepr:`7693` by :ghuser:`kahrendt` (new-integration)
+- Add OpenTherm component (part 3: rest of the sensors) :esphomepr:`7676` by :ghuser:`olegtarasov` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- [qspi_dbi] Rename from qspi_amoled, add features :esphomepr:`7594` by :ghuser:`clydebarrow` (breaking-change) (new-platform)
+- Add OpenTherm component (part 2.1: sensor platform) :esphomepr:`7529` by :ghuser:`olegtarasov` (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- [qspi_dbi] Rename from qspi_amoled, add features :esphomepr:`7594` by :ghuser:`clydebarrow` (breaking-change) (new-platform)
+- [lvgl] light schema should require `widget:` not `led:` (Bugfix) :esphomepr:`7649` by :ghuser:`clydebarrow` (breaking-change)
+- [http_request] Always return defined server response status :esphomepr:`7689` by :ghuser:`clydebarrow` (breaking-change)
+- [touchscreen] Calibration fixes :esphomepr:`7704` by :ghuser:`clydebarrow` (breaking-change)
+- [spi_device] rename mode to spi_mode :esphomepr:`7724` by :ghuser:`clydebarrow` (breaking-change)
+- Update UNIT_VOLT_AMPS_REACTIVE = "var" (Currently 'VAR') :esphomepr:`7643` by :ghuser:`Roving-Ronin` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- Fix temperature and humidity for bme680 with bsec2 :esphomepr:`7728` by :ghuser:`luar123`
+- [i2s_audio] Bugfix: Adjust I2S speaker setup priority :esphomepr:`7759` by :ghuser:`kahrendt`
+- Update UNIT_VOLT_AMPS_REACTIVE = "var" (Currently 'VAR') :esphomepr:`7643` by :ghuser:`Roving-Ronin` (breaking-change)
+- Fix reactive power unit of measurement from VAR to var :esphomepr:`7757` by :ghuser:`felipecrs`
+- Disable bluetooth proxy during update :esphomepr:`7695` by :ghuser:`jzucker2`
+- ld2420: fix typo in log message :esphomepr:`7758` by :ghuser:`bfabio`
+- TuyaFan control should use oscillation_type :esphomepr:`7776` by :ghuser:`pethans`
+- Bump esphome-dashboard to 20241118.0 :esphomepr:`7782` by :ghuser:`jesserockz`
+- [http_request] Feed watchdog timeout around http request functions :esphomepr:`7786` by :ghuser:`jesserockz`
+- Bump esphome-dashboard to 20241120.0 :esphomepr:`7787` by :ghuser:`jesserockz`
+
+All changes
+^^^^^^^^^^^
+
+- Update `pillow` to 10.4.0 :esphomepr:`7566` by :ghuser:`hostcc`
+- Bump actions/upload-artifact from 4.4.2 to 4.4.3 :esphomepr:`7575` by :ghuser:`dependabot[bot]`
+- [fix] ESP32-C6 Reset Reasons :esphomepr:`7578` by :ghuser:`rvalitov`
+- [light] Add ``initial_state`` configuration :esphomepr:`7577` by :ghuser:`jesserockz`
+- [CI] failures when installing using apt-get. :esphomepr:`7593` by :ghuser:`clydebarrow`
+- [web_server] expose event compoent to REST :esphomepr:`7587` by :ghuser:`RFDarter`
+- Update test_build_components :esphomepr:`7597` by :ghuser:`tomaszduda23`
+- [fix] ESP32-C6: internal temperature reporting :esphomepr:`7579` by :ghuser:`rvalitov`
+- [code-quality] statsd component :esphomepr:`7603` by :ghuser:`tomaszduda23`
+- [automation] Implement all and any condition shortcuts :esphomepr:`7565` by :ghuser:`clydebarrow`
+- Add TC74 temperature sensor :esphomepr:`7460` by :ghuser:`sethgirvan` (new-integration)
+- [display] filled_ring and filled_gauge methods added :esphomepr:`7420` by :ghuser:`artemyevav`
+- [fix] deprecated functions warnings for logger component with ESP IDF version 5.3.0+ :esphomepr:`7600` by :ghuser:`rvalitov`
+- [lvgl] Implement better software rotation :esphomepr:`7595` by :ghuser:`clydebarrow`
+- [qspi_dbi] Rename from qspi_amoled, add features :esphomepr:`7594` by :ghuser:`clydebarrow` (breaking-change) (new-platform)
+- Add support for Analog Devices MAX17043 battery fuel gauge :esphomepr:`7522` by :ghuser:`blacknell` (new-integration)
+- chore: bump pyyaml to 6.0.2 to support py3.13 build :esphomepr:`7610` by :ghuser:`chenrui333`
+- chore: bump platformio to 6.1.16 to support py3.13 build :esphomepr:`7590` by :ghuser:`chenrui333`
+- [speaker, i2s_audio] I2S Speaker implementation using a ring buffer :esphomepr:`7605` by :ghuser:`kahrendt` (new-integration)
+- Bump arduino-mlx90393 to 1.0.2 :esphomepr:`7618` by :ghuser:`functionpointer`
+- [fix] ESP32-C6 BLE compile error :esphomepr:`7580` by :ghuser:`rvalitov`
+- [axs15231] Touchscreen driver :esphomepr:`7592` by :ghuser:`clydebarrow` (new-integration)
+- [lvgl] Roller and Dropdown enhancements; :esphomepr:`7608` by :ghuser:`clydebarrow`
+- [code-quality] udp component :esphomepr:`7602` by :ghuser:`tomaszduda23`
+- [lvgl] Revise code generation to allow early widget creation :esphomepr:`7611` by :ghuser:`clydebarrow`
+- [lvgl] Allow esphome::Image in lambda to update image source directly :esphomepr:`7624` by :ghuser:`guillempages`
+- Bump bme68x_bsec2 version to 1.8.2610 :esphomepr:`7626` by :ghuser:`shvmm`
+- Update Pull request template :esphomepr:`7620` by :ghuser:`jesserockz`
+- [lvgl] Defer display rotation reset until setup(). (Bugfix) :esphomepr:`7627` by :ghuser:`clydebarrow`
+- [lvgl] light schema should require `widget:` not `led:` (Bugfix) :esphomepr:`7649` by :ghuser:`clydebarrow` (breaking-change)
+- [image] Fix compile time problem with host image not using lvgl :esphomepr:`7654` by :ghuser:`clydebarrow`
+- [lvgl] Fix rotation code for 90deg (Bugfix) :esphomepr:`7653` by :ghuser:`clydebarrow`
+- [lvgl] Allow strings to be interpreted as integers (Bugfix) :esphomepr:`7652` by :ghuser:`clydebarrow`
+- [rtttl] Add ``get_gain()`` :esphomepr:`7647` by :ghuser:`edwardtfn`
+- feat(MQTT): Add subscribe QoS to discovery :esphomepr:`7648` by :ghuser:`Rapsssito`
+- i2c_device :esphomepr:`7641` by :ghuser:`gabest11` (new-integration)
+- Bump actions/cache from 4.1.1 to 4.1.2 in /.github/actions/restore-python :esphomepr:`7659` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.1.1 to 4.1.2 :esphomepr:`7660` by :ghuser:`dependabot[bot]`
+- [speaker, i2s_audio] Support audio_dac component, mute actions, and improved logging :esphomepr:`7664` by :ghuser:`kahrendt`
+- unified way how all platforms handle copy_files :esphomepr:`7614` by :ghuser:`tomaszduda23`
+- updating ESP32 board definitions :esphomepr:`7650` by :ghuser:`asolochek`
+- Support ignoring discovered devices from the dashboard :esphomepr:`7665` by :ghuser:`jesserockz` (new-feature)
+- Bump esphome-dashboard to 20241025.0 :esphomepr:`7669` by :ghuser:`jesserockz`
+- unified way how all platforms handle get_download_types :esphomepr:`7617` by :ghuser:`tomaszduda23`
+- [media_player] Add new media player conditions :esphomepr:`7667` by :ghuser:`kahrendt` (new-feature)
+- [code-quality] weikai.h :esphomepr:`7601` by :ghuser:`tomaszduda23`
+- Bump actions/setup-python from 5.2.0 to 5.3.0 in /.github/actions/restore-python :esphomepr:`7671` by :ghuser:`dependabot[bot]`
+- Bump actions/setup-python from 5.2.0 to 5.3.0 :esphomepr:`7670` by :ghuser:`dependabot[bot]`
+- [image][online_image][animation] Fix transparency in RGB565 :esphomepr:`7631` by :ghuser:`clydebarrow`
+- Add OpenTherm component (part 2.1: sensor platform) :esphomepr:`7529` by :ghuser:`olegtarasov` (new-platform)
+- gp8403 : Add the possibility to use substitution for channel selection :esphomepr:`7681` by :ghuser:`SeByDocKy`
+- [lvgl] Implement qrcode :esphomepr:`7623` by :ghuser:`clydebarrow`
+- [bytebuffer] Rework ByteBuffer using templates :esphomepr:`7638` by :ghuser:`clydebarrow`
+- [http_request] Always return defined server response status :esphomepr:`7689` by :ghuser:`clydebarrow` (breaking-change)
+- [font] Fix failure with bitmap fonts :esphomepr:`7691` by :ghuser:`clydebarrow`
+- [http_request] Add enum for status codes :esphomepr:`7690` by :ghuser:`clydebarrow`
+- Support W5500 SPI-Ethernet polling mode if framework is supported :esphomepr:`7503` by :ghuser:`slakichi`
+- Add asdf to gitignore (and dockerignore) :esphomepr:`7686` by :ghuser:`jzucker2`
+- Add more prometheus metrics :esphomepr:`7683` by :ghuser:`jzucker2`
+- Mopeka Pro Check improvement to allow user to configure the sensor reporting for lower quality readings :esphomepr:`7475` by :ghuser:`spbrogan`
+- fix(WiFi): Fix strncpy missing NULL terminator [-Werror=stringop-truncation] :esphomepr:`7668` by :ghuser:`Rapsssito`
+- let make new platform implementation in external components :esphomepr:`7615` by :ghuser:`tomaszduda23`
+- remove use of delay :esphomepr:`7680` by :ghuser:`ssieb`
+- fix build error :esphomepr:`7694` by :ghuser:`tomaszduda23`
+- fix: [climate] Allow substitutions in `visual.temperature_step.{target_temperature,current_temperature}` :esphomepr:`7679` by :ghuser:`hostcc`
+- Add in area and device to the prometheus labels :esphomepr:`7692` by :ghuser:`jzucker2`
+- [http_request] Implement `on_error` trigger for requests :esphomepr:`7696` by :ghuser:`clydebarrow`
+- Bump pypa/gh-action-pypi-publish from 1.10.3 to 1.11.0 :esphomepr:`7700` by :ghuser:`dependabot[bot]`
+- [es8311] Add es8311 dac component :esphomepr:`7693` by :ghuser:`kahrendt` (new-integration)
+- [sdl] Allow window to be resized. :esphomepr:`7698` by :ghuser:`clydebarrow`
+- Add config for current temperature precision :esphomepr:`7699` by :ghuser:`JasonN3`
+- [spi] Add mosi pin checks for displays :esphomepr:`7702` by :ghuser:`clydebarrow`
+- [CI] Fix webserver defines to be present based on platform, not just framework :esphomepr:`7703` by :ghuser:`jesserockz`
+- [touchscreen] Calibration fixes :esphomepr:`7704` by :ghuser:`clydebarrow` (breaking-change)
+- [font] Add support for "glyphsets" :esphomepr:`7429` by :ghuser:`paravoid`
+- [lvlg] fix tests :esphomepr:`7708` by :ghuser:`clydebarrow`
+- [esp32_ble] Add disconnect as a virtual function to ``ESPBTClient`` :esphomepr:`7705` by :ghuser:`jesserockz`
+- handle bad pin schemas :esphomepr:`7711` by :ghuser:`ssieb`
+- datetime fix build_language_schema :esphomepr:`7710` by :ghuser:`tomaszduda23`
+- [lvgl] Don't just throw key error if someone types a bad layout type :esphomepr:`7722` by :ghuser:`jesserockz`
+- [spi_device] rename mode to spi_mode :esphomepr:`7724` by :ghuser:`clydebarrow` (breaking-change)
+- feat(MQTT): Add `enable`, `disable` and `enable_on_boot` :esphomepr:`7716` by :ghuser:`Rapsssito`
+- [lvgl] Allow multiple LVGL instances :esphomepr:`7712` by :ghuser:`clydebarrow`
+- [fix] deprecated legacy driver tsens :esphomepr:`7658` by :ghuser:`rvalitov`
+- [lvgl] Fix id config for the lvgl component (Bugfix) :esphomepr:`7731` by :ghuser:`clydebarrow`
+- Bump pypa/gh-action-pypi-publish from 1.11.0 to 1.12.2 :esphomepr:`7730` by :ghuser:`dependabot[bot]`
+- OTA: Fix IPv6 and multiple address support :esphomepr:`7414` by :ghuser:`dwmw2`
+- Fix dashboard ip resolving :esphomepr:`7747` by :ghuser:`jesserockz`
+- [docker] Bump curl, iputils-ping and libssl-dev :esphomepr:`7748` by :ghuser:`jesserockz`
+- Remove the choice for MQTT logging if it is disabled :esphomepr:`7723` by :ghuser:`solarkennedy`
+- [sensor] Make some values templatable :esphomepr:`7735` by :ghuser:`clydebarrow`
+- [lvgl] Implement keypads :esphomepr:`7719` by :ghuser:`clydebarrow`
+- [midea] Add temperature validation in do_follow_me method (bugfix) :esphomepr:`7736` by :ghuser:`DjordjeMandic`
+- Add OpenTherm component (part 3: rest of the sensors) :esphomepr:`7676` by :ghuser:`olegtarasov` (new-integration)
+- [i2s_audio] I2S speaker improvements :esphomepr:`7749` by :ghuser:`kahrendt`
+- [opentherm] Message to string extend :esphomepr:`7755` by :ghuser:`FreeBear-nc`
+- [sun] Implements `is_above_horizon()` :esphomepr:`7754` by :ghuser:`edwardtfn`
+- [core] Ring buffer write functions use const pointer parameter :esphomepr:`7750` by :ghuser:`kahrendt`
+- [Modbus Controller] Added `on_online` and `on_offline` automation :esphomepr:`7417` by :ghuser:`0x3333`
+- Updated dfplayer logging to be more user-friendly :esphomepr:`7740` by :ghuser:`solarkennedy`
+- Fix temperature and humidity for bme680 with bsec2 :esphomepr:`7728` by :ghuser:`luar123`
+- [i2s_audio] Bugfix: Adjust I2S speaker setup priority :esphomepr:`7759` by :ghuser:`kahrendt`
+- Update UNIT_VOLT_AMPS_REACTIVE = "var" (Currently 'VAR') :esphomepr:`7643` by :ghuser:`Roving-Ronin` (breaking-change)
+- Fix reactive power unit of measurement from VAR to var :esphomepr:`7757` by :ghuser:`felipecrs`
+- Disable bluetooth proxy during update :esphomepr:`7695` by :ghuser:`jzucker2`
+- ld2420: fix typo in log message :esphomepr:`7758` by :ghuser:`bfabio`
+- TuyaFan control should use oscillation_type :esphomepr:`7776` by :ghuser:`pethans`
+- Bump esphome-dashboard to 20241118.0 :esphomepr:`7782` by :ghuser:`jesserockz`
+- [http_request] Feed watchdog timeout around http request functions :esphomepr:`7786` by :ghuser:`jesserockz`
+- Bump esphome-dashboard to 20241120.0 :esphomepr:`7787` by :ghuser:`jesserockz`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.10.0`
+- :doc:`2024.9.0`
+- :doc:`2024.8.0`
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

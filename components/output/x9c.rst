@@ -36,7 +36,8 @@ All chips are controlled by a three wire interface and feature 100 possible wipe
         cs_pin: GPIOXX
         inc_pin: GPIOXX
         ud_pin: GPIOXX
-        initial_value: 0.5
+        initial_value: 1.0
+        step_delay: 1us
 
 Configuration variables:
 ------------------------
@@ -46,6 +47,7 @@ Configuration variables:
 - **inc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Increment pin
 - **ud_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Up/Down pin
 - **initial_value** (*Optional*, float): Manually specify the initial potentiometer value, between ``0.01`` and ``1.0``. Defaults to ``1.0``.
+- **step_delay** (*Optional*, int): Manually specify the delay between steps (in microseconds) between ``1us`` and ``100us``. Defaults to ``1us``.
 - All other options from :ref:`Output <config-output>`.
 
 See Also

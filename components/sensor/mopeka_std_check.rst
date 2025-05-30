@@ -7,9 +7,9 @@ Mopeka Standard Check BLE Sensor
     :keywords: Mopeka, Mopeka Standard Check, Mopeka Std Check, BLE, Bluetooth
 
 The ``mopeka_std_check`` sensor platform lets you track the output of Mopeka
-Standard Check LP Bluetooth Low Energy devices using the 
-:doc:`/components/esp32_ble_tracker`. This component will track the tank level, 
-distance, temperature, and battery percentage of a Mopeka Standard Check LP BLE 
+Standard Check LP Bluetooth Low Energy devices using the
+:doc:`/components/esp32_ble_tracker`. This component will track the tank level,
+distance, temperature, and battery percentage of a Mopeka Standard Check LP BLE
 device every time the sensor sends out a BLE broadcast.
 
 .. warning::
@@ -29,7 +29,7 @@ device every time the sensor sends out a BLE broadcast.
     sensor:
       # Example using 11kg 100% propane tank.
       - platform: mopeka_std_check
-        mac_address: D3:75:F2:DC:16:91
+        mac_address: XX:XX:XX:XX:XX:XX
         tank_type: Europe_11kg
         temperature:
             name: "Propane test temp"
@@ -42,7 +42,7 @@ device every time the sensor sends out a BLE broadcast.
 
       # Custom example - user defined empty / full points and 80% butane and 20% propane.
       - platform: mopeka_std_check
-        mac_address: D3:75:F2:DC:16:91
+        mac_address: XX:XX:XX:XX:XX:XX
         tank_type: CUSTOM
         custom_distance_full: 40cm
         custom_distance_empty: 32mm
@@ -125,15 +125,15 @@ and the ``mopeka_ble`` component like so:
 
     mopeka_ble:
 
-After uploading, the ESP32 will immediately try to scan for BLE devices. For Mopeka Standard devices you must press and hold the green sync button for it to be identified. 
+After uploading, the ESP32 will immediately try to scan for BLE devices. For Mopeka Standard devices you must press and hold the green sync button for it to be identified.
 Or alternativly set the configuration flag ``show_sensors_without_sync: true`` to see all devices.
 For all sensors found the ``mopeka_ble`` component will print a message like this one:
 
 .. code::
 
-    [20:43:26][I][mopeka_ble:056]: MOPEKA STD (CC2540) SENSOR FOUND: D3:75:F2:DC:16:91
+    [20:43:26][I][mopeka_ble:056]: MOPEKA STD (CC2540) SENSOR FOUND: XX:XX:XX:XX:XX:XX
 
-Then just copy the address (``D3:75:F2:DC:16:91``) into a new
+Then just copy the address (``XX:XX:XX:XX:XX:XX``) into a new
 ``sensor.mopeka_std_check`` platform entry like in the configuration example at the top.
 
 .. note::

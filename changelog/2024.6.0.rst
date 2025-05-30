@@ -1,0 +1,481 @@
+ESPHome 2024.6.0 - 19th June 2024
+=================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.6.0.
+    :image: /_static/changelog-2024.6.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    ESPHome OTA Updates, components/ota, system-update.svg, dark-invert
+    HTTP Request OTA Updates, components/ota_http_request, system-update.svg, dark-invert
+    Managed Updates, components/update/http_request, system-update.svg, dark-invert
+
+    1-Wire, components/one_wire, one-wire.svg
+    GDK101, components/sensor/gdk101, gdk101.jpg
+    Beken SPI, components/light/beken_spi_led_strip, color_lens.svg, dark-invert
+
+    INA2XX, components/sensor/ina2xx, ina2xx.jpg
+    LTR Light & Proximity Sensors, components/sensor/ltr_als_ps, ltr329.jpg
+    Host SDL2 display, components/display/sdl, sdl.png
+
+.. |ss| raw:: html
+
+    <strike>
+
+.. |se| raw:: html
+
+    </strike>
+
+An update on updates
+--------------------
+
+So we have a few updates to update you on this |ss| update |se| release.
+Please do read these release notes carefully as there are quite a few breaking changes that
+we know will affect a large portion of users.
+
+Join us for the ESPHome Release Party for the 2024.6.0 release! We'll talk about the hard work put into
+ESPHome over the past few months, its new home under the Open Home Foundation, and share with you the new logo!
+
+.. raw:: html
+
+    <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/hTiG9Dd8wjw"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+    </iframe>
+
+Jesse
+
+ESPHome branding
+^^^^^^^^^^^^^^^^
+
+In April, Nabu Casa donated ESPHome to the newly found Open Home Foundation. This foundation,
+which also owns Home Assistant, fights for the rights of privacy, choice, and sustainability
+of the smart home - and everyone that lives in one. This was done to create a bulwark against
+surveillance capitalism, the risk of buyout, and open-source projects becoming abandonware.
+To an extent, this protection extends even against our future selves—so that smart home users
+can continue to benefit for years, if not decades, no matter what comes.
+
+As part of this new governance, we decided to align the branding of Home Assistant and ESPHome,
+the two consumer-facing projects of the foundation, to communicate that we share a common vision.
+
+This change will not have any impact on the day-to- day running of ESPHome.
+Both Keith and I will remain full-time employees at Nabu Casa, a commercial partner of
+the Open Home Foundation, to further develop ESPHome as the best way for anyone to create
+smart home devices. To support our work,
+`subscribe to Home Assistant Cloud by Nabu Casa <https://www.nabucasa.com/>`__.
+`Learn more about the Open Home Foundation <https://www.openhomefoundation.org/blog/announcing-the-open-home-foundation/>`__
+
+Update Entities
+^^^^^^^^^^^^^^^
+
+So, we created ``update`` entities. These are similar to the ones that Home Assistant shows now when
+you have the ESPHome Add-on installed in Home Assistant OS, except those ones show you an update to the
+version of the ESPHome Add-on and in the background will compile and upload new firmware to your device.
+
+These new ``update`` entities are a bit different. If you have acquired a device that was pre-installed
+with ESPHome, the vendor you acquired the device from is now able to compile the firmware and host it
+on a website along with a description of the firmware the device can read and present that there is an
+update available for this device. You do not need to adopt the device into the ESPHome dashboard, and
+you don't actually need the ESPHome dashboard installed. Using the new ``http_request`` OTA platform,
+the device will be able to download the firmware and update itself.
+
+.. note::
+
+    Update Entities require at least Home Assistant 2024.7 to show up and be controlled in the Home Assistant UI.
+
+Voice Assistant Timers
+^^^^^^^^^^^^^^^^^^^^^^
+
+Home Assistant 2024.6 added support for starting, pausing, resuming, cancelling timers via Assist devices.
+In this ESPHome release, we added new triggers to the :doc:`Voice Assistant </components/voice_assistant>` component
+to take advantage of these. Timers are only in memory, do not represent entities and are only available on the device
+that started the timer.
+
+OTA Platforms
+^^^^^^^^^^^^^
+
+With the above mentioned ``http_request`` OTA platform, we made the decision to split out the current
+``ota`` server to its own platform to make the code more managable and to allow for more flexibility going forward.
+
+Because of this, all configurations that currently have ``ota:`` in them will fail to validate after
+updating to this release.
+
+You will need to change the configuration by adding a new line as below:
+
+.. code-block:: yaml
+
+    # Old
+    ota:
+
+    # New
+    ota:
+      platform: esphome
+
+If you have a password set, it may look like the following:
+
+.. code-block:: yaml
+
+    # Old
+    ota:
+      password: "xxxx"
+
+    # New
+    ota:
+      platform: esphome
+      password: "xxxx"
+
+As part of this change also, :doc:`safe_mode </components/safe_mode>` has been pulled out into its own top level component.
+It is automatically included in any configuration that has an ``ota`` configuration block, so there is nothing you
+need to do unless you were overriding some of the safe mode specific configurations.
+
+1-Wire
+^^^^^^
+
+Up until now, the ``dallas`` sensor platform contained the only 1-wire implementation in ESPHome.
+There had been requests to add support for other 1-wire based components, so :ghuser:`ssieb` has
+made a new top level :doc:`1-wire </components/one_wire>` component that will allow for this.
+In doing so, the ``dallas`` sensor platform has been removed, and replaced with ``dallas_temp``
+to allow for other Dallas sensors to be implemented that are not temperature sensors.
+
+.. code-block:: yaml
+
+    # Old
+    dallas:
+      - pin: GPIOXX
+
+    sensor:
+      - platform: dallas
+        address: 0x1234567890abcdef
+        name: "My Sensor"
+
+    # New
+    one_wire:
+      - platform: gpio
+        pin: GPIOXX
+
+    sensor:
+      - platform: dallas_temp
+        address: 0x1234567890abcdef
+        name: "My Sensor"
+
+HTTP(s) Requests
+^^^^^^^^^^^^^^^^
+
+The :doc:`http_request </components/http_request>` platform has been rewritten in this release to
+add support when using ESP-IDF or when using the :doc:`rp2040 </components/rp2040>` platform. This will
+also allow other ESPHome components to make HTTP(s) requests which includes the new ``http_request`` OTA platform and the
+``update`` entities.
+
+As part of this, the configuration has been changed quite a bit so please read the documentation for the latest
+configuration options.
+
+JSON parsing
+^^^^^^^^^^^^
+
+An internal helper component ``json`` has had some minor, but breaking changes that now require the parsing
+callback function to return a boolean value, representing whether the parsing was successful or not.
+This is mostly an internal change, but could be used by :doc:`external components </components/external_components>`
+or lambdas in YAML.
+
+
+Release 2024.6.1 - June 20
+--------------------------
+
+- debug_libretiny - Fix typo :esphomepr:`6942` by :ghuser:`Cossid`
+- Bump esphome-dashboard to 20240620.0 :esphomepr:`6944` by :ghuser:`jesserockz`
+
+Release 2024.6.2 - June 25
+--------------------------
+
+- [core] Fix package merging with lists of primitives :esphomepr:`6952` by :ghuser:`jesserockz`
+- [update] Set entity_category to config & Publish state to logs :esphomepr:`6954` by :ghuser:`jesserockz`
+- Fix infinite loop in http_request for ESP-IDF. :esphomepr:`6963` by :ghuser:`kpfleming`
+- ESP-IDF 4.x expects seconds for esp_task_wdt_init(), not milliseconds. :esphomepr:`6964` by :ghuser:`kpfleming`
+- Onewire :esphomepr:`6967` by :ghuser:`ssieb`
+- [http_request] memory leak fix :esphomepr:`6973` by :ghuser:`gabest11`
+- Await cg.get_variable in Update component :esphomepr:`6974` by :ghuser:`bkaufx`
+- [one-wire] fix potential hang :esphomepr:`6976` by :ghuser:`ssieb`
+- [midea] fix fan speed compatibility with some models :esphomepr:`6978` by :ghuser:`dudanov`
+
+Release 2024.6.3 - June 26
+--------------------------
+
+- [safe_mode] Set safe mode core data in disabled cases :esphomepr:`6983` by :ghuser:`jesserockz`
+- [ota-esphome] Validate for multiple esphome ota instances :esphomepr:`6984` by :ghuser:`kbx81`
+- Improve 'body' handling in http_request on_response triggers :esphomepr:`6968` by :ghuser:`kpfleming`
+- [ds1307] Initialize uninitialized struct members :esphomepr:`6985` by :ghuser:`ptr727`
+- Fix float encoding in modbus server :esphomepr:`6986` by :ghuser:`Petapton`
+- [dallas_temp] fix ds18s20 temp calc :esphomepr:`6988` by :ghuser:`ssieb`
+- [modbus-text-sensor] fix potential buffer overflow :esphomepr:`6993` by :ghuser:`dudanov`
+
+Release 2024.6.4 - June 27
+--------------------------
+
+- [ota-esphome] Merge configurations by port :esphomepr:`7001` by :ghuser:`kbx81`
+- Fix LEDC 100% is not 100% duty with ESP32 IDF :esphomepr:`6997` by :ghuser:`Links2004`
+
+Release 2024.6.5 - July 3
+-------------------------
+
+- [mpr121] await register parented :esphomepr:`7014` by :ghuser:`jesserockz`
+- Move some consts for #4585 :esphomepr:`7023` by :ghuser:`kbx81`
+- [wifi] Only set default ttls phase 2 on esp-idf :esphomepr:`7033` by :ghuser:`jesserockz`
+
+Release 2024.6.6 - July 3
+-------------------------
+
+- Bump dockerfile dependencies :esphomepr:`7017` by :ghuser:`jesserockz`
+- [docker] Bump versions inside armv7 block :esphomepr:`7022` by :ghuser:`jesserockz`
+- [docker] Fix docker build error fall through :esphomepr:`7021` by :ghuser:`jesserockz`
+
+Full list of changes
+--------------------
+
+New Features
+^^^^^^^^^^^^
+
+- Add ADC multisampling :esphomepr:`6330` by :ghuser:`Mat931` (new-feature)
+- [voice_assistant] Timers :esphomepr:`6821` by :ghuser:`jesserockz` (new-feature)
+
+New Components
+^^^^^^^^^^^^^^
+
+- GDK101 support :esphomepr:`4703` by :ghuser:`Szewcson` (new-integration)
+- Add beken_spi_led_strip component :esphomepr:`6515` by :ghuser:`Mat931` (new-integration)
+- Separate ``OTABackend`` from OTA component :esphomepr:`6459` by :ghuser:`kbx81` (new-integration) (breaking-change)
+- SPI and I2C for ENS160 :esphomepr:`6369` by :ghuser:`latonita` (new-integration) (breaking-change)
+- INA228/INA229, INA238/INA239, INA237 power/energy/charge monitor (I2C, SPI) :esphomepr:`6138` by :ghuser:`latonita` (new-integration)
+- [haier] ``text_sensor`` and ``button`` platforms :esphomepr:`6780` by :ghuser:`paveldn` (new-integration)
+- LTR-303, LTR-329, LTR-553, LTR-556, LTR-559, LTR-659 Series of Lite-On Light (ALS) and Proximity(PS) sensors :esphomepr:`6076` by :ghuser:`latonita` (new-integration)
+- Add host time platform; remove host support from sntp. :esphomepr:`6854` by :ghuser:`clydebarrow` (new-integration)
+- [ota] http_request update platform :esphomepr:`5586` by :ghuser:`oarcher` (new-integration)
+- [core] Update Entities :esphomepr:`6885` by :ghuser:`jesserockz` (new-integration)
+- New 1-wire component :esphomepr:`6860` by :ghuser:`ssieb` (new-integration) (breaking-change)
+- [display] SDL2 display driver for host platform :esphomepr:`6825` by :ghuser:`clydebarrow` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- BedJet: expose the outlet temperature on the climate and as a sensor :esphomepr:`6633` by :ghuser:`javawizard` (new-platform)
+- mpr121: Add GPIO support :esphomepr:`6776` by :ghuser:`polyfloyd` (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Separate ``OTABackend`` from OTA component :esphomepr:`6459` by :ghuser:`kbx81` (new-integration) (breaking-change)
+- SPI and I2C for ENS160 :esphomepr:`6369` by :ghuser:`latonita` (new-integration) (breaking-change)
+- Uncouple safe_mode from OTA :esphomepr:`6759` by :ghuser:`kbx81` (breaking-change)
+- Fix incorrect naming of the AdaFruit MagTag display. :esphomepr:`6810` by :ghuser:`sasodoma` (breaking-change)
+- [http_request] Add esp-idf and rp2040 support :esphomepr:`3256` by :ghuser:`jesserockz` (breaking-change)
+- Allow parse_json to return a boolean result :esphomepr:`6884` by :ghuser:`jesserockz` (breaking-change)
+- New 1-wire component :esphomepr:`6860` by :ghuser:`ssieb` (new-integration) (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- [CI] Fix for sdl :esphomepr:`6892` by :ghuser:`jesserockz`
+- Add operation_speed option to X9C component :esphomepr:`6890` by :ghuser:`oliverhihn`
+- [host] Execute host program when using run command :esphomepr:`6897` by :ghuser:`jesserockz`
+- Bump esphome-dashboard to 20240613.0 :esphomepr:`6901` by :ghuser:`jesserockz`
+- Synchronise Device Classes from Home Assistant :esphomepr:`6904` by :ghuser:`esphomebot`
+- [ili9xxx] Fix init for GC9A01A :esphomepr:`6913` by :ghuser:`jesserockz`
+- [mqtt] Fix datetime copy pasta :esphomepr:`6914` by :ghuser:`jesserockz`
+- fix(dallas): make recovery time for 1-bit equal to that of 0-bit :esphomepr:`6763` by :ghuser:`muggenhor`
+- [wifi] Fix some access point bugs related to esp-idf 4.4.7 :esphomepr:`6928` by :ghuser:`jesserockz`
+- Rename legacy/modern to ota/factory :esphomepr:`6922` by :ghuser:`jesserockz`
+- Bump pypa/gh-action-pypi-publish from 1.8.14 to 1.9.0 :esphomepr:`6926` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 5.4.0 to 6.0.0 in /.github/actions/build-image :esphomepr:`6927` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 6.0.0 to 6.0.1 in /.github/actions/build-image :esphomepr:`6934` by :ghuser:`dependabot[bot]`
+- [network] Default ipv6 to false to always set the flags :esphomepr:`6937` by :ghuser:`jesserockz`
+
+All changes
+^^^^^^^^^^^
+
+- Add IRK support to ble_rssi :esphomepr:`6422` by :ghuser:`chbmuc`
+- Add new Error type to skip prepending path :esphomepr:`6716` by :ghuser:`jesserockz`
+- [github] Only save platformio cache for dev branch :esphomepr:`6711` by :ghuser:`jesserockz`
+- Only cache docker images on dev branch :esphomepr:`6714` by :ghuser:`jesserockz`
+-     Add pylint to git pre-commit hooks :esphomepr:`6726` by :ghuser:`clydebarrow`
+- separate debug component for each platform in different file :esphomepr:`6715` by :ghuser:`tomaszduda23`
+- GDK101 support :esphomepr:`4703` by :ghuser:`Szewcson` (new-integration)
+- Typing hint and doc fixes :esphomepr:`6729` by :ghuser:`clydebarrow`
+- time_based_cover.cpp with manual control fix :esphomepr:`6719` by :ghuser:`Jorge-Crespo-Celdran`
+- [CST816] Add support for Hynitron Microelectronics CST826 capacitive touch :esphomepr:`6682` by :ghuser:`lboue`
+- Bump pytest from 8.1.1 to 8.2.0 :esphomepr:`6732` by :ghuser:`dependabot[bot]`
+- [web_server] Minor python formatting :esphomepr:`6735` by :ghuser:`jesserockz`
+- [esp32_ble] Fix compilation error on esp32c6 :esphomepr:`6734` by :ghuser:`jesserockz`
+- [core] Fix minor formatting issues :esphomepr:`6738` by :ghuser:`jesserockz`
+- [config] Improve error reporting :esphomepr:`6736` by :ghuser:`clydebarrow`
+- [tests] ``test2.yaml`` has become too large :esphomepr:`6750` by :ghuser:`kbx81`
+- Bump esphome-dashboard from 20240412.0 to 20240429.1 :esphomepr:`6743` by :ghuser:`dependabot[bot]`
+- BedJet: expose the outlet temperature on the climate and as a sensor :esphomepr:`6633` by :ghuser:`javawizard` (new-platform)
+- Add beken_spi_led_strip component :esphomepr:`6515` by :ghuser:`Mat931` (new-integration)
+- i2c: fix format string specifiers :esphomepr:`6746` by :ghuser:`ius`
+- Allow one timing to cancel others :esphomepr:`6744` by :ghuser:`lbilger`
+- fix rp2040_pio_led flicker and proper multi-strip support :esphomepr:`6194` by :ghuser:`Papa-DMan`
+- Mirage remote receiver & transmitter :esphomepr:`6479` by :ghuser:`heggi`
+- WPA2 Enterprise - Explicitly set TTLS Phase 2 :esphomepr:`6436` by :ghuser:`shxshxshxshx`
+- Fix Prometheus Output to Match Spec :esphomepr:`6032` by :ghuser:`sdwilsh`
+- Skip gpio validation :esphomepr:`5615` by :ghuser:`amcfague`
+- [core] Migrate to pyproject.toml :esphomepr:`6737` by :ghuser:`jesserockz`
+- [core] Move pytest config into pyproject.toml :esphomepr:`6740` by :ghuser:`jesserockz`
+- [core] Move pylint config into pyproject.toml :esphomepr:`6739` by :ghuser:`jesserockz`
+- [core] Fix running pylint via pre-commit from GUI apps :esphomepr:`6754` by :ghuser:`jesserockz`
+- Separate ``OTABackend`` from OTA component :esphomepr:`6459` by :ghuser:`kbx81` (new-integration) (breaking-change)
+- Add ADC multisampling :esphomepr:`6330` by :ghuser:`Mat931` (new-feature)
+- [core] Fix some extends cases :esphomepr:`6748` by :ghuser:`jesserockz`
+- Port wifi_component_esp32_arduino from tcpip_adapter to esp_netif :esphomepr:`6476` by :ghuser:`paravoid`
+- SPI and I2C for ENS160 :esphomepr:`6369` by :ghuser:`latonita` (new-integration) (breaking-change)
+- Fix wifi compile error on IDF 5.1+ :esphomepr:`6756` by :ghuser:`kbx81`
+- [core] Update some coroutine priorities :esphomepr:`6755` by :ghuser:`jesserockz`
+- INA228/INA229, INA238/INA239, INA237 power/energy/charge monitor (I2C, SPI) :esphomepr:`6138` by :ghuser:`latonita` (new-integration)
+- [nextion] Fix type on sprintf for IDF v5 :esphomepr:`6758` by :ghuser:`edwardtfn`
+- [core] Remove references to deleted setup.py :esphomepr:`6757` by :ghuser:`jesserockz`
+- Fix pip3 install :esphomepr:`6771` by :ghuser:`syssi`
+- [tests] make test_build_components work with venv without installing esphome :esphomepr:`6761` by :ghuser:`tomaszduda23`
+- separate deep_sleep component for each platform in different file :esphomepr:`6762` by :ghuser:`tomaszduda23`
+- Bump actions/checkout from 4.1.5 to 4.1.6 :esphomepr:`6764` by :ghuser:`dependabot[bot]`
+- add rp2040 support to the wizard :esphomepr:`6239` by :ghuser:`fodfodfod`
+- [ili9xxx] Add 18bit mode selection and custom init sequence :esphomepr:`6745` by :ghuser:`clydebarrow`
+- Tiny fix in automation.h - unused return value removed :esphomepr:`6760` by :ghuser:`latonita`
+- Uncouple safe_mode from OTA :esphomepr:`6759` by :ghuser:`kbx81` (breaking-change)
+- Add support for acting as Modbus server :esphomepr:`4874` by :ghuser:`JeroenVanOort`
+- Add on_safe_mode trigger :esphomepr:`6790` by :ghuser:`kbx81`
+- [sx1509] Output open drain pin mode :esphomepr:`6788` by :ghuser:`Swamp-Ig`
+- [ledc] Change some logging lines from debug to verbose :esphomepr:`6796` by :ghuser:`jesserockz`
+- [haier] ``text_sensor`` and ``button`` platforms :esphomepr:`6780` by :ghuser:`paveldn` (new-integration)
+- mpr121: Add GPIO support :esphomepr:`6776` by :ghuser:`polyfloyd` (new-platform)
+- [nextion] Add basic functions to Intelligent series :esphomepr:`6791` by :ghuser:`edwardtfn`
+- Fix incorrect naming of the AdaFruit MagTag display. :esphomepr:`6810` by :ghuser:`sasodoma` (breaking-change)
+- [tuya] add support for extended services :esphomepr:`6808` by :ghuser:`augs`
+- fix libretiny regression from #6715 :esphomepr:`6806` by :ghuser:`augs`
+- Make i2s_audio compatible with  IDF 5+ :esphomepr:`6534` by :ghuser:`pimdo`
+- Fix compile errors on ESP32-C6 with latest ESP-IDF :esphomepr:`6822` by :ghuser:`DAVe3283`
+- Use uint8_t instead of uint32_t for 8-bit values on mitsubishi :esphomepr:`6824` by :ghuser:`DAVe3283`
+- Make SPI Ethernet (W5500) compatible with ESP-IDF v5 :esphomepr:`6778` by :ghuser:`fightforlife`
+- [wake_on_lan] Make component platform independent :esphomepr:`6815` by :ghuser:`clydebarrow`
+- Fix a bunch of components for IDF 5 compatibility and #6802 :esphomepr:`6805` by :ghuser:`kbx81`
+- Bump docker/login-action from 3.1.0 to 3.2.0 :esphomepr:`6823` by :ghuser:`dependabot[bot]`
+- Bump pytest-cov from 4.1.0 to 5.0.0 :esphomepr:`6580` by :ghuser:`dependabot[bot]`
+- Bump peter-evans/create-pull-request from 6.0.4 to 6.0.5 :esphomepr:`6635` by :ghuser:`dependabot[bot]`
+- Bump black from 24.4.0 to 24.4.2 :esphomepr:`6646` by :ghuser:`dependabot[bot]`
+- [voice_assistant] Timers :esphomepr:`6821` by :ghuser:`jesserockz` (new-feature)
+- [web_server] add entity sorting for v3 :esphomepr:`6445` by :ghuser:`RFDarter`
+- [micro_wake_word] Ensure model string is Path :esphomepr:`6826` by :ghuser:`synesthesiam`
+-  Fix DHT reading timing for SI7021 on ESP32 :esphomepr:`6604` by :ghuser:`erdembey`
+- [core] Const-ify some Component fields :esphomepr:`6831` by :ghuser:`jesserockz`
+- LTR-303, LTR-329, LTR-553, LTR-556, LTR-559, LTR-659 Series of Lite-On Light (ALS) and Proximity(PS) sensors :esphomepr:`6076` by :ghuser:`latonita` (new-integration)
+- Update const.py added missing millimeter :esphomepr:`6834` by :ghuser:`NonaSuomy`
+- Fix log message in VA for IDF 5 :esphomepr:`6839` by :ghuser:`kbx81`
+- Replace random non-ascii-print characters with standard substitutes :esphomepr:`6840` by :ghuser:`ptr727`
+- Wireguard support for bk72 microcontrollers :esphomepr:`6842` by :ghuser:`droscy`
+- Add messages when WiFi and Ethernet components set 'warning' flag. :esphomepr:`6850` by :ghuser:`kpfleming`
+- [sntp] fix for ESP-IDF > 5.0 :esphomepr:`6769` by :ghuser:`HeMan`
+- Avoid unsafe git error when container user and file config volume permissions don't match :esphomepr:`6843` by :ghuser:`ptr727`
+- Add Ethernet MAC address to ethernet_info :esphomepr:`6835` by :ghuser:`ptr727`
+- Add host time platform; remove host support from sntp. :esphomepr:`6854` by :ghuser:`clydebarrow` (new-integration)
+- [wireguard] Implement workaround for crash on IDF 5+ :esphomepr:`6846` by :ghuser:`kbx81`
+- [ft5x06] Interrupt pin and code quality improvements :esphomepr:`6851` by :ghuser:`jesserockz`
+- [ethernet] Add config option to set arbitrary PHY register values :esphomepr:`6836` by :ghuser:`heythisisnate`
+- Add carrier_frequency option to remote_transmitter.transmit_aeha :esphomepr:`6792` by :ghuser:`svxa`
+- Add ``invert_position_report`` to ``tuya.cover`` :esphomepr:`6020` by :ghuser:`wrouesnel`
+- [Tuya Climate] Support both datapoint and pins for active state :esphomepr:`6789` by :ghuser:`zry98`
+- [config] Allow file: scheme for git external components :esphomepr:`6844` by :ghuser:`clydebarrow`
+- [ota] http_request update platform :esphomepr:`5586` by :ghuser:`oarcher` (new-integration)
+- [logger] Fix defines for development :esphomepr:`6870` by :ghuser:`jesserockz`
+- [docker] Avoid unsafe git error when container user and file config volume permissions don't match :esphomepr:`6873` by :ghuser:`ptr727`
+- [datetime] Add logs on DateCall perform :esphomepr:`6868` by :ghuser:`RFDarter`
+- fix: arduino media player sets wrong state for announcements :esphomepr:`6849` by :ghuser:`gnumpi`
+- [datetime] datetime-datetime  strptime support value string without seconds :esphomepr:`6867` by :ghuser:`RFDarter`
+- Update webserver local assets to 20240608-093147 :esphomepr:`6874` by :ghuser:`esphomebot`
+- fix: arduino media player still sets wrong state. :esphomepr:`6875` by :ghuser:`gnumpi`
+- [http_request] Add esp-idf and rp2040 support :esphomepr:`3256` by :ghuser:`jesserockz` (breaking-change)
+- [i2s_speaker] A few fixes :esphomepr:`6872` by :ghuser:`jesserockz`
+- [voice_assistant] Write less data to speaker each loop :esphomepr:`6877` by :ghuser:`jesserockz`
+- Bump docker/build-push-action from 5.3.0 to 5.4.0 in /.github/actions/build-image :esphomepr:`6883` by :ghuser:`dependabot[bot]`
+- Allow parse_json to return a boolean result :esphomepr:`6884` by :ghuser:`jesserockz` (breaking-change)
+- Update webserver local assets to 20240610-230854 :esphomepr:`6886` by :ghuser:`esphomebot`
+- [core] Update Entities :esphomepr:`6885` by :ghuser:`jesserockz` (new-integration)
+- [Dockerfile] Sync platformio version with requirements.txt :esphomepr:`6888` by :ghuser:`ptr727`
+- [Deep sleep] Compilation error with IDF >= 5.* :esphomepr:`6879` by :ghuser:`asergunov`
+- [animation] Allow loading external url at build time :esphomepr:`6876` by :ghuser:`landonr`
+- [waveshare_epaper] Add support for 13.3in-k :esphomepr:`6443` by :ghuser:`pgericson`
+- Climate IR LG - Support fan only mode and all "on" commands :esphomepr:`3712` by :ghuser:`danieldabate`
+- [safe_mode] Allow user-defined interval for successful boot :esphomepr:`6882` by :ghuser:`NMartin354`
+- New 1-wire component :esphomepr:`6860` by :ghuser:`ssieb` (new-integration) (breaking-change)
+- [he60r] Don't publish state unless it has changed. [BUGFIX] :esphomepr:`6869` by :ghuser:`clydebarrow`
+- [image] Make PIL import local :esphomepr:`6864` by :ghuser:`guillempages`
+- [config] Retain path information in validated configuration :esphomepr:`6785` by :ghuser:`clydebarrow`
+- WebSocket overrides check_origin for reverse proxy configuration :esphomepr:`6845` by :ghuser:`gabest11`
+- [config] Early termination of validation steps on error :esphomepr:`6837` by :ghuser:`clydebarrow`
+- Fix media_player.volume_set when media player is not started :esphomepr:`6859` by :ghuser:`tetele`
+- [display] SDL2 display driver for host platform :esphomepr:`6825` by :ghuser:`clydebarrow` (new-integration)
+- [ili9xxx] Implement st7735 support :esphomepr:`6838` by :ghuser:`clydebarrow`
+- [CI] Fix for sdl :esphomepr:`6892` by :ghuser:`jesserockz`
+- Add operation_speed option to X9C component :esphomepr:`6890` by :ghuser:`oliverhihn`
+- [host] Execute host program when using run command :esphomepr:`6897` by :ghuser:`jesserockz`
+- Bump esphome-dashboard to 20240613.0 :esphomepr:`6901` by :ghuser:`jesserockz`
+- Synchronise Device Classes from Home Assistant :esphomepr:`6904` by :ghuser:`esphomebot`
+- [ili9xxx] Fix init for GC9A01A :esphomepr:`6913` by :ghuser:`jesserockz`
+- [mqtt] Fix datetime copy pasta :esphomepr:`6914` by :ghuser:`jesserockz`
+- fix(dallas): make recovery time for 1-bit equal to that of 0-bit :esphomepr:`6763` by :ghuser:`muggenhor`
+- [wifi] Fix some access point bugs related to esp-idf 4.4.7 :esphomepr:`6928` by :ghuser:`jesserockz`
+- Rename legacy/modern to ota/factory :esphomepr:`6922` by :ghuser:`jesserockz`
+- Bump pypa/gh-action-pypi-publish from 1.8.14 to 1.9.0 :esphomepr:`6926` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 5.4.0 to 6.0.0 in /.github/actions/build-image :esphomepr:`6927` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 6.0.0 to 6.0.1 in /.github/actions/build-image :esphomepr:`6934` by :ghuser:`dependabot[bot]`
+- [network] Default ipv6 to false to always set the flags :esphomepr:`6937` by :ghuser:`jesserockz`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

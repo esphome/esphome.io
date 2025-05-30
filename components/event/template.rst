@@ -26,6 +26,6 @@ Configuration variables:
 See Also
 --------
 
-- :doc:`/guides/automations`
+- :doc:`/automations/index`
 - :doc:`/components/event/index`
 - :ghedit:`Edit`

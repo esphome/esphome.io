@@ -45,7 +45,7 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **display** (*Optional*, :ref:`config-id`): ID of the display to render to. See 
   :ref:`drawing_modes` for more details
-- **font** (:ref:`Font <display-fonts>`): Specifies the font to use
+- **font** (**Required**, :ref:`Font <display-fonts>`): Specifies the font to use
 - **foreground_color** (*Optional*, :ref:`config-color`): Specifies the foreground color to use.
   Defaults to COLOR_ON
 - **background_color** (*Optional*, :ref:`config-color`): Specifies the background color to use.
@@ -55,7 +55,7 @@ Automations:
 
 - **on_redraw** (*Optional*, :ref:`Automation <automation>`): An automation to perform
   when the menu needs to be redrawn. This can be useful if your display has slow refresh rates.
-  For example E-Ink displays that are used with `display_interval: never`
+  For example E-Ink displays that are used with ``display_interval: never``.
 
 Additional configuration is described in the :ref:`Display Menu <display_menu>` component.
 

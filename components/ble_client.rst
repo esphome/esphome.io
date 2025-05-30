@@ -12,7 +12,7 @@ connections to them for use by other components.
 .. warning::
 
     The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-    
+
     **Crashes are likely to occur** if you include too many additional components in your device's
     configuration. Memory-intensive components such as :doc:`/components/voice_assistant` and other
     audio components are most likely to cause issues.
@@ -36,7 +36,7 @@ to discover available client devices.
     esp32_ble_tracker:
 
     ble_client:
-      - mac_address: FF:FF:20:00:0F:15
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: itag_black
         auto_connect: true
 
@@ -73,7 +73,7 @@ This automation is triggered when the client connects to the BLE device.
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: ble_itag
         on_connect:
           then:
@@ -90,7 +90,7 @@ This automation is triggered when the client disconnects from a BLE device.
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: ble_itag
         on_disconnect:
           then:
@@ -108,7 +108,7 @@ This automation is triggered when the BLE device requests a passkey for authenti
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: ble_itag
         on_passkey_request:
           then:
@@ -126,7 +126,7 @@ This automation is triggered when a passkey is received from the BLE device.
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: ble_itag
         on_passkey_notification:
           then:
@@ -144,7 +144,7 @@ This automation is triggered when a numeric comparison is requested by the BLE d
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: ble_itag
         on_numeric_comparison_request:
           then:
@@ -174,10 +174,10 @@ on, hence the stop and start of the scan during connect.
 
     ble_client:
       - id: ble_clock
-        mac_address: 17:75:BC:F2:94:4D
+        mac_address: XX:XX:XX:XX:XX:XX
         auto_connect: false
       - id: other_device
-        mac_address: 0D:33:12:66:00:D4
+        mac_address: XX:XX:XX:XX:XX:XX
 
     interval:
       - interval: 60min
@@ -222,7 +222,7 @@ Example usage:
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: my_ble_client
 
     switch:
@@ -308,7 +308,7 @@ Example usage:
 .. code-block:: yaml
 
     ble_client:
-      - mac_address: 11:22:33:44:55:66
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: my_ble_client
         on_connect:
           then:
@@ -391,9 +391,9 @@ display them in the log:
 
 .. code-block:: text
 
-    [18:24:56][D][ble_client:043]: Found device at MAC address [FC:58:FA:B1:F8:93]
-    [18:24:56][I][ble_client:072]: Attempting BLE connection to fc:58:fa:b1:f8:93
-    [18:24:56][I][ble_client:097]: [fc:58:fa:b1:f8:93] ESP_GATTC_OPEN_EVT
+    [18:24:56][D][ble_client:043]: Found device at MAC address [XX:XX:XX:XX:XX:XX]
+    [18:24:56][I][ble_client:072]: Attempting BLE connection to XX:XX:XX:XX:XX:XX
+    [18:24:56][I][ble_client:097]: [XX:XX:XX:XX:XX:XX] ESP_GATTC_OPEN_EVT
     [18:24:57][I][ble_client:143]: Service UUID: 0x1800
     [18:24:57][I][ble_client:144]:   start_handle: 0x1  end_handle: 0x5
     [18:24:57][I][ble_client:305]:  characteristic 0x2A00, handle 0x3, properties 0x2
@@ -445,7 +445,7 @@ Secure connection with a fixed passkey:
     esp32_ble_tracker:
 
     ble_client:
-      - mac_address: A4:C1:38:B1:CD:7F
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: pvvx_ble_display
         on_passkey_request:
           then:
@@ -459,8 +459,8 @@ Secure connection with a dynamically generated passkey:
 .. code-block:: yaml
 
     api:
-      services:
-        - service: passkey_reply
+      actions:
+        - action: passkey_reply
           variables:
             passkey: int
           then:
@@ -468,7 +468,7 @@ Secure connection with a dynamically generated passkey:
             - ble_client.passkey_reply:
                 id: my_ble_client
                 passkey: !lambda return passkey;
-        - service: numeric_comparison_reply
+        - action: numeric_comparison_reply
           variables:
             accept: bool
           then:
@@ -483,7 +483,7 @@ Secure connection with a dynamically generated passkey:
     esp32_ble_tracker:
 
     ble_client:
-      - mac_address: AA:BB:CC:DD:EE:FF
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: my_ble_client
         on_passkey_request:
           then:

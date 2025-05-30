@@ -11,7 +11,7 @@ WireGuard Component
 |wireguard|_ is an extremely simple yet fast and modern VPN that utilizes
 state-of-the-art cryptography. This component uses a **custom**
 implementation not developed by original authors and currently
-available for ESP32 and ESP8266 platforms *only*.
+available for ESP32, ESP8266 and BK72xx microcontrollers *only*.
 
   Please note that *"WireGuard" and the "WireGuard" logo are
   registered trademarks of Jason A. Donenfeld.* See

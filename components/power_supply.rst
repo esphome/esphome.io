@@ -7,9 +7,9 @@ Power Supply Component
     :keywords: power, ATX
 
 The ``power_supply`` component allows you to have a high power mode for
-certain outputs. For example, if you’re using an `ATX power
+certain outputs. For example, if you're using an `ATX power
 supply <https://en.wikipedia.org/wiki/ATX>`__ to power your LED strips,
-you usually don’t want to have the power supply on all the time while
+you usually don't want to have the power supply on all the time while
 the output is not on. The power supply component can be attached to any
 :ref:`Output Component <output>` and
 will automatically switch on if any of the outputs are on. Furthermore,
@@ -66,7 +66,7 @@ to be inverted.
           inverted: true
 
 Then simply connect the green control wire from the ATX power supply to
-your specified pin. It’s recommended to put a small resistor (about 1kΩ)
+your specified pin. It's recommended to put a small resistor (about 1kΩ)
 in between to protect the ESP board.
 
 See Also

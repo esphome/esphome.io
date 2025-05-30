@@ -44,6 +44,28 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``. It is recommended that the update interval is at least 1 second since updates can take up to 800ms when using a high resolution value.
 
+Granular control over gain and resolution
+.........................................
+By default, the ``gain`` and ``resolution`` parameters set same values for both ALS and UV measurements. In real life scenarios there might be significant
+differences in the light intensity and UV index, so it is recommended to use different gain and resolution values for ALS and for UV sensor to avoid saturation.
+See the example below, where the gain and resolution are set to different values for ALS and UV sensors.:
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: ltr390
+        uv:
+          name: "UV Sensor Counts"
+        ambient_light:
+          name: "Light Sensor Counts"
+        gain:
+          ambient_light: X9
+          uv: X3
+        resolution:
+          ambient_light: 18
+          uv: 13
+
+
 Lux and UVI Formulas
 --------------------
 
