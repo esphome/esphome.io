@@ -102,6 +102,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
+    OpenThread, components/openthread, openthread.png
     Packet Transport, components/packet_transport/index, packet_transport.svg, dark-invert
 
 Bluetooth/BLE
