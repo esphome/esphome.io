@@ -63,3 +63,18 @@ Configuration variables:
 - **extpanid** (string): 8-byte Extended Personal Area Network ID (XPAN ID)
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
 
+
+Configuration examples with dataset TLV
+---------------------------------------
+
+It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
+
+.. code-block:: yaml
+
+    # Example OpenThread TLV value from the Thread information in Home Assistant
+    openthread:
+      tlv: 0e080000000000010000000300001035060004001fffe00208e227ac6a7f24052f0708fdb753eb517cb4d3051062b2442a928d9ea3b947a1618fc4085a030f4f70656e5468726561642d393837330102987304105330d857354330133c05e1fd7ae81a910c0402a0f7f8
+
+Configuration variables:
+
+- **channel** (string): dataset TLVs from the Thread information in Home Assistant
