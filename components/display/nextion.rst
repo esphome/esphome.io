@@ -90,6 +90,10 @@ Configuration variables:
 - **command_spacing** (*Optional*, :ref:`config-time`): Sets the minimum time between commands sent to the Nextion display.
   A higher value can help prevent buffer overflows but will result in slower interface updates.
   Range is ``0-255ms``. Defaults to ``0ms`` (disabled).
+- **max_commands_per_loop** (*Optional*, integer): Limits the number of commands processed per loop cycle.  
+  This helps prevent stack overflows when a large number of commands are queued.  
+  Default is ``1000``, which behaves similarly to previous versions by processing most or all commands immediately.  
+  Lower values (e.g., ``20``) can help improve system stability in constrained environments.
 
 .. _display-nextion_lambda:
 
