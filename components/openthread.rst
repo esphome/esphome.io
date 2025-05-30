@@ -77,4 +77,4 @@ It is also possible to supply the entire dataset TLVs from the Thread informatio
 
 Configuration variables:
 
-- **channel** (string): dataset TLVs from the Thread information in Home Assistant
+- **tlv** (string): dataset TLVs from the Thread information in Home Assistant
