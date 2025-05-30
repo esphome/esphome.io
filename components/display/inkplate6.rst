@@ -83,6 +83,11 @@ Configuration variables:
 - **greyscale** (*Optional*, boolean): Makes the screen display 3 bit colors. Defaults to ``false``
 - **partial_updating** (*Optional*, boolean): Makes the screen update partially, which is faster, but leaves burnin. Defaults to ``false``
 - **full_update_every** (*Optional*, int): When partial updating is enabled, forces a full screen update after chosen number of updates. Defaults to ``10``
+- **transform** (*Optional*): Transform the display presentation.
+
+    - **flip_y** (*Optional*, boolean): Flip the screen on the Y axis. Defaults to ``false``
+    - **flip_x** (*Optional*, boolean): Flip the screen on the X axis. Defaults to ``false``
+
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
   See :ref:`display-engine` for more information.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to re-draw the screen. Defaults to ``5s``.
@@ -426,6 +431,98 @@ Below is a config example:
         pca6416a: pca6416a_hub
         number: 5
         
+
+Inkplate 10
+***********
+
+The Inkplate 10 has a configuration similar to 5 and 6, except it has 2 expanders and the battery read MOSFET is not inverted. Also, some versions have an embedded RTC to aid in clock sync.
+Below is a config example:
+
+.. code-block:: yaml
+
+    time:
+      - platform: pcf85063
+        id: esptime
+        # repeated synchronization is not necessary unless the external RTC
+        # is much more accurate than the internal clock
+        update_interval: never
+      - platform: homeassistant
+        # instead try to synchronize via network repeatedly ...
+        on_time_sync:
+          then:
+            # ... and update the RTC when the synchronization was successful
+            pcf85063.write_time:
+
+    pca6416a:
+      - id: pca6416a_hub
+        address: 0x20
+        # Primary expander for display control and additional I/O
+      - id: pca6416a_hub2
+        address: 0x21
+        # Secondary expander for additional I/O
+
+    switch:
+      - platform: gpio
+        id: battery_read_mosfet
+        pin:
+          pca6416a: pca6416a_hub
+          number: 9
+
+    sensor:
+      - platform: adc
+        id: battery_voltage
+        update_interval: never
+        attenuation: 12db
+        pin: 35
+      - platform: template
+        name: "Inkplate Battery Voltage"
+        unit_of_measurement: "V"
+        accuracy_decimals: 3
+        lambda: |-
+          // Enable MOSFET to connect battery voltage divider
+          id(battery_read_mosfet).turn_on();
+          // Wait for voltage to stabilize
+          delay(5);
+          // Sample ADC value
+          float adc = id(battery_voltage).sample();
+          // Disable MOSFET to save power
+          id(battery_read_mosfet).turn_off();
+          return adc;
+        filters:
+          - multiply: 2 # Compensate for voltage divider (1:2 ratio)
+
+    display:
+      - platform: inkplate6
+        id: inkplate_display
+        greyscale: true
+        partial_updating: false
+        update_interval: never
+        model: inkplate_10  
+
+        ckv_pin: 32
+        sph_pin: 33
+        gmod_pin:
+          pca6416a: pca6416a_hub
+          number: 1
+        gpio0_enable_pin:
+          pca6416a: pca6416a_hub
+          number: 8
+        oe_pin:
+          pca6416a: pca6416a_hub
+          number: 0
+        spv_pin:
+          pca6416a: pca6416a_hub
+          number: 2
+        powerup_pin:
+          pca6416a: pca6416a_hub
+          number: 4
+        wakeup_pin:
+          pca6416a: pca6416a_hub
+          number: 3
+        vcom_pin:
+          pca6416a: pca6416a_hub
+          number: 5
+
 See Also
 --------
 

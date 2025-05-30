@@ -50,15 +50,17 @@ ESP32 IDF configuration variables:
       :header: "ESP32 Variant", "Memory Size", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-S2", "256 symbols", "64 symbols"
+      "ESP32-S3", "384 symbols", "48 symbols"
 
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to ``1000000``.
-- **one_wire** (*Optional*, boolean): Allows the GPIO to be used as both a transmitter and receiver.
-- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it.
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to ``1000000``.
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
+  the DMA buffer size and can be set to a large value.
+- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``pin``
+  is set to inverted or open-drain.
 
 ESP32 Arduino configuration variables:
 **************************************
@@ -69,9 +71,11 @@ ESP32 Arduino configuration variables:
       :header: "ESP32 Variant", "Channels"
 
       "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
+      "ESP32-C3", "0, 1"
+      "ESP32-C6", "0, 1"
+      "ESP32-H2", "0, 1"
       "ESP32-S2", "0, 1, 2, 3"
       "ESP32-S3", "0, 1, 2, 3"
-      "ESP32-C3", "0, 1"
 
 - **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
   a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.
@@ -131,6 +135,7 @@ to set the **times** to 10 and the **wait_time** to 0s.
 .. _remote_transmitter-transmit_abbwelcome:
 
 ``remote_transmitter.transmit_abbwelcome`` **Action**
+*****************************************************
 
 This :ref:`action <config-action>` sends a ABB-Welcome message to the intercom bus. The
 message type, addresses, address length and data can vary a lot between ABB-Welcome
@@ -149,26 +154,24 @@ doorbell or opening a door.
 
 Configuration variables:
 
-- **source_address** (**Required**, int):The source address to send the command from,
+- **source_address** (**Required**, int): The source address to send the command from,
   see received messages for more info. For indoor stations the last byte of the address
   represents the apartment number set by the dials on the back of the indoor station and is
   transmitted in hexadecimal format.
 - **destination_address** (**Required**, int): The destination address to send the command to,
   see received messages for more info.
-- **three_byte_address** (**Required**, int): The destination address to send the command to,
-  see received messages for more info.
-- **three_byte_address** (**Optional**, boolean): The length of the source and destination address. ``false``
+- **three_byte_address** (*Optional*, boolean): The length of the source and destination address. ``false``
   means two bytes and ``true`` means three bytes. Please check the received messages to see which address length
   is used by your system. For example, ``[XXXX > XXXX]`` appears in the receiver log for two byte addresses and
   ``[XXXXXX > XXXXXX]`` for three byte addresses. Defaults to ``false``.
-- **retransmission** (**Optional**, boolean): Should only be ``true`` if this message has been transmitted
+- **retransmission** (*Optional*, boolean): Should only be ``true`` if this message has been transmitted
   before with the same ``message_id``. Typically, messages are transmitted up to three times with a 1 second
   interval if no reply is received. Defaults to ``false``.
 - **message_type** (**Required**, int): The message type, see dumper output for more info.
   The highest bit indicates a reply.
-- **message_id** (**Optional**, int): The message ID, see dumper output for more info.
+- **message_id** (*Optional*, int): The message ID, see dumper output for more info.
   Defaults to a randomly generated ID if this message is not a reply or retransmission.
-- **data** (**Optional**, 0-7 bytes list): The code to send.
+- **data** (*Optional*, 0-7 bytes list): The code to send.
   Usually you only need to copy this directly from the dumper output. Defaults to ``[]``
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
@@ -181,6 +184,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_aeha:
 
 ``remote_transmitter.transmit_aeha`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` sends a AEHA code to a remote transmitter.
 
@@ -202,9 +206,29 @@ Configuration variables:
 AEHA refers to the Association for Electric Home Appliances in Japan, a format used by Panasonic and many other
 companies.
 
+.. _remote_transmitter-transmit_beo4:
+
+``remote_transmitter.transmit_beo4`` **Action**
+
+This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_beo4:
+          source: '0x01'
+          command: '0x0d'
+
+Configuration variables:
+
+- **source** (**Required**, int): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
+- **command** (**Required**, int): The command to send, e.g. 0x01=num1, 0x0d=mute,...,  see dumper output for more info.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+
 .. _remote_transmitter-transmit_byronsx:
 
 ``remote_transmitter.transmit_byronsx`` **Action**
+**************************************************
 
 This :ref:`action <config-action>` sends a Byron Doorbell RF protocol code to a remote transmitter.
 
@@ -224,12 +248,13 @@ Configuration variables:
 .. _remote_transmitter-transmit_canalsat:
 
 ``remote_transmitter.transmit_canalsat`` **Action**
+***************************************************
 
 This :ref:`action <config-action>` sends a CanalSat infrared remote code to a remote transmitter.
 
 .. note::
 
-    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56khz) and are very similar.
+    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 .. code-block:: yaml
@@ -251,12 +276,13 @@ Configuration variables:
 .. _remote_transmitter-transmit_canalsatld:
 
 ``remote_transmitter.transmit_canalsatld`` **Action**
+*****************************************************
 
 This :ref:`action <config-action>` sends a CanalSatLD infrared remote code to a remote transmitter.
 
 .. note::
 
-    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56khz) and are very similar.
+    The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 .. code-block:: yaml
@@ -278,6 +304,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_coolix:
 
 ``remote_transmitter.transmit_coolix`` **Action**
+*************************************************
 
 This :ref:`action <config-action>` sends one or two 24-bit Coolix infrared remote codes to a remote transmitter.
 
@@ -299,6 +326,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_dish:
 
 ``remote_transmitter.transmit_dish`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` sends a Dish Network infrared remote code to a remote transmitter.
 
@@ -321,6 +349,7 @@ You can find a list of commands in the
 .. _remote_transmitter-transmit_dooya:
 
 ``remote_transmitter.transmit_dooya`` **Action**
+************************************************
 
 This :ref:`action <config-action>` sends a Dooya RF remote code to a remote transmitter.
 
@@ -345,6 +374,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_drayton:
 
 ``remote_transmitter.transmit_drayton`` **Action**
+**************************************************
 
 This :ref:`action <config-action>` sends a Draton Digistat RF remote code to a remote transmitter.
 
@@ -363,9 +393,41 @@ Configuration variables:
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
+.. _remote_transmitter-transmit_gobox:
+
+``remote_transmitter.transmit_gobox`` **Action**
+
+This :ref:`action <config-action>` sends a command to a Go-Box via the IR transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_gobox:
+          code: 0xfa05
+
+Configuration variables:
+
+- **code** (**Required**, int): The command to send. Known commands are:
+  - MENU = 0xaa55,
+  - RETURN = 0x22dd,
+  - UP = 0x0af5,
+  - LEFT = 0x8a75,
+  - RIGHT = 0x48b7,
+  - DOWN = 0xa25d,
+  - OK = 0xc837,
+  - TOGGLE = 0xb847,
+  - PROFILE = 0xfa05
+  - FASTER = 0xf00f,
+  - SLOWER = 0xd02f,
+  - LOUDER = 0xb04f,
+  - SOFTER = 0xf807,
+
+  - All other options from :ref:`remote_transmitter-transmit_action`.
+
 .. _remote_transmitter-transmit_jvc:
 
 ``remote_transmitter.transmit_jvc`` **Action**
+**********************************************
 
 This :ref:`action <config-action>` sends a JVC infrared remote code to a remote transmitter.
 
@@ -383,6 +445,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_keeloq:
 
 ``remote_transmitter.transmit_keeloq`` **Action**
+*************************************************
 
 This :ref:`action <config-action>` sends KeeLoq RF remote code to a remote transmitter.
 
@@ -401,14 +464,15 @@ Configuration variables:
 
 - **address** (**Required**, int): The 32-bit address to send, see dumper output for more info.
 - **command** (**Required**, int): The 4 bit command/button code to send, see dumper output for more info.
-- **code** (**Optional**, int): The 32 bit encrypted field to send. Defaults to all zeros.
-- **level** (**Optional**, boolean): Low battery level status bit. Defaults to false.
+- **code** (*Optional*, int): The 32 bit encrypted field to send. Defaults to all zeros.
+- **level** (*Optional*, boolean): Low battery level status bit. Defaults to false.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 - A repeat **wait_time** of 15ms as shown replicates the repetition of an HCS301.
 
 .. _remote_transmitter-transmit_haier:
 
 ``remote_transmitter.transmit_haier`` **Action**
+************************************************
 
 This :ref:`action <config-action>` sends a 104-bit Haier code to a remote transmitter. The 8-bit checksum is added
 automatically.
@@ -427,6 +491,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_lg:
 
 ``remote_transmitter.transmit_lg`` **Action**
+*********************************************
 
 This :ref:`action <config-action>` sends an LG infrared remote code to a remote transmitter.
 
@@ -446,6 +511,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_magiquest:
 
 ``remote_transmitter.transmit_magiquest`` **Action**
+****************************************************
 
 This :ref:`action <config-action>` sends a MagiQuest wand code to a remote transmitter.
 
@@ -466,6 +532,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_midea:
 
 ``remote_transmitter.transmit_midea`` **Action**
+************************************************
 
 This :ref:`action <config-action>` sends a 40-bit Midea code to a remote transmitter. 8-bits of checksum added
 automatically.
@@ -489,6 +556,7 @@ Configuration variables:
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
 ``remote_transmitter.transmit_nec`` **Action**
+**********************************************
 
 This :ref:`action <config-action>` sends an NEC infrared remote code to a remote transmitter.
 
@@ -514,10 +582,11 @@ Configuration variables:
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
 - **command** (**Required**, int): The 16-bit NEC command to send.
 - **command_repeats** (*Optional*, int): The number of times the command bytes are sent in one transmission.
-  Defaults to `1`.
+  Defaults to ``1``.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
 ``remote_transmitter.transmit_nexa`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` a Nexa RF remote code to a remote transmitter.
 
@@ -544,6 +613,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_panasonic:
 
 ``remote_transmitter.transmit_panasonic`` **Action**
+****************************************************
 
 This :ref:`action <config-action>` sends a Panasonic infrared remote code to a remote transmitter.
 
@@ -563,6 +633,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_pioneer:
 
 ``remote_transmitter.transmit_pioneer`` **Action**
+**************************************************
 
 This :ref:`action <config-action>` sends a Pioneer infrared remote code to a remote transmitter.
 
@@ -593,6 +664,7 @@ are largely shared among devices within a given class.
 .. _remote_transmitter-transmit_pronto:
 
 ``remote_transmitter.transmit_pronto`` **Action**
+*************************************************
 
 This :ref:`action <config-action>` sends a raw code to a remote transmitter specified in Pronto format.
 
@@ -611,6 +683,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_raw:
 
 ``remote_transmitter.transmit_raw`` **Action**
+**********************************************
 
 This :ref:`action <config-action>` sends a raw code to a remote transmitter.
 
@@ -638,6 +711,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc5:
 
 ``remote_transmitter.transmit_rc5`` **Action**
+**********************************************
 
 This :ref:`action <config-action>` sends an RC5 infrared remote code to a remote transmitter.
 
@@ -657,6 +731,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc6:
 
 ``remote_transmitter.transmit_rc6`` **Action**
+**********************************************
 
 This :ref:`action <config-action>` sends an RC6 infrared remote code to a remote transmitter.
 
@@ -676,6 +751,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc_switch_raw:
 
 ``remote_transmitter.transmit_rc_switch_raw`` **Action**
+********************************************************
 
 This :ref:`action <config-action>` sends a raw RC-Switch code to a
 remote transmitter.
@@ -697,6 +773,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc_switch_type_a:
 
 ``remote_transmitter.transmit_rc_switch_type_a`` **Action**
+***********************************************************
 
 This :ref:`action <config-action>` sends a type A RC-Switch code to a
 remote transmitter.
@@ -722,6 +799,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc_switch_type_b:
 
 ``remote_transmitter.transmit_rc_switch_type_b`` **Action**
+***********************************************************
 
 This :ref:`action <config-action>` sends a type B RC-Switch code to a
 remote transmitter.
@@ -747,6 +825,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc_switch_type_c:
 
 ``remote_transmitter.transmit_rc_switch_type_c`` **Action**
+***********************************************************
 
 This :ref:`action <config-action>` sends a type C RC-Switch code to a
 remote transmitter.
@@ -774,6 +853,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_rc_switch_type_d:
 
 ``remote_transmitter.transmit_rc_switch_type_d`` **Action**
+***********************************************************
 
 This :ref:`action <config-action>` sends a type D RC-Switch code to a
 remote transmitter.
@@ -799,6 +879,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_roomba:
 
 ``remote_transmitter.transmit_roomba`` **Action**
+*************************************************
 
 This :ref:`action <config-action>` sends a Roomba infrared remote code to a remote transmitter.
 
@@ -826,6 +907,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_samsung:
 
 ``remote_transmitter.transmit_samsung`` **Action**
+**************************************************
 
 This :ref:`action <config-action>` sends a Samsung infrared remote code to a remote transmitter.
 It transmits codes up to 64 bits in length in a single packet.
@@ -849,6 +931,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_samsung36:
 
 ``remote_transmitter.transmit_samsung36`` **Action**
+****************************************************
 
 This :ref:`action <config-action>` sends a Samsung36 infrared remote code to a remote transmitter.
 It transmits the ``address`` and ``command`` in two packets separated by a "space".
@@ -869,6 +952,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_sony:
 
 ``remote_transmitter.transmit_sony`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` a Sony infrared remote code to a remote transmitter.
 
@@ -888,6 +972,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_toshiba_ac:
 
 ``remote_transmitter.transmit_toshiba_ac`` **Action**
+*****************************************************
 
 This :ref:`action <config-action>` sends a Toshiba AC infrared remote code to a remote transmitter.
 
@@ -912,6 +997,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_mirage:
 
 ``remote_transmitter.transmit_mirage`` **Action**
+*************************************************
 
 This :ref:`action <config-action>` sends a 112-bit Mirage code to a remote transmitter. 8-bits of checksum added
 automatically.
@@ -926,6 +1012,34 @@ Configuration variables:
 
 - **code** (**Required**, list): The 14 byte Mirage code to send.
 - All other options from :ref:`remote_transmitter-transmit_action`.
+
+.. _remote_transmitter-transmit_toto:
+
+``remote_transmitter.transmit_toto`` **Action**
+***********************************************
+
+This :ref:`action <config-action>` sends a Toto infrared remote code to a remote transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_toto:
+          command: 0xED  # Set water and seat temperature
+          rc_code_1: 0x0 # Water heater off
+          rc_code_2: 0x0 # Seat heater off
+          # Repeats 3 times at a 36ms interval by default
+
+Configuration variables:
+
+- **command** (**Required**, int): The 1-byte Toto command code to send. Range is 0 to 0xFF.
+- **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
+- **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+
+.. note::
+
+    Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables.
+
 
 .. _remote_transmitter-rc_switch-protocol:
 

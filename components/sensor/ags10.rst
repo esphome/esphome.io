@@ -81,7 +81,7 @@ Configuration option:
   - ``CURRENT_VALUE`` - set zero-point calibration with current resistance
   - ``CUSTOM_VALUE`` - set zero-point calibration with resistance pointed with ``value`` option
 
-- **value** (**Optional**, int): nominated resistance value to set (unit: 0.1 kΩ).
+- **value** (*Optional*, int): nominated resistance value to set (unit: 0.1 kΩ).
 
 
 .. _sensor-AGS10NewI2cAddressAction:
