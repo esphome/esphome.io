@@ -461,8 +461,8 @@ section below for more detail and examples.
 ***********************************
 
 Sets the multiplier value used to proportionally increase or decrease the run duration for all valves/zones.
-For seasonal changes, it’s easier to use the multiplier to adjust the watering time instead of adjusting the
-run durations directly. Set your run duration to the time you want for ‘mild’ weather (spring/autumn) and then
+For seasonal changes, it's easier to use the multiplier to adjust the watering time instead of adjusting the
+run durations directly. Set your run duration to the time you want for 'mild' weather (spring/autumn) and then
 use the multiplier to increase (summer) or decrease (winter) the calculated run times. When a given valve is
 activated, this value is multiplied by the valve's run duration (see below) to determine the valve's actual
 run duration. *Note that a multiplier value of zero is allowed; if the multiplier value is zero, the

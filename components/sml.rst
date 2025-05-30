@@ -75,7 +75,7 @@ Sensor
         filters:
           - multiply: 0.0001
 
-- **obis_code** (*Required*, string): Specify the OBIS code you want to retrieve data for from the device.
+- **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`SML platform <sml-platform>`
@@ -95,7 +95,7 @@ Text Sensor
         obis_code: "129-129:199.130.3"
         format: text
 
-- **obis_code** (*Required*, string): Specify the OBIS code you want to retrieve data for from the device.
+- **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`SML platform <sml-platform>`

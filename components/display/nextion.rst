@@ -87,6 +87,9 @@ Configuration variables:
   release). See :ref:`Nextion Automation <nextion-on_touch>`.
 - **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion
   reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
+- **command_spacing** (*Optional*, :ref:`config-time`): Sets the minimum time between commands sent to the Nextion display.
+  A higher value can help prevent buffer overflows but will result in slower interface updates.
+  Range is ``0-255ms``. Defaults to ``0ms`` (disabled).
 
 .. _display-nextion_lambda:
 

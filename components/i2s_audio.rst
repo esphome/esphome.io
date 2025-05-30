@@ -24,6 +24,7 @@ Configuration variables:
 - **i2s_bclk_pin** (*Optional*, :ref:`config-pin`): The GPIO pin to use for the I²S ``BCLK`` *(Bit Clock)* signal, also referred to as ``SCK`` *(Serial Clock)*.
 - **i2s_mclk_pin** (*Optional*, :ref:`config-pin`): The GPIO pin to use for the I²S ``MCLK`` *(Master Clock)* signal.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this I²S bus if you need multiple.
+- **use_legacy** (*Optional, boolean*): Use the legacy I²S driver when using esp-idf framework version 5.x.x. Not valid for Arduino framework or esp-idf version < 5. All ``i2s_audio`` components need to use the same setting. Defaults to ``false``.
 
 See also
 --------
