@@ -49,10 +49,11 @@ This example show how to configure Thread Dataset for a node.
     openthread:
       channel: 13
       network_name: OpenThread-8f28
-      network_key: dfd34f0f05cad978ec4e32b0413038ff
-      panid: 0x8f28
-      extpanid: d63e8e3e495ebbc3
-      pskc: c23a76e98f1a6483639b1ac1271e2e27
+      network_key: 0xdfd34f0f05cad978ec4e32b0413038ff
+      pan_id: 0x8f28
+      ext_pan_id: 0xd63e8e3e495ebbc3
+      pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
+      force_dataset: true
 
 Configuration variables:
 
