@@ -181,6 +181,15 @@ In the ``seconds:``, ``minutes:``, ... fields you can use the following operator
                 then:
                   - switch.toggle: my_switch
 
+.. note::
+
+    ``on_time`` does not re-schedule events for times that are skipped or duplicated due to local Daylight
+    Saving Time or other local time-adjustments like leap seconds. In regions with Daylight Saving Time, this
+    means that events located between 01:00 - 02:00 may trigger twice, and events scheduled between 02:00 - 03:00 may
+    be skipped once a year. This differs from `cron <https://man7.org/linux/man-pages/man8/cron.8.html>`__ behavior
+    despite allowing the use of similar `crontab` syntax. Similarly, triggers on days of the month that do not exist
+    ("every 31st of the month") will be skipped when those dates do not exist.
+
 .. _time-on_time_sync:
 
 ``on_time_sync`` Trigger
@@ -272,7 +281,7 @@ allows for a lot of flexibility.
 
 .. code-block:: cpp
 
-    # For example, in a display object
+    // For example, in a display object
     it.strftime(0, 0, id(font), "%Y-%m-%d %H:%M", id(time).now());
 
 The strftime will parse the format string (here ``"%Y-%m-%d %H:%M"``) and match anything beginning with

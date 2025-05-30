@@ -191,7 +191,7 @@ All sensors are normal binary sensors... so all binary sensor variables are work
 - **warning_battery_too_low_to_charge** (*Optional*): warning battery too low to charge
 - **fault_dc_dc_over_current** (*Optional*): fault dc dc over current
 - **fault_code** (*Optional*): fault code
-- **warnung_low_pv_energy** (*Optional*): warnung low pv energy
+- **warning_low_pv_energy** (*Optional*): warning low pv energy
 - **warning_high_ac_input_during_bus_soft_start** (*Optional*): warning high ac input during bus soft start
 - **warning_battery_equalization** (*Optional*): warning battery equalization
 
@@ -242,6 +242,8 @@ Not all possible switches are exposed as they lead to the possibility to make se
           name: inverter0_output_source_priority_solar
         output_source_priority_battery:
           name: inverter0_output_source_priority_battery
+        output_source_priority_hybrid:
+          name: inverter0_output_source_priority_hybrid
         input_voltage_range:
           name: inverter0_input_voltage_range
         pv_ok_condition_for_parallel:
@@ -256,6 +258,7 @@ All sensors are normal text sensors... so all text sensor variables are working 
 - **output_source_priority_utility** (*Optional*): output source priority utility
 - **output_source_priority_solar** (*Optional*): output source priority solar
 - **output_source_priority_battery** (*Optional*): output source priority battery
+- **output_source_priority_hybrid** (*Optional*): output source priority hybrid
 - **input_voltage_range** (*Optional*): input voltage range
 - **pv_ok_condition_for_parallel** (*Optional*): pv ok condition for parallel
 - **pv_power_balance** (*Optional*): pv power balance
@@ -320,7 +323,7 @@ target level of the output.
       then:
       - output.pipsolar.set_level:
           id: my_pipsolar_output
-          level: 48.0
+          value: 48.0
 
 
 Configuration options:

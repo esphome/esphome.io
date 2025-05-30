@@ -38,7 +38,7 @@ many IBS-TH1/TH2 devices at once as you want.
 
     sensor:
       - platform: inkbird_ibsth1_mini
-        mac_address: 38:81:D7:0A:9C:11
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Inkbird IBS-TH1 Temperature"
         external_temperature:
@@ -54,27 +54,19 @@ Configuration variables:
 - **mac_address** (**Required**, MAC Address): The MAC address of the Inkbird IBS-TH1 device.
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **external_temperature** (*Optional*): The information for the external temperature sensor.
 
-  - **name** (**Required**, string): The name for the external temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): The information for the humidity sensor
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **battery_level** (*Optional*): The information for the battery level sensor
 
-  - **name** (**Required**, string): The name for the battery level sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 
 Setting Up Devices
@@ -88,21 +80,21 @@ like so:
 
     esp32_ble_tracker:
 
-After uploading the ESP32 will immediately try to scan for BLE devices such as the Inkbird IBS-TH1/TH2. 
+After uploading the ESP32 will immediately try to scan for BLE devices such as the Inkbird IBS-TH1/TH2.
 When it detects these sensors, it will automatically parse the BLE message print a
 message like this one:
 
 .. code::
 
-    [13:36:43][D][esp32_ble_tracker:544]: Found device 38:81:D7:0A:9C:11 RSSI=-53
+    [13:36:43][D][esp32_ble_tracker:544]: Found device XX:XX:XX:XX:XX:XX RSSI=-53
     [13:36:43][D][esp32_ble_tracker:565]:   Address Type: PUBLIC
     [13:36:43][D][esp32_ble_tracker:567]:   Name: 'sps'
 
 Note that it can sometimes take some time for the first BLE broadcast to be received. Please note that address type
-should say 'PUBLIC' and the device name should be 'sps', this is how you find the Inkbird IBS-TH1/TH2 among all the 
+should say 'PUBLIC' and the device name should be 'sps', this is how you find the Inkbird IBS-TH1/TH2 among all the
 other devices.
 
-Then just copy the address (``38:81:D7:0A:9C:11``) into a new ``sensor.inkbird_ibsth1_mini`` platform
+Then just copy the address (``XX:XX:XX:XX:XX:XX``) into a new ``sensor.inkbird_ibsth1_mini`` platform
 entry like in the configuration example at the top.
 
 .. note::

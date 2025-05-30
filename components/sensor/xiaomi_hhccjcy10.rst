@@ -16,7 +16,7 @@ MiFlora, tuya (pink) version, measures temperature, moisture, ambient light and 
 
     sensor:
       - platform: xiaomi_hhccjcy10
-        mac_address: '94:2B:FF:5C:91:61'
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Xiaomi HHCCJCY10 Temperature"
         moisture:

@@ -27,13 +27,10 @@ Configuration variables:
 
 - **output** (**Required**, :ref:`config-id`): The id of the
   binary output component to use for this fan.
-- **name** (**Required**, string): The name for this fan.
 - **oscillation_output** (*Optional*, :ref:`config-id`): The id of the
   :ref:`output <output>` to use for the oscillation state of this fan. Default is empty.
 - **direction_output** (*Optional*, :ref:`config-id`): The id of the
   :ref:`output <output>` to use for the direction state of the fan. Default is empty.
-- **id** (*Optional*, :ref:`config-id`): Manually specify
-  the ID used for code generation.
 - All other options from :ref:`Fan Component <config-fan>`.
 
 See Also

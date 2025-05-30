@@ -14,7 +14,7 @@ the MAC address of a device and track it using ESPHome.
 .. warning::
 
     The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-    
+
     **Crashes are likely to occur** if you include too many additional components in your device's
     configuration. Memory-intensive components such as :doc:`/components/voice_assistant` and other
     audio components are most likely to cause issues.
@@ -23,18 +23,19 @@ the MAC address of a device and track it using ESPHome.
 
     # Example configuration entry
     esp32_ble_tracker:
+      max_connections: 3
 
     binary_sensor:
       - platform: ble_presence
-        mac_address: AC:37:43:77:5F:4C
+        mac_address: XX:XX:XX:XX:XX:XX
         name: "ESP32 BLE Presence Google Home Mini"
 
     sensor:
       - platform: ble_rssi
-        mac_address: AC:37:43:77:5F:4C
+        mac_address: XX:XX:XX:XX:XX:XX
         name: "BLE Google Home Mini RSSI value"
       - platform: xiaomi_hhccjcy01
-        mac_address: 94:2B:FF:5C:91:61
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Xiaomi MiFlora Temperature"
         moisture:
@@ -46,7 +47,7 @@ the MAC address of a device and track it using ESPHome.
         battery_level:
           name: "Xiaomi MiFlora Battery Level"
       - platform: xiaomi_lywsdcgq
-        mac_address: 7A:80:8E:19:36:BA
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Xiaomi MiJia Temperature"
         humidity:
@@ -84,8 +85,19 @@ Configuration variables:
     you can save power and RF pollution by setting it to ``false``. Defaults to ``true``.
   - **continuous** (*Optional*, boolean): Whether to scan continuously (forever) or to only scan when
     asked to start a scan (with start_scan action). Defaults to ``true``.
+  - **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
+    briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
+    which can improve reliability. Only available if ``wifi`` component is configured.
+    Defaults to ``true``.
 
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this ESP32 BLE Hub.
+- **max_connections** (*Optional*, int): The maximum number of BLE connection slots to use.
+  Each configured slot consumes ~1KB of RAM. It is recommended not to exceed ``5``
+  connection slots to avoid memory issues. Defaults to ``3``.
+  This can only be adjusted when using the ``esp-idf`` framework up to a maximum of ``9``.
+  This value cannot exceed the total number of ``connection_slots`` for the
+  :doc:`bluetooth_proxy` component combined with the total
+  configured :doc:`ble_client` instances.
 
 Automations:
 
@@ -116,9 +128,9 @@ This automation will be triggered when a Bluetooth advertising is received. A va
 
     esp32_ble_tracker:
       on_ble_advertise:
-        - mac_address: 
-            - 11:11:11:11:11:11
-            - 22:22:22:22:22:22
+        - mac_address:
+            - XX:XX:XX:XX:XX:XX
+            - XX:XX:XX:XX:XX:XX
           then:
             - lambda: |-
                 ESP_LOGD("ble_adv", "New BLE device");
@@ -159,7 +171,7 @@ variable ``x`` of type ``std::vector<uint8_t>`` is passed to the automation for 
 
     esp32_ble_tracker:
       on_ble_manufacturer_data_advertise:
-        - mac_address: 11:22:33:44:55:66
+        - mac_address: XX:XX:XX:XX:XX:XX
           manufacturer_id: 0590
           then:
             - lambda: |-
@@ -190,7 +202,7 @@ variable ``x`` of type ``std::vector<uint8_t>`` is passed to the automation for 
 
     esp32_ble_tracker:
       on_ble_service_data_advertise:
-        - mac_address: 11:22:33:44:55:66
+        - mac_address: XX:XX:XX:XX:XX:XX
           service_uuid: 181A
           then:
             - lambda: 'id(ble_sensor).publish_state(x[0]);'

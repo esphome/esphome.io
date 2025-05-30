@@ -3,10 +3,10 @@ Physically Connecting to your Device
 
 The most difficult part of setting up a new ESPHome device is the initial
 installation, which requires connecting your ESP device to a computer using a
-cable.
+data cable.
 
 **You only need to do this once per device.** Once you've flashed ESPHome on a
-device, you can use :doc:`the OTA updater </components/ota>` to upload new
+device, you can use :doc:`/components/ota/index` to upload new
 versions or configuration changes wirelessly.
 
 ESPHome runs on a wide variety of devices, so it's hard to list any specific
@@ -24,8 +24,8 @@ requires you do something different to connect your computer to the ESP in
 order to flash it.
 
 You only need to physically connect to it once. Once you've flashed your device
-and connected it to your WiFi, you can use the `OTA (over-the-air) update
-component </components/ota.html>`_ to install software remotely.
+and connected it to your WiFi, you can use :doc:`/components/ota/index` to
+install software remotely.
 
 Programming a ESP-based device is done by connecting the serial port on the
 ESP8266/ESP32 to your computer through a USB to serial adapter. Some devices
@@ -119,8 +119,9 @@ USB Port on Device
 
 Development boards often come with a USB port built in. This USB port is
 connected to a serial adapter, so you don't need a separate serial adapter. You
-can use just a :ref:`USB cable <usb-cable>` to connect it to your computer to
-program it.
+can use just a :ref:`USB data cable <usb-cable>` to connect it to your computer to
+program it. Additionally, a development board can also be used to flash other ESPs.
+:doc:`Read more here. </guides/devboard_as_flasher>`
 
 This isn't likely to be very useful without connecting additional sensors to it
 by either soldering or using a breadboard, but you do not need anything else to
@@ -241,7 +242,8 @@ require different parts and tools.
         .. _usb-cable:
     * - :ref:`USB to micro-USB/mini-USB/USB-C <usb-cable>`
       - If your target device has a USB port on it, you need the appropriate
-        cable to connect to it.
+        data cable to connect to it. A power only USB cable that usually
+        comes presupplied with powerbanks won't work.
       - $3 to $10
       - .. image:: /guides/images/usb-cable.jpg
             :alt: From https://www.stockvault.net/photo/271754/usb-cable
@@ -259,6 +261,9 @@ require different parts and tools.
 
         The `Tasmota website provides a good set of suggestions on what to buy
         <https://tasmota.github.io/docs/Getting-Started/#needed-hardware>`_.
+
+        Any ESP development board with functioning USB_UART bridge chip can also be used instead.
+        :doc:`Read instructions here. </guides/devboard_as_flasher>`
       - $3 to $10
       - .. image:: /guides/images/usb-serial-adapter.jpg
             :alt: From https://tasmota.github.io/docs/Getting-Started/

@@ -39,8 +39,6 @@ Configuration variables:
 
 - **voc** (*Optional*): VOC Index
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters. For more details see `Engineering Guidelines for SEN5x <https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf>`__
 
     - **index_offset** (*Optional*): VOC index representing typical (average) conditions. Allowed values are in range 1..250. The default value is 100.
@@ -55,8 +53,6 @@ Configuration variables:
 
 - **nox** (*Optional*): NOx Index. Only available with SGP41. If a SGP40 sensor is detected this sensor will be ignored
 
-  - **name** (**Required**, string): The name of the sensor.
-  - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
   - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.For more details see `Engineering Guidelines for SEN5x <https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf>`__
 
     - **index_offset** (*Optional*): NOx index representing typical (average) conditions. Allowed values are in range 1..250. The default value is 100.
