@@ -117,6 +117,7 @@ The Component provides some useful font metrics. Those include:
 
     The ``capheight`` and ``xheight`` values are typically calculated using glyphs with flat tops.
     Rounded characters however might overshoot this value slightly to make them visually appear as the same size.
+    For special fonts like the Material Design Icons font, which do not contain any letters, these two metrics will be set to 0.
 
 The following code snipped produces the image below. Note that the lines in the code are ordered as they appear in the image from top to bottom.
 For this font the ``descender`` and ``height`` are only one pixel apart.
