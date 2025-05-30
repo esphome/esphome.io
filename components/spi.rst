@@ -23,7 +23,7 @@ The SPI bus usually consists of 4 wires:
 - **MISO** (also SDI - Serial Data In): Is used to receive data. All devices on the bus share this line.
 
 In some cases one of **MOSI** or **MISO** does not exist as the receiving device only accepts data or sends data.
-It is also possible to configure a quad SPI interface using 4 output data lines. This is required only for
+It is also possible to configure a quad SPI interface using 4 output data lines, and an octal interface using 8 data output lines. This is required only for
 use with certain components.
 
 To set up SPI devices in ESPHome, you first need to place a top-level SPI component which defines the pins to
@@ -63,7 +63,7 @@ This component also accepts a list of controllers if you want to implement multi
 Configuration variables:
 ------------------------
 
-- **type** (*Optional*): Choose between ``single`` for standard 1 bit bus SPI (the default) or ``quad`` for quad SPI.
+- **type** (*Optional*): Choose between ``single`` for standard 1 bit bus SPI (the default), ``quad`` and ``octal``.
 - **clk_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin used for the clock line of the SPI bus.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
@@ -75,10 +75,10 @@ For the conventional ``single`` bit bus at least one of ``miso_pin`` or ``mosi_p
 - **mosi_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin used for the MOSI line of the SPI bus.
 - **miso_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin used for the MISO line of the SPI bus.
 
-For ``quad`` type instead specify ``data_pins``:
+For ``quad`` or ``octal`` type instead specify ``data_pins``:
 
-- **data_pins** (*Required*, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
-  for the quad SPI output data lines.
+- **data_pins** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
+  for the quad SPI output data lines, or exactly 8 pins for octal mode. Not used for single mode.
 
 
 Interface selection:
@@ -103,7 +103,7 @@ While the ESP32 supports the reassignment of the default SPI pins to most other 
 can improve performance and stability for certain ESP/device combinations.
 ESP8266 has a more limited selection of pins that can be used; check the datasheet for more information.
 
-Quad mode requires a hardware interface, so ``software`` and ``any`` are not permitted values.
+Quad and octal modes requires a hardware interface, so ``software`` and ``any`` are not permitted values.
 
 Generic SPI device component:
 -----------------------------
@@ -126,7 +126,7 @@ Reads and writes on the device can be performed with lambdas. For example:
         id: spidev
         cs_pin: GPIOXX
         data_rate: 2MHz
-        mode: 3
+        spi_mode: 3
         bit_order: lsb_first
 
    on...:
@@ -143,7 +143,7 @@ Configuration variables:
 - **data_rate** (*Optional*): Set the data rate of the controller. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz``,
   ``5MHz``, ``4MHz``, ``2MHz``, ``1MHz`` (default), ``200kHz``, ``75kHz`` or ``1kHz``. A numeric value in Hz can alternatively
   be specified.
-- **mode** (*Optional*): Set the controller mode - one of ``mode0``, ``mode1``, ``mode2``, ``mode3``. The default is ``mode3``.
+- **spi_mode** (*Optional*): Set the controller mode - one of ``mode0``, ``mode1``, ``mode2``, ``mode3``. The default is ``mode3``.
   See table below for more information
 - **bit_order** (*Optional*): Set the bit order - choose one of ``msb_first`` (default) or ``lsb_first``.
 - **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
@@ -152,7 +152,7 @@ SPI modes:
 ----------
 
 SPI devices operate in one of four modes as per the table below. The choice of mode is dictated by the requirements
-of the speficic peripheral chip.
+of the specific peripheral chip.
 
 .. csv-table:: Supported Modes
     :header: "Mode", "Clock Idle Polarity", "Clock Phase", "Data shifted on", "Data sampled on"

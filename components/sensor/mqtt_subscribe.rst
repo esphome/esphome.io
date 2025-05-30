@@ -26,10 +26,8 @@ text sensor for importing arbitrary text into the ESPHome ecosystem.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the sensor.
 - **topic** (**Required**, string): The MQTT topic to listen for numeric messages.
 - **qos** (*Optional*, int): The MQTT QoS to subscribe with. Defaults to ``0``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also

@@ -21,7 +21,8 @@ Base Lock Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the lock.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the lock. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -44,6 +45,7 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options. Set to ``""`` to remove the default entity category.
 - If MQTT enabled, All other options from :ref:`MQTT Component <config-mqtt-component>`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 .. _lock-lock_action:
 

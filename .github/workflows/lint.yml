@@ -10,7 +10,7 @@ on:
 
 permissions:
   contents: read
-  
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -20,14 +20,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Install pagefind
-      uses: jaxxstorm/action-install-gh-release@v1.12.0
+      uses: jaxxstorm/action-install-gh-release@v1.14.0
       with:
           repo: cloudcannon/pagefind
-    - uses: actions/checkout@v4.1.6
-    - name: Set up Python 3.8
+    - uses: actions/checkout@v4.2.2
+    - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
-        python-version: 3.8
+        python-version: 3.12
     - name: Install dependencies
       run: pip install -r requirements.txt -r requirements_test.txt
     - name: Register problem matchers

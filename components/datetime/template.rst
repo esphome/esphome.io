@@ -13,7 +13,7 @@ using :ref:`lambdas <config-lambda>`.
     datetime:
       # Example Date
       - platform: template
-        id: my_date
+        id: my_datetime_date
         type: date
         name: Pick a Date
         optimistic: yes
@@ -22,7 +22,7 @@ using :ref:`lambdas <config-lambda>`.
 
       # Example Time
       - platform: template
-        id: my_time
+        id: my_datetime_time
         type: time
         name: Pick a Time
         optimistic: yes
@@ -41,7 +41,7 @@ using :ref:`lambdas <config-lambda>`.
 Configuration variables:
 ------------------------
 
-- **type** (*Required*, enum): The type of the datetime. Can be one of ``date`` or ``time``.
+- **type** (**Required**, enum): The type of the datetime. Can be one of ``date`` or ``time``.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated every update interval to get the current value of the datetime.
 - **set_action** (*Optional*, :ref:`Action <config-action>`): The action that should

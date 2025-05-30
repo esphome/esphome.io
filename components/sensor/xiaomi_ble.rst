@@ -4,7 +4,7 @@ Xiaomi Mijia BLE Sensors
 .. seo::
     :description: Instructions for setting up Xiaomi Mi Home (Mijia) bluetooth-based sensors in ESPHome.
     :image: xiaomi_mijia_logo.jpg
-    :keywords: Xiaomi, Mi Home, Mijia, BLE, Bluetooth, HHCCJCY01, GCLS002, HHCCPOT002, LYWSDCGQ, LYWSD02, CGG1, LYWSD03MMC, CGD1, JQJCY01YM, MUE4094RT, WX08ZM, MHO, C401, MHOC401
+    :keywords: Xiaomi, Mi Home, Mijia, BLE, Bluetooth, HHCCJCY01, GCLS002, HHCCPOT002, LYWSDCGQ, LYWSD02, LYWSD02MMC, CGG1, LYWSD03MMC, CGD1, JQJCY01YM, MUE4094RT, WX08ZM, MHO, C401, MHOC401
 
 The ``xiaomi_ble`` sensor platform lets you track the output of Xiaomi Bluetooth Low Energy devices using the :doc:`/components/esp32_ble_tracker`. This component will track, for example, the temperature, humidity, moisture, conductivity, illuminance, formaldehyde, mosquito tablet and battery level of the device every time the sensor sends out a BLE broadcast. Contrary to other implementations, ``xiaomi_ble`` listens passively to advertisement packets and does not pair with the device. Hence ESPHome has no impact on battery life. Thus, if you only use such sensors, you can safely set ``scan_parameters.active: false`` in ``esp32_ble_tracker`` configuration, to save from spamming your RF environment with useless scan requests.
 
@@ -32,7 +32,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_hhccjcy01
-        mac_address: '94:2B:FF:5C:91:61'
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "Xiaomi HHCCJCY01 Temperature"
         moisture:
@@ -64,7 +64,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_gcls002
-        mac_address: "94:2B:FF:5C:91:61"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "GCLS02 Temperature"
         moisture:
@@ -89,7 +89,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_hhccpot002
-        mac_address: "94:2B:FF:5C:91:61"
+        mac_address: XX:XX:XX:XX:XX:XX
         moisture:
           name: "HHCCPOT002 Moisture"
         conductivity:
@@ -110,7 +110,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_lywsdcgq
-        mac_address: "7A:80:8E:19:36:BA"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "LYWSDCGQ Temperature"
         humidity:
@@ -135,13 +135,33 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_lywsd02
-        mac_address: "3F:5B:7D:82:58:4E"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "LYWSD02 Temperature"
         humidity:
           name: "LYWSD02 Humidity"
         battery_level:
           name: "LYWSD02 Battery Level"
+
+LYWSD02MMC
+**********
+
+Hygro thermometer, rectangular body, e-ink display, broadcasts temperature, humidity and battery level. Encrypted.
+
+Configuration example:
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: xiaomi_lywsd02mmc
+        mac_address: "A4:C1:38:54:5E:18"
+        bindkey: "2529d8e0d23150a588675cc54ad48400"
+        temperature:
+          name: "LYWSD02MMC Temperature"
+        humidity:
+          name: "LYWSD02MMC Humidity"
+        battery_level:
+          name: "LYWSD02MMC Battery Level"
 
 CGG1
 ****
@@ -160,7 +180,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_cgg1
-        mac_address: "7A:80:8E:19:36:BA"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "CGG1 Temperature"
         humidity:
@@ -168,7 +188,7 @@ Configuration example:
         battery_level:
           name: "CGG1 Battery Level"
       - platform: xiaomi_cgg1
-        mac_address: "7A:80:8E:28:39:CD"
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "00112233445566778899aabbccddeeff"
         temperature:
           name: "CGG1 (New) Temperature"
@@ -200,7 +220,7 @@ Configuration example for Xiaomi stock firmware or ATC MiThermometer firmware se
 
     sensor:
       - platform: xiaomi_lywsd03mmc
-        mac_address: "A4:C1:38:B1:CD:7F"
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "eef418daf699a0c188f3bfd17e4565d9"
         temperature:
           name: "LYWSD03MMC Temperature"
@@ -215,7 +235,7 @@ Configuration example for PVVX MiThermometer firmware set to "Custom" advertisem
 
     sensor:
       - platform: pvvx_mithermometer
-        mac_address: "A4:C1:38:B1:CD:7F"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "PVVX Temperature"
         humidity:
@@ -233,7 +253,7 @@ Configuration example for ATC MiThermometer firmware set to "Custom" advertiseme
 
     sensor:
       - platform: atc_mithermometer
-        mac_address: "A4:C1:38:B1:CD:7F"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "ATC Temperature"
         humidity:
@@ -263,7 +283,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_mhoc303
-        mac_address: "E7:50:59:32:A0:1C"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "MHO-C303 Climate Temperature"
         humidity:
@@ -296,7 +316,7 @@ Configuration example for Xiaomi stock firmware:
 
     sensor:
       - platform: xiaomi_mhoc401
-        mac_address: "A4:C1:38:B1:CD:7F"
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "eef418daf699a0c188f3bfd17e4565d9"
         temperature:
           name: "MHOC401 Temperature"
@@ -311,7 +331,7 @@ Configuration example for PVVX MiThermometer firmware set to "Custom" advertisem
 
     sensor:
       - platform: pvvx_mithermometer
-        mac_address: "A4:C1:38:B1:CD:7F"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "PVVX Temperature"
         humidity:
@@ -337,7 +357,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_cgd1
-        mac_address: "A4:C1:38:8C:34:B7"
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "fe39106baeedb7c801e3d63c4396f97e"
         temperature:
           name: "CGD1 Temperature"
@@ -362,7 +382,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_cgdk2
-        mac_address: "58:2D:34:11:34:B7"
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "fe39106baeedb7c801e3d63c4396f97e"
         temperature:
           name: "CGDK2 Temperature"
@@ -386,7 +406,7 @@ Configuration example:
 
     sensor:
       - platform: xiaomi_jqjcy01ym
-        mac_address: "7A:80:8E:19:36:BA"
+        mac_address: XX:XX:XX:XX:XX:XX
         temperature:
           name: "JQJCY01YM Temperature"
         humidity:
@@ -413,7 +433,7 @@ Configuration example:
 
     binary_sensor:
       - platform: xiaomi_wx08zm
-        mac_address: "74:a3:4a:b5:07:34"
+        mac_address: XX:XX:XX:XX:XX:XX
         tablet:
           name: "WX08ZM Mosquito Tablet"
         battery_level:
@@ -437,7 +457,7 @@ Configuration example:
     binary_sensor:
       - platform: xiaomi_mue4094rt
         name: "MUE4094RT Night Light"
-        mac_address: "7A:80:8E:19:36:BA"
+        mac_address: XX:XX:XX:XX:XX:XX
         timeout: "5s"
 
 MJYD02YL-A
@@ -458,7 +478,7 @@ Configuration example:
     binary_sensor:
       - platform: xiaomi_mjyd02yla
         name: "MJYD02YL-A Night Light"
-        mac_address: "50:EC:50:CD:32:02"
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "48403ebe2d385db8d0c187f81e62cb64"
         idle_time:
           name: "MJYD02YL-A Idle Time"
@@ -485,7 +505,7 @@ Configuration example:
     binary_sensor:
       - platform: xiaomi_cgpr1
         name: "CGPR1 Motion detector"
-        mac_address: 58:2D:34:60:32:A2
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: "ff1ae526b23b4aebeadcaaad86f59055"
         idle_time:
           name: "CGPR1 Idle Time"
@@ -510,7 +530,7 @@ Configuration example:
 
     xiaomi_rtcgq02lm:
       - id: motion_one
-        mac_address: 01:23:45:67:89:AB
+        mac_address: XX:XX:XX:XX:XX:XX
         bindkey: fe39106baeedb7c801e3d63c4396f97e
 
     binary_sensor:
@@ -539,7 +559,7 @@ Required:
 - **mac_address** (MAC Address): The MAC address of the device.
 - **bindkey** (string, 32 characters, case insensitive): The key to decrypt the BLE advertisements for encrypted sensor types
 
-Optional with **name**, **id** (:ref:`config-id`) and all other options from :ref:`Sensor <config-sensor>`:
+All options from :ref:`Sensor <config-sensor>` are supported for:
 
 - **temperature**
 - **humidity**
@@ -567,11 +587,11 @@ After uploading, the ESP32 will immediately try to scan for BLE devices. When it
 
 .. code::
 
-    Found device A4:C1:38:4E:16:78 RSSI=-78
+    Found device XX:XX:XX:XX:XX:XX RSSI=-78
       Address Type: PUBLIC
       Name: 'LYWSD03MMC'
 
-It can sometimes take some time for the first BLE broadcast to be received. Once the device has been found, copy the address ``A4:C1:38:4E:16:78`` into a new platform entry like shown in the example configurations.
+It can sometimes take some time for the first BLE broadcast to be received. Once the device has been found, copy the address ``XX:XX:XX:XX:XX:XX`` into a new platform entry like shown in the example configurations.
 
 .. _obtaining_the_bindkey:
 
@@ -621,7 +641,7 @@ Another option is to use a SSL packet sniffer. It can be setup on either an Andr
 
     packet: POST /app/device/bltbind
 
-    "data" = "{"did":"blt.3.129q4nasgeg00","token":"20c665a7ff82a5bfb5eefc36","props":[{"type":"prop","key":"bind_key","value":"cfc7cc892f4e32f7a733086cf3443cb0"},   {"type":"prop","key":"smac","value":"A4:C1:38:8C:34:B7"}]}"
+    "data" = "{"did":"blt.3.129q4nasgeg00","token":"20c665a7ff82a5bfb5eefc36","props":[{"type":"prop","key":"bind_key","value":"cfc7cc892f4e32f7a733086cf3443cb0"},   {"type":"prop","key":"smac","value":XX:XX:XX:XX:XX:XX}]}"
 
 The ``bind_key`` is the 32 digits "value" item in the above output which needs to be inserted into the config file.
 

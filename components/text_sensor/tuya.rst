@@ -21,8 +21,6 @@ You can create the text sensor as follows:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 

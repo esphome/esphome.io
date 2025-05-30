@@ -74,6 +74,8 @@ Frame Settings:
   Up to 60Hz is possible (with reduced frame sizes), but beware of overheating. Defaults to ``10 fps``.
 - **idle_framerate** (*Optional*, float): The framerate to capture images at when no client
   is requesting a full stream. Defaults to ``0.1 fps``.
+- **frame_buffer_count** (*Optional*, int): The number of frame buffers to use when reading from the camera sensor.
+  Must be between 1 and 2.  Defaults to ``1``.
 
 Image Settings:
 
@@ -174,8 +176,10 @@ Test Setting:
     Camera uses PWM timer #1. If you need PWM (via the ``ledc`` platform) you need to manually specify
     a channel there (with the ``channel: 2``  parameter)
 
-Configuration for Ai-Thinker Camera
------------------------------------
+Configuration examples
+----------------------
+
+**Ai-Thinker Camera**:
 
 .. warning::
 
@@ -203,8 +207,7 @@ Configuration for Ai-Thinker Camera
       name: My Camera
       # ...
 
-Configuration for M5Stack Camera
---------------------------------
+**M5Stack Camera**:
 
 .. warning::
 
@@ -235,8 +238,7 @@ Configuration for M5Stack Camera
       name: My Camera
       # ...
 
-Configuration for M5Stack Timer Camera X/F
-------------------------------------------
+**M5Stack Timer Camera X/F**:
 
 .. code-block:: yaml
 
@@ -258,8 +260,7 @@ Configuration for M5Stack Timer Camera X/F
       name: My Camera
       # ...
 
-Confguration for M5Stack M5CameraF New
---------------------------------------
+**M5Stack M5CameraF New**:
 
 .. code-block:: yaml
 
@@ -277,8 +278,7 @@ Confguration for M5Stack M5CameraF New
       pixel_clock_pin: GPIO21
       reset_pin: GPIO15
 
-Configuration for Wrover Kit Boards
------------------------------------
+**Wrover Kit Boards**:
 
 .. code-block:: yaml
 
@@ -299,8 +299,7 @@ Configuration for Wrover Kit Boards
       name: My Camera
       # ...
 
-Configuration for TTGO T-Camera V05
------------------------------------
+**TTGO T-Camera V05**:
 
 .. code-block:: yaml
 
@@ -322,8 +321,7 @@ Configuration for TTGO T-Camera V05
       name: My Camera
       # ...
 
-Configuration for TTGO T-Camera V162
-------------------------------------
+**TTGO T-Camera V162**:
 
 .. code-block:: yaml
 
@@ -346,8 +344,7 @@ Configuration for TTGO T-Camera V162
       name: My Camera
       # ...
 
-Configuration for TTGO T-Camera V17
------------------------------------
+**TTGO T-Camera V17**:
 
 .. code-block:: yaml
 
@@ -371,8 +368,7 @@ Configuration for TTGO T-Camera V17
       name: My Camera
       # ...
 
-Configuration for TTGO T-Journal
---------------------------------
+**TTGO T-Journal**:
 
 .. code-block:: yaml
 
@@ -394,8 +390,7 @@ Configuration for TTGO T-Journal
       # ...
 
 
-Configuration for TTGO-Camera Plus
-----------------------------------
+**TTGO-Camera Plus**:
 
 .. code-block:: yaml
 
@@ -418,8 +413,7 @@ Configuration for TTGO-Camera Plus
       name: My Camera
       # ...
 
-Configuration for TTGO-Camera Mini
-----------------------------------
+**TTGO-Camera Mini**:
 
 .. code-block:: yaml
 
@@ -440,8 +434,7 @@ Configuration for TTGO-Camera Mini
       name: My Camera
       # ...
 
-Configuration for ESP-EYE
-----------------------------------
+**ESP-EYE**:
 
 .. code-block:: yaml
 
@@ -462,8 +455,7 @@ Configuration for ESP-EYE
       name: My Camera
       # ...
 
-Configuration for ESP32S3_EYE on `Freenove ESP32-S3-DevKitC-1 <https://github.com/Freenove/Freenove_ESP32_S3_WROOM_Board>`_
----------------------------------------------------------------------------------------------------------------------------
+**ESP32S3_EYE** on `Freenove ESP32-S3-DevKitC-1 <https://github.com/Freenove/Freenove_ESP32_S3_WROOM_Board>`__:
 
 .. code-block:: yaml
 
@@ -484,6 +476,26 @@ Configuration for ESP32S3_EYE on `Freenove ESP32-S3-DevKitC-1 <https://github.co
       data_pins: [GPIO11, GPIO9, GPIO8, GPIO10, GPIO12, GPIO18, GPIO17, GPIO16]
       vsync_pin: GPIO6
       href_pin: GPIO7
+      pixel_clock_pin: GPIO13
+
+      # Image settings
+      name: My Camera
+      # ...
+
+**Seeed Studio XIAO ESP32S3 Sense**:
+
+.. code-block:: yaml
+
+    esp32_camera:
+      external_clock:
+        pin: GPIO10
+        frequency: 20MHz
+      i2c_pins:
+        sda: GPIO40
+        scl: GPIO39
+      data_pins: [GPIO15, GPIO17, GPIO18, GPIO16, GPIO14, GPIO12, GPIO11, GPIO48]
+      vsync_pin: GPIO38
+      href_pin: GPIO47
       pixel_clock_pin: GPIO13
 
       # Image settings
