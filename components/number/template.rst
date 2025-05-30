@@ -22,7 +22,6 @@ using :ref:`lambdas <config-lambda>`.
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the number.
 - **min_value** (**Required**, float): The minimum value this number can be.
 - **max_value** (**Required**, float): The maximum value this number can be.
 - **step** (**Required**, float): The granularity with which the number can be set.
@@ -41,7 +40,6 @@ Configuration variables:
 - **initial_value** (*Optional*, float): The value to set the state to on setup if not
   restored with ``restore_value``.
   Cannot be used with ``lambda``. Defaults to ``min_value``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Number <config-number>`.
 
 ``number.set`` Action

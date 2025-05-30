@@ -29,7 +29,8 @@ All datetime in ESPHome have a name and an optional icon.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the datetime.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name for the datetime. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -47,8 +48,9 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
-- **time_id** (**Required**, :ref:`config-id`): The ID of the time entity. Automatically set
-  to the ID of a time component if only a single one is defined.
+- **time_id** (*Optional*, :ref:`config-id`): The ID of the time entity. Automatically set
+  to the ID of a time component if only a single one is defined. Required if ``on_time`` is used.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 MQTT Options:
 
@@ -57,7 +59,7 @@ MQTT Options:
 Time and DateTime Options:
 
 - **on_time** (*Optional*, :ref:`automation`): Automation to run when the current datetime or time matches the current state.
-  Only valid on ``time`` or ``datetime`` types.
+  Only valid on ``time`` or ``datetime`` types.  Use of ``on_time`` causes ``time_id`` to be required, ``time_id`` will be automatically assigned if a time source exists in the config, and will cause an invalid configuration if there is no :doc:`/components/time/index` configured.
 
 Automation
 ----------
@@ -103,12 +105,12 @@ The ``date`` provided can be in one of 3 formats:
 
     # String date
     - datetime.date.set:
-        id: my_date
+        id: my_datetime_date
         date: "2023-12-04"
 
     # Individual date parts
     - datetime.date.set:
-        id: my_date
+        id: my_datetime_date
         date:
           year: 2023
           month: 12
@@ -116,10 +118,10 @@ The ``date`` provided can be in one of 3 formats:
 
     # Using a lambda
     - datetime.date.set:
-        id: my_date
+        id: my_datetime_date
         date: !lambda |-
           // Return an ESPTime struct
-          return {.day_of_month: 4, .month: 12, .year: 2023};
+          return {.day_of_month = 4, .month = 12, .year = 2023};
 
 Configuration variables:
 
@@ -142,7 +144,7 @@ advanced stuff (see the full API Reference for more info).
   .. code-block:: cpp
 
       // Within lambda, set the date to 2024-02-25
-      auto call = id(my_date).make_call();
+      auto call = id(my_datetime_date).make_call();
       call.set_date("2024-02-25");
       call.perform();
 
@@ -174,12 +176,12 @@ The ``time`` provided can be in one of 3 formats:
 
     # String time
     - datetime.time.set:
-        id: my_time
+        id: my_datetime_time
         time: "12:34:56"
 
     # Individual time parts
     - datetime.time.set:
-        id: my_time
+        id: my_datetime_time
         time:
           hour: 12
           minute: 34
@@ -187,10 +189,10 @@ The ``time`` provided can be in one of 3 formats:
 
     # Using a lambda
     - datetime.time.set:
-        id: my_time
+        id: my_datetime_time
         time: !lambda |-
           // Return an ESPTime struct
-          return {.second: 56, .minute: 34, .hour: 12};
+          return {.second = 56, .minute = 34, .hour = 12};
 
 Configuration variables:
 
@@ -212,7 +214,7 @@ advanced stuff (see the full API Reference for more info).
   .. code-block:: cpp
 
       // Within lambda, set the time to 12:34:56
-      auto call = id(my_time).make_call();
+      auto call = id(my_datetime_time).make_call();
       call.set_time("12:34:56");
       call.perform();
 
@@ -227,7 +229,7 @@ advanced stuff (see the full API Reference for more info).
   .. code-block:: cpp
 
       // For example, create a custom log message when a value is received:
-      ESP_LOGI("main", "Value of my datetime: %0d:%02d:%02d", id(my_time).hour, id(my_time).minute, id(my_time).second);
+      ESP_LOGI("main", "Value of my datetime: %0d:%02d:%02d", id(my_datetime_time).hour, id(my_datetime_time).minute, id(my_datetime_time).second);
 
 
 DateTime Automation
@@ -264,7 +266,7 @@ The ``datetime`` provided can be in one of 3 formats:
         id: my_datetime
         datetime: !lambda |-
           // Return an ESPTime struct
-          return {.second: 56, .minute: 34, .hour: 12, .day_of_month: 31, .month: 12, .year: 2024};
+          return {.second = 56, .minute = 34, .hour = 12, .day_of_month = 31, .month = 12, .year = 2024};
 
 Configuration variables:
 
@@ -286,7 +288,7 @@ For more complex use cases, several methods are available for use on datetimes f
 
       // Within lambda, set the datetime to 2024-12-31 12:34:56
       auto call = id(my_datetime).make_call();
-      call.set_date("2024-12-31 12:34:56");
+      call.set_datetime("2024-12-31 12:34:56");
       call.perform();
 
   Check the API reference for information on the methods that are available for

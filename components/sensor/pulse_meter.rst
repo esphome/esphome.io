@@ -29,7 +29,6 @@ Configuration variables
 ------------------------
 
 - **pin** (**Required**, :ref:`config-pin`): The pin to count pulses on.
-- **name** (**Required**, string): The name of the sensor.
 
 - **internal_filter** (*Optional*, :ref:`config-time`): If a pulse shorter than this   time is detected, it is discarded. Defaults to ``13us``.
 
@@ -48,7 +47,7 @@ Converting units
 ----------------
 
 The sensor defaults to units of *pulses/min*, You can change this by using :ref:`sensor-filters`.
-For example, if you’re using the pulse meter with a photodiode to count the light pulses on a power meter that has an impulse constant of *10000 pulses / kWh*, you can use the following to output instantaneous usage in *W*:
+For example, if you're using the pulse meter with a photodiode to count the light pulses on a power meter that has an impulse constant of *10000 pulses / kWh*, you can use the following to output instantaneous usage in *W*:
 
 .. code-block:: yaml
 
@@ -91,8 +90,8 @@ trying to match.
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_total
+      actions:
+        - action: set_total
           variables:
             new_total: int
           then:

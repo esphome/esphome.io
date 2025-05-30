@@ -44,7 +44,7 @@ for a short period of time, the close/open action begins.
 See Also
 --------
 
-- :doc:`/guides/automations`
+- :doc:`/automations/index`
 - :doc:`/components/switch/gpio`
 - :doc:`/components/cover/template`
 - :ghedit:`Edit`

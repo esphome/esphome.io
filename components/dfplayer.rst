@@ -345,19 +345,19 @@ Sample code
           logger.log: 'Playback finished event'
 
     api:
-      services:
-      - service: dfplayer_next
+      actions:
+      - action: dfplayer_next
         then:
           - dfplayer.play_next:
-      - service: dfplayer_previous
+      - action: dfplayer_previous
         then:
           - dfplayer.play_previous:
-      - service: dfplayer_play
+      - action: dfplayer_play
         variables:
           file: int
         then:
           - dfplayer.play: !lambda 'return file;'
-      - service: dfplayer_play_loop
+      - action: dfplayer_play_loop
         variables:
           file: int
           loop_: bool
@@ -365,7 +365,7 @@ Sample code
           - dfplayer.play:
               file: !lambda 'return file;'
               loop: !lambda 'return loop_;'
-      - service: dfplayer_play_folder
+      - action: dfplayer_play_folder
         variables:
           folder: int
           file: int
@@ -374,7 +374,7 @@ Sample code
               folder: !lambda 'return folder;'
               file: !lambda 'return file;'
 
-      - service: dfplayer_play_loop_folder
+      - action: dfplayer_play_loop_folder
         variables:
           folder: int
         then:
@@ -382,54 +382,54 @@ Sample code
               folder: !lambda 'return folder;'
               loop: true
 
-      - service: dfplayer_set_device_tf
+      - action: dfplayer_set_device_tf
         then:
           - dfplayer.set_device: TF_CARD
 
-      - service: dfplayer_set_device_usb
+      - action: dfplayer_set_device_usb
         then:
           - dfplayer.set_device: USB
 
-      - service: dfplayer_set_volume
+      - action: dfplayer_set_volume
         variables:
           volume: int
         then:
           - dfplayer.set_volume: !lambda 'return volume;'
-      - service: dfplayer_set_eq
+      - action: dfplayer_set_eq
         variables:
           preset: int
         then:
           - dfplayer.set_eq: !lambda 'return static_cast<dfplayer::EqPreset>(preset);'
 
-      - service: dfplayer_sleep
+      - action: dfplayer_sleep
         then:
           - dfplayer.sleep
 
-      - service: dfplayer_reset
+      - action: dfplayer_reset
         then:
           - dfplayer.reset
 
-      - service: dfplayer_start
+      - action: dfplayer_start
         then:
           - dfplayer.start
 
-      - service: dfplayer_pause
+      - action: dfplayer_pause
         then:
           - dfplayer.pause
 
-      - service: dfplayer_stop
+      - action: dfplayer_stop
         then:
           - dfplayer.stop
 
-      - service: dfplayer_random
+      - action: dfplayer_random
         then:
           - dfplayer.random
 
-      - service: dfplayer_volume_up
+      - action: dfplayer_volume_up
         then:
           - dfplayer.volume_up
 
-      - service: dfplayer_volume_down
+      - action: dfplayer_volume_down
         then:
           - dfplayer.volume_down
 
