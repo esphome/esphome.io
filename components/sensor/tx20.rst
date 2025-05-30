@@ -7,8 +7,6 @@ TX20/TX23 Wind Speed/Direction Sensor
     :keywords: TX20
 
 The ``tx20`` sensor platform allows you to use your TX20/TX23
-(`Amazon`_,
-`lacrosse_tx23`_)
 wind direction and speed sensors with ESPHome.
 The only required pin is the black or brown cable (which is used to transmit data.)
 The red cable should be connected to VCC (3.3V), green initiates the data transfer when connected to GND
@@ -22,9 +20,6 @@ connected to GND in the TX20.
     :width: 50.0%
 
     TX20 / TX23 Wind Speed / Direction.
-
-.. _Amazon: https://www.amazon.de/Technoline-Tx-20/dp/B01HXZ3KLA
-.. _lacrosse_tx23: https://www.lacrossetechnology.com/tx23-wind-sensor
 
 .. code-block:: yaml
 
@@ -66,14 +61,20 @@ Configuration variables:
             return {id(tx20_id).get_wind_cardinal_direction()};
           update_interval: 2s
 
+.. note::
+
+    It appears that the manufacturer discontinued production of this sensor, as it doesn't seem to be available anymore for purchase.
+    There are various alternatives though, and since ESPHome has a :doc:`/components/modbus`, any model supporting RS485 connection
+    can be easily integrated. 
+
+    Check out in the ESPHome Devices database example configurations for
+    `RS-FSJT-N01 Wind Speed <https://devices.esphome.io/devices/Renke-RS-FSJT-N01-Wind-Speed>`__ and
+    `RS-FXJT-N01 Wind Direction <https://devices.esphome.io/devices/Renke-RS-FXJT-N01-Wind-Direction>`__ sensors.
 
 See Also
 --------
 
 - :ref:`sensor-filters`
 - :apiref:`tx20/tx20.h`
-- `Amazon Tx20 <https://www.amazon.de/Technoline-Tx-20/dp/B01HXZ3KLA>`__
-- `La Crosse Tx23 <https://www.lacrossetechnology.com/tx23-wind-sensor>`__
 - `Datagram Tx20 <http://www.sdpro.eu/jm/images/allegati/TX20_Documentazione.pdf>`__
-- `Datagram Tx23 <https://www.lacrossetechnology.com/tx23-wind-sensor>`__-
 - :ghedit:`Edit`

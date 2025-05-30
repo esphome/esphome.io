@@ -41,7 +41,6 @@ Possible return values for the optional lambda:
 Configuration variables:
 ------------------------
 
-- **name** (**Required**, string): The name of the valve.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
   Lambda to be evaluated repeatedly to get the current state of the valve.
 - **open_action** (*Optional*, :ref:`Action <config-action>`): The action that should be performed when the remote
@@ -52,6 +51,12 @@ Configuration variables:
   requests the valve to be stopped.
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
   the template valve will immediately update the reported state and no lambda needs to be used. Defaults to ``false``.
+- **restore_mode** (*Optional*, enum): Control how the valve attempts to restore state on bootup.
+
+  - ``NO_RESTORE`` (Default): Do not save or restore state.
+  - ``RESTORE``: Attempts to restore the state on startup, but doesn't instruct the valve to return to that state.
+  - ``RESTORE_AND_CALL``: Attempts to restore the state on startup and instructs the valve to return to the restored state.
+
 - **assumed_state** (*Optional*, boolean): Whether the true state of the valve is not known. This will make the Home
   Assistant frontend show buttons for both OPEN and CLOSE actions, instead of hiding one of them. Defaults to ``false``.
 - **has_position** (*Optional*, boolean): Whether this valve will publish its position as a floating point number.
@@ -59,7 +64,6 @@ Configuration variables:
 - **position_action** (*Optional*, :ref:`Action <config-action>`): The action that should be performed when the remote
   (like Home Assistant's frontend) requests the valve be set to a specific position. The desired position is available
   in the lambda in the ``pos`` variable. Requires ``has_position`` (above) to be set to ``true``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Valve <config-valve>`.
 
 .. _valve-template-publish_action:

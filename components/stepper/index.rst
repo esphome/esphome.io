@@ -153,7 +153,7 @@ Configuration options:
 
 .. warning::
 
-    This turns the stepper to an absolute position! To have the servo move *relative* to the current
+    This turns the stepper to an absolute position! To have the stepper motor move *relative* to the current
     position, first reset the current position and then set the target to the relative value.
 
     .. code-block:: yaml

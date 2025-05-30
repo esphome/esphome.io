@@ -49,9 +49,7 @@ datasheet indicates that the sensor does not measure temperature.
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 
 - **cs_pin** (**Required**, :ref:`SPI <spi>`): Chip select pin.

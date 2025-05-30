@@ -67,6 +67,7 @@ Here is the configuration with the basic operations outlined above.
     logger:
 
     ota:
+      platform: esphome
 
     api:
 

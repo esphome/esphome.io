@@ -37,10 +37,10 @@ Configuration variables:
 ------------------------
 
 
-- **co2** (**Required**): The CO_2 data from the sensor in parts per million (ppm).
+- **co2** (*Optional*): The CO_2 data from the sensor in parts per million (ppm).
   All options from :ref:`Sensor <config-sensor>`.
 
-- **temperature** (**Required**): The information for the temperature sensor. Please note that this is
+- **temperature** (*Optional*): The information for the temperature sensor. Please note that this is
   not officially documented in the datasheet and seems to be quite inaccurate.
   All options from :ref:`Sensor <config-sensor>`.
 
@@ -82,13 +82,13 @@ for over 20 minutes and you execute this function.
       then:
         - mhz19.calibrate_zero: my_mhz19_id
 
-You can provide :ref:`service <api-services>` to call it from Home Assistant
+You can provide an :ref:`action <api-device-actions>` to perform from Home Assistant
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: mhz19_calibrate_zero
+      actions:
+        - action: mhz19_calibrate_zero
           then:
             - mhz19.calibrate_zero: my_mhz19_id
 

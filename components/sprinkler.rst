@@ -461,8 +461,8 @@ section below for more detail and examples.
 ***********************************
 
 Sets the multiplier value used to proportionally increase or decrease the run duration for all valves/zones.
-For seasonal changes, it’s easier to use the multiplier to adjust the watering time instead of adjusting the
-run durations directly. Set your run duration to the time you want for ‘mild’ weather (spring/autumn) and then
+For seasonal changes, it's easier to use the multiplier to adjust the watering time instead of adjusting the
+run durations directly. Set your run duration to the time you want for 'mild' weather (spring/autumn) and then
 use the multiplier to increase (summer) or decrease (winter) the calculated run times. When a given valve is
 activated, this value is multiplied by the valve's run duration (see below) to determine the valve's actual
 run duration. *Note that a multiplier value of zero is allowed; if the multiplier value is zero, the
@@ -643,7 +643,8 @@ could easily be added by adding the ``pump_switch_id`` parameter and a :ref:`swi
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -673,7 +674,8 @@ This example illustrates a complete, simple three-valve system with no pump/upst
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -724,7 +726,8 @@ This example illustrates a complete three-valve system with a single pump/upstre
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -788,7 +791,8 @@ a common pump/upstream valve.
 
     esphome:
       name: esp-sprinkler-controller
-      platform: ESP32
+
+    esp32:
       board: featheresp32
 
     wifi:
@@ -866,7 +870,8 @@ valves, each of which are shared between the two controllers:
 
     esphome:
         name: esp-sprinkler-controller
-        platform: ESP32
+
+    esp32:
         board: featheresp32
 
     wifi:
@@ -1087,38 +1092,38 @@ memory use.
 Expose Sprinkler Controller Actions via user-API
 ************************************************
 
-This configuration snippet illustrates how user-defined ESPHome API services may be used to expose
+This configuration snippet illustrates how user-defined ESPHome API actions may be used to expose
 various sprinkler controller actions to the front end. This could be useful to change settings
 and/or trigger sprinkler controller actions using automations.
 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_multiplier
+      actions:
+        - action: set_multiplier
           variables:
             multiplier: float
           then:
             - sprinkler.set_multiplier:
                 id: lawn_sprinkler_ctrlr
                 multiplier: !lambda 'return multiplier;'
-        - service: start_full_cycle
+        - action: start_full_cycle
           then:
             - sprinkler.start_full_cycle: lawn_sprinkler_ctrlr
-        - service: start_single_valve
+        - action: start_single_valve
           variables:
             valve: int
           then:
             - sprinkler.start_single_valve:
                 id: lawn_sprinkler_ctrlr
                 valve_number: !lambda 'return valve;'
-        - service: next_valve
+        - action: next_valve
           then:
             - sprinkler.next_valve: lawn_sprinkler_ctrlr
-        - service: previous_valve
+        - action: previous_valve
           then:
             - sprinkler.previous_valve: lawn_sprinkler_ctrlr
-        - service: shutdown
+        - action: shutdown
           then:
             - sprinkler.shutdown: lawn_sprinkler_ctrlr
 

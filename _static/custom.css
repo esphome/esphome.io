@@ -1,3 +1,14 @@
+/* provide this to be queried in JS. Sadly can't be used in media-queries just yet*/
+
+:root {
+  --mobile-width-stop: 875;
+}
+
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .row-odd {
   background-color: #f3f6f6;
 }
@@ -263,9 +274,8 @@ div.body p, div.body dd, div.body li, div.body blockquote {
 .search-results {
     background-color: #f8f8f8;
     box-shadow: 0 6px 10px rgb(0 0 0 / 0.2);
-    position: absolute;
+    position: fixed;
     z-index: 1500;
-    margin-top: 4px;
     padding-right: 6px;
     padding-left: 6px;
     border-radius: 12px;
@@ -277,8 +287,122 @@ div.body p, div.body dd, div.body li, div.body blockquote {
     display: none;
 }
 
+.sphinx-tabs-tab {
+  line-height: 20px;
+}
+
+/* New branding changes */
+
+div.body{
+  margin: 0 auto;
+}
+
+div.body h1, div.body h2, div.body h3, div.body h4, div.body h5, div.body h6, div.sphinxsidebar h3, div.sphinxsidebar h4, div.admonition p.admonition-title {
+  font-family: Figtree, system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+  font-weight: 600;
+}
+
+div.body h1 {
+  font-size: 2.5rem;
+}
+
+.custom-footer{
+  border-top: 1px solid #3E4349;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 1rem 0;
+}
+
+.custom-footer .side{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.custom-footer .side:last-child{
+  align-items: flex-end;
+}
+.custom-footer .ohf{
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.custom-footer .ohf span{
+  font-size: 12px;
+}
+
+.custom-footer .ohf a{
+  border-bottom: none;
+}
+
+.custom-footer .links{
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+.custom-footer .links a{
+  display: flex;
+  align-items: flex-end;
+}
+
+.custom-footer .link-netlify{
+  font-size: 12px;
+}
+
+body {
+  font-family: "Instrument Sans", system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0.01rem;
+}
+
+div.body p, div.body dd, div.body li {
+  line-height: 1.6;
+}
+
+div.sphinxsidebar h3 {
+  line-height: 1.25;
+}
+
+div.sphinxsidebar li {
+  line-height: 1.5;
+  margin-bottom: .25rem;
+}
+
+div.sphinxsidebar input {
+  font-family: "Instrument Sans", system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+}
+
+.pagefind-ui__form {
+  margin-bottom: 1rem;
+}
+
+@media screen and (max-width: 875px) {
+  /* hide search result thumbnails on mobile */
+  .pagefind-modular-list-thumb {
+    width: 0;
+  }
+  /* reduce height of search box */
+  .pagefind-modular-input-wrapper {
+    scale: 90%;
+  }
+  .logo {
+    scale: 60%;
+  }
+}
+
+
 /* dark theme */
 @media (prefers-color-scheme: dark) {
+
+  :root{
+    --logo-text-color: #FFFFFF;
+  }
+
+  .custom-footer{
+    border-top: 1px solid #ececec;
+  }
 
   @media screen and (max-width: 875px) {
     div.documentwrapper {
@@ -297,7 +421,17 @@ div.body p, div.body dd, div.body li, div.body blockquote {
     background-color: #212121;
   }
 
-  img.dark-invert, img.logo {
+  .sphinx-tabs-panel {
+    background: #212121;
+  }
+  
+  .sphinx-tabs-tab {
+    color: #3fc3ff !important;
+    background: #212121 !important;
+    margin: 0 !important;
+  }
+  
+  img.dark-invert {
     filter: invert(1);
   }
 
@@ -383,6 +517,7 @@ div.body p, div.body dd, div.body li, div.body blockquote {
   .pagefind-ui__form, .pagefind-modular-input, .search-results {
     color: #ececec !important;
   }
+
   :root {
     --pagefind-ui-primary: #eeeeee;
     --pagefind-ui-text: #eeeeee;

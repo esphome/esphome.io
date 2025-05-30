@@ -41,33 +41,25 @@ Configuration variables:
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See :ref:`bme680-oversampling`.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **pressure** (*Optional*): The information for the pressure sensor.
 
-  - **name** (**Required**, string): The name for the pressure sensor.
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See :ref:`bme680-oversampling`.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): The information for the humidity sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See :ref:`bme680-oversampling`.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **gas_resistance** (*Optional*): The information for the gas sensor.
 
-  - **name** (**Required**, string): The name for the gas resistance sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **address** (*Optional*, int): Manually specify the I²C address of
   the sensor. Defaults to ``0x76``. Another address can be ``0x77``.
@@ -132,9 +124,10 @@ Add indoor air quality (IAQ) calculation and IAQ label, based on the values in t
         name: "BME680 Indoor Air Quality"
         id: iaq
         icon: "mdi:gauge"
-        # caulculation: comp_gas = log(R_gas[ohm]) + 0.04 log(Ohm)/%rh * hum[%rh]    
+        # calculation: comp_gas = log(R_gas[ohm]) + 0.04 log(Ohm)/%rh * hum[%rh]
         lambda: |-
           return log(id(gas_resistance).state) + 0.04 *  id(humidity).state;
+        state_class: "measurement"
     text_sensor:
       - platform: template
         name: "BME680 IAQ Classification"

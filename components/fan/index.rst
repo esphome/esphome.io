@@ -26,7 +26,8 @@ Base Fan Configuration
 
 Configuration variables:
 
-- **name** (**Required**, string): The name of the fan.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name of the fan. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -54,9 +55,14 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 MQTT options:
 
+- **direction_state_topic** (*Optional*, string): The topic to
+  publish fan direction state changes to (options: forward, reverse).
+- **direction_command_topic** (*Optional*, string): The topic to
+  receive fan direction commands on (options: forward, reverse, toggle).
 - **oscillation_state_topic** (*Optional*, string): The topic to
   publish fan oscillation state changes to.
 - **oscillation_command_topic** (*Optional*, string): The topic to
@@ -70,7 +76,6 @@ MQTT options:
 - **speed_command_topic** (*Optional*, string): The topic to receive
   speed commands on (options: LOW, MEDIUM, HIGH).
 - All other options from :ref:`MQTT Component <config-mqtt-component>`.
-- If Webserver enabled, ``web_server_sorting_weight`` can be set. See :ref:`Webserver Entity Sorting <config-webserver-sorting>`.
 
 Automation triggers:
 

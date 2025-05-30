@@ -1,0 +1,248 @@
+ESPHome 2024.10.0 - 16th October 2024
+=====================================
+
+.. seo::
+    :description: Changelog for ESPHome 2024.10.0.
+    :image: /_static/changelog-2024.10.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    Audio DAC Core, components/audio_dac/index, audio_dac.svg
+    AIC3204, components/audio_dac/aic3204, aic3204.svg
+    GP2Y1010AU0F, components/sensor/gp2y1010au0f, gp2y1010au0f.png
+    Grove Gas V2, components/sensor/grove_gas_mc_v2, grove-gas-mc-v2.png
+    NAU7802, components/sensor/nau7802, nau7802.jpg
+    NPI-19, components/sensor/npi19, npi19.jpg
+    TCA9555, components/tca9555, tca9555.svg
+    TE-M3200, components/sensor/tem3200, tem3200.jpg
+
+
+Web Server Grouping
+-------------------
+
+For those that use the :doc:`/components/web_server` with version 3, there is a new
+grouping feature that allows for custom/user defined groups of entities.
+
+This is also a breaking change as the previous ``web_server_sorting_weight`` has been moved into a new
+``web_server`` -> ``sorting_weight`` configuration entry for the entity.
+
+Please see :ref:`config-webserver-sorting` for the latest documentation on these features.
+
+ESP32 Advanced MAC Address Configuration
+----------------------------------------
+
+ESPHome now supports reading a custom MAC address from the ESP32 eFuse blocks and will read and use it by default if
+there is data burned into the eFuses. If you would like to disable this, or the eFuse has data burned that is not a
+MAC address into those eFuses, then you can add ``ignore_efuse_custom_mac: true`` to your ESP32 ``advanced``
+configuration. See :ref:`ESP32 Advanced Configuration <esp32-advanced_configuration>` for more details.
+
+
+CSE7766 Breaking Changes
+------------------------
+
+The :doc:`/components/sensor/cse7766` now requires even parity in configuration. There are some chips that work without ``EVEN``,
+but the majority of newer chips seem to require it and the older ones work fine with it set as well so to make it consistent across all devices
+the component now requires it.
+
+Release 2024.10.1 - October 22
+------------------------------
+
+- [config] Fix crash with empty substitutions block :esphomepr:`7612` by :ghuser:`clydebarrow`
+- Fix broken ibeacon_uuid config in ble_rssi :esphomepr:`7640` by :ghuser:`lennart-k`
+- auto-load preferences :esphomepr:`7642` by :ghuser:`ssieb`
+- [wifi] Support custom MAC on Arduino, too :esphomepr:`7644` by :ghuser:`kbx81`
+- [config] Ensure user-supplied build flags don't get silently overwritten :esphomepr:`7622` by :ghuser:`clydebarrow`
+- [lvgl] Remove states from style definitions (Bugfix) :esphomepr:`7645` by :ghuser:`clydebarrow`
+- Move setting global voice assistant to constructor :esphomepr:`7630` by :ghuser:`synesthesiam`
+
+Release 2024.10.2 - October 24
+------------------------------
+
+- Humanized the missing MQTT log topic error message :esphomepr:`7634` by :ghuser:`solarkennedy`
+- [lvgl] Some properties were not templatable (Bugfix) :esphomepr:`7655` by :ghuser:`clydebarrow`
+- [voice_assistant] Bugfix: Fix crash on start :esphomepr:`7662` by :ghuser:`kahrendt`
+
+Release 2024.10.3 - November 8
+------------------------------
+
+- [rpi_dpi_rgb] Fix get_width and height (Bugfix) :esphomepr:`7675` by :ghuser:`clydebarrow`
+- Fixes modbus timing error :esphomepr:`7674` by :ghuser:`exciton`
+- [lvgl] Ensure images are configured before using them. (Bugfix) :esphomepr:`7721` by :ghuser:`clydebarrow`
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add tca9555 GPIO driver :esphomepr:`7146` by :ghuser:`mobrembski` (new-integration)
+- Add support for Sharp GP2Y1010AU0F PM2.5 sensor :esphomepr:`6007` by :ghuser:`zry98` (new-integration)
+- [audio_dac] [aic3204] Add new component + platform :esphomepr:`7505` by :ghuser:`kbx81` (new-integration)
+- Feature/add seeed grove gmxxx multichannel gas support :esphomepr:`4304` by :ghuser:`YorkshireIoT` (new-integration)
+- Add Initial TE-M3200 pressure sensor support :esphomepr:`6862` by :ghuser:`bakerkj` (new-integration)
+- Add Initial NPI-19 pressure sensor support :esphomepr:`7181` by :ghuser:`bakerkj` (new-integration)
+- nau7802: new component :esphomepr:`6291` by :ghuser:`cujomalainey` (new-integration)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- Haier climate integration update :esphomepr:`7416` by :ghuser:`paveldn` (breaking-change) (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Haier climate integration update :esphomepr:`7416` by :ghuser:`paveldn` (breaking-change) (new-platform)
+- [ch422g] Add support for pins 8-11; make input work. :esphomepr:`7467` by :ghuser:`clydebarrow` (breaking-change)
+- CSE7766 needs even parity :esphomepr:`7549` by :ghuser:`ssieb` (breaking-change)
+- [web_server] v3 entity grouping :esphomepr:`6833` by :ghuser:`RFDarter` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- fix uart settings check :esphomepr:`7573` by :ghuser:`ssieb`
+- [web_server] Event component grouping :esphomepr:`7586` by :ghuser:`RFDarter`
+- [touchscreen] Fix coordinates when using rotation :esphomepr:`7591` by :ghuser:`clydebarrow`
+- Fix update sequence when update is set to false (#5225) :esphomepr:`7407` by :ghuser:`edge90`
+
+All changes
+^^^^^^^^^^^
+
+- Bump peter-evans/create-pull-request from 7.0.0 to 7.0.2 :esphomepr:`7437` by :ghuser:`dependabot[bot]`
+- Bump recommended ESP-IDF to 4.4.8 :esphomepr:`7349` by :ghuser:`bdraco`
+- [tm1638] Fix linting and formatting issues :esphomepr:`7443` by :ghuser:`jesserockz`
+- [image] Fix linting and formatting issues :esphomepr:`7440` by :ghuser:`jesserockz`
+- [animation] Fix linting and formatting issues :esphomepr:`7439` by :ghuser:`jesserockz`
+- [thermostat] Fix linting and formatting issues :esphomepr:`7442` by :ghuser:`jesserockz`
+- Add OpenTherm component (part 1: communication layer and hub) :esphomepr:`6645` by :ghuser:`olegtarasov` (new-integration)
+- [st7701s] Make use of IDF5.x to speed up display operations :esphomepr:`7447` by :ghuser:`clydebarrow`
+- [modbus_controller] Fix linting and formatting issues :esphomepr:`7441` by :ghuser:`jesserockz`
+- Bump pylint from 3.1.0 to 3.2.7 :esphomepr:`7438` by :ghuser:`jesserockz`
+- Bump peter-evans/create-pull-request from 7.0.2 to 7.0.3 :esphomepr:`7457` by :ghuser:`dependabot[bot]`
+- openeth ethernet / qemu support :esphomepr:`7020` by :ghuser:`apbodrov`
+- [nextion] Optionally skip connection handshake :esphomepr:`6905` by :ghuser:`edwardtfn`
+- Haier climate integration update :esphomepr:`7416` by :ghuser:`paveldn` (breaking-change) (new-platform)
+- Added i2s_comm_fmt parameter to i2s speaker component :esphomepr:`7449` by :ghuser:`PxPert`
+- [lvgl] Enhancements :esphomepr:`7453` by :ghuser:`clydebarrow`
+- Add tca9555 GPIO driver :esphomepr:`7146` by :ghuser:`mobrembski` (new-integration)
+- [st7701s] Fix initialisation race :esphomepr:`7462` by :ghuser:`clydebarrow`
+- add "fan_mode" and "swing_mode" to REST API :esphomepr:`7476` by :ghuser:`Tarik2142`
+- [esp32_improv] Add triggers for various states :esphomepr:`7461` by :ghuser:`kbx81`
+- [micro_wake_word] Workaround for failing IDF 5+ tests :esphomepr:`7484` by :ghuser:`kbx81`
+- Bump peter-evans/create-pull-request from 7.0.3 to 7.0.5 :esphomepr:`7469` by :ghuser:`dependabot[bot]`
+- Add CSE7766 reactive power :esphomepr:`7301` by :ghuser:`nkinnan`
+- Support inkplate 5 and 5 V2 :esphomepr:`7448` by :ghuser:`DavidSichau`
+- Add remote transmitter triggers :esphomepr:`7483` by :ghuser:`swoboda1337`
+- tcs34725: fix color/clear channel percentage calculations on long exposures :esphomepr:`7493` by :ghuser:`RubenKelevra`
+- tcs34725: Add check for Division by Zero :esphomepr:`7485` by :ghuser:`RubenKelevra`
+- [core] add ring buffer destructor :esphomepr:`7500` by :ghuser:`kahrendt`
+- [ch422g] Add support for pins 8-11; make input work. :esphomepr:`7467` by :ghuser:`clydebarrow` (breaking-change)
+- Add clean_session as configurable option to the MQTT component :esphomepr:`7501` by :ghuser:`victorclaessen`
+- [wifi] Use custom MAC address if programmed :esphomepr:`7498` by :ghuser:`kbx81`
+- Add support for Sharp GP2Y1010AU0F PM2.5 sensor :esphomepr:`6007` by :ghuser:`zry98` (new-integration)
+- Make time dependency optional :esphomepr:`7425` by :ghuser:`nkinnan`
+- Add OHF logo to README :esphomepr:`7509` by :ghuser:`mrdarrengriffin`
+- Bump pypa/gh-action-pypi-publish from 1.10.1 to 1.10.2 :esphomepr:`7487` by :ghuser:`dependabot[bot]`
+- tcs34725: optimize fetch time with burst read for RGB and clear values :esphomepr:`7494` by :ghuser:`RubenKelevra`
+- tcs34725: Remove IR compensation and improve illuminance and color temperature handling in extreme conditions :esphomepr:`7492` by :ghuser:`RubenKelevra`
+- [CI] Remove ``sorted`` from library include dirs :esphomepr:`7526` by :ghuser:`kbx81`
+- [wifi] Fix error message when no custom MAC is set :esphomepr:`7515` by :ghuser:`kbx81`
+- [esp32] Add ``ignore_efuse_custom_mac`` config var :esphomepr:`7527` by :ghuser:`kbx81`
+- [mics_4514] Move consts to consts.py :esphomepr:`7528` by :ghuser:`jesserockz`
+- Fix parsing of µs time periods in config :esphomepr:`7495` by :ghuser:`dwmw2`
+- [web_server] Expose detail=all on all components :esphomepr:`7531` by :ghuser:`RFDarter`
+- [CI] Use a list when reading idedata for includes :esphomepr:`7535` by :ghuser:`kbx81`
+- Use "puremagic" instead of "magic" python module :esphomepr:`7536` by :ghuser:`guillempages`
+- [lvgl] Remap image to img in "set_style_*" :esphomepr:`7546` by :ghuser:`guillempages`
+- CSE7766 needs even parity :esphomepr:`7549` by :ghuser:`ssieb` (breaking-change)
+- Allow use of all pulse count unit channels if needed. :esphomepr:`7550` by :ghuser:`ToSa27`
+- [bang-bang] Remove ``assert()`` :esphomepr:`7533` by :ghuser:`kbx81`
+- [thermostat] Remove ``assert()`` :esphomepr:`7544` by :ghuser:`kbx81`
+- [bedjet_codec] Remove ``assert()`` :esphomepr:`7543` by :ghuser:`kbx81`
+- [audio_dac] [aic3204] Add new component + platform :esphomepr:`7505` by :ghuser:`kbx81` (new-integration)
+- [wifi] Replace ``USE_ESP32_IGNORE_EFUSE_MAC_CRC`` with IDF's ``CONFIG_ESP_MAC_IGNORE_MAC_CRC_ERROR`` :esphomepr:`7502` by :ghuser:`kbx81`
+- Bump docker/setup-buildx-action from 3.6.1 to 3.7.1 in the docker-actions group across 1 directory :esphomepr:`7542` by :ghuser:`dependabot[bot]`
+- Bump pypa/gh-action-pypi-publish from 1.10.2 to 1.10.3 :esphomepr:`7541` by :ghuser:`dependabot[bot]`
+- Bump docker/build-push-action from 6.7.0 to 6.9.0 in /.github/actions/build-image :esphomepr:`7511` by :ghuser:`dependabot[bot]`
+- [code-quality] fix clang-tidy md5 and hmac_md5 :esphomepr:`7325` by :ghuser:`tomaszduda23`
+- [code-quality] fix clang-tidy api :esphomepr:`7279` by :ghuser:`tomaszduda23`
+- [lvgl] Bugfixes #3 :esphomepr:`7472` by :ghuser:`clydebarrow`
+- Feature/add seeed grove gmxxx multichannel gas support :esphomepr:`4304` by :ghuser:`YorkshireIoT` (new-integration)
+- [lvgl] Fix: allow full range of styles on dropdown list. :esphomepr:`7552` by :ghuser:`clydebarrow`
+- [web_server] v3 entity grouping :esphomepr:`6833` by :ghuser:`RFDarter` (breaking-change)
+- Add Initial TE-M3200 pressure sensor support :esphomepr:`6862` by :ghuser:`bakerkj` (new-integration)
+- Add Initial NPI-19 pressure sensor support :esphomepr:`7181` by :ghuser:`bakerkj` (new-integration)
+- nau7802: new component :esphomepr:`6291` by :ghuser:`cujomalainey` (new-integration)
+- Update webserver local assets to 20241007-025551 :esphomepr:`7553` by :ghuser:`esphomebot`
+- [online_image] Bugfix: Use std::string instead of const char * :esphomepr:`7556` by :ghuser:`clydebarrow`
+- [ili9xxx] Put display into sleep mode on shutdown. :esphomepr:`7555` by :ghuser:`clydebarrow`
+- Bump actions/upload-artifact from 4.4.0 to 4.4.1 :esphomepr:`7559` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.0.2 to 4.1.0 in /.github/actions/restore-python :esphomepr:`7560` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.0.2 to 4.1.0 :esphomepr:`7558` by :ghuser:`dependabot[bot]`
+- Update radon_eye_listener.cpp for more possible variants :esphomepr:`7567` by :ghuser:`baldisos`
+- [cst816] Allow skipping i2c probe :esphomepr:`7557` by :ghuser:`clydebarrow`
+- [lvgl] Fix text component :esphomepr:`7563` by :ghuser:`clydebarrow`
+- [template/binary_sensor] Implement `condition:` option as alternative to lambda. :esphomepr:`7561` by :ghuser:`clydebarrow`
+- Bump actions/upload-artifact from 4.4.1 to 4.4.2 :esphomepr:`7569` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.1.0 to 4.1.1 :esphomepr:`7570` by :ghuser:`dependabot[bot]`
+- Bump actions/cache from 4.1.0 to 4.1.1 in /.github/actions/restore-python :esphomepr:`7571` by :ghuser:`dependabot[bot]`
+- fix uart settings check :esphomepr:`7573` by :ghuser:`ssieb`
+- [CI] failures when installing using apt-get. :esphomepr:`7593` by :ghuser:`clydebarrow`
+- [web_server] Event component grouping :esphomepr:`7586` by :ghuser:`RFDarter`
+- [touchscreen] Fix coordinates when using rotation :esphomepr:`7591` by :ghuser:`clydebarrow`
+- Fix update sequence when update is set to false (#5225) :esphomepr:`7407` by :ghuser:`edge90`
+
+Past Changelogs
+---------------
+
+- :doc:`2024.9.0`
+- :doc:`2024.8.0`
+- :doc:`2024.7.0`
+- :doc:`2024.6.0`
+- :doc:`2024.5.0`
+- :doc:`2024.4.0`
+- :doc:`2024.3.0`
+- :doc:`2024.2.0`
+- :doc:`2023.12.0`
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

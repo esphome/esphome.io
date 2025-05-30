@@ -11,23 +11,27 @@ Tuya climate requires a :doc:`/components/tuya` to be configured.
 
 .. code-block:: text
 
-    [22:03:11][C][tuya:023]: Tuya:
-    [22:03:11][C][tuya:032]:   Datapoint 1: switch (value: ON)
-    [22:03:11][C][tuya:032]:   Datapoint 2: switch (value: OFF)
-    [22:03:11][C][tuya:034]:   Datapoint 3: int value (value: 20)
-    [22:03:11][C][tuya:034]:   Datapoint 4: int value (value: 19)
-    [22:03:11][C][tuya:034]:   Datapoint 5: int value (value: 0)
-    [22:03:11][C][tuya:036]:   Datapoint 7: enum (value: 1)
-    [22:03:11][C][tuya:046]:   Product: '{"p":"ynjanlglr4qa6dxf","v":"1.0.0","m":0}'
+    [11:45:14][C][tuya:041]: Tuya:
+    [11:45:14][C][tuya:056]:   Datapoint 1: switch (value: OFF)
+    [11:45:14][C][tuya:058]:   Datapoint 2: int value (value: 65)
+    [11:45:14][C][tuya:058]:   Datapoint 3: int value (value: 54)
+    [11:45:14][C][tuya:062]:   Datapoint 4: enum (value: 1)
+    [11:45:14][C][tuya:056]:   Datapoint 5: switch (value: OFF)
+    [11:45:14][C][tuya:056]:   Datapoint 6: switch (value: OFF)
+    [11:45:14][C][tuya:062]:   Datapoint 102: enum (value: 0)
+    [11:45:14][C][tuya:062]:   Datapoint 103: enum (value: 1)
+    [11:45:14][C][tuya:074]:   Product: 'N8bUqOZ8HBQjU0K02.0.1'
 
-On this controller, the data points are:
+On this controller (BAC-002-ELW), the data points are:
 
 - 1 represents the climate on/off state.
-- 2 represents the child lock switch. (use the :doc:`/components/switch/tuya` component to control this)
-- 3 represents the target temperature.
-- 4 represents the current temperature.
-- 5 represents the timer but is not yet available to be used in ESPHome.
-- 7 represents the eco mode switch.
+- 2 represents the target temperature.
+- 3 represents the current temperature.
+- 4 represents the schedule mode but is not yet available to be used in ESPHome.
+- 5 represents the ECO mode switch.
+- 6 represents the child lock switch. (use the :doc:`/components/switch/tuya` component to control this)
+- 102 represents the HVAC mode (heating, cooling, fan-only, etc.).
+- 103 represents the fan speed (auto, low, medium, high, etc.).
 
 Based on this, you can create the climate device as follows:
 
@@ -37,28 +41,41 @@ Based on this, you can create the climate device as follows:
       - platform: tuya
         name: "My Climate Device"
         switch_datapoint: 1
-        target_temperature_datapoint: 3
-        current_temperature_datapoint: 4
+        target_temperature_datapoint: 2
+        current_temperature_datapoint: 3
+        supports_heat: true
+        supports_cool: true
+        active_state:
+          datapoint: 102
+          cooling_value: 0
+          heating_value: 1
+          fanonly_value: 2
+        fan_mode:
+          datapoint: 103
+          auto_value: 0
+          high_value: 1
+          medium_value: 2
+          low_value: 3
         preset:
           eco:
-            datapoint: 8
+            datapoint: 5
             temperature: 28
+
+
 
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the climate device.
 - **supports_heat** (*Optional*, boolean): Specifies if the device has a heating mode. Defaults to ``true``.
 - **supports_cool** (*Optional*, boolean): Specifies if the device has a cooling mode. Defaults to ``false``.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the climate switch (device on/off).
-- **active_state** (*Optional*): Configuration for the Active State Configuration.
+- **active_state** (*Optional*): Configuration for the Active State detection (or HVAC mode setting and reporting).
 
     - **datapoint** (**Required**, int): The datapoint id number of the active state - :ref:`see below <active_state_detection>`.
-    - **heating_value** (*Optional*, int): The active state datapoint value the device reports when heating. Defaults to ``1`` - :ref:`see below <active_state_detection>`.
-    - **cooling_value** (*Optional*, int): The active state datapoint value the device reports when cooling - :ref:`see below <active_state_detection>`.
-    - **drying_value** (*Optional*, int): The active state datapoint value the device reports when in drying mode.
-    - **fanonly_value** (*Optional*, int): The active state datapoint value the device reports when in Fan Only mode.
+    - **heating_value** (*Optional*, int): The active state datapoint value when in heating mode. Defaults to ``1`` - :ref:`see below <active_state_detection>`.
+    - **cooling_value** (*Optional*, int): The active state datapoint value when in cooling mode - :ref:`see below <active_state_detection>`.
+    - **drying_value** (*Optional*, int): The active state datapoint value when in drying mode.
+    - **fanonly_value** (*Optional*, int): The active state datapoint value when in fan-only mode.
 - **preset** (*Optional*): Configuration for presets.
 
     - **eco** (*Optional*): Configuration for Eco preset.
@@ -100,13 +117,14 @@ If the device has different multipliers for current and target temperatures, **t
 Active state detection
 ----------------------
 
-Some Tuya climate devices report the active state (idle/heating/cooling) via a tuya data point. In this case, you can use the **active_state_datapoint** variable together with **active_state_heating_value** and **active_state_cooling_value**.
+Some Tuya climate devices don't have a data point for setting and reporting HVAC mode, they use a data point to report their active state (current action). In this case, you can just use the **active_state** configuration.
 
-If your device does not make a data point available for this, it is possible to modify the hardware so that the relay outputs can be read by the ESP. Please refer to `this discussion <https://github.com/klausahrenberg/WThermostatBeca/issues/17>` for more details on the required modifications. You can then use the **heating_state_pin** and/or **cooling_state_pin** configuration variables to detect the current state.
+If your device uses a data point for HVAC mode, but not for reporting the active state, it is possible to modify the hardware so that the relay outputs can be read by the ESP. Please refer to `this discussion <https://github.com/klausahrenberg/WThermostatBeca/issues/17>`__ for more details on the required modifications. You can then use the **heating_state_pin** and/or **cooling_state_pin** configuration variables to detect the current state.
 
-If none of the above variables are set, the current state is inferred from the difference between the current and target temperatures.
-If **supports_heat** is ``True`` and the current temperature is more than 1 °C below the target temperature, the device is expected to be heating.
-If **supports_cool** is ``True`` and the current temperature is more than 1 °C above the target temperature, the device is expected to be cooling.
+If none of the above variables are set, the active state is inferred from the difference between the current and target temperatures:
+
+- If **supports_heat** is ``True`` and the current temperature is more than 1 °C below the target temperature, the device is expected to be heating.
+- If **supports_cool** is ``True`` and the current temperature is more than 1 °C above the target temperature, the device is expected to be cooling.
 
 .. _temperature-multiplier:
 

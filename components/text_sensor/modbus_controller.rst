@@ -10,8 +10,6 @@ and requires :doc:`/components/modbus_controller` to be configured.
 
 Configuration variables:
 ------------------------
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the sensor.
 - **register_type** (**Required**): type of the modbus register.
 
     - ``coil``: Coils are 1-bit registers (on/off values) that are used to control discrete outputs. They may be read and/or written. Modbus *Function Code 1 (Read Coil Status)* will be used.
@@ -23,11 +21,16 @@ Configuration variables:
 - **skip_updates** (*Optional*, int): By default all sensors of a modbus_controller are updated together. For data points that don't change very frequently updates can be skipped. A value of 5 would only update this sensor range in every 5th update cycle
 - **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See :ref:`modbus_register_count` for more details.
 - **response_size** (**Required**): Number of bytes of the response.
-- **raw_encode** (*Optional*, enum): If the response is binary it can't be published directly. Since a text sensor only publishes strings the binary data can be encoded:
+- **raw_encode** (*Optional*, enum): If the response is binary it can't be published directly. Since a text sensor only publishes strings the binary data can be encoded. Defaults to ``ANSI``. Possible encodings are:
 
      - ``NONE``: Don't encode data.
      - ``HEXBYTES``:  2 byte hex string. 0x2011 will be sent as "2011".
-     - ``COMMA``: Byte values as integers, delimited by a coma. 0x2011 will be sent as "32,17"
+     - ``COMMA``: Byte values as integers, delimited by a coma. 0x2011 will be sent as "32,17".
+     - ``ANSI``: Each byte is treated as an ``ANSI`` character. All control characters are ignored.
+
+.. note::
+
+    From version 2024.7, default encoding is ``ANSI``. Thus, all control characters are now ignored. If you need to receive all characters, use ``NONE`` encoding.
 
 - **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting ``force_new_range: true`` enforces the start of a new range at that address.
 - **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If ``custom_command`` is used ``address`` and ``register_type`` can't be used.
@@ -39,7 +42,7 @@ Configuration variables:
   Parameters passed into the lambda
 
   - **x** (std:string): The parsed value of the modbus data according to **raw_encode**
-  - **data** (std::vector<uint8_t): vector containing the complete raw modbus response bytes for this sensor
+  - **data** (std::vector<uint8_t>): vector containing the complete raw modbus response bytes for this sensor
     *note:* because the response contains data for all registers in the same range you have to use ``data[item->offset]`` to get the first response byte for your sensor.
   - **item** (const pointer to a SensorItem derived object):  The sensor object itself.
 
@@ -48,7 +51,7 @@ Configuration variables:
   - ``return <std::string>;`` the new value for the sensor.
   - ``return {};`` uses the parsed value for the state (same as ``return x;``).
 
-- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. 
+- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type.
 - All options from :ref:`Text Sensor <config-text_sensor>`.
 
 Example:
