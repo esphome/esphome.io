@@ -7,7 +7,21 @@
 .. raw:: html
     :file: ../images/logo-docs.svg
 
-This page is an index of all of the hardware components and platforms ESPHome currently supports.
+This is the top-level ESPHome documentation index. Browse the tables below, use the sidebar menu, or the search
+function to find the information you're looking for.
+
+ESPHome Configuration
+---------------------
+
+ESPHome is configured in YAML files - use these links for basic and advanced
+information about ESPHome configuration files.
+
+.. imgtable::
+
+    YAML Configuration, guides/yaml, description.svg, dark-invert
+    Packages, components/packages, description.svg, dark-invert
+    Substitutions, components/substitutions, description.svg, dark-invert
+    External Components, components/external_components, external_components.svg, dark-invert
 
 .. _devices:
 
@@ -66,17 +80,6 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
-
-ESPHome Configuration
----------------------
-
-Streamline your ESPHome configuration and/or use components provided by other contributors.
-
-.. imgtable::
-
-    External Components, components/external_components, external_components.svg, dark-invert
-    Packages, components/packages, description.svg, dark-invert
-    Substitutions, components/substitutions, description.svg, dark-invert
 
 Network Hardware
 ----------------
@@ -783,6 +786,8 @@ Energy/Solar Management
 
 .. imgtable::
 
+    Growatt Solar, components/sensor/growatt_solar, growatt.jpg
+    Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg
     PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
     Power Supply, components/power_supply, power.svg, dark-invert
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
@@ -875,7 +880,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
-    Speaker, components/media_player/speaker, speaker.svg
+    Speaker, components/media_player/speaker, speaker.svg, dark-invert
 
 Microphone Components
 ---------------------
