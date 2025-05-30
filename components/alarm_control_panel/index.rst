@@ -30,19 +30,19 @@ Configuration variables:
 - **on_state** (*Optional*, :ref:`Action <config-action>`): An automation to perform
   when the alarm changes state. See :ref:`alarm_control_panel_on_state_trigger`.
 - **on_arming** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the alarm state changes to ``arming``. See :ref:`alarm_control_panel_on_arming_trigger`.
+  when the alarm state changes to ``ARMING``. See :ref:`alarm_control_panel_on_arming_trigger`.
 - **on_pending** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the alarm state changes to ``pending``. See :ref:`alarm_control_panel_on_pending_trigger`.
+  when the alarm state changes to ``PENDING``. See :ref:`alarm_control_panel_on_pending_trigger`.
 - **on_armed_home** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the alarm state changes to ``armed_home``. See :ref:`alarm_control_panel_on_armed_home_trigger`.
+  when the alarm state changes to ``ARMED_HOME``. See :ref:`alarm_control_panel_on_armed_home_trigger`.
 - **on_armed_night** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the alarm state changes to ``armed_night``. See :ref:`alarm_control_panel_on_armed_night_trigger`.
+  when the alarm state changes to ``ARMED_NIGHT``. See :ref:`alarm_control_panel_on_armed_night_trigger`.
 - **on_armed_away** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the alarm state changes to ``armed_away``. See :ref:`alarm_control_panel_on_armed_away_trigger`.
+  when the alarm state changes to ``ARMED_AWAY``. See :ref:`alarm_control_panel_on_armed_away_trigger`.
 - **on_triggered** (*Optional*, :ref:`Action <config-action>`): An automation to perform
   when the alarm triggers. See :ref:`alarm_control_panel_on_triggered_trigger`.
 - **on_disarmed** (*Optional*, :ref:`Action <config-action>`): An automation to perform
-  when the alarm state changes to ``disarmed``. See :ref:`alarm_control_panel_on_disarmed_trigger`.
+  when the alarm state changes to ``DISARMED``. See :ref:`alarm_control_panel_on_disarmed_trigger`.
 - **on_cleared** (*Optional*, :ref:`Action <config-action>`): An automation to perform
   when the alarm clears. See :ref:`alarm_control_panel_on_cleared_trigger`.
 - **on_ready** (*Optional*, :ref:`Action <config-action>`): An automation to perform
@@ -77,7 +77,7 @@ This trigger is activated each time the alarm changes state.
 ``on_pending`` Trigger
 **********************
 
-This trigger is activated when the alarm changes to pending state.
+This trigger is activated when the alarm changes to ``PENDING`` state.
 
 .. code-block:: yaml
 
@@ -92,7 +92,7 @@ This trigger is activated when the alarm changes to pending state.
 ``on_arming`` Trigger
 *********************
 
-This trigger is activated when the alarm changes to arming state.
+This trigger is activated when the alarm changes to ``ARMING`` state.
 
 .. code-block:: yaml
 
@@ -107,7 +107,7 @@ This trigger is activated when the alarm changes to arming state.
 ``on_armed_home`` Trigger
 *************************
 
-This trigger is activated when the alarm changes to armed_home state.
+This trigger is activated when the alarm changes to ``ARMED_HOME`` state.
 
 .. code-block:: yaml
 
@@ -122,7 +122,7 @@ This trigger is activated when the alarm changes to armed_home state.
 ``on_armed_night`` Trigger
 **************************
 
-This trigger is activated when the alarm changes to armed_night state.
+This trigger is activated when the alarm changes to ``ARMED_NIGHT`` state.
 
 .. code-block:: yaml
 
@@ -137,7 +137,7 @@ This trigger is activated when the alarm changes to armed_night state.
 ``on_armed_away`` Trigger
 *************************
 
-This trigger is activated when the alarm changes to armed_away state.
+This trigger is activated when the alarm changes to ``ARMED_AWAY`` state.
 
 .. code-block:: yaml
 
@@ -152,7 +152,7 @@ This trigger is activated when the alarm changes to armed_away state.
 ``on_triggered`` Trigger
 ************************
 
-This trigger is activated when the alarm changes to triggered state.
+This trigger is activated when the alarm changes to ``TRIGGERED`` state.
 
 .. code-block:: yaml
 
@@ -167,7 +167,7 @@ This trigger is activated when the alarm changes to triggered state.
 ``on_cleared`` Trigger
 **********************
 
-This trigger is activated when the alarm changes from triggered back to either the previous armed state or disarmed.
+This trigger is activated when the alarm changes from ``TRIGGERED`` back to either the previous ``ARMED_...`` state or ``DISARMED``.
 
 .. code-block:: yaml
 
@@ -182,7 +182,7 @@ This trigger is activated when the alarm changes from triggered back to either t
 ``on_disarmed`` Trigger
 ***********************
 
-This trigger is activated when the alarm changes from to disarmed.
+This trigger is activated when the alarm changes to ``DISARMED`` state.
 
 .. code-block:: yaml
 
@@ -197,8 +197,9 @@ This trigger is activated when the alarm changes from to disarmed.
 ``on_ready`` Trigger
 ********************
 
-This trigger is activated when the logical 'and' of all the alarm sensors change state. This is useful for implementing "alarm ready" LEDs.
-Once this trigger is called, you can get the ready state by calling get_all_sensors_ready() in a lambda block.
+This trigger is activated when the logical 'AND' of all the alarm sensors changes state.
+This is useful for implementing "alarm ready" LEDs.
+Once this trigger is called, you can get the ready state by calling ``get_all_sensors_ready()`` in a lambda block.
 
 .. code-block:: yaml
 
@@ -214,8 +215,8 @@ Once this trigger is called, you can get the ready state by calling get_all_sens
 ``on_chime`` Trigger
 ********************
 
-This trigger is activated when a zone sensor marked with chime:true changes from closed to open. This is useful for implementing keypad chimes when a zone
-opens.
+This trigger is activated when a zone sensor marked with ``chime: true`` changes from ``OFF`` to ``ON``.
+This is useful for implementing keypad chimes when a zone opens.
 
 .. code-block:: yaml
 
@@ -230,7 +231,8 @@ opens.
 ``arm_away`` Action
 *******************
 
-This action arms the alarm in away mode. The ``code`` is required when *requires_code_to_arm* is *true*.
+This action arms the alarm in away mode.
+The ``code`` is required when *requires_code_to_arm* is *true*.
 
 .. code-block:: yaml
 
@@ -245,7 +247,8 @@ This action arms the alarm in away mode. The ``code`` is required when *requires
 ``arm_home`` Action
 *******************
 
-This action arms the alarm in home mode. The ``code`` is required when *requires_code_to_arm* is *true*.
+This action arms the alarm in home mode.
+The ``code`` is required when *requires_code_to_arm* is *true*.
 
 .. code-block:: yaml
 
@@ -260,7 +263,8 @@ This action arms the alarm in home mode. The ``code`` is required when *requires
 ``arm_night`` Action
 ********************
 
-This action arms the alarm in night mode. The ``code`` is required when *requires_code_to_arm* is *true*.
+This action arms the alarm in night mode.
+The ``code`` is required when *requires_code_to_arm* is *true*.
 
 .. code-block:: yaml
 
@@ -275,7 +279,8 @@ This action arms the alarm in night mode. The ``code`` is required when *require
 ``disarm`` Action
 *****************
 
-This action disarms the alarm. The ``code`` is required when *codes* is not empty.
+This action disarms the alarm.
+The ``code`` is required when *codes* is not empty.
 
 .. code-block:: yaml
 
@@ -290,7 +295,7 @@ This action disarms the alarm. The ``code`` is required when *codes* is not empt
 ``pending`` Action
 ******************
 
-This action puts the alarm in pending state (the state before triggered after *pending_time*).
+This action puts the alarm in ``PENDING`` state (the state before ``TRIGGERED`` after *pending_time*).
 
 .. code-block:: yaml
 
@@ -303,7 +308,7 @@ This action puts the alarm in pending state (the state before triggered after *p
 ``triggered`` Action
 ********************
 
-This action puts the alarm in triggered state.
+This action puts the alarm in ``TRIGGERED`` state.
 
 .. code-block:: yaml
 
