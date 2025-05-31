@@ -35,6 +35,7 @@ Supported Microcontrollers
     RP2040, components/rp2040, rp2040.svg
     BK72xx, components/libretiny, bk72xx.svg
     RTL87xx, components/libretiny, rtl87xx.svg
+    LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
 
 Microcontroller Peripherals
