@@ -31,7 +31,8 @@ Configuration variables:
     voice_assistant:
       microphone: mic_id
 
-- **microphone** (**Required**, :ref:`config-id`): The :doc:`microphone </components/microphone/index>` to use for input.
+- **microphone** (**Required**, :ref:`config-microphone-source`): The :doc:`microphone </components/microphone/index>` settings to use for input.
+- **micro_wake_word** (*Optional*, :ref:`config-id`): The :doc:`micro_wake_word </components/micro_wake_word>` component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 - **speaker** (*Optional*, :ref:`config-id`): The :doc:`speaker </components/speaker/index>` to use to output the response.
   Cannot be used with ``media_player`` below.
 - **media_player** (*Optional*, :ref:`config-id`): The :doc:`media_player </components/media_player/index>` to use
@@ -161,7 +162,10 @@ Here is an example offering Push to Talk with a :doc:`/components/binary_sensor/
 .. code-block:: yaml
 
     voice_assistant:
-      microphone: ...
+      microphone:
+        microphone: ...
+        channels: 0
+        gain_factor: 4
       speaker: ...
 
     binary_sensor:
@@ -179,7 +183,10 @@ Click to Converse
 .. code-block:: yaml
 
     voice_assistant:
-      microphone: ...
+      microphone:
+        microphone: ...
+        channels: 0
+        gain_factor: 4
       speaker: ...
 
     binary_sensor:

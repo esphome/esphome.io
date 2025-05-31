@@ -30,12 +30,12 @@ Configuration variables:
   characters, digits and hyphens, and can be at most 24 characters long by default, or 31
   characters long if ``name_add_mac_suffix`` is ``false``.
   See :ref:`esphome-changing_node_name`.
-- **friendly_name** (*Optional*, string):  
+- **friendly_name** (*Optional*, string):
   This name is sent to the frontend and used by Home Assistant as  
   the integration and device name. It also gets prefixed to entity  
   names when needed. While optional, leaving it out can result in  
   less intuitive names and a less polished experience in Home  
-  Assistant. Setting a `friendly_name` helps keep things clear,  
+  Assistant. Setting a ``friendly_name`` helps keep things clear,  
   consistent, and easier to manage.
 - **area** (*Optional*, string): This is the area sent to the frontend. It is used
   by Home Assistant as the area / zone which the node belongs to.
@@ -250,14 +250,19 @@ this option. If they are used by another library, they should be listed before t
 
 .. _preferences-flash_write_interval:
 
-Adjusting flash writes
-------------------------
+Preferences Component
+---------------------
+
+This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
+state of a light or the accumulated energy used by an appliance.
 
 .. code-block:: yaml
 
     # Example configuration entry
     preferences:
       flash_write_interval: 1min
+
+Configuration variables:
 
 - **flash_write_interval** (*Optional*, :ref:`config-time`): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly

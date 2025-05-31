@@ -1,20 +1,25 @@
-UDP Binary Sensor
-=================
+Packet Transport Binary Sensor
+==============================
 
 .. seo::
-    :description: Instructions for setting up a UDP binary sensor.
-    :image: udp.svg
+    :description: Instructions for setting up a packet transport binary sensor.
+    :image: packet_transport.svg
 
-The ``udp`` binary sensor platform allows you to receive binary sensor data directly from another ESPHome node.
+The ``packet_transport`` binary sensor platform allows you to receive binary sensor data directly from another ESPHome node.
+It requires a ``packet_transport`` component to be configured.
 
 .. code-block:: yaml
 
     # Example configuration entry
     binary_sensor:
-      - platform: udp
+      - platform: packet_transport
         id: switch_status
         provider: light-switch
         remote_id: light_switch
+
+     packet_transport:
+       - platform: ...
+
 
 Configuration variables
 -----------------------
@@ -42,8 +47,7 @@ configured.
 See Also
 --------
 
-- :doc:`/components/udp`
+- :doc:`/components/packet_transport/index`
 - :doc:`/components/sensor/index`
 - :ref:`automation`
-- :apiref:`udp/udp_component.h`
 - :ghedit:`Edit`

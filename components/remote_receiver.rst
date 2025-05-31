@@ -45,6 +45,7 @@ Configuration variables:
   - **dooya**: Decode and dump Dooya RF codes.
   - **drayton**: Decode and dump Drayton Digistat RF codes.
   - **jvc**: Decode and dump JVC infrared codes.
+  - **gobox**: Decode and dump Go-Box infrared codes.
   - **keeloq**: Decode and dump KeeLoq RF codes.
   - **haier**: Decode and dump Haier infrared codes.
   - **lg**: Decode and dump LG infrared codes.
@@ -95,17 +96,17 @@ ESP32 IDF configuration variables:
       :header: "ESP32 Variant", "Memory Size", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-S2", "256 symbols", "64 symbols"
+      "ESP32-S3", "384 symbols", "48 symbols"
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to ``rmt_symbols``.
 - **filter_symbols** (*Optional*, int): Filter out any data received with a length in symbols less than
   ``filter_symbols``. Useful for filtering out short bursts of noise.
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in hz. Defaults to
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
   the DMA buffer size and can be set to a large value.
@@ -119,11 +120,11 @@ ESP32 Arduino configuration variables:
       :header: "ESP32 Variant", "Channels"
 
       "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "4, 5, 6, 7"
       "ESP32-C3", "2, 3"
       "ESP32-C6", "2, 3"
       "ESP32-H2", "2, 3"
+      "ESP32-S2", "0, 1, 2, 3"
+      "ESP32-S3", "4, 5, 6, 7"
 
 - **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
   number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
@@ -170,6 +171,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_drayton** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Drayton Digistat RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::DraytonData`
+  is passed to the automation for use in lambdas.
+- **on_gobox** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  Go-Box remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::GoboxData`
   is passed to the automation for use in lambdas.
 - **on_jvc** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   JVC remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::JVCData`
@@ -353,6 +357,10 @@ Remote code selection (exactly one of these has to be included):
   - **channel** (**Required**, int): The 7-bit switch/channel to listen for.
   - **command** (**Required**, int): The 5-bit command to listen for.
 
+- **gobox**: Trigger on a decoded Go-Box remote code with the given data.
+
+  - **code** (**Required**, int): The Go-Box code to trigger on, see dumper output for more info.
+
 - **jvc**: Trigger on a decoded JVC remote code with the given data.
 
   - **data** (**Required**, int): The JVC code to trigger on, see dumper output for more info.
@@ -510,7 +518,7 @@ Remote code selection (exactly one of these has to be included):
 
 .. note::
 
-    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56khz) and are very similar.
+    The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
     Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 
