@@ -30,6 +30,7 @@ Refer to `LibreTiny/Boards <https://docs.libretiny.eu/link/boards>`__ to find yo
     # Example configuration entry for LN882x
     ln882x:
       board: generic-ln882hki
+
 Configuration variables:
 ------------------------
 
