@@ -28,7 +28,7 @@ configure wifi - network will automatically be available using the host computer
 Configuration variables:
 ------------------------
 
-- **mac_address** (**Optional**, MAC address): A dummy MAC address to use when communicating with HA.
+- **mac_address** (*Optional*, MAC address): A dummy MAC address to use when communicating with HA.
 
 Build and run
 -------------

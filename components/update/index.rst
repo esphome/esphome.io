@@ -6,7 +6,7 @@ Update Core
     :image: system-update.svg
     :keywords: Updates, OTA, ESP32, ESP8266
 
-The `update` component allows your ESPHome devices to install updates from a remote source; instead of
+The ``update`` component allows your ESPHome devices to install updates from a remote source; instead of
 :doc:`"pushing" an update to your device </components/ota/index>`, the device can retrieve an update and
 install it on its own.
 
