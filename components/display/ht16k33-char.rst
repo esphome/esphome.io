@@ -217,7 +217,7 @@ A list of supported characters is given for each device. If you place a non-supp
         - ``J``
         - ``L``
         - ``N``
-        - ``O (Capitol letter O)``
+        - ``O (Capital letter O)``
         - ``o (Lower case letter o)``
         - ``P``    
         - ``r``
@@ -273,7 +273,7 @@ A list of supported characters is given for each device. If you place a non-supp
         - ``J``
         - ``L``
         - ``N``
-        - ``O (Capitol letter O)``
+        - ``O (Capital letter O)``
         - ``o (Lower case letter o)``
         - ``P``    
         - ``r``
