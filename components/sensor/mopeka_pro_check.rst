@@ -126,7 +126,7 @@ Configuration variables:
 
   - All options from :ref:`Sensor <config-sensor>`.
 
-- **minimum_signal_quality** (*Optional*): Each report from the sensor
+- **minimum_signal_quality** (*Optional*, enum): Each report from the sensor
   indicates the quality or confidence in the distance the sensor calculated. Physical
   sensor placement, tank material or quality, or other factors can influence the
   sensors ability to read with confidence.  As quality gets lower, the accuracy of the
@@ -134,10 +134,10 @@ Configuration variables:
   the minimum quality level that the distance should be evaluated/reported.
   Acceptable Values:
 
-  - "HIGH": High Quality
-  - "MEDIUM": Medium Quality (default value)
-  - "LOW": Low Quality
-  - "ZERO": Zero Quality
+  - ``HIGH``: High Quality
+  - ``MEDIUM``: Medium Quality (default value)
+  - ``LOW``: Low Quality
+  - ``ZERO``: Zero Quality
 
 Tank Types
 ----------

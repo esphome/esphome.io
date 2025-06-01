@@ -164,7 +164,7 @@ Automatic Cleaning:
 When the module is in Measurement-Mode an automatic fan-cleaning procedure will be triggered periodically following a defined cleaning interval. This will accelerate the fan to maximum speed for 10 seconds to blow out the accumulated dust inside the fan.
 
 - Measurement values are not updated while the fan-cleaning is running.
-- The cleaning interval is set to 604’800 seconds (i.e., 168 hours or 1 week).
+- The cleaning interval is set to 604,800 seconds (i.e., 168 hours or 1 week).
 - The interval can be configured using the Set Automatic Cleaning Interval command.
 - Set the interval to 0 to disable the automatic cleaning.
 - A sensor reset, resets the cleaning interval to its default value

@@ -19,7 +19,7 @@ from docutils import nodes
 #   -d_build/.doctrees-schema
 # will put caches in another dir and not overwrite the ones without schema
 
-SCHEMA_PATH = "../esphome-vscode/server/src/schema/"
+SCHEMA_PATH = "../schema/"
 CONFIGURATION_VARIABLES = "Configuration variables:"
 CONFIGURATION_OPTIONS = "Configuration options:"
 PIN_CONFIGURATION_VARIABLES = "Pin configuration variables:"
@@ -66,37 +66,37 @@ def doctree_resolved(app, doctree, docname):
 
 
 PLATFORMS_TITLES = {
-    "Sensor": "sensor",
+    "Alarm Control Panel": "alarm_control_panel",
     "Binary Sensor": "binary_sensor",
-    "Text Sensor": "text_sensor",
-    "Output": "output",
-    "Cover": "cover",
     "Button": "button",
-    "Select": "select",
-    "Fan": "fan",
-    "Lock": "lock",
-    "Number": "number",
-    "Climate": "climate",
     "CAN Bus": "canbus",
-    "Stepper": "stepper",
-    "Switch": "switch",
+    "Climate": "climate",
+    "Base Datetime Configuration": "datetime",
+    "Cover": "cover",
+    "Event": "event",
+    "Fan": "fan",
     "I²C": "i2c",
+    "Lock": "lock",
     "Media Player": "media_player",
     "Microphone": "microphone",
+    "Number": "number",
+    "Output": "output",
+    "Select": "select",
+    "Sensor": "sensor",
     "Speaker": "speaker",
-    "Alarm Control Panel": "alarm_control_panel",
-    "Event": "event",
+    "Stepper": "stepper",
+    "Switch": "switch",
+    "Text Sensor": "text_sensor",
 }
 
 CUSTOM_DOCS = {
-    "components/globals": {
-        "Global Variables": "globals.schemas.CONFIG_SCHEMA",
+    "automations/actions": {},
+    # audio adc and audio dac needed because they don't define CONFIG_SCHEMA but they document it
+    "components/audio_adc/index": {
+        "Audio ADC Core": ["audio_adc.__IGNORE_SCHEMA"],
     },
-    "guides/configuration-types": {
-        "Pin Schema": [
-            "esp32.pin.schema",
-            "esp8266.pin.schema",
-        ],
+    "components/audio_dac/index": {
+        "Audio DAC Core": ["audio_dac.__IGNORE_SCHEMA"],
     },
     "components/binary_sensor/index": {
         "Binary Sensor Filters": "binary_sensor.registry.filter",
@@ -111,6 +111,9 @@ CUSTOM_DOCS = {
         "Fonts": "font.schemas.CONFIG_SCHEMA",
         "Color": "color.schemas.CONFIG_SCHEMA",
         "Animation": "animation.schemas.CONFIG_SCHEMA",
+    },
+    "components/globals": {
+        "Global Variables": "globals.schemas.CONFIG_SCHEMA",
     },
     "components/light/index": {
         "Base Light Configuration": [
@@ -136,6 +139,13 @@ CUSTOM_DOCS = {
     "components/mqtt": {
         "MQTT Component Base Configuration": "core.schemas.MQTT_COMMAND_COMPONENT_SCHEMA",
         "MQTTMessage": "mqtt.schemas.MQTT_MESSAGE_BASE",
+    },
+    "components/one_wire": {
+        "1-Wire Bus": ["one_wire.schemas"],
+        "GPIO": "gpio.platform.one_wire.schemas.CONFIG_SCHEMA",
+    },
+    "components/ota/index": {
+        "Over-the-Air Updates": "ota.schemas.BASE_OTA_SCHEMA",
     },
     "components/output/index": {
         "Base Output Configuration": "output.schemas.FLOAT_OUTPUT_SCHEMA",
@@ -207,9 +217,17 @@ CUSTOM_DOCS = {
         "Generic SPI device component:": "spi_device.schemas.CONFIG_SCHEMA"
     },
     "components/libretiny": {"LibreTiny Platform": "bk72xx.schemas.CONFIG_SCHEMA"},
+    "guides/configuration-types": {
+        "Pin Schema": [
+            "esp32.pin.schema",
+            "esp8266.pin.schema",
+        ],
+    },
 }
 
-REQUIRED_OPTIONAL_TYPE_REGEX = r"(\(((\*\*Required\*\*)|(\*Optional\*))(,\s(.*))*)\):\s"
+REQUIRED_OPTIONAL_TYPE_REGEX = (
+    r"(\(((\*\*(Required|Exclusive)\*\*)|(\*Optional\*))(,\s(.*))*)\):\s"
+)
 
 
 def get_node_title(node):
@@ -249,9 +267,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 self.component = docname[11:]
                 if not self.custom_doc or self.custom_doc.get("_LoadSchema", True):
                     self.file_schema = get_component_file(app, self.component)
-                    self.json_component = self.file_schema[self.component]["schemas"][
-                        "CONFIG_SCHEMA"
-                    ]
+                    schemas = self.file_schema[self.component]["schemas"]
+                    # e.g. one_wire has no CONFIG_SCHEMA
+                    self.json_component = schemas.get("CONFIG_SCHEMA")
             elif self.path[1] == "display_menu":  # weird folder naming
                 if self.path[2] == "index":
                     # weird component name mismatch
@@ -281,7 +299,6 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         self.json_component = self.file_schema[self.component][
                             "schemas"
                         ].get(self.component.upper() + "_SCHEMA")
-                        pass
                     else:
                         self.json_component = get_component_file(app, self.component)
                         self.json_platform_component = find_platform_component(
@@ -315,9 +332,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
     def set_component_description(self, description, componentName, platformName=None):
         if platformName is not None:
             platform = get_component_file(self.app, platformName)
-            platform[platformName]["components"][componentName.lower()][
-                "docs"
-            ] = description
+            platform[platformName]["components"][componentName.lower()]["docs"] = (
+                description
+            )
         else:
             core = get_component_file(self.app, "esphome")["core"]
             if componentName in core["components"]:
@@ -364,9 +381,11 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 self.component,
             ):
                 self.props = self.find_props(
-                    self.json_platform_component
-                    if self.json_platform_component
-                    else self.json_component,
+                    (
+                        self.json_platform_component
+                        if self.json_platform_component
+                        else self.json_component
+                    ),
                     True,
                 )
 
@@ -383,9 +402,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                     components + ".platform.climate.schemas.CONFIG_SCHEMA"
                     for components in row[1].astext().split("\n")
                 ]
-                CUSTOM_DOCS["components/climate/climate_ir"][
-                    "IR Remote Climate"
-                ] += components_paths
+                CUSTOM_DOCS["components/climate/climate_ir"]["IR Remote Climate"] += (
+                    components_paths
+                )
 
     def depart_document(self, node):
         pass
@@ -423,6 +442,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         self.set_component_description(desc, c.split(".")[0])
 
                 return
+            else:
+                self.multi_component = None
 
             json_component = self.find_component(self.custom_doc[title_text])
             if not json_component:
@@ -539,12 +560,13 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 #     return
                 # self.props_section_title = title_text
 
-                for t in PLATFORMS_TITLES:
+                for t in sorted(PLATFORMS_TITLES, key=len, reverse=True):
                     if title_text.endswith(t):
                         component_name = title_text[
                             0 : len(title_text) - len(t) - 1
                         ].replace(" ", "_")
                         platform_name = PLATFORMS_TITLES[t]
+                        break  # this matches Binary Sensor first than Sensor as PLATFORMS_TITLE is sorted
 
                 if not platform_name:
                     # Some general title which does not locate a component directly
@@ -565,8 +587,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             # Now fill props for the platform element
             try:
                 self.props = self.find_props(self.json_platform_component)
-            except KeyError:
-                raise ValueError("Cannot find platform props")
+            except KeyError as exc:
+                raise ValueError("Cannot find platform props") from exc
 
         elif title_text.endswith("Component") or title_text.endswith("Bus"):
             # if len(path) == 3 and path[2] == 'index':
@@ -598,10 +620,10 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         try:
                             self.props = self.find_props(self.json_component)
                             self.multi_component = None
-                        except KeyError:
+                        except KeyError as exc:
                             raise ValueError(
                                 "Cannot find props for component " + component_name
-                            )
+                            ) from exc
                         return
 
                 # component which are platforms in doc, used by: stepper and canbus, lcd_pcf8574
@@ -615,10 +637,10 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                     try:
                         self.props = self.find_props(self.json_platform_component)
 
-                    except KeyError:
+                    except KeyError as exc:
                         raise ValueError(
-                            f"Cannot find props for platform {self.path[1]} component {self.component_name}"
-                        )
+                            f"Cannot find props for platform {self.path[1]} component {component_name}"
+                        ) from exc
                     return
 
         elif title_text.endswith("Trigger"):
@@ -667,7 +689,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         component_parts[1] + "." + component_parts[0]
                     ][split_text[1].lower()][component_parts[2]]
                 except KeyError:
-                    logger.warn(
+                    logger.warning(
                         f"In {self.docname} cannot found schema of {title_text}"
                     )
                     cv = None
@@ -814,15 +836,20 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             self.filled_props = True
             self.current_prop, found = self.update_prop(node, self.props)
             if self.current_prop and not found:
-                logger.info(
-                    f"In '{self.docname} {self.previous_title_text} Cannot find property {self.current_prop}"
-                )
+                self.find_props_previous_title()
+                self.current_prop, found = self.update_prop(node, self.props)
+                if self.current_prop and not found:
+                    logger.info(
+                        f"In '{self.docname} {self.previous_title_text} Cannot find property {self.current_prop}"
+                    )
 
         elif self.multi_component:
             # update prop for each component
             found_any = False
             self.current_prop = None
             for c in self.multi_component:
+                if c.endswith("__IGNORE_SCHEMA"):
+                    continue
                 props = self.find_props(self.find_component(c))
                 self.current_prop, found = self.update_prop(node, props)
                 if self.current_prop and found:
@@ -946,7 +973,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
 
         markdown = self.getMarkdown(node)
 
-        markdown += f"\n\n*See also: [{self.props_section_title}]({urllib.parse.urljoin(self.app.config.html_baseurl, self.docname +'.html#'+self.title_id)})*"
+        markdown += f"\n\n*See also: [{self.props_section_title}]({urllib.parse.urljoin(self.app.config.html_baseurl, self.docname + '.html#' + self.title_id)})*"
 
         try:
             name_type = markdown[: markdown.index(": ") + 2]
@@ -976,7 +1003,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
 
         if ntr:
             prop_name = ntr.group(1)
-            param_type = ntr.group(7)
+            param_type = ntr.group(8)
         else:
             s2 = re.search(
                 FULL_ITEM_PROP_NAME_TYPE_REGEX,
@@ -991,13 +1018,14 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                     prop_name = s3.group(1)
                 else:
                     logger.info(
-                        f"In '{self.docname} {self.previous_title_text} Invalid list format: {node.rawsource}"
+                        f"In '{self.docname}.rst:{node.children[0].line} {self.previous_title_text} Invalid list format: {node.rawsource}"
                     )
                 param_type = None
             else:
-                logger.info(
-                    f"In '{self.docname} {self.previous_title_text} Invalid property format: {node.rawsource}"
-                )
+                if "(*Deprecated*)" not in node.rawsource:
+                    logger.info(
+                        f"In '{self.docname}.rst:{node.children[0].line} {self.previous_title_text} Invalid property format: {node.rawsource}"
+                    )
                 return prop_name, False
 
         prop_names = str(prop_name)
@@ -1218,11 +1246,21 @@ def handle_component(app, doctree, docname):
         logger.warning(err_str)
 
 
+def sortedDeep(d):
+    if isinstance(d, list):
+        return sorted(sortedDeep(v) for v in d)
+    if isinstance(d, dict):
+        return {k: sortedDeep(d[k]) for k in sorted(d)}
+    return d
+
+
 def build_finished(app, exception):
     # TODO: create report of missing descriptions
 
     for fname, contents in app.files.items():
         f = open(SCHEMA_PATH + fname + ".json", "w", newline="\n")
+        # make sure all is sorted to minimize git diffs
+        contents = sortedDeep(contents)
         if JSON_DUMP_PRETTY:
             f.write(json.dumps(contents, indent=2))
         else:

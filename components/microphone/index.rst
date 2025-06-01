@@ -18,6 +18,25 @@ Configuration variables:
 - **on_data** (*Optional*, :ref:`Automation <automation>`): An automation to
   perform when new data is received.
 
+
+.. _config-microphone-source:
+
+Microphone Source Configuration
+-------------------------------
+
+A microphone source configuration is used by components to ensure that it receives audio in the required format.
+
+Configuration variables:
+
+- **microphone** (**Required**, :ref:`config-id`): The :doc:`microphone </components/microphone/index>` to use for input.
+- **bits_per_sample** (*Optional*, int): The bits per sample to use as input to the component.
+  May be restricted by the component to a specific value.
+- **channels** (*Optional*, list): A list of 0-indexed channel numbers enabling them to use as
+  input to the component. The total amount may be restricted by the component. Defaults to 0,
+  the first channel read by the microphone.
+- **gain_factor** (*Optional*, int): The gain factor to apply to audio read from the microphone. Ranges from 1 to 64.
+  Defaults to 1, no gain.
+
 .. _microphone-actions:
 
 Microphone Actions
@@ -46,6 +65,20 @@ and will be available in the ``on_data`` trigger.
 
 This action will stop capturing audio data from the microphone.
 
+.. _microphone-mute:
+
+``microphone.mute`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will apply a software mute to the audio data from the microphone before passing it to any listening components.
+
+.. _microphone-unmute:
+
+``microphone.unmute`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will disable applying a software mute initiated with ``microphone.mute``.
+
 
 .. _microphone-triggers:
 
@@ -58,7 +91,8 @@ Microphone Triggers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This trigger will fire when new data is received from the microphone.
-The data is available as a ``std::vector<int16_t>`` in the variable ``x``.
+The data is available as a ``std::vector<uint8_t>`` in the variable ``x``.
+This data is the raw microphone audio and includes all the read bits per sample and channels.
 
 .. code-block:: yaml
 
@@ -92,6 +126,13 @@ Configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This condition will check if the microphone is currently capturing audio data.
+
+.. _microphone-is_muted:
+
+``microphone.is_muted`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition will check if the microphone is currently apply a software mute.
 
 
 Platforms

@@ -44,6 +44,10 @@ Configuration variables:
   - **Local files**: The path (relative to where the .yaml file is) of the image file.
   - **Material Design Icons**: Specify the `Material Design Icon <https://pictogrammers.com/library/mdi/>`_
     id in the format ``mdi:icon-name``, and that icon will automatically be downloaded and added to the configuration.
+  - **Material Design Light Icons**: Specify the `Material Design Light Icon <https://pictogrammers.com/library/mdil/>`_
+    id in the format ``mdil:icon-name``, and that icon will automatically be downloaded and added to the configuration.
+  - **Memory Icons**: Specify the `Memory Icon <https://pictogrammers.com/library/memory/>`_
+    id in the format ``memory:icon-name``, and that icon will automatically be downloaded and added to the configuration.
   - **Remote files**: The URL of the image file.
 
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
