@@ -476,6 +476,7 @@ Miscellaneous
     Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg, Solar rooftop
     Integration, components/sensor/integration, sigma.svg, dark-invert
     Kuntze pool sensor, components/sensor/kuntze, kuntze.jpg
+    LC709203F, components/sensor/lc709203f, lc709203f.jpg, Battery Monitor
     LVGL widget, components/sensor/lvgl, lvgl_c_num.png
     M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
     MAX17043, components/sensor/max17043, max17043.jpg, Battery
