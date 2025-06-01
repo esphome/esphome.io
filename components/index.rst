@@ -724,6 +724,7 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    HT16K33 Character, components/display/ht16k33-char, ht16k33-char.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg
     ILI9342, components/display/ili9xxx, ili9342.svg
