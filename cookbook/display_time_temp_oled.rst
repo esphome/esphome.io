@@ -61,8 +61,7 @@ By adding ``internal: true`` to the sensors they won't be published back to Home
 
       - platform: homeassistant
         id: outside_temperature
-        entity_id: weather.forecast_home
-        attribute: temperature
+        entity_id: REPLACEME
         internal: true
 
     text_sensor:
