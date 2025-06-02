@@ -71,6 +71,12 @@ Configuration variables:
 
   - All options from :ref:`Sensor <config-sensor>`.
 
+- **hdop** (*Optional*): Include the measured HDOP (Horizontal Dilution Of Precision) as a sensor
+
+  - All options from :ref:`Sensor <config-sensor>`.
+
+- **update_interval** (*Optional*, :ref:`config-time`): The interval of sensor updates. Defaults to  ``20s``.
+
 See Also
 --------
 

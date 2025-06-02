@@ -90,14 +90,13 @@ PLATFORMS_TITLES = {
 }
 
 CUSTOM_DOCS = {
-    "components/globals": {
-        "Global Variables": "globals.schemas.CONFIG_SCHEMA",
+    "automations/actions": {},
+    # audio adc and audio dac needed because they don't define CONFIG_SCHEMA but they document it
+    "components/audio_adc/index": {
+        "Audio ADC Core": ["audio_adc.__IGNORE_SCHEMA"],
     },
-    "guides/configuration-types": {
-        "Pin Schema": [
-            "esp32.pin.schema",
-            "esp8266.pin.schema",
-        ],
+    "components/audio_dac/index": {
+        "Audio DAC Core": ["audio_dac.__IGNORE_SCHEMA"],
     },
     "components/binary_sensor/index": {
         "Binary Sensor Filters": "binary_sensor.registry.filter",
@@ -112,6 +111,9 @@ CUSTOM_DOCS = {
         "Fonts": "font.schemas.CONFIG_SCHEMA",
         "Color": "color.schemas.CONFIG_SCHEMA",
         "Animation": "animation.schemas.CONFIG_SCHEMA",
+    },
+    "components/globals": {
+        "Global Variables": "globals.schemas.CONFIG_SCHEMA",
     },
     "components/light/index": {
         "Base Light Configuration": [
@@ -137,6 +139,13 @@ CUSTOM_DOCS = {
     "components/mqtt": {
         "MQTT Component Base Configuration": "core.schemas.MQTT_COMMAND_COMPONENT_SCHEMA",
         "MQTTMessage": "mqtt.schemas.MQTT_MESSAGE_BASE",
+    },
+    "components/one_wire": {
+        "1-Wire Bus": ["one_wire.schemas"],
+        "GPIO": "gpio.platform.one_wire.schemas.CONFIG_SCHEMA",
+    },
+    "components/ota/index": {
+        "Over-the-Air Updates": "ota.schemas.BASE_OTA_SCHEMA",
     },
     "components/output/index": {
         "Base Output Configuration": "output.schemas.FLOAT_OUTPUT_SCHEMA",
@@ -208,6 +217,12 @@ CUSTOM_DOCS = {
         "Generic SPI device component:": "spi_device.schemas.CONFIG_SCHEMA"
     },
     "components/libretiny": {"LibreTiny Platform": "bk72xx.schemas.CONFIG_SCHEMA"},
+    "guides/configuration-types": {
+        "Pin Schema": [
+            "esp32.pin.schema",
+            "esp8266.pin.schema",
+        ],
+    },
 }
 
 REQUIRED_OPTIONAL_TYPE_REGEX = (
@@ -252,9 +267,9 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                 self.component = docname[11:]
                 if not self.custom_doc or self.custom_doc.get("_LoadSchema", True):
                     self.file_schema = get_component_file(app, self.component)
-                    self.json_component = self.file_schema[self.component]["schemas"][
-                        "CONFIG_SCHEMA"
-                    ]
+                    schemas = self.file_schema[self.component]["schemas"]
+                    # e.g. one_wire has no CONFIG_SCHEMA
+                    self.json_component = schemas.get("CONFIG_SCHEMA")
             elif self.path[1] == "display_menu":  # weird folder naming
                 if self.path[2] == "index":
                     # weird component name mismatch
@@ -427,6 +442,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
                         self.set_component_description(desc, c.split(".")[0])
 
                 return
+            else:
+                self.multi_component = None
 
             json_component = self.find_component(self.custom_doc[title_text])
             if not json_component:
@@ -831,6 +848,8 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
             found_any = False
             self.current_prop = None
             for c in self.multi_component:
+                if c.endswith("__IGNORE_SCHEMA"):
+                    continue
                 props = self.find_props(self.find_component(c))
                 self.current_prop, found = self.update_prop(node, props)
                 if self.current_prop and found:
@@ -984,7 +1003,7 @@ class SchemaGeneratorVisitor(nodes.NodeVisitor):
 
         if ntr:
             prop_name = ntr.group(1)
-            param_type = ntr.group(7)
+            param_type = ntr.group(8)
         else:
             s2 = re.search(
                 FULL_ITEM_PROP_NAME_TYPE_REGEX,

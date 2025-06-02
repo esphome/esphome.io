@@ -28,27 +28,21 @@ an ``i2c:`` section in your config for this component to work.
 .. code-block:: yaml
 
     # Example configuration entry
-    i2c:
-      sda: D0
-      scl: D1
-
     sensor:
       - platform: ccs811
         eco2:
           name: "CCS811 eCO2 Value"
         tvoc:
           name: "CCS811 Total Volatile Organic Compound"
-        address: 0x5A
-        update_interval: 60s
 
 Configuration variables:
 ------------------------
 
-- **eco2** (**Required**): The eCO_2 data from the sensor in parts per million (ppm).
+- **eco2** (*Optional*): The eCO_2 data from the sensor in parts per million (ppm).
 
   - All options from :ref:`Sensor <config-sensor>`.
 
-- **tvoc** (**Required**): The information for the total volatile organic compound sensor in
+- **tvoc** (*Optional*): The information for the total volatile organic compound sensor in
   parts per billion (ppb).
 
   - All options from :ref:`Sensor <config-sensor>`.
@@ -62,7 +56,7 @@ Configuration variables:
 
 Advanced:
 
-- **address** (*Optional*, int): The :ref:`I²C <i2c>` address of the sensor.
+- **address** (*Optional*, int): The :ref:`I²C <i2c>` address of the sensor. Defaults to ``0x5A``.
 
 - **baseline** (*Optional*, int): The baseline value for the unit, for calibration
   purposes. See :ref:`ccs811-calibrating` for more info.
