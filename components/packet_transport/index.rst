@@ -81,7 +81,7 @@ Configuration variables:
 
   - **name** (**Required**, string): The device name of the provider.
   - **encryption** (*Optional*, string): The provider's encryption key.
-  - **status_sensor** (*Optional*, :ref:`Binary Sensor <config-binary_sensor>`): A connection status sensor is created for the provider. Requires ``ping_pong`` to be set.
+  - **status_sensor** (*Optional*, :ref:`Binary Sensor <config-binary_sensor>`): A connection status sensor is created for the provider. Requires ``ping_pong_enable`` to be set and that the provider has ``encryption`` set.
 
 Wherever a provider name is required, this should be the node name configured in the ``esphome:`` block.
 
