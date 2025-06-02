@@ -129,6 +129,9 @@ Additional options:
   detectors. In this configuration the ``stop_action`` is not performed when the open or close
   time is completed and if the cover is commanded to open or close the corresponding actions
   will be performed without checking current state. Defaults to ``false``.
+- **enable_duration_autocalibration** (*Optional*, boolean): The opening and closing time is
+  automatically calibrated when the cover makes a complete movement. The endstop must
+  be informed (directly or via moving sensor). Defaults to ``false``.
 - **infer_endstop_from_movement** (*Optional*, boolean): Whether to infer endstop state from the movement sensor.
   Requires movement sensors to be set, no endstop sensors and to have builtin endstops. Defaults to ``false``.
 - **assumed_state** (*Optional*, boolean): Whether the true state of the cover is not known.
