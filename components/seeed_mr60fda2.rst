@@ -71,8 +71,9 @@ The ``seeed_mr60fda2`` button allows you to perform actions.
 Configuration variables:
 ************************
 
-- **factory_reset**: Restore all radar settings to factory parameters. All options from :ref:`Button <config-button>`.
-- **get_radar_parameters**: Get all the current setup parameters of the radar.
+- **factory_reset** (*Optional*): Restore all radar settings to factory parameters. 
+  All options from :ref:`Button <config-button>`.
+- **get_radar_parameters** (*Optional*): Get all the current setup parameters of the radar.
   All options from :ref:`Button <config-button>`.
 
 
@@ -95,11 +96,11 @@ The ``seeed_mr60fda2`` select allows you to control the configuration.
 Configuration variables:
 ************************
 
-- **install_height**: Before using the MR60FDA2, please select the installation height of the radar according to the actual situation in order to obtain accurate identification results. The default is 3m.
+- **install_height** (*Optional*): Before using the MR60FDA2, please select the installation height of the radar according to the actual situation in order to obtain accurate identification results. The default is 3m.
   All options from :ref:`Select <config-select>`.
-- **height_threshold**: To accurately distinguish between a person falling and sitting still in this area, you need to set the trigger height that triggers fall detection. This height refers to the distance between the person and the ground at the time of the fall. The default is 0.6m.
+- **height_threshold** (*Optional*): To accurately distinguish between a person falling and sitting still in this area, you need to set the trigger height that triggers fall detection. This height refers to the distance between the person and the ground at the time of the fall. The default is 0.6m.
   All options from :ref:`Select <config-select>`.
-- **sensitivity**: Fall sensitivity factor. Defaults to 1 with a range of 1-3, 3 = high and 1 = low.
+- **sensitivity** (*Optional*): Fall sensitivity factor. Defaults to 1 with a range of 1-3, 3 = high and 1 = low.
   All options from :ref:`Select <config-select>`.
 
 See Also
