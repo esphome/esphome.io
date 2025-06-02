@@ -69,10 +69,11 @@ FSK/OOK configuration variables:
   ``5_2kHz``, ``6_3kHz``, ``7_8kHz``, ``10_4kHz``, ``12_5kHz``, ``15_6kHz``, ``20_8kHz``, ``25_0kHz``,
   ``31_3kHz``, ``41_7kHz``, ``50_0kHz``, ``62_5kHz``, ``83_3kHz``, ``100_0kHz``, ``125_0kHz``,
   ``166_7kHz``, ``200_0kHz`` or ``250_0kHz``.
-- **payload_length** (**Optional**, int): If greater than zero packet mode is enabled. In packet mode,
-  bytes are sent via the ``send_packet`` automation and received with the ``on_packet`` trigger. If not
-  configured continuous mode is enabled and raw data is sent and received on DIO2. Maximum
-  length is 64.
+- **packet_mode** (**Required**, bool): In packet mode bytes are sent via the ``send_packet``
+  automation and received with the ``on_packet`` trigger. If not enabled continuous mode is
+  used and raw data is sent and received on DIO2.
+- **payload_length** (**Optional**, int): Length of the payload in packet mode. If not configured then
+  the variable length packet format is used. Maximum length is 64.
 - **crc_enable** (**Optional**, bool): Enables a 16 bit CRC calculation/check in packet mode.
 - **bitrate** (**Optional**, int): Bit rate of the signal. Required in packet mode and recommended
   in continuous mode. Normally the inverse of the bit duration, eg 1 / 208 us is 4800 bps.
