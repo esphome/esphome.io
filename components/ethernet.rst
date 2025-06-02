@@ -132,6 +132,15 @@ Advanced common configuration variables:
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to ``.local``, all uploads will be sent to ``<HOSTNAME>.local``.
   Defaults to ``.local``.
+- **duplex** (*Optional*, string): Set the duplex mode and disables auto negotiation. Must be one of the following values:
+
+  - ``DUPLEX_HALF`` - Half Duplex Mode
+  - ``DUPLEX_FULL`` - Full Duplex Mode
+- **speed** (*Optional*, string): Set the link speed and disables auto negotiation. Must be one of the following values:
+
+  - ``SPEED_10M`` - 10Mbps
+  - ``SPEED_100M`` - 100Mbps
+
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
 
