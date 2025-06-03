@@ -89,7 +89,6 @@ Characteristics can also have multiple descriptors to provide additional informa
         characteristics:
           - id: test_characteristic
             uuid: cad48e28-7fbe-41cf-bae9-d77a6c233423
-            advertise: true
             description: "Sample description"
             read: true
             value:
