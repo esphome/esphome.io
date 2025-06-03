@@ -9,7 +9,7 @@ SX127x Packet Transport Platform
     :keywords: sx127x, packet, transport
 
 The :ref:`packet-transport` platform allows ESPHome nodes to directly communicate with each over a
-communication channel. The sx127x implementation of the platform uses FSK/OOK or LoRa as a communication
+communication channel. The sx127x implementation of the platform uses FSK, OOK or LoRa as a communication
 medium. See the :ref:`packet-transport` and :ref:`sx127x` for more information.
 
 Example Configuration
@@ -18,11 +18,6 @@ Example Configuration
 .. code-block:: yaml
 
     # Example configuration entry
-    packet_transport:
-      platform: sx127x
-      sensors:
-        - dht_temp
-
     sx127x:
       dio0_pin: GPIO26
       cs_pin: GPIO18
@@ -37,6 +32,11 @@ Example Configuration
       sync_value: 0x33
       spreading_factor: 7
       coding_rate: CR_4_5
+
+    packet_transport:
+      platform: sx127x
+      sensors:
+        - dht_temp
 
     sensor:
       - platform: dht
