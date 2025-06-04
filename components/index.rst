@@ -1068,7 +1068,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
     Remote Transmitter, components/remote_transmitter, remote.svg, dark-invert
     RF Bridge, components/rf_bridge, rf_bridge.jpg
     SIM800L, components/sim800l, sim800l.jpg
-    SX1261/2/8, components/sx126x, sx126x.png
+    SX126x, components/sx126x, sx126x.png
 
 Miscellaneous Components
 ------------------------
