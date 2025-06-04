@@ -48,6 +48,7 @@ Configuration variables:
     - **always_on_top** (*Optional*, boolean): Whether to always draw the display window above other windows or not
     - **fullscreen** (*Optional*, boolean): Whether to draw the display window in fullscreen or not. This may resize the resolution of the host display to match the SDL display dimensions
     - **skip_taskbar** (*Optional*, boolean): Whether to skip adding a taskbar icon for the display window or not
+    - **resizable** (*Optional*, boolean): Whether the display window can be manually resized
 
 .. note::
 
