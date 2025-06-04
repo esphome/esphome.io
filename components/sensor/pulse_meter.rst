@@ -47,7 +47,7 @@ Converting units
 ----------------
 
 The sensor defaults to units of *pulses/min*, You can change this by using :ref:`sensor-filters`.
-For example, if you’re using the pulse meter with a photodiode to count the light pulses on a power meter that has an impulse constant of *10000 pulses / kWh*, you can use the following to output instantaneous usage in *W*:
+For example, if you're using the pulse meter with a photodiode to count the light pulses on a power meter that has an impulse constant of *10000 pulses / kWh*, you can use the following to output instantaneous usage in *W*:
 
 .. code-block:: yaml
 
