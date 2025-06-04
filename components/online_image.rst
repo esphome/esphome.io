@@ -98,7 +98,7 @@ A good example for that is to update the display component after the download su
 Actions
 -------
 
-**online_image.set_url**: Change the URL where the image is downloaded from. The image needs to be manually updated afterwards.
+**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered.
 
 Configuration variables:
 
