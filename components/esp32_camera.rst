@@ -502,6 +502,27 @@ Configuration examples
       name: My Camera
       # ...
 
+**DFRobot ESP32 S3 AI CAM**:
+
+.. code-block:: yaml
+
+esp32_camera:
+  external_clock:
+    pin: GPIO5
+    frequency: 20MHz
+  i2c_pins:
+    sda: GPIO8
+    scl: GPIO9
+  data_pins: [GPIO16, GPIO18, GPIO21, GPIO17, GPIO14, GPIO7, GPIO6, GPIO4]
+  vsync_pin: GPIO1
+  href_pin: GPIO2
+  pixel_clock_pin: GPIO15
+
+      # Image settings
+      name: My Camera
+      # ...
+
+
 See Also
 --------
 
