@@ -30,12 +30,6 @@ which is 19200bps.
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: uart_hub
-      baud_rate: 19200
-      tx_pin: 1
-      rx_pin: 3
-
     rf_bridge:
       id: kitchen_RF_bridge
       on_code_received:
@@ -49,7 +43,8 @@ which is 19200bps.
 
 Configuration variables:
 ------------------------
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the RF bridge. Usefull for event tracking in home assistant. 
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the RF bridge.
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART hub that the bridge component uses.
 - **on_code_received** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a code is received. See :ref:`rf_bridge-on_code_received`.
 
@@ -509,6 +504,26 @@ Additional example configurations in ESPHome
               low: 0x0184 
               high: 0x048C 
               code: 0x00C303
+    # example window blinds using Bitbucket sending.
+    # Works on Portisch/mightymos firmware only.
+    cover:
+      - platform: time_based
+        name: "Window blinds"
+        device_class: blind
+        open_action:
+          - rf_bridge.send_raw:
+          raw: 'AAB04C0408137702440111139B38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A1A1A192A1929292A192A1A1929292955'
+        open_duration: 26.26s
+        close_action:
+          - rf_bridge.send_raw: 
+              raw: 'AAB04C0408137E0249010E139C38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A192A1A1A1A192929292A19292929292955'
+        close_duration: 25.99s
+        stop_action:
+          - rf_bridge.send_raw: 
+              raw: 'AAB04C0408137502490111139F38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A192A1A1A1929292A1929292929292955'
+
+        has_built_in_endstop: true
+        assumed_state: false
 
 See Also
 --------
