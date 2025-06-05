@@ -68,11 +68,12 @@ ESP-IDF. PSRAM is a requirement due to the size of the display buffer.
 Configuration variables:
 ************************
 
-- **data_pins** (**Required**) A list of pins used for the databus. Specified in 3 groups:
+- **data_pins** (**Required**): A list of pins used for the databus. Specified in 3 groups:
 
-    - **red**: (**Required**, :ref:`Pin Schema <config-pin_schema>`) Exactly 5 pin numbers for the red databits, listed from least to most significant bit.
-    - **green**: (**Required**, :ref:`Pin Schema <config-pin_schema>`) Exactly 6 pin numbers for the green databits, listed from least to most significant bit.
-    - **blue**: (**Required**, :ref:`Pin Schema <config-pin_schema>`) Exactly 5 pin numbers for the blue databits, listed from least to most significant bit.
+    - **red** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Exactly 5 pin numbers for the red databits, listed from least to most significant bit.
+    - **green** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Exactly 6 pin numbers for the green databits, listed from least to most significant bit.
+    - **blue** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Exactly 5 pin numbers for the blue databits, listed from least to most significant bit.
+
 - **de_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DE pin
 - **pclk_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The PCLK pin.
 - **hsync_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The Horizontal sync pin.
@@ -92,13 +93,14 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **color_order** (*Optional*): Should be one of ``bgr`` (default) or ``rgb``.
 - **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g ``320x240``) or with separate config keys.
+
     - **height** (**Required**, int): Specifies height of display in pixels.
     - **width** (**Required**, int): Specifies width of display.
     - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
     - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
 - **pclk_frequency** (*Optional*): Set the pixel clock speed. Default is 16MHz.
-- **pclk_inverted** (*Optional* bool): If the pclk is active negative (default is True)
+- **pclk_inverted** (*Optional*, bool): If the pclk is active negative (default is True)
 - **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the displays have this option set automatically to true and can't be changed.
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of ``0°``, ``90°``, ``180°``, or ``270°``.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.

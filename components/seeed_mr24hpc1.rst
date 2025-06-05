@@ -240,8 +240,8 @@ The ``seeed_mr24hpc1`` button allows you to perform actions.
 Configuration variables:
 ************************
 
-- **restart**: Restart the device. All options from :ref:`Button <config-button>`.
-- **custom_set_end**: Valid only in :ref:`custom mode settings <seeed_mr24hpc1-custom_mode>`.
+- **restart** (*Optional*): Restart the device. All options from :ref:`Button <config-button>`.
+- **custom_set_end** (*Optional*): Valid only in :ref:`custom mode settings <seeed_mr24hpc1-custom_mode>`.
   This button is used to end the current custom mode setting and enable that custom mode.
   All options from :ref:`Button <config-button>`.
 
@@ -314,7 +314,7 @@ The ``seeed_mr24hpc1`` select allows you to control the configuration.
 Configuration variables:
 ************************
 
-- **scene_mode**: Valid only in :ref:`standard mode <seeed_mr24hpc1-standard_mode>`. Used to select a preset scene in standard mode.
+- **scene_mode** (*Optional*): Valid only in :ref:`standard mode <seeed_mr24hpc1-standard_mode>`. Used to select a preset scene in standard mode.
   The function of scene mode is to adjust the maximum detection range of the sensor to recognize human movements (Maximum detection distance of the sensor).
   There are 4 modes for scene mode, with the default mode being the living room mode. The detection range values for each scene mode are in the following table.
   All options from :ref:`Select <config-select>`.

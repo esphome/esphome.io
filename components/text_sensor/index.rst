@@ -63,7 +63,7 @@ Text Sensor Filters
 -------------------
 
 ESPHome allows you to do some basic pre-processing of
-text_sensor values before they’re sent to Home Assistant. This is for example
+text_sensor values before they're sent to Home Assistant. This is for example
 useful if you want to manipulate the text_sensor string in some fashion.
 
 There are a lot of filters that sensors support. You define them by adding a ``filters``

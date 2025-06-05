@@ -58,12 +58,14 @@ Configuration variables:
 ************************
 
 - **model** (**Required**): One of
+
     - ``CUSTOM``
     - ``RM67162``
     - ``RM690B0``
     - ``JC4832W535``
     - ``JC3636W518``
     - ``AXS15231``
+    
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. This is required when using the ``CUSTOM`` model - but may be empty. If specified for other models this data will be sent after the pre-configured sequence.
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The chip select pin.
 - **reset_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The RESET pin.

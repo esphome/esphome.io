@@ -13,7 +13,10 @@ With this component you can define images that will be downloaded, decoded and d
 
     Current supported formats:
 
-    - BMP images, currently only binary uncompressed images are supported
+    - BMP images
+
+      - 1-bit / binary / black and white
+      - 24-bit / RGB
 
     - JPEG images, currently only baseline images (no progressive support)
 
@@ -45,7 +48,7 @@ Configuration variables
   - ``PNG``: The image on the server is encoded in PNG format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
-- **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
+- **placeholder** (*Optional*, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
   This placeholder image will **not** be resized; regardless of the ``resize`` option value for the ``online_image``.
 - **type** (*Required*): Specifies how to encode image internally.
 
@@ -73,7 +76,7 @@ A good example for that is to update the display component after the download su
 Actions
 -------
 
-**online_image.set_url**: Change the URL where the image is downloaded from. The image needs to be manually updated afterwards.
+**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered.
 
 Configuration variables:
 

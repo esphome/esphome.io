@@ -26,8 +26,11 @@ The training process is described on the `microWakeWord GitHub repository <https
 Configuration variables:
 ------------------------
 
-- **models** (**Required**, list): The models to use.
+- **microphone** (**Required**, :ref:`config-microphone-source`): The :doc:`microphone </components/microphone/index>` settings to use for audio input.
+- **stop_after_detection** (*Optional*, boolean): Whether to stop the component after detecting a wake word. Defaults to ``true``.
+- **models** (**Required**, list): The models to use. Only the first model is enabled by default on the first boot. Each model's enabled state is then saved/restored to/from the flash.
 
+  - **id** (*Optional*, :ref:`config-id`): The optional ID used for the model actions below.
   - **model** (**Required**, string): This can be one of:
 
         - A simple name of a model that exists in the official `ESPHome Models repository <https://github.com/esphome/micro-wake-word-models>`__.
@@ -41,6 +44,7 @@ Configuration variables:
     If the probability of the wake word is below this value, the wake word is not detected.
     A larger value reduces the number of false accepts but increases the number of false rejections.
   - **sliding_window_size** (*Optional*, int): The size of the sliding window average for the wake word detection. A small value lowers latency but may increase the number of false accepts.
+  - **internal** (*Optional*, boolean): The wake word model is internal to the device and won't be able to enabled/disabled in Home Assistant.
 - **on_wake_word_detected** (*Optional*, Automation): An automation to perform when the wake word is detected.
   The ``wake_word`` phrase from the model manifest is provided as a ``std::string`` to any actions in this automation.
 - **vad** (*Optional*, model): Enable a Voice Activity Detection model to reduce false accepts from non-speech sounds.
@@ -74,16 +78,58 @@ Starts the wake word detection.
 
 Stops the wake word detection.
 
+``micro_wake_word.enable_model`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - micro_wake_word.enable_model: model_id
+
+Enables the specified model so it can be detected when the component is running.
+
+``micro_wake_word.disable_model`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - micro_wake_word.disable_model: model_id
+
+Disables the specified model so it won't be detected when the component is running.
+
+Conditions
+----------
+
+``micro_wake_word.is_running`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Checks if the component is running to detect wake words.
+
+``micro_wake_word.model_is_enabled`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Checks if the given model is enabled.
+
 Example usage
 -------------
 
 .. code-block:: yaml
 
     micro_wake_word:
+      microphone:
+        microphone: ...
+        channels: 0
+        gain_factor: 4
       vad:
       models:
         - model: okay_nabu
+          id: okay_nabu_model
         - model: hey_mycroft
+          id: hey_mycroft_model
+    wake_word:
       on_wake_word_detected:
         then:
           - voice_assistant.start:
