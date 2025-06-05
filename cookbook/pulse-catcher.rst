@@ -5,8 +5,8 @@ Pulse Catcher
     :description: Example to use the pulse meter sensor as a pulse catcher.
     :image: pulses.png
 
-The ``pulse_meter`` sensor can be used as a very fast pulse catcher. This can be useful
-if you would like to detect an incoming pulse on a GPIO pin shorter than the usually around 16ms loop time.
+The :doc:`/components/sensor/pulse_meter` can be used as a very fast pulse catcher. This can be useful
+if you would like to detect an incoming pulse on a GPIO pin shorter than the typical ``16ms`` loop interval.
 
 .. code-block:: yaml
 
