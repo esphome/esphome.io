@@ -956,7 +956,7 @@ Images are the basic widgets used to display images.
 
 .. note::
 
-    Currently ``RGB565`` type images are supported, with transparency using the optional parameter ``use_transparency`` set. See :ref:`display-image` for how to load an image for rendering in ESPHome.
+    Currently ``RGB565`` type images are supported, with transparency using the optional parameter ``transparency`` set. See :ref:`display-image` for how to load an image for rendering in ESPHome.
 
 .. tip::
 
