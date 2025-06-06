@@ -549,6 +549,38 @@ Configuration example:
         battery_level:
           name: "Mi Motion Sensor Battery Level"
 
+JTYJGD03MI Smoke Sensor
+******************************
+
+Xiaomi (Honeywell) smoke sensor and battery status.
+Requires a bindkey in order to decrypt the received data (see :ref:`obtaining_the_bindkey`).
+
+.. figure:: images/xiaomi_jtyjgd03mi.jpg
+    :align: center
+    :width: 30.0%
+
+Configuration example:
+
+.. code-block:: yaml
+
+    xiaomi_jtyjgd03mi:
+      - id: smoke_one
+        mac_address: XX:XX:XX:XX:XX:XX
+        bindkey: fe39106baeedb7c801e3d63c4396f97e
+
+    binary_sensor:
+      - platform: xiaomi_jtyjgd03mi
+        id: smoke_one
+        motion:
+          name: "Mi Smoke"
+        button:
+          name: "Mi Smoke Sensor Button"
+
+    sensor:
+      - platform: xiaomi_jtyjgd03mi
+        id: smoke_one
+        battery_level:
+          name: "Mi Smoke Sensor Battery Level"
 
 
 Setting Up Devices
