@@ -571,7 +571,7 @@ Configuration example:
     binary_sensor:
       - platform: xiaomi_jtyjgd03mi
         id: smoke_one
-        motion:
+        smoke:
           name: "Mi Smoke"
         button:
           name: "Mi Smoke Sensor Button"
