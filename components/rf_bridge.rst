@@ -6,7 +6,7 @@ RF Bridge Component
     :image: rf_bridge.jpg
     :keywords: RF Bridge
 
-The ``RF Bridge`` component provides the ability to send and receive 433MHz signals (like RF remotes/key fobs) using radio microcontrollers found on RF bridge devices ( eg. Sonoff RF bridge).
+The ``RF Bridge`` component provides the ability to send and receive 433MHz signals (like RF remotes/key fobs) using radio microcontrollers found on RF bridge devices ( eg., Sonoff RF Bridge).
 
 * The black Sonoff RF Bridge (R1, R2 V1.0) has an ESP8266 (for WIFI/ESPHome) and an embedded EFM8BB1 microcontroller (433 MHz). 
 * The white Sonoff RF Bridge (R2 V2.0) has ESP8266 and an embedded OB38S003 microcontroller (433 MHz). 
@@ -53,8 +53,7 @@ Configuration variables:
 ``on_code_received`` Trigger
 ----------------------------
 
-With this configuration option you can write complex automations whenever a code is
-received by the bridge. To use the code, use a :ref:`lambda <config-lambda>` template. The code
+With this configuration option you can write complex automations whenever a code is received by the bridge. To use the code, use a :ref:`lambda <config-lambda>` template. The code
 and the corresponding protocol timings are available inside that lambda under the
 variables named ``code``, ``sync``, ``high`` and ``low``.
 
@@ -326,7 +325,7 @@ The raw data will be available in the log and can later be used with :ref:`rf_br
 .. note::
 
     There seems to be an overflow problem in Portisch firmware and after a short while, the bucket sniffing stops.
-    You should re-call the action to reset and start sniffing again. This issue is fixed in Mightmos firmware.
+    You should re-call the action to reset and start sniffing again. This issue is fixed in Mightymos firmware.
 
 .. code-block:: yaml
 
@@ -377,8 +376,8 @@ Home Assistant as events and will also setup a service so you can send codes wit
       baud_rate: 0
 
     api:
-      actions: ## create actions in HA
-           #Send standard RF using intiger values 
+      actions: # create actions in HA
+           #Send standard RF using integer values 
         - action: send_rf_code  
           variables:
             sync: int
@@ -392,7 +391,7 @@ Home Assistant as events and will also setup a service so you can send codes wit
                 high: !lambda 'return high;'
                 code: !lambda 'return code;'
         
-        ## send raw RF  
+        # send raw RF  
         - action: send_rf_code_raw
           variables:
             raw: string
@@ -423,7 +422,7 @@ Home Assistant as events and will also setup a service so you can send codes wit
                 high: !lambda 'return int(data.high);'
                 code: !lambda 'return int(data.code);'
   
-      on_advanced_code_received: ##only on Portisch or mightymos firmwares
+      on_advanced_code_received: #only on Portisch or mightymos firmwares
         then:
           - homeassistant.event:
               event: esphome.rf_advanced_code_received
