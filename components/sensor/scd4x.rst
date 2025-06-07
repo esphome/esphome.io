@@ -89,14 +89,14 @@ Actions:
 
 This :ref:`action <config-action>` manually calibrates the sensor to the provided value in ppm.
 Operate the SCD4x in the operation mode later used in normal sensor operation (periodic measurement, low power periodic measurement or single shot) for > 3 minutes in an environment with homogenous and constant CO2 concentration before performing a forced recalibration.
-As of March 2025 the global monthly mean CO2 concentration is 426 ppm.
+As of March 2025, the global monthly mean CO₂ concentration is 426 ppm.
 
 .. code-block:: yaml
 
     on_...:
       then:
         - scd4x.perform_forced_calibration:
-            # Global Monthly Mean CO2
+            # Global Monthly Mean CO₂
             # https://gml.noaa.gov/ccgg/trends/global.html
             value: 426
             id: my_scd41
