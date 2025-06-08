@@ -109,14 +109,27 @@ Configuration variables:
 Advanced Configuration
 ----------------------
 
+- **assertion_level** (*Optional*, enum): One of ``ENABLE`` (default), ``SILENT`` or ``DISABLE``. Changing away from
+  the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization-assertion-level>`__
+  for more information.
+- **compiler_optimization** (*Optional*, enum): One of ``SIZE`` (default), ``PERF``, ``NONE`` or ``DEBUG``. Changing
+  away from the default will increase the size of the compiled binary but may increase performance or allow for easier
+  troubleshooting. See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization>`__
+  for more information.
+- **enable_lwip_assert** (*Optional*, boolean): Can be set to ``false`` to reduce the size of the compiled binary by
+  disabling LWIP assertions. Defaults to ``true`` (as recommended by Espressif). See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-lwip-esp-lwip-assert>`__
+  for more information.
 - **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in custom
   MAC address is not valid.
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   ``Base MAC address from BLK0 of EFUSE CRC error``. **Valid only on original ESP32 with** ``esp-idf`` **framework.**
-- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable
-  experimental features in the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features
-  may cause instability or other issues.
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable experimental features in
+  the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
+  other issues.
 
 GPIO Pin Numbering
 ------------------
