@@ -128,7 +128,7 @@ Advanced Configuration
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   ``Base MAC address from BLK0 of EFUSE CRC error``. **Valid only on original ESP32 with** ``esp-idf`` **framework.**
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable experimental features in
-  the ESP-IDF framework. Not valid for the Arduino framework. Enabling experimental features may cause instability or
+  the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
   other issues.
 
 GPIO Pin Numbering
