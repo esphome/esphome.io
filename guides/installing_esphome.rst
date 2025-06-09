@@ -23,7 +23,7 @@ In the terminal that comes up, check that Python is installed:
 .. code-block:: console
 
     > python --version
-    Python 3.13.2
+    Python 3.10.1
 
 Looks good? You can go ahead and install ESPHome:
 
