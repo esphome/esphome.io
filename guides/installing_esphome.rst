@@ -38,7 +38,7 @@ with the following:
 .. code-block:: console
 
     > esphome version
-    Version: 2021.12.3
+    Version: 2025.5.2
 
 
 .. note::
