@@ -786,6 +786,8 @@ Energy/Solar Management
 
 .. imgtable::
 
+    Growatt Solar, components/sensor/growatt_solar, growatt.jpg
+    Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg
     PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
     Power Supply, components/power_supply, power.svg, dark-invert
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
@@ -1094,6 +1096,7 @@ Cookbook
     Sonoff Fishpond Pump, cookbook/sonoff-fishpond-pump, cookbook-sonoff-fishpond-pump.jpg
     Arduino Port Extender, cookbook/arduino_port_extender, arduino_logo.svg
     EHMTX a matrix status/text display, cookbook/ehmtx, ehmtx.jpg
+    Pulse Catcher, cookbook/pulse-catcher, pulses.png
 
 Contributing
 ------------
