@@ -137,7 +137,7 @@ The following options are available under the ``advanced`` section when using th
 LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
 
 - **enable_lwip_dhcp_server** (*Optional*, boolean): Enable DHCP server functionality. Only needed if the device will act
-  as a DHCP server (e.g., in WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
+  as a DHCP server (necessary for WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
   the DHCP server based on whether AP mode is configured. When WiFi is not used, defaults to ``false``.
 - **enable_lwip_mdns_queries** (*Optional*, boolean): Enable mDNS query support in the DNS resolver. ESPHome uses its own
   mDNS implementation, so this is rarely needed. Defaults to ``false``.
