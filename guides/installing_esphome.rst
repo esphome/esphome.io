@@ -23,13 +23,7 @@ In the terminal that comes up, check that Python is installed:
 .. code-block:: console
 
     > python --version
-    Python 3.10.1
-
-.. note::
-
-    Don't copy the ``>``. That's used to show that this is a command that goes
-    in the console, and to let you see what the expected results are (shown on
-    the next line without a ``>``)
+    Python 3.13.2
 
 Looks good? You can go ahead and install ESPHome:
 
@@ -45,6 +39,15 @@ with the following:
 
     > esphome version
     Version: 2021.12.3
+
+
+.. note::
+
+    - Don't copy the ``>``. That's used to show that this is a command that goes
+      in the console, and to let you see what the expected results are (shown on
+      the next line without a ``>``)    
+    - You may additionally need to install git for the external components feature.
+      Download git from `the official website <https://git-scm.com/downloads/win>`_
 
 Mac
 ---
