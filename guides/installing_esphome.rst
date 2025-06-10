@@ -69,7 +69,7 @@ Verify the installation:
 .. code-block:: console
 
     $ esphome version
-    Version: 2024.12.0 
+    Version: 2025.5.2
 
 
 
@@ -151,7 +151,7 @@ At this point, you should be able to confirm that ESPHome has been successfully 
 .. code-block:: console
 
     $ esphome version
-    Version: 2022.11.4
+    Version: 2025.5.2
 
 If you get an error like "Command not found", you need to add the binary to
 your ``PATH`` using ``export PATH=$PATH:$HOME/.local/bin``.
