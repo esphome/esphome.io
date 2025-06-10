@@ -29,25 +29,25 @@ Looks good? You can go ahead and install ESPHome:
 
 .. code-block:: console
 
-    > pip3 install wheel
-    > pip3 install esphome
+    pip3 install wheel
+    pip3 install esphome
 
 And you should be good to go! You can test that things are properly installed
 with the following:
 
 .. code-block:: console
 
-    > esphome version
+    esphome version
+
+.. code-block:: console
+
     Version: 2025.5.2
 
 
 .. note::
-
-    - Don't copy the ``>``. That's used to show that this is a command that goes
-      in the console, and to let you see what the expected results are (shown on
-      the next line without a ``>``)    
-    - You may additionally need to install git for the external components feature.
-      Download git from `the official website <https://git-scm.com/downloads/win>`_
+   
+    You may additionally need to install git for the external components feature.
+    Download git from `the official link <https://git-scm.com/downloads>`_
 
 Mac
 ---
