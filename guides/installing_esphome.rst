@@ -22,7 +22,7 @@ In the terminal that comes up, check that Python is installed:
 
 .. code-block:: console
 
-    > python --version
+    $ python --version
     Python 3.10.1
 
 Looks good? You can go ahead and install ESPHome:
@@ -37,10 +37,7 @@ with the following:
 
 .. code-block:: console
 
-    esphome version
-
-.. code-block:: console
-
+    $ esphome version
     Version: 2025.5.2
 
 
@@ -65,7 +62,7 @@ An easy way for installation is via `Homebrew <https://brew.sh/>`_:
 
 .. code-block:: console
 
-    $ brew install esphome
+    brew install esphome
 
 Verify the installation:
 
@@ -74,15 +71,16 @@ Verify the installation:
     $ esphome version
     Version: 2024.12.0 
 
-If you encounter any issues with Homebrew installation, please check the
-`ESPHome Homebrew Formula <https://formulae.brew.sh/formula/esphome>`_ page
-for additional information.
+
 
 .. note::
 
-    Homebrew may not always provide the latest version immediately. Updating Homebrew will 
-    automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to 
-    install ESPHome.
+    - If you encounter any issues with Homebrew installation, please check the
+      `ESPHome Homebrew Formula <https://formulae.brew.sh/formula/esphome>`_ page
+      for additional information.
+    - Homebrew may not always provide the latest version immediately. Updating Homebrew will 
+      automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to 
+      install ESPHome.
 
 **pip**
 
@@ -91,7 +89,7 @@ and may need additional dependencies and path settings. Setting up a virtual env
 highly recommended. If you are not familiar with Python virtual environments, Homebrew
 may be easier.
 
-You will require Python 3.9 or newer. While your Mac may have a version of Python installed it may not be up-to-date.
+You will require Python 3.10 or newer. While your Mac may have a version of Python installed it may not be up-to-date.
 Python can be installed from the `official site <https://www.python.org/downloads>`_
 or with Homebrew. Once Python is installed, create and activate a virtual environment and install ESPHome with pip:
 
@@ -113,19 +111,19 @@ Linux
 -----
 
 Your distribution probably already has Python installed. Confirm that it is at
-least version 3.9:
+least version 3.10:
 
 .. code-block:: console
 
     $ python3 --version
-    Python 3.9.15
+    Python 3.10.1
 
 Looks good? Now create a virtual environment to contain ESPHome and it's dependencies.
 
 .. code-block:: console
 
-    $ python3 -m venv venv
-    $ source venv/bin/activate
+    python3 -m venv venv
+    source venv/bin/activate
 
 You may or may not see ``(venv)`` at the beginning of your prompt depending on your shell configuration. This indicates that you are in the virtual environment.
 
@@ -138,7 +136,7 @@ You can go ahead and install ESPHome:
 .. caution::
 
     Don't use ``sudo`` with pip. If you do, you'll run into trouble updating
-    your OS down the road.
+    your Distro down the road.
 
     For details, see `DontBreakDebian
     <https://wiki.debian.org/DontBreakDebian#A.27make_install.27_can_conflict_with_packages>`_.
@@ -146,9 +144,9 @@ You can go ahead and install ESPHome:
     advice in the article applies to all Linux distributions, not just Debian.
 
     Some people install ESPHome without the virtual environment, which can lead to issues with PATHs etc.
-    Non virtual environment installations are considered not "supported" as people end up having to know your exact system setup.
+    Installations without `venv` are considered not "supported" as people end up having to know your exact system setup.
 
-At this point, you should be able confirm that ESPHome has been successfully installed:
+At this point, you should be able to confirm that ESPHome has been successfully installed:
 
 .. code-block:: console
 
