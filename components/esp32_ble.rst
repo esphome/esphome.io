@@ -22,6 +22,7 @@ can run.
 
     esp32_ble:
       io_capability: keyboard_only
+      disable_bt_logs: true  # Default, saves flash
 
 Configuration variables:
 ------------------------
@@ -40,6 +41,12 @@ Configuration variables:
     - Defaults to the hostname of the device.
     - Must be 20 characters or less.
     - Must be 13 characters or less when using ``name_add_mac_suffix: true`` - :ref:`esphome-mac_suffix`.
+
+- **disable_bt_logs** (*Optional*, boolean): When enabled, disables Bluetooth logging categories that are not used by the configured components. This saves flash memory by only including the loggers needed by your configuration. Defaults to ``true``.
+
+.. note::
+
+    The ``disable_bt_logs`` option intelligently disables only the Bluetooth logging categories that are not required by your configuration. Each Bluetooth component registers the specific loggers it needs, and all unused loggers are automatically disabled during compilation. This includes loggers for Classic Bluetooth features (like RFCOMM, A2DP, HID) that are not used by ESPHome's BLE implementation.
 
 ``ble.disable`` Action
 -----------------------
