@@ -92,7 +92,7 @@ Configuration variables:
   Range is ``0-255ms``. Defaults to ``0ms`` (disabled).
 - **max_commands_per_loop** (*Optional*, integer): Limits the number of commands processed per loop cycle.  
   This helps prevent stack overflows when a large number of commands are queued. 
-  Lower values (e.g., ``20``) can help improve system stability in constrained environments.
+  Lower values (for example, ``20``) may help improve stability in constrained environments.
 - **max_queue_size** (*Optional*, integer): Sets the maximum number of commands that can be queued at once.
   When the limit is reached, new commands will be dropped and a warning will be logged.
   This helps prevent memory overflows or boot-time crashes in complex setups that issue a large number of commands
