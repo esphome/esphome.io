@@ -42,7 +42,7 @@ with the following:
 
 
 .. note::
-   
+
     You may additionally need to install git for the external components feature.
     Download git from `the official link <https://git-scm.com/downloads>`_
 
