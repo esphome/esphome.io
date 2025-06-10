@@ -147,7 +147,9 @@ and can therefore be used with many of ESPHome's components such as the GPIO
 binary sensor or GPIO switch.
 
 GPIO pins in the datasheet are labelled A0 to A7 and B0 to B7, these are mapped
-consecutively in this component to numbers from 0 to 15.
+consecutively in this component to numbers from 0 to 15. There are two parts to
+note here: port A is reverse-mapped (A7=0 to A0=7) and port B is forward-mapped
+(B0=8 to B7=15).
 
 .. code-block:: yaml
 
@@ -163,7 +165,7 @@ consecutively in this component to numbers from 0 to 15.
         pin:
           mcp23xxx: mcp23017_hub
           # Use pin A0
-          number: 0
+          number: 7
           mode:
             output: true
           inverted: false
