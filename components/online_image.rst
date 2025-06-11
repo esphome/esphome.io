@@ -39,6 +39,7 @@ Configuration variables
 -----------------------
 
 - **url** (**Required**, url): The URL where the image will be downloaded from.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
   in your display code.
 - **format** (**Required**): The format that the image is encoded with.
