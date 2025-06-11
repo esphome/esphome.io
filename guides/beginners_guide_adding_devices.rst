@@ -29,12 +29,12 @@ When you keep these secret values in a separate file, you can confidently copy a
 it with others. You don't need to worry about accidentally sharing the details of your home network, such as your Wi-Fi
 SSID name and password.
 
-Click here in the ESPHome Dashboard to edit ``Secrets``.
+In the ESPHome Dashboard, click ``Secrets`` to edit your secrets file.
 
 .. figure:: images/noob_dashboard_1a.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard window with circle around "Secrets"
+    :alt: Screenshot of ESPHome Dashboard window with circle around "Secrets"
 
 Wi-Fi Network
 *************
@@ -65,7 +65,7 @@ find the wireless network.
 
 .. warning::
 
-    Supported Espressif microcontrollers only support the 2.4 Ghz frequency range for Wi-Fi.
+    Supported Espressif microcontrollers only support the 2.4 GHz frequency range for Wi-Fi.
 
     If you're experiencing connectivity issues, see our :ref:`FAQ <wifi-problems>`.
 
@@ -105,14 +105,14 @@ Don't forget to click ``Save`` when finished editing.
 .. figure:: images/noob_dashboard_1b.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard Secrets window with circle around "Save"
+    :alt: Screenshot of ESPHome Dashboard Secrets window with circle around "Save"
 
 Then you can close the Secrets.
 
 .. figure:: images/noob_dashboard_1c.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard Secrets window with circle around "X"
+    :alt: Screenshot of ESPHome Dashboard Secrets window with circle around "X"
 
 
 Adding a Device
@@ -120,7 +120,7 @@ Adding a Device
 
 This example (and everything below) will use
 `Athom-E27-7W-Bulb <https://devices.esphome.io/devices/Athom-E27-7W-Bulb>`__ as an example
-because it illustrates the basic principals of an ESPHome Configuration and the community's usual/best practices.
+because it illustrates the basic principles of an ESPHome Configuration and the community's usual/best practices.
 Your first use-case will surely be different but the principles will be the same.
 
 .. note::
@@ -143,24 +143,24 @@ First, click "New Device."  When you have no devices, it will look like this.
 .. figure:: images/noob_dashboard_2a.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard with no devices and circles around both "New Device" buttons
+    :alt: Screenshot of ESPHome Dashboard with no devices and circles around both "New Device" buttons
 
 Give the device a name. For the example, let's call it "livingroom-light".
 The device name should be informative and unique because each and every device
-in ESPHome will get it's own YAML file.  It's totally up to you how to name it.
+in ESPHome will get its own YAML file.  It's totally up to you how to name it.
 After naming it, click "Next".
 
 .. figure:: images/noob_dashboard_2b.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard "New Device" with a circle around Name and set to "livingroom-light"
+    :alt: Screenshot of ESPHome Dashboard "New Device" with a circle around Name and set to "livingroom-light"
 
 We're not ready to install ESPHome to the device yet so click "Skip this step".
 
 .. figure:: images/noob_dashboard_2c.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard "New Device" Installation with a circle around "Skip this step"
+    :alt: Screenshot of ESPHome Dashboard "New Device" Installation with a circle around "Skip this step"
 
 Next, we have to choose what type of device this is. In the link for
 `Athom-E27-7W-Bulb <https://devices.esphome.io/devices/Athom-E27-7W-Bulb>`__
@@ -175,7 +175,7 @@ So we know it's an ESP8266.
 .. figure:: images/noob_dashboard_2e.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard "New Device" Installation with a circle around "ESP8266"
+    :alt: Screenshot of ESPHome Dashboard "New Device" Installation with a circle around "ESP8266"
 
 You can see that ESPHome has generated a unique key for the device but we're not quite ready to install ESPHome yet,
 so click ``skip``.
@@ -183,14 +183,14 @@ so click ``skip``.
 .. figure:: images/noob_dashboard_2f.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard "New Device" Installation with a circle around "ESP8266"
+    :alt: Screenshot of ESPHome Dashboard "New Device" Installation with a circle around "ESP8266"
 
 Now we have a device YAML file ready.  But we still have to edit it to fit the device.
 
 .. figure:: images/noob_dashboard_2g.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard showing the new device "livingroom-light" has been added
+    :alt: Screenshot of ESPHome Dashboard showing the new device "livingroom-light" has been added
 
 
 The YAML
@@ -201,21 +201,21 @@ Click ``edit``.
 .. figure:: images/noob_dashboard_3a.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard showing the new device "livingroom-light" has been added
+    :alt: Screenshot of ESPHome Dashboard showing the new device "livingroom-light" has been added
 
 This is the ESPHome Dashboard editor. This is YAML code and how ESPHome devices are configured.
 
 .. figure:: images/noob_dashboard_3b.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard editor, opened to "livingroom-light.yaml"
+    :alt: Screenshot of ESPHome Dashboard editor, opened to "livingroom-light.yaml"
 
 We need to go back to the profile for `Athom-E27-7W-Bulb <https://devices.esphome.io/devices/Athom-E27-7W-Bulb>`__.
 
 .. figure:: images/noob_dashboard_3c.png
     :align: center
     :width: 75.0%
-    :alt: Code snippet for Athom-E27-7W-Bulb with a circle around "Copy"
+    :alt: Screenshot of Code snippet for Athom-E27-7W-Bulb with a circle around "Copy"
 
 Thankfully, this page has a button we can click "Copy" and just copy the entire YAML from the template.  Click "Copy".
 
@@ -226,7 +226,7 @@ is at the first column like this.
 .. figure:: images/noob_dashboard_3d.gif
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard editor, opened to "livingroom-light.yaml"
+    :alt: Screenshot of ESPHome Dashboard editor, opened to "livingroom-light.yaml"
 
 And then paste what you just copied.
 
@@ -273,7 +273,7 @@ And then paste what you just copied.
 
             **Redo**  : ``Command (⌘) + Shift + Z``
 
-What we need to do now is merge the two separate bits together.  Fortunately, there isn't a lot to worry about.
+What we need to do now is merge the two separate sections together.  Fortunately, there isn't a lot to worry about.
 Mostly, we will just work with what we pasted.
 
 Throughout the rest of this tutorial, there will be links to more detailed documentation.
@@ -616,14 +616,14 @@ Don't forget to save!
 .. figure:: images/noob_dashboard_3f.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard window with circle around "Save"
+    :alt: Screenshot of ESPHome Dashboard window with circle around "Save"
 
 Then you can close the file.
 
 .. figure:: images/noob_dashboard_3g.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard window with circle around "X"
+    :alt: Screenshot of ESPHome Dashboard window with circle around "X"
 
 Validate & Download Binary File
 -------------------------------
@@ -633,7 +633,7 @@ On the living-room-light's YAML, click the three dots ``⋮`` and select ``Valid
 .. figure:: images/noob_dashboard_4a.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard after clicking a YAML's ⋮ showing options with a circle around "Validate"
+    :alt: Screenshot of ESPHome Dashboard after clicking a YAML's ⋮ showing options with a circle around "Validate"
 
 If there are errors, read the message, then edit your YAML to fix the problem.
 You may need to search :doc:`ESPHome.io</index>` and do some reading.
@@ -643,7 +643,7 @@ If no errors, click ``Install``.
 .. figure:: images/noob_dashboard_4b.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard showing validation screen with circles around "INFO Configuration is valid!" and "Install"
+    :alt: Screenshot of ESPHome Dashboard showing validation screen with circles around "INFO Configuration is valid!" and "Install"
 
 Even if we're not ready to actually install, ``Manual download``
 will do a deeper check of the code to make sure everything is okay.
@@ -651,14 +651,14 @@ will do a deeper check of the code to make sure everything is okay.
 .. figure:: images/noob_dashboard_4c.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard showing install options with a circle around "Manual download"
+    :alt: Screenshot of ESPHome Dashboard showing install options with a circle around "Manual download"
 
 It can take a few minutes to download all the dependencies and compile the code, especially the first time.
 
 .. figure:: images/noob_dashboard_4d.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard showing compilation screen
+    :alt: Screenshot of ESPHome Dashboard showing compilation screen
 
 If it doesn't say ``[ SUCCESS ]`` then you have to fix an error.
 This may involve searching and reading the ESPHome documentation.
@@ -669,7 +669,7 @@ Actually you don't need to download it now. Compilation next time will be much f
 .. figure:: images/noob_dashboard_4e.png
     :align: center
     :width: 95.0%
-    :alt: ESPHome Dashboard showing compilation finished screen with circles around "[ SUCCESS ]" and "Download"
+    :alt: Screenshot of ESPHome Dashboard showing compilation finished screen with circles around "[ SUCCESS ]" and "Download"
 
 .. collapse:: Blocked Download
 
