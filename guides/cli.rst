@@ -285,3 +285,45 @@ You can register ESPHome for auto-completion by adding the following to your ~/.
     eval "$(register-python-argcomplete esphome)"
 
 For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`__ documentation.
+
+Using logging tools supplied with ESPHome
+-----------------------------------
+There are two types of logging interface supplied with ESPHome. API and Serial AKA UART logging.
+For serial logging, There are many options including web.esphome.io and ESPHome CLI's ``run``
+command.
+
+For crude API based logging uses, one can use the `aioesphomeapi-logs` command bundled with ESPHome.
+Very useful when an ESP device is located in a remote/inaccessible location.
+
+The syntax is as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-logs <IPv4/v6 address>
+
+Some working examples include:
+
+.. code-block:: console
+
+    aioesphomeapi-logs 192.168.1.7
+    aioesphomeapi-logs fe80::cdef:0123:4567:89ab
+    aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
+
+Press CTRL+C to exit from the logging view.
+If you do not know/wish to know the IP address of an ESPHome device,
+one can also use ``aioesphomeapi-discover`` to discover online ESPHome devices on the local network.
+
+The syntax is as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-discover
+
+The response lists info about currently available ESPHome devices'
+``Status |Name |Address |MAC |Version |Platform |Board``
+
+See Also
+--------
+
+- :doc:`Guides </guides/index>`
+- :ghedit:`Edit`
