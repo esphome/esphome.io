@@ -25,18 +25,21 @@ Currently Supported Devices:
 
 See :ref:`ht16k33-char_device_details` for more info on these devices and :ref:`ht16k33-char_new_devices` for instructions on adding support for new devices.
 
-+------------------------------------------------------------------------------------+--------------------------------------+
-| Device                                                                             | Device ID(s)                         |
-+====================================================================================+======================================+
-| `Adafruit 1.2" 4-Digit 7-Segment <https://www.adafruit.com/product/1270>`__        | ``ADAFRUIT_7SEGMENT_1.2IN``          |
-|                                                                                    | ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``  |
-+------------------------------------------------------------------------------------+--------------------------------------+
-| `Adafruit 0.56" 4-Digit 7-Segment <https://www.adafruit.com/product/878>`__        | ``ADAFRUIT_7SEGMENT_.56IN``          |
-|                                                                                    | ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``  |
-+------------------------------------------------------------------------------------+--------------------------------------+
-| `Adafruit 0.54" 4-Digit 14-Segment <https://www.adafruit.com/product/1911>`__      | ``ADAFRUIT_14_SEG``                  |
-|                                                                                    | ``ADAFRUIT_14_SEG_FLIPPED``          |
-+------------------------------------------------------------------------------------+--------------------------------------+
++--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
+| Device                                                                                                             | Device ID(s)                         |
++====================================================================================================================+======================================+
+| `Adafruit 1.2" 4-Digit 7-Segment <https://www.adafruit.com/product/1270>`__                                        | ``ADAFRUIT_7SEGMENT_1.2IN``          |
+|                                                                                                                    | ``ADAFRUIT_7SEGMENT_1.2IN_FLIPPED``  |
++--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
+| `Adafruit 0.56" 4-Digit 7-Segment <https://www.adafruit.com/product/878>`__                                        | ``ADAFRUIT_7SEGMENT_.56IN``          |
+|                                                                                                                    | ``ADAFRUIT_7SEGMENT_.56IN_FLIPPED``  |
++--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
+| `Adafruit 0.54" 4-Digit 14-Segment <https://www.adafruit.com/product/1911>`__                                      | ``ADAFRUIT_14_SEG``                  |
+|                                                                                                                    | ``ADAFRUIT_14_SEG_FLIPPED``          |
++--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
+| `Sparkfun QUIIC 4-Digit 14-Segment <https://www.sparkfun.com/sparkfun-qwiic-alphanumeric-display-red.html>`__      | ``SPARKFUN_14_SEG``                  |
+|                                                                                                                    | ``SPARKFUN_14_SEG_FLIPPED``          |
++--------------------------------------------------------------------------------------------------------------------+--------------------------------------+
 
 Prerequisites:
 -----------------------------------------
@@ -350,6 +353,62 @@ A list of supported characters is given for each device. If you place a non-supp
 
         - Use the ``.`` character to turn on a decimal point.
         - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal points that are now at the top of the display. The display itself is capable of displaying the ``'`` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for those decimal points.
+
+    These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
+
+.. collapse:: Sparkfun QUIIC 4-Digit 14-Segment
+
+    Small 14 segment displays from `Sparkfun <https://www.sparkfun.com/sparkfun-qwiic-alphanumeric-display-red.html>`__. They have various colors and all the colors should work the same. The wiring diagram for the device is `here <https://cdn.sparkfun.com/assets/c/7/2/8/a/Qwiic_Alphanumeric_Display.pdf>`__.
+  
+    Both a right-side-up and upside-down version of this display is implemented here. To use them set ``device`` to ``SPARKFUN_14_SEG`` or ``SPARKFUN_14_SEG_FLIPPED``.
+
+    I have implemented most of the basic alphanumeric characters and punctuation. Some of them are a bit of a strech to display on these devices, but they are generally readable.
+
+    .. collapse:: Supported Characters
+
+        - All upper case english characters (A-Z)
+        - All lower case english characters (a-z)
+        - All numerals (0-9)
+        - a blank space
+        - ``!``
+        - ``"``
+        - ``#``
+        - ``$``
+        - ``%``
+        - ``&``
+        - ``'``
+        - ``(``
+        - ``)``
+        - ``*``
+        - ``+``
+        - ``,``
+        - ``-``
+        - ``/``
+        - ``:``
+        - ``;``
+        - ``<``
+        - ``=``
+        - ``>``
+        - ``?``
+        - ``@``
+        - ``[``
+        - ``\``
+        - ``]``
+        - ``^``
+        - ``_``
+        - ``\```
+        - ``{``
+        - ``|``
+        - ``}``
+        - ``~``
+
+    Aside from the standard characters, this display also has:
+  
+      - A colon between digit 1 and 2
+      - A decimal point after digit 2
+
+        - Use the ``.`` character to turn on the decimal point.
+        - Note that if you are using the upside-down version of the display, I did not implement any way to light the decimal point that is now at the top of the display. The display itself is capable of displaying the ``'`` character, so I did not figure it was worth it to also be able to light the decimal point. This could be changed in the future is anyone finds a use for this decimal point.
 
     These characters must be placed in the correct position in the character buffer to turn on the relevant LED. If they are placed in any other position, they will be treated as an unsupported character.
 
