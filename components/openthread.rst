@@ -26,11 +26,8 @@ ESP-IDF.
     # Example ESP-IDF configuration for ESP32-C6-DevKitM-1 board
     esp32:
       board: esp32-c6-devkitm-1
-      variant: esp32c6
       framework:
         type: esp-idf
-        version: "5.3.1"
-        platform_version: 6.8.1
 
 .. _config-openthread:
 
