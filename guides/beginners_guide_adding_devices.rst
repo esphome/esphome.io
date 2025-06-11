@@ -3,7 +3,7 @@ Beginner's Guide to Adding Devices
 
 .. seo::
     :description: A step-by-step beginner's guide to adding device YAMLs to ESPHome in a running Docker container, with detailed instructions and pictures.
-    :image: docker-mark-blue.svg
+    :image: logo.svg
 
 This guide is for people who are unfamiliar with ESPHome and wish to learn the basics.
 
