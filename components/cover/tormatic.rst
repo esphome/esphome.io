@@ -21,9 +21,10 @@ be supported:
 
 .. note::
 
-    This component was written and tested against a Novoferm 423, so
-    compatibility with other models is currently not guaranteed. Please update
-    this documentation if you confirm this to work on other models as well.
+    This component was written against a Novoferm 423. It has been successfully 
+    tested with Novoferm 423 and Tormatic Black 600, so compatibility with other 
+    models is currently not guaranteed. Please update this documentation if you 
+    confirm this to work on other models as well.
     
     The vendor's cloud-based remote is not known to perform model or feature
     detection, so it's assumed that the protocol is the same across all models.
