@@ -475,10 +475,10 @@ web_server:
 This section creates a :doc:`web server </components/web_server>`
 on the device so you can access and control the device using the mDNS or IP address.
 Chances are good that the web address will match what we made the ``name:`` earlier
-(which refers to the substitution ``device-name``).
+(which refers to the substitution ``device_name``).
 So after flashing the new firmware, we should be able to go to
 `http://living-room-light.local <http://living-room-light.local>`__ and control the light bulb
-through it's WebUI.
+through its WebUI.
 
 .. collapse:: Note About mDNS
 
