@@ -573,8 +573,6 @@ Configuration example:
         id: smoke_one
         smoke:
           name: "Mi Smoke"
-        button:
-          name: "Mi Smoke Sensor Button"
 
     sensor:
       - platform: xiaomi_jtyjgd03mi
