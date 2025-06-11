@@ -165,8 +165,8 @@ Hardware Peripheral Interfaces/Busses
     OpenTherm, components/opentherm, opentherm.png
     SPI Bus, components/spi, spi.svg
     UART, components/uart, uart.svg
-    USB Host, components/usb_host, usb.svg
-    USB UART, components/usb_uart, usb.svg
+    USB Host, components/usb_host, usb.svg, dark-invert
+    USB UART, components/usb_uart, usb.svg, dark-invert
 
 I/O Expanders/Multiplexers
 --------------------------
