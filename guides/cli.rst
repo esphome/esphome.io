@@ -289,10 +289,10 @@ For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`
 Using logging tools supplied with ESPHome
 -----------------------------------
 There are two types of logging interface supplied with ESPHome. API and Serial AKA UART logging.
-For serial logging, There are many options including web.esphome.io and ESPHome CLI's ``run``
+For serial logging, There are many options including `ESPHome Web <https://web.esphome.io>`__ and ESPHome CLI's ``run``
 command.
 
-For crude API based logging uses, one can use the `aioesphomeapi-logs` command bundled with ESPHome.
+For crude API based logging uses, one can use the ``aioesphomeapi-logs`` command bundled with ESPHome.
 Very useful when an ESP device is located in a remote/inaccessible location.
 
 The syntax is as follows:
@@ -327,6 +327,7 @@ The syntax is as follows:
     aioesphomeapi-discover
 
 The response lists info about currently available ESPHome devices'
+
 ``Status |Name |Address |MAC |Version |Platform |Board``
 
 See Also
