@@ -46,6 +46,7 @@ Peripherals which directly support the operation of the microcontroller's proces
 
     PSRAM, components/psram, psram.svg
     Deep Sleep, components/deep_sleep, hotel.svg, dark-invert
+    ESP32-P4 LDO regulator, components/esp_ldo, ldo.svg, dark-invert
 
 ESPHome Automations
 -------------------
