@@ -519,10 +519,9 @@ captive_portal:
 
     captive_portal:
 
-The :doc:`captive_portal </components/captive_portal>` section is responsible to create a special web server using
-the hotspot created in conjunction with the `ap:` information specified above.
-This allows you allows you to give the device new wireless network credentials when the device cannot connect
-to the network it expects.
+The :doc:`captive_portal </components/captive_portal>` section is responsible for creating a special web server
+using the hotspot defined in the `ap:` section.
+This allows you to give the device new wireless network credentials when it cannot connect to the expected network.
 
 When you connect to the fallback hotspot, the web interface should open automatically
 or there should be a prompt on your phone to open the login.
