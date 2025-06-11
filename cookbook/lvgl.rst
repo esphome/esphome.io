@@ -1190,7 +1190,7 @@ To display a boot image with a spinner animation which disappears automatically 
         id: boot_logo
         resize: 200x200
         type: RGB565
-        use_transparency: alpha_channel
+        transparency: alpha_channel
 
     lvgl:
       ...
