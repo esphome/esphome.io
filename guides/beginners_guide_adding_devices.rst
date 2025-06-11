@@ -338,7 +338,7 @@ so that you don't have to search for it to change it.
 
   .. collapse:: Note About Curly Brackets
 
-      Note that usually curly brackets ``{$device_name}`` are usually used when calling the substitution,
+      Note that usually curly brackets ``${device_name}`` are usually used when calling the substitution,
       although sometimes you may see substitutions that do not use curly brackets like ``$device_name``.
       Both are acceptable but curly brackets are used to avoid errors so it's best to use curly brackets.
 
@@ -389,11 +389,11 @@ Code for one will not work on the other.
 
 It is also important to know which board you are working with, as many boards have different hardware configurations,
 especially differing in flash memory sizes.
-But in most cases, when dealing with ESP8266, it is ``esp8255`` or sometimes ``esp12e`` (which has only 1M of flash memory).
+But in most cases, when dealing with ESP8266, it is ``esp8285`` or sometimes ``esp12e`` (which has only 1M of flash memory).
 For ESP32, ``esp32dev`` will work for many boards - but not all.
 
-Under the hood, ESPHome uses PlatformIO to turn YAML into a program, so you need to use the official board name
-(lowercase, no spaces) from PlatformIO.
+Under the hood, ESPHome uses PlatformIO to turn YAML into a program so you should, whenever possible,
+use the official board name (lowercase, no spaces) from PlatformIO.
 
 For ESP8266 boards you can consult the
 `platformio/espressif8266 boards list <https://registry.platformio.org/platforms/platformio/espressif8266/boards>`__.
