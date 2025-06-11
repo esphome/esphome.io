@@ -46,6 +46,7 @@ Peripherals which directly support the operation of the microcontroller's proces
 
     PSRAM, components/psram, psram.svg
     Deep Sleep, components/deep_sleep, hotel.svg, dark-invert
+    ESP32-P4 LDO regulator, components/esp_ldo, ldo.svg, dark-invert
 
 ESPHome Automations
 -------------------
@@ -477,6 +478,7 @@ Miscellaneous
     Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg, Solar rooftop
     Integration, components/sensor/integration, sigma.svg, dark-invert
     Kuntze pool sensor, components/sensor/kuntze, kuntze.jpg
+    LC709203F, components/sensor/lc709203f, lc709203f.jpg, Battery Monitor
     LVGL widget, components/sensor/lvgl, lvgl_c_num.png
     M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
     MAX17043, components/sensor/max17043, max17043.jpg, Battery
@@ -791,6 +793,8 @@ Energy/Solar Management
 
 .. imgtable::
 
+    Growatt Solar, components/sensor/growatt_solar, growatt.jpg
+    Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg
     PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
     Power Supply, components/power_supply, power.svg, dark-invert
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
@@ -883,7 +887,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
-    Speaker, components/media_player/speaker, speaker.svg
+    Speaker, components/media_player/speaker, speaker.svg, dark-invert
 
 Microphone Components
 ---------------------
@@ -1099,6 +1103,7 @@ Cookbook
     Sonoff Fishpond Pump, cookbook/sonoff-fishpond-pump, cookbook-sonoff-fishpond-pump.jpg
     Arduino Port Extender, cookbook/arduino_port_extender, arduino_logo.svg
     EHMTX a matrix status/text display, cookbook/ehmtx, ehmtx.jpg
+    Pulse Catcher, cookbook/pulse-catcher, pulses.png
 
 Contributing
 ------------

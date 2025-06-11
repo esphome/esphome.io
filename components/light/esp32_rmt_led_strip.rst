@@ -14,9 +14,17 @@ This is a component using the ESP32 RMT peripheral to drive most addressable LED
         rgb_order: GRB
         pin: GPIOXX
         num_leds: 30
-        rmt_channel: 0
         chipset: ws2812
         name: "My Light"
+
+Only for Arduino platforms (and ESP-IDF <5 which was used until ESPHome 2025), the RMT channel must be defined.
+
+.. code-block:: yaml
+
+    light:
+      - platform: esp32_rmt_led_strip
+        rmt_channel: 0
+        ...
 
 Configuration variables
 -----------------------
@@ -60,8 +68,10 @@ IDF configuration variables:
 
       "ESP32", "512 symbols", "64 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
+      "ESP32-C5", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-P4", "384 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
       "ESP32-S3", "384 symbols", "48 symbols"
 
