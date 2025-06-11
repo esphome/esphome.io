@@ -287,7 +287,7 @@ You can register ESPHome for auto-completion by adding the following to your ~/.
 For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`__ documentation.
 
 Using logging tools supplied with ESPHome
------------------------------------
+-----------------------------------------
 There are two types of logging interface supplied with ESPHome. API and Serial AKA UART logging.
 For serial logging, There are many options including `ESPHome Web <https://web.esphome.io>`__ and ESPHome CLI's ``run``
 command.
