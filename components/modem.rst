@@ -100,6 +100,21 @@ Configuration variables:
     As the data channel is used for ``PPPoS``, It's not possible to create another data channel, for example for NMEA GNSS frames. 
     (For GNSS, a workaround is to use ``AT+CGNSSINFO``, that doesn't produce NMEA frames).
 
+.. note::
+
+    **Watchdog timeout**
+    
+    The modem component tries to locally increase the timeout for the watchdog, to avoid it to trigger during long operations.
+    If you have issues with the watchdog, you can try to globaly increase it with the following configuration:
+    
+    .. code-block:: yaml
+
+        esp32:
+          framework:
+            type: esp-idf
+            sdkconfig_options:
+              CONFIG_ESP_TASK_WDT_TIMEOUT_S: "20"  # 20 seconds for task watchdog              
+
 
 
 Configuration examples
