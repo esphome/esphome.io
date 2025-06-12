@@ -288,18 +288,18 @@ For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`
 
 Using logging tools supplied with ESPHome
 -----------------------------------------
-There are two types of logging interface supplied with ESPHome. API and Serial AKA UART logging.
-For serial logging, There are many options including `ESPHome Web <https://web.esphome.io>`__ and ESPHome CLI's ``run``
-command.
+There are two types of logging interfaces supplied with ESPHome: API and Serial (UART) logging.
+For serial logging, there are many options including `ESPHome Web <https://web.esphome.io>`__ and
+the ESPHome CLI's ``run`` command.
 
-For crude API based logging uses, one can use the ``aioesphomeapi-logs`` command bundled with ESPHome.
-Very useful when an ESP device is located in a remote/inaccessible location.
+For basic API based logging uses, one can use the ``aioesphomeapi-logs`` command bundled with ESPHome,
+Which is especially useful for ESP devices in a remote/inaccessible location.
 
 The syntax is as follows:
 
 .. code-block:: console
 
-    aioesphomeapi-logs <IPv4/v6 address>
+    aioesphomeapi-logs <IPv4 pr IPv6 address>
 
 Some working examples include:
 
@@ -309,9 +309,9 @@ Some working examples include:
     aioesphomeapi-logs fe80::cdef:0123:4567:89ab
     aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
 
-Press CTRL+C to exit from the logging view.
+Press ``CTRL+C`` to exit the logging view.
 
-If you have configured encryption for API, copy-paste the key from the yaml as follows:
+If you have configured encryption for API, provide the key from the yaml as follows:
 
 .. code-block:: console
 
@@ -326,7 +326,7 @@ The syntax is as follows:
 
     aioesphomeapi-discover
 
-The response lists info about currently available ESPHome devices'
+The response lists info about currently available ESPHome devices:
 
 ``Status |Name |Address |MAC |Version |Platform |Board``
 
