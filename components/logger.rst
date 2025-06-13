@@ -323,5 +323,6 @@ See Also
 
 - :doc:`/components/uart`
 - :doc:`/components/select/logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide including how to get backtraces
 - :apiref:`logger/logger.h`
 - :ghedit:`Edit`

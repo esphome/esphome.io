@@ -98,5 +98,6 @@ See Also
 
 - :ref:`sensor-filters`
 - :doc:`logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide including how to get backtraces from crashes
 - :apiref:`debug/debug_component.h`
 - :ghedit:`Edit`
