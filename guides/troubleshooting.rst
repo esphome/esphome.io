@@ -19,7 +19,7 @@ When your ESPHome device crashes, you can obtain a decoded backtrace to help ide
 Steps to Get a Backtrace
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-1. **Compile locally**: Build your configuration on your local machine rather than using OTA updates.
+1. **Compile locally**: Build your configuration on your local machine to ensure you have matching debug symbols.
 
    If you're using the ESPHome Device Builder web interface:
    
@@ -33,6 +33,10 @@ Steps to Get a Backtrace
 
        esphome compile your-device.yaml
        esphome upload your-device.yaml
+
+   .. note::
+
+       While you can use OTA for the upload, you'll need a USB connection anyway to capture the crash output in the next steps, so uploading via USB is usually more convenient.
 
 2. **Connect via USB**: Connect your device to your computer using a USB cable. The device must be connected via serial console (not over WiFi/OTA) to capture the crash output.
 
@@ -80,7 +84,6 @@ Common Issues
 
 - **No decoded output**: Ensure you compiled and uploaded the firmware locally before capturing the crash
 - **Cannot connect**: Make sure you're using a USB data cable (not just a charging cable) and the correct serial port
-- **Missing output**: Some crashes may cause immediate resets - try enabling the :doc:`debug component </components/debug>` for more information
 
 See Also
 --------
