@@ -71,6 +71,7 @@ Steps to Get a Backtrace
         (inlined by) timer_task at /Users/bdraco/.platformio/packages/framework-espidf/components/esp_timer/src/esp_timer.c:482
 
 The decoded backtrace shows:
+
 - The exact function names and source files where the crash occurred
 - Line numbers in the source code
 - The call stack leading to the crash
