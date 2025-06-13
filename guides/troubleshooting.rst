@@ -2,10 +2,14 @@ Troubleshooting
 ===============
 
 .. seo::
-    :description: Guide for troubleshooting ESPHome issues and debugging crashes.
+    :description: Guide for troubleshooting ESPHome issues, debugging crashes, getting backtraces, and analyzing stack traces from device failures.
     :image: bug-report.svg
 
-This guide covers common troubleshooting techniques for ESPHome, including how to debug crashes and obtain backtraces.
+This guide helps you diagnose and debug ESPHome device issues, particularly crashes and boot failures. Whether you're experiencing random resets, watchdog timeouts, or need to analyze stack traces, this guide provides step-by-step instructions for capturing and understanding crash data.
+
+.. note::
+
+    This guide assumes you have ESPHome installed and basic familiarity with the command line. For installation instructions, see :doc:`/guides/installing_esphome`.
 
 Getting a Backtrace from Crashes
 --------------------------------
@@ -57,9 +61,6 @@ Steps to Get a Backtrace
        [08:17:06]E (5906) task_wdt: CPU 1: IDLE1
        [08:17:06]E (5906) task_wdt: Aborting.
        [08:17:06]E (5906) task_wdt: Print CPU 0 (current core) backtrace
-       
-       
-       
        
        [08:17:06]Backtrace: 0x4013d30e:0x3ffbac20 0x4013d383:0x3ffbac40 0x4014b23e:0x3ffbac70
        WARNING Found stack trace! Trying to decode it
