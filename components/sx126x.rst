@@ -132,8 +132,12 @@ This :ref:`action <config-action>` runs the ``sx126x`` image calibration.
 
 .. code-block:: yaml
 
-    on_...:
-      - sx126x.run_image_cal
+    interval:
+      - interval: 10min
+        then:
+          - sx126x.set_mode_standby
+          - sx126x.run_image_cal
+          - sx126x.set_mode_rx
 
 ``sx126x.set_mode_tx`` **Action**
 
