@@ -5,21 +5,21 @@ OpenThread Component
     :description: Instructions for setting up OpenThread component.
     :image: openthread.png
 
-`Thread <https://www.threadgroup.org>`__ is a low-power mesh networking standard for IoT devices. The low-power aspect is important for battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications that don’t send a lot of data, like switches or motion sensors.
+`Thread <https://www.threadgroup.org>`__ is a low-power mesh networking standard for IoT devices. The low-power aspect is important for battery-powered smart home devices. It’s also low-bandwidth, making it ideal for applications that don’t send a lot of data, like switches or motion sensors.
 
-Thread uses the same RF technology as Zigbee (IEEE 802.15.4) but provides IP connectivity similar to Wi-Fi. Unlike Zigbee, Thread by itself does not allow controlling devices: It is just a communication protocol. To control the Thread devices, a higher-level protocol is required: Matter or Apple HomeKit or :doc:`ESPHome API </components/api>` .
+Thread uses the same RF technology as Zigbee (IEEE 802.15.4) but provides IP connectivity similar to Wi-Fi. Unlike Zigbee, Thread by itself does not specify how devices are controlled; it's just a communication protocol. To control devices which communicate over Thread, a higher-level protocol is required, such as Matter, Apple HomeKit, or :doc:`ESPHome API </components/api>`.
 
-The purpose of this component is to allow ESPHome nodes to communicate over a Thread network. It permits the state of sensors and binary sensors to be send to Home Assistant via 6LoWPAN packets. This OpenThread component relies on `OpenThread <https://openthread.io>`__ which is an open-source implementation of Thread.
+This component adds the ability to communicate over a Thread network. It supports sending the state of sensors and binary sensors to Home Assistant via 6LoWPAN packets. This OpenThread component relies on `OpenThread <https://openthread.io>`__ which is an open-source implementation of Thread.
 
 .. note::
 
-    You will need a `Thread border router <https://www.home-assistant.io/integrations/thread#about-thread-border-routers>`__ to connect your node to a Thread network.
+    You'll need a `Thread border router <https://www.home-assistant.io/integrations/thread#about-thread-border-routers>`__ to connect your node to a Thread network.
 
 
 Usage
 -----
-This component requires an ESP32 (ESP32-C6 or ESP32-H2 because they have Thread radio chip) and the use of
-ESP-IDF.
+
+This component requires an ESP32 with a Thread-capable radio, such as the ESP32-C6 or ESP32-H2, along with ESP-IDF.
 
 .. code-block:: yaml
 
@@ -35,7 +35,7 @@ ESP-IDF.
 Configuration examples
 ----------------------
 
-This example show how to configure Thread Dataset for a node.
+Here's an example ``openthread`` configuration:
 
 .. code-block:: yaml
 
@@ -65,7 +65,7 @@ Configuration variables:
 Configuration examples with dataset TLV
 ---------------------------------------
 
-It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
+It's also possible to supply the entire Operational Dataset as hex-encoded TLVs from the Thread information in Home Assistant. The individual values will be automatically extracted from it.
 
 .. code-block:: yaml
 
