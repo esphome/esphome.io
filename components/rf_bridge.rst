@@ -354,8 +354,8 @@ For *Portisch* or *Mightymos* firmware
 
 .. code-block:: yaml
 
-        - rf_bridge.send_raw: 
-            raw: 'AAFE55'
+    - rf_bridge.send_raw: 
+        raw: 'AAFE55'
 
 
 Getting started with Home Assistant
