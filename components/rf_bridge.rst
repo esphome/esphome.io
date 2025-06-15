@@ -165,7 +165,7 @@ Configuration options:
 ``rf_bridge.send_raw`` Action
 -----------------------------
 
-Send a raw command to the onboard radio chip. The OEM RF firmware is able to raw send only standard signals (usually short), for other signals (B0 transmit), flashing the RF chip with Portisch or Mightymos fimrware is needed.
+Send a raw command to the onboard radio chip. The OEM RF firmware is able to raw send only standard signals (usually short), for other signals (B0 transmit), flashing the RF chip with Portisch or Mightymos firmware is needed.
 
 
 This can be used to send raw RF codes in automations, mainly for protocols that are not supported.
@@ -345,7 +345,7 @@ Configuration options:
 
         id(rf_bridge).start_bucket_sniffing();
 
-.. _rf_bridge-restart radio controller:
+.. _rf_bridge-restart_radio_controller:
 
 Reset radio
 ***********
@@ -354,8 +354,7 @@ For *Portisch* or *Mightymos* firmware
 
 .. code-block:: yaml
 
-
-        - rf_bridge.send_raw: #in OEM firmware 
+        - rf_bridge.send_raw: 
             raw: 'AAFE55'
 
 
@@ -404,7 +403,7 @@ Home Assistant as events and will also setup a service so you can send codes wit
             - rf_bridge.learn
 
     rf_bridge:
-      on_code_received: #all fimrwares, can be reported as intiger, hex, or both, as desired. 
+      on_code_received: #all firmwares, can be reported as intiger, hex, or both, as desired. 
         then:
           - homeassistant.event:
               event: esphome.rf_code_received
