@@ -27,6 +27,7 @@ expected. This is automatically enabled by this component, but it may be disable
 Configuration variables:
 ------------------------
 
+-  **platform** (*Required*, string): The patform used to initiate OTA.
 -  **password** (*Optional*, string): The password to use for updates.
 -  **port** (*Optional*, int): The port to use for OTA updates. Defaults:
 
