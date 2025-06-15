@@ -46,7 +46,7 @@ Adjust ``GPIO12`` to match your set up of course. The output from the pulse coun
 
 .. note::
 
-    The ``pulse_meter`` sensor sends an update every time a pulse is detected. This can quickly lead to sub-second updates which can be a bit much for Home Assistant to handle. To avoid this, you can use the ``average_throttle`` filter to only send updates up to a desired interval:
+    The ``pulse_meter`` sensor sends an update every time a pulse is detected. This can quickly lead to sub-second updates which can be a bit much for Home Assistant to handle. To avoid this, you can use the ``throttle_average`` filter to only send updates up to a desired interval:
 
     .. code-block:: yaml
 
@@ -54,7 +54,7 @@ Adjust ``GPIO12`` to match your set up of course. The output from the pulse coun
           - platform: pulse_meter
             # ...
             filters:
-              - average_throttle: 10s
+              - throttle_average: 10s
               - filter_out: NaN
 
 .. note::
@@ -97,7 +97,7 @@ When the total sensor is configured, ``pulse_meter`` also reports the total numb
           accuracy_decimals: 3
           filters:
             - multiply: 0.0001  # (1/10000 pulses per kWh)
-            # - average_throttle: 10s
+            # - throttle_average: 10s
             # - filter_out: NaN
 
 (Re)Setting the total energy value
@@ -108,8 +108,8 @@ Using this action, you are able to reset/set the total pulse count. This can be 
 .. code-block:: yaml
 
     api:
-      services:
-        - service: set_total
+      actions:
+        - action: set_total
           variables:
             new_total: int
           then:
@@ -137,7 +137,7 @@ Additionally you can also calculate the total daily energy generated, for which 
         filters:
           # Multiplication factor from W to kW is 0.001
           - multiply: 0.001
-    
+
     time:
       - platform: homeassistant
         id: homeassistant_time

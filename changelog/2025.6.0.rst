@@ -1,0 +1,324 @@
+ESPHome 2025.6.0 - 18th June 2025
+=================================
+
+.. seo::
+    :description: Changelog for ESPHome 2025.6.0.
+    :image: /_static/changelog-2025.6.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    OpenThread, components/openthread, openthread.png
+    USB Host, components/usb_host, usb.svg, dark-invert
+    USB UART, components/usb_uart, usb.svg, dark-invert
+    CM1106, components/sensor/cm1106, cm1106.png
+    ES8388, components/audio_dac/es8388, es8388.svg
+    LC709203F, components/sensor/lc709203f, lc709203f.jpg
+    ESP32-P4 LDO regulator, components/esp_ldo, ldo.svg, dark-invert
+
+
+ESP-IDF 5.3.2
+-------------
+
+To be written...
+
+
+OpenThread
+----------
+
+To Be written...
+
+
+Python 3.10
+-----------
+
+From 2025.6.0, ESPHome now requires Python 3.10 or higher to run. This change is made to
+allow us to keep our codebase up to date with newer Python features
+and remove legacy code that was needed to support older Python versions.
+Python 3.9 reaches its `end of life in October 2025 <https://devguide.python.org/versions/>`__
+and so we really needed to make this change.
+
+If you are using the Home Assistant Add-on or the provided container images,
+you do not need to do anything as these already use Python 3.12.
+If you are running ESPHome directly on your own machine, you will need to ensure
+that Python 3.10 or higher is installed or running ``pip install -U esphome``
+will not install any version past 2025.5.2.
+
+
+Code optimizations
+------------------
+
+There are many code optimizations going on in this release and more to come.
+These optimizations focus on not only speed of the :doc:`Native API </components/api>`,
+but also on reducing the memory footprint, and also the flash size footprint where possible.
+
+
+BME68x via BSEC2
+----------------
+
+Bosch merged and released a community pull request into their libraries
+that allows consumers like ESPHome to use the BSEC library without Arduino.
+
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add CUBIC CM1106 Single Beam NDIR CO2 Sensor Module :esphomepr:`8293` by :ghuser:`andrewjswan` (new-integration)
+- [usb_uart] Implement USB Host mode UART :esphomepr:`8334` by :ghuser:`clydebarrow` (new-integration)
+- Add es8388 audio_dac :esphomepr:`8342` by :ghuser:`P4uLT` (new-integration)
+- [lc709203f] Add battery monitor :esphomepr:`8037` by :ghuser:`ilikecake` (new-integration)
+- [esp_ldo] Implement support for ESP32-P4 LDO :esphomepr:`9009` by :ghuser:`clydebarrow` (new-integration)
+- Add OpenThread support on ESP-IDF :esphomepr:`7506` by :ghuser:`mrene` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- update minimal python version to 3.10 :esphomepr:`8850` by :ghuser:`ximex` (breaking-change)
+- Add LWIP optimization options to reduce flash usage :esphomepr:`8946` by :ghuser:`bdraco` (breaking-change)
+- Replace API deferred queue with efficient message batching system :esphomepr:`9012` by :ghuser:`bdraco` (breaking-change)
+
+Notable Changes
+^^^^^^^^^^^^^^^
+
+- [bme68x_bsec2_i2c] Remove arduino dependency :esphomepr:`7815` by :ghuser:`luar123` (notable-change)
+
+All changes
+^^^^^^^^^^^
+
+.. collapse:: Show
+    :open:
+
+    - add actions to the MAX7219Component :esphomepr:`6462` by :ghuser:`nielsnl68`
+    - [api] Update api proto to add legacy value :esphomepr:`8802` by :ghuser:`jesserockz`
+    - [script] Use local import for zephyr :esphomepr:`8822` by :ghuser:`clydebarrow`
+    - Bump cryptography to 45.0.1 :esphomepr:`8826` by :ghuser:`bdraco`
+    - unify and add missing metric suffixes :esphomepr:`8816` by :ghuser:`ximex`
+    - Improve stability for a test that crashes intermittently in CI :esphomepr:`8699` by :ghuser:`dala318`
+    - update ruff version to ``0.11.10`` in ``.pre-commit-config.yaml`` :esphomepr:`8851` by :ghuser:`ximex`
+    - add python 3.13 to ci pipeline :esphomepr:`8855` by :ghuser:`ximex`
+    - [esp32] Use IDF 5.3.2 as default for IDF builds :esphomepr:`8464` by :ghuser:`swoboda1337`
+    - update minimal python version to 3.10 :esphomepr:`8850` by :ghuser:`ximex` (breaking-change)
+    - [esp32, logger] Add initial P4 support :esphomepr:`8439` by :ghuser:`swoboda1337`
+    - Add CUBIC CM1106 Single Beam NDIR CO2 Sensor Module :esphomepr:`8293` by :ghuser:`andrewjswan` (new-integration)
+    - Updates for development environment :esphomepr:`8801` by :ghuser:`jesserockz`
+    - [sync] Update and fix sync workflow :esphomepr:`8873` by :ghuser:`jesserockz`
+    - [lvgl] Try to allocate smaller buffer on failure :esphomepr:`8814` by :ghuser:`clydebarrow`
+    - [lvgl] Add content styling to tabview :esphomepr:`8823` by :ghuser:`clydebarrow`
+    - [usb_uart] Implement USB Host mode UART :esphomepr:`8334` by :ghuser:`clydebarrow` (new-integration)
+    - OTA: Close and clean up client when setsockopt fails :esphomepr:`8865` by :ghuser:`luuoaoa`
+    - Add const DEVICE_CLASS_WIND_DIRECTION :esphomepr:`8870` by :ghuser:`Pi57`
+    - Synchronise Device Classes from Home Assistant :esphomepr:`8874` by :ghuser:`esphomebot`
+    - Optimize API frame helper buffer management :esphomepr:`8805` by :ghuser:`bdraco`
+    - Use UINT16_MAX instead of hard coded 65535 in api :esphomepr:`8884` by :ghuser:`bdraco`
+    - feat: `wifi.configure` now emits error after reconnecting to old AP :esphomepr:`8653` by :ghuser:`Rapsssito`
+    - [modbus_controller] Add assumed_state to switch :esphomepr:`8880` by :ghuser:`gotnone`
+    - [const] Move ``CONF_RESET`` to const.py :esphomepr:`8889` by :ghuser:`jesserockz`
+    - [bme68x_bsec2_i2c] Remove arduino dependency :esphomepr:`7815` by :ghuser:`luar123` (notable-change)
+    - [i2s_audio] Add basic support for esp32-p4 :esphomepr:`8887` by :ghuser:`jesserockz`
+    - [esp32, logger, core] Add initial c5 support :esphomepr:`8895` by :ghuser:`swoboda1337`
+    - Resolve regex library warnings :esphomepr:`8890` by :ghuser:`emmanuel-ferdman`
+    - Add integration tests for host :esphomepr:`8912` by :ghuser:`bdraco`
+    - Fix flakey tests :esphomepr:`8914` by :ghuser:`bdraco`
+    - [sx1509] add support for keys :esphomepr:`8413` by :ghuser:`ssieb`
+    - Add es8388 audio_dac :esphomepr:`8342` by :ghuser:`P4uLT` (new-integration)
+    - [online_image] Last-Modified-Date and ETag response caching :esphomepr:`8782` by :ghuser:`candrews`
+    - [aht10] Various optimizations/clean-up :esphomepr:`8921` by :ghuser:`kbx81`
+    - [rtttl] Various optimizations/clean-up :esphomepr:`8923` by :ghuser:`kbx81`
+    - [ledc] Various optimizations/clean-up :esphomepr:`8922` by :ghuser:`kbx81`
+    - Streamline setup() logging (a, b) :esphomepr:`8924` by :ghuser:`kbx81`
+    - Streamline setup() logging (c, d) :esphomepr:`8925` by :ghuser:`kbx81`
+    - Streamline setup() logging (e, f) :esphomepr:`8926` by :ghuser:`kbx81`
+    - Streamline setup() logging (g, h, i) :esphomepr:`8927` by :ghuser:`kbx81`
+    - Streamline setup() logging (k, l, m) :esphomepr:`8928` by :ghuser:`kbx81`
+    - Streamline setup() logging (n, o, p, q, r) :esphomepr:`8929` by :ghuser:`kbx81`
+    - Streamline setup() logging (s, t, u, v, w, x, y, z) :esphomepr:`8930` by :ghuser:`kbx81`
+    - [speaker mediaplayer] Yaml config initial volume (on first boot) :esphomepr:`8898` by :ghuser:`mrtoy-me`
+    - [i2s_audio] Bump esphome/ESP32-audioI2S to 2.2.0 :esphomepr:`8920` by :ghuser:`jesserockz`
+    - Add more demo platforms :esphomepr:`8903` by :ghuser:`jesserockz`
+    - Migrate wifi component to use App.get_loop_component_start_time :esphomepr:`8931` by :ghuser:`bdraco`
+    - Optimize socket operations by checking readiness in the main loop :esphomepr:`8918` by :ghuser:`bdraco`
+    - Improve logging in integration tests when port does not open :esphomepr:`8932` by :ghuser:`bdraco`
+    - [pmwcs3] Optimize logging :esphomepr:`8936` by :ghuser:`kbx81`
+    - [tmp102] Remove `setup()`, optimize logging :esphomepr:`8937` by :ghuser:`kbx81`
+    - Optimize plaintext API header reading to reduce system calls :esphomepr:`8941` by :ghuser:`bdraco`
+    - [gcja5] Remove unused `setup()` method :esphomepr:`8935` by :ghuser:`kbx81`
+    - [alarm_control_panel] BYPASS_AUTO option for Template Alarm Control Panel sensors left open when armed :esphomepr:`8795` by :ghuser:`heythisisnate`
+    - Fix select() logging flood in very verbose mode :esphomepr:`8942` by :ghuser:`bdraco`
+    - particle matter improvements :esphomepr:`8846` by :ghuser:`ximex`
+    - Fix colors in update all :esphomepr:`8854` by :ghuser:`swoboda1337`
+    - Add flip X and Y on inkplate6 component :esphomepr:`7904` by :ghuser:`Leicas`
+    - [modbus] [modbus_controller] Fix server role read coil 0x1 crc :esphomepr:`8859` by :ghuser:`gotnone`
+    - [rp2040] Allow changing watchdog timeout :esphomepr:`8868` by :ghuser:`kuba2k2`
+    - [esp32] Regenerate boards from recommended platform version :esphomepr:`8938` by :ghuser:`jesserockz`
+    - Introduce "communication failed" log macro :esphomepr:`8939` by :ghuser:`kbx81`
+    - [demo] FIx some of the entities :esphomepr:`8943` by :ghuser:`jesserockz`
+    - Redundant Log Messages Cleanup :esphomepr:`8944` by :ghuser:`bdraco`
+    - [dht] Clean-up, shorten some log messages :esphomepr:`8949` by :ghuser:`kbx81`
+    - Have ESPHome's YAML dumper comply with its own yamllint rules :esphomepr:`8957` by :ghuser:`jpeletier`
+    - Allow Weikai to pass data_bit validation :esphomepr:`8917` by :ghuser:`timdaman`
+    - [max9611] Remove redundant "max9611" from log messages :esphomepr:`8967` by :ghuser:`kbx81`
+    - [nextion] Allocate NextionQueue in PSRAM (if available) :esphomepr:`8979` by :ghuser:`edwardtfn`
+    - [esp32c6] Add test base file and platformio env :esphomepr:`8973` by :ghuser:`jesserockz`
+    - Add missing icons and device classes to BME680 sensors :esphomepr:`8960` by :ghuser:`tronikos`
+    - [preferences] Shorten log messages :esphomepr:`8982` by :ghuser:`kbx81`
+    - [lc709203f] Add battery monitor :esphomepr:`8037` by :ghuser:`ilikecake` (new-integration)
+    - [mdns] Set up only after API is set up :esphomepr:`9000` by :ghuser:`jesserockz`
+    - [const] Move CONF_X and CONF_Y to const.py :esphomepr:`8999` by :ghuser:`Hannah-GBS`
+    - [core] Update defines.h esp-idf version :esphomepr:`8974` by :ghuser:`jesserockz`
+    - [spi] Remove redundant "SPI" from log messages :esphomepr:`8970` by :ghuser:`kbx81`
+    - [sdp3x] Remove redundant "sdp3x" from log messages :esphomepr:`8969` by :ghuser:`kbx81`
+    - [ethernet] Remove redundant "ethernet" from log messages :esphomepr:`8966` by :ghuser:`kbx81`
+    - [bmp3xx] Remove redundant "bmp3xx" from log messages :esphomepr:`8965` by :ghuser:`kbx81`
+    - Remove unnecessary ellipsis :esphomepr:`8964` by :ghuser:`kbx81`
+    - [wireguard] Remove redundant "wireguard" from log messages :esphomepr:`8963` by :ghuser:`kbx81`
+    - [dashboard] Fix logging colors :esphomepr:`8984` by :ghuser:`swoboda1337`
+    - [sps30] Shorten log messages :esphomepr:`8971` by :ghuser:`kbx81`
+    - [bmp581] Shorten some log messages :esphomepr:`8948` by :ghuser:`kbx81`
+    - [api] Streamline some log strings :esphomepr:`8962` by :ghuser:`kbx81`
+    - [mqtt] Remove redundant "mqtt" from log messages :esphomepr:`8968` by :ghuser:`kbx81`
+    - [ci, nrf52] make zephyr clang mandatory :esphomepr:`8992` by :ghuser:`tomaszduda23`
+    - [sdl] Add config for SDL window flags :esphomepr:`8998` by :ghuser:`Hannah-GBS`
+    - [nextion] Add optional `max_queue_size` limit to prevent queue overflows :esphomepr:`8976` by :ghuser:`edwardtfn`
+    - Move CONF_REQUEST_HEADERS to const.py :esphomepr:`9002` by :ghuser:`numo68`
+    - [api] Fix build error in IDF 5.5 :esphomepr:`9007` by :ghuser:`swoboda1337`
+    - [list-components.py] Only add platforms that are actually platforms. :esphomepr:`9005` by :ghuser:`clydebarrow`
+    - [qwiic_pir] Clean-up, shorten some log messages :esphomepr:`8951` by :ghuser:`kbx81`
+    - [esp32] Add config vars for compiler :esphomepr:`9023` by :ghuser:`kbx81`
+    - Implement proper API connection teardown before deep sleep/reboot :esphomepr:`9008` by :ghuser:`bdraco`
+    - [config] Clean build on ESP-IDF when component/platform combos change :esphomepr:`9028` by :ghuser:`clydebarrow`
+    - Disable ruff rule UP038 :esphomepr:`9029` by :ghuser:`bdraco`
+    - Update webserver local assets to 20250608-225410 :esphomepr:`9030` by :ghuser:`esphomebot`
+    - Reduce ESP_LOGCONFIG calls :esphomepr:`9026` by :ghuser:`bdraco`
+    - Force socket ready when high frequency looping :esphomepr:`9032` by :ghuser:`juanboro`
+    - [psram] Add P4 support :esphomepr:`8545` by :ghuser:`clydebarrow`
+    - [nextion] Use safe restart to properly handle globals and restart logging :esphomepr:`9010` by :ghuser:`edwardtfn`
+    - [max7219digit, servo, tsl2591] ESP_LOGCONFIG call reduction (Extend #9026) :esphomepr:`9033` by :ghuser:`kbx81`
+    - [tsl2561, tsl2591] Shorten log messages :esphomepr:`9034` by :ghuser:`kbx81`
+    - Change RP2040 PIO SK6812 timings :esphomepr:`9020` by :ghuser:`pseud0sphere`
+    - Add LWIP optimization options to reduce flash usage :esphomepr:`8946` by :ghuser:`bdraco` (breaking-change)
+    - [globals] Prevent redundant oversized string checks in loop :esphomepr:`9001` by :ghuser:`edwardtfn`
+    - [nextion] Optimize log messages to reduce memory usage :esphomepr:`9039` by :ghuser:`edwardtfn`
+    - [nextion] Add configurable limit for commands processed per loop :esphomepr:`8972` by :ghuser:`edwardtfn`
+    - [lvgl] Fix templated argument to `lvgl.is_idle` :esphomepr:`9014` by :ghuser:`clydebarrow`
+    - Replace API deferred queue with efficient message batching system :esphomepr:`9012` by :ghuser:`bdraco` (breaking-change)
+    - Reduce Bluetooth overhead by disabling unused logging categories :esphomepr:`8945` by :ghuser:`bdraco`
+    - [inkplate] Remove arduino dependency :esphomepr:`9031` by :ghuser:`jesserockz`
+    - [core] Include esp_mac.h on Arduino too :esphomepr:`9040` by :ghuser:`swoboda1337`
+    - Use a `define` for log message constants :esphomepr:`8952` by :ghuser:`kbx81`
+    - [esp_ldo] Implement support for ESP32-P4 LDO :esphomepr:`9009` by :ghuser:`clydebarrow` (new-integration)
+    - Fix: Seeed Studio MR60FDA2 threshold height could not be set :esphomepr:`9011` by :ghuser:`limengdu`
+    - [esp32] Use release zip from pioarduino/platform-espressif32 instead of git tag :esphomepr:`8975` by :ghuser:`jesserockz`
+    - [esp32_rmt] Add variant validation for use_dma :esphomepr:`8897` by :ghuser:`swoboda1337`
+    - Ensure components only powerdown after teardown :esphomepr:`9044` by :ghuser:`bdraco`
+    - use ``encode_uintXX`` :esphomepr:`8847` by :ghuser:`ximex`
+    - Add OpenThread support on ESP-IDF :esphomepr:`7506` by :ghuser:`mrene` (new-integration)
+    - [shtcx] Shorten log messages :esphomepr:`9046` by :ghuser:`kbx81`
+    - [application] Fix build error on some IDF versions :esphomepr:`9045` by :ghuser:`kbx81`
+    - [spi] Restrict octal spi to S3/S2/P4 :esphomepr:`9041` by :ghuser:`clydebarrow`
+    - Reserve memory for component and platform vectors :esphomepr:`9042` by :ghuser:`bdraco`
+    - Improve shutdown reliability when tx buffer is full :esphomepr:`9043` by :ghuser:`bdraco`
+    - Add support for custom request headers in online_image component :esphomepr:`8985` by :ghuser:`numo68`
+    - Openthread code updates :esphomepr:`9047` by :ghuser:`jesserockz`
+    - [sgp4x] Shorten log messages, various clean-up :esphomepr:`9048` by :ghuser:`kbx81`
+
+Dependency Changes
+^^^^^^^^^^^^^^^^^^
+
+.. collapse:: Show
+
+    - Bump aioesphomeapi from 30.2.0 to 31.0.0 :esphomepr:`8779` by :ghuser:`dependabot[bot]`
+    - Bump cairosvg from 2.7.1 to 2.8.0 :esphomepr:`8780` by :ghuser:`dependabot[bot]`
+    - Bump cairosvg from 2.8.0 to 2.8.1 :esphomepr:`8799` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 31.0.0 to 31.0.1 :esphomepr:`8809` by :ghuser:`dependabot[bot]`
+    - Bump setuptools from 80.4.0 to 80.7.1 :esphomepr:`8808` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.9 to 0.11.10 :esphomepr:`8818` by :ghuser:`dependabot[bot]`
+    - Bump cairosvg from 2.8.1 to 2.8.2 :esphomepr:`8817` by :ghuser:`dependabot[bot]`
+    - Bump codecov/codecov-action from 5.4.2 to 5.4.3 :esphomepr:`8820` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 31.0.1 to 31.1.0 :esphomepr:`8849` by :ghuser:`dependabot[bot]`
+    - Bump setuptools from 80.7.1 to 80.8.0 :esphomepr:`8858` by :ghuser:`dependabot[bot]`
+    - Bump tornado from 6.4.2 to 6.5.1 :esphomepr:`8882` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.10 to 0.11.11 :esphomepr:`8883` by :ghuser:`dependabot[bot]`
+    - Bump pyupgrade from 3.19.1 to 3.20.0 :esphomepr:`8891` by :ghuser:`dependabot[bot]`
+    - Bump actions/checkout from 4.1.7 to 4.2.2 :esphomepr:`8904` by :ghuser:`jesserockz`
+    - Bump ruamel-yaml from 0.18.10 to 0.18.11 :esphomepr:`8910` by :ghuser:`dependabot[bot]`
+    - Bump pytest-mock from 3.14.0 to 3.14.1 :esphomepr:`8909` by :ghuser:`dependabot[bot]`
+    - Bump setuptools from 80.8.0 to 80.9.0 :esphomepr:`8915` by :ghuser:`dependabot[bot]`
+    - Bump pytest-xdist from 3.6.1 to 3.7.0 :esphomepr:`8916` by :ghuser:`dependabot[bot]`
+    - Bump docker/build-push-action from 6.17.0 to 6.18.0 in /.github/actions/build-image :esphomepr:`8919` by :ghuser:`dependabot[bot]`
+    - Bump pytest from 8.3.5 to 8.4.0 :esphomepr:`8993` by :ghuser:`dependabot[bot]`
+    - Bump ruamel-yaml from 0.18.11 to 0.18.12 :esphomepr:`8977` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 31.1.0 to 32.0.0 :esphomepr:`9004` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.11.11 to 0.11.13 :esphomepr:`9017` by :ghuser:`dependabot[bot]`
+    - Bump ruamel-yaml from 0.18.12 to 0.18.13 :esphomepr:`9018` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 32.0.0 to 32.1.0 :esphomepr:`9024` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 32.1.0 to 32.2.0 :esphomepr:`9025` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 32.2.0 to 32.2.1 :esphomepr:`9038` by :ghuser:`dependabot[bot]`
+    - Bump ruamel-yaml from 0.18.13 to 0.18.14 :esphomepr:`9037` by :ghuser:`dependabot[bot]`
+
+
+Past Changelogs
+---------------
+
+.. collapse:: Show
+
+    - :doc:`2025.5.0`
+    - :doc:`2025.4.0`
+    - :doc:`2025.3.0`
+    - :doc:`2025.2.0`
+    - :doc:`2024.12.0`
+    - :doc:`2024.11.0`
+    - :doc:`2024.10.0`
+    - :doc:`2024.9.0`
+    - :doc:`2024.8.0`
+    - :doc:`2024.7.0`
+    - :doc:`2024.6.0`
+    - :doc:`2024.5.0`
+    - :doc:`2024.4.0`
+    - :doc:`2024.3.0`
+    - :doc:`2024.2.0`
+    - :doc:`2023.12.0`
+    - :doc:`2023.11.0`
+    - :doc:`2023.10.0`
+    - :doc:`2023.9.0`
+    - :doc:`2023.8.0`
+    - :doc:`2023.7.0`
+    - :doc:`2023.6.0`
+    - :doc:`2023.5.0`
+    - :doc:`2023.4.0`
+    - :doc:`2023.3.0`
+    - :doc:`2023.2.0`
+    - :doc:`2022.12.0`
+    - :doc:`2022.11.0`
+    - :doc:`2022.10.0`
+    - :doc:`2022.9.0`
+    - :doc:`2022.8.0`
+    - :doc:`2022.6.0`
+    - :doc:`2022.5.0`
+    - :doc:`2022.4.0`
+    - :doc:`2022.3.0`
+    - :doc:`2022.2.0`
+    - :doc:`2022.1.0`
+    - :doc:`2021.12.0`
+    - :doc:`2021.11.0`
+    - :doc:`2021.10.0`
+    - :doc:`2021.9.0`
+    - :doc:`2021.8.0`
+    - :doc:`v1.20.0`
+    - :doc:`v1.19.0`
+    - :doc:`v1.18.0`
+    - :doc:`v1.17.0`
+    - :doc:`v1.16.0`
+    - :doc:`v1.15.0`
+    - :doc:`v1.14.0`
+    - :doc:`v1.13.0`
+    - :doc:`v1.12.0`
+    - :doc:`v1.11.0`
+    - :doc:`v1.10.0`
+    - :doc:`v1.9.0`
+    - :doc:`v1.8.0`
+    - :doc:`v1.7.0`

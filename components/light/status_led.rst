@@ -34,12 +34,8 @@ When the device is in OK state, the LED will be restored to the state of the ``b
 Configuration variables:
 ------------------------
 
-- **name** (*Optional*, string): The name of the light.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The GPIO pin to operate the LED on.
 - **output** (*Optional*, :ref:`config-id`): The id of the binary :ref:`output` to use for this light.
-- **effects** (*Optional*, list): A list of :ref:`light effects <light-effects>` to use for this light, though binary lights
-  only support very few of them.
 - All other options from :ref:`Light <config-light>`.
 
 .. note::

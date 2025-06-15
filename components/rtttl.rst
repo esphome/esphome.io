@@ -174,8 +174,8 @@ Sample code
         - logger.log: 'Song ended!'
 
     api:
-      services:
-        - service: play_rtttl
+      actions:
+        - action: rtttl_play
           variables:
             song_str: string
           then:

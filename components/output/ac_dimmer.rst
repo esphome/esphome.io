@@ -43,7 +43,7 @@ There are several already made boards which are compatible with this component, 
     light:
       - platform: monochromatic
         output: dimmer1
-        name: Dimmerized Light
+        name: Dimmable Light
 
 Configuration variables:
 ------------------------
@@ -52,7 +52,9 @@ Configuration variables:
   Mosfet.
 - **zero_cross_pin** (**Required**, :ref:`config-pin`): The pin used to sense the AC
   Zero cross event, you can have several dimmers controlled with the same zero cross
-  detector, in such case duplicate the ``zero_cross_pin`` config on each output.
+  detector, in such case duplicate the ``zero_cross_pin`` config on each output. When
+  doing so, ``allow_other_uses`` pin schema option **must** be set to ``true`` to
+  avoid configuration errors due to pin reuse.
 - **method** (*Optional*): Set the method for dimming, can be:
 
   - ``leading pulse``: (default) a short pulse to trigger a triac.

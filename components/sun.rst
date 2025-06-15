@@ -81,8 +81,6 @@ Configuration variables:
 
 - **type** (**Required**, string): The type of value to track. One of ``elevation`` and
   ``azimuth``.
-- **name** (**Required**, string): The name of the sensor.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 ``sun`` Text Sensor
@@ -109,13 +107,10 @@ Configuration variables:
 
 - **type** (**Required**, string): The type of value to track. One of ``sunrise`` and
   ``sunset``.
-- **name** (**Required**, string): The name of the text sensor.
 - **elevation** (*Optional*, float): The elevation to calculate the next sunrise/sunset event
   for. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
 - **format** (*Optional*, string): The format to format the time value with, see :ref:`strftime`
   for more information. Defaults to ``%X``.
-
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Text Sensor <config-text_sensor>`.
 
 .. _sun-is_above_below_horizon-condition:

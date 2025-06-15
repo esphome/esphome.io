@@ -5,14 +5,17 @@ Modbus Controller
     :description: Instructions for setting up the Modbus Controller component.
     :image: modbus.png
 
-The ``modbus_controller`` component creates a RS485 connection to control a Modbus server (slave) device, letting your ESPHome node to act as a Modbus client (master).
-You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+
+The ``modbus_controller`` component creates a RS485 connection to either:
+
+- control a Modbus server (slave) device, letting your ESPHome node to act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+- let your ESPHome node act as a Modbus server, allowing a ModBUS client to read data (like sensor values) from your ESPHome node.
+
+To choose the role, set the ``role`` attribute of the :doc:`/components/modbus` upon which this ``modbus_controller`` component relies. ``client`` is the default.
 
 .. figure:: /images/modbus.png
     :align: center
     :width: 25%
-
-The ``modbus_controller`` component relies on the :doc:`/components/modbus`.
 
 
 
@@ -51,7 +54,9 @@ Configuration variables:
 
 - **modbus_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the ``modbus`` hub.
 
-- **address** (**Required**, :ref:`config-id`): The Modbus address of the slave device
+- **address** (**Required**, :ref:`config-id`): The Modbus address of the slave device.
+
+- **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to ``false``.
 
 - **command_throttle** (*Optional*, :ref:`config-time`): minimum time in between 2 requests to the device. Default is ``0ms``.
   Some Modbus slave devices limit the rate of requests from the master, so this allows the interval between requests to be altered.
@@ -59,13 +64,46 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
+.. _modbus_controller-offline_skip_updates:
+
 - **offline_skip_updates** (*Optional*, integer): When a slave doesn't respond to a command, it is
   marked as offline, you can specify how many updates will be skipped while it is offline. If using a bus with multiple
   slaves, this avoids waiting for timeouts allowing to read other slaves in the same bus. When the slave
   responds to a command, it'll be marked online again.
 
-Example
--------
+- **max_cmd_retries** (*Optional*, integer): How many times a command will be retried if no response is received. It doesn't include the initial transmition. Defaults to 4.
+
+- **server_registers** (*Optional*): A list of registers that are responded to when acting as a server.
+  - **address** (**Required**, integer): start address of the first register in a range
+  - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (MSB first)
+
+      - ``U_WORD``: unsigned 16 bit integer from 1 register = 16bit
+      - ``S_WORD``: signed 16 bit integer from 1 register = 16bit
+      - ``U_DWORD``: unsigned 32 bit integer from 2 registers = 32bit
+      - ``S_DWORD``: signed 32 bit integer from 2 registers = 32bit
+      - ``U_DWORD_R``: unsigned 32 bit integer from 2 registers low word first
+      - ``S_DWORD_R``: signed 32 bit integer from 2 registers low word first
+      - ``U_QWORD``: unsigned 64 bit integer from 4 registers = 64bit
+      - ``S_QWORD``: signed 64 bit integer from 4 registers = 64bit
+      - ``U_QWORD_R``: unsigned 64 bit integer from 4 registers low word first
+      - ``S_QWORD_R``: signed 64 bit integer from 4 registers low word first
+      - ``FP32``: 32 bit IEEE 754 floating point from 2 registers
+      - ``FP32_R``: 32 bit IEEE 754 floating point - same as FP32 but low word first
+
+    Defaults to ``U_WORD``.
+
+  - **read_lambda** (**Required**, :ref:`lambda <config-lambda>`):
+    Lambda that returns the value of this register.
+
+Automations:
+
+- **on_command_sent** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus command has been sent. See :ref:`modbus_controller-on_command_sent`
+- **on_online** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes online. See :ref:`modbus_controller-on_online`
+- **on_offline** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes offline. See :ref:`modbus_controller-on_offline`
+
+Example Client
+--------------
+
 The following code creates a ``modbus_controller`` hub talking to a ModBUS device at address ``1`` with ``115200`` bps
 
 ModBUS sensors can be directly defined (inline) under the ``modbus_controller`` hub or as standalone components
@@ -117,6 +155,56 @@ Technically there is no difference between the "inline" and the standard definit
       response_size: 6
 
 The configuration example above creates a ``modbus_controller`` hub talking to a Modbus device at address ``1`` with a baudrate of ``115200`` bps, implementing a sensor, a switch and a text sensor.
+
+Example Server
+--------------
+
+The following code allows a ModBUS client to read a sensor value from your ESPHome node, that the node itself read from a ModBUS server.
+
+.. code-block:: yaml
+
+    uart:
+      - id: uart_modbus_client
+        tx_pin: 32
+        rx_pin: 34
+      - id: uart_modbus_server
+        tx_pin: 25
+        rx_pin: 35
+
+    modbus:
+      - uart_id: uart_modbus_client
+        id: modbus_client
+      - uart_id: uart_modbus_server
+        id: modbus_server
+        role: server
+
+    modbus_controller:
+      - id: modbus_evse
+        modbus_id: modbus_client
+        address: 0x2
+        update_interval: 5s
+      - modbus_id: modbus_server
+        address: 0x4
+        server_registers:
+          - address: 0x0002
+            value_type: S_DWORD_R
+            read_lambda: |-
+              return id(evse_voltage_l1).state;
+
+    sensor:
+      - platform: modbus_controller
+        id: evse_voltage_l1
+        modbus_controller_id: modbus_evse
+        name: "EVSE voltage L1"
+        register_type: holding
+        address: 0x0000
+        device_class: voltage
+        value_type: S_DWORD_R
+        accuracy_decimals: 1
+        unit_of_measurement: V
+        filters:
+          - multiply: 0.1
+
 
 Check out the various Modbus components available at the bottom of the document in the :ref:`modbusseealso` section. They can be directly defined *(inline)* under the ``modbus_controller`` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
 
@@ -310,8 +398,8 @@ An example is an SDM meter, with interesting data in register addresses 0, 2, 4 
 
 The configuration above will generate *one* modbus command *read multiple registers from 0 to 6*.
 
-Maybe you don’t care about the data in register addresses 2 and 4, which are voltage values for Phase 2 and Phase 3 (or you have a SDM-120).
-Of course, you can delete the sensors your don’t care about, but then you'd have a gap in the addresses. If you remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*. To avoid generating multiple commands and thus reduce activity on the bus, ``register_count`` can be used to fill the gaps:
+Maybe you don't care about the data in register addresses 2 and 4, which are voltage values for Phase 2 and Phase 3 (or you have a SDM-120).
+Of course, you can delete the sensors your don't care about, but then you'd have a gap in the addresses. If you remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*. To avoid generating multiple commands and thus reduce activity on the bus, ``register_count`` can be used to fill the gaps:
 
 .. code-block:: yaml
 
@@ -643,6 +731,62 @@ The response is mapped to the sensor based on ``register_count`` and offset in b
               - multiply: 0.01
 
 .. _modbusseealso:
+
+.. _modbus_controller-automations:
+
+Automation
+----------
+
+.. _modbus_controller-on_command_sent:
+
+``on_command_sent``
+*******************
+
+This automation will be triggered when a command has been sent by the `modbus_controller`. In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_command_sent:
+          then:
+            - number.increment: modbus_commands
+
+.. _modbus_controller-on_online:
+
+``on_online``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``online``, after been ``offline``. In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_online:
+          then:
+            - logger.log: "Controller back online!"
+
+.. _modbus_controller-on_offline:
+
+``on_offline``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``offline`` (See :ref:`offline_skip_updates <modbus_controller-offline_skip_updates>`). In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_offline:
+          then:
+            - logger.log: "Controller goes offline!"
 
 See Also
 --------

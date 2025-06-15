@@ -3,9 +3,9 @@ Web Server API
 
 .. seo::
     :description: Information on Web Server APIs, including Event Source APIs and REST APIs.
-    :image: logo-text.svg
+    :image: ../images/logo-text.svg
 
-Since version 1.3, ESPHome includes a built-in web server that can be used to view states
+ESPHome includes a built-in web server that can be used to view states
 and send commands. In addition to the web-frontend available under the root index of the
 web server, there's also two other features the web server currently offers: A real time event
 source and REST API.
@@ -75,6 +75,8 @@ to ``VERY_VERBOSE`` and check the ``object_id:`` in the logs.
 By creating a simple GET request for a URL of the form ``/<domain>/<id>`` you will get a JSON payload
 describing the current state of the component. This payload is equivalent to the ones sent by the
 event source API.
+You can get verbose information about the component by adding the parameter ``detail=all``
+An example would be ``/select/my_select?detail=all``
 
 To actually *control* the state of a component you need to send a POST request with a ``method`` like
 ``turn_on``. For example, to turn on a light, you would send a POST request to
@@ -319,6 +321,33 @@ method is ``set``. The following parameter can be used:
    minimum and maximum range of the number otherwise it will be ignored.
 
 For example POST ``/number/desired_delay/set?value=24`` will set the number to 24.
+
+Alarm Control Panel
+*******************
+
+The current state of an Alarm Control Panel can be retrieved by a GET request to ``alarm_control_panel/my_alarm``
+which may yield:
+
+.. code-block:: json
+
+    {
+      "id": "alarm-control-panel-my_alarm",
+      "state": "ARMED_AWAY",
+      "value": 2
+    }
+
+-  **id**: The ID of the alarm control panel, prefixed with ``alarm-control-panel-``.
+-  **state**: ``DISARMED``, ``ARMED_HOME``, ``ARMED_AWAY``, ``ARMED_NIGHT``, ``ARMED_VACATION``, 
+   ``ARMED_CUSTOM_BYPASS``, ``PENDING``, ``ARMING``, ``DISARMING``, or ``TRIGGERED``.
+-  **value**: Current state as number. See the ``AlarmControlPanelState`` enum.
+
+A POST request allows arming and disarming the alarm control panel. Available methods are ``arm_away``, ``arm_home``,
+``arm_night``, ``arm_vacation`` and ``disarm``. The ``code`` parameter may be given if the alarm control panel requires
+a code for disarming or arming. For example, a POST to ``alarm_control_panel/my_alarm/disarm?code=1234`` would attempt to
+disarm the alarm control panel named "My Alarm" using the code 1234.
+
+A valid POST request will always return a 200 OK status response. This does not indicate that the alarm was armed or
+disarmed successfully. It only indicates that the command was received and processed by the web server.
 
 See Also
 --------
