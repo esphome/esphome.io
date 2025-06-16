@@ -43,10 +43,6 @@ ESP heap memory (free space, maximum free block size and fragmentation level) an
         cpu_frequency:
           name: "CPU Frequency"
 
-    # Logger must be at least debug (default)
-    logger:
-      level: debug
-
 Text Sensor
 ------------
 Configuration variables:
