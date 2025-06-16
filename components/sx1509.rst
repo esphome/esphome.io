@@ -53,19 +53,28 @@ up to 8x8 matrix (i.e. 64 keys).
 
 - **keypad** (*Optional*): Add this to enable the keypad.
 
-  - **key_rows** (**Required**, int): The number of keypad rows to use. This enables any number of the first 7 pins.
-    So a value of 3 enables pins 0,1,2 to be used as the rows for the keypad matrix. This value must be between 1 and 8.
-  - **key_columns** (**Required**, int): The number of keypad columns to use. This enables any number of the last 7 pins.
+  - **key_rows** (**Required**, int): The number of keypad rows to use. This enables any number of the first 8 pins.
+    So a value of 3 enables pins 0,1,2 to be used as the rows for the keypad matrix. This value must be between 2 and 8.
+  - **key_columns** (**Required**, int): The number of keypad columns to use. This enables any number of the last 8 pins.
     So a value of 4 enables pins 8,9,10,11 to be used as the columns for the keypad matrix. This value must be between 1 and 8.
   - **sleep_time** (*Optional*, int): No key press within this time will set keypad engine to sleep.
   - **scan_time** (*Optional*, int): Scan time per row (must be set above debounce time).
   - **debounce_time** (*Optional*, int): The debounce time is common to all IOs.
+  - **keys** (*Optional*, string): The keys present on the matrix, from top left to bottom right,
+    row by row. Required for ``key_collector``.
+  - **on_key** (*Optional*, :ref:`Automation <automation>`): An automation to perform
+    when a key has been pressed. The key is in a variable called ``x``.
 
 .. figure:: images/sx1509-keypad.jpg
     :align: center
     :width: 80.0%
 
     SX1509 pins for keypad setup (image from the datasheet).
+
+.. note::
+
+    Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
+    the :ref:`Key Collector <key_collector>` component.
 
 Attention should be paid to the capabilities of the I/O pins.
 
@@ -193,8 +202,6 @@ The outputs can in turn be used to add PWM-enabled lights like the monochromatic
   ``INPUT_PULLUP``, ``OUTPUT``, or ``OUTPUT_OPEN_DRAIN``.
 
 
-And naturally you may use all automation functions with these SX1509 binary_sensors, switches and output (lights).
-
 See Also
 --------
 
@@ -202,5 +209,6 @@ See Also
 - :doc:`switch/gpio`
 - :doc:`binary_sensor/gpio`
 - :doc:`/components/light/monochromatic`
+- :doc:`/components/key_collector`
 - :apiref:`sx1509/sx1509.h`
 - :ghedit:`Edit`
