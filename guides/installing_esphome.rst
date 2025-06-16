@@ -22,7 +22,12 @@ In the terminal that comes up, check that Python is installed:
 
 .. code-block:: console
 
-    $ python --version
+    python --version
+
+It should show something like:
+
+.. code-block:: console
+
     Python 3.10.1
 
 Looks good? You can go ahead and install ESPHome:
@@ -33,11 +38,16 @@ Looks good? You can go ahead and install ESPHome:
     pip3 install esphome
 
 And you should be good to go! You can test that things are properly installed
-with the following:
+with:
 
 .. code-block:: console
 
-    $ esphome version
+    esphome version
+
+It should show something like:
+
+.. code-block:: console
+
     Version: 2025.5.2
 
 
@@ -68,7 +78,12 @@ Verify the installation:
 
 .. code-block:: console
 
-    $ esphome version
+    esphome version
+
+It should show something like:
+
+.. code-block:: console
+
     Version: 2025.5.2
 
 
@@ -115,7 +130,12 @@ least version 3.10:
 
 .. code-block:: console
 
-    $ python3 --version
+    python3 --version
+
+It should show something like:
+
+.. code-block:: console
+
     Python 3.10.1
 
 Looks good? Now create a virtual environment to contain ESPHome and it's dependencies.
@@ -150,7 +170,12 @@ At this point, you should be able to confirm that ESPHome has been successfully 
 
 .. code-block:: console
 
-    $ esphome version
+    esphome version
+
+It should show something like:
+
+.. code-block:: console
+
     Version: 2025.5.2
 
 If you get an error like "Command not found", you need to add the binary to
