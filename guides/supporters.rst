@@ -516,6 +516,7 @@ Contributors
 - `Damian Gołda (@dgolda) <https://github.com/dgolda>`__
 - `dgtal1 (@dgtal1) <https://github.com/dgtal1>`__
 - `Dan Halbert (@dhalbert) <https://github.com/dhalbert>`__
+- `dhewg (@dhewg) <https://github.com/dhewg>`__
 - `Dustin L. Howett (@DHowett) <https://github.com/DHowett>`__
 - `Lucio Tarantino (@dianlight) <https://github.com/dianlight>`__
 - `diesel437 (@diesel437) <https://github.com/diesel437>`__
@@ -2159,4 +2160,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated June 16, 2025.*
+*This page was last updated June 18, 2025.*
