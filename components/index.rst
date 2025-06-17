@@ -454,7 +454,6 @@ Magnetic
 .. imgtable::
 
     AS5600, components/sensor/as5600, as5600.jpg, 12-Bit Magnetic Position Sensor
-    ESP32 Hall Sensor, components/sensor/esp32_hall, magnet.svg, ESP internal, dark-invert
     HMC5883L, components/sensor/hmc5883l, hmc5883l.jpg, 3-Axis magnetometer
     MLX90393, components/sensor/mlx90393, mlx90393.jpg, 3-Axis magnetometer
     MMC5603, components/sensor/mmc5603, mmc5603.jpg, 3-Axis magnetometer
