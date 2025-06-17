@@ -166,7 +166,7 @@ There are several ways of doing this. See below examples to see how you can spec
 
 .. note::
 
-    For config reference, see file: https://github.com/esphome/esphome/blob/dev/esphome/config_validation.py
+    For config reference, `See File <https://github.com/esphome/esphome/blob/dev/esphome/config_validation.py>`_
 
 See Also
 --------
@@ -175,3 +175,4 @@ See Also
 - :doc:`getting_started_command_line`
 - :doc:`faq`
 - :ghedit:`Edit`
+- `Reference file for Config validation <https://github.com/esphome/esphome/blob/dev/esphome/config_validation.py>`_
