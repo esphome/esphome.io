@@ -62,7 +62,8 @@ The GPIO binary sensor supports two modes of operation:
 
 - Uses hardware interrupts to detect pin state changes
 - Extremely efficient - up to 98% lower CPU usage
-- Responds immediately to state changes
+- Updates are processed once per loop cycle (same as polling mode)
+- Transitions shorter than the loop interval are ignored for backwards compatibility
 - Only processes when the pin actually changes state
 - Recommended for most use cases
 
@@ -70,7 +71,7 @@ The GPIO binary sensor supports two modes of operation:
 
 - Continuously reads the pin state in the main loop
 - Higher CPU usage but simpler implementation
-- May miss very short pulses
+- Transitions shorter than the loop interval are ignored
 - Use only when interrupts are not supported or for compatibility
 
 .. note::
@@ -120,11 +121,6 @@ Debouncing Values
 Some binary sensors are a bit unstable and quickly transition between the ON and OFF state while
 they're pressed. To fix this and debounce the signal, use the :ref:`binary sensor filters <binary_sensor-filters>`.
 
-.. note::
-
-    When using interrupt mode, proper debouncing becomes even more important as every 
-    state change will trigger an interrupt. Without debouncing, a noisy switch could 
-    generate hundreds of interrupts per second.
 
 .. code-block:: yaml
 
