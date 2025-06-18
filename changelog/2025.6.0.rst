@@ -167,17 +167,14 @@ Breaking Changes
 - update minimal python version to 3.10 :esphomepr:`8850` by :ghuser:`ximex` (breaking-change)
 - Add LWIP optimization options to reduce flash usage :esphomepr:`8946` by :ghuser:`bdraco` (breaking-change)
 - Replace API deferred queue with efficient message batching system :esphomepr:`9012` by :ghuser:`bdraco` (breaking-change)
-
-Notable Changes
-^^^^^^^^^^^^^^^
-
-- [bme68x_bsec2_i2c] Remove arduino dependency :esphomepr:`7815` by :ghuser:`luar123` (notable-change)
+- Optimize Component and Application state storage from uint32_t to uint8_t :esphomepr:`9082` by :ghuser:`bdraco` (breaking-change)
+- Reduce entity memory usage by eliminating field shadowing and bit-packing :esphomepr:`9076` by :ghuser:`bdraco` (breaking-change)
+- Optimize Application ``area_`` from ``std::string`` to ``const char*`` :esphomepr:`9085` by :ghuser:`bdraco` (breaking-change)
 
 Beta Changes
 ^^^^^^^^^^^^
 
 .. collapse:: Show
-    :open:
 
     - Fix dashboard logging being escaped before parser :esphomepr:`9054` by :ghuser:`bdraco`
     - Always perform select() when loop duration exceeds interval :esphomepr:`9058` by :ghuser:`bdraco`
@@ -195,6 +192,7 @@ Beta Changes
     - Fix API message encoding to return actual size instead of calculated size :esphomepr:`9073` by :ghuser:`bdraco`
     - Optimize Application ``area_`` from ``std::string`` to ``const char*`` :esphomepr:`9085` by :ghuser:`bdraco` (breaking-change)
     - Fix unbound BLE event queue growth and reduce memory usage :esphomepr:`9052` by :ghuser:`bdraco`
+    - Bump aioesphomeapi from 32.2.1 to 32.2.3 :esphomepr:`9091` by :ghuser:`dependabot[bot]`
     - [fan] fix initial FanCall to properly set speed :esphomepr:`8277` by :ghuser:`dhewg`
     - Implement a lock free ring buffer for BLEScanResult to avoid drops :esphomepr:`9087` by :ghuser:`bdraco`
     - Make BLE queue lock free :esphomepr:`9088` by :ghuser:`bdraco`
@@ -203,11 +201,17 @@ Beta Changes
     - Ensure we can send batches where the first message exceeds MAX_PACKET_SIZE :esphomepr:`9068` by :ghuser:`bdraco`
     - Add common base classes for entity protobuf messages to reduce duplicate code :esphomepr:`9090` by :ghuser:`bdraco`
     - Reduce Component blocking threshold memory usage by 2 bytes per component :esphomepr:`9081` by :ghuser:`bdraco`
+    - Remove ``std::`` prefix as not all platforms have access yet. :esphomepr:`9095` by :ghuser:`jesserockz`
     - [i2s_audio] Add ``dump_config`` methods, shorten log messages :esphomepr:`9099` by :ghuser:`kbx81`
     - [i2s_audio] Bugfix: crashes when unlocking i2s bus multiple times :esphomepr:`9100` by :ghuser:`kahrendt`
     - [spi] Cater for non-word-aligned buffers on esp8266 :esphomepr:`9108` by :ghuser:`clydebarrow`
     - Optimize LightState memory layout :esphomepr:`9113` by :ghuser:`bdraco`
     - Reduce Switch component memory usage by 8 bytes per instance :esphomepr:`9112` by :ghuser:`bdraco`
+
+Notable Changes
+^^^^^^^^^^^^^^^
+
+- [bme68x_bsec2_i2c] Remove arduino dependency :esphomepr:`7815` by :ghuser:`luar123` (notable-change)
 
 All changes
 ^^^^^^^^^^^
@@ -347,6 +351,36 @@ All changes
     - Add support for custom request headers in online_image component :esphomepr:`8985` by :ghuser:`numo68`
     - Openthread code updates :esphomepr:`9047` by :ghuser:`jesserockz`
     - [sgp4x] Shorten log messages, various clean-up :esphomepr:`9048` by :ghuser:`kbx81`
+    - Fix dashboard logging being escaped before parser :esphomepr:`9054` by :ghuser:`bdraco`
+    - Always perform select() when loop duration exceeds interval :esphomepr:`9058` by :ghuser:`bdraco`
+    - [nextion] Remove upload flags reset from success path to prevent TFT corruption :esphomepr:`9064` by :ghuser:`edwardtfn`
+    - Fix BYPASS_AUTO feature to work with or without an arming delay :esphomepr:`9051` by :ghuser:`heythisisnate`
+    - Fix misleading comment in API :esphomepr:`9069` by :ghuser:`bdraco`
+    - [prometheus] Remove ``cv.only_with_arduino`` :esphomepr:`9061` by :ghuser:`jesserockz`
+    - [esp32] Dynamically set default framework based on variant :esphomepr:`9060` by :ghuser:`jesserockz`
+    - Fix ``captive_portal`` loading entire ``web_server`` :esphomepr:`9066` by :ghuser:`bdraco`
+    - Make ParseOnOffState enum uint8_t :esphomepr:`9083` by :ghuser:`bdraco`
+    - Optimize Component and Application state storage from uint32_t to uint8_t :esphomepr:`9082` by :ghuser:`bdraco` (breaking-change)
+    - Small optimizations to api buffer helper :esphomepr:`9071` by :ghuser:`bdraco`
+    - Reduce entity memory usage by eliminating field shadowing and bit-packing :esphomepr:`9076` by :ghuser:`bdraco` (breaking-change)
+    - Optimize memory usage by lazy-allocating raw callbacks in sensors :esphomepr:`9077` by :ghuser:`bdraco`
+    - Fix API message encoding to return actual size instead of calculated size :esphomepr:`9073` by :ghuser:`bdraco`
+    - Optimize Application ``area_`` from ``std::string`` to ``const char*`` :esphomepr:`9085` by :ghuser:`bdraco` (breaking-change)
+    - Fix unbound BLE event queue growth and reduce memory usage :esphomepr:`9052` by :ghuser:`bdraco`
+    - [fan] fix initial FanCall to properly set speed :esphomepr:`8277` by :ghuser:`dhewg`
+    - Implement a lock free ring buffer for BLEScanResult to avoid drops :esphomepr:`9087` by :ghuser:`bdraco`
+    - Make BLE queue lock free :esphomepr:`9088` by :ghuser:`bdraco`
+    - Fix protobuf encoding size mismatch by passing force parameter in encode_string :esphomepr:`9074` by :ghuser:`bdraco`
+    - [i2s_audio] Check for a nullptr before disabling and deleting channel :esphomepr:`9062` by :ghuser:`kahrendt`
+    - Ensure we can send batches where the first message exceeds MAX_PACKET_SIZE :esphomepr:`9068` by :ghuser:`bdraco`
+    - Add common base classes for entity protobuf messages to reduce duplicate code :esphomepr:`9090` by :ghuser:`bdraco`
+    - Reduce Component blocking threshold memory usage by 2 bytes per component :esphomepr:`9081` by :ghuser:`bdraco`
+    - Remove ``std::`` prefix as not all platforms have access yet. :esphomepr:`9095` by :ghuser:`jesserockz`
+    - [i2s_audio] Add ``dump_config`` methods, shorten log messages :esphomepr:`9099` by :ghuser:`kbx81`
+    - [i2s_audio] Bugfix: crashes when unlocking i2s bus multiple times :esphomepr:`9100` by :ghuser:`kahrendt`
+    - [spi] Cater for non-word-aligned buffers on esp8266 :esphomepr:`9108` by :ghuser:`clydebarrow`
+    - Optimize LightState memory layout :esphomepr:`9113` by :ghuser:`bdraco`
+    - Reduce Switch component memory usage by 8 bytes per instance :esphomepr:`9112` by :ghuser:`bdraco`
 
 Dependency Changes
 ^^^^^^^^^^^^^^^^^^
@@ -381,6 +415,7 @@ Dependency Changes
     - Bump aioesphomeapi from 32.1.0 to 32.2.0 :esphomepr:`9025` by :ghuser:`dependabot[bot]`
     - Bump aioesphomeapi from 32.2.0 to 32.2.1 :esphomepr:`9038` by :ghuser:`dependabot[bot]`
     - Bump ruamel-yaml from 0.18.13 to 0.18.14 :esphomepr:`9037` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 32.2.1 to 32.2.3 :esphomepr:`9091` by :ghuser:`dependabot[bot]`
 
 
 Past Changelogs
