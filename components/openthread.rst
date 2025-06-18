@@ -50,6 +50,7 @@ This example show how to configure Thread Dataset for a node.
       pan_id: 0x8f28
       ext_pan_id: 0xd63e8e3e495ebbc3
       pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
+      mesh_local_prefix: 0xeD52135fed21bc80
       force_dataset: true
 
 Configuration variables:
@@ -60,6 +61,7 @@ Configuration variables:
 - **panid** (string): 2-byte Personal Area Network ID (PAN ID)
 - **extpanid** (string): 8-byte Extended Personal Area Network ID (XPAN ID)
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
+- **mesh_local_prefix** (string): is used for communication within a Thread network partition
 
 
 Configuration examples with dataset TLV
