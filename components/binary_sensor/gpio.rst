@@ -119,8 +119,7 @@ Debouncing Values
 -----------------
 
 Some binary sensors are a bit unstable and quickly transition between the ON and OFF state while
-they're pressed. To fix this and debounce the signal, use the :ref:`binary sensor filters <binary_sensor-filters>`.
-
+they're pressed. To fix this and debounce the signal, use the :ref:`binary sensor filters <binary_sensor-filters>`:
 
 .. code-block:: yaml
 
