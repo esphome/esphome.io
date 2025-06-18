@@ -63,7 +63,7 @@ The GPIO binary sensor supports two modes of operation:
 - Uses hardware interrupts to detect pin state changes
 - Extremely efficient - up to 98% lower CPU usage
 - Updates are processed once per loop cycle (same as polling mode)
-- Transitions shorter than the loop interval are ignored for backwards compatibility
+- Transitions shorter than the loop interval are ignored for backwards compatibility with polling mode
 - Only processes when the pin actually changes state
 - Recommended for most use cases
 
