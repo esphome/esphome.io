@@ -112,6 +112,7 @@ Contributors
 - `Alexander Momchilov (@amomchilov) <https://github.com/amomchilov>`__
 - `Oliver King (@AnachronisticPenguin) <https://github.com/AnachronisticPenguin>`__
 - `anatoly-savchenkov (@anatoly-savchenkov) <https://github.com/anatoly-savchenkov>`__
+- `AndersWestman (@AndersWestman) <https://github.com/AndersWestman>`__
 - `andig (@andig) <https://github.com/andig>`__
 - `Andi Egli (@andilge) <https://github.com/andilge>`__
 - `Kieren  (@ando023) <https://github.com/ando023>`__
@@ -515,6 +516,7 @@ Contributors
 - `Damian Gołda (@dgolda) <https://github.com/dgolda>`__
 - `dgtal1 (@dgtal1) <https://github.com/dgtal1>`__
 - `Dan Halbert (@dhalbert) <https://github.com/dhalbert>`__
+- `dhewg (@dhewg) <https://github.com/dhewg>`__
 - `Dustin L. Howett (@DHowett) <https://github.com/DHowett>`__
 - `Lucio Tarantino (@dianlight) <https://github.com/dianlight>`__
 - `diesel437 (@diesel437) <https://github.com/diesel437>`__
@@ -809,6 +811,7 @@ Contributors
 - `Charles (@hallard) <https://github.com/hallard>`__
 - `Alex Griffith (@halomademeapc) <https://github.com/halomademeapc>`__
 - `Aniket (@HandyHat) <https://github.com/HandyHat>`__
+- `Hannah_GBS (@Hannah-GBS) <https://github.com/Hannah-GBS>`__
 - `Harrison Jones (@harrisonhjones) <https://github.com/harrisonhjones>`__
 - `HarvsG (@HarvsG) <https://github.com/HarvsG>`__
 - `Charles Thompson (@haryadoon) <https://github.com/haryadoon>`__
@@ -1084,6 +1087,7 @@ Contributors
 - `Kevin Lewis (@kll) <https://github.com/kll>`__
 - `kmoulton (@kmoulton) <https://github.com/kmoulton>`__
 - `KNXBroker (@KNXBroker) <https://github.com/KNXBroker>`__
+- `KoalaBear84 (@KoalaBear84) <https://github.com/KoalaBear84>`__
 - `KodinLanewave (@KodinLanewave) <https://github.com/KodinLanewave>`__
 - `KoenBreeman (@KoenBreeman) <https://github.com/KoenBreeman>`__
 - `Koen Vervloesem (@koenvervloesem) <https://github.com/koenvervloesem>`__
@@ -1425,6 +1429,7 @@ Contributors
 - `Nejc Koncan (@nejc-cc) <https://github.com/nejc-cc>`__
 - `NeoAcheron (@NeoAcheron) <https://github.com/NeoAcheron>`__
 - `neographikal (@neographikal) <https://github.com/neographikal>`__
+- `Nick (@neponn) <https://github.com/neponn>`__
 - `nepozs (@nepozs) <https://github.com/nepozs>`__
 - `Nerdiy.de (@Nerdiyde) <https://github.com/Nerdiyde>`__
 - `Nerijus Baliūnas (@nerijus) <https://github.com/nerijus>`__
@@ -2108,6 +2113,7 @@ Contributors
 - `Mike Brown (@xenoxaos) <https://github.com/xenoxaos>`__
 - `xheronimo (@xheronimo) <https://github.com/xheronimo>`__
 - `Huw Percival (@xhuw) <https://github.com/xhuw>`__
+- `xilard (@xilard) <https://github.com/xilard>`__
 - `Thomas Rupprecht (@ximex) <https://github.com/ximex>`__
 - `Luciano Martin (@xluciano) <https://github.com/xluciano>`__
 - `Péter Sárközi (@Xmister) <https://github.com/Xmister>`__
@@ -2154,4 +2160,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated June 3, 2025.*
+*This page was last updated June 18, 2025.*

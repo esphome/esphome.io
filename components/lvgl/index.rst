@@ -525,9 +525,8 @@ The action takes a style ID and a dictionary of properties to update. The proper
     on_...:
       - lvgl.style.update:
           id: my_style
-          properties:
-            bg_color: 0xFF0000
-            border_color: 0x00FF00
+          bg_color: 0xFF0000
+          border_color: 0x00FF00
 
 .. _lvgl-layouts:
 

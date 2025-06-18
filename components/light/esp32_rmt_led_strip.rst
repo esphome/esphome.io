@@ -68,8 +68,10 @@ IDF configuration variables:
 
       "ESP32", "512 symbols", "64 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
+      "ESP32-C5", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-P4", "384 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
       "ESP32-S3", "384 symbols", "48 symbols"
 

@@ -61,11 +61,11 @@ Configuration variables:
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to ``0x76``. The sensor can
   also be configured to use ``0x77``.
-- **model** (*Optional*, string): The model of the connected sensor; either ``BME680`` or ``BME688``.
+- **model** (*Required*, string): The model of the connected sensor; either ``BME680`` or ``BME688``.
 - **algorithm_output** (*Optional*, string): The output of the BSEC2 algorithm. Either ``classification`` (default) or
   ``regression``. *Only valid when model is BME688.*
 - **operating_age** (*Optional*, string): The history BSEC2 considers for the automatic background calibration of the
-  IAQ in days. That means changes in this time period will influence the IAQ value. Either ``4d`` or ``28d``.
+  IAQ in days. That means changes in this time period will influence the IAQ value. Either ``4d`` or ``28d`` (default).
 - **sample_rate** (*Optional*, string): Sample rate. Default is ``LP`` for low power consumption, sampling every 3
   seconds. Can be ``ULP`` for ultra-low power, sampling every 5 minutes. This controls the sampling rate for
   gas-dependent sensors and will govern the interval at which the sensor heater is operated. By default, this rate will
