@@ -24,11 +24,13 @@ Configuration variables:
 - **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of ``2MB``,
   ``4MB``, ``8MB``, ``16MB`` or ``32MB``. Defaults to ``4MB``. **Warning: specifying a size larger than that available
   on your board will cause the ESP32 to fail to boot.**
+- **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of ``40MHz``, ``80MHz``, ``160MHz``, ``240MHz``,
+  ``360MHz`` or ``400MHz``. Defaults to ``160MHz``. Not all values are available for all chips.
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
   partitioning scheme to be used. When not specified, partitions are automatically generated based on ``flash_size``.
 - **variant** (*Optional*, string): The variant of the ESP32 that is used on this board. One of ``esp32``,
-  ``esp32s2``, ``esp32s3``, ``esp32c3`` and ``esp32h2``. Defaults to the variant that is detected from the board; if
-  a board that's unknown to ESPHome is used, this option is mandatory.
+  ``esp32s2``, ``esp32s3``, ``esp32c2``, ``esp32c3``, ``esp32c5``, ``esp32c6``, ``esp32h2`` and ``esp32p4``. Defaults
+  to the variant that is detected from the board; if a board that's unknown to ESPHome is used, this option is mandatory.
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome. See :ref:`esp32-arduino_framework`
   and :ref:`esp32-espidf_framework`.
 
@@ -71,7 +73,7 @@ ESP-IDF framework
 -----------------
 
 This is an alternative base framework for ESP32 chips; it is recommended for variants of the ESP32 like ESP32S2,
-ESP32S3, ESP32C3 and single-core ESP32 chips.
+ESP32S3, ESP32P4 and single-core ESP32 chips.
 
 .. code-block:: yaml
 
@@ -107,14 +109,43 @@ Configuration variables:
 Advanced Configuration
 ----------------------
 
+- **assertion_level** (*Optional*, enum): One of ``ENABLE`` (default), ``SILENT`` or ``DISABLE``. Changing away from
+  the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization-assertion-level>`__
+  for more information.
+- **compiler_optimization** (*Optional*, enum): One of ``SIZE`` (default), ``PERF``, ``NONE`` or ``DEBUG``. Changing
+  away from the default will increase the size of the compiled binary but may increase performance or allow for easier
+  troubleshooting. See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization>`__
+  for more information.
+- **enable_lwip_assert** (*Optional*, boolean): Can be set to ``false`` to reduce the size of the compiled binary by
+  disabling LWIP assertions. Defaults to ``true`` (as recommended by Espressif). See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-lwip-esp-lwip-assert>`__
+  for more information.
 - **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in custom
   MAC address is not valid.
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   ``Base MAC address from BLK0 of EFUSE CRC error``. **Valid only on original ESP32 with** ``esp-idf`` **framework.**
-- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable
-  experimental features in the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features
-  may cause instability or other issues.
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable experimental features in
+  the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
+  other issues.
+
+**LWIP Optimization Options (ESP-IDF only):**
+
+The following options are available under the ``advanced`` section when using the ESP-IDF framework to disable unused
+LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
+
+- **enable_lwip_dhcp_server** (*Optional*, boolean): Enable DHCP server functionality. Only needed if the device will act
+  as a DHCP server (necessary for WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
+  the DHCP server based on whether AP mode is configured. When WiFi is not used, defaults to ``false``.
+- **enable_lwip_mdns_queries** (*Optional*, boolean): Enable mDNS query support in the DNS resolver. ESPHome uses its own
+  mDNS implementation, so this is rarely needed. Defaults to ``false``.
+- **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
+  interfaces. Defaults to ``false``.
+
+These optimizations are applied automatically and save flash memory without affecting typical ESPHome functionality. The
+features can be enabled if needed by setting the corresponding option to ``true``.
 
 GPIO Pin Numbering
 ------------------
