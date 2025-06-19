@@ -2,7 +2,7 @@ Troubleshooting
 ===============
 
 .. seo::
-    :description: Guide for troubleshooting ESPHome issues, debugging crashes, getting backtraces, and analyzing stack traces from device failures.
+    :description: Guide for troubleshooting ESPHome issues, debugging crashes, and obtaining decoded stack traces from device failures.
     :image: bug-report.svg
 
 This guide helps you diagnose and debug ESPHome device issues, particularly crashes and boot failures. Whether you're experiencing random resets, watchdog timeouts, or need to analyze stack traces, this guide provides step-by-step instructions for capturing and understanding crash data.
@@ -11,17 +11,17 @@ This guide helps you diagnose and debug ESPHome device issues, particularly cras
 
     This guide assumes you have ESPHome installed and basic familiarity with the command line. For installation instructions, see :doc:`/guides/installing_esphome`.
 
-Getting a Backtrace from Crashes
---------------------------------
+Getting a Stack Trace from Crashes
+-----------------------------------
 
-When your ESPHome device crashes, you can obtain a decoded backtrace to help identify the cause. This requires:
+When your ESPHome device crashes, you can obtain a decoded stack trace to help identify the cause. This requires:
 
 1. Compiling the firmware locally (to have matching debug symbols)
 2. Connecting the device via USB cable for serial console access
 3. Running the logs command to capture and decode the crash
 
-Steps to Get a Backtrace
-~~~~~~~~~~~~~~~~~~~~~~~~
+Steps to Get a Stack Trace
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **Compile locally**: Build your configuration on your local machine to ensure you have matching debug symbols.
 
@@ -50,7 +50,7 @@ Steps to Get a Backtrace
 
        esphome logs your-device.yaml
 
-4. **Wait for crash**: When the device crashes, ESPHome will automatically detect and decode the backtrace. You'll see output similar to this:
+4. **Wait for crash**: When the device crashes, ESPHome will automatically detect and decode the stack trace. You'll see output similar to this:
 
    .. code-block:: text
 
@@ -71,7 +71,7 @@ Steps to Get a Backtrace
        WARNING Decoded 0x4014b23e: timer_process_alarm at /Users/bdraco/.platformio/packages/framework-espidf/components/esp_timer/src/esp_timer.c:456
         (inlined by) timer_task at /Users/bdraco/.platformio/packages/framework-espidf/components/esp_timer/src/esp_timer.c:482
 
-The decoded backtrace shows:
+The decoded stack trace shows:
 
 - The exact function names and source files where the crash occurred
 - Line numbers in the source code
@@ -79,7 +79,7 @@ The decoded backtrace shows:
 
 .. note::
 
-    **Important**: You must compile locally and upload the firmware before capturing the crash. The debug symbols must match the running firmware for the backtrace to be decoded correctly.
+    **Important**: You must compile locally and upload the firmware before capturing the crash. The debug symbols must match the running firmware for the stack trace to be decoded correctly.
 
 Common Issues
 ~~~~~~~~~~~~~
@@ -87,9 +87,35 @@ Common Issues
 - **No decoded output**: Ensure you compiled and uploaded the firmware locally before capturing the crash
 - **Cannot connect**: Make sure you're using a USB data cable (not just a charging cable) and the correct serial port
 
+Alternative: Web-Based Stack Trace Decoder
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you already have a stack trace but need to decode it, you can use the `ESP Stack Trace Decoder <https://esphome.github.io/esp-stacktrace-decoder/>`__ web tool:
+
+1. **Download the .elf file**: From the ESPHome dashboard, click the overflow menu (three dots) on your device card and select "Download .elf file"
+   
+   .. note::
+   
+       The .elf file must be from the same compilation that produced the firmware currently running on your device. If you've recompiled since flashing, the debug symbols won't match.
+
+2. **Open the decoder**: Navigate to https://esphome.github.io/esp-stacktrace-decoder/
+
+3. **Upload files**: 
+   
+   - Click "Choose File" under "ELF File" and select your downloaded .elf file
+   - Paste your stack trace into the text area
+   - Click "Decode Stack Trace"
+
+4. **View results**: The tool will decode the addresses and show you the function names, file paths, and line numbers
+
+.. note::
+
+    This tool runs entirely in your browser - no data is sent to any server, ensuring your firmware and debug information remain private.
+
 See Also
 --------
 
 - :doc:`/components/logger` - Configure logging levels and outputs
 - :doc:`/components/debug` - Debug component for additional diagnostics
+- :doc:`/components/safe_mode` - Safe Mode recovery guide
 - :doc:`/guides/faq` - Frequently asked questions
