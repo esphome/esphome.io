@@ -97,7 +97,7 @@ If you already have a stack trace but need to decode it, you can use the `ESP St
    .. note::
    
        The .elf file must be from the same compilation that produced the firmware currently running on your device. If you've recompiled since flashing, the debug symbols won't match.
-   
+
 2. **Open the decoder**: Navigate to https://esphome.github.io/esp-stacktrace-decoder/
 
 3. **Upload files**: 
