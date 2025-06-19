@@ -13,6 +13,8 @@ The ``mk2pvrouter`` component allows you to retrieve data from a
 Mk2PVRouter diverter using Telemetry. It works with any Mk2PVRouter
 diverter, as long as this feature has been activated on the router itself.
 
+This component can also be used to send data to a non-Home Assistant system via MQTT.
+
 .. figure:: images/mk2pvrouter-full.jpg
     :align: center
     :width: 50.0%
@@ -43,12 +45,51 @@ Configuration variables:
 
 In ``mk2pvrouter`` platform:
 
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation or multiple hubs.
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART Component if you want to use multiple UART buses.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-  sensor. Defaults to ``60s``.
+  sensor. Defaults to ``5s``.
+- **mqtt** (*Optional*): For forwarding data to an MQTT broker, including emoncms via MQTT.
 
+  - **topic_prefix** (**Required**, string): The MQTT topic prefix to use for publishing data.
 
-Sensor
-******
+MQTT Integration
+----------------
+
+.. warning::
+
+    If you enable ``mqtt`` forwarding and you do *not* use the :doc:`/components/api`, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must
+    remove the ``api:`` configuration or set ``reboot_timeout: 0s``, otherwise the ESP will
+    reboot every 15 minutes because no client connected to the native API.
+
+If you configure the ``mqtt`` option, you will need to define the :doc:`/components/mqtt` component in your configuration.
+This is required for the component to publish data to the MQTT broker.
+
+The component will publish all sensor data to topics following this structure:
+``<topic_prefix>/<sensor_name>``
+
+Example:
+
+.. code-block:: yaml
+
+    mqtt:
+      broker: 192.168.1.10
+      port: 1883           # Optional
+      username: mqtt_user  # Optional
+      password: mqtt_pass  # Optional
+      id: mqtt_client      # Optional
+    
+    mk2pvrouter:
+      mqtt:
+        topic_prefix: "mk2pvrouter"
+
+With this configuration, data will be published to topics such as:
+
+- ``mk2pvrouter/V1`` for voltage on phase 1
+- ``mk2pvrouter/P1`` for power on CT1
+
+Sensors
+-------
 
 .. code-block:: yaml
 
@@ -80,7 +121,7 @@ Sensor
 
 
 Binary Sensor
-*************
+-------------
 
 .. code-block:: yaml
 
@@ -94,7 +135,7 @@ Binary Sensor
 
 
 Text Sensor
-***********
+-----------
 
 .. code-block:: yaml
 
