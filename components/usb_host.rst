@@ -17,6 +17,7 @@ possible to configure devices directly in this component, but this has no applic
 
     # Example configuration entry
     usb_host:
+      enable_hubs: true
       devices:
         - id: device_0
           vid: 0x1725
@@ -27,6 +28,7 @@ Configuration variables:
 ************************
 
 - **id** (*Optional*, :ref:`config-id`): The id to use for this component.
+- **enable_hubs** (*Optional*, boolean): Whether to include support for hubs. Defaults to ``false``.
 - **devices** (*Optional*, list): A list of devices to configure.
 
 Device configuration options:
