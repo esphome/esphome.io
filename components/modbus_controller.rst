@@ -96,7 +96,8 @@ Configuration variables:
     Lambda that returns the value of this register.
   - **write_lambda** (*Optional*, :ref:`lambda <config-lambda>`):
     Lambda that sets the value of this register. A variable ``x`` of the appropriate type (``uint16_t``, ``int32_t``, etc, see above) is provided with the value, 
-    as well as ``address`` containing the address of this register.
+    as well as ``address`` containing the address of this register. You must return ``true`` if the operation was successful, ``false`` otherwise, in which case
+    a ModBUS exception code ``4`` will be sent to the client.
 
 Automations:
 
