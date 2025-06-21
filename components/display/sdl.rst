@@ -39,7 +39,16 @@ Configuration variables:
 - **sdl_options** (*Optional*, string): Build arguments if required to specify include or library paths. Should not be required if SDL2 is properly installed.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See :ref:`display-pages`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **window_options** (*Optional*): Options that affect how the display renders on the host system. All default to false, except position, which defaults to SDL's undefined position
 
+    - **position** (*Optional*):
+        - **x** (**Required**, int): X position of the display window in pixels
+        - **y** (**Required**, int): Y position of the display window in pixels
+    - **borderless** (*Optional*, boolean): Whether to draw the display window with or without borders
+    - **always_on_top** (*Optional*, boolean): Whether to always draw the display window above other windows or not
+    - **fullscreen** (*Optional*, boolean): Whether to draw the display window in fullscreen or not. This may resize the resolution of the host display to match the SDL display dimensions
+    - **skip_taskbar** (*Optional*, boolean): Whether to skip adding a taskbar icon for the display window or not
+    - **resizable** (*Optional*, boolean): Whether the display window can be manually resized
 
 .. note::
 

@@ -39,6 +39,7 @@ Configuration variables
 -----------------------
 
 - **url** (**Required**, url): The URL where the image will be downloaded from.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
   in your display code.
 - **format** (**Required**): The format that the image is encoded with.
@@ -98,7 +99,7 @@ A good example for that is to update the display component after the download su
 Actions
 -------
 
-**online_image.set_url**: Change the URL where the image is downloaded from. The image needs to be manually updated afterwards.
+**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered.
 
 Configuration variables:
 
