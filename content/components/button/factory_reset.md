@@ -1,49 +1,49 @@
-Factory Reset Button
-====================
+---
+description: "Instructions for setting up buttons that can remotely invalidate all ESPHome preferences stored in flash and reboot ESP."
+title: "Factory Reset Button"
+params:
+  seo:
+    description: Instructions for setting up buttons that can remotely invalidate all ESPHome preferences stored in flash and reboot ESP.
+    image: restart.svg
+---
 
-.. seo::
-    :description: Instructions for setting up buttons that can remotely invalidate all ESPHome preferences stored in flash and reboot ESP.
-    :image: restart.svg
 
-The ``factory_reset`` button allows you to remotely invalidate (reset) all ESPHome :ref:`preferences <preferences-flash_write_interval>` stored in flash memory and reboot your node.
+
+The `factory_reset` button allows you to remotely invalidate (reset) all ESPHome [preferences](#preferences-flash_write_interval) stored in flash memory and reboot your node.
 After reboot all states, parameters and variables will be reinitialized with their default values. This is useful:
 
 - for devices preflashed with ESPHome to reset behavior back to factory state
 - in case of moving a device to a new environment or starting a new use-case (e.g. reset counters or state)
 - for privacy concerns when giving away a device
 
-.. note::
+{{< note >}}
+**USE WITH GREAT CAUTION!** All credentials, global variables, counters and saved states stored in non-volatile memory will be lost with no chance of recovering them.
+Even raw reading of flash memory with `esptool` will not help, since data is physically erased from flash memory.
 
-    **USE WITH GREAT CAUTION!** All credentials, global variables, counters and saved states stored in non-volatile memory will be lost with no chance of recovering them.
-    Even raw reading of flash memory with ``esptool`` will not help, since data is physically erased from flash memory.
-
-    For devices configured using :doc:`captive portal </components/captive_portal>`, this will reset WiFi settings as well, thus making such devices offline.
-    You'll need to be in close proximity to your device to configure it again using a built-in WiFi access point and captive portal.
+For devices configured using {{< docref "/components/captive_portal" "captive portal" >}}, this will reset WiFi settings as well, thus making such devices offline.
+You'll need to be in close proximity to your device to configure it again using a built-in WiFi access point and captive portal.
 
 
-.. figure:: images/factory-rst-ui.png
-    :align: center
-    :width: 80.0%
+{{< /note >}}
+{{< img src="factory-rst-ui.png" alt="Image" width="80.0%" class="center" >}}
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+button:
+  - platform: factory_reset
+    name: Restart with Factory Default Settings
 
-    # Example configuration entry
-    button:
-      - platform: factory_reset
-        name: Restart with Factory Default Settings
+```
+## Configuration variables:
 
-Configuration variables:
-------------------------
+- All options from [Button](#config-button).
 
-- All options from :ref:`Button <config-button>`.
+## See Also
 
-See Also
---------
+- {{< docref "shutdown/" >}}
+- {{< docref "restart/" >}}
+- {{< docref "safe_mode/" >}}
+- {{< docref "/components/switch/factory_reset" >}}
+- {{< docref "template/" >}}
+- {{< apiref "factory_reset/factory_reset_button.h" "factory_reset/factory_reset_button.h" >}}
 
-- :doc:`shutdown`
-- :doc:`restart`
-- :doc:`safe_mode`
-- :doc:`/components/switch/factory_reset`
-- :doc:`template`
-- :apiref:`factory_reset/factory_reset_button.h`
-- :ghedit:`Edit`

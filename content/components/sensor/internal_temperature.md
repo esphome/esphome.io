@@ -1,39 +1,38 @@
-Internal Temperature Sensor
-===========================
+---
+description: "Instructions for setting up the integrated temperature sensor of the ESP32, RP2040 and BK72XX."
+title: "Internal Temperature Sensor"
+params:
+  seo:
+    description: Instructions for setting up the integrated temperature sensor of the ESP32, RP2040 and BK72XX.
+    image: thermometer.svg
+---
 
-.. seo::
-    :description: Instructions for setting up the integrated temperature sensor of the ESP32, RP2040 and BK72XX.
-    :image: thermometer.svg
-    :keywords: esp32, rp2040, cpu, internal, temperature
 
-The ``internal_temperature`` sensor platform allows you to use the integrated
+
+The `internal_temperature` sensor platform allows you to use the integrated
 temperature sensor of the ESP32, RP2040 and BK72XX chip.
 
-.. note::
+{{< note >}}
+Some ESP32 variants return a large amount of invalid temperature
+values, including 53.3°C which equates to a raw value of 128. Invalid measurements are ignored by this component.
 
-    Some ESP32 variants return a large amount of invalid temperature
-    values, including 53.3°C which equates to a raw value of 128. Invalid measurements are ignored by this component.
+{{< /note >}}
+{{< img src="internal_temperature-ui.png" alt="Image" width="70.0%" class="center" >}}
 
-.. figure:: images/internal_temperature-ui.png
-    :align: center
-    :width: 70.0%
+```yaml
+# Example configuration entry
+sensor:
+  - platform: internal_temperature
+    name: "Internal Temperature"
 
-.. code-block:: yaml
+```
+## Configuration variables:
 
-    # Example configuration entry
-    sensor:
-      - platform: internal_temperature
-        name: "Internal Temperature"
+- **update_interval** (*Optional*, [Time](#config-time)): The interval
+  to check the sensor. Defaults to `60s`.
+- All other options from [Sensor](#config-sensor).
 
-Configuration variables:
-------------------------
+## See Also
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval
-  to check the sensor. Defaults to ``60s``.
-- All other options from :ref:`Sensor <config-sensor>`.
+- [Sensor Filters](#sensor-filters)
 
-See Also
---------
-
-- :ref:`sensor-filters`
-- :ghedit:`Edit`

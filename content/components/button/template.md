@@ -1,30 +1,32 @@
-Template Button
-===============
+---
+description: "Instructions for setting up template buttons that can execute arbitrary actions when pressed."
+title: "Template Button"
+params:
+  seo:
+    description: Instructions for setting up template buttons that can execute arbitrary actions when pressed.
+    image: description.svg
+---
 
-.. seo::
-    :description: Instructions for setting up template buttons that can execute arbitrary actions when pressed.
-    :image: description.svg
 
-The ``template`` button platform allows you to create simple buttons out of just actions. Once defined,
+
+The `template` button platform allows you to create simple buttons out of just actions. Once defined,
 it will automatically appear in Home Assistant as a button and can be controlled through the frontend.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+button:
+  - platform: template
+    name: "Template Button"
+    on_press:
+      - logger.log: Button Pressed
 
-    # Example configuration entry
-    button:
-      - platform: template
-        name: "Template Button"
-        on_press:
-          - logger.log: Button Pressed
+```
+## Configuration variables:
 
-Configuration variables:
-------------------------
+- All options from [Button](#config-button).
 
-- All options from :ref:`Button <config-button>`.
+## See Also
 
-See Also
---------
+- {{< docref "/automations" >}}
+- {{< docref "/components/button" >}}
 
-- :doc:`/automations/index`
-- :doc:`/components/button/index`
-- :ghedit:`Edit`

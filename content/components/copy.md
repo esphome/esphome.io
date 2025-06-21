@@ -1,206 +1,187 @@
-Copy Component
-==============
+---
+description: "Instructions for setting up the copy component in ESPHome"
+title: "Copy Component"
+params:
+  seo:
+    description: Instructions for setting up the copy component in ESPHome
+    image: content-copy.svg
+---
 
-.. seo::
-    :description: Instructions for setting up the copy component in ESPHome
-    :image: content-copy.svg
 
-The ``copy`` component can be used to copy an existing component (like a sensor, switch, etc.)
+
+The `copy` component can be used to copy an existing component (like a sensor, switch, etc.)
 and create a duplicate mirroring the source's state and forwarding actions such as turning on to the source.
 
 For each of the supported platforms, the configuration consists of the required configuration
-variable ``source_id``, which is used to indicate the source of the object being mirorred.
+variable `source_id`, which is used to indicate the source of the object being mirorred.
 
-Copy Binary Sensor
-------------------
+## Copy Binary Sensor
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: copy
+    source_id: source_binary_sensor
+    name: "Copy of source_binary_sensor"
 
-    # Example configuration entry
-    binary_sensor:
-      - platform: copy
-        source_id: source_binary_sensor
-        name: "Copy of source_binary_sensor"
+```
+### Configuration variables:
 
-Configuration variables:
-************************
+- **source_id** (**Required**, [ID](#config-id)): The binary sensor that should be mirrored.
+- All other options from [Binary Sensor](#config-binary_sensor).
 
-- **source_id** (**Required**, :ref:`config-id`): The binary sensor that should be mirrored.
-- All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+## Copy Button
 
-Copy Button
------------
+```yaml
+# Example configuration entry
+button:
+  - platform: copy
+    source_id: source_button
+    name: "Copy of source_button"
 
-.. code-block:: yaml
+```
+### Configuration variables:
 
-    # Example configuration entry
-    button:
-      - platform: copy
-        source_id: source_button
-        name: "Copy of source_button"
+- **source_id** (**Required**, [ID](#config-id)): The button that should be mirrored.
+- All other options from [Button](#config-button).
 
-Configuration variables:
-************************
+## Copy Cover
 
-- **source_id** (**Required**, :ref:`config-id`): The button that should be mirrored.
-- All other options from :ref:`Button <config-button>`.
+```yaml
+# Example configuration entry
+cover:
+  - platform: copy
+    source_id: source_cover
+    name: "Copy of source_cover"
 
-Copy Cover
-----------
+```
+### Configuration variables:
 
-.. code-block:: yaml
+- **source_id** (**Required**, [ID](#config-id)): The cover that should be mirrored.
+- All other options from [Cover](#config-cover).
 
-    # Example configuration entry
-    cover:
-      - platform: copy
-        source_id: source_cover
-        name: "Copy of source_cover"
+## Copy Fan
 
-Configuration variables:
-************************
+```yaml
+# Example configuration entry
+fan:
+  - platform: copy
+    source_id: source_fan
+    name: "Copy of source_fan"
 
-- **source_id** (**Required**, :ref:`config-id`): The cover that should be mirrored.
-- All other options from :ref:`Cover <config-cover>`.
+```
+### Configuration variables:
 
-Copy Fan
---------
+- **source_id** (**Required**, [ID](#config-id)): The fan that should be mirrored.
+- All other options from [Fan](#config-fan).
 
-.. code-block:: yaml
+## Copy Lock
 
-    # Example configuration entry
-    fan:
-      - platform: copy
-        source_id: source_fan
-        name: "Copy of source_fan"
+```yaml
+# Example configuration entry
+lock:
+  - platform: copy
+    source_id: source_lock
+    name: "Copy of source_lock"
 
-Configuration variables:
-************************
+```
+### Configuration variables:
 
-- **source_id** (**Required**, :ref:`config-id`): The fan that should be mirrored.
-- All other options from :ref:`Fan <config-fan>`.
+- **source_id** (**Required**, [ID](#config-id)): The lock that should be mirrored.
+- All other options from [Lock](#config-lock).
 
-Copy Lock
----------
+## Copy Number
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+number:
+  - platform: copy
+    source_id: source_number
+    name: "Copy of source_number"
 
-    # Example configuration entry
-    lock:
-      - platform: copy
-        source_id: source_lock
-        name: "Copy of source_lock"
+```
+### Configuration variables:
 
-Configuration variables:
-************************
+- **source_id** (**Required**, [ID](#config-id)): The number that should be mirrored.
+- All other options from [Number](#config-number).
 
-- **source_id** (**Required**, :ref:`config-id`): The lock that should be mirrored.
-- All other options from :ref:`Lock <config-lock>`.
+## Copy Select
 
-Copy Number
------------
+```yaml
+# Example configuration entry
+select:
+  - platform: copy
+    source_id: source_select
+    name: "Copy of source_select"
 
-.. code-block:: yaml
+```
+### Configuration variables:
 
-    # Example configuration entry
-    number:
-      - platform: copy
-        source_id: source_number
-        name: "Copy of source_number"
+- **source_id** (**Required**, [ID](#config-id)): The select that should be mirrored.
+- All other options from [Select](#config-select).
 
-Configuration variables:
-************************
+{{< anchor "copy-sensor" >}}
 
-- **source_id** (**Required**, :ref:`config-id`): The number that should be mirrored.
-- All other options from :ref:`Number <config-number>`.
+## Copy Sensor
 
-Copy Select
------------
+```yaml
+# Example configuration entry
+sensor:
+  - platform: copy
+    source_id: source_sensor
+    name: "Copy of source_sensor"
 
-.. code-block:: yaml
+```
+### Configuration variables:
 
-    # Example configuration entry
-    select:
-      - platform: copy
-        source_id: source_select
-        name: "Copy of source_select"
+- **source_id** (**Required**, [ID](#config-id)): The sensor that should be mirrored.
+- All other options from [Sensor](#config-sensor).
 
-Configuration variables:
-************************
+## Copy Switch
 
-- **source_id** (**Required**, :ref:`config-id`): The select that should be mirrored.
-- All other options from :ref:`Select <config-select>`.
+```yaml
+# Example configuration entry
+switch:
+  - platform: copy
+    source_id: source_switch
+    name: "Copy of source_switch"
 
-.. _copy-sensor:
+```
+### Configuration variables:
 
-Copy Sensor
------------
+- **source_id** (**Required**, [ID](#config-id)): The switch that should be mirrored.
+- All other options from [Switch](#config-switch).
 
-.. code-block:: yaml
+## Copy Text Sensor
 
-    # Example configuration entry
-    sensor:
-      - platform: copy
-        source_id: source_sensor
-        name: "Copy of source_sensor"
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: copy
+    source_id: source_text_sensor
+    name: "Copy of source_text_sensor"
 
-Configuration variables:
-************************
+```
+### Configuration variables:
 
-- **source_id** (**Required**, :ref:`config-id`): The sensor that should be mirrored.
-- All other options from :ref:`Sensor <config-sensor>`.
+- **source_id** (**Required**, [ID](#config-id)): The text sensor that should be mirrored.
+- All other options from [Text Sensor](#config-text_sensor).
 
-Copy Switch
------------
+## Copy Text
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+text:
+  - platform: copy
+    source_id: source_text
+    name: "Copy of source_text"
 
-    # Example configuration entry
-    switch:
-      - platform: copy
-        source_id: source_switch
-        name: "Copy of source_switch"
+```
+### Configuration variables:
 
-Configuration variables:
-************************
+- **source_id** (**Required**, [ID](#config-id)): The text that should be mirrored.
+- All other options from [Text](#config-text).
 
-- **source_id** (**Required**, :ref:`config-id`): The switch that should be mirrored.
-- All other options from :ref:`Switch <config-switch>`.
+## See Also
 
-Copy Text Sensor
-----------------
 
-.. code-block:: yaml
-
-    # Example configuration entry
-    text_sensor:
-      - platform: copy
-        source_id: source_text_sensor
-        name: "Copy of source_text_sensor"
-
-Configuration variables:
-************************
-
-- **source_id** (**Required**, :ref:`config-id`): The text sensor that should be mirrored.
-- All other options from :ref:`Text Sensor <config-text_sensor>`.
-
-Copy Text
----------
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    text:
-      - platform: copy
-        source_id: source_text
-        name: "Copy of source_text"
-
-Configuration variables:
-************************
-
-- **source_id** (**Required**, :ref:`config-id`): The text that should be mirrored.
-- All other options from :ref:`Text <config-text>`.
-
-See Also
---------
-
-- :ghedit:`Edit`

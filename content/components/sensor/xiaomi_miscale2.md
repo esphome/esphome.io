@@ -1,4 +1,8 @@
-Xiaomi Miscale2 combined into Xiaomi Miscale
-============================================
+---
+description: "Xiaomi Miscale2 combined into Xiaomi Miscale"
+title: "Xiaomi Miscale2 combined into Xiaomi Miscale"
+---
 
-:doc:`/components/sensor/xiaomi_miscale`
+
+
+{{< docref "/components/sensor/xiaomi_miscale" >}}

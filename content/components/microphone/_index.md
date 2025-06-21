@@ -1,34 +1,36 @@
-Microphone Components
-=====================
+---
+description: "Instructions for setting up microphones in ESPHome."
+title: "Microphone Components"
+params:
+  seo:
+    description: Instructions for setting up microphones in ESPHome.
+    image: folder-open.svg
+---
 
-.. seo::
-    :description: Instructions for setting up microphones in ESPHome.
-    :image: folder-open.svg
 
-The ``microphone`` domain contains common functionality shared across the
+
+The `microphone` domain contains common functionality shared across the
 microphone platforms.
 
-.. _config-microphone:
+{{< anchor "config-microphone" >}}
 
-Base Microphone Configuration
------------------------------
+## Base Microphone Configuration
 
 Configuration variables:
 
-- **on_data** (*Optional*, :ref:`Automation <automation>`): An automation to
+- **on_data** (*Optional*, [Automation](#automation)): An automation to
   perform when new data is received.
 
 
-.. _config-microphone-source:
+{{< anchor "config-microphone-source" >}}
 
-Microphone Source Configuration
--------------------------------
+## Microphone Source Configuration
 
 A microphone source configuration is used by components to ensure that it receives audio in the required format.
 
 Configuration variables:
 
-- **microphone** (**Required**, :ref:`config-id`): The :doc:`microphone </components/microphone/index>` to use for input.
+- **microphone** (**Required**, [ID](#config-id)): The {{< docref "/components/microphone/index" "microphone" >}} to use for input.
 - **bits_per_sample** (*Optional*, int): The bits per sample to use as input to the component.
   May be restricted by the component to a specific value.
 - **channels** (*Optional*, list): A list of 0-indexed channel numbers enabling them to use as
@@ -37,114 +39,96 @@ Configuration variables:
 - **gain_factor** (*Optional*, int): The gain factor to apply to audio read from the microphone. Ranges from 1 to 64.
   Defaults to 1, no gain.
 
-.. _microphone-actions:
+{{< anchor "microphone-actions" >}}
 
-Microphone Actions
-------------------
+## Microphone Actions
 
-All ``microphone`` actions can be used without specifying an ``id`` if you have only one ``microphone`` in
+All `microphone` actions can be used without specifying an `id` if you have only one `microphone` in
 your configuration YAML.
 
 Configuration variables:
 
-**id** (*Optional*, :ref:`config-id`): The microphone to control. Defaults to the only one in YAML.
+**id** (*Optional*, [ID](#config-id)): The microphone to control. Defaults to the only one in YAML.
 
 
-.. _microphone-capture:
+{{< anchor "microphone-capture" >}}
 
-``microphone.capture`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.capture` Action
 
 This action will start capturing audio data from the microphone. The data will be passed to any components listening
-and will be available in the ``on_data`` trigger.
+and will be available in the `on_data` trigger.
 
-.. _microphone-stop_capture:
+{{< anchor "microphone-stop_capture" >}}
 
-``microphone.stop_capture`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.stop_capture` Action
 
 This action will stop capturing audio data from the microphone.
 
-.. _microphone-mute:
+{{< anchor "microphone-mute" >}}
 
-``microphone.mute`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.mute` Action
 
 This action will apply a software mute to the audio data from the microphone before passing it to any listening components.
 
-.. _microphone-unmute:
+{{< anchor "microphone-unmute" >}}
 
-``microphone.unmute`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.unmute` Action
 
-This action will disable applying a software mute initiated with ``microphone.mute``.
+This action will disable applying a software mute initiated with `microphone.mute`.
 
 
-.. _microphone-triggers:
+{{< anchor "microphone-triggers" >}}
 
-Microphone Triggers
--------------------
+## Microphone Triggers
 
-.. _microphone-on_data:
+{{< anchor "microphone-on_data" >}}
 
-``microphone.on_data`` Trigger
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.on_data` Trigger
 
 This trigger will fire when new data is received from the microphone.
-The data is available as a ``std::vector<uint8_t>`` in the variable ``x``.
+The data is available as a `std::vector<uint8_t>` in the variable `x`.
 This data is the raw microphone audio and includes all the read bits per sample and channels.
 
-.. code-block:: yaml
+```yaml
+microphone:
+  - platform: ...
+    on_data:
+      - logger.log:
+          format: "Received %d bytes"
+          args: ['x.size()']
 
-    microphone:
-      - platform: ...
-        on_data:
-          - logger.log:
-              format: "Received %d bytes"
-              args: ['x.size()']
-
+```
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The microphone to check. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The microphone to check. Defaults to the only one in YAML.
 
 
-.. _microphone-conditions:
+{{< anchor "microphone-conditions" >}}
 
-Microphone Conditions
----------------------
+## Microphone Conditions
 
-All ``microphone`` conditions can be used without specifying an ``id`` if you have only one ``microphone`` in
+All `microphone` conditions can be used without specifying an `id` if you have only one `microphone` in
 your configuration YAML.
 
 Configuration variables:
 
-**id** (*Optional*, :ref:`config-id`): The microphone to check. Defaults to the only one in YAML.
+**id** (*Optional*, [ID](#config-id)): The microphone to check. Defaults to the only one in YAML.
 
-.. _microphone-is_capturing:
+{{< anchor "microphone-is_capturing" >}}
 
-``microphone.is_capturing`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.is_capturing` Condition
 
 This condition will check if the microphone is currently capturing audio data.
 
-.. _microphone-is_muted:
+{{< anchor "microphone-is_muted" >}}
 
-``microphone.is_muted`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `microphone.is_muted` Condition
 
 This condition will check if the microphone is currently apply a software mute.
 
 
-Platforms
----------
+## Platforms
 
-.. toctree::
-    :maxdepth: 1
-    :glob:
+## See Also
 
-    *
 
-See Also
---------
-
-- :ghedit:`Edit`

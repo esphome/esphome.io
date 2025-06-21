@@ -1,42 +1,44 @@
-LVGL Switch
-===========
+---
+description: "Instructions for setting up an LVGL widget switch."
+title: "LVGL Switch"
+params:
+  seo:
+    description: Instructions for setting up an LVGL widget switch.
+    image: ../images/lvgl_c_swi.png
+---
 
-.. seo::
-    :description: Instructions for setting up an LVGL widget switch.
-    :image: ../images/lvgl_c_swi.png
 
-The ``lvgl`` switch platform creates a switch from an LVGL widget
-and requires :doc:`LVGL </components/lvgl/index>` to be configured.
 
-Supported widgets are :ref:`lvgl-widget-button` (with ``checkable`` option enabled), :ref:`lvgl-widget-switch` and :ref:`lvgl-widget-checkbox`. A single switch supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome switch component.
+The `lvgl` switch platform creates a switch from an LVGL widget
+and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
-Configuration variables:
-------------------------
+Supported widgets are [`button`](#lvgl-widget-button) (with `checkable` option enabled), [`switch`](#lvgl-widget-switch) and [`checkbox`](#lvgl-widget-checkbox). A single switch supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome switch component.
+
+## Configuration variables:
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the switch.
-- All other variables from :ref:`Switch <config-switch>`.
+- All other variables from [Switch](#config-switch).
 
 Example:
 
-.. code-block:: yaml
+```yaml
+switch:
+  - platform: lvgl
+    widget: checkbox_id
+    name: LVGL switch
 
-    switch:
-      - platform: lvgl
-        widget: checkbox_id
-        name: LVGL switch
+```
+## See Also
+- {{< docref "/components/lvgl/index" "LVGL Main component" >}}
+- [Button widget](#lvgl-widget-button)
+- [Switch widget](#lvgl-widget-switch)
+- [Checkbox widget](#lvgl-widget-checkbox)
+- {{< docref "/components/binary_sensor/lvgl" >}}
+- {{< docref "/components/sensor/lvgl" >}}
+- {{< docref "/components/number/lvgl" >}}
+- {{< docref "/components/select/lvgl" >}}
+- {{< docref "/components/light/lvgl" >}}
+- {{< docref "/components/text/lvgl" >}}
+- {{< docref "/components/text_sensor/lvgl" >}}
+- {{< docref "/components/output" >}}
 
-See Also
---------
-- :doc:`LVGL Main component </components/lvgl/index>`
-- :ref:`Button widget <lvgl-widget-button>`
-- :ref:`Switch widget <lvgl-widget-switch>`
-- :ref:`Checkbox widget <lvgl-widget-checkbox>`
-- :doc:`/components/binary_sensor/lvgl`
-- :doc:`/components/sensor/lvgl`
-- :doc:`/components/number/lvgl`
-- :doc:`/components/select/lvgl`
-- :doc:`/components/light/lvgl`
-- :doc:`/components/text/lvgl`
-- :doc:`/components/text_sensor/lvgl`
-- :doc:`/components/output/index`
-- :ghedit:`Edit`

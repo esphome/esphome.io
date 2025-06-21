@@ -1,21 +1,23 @@
-Host Time Source
-================
+---
+description: "Host Time Source"
+title: "Host Time Source"
+---
 
-.. code-block:: yaml
 
-    # Example configuration entry
-    time:
-      - platform: host
-        id: sntp_time
-        timezone: Europe/Sofia
 
-Configuration variables
------------------------
+```yaml
+# Example configuration entry
+time:
+  - platform: host
+    id: sntp_time
+    timezone: Europe/Sofia
 
-All options from :ref:`base_time_config`.
+```
+## Configuration variables
 
-See Also
---------
+All options from [Base Time Configuration](#base_time_config).
 
-- :doc:`/components/host`
-- :ghedit:`Edit`
+## See Also
+
+- {{< docref "/components/host" >}}
+

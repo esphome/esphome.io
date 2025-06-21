@@ -1,36 +1,36 @@
-Restart Switch
-==============
+---
+description: "Instructions for setting up switches that can remotely reboot the ESP in ESPHome."
+title: "Restart Switch"
+params:
+  seo:
+    description: Instructions for setting up switches that can remotely reboot the ESP in ESPHome.
+    image: restart.svg
+---
 
-.. seo::
-    :description: Instructions for setting up switches that can remotely reboot the ESP in ESPHome.
-    :image: restart.svg
 
-The ``restart`` switch platform allows you to restart your node remotely
+
+The `restart` switch platform allows you to restart your node remotely
 through Home Assistant.
 
-.. figure:: images/restart-ui.png
-    :align: center
-    :width: 80.0%
+{{< img src="restart-ui.png" alt="Image" width="80.0%" class="center" >}}
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+switch:
+  - platform: restart
+    name: "Living Room Restart"
 
-    # Example configuration entry
-    switch:
-      - platform: restart
-        name: "Living Room Restart"
+```
+## Configuration variables:
 
-Configuration variables:
-------------------------
+- All options from [Switch](#config-switch).
 
-- All options from :ref:`Switch <config-switch>`.
+## See Also
 
-See Also
---------
+- {{< docref "shutdown/" >}}
+- {{< docref "safe_mode/" >}}
+- {{< docref "factory_reset/" >}}
+- {{< docref "/components/button/restart" >}}
+- {{< docref "template/" >}}
+- {{< apiref "restart/switch/restart_switch.h" "restart/switch/restart_switch.h" >}}
 
-- :doc:`shutdown`
-- :doc:`safe_mode`
-- :doc:`factory_reset`
-- :doc:`/components/button/restart`
-- :doc:`template`
-- :apiref:`restart/switch/restart_switch.h`
-- :ghedit:`Edit`

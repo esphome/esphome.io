@@ -1,62 +1,57 @@
-HTU31D Temperature & Humidity Sensor
-=====================================================
+---
+description: "Instructions for setting up HTU31D temperature and humidity sensors."
+title: "HTU31D Temperature & Humidity Sensor"
+params:
+  seo:
+    description: Instructions for setting up HTU31D temperature and humidity sensors.
+    image: htu31d.jpg
+---
 
-.. seo::
-    :description: Instructions for setting up HTU31D temperature and humidity sensors.
-    :image: htu31d.jpg
-    :keywords: HTU31D
+
 
 The HTU31D Temperature & Humidity component allows you to use HTU31D sensors with
-ESPHome. The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for this sensor to work.
+ESPHome. The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
 
 Example sensors:
 
-- (`Adafruit <https://www.adafruit.com/product/4832>`__)
+- ([Adafruit](https://www.adafruit.com/product/4832))
 
-.. figure:: images/htu31d.jpg
-    :align: center
-    :width: 50.0%
+{{< img src="htu31d.jpg" alt="Image" caption="HTU31D Temperature & Humidity Sensor. Image by `Adafruit`_." width="50.0%" class="center" >}}
 
-    HTU31D Temperature & Humidity Sensor. Image by `Adafruit`_.
+[Adafruit](https://www.adafruit.com/product/4832)
 
-.. _Adafruit: https://www.adafruit.com/product/4832
+{{< img src="temperature-humidity.png" alt="Image" width="80.0%" class="center" >}}
 
-.. figure:: images/temperature-humidity.png
-    :align: center
-    :width: 80.0%
+```yaml
+# Example configuration entry
+sensor:
+  - platform: htu31d
+    temperature:
+      name: "Temperature"
+    humidity:
+      name: "Humidity"
 
-.. code-block:: yaml
-
-    # Example configuration entry
-    sensor:
-      - platform: htu31d
-        temperature:
-          name: "Temperature"
-        humidity:
-          name: "Humidity"
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **temperature** (*Optional*): The information for the temperature sensor.
-  All options from :ref:`Sensor <config-sensor>`.
+  All options from [Sensor](#config-sensor).
 
 - **humidity** (*Optional*): The information for the humidity sensor.
-  All options from :ref:`Sensor <config-sensor>`.
+  All options from [Sensor](#config-sensor).
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
-See Also
---------
+## See Also
 
-- :ref:`sensor-filters`
-- :doc:`absolute_humidity`
-- :doc:`htu21d`
-- :doc:`dht`
-- :doc:`dht12`
-- :doc:`hdc1080`
-- :doc:`sht3xd`
-- :apiref:`htu31d/htu31d.h`
-- `i2cdevlib <https://github.com/jrowberg/i2cdevlib>`__ by `Jeff Rowberg <https://github.com/jrowberg>`__
-- :ghedit:`Edit`
+- [Sensor Filters](#sensor-filters)
+- {{< docref "absolute_humidity/" >}}
+- {{< docref "htu21d/" >}}
+- {{< docref "dht/" >}}
+- {{< docref "dht12/" >}}
+- {{< docref "hdc1080/" >}}
+- {{< docref "sht3xd/" >}}
+- {{< apiref "htu31d/htu31d.h" "htu31d/htu31d.h" >}}
+- [i2cdevlib](https://github.com/jrowberg/i2cdevlib) by [Jeff Rowberg](https://github.com/jrowberg)
+

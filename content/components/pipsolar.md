@@ -1,74 +1,69 @@
-PipSolar PV Inverter
-====================
+---
+description: "Instructions for setting up PipSolar Compatible PV Inverter in ESPHome."
+title: "PipSolar PV Inverter"
+params:
+  seo:
+    description: Instructions for setting up PipSolar Compatible PV Inverter in ESPHome.
+    image: pipsolar.jpg
+---
 
-.. seo::
-    :description: Instructions for setting up PipSolar Compatible PV Inverter in ESPHome.
-    :image: pipsolar.jpg
+
 
 The PipSolar component allows you to integrate PIP-compatible Inverters in ESPHome.
-It uses :ref:`UART <uart>` for communication.
+It uses [UART](#uart) for communication.
 
 Once configured, you can use sensors, binary sensors, switches and outputs as described below for your projects.
 
-.. warning::
+{{< warning >}}
+All functionality is working fine on esp8266 and esp32 chips.
+If you configure a lot of the possible sensors etc. from below it could be that you run out of memory (on esp8266).
+If you configure more than one if this devices with nearly all sensors etc. you run in a stack-size issue. In this case you have to increase stack size.
 
-    All functionality is working fine on esp8266 and esp32 chips.
-    If you configure a lot of the possible sensors etc. from below it could be that you run out of memory (on esp8266).
-    If you configure more than one if this devices with nearly all sensors etc. you run in a stack-size issue. In this case you have to increase stack size.
+{{< /warning >}}
+{{< img src="pipsolar.jpg" alt="Image" caption="pip4048 compatible PV Inverter." width="50.0%" class="center" >}}
 
-.. figure:: images/pipsolar.jpg
-    :align: center
-    :width: 50.0%
-
-    pip4048 compatible PV Inverter.
-
-Overview
---------
+## Overview
 
 You can connect a wide variety of PV Inverters as long as they provide a serial interface and talk the commands used (at least those you want to use).
-A documentation about the communication protocol mostly supported can be found |here|_.
+A documentation about the communication protocol mostly supported can be found replace:: ``here``_.
 
 This component will poll the needed polling commands in a loop. If there is a command to send for controlling the inverter this command will be queued and fired as next after the current polling command ends.
 There is a buffer to buffer up to 10 commands.
 
-.. |here| replace:: ``here``
-.. _here: https://github.com/jblance/mpp-solar/tree/master/docs
+[here](https://github.com/jblance/mpp-solar/tree/master/docs)
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+pipsolar:
+  - id: inverter0
 
-    # Example configuration entry
-    pipsolar:
-      - id: inverter0
+```
+### Configuration variables:
 
-Configuration variables:
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-- **id** (**Required**, :ref:`config-id`): The id to use for this pipsolar component.
+- **id** (**Required**, [ID](#config-id)): The id to use for this pipsolar component.
 - **uart_id** (*Optional*): The uart Bus ID
 
-Sensor
-------
-.. code-block:: yaml
+## Sensor
+```yaml
+# Example configuration entry
+sensor:
+  - platform: pipsolar
+    pipsolar_id: inverter0
+    grid_rating_voltage:
+      id: inverter0_grid_rating_voltage
+      name: inverter0_grid_rating_voltage
+    grid_rating_current:
+      id: inverter0_grid_rating_current
+      name: inverter0_grid_rating_current
+    ac_output_apparent_power:
+      id: inverter0_ac_output_apparent_power
+      name: inverter0_ac_output_apparent_power
+    ac_output_active_power:
+      id: inverter0_ac_output_active_power
+      name: inverter0_ac_output_active_power
 
-    # Example configuration entry
-    sensor:
-      - platform: pipsolar
-        pipsolar_id: inverter0
-        grid_rating_voltage:
-          id: inverter0_grid_rating_voltage
-          name: inverter0_grid_rating_voltage
-        grid_rating_current:
-          id: inverter0_grid_rating_current
-          name: inverter0_grid_rating_current
-        ac_output_apparent_power:
-          id: inverter0_ac_output_apparent_power
-          name: inverter0_ac_output_apparent_power
-        ac_output_active_power:
-          id: inverter0_ac_output_active_power
-          name: inverter0_ac_output_active_power
-
-Configuration variables:
-~~~~~~~~~~~~~~~~~~~~~~~~
+```
+### Configuration variables:
 All sensors are normal sensors... so all sensor variables are working to.
 
 - **grid_rating_voltage** (*Optional*): grid rating voltage
@@ -117,24 +112,22 @@ All sensors are normal sensors... so all sensor variables are working to.
 - **eeprom_version** (*Optional*): eeprom version
 - **pv_charging_power** (*Optional*): pc charging power
 
-Binary Sensor
--------------
+## Binary Sensor
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: pipsolar
+    pipsolar_id: inverter0
+    add_sbu_priority_version:
+      id: inverter0_add_sbu_priority_version
+      name: inverter0_add_sbu_priority_version
+    configuration_status:
+      id: inverter0_configuration_status
+      name: inverter0_configuration_status
 
-    # Example configuration entry
-    binary_sensor:
-      - platform: pipsolar
-        pipsolar_id: inverter0
-        add_sbu_priority_version:
-          id: inverter0_add_sbu_priority_version
-          name: inverter0_add_sbu_priority_version
-        configuration_status:
-          id: inverter0_configuration_status
-          name: inverter0_configuration_status
-
-Configuration variables:
-~~~~~~~~~~~~~~~~~~~~~~~~
+```
+### Configuration variables:
 All sensors are normal binary sensors... so all binary sensor variables are working to.
 
 - **add_sbu_priority_version** (*Optional*): add sbu priority version
@@ -195,25 +188,23 @@ All sensors are normal binary sensors... so all binary sensor variables are work
 - **warning_high_ac_input_during_bus_soft_start** (*Optional*): warning high ac input during bus soft start
 - **warning_battery_equalization** (*Optional*): warning battery equalization
 
-Text Sensor
------------
+## Text Sensor
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: pipsolar
+    pipsolar_id: inverter0
+    device_mode:
+      id: inverter0_device_mode
+      name: inverter0_device_mode
+    last_qpigs:
+      id: inverter0_last_qpigs
+      name: inverter0_last_qpigs
+    last_qpiri:
 
-    # Example configuration entry
-    text_sensor:
-      - platform: pipsolar
-        pipsolar_id: inverter0
-        device_mode:
-          id: inverter0_device_mode
-          name: inverter0_device_mode
-        last_qpigs:
-          id: inverter0_last_qpigs
-          name: inverter0_last_qpigs
-        last_qpiri:
-
-Configuration variables:
-~~~~~~~~~~~~~~~~~~~~~~~~
+```
+### Configuration variables:
 All sensors are normal text sensors... so all text sensor variables are working to.
 
 - **device_mode** (*Optional*): device mode response
@@ -225,34 +216,32 @@ All sensors are normal text sensors... so all text sensor variables are working 
 - **last_qt** (*Optional*): last qt reponse
 - **last_qmn** (*Optional*): last qmn reponse
 
-Switch
-------
+## Switch
 
 Not all possible switches are exposed as they lead to the possibility to make serious damage. They should only be set at the physical device itself.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+switch:
+  - platform: pipsolar
+    pipsolar_id: inverter0
+    output_source_priority_utility:
+      name: inverter0_output_source_priority_utility
+    output_source_priority_solar:
+      name: inverter0_output_source_priority_solar
+    output_source_priority_battery:
+      name: inverter0_output_source_priority_battery
+    output_source_priority_hybrid:
+      name: inverter0_output_source_priority_hybrid
+    input_voltage_range:
+      name: inverter0_input_voltage_range
+    pv_ok_condition_for_parallel:
+      name: inverter0_pv_ok_condition_for_parallel
+    pv_power_balance:
+      name: inverter0_pv_power_balance
 
-    # Example configuration entry
-    switch:
-      - platform: pipsolar
-        pipsolar_id: inverter0
-        output_source_priority_utility:
-          name: inverter0_output_source_priority_utility
-        output_source_priority_solar:
-          name: inverter0_output_source_priority_solar
-        output_source_priority_battery:
-          name: inverter0_output_source_priority_battery
-        output_source_priority_hybrid:
-          name: inverter0_output_source_priority_hybrid
-        input_voltage_range:
-          name: inverter0_input_voltage_range
-        pv_ok_condition_for_parallel:
-          name: inverter0_pv_ok_condition_for_parallel
-        pv_power_balance:
-          name: inverter0_pv_power_balance
-
-Configuration variables:
-~~~~~~~~~~~~~~~~~~~~~~~~
+```
+### Configuration variables:
 All sensors are normal text sensors... so all text sensor variables are working to.
 
 - **output_source_priority_utility** (*Optional*): output source priority utility
@@ -263,22 +252,20 @@ All sensors are normal text sensors... so all text sensor variables are working 
 - **pv_ok_condition_for_parallel** (*Optional*): pv ok condition for parallel
 - **pv_power_balance** (*Optional*): pv power balance
 
-Output
-------
+## Output
 
 Not all possible outputs are exposed as they lead to the possibility to make serious damage. They should only be set at the physical device itself.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+output:
+  - platform: pipsolar
+    pipsolar_id: inverter0
+    battery_recharge_voltage:
+      id: inverter0_battery_recharge_voltage_out
 
-    # Example configuration entry
-    output:
-      - platform: pipsolar
-        pipsolar_id: inverter0
-        battery_recharge_voltage:
-          id: inverter0_battery_recharge_voltage_out
-
-Configuration variables:
-~~~~~~~~~~~~~~~~~~~~~~~~
+```
+### Configuration variables:
 All sensors are normal text sensors... so all text sensor variables are working to.
 
 - **battery_recharge_voltage** (*Optional*): battery recharge voltage;
@@ -309,31 +296,28 @@ All sensors are normal text sensors... so all text sensor variables are working 
 
   - **possible_values** (*Optional*, list): a list of possible values default: 00.0,48.0,49,50.0,51.0,52,53,54,55,56,57,58
 
-.. _pipsolaroutput_set_level_action:
+{{< anchor "pipsolaroutput_set_level_action" >}}
 
-``output.pipsolar.set_level`` Action
-------------------------------------
+## `output.pipsolar.set_level` Action
 
-To use your outputs in :ref:`automations <automation>` or templates, you can use this action to set the
+To use your outputs in [automations](#automation) or templates, you can use this action to set the
 target level of the output.
 
-.. code-block:: yaml
+```yaml
+on_...:
+  then:
+  - output.pipsolar.set_level:
+      id: my_pipsolar_output
+      value: 48.0
 
-    on_...:
-      then:
-      - output.pipsolar.set_level:
-          id: my_pipsolar_output
-          value: 48.0
-
-
+```
 Configuration options:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the output.
-- **value** (*Optional*, percentage, :ref:`templatable <config-templatable>`): The target level.
+- **id** (**Required**, [ID](#config-id)): The ID of the output.
+- **value** (*Optional*, percentage, [templatable](#config-templatable)): The target level.
 
 
-See Also
---------
+## See Also
 
-- :ref:`uart`
-- :ghedit:`Edit`
+- [UART Bus](#uart)
+

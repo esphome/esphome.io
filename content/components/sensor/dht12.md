@@ -1,61 +1,56 @@
-DHT12 Temperature+Humidity Sensor
-=================================
+---
+description: "Instructions for setting up DHT12 temperature and humidity sensors"
+title: "DHT12 Temperature+Humidity Sensor"
+params:
+  seo:
+    description: Instructions for setting up DHT12 temperature and humidity sensors
+    image: dht12.jpg
+---
 
-.. seo::
-    :description: Instructions for setting up DHT12 temperature and humidity sensors
-    :image: dht12.jpg
-    :keywords: dht12
 
-The ``dht12`` Temperature+Humidity sensor allows you to use your DHT12
-(`datasheet <http://www.robototehnika.ru/file/DHT12.pdf>`__,
+
+The `dht12` Temperature+Humidity sensor allows you to use your DHT12
+([datasheet](http://www.robototehnika.ru/file/DHT12.pdf),
 `electrodragon`_) I²C-based sensor with ESPHome. This sensor is also called AM2320 by some sellers.
 
-.. figure:: images/dht12-full.jpg
-    :align: center
-    :width: 50.0%
+{{< img src="dht12-full.jpg" alt="Image" caption="DHT12 Temperature & Humidity Sensor." width="50.0%" class="center" >}}
 
-    DHT12 Temperature & Humidity Sensor.
+[electrodragon](http://www.electrodragon.com/product/dht12/)
 
-.. _electrodragon: http://www.electrodragon.com/product/dht12/
+{{< img src="temperature-humidity.png" alt="Image" width="80.0%" class="center" >}}
 
-.. figure:: images/temperature-humidity.png
-    :align: center
-    :width: 80.0%
+```yaml
+# Example configuration entry
+sensor:
+  - platform: dht12
+    temperature:
+      name: "Living Room Temperature"
+    humidity:
+      name: "Living Room Humidity"
+    update_interval: 60s
 
-.. code-block:: yaml
-
-    # Example configuration entry
-    sensor:
-      - platform: dht12
-        temperature:
-          name: "Living Room Temperature"
-        humidity:
-          name: "Living Room Humidity"
-        update_interval: 60s
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **temperature** (**Required**): The information for the temperature sensor.
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **humidity** (**Required**): The information for the humidity sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
 
-See Also
---------
+## See Also
 
-- :ref:`sensor-filters`
-- :doc:`absolute_humidity`
-- :doc:`dht`
-- :doc:`hdc1080`
-- :doc:`htu21d`
-- :doc:`sht3xd`
-- :apiref:`dht12/dht12.h`
-- `DHT12 Library <https://github.com/dplasa/dht>`__ by `Daniel Plasa <https://github.com/dplasa>`__
-- :ghedit:`Edit`
+- [Sensor Filters](#sensor-filters)
+- {{< docref "absolute_humidity/" >}}
+- {{< docref "dht/" >}}
+- {{< docref "hdc1080/" >}}
+- {{< docref "htu21d/" >}}
+- {{< docref "sht3xd/" >}}
+- {{< apiref "dht12/dht12.h" "dht12/dht12.h" >}}
+- [DHT12 Library](https://github.com/dplasa/dht) by [Daniel Plasa](https://github.com/dplasa)
+

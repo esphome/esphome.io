@@ -1,38 +1,38 @@
-Safe Mode Button
-================
+---
+description: "Instructions for setting up buttons that can remotely reboot the ESP in ESPHome into safe mode."
+title: "Safe Mode Button"
+params:
+  seo:
+    description: Instructions for setting up buttons that can remotely reboot the ESP in ESPHome into safe mode.
+    image: restart.svg
+---
 
-.. seo::
-    :description: Instructions for setting up buttons that can remotely reboot the ESP in ESPHome into safe mode.
-    :image: restart.svg
 
-The ``safe_mode`` button allows you to remotely reboot your node into :doc:`/components/safe_mode`. This is useful in certain situations
+
+The `safe_mode` button allows you to remotely reboot your node into {{< docref "/components/safe_mode" >}}. This is useful in certain situations
 where a misbehaving component is preventing Over-The-Air updates from completing successfully.
 
-This component requires :doc:`/components/safe_mode` to be configured.
+This component requires {{< docref "/components/safe_mode" >}} to be configured.
 
-.. figure:: images/safemode-ui.png
-    :align: center
-    :width: 80.0%
+{{< img src="safemode-ui.png" alt="Image" width="80.0%" class="center" >}}
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+button:
+  - platform: safe_mode
+    name: "Living Room Restart (Safe Mode)"
 
-    # Example configuration entry
-    button:
-      - platform: safe_mode
-        name: "Living Room Restart (Safe Mode)"
+```
+## Configuration variables:
 
-Configuration variables:
-------------------------
+- All options from [Button](#config-button).
 
-- All options from :ref:`Button <config-button>`.
+## See Also
 
-See Also
---------
+- {{< docref "shutdown/" >}}
+- {{< docref "restart/" >}}
+- {{< docref "factory_reset/" >}}
+- {{< docref "/components/switch/safe_mode" >}}
+- {{< docref "template/" >}}
+- {{< apiref "safe_mode/safe_mode_button.h" "safe_mode/safe_mode_button.h" >}}
 
-- :doc:`shutdown`
-- :doc:`restart`
-- :doc:`factory_reset`
-- :doc:`/components/switch/safe_mode`
-- :doc:`template`
-- :apiref:`safe_mode/safe_mode_button.h`
-- :ghedit:`Edit`

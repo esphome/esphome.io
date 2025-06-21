@@ -1,15 +1,20 @@
-``skip_initial``
-****************
+---
+description: ""
+title: ""
+---
 
-A simple skip filter; ``skip_initial: N`` skips the first ``N`` sensor readings and passes on the
+
+# `skip_initial`
+
+A simple skip filter; `skip_initial: N` skips the first `N` sensor readings and passes on the
 rest. This can be used when the sensor needs a few readings to 'warm up'. After the initial
 readings have been skipped, this filter does nothing.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+- platform: wifi_signal
+  # ...
+  filters:
+    - skip_initial: 3
 
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - skip_initial: 3
-
+```

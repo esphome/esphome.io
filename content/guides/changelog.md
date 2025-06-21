@@ -1,5 +1,8 @@
-Changelog
-=========
+---
+description: "Changelog"
+title: "Changelog"
+---
 
-.. redirect::
-    :url: /changelog/index.html
+
+
+{{< redirect url="/changelog/index.html" >}}

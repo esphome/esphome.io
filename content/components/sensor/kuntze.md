@@ -1,63 +1,61 @@
-Kuntze pool monitor
-===================
+---
+description: "Instructions for setting up Kuntze pool monitor in ESPHome."
+title: "Kuntze pool monitor"
+params:
+  seo:
+    description: Instructions for setting up Kuntze pool monitor in ESPHome.
+    image: kuntze.jpg
+---
 
-.. seo::
-    :description: Instructions for setting up Kuntze pool monitor in ESPHome.
-    :image: kuntze.jpg
 
-The ``kuntze`` component allows you to integrate the Kuntze water measurement
-instrument in ESPHome. It uses :ref:`UART <uart>` (ModBUS) for communication.
+
+The `kuntze` component allows you to integrate the Kuntze water measurement
+instrument in ESPHome. It uses [UART](#uart) (ModBUS) for communication.
 
 Once configured you can use sensors as described below for your projects.
 
 
-.. figure:: ../../images/kuntze.jpg
-    :align: center
+{{< img src="kuntze.jpg" alt="Image" caption="Kuntze Neon® Multi instrument" class="center" >}}
 
-    Kuntze Neon® Multi instrument
-
-Overview
---------
+## Overview
 
 Kuntze devices have an RS485 (ModBUS RTU) communication port. Please see the
 Kuntze papers for the pinout of the RS485 connector on your unit. ModBUS line
-has to be terminated properly (with a ``120Ω`` resistor), and since this is likely
+has to be terminated properly (with a `120Ω` resistor), and since this is likely
 your only unit connected to ESPHome, you should activate bus termination in the
 Network menu (this component doesn't support multiple Kuntze devices on the same
 bus). ModBUS address should remain at factory default value.
 
-The device communicates at ``19200`` baud ``8E1``. To connect to ESPHome, an RS485
+The device communicates at `19200` baud `8E1`. To connect to ESPHome, an RS485
 transceiver is needed. Choose a type which does not need a trigger to send and
 receive data,  for example:
 
-.. figure:: ../../images/rs485.jpg
+{{< img src="rs485.jpg" alt="Image" >}}
 
 The controller connects to the UART of the MCU. For ESP32 GPIO `16` to `TXD` and `17`
 to RXD are the default ones but any other pins can be used as well. 3.3V to VCC and GND to GND.
 
-.. warning::
+{{< warning >}}
+If you are using the [Logger Component](#logger) make sure you are not using the same pins for it or otherwise disable the UART
+logging with the `baud_rate: 0` option.
 
-    If you are using the :ref:`logger` make sure you are not using the same pins for it or otherwise disable the UART
-    logging with the ``baud_rate: 0`` option.
-
-Component
----------
+{{< /warning >}}
+## Component
 
 A configured modbus component is optional. It will be automatically created.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
 
-    # Example configuration entry
+sensor:
+  - platform: kuntze
+    id: my_kuntze
+    ph:
+      id: ph
+    temperature:
+      id: temperature
 
-    sensor:
-      - platform: kuntze
-        id: my_kuntze
-        ph:
-          id: ph
-        temperature:
-          id: temperature
-
-
+```
 Configuration variables:
 
 - **ph** (*Optional*): Measured pH value.
@@ -68,14 +66,13 @@ Configuration variables:
 - **ec** (*Optional*): Measured EC value.
 - **oci** (*Optional*): Measured OCI value.
 
-All sensors are *Optional* and support all other options from :ref:`Sensor <config-sensor>`.
+All sensors are *Optional* and support all other options from [Sensor](#config-sensor).
 
-See Also
---------
+## See Also
 
-- :ref:`uart`
-- :ref:`logger`
-- :ref:`Sensor <config-sensor>`
-- `Kuntze manuals <https://www.kuntze.com/en/downloads-2/>`__
-- `Communication protocol <https://www.kuntze.com/wp-content/uploads/2021/05/2019_Manual_Modbus-RTU_ENG.pdf>`__
-- :ghedit:`Edit`
+- [UART Bus](#uart)
+- [Logger Component](#logger)
+- [Sensor](#config-sensor)
+- [Kuntze manuals](https://www.kuntze.com/en/downloads-2/)
+- [Communication protocol](https://www.kuntze.com/wp-content/uploads/2021/05/2019_Manual_Modbus-RTU_ENG.pdf)
+

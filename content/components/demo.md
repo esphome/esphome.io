@@ -1,29 +1,29 @@
-Demo Component
-==============
+---
+description: "Instructions for setting up the demo component in ESPHome"
+title: "Demo Component"
+params:
+  seo:
+    description: Instructions for setting up the demo component in ESPHome
+    image: description.svg
+---
 
-.. seo::
-    :description: Instructions for setting up the demo component in ESPHome
-    :image: description.svg
 
-The ``demo`` component can be used for testing to generate sample instances of many
+
+The `demo` component can be used for testing to generate sample instances of many
 different components (sensors, lights, ...)
 
-.. figure:: images/demo-ui.png
-    :align: center
-    :width: 70.0%
+{{< img src="demo-ui.png" alt="Image" width="70.0%" class="center" >}}
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+demo:
 
-    # Example configuration entry
-    demo:
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 This component has no configuration variables
 
-See Also
---------
+## See Also
 
-- :apiref:`demo/demo_sensor.h`
-- :ghedit:`Edit`
+- {{< apiref "demo/demo_sensor.h" "demo/demo_sensor.h" >}}
+

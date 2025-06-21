@@ -1,31 +1,33 @@
-LibreTiny Text Sensor
-=====================
+---
+description: "Instructions for setting up LibreTiny text sensors."
+title: "LibreTiny Text Sensor"
+params:
+  seo:
+    description: Instructions for setting up LibreTiny text sensors.
+    image: libretiny.svg
+---
 
-.. seo::
-    :description: Instructions for setting up LibreTiny text sensors.
-    :image: libretiny.svg
 
-The ``libretiny`` text sensor platform exposes various LibreTiny core
+
+The `libretiny` text sensor platform exposes various LibreTiny core
 information via text sensors.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: libretiny
+    version:
+      name: LibreTiny Version
 
-    # Example configuration entry
-    text_sensor:
-      - platform: libretiny
-        version:
-          name: LibreTiny Version
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **version** (*Optional*): Expose the version of LibreTiny core as a text sensor. All options from
-  :ref:`Text Sensor <config-text_sensor>`.
+  [Text Sensor](#config-text_sensor).
 
 
-See Also
---------
+## See Also
 
-- :doc:`/components/libretiny`
-- :apiref:`libretiny/lt_component.h`
-- :ghedit:`Edit`
+- {{< docref "/components/libretiny" >}}
+- {{< apiref "libretiny/lt_component.h" "libretiny/lt_component.h" >}}
+

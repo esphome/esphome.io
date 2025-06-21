@@ -1,65 +1,67 @@
-Home Assistant Sensor
-=====================
+---
+description: "Instructions for setting up Home Assistant sensors with ESPHome that import states from your Home Assistant instance."
+title: "Home Assistant Sensor"
+params:
+  seo:
+    description: Instructions for setting up Home Assistant sensors with ESPHome that import states from your Home Assistant instance.
+    image: home-assistant.svg
+---
 
-.. seo::
-    :description: Instructions for setting up Home Assistant sensors with ESPHome that import states from your Home Assistant instance.
-    :image: home-assistant.svg
 
-The ``homeassistant`` sensor platform allows you to create sensors that import
-states from your Home Assistant instance using the :doc:`native API </components/api>`.
 
-.. note::
+The `homeassistant` sensor platform allows you to create sensors that import
+states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
-    Although you might not plan to *export* states from the node and you do not need an entity of the node
-    in Home Assistant, this component still requires you to register the node under Home Assistant. See:
-    :ref:`connecting-your-device-to-home-assistant`.
+{{< note >}}
+Although you might not plan to *export* states from the node and you do not need an entity of the node
+in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+[Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
-.. code-block:: yaml
+{{< /note >}}
+```yaml
+# Example configuration entry
+sensor:
+  - platform: homeassistant
+    name: "Temperature Sensor From Home Assistant"
+    entity_id: sensor.temperature_sensor
 
-    # Example configuration entry
-    sensor:
-      - platform: homeassistant
-        name: "Temperature Sensor From Home Assistant"
-        entity_id: sensor.temperature_sensor
-
+```
 Entity state attributes can also be imported:
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+sensor:
+  - platform: homeassistant
+    id: current_temperature
+    entity_id: climate.living_room
+    attribute: current_temperature
 
-    # Example configuration entry
-    sensor:
-      - platform: homeassistant
-        id: current_temperature
-        entity_id: climate.living_room
-        attribute: current_temperature
-
-.. note::
-
-    This component is only for numeral states. If you want to import arbitrary text states
-    from Home Assistant, use the :doc:`Home Assistant Text Sensor </components/text_sensor/homeassistant>`.
+```
+{{< note >}}
+This component is only for numeral states. If you want to import arbitrary text states
+from Home Assistant, use the {{< docref "/components/text_sensor/homeassistant" "Home Assistant Text Sensor" >}}.
 
 
-Configuration variables:
-------------------------
+{{< /note >}}
+## Configuration variables:
 
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
   specified entity. The entity state is used when this option is omitted.
-- All other options from :ref:`Sensor <config-sensor>`.
+- All other options from [Sensor](#config-sensor).
 
 
-.. note::
+{{< note >}}
+The sensors implemented by this component are by default `internal`, to avoid exporting them back to
+Home Assistant. Should you still want to do that (eg. because you use ESPHome's very efficient filters
+on them) you need to specifically configure `internal: false`. Also, `state_class`, `unit_of_measurement`
+are not inherited from the imported sensor so you need to set them manually.
 
-    The sensors implemented by this component are by default ``internal``, to avoid exporting them back to
-    Home Assistant. Should you still want to do that (eg. because you use ESPHome's very efficient filters
-    on them) you need to specifically configure ``internal: false``. Also, ``state_class``, ``unit_of_measurement``
-    are not inherited from the imported sensor so you need to set them manually.
 
+{{< /note >}}
+## See Also
 
-See Also
---------
+- [Sensor Filters](#sensor-filters)
+- [Automation](#automation)
+- {{< apiref "homeassistant/sensor/homeassistant_sensor.h" "homeassistant/sensor/homeassistant_sensor.h" >}}
 
-- :ref:`sensor-filters`
-- :ref:`automation`
-- :apiref:`homeassistant/sensor/homeassistant_sensor.h`
-- :ghedit:`Edit`

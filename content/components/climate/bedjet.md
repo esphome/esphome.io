@@ -1,11 +1,15 @@
-BedJet
-======
+---
+description: "Instructions for setting up a BedJet climate device."
+title: "BedJet"
+params:
+  seo:
+    description: Instructions for setting up a BedJet climate device.
+    image: bedjet.png
+---
 
-.. seo::
-    :description: Instructions for setting up a BedJet climate device.
-    :image: bedjet.png
 
-The ``bedjet`` component allows you to communicate with a BedJet V3 Climate Comfort
+
+The `bedjet` component allows you to communicate with a BedJet V3 Climate Comfort
 Sleep System.
 
 This component supports the following functionality:
@@ -17,203 +21,191 @@ This component supports the following functionality:
 - Show the current status of the BedJet
 
 This component uses the BLE peripheral on an ESP32, so you also need to enable
-this component. Please see the :doc:`/components/ble_client` docs for how to discover the MAC
+this component. Please see the {{< docref "/components/ble_client" >}} docs for how to discover the MAC
 address of your BedJet device.
 
-Component/Hub
--------------
+## Component/Hub
 
 This component is a global hub that maintains the connection to the BedJet device
 and delegates status updates to individual platform components.
 
-.. code-block:: yaml
+```yaml
+esp32_ble_tracker:
 
-    esp32_ble_tracker:
+ble_client:
+  - mac_address: XX:XX:XX:XX:XX:XX
+    id: bedjet_ble_id1
 
-    ble_client:
-      - mac_address: XX:XX:XX:XX:XX:XX
-        id: bedjet_ble_id1
+bedjet:
+  - id: bedjet_1
+    ble_client_id: bedjet_ble_id1
 
-    bedjet:
-      - id: bedjet_1
-        ble_client_id: bedjet_ble_id1
+```
+### Configuration variables:
 
-Configuration variables:
-************************
-
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **ble_client_id** (**Required**, :ref:`config-id`): The ID of the BLE Client.
-- **time_id** (*Optional*, :ref:`config-id`): The ID of a :doc:`/components/time/index` which
+- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **ble_client_id** (**Required**, [ID](#config-id)): The ID of the BLE Client.
+- **time_id** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/time" >}} which
   can be used to set the time on the BedJet device.
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to dispatch status
-  changes to child components. Defaults to ``5s``. Each child component can decide whether to
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to dispatch status
+  changes to child components. Defaults to `5s`. Each child component can decide whether to
   publish its own updated state on this interval, or use another (longer) update interval to
   throttle its own updates.
 
-lambda calls
-************
+### lambda calls
 
-From :ref:`lambdas <config-lambda>`, you can call methods to do some advanced stuff.
+From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
 
-- ``.upgrade_firmware``: Check for and install updated BedJet firmware.
+- `.upgrade_firmware`: Check for and install updated BedJet firmware.
 
-  .. code-block:: yaml
+  ```yaml
+  button:
+    - platform: template
+      name: "Check Bedjet(1) Firmware"
+      on_press:
+        then:
+        - lambda: |-
+            id(bedjet_1).upgrade_firmware();
 
-      button:
-        - platform: template
-          name: "Check Bedjet(1) Firmware"
-          on_press:
-            then:
-            - lambda: |-
-                id(bedjet_1).upgrade_firmware();
+  ```
+- `.send_local_time`: If `time_id` is set, attempt to sync the clock now.
 
-- ``.send_local_time``: If `time_id` is set, attempt to sync the clock now.
+  ```yaml
+  button:
+    - platform: template
+      name: "Sync Clock"
+      on_press:
+        then:
+        - lambda: |-
+            id(my_bedjet_fan).send_local_time();
 
-  .. code-block:: yaml
+  ```
+- `.set_clock`: Set the BedJet clock to a specified time; works with or without a `time_id`.
 
-      button:
-        - platform: template
-          name: "Sync Clock"
-          on_press:
-            then:
-            - lambda: |-
-                id(my_bedjet_fan).send_local_time();
+  ```yaml
+  button:
+    - platform: template
+      name: "Set Clock to 10:10pm"
+      on_press:
+        then:
+        - lambda: |-
+            id(my_bedjet_fan).set_clock(22, 10);
 
-- ``.set_clock``: Set the BedJet clock to a specified time; works with or without a `time_id`.
+  ```
+## `bedjet` Climate
 
-  .. code-block:: yaml
-
-      button:
-        - platform: template
-          name: "Set Clock to 10:10pm"
-          on_press:
-            then:
-            - lambda: |-
-                id(my_bedjet_fan).set_clock(22, 10);
-
-
-``bedjet`` Climate
-------------------
-
-The ``climate`` platform exposes the BedJet's climate-related functionality, including
+The `climate` platform exposes the BedJet's climate-related functionality, including
 setting the mode and target temperature.
 
-.. code-block:: yaml
+```yaml
+climate:
+  - platform: bedjet
+    id: my_bedjet_climate_entity
+    name: "My BedJet"
+    bedjet_id: bedjet_1
 
-    climate:
-      - platform: bedjet
-        id: my_bedjet_climate_entity
-        name: "My BedJet"
-        bedjet_id: bedjet_1
+```
+### Configuration variables:
 
-Configuration variables:
-************************
+- **bedjet_id** (**Required**, [ID](#config-id)): The ID of the Bedjet component.
+- **heat_mode** (*Optional*, string): The primary heating mode to use for `HVACMode.HEAT`:
 
-- **bedjet_id** (**Required**, :ref:`config-id`): The ID of the Bedjet component.
-- **heat_mode** (*Optional*, string): The primary heating mode to use for ``HVACMode.HEAT``:
-
-    - ``heat`` (Default) - Setting ``hvac_mode=heat`` uses the BedJet "HEAT" mode.
-    - ``extended`` - Setting ``hvac_mode=heat`` uses BedJet "EXT HEAT" mode.
+    - `heat` (Default) - Setting `hvac_mode=heat` uses the BedJet "HEAT" mode.
+    - `extended` - Setting `hvac_mode=heat` uses BedJet "EXT HEAT" mode.
 
     Whichever is not selected will be made available as a custom preset.
 
 - **temperature_source** (*Optional*, string): The temperature that should be used as the
   climate entity's current temperature:
 
-    - ``ambient`` (Default) - The temperature of the room the BedJet is in will be
+    - `ambient` (Default) - The temperature of the room the BedJet is in will be
       reported as the climate entity's current temperature.
-    - ``outlet`` - The temperature of the air being discharged by the BedJet will be
+    - `outlet` - The temperature of the air being discharged by the BedJet will be
       reported as the climate entity's current temperature.
-- All other options from :ref:`Climate <config-climate>`.
+- All other options from [Climate](#config-climate).
 
-``bedjet`` Fan
---------------
+## `bedjet` Fan
 
-The ``fan`` platform exposes the BedJet's fan-related functionality, including
+The `fan` platform exposes the BedJet's fan-related functionality, including
 on/off and speed control.
 
 When the BedJet is already on, turning the Fan component off will set the BedJet unit's mode to
-``OFF``. If it was not already on, it will be turned on to mode ``FAN_ONLY``.
+`OFF`. If it was not already on, it will be turned on to mode `FAN_ONLY`.
 
-.. code-block:: yaml
+```yaml
+fan:
+  - platform: bedjet
+    id: my_bedjet_fan_entity
+    name: "My BedJet Fan"
+    bedjet_id: bedjet_1
 
-    fan:
-      - platform: bedjet
-        id: my_bedjet_fan_entity
-        name: "My BedJet Fan"
-        bedjet_id: bedjet_1
+```
+### Configuration variables:
 
-Configuration variables:
-************************
+- **bedjet_id** (**Required**, [ID](#config-id)): The ID of the Bedjet component.
+- Other options from [Fan](#config-fan).
 
-- **bedjet_id** (**Required**, :ref:`config-id`): The ID of the Bedjet component.
-- Other options from :ref:`Fan <config-fan>`.
+## `bedjet` Sensor
 
-``bedjet`` Sensor
------------------
+The `sensor` platform exposes the BedJet's various temperature readings as sensors.
 
-The ``sensor`` platform exposes the BedJet's various temperature readings as sensors.
+```yaml
+sensor:
+  - platform: bedjet
+    bedjet_id: bedjet_1
+    outlet_temperature:
+      name: "My BedJet Outlet Temperature"
+    ambient_temperature:
+      name: "My BedJet Ambient Temperature"
 
-.. code-block:: yaml
-
-    sensor:
-      - platform: bedjet
-        bedjet_id: bedjet_1
-        outlet_temperature:
-          name: "My BedJet Outlet Temperature"
-        ambient_temperature:
-          name: "My BedJet Ambient Temperature"
-
-Configuration variables:
-************************
+```
+### Configuration variables:
 
 - **outlet_temperature** (*Optional*): If specified, the temperature of the air being
   discharged from the BedJet will be reported as a sensor.
-  All options from :ref:`Sensor <config-sensor>`.
+  All options from [Sensor](#config-sensor).
 
 - **ambient_temperature** (*Optional*): If specified, the temperature of the room the
   BedJet is in will be reported as a sensor.
-  All options from :ref:`Sensor <config-sensor>`.
+  All options from [Sensor](#config-sensor).
 
-Known issues:
--------------
+## Known issues:
 
-.. warning::
+{{< warning >}}
+BedJet V2 and other devices are not currently supported. Only BedJet V3 is supported.
 
-    BedJet V2 and other devices are not currently supported. Only BedJet V3 is supported.
+{{< /warning >}}
+{{< note >}}
+Only one client can be connected to the BedJet BLE service at a time, so you cannot
+use the BedJet mobile app to monitor or control the BedJet device while this component
+is connected. To use the mobile app, you should disconnect the ESP client first.
 
-.. note::
+To set up a (dis-)connect switch, see {{< docref "/components/switch/ble_client" >}}.
 
-    Only one client can be connected to the BedJet BLE service at a time, so you cannot
-    use the BedJet mobile app to monitor or control the BedJet device while this component
-    is connected. To use the mobile app, you should disconnect the ESP client first.
+{{< /note >}}
+{{< note >}}
+When more than one device is configured and connected, the ESP device may become
+overwhelmed and lead to timeouts while trying to install an updated version of the
+configuration. If this occurs, see the previous note about adding disconnect switches,
+and toggle those off while performing the installation. This will free up resources
+on the ESP and allow the installation to complete.
 
-    To set up a (dis-)connect switch, see :doc:`/components/switch/ble_client`.
+Additionally, you may use an [ota.on_begin](#ota-on_begin) [Automation](#automation)
+to do this automatically:
 
-.. note::
+```yaml
+ota:
+  on_begin:
+    then:
+      - logger.log: "Disconnecting clients for OTA update..."
+      - switch.turn_off: bedjet_1_monitor
+      - switch.turn_off: bedjet_2_monitor
 
-    When more than one device is configured and connected, the ESP device may become
-    overwhelmed and lead to timeouts while trying to install an updated version of the
-    configuration. If this occurs, see the previous note about adding disconnect switches,
-    and toggle those off while performing the installation. This will free up resources
-    on the ESP and allow the installation to complete.
+```
+{{< /note >}}
+## See Also
 
-    Additionally, you may use an :ref:`ota.on_begin <ota-on_begin>` :ref:`Automation<automation>`
-    to do this automatically:
+- {{< docref "/components/ble_client" >}}
+- {{< docref "/components/climate" >}}
+- {{< apiref "bedjet/bedjet.h" "bedjet/bedjet.h" >}}
 
-    .. code-block:: yaml
-
-        ota:
-          on_begin:
-            then:
-              - logger.log: "Disconnecting clients for OTA update..."
-              - switch.turn_off: bedjet_1_monitor
-              - switch.turn_off: bedjet_2_monitor
-
-See Also
---------
-
-- :doc:`/components/ble_client`
-- :doc:`/components/climate/index`
-- :apiref:`bedjet/bedjet.h`
-- :ghedit:`Edit`

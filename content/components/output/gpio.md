@@ -1,44 +1,46 @@
-GPIO Output
-===========
+---
+description: "Instructions for setting up binary outputs for GPIO pins."
+title: "GPIO Output"
+params:
+  seo:
+    description: Instructions for setting up binary outputs for GPIO pins.
+    image: gpio.svg
+---
 
-.. seo::
-    :description: Instructions for setting up binary outputs for GPIO pins.
-    :image: gpio.svg
+
 
 The GPIO output component is quite simple: It exposes a single GPIO pin
 as an output component. Note that output components are **not** switches and
-will not show up in Home Assistant. See :doc:`/components/switch/gpio`.
+will not show up in Home Assistant. See {{< docref "/components/switch/gpio" >}}.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+output:
+  - platform: gpio
+    pin: GPIOXX
+    id: gpio_d1
 
-    # Example configuration entry
-    output:
-      - platform: gpio
-        pin: GPIOXX
-        id: gpio_d1
+```
+## Configuration variables:
 
-Configuration variables:
-------------------------
+- **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to turn on and off.
+- **id** (**Required**, [ID](#config-id)): The id to use for this output component.
+- All other options from [Output](#config-output).
 
-- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to turn on and off.
-- **id** (**Required**, :ref:`config-id`): The id to use for this output component.
-- All other options from :ref:`Output <config-output>`.
+{{< warning >}}
+This is an **output component** and will not be visible from the frontend. Output components are intermediary
+components that can be attached to for example lights. To have a GPIO pin in the Home Assistant frontend, please
+see the {{< docref "/components/switch/gpio" >}}.
 
-.. warning::
+{{< /warning >}}
+## See Also
 
-    This is an **output component** and will not be visible from the frontend. Output components are intermediary
-    components that can be attached to for example lights. To have a GPIO pin in the Home Assistant frontend, please
-    see the :doc:`/components/switch/gpio`.
+- {{< docref "/components/switch/gpio" >}}
+- {{< docref "/components/output" >}}
+- {{< docref "/components/output/esp8266_pwm" >}}
+- {{< docref "/components/output/ledc" >}}
+- {{< docref "/components/light/binary" >}}
+- {{< docref "/components/fan/binary" >}}
+- {{< docref "/components/power_supply" >}}
+- {{< apiref "gpio/output/gpio_binary_output.h" "gpio/output/gpio_binary_output.h" >}}
 
-See Also
---------
-
-- :doc:`/components/switch/gpio`
-- :doc:`/components/output/index`
-- :doc:`/components/output/esp8266_pwm`
-- :doc:`/components/output/ledc`
-- :doc:`/components/light/binary`
-- :doc:`/components/fan/binary`
-- :doc:`/components/power_supply`
-- :apiref:`gpio/output/gpio_binary_output.h`
-- :ghedit:`Edit`

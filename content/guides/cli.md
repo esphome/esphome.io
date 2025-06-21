@@ -1,337 +1,311 @@
-Command Line Interface
-======================
+---
+description: "Documentation for the command line interface of ESPHome."
+title: "Command Line Interface"
+params:
+  seo:
+    description: Documentation for the command line interface of ESPHome.
+---
 
-.. seo::
-    :description: Documentation for the command line interface of ESPHome.
 
-Base Usage
-----------
+
+## Base Usage
 
 ESPHome's command line interface always has the following format
 
-.. code-block:: console
+```console
+esphome [OPTIONS] <COMMAND> <CONFIGURATION...> [ARGUMENTS]
 
-    esphome [OPTIONS] <COMMAND> <CONFIGURATION...> [ARGUMENTS]
+```
+{{< note >}}
+You can specify multiple configuration files in the command line interface for some commands,
+just list all files after the <COMMAND> like so:
 
-.. note::
+```console
+esphome run livingroom.yaml kitchen.yaml
 
-    You can specify multiple configuration files in the command line interface for some commands,
-    just list all files after the <COMMAND> like so:
+```
+{{< /note >}}
+## `--help` Option
 
-    .. code-block:: console
+{{< option "-h|--help" >}}
+Output possible <commands> and [arguments].
+Note: you can also use `--help` for any command to get arguments specific to that command.
+{{< /option >}}
+```console
+esphome <some_command> --help
 
-        esphome run livingroom.yaml kitchen.yaml
+```
+## `--verbose` Option
 
-``--help`` Option
---------------------
+{{< option "-v|--verbose" >}}
+Enable verbose esphome logs.
+Can also be enabled via environment variable `ESPHOME_VERBOSE=true`.
 
-.. option:: -h|--help
+{{< /option >}}
+## `--quiet` Option
 
-    Output possible <commands> and [arguments].
-    Note: you can also use ``--help`` for any command to get arguments specific to that command.
-.. code-block:: console
+{{< option "-q|--quiet" >}}
+Disable all esphome logs.
 
-    esphome <some_command> --help
-
-``--verbose`` Option
---------------------
-
-.. option:: -v|--verbose
-
-    Enable verbose esphome logs.
-    Can also be enabled via environment variable ``ESPHOME_VERBOSE=true``.
-
-``--quiet`` Option
-------------------
-
-.. option:: -q|--quiet
-
-    Disable all esphome logs.
-
-``--substitution`` Option
--------------------------
+{{< /option >}}
+## `--substitution` Option
 
 *(can be issued multiple times)*
 
-.. option:: -s|--substitution KEY VALUE
+{{< option "-s|--substitution KEY VALUE" >}}
+Defines or overrides substitution KEY with value VALUE.
 
-    Defines or overrides substitution KEY with value VALUE.
+{{< /option >}}
+Please see [command line substitutions](#command-line-substitutions) for details.
 
-Please see :ref:`command line substitutions <command-line-substitutions>` for details.
+## `run` Command
 
-``run`` Command
----------------
-
-The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
+The `esphome run <CONFIG>` command is the most common command for ESPHome. It
 
 * Validates the configuration
 * Compiles a firmware
 * Uploads the firmware (over OTA or USB)
 * Starts the log view
 
-.. program:: esphome run
 
-.. option:: --device UPLOAD_PORT
+{{< option "--device UPLOAD_PORT" >}}
+Manually specify the upload port/IP to use. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
+to perform an OTA.
 
-    Manually specify the upload port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
-    to perform an OTA.
+{{< /option >}}
+{{< option "--upload_speed BAUD_RATE" >}}
+The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
+This can be overridden in the platformio options on a per-config
+basis, or set with this option at the time of uploading.
 
-.. option:: --upload_speed BAUD_RATE
+{{< /option >}}
+{{< option "--no-logs" >}}
+Disable starting log view.
 
-    The upload speed for serial flashing defaults to 460800 or as set with the environment variable ``ESPHOME_UPLOAD_SPEED``.
-    This can be overridden in the platformio options on a per-config
-    basis, or set with this option at the time of uploading.
+{{< /option >}}
+{{< option "--topic TOPIC" >}}
+Manually set the topic to subscribe to for MQTT logs (defaults to the one in the configuration).
 
-.. option:: --no-logs
+{{< /option >}}
+{{< option "--username USERNAME" >}}
+Manually set the username to subscribe with for MQTT logs (defaults to the one in the configuration).
 
-    Disable starting log view.
+{{< /option >}}
+{{< option "--password PASSWORD" >}}
+Manually set the password to subscribe with for MQTT logs (defaults to the one in the configuration).
 
-.. option:: --topic TOPIC
+{{< /option >}}
+{{< option "--client-id CLIENT_ID" >}}
+Manually set the client ID to subscribe with for MQTT logs (defaults to a randomly chosen one).
 
-    Manually set the topic to subscribe to for MQTT logs (defaults to the one in the configuration).
+{{< /option >}}
+{{< option "--host-port HOST_PORT" >}}
+Specify the host port to use for legacy Over the Air uploads.
 
-.. option:: --username USERNAME
+{{< /option >}}
+{{< option "--reset" >}}
+If set, reset the device before starting the logs. May also be configured with the environment variable
+`ESPHOME_SERIAL_LOGGING_RESET=true`.
 
-    Manually set the username to subscribe with for MQTT logs (defaults to the one in the configuration).
-
-.. option:: --password PASSWORD
-
-    Manually set the password to subscribe with for MQTT logs (defaults to the one in the configuration).
-
-.. option:: --client-id CLIENT_ID
-
-    Manually set the client ID to subscribe with for MQTT logs (defaults to a randomly chosen one).
-
-.. option:: --host-port HOST_PORT
-
-    Specify the host port to use for legacy Over the Air uploads.
-
-.. option:: --reset
-
-    If set, reset the device before starting the logs. May also be configured with the environment variable
-    ``ESPHOME_SERIAL_LOGGING_RESET=true``.
-
-``config`` Command
-------------------
-
-.. program:: esphome config
-
-The ``esphome config <CONFIG>`` validates the configuration and displays the validation result.
+{{< /option >}}
+## `config` Command
 
 
-``compile`` Command
--------------------
+The `esphome config <CONFIG>` validates the configuration and displays the validation result.
 
-.. program:: esphome compile
 
-The ``esphome compile <CONFIG>`` validates the configuration and compiles the firmware.
+## `compile` Command
 
-.. option:: --only-generate
 
-    If set, only generates the C++ source code and does not compile the firmware.
+The `esphome compile <CONFIG>` validates the configuration and compiles the firmware.
 
-``upload`` Command
-------------------
+{{< option "--only-generate" >}}
+If set, only generates the C++ source code and does not compile the firmware.
 
-.. program:: esphome upload
+{{< /option >}}
+## `upload` Command
 
-The ``esphome upload <CONFIG>`` validates the configuration and uploads the most recent firmware build.
 
-.. option:: --device UPLOAD_PORT
+The `esphome upload <CONFIG>` validates the configuration and uploads the most recent firmware build.
 
-    Manually specify the upload port/IP address to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
-    to perform an OTA.
+{{< option "--device UPLOAD_PORT" >}}
+Manually specify the upload port/IP address to use. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
+to perform an OTA.
 
-.. option:: --upload_speed BAUD_RATE
+{{< /option >}}
+{{< option "--upload_speed BAUD_RATE" >}}
+The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
+This can be overridden in the platformio options on a per-config
+basis, or set with this option at the time of uploading.
 
-    The upload speed for serial flashing defaults to 460800 or as set with the environment variable ``ESPHOME_UPLOAD_SPEED``.
-    This can be overridden in the platformio options on a per-config
-    basis, or set with this option at the time of uploading.
+{{< /option >}}
+{{< option "--host-port HOST_PORT" >}}
+Specify the host port to use for legacy Over the Air uploads.
 
-.. option:: --host-port HOST_PORT
+{{< /option >}}
+## `clean-mqtt` Command
 
-    Specify the host port to use for legacy Over the Air uploads.
 
-``clean-mqtt`` Command
-----------------------
+The `esphome clean-mqtt <CONFIG>` cleans retained MQTT discovery messages from the MQTT broker.
+See [Using with Home Assistant MQTT entities](#mqtt-using_with_home_assistant_entities).
 
-.. program:: esphome clean-mqtt
+{{< option "--topic TOPIC" >}}
+Manually set the topic to clean retained messages from (defaults to the MQTT discovery topic of the
+node).
 
-The ``esphome clean-mqtt <CONFIG>`` cleans retained MQTT discovery messages from the MQTT broker.
-See :ref:`mqtt-using_with_home_assistant_entities`.
+{{< /option >}}
+{{< option "--username USERNAME" >}}
+Manually set the username to subscribe with.
 
-.. option:: --topic TOPIC
+{{< /option >}}
+{{< option "--password PASSWORD" >}}
+Manually set the password to subscribe with.
 
-    Manually set the topic to clean retained messages from (defaults to the MQTT discovery topic of the
-    node).
+{{< /option >}}
+{{< option "--client-id CLIENT_ID" >}}
+Manually set the client ID to subscribe with.
 
-.. option:: --username USERNAME
+{{< /option >}}
+## `wizard` Command
 
-    Manually set the username to subscribe with.
 
-.. option:: --password PASSWORD
+The `esphome wizard <CONFIG>` command starts the ESPHome configuration creation wizard.
 
-    Manually set the password to subscribe with.
+## `mqtt-fingerprint` Command
 
-.. option:: --client-id CLIENT_ID
 
-    Manually set the client ID to subscribe with.
+The `esphome mqtt-fingerprint <CONFIG>` command shows the MQTT SSL fingerprints of the remote used
+for SSL MQTT connections. See [SSL Fingerprints](#mqtt-ssl_fingerprints).
 
-``wizard`` Command
-------------------
+## `version` Command
 
-.. program:: esphome wizard
 
-The ``esphome wizard <CONFIG>`` command starts the ESPHome configuration creation wizard.
+The `esphome version` command shows the current ESPHome version and exits.
 
-``mqtt-fingerprint`` Command
-----------------------------
+## `clean` Command
 
-.. program:: esphome mqtt-fingerprint
 
-The ``esphome mqtt-fingerprint <CONFIG>`` command shows the MQTT SSL fingerprints of the remote used
-for SSL MQTT connections. See :ref:`mqtt-ssl_fingerprints`.
+The `esphome clean <CONFIG>` command cleans all build files and can help with some build issues.
 
-``version`` Command
--------------------
+## `dashboard` Command
 
-.. program:: esphome version
 
-The ``esphome version`` command shows the current ESPHome version and exits.
-
-``clean`` Command
------------------
-
-.. program:: esphome clean
-
-The ``esphome clean <CONFIG>`` command cleans all build files and can help with some build issues.
-
-``dashboard`` Command
----------------------
-
-.. program:: esphome dashboard
-
-The ``esphome dashboard <CONFIG>`` command starts the ESPHome dashboard server for using ESPHome
+The `esphome dashboard <CONFIG>` command starts the ESPHome dashboard server for using ESPHome
 through a graphical user interface. This command accepts a configuration directory instead of a
 single configuration file.
 
-.. option:: --address ADDRESS
+{{< option "--address ADDRESS" >}}
+Manually set the address to bind to (defaults to 0.0.0.0)
 
-    Manually set the address to bind to (defaults to 0.0.0.0)
+{{< /option >}}
+{{< option "--port PORT" >}}
+Manually set the HTTP port to open connections on (defaults to 6052)
 
-.. option:: --port PORT
+{{< /option >}}
+{{< option "--socket SOCKET" >}}
+Manually set the unix socket to bind to. If specified along with `--address` or `--port` the values
+for those parameters will be ignored. Cannot be used along with `--systemd-socket`.
 
-    Manually set the HTTP port to open connections on (defaults to 6052)
+{{< /option >}}
+{{< option "--username USERNAME" >}}
+The optional username to require for authentication.
 
-.. option:: --socket SOCKET
+{{< /option >}}
+{{< option "--password PASSWORD" >}}
+The optional password to require for authentication.
 
-    Manually set the unix socket to bind to. If specified along with ``--address`` or ``--port`` the values
-    for those parameters will be ignored. Cannot be used along with ``--systemd-socket``.
+{{< /option >}}
+{{< option "--open-ui" >}}
+If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
+`--socket`.
 
-.. option:: --username USERNAME
+{{< /option >}}
+## `logs` Command
 
-    The optional username to require for authentication.
 
-.. option:: --password PASSWORD
+The `esphome logs <CONFIG>` command validates the configuration and shows all logs.
 
-    The optional password to require for authentication.
+{{< option "--topic TOPIC" >}}
+Manually set the topic to subscribe to.
 
-.. option:: --open-ui
+{{< /option >}}
+{{< option "--username USERNAME" >}}
+Manually set the username.
 
-    If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
-    ``--socket``.
+{{< /option >}}
+{{< option "--password PASSWORD" >}}
+Manually set the password.
 
-``logs`` Command
----------------------
+{{< /option >}}
+{{< option "--client-id CLIENT_ID" >}}
+Manually set the client id.
 
-.. program:: esphome logs
+{{< /option >}}
+{{< option "--device SERIAL_PORT" >}}
+Manually specify a serial port/IP to use. For example `/dev/cu.SLAB_USBtoUART`.
 
-The ``esphome logs <CONFIG>`` command validates the configuration and shows all logs.
+{{< /option >}}
+{{< option "--reset" >}}
+If set, reset the device before starting the logs. May also be configured with the environment variable
+`ESPHOME_SERIAL_LOGGING_RESET=true`.
 
-.. option:: --topic TOPIC
-
-    Manually set the topic to subscribe to.
-
-.. option:: --username USERNAME
-
-    Manually set the username.
-
-.. option:: --password PASSWORD
-
-    Manually set the password.
-
-.. option:: --client-id CLIENT_ID
-
-    Manually set the client id.
-
-.. option:: --device SERIAL_PORT
-
-    Manually specify a serial port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``.
-
-.. option:: --reset
-
-    If set, reset the device before starting the logs. May also be configured with the environment variable
-    ``ESPHOME_SERIAL_LOGGING_RESET=true``.
-
-Using Bash or ZSH auto-completion
----------------------------------
+{{< /option >}}
+## Using Bash or ZSH auto-completion
 
 ESPHome's command line interface provides the ability to use auto-completion features provided by Bash or ZSH.
 
 You can register ESPHome for auto-completion by adding the following to your ~/.bashrc file:
 
-.. code-block:: console
+```console
+eval "$(register-python-argcomplete esphome)"
 
-    eval "$(register-python-argcomplete esphome)"
+```
+For more information, see [argcomplete](https://kislyuk.github.io/argcomplete/) documentation.
 
-For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`__ documentation.
-
-Using logging tools supplied with ESPHome
------------------------------------------
+## Using logging tools supplied with ESPHome
 There are two types of logging interfaces supplied with ESPHome: API and Serial (UART) logging.
-For serial logging, there are many options including `ESPHome Web <https://web.esphome.io>`__ and
-the ESPHome CLI's ``run`` command.
+For serial logging, there are many options including [ESPHome Web](https://web.esphome.io) and
+the ESPHome CLI's `run` command.
 
-For basic API based logging uses, one can use the ``aioesphomeapi-logs`` command bundled with ESPHome,
+For basic API based logging uses, one can use the `aioesphomeapi-logs` command bundled with ESPHome,
 Which is especially useful for ESP devices in a remote/inaccessible location.
 
 The syntax is as follows:
 
-.. code-block:: console
+```console
+aioesphomeapi-logs <IPv4 pr IPv6 address>
 
-    aioesphomeapi-logs <IPv4 pr IPv6 address>
-
+```
 Some working examples include:
 
-.. code-block:: console
+```console
+aioesphomeapi-logs 192.168.x.y
+aioesphomeapi-logs fe80::cdef:0123:4567:89ab
+aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
 
-    aioesphomeapi-logs 192.168.x.y
-    aioesphomeapi-logs fe80::cdef:0123:4567:89ab
-    aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
-
-Press ``CTRL+C`` to exit the logging view.
+```
+Press `CTRL+C` to exit the logging view.
 
 If you have configured encryption for API, provide the key from the yaml as follows:
 
-.. code-block:: console
+```console
+aioesphomeapi-logs 192.168.x.y --noise-psk <your-api-key-from-yaml>
 
-    aioesphomeapi-logs 192.168.x.y --noise-psk <your-api-key-from-yaml>
-
+```
 If you do not know/wish to know the IP address of an ESPHome device,
-one can also use ``aioesphomeapi-discover`` to discover online ESPHome devices on the local network.
+one can also use `aioesphomeapi-discover` to discover online ESPHome devices on the local network.
 
 The syntax is as follows:
 
-.. code-block:: console
+```console
+aioesphomeapi-discover
 
-    aioesphomeapi-discover
-
+```
 The response lists info about currently available ESPHome devices:
 
-``Status |Name |Address |MAC |Version |Platform |Board``
+`Status |Name |Address |MAC |Version |Platform |Board`
 
-See Also
---------
+## See Also
 
-- :doc:`Guides </guides/index>`
-- :ghedit:`Edit`
+- {{< docref "/guides/index" "Guides" >}}
+

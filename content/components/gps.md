@@ -1,41 +1,41 @@
-GPS Component
-=============
+---
+description: "Instructions for setting up GPS component in ESPHome."
+title: "GPS Component"
+params:
+  seo:
+    description: Instructions for setting up GPS component in ESPHome.
+    image: crosshairs-gps.svg
+---
 
-.. seo::
-    :description: Instructions for setting up GPS component in ESPHome.
-    :image: crosshairs-gps.svg
 
-The ``gps`` component allows you to connect GPS modules to your ESPHome project.
+
+The `gps` component allows you to connect GPS modules to your ESPHome project.
 Any GPS module that uses the standardized NMEA communication protocol will work.
 
-.. figure:: images/gps-full.jpg
-    :align: center
-    :width: 50.0%
+{{< img src="gps-full.jpg" alt="Image" caption="GPS Module. Image by `Adafruit`_" width="50.0%" class="center" >}}
 
-    GPS Module. Image by `Adafruit`_
+[Adafruit](https://www.adafruit.com/product/746)
 
-.. _Adafruit: https://www.adafruit.com/product/746
-
-For this component to work you need to have set up a :ref:`UART bus <uart>`
+For this component to work you need to have set up a [UART bus](#uart)
 in your configuration - only the RX pin should be necessary.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
 
-    # Example configuration entry
+# Declare GPS module
+gps:
+  latitude:
+    name: "Latitude"
+  longitude:
+    name: "Longitude"
+  altitude:
+    name: "Altitude"
 
-    # Declare GPS module
-    gps:
-      latitude:
-        name: "Latitude"
-      longitude:
-        name: "Longitude"
-      altitude:
-        name: "Altitude"
+# GPS as time source
+time:
+  - platform: gps
 
-    # GPS as time source
-    time:
-      - platform: gps
-
+```
 The component is split up in platforms, by defining the GPS module
 (as seen above).
 
@@ -43,44 +43,42 @@ In addition to retrieving GPS position data, the module can also be used as a
 time platform to get the current date and time via the very accurate GPS clocks
 without a network connection.
 
-See :doc:`time/gps` for config options for the GPS time source.
+See {{< docref "time/gps" >}} for config options for the GPS time source.
 
-Configuration variables:
-------------------------
+## Configuration variables:
 - **latitude** (*Optional*): Include the Latitude as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **longitude** (*Optional*): Include the Longitude as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **speed** (*Optional*): Include the measured speed as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **course** (*Optional*): Include the measured course as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **altitude** (*Optional*): Include the measured altitude as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **satellites** (*Optional*): Include the number of tracking satellites being used as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
 - **hdop** (*Optional*): Include the measured HDOP (Horizontal Dilution Of Precision) as a sensor
 
-  - All options from :ref:`Sensor <config-sensor>`.
+  - All options from [Sensor](#config-sensor).
 
-- **update_interval** (*Optional*, :ref:`config-time`): The interval of sensor updates. Defaults to  ``20s``.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval of sensor updates. Defaults to  `20s`.
 
-See Also
---------
+## See Also
 
-- :ref:`sensor-filters`
-- `TinyGPS++ library <http://arduiniana.org/libraries/tinygpsplus/>`__
-- :apiref:`gps/gps.h`
-- :ghedit:`Edit`
+- [Sensor Filters](#sensor-filters)
+- [TinyGPS++ library](http://arduiniana.org/libraries/tinygpsplus/)
+- {{< apiref "gps/gps.h" "gps/gps.h" >}}
+

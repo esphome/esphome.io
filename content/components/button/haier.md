@@ -1,34 +1,36 @@
-Haier Climate Buttons
-=====================
+---
+description: "Instructions for setting up additional buttons for Haier climate devices."
+title: "Haier Climate Buttons"
+params:
+  seo:
+    description: Instructions for setting up additional buttons for Haier climate devices.
+    image: haier.svg
+---
 
-.. seo::
-    :description: Instructions for setting up additional buttons for Haier climate devices.
-    :image: haier.svg
+
 
 Additional buttons for Haier AC cleaning. **These buttons are supported only by the hOn protocol**.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+button:
+  - platform: haier
+    haier_id: haier_ac
+    self_cleaning:
+      name: Haier start self cleaning
+    steri_cleaning:
+      name: Haier start 56°C steri-cleaning
 
-    # Example configuration entry
-    button:
-      - platform: haier
-        haier_id: haier_ac
-        self_cleaning:
-          name: Haier start self cleaning
-        steri_cleaning:
-          name: Haier start 56°C steri-cleaning
+```
+## Configuration variables:
 
-Configuration variables:
-------------------------
-
-- **haier_id** (**Required**, :ref:`config-id`): The id of Haier climate component
+- **haier_id** (**Required**, [ID](#config-id)): The id of Haier climate component
 - **self_cleaning** (*Optional*): A button that starts Haier climate self cleaning.
-  All options from :ref:`Button <config-button>`.
+  All options from [Button](#config-button).
 - **steri_cleaning** (*Optional*): A button that starts Haier climate 56°C Steri-Clean.
-  All options from :ref:`Button <config-button>`.
+  All options from [Button](#config-button).
 
-See Also
---------
+## See Also
 
-- :doc:`Haier Climate </components/climate/haier>`
-- :ghedit:`Edit`
+- {{< docref "/components/climate/haier" "Haier Climate" >}}
+

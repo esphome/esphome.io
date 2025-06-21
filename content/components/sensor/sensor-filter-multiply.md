@@ -1,7 +1,12 @@
-``multiply``
-************
+---
+description: ""
+title: ""
+---
+
+
+# `multiply`
 
 Multiplies each value by a templatable value.
 
-.. _sensor-filter-calibrate_linear:
+{{< anchor "sensor-filter-calibrate_linear" >}}
 

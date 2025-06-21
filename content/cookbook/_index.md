@@ -1,7 +1,6 @@
-Cookbook
-========
+---
+description: "Cookbook"
+title: "Cookbook"
+---
 
-.. toctree::
-    :glob:
 
-    *

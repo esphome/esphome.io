@@ -1,389 +1,371 @@
-Select Component
-================
+---
+description: "Instructions for setting up select components in ESPHome."
+title: "Select Component"
+params:
+  seo:
+    description: Instructions for setting up select components in ESPHome.
+    image: folder-open.svg
+---
 
-.. seo::
-    :description: Instructions for setting up select components in ESPHome.
-    :image: folder-open.svg
+
 
 ESPHome has support for components to create a select entity. A select entity is
 basically an option list that can be set by either yaml, hardware or the user/frontend.
 
-.. note::
+{{< note >}}
+Home Assistant Core 2021.8 or higher is required for ESPHome select entities to work.
 
-    Home Assistant Core 2021.8 or higher is required for ESPHome select entities to work.
+{{< /note >}}
+{{< anchor "config-select" >}}
 
-.. _config-select:
-
-Base Select Configuration
--------------------------
+## Base Select Configuration
 
 All selects in ESPHome have a name and an optional icon.
 
-.. code-block:: yaml
+```yaml
+# Example select configuration
+name: Livingroom Mood
+id: my_select
 
-    # Example select configuration
-    name: Livingroom Mood
-    id: my_select
+# Optional variables:
+icon: "mdi:emoticon-outline"
 
-    # Optional variables:
-    icon: "mdi:emoticon-outline"
-
+```
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the select. At least one of **id** and **name** must be specified.
 
-  .. note::
+{{< note >}}
+If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+you want the select to use that name, you can set `name: None`.
 
-      If you have a :ref:`friendly_name <esphome-configuration_variables>` set for your device and
-      you want the select to use that name, you can set ``name: None``.
-
+{{< /note >}}
 - **icon** (*Optional*, icon): Manually set the icon to use for the select in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an ``id`` without
-  a ``name`` will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to ``false``.
+  Defaults to `false`.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
-  Set to ``""`` to remove the default entity category.
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
+  Set to `""` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 Automations:
 
-- **on_value** (*Optional*, :ref:`Automation <automation>`): An automation to perform
-  when a new value is published. See :ref:`select-on_value`.
+- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+  when a new value is published. See [`on_value`](#select-on_value).
 
 MQTT Options:
 
-- All other options from :ref:`MQTT Component <config-mqtt-component>`.
+- All other options from [MQTT Component](#config-mqtt-component).
 
-Select Automation
------------------
+## Select Automation
 
-You can access the most recent state of the select in :ref:`lambdas <config-lambda>` using
-``id(select_id).state``.
-For more information on using lambdas with select, see :ref:`select-lambda_calls`.
+You can access the most recent state of the select in [lambdas](#config-lambda) using
+`id(select_id).state`.
+For more information on using lambdas with select, see [lambda calls](#select-lambda_calls).
 
-.. _select-on_value:
+{{< anchor "select-on_value" >}}
 
-``on_value``
-************
+### `on_value`
 
-This automation will be triggered whenever a value is set/published, even if the value is the same as before. In :ref:`Lambdas <config-lambda>`
-you can get the value from the trigger with ``x`` and the index offset of the selected value with ``i``.
+This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](#config-lambda)
+you can get the value from the trigger with `x` and the index offset of the selected value with `i`.
 
-.. code-block:: yaml
+```yaml
+select:
+  - platform: template
+    # ...
+    on_value:
+      then:
+        - logger.log:
+            format: "Chosen option: %s (index %d)"
+            args: ["x.c_str()", "i"]
 
-    select:
-      - platform: template
-        # ...
-        on_value:
-          then:
-            - logger.log:
-                format: "Chosen option: %s (index %d)"
-                args: ["x.c_str()", "i"]
+```
+Configuration variables: See [Automation](#automation).
 
-Configuration variables: See :ref:`Automation <automation>`.
+{{< anchor "select-set_action" >}}
 
-.. _select-set_action:
+### `select.set` Action
 
-``select.set`` Action
-*********************
+This is an [Action](#config-action) for setting the active option using an option value.
 
-This is an :ref:`Action <config-action>` for setting the active option using an option value.
+```yaml
+- select.set:
+    id: my_select
+    option: "Happy"
 
-.. code-block:: yaml
-
-    - select.set:
-        id: my_select
-        option: "Happy"
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
-- **option** (**Required**, string, :ref:`templatable <config-templatable>`):
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **option** (**Required**, string, [templatable](#config-templatable)):
   The option to set the select to.
 
 When a non-existing option value is used, a warning is logged and the state of
 the select is left as-is.
 
-.. _select-set_index_action:
+{{< anchor "select-set_index_action" >}}
 
-``select.set_index`` Action
-***************************
+### `select.set_index` Action
 
-This is an :ref:`Action <config-action>` for setting the active option using its index offset.
+This is an [Action](#config-action) for setting the active option using its index offset.
 
-.. code-block:: yaml
+```yaml
+- select.set_index:
+    id: my_select
+    index: 3
 
-    - select.set_index:
-        id: my_select
-        index: 3
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
-- **index** (**Required**, int, :ref:`templatable <config-templatable>`):
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **index** (**Required**, int, [templatable](#config-templatable)):
   The index offset of the option to be activated.
 
 When a non-existing index value is used, a warning is logged and the state of
 the select is left as-is.
 
-.. _select-next_action:
+{{< anchor "select-next_action" >}}
 
-``select.next`` Action
-**********************
+### `select.next` Action
 
-This is an :ref:`Action <config-action>` for selecting the next option in a select component.
+This is an [Action](#config-action) for selecting the next option in a select component.
 
-.. code-block:: yaml
+```yaml
+- select.next:
+    id: my_select
+    cycle: false
 
-    - select.next:
-        id: my_select
-        cycle: false
+# Shorthand
+- select.next: my_select
 
-    # Shorthand
-    - select.next: my_select
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump back to the first option
-  of the select when the last option is currently selected. Defaults to ``true``.
+  of the select when the last option is currently selected. Defaults to `true`.
 
-.. _select-previous_action:
+{{< anchor "select-previous_action" >}}
 
-``select.previous`` Action
-**************************
+### `select.previous` Action
 
-This is an :ref:`Action <config-action>` for selecting the previous option in
+This is an [Action](#config-action) for selecting the previous option in
 a select component.
 
-.. code-block:: yaml
+```yaml
+- select.previous:
+    id: my_select
+    cycle: true
 
-    - select.previous:
-        id: my_select
-        cycle: true
+# Shorthand
+- select.previous: my_select
 
-    # Shorthand
-    - select.previous: my_select
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump to the last option
-  of the select when the first option is currently selected. Defaults to ``true``.
+  of the select when the first option is currently selected. Defaults to `true`.
 
-.. _select-first_action:
+{{< anchor "select-first_action" >}}
 
-``select.first`` Action
-***********************
+### `select.first` Action
 
-This is an :ref:`Action <config-action>` for selecting the first option in
+This is an [Action](#config-action) for selecting the first option in
 a select component.
 
-.. code-block:: yaml
+```yaml
+- select.first:
+    id: my_select
 
-    - select.first:
-        id: my_select
+# Shorthand
+- select.first: my_select
 
-    # Shorthand
-    - select.first: my_select
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 
-.. _select-last_action:
+{{< anchor "select-last_action" >}}
 
-``select.last`` Action
-**********************
+### `select.last` Action
 
-This is an :ref:`Action <config-action>` for selecting the last option in
+This is an [Action](#config-action) for selecting the last option in
 a select component.
 
-.. code-block:: yaml
+```yaml
+- select.last:
+    id: my_select
 
-    - select.last:
-        id: my_select
+# Shorthand
+- select.last: my_select
 
-    # Shorthand
-    - select.last: my_select
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 
-.. _select-operation_action:
+{{< anchor "select-operation_action" >}}
 
-``select.operation`` Action
-***************************
+### `select.operation` Action
 
-This is an :ref:`Action <config-action>` that can be used to change the active
+This is an [Action](#config-action) that can be used to change the active
 option in a select component (first, last, previous or next), using a generic
 templatable action call.
 
-.. code-block:: yaml
+```yaml
+# Using values
+- select.operation:
+    id: my_select
+    operation: Next
+    cycle: true
 
-    # Using values
-    - select.operation:
-        id: my_select
-        operation: Next
-        cycle: true
+# Or templated (lambdas)
+- select.operation:
+    id: my_select
+    operation: !lambda "return SELECT_OP_NEXT;"
+    cycle: !lambda "return true;"
 
-    # Or templated (lambdas)
-    - select.operation:
-        id: my_select
-        operation: !lambda "return SELECT_OP_NEXT;"
-        cycle: !lambda "return true;"
-
+```
 Configuration variables:
 
-- **id** (**Required**, :ref:`config-id`): The ID of the select to set.
-- **operation** (**Required**, string, :ref:`templatable <config-templatable>`): The
-  operation to perform. One of ``FIRST``, ``LAST``, ``PREVIOUS`` or
-  ``NEXT`` (case insensitive). When writing a lambda for this field, then return
-  one of the following enum values: ``SELECT_OP_FIRST``, ``SELECT_OP_LAST``,
-  ``SELECT_OP_PREVIOUS`` or ``SELECT_OP_NEXT``.
-- **cycle** (*Optional*, bool, :ref:`templatable <config-templatable>`):
-  Can be used for options ``NEXT`` and ``PREVIOUS`` to specify whether or not to
+- **id** (**Required**, [ID](#config-id)): The ID of the select to set.
+- **operation** (**Required**, string, [templatable](#config-templatable)): The
+  operation to perform. One of `FIRST`, `LAST`, `PREVIOUS` or
+  `NEXT` (case insensitive). When writing a lambda for this field, then return
+  one of the following enum values: `SELECT_OP_FIRST`, `SELECT_OP_LAST`,
+  `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`.
+- **cycle** (*Optional*, bool, [templatable](#config-templatable)):
+  Can be used for options `NEXT` and `PREVIOUS` to specify whether or not to
   wrap around the options list when respectively the last or first option in
   the select is currently active.
 
-.. _select-lambda_calls:
+{{< anchor "select-lambda_calls" >}}
 
-lambda calls
-************
+### lambda calls
 
-From :ref:`lambdas <config-lambda>`, you can call several methods on all selects to do some
+From [lambdas](#config-lambda), you can call several methods on all selects to do some
 advanced stuff (see the full API Reference for more info).
 
-- ``.make_call()``: Create a call for changing the select state.
+- `.make_call()`: Create a call for changing the select state.
 
-  .. code-block:: cpp
+  ```cpp
+  // Within lambda, select the "Happy" option.
+  auto call = id(my_select).make_call();
+  call.set_option("Happy");
+  call.perform();
 
-      // Within lambda, select the "Happy" option.
-      auto call = id(my_select).make_call();
-      call.set_option("Happy");
-      call.perform();
-
+  ```
   Check the API reference for information on the methods that are available for
-  the ``SelectCall`` object. You can for example also use ``call.select_first()``
-  to select the first option or ``call.select_next(true)`` to select the next
+  the `SelectCall` object. You can for example also use `call.select_first()`
+  to select the first option or `call.select_next(true)` to select the next
   option with the cycle feature enabled.
 
-- ``.state``: Retrieve the currently selected option of the select.
+- `.state`: Retrieve the currently selected option of the select.
 
-  .. code-block:: cpp
+  ```cpp
+  // For example, create a custom log message when an option is selected:
+  auto state = id(my_select).state.c_str();
+  ESP_LOGI("main", "Option of my select: %s", state);
 
-      // For example, create a custom log message when an option is selected:
-      auto state = id(my_select).state.c_str();
-      ESP_LOGI("main", "Option of my select: %s", state);
+  ```
+  ```yaml
+  # Check if a specific option is selected
+  - if:
+      condition:
+        - lambda: 'return id(my_select).state == "my_option_value";'
 
-  .. code-block:: yaml
+  ```
+- `.size()`: Retrieve the number of options in the select.
 
-      # Check if a specific option is selected
-      - if:
-          condition:
-            - lambda: 'return id(my_select).state == "my_option_value";'
+  ```cpp
+  auto size = id(my_select).size();
+  ESP_LOGI("main", "Select has %d options", size);
 
+  ```
+- `.index_of(<option value>)`: Retrieve the index offset for an option value.
 
-- ``.size()``: Retrieve the number of options in the select.
+  ```cpp
+  auto index = id(my_select).index_of("Happy");
+  if (index.has_value()) {
+    ESP_LOGI("main", "'Happy' is at index: %d", index.value());
+  } else {
+    ESP_LOGE("main", "There is no option 'Happy'");
+  }
 
-  .. code-block:: cpp
+  ```
+- `.active_index()`: Retrieve the index of the currently active option.
 
-      auto size = id(my_select).size();
-      ESP_LOGI("main", "Select has %d options", size);
+  ```cpp
+  auto index = id(my_select).active_index();
+  if (index.has_value()) {
+    ESP_LOGI("main", "Option at index %d is active", index.value());
+  } else {
+    ESP_LOGI("main", "No option is active");
+  }
 
-- ``.index_of(<option value>)``: Retrieve the index offset for an option value.
+  ```
+- `.at(<index offset>)`: Retrieve the option value at a given index offset.
 
-  .. code-block:: cpp
+  ```cpp
+  auto index = 1;
+  auto option = id(my_select).at(index);
+  if (option.has_value()) {
+    auto value = option.value();
+    ESP_LOGI("main", "Option at %d is: %s", index, value);
+  } else {
+    ESP_LOGE("main", "Index %d does not exist", index);
+  }
 
-      auto index = id(my_select).index_of("Happy");
-      if (index.has_value()) {
-        ESP_LOGI("main", "'Happy' is at index: %d", index.value());
-      } else {
-        ESP_LOGE("main", "There is no option 'Happy'");
-      }
+  ```
+- `.has_option(<option value>)`: Check if the select contains the given option value.
 
-- ``.active_index()``: Retrieve the index of the currently active option.
+  ```cpp
+  auto option = "Happy";
+  if (id(my_select).has_option(option)) {
+    ESP_LOGI("main", "Select has option '%s'", option);
+  }
 
-  .. code-block:: cpp
+  ```
+- `.has_index(<index offset>)`: Check if the select contains an option value for the given index offset.
 
-      auto index = id(my_select).active_index();
-      if (index.has_value()) {
-        ESP_LOGI("main", "Option at index %d is active", index.value());
-      } else {
-        ESP_LOGI("main", "No option is active");
-      }
+  ```cpp
+  auto index = 3;
+  if (id(my_select).has_index(index)) {
+    ESP_LOGI("main", "Select has index offset %d", index);
+  }
 
-- ``.at(<index offset>)``: Retrieve the option value at a given index offset.
-
-  .. code-block:: cpp
-
-      auto index = 1;
-      auto option = id(my_select).at(index);
-      if (option.has_value()) {
-        auto value = option.value();
-        ESP_LOGI("main", "Option at %d is: %s", index, value);
-      } else {
-        ESP_LOGE("main", "Index %d does not exist", index);
-      }
-
-- ``.has_option(<option value>)``: Check if the select contains the given option value.
-
-  .. code-block:: cpp
-
-      auto option = "Happy";
-      if (id(my_select).has_option(option)) {
-        ESP_LOGI("main", "Select has option '%s'", option);
-      }
-
-- ``.has_index(<index offset>)``: Check if the select contains an option value for the given index offset.
-
-  .. code-block:: cpp
-
-      auto index = 3;
-      if (id(my_select).has_index(index)) {
-        ESP_LOGI("main", "Select has index offset %d", index);
-      }
-
-
-Example
--------
+  ```
+## Example
 
 Setting up three options and set component state to selected option value.
 
-.. code-block:: yaml
+```yaml
+select:
+  - platform: template
+    name: Mode
+    id: mode
+    options:
+     - "Option1"
+     - "Option2"
+     - "Option3"
+    initial_option: "Option1"
+    optimistic: true
+    set_action:
+      - logger.log:
+          format: "Chosen option: %s"
+          args: ["x.c_str()"]
 
-    select:
-      - platform: template
-        name: Mode
-        id: mode
-        options:
-         - "Option1"
-         - "Option2"
-         - "Option3"
-        initial_option: "Option1"
-        optimistic: true
-        set_action:
-          - logger.log:
-              format: "Chosen option: %s"
-              args: ["x.c_str()"]
+```
+## See Also
 
+- {{< apiref "Select" "select/select.h" >}}
+- {{< apiref "SelectCall" "select/select_call.h" >}}
 
-See Also
---------
-
-- :apiref:`Select <select/select.h>`
-- :apiref:`SelectCall <select/select_call.h>`
-- :ghedit:`Edit`
-
-.. toctree::
-    :maxdepth: 1
-    :glob:
-
-    *

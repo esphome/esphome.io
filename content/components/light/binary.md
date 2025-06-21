@@ -1,38 +1,37 @@
-Binary Light
-============
-
-.. seo::
-    :description: Instructions for setting up binary ON/OFF lights in ESPHome.
-    :image: lightbulb.svg
-
-The ``binary`` light platform creates a simple ON/OFF-only light from a
-:ref:`binary output component <output>`.
-
-.. figure:: images/binary-ui.png
-    :align: center
-    :width: 40.0%
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    light:
-      - platform: binary
-        name: "Desk Lamp"
-        output: light_output
+---
+description: "Instructions for setting up binary ON/OFF lights in ESPHome."
+title: "Binary Light"
+params:
+  seo:
+    description: Instructions for setting up binary ON/OFF lights in ESPHome.
+    image: lightbulb.svg
+---
 
 
-Configuration variables:
-------------------------
 
-- **output** (**Required**, :ref:`config-id`): The id of the binary :ref:`output` to use for this light.
-- All other options from :ref:`Light <config-light>`.
+The `binary` light platform creates a simple ON/OFF-only light from a
+[binary output component](#output).
 
-See Also
---------
+{{< img src="binary-ui.png" alt="Image" width="40.0%" class="center" >}}
 
-- :doc:`/components/output/index`
-- :doc:`/components/light/index`
-- :doc:`/components/output/gpio`
-- :doc:`/components/power_supply`
-- :apiref:`binary/light/binary_light_output.h`
-- :ghedit:`Edit`
+```yaml
+# Example configuration entry
+light:
+  - platform: binary
+    name: "Desk Lamp"
+    output: light_output
+
+```
+## Configuration variables:
+
+- **output** (**Required**, [ID](#config-id)): The id of the binary [Output Component](#output) to use for this light.
+- All other options from [Light](#config-light).
+
+## See Also
+
+- {{< docref "/components/output" >}}
+- {{< docref "/components/light" >}}
+- {{< docref "/components/output/gpio" >}}
+- {{< docref "/components/power_supply" >}}
+- {{< apiref "binary/light/binary_light_output.h" "binary/light/binary_light_output.h" >}}
+

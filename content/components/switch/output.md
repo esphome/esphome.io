@@ -1,37 +1,37 @@
-Generic Output Switch
-=====================
+---
+description: "Instructions for setting up generic output switches in ESPHome that control an output component."
+title: "Generic Output Switch"
+params:
+  seo:
+    description: Instructions for setting up generic output switches in ESPHome that control an output component.
+    image: upload.svg
+---
 
-.. seo::
-    :description: Instructions for setting up generic output switches in ESPHome that control an output component.
-    :image: upload.svg
 
-The ``output`` switch platform allows you to use any output component as a switch.
 
-.. figure:: images/output-ui.png
-    :align: center
-    :width: 80.0%
+The `output` switch platform allows you to use any output component as a switch.
 
-.. code-block:: yaml
+{{< img src="output-ui.png" alt="Image" width="80.0%" class="center" >}}
 
-    # Example configuration entry
-    output:
-      - platform: gpio
-        pin: GPIOXX
-        id: 'generic_out'
-    switch:
-      - platform: output
-        name: "Generic Output"
-        output: 'generic_out'
+```yaml
+# Example configuration entry
+output:
+  - platform: gpio
+    pin: GPIOXX
+    id: 'generic_out'
+switch:
+  - platform: output
+    name: "Generic Output"
+    output: 'generic_out'
 
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
-- **output** (**Required**, :ref:`config-id`): The ID of the output component to use.
-- All other options from :ref:`Switch <config-switch>`.
+- **output** (**Required**, [ID](#config-id)): The ID of the output component to use.
+- All other options from [Switch](#config-switch).
 
-See Also
---------
+## See Also
 
-- :doc:`/components/output/index`
-- :apiref:`output/switch/output_switch.h`
-- :ghedit:`Edit`
+- {{< docref "/components/output" >}}
+- {{< apiref "output/switch/output_switch.h" "output/switch/output_switch.h" >}}
+

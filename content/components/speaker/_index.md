@@ -1,178 +1,162 @@
-Speaker Components
-==================
+---
+description: "Instructions for setting up speakers in ESPHome."
+title: "Speaker Components"
+params:
+  seo:
+    description: Instructions for setting up speakers in ESPHome.
+    image: speaker.svg
+---
 
-.. seo::
-    :description: Instructions for setting up speakers in ESPHome.
-    :image: speaker.svg
 
-The ``speaker`` domain contains common functionality shared across the
+
+The `speaker` domain contains common functionality shared across the
 speaker platforms.
 
-.. _config-speaker:
+{{< anchor "config-speaker" >}}
 
-Base Speaker Configuration
---------------------------
+## Base Speaker Configuration
 
-.. code-block:: yaml
+```yaml
+speaker:
+  - platform: ...
 
-    speaker:
-      - platform: ...
-
-
+```
 Configuration variables:
 
-- **audio_dac** (*Optional*, :ref:`config-id`): The :doc:`audio DAC </components/audio_dac/index>` to use for volume control.
+- **audio_dac** (*Optional*, [ID](#config-id)): The {{< docref "/components/audio_dac/index" "audio DAC" >}} to use for volume control.
 
-.. _speaker-actions:
+{{< anchor "speaker-actions" >}}
 
-Speaker Actions
----------------
+## Speaker Actions
 
-All ``speaker`` actions can be used without specifying an ``id`` if you have only one ``speaker`` in
+All `speaker` actions can be used without specifying an `id` if you have only one `speaker` in
 your configuration YAML.
 
-.. _speaker-play:
+{{< anchor "speaker-play" >}}
 
-``speaker.play`` Action
-^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.play` Action
 
 This action will start playing raw audio data from the speaker.
 
-.. code-block:: yaml
+```yaml
+on_...:
+  # Static raw audio data
+  - speaker.play: [...]
 
-    on_...:
-      # Static raw audio data
-      - speaker.play: [...]
+  # Templated, return type is std::vector<uint8_t>
+  - speaker.play: !lambda return {...};
 
-      # Templated, return type is std::vector<uint8_t>
-      - speaker.play: !lambda return {...};
+  # in case you need to specify the speaker id
+  - speaker.play:
+      id: my_speaker
+      data: [...]
 
-      # in case you need to specify the speaker id
-      - speaker.play:
-          id: my_speaker
-          data: [...]
-
+```
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to control. Defaults to the only one in YAML.
 - **data** (**Required**, list of bytes): The raw audio data to play.
 
-.. _speaker-stop:
+{{< anchor "speaker-stop" >}}
 
-``speaker.stop`` Action
-^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.stop` Action
 
 This action will stop playing audio data from the speaker and discard the unplayed data.
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to control. Defaults to the only one in YAML.
 
-.. _speaker-finish:
+{{< anchor "speaker-finish" >}}
 
-``speaker.finish`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.finish` Action
 
 This action will stop playing audio data from the speaker after all data **is** played.
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to control. Defaults to the only one in YAML.
 
-.. _speaker-mute_on:
+{{< anchor "speaker-mute_on" >}}
 
-``speaker.mute_on`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.mute_on` Action
 
 This action will mute the speaker.
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to control. Defaults to the only one in YAML.
 
-.. _speaker-mute_off:
+{{< anchor "speaker-mute_off" >}}
 
-``speaker.mute_off`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.mute_off` Action
 
 This action will unmute the speaker.
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to control. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to control. Defaults to the only one in YAML.
 
-.. _speaker-volume_set:
+{{< anchor "speaker-volume_set" >}}
 
-``speaker.volume_set`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.volume_set` Action
 
 This action will set the volume of the speaker.
 
-.. code-block::
+```
+on_...:
+  # Simple
+  - speaker.volume_set: 50%
 
-    on_...:
-      # Simple
-      - speaker.volume_set: 50%
+  # Full
+  - speaker.volume_set:
+      id: speaker_id
+      volume: 50%
 
-      # Full
-      - speaker.volume_set:
-          id: speaker_id
-          volume: 50%
+  # Simple with lambda
+  -  speaker.volume_set: !lambda "return 0.5;"
 
-      # Simple with lambda
-      -  speaker.volume_set: !lambda "return 0.5;"
-
+```
 Configuration variables:
 
 **volume** (**Required**, percentage): The volume to set the speaker to.
 
-.. _speaker-conditions:
+{{< anchor "speaker-conditions" >}}
 
-Speaker Conditions
----------------------
+## Speaker Conditions
 
-All ``speaker`` conditions can be used without specifying an ``id`` if you have only one ``speaker`` in
+All `speaker` conditions can be used without specifying an `id` if you have only one `speaker` in
 your configuration YAML.
 
-.. _speaker-is_playing:
+{{< anchor "speaker-is_playing" >}}
 
-``speaker.is_playing`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.is_playing` Condition
 
 This condition will check if the speaker is currently playing audio data.
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to check. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to check. Defaults to the only one in YAML.
 
-.. _speaker-is_stopped:
+{{< anchor "speaker-is_stopped" >}}
 
-``speaker.is_stopped`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `speaker.is_stopped` Condition
 
 This condition will check if the speaker is fully stopped audio data and is in idle mode.
 
 .. note:
 
-Between the time ``speaker.is_playing`` is false and ``speaker.is_stopped`` is true the 'speaker' component is closing down structures that where used to play the data correctly. *It better to check if the speaker is stopped then that if it plays.*
+Between the time `speaker.is_playing` is false and `speaker.is_stopped` is true the 'speaker' component is closing down structures that where used to play the data correctly. *It better to check if the speaker is stopped then that if it plays.*
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The speaker to check. Defaults to the only one in YAML.
+- **id** (*Optional*, [ID](#config-id)): The speaker to check. Defaults to the only one in YAML.
 
 
-Platforms
----------
+## Platforms
 
-.. toctree::
-    :maxdepth: 1
-    :glob:
+## See Also
 
-    *
+- {{< docref "/guides/audio_clips_for_i2s" >}}
+- {{< docref "/components/speaker/i2s_audio" >}}
 
-See Also
---------
-
-- :doc:`/guides/audio_clips_for_i2s`
-- :doc:`/components/speaker/i2s_audio`
-- :ghedit:`Edit`

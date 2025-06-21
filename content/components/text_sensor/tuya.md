@@ -1,33 +1,35 @@
-Tuya Text Sensor
-================
+---
+description: "Instructions for setting up a Tuya device sensor."
+title: "Tuya Text Sensor"
+params:
+  seo:
+    description: Instructions for setting up a Tuya device sensor.
+    image: tuya.png
+---
 
-.. seo::
-    :description: Instructions for setting up a Tuya device sensor.
-    :image: tuya.png
 
-The ``tuya`` text sensor platform creates a sensor from a tuya component
-and requires :doc:`/components/tuya` to be configured.
+
+The `tuya` text sensor platform creates a sensor from a tuya component
+and requires {{< docref "/components/tuya" >}} to be configured.
 
 You can create the text sensor as follows:
 
-.. code-block:: yaml
+```yaml
+# Create a sensor
+text_sensor:
+  - platform: "tuya"
+    name: "MyTextSensor"
+    sensor_datapoint: 18
 
-    # Create a sensor
-    text_sensor:
-      - platform: "tuya"
-        name: "MyTextSensor"
-        sensor_datapoint: 18
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
-- All other options from :ref:`Text Sensor <config-text_sensor>`.
+- All other options from [Text Sensor](#config-text_sensor).
 
-See Also
---------
+## See Also
 
-- :doc:`/components/tuya`
-- :doc:`/components/text_sensor/index`
-- :apiref:`tuya/text_sensor/tuya_text_sensor.h`
-- :ghedit:`Edit`
+- {{< docref "/components/tuya" >}}
+- {{< docref "/components/text_sensor" >}}
+- {{< apiref "tuya/text_sensor/tuya_text_sensor.h" "tuya/text_sensor/tuya_text_sensor.h" >}}
+

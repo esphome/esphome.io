@@ -1,37 +1,39 @@
-Uptime Sensor
-=============
+---
+description: "Instructions for setting up a sensor that tracks the uptime of the ESP."
+title: "Uptime Sensor"
+params:
+  seo:
+    description: Instructions for setting up a sensor that tracks the uptime of the ESP.
+    image: timer.svg
+---
 
-.. seo::
-    :description: Instructions for setting up a sensor that tracks the uptime of the ESP.
-    :image: timer.svg
 
-The ``uptime`` sensor allows you to track the time the ESP has stayed up for in seconds.
+
+The `uptime` sensor allows you to track the time the ESP has stayed up for in seconds.
 Time rollovers are automatically handled.
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+sensor:
+  - platform: uptime
+    type: seconds
+    name: Uptime Sensor
 
-    # Example configuration entry
-    sensor:
-      - platform: uptime
-        type: seconds
-        name: Uptime Sensor
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **type** (*Optional*): Either:
 
-  - ``seconds`` (*default*): A simple counter.
-  - ``timestamp``: presents the time ESPHome last booted up. Requires a :doc:`/components/time/index`.
+  - `seconds` (*default*): A simple counter.
+  - `timestamp`: presents the time ESPHome last booted up. Requires a {{< docref "/components/time" >}}.
 
-- **update_interval** (*Optional*, :ref:`config-time`): The sensor reporting interval. Defaults to ``60s``.
-  Valid only with ``type: seconds``.
-- All other options from :ref:`Sensor <config-sensor>`.
+- **update_interval** (*Optional*, [Time](#config-time)): The sensor reporting interval. Defaults to `60s`.
+  Valid only with `type: seconds`.
+- All other options from [Sensor](#config-sensor).
 
-See Also
---------
+## See Also
 
-- :doc:`/components/text_sensor/uptime`
-- :ref:`sensor-filters`
-- :apiref:`uptime/uptime_sensor.h`
-- :ghedit:`Edit`
+- {{< docref "/components/text_sensor/uptime" >}}
+- [Sensor Filters](#sensor-filters)
+- {{< apiref "uptime/uptime_sensor.h" "uptime/uptime_sensor.h" >}}
+

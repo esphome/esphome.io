@@ -1,8 +1,6 @@
-Guides
-======
+---
+description: "Guides"
+title: "Guides"
+---
 
-.. toctree::
-    :glob:
-    :maxdepth: 1
 
-    *

@@ -1,37 +1,37 @@
-Generic Output Lock
-=====================
+---
+description: "Instructions for setting up generic output locks in ESPHome that control an output component."
+title: "Generic Output Lock"
+params:
+  seo:
+    description: Instructions for setting up generic output locks in ESPHome that control an output component.
+    image: upload.svg
+---
 
-.. seo::
-    :description: Instructions for setting up generic output locks in ESPHome that control an output component.
-    :image: upload.svg
 
-The ``output`` lock platform allows you to use any output component as a lock.
 
-.. figure:: images/output-ui.png
-    :align: center
-    :width: 80.0%
+The `output` lock platform allows you to use any output component as a lock.
 
-.. code-block:: yaml
+{{< img src="output-ui.png" alt="Image" width="80.0%" class="center" >}}
 
-    # Example configuration entry
-    output:
-      - platform: gpio
-        pin: GPIOXX
-        id: 'generic_out'
-    lock:
-      - platform: output
-        name: "Generic Output"
-        output: 'generic_out'
+```yaml
+# Example configuration entry
+output:
+  - platform: gpio
+    pin: GPIOXX
+    id: 'generic_out'
+lock:
+  - platform: output
+    name: "Generic Output"
+    output: 'generic_out'
 
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
-- **output** (**Required**, :ref:`config-id`): The ID of the output component to use.
-- All other options from :ref:`Lock <config-lock>`.
+- **output** (**Required**, [ID](#config-id)): The ID of the output component to use.
+- All other options from [Lock](#config-lock).
 
-See Also
---------
+## See Also
 
-- :doc:`/components/output/index`
-- :apiref:`output/lock/output_lock.h`
-- :ghedit:`Edit`
+- {{< docref "/components/output" >}}
+- {{< apiref "output/lock/output_lock.h" "output/lock/output_lock.h" >}}
+

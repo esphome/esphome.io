@@ -1,50 +1,52 @@
-Home Assistant Text Sensor
-==========================
+---
+description: "Instructions for setting up Home Assistant text sensors with ESPHome that import states from your Home Assistant instance."
+title: "Home Assistant Text Sensor"
+params:
+  seo:
+    description: Instructions for setting up Home Assistant text sensors with ESPHome that import states from your Home Assistant instance.
+    image: home-assistant.svg
+---
 
-.. seo::
-    :description: Instructions for setting up Home Assistant text sensors with ESPHome that import states from your Home Assistant instance.
-    :image: home-assistant.svg
 
-The ``homeassistant`` text sensor platform allows you to create sensors that import
-states from your Home Assistant instance using the :doc:`native API </components/api>`.
 
-.. note::
+The `homeassistant` text sensor platform allows you to create sensors that import
+states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
-    Although you might not plan to *export* states from the node and you do not need an entity of the node
-    in Home Assistant, this component still requires you to register the node under Home Assistant. See:
-    :ref:`connecting-your-device-to-home-assistant`.
+{{< note >}}
+Although you might not plan to *export* states from the node and you do not need an entity of the node
+in Home Assistant, this component still requires you to register the node under Home Assistant. See:
+[Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
-.. code-block:: yaml
+{{< /note >}}
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: homeassistant
+    id: weather_fom_ha
+    entity_id: sensor.weather_forecast
 
-    # Example configuration entry
-    text_sensor:
-      - platform: homeassistant
-        id: weather_fom_ha
-        entity_id: sensor.weather_forecast
-
+```
 Entity state attributes can also be imported:
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+text_sensor:
+  - platform: homeassistant
+    id: effect
+    entity_id: light.led_strip
+    attribute: effect
 
-    # Example configuration entry
-    text_sensor:
-      - platform: homeassistant
-        id: effect
-        entity_id: light.led_strip
-        attribute: effect
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
   specified entity. The entity state is used when this option is omitted.
-- All other options from :ref:`Text Sensor <config-text_sensor>`.
+- All other options from [Text Sensor](#config-text_sensor).
 
-See Also
---------
+## See Also
 
-- :ref:`sensor-filters`
-- :ref:`automation`
-- :apiref:`homeassistant/text_sensor/homeassistant_text_sensor.h`
-- :ghedit:`Edit`
+- [Sensor Filters](#sensor-filters)
+- [Automation](#automation)
+- {{< apiref "homeassistant/text_sensor/homeassistant_text_sensor.h" "homeassistant/text_sensor/homeassistant_text_sensor.h" >}}
+

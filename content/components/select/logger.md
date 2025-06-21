@@ -1,26 +1,29 @@
-Logger Select
-=============
+---
+description: "Instructions for setting up a logger select in ESPHome."
+title: "Logger Select"
+params:
+  seo:
+    description: Instructions for setting up a logger select in ESPHome.
+    image: description.svg
+---
 
-.. seo::
-    :description: Instructions for setting up a logger select in ESPHome.
-    :image: description.svg
 
-The ``logger`` Select platform allows you to create a Select that can be used to change the log level of the logger component.
 
-.. code-block:: yaml
+The `logger` Select platform allows you to create a Select that can be used to change the log level of the logger component.
 
-    # Example configuration entry
-    select:
-      - platform: logger
-        name: "Logger select"
+```yaml
+# Example configuration entry
+select:
+  - platform: logger
+    name: "Logger select"
 
-.. note::
+```
+{{< note >}}
+The only selections available will be log levels below the level set in the logger component definition. If not set, the default of DEBUG is used.
 
-    The only selections available will be log levels below the level set in the logger component definition. If not set, the default of DEBUG is used.
+{{< /note >}}
+## See Also
 
-See Also
---------
+- [Automation](#automation)
+- {{< docref "/components/logger" >}}
 
-- :ref:`automation`
-- :doc:`/components/logger`
-- :ghedit:`Edit`

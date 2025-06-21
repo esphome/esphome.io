@@ -1,45 +1,47 @@
-LVGL Select
-===========
+---
+description: "Instructions for setting up an LVGL widget select."
+title: "LVGL Select"
+params:
+  seo:
+    description: Instructions for setting up an LVGL widget select.
+    image: ../images/lvgl_c_sel.png
+---
 
-.. seo::
-    :description: Instructions for setting up an LVGL widget select.
-    :image: ../images/lvgl_c_sel.png
 
-The ``lvgl`` select platform creates a select from an LVGL widget
-and requires :doc:`LVGL </components/lvgl/index>` to be configured.
 
-Supported widgets are :ref:`lvgl-widget-dropdown` and :ref:`lvgl-widget-roller`. A single select supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome select component.
+The `lvgl` select platform creates a select from an LVGL widget
+and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
-Configuration variables:
-------------------------
+Supported widgets are [`dropdown`](#lvgl-widget-dropdown) and [`roller`](#lvgl-widget-roller). A single select supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome select component.
+
+## Configuration variables:
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the select.
-- **restore_value**: (*Optional*, bool) Restore the value of the select from non-volatile memory when the device is restarted. Defaults to ``false``.
-- All other variables from :ref:`Select <config-select>`.
+- **restore_value**: (*Optional*, bool) Restore the value of the select from non-volatile memory when the device is restarted. Defaults to `false`.
+- All other variables from [Select](#config-select).
 
 Example:
 
-.. code-block:: yaml
+```yaml
+select:
+  - platform: lvgl
+    widget: dropdown_id
+    name: LVGL Dropdown
 
-    select:
-      - platform: lvgl
-        widget: dropdown_id
-        name: LVGL Dropdown
+```
+{{< note >}}
+Widget-specific actions (`lvgl.dropdown.update`, `lvgl.roller.update`) will trigger correspponding component updates to be sent to Home Assistant.
 
-.. note::
+{{< /note >}}
+## See Also
+- {{< docref "/components/lvgl/index" "LVGL Main component" >}}
+- [Roller widget](#lvgl-widget-roller)
+- [Dropdown widget](#lvgl-widget-dropdown)
+- {{< docref "/components/binary_sensor/lvgl" >}}
+- {{< docref "/components/sensor/lvgl" >}}
+- {{< docref "/components/number/lvgl" >}}
+- {{< docref "/components/switch/lvgl" >}}
+- {{< docref "/components/light/lvgl" >}}
+- {{< docref "/components/text/lvgl" >}}
+- {{< docref "/components/text_sensor/lvgl" >}}
 
-    Widget-specific actions (``lvgl.dropdown.update``, ``lvgl.roller.update``) will trigger correspponding component updates to be sent to Home Assistant.
-
-See Also
---------
-- :doc:`LVGL Main component </components/lvgl/index>`
-- :ref:`Roller widget <lvgl-widget-roller>`
-- :ref:`Dropdown widget <lvgl-widget-dropdown>`
-- :doc:`/components/binary_sensor/lvgl`
-- :doc:`/components/sensor/lvgl`
-- :doc:`/components/number/lvgl`
-- :doc:`/components/switch/lvgl`
-- :doc:`/components/light/lvgl`
-- :doc:`/components/text/lvgl`
-- :doc:`/components/text_sensor/lvgl`
-- :ghedit:`Edit`

@@ -1,46 +1,46 @@
-STS3X Temperature Sensor
-========================
+---
+description: "Instructions for setting up STS3x-DIS temperature sensors"
+title: "STS3X Temperature Sensor"
+params:
+  seo:
+    description: Instructions for setting up STS3x-DIS temperature sensors
+    image: sts3x.jpg
+---
 
-.. seo::
-    :description: Instructions for setting up STS3x-DIS temperature sensors
-    :image: sts3x.jpg
 
-The ``sts3x`` sensor platform Temperature sensor allows you to use your Sensirion STS30-DIS, STS31-DIS or STS35-DIS
-(`datasheet <https://sensirion.com/media/documents/1DA31AFD/61641F76/Sensirion_Temperature_Sensors_STS3x_Datasheet.pdf>`__,
-`Sensirion STS3x <https://www.sensirion.com/sts3x/>`__) sensors with
-ESPHome. The :ref:`I²C Bus <i2c>` is
+
+The `sts3x` sensor platform Temperature sensor allows you to use your Sensirion STS30-DIS, STS31-DIS or STS35-DIS
+([datasheet](https://sensirion.com/media/documents/1DA31AFD/61641F76/Sensirion_Temperature_Sensors_STS3x_Datasheet.pdf),
+[Sensirion STS3x](https://www.sensirion.com/sts3x/)) sensors with
+ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
 
-.. figure:: images/temperature.png
-    :align: center
-    :width: 80.0%
+{{< img src="temperature.png" alt="Image" width="80.0%" class="center" >}}
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+sensor:
+  - platform: sts3x
+    name: "Living Room Temperature"
+    address: 0x4A
+    update_interval: 60s
 
-    # Example configuration entry
-    sensor:
-      - platform: sts3x
-        name: "Living Room Temperature"
-        address: 0x4A
-        update_interval: 60s
-
-Configuration variables:
-------------------------
+```
+## Configuration variables:
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to ``0x4A``.
-- **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-  sensor. Defaults to ``60s``.
-- All other options from :ref:`Sensor <config-sensor>`.
+  Defaults to `0x4A`.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+  sensor. Defaults to `60s`.
+- All other options from [Sensor](#config-sensor).
 
-See Also
---------
+## See Also
 
-- :ref:`sensor-filters`
-- :doc:`dht`
-- :doc:`dht12`
-- :doc:`hdc1080`
-- :doc:`htu21d`
-- :doc:`sht3xd`
-- :apiref:`sts3x/sts3x.h`
-- :ghedit:`Edit`
+- [Sensor Filters](#sensor-filters)
+- {{< docref "dht/" >}}
+- {{< docref "dht12/" >}}
+- {{< docref "hdc1080/" >}}
+- {{< docref "htu21d/" >}}
+- {{< docref "sht3xd/" >}}
+- {{< apiref "sts3x/sts3x.h" "sts3x/sts3x.h" >}}
+

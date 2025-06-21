@@ -1,27 +1,31 @@
-``filter_out``
-**************
+---
+description: ""
+title: ""
+---
 
-(**Required**, number): Filter out specific values to be displayed, e.g., filtering out the value ``85.0``
 
-.. code-block:: yaml
+# `filter_out`
 
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - filter_out: 85.0
+(**Required**, number): Filter out specific values to be displayed, e.g., filtering out the value `85.0`
 
+```yaml
+# Example configuration entry
+- platform: wifi_signal
+  # ...
+  filters:
+    - filter_out: 85.0
+
+```
 A list of values may be supplied, and values are templatable:
 
 
-.. code-block:: yaml
+```yaml
+# Example configuration entry
+- platform: wifi_signal
+  # ...
+  filters:
+    - filter_out:
+        - 85.0
+        - !lambda return id(some_sensor).state;
 
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - filter_out:
-            - 85.0
-            - !lambda return id(some_sensor).state;
-
-
+```

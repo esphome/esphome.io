@@ -1,11 +1,14 @@
-.. _automation:
+---
+description: "Getting started guide for automations in ESPHome"
+title: "Automation"
+params:
+  seo:
+    description: Getting started guide for automations in ESPHome
+    image: auto-fix.svg
+---
 
-Automation
-==========
 
-.. seo::
-    :description: Getting started guide for automations in ESPHome
-    :image: auto-fix.svg
+
 
 Automations are a very powerful aspect of ESPHome; they allow you to easily perform actions given some condition(s).
 
@@ -18,15 +21,8 @@ When you want your ESPHome device to respond to its environment, you use an auto
 This page serves as an index which will walk to through the process of using ESPHome automations--actions, triggers,
 templates, and more--to customize your ESPHome device just how you like it.
 
-- :doc:`actions`
-- :doc:`templates`
-- :doc:`/components/globals`
-- :doc:`/components/script`
-- :doc:`/components/interval`
-
-.. toctree::
-    :glob:
-    :maxdepth: 1
-    :hidden:
-
-    *
+- {{< docref "actions/" >}}
+- {{< docref "templates/" >}}
+- {{< docref "/components/globals" >}}
+- {{< docref "/components/script" >}}
+- {{< docref "/components/interval" >}}
