@@ -229,6 +229,7 @@ Air Quality
     GP2Y1010AU0F, components/sensor/gp2y1010au0f, gp2y1010au0f.png, Particulate
     Grove Multichannel Gas V2, components/sensor/grove_gas_mc_v2, grove-gas-mc-v2.png, NO2 & CO & Ethanol & Volatile organics
     HM3301, components/sensor/hm3301, hm3301.jpg, Particulate
+    HPMA115C0, components/sensor/hpma115c0, hpma115c0.png, Particulate
     iAQ-Core, components/sensor/iaqcore, iaqcore.jpg, CO2 & Volatile organics
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MiCS-4514, components/sensor/mics_4514, mics_4514.jpg, Gas concentration
