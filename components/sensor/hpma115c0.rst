@@ -57,6 +57,7 @@ Pinout:
 +-----+------+----------------------------------+
 
 .. warning::
+
    Although sensor is powered by +5V, UART pins 7 and 9 (**Tx** and **Rx**) are using **3.3V** voltage levels.
 
 .. figure:: images/hpma115c0_connector.jpg
