@@ -71,11 +71,11 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access. Defaults to ``false``.
 - **version** (*Optional*, string): ``1``, ``2`` or ``3``. Version 1 displays as a table. Version 2 uses web components and has more functionality. Version 3 uses HA-Styling. Defaults to ``2``.
-- **sorting_groups**  (*Optional*, list): Avaliable only on ``version: 3``. A list of group ID's and names to group the entities. See :ref:`Webserver Entity Grouping <config-webserver-grouping>`.
+- **sorting_groups** (*Optional*, list): Available only on ``version: 3``. A list of group ID's and names to group the entities. See :ref:`Webserver Entity Grouping <config-webserver-grouping>`.
   
-  - **id** (*Required*, :ref:`config-id`): Manually specify the ID used for the group.
-  - **name** (*Required*, string): A string representing the group name which is displayed as the header of the group
-  - **sorting_weight** (*Optional*, float) A float representing the weight of the group. A group with a smaler ``sorting_weight`` will be displayed first. Defaults to ``50``
+  - **id** (**Required**, :ref:`config-id`): Manually specify the ID used for the group.
+  - **name** (**Required**, string): A string representing the group name which is displayed as the header of the group
+  - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller ``sorting_weight`` will be displayed first. Defaults to ``50``
 
 To conserve flash size, the CSS and JS files used on the root page to show a simple user
 interface are hosted by esphome.io. If you want to use your own service, use the

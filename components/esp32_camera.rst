@@ -8,6 +8,8 @@ ESP32 Camera Component
 The ``esp32_camera`` component allows you to use ESP32-based camera boards in ESPHome that
 directly integrate into Home Assistant through the native API.
 
+Requires an :doc:`/components/i2c` to be set up.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -16,9 +18,7 @@ directly integrate into Home Assistant through the native API.
       external_clock:
         pin: GPIOXX
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIOXX
-        scl: GPIOXX
+      i2c_id: my_i2c_bus
       data_pins: [GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX]
       vsync_pin: GPIOXX
       href_pin: GPIOXX
@@ -56,11 +56,7 @@ Connection Options:
   - **frequency** (*Optional*, float): The frequency of the external clock, must be between 10
     and 20MHz. Defaults to ``20MHz``.
 
-- **i2c_pins** (**Required**): The I²C control pins of the camera.
-
-  - **sda** (**Required**, pin): The SDA pin of the I²C interface. Also called ``SIOD``.
-  - **scl** (**Required**, pin): The SCL pin of the I²C interface. Also called ``SIOC``.
-
+- **i2c_id** (**Required**, :ref:`config-id`): The ID of the :ref:`I²C bus <i2c>` the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
   If set, this will reset the camera before the ESP boots.
 - **power_down_pin** (*Optional*, pin): The ESP pin to power down the camera.
@@ -190,13 +186,16 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO26
+        scl: GPIO27
+
     esp32_camera:
       external_clock:
         pin: GPIO0
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO26
-        scl: GPIO27
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
       vsync_pin: GPIO25
       href_pin: GPIO23
@@ -221,13 +220,16 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO25
+        scl: GPIO23
+
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO22
       href_pin: GPIO26
@@ -243,13 +245,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO25
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO32, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO22
       href_pin: GPIO26
@@ -265,13 +269,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry as per https://docs.m5stack.com/en/unit/m5camera_f_new
+    i2c:
+      - id: camera_i2c
+        sda: GPIO22
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO22
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO32, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO25
       href_pin: GPIO26
@@ -283,13 +289,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO26
+        scl: GPIO27
     esp32_camera:
       external_clock:
         pin: GPIO21
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO26
-        scl: GPIO27
+      i2c_id: camera_i2c
       data_pins: [GPIO4, GPIO5, GPIO18, GPIO19, GPIO36, GPIO39, GPIO34, GPIO35]
       vsync_pin: GPIO25
       href_pin: GPIO23
@@ -304,13 +312,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO13
+        scl: GPIO12
     esp32_camera:
       external_clock:
         pin: GPIO32
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO13
-        scl: GPIO12
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO18, GPIO23, GPIO36, GPIO39]
       vsync_pin: GPIO27
       href_pin: GPIO25
@@ -325,13 +335,16 @@ Configuration examples
 
 .. code-block:: yaml
 
+    # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO18
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO4
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO18
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO34, GPIO13, GPIO14, GPIO35, GPIO39, GPIO38, GPIO37, GPIO36]
       vsync_pin: GPIO5
       href_pin: GPIO27
@@ -349,13 +362,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO13
+        scl: GPIO12
     esp32_camera:
       external_clock:
         pin: GPIO32
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO13
-        scl: GPIO12
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO18, GPIO23, GPIO36, GPIO39]
       vsync_pin: GPIO27
       href_pin: GPIO25
@@ -373,13 +388,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO25
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO22
       href_pin: GPIO26
@@ -395,13 +412,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO18
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO4
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO18
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO34, GPIO13, GPIO26, GPIO35, GPIO39, GPIO38, GPIO37, GPIO36]
       vsync_pin: GPIO5
       href_pin: GPIO27
@@ -418,13 +437,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO13
+        scl: GPIO12
     esp32_camera:
       external_clock:
         pin: GPIO32
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO13
-        scl: GPIO12
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO37, GPIO38, GPIO36, GPIO39]
       vsync_pin: GPIO27
       href_pin: GPIO25
@@ -439,13 +460,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO18
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO4
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO18
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO34, GPIO13, GPIO14, GPIO35, GPIO39, GPIO38, GPIO37, GPIO36]
       vsync_pin: GPIO5
       href_pin: GPIO27
@@ -486,13 +509,16 @@ Configuration examples
 
 .. code-block:: yaml
 
+    # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO40
+        scl: GPIO39
     esp32_camera:
       external_clock:
         pin: GPIO10
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO40
-        scl: GPIO39
+      i2c_id: camera_i2c
       data_pins: [GPIO15, GPIO17, GPIO18, GPIO16, GPIO14, GPIO12, GPIO11, GPIO48]
       vsync_pin: GPIO38
       href_pin: GPIO47

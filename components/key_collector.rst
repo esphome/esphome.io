@@ -61,6 +61,7 @@ Configuration variables:
 - **allowed_keys** (*Optional*, string): Keys allowed to be used. If not specified, then any otherwise 
   unused keys will be allowed.
 - **timeout** (*Optional*, :ref:`config-time`): Timeout after which to cancel building the sequence and delete all the keys.
+- **enable_on_boot** (*Optional*, boolean): If enabled, this key collector will be enabled on boot. Defaults to ``true``.
 
 At least one of ``end_keys`` or ``max_length`` have to be specified. The rest are optional.
 If both ``end_keys`` and ``max_length`` are specified, then once ``max_length`` keys are collected, no more will be
@@ -82,6 +83,30 @@ Automations:
 - **on_timeout** (*Optional*, :ref:`Automation <automation>`): An automation to perform
   if the timeout happens. The current sequence of pressed keys is placed in a ``vector<uint8_t>`` variable ``x``
   and ``start`` holds the start key that activated this sequence or else ``0``.
+
+``key_collector.enable`` Action
+-------------------------------
+
+This action activates a ``key_collector``.  It will start accepting keys.
+If there is more than one key collector, you will need to provide the ``id`` of the one to enable.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - key_collector.enable:
+
+``key_collector.disable`` Action
+--------------------------------
+
+This action deactivates a ``key_collector``.  It will stop accepting keys and will clear any already collected ones.
+If there is more than one key collector, you will need to provide the ``id`` of the one to disable.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - key_collector.disable:
 
 Lambda:
 -------
