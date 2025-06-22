@@ -78,13 +78,15 @@ The ``led_map`` string should reflect how LEDs are arranged to form digits based
 
 .. code-block:: text
 
-        A
-       ---
-    F |   | B
-       -G-
-    E |   | C
-       ---
-        D
+    ___________
+    |    A    |
+    |   ---   |
+    |F |   | B|
+    |   -G-   |
+    |E |   | C|
+    |   ---   |
+    |    D    |
+    |_________|
 
 **Valid characters:**
 
