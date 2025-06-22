@@ -15,54 +15,56 @@ control signal, just as the unit's handheld remote controller would.
 There is a growing list of compatible units. If your unit is not listed below you should
 submit a feature request (see FAQ).
 
-+---------------------------------------+---------------------+----------------------+
-| Supported units                       | Platform name       |  Supports receiver   |
-|                                       |                     |                      |
-+=======================================+=====================+======================+
-| Ballu                                 | ``ballu``           | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Coolix                                | ``coolix``          | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Daikin                                | ``daikin``          | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Daikin ARC<daikin_arc>`         | ``daikin_arc``      | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Daikin BRC<daikin_brc>`         | ``daikin_brc``      | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Delonghi<delonghi_ir>`          | ``delonghi``        | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Emmeti                                | ``emmeti``          | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Fujitsu General                       | ``fujitsu_general`` | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`GREE<gree_ir>`                  | ``gree``            |                      |
-+---------------------------------------+---------------------+----------------------+
-| Hitachi                               | ``hitachi_ac344``,  | yes                  |
-|                                       | ``hitachi_ac424``   |                      |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`LG<climate_ir_lg>`              | ``climate_ir_lg``   | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Midea<midea_ir>`                | ``midea_ir``        | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Mitsubishi<mitsubishi>`         | ``mitsubishi``      | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Noblex                                | ``noblex``          | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Electrolux, TCL, Fuego                | ``tcl112``          | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Toshiba<toshiba>`               | ``toshiba``         | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Whirlpool<whirlpool>`           | ``whirlpool``       | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| Yashima                               | ``yashima``         |                      |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Whynter<whynter>`               | ``whynter``         | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`ZH/LT-01<zhlt01>`               | ``zhlt01``          | yes                  |
-+---------------------------------------+---------------------+----------------------+
-| :ref:`Arduino-HeatpumpIR<heatpumpir>` | ``heatpumpir``      |                      |
-| library                               |                     |                      |
-+---------------------------------------+---------------------+----------------------+
++---------------------------------------------+-----------------------+-------------------+
+|               Supported units               |     Platform name     | Supports receiver |
+|                                             |                       |                   |
++=============================================+=======================+===================+
+| Ballu                                       | ``ballu``             | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| Coolix                                      | ``coolix``            | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| Daikin                                      | ``daikin``            | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Daikin ARC<daikin_arc>`               | ``daikin_arc``        | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Daikin BRC<daikin_brc>`               | ``daikin_brc``        | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Delonghi<delonghi_ir>`                | ``delonghi``          | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| Emmeti                                      | ``emmeti``            | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`emerio PAC-125152<emerio_pac_125152>` | ``emerio_pac_125152`` | no                |
++---------------------------------------------+-----------------------+-------------------+
+| Fujitsu General                             | ``fujitsu_general``   | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`GREE<gree_ir>`                        | ``gree``              |                   |
++---------------------------------------------+-----------------------+-------------------+
+| Hitachi                                     | ``hitachi_ac344``,    | yes               |
+|                                             | ``hitachi_ac424``     |                   |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`LG<climate_ir_lg>`                    | ``climate_ir_lg``     | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Midea<midea_ir>`                      | ``midea_ir``          | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Mitsubishi<mitsubishi>`               | ``mitsubishi``        | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| Noblex                                      | ``noblex``            | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| Electrolux, TCL, Fuego                      | ``tcl112``            | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Toshiba<toshiba>`                     | ``toshiba``           | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Whirlpool<whirlpool>`                 | ``whirlpool``         | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| Yashima                                     | ``yashima``           |                   |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Whynter<whynter>`                     | ``whynter``           | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`ZH/LT-01<zhlt01>`                     | ``zhlt01``            | yes               |
++---------------------------------------------+-----------------------+-------------------+
+| :ref:`Arduino-HeatpumpIR<heatpumpir>`       | ``heatpumpir``        |                   |
+| library                                     |                       |                   |
++---------------------------------------------+-----------------------+-------------------+
 
 This component requires that you have configured a :doc:`/components/remote_transmitter`.
 
@@ -150,6 +152,85 @@ The ``delonghi`` climate currently supports the protocol used by some Delonghi p
 ``daikin_arc`` **Climate**:
 
 The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc480`` protocols of :ref:`Arduino-HeatpumpIR<heatpumpir>`) are used by the japanese model of Daikin.
+
+.. _emerio_pac_125152:
+
+``emerio_pac_125152`` **Climate**:
+
+The Emerio PAC-125152 has no receiver capabilities but tries to manage the state on a best effort basis.
+
+There are a few recommendations for smooth operation:
+
+- Set an external temperature sensor using the **sensor** (*Required*, :ref:`config-id`) field to get a current temperature
+- Use a **carrier_duty_percent** of ``33%`` instead.
+- Make use of the calibration action which allows you to set the current state without sending any IR commands:
+  
+  .. code-block:: yaml
+
+      # Example calibration setup
+      
+      select:
+        - platform: template
+          name: "Climate Calibration Mode"
+          id: climate_cal_mode
+          optimistic: true
+          options:
+            - "OFF"
+            - "COOL"
+            - "DRY"
+            - "FAN_ONLY"
+            - "AUTO"
+          initial_option: "COOL"
+          restore_value: true
+          entity_category: config
+
+        - platform: template
+          name: "Climate Calibration Fan"
+          id: climate_cal_fan
+          optimistic: true
+          options:
+            - "LOW"
+            - "MEDIUM"
+            - "HIGH"
+          initial_option: "LOW"
+          restore_value: true
+          entity_category: config
+
+      number:
+        - platform: template
+          name: "Climate Calibration Setpoint"
+          id: klima_cal_temp
+          optimistic: true
+          min_value: 18
+          max_value: 30
+          step: 1
+          initial_value: 23
+          mode: box
+          restore_value: true
+          entity_category: config
+
+      button:
+        - platform: template
+          name: "Apply Klima Calibration"
+          entity_category: config
+          on_press:
+            - emerio_pac_125152.calibrate_state:
+                id: climate_emerio
+                mode: !lambda |-
+                  auto val = id(climate_cal_mode).state;
+                  if (val == "OFF") return 0;
+                  if (val == "COOL") return 2;
+                  if (val == "DRY") return 5;
+                  if (val == "FAN_ONLY") return 4;
+                  if (val == "AUTO") return 6;
+                  return 1; // default to COOL
+                temperature: !lambda "return id(klima_cal_temp).state;"
+                fan_mode: !lambda |-
+                  auto val = id(climate_cal_fan).state;
+                  if (val == "LOW") return 3;
+                  if (val == "MEDIUM") return 4;
+                  if (val == "HIGH") return 5;
+                  return 0; // default to LOW
 
 .. _gree_ir:
 
