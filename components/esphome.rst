@@ -71,11 +71,9 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
-- **sub_devices** (*Optional*, :ref:`esphome-sub_devices`): A virtual sub-device to group entries under.
-
-  - **id** (**Required**, string): Specify the ID for code generation.
-  - **name** (**Required**, string): The name for the sub device.
-  - **area** (*Optional*, string): The suggested area for the sub device.
+- **area** (*Optional*, :ref:`esphome-area`): The area configuration for this device. Either a structured format or a string (deprecated).
+- **areas** (*Optional*, list of :ref:`esphome-area`): Additional areas that can be referenced by virtual devices.
+- **devices** (*Optional*, list of :ref:`esphome-devices`): Virtual devices to group entities under.
 
 
 Automations:
@@ -374,31 +372,138 @@ This allows YAML files to specify the minimum version of ESPHome required to com
 This is useful in the case of packages where a published package might use features only
 available in a newer version of ESPHome. This allows for a more friendly error message.
 
-.. _esphome-sub_devices:
+.. _esphome-area:
 
-Sub Devices
------------
+Area Configuration
+------------------
 
-ESPHome has support for createting sub devices in configuration where individual entities
-can be grouped to. The grouping has no direct effect on the functionality of the entities,
-but it can be used to group entities together in the Home Assistant UI. This is useful for
-example when you have a mix sensors on one device that are related to different physical
-devices.
+Areas help organize your devices in Home Assistant by location. The area configuration can be either:
+
+- **Structured format** (recommended):
+
+  - **id** (**Required**, string): Unique identifier for the area.
+  - **name** (**Required**, string): Display name for the area.
+
+- **String format** (deprecated): Simply the area name as a string.
+
+.. note::
+
+    The string format (``area: "Living Room"``) is deprecated and will show a warning.
+    Please use the structured format to enable advanced features like virtual devices.
+
+.. _esphome-devices:
+
+Virtual Devices
+---------------
+
+ESPHome supports creating virtual devices within a single ESP controller. This allows you to group entities
+into logical devices that appear separately in Home Assistant. This is particularly useful when:
+
+- One ESP acts as a hub/gateway for multiple physical devices (RF bridges, Modbus devices, etc.)
+- A single ESP controls multiple zones or rooms
+- You want better organization of entities in Home Assistant
+
+Configuration variables:
+
+- **id** (**Required**, string): Unique identifier for the device.
+- **name** (**Required**, string): Display name for the device.
+- **area_id** (*Optional*, string): Reference to an area ID defined in ``areas``.
+
+Example: RF Bridge Gateway
+**************************
 
 .. code-block:: yaml
 
-    # Example configuration entry
+    # ESP32 acting as RF bridge for multiple 433MHz devices
     esphome:
-      # ...
-      sub_devices:
-        - id: dev_livingroom
-          name: Livingroom climate 
-          # Optional variables:
-          area: Living Room
+      name: rf-bridge
+      area:
+        id: bridge_area
+        name: "Utility Room"
+      
+      devices:
+        - id: front_door_device
+          name: "Front Door Sensor"
+          area_id: entrance_area
+        - id: kitchen_motion_device
+          name: "Kitchen Motion"
+          area_id: kitchen_area
+        - id: garage_door_device
+          name: "Garage Door"
+          area_id: garage_area
+      
+      areas:
+        - id: entrance_area
+          name: "Entrance"
+        - id: kitchen_area
+          name: "Kitchen"
+        - id: garage_area
+          name: "Garage"
+
+    # Each RF device appears as a separate device in HA
+    binary_sensor:
+      - platform: remote_receiver
+        name: "Front Door"
+        device_id: front_door_device
+        rc_switch_raw:
+          code: '101010110101'
+          
+      - platform: remote_receiver
+        name: "Kitchen Motion"
+        device_id: kitchen_motion_device
+        rc_switch_raw:
+          code: '110011001100'
+
+Example: Multi-Zone Controller
+******************************
+
+.. code-block:: yaml
+
+    esphome:
+      name: multi-room-controller
+      
+      devices:
+        - id: living_room_device
+          name: "Living Room Controller"
+          area_id: living_area
+        - id: kitchen_device
+          name: "Kitchen Controller"
+          area_id: kitchen_area
+      
+      areas:
+        - id: living_area
+          name: "Living Room"
+        - id: kitchen_area
+          name: "Kitchen"
 
     sensor:
-      # ...
-      device_id: dev_livingroom
+      - platform: dht
+        pin: GPIO5
+        temperature:
+          name: "Temperature"
+          device_id: living_room_device
+        humidity:
+          name: "Humidity"
+          device_id: living_room_device
+
+Migration from String Area Format
+*********************************
+
+If you're using the old string format for areas:
+
+.. code-block:: yaml
+
+    # Before (deprecated)
+    esphome:
+      name: my-device
+      area: "Kitchen"
+
+    # After (recommended)
+    esphome:
+      name: my-device
+      area:
+        id: kitchen
+        name: "Kitchen"
 
 
 See Also
