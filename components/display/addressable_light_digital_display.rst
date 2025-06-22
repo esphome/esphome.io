@@ -65,7 +65,7 @@ Configuration variables:
 - **restore_mode** (*Optional*): How to restore the light state on boot.
 - **default_transition_length** (*Optional*, :ref:`config-time`): The default transition length.
 
-All other options from :ref:`Display <config-display>` and :ref:`Light <config-light>`.
+All other options from :ref:`Display <display-configuration>` and :ref:`Light <config-light>`.
 
 .. _led_map_format:
 
