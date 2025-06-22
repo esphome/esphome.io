@@ -33,6 +33,8 @@ submit a feature request (see FAQ).
 +---------------------------------------+---------------------+----------------------+
 | Emmeti                                | ``emmeti``          | yes                  |
 +---------------------------------------+---------------------+----------------------+
+| Friedrich                             | ``friedrich      `` | yes                  |
++---------------------------------------+---------------------+----------------------+
 | Fujitsu General                       | ``fujitsu_general`` | yes                  |
 +---------------------------------------+---------------------+----------------------+
 | :ref:`GREE<gree_ir>`                  | ``gree``            |                      |
@@ -173,6 +175,15 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
         name: "AC"
         sensor: room_temperature
         model: yan
+
+.. _friedrich:
+
+``friedrich`` **Climate**:
+
+- **model** (*Optional*, string): There is 1 valid model.  Future proofing for other models
+  - ``MW12Y3H``: See https://homeappliance.manualsonline.com/manuals/mfg/friedrich/mw12y3h.html, uses Deg F
+
+- **use_fahrenheit** (*Optional*, boolean): Future proofing for other models. Defaults to ``true``.
 
 .. _midea_ir:
 
@@ -381,6 +392,7 @@ See Also
   :apiref:`climate_ir_lg.h <climate_ir_lg/climate_ir_lg.h>`
   :apiref:`coolix.h <coolix/coolix.h>`,
   :apiref:`daikin.h <daikin/daikin.h>`
+  :apiref:`friedrich.h <fujitsu_general/friedrich.h>`,
   :apiref:`fujitsu_general.h <fujitsu_general/fujitsu_general.h>`,
   :apiref:`gree.h <gree/gree.h>`,
   :apiref:`hitachi_ac344.h <hitachi_ac344/hitachi_ac344.h>`,
