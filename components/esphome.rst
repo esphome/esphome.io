@@ -15,7 +15,7 @@ where you specify the **name** of the node.
     esphome:
         name: livingroom
         comment: Living room ESP32 controller
-        area: "Living Room"
+        area: Living Room
 
     esp32:
         board: nodemcu-32s
