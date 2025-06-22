@@ -37,8 +37,8 @@ Configuration variables:
   less intuitive names and a less polished experience in Home  
   Assistant. Setting a ``friendly_name`` helps keep things clear,  
   consistent, and easier to manage.
-- **area** (*Optional*, string): This is the area sent to the frontend. It is used
-  by Home Assistant as the area / zone which the node belongs to.
+- **area** (*Optional*, :ref:`esphome-area`): The area configuration for this device. This is sent to
+  Home Assistant to specify which area/zone the device belongs to.
 
 Advanced options:
 
@@ -71,9 +71,8 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
-- **area** (*Optional*, :ref:`esphome-area`): The area configuration for this device. Either a structured format or a string (deprecated).
-- **areas** (*Optional*, list of :ref:`esphome-area`): Additional areas that can be referenced by virtual devices.
-- **devices** (*Optional*, list of :ref:`esphome-devices`): Virtual devices to group entities under.
+- **areas** (*Optional*, list of :ref:`esphome-area`): Additional areas that can be referenced by devices.
+- **devices** (*Optional*, list of :ref:`esphome-devices`): Sub-devices to group entities under.
 
 
 Automations:
@@ -377,26 +376,19 @@ available in a newer version of ESPHome. This allows for a more friendly error m
 Area Configuration
 ------------------
 
-Areas help organize your devices in Home Assistant by location. The area configuration can be either:
+Areas help organize your devices in Home Assistant by location.
 
-- **Structured format** (recommended):
+Configuration variables:
 
-  - **id** (**Required**, string): Unique identifier for the area.
-  - **name** (**Required**, string): Display name for the area.
-
-- **String format** (deprecated): Simply the area name as a string.
-
-.. note::
-
-    The string format (``area: "Living Room"``) is deprecated and will show a warning.
-    Please use the structured format to enable advanced features like virtual devices.
+- **id** (**Required**, string): Unique identifier for the area.
+- **name** (**Required**, string): Display name for the area.
 
 .. _esphome-devices:
 
-Virtual Devices
----------------
+Sub-Devices
+-----------
 
-ESPHome supports creating virtual devices within a single ESP controller. This allows you to group entities
+ESPHome supports creating sub-devices within a single ESP controller. This allows you to group entities
 into logical devices that appear separately in Home Assistant. This is particularly useful when:
 
 - One ESP acts as a hub/gateway for multiple physical devices (RF bridges, Modbus devices, etc.)
@@ -420,7 +412,7 @@ Example: RF Bridge Gateway
       area:
         id: bridge_area
         name: "Utility Room"
-      
+
       devices:
         - id: front_door_device
           name: "Front Door Sensor"
@@ -431,7 +423,7 @@ Example: RF Bridge Gateway
         - id: garage_door_device
           name: "Garage Door"
           area_id: garage_area
-      
+
       areas:
         - id: entrance_area
           name: "Entrance"
@@ -447,7 +439,7 @@ Example: RF Bridge Gateway
         device_id: front_door_device
         rc_switch_raw:
           code: '101010110101'
-          
+
       - platform: remote_receiver
         name: "Kitchen Motion"
         device_id: kitchen_motion_device
@@ -461,7 +453,7 @@ Example: Multi-Zone Controller
 
     esphome:
       name: multi-room-controller
-      
+
       devices:
         - id: living_room_device
           name: "Living Room Controller"
@@ -469,7 +461,7 @@ Example: Multi-Zone Controller
         - id: kitchen_device
           name: "Kitchen Controller"
           area_id: kitchen_area
-      
+
       areas:
         - id: living_area
           name: "Living Room"
@@ -486,24 +478,6 @@ Example: Multi-Zone Controller
           name: "Humidity"
           device_id: living_room_device
 
-Migration from String Area Format
-*********************************
-
-If you're using the old string format for areas:
-
-.. code-block:: yaml
-
-    # Before (deprecated)
-    esphome:
-      name: my-device
-      area: "Kitchen"
-
-    # After (recommended)
-    esphome:
-      name: my-device
-      area:
-        id: kitchen
-        name: "Kitchen"
 
 
 See Also
