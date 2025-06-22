@@ -76,7 +76,7 @@ The ``led_map`` string should reflect how LEDs are arranged to form digits based
 
 **Segment mapping:**
 
-    .. code-block:: text
+.. code-block:: text
 
         A
        ---
