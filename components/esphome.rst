@@ -15,7 +15,7 @@ where you specify the **name** of the node.
     esphome:
         name: livingroom
         comment: Living room ESP32 controller
-        area: Living Room
+        area: "Living Room"
 
     esp32:
         board: nodemcu-32s
@@ -37,8 +37,9 @@ Configuration variables:
   less intuitive names and a less polished experience in Home  
   Assistant. Setting a ``friendly_name`` helps keep things clear,  
   consistent, and easier to manage.
-- **area** (*Optional*, :ref:`esphome-area`): The area configuration for this device. This is sent to
-  Home Assistant to specify which area/zone the device belongs to.
+- **area** (*Optional*, string or :ref:`esphome-area`): The area configuration for this device. This is sent to
+  Home Assistant to specify which area/zone the device belongs to. Can be either a simple string (e.g., ``"Living Room"``) 
+  or a structured format with ``id`` and ``name``.
 
 Advanced options:
 
@@ -376,9 +377,30 @@ available in a newer version of ESPHome. This allows for a more friendly error m
 Area Configuration
 ------------------
 
-Areas help organize your devices in Home Assistant by location.
+Areas help organize your devices in Home Assistant by location. ESPHome supports two formats for area configuration:
 
-Configuration variables:
+**Simple String Format:**
+
+.. code-block:: yaml
+
+    esphome:
+      name: my-device
+      area: "Living Room"
+
+**Structured Format:**
+
+.. code-block:: yaml
+
+    esphome:
+      name: my-device
+      area:
+        id: living_room
+        name: "Living Room"
+
+The simple string format is convenient for basic use cases where you just want to assign the ESP device to a room.
+The structured format is recommended when using sub-devices, as it allows you to reference areas by their ID.
+
+Configuration variables (structured format):
 
 - **id** (**Required**, string): Unique identifier for the area.
 - **name** (**Required**, string): Display name for the area.
@@ -409,9 +431,7 @@ Example: RF Bridge Gateway
     # ESP32 acting as RF bridge for multiple 433MHz devices
     esphome:
       name: rf-bridge
-      area:
-        id: bridge_area
-        name: "Utility Room"
+      area: "Utility Room"  # Simple string format for ESP device's area
 
       devices:
         - id: front_door_device
