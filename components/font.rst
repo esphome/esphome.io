@@ -99,7 +99,7 @@ Font metrics:
 
 The Component provides some useful font metrics. Those include:
 
-- **ascender** (``get_ascender()``): The maximum height of the glyphs above the baseline.
+- **ascender** (``get_ascender()``): The maximum height of the glyphs above the baseline (currently returns the same value as ``get_baseline()``).
 
 - **capheight** (``get_capheight()``): The height of the capital letters measured on the X glyph.
 
