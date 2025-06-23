@@ -167,6 +167,7 @@ Hardware Peripheral Interfaces/Busses
     UART, components/uart, uart.svg
     USB Host, components/usb_host, usb.svg, dark-invert
     USB UART, components/usb_uart, usb.svg, dark-invert
+    HDMI CEC, components/hdmi_cec/index, hdmi-cec.png
 
 I/O Expanders/Multiplexers
 --------------------------
