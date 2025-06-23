@@ -50,4 +50,5 @@ See Also
 - :apiref:`safe_mode/safe_mode.h`
 - :doc:`/components/button/safe_mode`
 - :doc:`/components/switch/safe_mode`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :ghedit:`Edit`

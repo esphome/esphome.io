@@ -94,6 +94,58 @@ Next, create a ``font:`` section in your configuration:
     display:
       # ...
 
+Font metrics:
+-------------
+
+The Component provides some useful font metrics. Those include:
+
+- **ascender** (``get_ascender()``): The maximum height of the glyphs above the baseline (currently returns the same value as ``get_baseline()``).
+
+- **capheight** (``get_capheight()``): The height of the capital letters measured on the X glyph.
+
+- **xheight** (``get_xheight()``): The height of the lowercase letters measured on the x glyph.
+
+- **baseline** (``get_baseline()``): The imaginary line on which all characters sit.
+
+- **descender** (``get_descender()``): The maximum height of the glyphs below the baseline.
+
+- **linegap** (``get_linegap()``): The gap between two lines of text.
+
+- **height** (``get_height()``): The lineheight of the font measured from baseline to baseline.
+
+.. note::
+
+    The ``capheight`` and ``xheight`` values are typically calculated using glyphs with flat tops.
+    Rounded characters however might overshoot this value slightly to make them visually appear as the same size.
+    For special fonts like the Material Design Icons font, which do not contain any letters, these two metrics will be set to 0.
+
+The following code snipped produces the image below. Note that the lines in the code are ordered as they appear in the image from top to bottom.
+For this font the ``descender`` and ``height`` are only one pixel apart.
+
+.. code-block:: yaml
+
+    it.print(0, 0, id(my_font), "EspHome");
+
+    int ascender = id(my_font).get_baseline() - id(my_font).get_ascender();
+    int capheight = id(my_font).get_baseline() - id(my_font).get_capheight();
+    int xheight = id(my_font).get_baseline() - id(my_font).get_xheight();
+    int baseline = id(my_font).get_baseline();
+    int descender = id(my_font).get_baseline() + id(my_font).get_descender();
+    int height = id(my_font).get_height();
+
+    it.horizontal_line(0, ascender, it.get_width());
+    it.horizontal_line(0, capheight, it.get_width());
+    it.horizontal_line(0, xheight, it.get_width());
+    it.horizontal_line(0, baseline, it.get_width());
+    it.horizontal_line(0, descender, it.get_width());
+    it.horizontal_line(0, height, it.get_width());
+
+.. figure:: images/fontmetrics.png
+    :align: center
+    :width: 60.0%
+
+    The fontmetric values provided by ESPHome.
+
 
 Configuration variables:
 ------------------------
