@@ -25,22 +25,16 @@ TX/RX labels are from the perspective of the SenseAir sensor). Additionally, you
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      rx_pin: D0
-      tx_pin: D1
-      baud_rate: 9600
-
     sensor:
       - platform: senseair
         co2:
           name: "SenseAir CO2 Value"
-        update_interval: 60s
 
 Configuration variables:
 ------------------------
 
 
-- **co2** (**Required**): The CO_2 data from the sensor in parts per million (ppm).
+- **co2** (*Optional*): The CO_2 data from the sensor in parts per million (ppm).
 
   - All options from :ref:`Sensor <config-sensor>`.
 

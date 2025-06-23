@@ -40,7 +40,7 @@ Configuration variables
 
 - **use_pcnt** (*Optional*, boolean): Use hardware ``PCNT`` pulse counter. Only supported on ESP32. Defaults to ``true``.
 - **internal_filter** (*Optional*, :ref:`config-time`): If a pulse shorter than this
-  time is detected, it’s discarded and no pulse is counted. Defaults to ``13us``. On the ESP32, when using the hardware pulse counter
+  time is detected, it's discarded and no pulse is counted. Defaults to ``13us``. On the ESP32, when using the hardware pulse counter
   this value can not be higher than ``13us``, for the ESP8266 or with ``use_pcnt: false`` you can use larger intervals too.
   If you enable this, set up the ``count_mode`` to increase on the falling edge, not leading edge. For S0 pulse meters that are used to meter power consumption 50-100 ms is a reasonable value.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
@@ -57,7 +57,7 @@ Converting units
 
 The sensor defaults to measuring its values using a unit of measurement
 of “pulses/min”. You can change this by using :ref:`sensor-filters`.
-For example, if you’re using the pulse counter with a photodiode to
+For example, if you're using the pulse counter with a photodiode to
 count the light pulses on a power meter, you can do the following:
 
 .. code-block:: yaml

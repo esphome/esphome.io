@@ -11,7 +11,7 @@ for you. You need to have a network configuration (either Wifi or Ethernet)
 or ESPHome will fail in the config validation stage. You also can't have both Wifi
 and Ethernet setup in same time (even if your ESP has both wired).
 
-It’s recommended to provide a static IP for your node, as it can
+It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
 
 .. code-block:: yaml
@@ -343,15 +343,15 @@ This action connects to an SSID and password, optionally saving it in persistent
             password: "VerySafePassword"
             save: true
             timeout: 30000ms
-            on_connect: 
+            on_connect:
               - logger.log: "Connected to WiFi!"
             on_error:
               - logger.log: "Failed to connect to WiFi!"
 
 Configuration variables:
 
-- **ssid** (*Required*, string, :ref:`templatable <config-templatable>`): The name of the WiFi access point.
-- **password** (*Required*, string, :ref:`templatable <config-templatable>`): The password of the WiFi access point. Leave empty for no password.
+- **ssid** (**Required**, string, :ref:`templatable <config-templatable>`): The name of the WiFi access point.
+- **password** (**Required**, string, :ref:`templatable <config-templatable>`): The password of the WiFi access point. Leave empty for no password.
 - **save** (*Optional*, boolean, :ref:`templatable <config-templatable>`): If set to ``true``, the SSID and password will be saved in persistent memory. Defaults to ``true``.
 - **timeout** (*Optional*, :ref:`config-time`, :ref:`templatable <config-templatable>`): The time to wait for the connection to be established. Defaults to 30 seconds.
 - **on_connect** (*Optional*, :ref:`Automation <automation>`): An action to be performed when a connection is established.

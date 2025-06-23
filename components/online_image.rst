@@ -13,7 +13,10 @@ With this component you can define images that will be downloaded, decoded and d
 
     Current supported formats:
 
-    - BMP images, currently only binary uncompressed images are supported
+    - BMP images
+
+      - 1-bit / binary / black and white
+      - 24-bit / RGB
 
     - JPEG images, currently only baseline images (no progressive support)
 
@@ -36,6 +39,7 @@ Configuration variables
 -----------------------
 
 - **url** (**Required**, url): The URL where the image will be downloaded from.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
   in your display code.
 - **format** (**Required**): The format that the image is encoded with.
@@ -45,7 +49,7 @@ Configuration variables
   - ``PNG``: The image on the server is encoded in PNG format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions ``WIDTHxHEIGHT``
   and preserve the aspect ratio.
-- **placeholder** (**Optional**, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
+- **placeholder** (*Optional*, :ref:`config-id`): ID of an :doc:`Image </components/image>` to display while the downloaded image is not yet ready.
   This placeholder image will **not** be resized; regardless of the ``resize`` option value for the ``online_image``.
 - **type** (*Required*): Specifies how to encode image internally.
 
@@ -66,6 +70,28 @@ Automations
 
 - **on_download_finished** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the image has been successfully downloaded.
 
+The variable ``cached`` is a boolean available in :ref:`lambdas <config-lambda>` that indicates cache status:
+ - ``true`` if the image was loaded from cache (cache hit).
+ - ``false`` if the image was freshly downloaded (cache miss).
+
+Caching follows standard HTTP mechanisms (see `HTTP caching <https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching>`_), utilizing the ``Last-Modified`` and ``ETag`` headers.
+
+For example:
+
+.. code-block:: yaml
+
+    online_image:
+      - url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png"
+        format: png
+        id: my_online_image
+        on_download_finished:
+          lambda: |-
+            if (cached) {
+              ESP_LOGD("online_image", "Cache hit: using cached image");
+            } else {
+              ESP_LOGD("online_image", "Cache miss: fresh download");
+            }
+
 A good example for that is to update the display component after the download succeeded.
 
 - **on_error** (*Optional*, :ref:`Automation <automation>`): An automation to perform when an error happened during download or decode.
@@ -73,7 +99,7 @@ A good example for that is to update the display component after the download su
 Actions
 -------
 
-**online_image.set_url**: Change the URL where the image is downloaded from. The image needs to be manually updated afterwards.
+**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered.
 
 Configuration variables:
 

@@ -26,9 +26,9 @@ Configuration variables:
 
 - **rx_pin** (**Required**, :ref:`Pin <config-pin>`): Receive pin.
 - **tx_pin** (**Required**, :ref:`Pin <config-pin>`): Transmit pin.
-- **rx_queue_len** (**Optional**, int): Length of RX queue.
-- **tx_queue_len** (**Optional**, int): Length of TX queue, 0 to disable.
-- **tx_enqueue_timeout** (**Optional**, :ref:`config-time`): Maximum time to wait when the TX queue is full before
+- **rx_queue_len** (*Optional*, int): Length of RX queue.
+- **tx_queue_len** (*Optional*, int): Length of TX queue, 0 to disable.
+- **tx_enqueue_timeout** (*Optional*, :ref:`config-time`): Maximum time to wait when the TX queue is full before
   dropping the message (by default, this is set to the time it takes to send 10 CAN messages at the given bit rate).
 - All other options from :ref:`Canbus <config-canbus>`.
 
@@ -37,7 +37,7 @@ Configuration variables:
 The following table lists the bit rates supported by the component for ESP32 variants:
 
 =================== ======= ========== ========== ========== ========== ==========
-bit_rate            ESP32   ESP32-S2   ESP32-S3   ESP32-C3   ESP32-C6   ESP32-H2
+bit_rate            ESP32   ESP32-C3   ESP32-C6   ESP32-H2   ESP32-S2   ESP32-S3
 =================== ======= ========== ========== ========== ========== ==========
 1KBPS                        x          x          x          x          x
 5KBPS                        x          x          x          x          x
