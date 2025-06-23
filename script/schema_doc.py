@@ -20,6 +20,8 @@ JSON_CV_TYPE = "type"
 JSON_CV_TYPE_SCHEMA = "schema"
 JSON_ACTION = "action"
 
+args = None
+
 
 class Stats:
     core_docs = 0
@@ -106,7 +108,7 @@ def md_get_next_config(lines, index):
         if line.startswith("-"):
             if ret:
                 return index, ret, indent
-            ret = line.strip()[2:]
+            ret = line[2:].strip()
             indent = lines[index].find("-")
         elif ret and line:
             ret += " " + line
@@ -115,9 +117,6 @@ def md_get_next_config(lines, index):
 
 mrkdwn_docs = {}
 json_docs = {}
-env = {
-    "args": None,
-}
 
 
 def mrkdwn_lines(mrkdwn_file_name):
@@ -136,20 +135,21 @@ def mrkdwn_lines(mrkdwn_file_name):
 
 
 def json_exists(name):
-    json_file_name = os.path.join(env["args"].schema_dir, name + ".json")
+    json_file_name = os.path.join(args.schema_dir, name + ".json")
     if os.path.exists(json_file_name):
         return True
     return False
 
 
 def json_get(name):
+    if name == "core":
+        name = "esphome"
+
     json_doc = json_docs.get(name)
     if json_doc:
         return json_doc
 
-    if name == "core":
-        name = "esphome"
-    json_file_name = os.path.join(env["args"].schema_dir, name + ".json")
+    json_file_name = os.path.join(args.schema_dir, name + ".json")
     if os.path.exists(json_file_name):
         f = open(json_file_name, "r", encoding="utf-8-sig")
         str = f.read()
@@ -162,7 +162,7 @@ def json_get(name):
 
 def json_save():
     for name, content in json_docs.items():
-        json_file_name = os.path.join(env["args"].schema_dir, name + ".json")
+        json_file_name = os.path.join(args.schema_dir, name + ".json")
         with open(json_file_name, "w", encoding="utf-8") as f:
             f.write(json.dumps(content, indent=2))
 
@@ -191,7 +191,7 @@ def process_platform_component(lines, index, platform, name):
 
 def get_platform_from_title(title, config_component=None):
     esphome_json = json_get("esphome")
-    title = title.lower()
+    title = title.lower().replace("`", "")
     if config_component and title.startswith(config_component.lower()):
         title = title[len(config_component) + 1 :]
     name = title.replace(" ", "_")
@@ -257,7 +257,7 @@ def is_break_title(title):
         name = title.split(" ")[-1].lower()
         if get_platform_from_title(name):
             return True
-        if name in ["action", "condition"]:
+        if name in ["action", "condition", "component"]:
             return True
     return False
 
@@ -282,9 +282,10 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                 prop_name = search.group(1)
                 matched_config = find_schema_prop(schema, prop_name)
                 if matched_config:
-                    print(
-                        f"{md_file}:{index} {lines[index]} : matched title for prop {prop_name} "
-                    )
+                    if args.debug_level > 3:
+                        print(
+                            f"{md_file}:{index} {lines[index]} : matched title for prop {prop_name} "
+                        )
                     index = process_config(
                         md_file, lines, index + 1, matched_config, 0, schema
                     )
@@ -300,15 +301,17 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                 return prev_index
             if item_indent > indent:
                 if not matched_config:
-                    print(
-                        f"{md_file}:{index} {lines[index]} an indentation increase for unknown"
-                    )
+                    if args.debug_level > 2:
+                        print(
+                            f"{md_file}:{index} {lines[index]} an indentation increase for unknown"
+                        )
                     next_index = md_skip_level(lines, index)
                     continue
                 if matched_config.get(JSON_CV_TYPE, []) not in ["enum", "schema"]:
-                    print(
-                        f"{md_file}:{index} {lines[index]} : an indentation increase for a {matched_config.get(JSON_CV_TYPE, 'unknown')}"
-                    )
+                    if args.debug_level > 2:
+                        print(
+                            f"{md_file}:{index} {lines[index]} : an indentation increase for a {matched_config.get(JSON_CV_TYPE, 'unknown')}"
+                        )
                 next_index = process_config(
                     md_file, lines, prev_index, matched_config, item_indent, schema
                 )
@@ -412,10 +415,15 @@ def oddities_titles(folder, file, title):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Add docs to ESPHome json schema")
     parser.add_argument("schema_dir", help="Directory containing JSON files")
-    parser.add_argument("--single", help="Process a single json file")
+    parser.add_argument("--single", help="Process a single json file", default=None)
+    parser.add_argument(
+        "--debug-level",
+        help="Print parsing issues level, 0 prints nothing",
+        default=0,
+        type=int,
+    )
     args = parser.parse_args()
 
-    env["args"] = args
     esphome_json = json_get("esphome")
     core = esphome_json["core"]
 
@@ -425,8 +433,10 @@ if __name__ == "__main__":
             if file.endswith(".md"):
                 fullpath = Path(root, file)
                 md_files.append(fullpath)
+    md_files.append(Path(".") / "content" / "automations" / "actions.md")
 
-    # md_files = [f for f in md_files if "alarm_control_panel/_index.md" in repr(f)]
+    if args.single:
+        md_files = [f for f in md_files if args.single in repr(f)]
 
     for md_file in md_files:
         lines = mrkdwn_lines(md_file)
@@ -500,6 +510,8 @@ if __name__ == "__main__":
                     )
                     if is_platform:
                         config_component = file_name
+        elif content_folder == "automations":
+            config_component = "core"
 
         platform_name = content_folder if content_folder != "components" else None
         title_config_vars = None
@@ -531,10 +543,13 @@ if __name__ == "__main__":
                 component_name = f"{file_name}_i2c"
             elif (
                 file_name != "_index"
-                and get_platform_from_title(title, config_component) is not None
+                and get_platform_from_title(title, config_component or file_name)
+                is not None
             ):
                 component_name = file_name
-                platform_name = get_platform_from_title(title, config_component)
+                platform_name = get_platform_from_title(
+                    title, config_component or file_name
+                )
 
             if (
                 title.endswith(" Action") or title.endswith(" Condition")
@@ -583,7 +598,7 @@ if __name__ == "__main__":
                 else:
                     print(f"{md_file}:{index} Found title {title} too many parts")
 
-                if title_config_vars:
+                if title_config_vars is not None:
                     index, docs = md_get_paragraph(lines, index)
                     title_config_vars[JSON_DOCS] = docs
                     if config_type == "action":
@@ -651,6 +666,7 @@ if __name__ == "__main__":
                         # import traceback
                         # traceback.print_exc()
                         break
+                title_config_vars = None
 
     json_save()
 
