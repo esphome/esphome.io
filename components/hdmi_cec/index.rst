@@ -63,17 +63,19 @@ Basic configuration
     id: cec
     # Pick a GPIO pin that can do both input AND output
     pin: GPIO9 # Required
-    # The (logical) address can be anything in the [0x1 .. 0xF] range. Use 0xF if you only want to listen to the bus and
-    # not act like a standard device. Address 0x5 is intended for an audio device.
+    # The (logical) address can be anything in the [0x1 .. 0xF] range.
+    # Use 0xF if you only want to listen to the bus and not act
+    # like a standard device. Address 0x5 is for an audio device.
     address: 0x4 # Required
     # Physical address of the device. In this case: 4.0.0.0 (HDMI4 input on the TV)
-    # DDC autodiscovery is not yet implemented, so you'll have to set this manually.
+    # Unfortunately, you will have to set this manually.
     physical_address: 0x4000 # Required
     # The name that will be displayed in the list of devices on your TV/receiver
     osd_name: "my device" # Optional. Defaults to "esphome"
-    # By default, promiscuous mode is disabled, so the component only handles directly-address messages (matching
-    # the address configured above) and broadcast messages. Enabling promiscuous mode will make the component
-    # listen for all messages (both in logs and the 'on_message' triggers)
+    # By default, promiscuous mode is disabled, so the component only handles
+    # directly-addressed messages (matching the address configured above)
+    # and broadcast messages. Enabling promiscuous mode will make the component
+    # listen for ALL messages (both in logs and the 'on_message' triggers)
     promiscuous_mode: false # Optional. Defaults to false
     # By default, monitor mode is disabled, so the component can send messages and acknowledge incoming messages.
     # Enabling monitor mode lets the component act as a passive listener, disabling active manipulation of the CEC bus.
@@ -122,7 +124,7 @@ Example: TV power-up and volume control
       on_press:
         - hdmi_cec.send:
             destination: 0x0  # to TV
-            data: [0x44, 0x6D]  # UI (RC) command, "Power On"
+            data: [0x44, 0x6D]  # UI command, "Power On"
     - platform: template
       name: "TV Volume Up"
       on_press:
@@ -182,7 +184,7 @@ Disconnect from cec on power-down
 Although the cec line uses 3.3V logic, which is fine for GPIO, there is an issue when your esphome device is powered off.
 In that case, the cec line is likely to stay at 3.3V, and a GPIO pin should NOT have a voltage above the microcontroller
 power supply: such situation exceeds the device operating conditions.
-Although in practice people often ignore this, it has the risc of
+Although in practice people often ignore this, it has the risc of:
 
 - damaging your microcontroller
 - disturbing the communication between the other hdmi devices
@@ -206,7 +208,7 @@ As result, in the basic configuration, you will see in an output debug log many 
   [W][hdmi_cec:239]: Component hdmi_cec took a long time for an operation (224 ms).
 
 Many people ignore this, and their component seems to work fine. However, these warnings are likely to affect
-the esphome system stability, and might easily interfere with for instance wifi operation and/or
+the esphome device stability, and might easily interfere with for instance wifi operation and/or
 cause an occasional crash and reboot.
 To avoid this issue, this new version of `hdmi_cec` allows to alternatively use a hardware UART to send its messages.
 Using a UART takes the workload off the CPU. Clearly, your microcontroller needs to have a UART available.
@@ -222,7 +224,7 @@ Schottky type diodes offer a smaller voltage drop, but a low-leakage type is nee
 Do NOT choose larger rectifier diodes, as those will have too high reverse leakage current.
 
 To enable the UART with the hdmi_cec component, the yaml file must declare the UART,
-and pass its id to the cec component. For example:
+and pass its `id` to the cec component. For example:
 
 .. code-block:: yaml
 
@@ -240,7 +242,7 @@ and pass its id to the cec component. For example:
 The baudrate assignment is required for a UART, but its value is not important: it will be
 re-assigned by the `hdmi_cec` component software.
 
-`Note`: On several microcontrollers, especially the esp types from Espressif, a UART will output a log message during boot-up.
+`Note`: On several microcontrollers, especially the esp types from Espressif, one UART will output a log message during boot-up.
 Potentially, that could interfere with the intended CEC bus usage. To prevent such interference, different options are available:
 Use some 'strapping pin' to change the boot message mode, write an eFuse register, or select a different UART when available.
 Please consult the device programming manual for details.
