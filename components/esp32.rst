@@ -160,7 +160,7 @@ listing their name under this option. It is also possible to use specific versio
 git repository.
 
 - **name** (*Required*, string): Name of the component e.g. ``espressif/esp_hosted``.
-- **ref** (*Optional*, string): Version of the component in the registry or a git ref.
+- **ref** (*Optional*, string): Component registry version or a git ref.
 - **source** (*Optional*, string): The git repository to use for the component. This can be used for a
   custom or patched version of the component.
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
