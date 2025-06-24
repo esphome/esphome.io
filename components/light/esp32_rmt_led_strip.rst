@@ -54,11 +54,8 @@ Configuration variables
 - **max_refresh_rate** (*Optional*, :ref:`config-time`): A time interval used to limit the number of commands a light
   can handle per second. For example, ``16ms`` will limit the light to a refresh rate of about 60Hz. Defaults to
   sending commands as quickly as changes are made to the lights.
-- **use_psram** (*Optional*, boolean): Set to ``false`` to force internal RAM allocation even if you have the the PSRAM component enabled. This can be useful if you're experiencing issues like flickering with your leds strip. Defaults to ``true``.
-
-IDF configuration variables:
-****************************
-
+- **use_psram** (*Optional*, boolean): Set to ``false`` to force internal RAM allocation even if you have the the PSRAM
+  component enabled. This can be useful if you're experiencing issues like flickering with your leds strip. Defaults to ``true``.
 - **rmt_symbols** (*Optional*, int): The amount of RMT memory allocated to this component. Memory is shared by all
   receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the symbol memory is
   available to transmitters. Each symbol is 32 bits and contains two values.
@@ -77,19 +74,6 @@ IDF configuration variables:
 
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
   the DMA buffer size and can be set to a large value.
-
-Arduino configuration variables:
-********************************
-
-- **rmt_channel** (**Required**, int): The RMT channel to use. Each LED strip needs to use a unique channel.
-
-  .. csv-table::
-      :header: "ESP32 Variant", "Channels"
-
-      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-C3", "0, 1"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "0, 1, 2, 3"
 
 - All other options from :ref:`Light <config-light>`.
 
