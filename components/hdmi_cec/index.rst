@@ -66,10 +66,10 @@ Basic configuration
     # The (logical) address can be anything in the [0x1 .. 0xF] range.
     # Use 0xF if you only want to listen to the bus and not act
     # like a standard device. Address 0x5 is for an audio device.
-    address: 0x4 # Required
+    address: 0xE # Required
     # Physical address of the device. In this case: 4.0.0.0 (HDMI4 input on the TV)
     # Unfortunately, you will have to set this manually.
-    physical_address: 0x4000 # Required
+    physical_address: 0x2000 # Required
     # The name that will be displayed in the list of devices on your TV/receiver
     osd_name: "my device" # Optional. Defaults to "esphome"
     # By default, promiscuous mode is disabled, so the component only handles
@@ -141,6 +141,39 @@ Example: TV power-up and volume control
 Note that these cec commands for TV control are well-defined.
 However, some TVs might not respond properly as they might have an incomplete implementation.
 
+When the device with this `hdmi_cec` and this example `yaml` is integrated in `Home Assistant`,
+and the buttons are pressed while capturing a `debug` output, the log would show something like this::
+
+  [17:14:50][D][api.connection:1579]: Home Assistant 2025.6.1 (192.168.178.194) connected
+  [17:15:16][D][button:010]: 'TV Volume Up' Pressed.
+  [17:15:16][D][hdmi_cec:381]: Sending: E0:44:41 => SpecificUse to TV: <User Control Pressed>[Volume Up]
+  [17:15:17][D][hdmi_cec:345]: Send frame success in 1 attempt
+  [17:15:52][D][button:010]: 'TV Volume Up' Pressed.
+  [17:15:52][D][hdmi_cec:381]: Sending: E0:44:41 => SpecificUse to TV: <User Control Pressed>[Volume Up]
+  [17:15:52][D][hdmi_cec:345]: Send frame success in 1 attempt
+  [17:16:06][D][button:010]: 'TV Volume Down' Pressed.
+  [17:16:06][D][hdmi_cec:381]: Sending: E0:44:42 => SpecificUse to TV: <User Control Pressed>[Volume Down]
+  [17:16:06][D][hdmi_cec:345]: Send frame success in 1 attempt
+  [17:16:14][D][button:010]: 'Standby All' Pressed.
+  [17:16:14][D][hdmi_cec:381]: Sending: EF:36 => SpecificUse to All: <Standby>
+  [17:16:14][D][hdmi_cec:345]: Send frame success in 1 attempt
+  [17:16:14][D][hdmi_cec:126]: Received: 5F:72:00 => AudioSystem to All: <Set System Audio Mode>[Off]
+  [17:16:36][D][button:010]: 'TV Power On' Pressed.
+  [17:16:36][D][hdmi_cec:381]: Sending: E0:44:6D => SpecificUse to TV: <User Control Pressed>[Power On Function]
+  [17:16:36][D][hdmi_cec:345]: Send frame success in 1 attempt
+  [17:16:37][D][hdmi_cec:126]: Received: 0F:84:00:00:00 => TV to All: <Report Physical Address>[0.0.0.0][TV]
+  [17:16:38][D][hdmi_cec:126]: Received: 0F:87:08:00:46 => TV to All: <Device Vendor ID>[Sony]
+  [17:16:40][D][hdmi_cec:126]: Received: 0E:83 => TV to SpecificUse: <Give Physical Address>
+  [17:16:40][D][hdmi_cec:381]: Sending: EF:84:20:00:04 => SpecificUse to All: <Report Physical Address>[2.0.0.0][Playback Device]
+  [17:16:40][D][hdmi_cec:345]: Send frame success in 1 attempt
+  [17:16:41][D][hdmi_cec:126]: Received: 5F:84:30:00:05 => AudioSystem to All: <Report Physical Address>[3.0.0.0][Audio System]
+  [17:16:41][D][hdmi_cec:126]: Received: 0E:46 => TV to SpecificUse: <Give OSD Name>
+  [17:16:41][D][hdmi_cec:381]: Sending: E0:47:65:73:70:68:6F:6D:65 => SpecificUse to TV: <Set OSD Name>[esphome]
+  [17:16:43][D][hdmi_cec:126]: Received: 0E:8F => TV to SpecificUse: <Give Device Power Status>
+  [17:16:43][D][hdmi_cec:381]: Sending: E0:90:00 => SpecificUse to TV: <Report Power Status>[On]
+
+
+
 Example: Create service for Home Assistant
 ------------------------------------------
 
@@ -168,17 +201,20 @@ Extended installation
 
 The basic configuration can be extended with two further enhancements:
 
-- Disconnect from the cec line on power-down
-- Use a UART for sending messages
+a. Disconnect from the cec line on power-down
+b. Use a UART for sending messages
 
-The figure below shows a schematics with both those enhancements, adding a relay and a diode:
+The figure below shows a schematics with both those enhancements, adding a relay (for a.) and a diode (for b.):
 
 .. figure:: images/cec_uart_schematics.png
     :align: center
 
+Note that the particular microcontroller type in this schematics is arbitrary,
+please select your own type based on your project requirements.
+
 The merits of these two enhancements are discussed below.
 
-Disconnect from cec on power-down
+a: Disconnect from cec on power-down
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although the cec line uses 3.3V logic, which is fine for GPIO, there is an issue when your esphome device is powered off.
@@ -193,7 +229,7 @@ Therefor, the schematics above proposes to add a small relay that disconnects th
 when the power is switched off. The choice of relay type is not critical, but it is advised to use a
 small-signal and compact relay type such as a TQ2-5V or a G6K-2P-5V.
 
-Use a UART for sending messages
+b: Use a UART for sending messages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The `hdmi_cec` component receives messages by being triggered by interrupts on GPIO level changes,
@@ -237,7 +273,7 @@ and pass its `id` to the cec component. For example:
     pin: GPIO9
     uart_id: cec_uart
     address: 0xE
-    physical_address: 0x4000
+    physical_address: 0x2000
 
 The baudrate assignment is required for a UART, but its value is not important: it will be
 re-assigned by the `hdmi_cec` component software.
