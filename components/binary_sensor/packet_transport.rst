@@ -19,6 +19,7 @@ It requires a ``packet_transport`` component to be configured.
 
       - platform: packet_transport
         id: provider_status
+        type: status
         name: Provider Status
         provider: light-switch
 
