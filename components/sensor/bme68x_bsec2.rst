@@ -20,14 +20,6 @@ a correlation between VOC and CO₂ in a human's exhaled breath.
 
 The :ref:`I²C <i2c>` is required to be set up in your configuration for this sensor to work.
 
-.. code-block:: yaml
-
-    # Sample configuration
-    i2c:
-      - id: bme_i2c
-        sda: GPIO13
-        scl: GPIO14
-
 .. _BSEC license agreement: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
 
 .. _Adafruit: https://www.adafruit.com/product/3660
@@ -57,7 +49,6 @@ The :ref:`I²C <i2c>` is required to be set up in your configuration for this se
     # Minimal example configuration with common sensors
     bme68x_bsec2_i2c:
       address: 0x76
-      i2c_id: bme_i2c
       model: bme680
       operating_age: 28d
       sample_rate: LP
@@ -70,7 +61,7 @@ Configuration variables:
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to ``0x76``. The sensor can
   also be configured to use ``0x77``.
-- **i2c_id** (**Optional**, :ref:`config-id`): The ID of the :ref:`I²C bus <i2c>` the camera is connected to (recommended way).
+- **i2c_id** (**Optional**, :ref:`config-id`): The ID of the :ref:`I²C bus <i2c>` the bme68x is connected to.
 - **model** (*Required*, string): The model of the connected sensor; either ``BME680`` or ``BME688``.
 - **algorithm_output** (*Optional*, string): The output of the BSEC2 algorithm. Either ``classification`` (default) or
   ``regression``. *Only valid when model is BME688.*
