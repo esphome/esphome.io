@@ -39,6 +39,7 @@ Configuration variables
 -----------------------
 
 - **url** (**Required**, url): The URL where the image will be downloaded from.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are :ref:`templatable <config-templatable>`.
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
   in your display code.
 - **format** (**Required**): The format that the image is encoded with.
@@ -68,6 +69,28 @@ Automations
 -----------
 
 - **on_download_finished** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the image has been successfully downloaded.
+
+The variable ``cached`` is a boolean available in :ref:`lambdas <config-lambda>` that indicates cache status:
+ - ``true`` if the image was loaded from cache (cache hit).
+ - ``false`` if the image was freshly downloaded (cache miss).
+
+Caching follows standard HTTP mechanisms (see `HTTP caching <https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching>`_), utilizing the ``Last-Modified`` and ``ETag`` headers.
+
+For example:
+
+.. code-block:: yaml
+
+    online_image:
+      - url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png"
+        format: png
+        id: my_online_image
+        on_download_finished:
+          lambda: |-
+            if (cached) {
+              ESP_LOGD("online_image", "Cache hit: using cached image");
+            } else {
+              ESP_LOGD("online_image", "Cache miss: fresh download");
+            }
 
 A good example for that is to update the display component after the download succeeded.
 
