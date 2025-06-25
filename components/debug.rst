@@ -98,5 +98,6 @@ See Also
 
 - :ref:`sensor-filters`
 - :doc:`logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :apiref:`debug/debug_component.h`
 - :ghedit:`Edit`
