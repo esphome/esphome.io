@@ -31,7 +31,6 @@ which is 19200bps.
 
     # Example configuration entry
     rf_bridge:
-      id: kitchen_RF_bridge
       on_code_received:
         - homeassistant.event:
             event: esphome.rf_code_received
@@ -53,8 +52,9 @@ Configuration variables:
 ``on_code_received`` Trigger
 ----------------------------
 
-With this configuration option you can write complex automations whenever a code is received by the bridge. To use the code, use a :ref:`lambda <config-lambda>` template. The code
-and the corresponding protocol timings are available inside that lambda under the
+With this configuration option you can write complex automations whenever a code is 
+received by the bridge. To use the code, use a :ref:`lambda <config-lambda>` template. 
+The code and the corresponding protocol timings are available inside that lambda under the
 variables named ``code``, ``sync``, ``high`` and ``low``.
 
 .. code-block:: yaml
@@ -120,7 +120,7 @@ Activate the internal buzzer to make a beep.
 
 Configuration options:
 
-- **duration** (**Required**, string, :ref:`templatable <config-templatable>`): beep duration in milliseconds.
+- **duration** (**Required**, int, :ref:`templatable <config-templatable>`): beep duration in milliseconds.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID of the RF Bridge if you have multiple components.
 
 .. note::
@@ -175,9 +175,9 @@ If you have *Portisch* or *Mightymos* firmware installed, these raw codes can be
 
     on_...:
       then:
-        - rf_bridge.send_raw: #in OEM firmware 
+        - rf_bridge.send_raw:  # in OEM firmware 
             raw: 'AAA5070008001000ABC12355'
-        - rf_bridge.send_raw: #in Portisch firmware
+        - rf_bridge.send_raw:  # in Portisch firmware
             raw: 'AAB04C0408137702440111139B38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A1A1A192A1929292A192A1A1929292955'
 
 Configuration options:
@@ -375,9 +375,9 @@ Home Assistant as events and will also setup a service so you can send codes wit
       baud_rate: 0
 
     api:
-      actions: # create actions in HA
-           #Send standard RF using integer values 
-        - action: send_rf_code  
+      actions:  # create actions in HA
+        # Send standard RF using integer values
+        - action: send_rf_code
           variables:
             sync: int
             low: int
@@ -389,8 +389,8 @@ Home Assistant as events and will also setup a service so you can send codes wit
                 low: !lambda 'return low;'
                 high: !lambda 'return high;'
                 code: !lambda 'return code;'
-        
-        # send raw RF  
+
+        # send raw RF
         - action: send_rf_code_raw
           variables:
             raw: string
@@ -403,7 +403,7 @@ Home Assistant as events and will also setup a service so you can send codes wit
             - rf_bridge.learn
 
     rf_bridge:
-      on_code_received: #all firmwares, can be reported as intiger, hex, or both, as desired. 
+      on_code_received:  # all firmwares, can be reported as integer, hex, or both, as desired.
         then:
           - homeassistant.event:
               event: esphome.rf_code_received
@@ -416,12 +416,12 @@ Home Assistant as events and will also setup a service so you can send codes wit
         - homeassistant.event:
               event: esphome.rf_code_received
               data:
-                sync: !lambda 'return int(data.sync);'
-                low: !lambda 'return int(data.low);'
-                high: !lambda 'return int(data.high);'
-                code: !lambda 'return int(data.code);'
-  
-      on_advanced_code_received: #only on Portisch or mightymos firmwares
+                sync: !lambda 'return data.sync;'
+                low: !lambda 'return data.low;'
+                high: !lambda 'return data.high;'
+                code: !lambda 'return data.code;'
+
+      on_advanced_code_received:  # only on Portisch or mightymos firmwares
         then:
           - homeassistant.event:
               event: esphome.rf_advanced_code_received
@@ -429,7 +429,7 @@ Home Assistant as events and will also setup a service so you can send codes wit
                 length: !lambda 'return format_hex(data.length);'
                 protocol: !lambda 'return format_hex(data.protocol);'
                 code: !lambda 'return data.code;'
-  
+
 
 
 Now your latest received code will be in an event.
@@ -463,14 +463,14 @@ Additional example configurations in ESPHome
         name: Advanced sniffing stop
         on_press:
           then:
-            - rf_bridge.stop_advanced_sniffing    
+            - rf_bridge.stop_advanced_sniffing
 
       - platform: template
         name: Bucket sniffing start
         on_press:
           then:
-            - rf_bridge.start_bucket_sniffing 
-    
+            - rf_bridge.start_bucket_sniffing
+
       - platform: template
         name: Beep
         on_press:
@@ -479,29 +479,30 @@ Additional example configurations in ESPHome
                 duration: 100
 
       - platform: template
-        name: "restart radio"
+        name: Restart Radio
         id: mcu_reset
         on_press:
           then:
-          - rf_bridge.send_raw: 
-              raw: 'AAFE55'   
+          - rf_bridge.send_raw:
+              raw: 'AAFE55'
 
     switch:
       - platform: template
         name: "example LED strip"
         optimistic: true
-        turn_on_action: 
+        turn_on_action:
           - rf_bridge.send_code:
               sync: 0x2F4A
               low: 0x0166
               high: 0x0483
-              code: 0x00C301    
-        turn_off_action: 
+              code: 0x00C301
+        turn_off_action:
           - rf_bridge.send_code:
-              sync: 0x2F1A 
-              low: 0x0184 
-              high: 0x048C 
+              sync: 0x2F1A
+              low: 0x0184
+              high: 0x048C
               code: 0x00C303
+
     # example window blinds using Bitbucket sending.
     # Works on Portisch/mightymos firmware only.
     cover:
@@ -510,14 +511,14 @@ Additional example configurations in ESPHome
         device_class: blind
         open_action:
           - rf_bridge.send_raw:
-          raw: 'AAB04C0408137702440111139B38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A1A1A192A1929292A192A1A1929292955'
+              raw: 'AAB04C0408137702440111139B38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A1A1A192A1929292A192A1A1929292955'
         open_duration: 26.26s
         close_action:
-          - rf_bridge.send_raw: 
+          - rf_bridge.send_raw:
               raw: 'AAB04C0408137E0249010E139C38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A192A1A1A1A192929292A19292929292955'
         close_duration: 25.99s
         stop_action:
-          - rf_bridge.send_raw: 
+          - rf_bridge.send_raw:
               raw: 'AAB04C0408137502490111139F38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A192A1A1A1929292A1929292929292955'
 
         has_built_in_endstop: true
