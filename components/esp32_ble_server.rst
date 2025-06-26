@@ -86,10 +86,10 @@ Characteristics can also have multiple descriptors to provide additional informa
     esp32_ble_server:
       services:
         # ...
+        advertise: true
         characteristics:
           - id: test_characteristic
             uuid: cad48e28-7fbe-41cf-bae9-d77a6c233423
-            advertise: true
             description: "Sample description"
             read: true
             value:
@@ -225,7 +225,7 @@ This action sets the value of a characteristic. A characteristic may not have a 
 
     on_...:
       then:
-        - ble_server.characteristic_set_value:
+        - ble_server.characteristic.set_value:
             id: test_write_characteristic
             value: [0, 1, 2]
 
@@ -245,7 +245,7 @@ This action triggers a notification to the client. The value sent will be the cu
 
     on_...:
       then:
-        - ble_server.characteristic_notify:
+        - ble_server.characteristic.notify:
             id: test_notify_characteristic
 
 Configuration variables:
@@ -263,7 +263,7 @@ This action sets the value of a descriptor.
 
     on_...:
       then:
-        - ble_server.descriptor:
+        - ble_server.descriptor.set_value:
             id: test_write_descriptor
             value: [0, 1, 2]
 
