@@ -43,8 +43,8 @@ Configuration variables:
 - **d3_pin** (*Required*, :ref:`config-pin`): The SDIO d3 pin.
 - **slot** (*Optional*, int): The SDIO slot number. Defaults to 1.
 - **reset_pin** (*Required*, :ref:`config-pin`): The reset pin of the co-processor.
-- **active_high** (*Optional*, boolean): If enabled, the co-processor is active when reset is
-  high. If disabled, the co-processor is active when reset is low. Defaults to ``true``.
+- **active_high** (*Required*, boolean): If enabled, the co-processor is active when reset is
+  high. If disabled, the co-processor is active when reset is low.
 
 See Also
 --------
