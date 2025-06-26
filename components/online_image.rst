@@ -99,12 +99,13 @@ A good example for that is to update the display component after the download su
 Actions
 -------
 
-**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered.
+**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered unless ``update`` is set to ``false``.
 
 Configuration variables:
 
 - **id** (**Required**, :ref:`config-id`): The image to update the URL for.
 - **url** (**Required**, url): The new URL to download the image from.
+- **update** (*Optional*, bool): If ``true``, the image will be updated (fetched) immediately after setting the new URL. If ``false``, the URL will be set but the image will **not** be updated until you call the ``update`` action. Defaults to ``true``
 
 .. code-block:: yaml
 
