@@ -140,7 +140,7 @@ LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
   as a DHCP server (necessary for WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
   the DHCP server based on whether AP mode is configured. When WiFi is not used, defaults to ``false``.
 - **enable_lwip_mdns_queries** (*Optional*, boolean): Enable mDNS query support in the DNS resolver. ESPHome uses its own
-  mDNS implementation, so this is rarely needed. Defaults to ``false``.
+  mDNS implementation, so this is rarely needed. Defaults to ``true``.
 - **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
   interfaces. Defaults to ``false``.
 
