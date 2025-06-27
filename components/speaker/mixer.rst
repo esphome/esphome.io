@@ -41,7 +41,7 @@ Configuration variables:
 
 - **num_channels** (*Optional*, positive integer): The number of audio channels to send to the output speaker. Either ``1`` or ``2``. Defaults to the output speaker's number of channels.
 - **queue_mode** (*Optional*, boolean): Enables queue mode. If enabled, audio isn't mixed but instead each source speaker's audio is played successively, starting with the first listed source speaker.
-- **task_stack_in_psram** (*Optional* boolean): Only with ``esp-idf``. Run the audio tasks in external memory. Defaults to ``false``.
+- **task_stack_in_psram** (*Optional*, boolean): Only with ``esp-idf``. Run the audio tasks in external memory. Defaults to ``false``.
 
 
 Automations

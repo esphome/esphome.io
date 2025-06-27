@@ -21,7 +21,7 @@ Configuration variables:
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
 - **bitmask** (*Optional*, int): sometimes multiple values are packed in a single register's response. The bitmask is used to determined if the result is true or false. See :ref:`bitmasks`.
-- **skip_updates** (*Optional*, int): By default all sensors of a modbus_controller are updated together. For data points that don't change very frequently updates can be skipped. A value of 5 would only update this sensor range in every 5th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. ``skip_updates`` applies for *all* components in the same range.
+- **skip_updates** (*Optional*, int): By default all sensors of a modbus_controller are updated together. For data points that don't change very frequently updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. ``skip_updates`` applies for *all* components in the same range.
 - **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See :ref:`modbus_register_count` for more details.
 - **response_size** (*Optional*, int): Size of the response for the register in bytes. Defaults to register_count*2.
 - **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting ``force_new_range: true`` enforces the start of a new range at that address.
@@ -69,5 +69,5 @@ See Also
 - :doc:`/components/select/modbus_controller`
 - :doc:`/components/text_sensor/modbus_controller`
 - https://www.modbustools.com/modbus.html
-- :apiclass:`:modbus_controller::ModbusBinarySensor`
+- :apiclass:`modbus_controller::ModbusBinarySensor`
 - :ghedit:`Edit`

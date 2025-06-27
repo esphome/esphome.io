@@ -267,6 +267,7 @@ That's no good. Here are some steps that resolve some problems:
 
 - **If you're having Wi-Fi problems**: See :ref:`wifi-problems`.
 - :ref:`Enable verbose logs<logger-log_levels>` in your ESPHome device's ``logger:`` section.
+- **If your device is crashing**: See the :doc:`/guides/troubleshooting` guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
   `ESPHome issue tracker <https://github.com/esphome/issues/issues>`__. If not, you can create a new issue to describe your
   problem there. We will take a look at it as soon as we can. Thanks!
@@ -391,7 +392,7 @@ Sure! We are happy to help :) You can contact us here:
 -  ESPHome `issue <https://github.com/esphome/issues/issues>`__ and
    `feature request <https://github.com/esphome/feature-requests/issues>`__ trackers. Preferably only for issues and
    feature requests.
--  **If your inquiry is not regarding support**, you can `e-mail us <mailto:esphome@nabucasa.com>`__.
+-  **If your inquiry is not regarding support**, you can `e-mail us <mailto:esphome@openhomefoundation.org>`__.
 
 .. _wifi-problems:
 
@@ -645,5 +646,5 @@ See Also
 --------
 
 - :doc:`ESPHome index </index>`
-- :doc:`contributing`
+- `Developer site <https://developers.esphome.io>`__
 - :ghedit:`Edit`

@@ -93,9 +93,9 @@ SPI configuration variables:
   This variable is **required** for older frameworks. See below.
 - **reset_pin** (*Optional*, :ref:`config-pin`): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
-  Any frequency between `8Mhz` and `80Mhz` is allowed, but the nearest integer division
-  of `80Mhz` is used, i.e. `16Mhz` (`80Mhz` / 5) is used when `15Mhz` is configured.
-  Default: `26.67Mhz`.
+  Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
+  of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
+  Default: `26.67MHz`.
 - **polling_interval** (*Optional*, :ref:`config-time`): If ``interrupt_pin`` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.

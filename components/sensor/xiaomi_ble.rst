@@ -4,7 +4,7 @@ Xiaomi Mijia BLE Sensors
 .. seo::
     :description: Instructions for setting up Xiaomi Mi Home (Mijia) bluetooth-based sensors in ESPHome.
     :image: xiaomi_mijia_logo.jpg
-    :keywords: Xiaomi, Mi Home, Mijia, BLE, Bluetooth, HHCCJCY01, GCLS002, HHCCPOT002, LYWSDCGQ, LYWSD02, LYWSD02MMC, CGG1, LYWSD03MMC, CGD1, JQJCY01YM, MUE4094RT, WX08ZM, MHO, C401, MHOC401
+    :keywords: Xiaomi, Mi Home, Mijia, BLE, Bluetooth, HHCCJCY01, GCLS002, HHCCPOT002, LYWSDCGQ, LYWSD02, LYWSD02MMC, CGG1, LYWSD03MMC, XMWSDJ04MMC, CGD1, JQJCY01YM, MUE4094RT, WX08ZM, MHO, C401, MHOC401
 
 The ``xiaomi_ble`` sensor platform lets you track the output of Xiaomi Bluetooth Low Energy devices using the :doc:`/components/esp32_ble_tracker`. This component will track, for example, the temperature, humidity, moisture, conductivity, illuminance, formaldehyde, mosquito tablet and battery level of the device every time the sensor sends out a BLE broadcast. Contrary to other implementations, ``xiaomi_ble`` listens passively to advertisement packets and does not pair with the device. Hence ESPHome has no impact on battery life. Thus, if you only use such sensors, you can safely set ``scan_parameters.active: false`` in ``esp32_ble_tracker`` configuration, to save from spamming your RF environment with useless scan requests.
 
@@ -265,6 +265,29 @@ Configuration example for ATC MiThermometer firmware set to "Custom" advertiseme
         signal_strength:
           name: "ATC Signal"
 
+XMWSDJ04MMC
+***********
+
+Hygro thermometer, small square body, e-ink display, encrypted, broadcasts temperature, humidity and battery status. Requires a bindkey in order to decrypt the received data (see :ref:`obtaining_the_bindkey`).
+
+.. figure:: images/xiaomi_xmwsdj04mmc.png
+    :align: center
+    :width: 30.0%
+
+Configuration example:
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: xiaomi_xmwsdj04mmc
+        mac_address: XX:XX:XX:XX:XX:XX
+        bindkey: "eef418daf699a0c188f3bfd17e4565d9"
+        temperature:
+          name: "XMWSDJ04MMC Temperature"
+        humidity:
+          name: "XMWSDJ04MMC Humidity"
+        battery_level:
+          name: "XMWSDJ04MMC Battery Level"
 
 MHO-C303
 ********
