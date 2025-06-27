@@ -27,7 +27,7 @@ in which case this is not needed.
 
 .. note::
 
-    Support for esp-idf is still experminental. Please report issues you have with mqtt using the esp-idf framework.
+    Support for esp-idf is still experimental. Please report issues you have with MQTT using the ESP-IDF framework.
 
 
 Configuration variables:
@@ -85,13 +85,17 @@ Configuration variables:
 - **ssl_fingerprints** (*Optional*, list): Only on ESP8266. A list of SHA1 hashes used
   for verifying SSL connections. See :ref:`mqtt-ssl_fingerprints`.
   for more information.
-- **certificate_authority** (*Optional*, string): Only with ``esp-idf``. CA certificate in PEM format. See :ref:`mqtt-tls-idf` for more information
+- **certificate_authority** (*Optional*, string): Only with ``esp-idf``. CA certificate in PEM format. See
+  :ref:`mqtt-tls-idf` for more information.
 - **client_certificate** (*Optional*, string): Only on ``esp32``. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on ``esp32``. Client private key in PEM format.
-- **skip_cert_cn_check** (*Optional*, bool): Only with ``esp-idf``. Don't verify if the common name in the server certificate matches the value of ``broker``.
-- **idf_send_async** (*Optional*, bool): Only with ``esp-idf``. If true publishing the message happens from the internal mqtt task. The client only enqueues the message. Defaults to ``false``.
-  The advantage of asyncronous publishing is that it doesn't block the esphome main thread. The disadvantage is a delay (up to 1-2 seconds) until the messages are actually sent out.
-  Set this to true if you send large amounts of of data over mqtt.
+- **skip_cert_cn_check** (*Optional*, bool): Only with ``esp-idf``. Don't verify if the common name in the server
+  certificate matches the value of ``broker``.
+- **idf_send_async** (*Optional*, bool): Only with ``esp-idf``. If true publishing the message happens from the
+  internal MQTT task. The client only enqueues the message. Defaults to ``false``.
+  The advantage of asynchronous publishing is that it doesn't block the ESPHome main thread. The disadvantage is a
+  delay (up to 1-2 seconds) until the messages are actually sent out. Set this to true if you send large amounts of
+  data over MQTT.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   MQTT connection exists. Can be disabled by setting this to ``0s``. Defaults to ``15min``.
 - **keepalive** (*Optional*, :ref:`config-time`): The time
@@ -106,7 +110,10 @@ Configuration variables:
 - **on_json_message** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when a JSON message on a specific MQTT topic is received. See :ref:`mqtt-on_json_message`.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **publish_nan_as_none** (*Optional*, bool): Publish ``None`` instead of ``NaN`` to handle Unknown/Unavailable sensor states in Home Assistant. Defaults to ``false``.
+- **publish_nan_as_none** (*Optional*, bool): Publish ``None`` instead of ``NaN`` to handle Unknown/Unavailable sensor
+  states in Home Assistant. Defaults to ``false``.
+- **wait_for_connection** (*Optional*, bool): Blocks other components from starting until the MQTT connection is
+  established. Defaults to ``false``.
 
 .. _mqtt-message:
 
@@ -371,12 +378,12 @@ then run the ``mqtt-fingerprint`` script of ESPHome to get the certificate:
 TLS with esp-idf (esp32)
 ------------------------
 
-If used with the esp-idf framework a TLS connection to a mqtt broker can be established.
+If used with the esp-idf framework a TLS connection to a MQTT broker can be established.
 The servers CA certificate is required to validate the connection.
 
-You have to download the server CA certficiate in PEM format and add it to ``certificate_authority``.
+You have to download the server CA certificate in PEM format and add it to ``certificate_authority``.
 Usually these are .crt files and you can open them with any text editor.
-Also make sure to change the ``port`` of the mqtt broker. Most brokers use port 8883 for TLS connections.
+Also make sure to change the ``port`` of the MQTT broker. Most brokers use port 8883 for TLS connections.
 
 .. warning::
 
@@ -455,7 +462,8 @@ Configuration variables:
 
 -  **name** (**Required**, string): The name to use for the MQTT
    Component.
--  **qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/) level for publishing. Defaults to 0.
+-  **qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+   level for publishing. Defaults to 0.
 -  **retain** (*Optional*, boolean): If all MQTT state messages should
    be retained. Defaults to ``true``.
 -  **discovery** (*Optional*, boolean): Manually enable/disable
@@ -555,7 +563,7 @@ Configuration variables:
     .. code-block:: yaml
 
         mqtt:
-          # Give the mqtt component an ID
+          # Give the MQTT component an ID
           id: mqtt_client
 
     .. code-block:: cpp
@@ -624,7 +632,7 @@ Configuration variables:
     .. code-block:: yaml
 
         mqtt:
-          # Give the mqtt component an ID
+          # Give the MQTT component an ID
           id: mqtt_client
 
     .. code-block:: cpp
@@ -675,7 +683,7 @@ Configuration options:
     .. code-block:: yaml
 
         mqtt:
-          # Give the mqtt component an ID
+          # Give the MQTT component an ID
           id: mqtt_client
 
     .. code-block:: cpp
@@ -726,7 +734,7 @@ Configuration options:
     .. code-block:: yaml
 
         mqtt:
-          # Give the mqtt component an ID
+          # Give the MQTT component an ID
           id: mqtt_client
 
     .. code-block:: cpp
@@ -765,7 +773,8 @@ This action turns on the MQTT component on demand.
 .. note::
 
     The configuration option ``enable_on_boot`` can be set to ``false`` if you do not want MQTT to be enabled on boot.
-    ``mqtt.enable`` can be useful for custom setups. For example, if the broker name is negotiated dynamically and saved in a global variable.
+    ``mqtt.enable`` can be useful for custom setups. For example, if the broker name is negotiated dynamically and
+    saved in a global variable.
 
 .. code-block:: yaml
 
@@ -810,7 +819,7 @@ the MQTT broker.
     .. code-block:: yaml
 
         mqtt:
-          # Give the mqtt component an ID
+          # Give the MQTT component an ID
           id: mqtt_client
 
     .. code-block:: cpp
