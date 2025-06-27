@@ -294,6 +294,7 @@ Contributors
 - `Ben Brooks (@brooksben11) <https://github.com/brooksben11>`__
 - `brtchip-tuannguyen (@brtchip-tuannguyen) <https://github.com/brtchip-tuannguyen>`__
 - `Vaclav (@bruxy70) <https://github.com/bruxy70>`__
+- `Bernhard Tittelbach (@btittelbach) <https://github.com/btittelbach>`__
 - `buddydvd (@buddydvd) <https://github.com/buddydvd>`__
 - `JB BUGEAUD (@bugeaud) <https://github.com/bugeaud>`__
 - `bulburDE (@bulburDE) <https://github.com/bulburDE>`__
@@ -2147,6 +2148,7 @@ Contributors
 - `Björn Stenberg (@zagor) <https://github.com/zagor>`__
 - `zaluthar (@zaluthar) <https://github.com/zaluthar>`__
 - `david reid (@zathras777) <https://github.com/zathras777>`__
+- `Ztech (@zd3sf) <https://github.com/zd3sf>`__
 - `Zebble (@Zebble) <https://github.com/Zebble>`__
 - `Wojciech Zelek (@zelo) <https://github.com/zelo>`__
 - `Brynley McDonald (@ZephireNZ) <https://github.com/ZephireNZ>`__
@@ -2166,4 +2168,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated June 23, 2025.*
+*This page was last updated June 27, 2025.*
