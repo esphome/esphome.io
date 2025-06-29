@@ -7,21 +7,18 @@ SEN5X and SEN6X Series Environmental sensor
     :keywords: Sensirion, SEN50, SEN54, SEN55, SEN5X, SEN60, SEN63C, SEN65, SEN66, SEN68
 
 The ``sen5x`` sensor platform allows you to use your Sensirion `SEN5X Series`_ or `SEN6X Series`_ Environmental sensors with ESPHome.
-This component only supports I²C communication thus the :ref:`I²C Bus <i2c>` is required. The SEN5X sensor must be configured for I²C communication.
+
+This component only supports I²C communication thus the :ref:`I²C Bus <i2c>` is required. The SEN5X sensor must be configured for I²C communication. 
+The SEN6X sensor only supports I²C communication so no configuration is required.
 
 .. _SEN5X Series: https://sensirion.com/products/catalog/SEK-SEN5x
 
 .. _SEN6X Series: https://sensirion.com/sen6x-air-quality-sensor-platform
 
 .. figure:: images/sen54.jpg
-    :width: 45% 
+    :width: 50% 
 
     SEN5X Series
-
-.. figure:: images/sen66.jpg
-    :width: 45% 
-
-    SEN6X Series
 
 .. code-block:: yaml
 
@@ -69,12 +66,18 @@ This component only supports I²C communication thus the :ref:`I²C Bus <i2c>` i
         address: 0x69
         update_interval: 10s
 
+.. figure:: images/sen66.jpg
+    :width: 50% 
+
+    SEN6X Series
+
 .. code-block:: yaml
 
     # Example configuration entry for SEN66
     sensor:
       - platform: sen5x
         id: sen66
+        model: SEN66
         pm_1_0:
           name: "PM <1µm Weight concentration"
           id: pm_1_0
