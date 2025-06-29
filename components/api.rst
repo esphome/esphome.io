@@ -87,7 +87,8 @@ Configuration variables:
 - **actions** (*Optional*, list): A list of user-defined actions. See :ref:`api-device-actions`.
 - **batch_delay** (*Optional*, :ref:`config-time`): The delay time for batching multiple state update messages
   together to reduce network overhead. Lower values send updates sooner but use more network packets,
-  while higher values batch more efficiently but add latency. Defaults to ``100ms``.
+  while higher values batch more efficiently but add latency. Must be between ``0ms`` and ``65535ms``
+  (65.535 seconds). Defaults to ``100ms``.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
