@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import re
+import string
 from pathlib import Path
 from pprint import pprint
 from inspect import getmembers
@@ -31,18 +32,64 @@ class Stats:
     enum_docs = 0
     action_docs = 0
     condition_docs = 0
+    missing_anchors = []
 
 
 stats = Stats()
 
+anchors = {}
+md_docs = {}
+json_docs = {}
 
-def md_skip_frontmatter(lines):
+
+def md_parse_frontmatter(md_file, lines):
     if lines[0] == "---":
         index = 1
         while lines[index] != "---":
+            if lines[index].startswith("title: "):
+                md_docs[md_file]["title"] = lines[index][len("title:  ") : -1]
             index += 1
         return index + 1
     return 0
+
+
+def mrkdwn_lines(md_file):
+    lines = md_docs.get(md_file, {}).get("lines")
+    if lines:
+        return lines
+
+    if os.path.exists(md_file):
+        mrkdwn_f = open(md_file, "r", encoding="utf-8-sig")
+        mrkdwn = mrkdwn_f.read()
+        lines = mrkdwn.split("\n")
+        md_docs[md_file] = {"lines": lines}
+        return lines
+    else:
+        print(f"Error: File {md_file} not found")
+    return
+
+
+def fill_anchors(md_files):
+    ANCHOR_START = '{{< anchor "'
+    ANCHOR_END = " >}}"
+    for md_file in md_files:
+        lines = mrkdwn_lines(md_file)
+        for line in lines:
+            if line.startswith(ANCHOR_START):
+                anchor = line[len(ANCHOR_START) : -len(ANCHOR_END) - 1]
+                anchors[anchor] = md_file
+                print(f"{anchor} -> {md_file}")
+
+
+def get_doc_title(md_file):
+    title = md_docs.get(md_file, {}).get("title")
+    if title:
+        return title
+
+    lines = mrkdwn_lines(md_file)
+    md_parse_frontmatter(md_file, lines)
+
+    return md_docs.get(md_file, {}).get("title")
 
 
 def md_get_paragraph(lines, index):
@@ -53,7 +100,7 @@ def md_get_paragraph(lines, index):
             lines[index].strip().startswith("{{")
             and lines[index].strip().endswith("}}")  # anchors
         )
-        or (lines[index].startswith("#"))  # titles
+        or (is_title(lines[index]))  # titles
     ):
         index += 1
         if index >= len(lines):
@@ -79,7 +126,7 @@ def md_get_next_title(lines, index):
         line = lines[index]
         if re.search(REGEX_CONFIGURATION_VARIABLES_TITLE, line, re.IGNORECASE):
             return index + 1, DOC_CONFIGURATION_VARIABLES
-        if line.startswith("#"):
+        if is_title(line):
             return index + 1, line.replace("#", "").strip()
         index += 1
 
@@ -92,7 +139,7 @@ def md_get_next_config(lines, index):
     while True:
         if index >= len(lines):
             return index, None, indent
-        line = lines[index].strip()
+        line = lines[index]
 
         # skip code blocks inside properties (and complain??)
         if line.startswith("```"):
@@ -101,37 +148,25 @@ def md_get_next_config(lines, index):
             index += 1
             continue
 
-        if line.startswith("#"):
+        if is_title(line):
             if ret:
                 return index, ret, indent
             return index, None, indent
-        if line.startswith("-"):
+
+        line = lines[index].strip()
+
+        if line.startswith("- "):
             if ret:
                 return index, ret, indent
             ret = line[2:].strip()
             indent = lines[index].find("-")
         elif ret and line:
-            ret += " " + line
+            line_indent = len(lines[index]) - len(line)
+            if line_indent == indent + 2:
+                ret += " " + line
+            else:
+                return index, ret, indent
         index += 1
-
-
-mrkdwn_docs = {}
-json_docs = {}
-
-
-def mrkdwn_lines(mrkdwn_file_name):
-    mrkdwn_doc_lines = mrkdwn_docs.get(mrkdwn_file_name)
-    if mrkdwn_doc_lines:
-        return mrkdwn_doc_lines
-
-    if os.path.exists(mrkdwn_file_name):
-        mrkdwn_f = open(mrkdwn_file_name, "r", encoding="utf-8-sig")
-        mrkdwn = mrkdwn_f.read()
-        mrkdwn_docs[mrkdwn_file_name] = mrkdwn_doc_lines = mrkdwn.split("\n")
-        return mrkdwn_doc_lines
-    else:
-        print(f"Error: File {mrkdwn_file_name} not found")
-    return
 
 
 def json_exists(name):
@@ -167,22 +202,24 @@ def json_save():
             f.write(json.dumps(content, indent=2))
 
 
-def process_component(lines, index, name):
+def process_component(md_file, lines, index, name):
     esphome_json = json_get("esphome")
     core = esphome_json["core"]
     if name not in core["components"]:
         return index, False
     index, docs = md_get_paragraph(lines, index)
-    core["components"][name][JSON_DOCS] = docs
+    core["components"][name][JSON_DOCS] = convert_links_and_shortcodes(md_file, docs)
     stats.core_docs += 1
     return index, True
 
 
-def process_platform_component(lines, index, platform, name):
+def process_platform_component(md_file, lines, index, platform, name):
     platform_json = json_get(platform)
     index, docs = md_get_paragraph(lines, index)
     if name in platform_json[platform]["components"]:
-        platform_json[platform]["components"][name][JSON_DOCS] = docs
+        platform_json[platform]["components"][name][JSON_DOCS] = (
+            convert_links_and_shortcodes(md_file, docs)
+        )
         stats.platform_docs += 1
         return index, True
     else:
@@ -233,10 +270,93 @@ def find_schema_prop(schema, prop_name):
     return None
 
 
-def set_schema_doc(schema, prop_name, doc):
+def get_md_file_ref(md_file, ref):
+    if ref.startswith("/"):
+        md_parent = Path(".") / "content"
+        ref = ref[1:]
+    else:
+        md_parent = md_file.parent
+    if ref.endswith("/"):
+        ref = ref[:-1]
+
+    ref_md_path = md_parent / (ref + ".md")
+    if ref_md_path.exists():
+        return ref_md_path
+    ref_md_default = md_parent / ref / "_index.md"
+    if ref_md_default.exists():
+        return ref_md_default
+
+
+DOXYGEN_LOOKUP = {}
+for s in string.ascii_lowercase + string.digits:
+    DOXYGEN_LOOKUP[s] = s
+for s in string.ascii_uppercase:
+    DOXYGEN_LOOKUP[s] = "_{}".format(s.lower())
+DOXYGEN_LOOKUP[":"] = "_1"
+DOXYGEN_LOOKUP["_"] = "__"
+DOXYGEN_LOOKUP["."] = "_8"
+
+
+def encode_doxygen(value):
+    value = value.split("/")[-1]
+    try:
+        return "".join(DOXYGEN_LOOKUP[s] for s in value)
+    except KeyError as exc:
+        raise ValueError(
+            "Unknown character in doxygen string! '{}'".format(value)
+        ) from exc
+
+
+def convert_links_and_shortcodes(md_file, docs):
+    if docs is None:
+        return None
+
+    # Matches [name-group-1](#local-link-group-2)
+    REGEX_LOCAL_LINK = r"\[([^\]]*)\]\(#([^\)]*)\)"
+
+    def replacer_local(match):
+        anchor = match.group(2)
+        if not anchor in anchors:
+            if not anchor in stats.missing_anchors:
+                stats.missing_anchors.append(anchor)
+            return match.group(1)
+        anchor_file = anchors[anchor]
+        return f"{args.deploy_url}/{'/'.join(anchor_file.parts[1:-1])}/{anchor_file.stem}#{anchor}"
+
+    docs = re.sub(REGEX_LOCAL_LINK, replacer_local, docs)
+
+    # Matches {{ shorcode-group-1 "group-2" "group-3" }}
+    REGEX_SHORTCODE = r"{{<\s([^\s]*)\s\"([^\"]*)\"(?:\s\"([^\"]*)\")?\s>}}"
+
+    def replacer_shortcode(match):
+        if match.group(1) == "docref":
+            ref = match.group(2)
+            md_file_ref = get_md_file_ref(md_file, ref)
+            title = match.group(3) or get_doc_title(md_file_ref)
+            if ref.startswith("/"):
+                url = args.deploy_url + ref
+            else:
+                url = args.deploy_url + "/" + "/".join(md_file.parts[1:-1]) + "/" + ref
+            if url.endswith("/index"):
+                url = url[: -(len("/index"))]
+        elif match.group(1) == "apistruct":
+            title = match.group(2)
+            url = f"{args.api_docs_url}/structesphome_1_1{encode_doxygen(match.group(3))}.html"
+        elif match.group(1) == "apiclass":
+            title = match.group(2)
+            url = f"{args.api_docs_url}/classesphome_1_1{encode_doxygen(match.group(3))}.html"
+        else:
+            return ""
+
+        return f"[{title}]({url})"
+
+    return re.sub(REGEX_SHORTCODE, replacer_shortcode, docs)
+
+
+def set_schema_doc(md_file, schema, prop_name, doc):
     matched_config = find_schema_prop(schema, prop_name)
     if matched_config:
-        matched_config[JSON_DOCS] = doc
+        matched_config[JSON_DOCS] = convert_links_and_shortcodes(md_file, doc)
         stats.props += 1
     return matched_config
 
@@ -252,8 +372,12 @@ def md_skip_level(lines, index):
     return index + 1
 
 
+def is_title(title):
+    return title.startswith("#")
+
+
 def is_break_title(title):
-    if title.startswith("#"):
+    if is_title(title):
         name = title.split(" ")[-1].lower()
         if get_platform_from_title(name):
             return True
@@ -262,8 +386,88 @@ def is_break_title(title):
     return False
 
 
-def process_config(md_file, lines, index, config_var, indent=0, parent_schema=None):
+def process_schema(
+    md_file,
+    lines,
+    index,
+    schema,
+    indent,
+    parent_schema,
+    typed_var=None,
+    typed_value=None,
+):
     matched_config = None
+    while True:
+        if index >= len(lines):
+            return index
+        if is_title(lines[index]):
+            if is_break_title(lines[index]):
+                return index
+            else:
+                index += 1
+        prev_index = index
+        index, item_config, item_indent = md_get_next_config(lines, index)
+        if index >= len(lines):
+            return index
+
+        search = re.search(REGEX_PROP_TITLE, lines[index], re.IGNORECASE)
+        if search:
+            prop_name = search.group(1)
+            matched_config = find_schema_prop(schema, prop_name)
+            if matched_config:
+                if args.debug_level > 3:
+                    print(
+                        f"{md_file}:{index} {lines[index]} : matched title for prop {prop_name} "
+                    )
+                index = process_config(
+                    md_file, lines, index + 1, matched_config, 0, schema
+                )
+                continue
+            elif parent_schema:
+                matched_config = find_schema_prop(parent_schema, prop_name)
+                if matched_config:
+                    return index
+            elif lines[index].endswith("Action"):
+                continue  # this is a breaking title, but many triggers are labeled action
+
+        if item_indent < indent:
+            return prev_index
+        if item_indent > indent:
+            if not matched_config:
+                if args.debug_level > 6:
+                    print(
+                        f"{md_file}:{index} {lines[index]} an indentation increase for unknown"
+                    )
+                next_index = md_skip_level(lines, index)
+                continue
+            if matched_config.get(JSON_CV_TYPE, []) not in ["enum", "schema"]:
+                if args.debug_level > 2:
+                    print(
+                        f"{md_file}:{index} {lines[index]} : an indentation increase for a {matched_config.get(JSON_CV_TYPE, 'unknown')}"
+                    )
+            next_index = process_config(
+                md_file, lines, prev_index, matched_config, item_indent, schema
+            )
+            if next_index == prev_index:
+                # no progress
+                next_index = index  # skip ahead
+            index = next_index
+            continue
+        if not item_config:
+            continue
+        search = re.search(REGEX_PROP, item_config, re.IGNORECASE)
+        if search:
+            prop_name = search.group(1)
+
+            if typed_var and typed_var.get("typed_key") == prop_name:
+                typed_var["docs"] = search.group(3)
+            else:
+                matched_config = set_schema_doc(
+                    md_file, schema, prop_name, search.group(3)
+                )
+
+
+def process_config(md_file, lines, index, config_var, indent=0, parent_schema=None):
     while True:
         if index >= len(lines):
             return index
@@ -272,63 +476,21 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
         item_type = config_var.get(JSON_CV_TYPE)
         if item_type in ["schema", "trigger"] and JSON_CV_TYPE_SCHEMA in config_var:
             schema = config_var[JSON_CV_TYPE_SCHEMA]
-            prev_index = index
-            index, item_config, item_indent = md_get_next_config(lines, index)
-            if index >= len(lines):
-                return index
-
-            search = re.search(REGEX_PROP_TITLE, lines[index], re.IGNORECASE)
-            if search:
-                prop_name = search.group(1)
-                matched_config = find_schema_prop(schema, prop_name)
-                if matched_config:
-                    if args.debug_level > 3:
-                        print(
-                            f"{md_file}:{index} {lines[index]} : matched title for prop {prop_name} "
-                        )
-                    index = process_config(
-                        md_file, lines, index + 1, matched_config, 0, schema
-                    )
-                    continue
-                elif parent_schema:
-                    matched_config = find_schema_prop(parent_schema, prop_name)
-                    if matched_config:
-                        return index
-                elif lines[index].endswith("Action"):
-                    continue  # this is a breaking title, but many triggers are labeled action
-
-            if item_indent < indent:
-                return prev_index
-            if item_indent > indent:
-                if not matched_config:
-                    if args.debug_level > 2:
-                        print(
-                            f"{md_file}:{index} {lines[index]} an indentation increase for unknown"
-                        )
-                    next_index = md_skip_level(lines, index)
-                    continue
-                if matched_config.get(JSON_CV_TYPE, []) not in ["enum", "schema"]:
-                    if args.debug_level > 2:
-                        print(
-                            f"{md_file}:{index} {lines[index]} : an indentation increase for a {matched_config.get(JSON_CV_TYPE, 'unknown')}"
-                        )
-                next_index = process_config(
-                    md_file, lines, prev_index, matched_config, item_indent, schema
-                )
-                if next_index == prev_index:
-                    # no progress
-                    next_index = index  # skip ahead
-                index = next_index
-                continue
-            if not item_config:
-                index += 1
-                continue
-            search = re.search(REGEX_PROP, item_config, re.IGNORECASE)
-            if search:
-                prop_name = search.group(1)
-                matched_config = set_schema_doc(schema, prop_name, search.group(3))
+            return process_schema(md_file, lines, index, schema, indent, parent_schema)
 
         elif item_type == "typed":
+            for typed in config_var["types"]:
+                typed_index = process_schema(
+                    md_file,
+                    lines,
+                    index,
+                    config_var["types"][typed],
+                    indent,
+                    None,
+                    typed_var=config_var,
+                    typed_value=typed,
+                )
+
             return md_skip_level(lines, index + 1)
         elif item_type == "enum":
             prev_index = index
@@ -344,7 +506,9 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                 values = config_var.get("values", {})
                 if enum_value in values:
                     values[enum_value] = values.get(enum_value) or {}
-                    values[enum_value][JSON_DOCS] = enum_desc
+                    values[enum_value][JSON_DOCS] = convert_links_and_shortcodes(
+                        md_file, enum_desc
+                    )
                     stats.enum_docs += 1
             else:
                 search = re.search(REGEX_ENUM2, item_config, re.IGNORECASE)
@@ -354,10 +518,12 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                     values = config_var.get("values", {})
                     if enum_value in values:
                         values[enum_value] = values.get(enum_value) or {}
-                        values[enum_value][JSON_DOCS] = enum_desc
+                        values[enum_value][JSON_DOCS] = convert_links_and_shortcodes(
+                            md_file, enum_desc
+                        )
                         stats.enum_docs += 1
                 else:
-                    print("Cannot get enum for this thing")
+                    print(f"{md_file}:{index} Cannot get enum expected here")
 
         elif item_type is None or item_type == "string":
             # consume this level
@@ -367,7 +533,6 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                 return prev_index if item_config else index
         else:
             return index
-    return index
 
 
 def oddities_doc_not_specific_component(folder, file):
@@ -422,6 +587,16 @@ if __name__ == "__main__":
         default=0,
         type=int,
     )
+    parser.add_argument(
+        "--deploy-url",
+        help="The base url for the deployment, e.g. https://esphome.io",
+        default="https://esphome.io",
+    )
+    parser.add_argument(
+        "--api-docs-url",
+        help="The base url for api docs, e.g. https://api-docs.esphome.io",
+        default="https://api-docs.esphome.io",
+    )
     args = parser.parse_args()
 
     esphome_json = json_get("esphome")
@@ -435,12 +610,14 @@ if __name__ == "__main__":
                 md_files.append(fullpath)
     md_files.append(Path(".") / "content" / "automations" / "actions.md")
 
+    fill_anchors(md_files)
+
     if args.single:
         md_files = [f for f in md_files if args.single in repr(f)]
 
     for md_file in md_files:
         lines = mrkdwn_lines(md_file)
-        index = md_skip_frontmatter(lines)
+        index = md_parse_frontmatter(md_file, lines)
         file_name = md_file.stem
         content_folder = md_file.parent.name
         is_platform = False
@@ -452,32 +629,30 @@ if __name__ == "__main__":
         # so for the root component (in core) we need to use the one in root, and ignore the one in subfolder,
         # that one will be used in e.g. sensors.json (platform)
 
-        # skip components with typed schema for now
-        if file_name in [
-            "ads1118",
-            "animation",
-            "binary_sensor_map",
-            "ble_client",
-            "combination",
-            "dfrobot_sen0395",
-            "display_menu_base",
-            "esp32",
-            "ethernet",
-            "i2s_audio",
-            "image",
-            "micro_wake_word",
-            "modbus_controller",
-            "msa3xx",
-            "qspi_dbi",
-            "sn74hc595",
-            "speaker",
-            "spi",
-            "template",
-            "uptime",
-            "usb_uart",
-            "vbus",
-        ]:
-            continue
+        # # skip components with typed schema for now
+        # if file_name in [
+        #     "ads1118",
+        #     "animation",
+        #     "ble_client",
+        #     "combination",
+        #     "dfrobot_sen0395",
+        #     "display_menu_base",
+        #     "esp32",
+        #     "i2s_audio",
+        #     "image",
+        #     "micro_wake_word",
+        #     "modbus_controller",
+        #     "msa3xx",
+        #     "qspi_dbi",
+        #     "sn74hc595",
+        #     "speaker",
+        #     "spi",
+        #     "template",
+        #     "uptime",
+        #     "usb_uart",
+        #     "vbus",
+        # ]:
+        #     continue
 
         if file_name == "one_wire":  # TODO move one_wire into folder
             content_folder = "one_wire"
@@ -491,14 +666,16 @@ if __name__ == "__main__":
 
         if file_name in core["components"]:
             # fill root component docs
-            index, is_component = process_component(lines, index, file_name)
+            index, is_component = process_component(md_file, lines, index, file_name)
             if is_component:
                 config_component = file_name
         elif content_folder != "content" and content_folder in core["platforms"]:
             if file_name == "_index":
                 # fill core platform docs, from _index files in platforms folders
                 index, docs = md_get_paragraph(lines, index)
-                core["platforms"][content_folder][JSON_DOCS] = docs
+                core["platforms"][content_folder][JSON_DOCS] = (
+                    convert_links_and_shortcodes(md_file, docs)
+                )
                 stats.core_platform_docs += 1
                 is_platform = True
                 config_component = content_folder
@@ -506,7 +683,7 @@ if __name__ == "__main__":
                 # this is a component inside a folder
                 if not oddities_doc_not_specific_component(content_folder, file_name):
                     index, is_platform = process_platform_component(
-                        lines, index, content_folder, file_name
+                        md_file, lines, index, content_folder, file_name
                     )
                     if is_platform:
                         config_component = file_name
@@ -542,6 +719,7 @@ if __name__ == "__main__":
             elif title.endswith(DOC_OVER_I2C):
                 component_name = f"{file_name}_i2c"
             elif (
+                # Handle Platform titles, e.g. Sensor, Switch titles
                 file_name != "_index"
                 and get_platform_from_title(title, config_component or file_name)
                 is not None
@@ -600,7 +778,9 @@ if __name__ == "__main__":
 
                 if title_config_vars is not None:
                     index, docs = md_get_paragraph(lines, index)
-                    title_config_vars[JSON_DOCS] = docs
+                    title_config_vars[JSON_DOCS] = convert_links_and_shortcodes(
+                        md_file, docs
+                    )
                     if config_type == "action":
                         stats.action_docs += 1
                     elif config_type == "condition":
@@ -615,12 +795,12 @@ if __name__ == "__main__":
                 is_component = False
                 if is_platform:
                     index, is_platform = process_platform_component(
-                        lines, index, platform_name, component_name
+                        md_file, lines, index, platform_name, component_name
                     )
 
                 if not is_platform and component_name in core["components"]:
                     index, is_component = process_component(
-                        lines, index, component_name
+                        md_file, lines, index, component_name
                     )
 
                 if not is_platform and not is_component:
