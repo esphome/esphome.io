@@ -38,7 +38,7 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
 
-ESP32 IDF configuration variables:
+ESP32 configuration variables:
 **********************************
 
 - **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
@@ -51,8 +51,10 @@ ESP32 IDF configuration variables:
 
       "ESP32", "512 symbols", "64 symbols"
       "ESP32-C3", "192 symbols", "48 symbols"
+      "ESP32-C5", "192 symbols", "48 symbols"
       "ESP32-C6", "192 symbols", "48 symbols"
       "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-P4", "384 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
       "ESP32-S3", "384 symbols", "48 symbols"
 
@@ -61,24 +63,6 @@ ESP32 IDF configuration variables:
   the DMA buffer size and can be set to a large value.
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to ``false`` unless ``pin``
   is set to inverted or open-drain.
-
-ESP32 Arduino configuration variables:
-**************************************
-
-- **rmt_channel** (*Optional*, int): The RMT channel to use. The following ESP32 variants have these channels available:
-
-  .. csv-table::
-      :header: "ESP32 Variant", "Channels"
-
-      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-C3", "0, 1"
-      "ESP32-C6", "0, 1"
-      "ESP32-H2", "0, 1"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "0, 1, 2, 3"
-
-- **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
-  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``.
 
 Automations:
 ------------

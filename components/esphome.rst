@@ -37,8 +37,9 @@ Configuration variables:
   less intuitive names and a less polished experience in Home  
   Assistant. Setting a ``friendly_name`` helps keep things clear,  
   consistent, and easier to manage.
-- **area** (*Optional*, string): This is the area sent to the frontend. It is used
-  by Home Assistant as the area / zone which the node belongs to.
+- **area** (*Optional*, string or :ref:`esphome-area`): The area configuration for this device. This is sent to
+  Home Assistant to specify which area/zone the device belongs to. Can be either a simple string (e.g., ``"Living Room"``) 
+  or a structured format with ``id`` and ``name``.
 
 Advanced options:
 
@@ -71,6 +72,9 @@ Advanced options:
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
 - **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **areas** (*Optional*, list of :ref:`esphome-area`): Additional areas that can be referenced by devices.
+- **devices** (*Optional*, list of :ref:`esphome-devices`): Sub-devices to group entities under.
+
 
 Automations:
 
@@ -367,6 +371,134 @@ Minimum ESPHome version
 This allows YAML files to specify the minimum version of ESPHome required to compile.
 This is useful in the case of packages where a published package might use features only
 available in a newer version of ESPHome. This allows for a more friendly error message.
+
+.. _esphome-area:
+
+Area Configuration
+------------------
+
+Areas help organize your devices in Home Assistant by location. ESPHome supports two formats for area configuration:
+
+**Simple String Format:**
+
+.. code-block:: yaml
+
+    esphome:
+      name: my-device
+      area: "Living Room"
+
+**Structured Format:**
+
+.. code-block:: yaml
+
+    esphome:
+      name: my-device
+      area:
+        id: living_room
+        name: "Living Room"
+
+The simple string format is convenient for basic use cases where you just want to assign the ESP device to a room.
+The structured format is recommended when using sub-devices, as it allows you to reference areas by their ID.
+
+Configuration variables (structured format):
+
+- **id** (**Required**, string): Unique identifier for the area.
+- **name** (**Required**, string): Display name for the area.
+
+.. _esphome-devices:
+
+Sub-Devices
+-----------
+
+ESPHome supports creating sub-devices within a single ESP controller. This allows you to group entities
+into logical devices that appear separately in Home Assistant. This is particularly useful when:
+
+- One ESP acts as a hub/gateway for multiple physical devices (RF bridges, Modbus devices, etc.)
+- A single ESP controls multiple zones or rooms
+- You want better organization of entities in Home Assistant
+
+Configuration variables:
+
+- **id** (**Required**, string): Unique identifier for the device.
+- **name** (**Required**, string): Display name for the device.
+- **area_id** (*Optional*, string): Reference to an area ID defined in ``areas``.
+
+Example: RF Bridge Gateway
+**************************
+
+.. code-block:: yaml
+
+    # ESP32 acting as RF bridge for multiple 433MHz devices
+    esphome:
+      name: rf-bridge
+      area: "Utility Room"  # Simple string format for ESP device's area
+
+      devices:
+        - id: front_door_device
+          name: "Front Door Sensor"
+          area_id: entrance_area
+        - id: kitchen_motion_device
+          name: "Kitchen Motion"
+          area_id: kitchen_area
+        - id: garage_door_device
+          name: "Garage Door"
+          area_id: garage_area
+
+      areas:
+        - id: entrance_area
+          name: "Entrance"
+        - id: kitchen_area
+          name: "Kitchen"
+        - id: garage_area
+          name: "Garage"
+
+    # Each RF device appears as a separate device in HA
+    binary_sensor:
+      - platform: remote_receiver
+        name: "Front Door"
+        device_id: front_door_device
+        rc_switch_raw:
+          code: '101010110101'
+
+      - platform: remote_receiver
+        name: "Kitchen Motion"
+        device_id: kitchen_motion_device
+        rc_switch_raw:
+          code: '110011001100'
+
+Example: Multi-Zone Controller
+******************************
+
+.. code-block:: yaml
+
+    esphome:
+      name: multi-room-controller
+
+      devices:
+        - id: living_room_device
+          name: "Living Room Controller"
+          area_id: living_area
+        - id: kitchen_device
+          name: "Kitchen Controller"
+          area_id: kitchen_area
+
+      areas:
+        - id: living_area
+          name: "Living Room"
+        - id: kitchen_area
+          name: "Kitchen"
+
+    sensor:
+      - platform: dht
+        pin: GPIO5
+        temperature:
+          name: "Temperature"
+          device_id: living_room_device
+        humidity:
+          name: "Humidity"
+          device_id: living_room_device
+
+
 
 See Also
 --------
