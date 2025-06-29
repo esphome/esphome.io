@@ -143,7 +143,7 @@ Text Sensor
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **pylontech_id** (**Optional**): Manually specify the ID of the pylontech instance if there are multiple.
+- **pylontech_id** (*Optional*): Manually specify the ID of the pylontech instance if there are multiple.
 - **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
 - **base_state** (*Optional*): Base state. Usually reads ``Dischg``, ``Charge`` or ``Idle``. All options from :ref:`Text Sensor <config-text_sensor>`.
 - **voltage_state** (*Optional*): Voltage state. Usually reads ``Normal``. All options from :ref:`Text Sensor <config-text_sensor>`.

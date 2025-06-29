@@ -173,6 +173,19 @@
         alt="ESP32-S3-BOX-3"
       />
     </label>
+    <label>
+      <input
+        type="radio"
+        name="voice-device"
+        class="device-option"
+        value="home-assistant-voice"
+        data-manifest-root="https://firmware.esphome.io/home-assistant-voice-pe"
+      />
+      <img
+        src="/_static/projects/voice-assistant/home-assistant-voice.png"
+        alt="Home Assistant Voice: Preview Edition"
+      />
+    </label>
   </div>
 
   <div class="hidden info esp32-s3-box-3">
@@ -212,17 +225,6 @@
 
   <div class="question-prompt">Start the installation:</div>
   <esp-web-install-button></esp-web-install-button>
-
-  <div class="question-prompt">Configure Home Assistant:</div>
-  <p>
-    Follow
-    <a
-      href="https://www.home-assistant.io/voice_control/thirteen-usd-voice-remote/"
-      target="_blank"
-      >this tutorial</a
-    >
-    to configure Home Assistant to use your new voice assistant.
-  </p>
 
   <div class="hidden info esp32-s3-box-3">
     <h3>ESP32-S3-BOX-3</h3>
@@ -267,6 +269,17 @@
     </ul>
   </div>
 
+  <div class="hidden info home-assistant-voice">
+    <h3>Home Assistant Voice: Preview Edition</h3>
+    <p>Our official voice assistant hardware created for ESPHome. Includes advanced voice processing and a beautiful design.</p>
+    <p>Learn more & buy</p>
+    <ul>
+      <li>
+        <a href="https://www.home-assistant.io/voice-pe/">Home Assistant</a>
+      </li>
+    </ul>
+  </div>
+
   <h3>For advanced users</h3>
   <ul>
     <li>
@@ -278,7 +291,7 @@
     </li>
     <li>
       The YAML configuration is on
-      <a href="https://github.com/esphome/firmware/tree/main/voice-assistant/"
+      <a href="https://github.com/esphome/wake-word-voice-assistants"
         >GitHub</a
       >
     </li>
@@ -304,18 +317,6 @@
       <img
         src="/_static/projects/bluetooth-proxy/esp32_generic.png"
         alt="ESP32 Generic"
-      />
-    </label>
-    <label>
-      <input
-        type="radio"
-        name="bluetooth-device"
-        class="device-option"
-        value="m5stack-atom-lite"
-      />
-      <img
-        src="/_static/projects/bluetooth-proxy/m5stack_atom_lite.png"
-        alt="M5Stack Atom Lite"
       />
     </label>
     <label>
@@ -409,26 +410,6 @@
         <a
           href="https://store.gl-inet.com/collections/iot-gateway/products/gl-s10-bluetooth-iot-gateway"
           >GL.iNet Shop</a
-        >
-      </li>
-    </ul>
-  </div>
-
-  <div class="hidden info m5stack-atom-lite">
-    <h3>M5Stack Atom Lite</h3>
-    <p>Small ESP32 board with a case.</p>
-    <p>Buy</p>
-    <ul>
-      <li>
-        <a
-          href="https://shop.m5stack.com/products/atom-lite-esp32-development-kit?ref=NabuCasa"
-          >M5Stack Shop</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://www.aliexpress.com/item/1005003299215808.html?aff_platform=portals-tool&sk=_A8G2YF&aff_trace_key=90326d2a90444b4887632f62dd533ce4-1654058373639-07963-_A8G2YF&terminal_id=c5517a8c9bb44b4fb32147398fbc2576&aff_fcid=90326d2a90444b4887632f62dd533ce4-1654058373639-07963-_A8G2YF&tt=CPS_NORMAL&aff_fsk=_A8G2YF"
-          >AliExpress</a
         >
       </li>
     </ul>
@@ -543,7 +524,7 @@
     </li>
     <li>
       The YAML configuration is on
-      <a href="https://github.com/esphome/firmware/tree/main/bluetooth-proxy/">GitHub</a>
+      <a href="https://github.com/esphome/bluetooth-proxies">GitHub</a>
     </li>
   </ul>
 </div>
@@ -603,6 +584,19 @@
       <img
         src="/_static/projects/media-player/atom_echo.png"
         alt="M5Stack Atom Echo Development Kit"
+      />
+    </label>
+    <label>
+      <input
+        type="radio"
+        name="media-device"
+        class="device-option"
+        value="home-assistant-voice"
+        data-manifest-root="https://firmware.esphome.io/home-assistant-voice-pe"
+      />
+      <img
+        src="/_static/projects/voice-assistant/home-assistant-voice.png"
+        alt="Home Assistant Voice: Preview Edition"
       />
     </label>
   </div>
@@ -700,6 +694,17 @@
     </ul>
   </div>
 
+  <div class="hidden info home-assistant-voice">
+    <h3>Home Assistant Voice: Preview Edition</h3>
+    <p>Our official voice assistant hardware created for ESPHome includes an aux port and a beautiful encoder to control the volume in style.</p>
+    <p>Learn more & buy</p>
+    <ul>
+      <li>
+        <a href="https://www.home-assistant.io/voice-pe/">Home Assistant</a>
+      </li>
+    </ul>
+  </div>
+
   <h3>For advanced users</h3>
   <ul>
     <li>
@@ -711,7 +716,7 @@
     </li>
     <li>
       The YAML configuration is on
-      <a href="https://github.com/esphome/firmware/tree/main/media-player/">GitHub</a>
+      <a href="https://github.com/esphome/media-players">GitHub</a>
     </li>
   </ul>
 </div>
@@ -840,7 +845,7 @@
   document.querySelectorAll("input.device-option").forEach((radio) =>
     radio.addEventListener("change", () => {
       const typeRoot = radio.closest(".type");
-      const manifestRoot = typeRoot.dataset.manifestRoot;
+      const manifestRoot = radio.dataset.manifestRoot || typeRoot.dataset.manifestRoot;
       if (manifestRoot) {
         const button = typeRoot.querySelector("esp-web-install-button");
 

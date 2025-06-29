@@ -54,7 +54,7 @@ Configuration variables:
   board.
 - **out_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled ``in`` on the
   board.
-- **sync_mode** (**Optional**, boolean, default **false**): Synchronous communication mode prevents other components
+- **sync_mode** (*Optional*, boolean, default **false**): Synchronous communication mode prevents other components
   from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
   invalid response errors (very likely to happen while using Dallas temperature sensors).
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.  Required if you have
@@ -65,15 +65,15 @@ Optional Boiler-specific Configuration
 Some boilers require certain OpenTherm messages to be sent by thermostat on initialization in order to work
 correctly. You can use the following settings in hub configuration to make your particular boiler happy.
 
-- **controller_product_type** (**Optional**, byte [0-255], OpenTherm message id ``126`` high byte): Controller product
+- **controller_product_type** (*Optional*, byte [0-255], OpenTherm message id ``126`` high byte): Controller product
   type
-- **controller_product_version** (**Optional**, byte [0-255], OpenTherm message id ``126`` low byte): Controller product
+- **controller_product_version** (*Optional*, byte [0-255], OpenTherm message id ``126`` low byte): Controller product
   version
-- **opentherm_version_controller** (**Optional**, float, OpenTherm message id ``124``): Version of OpenTherm implemented
+- **opentherm_version_controller** (*Optional*, float, OpenTherm message id ``124``): Version of OpenTherm implemented
   by controller
-- **controller_configuration** (**Optional**, byte [0-255], OpenTherm message id ``2`` high byte): Controller
+- **controller_configuration** (*Optional*, byte [0-255], OpenTherm message id ``2`` high byte): Controller
   configuration
-- **controller_id** (**Optional**, byte [0-255], OpenTherm message id ``2`` low byte): Controller ID code
+- **controller_id** (*Optional*, byte [0-255], OpenTherm message id ``2`` low byte): Controller ID code
 
 Automations
 ^^^^^^^^^^^
