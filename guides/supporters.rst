@@ -294,6 +294,7 @@ Contributors
 - `Ben Brooks (@brooksben11) <https://github.com/brooksben11>`__
 - `brtchip-tuannguyen (@brtchip-tuannguyen) <https://github.com/brtchip-tuannguyen>`__
 - `Vaclav (@bruxy70) <https://github.com/bruxy70>`__
+- `Bernhard Tittelbach (@btittelbach) <https://github.com/btittelbach>`__
 - `buddydvd (@buddydvd) <https://github.com/buddydvd>`__
 - `JB BUGEAUD (@bugeaud) <https://github.com/bugeaud>`__
 - `bulburDE (@bulburDE) <https://github.com/bulburDE>`__
@@ -768,6 +769,7 @@ Contributors
 - `Go0oSer (@Go0oSer) <https://github.com/Go0oSer>`__
 - `Dario Gogliandolo (@godario) <https://github.com/godario>`__
 - `Gonzalo Paniagua Javier (@gonzalop) <https://github.com/gonzalop>`__
+- `gopro2027 (@gopro2027) <https://github.com/gopro2027>`__
 - `Oleh Hordiienko (@gordio) <https://github.com/gordio>`__
 - `gordon-zhao (@gordon-zhao) <https://github.com/gordon-zhao>`__
 - `gotnone (@gotnone) <https://github.com/gotnone>`__
@@ -999,6 +1001,7 @@ Contributors
 - `johnshaferXMOS (@johnshaferXMOS) <https://github.com/johnshaferXMOS>`__
 - `Dave Johnston (@johnsto) <https://github.com/johnsto>`__
 - `joiboi (@joiboi) <https://github.com/joiboi>`__
+- `JonasB2497 (@JonasB2497) <https://github.com/JonasB2497>`__
 - `JonasEr (@JonasEr) <https://github.com/JonasEr>`__
 - `Jonas Niesner (@jonasniesner) <https://github.com/jonasniesner>`__
 - `Jonathan Adams (@jonathanadams) <https://github.com/jonathanadams>`__
@@ -1200,6 +1203,7 @@ Contributors
 - `Lewis Juggins (@lwis) <https://github.com/lwis>`__
 - `Alex Peters (@Lx) <https://github.com/Lx>`__
 - `lyj (@lyj0309) <https://github.com/lyj0309>`__
+- `Lincoln Lavoie (@lylavoie) <https://github.com/lylavoie>`__
 - `Linar Yusupov (@lyusupov) <https://github.com/lyusupov>`__
 - `Michael Klamminger (@m1ch) <https://github.com/m1ch>`__
 - `M3C-Owx (@M3C-Owx) <https://github.com/M3C-Owx>`__
@@ -1362,6 +1366,7 @@ Contributors
 - `moritzj29 (@moritzj29) <https://github.com/moritzj29>`__
 - `morph027 (@morph027) <https://github.com/morph027>`__
 - `Chris Laplante (@mostthingsweb) <https://github.com/mostthingsweb>`__
+- `Mowbys (@Mowbys) <https://github.com/Mowbys>`__
 - `Matthew Pettitt (@mpettitt) <https://github.com/mpettitt>`__
 - `Michael P. Flaga (@mpflaga) <https://github.com/mpflaga>`__
 - `Matti Lattu (@mplattu) <https://github.com/mplattu>`__
@@ -1731,6 +1736,7 @@ Contributors
 - `rweather (@rweather) <https://github.com/rweather>`__
 - `Rob Weir (@rweir) <https://github.com/rweir>`__
 - `rwilson131 (@rwilson131) <https://github.com/rwilson131>`__
+- `rwrozelle (@rwrozelle) <https://github.com/rwrozelle>`__
 - `Ryan Lang (@ryan-lang) <https://github.com/ryan-lang>`__
 - `ryanalden (@ryanalden) <https://github.com/ryanalden>`__
 - `Ryan Kulp (@ryanckulp) <https://github.com/ryanckulp>`__
@@ -1995,6 +2001,7 @@ Contributors
 - `Aleksandra M (@tort32) <https://github.com/tort32>`__
 - `Torwag (@torwag) <https://github.com/torwag>`__
 - `Teemu Simola (@tpssim) <https://github.com/tpssim>`__
+- `Manu (@tr4nt0r) <https://github.com/tr4nt0r>`__
 - `tracestep (@tracestep) <https://github.com/tracestep>`__
 - `Trent Houliston (@TrentHouliston) <https://github.com/TrentHouliston>`__
 - `Trevor Schirmer (@TrevorSchirmer) <https://github.com/TrevorSchirmer>`__
@@ -2141,6 +2148,7 @@ Contributors
 - `Björn Stenberg (@zagor) <https://github.com/zagor>`__
 - `zaluthar (@zaluthar) <https://github.com/zaluthar>`__
 - `david reid (@zathras777) <https://github.com/zathras777>`__
+- `Ztech (@zd3sf) <https://github.com/zd3sf>`__
 - `Zebble (@Zebble) <https://github.com/Zebble>`__
 - `Wojciech Zelek (@zelo) <https://github.com/zelo>`__
 - `Brynley McDonald (@ZephireNZ) <https://github.com/ZephireNZ>`__
@@ -2160,4 +2168,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated June 18, 2025.*
+*This page was last updated June 27, 2025.*

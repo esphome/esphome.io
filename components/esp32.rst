@@ -103,6 +103,7 @@ Configuration variables:
   `compiler options <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options>`__
   to set in the ESP-IDF project.
 - **advanced** (*Optional*, mapping): See :ref:`esp32-advanced_configuration` below.
+- **components** (*Optional*, list of components): See :ref:`esp32-idf_components` below.
 
 .. _esp32-advanced_configuration:
 
@@ -140,12 +141,30 @@ LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
   as a DHCP server (necessary for WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
   the DHCP server based on whether AP mode is configured. When WiFi is not used, defaults to ``false``.
 - **enable_lwip_mdns_queries** (*Optional*, boolean): Enable mDNS query support in the DNS resolver. ESPHome uses its own
-  mDNS implementation, so this is rarely needed. Defaults to ``false``.
+  mDNS implementation, so this is rarely needed. Defaults to ``true``.
 - **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
   interfaces. Defaults to ``false``.
 
 These optimizations are applied automatically and save flash memory without affecting typical ESPHome functionality. The
 features can be enabled if needed by setting the corresponding option to ``true``.
+
+.. _esp32-idf_components:
+
+IDF Components
+--------------
+
+The ``components`` option allows you to include IDF components. These components will then be compiled into the resulting
+firmware and may be used by :ref:`lambdas <config-lambda>`. The most common usage of this option is to include third-party
+components that are available in the `ESP Component Registry <https://components.espressif.com/>`__. They can be added by
+listing their name under this option. It is also possible to use specific versions, or to fetch components from a file or
+git repository.
+
+- **name** (*Required*, string): Name of the component e.g. ``espressif/esp_hosted``.
+- **ref** (*Optional*, string): Component registry version or a git ref.
+- **source** (*Optional*, string): The git repository to use for the component. This can be used for a
+  custom or patched version of the component.
+- **path** (*Optional*, string): The path of the component in the git repository or a local path to the
+  component if ``source`` is not set.
 
 GPIO Pin Numbering
 ------------------

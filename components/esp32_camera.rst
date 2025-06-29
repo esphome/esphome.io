@@ -528,6 +528,28 @@ Configuration examples
       name: My Camera
       # ...
 
+**Waveshare ESP32-S3 ETH + OV2640 camera**:
+
+.. code-block:: yaml
+
+    esp32_camera:
+      external_clock:
+        pin: GPIO3
+        frequency: 20MHz
+      i2c_pins:
+        sda: GPIO48
+        scl: GPIO47
+      data_pins: [GPIO41, GPIO45, GPIO46, GPIO42, GPIO40, GPIO38, GPIO15, GPIO18]
+      vsync_pin: GPIO1
+      href_pin: GPIO2
+      pixel_clock_pin: GPIO39
+      power_down_pin: GPIO8
+
+      # Image settings
+      name: My Camera
+      # ...
+
+
 See Also
 --------
 
