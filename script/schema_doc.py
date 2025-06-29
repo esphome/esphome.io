@@ -8,6 +8,7 @@ from pprint import pprint
 from inspect import getmembers
 from types import FunctionType
 
+# cspell:ignore Clockless fastled apiclass apistruct classesphome dfrobot docref structesphome templatable
 
 DOC_CONFIGURATION_VARIABLES = "Configuration variables:"
 DOC_CONFIGURATION_OPTIONS = "Configuration options:"
@@ -17,6 +18,8 @@ DOC_OVER_I2C = "Over I²C"
 JSON_CONFIG_VARS = "config_vars"
 JSON_EXTENDS = "extends"
 JSON_DOCS = "docs"
+JSON_KEY = "key"
+JSON_TEMPLATABLE = "templatable"
 JSON_CV_TYPE = "type"
 JSON_CV_TYPE_SCHEMA = "schema"
 JSON_ACTION = "action"
@@ -78,7 +81,6 @@ def fill_anchors(md_files):
             if line.startswith(ANCHOR_START):
                 anchor = line[len(ANCHOR_START) : -len(ANCHOR_END) - 1]
                 anchors[anchor] = md_file
-                print(f"{anchor} -> {md_file}")
 
 
 def get_doc_title(md_file):
@@ -315,17 +317,21 @@ def convert_links_and_shortcodes(md_file, docs):
     REGEX_LOCAL_LINK = r"\[([^\]]*)\]\(#([^\)]*)\)"
 
     def replacer_local(match):
+        title = match.group(1)
         anchor = match.group(2)
-        if not anchor in anchors:
-            if not anchor in stats.missing_anchors:
+        if anchor not in anchors:
+            if anchor not in stats.missing_anchors:
                 stats.missing_anchors.append(anchor)
-            return match.group(1)
-        anchor_file = anchors[anchor]
-        return f"{args.deploy_url}/{'/'.join(anchor_file.parts[1:-1])}/{anchor_file.stem}#{anchor}"
+            url = anchor
+        else:
+            anchor_file = anchors[anchor]
+            url = f"{args.deploy_url}/{'/'.join(anchor_file.parts[1:-1])}/{anchor_file.stem}#{anchor}"
+
+        return f"[{title}]({url})"
 
     docs = re.sub(REGEX_LOCAL_LINK, replacer_local, docs)
 
-    # Matches {{ shorcode-group-1 "group-2" "group-3" }}
+    # Matches {{ shortcode-group-1 "group-2" "group-3" }}
     REGEX_SHORTCODE = r"{{<\s([^\s]*)\s\"([^\"]*)\"(?:\s\"([^\"]*)\")?\s>}}"
 
     def replacer_shortcode(match):
@@ -346,17 +352,40 @@ def convert_links_and_shortcodes(md_file, docs):
             title = match.group(2)
             url = f"{args.api_docs_url}/classesphome_1_1{encode_doxygen(match.group(3))}.html"
         else:
-            return ""
+            print(f"{md_file}:{index} unknown shortcode '{match.group(1)}'")
 
         return f"[{title}]({url})"
 
     return re.sub(REGEX_SHORTCODE, replacer_shortcode, docs)
 
 
-def set_schema_doc(md_file, schema, prop_name, doc):
+def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
+    TYPE_TEMPLATABLE = "[templatable](#config-templatable)"
+
     matched_config = find_schema_prop(schema, prop_name)
     if matched_config:
-        matched_config[JSON_DOCS] = convert_links_and_shortcodes(md_file, doc)
+        type_parts = [part.strip() for part in prop_types.split(",")]
+        optionality = type_parts[0].replace("*", "").lower()
+        config_optionality = matched_config.get(JSON_KEY, "")
+        if optionality != config_optionality.lower() and args.debug_level > 3:
+            print(
+                f"{md_file}:{index} Key {config_optionality} in ESPHome does not match {optionality} in docs"
+            )
+
+        templatable = TYPE_TEMPLATABLE in type_parts[1:]
+        config_templatable = matched_config.get(JSON_TEMPLATABLE, False)
+        if templatable != config_templatable and args.debug_level > 3:
+            print(
+                f"{md_file}:{index} Templatable {config_templatable} in ESPHome does not match {templatable} in docs"
+            )
+
+        converted_doc = convert_links_and_shortcodes(md_file, doc)
+
+        if len(type_parts) > 1 and type_parts[1] != TYPE_TEMPLATABLE:
+            prop_type = convert_links_and_shortcodes(md_file, type_parts[1])
+            matched_config[JSON_DOCS] = f"**{prop_type}**: {converted_doc}"
+        else:
+            matched_config[JSON_DOCS] = converted_doc
         stats.props += 1
     return matched_config
 
@@ -415,7 +444,7 @@ def process_schema(
             prop_name = search.group(1)
             matched_config = find_schema_prop(schema, prop_name)
             if matched_config:
-                if args.debug_level > 3:
+                if args.debug_level > 6:
                     print(
                         f"{md_file}:{index} {lines[index]} : matched title for prop {prop_name} "
                     )
@@ -463,7 +492,7 @@ def process_schema(
                 typed_var["docs"] = search.group(3)
             else:
                 matched_config = set_schema_doc(
-                    md_file, schema, prop_name, search.group(3)
+                    md_file, index, schema, prop_name, search.group(2), search.group(3)
                 )
 
 
@@ -480,7 +509,7 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
 
         elif item_type == "typed":
             for typed in config_var["types"]:
-                typed_index = process_schema(
+                process_schema(
                     md_file,
                     lines,
                     index,
@@ -610,7 +639,17 @@ if __name__ == "__main__":
                 md_files.append(fullpath)
     md_files.append(Path(".") / "content" / "automations" / "actions.md")
 
-    fill_anchors(md_files)
+    fill_anchors(
+        md_files
+        + [
+            # config-lambda, config-templatable
+            Path(".") / "content" / "automations" / "templates.md",
+            # config-id, config-pin_schema
+            Path(".") / "content" / "guides" / "configuration-types.md",
+            # api-rest
+            Path(".") / "content" / "web-api" / "_index.md",
+        ]
+    )
 
     if args.single:
         md_files = [f for f in md_files if args.single in repr(f)]
@@ -629,36 +668,13 @@ if __name__ == "__main__":
         # so for the root component (in core) we need to use the one in root, and ignore the one in subfolder,
         # that one will be used in e.g. sensors.json (platform)
 
-        # # skip components with typed schema for now
-        # if file_name in [
-        #     "ads1118",
-        #     "animation",
-        #     "ble_client",
-        #     "combination",
-        #     "dfrobot_sen0395",
-        #     "display_menu_base",
-        #     "esp32",
-        #     "i2s_audio",
-        #     "image",
-        #     "micro_wake_word",
-        #     "modbus_controller",
-        #     "msa3xx",
-        #     "qspi_dbi",
-        #     "sn74hc595",
-        #     "speaker",
-        #     "spi",
-        #     "template",
-        #     "uptime",
-        #     "usb_uart",
-        #     "vbus",
-        # ]:
-        #     continue
-
         if file_name == "one_wire":  # TODO move one_wire into folder
             content_folder = "one_wire"
             file_name = "_index"
 
-        if file_name.startswith("sensor-filter-"):  # TODO this is kind of garbage
+        if file_name.startswith(
+            "sensor-filter-"
+        ):  # TODO this is kind of garbage, are we going to support includes?
             continue
 
         if file_name == "_index" and content_folder == "components":
@@ -804,7 +820,9 @@ if __name__ == "__main__":
                     )
 
                 if not is_platform and not is_component:
-                    print(f"{platform_name}/{file_name} {title} not processed.")
+                    print(
+                        f"{md_file}:{index} {platform_name}/{file_name} {title} not processed."
+                    )
                 else:
                     config_component = component_name
 
