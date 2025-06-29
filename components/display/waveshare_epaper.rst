@@ -143,6 +143,7 @@ Configuration variables:
   - ``7.50in-hd-b`` - Can't use with an ESP8266 as it runs out of RAM
   - ``gdey029t94`` - GooDisplay GDEY029t94, as used in the monochrome 2.9inch display from seeedstudio
   - ``gdew029t5`` - GooDisplay GDEW029T5, as used on the AdaFruit MagTag and Pimoroni Badger
+  - ``gdew0213t5d`` - GoodDisplay GDEW0213T5D, as used on the LilyGo T5 Q426
   - ``1.54in-m5coreink-m09`` - GoodDisplay gdew0154m09, as used in the M5Stack Core Ink
   - ``13.3in-k`` - 13.3in, with the K model, 960x680, B/W rendering only
 
@@ -159,7 +160,7 @@ Configuration variables:
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in``, ``2.90inv2``,  ``7.50inV2p`` and ``gdew029t5`` models, you have the option to only
+  because artifacts accumulate. On the ``1.54in``, ``1.54inv2``, ``2.13in``, ``2.13inv2``, ``2.90in``, ``2.90inv2``,  ``7.50inV2p``,  ``gdew029t5`` and ``gdew0213t5d`` models, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to ``30`` on the described models and a full update for
   all other models.
 - **reset_duration** (*Optional*, :ref:`config-time`): Duration for the display reset operation. Defaults to ``200ms``.
