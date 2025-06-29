@@ -68,12 +68,12 @@ The :ref:`UART <uart>` is required to be set up in your configuration for this s
 .. code-block:: yaml
 
     uart:
-    id: uart_bus
-    tx_pin: GPIO17
-    rx_pin: GPIO16
-    baud_rate: 115200
-    parity: NONE
-    stop_bits: 1
+      id: uart_bus
+      tx_pin: GPIO17
+      rx_pin: GPIO16
+      baud_rate: 115200
+      parity: NONE
+      stop_bits: 1
 
 
 Binary Sensor
@@ -86,9 +86,9 @@ The ``ld2410s`` binary sensor offers presence state for the targets.
 
     binary_sensor:
     - platform: ld2410s
-        has_target:
+      has_target:
         name: Presence
-        has_threshold_update:
+      has_threshold_update:
         name: Threshold update running
 
 Configuration variables:
@@ -112,9 +112,9 @@ The ``ld2410s`` binary sensor offers target distance.
 
     sensor:
     - platform: ld2410s
-        target_distance:
+      target_distance:
         name: Target Distance
-        threshold_update:
+      threshold_update:
         name: Threshold update progress
 
 Configuration variables:
@@ -138,15 +138,15 @@ The ``ld2410s`` text sensor offers diagnostic and calibration data.
 
     text_sensor:
     - platform: ld2410s
-        fw_version:
+      fw_version:
         name: Firmware version
-        trigger_threshold_ts:
+      trigger_threshold_ts:
         name: Triggers Threshold
-        trigger_hold_ts:
+      trigger_hold_ts:
         name: Triggers Hold
-        trigger_snr_ts:
+      trigger_snr_ts:
         name: Triggers SNR
-        energy_values_ts:
+      energy_values_ts:
         name: Energy Values
 
 Configuration variables:
@@ -181,24 +181,24 @@ Number
 
     number:
     - platform: ld2410s
-        max_distance:
+      max_distance:
         name: Max detect distance
-        min_distance:
+      min_distance:
         name: Min detect distance
-        no_delay:
+      no_delay:
         name: No detect report delay
-        status_reporting_frequency:
+      status_reporting_frequency:
         name: Status reporting frequency
-        distance_reporting_frequency:
+      distance_reporting_frequency:
         name: Distance reporting frequency
 
-        trigger_selected_gate:
+      trigger_selected_gate:
         name: Trigger Selected Gate
-        trigger_threshold:
+      trigger_threshold:
         name: Trigger Gate Threshold
-        trigger_hold:
+      trigger_hold:
         name: Trigger Gate Hold
-        trigger_snr:
+      trigger_snr:
         name: Trigger Gate SNR
 
 Configuration variables:
@@ -250,37 +250,47 @@ Button
 .. code-block:: yaml
 
     - platform: ld2410s
-        apply_config:
+      write_all:
         name: Apply config changes
-        read_all:
+      read_all:
         name: Read configuration
-        factory_reset:
+      factory_reset:
         name: Factory reset
-        calibration:
+      calibration:
         name: Start auto calibration
-        minimal_output:
+      minimal_output:
         name: Toggle minimal output
 
 Configuration variables:
 ************************
 
-- **apply_config** (*Optional*): 
+- **write_all** (*Optional*): 
   Saves all calibration values.
   All options from :ref:`Button <config-button>`.
+  Component is already saving every parameter modification so explicit saving is not really needed. Option remains for diagnostic puropose.
 - **read_all** (*Optional*): 
   Re-read all configuration values.
   All options from :ref:`Button <config-button>`.
+  Component is already reading all parameters on startup so explicit loading is not really needed. Option remains for diagnostic puropose.
 - **factory_reset** (*Optional*): 
   Reset all configuration values to suggested default values.
   All options from :ref:`Button <config-button>`.
+  Please note that factory reset set everything in a way that HLT Tech tool  dies which may not produce good results. Use it only if really neccesary.
 - **calibration** (*Optional*): 
   Initiates auto-calibration.
   All options from :ref:`Button <config-button>`.
+  Please note that auto-calibration may not produce good results. Use it only if really neccesary.
 - **minimal_output** (*Optional*): 
   Toggles minimal output. 
   By default minimal value is enabled, but you can disable it which will provide ``energy_values_ts`` readings.
   All options from :ref:`Button <config-button>`.
 
+Before doing Factory reset or Calibration please backup existing settings:
+  - Triggers Threshold
+  - Triggers Hold
+  - Trigger Gate SNR
+That would allow you to restore your ld2410s to real factory default state.
+Also, please provide those settings to me (https://github.com/NovakIrs) so that I could improve Factory reset settings.
 
 Select
 -------------
@@ -290,7 +300,7 @@ Select
 
     select:
     - platform: ld2410s
-        response_speed:
+      response_speed:
         name: Response speed
 
 Configuration variables:
@@ -314,122 +324,110 @@ Here is the complete example configuration for :doc:`ld2410s`.
     friendly_name: esp32-ld2410s
 
     esp32:
-    board: esp32dev
-    framework:
+      board: esp32dev
+      framework:
         type: arduino
 
-    preferences:
-    flash_write_interval: 10min
-
-    logger:
-    logs:
-        component: ERROR
+    external_components:
+      - source: github://NovakIrs/esphome@ld2410s
+        components:
+          - ld2410s
 
     wifi:
-    networks:
+      networks:
         - ssid: !secret wifi_ssid
-        password: !secret wifi_password
-    ap:
+          password: !secret wifi_password
+      ap:
         ssid: !secret ap_ssid
         password: !secret ap_password
 
-    captive_portal:
-
-    web_server:
-    port: 80
-    version: 3
-    include_internal: true
-    auth:
-        username: !secret web_server_username
-        password: !secret web_server_password
-
     ota:
-    - platform: esphome
+      - platform: esphome
         password: !secret ota_password
 
-    safe_mode:
-
     api:
-    encryption:
+      encryption:
         key: !secret api_encryption_key
 
+    logger:
+
     uart:
-    id: uart_bus
-    tx_pin: GPIO17
-    rx_pin: GPIO16
-    baud_rate: 115200
-    parity: NONE
-    stop_bits: 1
+      id: uart_bus
+      tx_pin: GPIO17
+      rx_pin: GPIO16
+      baud_rate: 115200
+      parity: NONE
+      stop_bits: 1
 
     ld2410s:
-    uart_id: uart_bus
+      uart_id: uart_bus
 
     sensor:
-    - platform: ld2410s
+      - platform: ld2410s
         target_distance:
-        name: Target Distance
+          name: Target Distance
         threshold_update:
-        name: Threshold update progress
+          name: Threshold update progress
 
     binary_sensor:
-    - platform: ld2410s
+      - platform: ld2410s
         has_target:
-        name: Presence
+          name: Presence
         has_threshold_update:
-        name: Threshold update running
+          name: Threshold update running
 
     text_sensor:
-    - platform: ld2410s
+      - platform: ld2410s
         fw_version:
-        name: Firmware version
+          name: Firmware version
         trigger_threshold_ts:
-        name: Triggers Threshold
+          name: Triggers Threshold
         trigger_hold_ts:
-        name: Triggers Hold
+          name: Triggers Hold
         trigger_snr_ts:
-        name: Triggers SNR
+          name: Triggers SNR
         energy_values_ts:
-        name: Energy Values
+          name: Energy Values
 
     number:
-    - platform: ld2410s
+      - platform: ld2410s
         max_distance:
-        name: Max detect distance
+          name: Max detect distance
         min_distance:
-        name: Min detect distance
+          name: Min detect distance
         no_delay:
-        name: No detect report delay
+          name: No detect report delay
         status_reporting_frequency:
-        name: Status reporting frequency
+          name: Status reporting frequency
         distance_reporting_frequency:
-        name: Distance reporting frequency
-
-        trigger_selected_gate:
-        name: Trigger Selected Gate
+          name: Distance reporting frequency
         trigger_threshold:
-        name: Trigger Gate Threshold
+          name: Trigger Gate Threshold
         trigger_hold:
-        name: Trigger Gate Hold
+          name: Trigger Gate Hold
         trigger_snr:
-        name: Trigger Gate SNR
+          name: Trigger Gate SNR
+        trigger_selected_gate:
+          name: Trigger Selected Gate
 
     button:
-    - platform: ld2410s
-        apply_config:
-        name: Apply config changes
+      - platform: ld2410s
+        write_all:
+          name: Apply config changes
         read_all:
-        name: Read configuration
-        factory_reset:
-        name: Factory reset
+          name: Read configuration
         calibration:
-        name: Start auto calibration
+          name: Start auto calibration
+        factory_reset:
+          name: Factory reset
         minimal_output:
-        name: Toggle minimal output
+          name: Toggle minimal output
 
     select:
-    - platform: ld2410s
+      - platform: ld2410s
         response_speed:
-        name: Response speed
+          name: Response speed
+
 
 
 See Also
