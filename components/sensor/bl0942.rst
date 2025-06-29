@@ -60,7 +60,16 @@ Configuration variables:
 Calibration
 -----------
 
-There are two fundamental calibration parameters which are dependent on the hardware: ``voltage_reference`` and ``current_reference``.  These can be determined by using an accurate voltage and current meter with a simple resistive load.
+There are two fundamental calibration parameters which are dependent on the hardware: ``voltage_reference`` and ``current_reference``.  
+These can be determined by using an accurate voltage and current meter with a simple resistive load. Higher current loads will give 
+more resolution to the measurement than smaller ones. Consider the largest load your device can support for this procedure. Example 
+resistive loads to consider: space heater, toaster, incandescent light bulb(s), etc.
+
+The default value of ``voltage_reference`` is ``15873.35944299`` and for ``current_reference`` it is ``251213.46469622``. Flash the 
+device with these values and then measure the voltage and current of the load while comparing it to the value reported in ESPHome. 
+The formula to determine the correct reference value is ``new_reference = reported_value * default_reference / actual_value``. 
+(If the reported value is low, the reference value should decrease, and vice versa.) This procedure can be repeated several 
+times to hone in on the correct calibration. *See the comment in* :apisource:`source code <bl0942/bl0942.h>` *for more details.*
 
 The ``power_reference`` value can be derived from those, and will be roughly ``voltage_reference`` * ``current_reference`` * 3537 / (305978 * 73989).
 
