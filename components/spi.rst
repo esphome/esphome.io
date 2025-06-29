@@ -26,6 +26,12 @@ In some cases one of **MOSI** or **MISO** does not exist as the receiving device
 It is also possible to configure a quad SPI interface using 4 output data lines, and an octal interface using 8 data output lines. This is required only for
 use with certain components.
 
+.. note::
+
+    - Software mode supports only single-bit SPI.
+    - Quad mode SPI is available only on on ESP32 devices (all variants).
+    - Octal mode is available only on ESP32-S3, -S2 and -P4 variants.
+
 To set up SPI devices in ESPHome, you first need to place a top-level SPI component which defines the pins to
 use for the functions described above. The **CS** pins are individually managed by the other components that
 reference the ``spi`` component.
@@ -77,7 +83,7 @@ For the conventional ``single`` bit bus at least one of ``miso_pin`` or ``mosi_p
 
 For ``quad`` or ``octal`` type instead specify ``data_pins``:
 
-- **data_pins** (*Required*, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
+- **data_pins** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
   for the quad SPI output data lines, or exactly 8 pins for octal mode. Not used for single mode.
 
 
@@ -147,6 +153,9 @@ Configuration variables:
   See table below for more information
 - **bit_order** (*Optional*): Set the bit order - choose one of ``msb_first`` (default) or ``lsb_first``.
 - **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
+- **release_device** (*Optional*, boolean): For ESP-IDF, release the bus device between transactions. Default isk
+  ``False``. Setting this to ``True`` will enable more than 6 devices to be connected to hardware SPI buses.
+- **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
 
 SPI modes:
 ----------
@@ -163,6 +172,14 @@ of the specific peripheral chip.
     "3", "high", "trailing", "falling CLK", "rising CLK"
 
 
+ESP-IDF limit on bus devices:
+-----------------------------
+
+ESP-IDF has a software limit of 6 devices to be connected to hardware SPI buses. This limit can't be readily
+changed but can be worked around by releasing the bus device between transactions, so that no more than 6 devices
+are configured at one time. The ``release_device`` option can be used to enable this on a per-device basis. It will
+add additional time to an SPI transaction, so should be used only with devices that don't require frequent
+transactions.
 
 See Also
 --------
