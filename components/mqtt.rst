@@ -89,11 +89,11 @@ Configuration variables:
   :ref:`mqtt-tls-idf` for more information.
 - **client_certificate** (*Optional*, string): Only on ``esp32``. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on ``esp32``. Client private key in PEM format.
-- **skip_cert_cn_check** (*Optional*, bool): Only with ``esp-idf``. Don't verify if the common name in the server 
+- **skip_cert_cn_check** (*Optional*, bool): Only with ``esp-idf``. Don't verify if the common name in the server
   certificate matches the value of ``broker``.
-- **idf_send_async** (*Optional*, bool): Only with ``esp-idf``. If true publishing the message happens from a separate mqtt task. 
+- **idf_send_async** (*Optional*, bool): Only with ``esp-idf``. If true publishing the message happens from a separate mqtt task.
   The client only enqueues the message. Defaults to ``false``.
-  The advantage of asynchronous publishing is that it doesn't block the esphome main thread for potentially tens of seconds. 
+  The advantage of asynchronous publishing is that it doesn't block the esphome main thread for potentially tens of seconds.
   The disadvantage is additional memory usage for the thread.
   Set this to true if you need to ensure that mqtt does not block the main thread, especially if you have poor network conditions.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
