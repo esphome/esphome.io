@@ -89,6 +89,7 @@ Configuration variables:
       - ``S_QWORD_R``: **little endian** signed 64 bit integer, 4 registers, ``int64_t``
       - ``FP32``: 32 bit IEEE 754 floating point, 2 registers, ``float``
       - ``FP32_R``: **little endian** 32 bit IEEE 754 floating point, 2 registers, ``float``
+    
     Defaults to ``U_WORD``.
 
   - **read_lambda** (**Required**, :ref:`lambda <config-lambda>`):
