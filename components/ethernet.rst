@@ -308,6 +308,7 @@ Configuration examples
       phy_addr: 0
       power_pin: GPIO12
 
+
 **QEMU qemu-system-xtensa**:
 
 .. code-block:: yaml
