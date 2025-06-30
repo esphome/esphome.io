@@ -85,6 +85,7 @@ Configuration variables:
 OpenThread Device Type
 ----------------------
 See https://openthread.io/guides/thread-primer/node-roles-and-types
+
 - **FTD** - Full Thread Device, sets CONFIG_OPENTHREAD_FTD, observed behavior is that this enables a REED (Router Eligible End Device) and can be promoted to a Router.
 - **MTD** - Minimal Thread Device, sets CONFIG_OPENTHREAD_MTD, cannot be promoted to Router.  Switching back from MTD to FTD will not result in a REED unless Non Volatile Storage (NVS) is cleared.
 
