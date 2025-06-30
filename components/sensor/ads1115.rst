@@ -88,6 +88,7 @@ Configuration variables:
 -  **multiplexer** (**Required**): The multiplexer channel of this sensor. Effectively means between which pins you
    want to measure voltage.
 -  **gain** (**Required**, float): The gain of this sensor.
+-  **sample_rate** (*Optional*, int): The sample rate of this sensor. Defaults to ``860``.
 -  **ads1115_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the
    :ref:`ADS1115 Hub <ads1115-component>` you want to use this sensor.
 -  **update_interval** (*Optional*, :ref:`config-time`): The interval
@@ -99,8 +100,8 @@ Configuration variables:
 
 - All other options from :ref:`Sensor <config-sensor>`.
 
-Multiplexer and Gain
---------------------
+Multiplexer, Gain and Sample rate
+---------------------------------
 
 .. note::
 
@@ -119,7 +120,7 @@ The ADS1115 has a multiplexer that can be configured to measure voltage between 
  - ``A2_GND`` (between Pin 2 and GND)
  - ``A3_GND`` (between Pin 3 and GND)
 
-Additionally, the ADS1115 has a Programmable Gain Amplifier (PGA) that can help you measure voltages in different ranges, these are:
+The ADS1115 has a Programmable Gain Amplifier (PGA) that can help you measure voltages in different ranges, these are:
 
  - ``6.144`` (measures up to 6.144V)
  - ``4.096`` (measures up to 4.096V)
@@ -127,6 +128,17 @@ Additionally, the ADS1115 has a Programmable Gain Amplifier (PGA) that can help 
  - ``1.024`` (measures up to 1.024V)
  - ``0.512`` (measures up to 0.512V)
  - ``0.256`` (measures up to 0.256V)
+
+Additionally, the sample rate can be adjusted to reduce noise. Note that low values will cause high loop delay. Supported values:
+
+ - ``8`` (8 SPS or 128 SPS on ADS1015)
+ - ``16`` (16 SPS or 250 SPS on ADS1015)
+ - ``32`` (32 SPS or 490 SPS on ADS1015)
+ - ``64`` (64 SPS or 920 SPS on ADS1015)
+ - ``128`` (128 SPS or 1600 SPS on ADS1015)
+ - ``250`` (250 SPS or 2400 SPS on ADS1015)
+ - ``475`` (475 SPS or 3300 SPS on ADS1015)
+ - ``860`` (860 SPS or 3300 SPS on ADS1015)
 
 The ADS1115 can be used with defaults settings.
 When using an ADS1015, the resolution has to be specified and should be defined to ``12_BITS``

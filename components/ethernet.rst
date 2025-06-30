@@ -91,11 +91,30 @@ SPI configuration variables:
 - **miso_pin** (**Required**, :ref:`config-pin`): The SPI MISO pin.
 - **cs_pin** (**Required**, :ref:`config-pin`): The SPI chip select pin.
 - **interrupt_pin** (*Optional*, :ref:`config-pin`): The interrupt pin.
+  This variable is **required** for older frameworks. See below.
 - **reset_pin** (*Optional*, :ref:`config-pin`): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
-  Any frequency between `8Mhz` and `80Mhz` is allowed, but the nearest integer division
-  of `80Mhz` is used, i.e. `16Mhz` (`80Mhz` / 5) is used when `15Mhz` is configured.
-  Default: `26.67Mhz`.
+  Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
+  of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
+  Default: `26.67MHz`.
+- **polling_interval** (*Optional*, :ref:`config-time`): If ``interrupt_pin`` is not set,
+  set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
+  Older frameworks may not support this variable. See below for details.
+
+If you are using a framework with the latest version, ESPHome provides
+an SPI-based Ethernet module without interrupt pin.
+Support for SPI polling mode (no interrupt pin) is provided by the following frameworks:
+
+- ESP-IDF 5.3 or later
+- ESP-IDF 5.2.1 and later 5.2.x versions
+- ESP-IDF 5.1.4
+- Arduino-ESP32 3.0.0 or later (**Caution**: PlatformIO does not support these Arduino-ESP32 versions)
+
+When building with frameworks that support SPI polling mode, either ``interrupt_pin``
+or ``polling_interval`` can be set. If you set both, ESPHome will throw an error.
+
+If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
+``interrupt_pin`` is **required** and you cannot set ``polling_interval``.
 
 Advanced common configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -295,6 +314,21 @@ Configuration examples
 
     ethernet:
       type: OPENETH
+
+
+**Waveshare ESP32-S3-ETH PoE**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: W5500
+      clk_pin: GPIO13
+      mosi_pin: GPIO11
+      miso_pin: GPIO12
+      cs_pin: GPIO14
+      interrupt_pin: GPIO10
+      reset_pin: GPIO9
+
 
 **ETH01-Evo**:
 

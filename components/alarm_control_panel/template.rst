@@ -36,6 +36,7 @@ Configuration variables:
   - **input** (**Required**, string): The id of the binary sensor component
   - **bypass_armed_home** (*Optional*, boolean): This binary sensor will not trigger the alarm when in ``armed_home`` state.
   - **bypass_armed_night** (*Optional*, boolean): This binary sensor will not trigger the alarm when in ``armed_night`` state.
+  - **bypass_auto** (*Optional*, boolean): This binary sensor will be automatically bypassed if left on/open at the time of arming.
   - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor. One of ``delayed``, ``instant``, or ``delayed_follower``. (``delayed`` is the default if not specified)
   - **chime** (*Optional*, boolean): When set ``true``, the chime callback will be called whenever the sensor goes from closed to open. (``false`` is the default if not specified)
 

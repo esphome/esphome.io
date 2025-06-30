@@ -6,7 +6,7 @@ Update Core
     :image: system-update.svg
     :keywords: Updates, OTA, ESP32, ESP8266
 
-The `update` component allows your ESPHome devices to install updates from a remote source; instead of
+The ``update`` component allows your ESPHome devices to install updates from a remote source; instead of
 :doc:`"pushing" an update to your device </components/ota/index>`, the device can retrieve an update and
 install it on its own.
 
@@ -38,8 +38,8 @@ Configuration variables:
 - **icon** (*Optional*, icon): The icon to use for the update entity in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Specifying an ``id`` without a ``name`` will
-  implicitly set this to true.
 - **on_update_available** (*Optional*, :ref:`Action <config-action>`): An automation to perform when an update is available.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations
 -----------

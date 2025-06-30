@@ -52,12 +52,13 @@ Next, create a ``font:`` section in your configuration:
         size: 28
         bpp: 4
         glyphs: [
-          a,A,á,Á,e,E,é,É,
+          0123456789aAáÁeEéÉ,
           (,),+,-,_,.,°,•,µ,
-          "\u0020", #space
-          "\u0021", #!
-          "\u0022", #"
-          "\u0027", #'
+          "\u0020", # space
+          "\u002C", # ,
+          "\u0021", # !
+          "\u0022", # "
+          "\u0027", # '
           ]
 
       - file: "fonts/RobotoCondensed-Regular.ttf"
@@ -71,6 +72,16 @@ Next, create a ``font:`` section in your configuration:
               "\U000F05D4", # mdi-airplane-landing
               ]
 
+      - file:
+          type: gfonts
+          family: Roboto
+        id: roboto_european_core
+        size: 16
+        glyphsets:
+          - GF_Latin_Core
+          - GF_Greek_Core
+          - GF_Cyrillic_Core
+
       - file: "https://github.com/IdreesInc/Monocraft/releases/download/v3.0/Monocraft.ttf"
         id: web_font
         size: 20
@@ -82,6 +93,58 @@ Next, create a ``font:`` section in your configuration:
 
     display:
       # ...
+
+Font metrics:
+-------------
+
+The Component provides some useful font metrics. Those include:
+
+- **ascender** (``get_ascender()``): The maximum height of the glyphs above the baseline (currently returns the same value as ``get_baseline()``).
+
+- **capheight** (``get_capheight()``): The height of the capital letters measured on the X glyph.
+
+- **xheight** (``get_xheight()``): The height of the lowercase letters measured on the x glyph.
+
+- **baseline** (``get_baseline()``): The imaginary line on which all characters sit.
+
+- **descender** (``get_descender()``): The maximum height of the glyphs below the baseline.
+
+- **linegap** (``get_linegap()``): The gap between two lines of text.
+
+- **height** (``get_height()``): The lineheight of the font measured from baseline to baseline.
+
+.. note::
+
+    The ``capheight`` and ``xheight`` values are typically calculated using glyphs with flat tops.
+    Rounded characters however might overshoot this value slightly to make them visually appear as the same size.
+    For special fonts like the Material Design Icons font, which do not contain any letters, these two metrics will be set to 0.
+
+The following code snipped produces the image below. Note that the lines in the code are ordered as they appear in the image from top to bottom.
+For this font the ``descender`` and ``height`` are only one pixel apart.
+
+.. code-block:: yaml
+
+    it.print(0, 0, id(my_font), "EspHome");
+
+    int ascender = id(my_font).get_baseline() - id(my_font).get_ascender();
+    int capheight = id(my_font).get_baseline() - id(my_font).get_capheight();
+    int xheight = id(my_font).get_baseline() - id(my_font).get_xheight();
+    int baseline = id(my_font).get_baseline();
+    int descender = id(my_font).get_baseline() + id(my_font).get_descender();
+    int height = id(my_font).get_height();
+
+    it.horizontal_line(0, ascender, it.get_width());
+    it.horizontal_line(0, capheight, it.get_width());
+    it.horizontal_line(0, xheight, it.get_width());
+    it.horizontal_line(0, baseline, it.get_width());
+    it.horizontal_line(0, descender, it.get_width());
+    it.horizontal_line(0, height, it.get_width());
+
+.. figure:: images/fontmetrics.png
+    :align: center
+    :width: 60.0%
+
+    The fontmetric values provided by ESPHome.
 
 
 Configuration variables:
@@ -120,13 +183,31 @@ Configuration variables:
 
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the font later
   in your display code.
-- **size** (*Optional*, int): The size of the font in pt (not pixel!).
-  If you want to use the same font in different sizes, create two font objects. Note: *size* is ignored
-  by bitmap fonts. Defaults to ``20``.
+- **size** (*Optional*, int): The desired size of the font. This will be the size (height) of the font in pixels
+  when rendered. If you want to use the same font in different sizes, create two font objects.
+  Defaults to ``20`` for scalable fonts and the first available size for bitmap fonts. Requesting a size that is not available in a bitmap-only font will result in an error.
 - **bpp** (*Optional*, int): The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be ``1``, ``2``, ``4``, ``8``. Defaults to ``1``.
-- **glyphs** (*Optional*, list): A list of characters you plan to use. Only the characters you specify
-  here will be compiled into the binary. Adjust this if you need some special characters or want to
-  reduce the size of the binary if you don't plan to use some glyphs. You can also specify glyphs by their codepoint (see below). Defaults to ``!"%()+=,-_.:°/?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz``.
+  If set to 1 and the font has a bitmap version available at the requested size, that will be used. Otherwise the font will be rendered from the vector representation.
+- **glyphsets** (*Optional*, list): A list of glyphsets you plan to use. Defaults to
+  ``GF_Latin_Kernel``, which contains the basic characters and necessary punctuation and symbols for
+  the English language. ``GF_Latin_Core`` is a more extended set that includes glyphs for the
+  languages of Europe and the Americas with over 5 million speakers. Other options include
+  ``GF_Arabic_Core``, ``GF_Cyrillic_Core``, ``GF_Greek_Core``, their ``Plus`` variants, as well as
+  ``GF_Latin_African``, ``GF_Latin_PriAfrican`` and ``GF_Latin_Vietnamese``.
+  See the `Google Fonts Glyphset documentation <https://github.com/googlefonts/glyphsets/blob/main/GLYPHSETS.md>`_
+  for an extensive list of all possible sets, along with their names and the languages supported by
+  each of those sets.  Note that ``GF_Latin_Kernel`` may need to be included for glyphs for basic
+  characters such as numbers (0-9) and whitespace to be present.
+- **glyphs** (*Optional*, list): A list of characters you plan to use, in addition to the characters
+  defined by the **glyphsets** option above. Adjust this list if you need some special characters or
+  want to reduce the size of the binary if you don't plan to use certain glyphs. Both single
+  characters (``a, b, c``) or strings of characters (``abc, def``) are acceptable options. You can
+  also specify glyphs by their codepoint (see below).
+- **ignore_missing_glyphs** (*Optional*, boolean): By default, warnings are generated for any glyph
+  that is included in the defined **glyphsets** but not present in the configured font. Use this
+  setting to suppress those warnings. Please note that the absence of any manually defined glyphs
+  (specified via the **glyphs** option) will always be treated as an error and will not be influenced
+  by this setting.
 - **extras** (*Optional*, enum): A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files (eg. icons from other font, but at the same size as the main font):
 
   - **file** (**Required**, string): The path of the font file with the extra glyphs.
@@ -149,7 +230,7 @@ Configuration variables:
 
     To use fonts you will need to have the python ``pillow`` package installed, as ESPHome uses that package
     to translate the OpenType/TrueType and bitmap font files into an internal format. If you're running this as a Home Assistant add-on or with the official ESPHome docker image, it should already be installed. Otherwise you need
-    to install it using ``pip install "pillow==10.2.0"``.
+    to install it using ``pip install "pillow==10.4.0"``.
 
 See Also
 --------
@@ -159,4 +240,5 @@ See Also
 - :doc:`/components/lvgl/index`
 - `MDI cheatsheet <https://pictogrammers.com/library/mdi/>`_
 - `MDI font repository <https://github.com/Pictogrammers/pictogrammers.github.io/tree/main/%40mdi/font/>`_
+- `Google Fonts Glyphsets <https://github.com/googlefonts/glyphsets/blob/main/GLYPHSETS.md>`_
 - :ghedit:`Edit`
