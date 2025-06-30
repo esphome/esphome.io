@@ -56,6 +56,7 @@ Configuration variables:
   - ``KSZ8081RNA`` (RMII)
   - ``W5500`` (SPI)
   - ``OPENETH`` (QEMU, ESP-IDF only)
+  - ``DM9051`` (SPI, ESP-IDF only)
 
 RMII configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -314,6 +315,39 @@ Configuration examples
 
     ethernet:
       type: OPENETH
+
+
+**Waveshare ESP32-S3-ETH PoE**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: W5500
+      clk_pin: GPIO13
+      mosi_pin: GPIO11
+      miso_pin: GPIO12
+      cs_pin: GPIO14
+      interrupt_pin: GPIO10
+      reset_pin: GPIO9
+
+
+**ETH01-Evo**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: DM9051
+      clk_pin: GPIO07
+      mosi_pin: GPIO10
+      miso_pin: GPIO03
+      cs_pin: GPIO09
+      interrupt_pin: GPIO08
+      reset_pin: GPIO06
+      clock_speed: 8MHz
+
+.. note::
+
+    Using a higher clock_speed, including default, might cause rx errors and dropped packets.
 
 See Also
 --------
