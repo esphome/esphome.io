@@ -35,6 +35,7 @@ Supported Microcontrollers
     RP2040, components/rp2040, rp2040.svg
     BK72xx, components/libretiny, bk72xx.svg
     RTL87xx, components/libretiny, rtl87xx.svg
+    LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
 
 Microcontroller Peripherals
@@ -181,6 +182,7 @@ I/O Expanders/Multiplexers
     PCA6416A, components/pca6416a, pca6416a.svg
     PCA9554, components/pca9554, pca9554a.jpg
     PCF8574, components/pcf8574, pcf8574.jpg
+    PI4IOE5V6408, components/pi4ioe5v6408, pca9554a.jpg
     SN74HC165, components/sn74hc165, sn74hc595.jpg
     SN74HC595, components/sn74hc595, sn74hc595.jpg
     SX1509, components/sx1509, sx1509.jpg
