@@ -240,8 +240,8 @@ reduce the ESP's overall performance.
 
 .. _esp32-note-about-variants:
 
-A Note About S2 and S3 Variants
--------------------------------
+S2 and S3 Variants
+------------------
 
 .. note::
 
