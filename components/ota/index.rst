@@ -164,6 +164,6 @@ expected. This is automatically enabled by the ``ota`` component, but it may be 
 See Also
 --------
 
-- :apiref:`ota/ota_component.h`
+- :apiref:`ota_base/ota_backend.h`
 - :doc:`/components/safe_mode`
 - :ghedit:`Edit`
