@@ -46,7 +46,7 @@ Configuration variables:
 Migration from Legacy Configuration
 -----------------------------------
 
-Prior to ESPHome 2024.12.0, OTA functionality was built into the ``web_server`` component using the ``ota`` option. 
+Prior to ESPHome 2025.7.0, OTA functionality was built into the ``web_server`` component using the ``ota`` option. 
 This has been moved to a separate platform for consistency with other OTA methods.
 
 **Old configuration:**
