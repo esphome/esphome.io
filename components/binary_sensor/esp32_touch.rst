@@ -256,7 +256,7 @@ S2 and S3 Variants
     - **Higher raw values** are returned compared to original ESP32
     - **Lower measurement duration required** - the default 8ms is often too high for S2/S3
 
-    **Working configuration for S2/S3:**
+    **Example settings for S2/S3:**
 
     .. code-block:: yaml
 
