@@ -67,7 +67,7 @@ Configuration variables:
   `Private Network Access Permission Prompt <https://wicg.github.io/private-network-access/#permission-prompt>`__.
   Defaults to ``true``.
 - **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to ``true``.
-- **ota** (*Optional*, boolean): Turn on or off the OTA feature inside webserver. Strongly not suggested without enabled authentication settings. Defaults to ``true``. Cannot be used with the ``esp-idf`` framework.
+- **ota** (*Optional*, boolean): Turn on or off the OTA feature inside webserver. Strongly not suggested without enabled authentication settings. Defaults to ``true``.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access. Defaults to ``false``.
 - **version** (*Optional*, string): ``1``, ``2`` or ``3``. Version 1 displays as a table. Version 2 uses web components and has more functionality. Version 3 uses HA-Styling. Defaults to ``2``.
