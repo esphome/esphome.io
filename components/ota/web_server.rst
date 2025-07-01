@@ -98,40 +98,6 @@ Secure setup with authentication:
     ota:
       - platform: web_server
 
-Multiple OTA platforms:
-
-.. code-block:: yaml
-
-    # Using both ESPHome and web server OTA
-    web_server:
-      port: 80
-      auth:
-        username: admin
-        password: !secret web_password
-
-    ota:
-      - platform: esphome
-        password: !secret ota_password
-      - platform: web_server
-
-With OTA automations:
-
-.. code-block:: yaml
-
-    # With progress feedback
-    web_server:
-      port: 80
-
-    ota:
-      - platform: web_server
-        on_begin:
-          - logger.log: "OTA update started via web interface"
-        on_progress:
-          - logger.log:
-              format: "OTA progress: %.1f%%"
-              args: ["x"]
-        on_end:
-          - logger.log: "OTA update completed successfully"
 
 Using the Web Interface
 -----------------------
@@ -139,13 +105,13 @@ Using the Web Interface
 1. Navigate to your device's web interface at ``http://<device-ip>/`` or ``http://<device-name>.local/``
 2. If authentication is enabled, enter your username and password
 3. Scroll down to the "OTA Update" section
-4. Click "Choose File" and select your firmware file (``firmware.ota.bin``)
+4. Click "Choose File" and select your firmware file (``firmware.bin``)
 5. Click "Update" to start the upload
 6. Wait for the upload to complete - the device will automatically reboot with the new firmware
 
 .. warning::
 
-    - Always use ``.ota.bin`` firmware files (legacy/OTA format), not ``.factory.bin`` files
+    - Always use ``firmware.bin`` files for OTA updates, not ``firmware.factory.bin`` files
     - The web interface may become unresponsive during the update process - this is normal
     - Do not power off the device during an update
 
