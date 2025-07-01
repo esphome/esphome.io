@@ -16,7 +16,7 @@ change was made to facilitate the use of multiple update mechanisms, enabling gr
 Available platforms:
 
 - **esphome**: The default OTA method using ESPHome's native protocol (used by the dashboard and CLI)
-- **http_request**: Pull firmware updates from a remote web server  
+- **http_request**: Pull firmware updates from a remote web server
 - **web_server**: Enable firmware uploads through the device's web interface
 
 .. code-block:: yaml
