@@ -43,7 +43,7 @@ This example show how to configure Thread Dataset for a node.
     network:
       enable_ipv6: true
     
-    openthread
+    openthread:
       device_type: FTD
       channel: 13
       network_name: OpenThread-8f28
