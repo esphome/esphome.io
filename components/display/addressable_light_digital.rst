@@ -1,17 +1,17 @@
-Addressable Light Digital Display
+Addressable Light Digital
 ==================================
 
 .. seo::
     :description: Instructions for setting up addressable light digital displays using LED strips
     :image: addressable_light.jpg
 
-The ``addressable_light_digital_display`` platform allows you to create large, customizable 7-segment digital displays using addressable LED strips (like WS2812B). This display uses individual LEDs to form the segments of each digit, enabling the creation of large, bright displays with minimal hardware complexity.
+The ``addressable_light_digital`` platform allows you to create large, customizable 7-segment digital displays using addressable LED strips (like WS2812B). This display uses individual LEDs to form the segments of each digit, enabling the creation of large, bright displays with minimal hardware complexity.
 
-.. figure:: images/addressable_light_digital_display.jpg
+.. figure:: images/addressable_light_digital.jpg
     :align: center
     :width: 75.0%
 
-    Addressable Light Digital Display
+    Addressable Light Digital
 
 This component is particularly useful for creating digital clocks, counters, or any numeric display where you want large, easily readable digits. The display can show numbers, letters, and special characters like periods (.) and colons (:).
 
@@ -36,7 +36,7 @@ Key advantages over traditional 7-segment displays:
         rgb_order: GRB
 
     display:
-      - platform: addressable_light_digital_display
+      - platform: addressable_light_digital
         id: my_display
         name: "Digital Clock"
         light_id: digital_display_light
@@ -53,7 +53,7 @@ Key advantages over traditional 7-segment displays:
 Configuration variables:
 ------------------------
 
-- **platform** (**Required**): Must be ``addressable_light_digital_display``.
+- **platform** (**Required**): Must be ``addressable_light_digital``.
 - **addressable_light_id** (**Required**, :ref:`config-id`): The ID of the addressable light component to use for the display.
 - **light_id** (**Required**, :ref:`config-id`): The ID to use for the light entity.
 - **led_map** (**Required**, string): A string that maps each LED to the 7 segments (A-G) and special symbols. See :ref:`led_map_format` below.
@@ -152,7 +152,7 @@ The display supports the following methods in lambda functions:
         id: sntp_time
 
     display:
-      - platform: addressable_light_digital_display
+      - platform: addressable_light_digital
         # ... other config ...
         lambda: |-
           // Blinking colon every second
@@ -172,7 +172,7 @@ The display supports the following methods in lambda functions:
           id: room_temp
 
     display:
-      - platform: addressable_light_digital_display
+      - platform: addressable_light_digital
         # ... other config ...
         lambda: |-
           it.printf("%.1f", id(room_temp).state);
@@ -210,7 +210,7 @@ Connect LEDs in series, from RIGHT to LEFT or LEFT to RIGHT. Typically requires 
 - **Data**: LED data pin to MCU GPIO pin (normally 1-2 wires)
 - **Optional**: Separate power wire for MCU if using higher voltage LEDs
 
-.. figure:: images/addressable_light_digital_display_wiring.jpg
+.. figure:: images/addressable_light_digital_wiring.jpg
     :align: center
     :width: 50.0%
 
@@ -256,7 +256,7 @@ Complete Example
         rgb_order: GRB
 
     display:
-      - platform: addressable_light_digital_display
+      - platform: addressable_light_digital
         id: digital_clock
         name: "Digital Clock"
         light_id: digital_display_light
@@ -317,5 +317,5 @@ See Also
 - :doc:`/components/light/fastled`
 - :doc:`/components/light/neopixelbus`
 - :doc:`/components/time/index`
-- :apiref:`addressable_light_digital_display/digital_display.h`
+- :apiref:`addressable_light_digital/digital_display.h`
 - :ghedit:`Edit`
