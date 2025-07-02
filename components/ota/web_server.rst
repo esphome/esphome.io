@@ -111,7 +111,7 @@ Using the Web Interface
 
 .. warning::
 
-    - Always use ``firmware.bin`` files for OTA updates, not ``firmware.factory.bin`` files
+    - Always use ``firmware.bin`` or ``firmware.ota.bin`` files for OTA updates, not ``firmware.factory.bin`` files
     - The web interface may become unresponsive during the update process - this is normal
     - Do not power off the device during an update
 
