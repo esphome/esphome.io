@@ -1074,6 +1074,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
     RF Bridge, components/rf_bridge, rf_bridge.jpg
     SIM800L, components/sim800l, sim800l.jpg
     SX126x, components/sx126x, sx126x.png
+    SX127x, components/sx127x, sx127x.png
 
 Miscellaneous Components
 ------------------------

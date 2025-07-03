@@ -248,6 +248,17 @@ The ``remote_receiver`` binary sensor lets you track when a button on a remote c
 
 Each time the pre-defined signal is received, the binary sensor will briefly go ON and then immediately OFF.
 
+.. note::
+
+    **For IR Remote Binary Sensors**: If you're using binary sensors to track IR remote button presses and
+    experiencing issues with rapid button presses not being detected (e.g., quick ON→OFF transitions being missed),
+    consider setting ``batch_delay: 0ms`` in your :doc:`API configuration </components/api>`. This will send state
+    changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
+    network traffic and should only be used when necessary.
+    
+    For new projects, consider using automations with the ``on_*`` triggers (described above)
+    instead of binary sensors, as they are better suited for handling momentary button press events.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -257,6 +268,23 @@ Each time the pre-defined signal is received, the binary sensor will briefly go 
         panasonic:
           address: 0x4004
           command: 0x100BCBD
+
+.. code-block:: yaml
+
+    # Example with batch_delay: 0 for rapid button presses
+    api:
+      batch_delay: 0ms  # Send state changes immediately
+    
+    remote_receiver:
+      pin: GPIOXX
+      dump: all
+    
+    binary_sensor:
+      - platform: remote_receiver
+        name: "TV Remote Power"
+        nec:
+          address: 0x1234
+          command: 0x5678
 
 Configuration variables:
 ************************

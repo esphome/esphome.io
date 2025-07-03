@@ -653,6 +653,7 @@ Contributors
 - `Bonne Eggleston (@exciton) <https://github.com/exciton>`__
 - `Expaso (@Expaso) <https://github.com/Expaso>`__
 - `Malte Franken (@exxamalte) <https://github.com/exxamalte>`__
+- `Eyal (@eyal0) <https://github.com/eyal0>`__
 - `f0rdprefect (@f0rdprefect) <https://github.com/f0rdprefect>`__
 - `Fabian Affolter (@fabaff) <https://github.com/fabaff>`__
 - `Fabian (@Fabian-Schmidt) <https://github.com/Fabian-Schmidt>`__
@@ -794,6 +795,7 @@ Contributors
 - `Guillaume DELVIT (@guiguid) <https://github.com/guiguid>`__
 - `guillempages (@guillempages) <https://github.com/guillempages>`__
 - `Fabian Pflug (@gumulka) <https://github.com/gumulka>`__
+- `Guy Lowe (@gunkaaa) <https://github.com/gunkaaa>`__
 - `guptamp (@guptamp) <https://github.com/guptamp>`__
 - `Guyohms (@Guyohms) <https://github.com/Guyohms>`__
 - `Gilles van den Hoven (@gvdhoven) <https://github.com/gvdhoven>`__
@@ -1571,6 +1573,7 @@ Contributors
 - `NuclearPhoenix (@Phoenix1747) <https://github.com/Phoenix1747>`__
 - `phoenixswiss (@phoenixswiss) <https://github.com/phoenixswiss>`__
 - `Philip Persson (@PhPersson) <https://github.com/PhPersson>`__
+- `piechade (@piechade) <https://github.com/piechade>`__
 - `Pierre Gordon (@pierlon) <https://github.com/pierlon>`__
 - `pieterbrink123 (@pieterbrink123) <https://github.com/pieterbrink123>`__
 - `pille (@pille) <https://github.com/pille>`__
@@ -1692,6 +1695,7 @@ Contributors
 - `Ryan Mounce (@rmounce) <https://github.com/rmounce>`__
 - `rnauber (@rnauber) <https://github.com/rnauber>`__
 - `Rob Deutsch (@rob-deutsch) <https://github.com/rob-deutsch>`__
+- `Robbe-B (@Robbe-B) <https://github.com/Robbe-B>`__
 - `Rob de Jonge (@robdejonge) <https://github.com/robdejonge>`__
 - `Robert Alfaro (@robert-alfaro) <https://github.com/robert-alfaro>`__
 - `Robert91911 (@Robert91911) <https://github.com/Robert91911>`__
@@ -1760,6 +1764,7 @@ Contributors
 - `Davide Perini (@sblantipodi) <https://github.com/sblantipodi>`__
 - `sbur83 (@sbur83) <https://github.com/sbur83>`__
 - `Søren Christian Aarup (@scaarup) <https://github.com/scaarup>`__
+- `scaiper (@scaiper) <https://github.com/scaiper>`__
 - `scamiv (@scamiv) <https://github.com/scamiv>`__
 - `Sascha (@Scarbous) <https://github.com/Scarbous>`__
 - `Matthew Schinckel (@schinckel) <https://github.com/schinckel>`__
@@ -2168,4 +2173,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated June 27, 2025.*
+*This page was last updated July 3, 2025.*

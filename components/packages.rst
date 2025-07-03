@@ -120,6 +120,7 @@ Configuration variables:
 For each package:
 
 - **url** (**Required**, string): The URL for the repository.
+- **path** (*Optional*, string): Base common path of included files.
 - **username** (*Optional*, string): Username to be used for authentication, if required.
 - **password** (*Optional*, string): Password to be used for authentication, if required.
 - **files** (**Required**): List of files to include. Can be one of:
