@@ -23,6 +23,7 @@ enabling it to communicate with other devices.
       d1_pin: GPIO10
       d2_pin: GPIO9
       d3_pin: GPIO8
+      active_high: true
 
     wifi:
       ssid: !secret wifi_ssid
