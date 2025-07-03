@@ -139,8 +139,8 @@ Configuration variables:
 - **co2** (*Optional*): Carbon dioxide (CO₂). Only available with SEN63C or SEN66. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
   - **auto_self_calibration** (*Optional*, boolean): True enables automatic CO₂ self calibration. False disables automatic CO₂ calibration. Default is ``true``.
-  - **altitude_compensation** (*Optional*, boolean): Enable compensating deviations due to current altitude (in meters). Note: Set altitude_compensation or ambient_pressure_compensation_source but not both.
-  - **ambient_pressure_compensation_source** (*Optional*, :ref:`config-id`): Set an external pressure sensor ID used for ambient pressure compensation. The pressure sensor must report pressure in hPa. The correction is applied before updating the state of the CO₂ sensor.
+  - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be compensated for deviations due to current altitude. Note: Set ```altitude_compensation``` or ```ambient_pressure_compensation_source``` but not both.
+  - **ambient_pressure_compensation_source** (*Optional*, :ref:`config-id`): Set a pressure sensor ID (must report pressure in hPA). This will compensate the CO₂ sensor for deviations due to current pressure. More accurate that altitude compensation this correction is applied before each update of the state of the CO₂ sensor.  Note: Set ```altitude_compensation``` or ```ambient_pressure_compensation_source``` but not both.
 
 - **voc** (*Optional*): VOC Index. Only available with SEN54, SEN55, SEN65, SEN66 or SEN68. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
