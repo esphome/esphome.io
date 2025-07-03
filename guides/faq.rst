@@ -267,6 +267,7 @@ That's no good. Here are some steps that resolve some problems:
 
 - **If you're having Wi-Fi problems**: See :ref:`wifi-problems`.
 - :ref:`Enable verbose logs<logger-log_levels>` in your ESPHome device's ``logger:`` section.
+- **If your device is crashing**: See the :doc:`/guides/troubleshooting` guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
   `ESPHome issue tracker <https://github.com/esphome/issues/issues>`__. If not, you can create a new issue to describe your
   problem there. We will take a look at it as soon as we can. Thanks!

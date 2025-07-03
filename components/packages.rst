@@ -120,6 +120,7 @@ Configuration variables:
 For each package:
 
 - **url** (**Required**, string): The URL for the repository.
+- **path** (*Optional*, string): Base common path of included files.
 - **username** (*Optional*, string): Username to be used for authentication, if required.
 - **password** (*Optional*, string): Password to be used for authentication, if required.
 - **files** (**Required**): List of files to include. Can be one of:
@@ -222,6 +223,17 @@ To remove captive portal for a specific device:
     packages: !include common.yaml  # see above
 
     captive_portal: !remove
+
+To remove only an attribute for a specific device:
+
+.. code-block:: yaml
+
+    packages:
+      common: !include common.yaml  # see above
+
+    sensor:
+      - id: !extend uptime_sensor
+        update_interval: !remove
 
 See Also
 --------

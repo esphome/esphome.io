@@ -7,8 +7,8 @@ USB Host Interface
     :image: usb.svg
 
 The USB Host interface on the ESP32-S3 and ESP32-S2 is used to connect to USB peripheral devices. Multiple
-devices may be configured, but only one can be connected at any time. The ESP32-S3 and ESP32-S2 do not support
-USB hubs.
+devices may be configured, but only one can be connected at any time. By default the device must be directly
+connected to the ESP32, but this can be changed by setting the ``enable_hubs`` option to ``true``.
 
 This component is used by the ``usb_uart`` component to allow the ESP32 to connect to USB-serial devices. It is also
 possible to configure devices directly in this component, but this has no application other than for debug purposes.
@@ -17,6 +17,7 @@ possible to configure devices directly in this component, but this has no applic
 
     # Example configuration entry
     usb_host:
+      enable_hubs: true
       devices:
         - id: device_0
           vid: 0x1725
@@ -27,6 +28,7 @@ Configuration variables:
 ************************
 
 - **id** (*Optional*, :ref:`config-id`): The id to use for this component.
+- **enable_hubs** (*Optional*, boolean): Whether to include support for hubs. Defaults to ``false``.
 - **devices** (*Optional*, list): A list of devices to configure.
 
 Device configuration options:

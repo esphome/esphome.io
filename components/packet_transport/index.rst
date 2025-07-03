@@ -51,7 +51,13 @@ Example Configuration
     binary_sensor:
       - platform: packet_transport
         provider: device2-name
+        type: data                  # Optional, defaults to 'data'
         id: other_binary_sensor_id  # also used as remote_id
+
+      - platform: packet_transport
+        provider: device1-name
+        type: status
+        name: Device 1 connection status
 
 
 Configuration variables:
@@ -120,6 +126,11 @@ Use of the ping-pong feature will add to network traffic and the size of the tra
 include up to 4 nonces from different devices) but provides a high level of protection against replay attacks. It does
 require a 2-way network connection, and it only works on local networks because the consumer can only *broadcast* the
 nonce to the providers.
+
+In addition when using ping-pong, a connection status binary sensor can be created. The status sensor will report
+``connected`` when the consumer has received a *pong* from the provider within the last ``ping_pong_recycle_time``. If not
+received, it will report ``disconnected``. This can be used to detect when a provider is no longer available, or when
+the encryption key has changed.
 
 .. note::
 

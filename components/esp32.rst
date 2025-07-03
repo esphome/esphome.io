@@ -103,20 +103,68 @@ Configuration variables:
   `compiler options <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options>`__
   to set in the ESP-IDF project.
 - **advanced** (*Optional*, mapping): See :ref:`esp32-advanced_configuration` below.
+- **components** (*Optional*, list of components): See :ref:`esp32-idf_components` below.
 
 .. _esp32-advanced_configuration:
 
 Advanced Configuration
 ----------------------
 
+- **assertion_level** (*Optional*, enum): One of ``ENABLE`` (default), ``SILENT`` or ``DISABLE``. Changing away from
+  the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization-assertion-level>`__
+  for more information.
+- **compiler_optimization** (*Optional*, enum): One of ``SIZE`` (default), ``PERF``, ``NONE`` or ``DEBUG``. Changing
+  away from the default will increase the size of the compiled binary but may increase performance or allow for easier
+  troubleshooting. See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization>`__
+  for more information.
+- **enable_lwip_assert** (*Optional*, boolean): Can be set to ``false`` to reduce the size of the compiled binary by
+  disabling LWIP assertions. Defaults to ``true`` (as recommended by Espressif). See
+  `Espressif's documentation <https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-lwip-esp-lwip-assert>`__
+  for more information.
 - **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in custom
   MAC address is not valid.
 - **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to ``true`` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   ``Base MAC address from BLK0 of EFUSE CRC error``. **Valid only on original ESP32 with** ``esp-idf`` **framework.**
-- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable
-  experimental features in the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features
-  may cause instability or other issues.
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to ``true`` to enable experimental features in
+  the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
+  other issues.
+
+**LWIP Optimization Options (ESP-IDF only):**
+
+The following options are available under the ``advanced`` section when using the ESP-IDF framework to disable unused
+LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
+
+- **enable_lwip_dhcp_server** (*Optional*, boolean): Enable DHCP server functionality. Only needed if the device will act
+  as a DHCP server (necessary for WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
+  the DHCP server based on whether AP mode is configured. When WiFi is not used, defaults to ``false``.
+- **enable_lwip_mdns_queries** (*Optional*, boolean): Enable mDNS query support in the DNS resolver. ESPHome uses its own
+  mDNS implementation, so this is rarely needed. Defaults to ``true``.
+- **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
+  interfaces. Defaults to ``false``.
+
+These optimizations are applied automatically and save flash memory without affecting typical ESPHome functionality. The
+features can be enabled if needed by setting the corresponding option to ``true``.
+
+.. _esp32-idf_components:
+
+IDF Components
+--------------
+
+The ``components`` option allows you to include IDF components. These components will then be compiled into the resulting
+firmware and may be used by :ref:`lambdas <config-lambda>`. The most common usage of this option is to include third-party
+components that are available in the `ESP Component Registry <https://components.espressif.com/>`__. They can be added by
+listing their name under this option. It is also possible to use specific versions, or to fetch components from a file or
+git repository.
+
+- **name** (*Required*, string): Name of the component e.g. ``espressif/esp_hosted``.
+- **ref** (*Optional*, string): Component registry version or a git ref.
+- **source** (*Optional*, string): The git repository to use for the component. This can be used for a
+  custom or patched version of the component.
+- **path** (*Optional*, string): The path of the component in the git repository or a local path to the
+  component if ``source`` is not set.
 
 GPIO Pin Numbering
 ------------------
