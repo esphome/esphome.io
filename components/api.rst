@@ -96,6 +96,7 @@ Configuration variables:
       applications that require real-time responsiveness, such as IR remote binary sensors where rapid
       ON→OFF transitions must be preserved. However, this will increase network traffic and may impact
       WiFi performance with many rapidly-changing sensors. Only use this setting when necessary.
+
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
