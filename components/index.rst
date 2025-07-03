@@ -682,8 +682,8 @@ Camera Components
 .. imgtable::
 
     Camera Core, components/camera/index, folder-open.svg, dark-invert
-    ESP32 Camera, components/esp32_camera, camera.svg, dark-invert
-    ESP32 Camera Web Server, components/esp32_camera_web_server, camera.svg, dark-invert
+    ESP32 Camera, components/camera/esp32_camera, camera.svg, dark-invert
+    ESP32 Camera Web Server, components/camera/esp32_camera_web_server, camera.svg, dark-invert
 
 Climate Components
 ------------------
