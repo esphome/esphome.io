@@ -46,7 +46,8 @@ Configuration variables:
 - **frequency** (**Required**, int): Frequency in Hz of the transceiver.
 - **modulation** (**Required**, enum): Modulation can be ``OOK``, ``FSK`` or ``LORA```.
 - **pa_pin** (**Optional**, enum): Transmitter output pin, can be ``BOOST`` or ``RFO``.
-- **pa_power** (**Optional**, int): Transmitter power, range is from 0 to 17 dBm.
+- **pa_power** (**Optional**, int): Transmitter power, range is from 2 to 17 dBm when ``pa_pin`` is ``BOOST`` and
+  0 to 15 dBm when using ``RFO``.
 - **pa_ramp** (**Optional**, enum): Transmitter PA ramp, can be ``10us``, ``12us``, ``15us``,
   ``20us``, ``25us``, ``31us``, ``40us``, ``50us``, ``62us``, ``100us``, ``125us``, ``250us``, ``500us``,
   ``1000us``, ``2000us`` or ``3400us``.
@@ -58,15 +59,15 @@ LoRa configuration variables:
   ``31_3kHz``, ``41_7kHz``, ``62_5kHz``, ``125_0kHz``, ``250_0kHz`` or ``500_0kHz``.
 - **payload_length** (**Optional**, int): If greater than zero implicit header mode is enabled and the
   packet size is fixed. If not configured explicit header mode is enabled and variable packet sizes can
-  be used. Maximum length is 256.
+  be used. Maximum length is 256. Must be configured when using a ``spreading_factor`` of 6.
 - **crc_enable** (**Optional**, bool): Enables a payload CRC calculation/check.
 - **preamble_size** (**Optional**, int): Length of the preamble in symbols, minimum of 6. Defaults to 8.
 - **spreading_factor** (**Optional**, int): Spreading factor, values range from 6 to 12. Defaults to 7.
 - **coding_rate** (**Optional**, enum): Coding rate, values can be ``CR_4_5``, ``CR_4_6``, ``CR_4_7``
   or ``CR_4_8``. Defaults to ``CR_4_5``.
-- **sync_value** (**Optional**, int): Synchronization word. The value 0x34 is reserved for LoRaWAN
-  networks and the value 0x12 is meant for private networks. It is recommended to use only 0x12
-  or 0x34. Defaults to 0x12.
+- **sync_value** (**Optional**, int): Synchronization word, limited to a single byte. The value 0x34 is
+  reserved for LoRaWAN networks and the value 0x12 is meant for private networks. It is recommended to use
+  only 0x12 or 0x34. Defaults to 0x12.
 
 FSK/OOK configuration variables:
 *********************************
@@ -92,8 +93,8 @@ FSK/OOK configuration variables:
 - **preamble_detect** (**Optional**, int): Minimum length of the preamble in bytes required by the receiver.
   Preamble detector is disabled if the size is 0 and its value capped at 3.
 - **preamble_errors** (**Optional**, int): Number of chip errors tolerated in the receiver.
-- **sync_value** (**Optional**, list): Synchronization bytes found after the preamble and before the
-  payload.
+- **sync_value** (**Optional**, list): Synchronization bytes, list of 1 to 8 bytes, found after the preamble and
+  before the payload.
 - **rx_floor** (**Optional**, float): When receiving OOK ``rx_floor`` should be set appropriately for your
   environment. If set too high (ie closer to 0) the radio will ignore everything. If set too low
   (ie closer to -128) too much noise will get through. When receiving FSK without a preamble configured
