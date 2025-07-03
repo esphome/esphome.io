@@ -26,6 +26,7 @@ The SEN6X sensor only supports I²C communication so no configuration is require
     sensor:
       - platform: sen5x
         id: sen54
+        model: SEN54  # required
         pm_1_0:
           name: "PM <1µm Weight concentration"
           id: pm_1_0
@@ -121,6 +122,7 @@ The SEN6X sensor only supports I²C communication so no configuration is require
 
 Configuration variables:
 ------------------------
+- **model** (***Required***, enum): The model of the connected sensor. It will be validated at runtime. Must be one of the following: SEN50, SEN54, SEN55, SEN60, SEN63C, SEN65, SEN66 or SEN68.
 
 - **pm_1_0** (*Optional*): The mass of fine particles up to 1μm. Readings in µg/m³. Available with all models. All options from :ref:`Sensor <config-sensor>`.
 
@@ -136,51 +138,51 @@ Configuration variables:
 
 - **co2** (*Optional*): Carbon dioxide (CO₂). Only available with SEN63C or SEN66. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
-  - **auto_self_calibration** (*Optional*): True enables automatic CO₂ self calibration. False disables automatic CO₂ calibration. Default is ``true``.
-  - **altitude_compensation** (*Optional*): Enable compensating deviations due to current altitude (in meters). Note: Set altitude_compensation or ambient_pressure_compensation_source but not both.
-  - **ambient_pressure_compensation_source** (*Optional*): Set an external pressure sensor ID used for ambient pressure compensation. The pressure sensor must report pressure in hPa. The correction is applied before updating the state of the CO₂ sensor.
+  - **auto_self_calibration** (*Optional*, boolean): True enables automatic CO₂ self calibration. False disables automatic CO₂ calibration. Default is ``true``.
+  - **altitude_compensation** (*Optional*, boolean): Enable compensating deviations due to current altitude (in meters). Note: Set altitude_compensation or ambient_pressure_compensation_source but not both.
+  - **ambient_pressure_compensation_source** (*Optional*, :ref:`config-id`): Set an external pressure sensor ID used for ambient pressure compensation. The pressure sensor must report pressure in hPa. The correction is applied before updating the state of the CO₂ sensor.
 
 - **voc** (*Optional*): VOC Index. Only available with SEN54, SEN55, SEN65, SEN66 or SEN68. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters.
 
-    - **index_offset** (*Optional*): VOC index representing typical (average) conditions. Allowed values are in range 1 - 250. The default value is 100.
-    - **learning_time_offset_hours** (*Optional*): Time constant to estimate the VOC algorithm offset from the history in hours. Past events will be forgotten after about twice the  learning time. Allowed values are in range 1 - 1000. The default value is 12 hour
-    - **learning_time_gain_hours** (*Optional*): Time constant to estimate the VOC algorithm gain from the history in hours. Past events will be forgotten after about twice the learning time. Allowed values are in range 1 - 1000. The default value is 12 hours.
-    - **gating_max_duration_minutes** (*Optional*): Maximum duration of gating in minutes (freeze of estimator during high VOC index signal). Zero disables the gating. Allowed values are in range 0 - 3000. The default value is 180 minutes.
-    - **std_initial** (*Optional*): Initial estimate for standard deviation. Lower value boosts events during initial learning period, but may result in larger device-todevice variations. Allowed values are in range 10 - 5000. The default value is 50.
-    - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output. Allowed values are in range 1 - 1000. The default value is 230.
+    - **index_offset** (*Optional*, integer): VOC index representing typical (average) conditions. Allowed values are in range 1 - 250. The default value is 100.
+    - **learning_time_offset_hours** (*Optional*, integer): Time constant to estimate the VOC algorithm offset from the history in hours. Past events will be forgotten after about twice the learning time. Allowed values are in range 1 - 1000. The default value is 12 hours.
+    - **learning_time_gain_hours** (*Optional*, integer): Time constant to estimate the VOC algorithm gain from the history in hours. Past events will be forgotten after about twice the learning time. Allowed values are in range 1 - 1000. The default value is 12 hours.
+    - **gating_max_duration_minutes** (*Optional*, integer): Maximum duration of gating in minutes (freeze of estimator during high VOC index signal). Zero disables the gating. Allowed values are in range 0 - 3000. The default value is 180 minutes.
+    - **std_initial** (*Optional*, integer): Initial estimate for standard deviation. Lower value boosts events during initial learning period, but may result in larger device-to-device variations. Allowed values are in range 10 - 5000. The default value is 50.
+    - **gain_factor** (*Optional*, integer): Gain factor to amplify or to attenuate the VOC index output. Allowed values are in range 1 - 1000. The default value is 230.
 
 - **nox** (*Optional*): NOx Index. Only available with SEN55, SEN65, SEN66 or SEN68. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
   - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.
 
-    - **index_offset** (*Optional*): NOx index representing typical (average) conditions. Allowed values are in range 1..250. The default value is 100.
-    - **learning_time_offset_hours** (*Optional*): Time constant to estimate the NOx algorithm offset from the history in hours. Past events will be forgotten after about twice the  learning time. Allowed values are in range 1..1000. The default value is 12 hour.
-    - **learning_time_gain_hours** (*Optional*): Time constant to estimate the NOx algorithm gain from the history in hours. Past events will be forgotten after about twice the learning time. Allowed values are in range 1..1000. The default value is 12 hours.
-    - **gating_max_duration_minutes** (*Optional*): Maximum duration of gating in minutes (freeze of estimator during high NOx index signal). Zero disables the gating. Allowed values are in range 0..3000. The default value is 180 minutes.
-    - **std_initial** (*Optional*): The initial estimate for standard deviation parameter has no impact for NOx. This parameter is still in place for consistency reasons with the VOC tuning parameters command. This parameter must always be set to 50.
-    - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output. Allowed values are in range 1..1000. The default value is 230.
+    - **index_offset** (*Optional*, integer): NOx index representing typical (average) conditions. Allowed values are in range 1..250. The default value is 1.
+    - **learning_time_offset_hours** (*Optional*, integer): Time constant to estimate the NOx algorithm offset from the history in hours. Past events will be forgotten after about twice the  learning time. Allowed values are in range 1..1000. The default value is 12 hour.
+    - **learning_time_gain_hours** (*Optional*, integer): Time constant to estimate the NOx algorithm gain from the history in hours. Past events will be forgotten after about twice the learning time. Allowed values are in range 1..1000. The default value is 12 hours.
+    - **gating_max_duration_minutes** (*Optional*, integer): Maximum duration of gating in minutes (freeze of estimator during high NOx index signal). Zero disables the gating. Allowed values are in range 0..3000. The default value is 720 minutes.
+    - **std_initial** (*Optional*, integer): The initial estimate for standard deviation parameter has no impact for NOx. This parameter is still in place for consistency reasons with the VOC tuning parameters command. This parameter must always be set to 50.
+    - **gain_factor** (*Optional*, integer): Gain factor to amplify or to attenuate the VOC index output. Allowed values are in range 1..1000. The default value is 230.
 
 - **hcho** (*Optional*): Formaldehyde (HCHO) in ppb. Only available with SEN68. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
-- **auto_cleaning_interval** (*Optional*): The periodic fan-cleaning interval in seconds. Only available with SEN5X series.
+- **auto_cleaning_interval** (*Optional*, integer): The periodic fan-cleaning interval in seconds. Only available with SEN5X series.
 
 - **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for quicker startups. Only available with SEN54, SEN55, SEN65, SEN66 and SEN68. Defaults to ``true``.
 
 - **temperature_compensation** (*Optional*): These parameters allow to compensate temperature effects of the design-in at customer side by applying a custom temperature offset to the ambient temperature. Only available with SEN54 and SEN55.
 
-  - **offset** (*Optional*): Temperature offset [°C]. Defaults to ``0``. Only available with SEN54 and SEN55.
-  - **normalized_offset_slope** (*Optional*): Normalized temperature offset slope. Defaults to ``0``. Only available with SEN54 and SEN55.
-  - **time_constant** (*Optional*): Time constant in seconds. Defaults to ``0``. Only available with SEN54 and SEN55.
+  - **offset** (*Optional*, integer): Temperature offset [°C]. Defaults to ``0``. Only available with SEN54 and SEN55.
+  - **normalized_offset_slope** (*Optional*, integer): Normalized temperature offset slope. Defaults to ``0``. Only available with SEN54 and SEN55.
+  - **time_constant** (*Optional*, integer): Time constant in seconds. Defaults to ``0``. Only available with SEN54 and SEN55.
 
-- **acceleration_mode** (*Optional*): Allowed value are ``low``, ``medium`` and ``high``. Defaults ``low``. Note: Only works with with SEN54 and SEN55 sensors.
+- **acceleration_mode** (*Optional*, enum): Allowed value are ``low``, ``medium`` and ``high``. Defaults ``low``. Note: Only works with with SEN54 and SEN55 sensors.
 
   By default, the RH/T acceleration algorithm is optimized for a sensor which is positioned in free air. If the sensor is integrated into another device, the ambient RH/T output values might not be optimal due to different thermal behavior.
   This parameter can be used to adapt the RH/T acceleration behavior for the actual use-case, leading in an improvement of the ambient RH/T output accuracy. There is a limited set of different modes available.
   Medium and high accelerations are particularly indicated for air quality monitors which are subjected to large temperature changes. Low acceleration is advised for stationary devices not subject to large variations in temperature.
 
-- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to ``0x69`` for the SEN5X sensors or ``0x6b`` for the SEN6X sensors.
+- **address** (*Optional*, integer): Manually specify the I²C address of the sensor. Defaults to ``0x69`` for the SEN5X sensors or ``0x6B`` for the SEN6X sensors.
 
 .. note::
 
