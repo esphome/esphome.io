@@ -11,12 +11,12 @@ standardized interface between camera hardware/software implementations and the 
 .. note::
 
     This component cannot be used directly. It serves as the base platform that specific camera 
-    implementations (like :doc:`esp32_camera`) build upon.
+    implementations (like :doc:`/components/esp32_camera`) build upon.
 
 Overview
 --------
 
-The camera component acts as a foundation for camera integrations, with :doc:`esp32_camera` being the 
+The camera component acts as a foundation for camera integrations, with :doc:`/components/esp32_camera` being the 
 first implementation using this framework.
 
 All camera implementations in ESPHome inherit from this base component, ensuring a consistent API 
@@ -34,7 +34,7 @@ Camera Platforms
 See Also
 --------
 
-- :doc:`esp32_camera`
-- :doc:`esp32_camera_web_server`
+- :doc:`/components/esp32_camera`
+- :doc:`/components/esp32_camera_web_server`
 - :apiref:`camera/camera.h`
 - :ghedit:`Edit`
