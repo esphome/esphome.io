@@ -55,7 +55,8 @@ Configuration variables:
 - **frequency** (**Required**, int): Frequency in Hz of the transceiver.
 - **hw_version** (**Required**, enum): Valid values are ``sx1261``, ``sx1262``, ``sx1268`` or ``llcc68``.
 - **modulation** (**Required**, enum): Modulation can be ``FSK`` or ``LORA``.
-- **pa_power** (**Optional**, int): Transmitter power, range is from -3 to 22 dBm.
+- **pa_power** (**Optional**, int): Transmitter power, range is from -3 to 15 dBm when ``hw_version`` is
+  ``sx1261`` and from -3 to 22 dBm otherwise.
 - **pa_ramp** (**Optional**, enum): Transmitter PA ramp, can be ``10us``, ``20us``, ``40us``, ``80us``,
   ``200us``, ``800us``, ``1700us`` or ``3400us``.
 - **rf_switch** (**Required**, bool): Used to indicate if DIO2 controls an external RF switch.
@@ -71,15 +72,15 @@ LoRa configuration variables:
   ``31_3kHz``, ``41_7kHz``, ``62_5kHz``, ``125_0kHz``, ``250_0kHz`` or ``500_0kHz``.
 - **payload_length** (**Optional**, int): If greater than zero implicit header mode is enabled and the
   packet size is fixed. If not configured explicit header mode is enabled and variable packet sizes can
-  be used. Maximum length is 256.
+  be used. Maximum length is 256. Must be greater than zero when using a spreading_factor of 6.
 - **crc_enable** (**Optional**, bool): Enables a payload CRC calculation/check.
 - **preamble_size** (**Optional**, int): Length of the preamble in symbols, minimum of 6. Defaults to 8.
 - **spreading_factor** (**Optional**, int): Spreading factor, values range from 6 to 12. Defaults to 7.
 - **coding_rate** (**Optional**, enum): Coding rate, values can be ``CR_4_5``, ``CR_4_6``, ``CR_4_7``
   or ``CR_4_8``. Defaults to ``CR_4_5``.
-- **sync_value** (**Optional**, list): Synchronization words. The value ``[0x34, 0x44]`` is reserved for
-  LoRaWAN networks and the value ``[0x14, 0x24]`` is meant for private networks. It is recommended to use
-  only these two sets of values. Defaults to ``[0x14, 0x24]``.
+- **sync_value** (**Optional**, list): Synchronization words, limited to two bytes. The value ``[0x34, 0x44]``
+  is reserved for LoRaWAN networks and the value ``[0x14, 0x24]`` is meant for private networks. It is
+  recommended to use only these two sets of values. Defaults to ``[0x14, 0x24]``.
 
 FSK configuration variables:
 *********************************
@@ -96,8 +97,8 @@ FSK configuration variables:
   AFC and AGC to adjust.
 - **preamble_detect** (**Optional**, int): Minimum length of the preamble in bytes required by the receiver.
   Preamble detector is disabled if the size is 0 and its value capped at 4.
-- **sync_value** (**Optional**, list): Synchronization bytes found after the preamble and before the
-  payload.
+- **sync_value** (**Optional**, list): Synchronization bytes, list of 1 to 8 bytes, found after the preamble
+  and before the payload.
 - **deviation** (**Optional**, int): Transmitter FSK frequency deviation, values range from 0 to 100,000 Hz.
 - **shaping** (**Optional**, enum): Transmitter data shaping can be ``GAUSSIAN_BT_0_3``, ``GAUSSIAN_BT_0_5``,
   ``GAUSSIAN_BT_0_7``, ``GAUSSIAN_BT_1_0`` or ``NONE``.
