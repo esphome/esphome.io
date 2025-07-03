@@ -1076,6 +1076,7 @@ Miscellaneous Components
 
 .. imgtable::
 
+    Camera, components/camera, camera.svg, dark-invert
     ESP32 Camera, components/esp32_camera, camera.svg, dark-invert
     Exposure Notifications, components/exposure_notifications, exposure_notifications.png
     GPS, components/gps, crosshairs-gps.svg, dark-invert
