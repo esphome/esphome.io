@@ -249,7 +249,7 @@ This trigger is activated every time the media player plays an announcement.
 .. _media_player-on_turn_off_trigger:
 
 ``media_player.on_turn_off`` Trigger
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This trigger is activated every time the media player is turned off.
 
@@ -264,7 +264,7 @@ This trigger is activated every time the media player is turned off.
 .. _media_player-on_turn_on_trigger:
 
 ``media_player.on_turn_on`` Trigger
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This trigger is activated every time the media player is turned on.
 
@@ -339,7 +339,7 @@ This condition checks if the media player is playing an announcement.
 .. _media_player-is_off_condition:
 
 ``media_player.is_off`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This condition checks if the media player is turned off.
 
@@ -354,7 +354,7 @@ This condition checks if the media player is turned off.
 .. _media_player-is_on_condition:
 
 ``media_player.is_on`` Condition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This condition checks if the media player is turned on.
 
