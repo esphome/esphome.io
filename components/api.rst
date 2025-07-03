@@ -91,7 +91,7 @@ Configuration variables:
   (65.535 seconds). Defaults to ``100ms``.
   
   .. note::
-  
+
       Setting ``batch_delay: 0ms`` enables immediate sending mode for state updates. This is useful for
       applications that require real-time responsiveness, such as IR remote binary sensors where rapid
       ON→OFF transitions must be preserved. However, this will increase network traffic and may impact
