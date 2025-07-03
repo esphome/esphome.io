@@ -7,7 +7,7 @@ Camera Component
 
 The ``camera`` component is a modular framework.
 
-Captured images can be rendered directly in Home Assisant, or displayed locally using the ``esp32_camera_web_server``
+Captured images can be rendered directly in Home Assistant, or displayed locally using the ``esp32_camera_web_server``
 running on the ESP32.
 
 Common use cases include:
