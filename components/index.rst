@@ -35,6 +35,7 @@ Supported Microcontrollers
     RP2040, components/rp2040, rp2040.svg
     BK72xx, components/libretiny, bk72xx.svg
     RTL87xx, components/libretiny, rtl87xx.svg
+    LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
 
 Microcontroller Peripherals
@@ -89,6 +90,7 @@ Network Hardware
 
     WiFi, components/wifi, network-wifi.svg, dark-invert
     ESP32 Ethernet, components/ethernet, ethernet.svg, dark-invert
+    ESP32 Hosted, components/esp32_hosted, network-wifi.svg, dark-invert
     OpenThread, components/openthread, openthread.png
 
 Network Protocols
@@ -179,6 +181,7 @@ I/O Expanders/Multiplexers
     PCA6416A, components/pca6416a, pca6416a.svg
     PCA9554, components/pca9554, pca9554a.jpg
     PCF8574, components/pcf8574, pcf8574.jpg
+    PI4IOE5V6408, components/pi4ioe5v6408, pca9554a.jpg
     SN74HC165, components/sn74hc165, sn74hc595.jpg
     SN74HC595, components/sn74hc595, sn74hc595.jpg
     SX1509, components/sx1509, sx1509.jpg
@@ -440,6 +443,7 @@ Light
     LTR559, components/sensor/ltr_als_ps, ltr559.jpg, Lux & Proximity
     LTR659, components/sensor/ltr_als_ps, ltr-ps.jpg, Proximity
     MAX44009, components/sensor/max44009, max44009.svg, Lux
+    OPT3001, components/sensor/opt3001, opt3001.jpg, Lux
     TCS34725, components/sensor/tcs34725, tcs34725.jpg, Lux & RGB colour
     TSL2561, components/sensor/tsl2561, tsl2561.jpg, Lux
     TSL2591, components/sensor/tsl2591, tsl2591.jpg, Lux
@@ -453,7 +457,6 @@ Magnetic
 .. imgtable::
 
     AS5600, components/sensor/as5600, as5600.jpg, 12-Bit Magnetic Position Sensor
-    ESP32 Hall Sensor, components/sensor/esp32_hall, magnet.svg, ESP internal, dark-invert
     HMC5883L, components/sensor/hmc5883l, hmc5883l.jpg, 3-Axis magnetometer
     MLX90393, components/sensor/mlx90393, mlx90393.jpg, 3-Axis magnetometer
     MMC5603, components/sensor/mmc5603, mmc5603.jpg, 3-Axis magnetometer
