@@ -120,14 +120,14 @@ This action will pause or resume the current playback.
 .. _media_player-turn_off:
 
 ``media_player.turn_off`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will turn off the media player.
 
 .. _media_player-turn_on:
 
 ``media_player.turn_on`` Action
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will turn on the media player.
 
