@@ -18,6 +18,8 @@ ESPHome devices with a microphone are able to stream the audio to Home Assistant
     **Crashes are likely to occur** if you include too many additional components in your device's
     configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
     combination with Voice Assistant and/or other audio components.
+    
+    If you experience crashes, see the :doc:`/guides/troubleshooting` guide for how to get a backtrace.
 
 Configuration variables:
 ------------------------

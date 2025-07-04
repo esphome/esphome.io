@@ -48,6 +48,7 @@ Configuration variables:
 - **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to ``true``.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to ``false``.
 - **volume_increment** (*Optional*, percentage): Increment amount that the ``media_player.volume_up`` and ``media_player.volume_down`` actions will increase or decrease volume by. Defaults to ``5%``.
+- **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to ``50%``.
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to ``0%``.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to ``100%``.
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.

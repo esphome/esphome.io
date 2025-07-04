@@ -6,7 +6,7 @@ SCD4X CO₂, Temperature and Relative Humidity Sensor
     :image: scd4x.jpg
 
 The ``scd4x`` sensor platform  allows you to use your Sensirion SCD4X CO₂
-(`datasheet <https://sensirion.com/media/documents/48C4B7FB/66E05452/CD_DS_SCD4x_Datasheet_D1.pdf>`__) sensors with ESPHome.
+(`datasheet <https://sensirion.com/media/documents/48C4B7FB/67FE0194/CD_DS_SCD4x_Datasheet_D1.pdf>`__) sensors with ESPHome.
 The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for this sensor to work.
 
 .. figure:: images/scd4x.jpg
@@ -89,14 +89,16 @@ Actions:
 
 This :ref:`action <config-action>` manually calibrates the sensor to the provided value in ppm.
 Operate the SCD4x in the operation mode later used in normal sensor operation (periodic measurement, low power periodic measurement or single shot) for > 3 minutes in an environment with homogenous and constant CO2 concentration before performing a forced recalibration.
-As of April 2022 the average fresh air Co² concentration is 419 ppm.
+As of March 2025, the global monthly mean CO₂ concentration is 426 ppm.
 
 .. code-block:: yaml
 
     on_...:
       then:
         - scd4x.perform_forced_calibration:
-            value: 419   # outside average April 2022
+            # Global Monthly Mean CO₂
+            # https://gml.noaa.gov/ccgg/trends/global.html
+            value: 426
             id: my_scd41
 
 value can also be a template, for example to define a Home Assistant calibration action:
