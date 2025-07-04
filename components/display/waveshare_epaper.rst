@@ -124,6 +124,7 @@ Configuration variables:
   - ``2.90inv2-r2`` - 2.9in V2 display, but with different initialization and full/partial display refresh management than ``2.90inv2``
   - ``2.90in-b`` - B/W rendering only
   - ``2.90in-bV3`` - B/W rendering only
+  - ``3.70in-g`` - Four color Black/White/Red/Yellow
   - ``4.20in``
   - ``4.20in-bV2`` - B/W rendering only
   - ``gdey042t81`` - GoodDisplay GDEY042T81 4.2" B/W
