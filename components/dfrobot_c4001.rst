@@ -1,5 +1,5 @@
 DFRobot mmWave C4001 Radar
-====================
+==========================
 
 .. seo::
     :description: Instructions for setting up DFRobot mmWave C4001 Radar
@@ -16,7 +16,7 @@ There are two variants:
 + SEN0609 has a 100° horizontal and 40° vertical field of view, 16 meter presence detection range and 25 meter motion detection range.
 + SEN0610 has a 100° horizontal and 80° vertical field of view, 8 meter presence detection range and 12 meter motion detection range.
 
-..  note::
+.. note::
 
     Some settings have different ranges depending on the variant used. This component treats both variants the same, so it is your responsibility to make sure your configuration sets these values appropriately.
 
@@ -31,7 +31,7 @@ This will tell the sensor to store the new settings in flash and make them opera
 More information on the C4001 (SEN0609) sensor is available [here](https://www.dfrobot.com/product-2793.html). Information on the C4001 (SEN0610) sensor is available [here](https://www.dfrobot.com/product-2795.html).
 
 
-.. figure:: component/images/dfrobot_sen0609-full.jpg
+.. figure:: images/dfrobot_sen0609-full.jpg
     :align: center
     :width: 75%
 
@@ -108,8 +108,8 @@ Multiple instances of this component may be defined if multiple :doc:`/component
       mode: PRESENCE
       flip_x_axis: false
     
-Configuration variables
-***********************
+Configuration variables:
+************************
 
 - **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are ``PRESENCE`` and ``SPEED_AND_DISTANCE``.
 
@@ -135,7 +135,7 @@ Configuration variables:
   All Options from :ref:`Switch <config-binary_sensor>`.
 
 Button
-*************
+******
 
 .. code-block:: yaml
 
@@ -228,7 +228,7 @@ Configuration variables:
 - **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
 
 Sensors
-******
+*******
 
 .. code-block:: yaml
 
@@ -256,7 +256,7 @@ Actions
 *******
 
 ``dfrobot_c4001.factory_reset`` Action
-***********************************
+**************************************
 
 .. code-block:: yaml
 
@@ -282,7 +282,7 @@ Will perform a factory reset of the module and all configuration values will go 
 See Also
 --------
 - :ref:`UART bus <uart>`
-- :apiref:`sen5x/sen5x.h`
+- :apiref:`dfrobot_c4001/dfrobot_c4001.h`
 - `DFRobot mmWave C4001 (SEN0609) Radar Wiki page <https://wiki.dfrobot.com/SKU_SEN0609_C4001_mmWave_Presence_Sensor_25m>`__
 - `DFRobot mmWave C4001 (SEN0610) Radar Wiki page <https://wiki.dfrobot.com/SKU_SEN0610_Gravity_C4001_mmWave_Presence_Sensor_12m_I2C_UART>`__
 - :ghedit:`Edit`
