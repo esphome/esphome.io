@@ -3,7 +3,7 @@ DFRobot mmWave C4001 Radar
 
 .. seo::
     :description: Instructions for setting up DFRobot mmWave C4001 Radar
-    :image: dfrobot_sen0609-full.jpg
+    :image: dfrobot_sen0609.jpg
     :keywords: mmWave
 
 The DFRobot C4001 (SEN0609 or SEN0610) is a millimeter-wave presence detector. The C4001 millimeter-wave presence sensor 
@@ -31,7 +31,7 @@ This will tell the sensor to store the new settings in flash and make them opera
 More information on the C4001 (SEN0609) sensor is available [here](https://www.dfrobot.com/product-2793.html). Information on the C4001 (SEN0610) sensor is available [here](https://www.dfrobot.com/product-2795.html).
 
 
-.. figure:: component/images/dfrobot_sen0609.jpg
+.. figure:: component/images/dfrobot_sen0609-full.jpg
     :align: center
     :width: 75%
 
