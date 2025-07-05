@@ -44,22 +44,26 @@ This example show how to configure Thread Dataset for a node.
       enable_ipv6: true
     
     openthread:
+      device_type: FTD
       channel: 13
       network_name: OpenThread-8f28
       network_key: 0xdfd34f0f05cad978ec4e32b0413038ff
       pan_id: 0x8f28
       ext_pan_id: 0xd63e8e3e495ebbc3
       pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
+      mesh_local_prefix: fd53:145f:ed22:ad81::/64
       force_dataset: true
 
 Configuration variables:
 
+- **device_type** (*Optional*, enum): OpenThread Device Type, either ``FTD`` or ``MTD``. Defaults to ``FTD``.
 - **channel** (int): Channel number from 11 to 26
 - **network_name** (string): A human-readable Network Name
 - **network_key** (string): OpenThread network key
 - **panid** (string): 2-byte Personal Area Network ID (PAN ID)
 - **extpanid** (string): 8-byte Extended Personal Area Network ID (XPAN ID)
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
+- **mesh_local_prefix** (ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
 
 
 Configuration examples with dataset TLV
@@ -76,3 +80,12 @@ It is also possible to supply the entire dataset TLVs from the Thread informatio
 Configuration variables:
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
+
+
+OpenThread Device Type
+----------------------
+See https://openthread.io/guides/thread-primer/node-roles-and-types
+
+- **FTD** - Full Thread Device, sets CONFIG_OPENTHREAD_FTD, observed behavior is that this enables a REED (Router Eligible End Device) and can be promoted to a Router.
+- **MTD** - Minimal Thread Device, sets CONFIG_OPENTHREAD_MTD, cannot be promoted to Router.  Switching back from MTD to FTD will not result in a REED unless Non Volatile Storage (NVS) is cleared.
+

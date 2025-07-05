@@ -84,7 +84,7 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
-ESP32 IDF configuration variables:
+ESP32 configuration variables:
 **********************************
 
 - **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
@@ -112,26 +112,6 @@ ESP32 IDF configuration variables:
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
   the DMA buffer size and can be set to a large value.
-
-ESP32 Arduino configuration variables:
-**************************************
-
-- **rmt_channel** (*Optional*, int): The RMT channel to use. The following ESP32 variants have these channels available:
-
-  .. csv-table::
-      :header: "ESP32 Variant", "Channels"
-
-      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-C3", "2, 3"
-      "ESP32-C6", "2, 3"
-      "ESP32-H2", "2, 3"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "4, 5, 6, 7"
-
-- **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
-  number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
-- **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
-  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``
 
 .. note::
 
@@ -268,6 +248,17 @@ The ``remote_receiver`` binary sensor lets you track when a button on a remote c
 
 Each time the pre-defined signal is received, the binary sensor will briefly go ON and then immediately OFF.
 
+.. note::
+
+    **For IR Remote Binary Sensors**: If you're using binary sensors to track IR remote button presses and
+    experiencing issues with rapid button presses not being detected (e.g., quick ON→OFF transitions being missed),
+    consider setting ``batch_delay: 0ms`` in your :doc:`API configuration </components/api>`. This will send state
+    changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
+    network traffic and should only be used when necessary.
+    
+    For new projects, consider using automations with the ``on_*`` triggers (described above)
+    instead of binary sensors, as they are better suited for handling momentary button press events.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -277,6 +268,23 @@ Each time the pre-defined signal is received, the binary sensor will briefly go 
         panasonic:
           address: 0x4004
           command: 0x100BCBD
+
+.. code-block:: yaml
+
+    # Example with batch_delay: 0 for rapid button presses
+    api:
+      batch_delay: 0ms  # Send state changes immediately
+    
+    remote_receiver:
+      pin: GPIOXX
+      dump: all
+    
+    binary_sensor:
+      - platform: remote_receiver
+        name: "TV Remote Power"
+        nec:
+          address: 0x1234
+          command: 0x5678
 
 Configuration variables:
 ************************
