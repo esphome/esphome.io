@@ -31,7 +31,7 @@ This will tell the sensor to store the new settings in flash and make them opera
 More information on the C4001 (SEN0609) sensor is available [here](https://www.dfrobot.com/product-2793.html). Information on the C4001 (SEN0610) sensor is available [here](https://www.dfrobot.com/product-2795.html).
 
 
-.. figure:: images/dfrobot_sen0609-full.jpg
+.. figure:: images/dfrobot_sen0609_full.jpg
     :align: center
     :width: 75%
 
