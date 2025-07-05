@@ -29,7 +29,7 @@ There are only two settings for this mode, ``micro_motion_enable switch`` and ``
 
     The C4001 sensor maintains settings in flash. When powered on these settings are loaded from flash and made operational. To change the configuration of the sensor dial in the ``number`` settings you need and hit the ``config_save`` button.
 
-More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>__.
+More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>`__.
 
 
 .. figure:: images/dfrobot_sen0609_full.jpg
