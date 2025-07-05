@@ -41,12 +41,6 @@ More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.
 .. code-block:: yaml
 
     # Sample configuration entry example
-    external_components:
-      - source:
-          type: git
-          url: https://github.com/mikelawrence/esphome-components
-        components: [ dfrobot_c4001 ]
-
     dfrobot_c4001:
       id: mmwave_sensor
       uart_id: mmwave_uart
@@ -94,7 +88,7 @@ More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.
 
 
 Hub Component
-=============
+-------------
 
 The hub component ``dfrobot_c4001:`` used use to define the ``mode`` of the sensor. A ``uart:`` is required in 
 your configuration with both the TX and RX pins defined and the baud rate must be set to ``9600``.
@@ -109,12 +103,12 @@ Multiple instances of this component may be defined if multiple :doc:`/component
       mode: PRESENCE
     
 Configuration variables:
-------------------------
+************************
 
 - **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are ``PRESENCE`` and ``SPEED_AND_DISTANCE``.
 
 Binary Sensor
-=============
+-------------
 
 .. code-block:: yaml
 
@@ -127,7 +121,7 @@ Binary Sensor
           name: Occupancy via UART
 
 Configuration variables:
-------------------------
+************************
 
 - **config_changed** (*Optional*): When ``true`` the current sensor configuration has been changed but not saved to the sensor. 
   All Options from :ref:`Switch <config-binary_sensor>`.
@@ -135,7 +129,7 @@ Configuration variables:
   All Options from :ref:`Switch <config-binary_sensor>`.
 
 Button
-======
+------
 
 .. code-block:: yaml
 
@@ -145,7 +139,7 @@ Button
           name: Config Save
 
 Configuration variables:
-------------------------
+************************
 
 - **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Switch <config-button>`.
 
@@ -156,7 +150,7 @@ Configuration variables:
     Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
 
 Number
-======
+------
 
 .. code-block:: yaml
 
@@ -181,7 +175,7 @@ Number
           name: Inhibit Time
 
 Configuration variables:
-------------------------
+************************
 
 - **min_range** (*Optional*): This is the minimum detection range. Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The manual recommends not changing this value. 
   The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
@@ -209,7 +203,7 @@ Configuration variables:
   Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-number>`.
 
 Switch
-======
+------
 
 .. code-block:: yaml
 
@@ -222,13 +216,13 @@ Switch
           name: Micro Motion Enable
 
 Configuration variables:
-------------------------
+************************
 
 - **led_enable** (*Optional*): When turned on the green LED will flash when the sensor has been started. The blue LED cannot be disabled with this command. All Options from :ref:`Switch <config-switch>`.
 - **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
 
 Sensors
-=======
+-------
 
 .. code-block:: yaml
 
@@ -242,7 +236,7 @@ Sensors
         target_energy:
 
 Configuration variables:
-------------------------
+************************
 
 - **target_distance** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates distance to target in meters (m). When **occupancy** binary sensor is ```false``` this sensor switches to 0.0 indicating invalid data. 
   Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-sensor>`. 
@@ -253,7 +247,7 @@ Configuration variables:
 
 
 Actions
-=======
+-------
 
 ``dfrobot_c4001.factory_reset`` Action
 --------------------------------------
