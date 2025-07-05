@@ -507,6 +507,7 @@ Motion
     APDS9960, components/sensor/apds9960, apds9960.jpg, Colour & Gesture
     BMI160, components/sensor/bmi160, bmi160.jpg, Accelerometer & Gyroscope
     LD2410, components/sensor/ld2410, ld2410.jpg, Motion & Presence
+    LD2412, components/sensor/ld2412, ld2412.png, Motion & Presence
     LD2420, components/sensor/ld2420, ld2420.jpg, Motion & Presence
     LD2450, components/sensor/ld2450, ld2450.png, Motion & Presence
     MPU6050, components/sensor/mpu6050, mpu6050.jpg, Accelerometer & Gyroscope
