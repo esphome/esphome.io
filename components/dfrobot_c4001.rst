@@ -17,6 +17,7 @@ There are two variants:
 + SEN0610 has a 100° horizontal and 80° vertical field of view, 8 meter presence detection range and 12 meter motion detection range.
 
 ..  note::
+  
     Some settings have different ranges depending on the variant used. This component treats both variants the same, so it is your responsibility to make sure your configuration sets these values appropriately.
 
 The sensor can operate in one of two modes, ```Presence``` and ```Speed and Distance```. In ```Presence``` mode the sensor provides a singular occupancy output. 
