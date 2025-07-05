@@ -374,21 +374,23 @@ Not only the end, but also the start value of the bar can be set, which changes 
 
 **Configuration variables:**
 
-- **anim_time** (*Optional*, :ref:`Time <config-time>`): Sets the animation time if the value is set with ``animated: true``.
 - **animated** (*Optional*, boolean): Animate the indicator on boot to the starting value. Defaults to ``true``.
-- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize, all the typical background properties.
-- **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to ``100``.
-- **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to ``0``.
-- **mode** (*Optional*, string): ``NORMAL``: the indicator is drawn from the minimum value to the current. ``REVERSE``: the indicator is drawn counter-clockwise from the maximum value to the current. ``SYMMETRICAL``: the indicator is drawn from the middle point to the current value. Defaults to ``NORMAL``.
-- **value** (*Optional*, int8): Actual value of the indicator at start, in ``min_value``-``max_value`` range. Defaults to ``0``.
+- **indicator** (*Optional*, int): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize, all the typical background properties.
+- **max_value** (*Optional*, int): Maximum value of the indicator. Defaults to ``100``.
+- **min_value** (*Optional*, int): Minimum value of the indicator. Defaults to ``0``.
+- **mode** (*Optional*, string): The mode of the bar. Defaults to ``NORMAL``.
+   * ``NORMAL``: the indicator is drawn from the minimum value to the current value.
+   * ``RANGE``: the indicator is drawn from the start value to the current value.
+   * ``SYMMETRICAL``: the indicator is symmetrically drawn from the middle point to the current value.
+- **start_value** (*Optional*, int): For ``RANGE`` mode, the start value of the indicator. Defaults to ``0``.
+- **value** (*Optional*, int): Value for the indicator end, in ``min_value``-``max_value`` range. Defaults to ``0``.
 - Style options from :ref:`lvgl-styling`. The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Actions:**
 
 - ``lvgl.bar.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of bar widgets to be updated.
-    - **animated** (*Optional*, boolean): Animate the indicator to the new value. Defaults to ``true``.
-    - **value** (*Optional*, int8): New value of the indicator.
+    - Any of the bar options as listed above.
     - Style options from :ref:`lvgl-styling`. The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Triggers:**

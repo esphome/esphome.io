@@ -8,7 +8,8 @@ GPIO Binary Sensor
     :image: gpio.svg
 
 The GPIO Binary Sensor platform allows you to use any input pin on your
-device as a binary sensor.
+device as a binary sensor. By default, it uses hardware interrupts for 
+efficient state change detection with minimal CPU usage.
 
 .. figure:: images/gpio-ui.png
     :align: center
@@ -23,11 +24,60 @@ device as a binary sensor.
         name: "Living Room Window"
         device_class: window
 
+    # Example with interrupt configuration
+    binary_sensor:
+      - platform: gpio
+        pin: GPIO13
+        name: "Motion Sensor"
+        # use_interrupt: true  # Default - uses interrupts
+        interrupt_type: RISING  # Only detect low-to-high transitions
+
+    # Example with polling mode (legacy behavior)
+    binary_sensor:
+      - platform: gpio
+        pin: GPIO14
+        name: "Legacy Sensor"
+        use_interrupt: false  # Use polling instead of interrupts
+
 Configuration variables:
 ------------------------
 
-- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to periodically check.
+- **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to monitor.
+- **use_interrupt** (*Optional*, boolean): Use hardware interrupts instead of polling for better 
+  performance and lower CPU usage. Defaults to ``true``. Only supported on internal GPIO pins.
+- **interrupt_type** (*Optional*, string): The type of interrupt to use. One of:
+
+  - ``ANY`` (default): Trigger on any edge change (high to low or low to high)
+  - ``RISING``: Trigger only on rising edge (low to high)
+  - ``FALLING``: Trigger only on falling edge (high to low)
+
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+
+Interrupt Mode vs Polling Mode
+------------------------------
+
+The GPIO binary sensor supports two modes of operation:
+
+**Interrupt Mode** (default, ``use_interrupt: true``):
+
+- Uses hardware interrupts to detect pin state changes
+- Extremely efficient - up to 98% lower CPU usage
+- Updates are processed once per loop cycle (same as polling mode)
+- Transitions shorter than the loop interval are ignored for backwards compatibility with polling mode
+- Only processes when the pin actually changes state
+- Recommended for most use cases
+
+**Polling Mode** (``use_interrupt: false``):
+
+- Continuously reads the pin state in the main loop
+- Higher CPU usage but simpler implementation
+- Transitions shorter than the loop interval are ignored
+- Use only when interrupts are not supported or for compatibility
+
+.. note::
+
+    Interrupt mode is only available on internal GPIO pins. External GPIO 
+    expanders (like PCF8574) will automatically fall back to polling mode.
 
 Activating internal pullups
 ---------------------------
