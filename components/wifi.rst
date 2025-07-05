@@ -11,7 +11,7 @@ for you. You need to have a network configuration (either Wifi or Ethernet)
 or ESPHome will fail in the config validation stage. You also can't have both Wifi
 and Ethernet setup in same time (even if your ESP has both wired).
 
-It’s recommended to provide a static IP for your node, as it can
+It's recommended to provide a static IP for your node, as it can
 dramatically improve connection times.
 
 .. code-block:: yaml
@@ -343,7 +343,7 @@ This action connects to an SSID and password, optionally saving it in persistent
             password: "VerySafePassword"
             save: true
             timeout: 30000ms
-            on_connect: 
+            on_connect:
               - logger.log: "Connected to WiFi!"
             on_error:
               - logger.log: "Failed to connect to WiFi!"

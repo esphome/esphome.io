@@ -32,6 +32,28 @@ Configuration variables:
 - **pin** (**Required**, number): The pin the sensor bus is connected to. Please note that 1-wire is a bi-directional bus so it requires both input and output from the pin.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.  Required if you have multiple busses.
 
+DS2484
+------
+
+The ``ds2484`` platform provides access to 1-Wire bus via DS2484 device using the :ref:`I²C Bus <i2c>` for communication.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    one_wire:
+      - platform: ds2484
+        active_pullup: true
+
+Configuration variables:
+************************
+
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+  Required if you have multiple busses.
+- **active_pullup** (*Optional*, defaults to ``false``): enables DS2484 `active_pullup`.
+- **strong_pullup** (*Optional*, defaults to ``false``): enables DS2484 `strong_pullup`.
+- **address** (*Optional*, int): The I²C address of the device. Defaults to ``0x18``.
+- **i2c_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :doc:`/components/i2c` if you want
+  to use multiple I2C buses.
 
 Getting Sensor IDs
 ******************

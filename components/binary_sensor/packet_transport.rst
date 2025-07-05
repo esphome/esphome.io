@@ -1,20 +1,31 @@
-UDP Binary Sensor
-=================
+Packet Transport Binary Sensor
+==============================
 
 .. seo::
-    :description: Instructions for setting up a UDP binary sensor.
-    :image: udp.svg
+    :description: Instructions for setting up a packet transport binary sensor.
+    :image: packet_transport.svg
 
-The ``udp`` binary sensor platform allows you to receive binary sensor data directly from another ESPHome node.
+The ``packet_transport`` binary sensor platform allows you to receive binary sensor data directly from another ESPHome node.
+It requires a ``packet_transport`` component to be configured.
 
 .. code-block:: yaml
 
     # Example configuration entry
     binary_sensor:
-      - platform: udp
+      - platform: packet_transport
         id: switch_status
         provider: light-switch
         remote_id: light_switch
+
+      - platform: packet_transport
+        id: provider_status
+        type: status
+        name: Provider Status
+        provider: light-switch
+
+     packet_transport:
+       - platform: ...
+
 
 Configuration variables
 -----------------------
@@ -22,6 +33,7 @@ Configuration variables
 -  **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 -  **provider** (**Required**, string): The name of the provider node.
 -  **remote_id** (*Optional*, :ref:`config-id`): The ID of the original binary sensor in the provider device. If not specified defaults to the ID configured with ``id:``.
+-  **type** (*Optional*, string): With ``type: status``, the sensor will report the connection status to the referenced provider node (online/offline). Defaults to ``data`` where a remote entity value is used.
 -  **name** (*Optional*, string): The name of the binary sensor.
 -  **internal** (*Optional*, boolean): Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to ``true`` if name is not set, required if name is provided.
 -  All other options from :ref:`Binary Sensor <config-binary_sensor>`.
@@ -42,8 +54,7 @@ configured.
 See Also
 --------
 
-- :doc:`/components/udp`
+- :doc:`/components/packet_transport/index`
 - :doc:`/components/sensor/index`
 - :ref:`automation`
-- :apiref:`udp/udp_component.h`
 - :ghedit:`Edit`
