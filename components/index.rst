@@ -503,6 +503,7 @@ Motion
 
     APDS9960, components/sensor/apds9960, apds9960.jpg, Colour & Gesture
     BMI160, components/sensor/bmi160, bmi160.jpg, Accelerometer & Gyroscope
+    DFRobot C4001 mmWave Radar, components/dfrobot_c4001, dfrobot_sen0609.jpg
     LD2410, components/sensor/ld2410, ld2410.jpg, Motion & Presence
     LD2420, components/sensor/ld2420, ld2420.jpg, Motion & Presence
     LD2450, components/sensor/ld2450, ld2450.png, Motion & Presence
@@ -610,6 +611,7 @@ Presence Detection
 
     AT581X, components/at581x, at581x.png
     DFRobot mmWave Radar, components/dfrobot_sen0395, dfrobot_sen0395.jpg
+    DFRobot C4001 mmWave Radar, components/dfrobot_c4001, dfrobot_sen0609.jpg
     LD2410, components/sensor/ld2410, ld2410.jpg
     LD2420, components/sensor/ld2420, ld2420.jpg
     LD2450, components/sensor/ld2450, ld2450.png
