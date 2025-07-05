@@ -6,7 +6,7 @@ DFRobot mmWave C4001 Radar
     :image: dfrobot_sen0609.jpg
     :keywords: mmWave
 
-The DFRobot C4001 (SEN0609 or SEN0610) is a millimeter-wave presence detector. The C4001 millimeter-wave presence sensor 
+The DFRobot C4001 (SEN0609 or SEN0610) is a millimeter-wave presence detector. This presence sensor 
 has the advantage of being able to detect both static and moving objects. It also has a relatively strong anti-interference 
 ability, making it less susceptible to factors such as temperature changes, variations in ambient light, and environmental noise. 
 Whether a person is sitting, sleeping, or in motion, the sensor can quickly detect their presence.
@@ -20,15 +20,16 @@ There are two variants:
 
     Some settings have different ranges depending on the variant used. This component treats both variants the same, so it is your responsibility to make sure your configuration sets these values appropriately.
 
-The sensor can operate in one of two modes, ```Presence``` and ```Speed and Distance```. In ```Presence``` mode the sensor provides a singular occupancy output. 
-The presence output once presence is detected will stay on for a period that can be configured. In ```Speed and Distance``` mode the occupancy binary sensor indicates if a target is being tracked or not. 
-Each time the sensor indicates presence it also outputs target distance, target speed and target energy. In ```Speed and Distance``` mode all of these parameter update frequently. 
-There are only two settings for this mode, micro_motion_enable switch and threshold_factor number.
+The sensor can operate in one of two modes, ``Presence`` and ``Speed and Distance``. In ``Presence`` mode the sensor provides a singular occupancy output. 
+The presence output once presence is detected will stay on for a period that can be configured. In ``Speed and Distance`` mode the occupancy binary sensor indicates if a target is being tracked or not. 
+Each time the sensor indicates presence it also outputs target distance, target speed and target energy. In ``Speed and Distance`` mode all of these parameter update frequently. 
+There are only two settings for this mode, ``micro_motion_enable switch`` and ``threshold_factor number``.
 
-The C4001 sensor maintains settings in flash. When powered on these settings are loaded from flash and made operational. To change the configuration of the sensor dial in the setting you need and hit the config_save button. 
-This will tell the sensor to store the new settings in flash and make them operational. You only need to do this once.
+.. note::
 
-More information on the C4001 (SEN0609) sensor is available [here](https://www.dfrobot.com/product-2793.html). Information on the C4001 (SEN0610) sensor is available [here](https://www.dfrobot.com/product-2795.html).
+    The C4001 sensor maintains settings in flash. When powered on these settings are loaded from flash and made operational. To change the configuration of the sensor dial in the ``number`` settings you need and hit the ``config_save`` button.
+
+More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>__.
 
 
 .. figure:: images/dfrobot_sen0609_full.jpg
@@ -93,9 +94,9 @@ More information on the C4001 (SEN0609) sensor is available [here](https://www.d
 
 
 Hub Component
-*************
+=============
 
-The hub component ``dfrobot_c4001:`` used use to define the ```mode`` of the sensor. When you define ``dfrobot_c4001:`` you'll need to have a ``uart:`` entry in
+The hub component ``dfrobot_c4001:`` used use to define the ``mode`` of the sensor. A ``uart:`` is required in 
 your configuration with both the TX and RX pins defined and the baud rate must be set to ``9600``.
 
 Multiple instances of this component may be defined if multiple :doc:`/components/uart` components are available:
@@ -106,15 +107,14 @@ Multiple instances of this component may be defined if multiple :doc:`/component
       id: mmwave_sensor
       uart_id: mmwave_uart
       mode: PRESENCE
-      flip_x_axis: false
     
 Configuration variables:
-************************
+------------------------
 
 - **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are ``PRESENCE`` and ``SPEED_AND_DISTANCE``.
 
 Binary Sensor
-*************
+=============
 
 .. code-block:: yaml
 
@@ -127,7 +127,7 @@ Binary Sensor
           name: Occupancy via UART
 
 Configuration variables:
-************************
+------------------------
 
 - **config_changed** (*Optional*): When ``true`` the current sensor configuration has been changed but not saved to the sensor. 
   All Options from :ref:`Switch <config-binary_sensor>`.
@@ -135,7 +135,7 @@ Configuration variables:
   All Options from :ref:`Switch <config-binary_sensor>`.
 
 Button
-******
+======
 
 .. code-block:: yaml
 
@@ -145,7 +145,7 @@ Button
           name: Config Save
 
 Configuration variables:
-************************
+------------------------
 
 - **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Switch <config-button>`.
 
@@ -155,8 +155,8 @@ Configuration variables:
     Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
     Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
 
-Numbers
-*******
+Number
+======
 
 .. code-block:: yaml
 
@@ -181,7 +181,7 @@ Numbers
           name: Inhibit Time
 
 Configuration variables:
-************************
+------------------------
 
 - **min_range** (*Optional*): This is the minimum detection range. Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The manual recommends not changing this value. 
   The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
@@ -209,7 +209,7 @@ Configuration variables:
   Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-number>`.
 
 Switch
-******
+======
 
 .. code-block:: yaml
 
@@ -222,13 +222,13 @@ Switch
           name: Micro Motion Enable
 
 Configuration variables:
-************************
+------------------------
 
 - **led_enable** (*Optional*): When turned on the green LED will flash when the sensor has been started. The blue LED cannot be disabled with this command. All Options from :ref:`Switch <config-switch>`.
 - **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
 
 Sensors
-*******
+=======
 
 .. code-block:: yaml
 
@@ -242,7 +242,7 @@ Sensors
         target_energy:
 
 Configuration variables:
-************************
+------------------------
 
 - **target_distance** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates distance to target in meters (m). When **occupancy** binary sensor is ```false``` this sensor switches to 0.0 indicating invalid data. 
   Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-sensor>`. 
@@ -253,10 +253,10 @@ Configuration variables:
 
 
 Actions
-*******
+=======
 
 ``dfrobot_c4001.factory_reset`` Action
-**************************************
+--------------------------------------
 
 .. code-block:: yaml
 
