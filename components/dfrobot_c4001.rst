@@ -17,7 +17,7 @@ There are two variants:
 + SEN0610 has a 100° horizontal and 80° vertical field of view, 8 meter presence detection range and 12 meter motion detection range.
 
 ..  note::
-  
+
     Some settings have different ranges depending on the variant used. This component treats both variants the same, so it is your responsibility to make sure your configuration sets these values appropriately.
 
 The sensor can operate in one of two modes, ```Presence``` and ```Speed and Distance```. In ```Presence``` mode the sensor provides a singular occupancy output. 
@@ -31,7 +31,7 @@ This will tell the sensor to store the new settings in flash and make them opera
 More information on the C4001 (SEN0609) sensor is available [here](https://www.dfrobot.com/product-2793.html). Information on the C4001 (SEN0610) sensor is available [here](https://www.dfrobot.com/product-2795.html).
 
 
-.. figure:: images/dfrobot_sen0609.jpg
+.. figure:: component/images/dfrobot_sen0609.jpg
     :align: center
     :width: 75%
 
@@ -39,57 +39,57 @@ More information on the C4001 (SEN0609) sensor is available [here](https://www.d
 
 .. code-block:: yaml
 
-  # Sample configuration entry example
-  external_components:
-    - source:
-        type: git
-        url: https://github.com/mikelawrence/esphome-components
-      components: [ dfrobot_c4001 ]
+    # Sample configuration entry example
+    external_components:
+      - source:
+          type: git
+          url: https://github.com/mikelawrence/esphome-components
+        components: [ dfrobot_c4001 ]
 
-  dfrobot_c4001:
-    id: mmwave_sensor
-    uart_id: mmwave_uart
-    mode: PRESENCE
+    dfrobot_c4001:
+      id: mmwave_sensor
+      uart_id: mmwave_uart
+      mode: PRESENCE
 
-  binary_sensor:
-    - platform: dfrobot_c4001
-      config_changed:
-        name: Config Changed
-      occupancy:
-        id: occupancy_uart
-        name: Occupancy via UART
-        
-  button:
-    - platform: dfrobot_c4001
-      config_save:
-        name: Config Save
-        entity_category: CONFIG
+    binary_sensor:
+      - platform: dfrobot_c4001
+        config_changed:
+          name: Config Changed
+        occupancy:
+          id: occupancy_uart
+          name: Occupancy via UART
+          
+    button:
+      - platform: dfrobot_c4001
+        config_save:
+          name: Config Save
+          entity_category: CONFIG
 
-  number:
-    - platform: dfrobot_c4001
-      dfrobot_c4001_id: mmwave_sensor
-      max_range:
-        name: Range Max
-      min_range:
-        name: Range Min
-      trigger_range:
-        name: Range Trigger
-      hold_sensitivity:
-        name: Sensitivity Hold
-      trigger_sensitivity:
-        name: Sensitivity Trigger
-      on_latency:
-        name: Latency On
-      off_latency:
-        name: Latency Off
-      inhibit_time:
-        name: Inhibit Time
+    number:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        max_range:
+          name: Range Max
+        min_range:
+          name: Range Min
+        trigger_range:
+          name: Range Trigger
+        hold_sensitivity:
+          name: Sensitivity Hold
+        trigger_sensitivity:
+          name: Sensitivity Trigger
+        on_latency:
+          name: Latency On
+        off_latency:
+          name: Latency Off
+        inhibit_time:
+          name: Inhibit Time
 
-  switch:
-    - platform: dfrobot_c4001
-      dfrobot_c4001_id: mmwave_sensor
-      led_enable:
-        name: Enable LED
+    switch:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        led_enable:
+          name: Enable LED
 
 
 Hub Component
@@ -102,14 +102,12 @@ Multiple instances of this component may be defined if multiple :doc:`/component
 
 .. code-block:: yaml
 
-  dfrobot_c4001:
-    id: mmwave_sensor
-    uart_id: mmwave_uart
-    mode: PRESENCE
-    flip_x_axis: false
+    dfrobot_c4001:
+      id: mmwave_sensor
+      uart_id: mmwave_uart
+      mode: PRESENCE
+      flip_x_axis: false
     
-    ...
-
 Configuration variables
 ***********************
 
@@ -120,13 +118,13 @@ Binary Sensor
 
 .. code-block:: yaml
 
-  binary_sensor:
-    - platform: dfrobot_c4001
-      config_changed:
-        name: Config Changed
-      occupancy:
-        id: occupancy_uart
-        name: Occupancy via UART
+    binary_sensor:
+      - platform: dfrobot_c4001
+        config_changed:
+          name: Config Changed
+        occupancy:
+          id: occupancy_uart
+          name: Occupancy via UART
 
 Configuration variables:
 ************************
@@ -141,15 +139,15 @@ Button
 
 .. code-block:: yaml
 
-  button:
-    - platform: dfrobot_c4001
-      config_save:
-        name: Config Save
+    button:
+      - platform: dfrobot_c4001
+        config_save:
+          name: Config Save
 
 Configuration variables:
 ************************
 
-- **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from [Button Component](https://esphome.io/components/button/index.html#base-button-configuration).
+- **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Switch <config-button>`.
 
 .. warning::
 
@@ -162,25 +160,25 @@ Numbers
 
 .. code-block:: yaml
 
-  number:
-    - platform: dfrobot_c4001
-      dfrobot_c4001_id: mmwave_sensor
-      max_range:
-        name: Range Max
-      min_range:
-        name: Range Min
-      trigger_range:
-        name: Range Trigger
-      hold_sensitivity:
-        name: Sensitivity Hold
-      trigger_sensitivity:
-        name: Sensitivity Trigger
-      on_latency:
-        name: Latency On
-      off_latency:
-        name: Latency Off
-      inhibit_time:
-        name: Inhibit Time
+    number:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        max_range:
+          name: Range Max
+        min_range:
+          name: Range Min
+        trigger_range:
+          name: Range Trigger
+        hold_sensitivity:
+          name: Sensitivity Hold
+        trigger_sensitivity:
+          name: Sensitivity Trigger
+        on_latency:
+          name: Latency On
+        off_latency:
+          name: Latency Off
+        inhibit_time:
+          name: Inhibit Time
 
 Configuration variables:
 ************************
@@ -215,13 +213,13 @@ Switch
 
 .. code-block:: yaml
 
-  switch:
-    - platform: dfrobot_c4001
-      dfrobot_c4001_id: mmwave_sensor
-      led_enable:
-        name: Enable LED
-      micro_motion_enable:
-        name: Micro Motion Enable
+    switch:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        led_enable:
+          name: Enable LED
+        micro_motion_enable:
+          name: Micro Motion Enable
 
 Configuration variables:
 ************************
@@ -234,14 +232,14 @@ Sensors
 
 .. code-block:: yaml
 
-  sensor:
-    - platform: dfrobot_c4001
-      dfrobot_c4001_id: mmwave_sensor
-      target_distance:
-        name: Target Distance
-      target_speed:
-        name: Target Speed
-      target_energy:
+    sensor:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        target_distance:
+          name: Target Distance
+        target_speed:
+          name: Target Speed
+        target_energy:
 
 Configuration variables:
 ************************
@@ -262,17 +260,17 @@ Actions
 
 .. code-block:: yaml
 
-  # using automations
-  button:
-    - platform: template
-      name: Factory Reset
-      on_press:
-        - dfrobot_c4001.factory_reset: mmwave_sensor
-      entity_category: CONFIG
+    # using automations
+    button:
+      - platform: template
+        name: Factory Reset
+        on_press:
+          - dfrobot_c4001.factory_reset: mmwave_sensor
+        entity_category: CONFIG
 
-  # using lambdas
-  - lambda: |-
-  id(mmwave_sensor).factory_reset();
+    # using lambdas
+    - lambda: |-
+    id(mmwave_sensor).factory_reset();
 
 Will perform a factory reset of the module and all configuration values will go back to default. The module will restart with these defaults. 
 
