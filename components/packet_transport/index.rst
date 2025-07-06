@@ -57,17 +57,17 @@ Example Configuration
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **id** (*Optional*, :ref:`config-id`): Specify the ID used for code generation.
 - **update_interval** (*Optional*, :ref:`config-time`): Interval between full broadcasts. Defaults to 15s.
-- **sensors** (*Optional*, list): A list of sensor IDs to be broadcast. Each entry may be just the sensor id, or may set a different id to be broadcast.
+- **sensors** (*Optional*, list): A list of sensor IDs provided (broadcast) to other nodes. Each entry may be just the sensor id, or may set a different ids to be provided (broadcast).
 
-  - **id** (**Required**, :ref:`config-id`): The id of the sensor to be used
-  - **broadcast_id** (*Optional*, string): The id to be used for this sensor in the broadcast. Defaults to the same as the internal id.
+  - **id** (**Required**, :ref:`config-id`): The id of the sensor.
+  - **broadcast_id** (*Optional*, string): The id used for this sensor in the broadcast. Defaults to the same as the internal id.
 
-- **binary_sensors** (*Optional*, list): A list of binary sensor IDs to be broadcast.
+- **binary_sensors** (*Optional*, list): A list of binary sensor IDs provided (broadcast) to other nodes. Each entry may be just the sensor id, or may set a different ids to be provided (broadcast).
 
-  - **id** (**Required**, :ref:`config-id`): The id of the binary sensor to be used
-  - **broadcast_id** (*Optional*, string): The id to be used for this binary sensor in the broadcast. Defaults to the same as the internal id.
+  - **id** (**Required**, :ref:`config-id`): The id of the binary sensor.
+  - **broadcast_id** (*Optional*, string): The id used for this binary sensor in the broadcast. Defaults to the same as the internal id.
 
 - **encryption** (*Optional*, string): The encryption key to use when broadcasting. Default is no encryption. This may be
   any string, and will be hashed to form a 256 bit key.
@@ -79,10 +79,11 @@ Configuration variables:
   - **name** (**Required**, string): The device name of the provider.
   - **encryption** (*Optional*, string): The provider's encryption key.
 
+To consume packet transported data from a provder, sensor and binary_sensor definitions must include a ``packet_transport id`` to specify from where to expect the data.
+
 Wherever a provider name is required, this should be the node name configured in the ``esphome:`` block.
 
 This component supports multiple configurations, making it possible to differentiate between consumers when providing data to them, or providers if they are multiple.
-When receiving data in such a configuration, sensors need a ``transport_id`` configuration item to know where to expect data to come from.
 
 Reliability
 -----------
@@ -96,7 +97,7 @@ By default there is no security - all data is transmitted in clear text on the n
 for non-sensitive sensor data or perhaps on a fully secured wired network. For other cases the data can be encrypted
 by providing an encryption key, which is shared between the provider and consumer.
 
-Encryption alone ensures that data cannot be read in transit and protects against spoofing of data, but does not protect
+Encryption ensures that data cannot be read in transit and protects against spoofing of data, but does not protect
 against replay attacks (where a threat actor records a transmission and replays it later, e.g. to repeat an action.)
 
 A rolling code can be enabled which mitigates replay attacks - each transmission contains a 64 bit value which is
@@ -108,9 +109,9 @@ attacks on the encryption much more difficult. This is enabled in the provider c
 
     The rolling code's upper 32 bit field is incremented and written to flash *once* at reboot on the provider node.
     It's also incremented and written to flash when the lower 32 bit field overflows, which can only happen after
-    a very long time. The consumer side does not store the d rolling codes in flash.
+    a very long time. The consumer side does not store the rolling codes in flash.
 
-For further protection a ``ping-pong`` (or challenge-response) facility is available, which can be enabled in the
+For further protection, a ``ping-pong`` (or challenge-response) facility is available, which can be enabled in the
 consumer configuration. The consumer periodically generates a 32 bit random number (a *nonce* aka "Number used Once")
 and broadcasts it as a *ping*. Any provider receiving this nonce will include it in any future encrypted broadcasts as
 *pong*. The consumer expects to get back its most recently transmitted *ping* in any packets it receives, and will reject
