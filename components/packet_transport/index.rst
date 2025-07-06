@@ -58,6 +58,7 @@ Configuration variables:
 ------------------------
 
 - **id** (*Optional*, :ref:`config-id`): Specify the ID used for code generation.
+- **platform** (*Required*, :ref:`config-id`): Specify udp or uart transport.
 - **update_interval** (*Optional*, :ref:`config-time`): Interval between full broadcasts. Defaults to 15s.
 - **sensors** (*Optional*, list): A list of sensor IDs provided (broadcast) to other nodes. Each entry may be the sensor id, or a set of different ids to be provided (broadcast).
 
