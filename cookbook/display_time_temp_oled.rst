@@ -45,7 +45,7 @@ Get the time from Home Assistant to sync the onboard real-time clock.
 Getting Temperature
 *******************
 
-Next, we want to get two temperature sensors imported from Home Assistant.
+Next, we want to get one temperature sensor and the `weather forecast <https://www.home-assistant.io/integrations/weather/>`_ imported from Home Assistant.
 
 I named them ``inside_temperature`` and ``outside_temperature``. You will use those references later.
 
@@ -56,12 +56,19 @@ By adding ``internal: true`` to the sensors they won't be published back to Home
     sensor:
       - platform: homeassistant
         id: inside_temperature
-        entity_id: sensor.mellanvaning_temperature
+        entity_id: REPLACEME
         internal: true
 
       - platform: homeassistant
         id: outside_temperature
-        entity_id: sensor.10_00080192969d_temperature
+        entity_id: REPLACEME
+        internal: true
+
+    text_sensor:
+      - platform: homeassistant
+        id: outside_temperature_unit
+        entity_id: REPLACEME
+        attribute: temperature_unit
         internal: true
 
 Define the Fonts
@@ -76,16 +83,33 @@ Define the Fonts
 
     font:
       - file: 'slkscr.ttf'
-        id: font1
+        id: small
         size: 8
 
       - file: 'BebasNeue-Regular.ttf'
-        id: font2
+        id: medium
         size: 48
 
       - file: 'arial.ttf'
-        id: font3
+        id: large
         size: 14
+
+
+- (Optional) You can also use Google fonts with the ``gfonts://`` scheme instead of including font files.
+- Find out more in the :doc:`/components/font` documentation.
+
+.. code-block:: yaml
+
+    font:
+      - file: "gfonts://Silkscreen"
+        id: small
+        size: 10
+      - file: "gfonts://Roboto"
+        id: large
+        size: 24
+      - file: "gfonts://Silkscreen"
+        id: medium
+        size: 15
 
 Display Definition
 ******************
@@ -102,6 +126,8 @@ Note your ``address`` and ``model`` might be different, use the scan option to f
       sda: GPIOXX
       scl: GPIOXX
       scan: false
+      # manually setting the frequency to a higher rate may avoid long component updates
+      # frequency: 300kHz
 
     display:
       - platform: ssd1306_i2c
@@ -109,20 +135,20 @@ Note your ``address`` and ``model`` might be different, use the scan option to f
         reset_pin: GPIOXX
         address: 0x3C
         lambda: |-
-          // Print "Mitt Smarta Hus" in top center.
-          it.printf(64, 0, id(font1), TextAlign::TOP_CENTER, "Mitt Smarta Hus");
+          it.printf(0, 0, id(small), TextAlign::TOP_LEFT, "Time and");
+          it.printf(0, 12, id(small), TextAlign::TOP_LEFT, "Temperature");
 
           // Print time in HH:MM format
-          it.strftime(0, 60, id(font2), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
+          it.strftime(0, 60, id(large), TextAlign::BASELINE_LEFT, "%H:%M", id(esptime).now());
 
           // Print inside temperature (from homeassistant sensor)
           if (id(inside_temperature).has_state()) {
-            it.printf(127, 23, id(font3), TextAlign::TOP_RIGHT , "%.1f°", id(inside_temperature).state);
+            it.printf(127, 23, id(medium), TextAlign::TOP_RIGHT , "%.1f", id(inside_temperature).state);
           }
 
-          // Print outside temperature (from homeassistant sensor)
+          // Print outside temperature (from homeassistant weather)
           if (id(outside_temperature).has_state()) {
-            it.printf(127, 60, id(font3), TextAlign::BASELINE_RIGHT , "%.1f°", id(outside_temperature).state);
+            it.printf(127, 60, id(medium), TextAlign::BASELINE_RIGHT , "%.1f%s", id(outside_temperature).state, id(outside_temperature_unit).state.c_str());
           }
 
 Rendering
@@ -135,7 +161,7 @@ Rendering
 Add a Text-Based Sensor
 -----------------------
 
-Below follows an example that replaces the "Mitt smarta hem" top printout with the alarm status from the alarm component in Home Assistant.
+Below follows an example that replaces the "Time and Temperature" top printout with the alarm status from the alarm component in Home Assistant.
 
 .. code-block:: yaml
 
@@ -152,7 +178,7 @@ Below follows an example that replaces the "Mitt smarta hem" top printout with t
         address: 0x3C
         lambda: |-
           // Print "Alarm State: <state>" in top center
-          it.printf(64, 0, id(font1), TextAlign::TOP_CENTER, "Alarm State: %s", id(alarm_state).state.c_str());
+          it.printf(64, 0, id(small), TextAlign::TOP_CENTER, "Alarm State: %s", id(alarm_state).state.c_str());
 
 
 See Also

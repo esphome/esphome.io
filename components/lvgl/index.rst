@@ -153,7 +153,7 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to ``true``. "Interacts" means to release a touch or button, or rotate an encoder.
 - **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
-- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. Default is ``100%`` (or ``1.0``). For devices without PSRAM, the recommended value is ``25%``.
+- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is ``100%`` with runtime fallback to ``12%`` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is ``25%``.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: ``TRACE``, ``INFO``, ``WARN``, ``ERROR``, ``USER``, ``NONE``. Defaults to ``WARN``.
 - **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either ``big_endian`` or ``little_endian``. Defaults to ``big_endian``.
@@ -202,7 +202,9 @@ Choosing a buffer size
 The ``buffer_size`` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is ``320 * 240 * 2`` bytes (for RGB565) = ``153600`` bytes. If you set the buffer size to ``50%``,
 then the buffer will be ``76800`` bytes. If you set it to ``25%``, then the buffer will be ``38400`` bytes. The default value is ``100%``.
 
-When using larger displays on devices with limited RAM (i.e. no PSRAM), you may need to reduce the buffer size to avoid running out of RAM.
+When using larger displays on devices with limited RAM (i.e. no PSRAM), you may want to reduce the buffer size to avoid running out of RAM.
+If not specified, the buffer size will be 100%, but a fallback
+at runtime to 12% will be attempted if a full size buffer fails. If a specific buffer size is set, the fallback will not be attempted.
 A failure to allocate a buffer will result in an error message in the log and the LVGL component being marked "Failed".
 
 Generally speaking a larger buffer will provide better performance, but the effect of reducing the buffer size from 100% is not as bad as you might think. The LVGL library is designed to be efficient and will only redraw the parts of the screen that have changed.

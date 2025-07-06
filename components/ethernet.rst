@@ -315,6 +315,20 @@ Configuration examples
     ethernet:
       type: OPENETH
 
+**Waveshare ESP32-S3-ETH PoE**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: W5500
+      clk_pin: GPIO13
+      mosi_pin: GPIO11
+      miso_pin: GPIO12
+      cs_pin: GPIO14
+      interrupt_pin: GPIO10
+      reset_pin: GPIO9
+
+
 See Also
 --------
 
