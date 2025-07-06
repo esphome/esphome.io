@@ -29,6 +29,8 @@ submit a feature request (see FAQ).
 +---------------------------------------+---------------------+----------------------+
 | :ref:`Daikin BRC<daikin_brc>`         | ``daikin_brc``      | yes                  |
 +---------------------------------------+---------------------+----------------------+
+| :ref:`Daikin WRC<daikin_wrc>`         | ``daikin_wrc``      | yes                  |
++---------------------------------------+---------------------+----------------------+
 | :ref:`Delonghi<delonghi_ir>`          | ``delonghi``        | yes                  |
 +---------------------------------------+---------------------+----------------------+
 | Emmeti                                | ``emmeti``          | yes                  |
@@ -138,6 +140,25 @@ The Daikin BRC remotes are used by the ceiling cassette model of Daikin heatpump
         name: "AC"
         sensor: room_temperature
         use_fahrenheit: true
+
+.. _daikin_wrc:
+
+``daikin_wrc`` **Climate**:
+
+The Daikin WRC remotes used by some wall mounted air conditioners of Daikin
+
+- **state_sensor_id** (*Optional*, :ref:`config-id`): Binary sensor ID that provides the on/off state of the air conditioner
+
+.. note::
+
+    This protocol doesn't have clear on and off commands, so to reliably determine the device's state, you must use a reed switch or a Hall effect sensor with a small magnet attached to the AC blade
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    climate:
+      - platform: daikin_wrc
+        name: "AC"
 
 .. _delonghi_ir:
 
