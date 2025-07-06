@@ -59,7 +59,7 @@ Configuration variables:
 
 - **id** (*Optional*, :ref:`config-id`): Specify the ID used for code generation.
 - **update_interval** (*Optional*, :ref:`config-time`): Interval between full broadcasts. Defaults to 15s.
-- **sensors** (*Optional*, list): A list of sensor IDs provided (broadcast) to other nodes. Each entry may be just the sensor id, or may set a different ids to be provided (broadcast).
+- **sensors** (*Optional*, list): A list of sensor IDs provided (broadcast) to other nodes. Each entry may be the sensor id, or a set of different ids to be provided (broadcast).
 
   - **id** (**Required**, :ref:`config-id`): The id of the sensor.
   - **broadcast_id** (*Optional*, string): The id used for this sensor in the broadcast. Defaults to the same as the internal id.
@@ -79,7 +79,7 @@ Configuration variables:
   - **name** (**Required**, string): The device name of the provider.
   - **encryption** (*Optional*, string): The provider's encryption key.
 
-To consume packet transported data from a provder, sensor and binary_sensor definitions must include a ``packet_transport id`` to specify from where to expect the data.
+To consume packet transported data from a provider, sensor and binary_sensor definitions must include a ``packet_transport`` id to specify from where to expect the data.
 
 Wherever a provider name is required, this should be the node name configured in the ``esphome:`` block.
 
