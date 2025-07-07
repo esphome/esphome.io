@@ -34,7 +34,7 @@ an ``i2c:`` section in your config for this integration to work.
 
     sensor:
       - platform: grove_gas_mc_v2
-        no2:
+        nitrogen_dioxide:
           name: "Nitrogen Dioxide"
         ethanol:
           name: "Ethanol"
@@ -46,7 +46,7 @@ an ``i2c:`` section in your config for this integration to work.
 Configuration variables:
 ------------------------
 
-- **no2** (**Required**): The Nitrogen Dioxide sensor data.
+- **nitrogen_dioxide** (**Required**): The Nitrogen Dioxide sensor data.
   All options from :ref:`Sensor <config-sensor>`.
 - **ethanol** (**Required**): The Ethanol (C2H5OH) sensor data.
   All options from :ref:`Sensor <config-sensor>`.

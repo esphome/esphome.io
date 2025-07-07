@@ -74,6 +74,9 @@ Configuration variables:
     DHT model with the ``model:`` configuration variable. Other problems could be wrong pull-up resistor values
     on the DATA pin or too long cables.
 
+    If you're using a DHT module with an external pull-up resistor and seeing invalid temperature/humidity warnings in the logs,
+    set ``pullup: false`` under your ``pin`` configuration.
+
 See Also
 --------
 

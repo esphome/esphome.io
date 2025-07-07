@@ -97,7 +97,7 @@ Climate component
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **address** (*Required*, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
+- **address** (**Required**, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
 - **uponor_smatrix_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the ``uponor_smatrix`` hub component if you want to use multiple hub components on one ESPHome device.
 - All options from :ref:`Climate <config-climate>`.
 
@@ -115,11 +115,13 @@ Sensor component
           name: Temperature Living Room
         external_temperature:
           name: Floor Temperature Living Room
+        target_temperature:
+          name: Thermostat Target Temperature Living Room
 
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **address** (*Required*, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
+- **address** (**Required**, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
 - **uponor_smatrix_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the ``uponor_smatrix`` hub component if you want to use multiple hub components on one ESPHome device.
 - **humidity** (*Optional*): A sensor reading the current humidity the thermostat reports.
   All options from :ref:`Sensor <config-sensor>`.
@@ -127,6 +129,8 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **external_temperature** (*Optional*): A sensor reading the current external temperature the thermostat reports.
   This comes from an optionally attached external temperature sensor that can measure the floor or outdoor temperature.
+  All options from :ref:`Sensor <config-sensor>`.
+- **target_temperature** (*Optional*): A sensor reading the currently set target temperature the thermostat reports.
   All options from :ref:`Sensor <config-sensor>`.
 
 

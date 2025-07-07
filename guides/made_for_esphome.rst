@@ -52,8 +52,8 @@ When your project meets the requirements
 
 - Create a new pull request in our `esphome-devices <https://github.com/esphome/esphome-devices/pulls>`__ repository to
   add your device on the `devices website <https://devices.esphome.io>`__. We will review and merge this PR upon
-  confirming that your project meets all of the requirements listed above. 
-- Apply for permission to carry the logo by emailing esphome@nabucasa.com -- **include a link to the PR** you've
+  confirming that your project meets all of the requirements listed above.
+- Apply for permission to carry the logo by emailing esphome@openhomefoundation.org -- **include a link to the PR** you've
   created (as above) so we can associate your application with your PR and device(s).
 - We will review your application and reply to your email. We may request changes to your project if we find it does
   not quite meet one or more of the requirements above. If we find everything is in order, we will approve your project.

@@ -59,6 +59,10 @@ Configuration variables:
 
 MQTT options:
 
+- **direction_state_topic** (*Optional*, string): The topic to
+  publish fan direction state changes to (options: forward, reverse).
+- **direction_command_topic** (*Optional*, string): The topic to
+  receive fan direction commands on (options: forward, reverse, toggle).
 - **oscillation_state_topic** (*Optional*, string): The topic to
   publish fan oscillation state changes to.
 - **oscillation_command_topic** (*Optional*, string): The topic to

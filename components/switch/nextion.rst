@@ -94,9 +94,9 @@ Configuration options:
 
 - **id** (**Required**, :ref:`config-id`): The ID of the Nextion switch.
 - **state** (**Required**, string, :ref:`templatable <config-templatable>`): The boolean state to publish.
-- **publish_state** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Home Assistant.
+- **publish_state** (*Optional*, bool, :ref:`templatable <config-templatable>`): Publish new state to Home Assistant.
   Default is true.
-- **send_to_nextion** (**Optional**, bool, :ref:`templatable <config-templatable>`): Publish new state to Nextion
+- **send_to_nextion** (*Optional*, bool, :ref:`templatable <config-templatable>`): Publish new state to Nextion
   display which will update component. Default is true.
 
 .. note::

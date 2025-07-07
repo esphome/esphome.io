@@ -8,7 +8,7 @@ UART Bus
     :image: uart.svg
     :keywords: UART, serial bus
 
-UART is a common serial protocol for a lot of devices. For example, when uploading a binary to your ESP
+UART is a common serial protocol for many devices. For example, when uploading a binary to your ESP
 you have probably used UART to access the chip. UART (or for Arduino often also called Serial) usually
 consists of 2 pins:
 
@@ -21,9 +21,12 @@ perspective these two pins are switched (i.e. *it* sends on pin B and receives o
 need to try with the two pins switched if it doesn't work immediately.
 
 Additionally, each UART bus can operate at different speeds (baud rates), so ESPHome needs to know what speed to
-receive/send data at using the ``baud_rate`` option. The most common baud rates are 9600 and 115200.
+receive/send data at using the ``baud_rate`` option. Two common baud rates are 9600 and 115200.
 
 In some cases only **TX** or **RX** exists as the device at the other end only accepts data or sends data.
+
+The UART component may be used as a platform for the :ref:`packet-transport` component, enabling sensor data to be sent
+directly from one ESPHome node to another over a UART bus. When using RS485 this can operate in a multi-drop configuration.
 
 .. note::
 
@@ -78,7 +81,7 @@ be accurate at higher baud rates.
 logger and leave others available. If you have configured the logger to use a different hardware UART, the pins
 used for hardware sharing change accordingly.
 
-The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-S3, ESP32-C3, ESP32-S2, etc) may have fewer UARTs (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
+The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-C3, ESP32-S2, ESP32-S3, etc) may have fewer UARTs (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
 
 The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. ``UART0`` may
 use either ``tx_pin: GPIO1`` and ``rx_pin: GPIO3``, or ``tx_pin: GPIO15`` and ``rx_pin: GPIO13``. ``UART1`` must
@@ -280,5 +283,6 @@ See Also
 --------
 
 - :doc:`/components/logger`
+- :doc:`/components/packet_transport/uart`
 - :apiref:`uart/uart.h`
 - :ghedit:`Edit`
