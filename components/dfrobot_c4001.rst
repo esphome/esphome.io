@@ -124,9 +124,9 @@ Configuration variables:
 ************************
 
 - **config_changed** (*Optional*): When ``true`` the current sensor configuration has been changed but not saved to the sensor. 
-  All Options from :ref:`Switch <config-binary_sensor>`.
+  All Options from :ref:`Binary Sensor <config-binary_sensor>`.
 - **occupancy** (*Optional*): In ``PRESENCE`` mode this indicates presence. In ``SPEED_AND_DISTANCE`` mode this indicates a target is being tracked. 
-  All Options from :ref:`Switch <config-binary_sensor>`.
+  All Options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 Buttons
 -------
@@ -145,9 +145,9 @@ Buttons
 Configuration variables:
 ************************
 
-- **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Switch <config-button>`.
-- **restart** (*Optional*): When you click this button the C4001 module with be restarted. All Options from :ref:`Switch <config-button>`.
-- **factory_reset** (*Optional*): When you click this button the C4001 module with be reset to factory state. All changed settings will be lost. All Options from :ref:`Switch <config-button>`.
+- **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Button <config-button>`.
+- **restart** (*Optional*): When you click this button the C4001 module with be restarted. All Options from :ref:`Button <config-button>`.
+- **factory_reset** (*Optional*): When you click this button the C4001 module with be reset to factory state. All changed settings will be lost. All Options from :ref:`Button <config-button>`.
 
 .. warning::
 
@@ -185,28 +185,28 @@ Configuration variables:
 
 - **min_range** (*Optional*): This is the minimum detection range. Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The manual recommends not changing this value. 
   The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
-  All Options from :ref:`Switch <config-number>`.
+  All Options from :ref:`Number <config-number>`.
 - **max_range** (*Optional*): This is the maximum detection range. Default is 6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
-  Available only in ``PRESENCE`` mode. All Options from :ref:`Switch <config-number>`.
+  Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **trigger_range** (*Optional*): Sets the maximum range at which occupancy can switch to present. The range between max detection range and trigger detection range can NOT cause occupancy to switch to present.
   Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
-  All Options from :ref:`Switch <config-number>`.
+  All Options from :ref:`Number <config-number>`.
 - **hold_sensitivity** (*Optional*): The number represents the ease in which the sensor switches to the present state when someone enters the sensing range of the sensor. 
   Default is 7 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
-  Available only in ``PRESENCE`` mode. All Options from :ref:`Switch <config-number>`.
+  Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **trigger_sensitivity** (*Optional*): This number represents ease of continued presence detection after the sensor switched to the present state. 
   Default is 5 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational.
-  Available only in ``PRESENCE`` mode. All Options from :ref:`Switch <config-number>`.
+  Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **on_latency** (*Optional*): This time value is how long presence is detected before switching to the present state. Default is 0.050 (seconds) with a range of 0.0 to 100.0. 
   The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
-  All Options from :ref:`Switch <config-number>`.
+  All Options from :ref:`Number <config-number>`.
 - **off_latency** (*Optional*): This time value is how long the after the sensor no longer detects presence before switching to the not present state.
   Default is 15 (seconds) with a range of 0 to 1500. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
-  Available only in ``PRESENCE`` mode. All Options from :ref:`Switch <config-number>`.
+  Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **inhibit_time** (*Optional*): The dead-time after switching to the not present state before presence can be detected again. Default is 1 (seconds) with a range of 0.1 to 255.0. 
-  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. All Options from :ref:`Switch <config-number>`.
+  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is required to trigger the sensor to switch to target tracked state. 
-  Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-number>`.
+  Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Number <config-number>`.
 
 Switches
 --------
@@ -267,8 +267,8 @@ Text Sensors
 Configuration variables:
 ************************
 
-- **software_version** (*Optional*): The Software Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text-sensor>`. 
-- **hardware_version** (*Optional*): The Hardware Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text-sensor>`.
+- **software_version** (*Optional*): The Software Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text_sensor>`. 
+- **hardware_version** (*Optional*): The Hardware Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text_sensor>`.
 
 
 Actions
