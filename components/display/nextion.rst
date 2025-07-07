@@ -64,6 +64,9 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **tft_url** (*Optional*, string): The URL to download the TFT file from for updates. See :ref:`Nextion Upload <nextion_upload_tft>`.
 - **touch_sleep_timeout** (*Optional*, int): Sets internal No-touch-then-sleep timer in seconds.
+  Range: 0 (disabled) or 3-65535 seconds (max: ~18 hours). Values 1-2 are auto-corrected to 3.
+  When set, Nextion will automatically enter sleep mode after the specified period of no touch activity.
+  This setting persists until device reboot or reset. Note: The display will only wake up by restart or by configuring `auto_wake_on_touch: true`.
 - **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
 - **wake_up_page** (*Optional*, int): Sets the page to display after waking up
 - **auto_wake_on_touch** (*Optional*, boolean): Sets if Nextion should auto-wake from sleep when touch press occurs.
