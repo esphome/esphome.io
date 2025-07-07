@@ -379,31 +379,6 @@ Or, if you happen to have multiple Nextion displays connected, you may need to u
             id: nextion1
             brightness: 50%
 
-.. _nextion-on_touch:
-
-``on_touch``
-************
-
-This automation is triggered when a component is pressed or released on the Nextion display.
-
-The following arguments will be available:
-
-  - ``page_id``: Contains the id (integer) of the page where the touch happened.
-
-  - ``component_id``: Contains the id (integer) of the component touched. It's required that the component have "Send Component ID" enabled either for "Touch Press Event" and/or "Touch Release Event".
-
-  - ``touch_event``: It will be ``true`` for a "press" event, or ``false`` for a "release" event.
-
-.. code-block:: yaml
-
-    on_touch:
-      then:
-        lambda: |-
-          ESP_LOGD("nextion.on_touch", "Nextion touch event detected!");
-          ESP_LOGD("nextion.on_touch", "Page Id: %i", page_id);
-          ESP_LOGD("nextion.on_touch", "Component Id: %i", component_id);
-          ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
-
 .. _nextion_upload_tft_file:
 
 Uploading A TFT File
