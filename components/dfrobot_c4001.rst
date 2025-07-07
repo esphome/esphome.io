@@ -1,8 +1,8 @@
-DFRobot mmWave C4001 Radar
+DFRobot C4001 mmWave Radar
 ==========================
 
 .. seo::
-    :description: Instructions for setting up DFRobot mmWave C4001 Radar
+    :description: Instructions for setting up DFRobot C4001 mmWave Radar
     :image: dfrobot_sen0609.jpg
     :keywords: mmWave
 
