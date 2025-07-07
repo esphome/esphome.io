@@ -132,6 +132,7 @@ Management and Monitoring
     StatsD, components/statsd, connection.svg, dark-invert
     Safe Mode, components/safe_mode, restart-alert.svg, dark-invert
     Web Server, components/web_server, http.svg
+    ESP32 Camera Web Server, components/esp32_camera_web_server, camera.svg, dark-invert
 
 Update Installation
 -------------------
@@ -676,15 +677,6 @@ Button Components
     UART Button, components/button/uart, uart.svg
     Wake-on-LAN, components/button/wake_on_lan, power_settings.svg, dark-invert
 
-Camera Components
------------------
-
-.. imgtable::
-
-    Camera Core, components/camera/index, folder-open.svg, dark-invert
-    ESP32 Camera, components/camera/esp32_camera, camera.svg, dark-invert
-    ESP32 Camera Web Server, components/camera/esp32_camera_web_server, camera.svg, dark-invert
-
 Climate Components
 ------------------
 
@@ -1088,6 +1080,7 @@ Miscellaneous Components
 
 .. imgtable::
 
+    ESP32 Camera, components/esp32_camera, camera.svg, dark-invert
     Exposure Notifications, components/exposure_notifications, exposure_notifications.png
     GPS, components/gps, crosshairs-gps.svg, dark-invert
     Grow Fingerprint Reader, components/fingerprint_grow, fingerprint.svg, dark-invert
