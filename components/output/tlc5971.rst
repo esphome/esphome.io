@@ -1,0 +1,85 @@
+TLC5971 LED driver
+==================
+
+.. seo::
+    :description: Instructions for setting up TLC5971 LED drivers in ESPHome.
+    :image: tlc5971.jpg
+    :keywords: tlc5971,
+
+.. _tlc5971-component:
+
+Component/Hub
+-------------
+.. figure:: images/tlc5971.jpg
+    :align: center
+    :width: 75.0%
+
+    Adafruit's TLC59711 board
+
+This component represents a chain of `TLC5971 12-Channel, 16-Bit PWM LED Drivers <https://www.ti.com/lit/ds/symlink/tlc5971.pdf>`_,
+which is used e.g. on this `board from Adafruit <https://www.adafruit.com/product/1455>`_.
+
+To use the channels of this components, you first need to setup the
+global ``tlc5971`` hub and give it an id, and then define the
+:ref:`individual output channels <tlc5971-output>`.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    tlc5971:
+      data_pin: GPIOXX
+      clock_pin: GPIOXX
+
+
+Configuration variables:
+************************
+
+-  **data_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin connected to DIN.
+-  **clock_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin connected to CLK.
+-  **num_chips** (*Optional*, int): Number of chips in the chain. Must be
+   in range from 1 to 85. Defaults to 1.
+-  **id** (*Optional*, :ref:`config-id`): The id to use for
+   this ``tlc5971`` component. Use this if you have multiple TLC5971 chains
+   connected at the same time.
+
+.. _tlc5971-output:
+
+Output
+------
+
+The tlc5971 output component exposes a tlc5971 channel of a global
+:ref:`tlc5971-component` as a float output.
+
+.. code-block:: yaml
+
+    # Individual outputs
+    output:
+      - platform: tlc5971
+        id: output_red
+        channel: 0
+      - platform: tlc5971
+        id: output_green
+        channel: 1
+      - platform: tlc5971
+        id: output_blue
+        channel: 2
+
+Configuration variables:
+************************
+
+- **id** (**Required**, :ref:`config-id`): The id to use for this output component.
+- **channel** (**Required**, int): Chose the channel of the TLC5971 chain of
+  this output component.
+- **tlc5971_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the
+  :ref:`TLC5971-component`.
+  Use this if you have multiple TLC5971 chains you want to use at the same time.
+- All other options from :ref:`Output <config-output>`.
+
+See Also
+--------
+
+- :doc:`/components/output/index`
+- :doc:`/components/light/monochromatic`
+- :doc:`/components/power_supply`
+- :apiref:`tlc5971/tlc5971.h`
+- :ghedit:`Edit`

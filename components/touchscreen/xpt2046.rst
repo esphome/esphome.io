@@ -8,7 +8,7 @@ XPT2046 Touch Screen Controller (Updated version)
 
 .. _xpt2046-component:
 
-The ``xpt2046`` touchscreen platform allows using the touch screen controllers
+The ``xpt2046`` touchscreen platform allows using the resistive touch screen controllers
 based on the XPT2046 chip
 (`datasheet <https://datasheetspdf.com/pdf-file/746665/XPTEK/XPT2046/1>`__,
 `AZ-Delivery`_) with ESPHome. Many cheap LCD displays contain this controller.
@@ -28,17 +28,17 @@ The :ref:`SPI <spi>` is required to be set up in your configuration for this sen
     touchscreen:
       platform: xpt2046
       id: my_touchscreen
-      cs_pin: 17
-      interrupt_pin: 16
+      cs_pin: GPIOXX
+      interrupt_pin: GPIOXX
       update_interval: 50ms
-      report_interval: 1s
       threshold: 400
-      calibration_x_min: 3860
-      calibration_x_max: 280
-      calibration_y_min: 340
-      calibration_y_max: 3860
-      swap_x_y: false
-
+      transform:
+        mirror_x: true
+      calibration:
+        x_min: 280
+        x_max: 3860
+        y_min: 340
+        y_max: 3860
 
 Configuration variables:
 ------------------------
@@ -47,144 +47,30 @@ The configuration is made up of two parts: The touch screen component, and optio
 Base Configuration:
 
 - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor.
-
 - **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The chip select pin.
   Often marked ``T_CS`` on the board.
-
 - **interrupt_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The touch detection pin.
   Often marked ``T_IRQ`` on the board. If not specified the component will use polling
   via SPI. This key is renamed from **irq_pin**
-
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. If ``interrupt_pin`` is specified the touch will be detected nearly instantaneously and this setting
   will be used only for the release detection. Defaults to ``50ms``.
-
-- **report_interval** (*Optional*, :ref:`config-time`): The interval to periodically
-  report the coordinates while the touch screen is touched. Defaults to ``never``.
-
 - **threshold** (*Optional*, int): The value to detect the touch or release. Defaults to ``400``.
+- **calibration** (**Required**): The XPT2046 is a resistive touch screen and it will require calibration on a per-device basis.
 
-- **calibration_x_min** (*Optional*, int): The raw value corresponding to the left
-  (or top if ``swap_x_y`` is specified) edge of the display. See :ref:`xpt2046-calibration`
-  for the process to calibrate the touch screen. Defaults to ``0``.
+    - **x_min** (**Required**, int): The raw value corresponding to the left
+      (or top if ``swap_xy`` is specified) edge of the touchscreen. See :ref:`touchscreen-calibration`
+      for the process to calibrate the touchscreen.
+    - **x_max** (**Required**, int): The raw value corresponding to the right
+      (or bottom if ``swap_xy`` is specified) edge of the touchscreen.
+    - **y_min** (**Required**, int): The raw value corresponding to the top
+      (or left if ``swap_xy`` is specified) edge of the touchscreen.
+    - **y_max** (**Required**, int): The raw value corresponding to the bottom
+      (or right if ``swap_xy`` is specified) edge of the touchscreen.
 
-- **calibration_x_max** (*Optional*, int): The raw value corresponding to the right
-  (or bottom if ``swap_x_y`` is specified) edge of the display. Defaults to ``4095``.
 
-- **calibration_y_min** (*Optional*, int): The raw value corresponding to the top
-  (or left if ``swap_x_y`` is specified) edge of the display. Defaults to ``0``.
-
-- **calibration_y_max** (*Optional*, int): The raw value corresponding to the bottom
-  (or right if ``swap_x_y`` is specified) edge of the display. Defaults to ``4095``.
-
-- **swap_x_y** (*Optional*, boolean): If true the x and y axes are swapped. Defaults to ``false``.
 
 - All other options from :ref:`config-touchscreen`.
-
-
-.. _xpt2046-calibration:
-
-Calibration
------------
-
-To match the point of the touch to the display coordinates the touch screen has to be calibrated.
-The XPT2046 component returns raw values in the 0 to 4095 range. Those raw values are available
-as the ``x_raw`` and ``y_raw`` member variables and for example write them out as in the example
-:ref:`touchscreen-on_touch`. The goal of the calibration is to identify the raw values corresponding
-to the edges of the screen.
-
-The calibration assumes a display oriented in a way that you will be using it, i.e. your
-:ref:`display-engine` component has to have the [0,0] logical coordinate at the top left.
-Set the dimensions as ``dimension_x`` and ``dimension_y`` and do not set any calibration
-values nor ``swap_x_y``.
-
-.. code-block:: yaml
-
-    # Touchscreen
-    touchscreen:
-      platform: xpt2046
-      id: my_touchscreen
-      cs_pin: 17
-      on_touch:
-        - lambda: |-
-              ESP_LOGI("cal", "x=%d, y=%d, x_raw=%d, y_raw=%0d",
-                  id(my_touchscreen).x,
-                  id(my_touchscreen).y,
-                  id(my_touchscreen).x_raw,
-                  id(my_touchscreen).y_raw
-                  );
-
-Get a stylus or a similar object, run the project and touch the corners of the screen at
-the edge pixels. Repeat several times and note minimum and maximum x and y raw values.
-
-.. code-block:: none
-
-    ... top left ...
-    [21:07:48][I][cal:071]: x=217, y=34, x_raw=3718, y_raw=445
-    [21:07:49][I][cal:071]: x=222, y=32, x_raw=3804, y_raw=419
-    ... top right ...
-    [21:07:52][I][cal:071]: x=19, y=36, x_raw=334, y_raw=370
-    [21:07:52][I][cal:071]: x=22, y=35, x_raw=386, y_raw=347
-    ... bottom left ...
-    [21:08:00][I][cal:071]: x=224, y=299, x_raw=3836, y_raw=3835
-    [21:08:00][I][cal:071]: x=225, y=303, x_raw=3848, y_raw=3878
-    [21:08:01][I][cal:071]: x=223, y=299, x_raw=3807, y_raw=3829
-    ... bottom right ...
-    [21:08:11][I][cal:071]: x=16, y=299, x_raw=281, y_raw=3839
-    [21:08:12][I][cal:071]: x=19, y=302, x_raw=328, y_raw=3866
-    [21:08:13][I][cal:071]: x=20, y=296, x_raw=358, y_raw=3799
-
-That means that the minimum raw x is 281, maximum 3848, minimum y 347 and maximum 3878.
-
-Identify which raw value is the display's x direction and what the y one. In our case
-moving right decreases the x raw value and going down increases the y one so the axes
-match and we *don't* need to use ``swap_x_y``. If the raw x is the display's y,
-use ``swap_x_y = true``.
-
-If one of the coordinates goes in the "wrong" direction it needs to be inverted.
-The inversion is performed by swapping the minimum and maximum values. In our
-case the horizontal direction represented by the raw x (no swap) is inverted
-so the ``calibration_x_min`` needs to be larger than ``calibration_x_max``.
-The vertical direction is fine. The configuration would thus be
-
-.. code-block:: yaml
-
-    touchscreen:
-      platform: xpt2046
-      calibration_x_min: 3848
-      calibration_x_max: 281
-      calibration_y_min: 347
-      calibration_y_max: 3878
-
-Compile, run and click on the edges again. The x and y should now match the coordinates
-of the display.
-
-.. code-block:: none
-
-    [21:32:34][I][cal:071]: x=7, y=6, x_raw=3755, y_raw=407
-    [21:32:37][I][cal:071]: x=237, y=4, x_raw=313, y_raw=385
-    [21:32:43][I][cal:071]: x=239, y=318, x_raw=284, y_raw=3845
-    [21:33:05][I][cal:071]: x=2, y=313, x_raw=3821, y_raw=3793
-
-Note that the touch screen is not extremely precise and there might be nonlinearities
-or similar errors so don't expect a pixel-perfect precision. You can verify the touchpoint
-using a display lambda similar to the following.
-
-.. code-block:: yaml
-
-    display:
-      - platform: ili9341
-        lambda: |-
-          it.fill(BLACK);
-          if (id(my_touchscreen).touched)
-            it.filled_circle(id(my_touchscreen).x, id(my_touchscreen).y, 10, RED);
-
-To be exact, the component does the following
-
-- reads the raw x and y and normalizes it using (non-inverted) min and max values
-- swaps x and y if needed
-- inverts if needed
-- scales to the display dimensions
 
 
 See Also

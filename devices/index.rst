@@ -1,7 +1,0 @@
-Devices
-========
-
-.. toctree::
-    :glob:
-
-    *

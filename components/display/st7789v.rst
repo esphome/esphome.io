@@ -25,6 +25,12 @@ The TTGO T-Display module shown has the display attached to the module's board a
 cannot be changed. Other display modules have pin headers or other connectors which must be connected appropriately
 to an ESP module.
 
+.. warning::
+
+    This component has been made redundant since the ST7789V is now supported by the :ref:`ILI9XXX component <ili9xxx>`. It is recommended
+    that you use the ``ili9xxx`` component as it will be maintained, whereas this component may not be, or may be removed completely
+    in the future.
+
 .. note::
 
     Displays larger than the 135x240 pixel display on the TTGO T-Display shown require a significant amount of RAM
@@ -34,17 +40,13 @@ to an ESP module.
 .. code-block:: yaml
 
     # Example minimal configuration entry
-    spi:
-      clk_pin: GPIO18
-      mosi_pin: GPIO19
-
     display:
       - platform: st7789v
         model: TTGO TDisplay 135x240
-        backlight_pin: GPIO4
-        cs_pin: GPIO5
-        dc_pin: GPIO16
-        reset_pin: GPIO23
+        backlight_pin: GPIOXX
+        cs_pin: GPIOXX
+        dc_pin: GPIOXX
+        reset_pin: GPIOXX
         lambda: |-
           it.print(0, 0, id(font), "Hello World!");
 
@@ -72,6 +74,7 @@ If you do specify them they will override any default.
   - ``Adafruit RR 280x240`` (round-rectangular display -- some pixels are "deleted" from corners to form rounded shape)
   - ``Adafruit S2 TFT FEATHER 240X135``
   - ``LILYGO T-Embed 170X320``
+  - ``Waveshare 1.47in 172X320`` (round-rectangular display -- some pixels are "deleted" from corners to form rounded shape)
   - ``Custom`` For other displays not listed above
 
 - **height** (**Required**, int): Sets height of display in pixels. Defaults depends ``model``.
@@ -177,6 +180,16 @@ Items marked RQ are hardware dependent but required and not preset. Items marked
      - 46
      - 12
      - 11
+   * - Waveshare 1.47in 172X320
+     - 320/172
+     - 34/0
+     - 21
+     - 22
+     - 23
+     - 4
+     -
+     - 18
+     - 19
    * - Custom
      - RQ
      - RQ

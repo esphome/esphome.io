@@ -59,63 +59,43 @@ Configuration variables:
 
 - **pm_1_0** (*Optional*): The information for the **Weight Concentration** sensor for fine particles up to 1μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_2_5** (*Optional*): The information for the **Weight Concentration** sensor for fine particles up to 2.5μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_4_0** (*Optional*): The information for the **Weight Concentration** sensor for coarse particles up to 4μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_10_0** (*Optional*): The information for the **Weight Concentration** sensor for coarse particles up to 10μm. Readings in µg/m³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pmc_0_5** (*Optional*): The information for the **Number Concentration** sensor for ultrafine particles up to 0.5μm. Readings in particles/cm³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pmc_1_0** (*Optional*): The information for the **Number Concentration** sensor for fine particles up to 1μm. Readings in particles/cm³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pmc_2_5** (*Optional*): The information for the **Number Concentration** sensor for fine particles up to 2.5μm. Readings in particles/cm³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pmc_4_0** (*Optional*): The information for the **Number Concentration** sensor for coarse particles up to 4μm. Readings in particles/cm³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pmc_10_0** (*Optional*): The information for the **Number Concentration** sensor for coarse particles up to 10μm. Readings in particles/cm³.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **pm_size** (*Optional*): Typical particle size in μm.
 
-  - **name** (**Required**, string): The name for this sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in automation and lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **auto_cleaning_interval** (*Optional*): The interval in seconds of the periodic fan-cleaning.
 
@@ -124,19 +104,19 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
 
-Wiring:
+Wiring
 -------
 
 The sensor has a 5 pin JST ZHR type connector, with a 1.5mm pitch. (`Matching connector housing <https://octopart.com/zhr-5-jst-279203>`__, `datasheet <http://www.farnell.com/datasheets/1393424.pdf>`__)
-To force the sensor into I²C mode, the SEL pin (Interface Select pin no.5) should be shorted to ground (pin no.4)
+To force the sensor into I²C mode, the SEL pin (Interface Select, pin no.4) should be shorted to ground (pin no.5)
 
 .. figure:: images/sps30-wiring.png
     :align: center
     :width: 50.0%
 
-For better stability, the SDA and SCL lines require suitable pull-up resistors.
+For better stability, the SDA and SCL lines require suitable pull-up resistors. Sensirion shows 10 kΩ resistors between VDD (5V, pin no.1) and SDA (pin no.2) and SCL (pin no.3) in the manual.
 
-Automatic Cleaning:
+Automatic Cleaning
 -------------------
 
 The SPS30 sensor has an automatic fan-cleaning which will accelerate the built-in fan to maximum speed for 10 seconds in order to blow out the dust accumulated inside the fan.
@@ -144,10 +124,10 @@ The default automatic-cleaning interval is 168 hours (1 week) of uninterrupted u
 Disabling of automatic-cleaning or setting a manual interval is not supported at the moment.
 
 
-.. _sps30_start_autoclean_fan_action:
+.. _sps30-start_fan_autoclean_action:
 
-``sps30.start_fan_autoclean`` Action
-------------------------------------
+Manual Cleaning
+---------------
 
 This :ref:`action <config-action>` manually starts fan-cleaning.
 
@@ -157,6 +137,23 @@ This :ref:`action <config-action>` manually starts fan-cleaning.
       then:
         - sps30.start_fan_autoclean: my_sps30
 
+To be able to trigger the fan cleaning feature from Home Assistant, add a button as shown below, and trigger it with a (periodic) automation.
+
+.. code-block:: yaml
+
+    button:
+      - platform: template
+        name: "SPS30 fan clean"
+        on_press:
+          then:
+            - sps30.start_fan_autoclean: my_sps30
+
+    sensor:  
+      - platform: sps30
+        id: "my_sps30"
+        ...
+
+Sensirion recommends cleaning at least once per week.
 
 See Also
 --------

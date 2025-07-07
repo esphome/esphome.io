@@ -42,8 +42,6 @@ Now you can create the light.
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
-- **name** (**Required**, string): The name of the light.
 - **dimmer_datapoint** (*Optional*, int): The datapoint id number of the dimmer value.
 - **min_value_datapoint** (*Optional*, int): The datapoint id number of the MCU minimum value
   setting.  If this is set then ESPHome will sync the **min_value** to the MCU on startup.

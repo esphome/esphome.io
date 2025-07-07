@@ -19,7 +19,7 @@ ESPHome node, without the requirement of a network connection.
 Overview
 --------
 
-The integration implements the :ref:`Display Menu <display_menu>` integration providing
+The component implements the :ref:`Display Menu <display_menu>` component providing
 a hierarchical menu primarily intended to be controlled either by a rotary encoder
 with a button or a five-button joystick controller.
 

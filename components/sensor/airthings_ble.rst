@@ -29,7 +29,7 @@ The device will then listen for nearby devices, and display a message like this 
 .. code-block:: text
 
     [D][airthings_ble:019]:
-    Found AirThings device Serial: 123456789 (MAC: 01:02:03:04:05:06)
+    Found AirThings device Serial: 123456789 (MAC: XX:XX:XX:XX:XX:XX)
 
 Once the device is found, remove the ``airthings_ble`` device tracker from your configuration and take note of the device MAC address, and use it when configuring a sensor below.
 
@@ -53,6 +53,7 @@ Configuration example:
 
     sensor:
       - platform: airthings_wave_plus
+        name: wave_plus
         ble_client_id: airthings01
         update_interval: 5min # default
         battery_update_interval: 24h # default
@@ -70,11 +71,13 @@ Configuration example:
           name: "WavePlus CO2"
         tvoc:
           name: "WavePlus VOC"
+        illuminance:
+          name: "WavePlus ambient light"
         battery_voltage:
           name: "WavePlus Battery Voltage"
 
     ble_client:
-      - mac_address: 01:02:03:04:05:06
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: airthings01
 
     esp32_ble_tracker:
@@ -109,7 +112,7 @@ Configuration example:
           name: "WaveMini Battery Voltage"
 
     ble_client:
-      - mac_address: 01:02:03:04:05:06
+      - mac_address: XX:XX:XX:XX:XX:XX
         id: airthingsmini
 
     esp32_ble_tracker:
@@ -134,8 +137,7 @@ Battery Level Reporting
 ***********************
 
 If you wish to have the 'percentage of battery life remaining'
-reported as a sensor, you can make use of the :ref:`copy-sensor`
-integration.
+reported as a sensor, you can make use of the :ref:`copy-sensor` component.
 
 The examples below are based on standard alkaline-chemistry batteries;
 if you use other types of batteries you may need to adjust the

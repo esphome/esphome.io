@@ -2,7 +2,7 @@ DF-Player mini
 ==============
 
 .. seo::
-    :description: Instructions for setting up DF Player Mini integration in ESPHome.
+    :description: Instructions for setting up DF Player Mini component in ESPHome.
     :image: dfplayer.svg
 
 The ``dfplayer`` (`datasheet <https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299>`__), component
@@ -14,8 +14,7 @@ allows you to play sound and music stored in an SD card or USB flash drive.
 
     DF-Player mini Module.
 
-For this integration to work you need to have set up a :ref:`UART bus <uart>`
-in your configuration.
+For this component to work you need to have set up a :ref:`UART bus <uart>` in your configuration.
 
 Overview
 --------
@@ -31,16 +30,7 @@ will be required.
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      tx_pin: GPIO2
-      rx_pin: GPIO5
-      baud_rate: 9600
-
-    # Declare DFPlayer mini module
     dfplayer:
-      on_finished_playback:
-        then:
-          logger.log: 'Somebody press play!'
 
 Configuration variables:
 ------------------------
@@ -114,11 +104,11 @@ Configuration options:
 ``dfplayer.play_mp3`` Action
 ----------------------------
 
-Plays a track inside the folder ``mp3``. Files inside the folder must be numbered from 1 
+Plays a track inside the folder ``mp3``. Files inside the folder must be numbered from 1
 to 9999, like ``0001.mp3``, ``0002.mp3``, ... etc.
-The folder name needs to be ``mp3``, placed under the SD card root directory, and the 
-mp3 file name needs to be 4 digits, for example, "0001.mp3", placed under the mp3 folder. 
-If you want, you can add additional text after the number in the filename, for example, 
+The folder name needs to be ``mp3``, placed under the SD card root directory, and the
+mp3 file name needs to be 4 digits, for example, "0001.mp3", placed under the mp3 folder.
+If you want, you can add additional text after the number in the filename, for example,
 ``0001hello.mp3``, but must always be referenced by number only in yaml.
 
 .. code-block:: bash
@@ -345,8 +335,8 @@ Sample code
 .. code-block:: yaml
 
     uart:
-      tx_pin: GPIO2
-      rx_pin: GPIO5
+      tx_pin: GPIOXX
+      rx_pin: GPIOXX
       baud_rate: 9600
 
     dfplayer:
@@ -355,19 +345,19 @@ Sample code
           logger.log: 'Playback finished event'
 
     api:
-      services:
-      - service: dfplayer_next
+      actions:
+      - action: dfplayer_next
         then:
           - dfplayer.play_next:
-      - service: dfplayer_previous
+      - action: dfplayer_previous
         then:
           - dfplayer.play_previous:
-      - service: dfplayer_play
+      - action: dfplayer_play
         variables:
           file: int
         then:
           - dfplayer.play: !lambda 'return file;'
-      - service: dfplayer_play_loop
+      - action: dfplayer_play_loop
         variables:
           file: int
           loop_: bool
@@ -375,7 +365,7 @@ Sample code
           - dfplayer.play:
               file: !lambda 'return file;'
               loop: !lambda 'return loop_;'
-      - service: dfplayer_play_folder
+      - action: dfplayer_play_folder
         variables:
           folder: int
           file: int
@@ -384,7 +374,7 @@ Sample code
               folder: !lambda 'return folder;'
               file: !lambda 'return file;'
 
-      - service: dfplayer_play_loop_folder
+      - action: dfplayer_play_loop_folder
         variables:
           folder: int
         then:
@@ -392,54 +382,54 @@ Sample code
               folder: !lambda 'return folder;'
               loop: true
 
-      - service: dfplayer_set_device_tf
+      - action: dfplayer_set_device_tf
         then:
           - dfplayer.set_device: TF_CARD
 
-      - service: dfplayer_set_device_usb
+      - action: dfplayer_set_device_usb
         then:
           - dfplayer.set_device: USB
 
-      - service: dfplayer_set_volume
+      - action: dfplayer_set_volume
         variables:
           volume: int
         then:
           - dfplayer.set_volume: !lambda 'return volume;'
-      - service: dfplayer_set_eq
+      - action: dfplayer_set_eq
         variables:
           preset: int
         then:
           - dfplayer.set_eq: !lambda 'return static_cast<dfplayer::EqPreset>(preset);'
 
-      - service: dfplayer_sleep
+      - action: dfplayer_sleep
         then:
           - dfplayer.sleep
 
-      - service: dfplayer_reset
+      - action: dfplayer_reset
         then:
           - dfplayer.reset
 
-      - service: dfplayer_start
+      - action: dfplayer_start
         then:
           - dfplayer.start
 
-      - service: dfplayer_pause
+      - action: dfplayer_pause
         then:
           - dfplayer.pause
 
-      - service: dfplayer_stop
+      - action: dfplayer_stop
         then:
           - dfplayer.stop
 
-      - service: dfplayer_random
+      - action: dfplayer_random
         then:
           - dfplayer.random
 
-      - service: dfplayer_volume_up
+      - action: dfplayer_volume_up
         then:
           - dfplayer.volume_up
 
-      - service: dfplayer_volume_down
+      - action: dfplayer_volume_down
         then:
           - dfplayer.volume_down
 

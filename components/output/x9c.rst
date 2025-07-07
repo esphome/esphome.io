@@ -15,7 +15,7 @@ The ``x9c`` output platform allows you to add an output that controls a `X9C dig
 
 The X9C family of digital potentiometers are available in different resistance values.
 
-==================== ===================== 
+==================== =====================
 ``X9C102``           ``1kΩ``
 -------------------- ---------------------
 ``X9C103``           ``10kΩ``
@@ -33,10 +33,11 @@ All chips are controlled by a three wire interface and feature 100 possible wipe
     output:
       - platform: x9c
         id: x9c_pot
-        cs_pin: GPIO25
-        inc_pin: GPIO27
-        ud_pin: GPIO26
-        initial_value: 0.5
+        cs_pin: GPIOXX
+        inc_pin: GPIOXX
+        ud_pin: GPIOXX
+        initial_value: 1.0
+        step_delay: 1us
 
 Configuration variables:
 ------------------------
@@ -46,6 +47,7 @@ Configuration variables:
 - **inc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Increment pin
 - **ud_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Up/Down pin
 - **initial_value** (*Optional*, float): Manually specify the initial potentiometer value, between ``0.01`` and ``1.0``. Defaults to ``1.0``.
+- **step_delay** (*Optional*, int): Manually specify the delay between steps (in microseconds) between ``1us`` and ``100us``. Defaults to ``1us``.
 - All other options from :ref:`Output <config-output>`.
 
 See Also

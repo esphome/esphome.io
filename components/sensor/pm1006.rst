@@ -70,21 +70,6 @@ Example config:
         update_interval: 20s
 
 
-If you run the PM1006 (2.5µm) or PM1006K (1, 2.5, 10µm) independent from the original MCU you need to send a serial command in the first 5 seconds after power is applied to the sensor. Otherwise the sensor will switch to PWM mode and does not repond to UART requests. A possibility to do this in ESPhome is to use an automation. `Source <https://community.home-assistant.io/t/ikea-vindriktning-air-quality-sensor/324599/300>`_
-
-Example config:
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    on_boot:
-      priority: 240
-      then:
-        - uart.write:
-            id: ikea #id of the uart bus used for the PM1006
-            data: [0x11, 0x02, 0x0B, 0x01, 0xE1]
-
-
 See Also
 --------
 

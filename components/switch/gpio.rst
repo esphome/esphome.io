@@ -3,7 +3,7 @@ GPIO Switch
 
 .. seo::
     :description: Instructions for setting up GPIO pin switches in ESPHome that control GPIO outputs.
-    :image: pin.svg
+    :image: gpio.svg
 
 The ``gpio`` switch platform allows you to use any pin on your node as a
 switch. You can for example hook up a relay to a GPIO pin and use it
@@ -18,7 +18,7 @@ through this platform.
     # Example configuration entry
     switch:
       - platform: gpio
-        pin: 25
+        pin: GPIOXX
         name: "Living Room Dehumidifier"
 
 Configuration variables:
@@ -26,8 +26,6 @@ Configuration variables:
 
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The
   GPIO pin to use for the switch.
-- **name** (**Required**, string): The name for the switch.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **interlock** (*Optional*, list): A list of other GPIO switches in an interlock group. See
   :ref:`switch-gpio-interlocking`.
 - **interlock_wait_time** (*Optional*, :ref:`config-time`): For interlocking mode, set how long
@@ -47,7 +45,7 @@ To create an active-low switch (one that is turned off by default), use the :ref
     switch:
       - platform: gpio
         pin:
-          number: 25
+          number: GPIOXX
           inverted: true
 
 Momentary Switch
@@ -65,7 +63,7 @@ or closes the gate. The relay simulates the button press for 500ms.
     # Example configuration entry
     switch:
       - platform: gpio
-        pin: 25
+        pin: GPIOXX
         id: relay
         name: "Gate Remote"
         icon: "mdi:gate"
@@ -92,13 +90,13 @@ with a list of all the switches in the group.
     # Prevent relay #1 and relay #2 from being activated at the same time.
     switch:
       - platform: gpio
-        pin: GPIO25
+        pin: GPIOXX
         name: "Relay #1"
         id: relay1
         interlock: [relay2]
 
       - platform: gpio
-        pin: GPIO26
+        pin: GPIOXX
         name: "Relay #2"
         id: relay2
         interlock: [relay1]

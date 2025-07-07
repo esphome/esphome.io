@@ -8,7 +8,8 @@ External Components
 You can easily import community or personal components using the external components feature.
 Bundled components can be overridden using this feature.
 
-You can find some basic documentation on creating your own components at :ref:`contributing_to_esphome`.
+If you want to create your own components/platforms for ESPHome, please see our
+`developer site <https://developers.esphome.io>`__.
 
 .. code-block:: yaml
 
@@ -33,6 +34,14 @@ You can find some basic documentation on creating your own components at :ref:`c
           type: local
           path: my_components
 
+      # use a component from a local git repository
+      - source:
+          type: git
+          url: file:///Users/user/path_to_repo
+          ref: my_awesome_branch
+        components: [my_awesome_component]
+
+
 Configuration variables:
 
 - **source**: The location of the components you want to retrieve. See :ref:`external-components_local`
@@ -42,10 +51,11 @@ Configuration variables:
 
   git options:
 
-  - **url** (**Required**, url): HTTP git repository url. See :ref:`external-components_git`.
+  - **url** (**Required**, url): Git repository url. See :ref:`external-components_git`.
   - **ref** (*Optional*, string): Git ref (branch or tag). If not specified the default branch is used.
   - **username** (*Optional*, string): Username for the Git server, if one is required
   - **password** (*Optional*, string): Password for the Git server, if one is required
+  - **path** (*Optional*, string): Path inside the repo, if different from ``components`` or ``esphome/components``
 
   local options:
 
@@ -113,6 +123,8 @@ Retrieving components from git is the easiest way to use components not included
 The source components should be inside a ``components`` folder or inside an ``esphome/components``
 folder. The latter makes sharing a component from a forked ESPHome repository easier.
 
+The url to the repository may be remote (``http:`` or ``https:`` scheme) or local (``file:`` scheme with an absolute path.)
+
 Example of git repositories
 ***************************
 
@@ -163,6 +175,10 @@ HTTP git repositories in general are supported with this configuration:
       source:
         type: git
         url: http://repository_url/
+        ref: branch_or_tag
+      source:
+        type: git
+        url: file:///Users/user/path_to_repo
         ref: branch_or_tag
 
 The source field accepts a short hand **github://** resource:

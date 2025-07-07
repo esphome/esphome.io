@@ -3,10 +3,10 @@ Physically Connecting to your Device
 
 The most difficult part of setting up a new ESPHome device is the initial
 installation, which requires connecting your ESP device to a computer using a
-cable.
+data cable.
 
 **You only need to do this once per device.** Once you've flashed ESPHome on a
-device, you can use :doc:`the OTA updater </components/ota>` to upload new
+device, you can use :doc:`/components/ota/index` to upload new
 versions or configuration changes wirelessly.
 
 ESPHome runs on a wide variety of devices, so it's hard to list any specific
@@ -24,36 +24,71 @@ requires you do something different to connect your computer to the ESP in
 order to flash it.
 
 You only need to physically connect to it once. Once you've flashed your device
-and connected it to your WiFi, you can use the `OTA (over-the-air) update
-component </components/ota.html>`_ to install software remotely.
+and connected it to your WiFi, you can use :doc:`/components/ota/index` to
+install software remotely.
 
 Programming a ESP-based device is done by connecting the serial port on the
 ESP8266/ESP32 to your computer through a USB to serial adapter. Some devices
-have adapter built into the circuit board, in which case things are a bit easier.
+have adapter built into the circuit board (and some even have the programmer
+embedded in the MCU, in which case things are a bit easier.
+
+In case you use an external serial programmer connected to RX and TX of the ESP, choose one based
+on CH340 as it's the most reliable and the cheapest one to use for flashing. Programmers based on
+CP2102 or PL2303 are compatible with many devices, but using an external 3.3V supply might be
+necessary for them. 
+
+.. _esphome-phy-con-drv:
+
+Plug in the board or the serial programmer into a free USB port and check if it has been properly detected
+by your computer. The firmware programming tools use a serial interface to communicate with your device. 
+On Windows these interfaces are named ``COM1``, ``COM2``, etc. and on Linux they are named ``/dev/ttyUSB0``,
+``/dev/ttyACM1``, etc. 
 
 .. note::
 
-    If the serial port is not showing up, you might not have the required
-    drivers installed. The model number you need is engraved on the chip
-    connected to the USB port, or in the store listing. These drivers work for
-    most ESP devices:
+    If it's not showing up as a serial port, you might not have the required drivers
+    installed. The model number you need is engraved on the chip connected to the USB port.
+    ESPs and programmers usually ship with one of these UART chips:
 
-      * CP2102 (square chip): `driver
-        <https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers>`__
-      * CH341: `driver
-        <https://github.com/nodemcu/nodemcu-devkit/tree/master/Drivers>`__
+    * CH34x: `driver <https://github.com/nodemcu/nodemcu-devkit/tree/master/Drivers>`__
+    * CP2102: `driver <https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers>`__
+    * PL2303: `driver <https://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41>`__
 
 With the exception of the situation where you have a USB port, you need to make
 five electrical connections to program an ESP-based board:
 
-- +3.3V, or occasionally +5.0V
-- GND, or ground
-- TX
-- RX
-- IO0, used to place the board into programming mode. This is often a button
-  that you need to hold down while connecting the power (+3.3V).
+- ``+3.3V``, or occasionally ``+5.0V``
+- ``GND``, or ground
+- ``TX`` of programmer to ``RX`` of the ``ESP``
+- ``RX`` of programmer to ``TX`` of the ``ESP``
+- ``IO0``, used to place the board into programming mode. This is often a button
+  that you need to hold down while connecting the power (``+3.3V``).
 
-RX and TX are frequently swapped. If programming your board doesn't work the
+The power supplied to the device is one of the most important elements for both flashing
+the device and for stable operation. You must ensure that the device receives sufficient
+power (current AND appropriate voltage level) to properly flash the firmware on the device.
+When using an external ``3.3V`` supply, ensure the ground (``GND``) of both are connected together,
+this ensures a common ground. A PC power supply can be a good source for ``3.3V`` DC power.
+
+.. note::
+
+    Some adapters can be switched between ``3.3V`` and ``5V`` for the data pins, but still provide 5V on the power pin which will irreparably destroy your device. You **MUST** make sure the data (``RX`` and ``TX``) and ``VCC`` pins are set for ``3.3V``.
+
+ESP needs to be put into programming mode or flash mode before the firmware can be uploaded. This is
+done by connecting ``GPIO0`` pin to ``GND`` while the chip is booting. 
+
+.. _esphome-phy-con-prg:
+
+To put the ESP into programming mode:
+
+* Disconnect the USB connection of your board or serial programmer from the computer (to power off your ESP)
+* Bridge ``GPIO0`` and ``GND`` (by pressing the on-board button or connection with a wire)
+* Connect the board or serial programmer to your computer (ensuring ESP powers up)
+* After a few seconds disconnect ``GPIO0`` from ``GND`` (release button or remove the wire connection). On devices that do not provide the ``GPIO0`` connected button, it may be easier to leave the wired bridge in place throughout the entire flashing process (erase & upload). Doing so will not create any problems. After the firmware is uploaded successfully, remove the bridge. This allows the device to boot normally.
+
+You may need to power-cycle the ESP between erasing and uploading the firmware, this can be done by disconnecting and reconnecting, of course with ``GPIO0`` and ``GND`` still connected to each other.
+
+``RX`` and ``TX`` can be sometimes swapped. If programming your board doesn't work the
 first time, try flipping the wires connected to those pins before trying again.
 
 .. warning::
@@ -84,8 +119,9 @@ USB Port on Device
 
 Development boards often come with a USB port built in. This USB port is
 connected to a serial adapter, so you don't need a separate serial adapter. You
-can use just a :ref:`USB cable <usb-cable>` to connect it to your computer to
-program it.
+can use just a :ref:`USB data cable <usb-cable>` to connect it to your computer to
+program it. Additionally, a development board can also be used to flash other ESPs.
+:doc:`Read more here. </guides/devboard_as_flasher>`
 
 This isn't likely to be very useful without connecting additional sensors to it
 by either soldering or using a breadboard, but you do not need anything else to
@@ -206,7 +242,8 @@ require different parts and tools.
         .. _usb-cable:
     * - :ref:`USB to micro-USB/mini-USB/USB-C <usb-cable>`
       - If your target device has a USB port on it, you need the appropriate
-        cable to connect to it.
+        data cable to connect to it. A power only USB cable that usually
+        comes presupplied with powerbanks won't work.
       - $3 to $10
       - .. image:: /guides/images/usb-cable.jpg
             :alt: From https://www.stockvault.net/photo/271754/usb-cable
@@ -224,6 +261,9 @@ require different parts and tools.
 
         The `Tasmota website provides a good set of suggestions on what to buy
         <https://tasmota.github.io/docs/Getting-Started/#needed-hardware>`_.
+
+        Any ESP development board with functioning USB_UART bridge chip can also be used instead.
+        :doc:`Read instructions here. </guides/devboard_as_flasher>`
       - $3 to $10
       - .. image:: /guides/images/usb-serial-adapter.jpg
             :alt: From https://tasmota.github.io/docs/Getting-Started/

@@ -22,7 +22,15 @@ The SPI bus usually consists of 4 wires:
   All devices on the bus share this line.
 - **MISO** (also SDI - Serial Data In): Is used to receive data. All devices on the bus share this line.
 
-In some cases one of **MOSI** or **MISO** do not exist as the receiving device only accepts data or sends data.
+In some cases one of **MOSI** or **MISO** does not exist as the receiving device only accepts data or sends data.
+It is also possible to configure a quad SPI interface using 4 output data lines, and an octal interface using 8 data output lines. This is required only for
+use with certain components.
+
+.. note::
+
+    - Software mode supports only single-bit SPI.
+    - Quad mode SPI is available only on on ESP32 devices (all variants).
+    - Octal mode is available only on ESP32-S3, -S2 and -P4 variants.
 
 To set up SPI devices in ESPHome, you first need to place a top-level SPI component which defines the pins to
 use for the functions described above. The **CS** pins are individually managed by the other components that
@@ -33,35 +41,51 @@ This component also accepts a list of controllers if you want to implement multi
 
     # Example configuration entry - single controller
     spi:
-      clk_pin: GPIO14
-      mosi_pin: GPIO13
-      miso_pin: GPIO12
+      clk_pin: GPIOXX
+      mosi_pin: GPIOXX
+      miso_pin: GPIOXX
 
-    # Example configuration entry - two controllers
+    # Example configuration entry - three controllers, one using quad SPI
     spi:
       - id: spi_bus0
-        clk_pin: GPIO18
-        mosi_pin: GPIO23
-        miso_pin: GPIO19
+        clk_pin: GPIOXX
+        mosi_pin: GPIOXX
+        miso_pin: GPIOXX
         interface: hardware
       - id: spi_bus1
-        clk_pin: GPIO14
-        mosi_pin: GPIO27
-        miso_pin: GPIO26
+        clk_pin: GPIOXX
+        mosi_pin: GPIOXX
+        miso_pin: GPIOXX
         interface: any
+      - id: quad_spi_bus
+        type: quad
+        clk_pin: GPIOXX
+        data_pins:
+          - GPIOXX
+          - GPIOXX
+          - GPIOXX
+          - GPIOXX
 
 Configuration variables:
 ------------------------
 
+- **type** (*Optional*): Choose between ``single`` for standard 1 bit bus SPI (the default), ``quad`` and ``octal``.
 - **clk_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin used for the clock line of the SPI bus.
-- **mosi_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin used for the MOSI line of the SPI bus.
-- **miso_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin used for the MISO line of the SPI bus.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
   Value may be one of ``any`` (default), ``software``, ``hardware``, ``spi``, ``spi2`` or ``spi3``, depending on
-  the particular chip. See discussion below.
-- **force_sw** (*Optional*, **Deprecated**, boolean): Whether software implementation should be used even if a hardware
-  controller is available. Default is ``false``.
+  the type and the particular chip used. See discussion below.
+
+For the conventional ``single`` bit bus at least one of ``miso_pin`` or ``mosi_pin`` is required.
+
+- **mosi_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin used for the MOSI line of the SPI bus.
+- **miso_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin used for the MISO line of the SPI bus.
+
+For ``quad`` or ``octal`` type instead specify ``data_pins``:
+
+- **data_pins** (**Required**, :ref:`Pin Schema <config-pin_schema>`): Must be a list of exactly 4 pins to be used
+  for the quad SPI output data lines, or exactly 8 pins for octal mode. Not used for single mode.
+
 
 Interface selection:
 --------------------
@@ -85,6 +109,8 @@ While the ESP32 supports the reassignment of the default SPI pins to most other 
 can improve performance and stability for certain ESP/device combinations.
 ESP8266 has a more limited selection of pins that can be used; check the datasheet for more information.
 
+Quad and octal modes requires a hardware interface, so ``software`` and ``any`` are not permitted values.
+
 Generic SPI device component:
 -----------------------------
 .. _spi_device:
@@ -97,16 +123,16 @@ Reads and writes on the device can be performed with lambdas. For example:
 .. code-block:: yaml
 
     spi:
-        clk_pin: GPIO14
-        mosi_pin: GPIO27
-        miso_pin: GPIO26
+        clk_pin: GPIOXX
+        mosi_pin: GPIOXX
+        miso_pin: GPIOXX
         interface: hardware
 
     spi_device:
         id: spidev
-        cs_pin: GPIO13
+        cs_pin: GPIOXX
         data_rate: 2MHz
-        mode: 3
+        spi_mode: 3
         bit_order: lsb_first
 
    on...:
@@ -123,16 +149,19 @@ Configuration variables:
 - **data_rate** (*Optional*): Set the data rate of the controller. One of ``80MHz``, ``40MHz``, ``20MHz``, ``10MHz``,
   ``5MHz``, ``4MHz``, ``2MHz``, ``1MHz`` (default), ``200kHz``, ``75kHz`` or ``1kHz``. A numeric value in Hz can alternatively
   be specified.
-- **mode** (*Optional*): Set the controller mode - one of ``mode0``, ``mode1``, ``mode2``, ``mode3``. The default is ``mode3``.
+- **spi_mode** (*Optional*): Set the controller mode - one of ``mode0``, ``mode1``, ``mode2``, ``mode3``. The default is ``mode3``.
   See table below for more information
 - **bit_order** (*Optional*): Set the bit order - choose one of ``msb_first`` (default) or ``lsb_first``.
 - **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin.
+- **release_device** (*Optional*, boolean): For ESP-IDF, release the bus device between transactions. Default isk
+  ``False``. Setting this to ``True`` will enable more than 6 devices to be connected to hardware SPI buses.
+- **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
 
 SPI modes:
 ----------
 
 SPI devices operate in one of four modes as per the table below. The choice of mode is dictated by the requirements
-of the speficic peripheral chip.
+of the specific peripheral chip.
 
 .. csv-table:: Supported Modes
     :header: "Mode", "Clock Idle Polarity", "Clock Phase", "Data shifted on", "Data sampled on"
@@ -143,6 +172,14 @@ of the speficic peripheral chip.
     "3", "high", "trailing", "falling CLK", "rising CLK"
 
 
+ESP-IDF limit on bus devices:
+-----------------------------
+
+ESP-IDF has a software limit of 6 devices to be connected to hardware SPI buses. This limit can't be readily
+changed but can be worked around by releasing the bus device between transactions, so that no more than 6 devices
+are configured at one time. The ``release_device`` option can be used to enable this on a per-device basis. It will
+add additional time to an SPI transaction, so should be used only with devices that don't require frequent
+transactions.
 
 See Also
 --------

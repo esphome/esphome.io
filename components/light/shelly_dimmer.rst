@@ -10,7 +10,6 @@ A detailed analysis of the Shelly Dimmer 2 hardware is given `here <https://gith
 
 Warning!!! At the time of writing there seems to be no way to revert back to the "stock firmware", because there seems to be no way to revert to firmware of the STM32 co-processor.
 
-The 
 
 .. figure:: ../../images/shellydimmer2.jpg
     :align: center
@@ -49,7 +48,6 @@ An example of a configuration of this component:
 Configuration variables:
 ------------------------
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART hub.
 
 .. note::
@@ -64,7 +62,6 @@ Configuration variables:
             baud_rate: 115200
 
 
-- **name** (**Required**, string): The name of the light.
 - **leading_edge** (*Optional*, boolean): `Dimming mode <https://en.wikipedia.org/wiki/Dimmer#Solid-state_dimmer>`_: ``true`` means leading edge, ``false`` is trailing edge. Defaults to ``false``.
 - **min_brightness** (*Optional*, int): Minimum brightness value on a scale from 0..1000, the default is 0.
 - **max_brightness** (*Optional*, int): Maximum brightness value on a scale from 0..1000, the default is 1000.
@@ -91,7 +88,7 @@ Configuration variables:
         firmware:
           version: "51.6" #<-- set version here
           update: true
-    
+
     There is no action required by the user to flash the STM32. There is no way to revert to stock firmware on the STM32 at the time of writing.
 
 - All other options from :ref:`Light <config-light>`.

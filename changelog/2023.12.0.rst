@@ -1,0 +1,361 @@
+ESPHome 2023.12.0 - 20th December 2023
+======================================
+
+.. seo::
+    :description: Changelog for ESPHome 2023.12.0.
+    :image: /_static/changelog-2023.12.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
+    GT911, components/touchscreen/gt911, esp32_s3_box_3.png
+    Pylontech Batteries, components/pylontech, pylontech.jpg
+    HE60R Cover, components/cover/he60r, he60r.jpg
+    Graphical Display Menu, components/display_menu/graphical_display_menu, graphical_display_menu.png
+    FT63X6, components/touchscreen/ft63x6, wt32-sc01.png
+    A02YYUW, components/sensor/a02yyuw, a02yyuw.jpg
+    PN7150, components/pn7150, pn7150.jpg
+    PN716X, components/pn7160, pn716x.jpg
+
+Graphical Menu
+--------------
+
+Following on from the previous :doc:`/components/display_menu/lcd_menu` that was only for LCD displays,
+there is now a new :doc:`/components/display_menu/graphical_display_menu` that can be used with any
+graphical/pixel based display.
+
+Pin Reuse validation
+--------------------
+
+There is a new validation performed on configurations to ensure that pins are not reused unintentionally.
+This is a common source of issues and generally a pin does not need to be reused across multiple components
+in a single configuration. Pins should only be reused in a very limited set of circumstances and seeing the
+error will generally mean that you need to reorganise your configuration to not reuse the pins.
+The error can be bypassed by specifically adding another config item to all of the
+duplicate pin definitions. See the :ref:`config-pin_schema` for details.
+
+Touchscreen internal changes
+----------------------------
+
+The touchscreen compoenent code has had a big overhaul which breaks any external components or open PRs for
+new touchscreens. See :esphomepr:`4596` for details if this affects you.
+
+MCP3008 breaking changes
+------------------------
+
+The MCP3008 has has a restructure of the code and at the same time the default update interval has been changed to 60 seconds,
+the units, device class and state class default have also been set to sane defaults expected for a voltage sensor.
+
+Release 2023.12.1 - December 21
+-------------------------------
+
+- Fix replaced - in allowed characters during object_id sanitizing :esphomepr:`5983` by :ghuser:`jesserockz`
+
+Release 2023.12.2 - December 22
+-------------------------------
+
+- ESP32-S3 and ESP-IDF don't play well with USB_CDC and need USB_SERIAL_JTAG :esphomepr:`5929` by :ghuser:`clydebarrow`
+- Update libtiff6 :esphomepr:`5985` by :ghuser:`cvandesande`
+- Override GPIOs 12 and 13 on the airm2m (LuatOS) board  :esphomepr:`5982` by :ghuser:`davidmonro`
+- Add workaround for crash in Arduino 2.0.9 when CDC is configured :esphomepr:`5987` by :ghuser:`kbx81`
+- web_server.py: return empty content when file doesn't exist :esphomepr:`5980` by :ghuser:`jessicah`
+
+Release 2023.12.3 - December 22
+-------------------------------
+
+- Fix unexpected disconnects when outgoing buffer is full during keepalive :esphomepr:`5988` by :ghuser:`bdraco`
+- Regenerate api_pb2 after manual changes were added incorrectly in #5732 :esphomepr:`5990` by :ghuser:`jesserockz`
+- Improved sensor readings in htu21d component. :esphomepr:`5839` by :ghuser:`matzman666`
+- Fix dashboard logs when api is disabled and using MQTT :esphomepr:`5992` by :ghuser:`bdraco`
+- Fix broken configs with non-existent components :esphomepr:`5993` by :ghuser:`jesserockz`
+
+Release 2023.12.4 - December 25
+-------------------------------
+
+- dashboard: Only ping when polling is active :esphomepr:`6001` by :ghuser:`bdraco`
+- tt21100: restore init read :esphomepr:`6008` by :ghuser:`nielsnl68`
+- dashboard: Fix file writes on Windows :esphomepr:`6013` by :ghuser:`bdraco`
+- Display: fix class inherence in Python script :esphomepr:`6009` by :ghuser:`nielsnl68`
+
+Release 2023.12.5 - December 25
+-------------------------------
+
+- Fix docker builds :esphomepr:`6012` by :ghuser:`bdraco`
+
+Release 2023.12.6 - January 15
+------------------------------
+
+- Fix device not requesting Home Assistant time at the update interval :esphomepr:`6022` by :ghuser:`bdraco`
+- fix compilation error for libretiny :esphomepr:`6064` by :ghuser:`tomaszduda23`
+- pylontech: Fix parsing error with US2000 :esphomepr:`6061` by :ghuser:`functionpointer`
+- Support full (>460 char) dumps of Pronto IR commands :esphomepr:`6040` by :ghuser:`rpaskowitz`
+- ESP32-C3 USB_CDC fixes :esphomepr:`6069` by :ghuser:`kbx81`
+- Improv Serial -- don't wait for incoming bytes :esphomepr:`6089` by :ghuser:`kbx81`
+- add STATE_CLASS_TOTAL_INCREASING to bl0940 and bl0942 :esphomepr:`6090` by :ghuser:`tomaszduda23`
+- Fallback to pure-python loader for better error when YAML loading fails :esphomepr:`6081` by :ghuser:`bdraco`
+
+Release 2023.12.7 - January 17
+------------------------------
+
+- Fix RMT timing clock base :esphomepr:`6101` by :ghuser:`majkrzak`
+- Create RingBuffer for VoiceAssistant :esphomepr:`6102` by :ghuser:`jesserockz`
+- Inkplate6: Fix crash with initial set of greyscale :esphomepr:`6038` by :ghuser:`clydebarrow`
+
+Release 2023.12.8 - January 19
+------------------------------
+
+- Let show_*_page actions depend on "Display" :esphomepr:`6092` by :ghuser:`guillempages`
+- Fix some Voice Assistant bugs :esphomepr:`6121` by :ghuser:`jesserockz`
+
+Release 2023.12.9 - January 22
+------------------------------
+
+- fix sen5x negative temperature :esphomepr:`6082` by :ghuser:`ssieb`
+- negative values for all DHT22 variants :esphomepr:`6074` by :ghuser:`ssieb`
+- fix negative temperature for pmsx003 :esphomepr:`6083` by :ghuser:`ssieb`
+- fix: negative temperatures on PMS5003T sensors :esphomepr:`6100` by :ghuser:`aschmitz`
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add ENS160 Sensor :esphomepr:`4243` by :ghuser:`vincentscode` (new-integration)
+- Create GT911 Touchscreen component :esphomepr:`4027` by :ghuser:`jesserockz` (new-integration)
+- Pylontech integration (solar battery bank) :esphomepr:`4688` by :ghuser:`functionpointer` (new-integration)
+- Add Chamberlain/HomEntry HE60R garage door opener :esphomepr:`5834` by :ghuser:`clydebarrow` (new-integration)
+- Add graphical display menu :esphomepr:`4105` by :ghuser:`MrMDavidson` (new-integration)
+- Updating the touchscreen interface structure  :esphomepr:`4596` by :ghuser:`nielsnl68` (new-integration) (breaking-change)
+- Added the A02YYUW distance sensor :esphomepr:`5729` by :ghuser:`TH-Braemer` (new-integration)
+- Add support for PN7160 :esphomepr:`5486` by :ghuser:`kbx81` (new-integration)
+- Add support for PN7150 :esphomepr:`5487` by :ghuser:`kbx81` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Add proper support for SH1107 to SSD1306 component :esphomepr:`5166` by :ghuser:`nikitakuklev` (breaking-change)
+- sen5x fix temperature compensation and gas tuning :esphomepr:`4901` by :ghuser:`matt7aylor` (breaking-change)
+- Ensure names containing characters other than `a-z` `A-Z` `0-9` or `_` are unique :esphomepr:`5810` by :ghuser:`bdraco` (breaking-change)
+- mcp3008: Tidy up and fix auto load bug :esphomepr:`5842` by :ghuser:`jesserockz` (breaking-change)
+- Nextion colors parameters :esphomepr:`5699` by :ghuser:`edwardtfn` (breaking-change)
+- Checks for pins used in multiple places :esphomepr:`5666` by :ghuser:`clydebarrow` (breaking-change)
+- Updating the touchscreen interface structure  :esphomepr:`4596` by :ghuser:`nielsnl68` (new-integration) (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- Allow use of CDC/JTAG loggers on esp32 variants with Arduino :esphomepr:`4658` by :ghuser:`jesserockz`
+- [Logger] ESP32 S3 serial logger :esphomepr:`4853` by :ghuser:`Fabian-Schmidt`
+- Support toggle action for template cover :esphomepr:`5917` by :ghuser:`jochenvg`
+- Fix SplitDefault with variants :esphomepr:`5928` by :ghuser:`jesserockz`
+- Update ENS160 TVOC device_class and AQI units to match required by HA :esphomepr:`5939` by :ghuser:`mrtoy-me`
+- Bump zeroconf from 0.128.4 to 0.130.0 :esphomepr:`5950` by :ghuser:`dependabot[bot]`
+- UARTComponent inline doc :esphomepr:`5930` by :ghuser:`edwardtfn`
+- Fix - Tuya Fan - Allow integer speed datapoint :esphomepr:`5948` by :ghuser:`cram42`
+- i2s_audio: Set player_task's prio to 1 :esphomepr:`5945` by :ghuser:`gaaf`
+- esp32_camera: Set framebuffer task prio to 1 :esphomepr:`5943` by :ghuser:`gaaf`
+- web_server_idf: fix call with hardcoded http code :esphomepr:`5942` by :ghuser:`dentra`
+- Revert pure virtual functions in UART component from #5920 :esphomepr:`5932` by :ghuser:`DrCoolzic`
+- Use the correct UART/`Serial` when CDC is enabled :esphomepr:`5957` by :ghuser:`kbx81`
+- rename ``set_raw_touch_position_`` to ``add_raw_touch_position_`` :esphomepr:`5962` by :ghuser:`nielsnl68`
+- Fix build issue with UART component when building with Arduino and CDC :esphomepr:`5964` by :ghuser:`kbx81`
+- Fix ``I2CBus::write()`` bug and add i2c documentation :esphomepr:`5947` by :ghuser:`DrCoolzic`
+- Add deep sleep between updates for waveshare epaper 1.54in and 1.54inv2 :esphomepr:`5961` by :ghuser:`mathieu-mp`
+- Speed up writing protobuf strings/bytes :esphomepr:`5828` by :ghuser:`bdraco`
+- Bump aioesphomeapi to 21.0.1 :esphomepr:`5969` by :ghuser:`bdraco`
+- image: allow the image to by auto-loaded by animation :esphomepr:`5139` by :ghuser:`ayufan`
+- Fix pin reuse error with pin expanders :esphomepr:`5973` by :ghuser:`jesserockz`
+
+All changes
+^^^^^^^^^^^
+
+- Nextion support to ``esp-idf`` :esphomepr:`5667` by :ghuser:`edwardtfn`
+- fix pin range for xl9535 :esphomepr:`5722` by :ghuser:`ssieb`
+- Bump black from 23.10.1 to 23.11.0 :esphomepr:`5702` by :ghuser:`dependabot[bot]`
+- Speed up YAML by using YAML C loader when available :esphomepr:`5721` by :ghuser:`bdraco`
+- Bump Arduino Pico Framework to 3.6.0 and Platform to 1.10.0 :esphomepr:`5731` by :ghuser:`HeMan`
+- Correct url for Arduino platform :esphomepr:`5744` by :ghuser:`HeMan`
+- remote_base: added helper class and schemas :esphomepr:`5169` by :ghuser:`dudanov`
+- Bump zeroconf from 0.123.0 to 0.126.0 :esphomepr:`5748` by :ghuser:`dependabot[bot]`
+- Make precommit checks happy :esphomepr:`5751` by :ghuser:`HeMan`
+- dashboard: Use mdns cache when available if device connection is OTA :esphomepr:`5724` by :ghuser:`bdraco`
+- Speed up OTAs :esphomepr:`5720` by :ghuser:`bdraco`
+- dashboard: convert ping thread to use asyncio :esphomepr:`5749` by :ghuser:`bdraco`
+- dashboard: Break apart dashboard into separate modules :esphomepr:`5764` by :ghuser:`bdraco`
+- dashboard: split dashboard web server code into its own module :esphomepr:`5770` by :ghuser:`bdraco`
+- Bump zeroconf from 0.126.0 to 0.127.0 :esphomepr:`5768` by :ghuser:`dependabot[bot]`
+- dashboard: fix subprocesses blocking the event loop :esphomepr:`5772` by :ghuser:`bdraco`
+- dashboard: use fastest available yaml loader in the dashboard :esphomepr:`5771` by :ghuser:`bdraco`
+- dashboard: Centralize dashboard entries into DashboardEntries class :esphomepr:`5774` by :ghuser:`bdraco`
+- Pass the name to the log runner when available :esphomepr:`5759` by :ghuser:`bdraco`
+- Add proper support for SH1107 to SSD1306 component :esphomepr:`5166` by :ghuser:`nikitakuklev` (breaking-change)
+- Split release workflow jobs per system arch :esphomepr:`5723` by :ghuser:`jesserockz`
+- Bump aioesphomeapi to 18.5.3 :esphomepr:`5785` by :ghuser:`bdraco`
+- Refactor log api client to let aioesphomeapi manage zeroconf :esphomepr:`5783` by :ghuser:`bdraco`
+- dashboard: Add support for firing events :esphomepr:`5775` by :ghuser:`bdraco`
+- dashboard: Ensure disk I/O happens in the executor :esphomepr:`5789` by :ghuser:`bdraco`
+- dashboard: Add lookup by name to entries :esphomepr:`5790` by :ghuser:`bdraco`
+- Refactor StorageJSON to keep loaded_integrations a set until its converted to JSON :esphomepr:`5793` by :ghuser:`bdraco`
+- wifi: Don't build SoftAP/DHCPS support unless 'ap' is in config. :esphomepr:`5649` by :ghuser:`kpfleming`
+- ssd1306: handle V_COM differently for SH1106 :esphomepr:`5796` by :ghuser:`papillon81`
+- Bump aioesphomeapi from 18.5.3 to 18.5.5 :esphomepr:`5804` by :ghuser:`dependabot[bot]`
+- dashboard: Fix online status when api is disabled :esphomepr:`5792` by :ghuser:`bdraco`
+- Haier component updated to support new protocol variations :esphomepr:`5713` by :ghuser:`paveldn`
+- sen5x fix temperature compensation and gas tuning :esphomepr:`4901` by :ghuser:`matt7aylor` (breaking-change)
+- Add startup_delay to interval. :esphomepr:`5327` by :ghuser:`clydebarrow`
+- Pillow: bump to 10.1.0 :esphomepr:`5815` by :ghuser:`hostcc`
+- dashboard: set nodelay on the websocket to avoid a delay seeing log messages :esphomepr:`5802` by :ghuser:`bdraco`
+- Bump aioesphomeapi from 18.5.5 to 18.5.7 :esphomepr:`5822` by :ghuser:`dependabot[bot]`
+- Ensure names containing characters other than `a-z` `A-Z` `0-9` or `_` are unique :esphomepr:`5810` by :ghuser:`bdraco` (breaking-change)
+- Add ENS160 Sensor :esphomepr:`4243` by :ghuser:`vincentscode` (new-integration)
+- Bump actions/github-script from 6.4.1 to 7.0.1 :esphomepr:`5803` by :ghuser:`dependabot[bot]`
+- Run all tests when local testing. :esphomepr:`5717` by :ghuser:`Fabian-Schmidt`
+- Bump aioesphomeapi from 18.5.7 to 18.5.9 :esphomepr:`5830` by :ghuser:`dependabot[bot]`
+- Allow split uart pin inversion for ESP-IDF :esphomepr:`5831` by :ghuser:`clydebarrow`
+- Add ``is_detected()`` for Nextion displays :esphomepr:`5825` by :ghuser:`edwardtfn`
+- Pull PollingComponent up from individual display drivers to Display. :esphomepr:`5444` by :ghuser:`clydebarrow`
+- Implement variable length single word SPI writes. :esphomepr:`5678` by :ghuser:`clydebarrow`
+- Add 'enable_on_boot' feature to power_supply :esphomepr:`5826` by :ghuser:`clydebarrow`
+- mcp3008: Tidy up and fix auto load bug :esphomepr:`5842` by :ghuser:`jesserockz` (breaking-change)
+- Create GT911 Touchscreen component :esphomepr:`4027` by :ghuser:`jesserockz` (new-integration)
+- Bump aioesphomeapi from 18.5.9 to 19.1.2 :esphomepr:`5844` by :ghuser:`dependabot[bot]`
+- Nextion - Standardizing log messages :esphomepr:`5837` by :ghuser:`edwardtfn`
+- dashboard: Small cleanups to dashboard :esphomepr:`5841` by :ghuser:`bdraco`
+- Pylontech integration (solar battery bank) :esphomepr:`4688` by :ghuser:`functionpointer` (new-integration)
+- Implement deep sleep and clear screen on Waveshare 7.5in B V3 :esphomepr:`5239` by :ghuser:`lucasprim`
+- Fix ESP-IDF uart initialisation sequence to match Espressif docs. :esphomepr:`5838` by :ghuser:`clydebarrow`
+- Nextion - Align strings on ``dump_config`` :esphomepr:`5824` by :ghuser:`edwardtfn`
+- Speed up (and fix) ili9xxx display component. :esphomepr:`5406` by :ghuser:`clydebarrow`
+- Fix regex for 'byte' custom CI check :esphomepr:`5851` by :ghuser:`jesserockz`
+- Pass through additional arguments to create number :esphomepr:`5849` by :ghuser:`clydebarrow`
+- Nextion ``on_touch`` trigger :esphomepr:`5833` by :ghuser:`edwardtfn`
+- Nextion colors parameters :esphomepr:`5699` by :ghuser:`edwardtfn` (breaking-change)
+- dashboard: fix supervisor auth doing I/O in the event loop :esphomepr:`5807` by :ghuser:`bdraco`
+- Improve reliability of Nextion TFT uploads (Arduino) :esphomepr:`5683` by :ghuser:`edwardtfn`
+- Add Pro Check Universal sensor support. :esphomepr:`5798` by :ghuser:`spbrogan`
+- Bump aioesphomeapi from 19.1.2 to 19.1.7 :esphomepr:`5859` by :ghuser:`dependabot[bot]`
+- Pn532 non blocking scan :esphomepr:`5191` by :ghuser:`sharkydog`
+- Add Chamberlain/HomEntry HE60R garage door opener :esphomepr:`5834` by :ghuser:`clydebarrow` (new-integration)
+- Bump aioesphomeapi from 19.1.7 to 19.2.1 :esphomepr:`5863` by :ghuser:`dependabot[bot]`
+- Bump tornado from 6.3.3 to 6.4 :esphomepr:`5862` by :ghuser:`dependabot[bot]`
+- add missing ifdef to pvvx_mithermometer :esphomepr:`5880` by :ghuser:`ssieb`
+- Fix un-initialized version string :esphomepr:`5865` by :ghuser:`descipher`
+- fix a01nyub data reading :esphomepr:`5882` by :ghuser:`ssieb`
+- Bump pytest-asyncio from 0.21.1 to 0.23.2 :esphomepr:`5888` by :ghuser:`dependabot[bot]`
+- Bump zeroconf from 0.127.0 to 0.128.0 :esphomepr:`5889` by :ghuser:`dependabot[bot]`
+- Bump pylint from 2.17.6 to 3.0.2 :esphomepr:`5592` by :ghuser:`dependabot[bot]`
+- Bump voluptuous from 0.13.1 to 0.14.1 :esphomepr:`5784` by :ghuser:`dependabot[bot]`
+- Security improvement: Support wifi ap_timeout=0s (disable) :esphomepr:`5887` by :ghuser:`fornellas`
+- Suppress full config output of "esphome config" when -q option is used. :esphomepr:`5852` by :ghuser:`clydebarrow`
+- Checks for pins used in multiple places :esphomepr:`5666` by :ghuser:`clydebarrow` (breaking-change)
+- Nextion support to idf with `cinttypes` :esphomepr:`5876` by :ghuser:`edwardtfn`
+- Fix test4.yaml after #5666 :esphomepr:`5890` by :ghuser:`kbx81`
+- Fix template text component length check :esphomepr:`5881` by :ghuser:`fornellas`
+- RC522 - Fix error counter error :esphomepr:`5873` by :ghuser:`kbx81`
+- feat(packages): support removing components :esphomepr:`5821` by :ghuser:`TMaYaD`
+- dashboard: Add some basic tests for the dashboard :esphomepr:`5870` by :ghuser:`bdraco`
+- Nextion exit reparse mode on startup :esphomepr:`5868` by :ghuser:`edwardtfn`
+- Bump aioesphomeapi from 19.2.1 to 19.3.0 :esphomepr:`5895` by :ghuser:`dependabot[bot]`
+- Add framework info to Nextion log tags :esphomepr:`5864` by :ghuser:`edwardtfn`
+- Handle case where using enetity level name: None with MQTT :esphomepr:`5897` by :ghuser:`mtl010957`
+- Bump actions/setup-python from 4.7.1 to 5.0.0 :esphomepr:`5896` by :ghuser:`dependabot[bot]`
+- Bump zeroconf from 0.128.0 to 0.128.4 :esphomepr:`5906` by :ghuser:`dependabot[bot]`
+- Fix 18 bit displays. :esphomepr:`5908` by :ghuser:`clydebarrow`
+- fix RGBW Mode on RP2040 :esphomepr:`5907` by :ghuser:`firegore`
+- Add graphical display menu :esphomepr:`4105` by :ghuser:`MrMDavidson` (new-integration)
+- Added on_image callback to ESP32 Cam :esphomepr:`4860` by :ghuser:`freekode`
+- Bump actions/stale from 8.0.0 to 9.0.0 :esphomepr:`5899` by :ghuser:`dependabot[bot]`
+- Bump pylint from 3.0.2 to 3.0.3 :esphomepr:`5905` by :ghuser:`dependabot[bot]`
+- Bump frenck/action-yamllint from 1.4.1 to 1.4.2 :esphomepr:`5716` by :ghuser:`dependabot[bot]`
+- Bump dessant/lock-threads from 4.0.1 to 5.0.1 :esphomepr:`5820` by :ghuser:`dependabot[bot]`
+- Add support for fan preset modes :esphomepr:`5694` by :ghuser:`mill1000`
+- Fix uninitialized climate target temperature :esphomepr:`5795` by :ghuser:`ckoca`
+- Bump aioesphomeapi from 19.3.0 to 20.0.0 :esphomepr:`5911` by :ghuser:`dependabot[bot]`
+- Bump black from 23.11.0 to 23.12.0 :esphomepr:`5912` by :ghuser:`dependabot[bot]`
+- Updating the touchscreen interface structure  :esphomepr:`4596` by :ghuser:`nielsnl68` (new-integration) (breaking-change)
+- Added the A02YYUW distance sensor :esphomepr:`5729` by :ghuser:`TH-Braemer` (new-integration)
+- Fix AHT10 / AHT20 communication :esphomepr:`5198` by :ghuser:`flaminggoat`
+- Fix crash when handling pin_check error :esphomepr:`5915` by :ghuser:`clydebarrow`
+- Bump aioesphomeapi to 20.1.0 :esphomepr:`5914` by :ghuser:`bdraco`
+- Remove setpoint-change from error when calculating derivative in pid controller :esphomepr:`4737` by :ghuser:`Newspaperman57`
+- ir_transmitter: add support for repeated commands in NEC protocol :esphomepr:`4995` by :ghuser:`ngilles`
+- BP1658CJ - Fix timing for all platforms, now consistent with other drivers :esphomepr:`5799` by :ghuser:`Cossid`
+- Add humidity support to climate :esphomepr:`5732` by :ghuser:`kroimon`
+- Remove lingering note :esphomepr:`5916` by :ghuser:`jesserockz`
+- Fix typo added in esp32 post_build filename :esphomepr:`5918` by :ghuser:`jesserockz`
+- Copy esp32 custom partition files to build folder :esphomepr:`5919` by :ghuser:`jesserockz`
+- UART change at runtime :esphomepr:`5909` by :ghuser:`edwardtfn`
+- Bump aioesphomeapi from 20.1.0 to 21.0.0 :esphomepr:`5922` by :ghuser:`dependabot[bot]`
+- Fix the initial run of lambda light effects :esphomepr:`5921` by :ghuser:`smithjacobj`
+- Exposes ``load_settings`` to `UARTComponent` class :esphomepr:`5920` by :ghuser:`edwardtfn`
+- Add support for PN7160 :esphomepr:`5486` by :ghuser:`kbx81` (new-integration)
+- Add support for PN7150 :esphomepr:`5487` by :ghuser:`kbx81` (new-integration)
+- Allow use of CDC/JTAG loggers on esp32 variants with Arduino :esphomepr:`4658` by :ghuser:`jesserockz`
+- [Logger] ESP32 S3 serial logger :esphomepr:`4853` by :ghuser:`Fabian-Schmidt`
+- Support toggle action for template cover :esphomepr:`5917` by :ghuser:`jochenvg`
+- Fix SplitDefault with variants :esphomepr:`5928` by :ghuser:`jesserockz`
+- Update ENS160 TVOC device_class and AQI units to match required by HA :esphomepr:`5939` by :ghuser:`mrtoy-me`
+- Bump zeroconf from 0.128.4 to 0.130.0 :esphomepr:`5950` by :ghuser:`dependabot[bot]`
+- UARTComponent inline doc :esphomepr:`5930` by :ghuser:`edwardtfn`
+- Fix - Tuya Fan - Allow integer speed datapoint :esphomepr:`5948` by :ghuser:`cram42`
+- i2s_audio: Set player_task's prio to 1 :esphomepr:`5945` by :ghuser:`gaaf`
+- esp32_camera: Set framebuffer task prio to 1 :esphomepr:`5943` by :ghuser:`gaaf`
+- web_server_idf: fix call with hardcoded http code :esphomepr:`5942` by :ghuser:`dentra`
+- Revert pure virtual functions in UART component from #5920 :esphomepr:`5932` by :ghuser:`DrCoolzic`
+- Use the correct UART/`Serial` when CDC is enabled :esphomepr:`5957` by :ghuser:`kbx81`
+- rename ``set_raw_touch_position_`` to ``add_raw_touch_position_`` :esphomepr:`5962` by :ghuser:`nielsnl68`
+- Fix build issue with UART component when building with Arduino and CDC :esphomepr:`5964` by :ghuser:`kbx81`
+- Fix I2CBus::write() bug and add i2c documentation :esphomepr:`5947` by :ghuser:`DrCoolzic`
+- Add deep sleep between updates for waveshare epaper 1.54in and 1.54inv2 :esphomepr:`5961` by :ghuser:`mathieu-mp`
+- Speed up writing protobuf strings/bytes :esphomepr:`5828` by :ghuser:`bdraco`
+- Bump aioesphomeapi to 21.0.1 :esphomepr:`5969` by :ghuser:`bdraco`
+- image: allow the image to by auto-loaded by animation :esphomepr:`5139` by :ghuser:`ayufan`
+- Fix pin reuse error with pin expanders :esphomepr:`5973` by :ghuser:`jesserockz`
+
+Past Changelogs
+---------------
+
+- :doc:`2023.11.0`
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

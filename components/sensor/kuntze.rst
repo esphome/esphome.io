@@ -48,12 +48,6 @@ A configured modbus component is optional. It will be automatically created.
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      - id: uart_bus
-        tx_pin: GPIO16
-        rx_pin: GPIO17
-        baud_rate: 19200
-        parity: EVEN
 
     sensor:
       - platform: kuntze

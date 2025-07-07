@@ -5,7 +5,7 @@ MAX7219 Digit Display
     :description: Instructions for setting up MAX7219 Digit displays.
     :image: max7219digit.jpg
 
-The ``max7219`` display platform allows you to use MAX7219 digit with ESPHome. Please note that this integration
+The ``max7219`` display platform allows you to use MAX7219 digit with ESPHome. Please note that this component
 is *only* for the digit "matrix" display, for the 7 segment display see :doc:`max7219`.
 
 .. figure:: images/max7219digit.png
@@ -14,7 +14,7 @@ is *only* for the digit "matrix" display, for the 7 segment display see :doc:`ma
 
     MAX7219 Digit Display.
 
-As the communication with the MAX7219 Digit is done using SPI for this integration, you need
+As the communication with the MAX7219 Digit is done using SPI for this component, you need
 to have an :ref:`SPI bus <spi>` in your configuration with both the **mosi_pin** set (miso_pin is not required).
 Connect VCC to 3.3V (the manufacturer recommends 4+ V, but 3.3V seems to work fine), DIN to your ``mosi_pin`` and
 CS to your set ``cs_pin`` and finally GND to GND.
@@ -70,6 +70,48 @@ Configuration variables:
 - **chip_lines_style** (*Optional*): How are the lines in Multiline Mode connected? Possible values are ``zigzag`` and ``snake``. Defaults to ``snake``
 - **flip_x** (*Optional*, boolean): Flip the horizontal axis on the screen. Defaults to ``false``.
 
+.. _display-max7219digit_actions:
+
+Actions
+-------
+The following actions are replicas of the LAMBDA functions shown in the next section. 
+
+.. _display-max7219digit_actions_invert_on_off>:
+
+`MAX7219.invert_on` & `MAX7219.invert_off` Action
+=================================================
+
+This action  ``MAX7219.invert_on`` will invert the display. So background pixels are on and texts pixels are
+off. ``MAX7219.invert_off`` sets the display back to normal. The background pixels are only set at the next update, the pixels drawn in
+the various function like print, line, etc. are directly influenced by the invert command.
+
+.. _display-max7219digit_actions_turn_on_off:
+
+`MAX7219.turn_on` & `MAX7219.turn_off` Action
+=============================================
+
+The display can be switched on and off "dynamically" with the actions `MAX7219.turn_on` & `MAX7219.turn_off`.
+
+
+.. _display-max7219digit_actions_reverse_off:
+
+`MAX7219.reverse_on` & `MAX7219.reverse_off` Action
+===================================================
+
+With this actions you can reverse the display direction from left to right to right to left.
+
+
+.. _display-max7219digit_actions_intensity:
+
+`MAX7219.intensity` Action
+===========================
+
+The intensity of the screen can be set "dynamically" within the lambda code with the following command: it.intensity(``0`` .. ``15``).
+
+- **intensity** (int): The intensity with which the MAX7219 should drive the outputs. Range is
+  from ``0``, least intense to ``15`` the brightest. Defaults to ``15``.
+
+
 .. _display-max7219digit_lambda:
 
 Rendering Lambda
@@ -103,6 +145,16 @@ commands have been added to the basic display set.
         id: my_image
 
 This is roughly the code used to display the MAX7219 pictured in the image.
+
+
+Font usage
+**********
+Because 8x8 matrix displays has a limited height of 8 pixels only, the use of TrueType fonts for displaying text 
+is not recommended. While rendering the single characters easily unattractive artifacts will occur. Bitmap-based 
+fonts in `bdf format <https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format>`__  are more suitable. 
+For example 5x7.bdf or 5x8.bdf
+
+
 
 Scrolling
 *********
