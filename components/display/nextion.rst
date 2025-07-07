@@ -73,7 +73,9 @@ Configuration variables:
 - **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See :ref:`Nextion Automation <nextion-on_sleep>`.
 - **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See :ref:`Nextion Automation <nextion-on_page>`.
 - **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or release). See :ref:`Nextion Automation <nextion-on_touch>`.
-  
+- **dump_device_info** (*Optional*, boolean): Shows device information (model, firmware version, serial number, flash size) in the configuration dump.
+  When disabled, device info is only logged during connection establishment to save memory. Defaults to ``false``.
+
 .. _display-nextion_lambda:
 
 Rendering Lambda
