@@ -7,9 +7,32 @@ Modbus Component
     :description: Instructions for setting up Modbus in ESPHome.
     :keywords: Modbus
 
-The ModBUS protocol is used by many consumer and industrial devices for communication.
-This component allows components in ESPHome to communicate to those devices.
-ModBUS requires a :ref:`UART Bus <uart>` to communicate.
+The Modbus protocol is used by many consumer and industrial devices for communication.
+This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
+
+The various sub-components implement some of the Modbus functions below (depending on their required functionality):
+
++---------------+----------------------------+
+| Function Code | Description                |
++===============+============================+
+| 1             | Read Coil Status           |
++---------------+----------------------------+
+| 2             | Read Discrete input Status |
++---------------+----------------------------+
+| 3             | Read Holding Registers     |
++---------------+----------------------------+
+| 4             | Read Input Registers       |
++---------------+----------------------------+
+| 5             | Write Single Coil          |
++---------------+----------------------------+
+| 6             | Write Single Register      |
++---------------+----------------------------+
+| 15            | Write Multiple Coils       |
++---------------+----------------------------+
+| 16            | Write Multiple Registers   |
++---------------+----------------------------+
+
+Modbus RTU requires a :ref:`UART Bus <uart>` to communicate.
 
 .. code-block:: yaml
 
@@ -32,23 +55,24 @@ Configuration variables:
   This is useful for RS485 transceivers that do not have automatic flow control switching,
   like the common MAX485.
 
-- **send_wait_time** (*Optional*, :ref:`config-time`): Time in milliseconds before the next ModBUS command is sent if an answer from a previous command is pending. Defaults to 250 ms.
-  If multiple ModBUS devices are attached to the same bus increasing this value can help avoiding to to overlapping reads.
-  When two devices are sending a command at the same time the response read from UART can't be assigned to the proper design.
-  This value defines the maximum queuing time for a command before it is send anyways.
+- **send_wait_time** (*Optional*, :ref:`config-time`): Time in milliseconds before the next ModBUS command is sent when an answer from a previous command has not yet started (i.e. when to timeout and assume no response is coming). Defaults to 250 ms.
+  Set this value to the maximum time required for the slowest device on the bus to begin responding (time to first byte).
+  If a device starts responding within this time, the next command will be queued and sent after the response is finished, no matter how long the response.  
   
 - **disable_crc** (*Optional*, boolean): Ignores a bad CRC if set to ``true``. Defaults to ``false``
 
+- **role** (*Optional*, string): The role of this component, ``client`` or ``server``. Defaults to ``client``.
 
 See Also
 --------
 - :doc:`/components/modbus_controller`
 - :doc:`/components/sensor/modbus_controller`
 - :doc:`/components/binary_sensor/modbus_controller`
-- :doc:`/components/text_sensor/modbus_controller`
+- :doc:`/components/output/modbus_controller`
 - :doc:`/components/switch/modbus_controller`
 - :doc:`/components/number/modbus_controller`
-- :doc:`/components/output/modbus_controller`
+- :doc:`/components/select/modbus_controller`
+- :doc:`/components/text_sensor/modbus_controller`
 - `Modbus RTU Protocol Description <https://www.modbustools.com/modbus.html>`__
 - :ref:`uart`
 - :apiref:`modbus/modbus.h`

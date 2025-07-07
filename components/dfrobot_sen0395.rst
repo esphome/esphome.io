@@ -36,7 +36,7 @@ a :doc:`/components/uart` component (and its requisite GPIO pins) is required in
         name: Mmwave Detected via GPIO
         device_class: motion
         pin:
-          number: REPLACEME
+          number: GPIOXX
           mode: INPUT_PULLDOWN
 
     switch:
@@ -97,7 +97,7 @@ If you don't want/need to change the radar's settings and only need to determine
         name: Presence Detected via GPIO
         device_class: motion
         pin:
-          number: REPLACEME
+          number: GPIOXX
           mode: INPUT_PULLDOWN
 
 .. _dfrobot_sen0395-via_uart:

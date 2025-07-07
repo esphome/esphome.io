@@ -2,7 +2,7 @@ AC Dimmer Component
 ===================
 
 .. seo::
-    :description: Instructions for setting up AC Dimmer integration in ESPHome.
+    :description: Instructions for setting up AC Dimmer component in ESPHome.
     :image: ac_dimmer.svg
 
 .. warning::
@@ -16,9 +16,8 @@ AC Dimmer Component
 The ``ac_dimmer`` component allows you to connect a dimmable light or other load
 which supports phase control dimming to your ESPHome project.
 
-There are several already made boards which are compatible with this integration,
-for example the `RobotDyn dimmer
-<https://robotdyn.com/ac-light-dimmer-module-1-channel-3-3v-5v-logic-ac-50-60hz-220v-110v.html>`__.
+There are several already made boards which are compatible with this component, such as the
+`RobotDyn dimmer <https://robotdyn.com/ac-light-dimmer-module-1-channel-3-3v-5v-logic-ac-50-60hz-220v-110v.html>`__.
 
 .. figure:: images/robotdyn_dimmer.jpg
     :align: center
@@ -34,9 +33,9 @@ for example the `RobotDyn dimmer
     output:
       - platform: ac_dimmer
         id: dimmer1
-        gate_pin: D7
+        gate_pin: GPIOXX
         zero_cross_pin:
-          number: D6
+          number: GPIOXX
           mode:
             input: true
           inverted: yes
@@ -44,7 +43,7 @@ for example the `RobotDyn dimmer
     light:
       - platform: monochromatic
         output: dimmer1
-        name: Dimmerized Light
+        name: Dimmable Light
 
 Configuration variables:
 ------------------------
@@ -53,7 +52,9 @@ Configuration variables:
   Mosfet.
 - **zero_cross_pin** (**Required**, :ref:`config-pin`): The pin used to sense the AC
   Zero cross event, you can have several dimmers controlled with the same zero cross
-  detector, in such case duplicate the ``zero_cross_pin`` config on each output.
+  detector, in such case duplicate the ``zero_cross_pin`` config on each output. When
+  doing so, ``allow_other_uses`` pin schema option **must** be set to ``true`` to
+  avoid configuration errors due to pin reuse.
 - **method** (*Optional*): Set the method for dimming, can be:
 
   - ``leading pulse``: (default) a short pulse to trigger a triac.

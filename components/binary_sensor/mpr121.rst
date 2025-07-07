@@ -69,13 +69,42 @@ binary sensors for each touch sensor.
 Configuration variables:
 
 
-- **name** (*Optional*, string): The name for the binary sensor.
 - **mpr121_id** (*Optional*, :ref:`config-id`): The ID of the MPR121 defined above. Useful for multiple MPR121's on the I²C bus
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **channel** (**Required**, int): The channel number at the MPR121 the touchkey is connected to.
 - **touch_threshold** (*Optional*, int): A per-channel override of the global touch_threshold value. If not specified, uses the global value.
 - **release_threshold** (*Optional*, int): A per-channel override of the global release_threshold value. If not specified, uses the global value.
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+
+GPIO
+----
+
+The ``mpr121`` also supports configuring its touch electrodes as GPIO inputs and outputs. To do so,
+specify an ``id`` in the configuration of the ``mpr121`` component. Then, configure a GPIO output or
+input using this ID in the ``mpr121`` field.
+
+.. code-block:: yaml
+
+    output:
+      - id: ext_5v_power
+        platform: gpio
+        pin:
+          mpr121: mpr121_component
+          number: 10
+          mode: OUTPUT
+          inverted: true
+
+
+The ``number`` refers to the ELEx pin number on the MPR121 chip. Only ELE4 up to including ELE11 are
+available as GPIO.
+
+GPIO and touch functionality may be used at the same time, but not on the same pins.
+
+It is also not valid to configure a pin as GPIO when a pin with a higher number is used as touch
+channel. This is because touch functionality is configured as a range, starting at ELE0.
+For example:
+
+- Using channel 2 and 5 as touch and channel 6 as GPIO is okay
+- Using channel 2 and 5 as touch and channel 4 as GPIO is not okay
 
 See Also
 --------

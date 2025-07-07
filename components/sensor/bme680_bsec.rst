@@ -10,17 +10,19 @@ Component/Hub
 -------------
 
 The ``bme680_bsec`` sensor platform allows you to use your BME680
-(`datasheet <https://cdn-shop.adafruit.com/product-files/3660/BME680.pdf>`__,
-`Adafruit`_) temperature, pressure and humidity and gas sensors with ESPHome via the Bosch Sensortec Environmental Cluster (BSEC)
+(`datasheet <https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf>`__,
+`Adafruit`_, `Pimoroni`_) temperature, pressure and humidity and gas sensors with ESPHome via the Bosch Sensortec Environmental Cluster (BSEC)
 software library. The use of Bosch's proprietary algorithms provide an Index for Air Quality (IAQ) measurement derived from the
 gas resistance sensor's response to specific Volatile Organic Compounds (VOC). The BSEC software also provides estimated values
 for CO₂ and Breath Volatile Organic Compounds (b-VOC) using a correlation between VOC and CO₂ in a human's exhaled breath.
 
 .. note::
 
-    The BSEC library is only available for use after accepting its software license agreement. By enabling this component,
-    you are explicitly agreeing to the terms of the `BSEC license agreement`_. You must not distribute any compiled firmware
-    binaries that include this component.
+    - The BSEC library is only available for use after accepting its software license agreement. By enabling this component,
+      you are explicitly agreeing to the terms of the `BSEC license agreement`_. You must not distribute any compiled firmware
+      binaries that include this component.
+    
+    - We recommend using the newer :doc:`bme68x_bsec2 <bme68x_bsec2>` component whenever possible.
 
 The :ref:`I²C <i2c>` is required to be set up in your configuration for this sensor to work.
 
@@ -30,9 +32,11 @@ The :ref:`I²C <i2c>` is required to be set up in your configuration for this se
 
     BME680 Temperature, Pressure, Humidity & Gas Sensor.
 
-.. _BSEC license agreement: https://www.bosch-sensortec.com/media/boschsensortec/downloads/bsec/2017-07-17_clickthrough_license_terms_environmentalib_sw_clean.pdf
+.. _BSEC license agreement: https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf
 
 .. _Adafruit: https://www.adafruit.com/product/3660
+
+.. _Pimoroni: https://shop.pimoroni.com/products/bme680-breakout
 
 .. code-block:: yaml
 
@@ -101,6 +105,9 @@ Configuration variables:
 - **iaq_mode** (*Optional*, string): IAQ calculation mode. Default is ``static`` for static applications (e.g. fixed indoor devices).
   Can be ``mobile`` for mobile applications (e.g. carry-on devices).
 
+- **supply_voltage** (*Optional*, string): Supply voltage of the sensor. Default is ``3.3V``.
+  Can be set to ``1.8V`` if your sensor is 1.8V-powered (e.g. the Pimoroni PIM357 BME680 Breakout module).
+
 - **sample_rate** (*Optional*, string): Sample rate. Default is ``lp`` for low power consumption, sampling every 3 seconds.
   Can be ``ulp`` for ultra-low power, sampling every 5 minutes.
   This controls the sampling rate for gas-dependent sensors and will govern the interval at which the sensor heater is operated.
@@ -120,54 +127,38 @@ Configuration variables:
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - **name** (**Required**, string): The name for the temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - **sample_rate** (*Optional*, string): Optional sample rate override for this sensor. Can be ``lp`` for low power consumption, sampling every 3 seconds or ``ulp`` for ultra-low power, sampling every 5 minutes.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **pressure** (*Optional*): The information for the pressure sensor.
 
-  - **name** (**Required**, string): The name for the pressure sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - **sample_rate** (*Optional*, string): Optional sample rate override for this sensor. Can be ``lp`` for low power consumption, sampling every 3 seconds or ``ulp`` for ultra-low power, sampling every 5 minutes.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **humidity** (*Optional*): The information for the humidity sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
   - **sample_rate** (*Optional*, string): Optional sample rate override for this sensor. Can be ``lp`` for low power consumption, sampling every 3 seconds or ``ulp`` for ultra-low power, sampling every 5 minutes.
   - All other options from :ref:`Sensor <config-sensor>`.
 
 - **gas_resistance** (*Optional*): The information for the gas sensor.
 
-  - **name** (**Required**, string): The name for the gas resistance sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **iaq** (*Optional*): The information for the IAQ sensor.
 
-  - **name** (**Required**, string): The name for the IAQ sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **iaq_accuracy** (*Optional*): The information for the numeric IAQ accuracy sensor.
 
-  - **name** (**Required**, string): The name for the IAQ accuracy sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **co2_equivalent** (*Optional*): The information for the CO₂ equivalent sensor.
 
-  - **name** (**Required**, string): The name for the CO₂ equivalent sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **breath_voc_equivalent** (*Optional*): The information for the Breath VOC equivalent humidity sensor.
 
-  - **name** (**Required**, string): The name for the Breath VOC equivalent sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 Text Sensor
 -----------
@@ -181,9 +172,7 @@ Configuration variables:
 - **iaq_accuracy** (*Optional*): The information for the IAQ accuracy sensor. Shows: Stabilizing,
   Uncertain, Calibrating, Calibrated.
 
-  - **name** (**Required**, string): The name for the IAQ accuracy sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`TextSensor <config-text_sensor>`.
+  - All options from :ref:`TextSensor <config-text_sensor>`.
 
 .. figure:: images/bme680-bsec-ui.png
     :align: center
@@ -230,6 +219,14 @@ For each sensor, all other options from :ref:`Sensor <config-sensor>` and :ref:`
         # - mobile (for on a person or other moveable devices)
         # Default: static
         iaq_mode: static
+
+        # Supply voltage
+        # --------------------
+        # Available options:
+        # - 3.3V
+        # - 1.8V
+        # Default: 3.3V
+        supply_voltage: 3.3V
 
         # Sample rate
         # -----------
@@ -423,7 +420,7 @@ The selected b-VOC gasses are as follows:
 IAQ Accuracy and Calibration
 ----------------------------
 
-The BSEC software automatically calibrates automatically in the background to provide consistent IAQ performance. The
+The BSEC software automatically calibrates in the background to provide consistent IAQ performance. The
 calibration process considers the recent measurement history so that a value of 50 corresponds to a “typical good”
 level and a value of 200 to a “typical polluted” level. The IAQ Accuracy sensor will give one of the following values:
 

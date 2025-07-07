@@ -8,22 +8,22 @@ ESP32 Camera Component
 The ``esp32_camera`` component allows you to use ESP32-based camera boards in ESPHome that
 directly integrate into Home Assistant through the native API.
 
+Requires an :doc:`/components/i2c` to be set up.
+
 .. code-block:: yaml
 
     # Example configuration entry
     esp32_camera:
       name: My Camera
       external_clock:
-        pin: GPIO27
+        pin: GPIOXX
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
-      data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
-      vsync_pin: GPIO22
-      href_pin: GPIO26
-      pixel_clock_pin: GPIO21
-      reset_pin: GPIO15
+      i2c_id: my_i2c_bus
+      data_pins: [GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX, GPIOXX]
+      vsync_pin: GPIOXX
+      href_pin: GPIOXX
+      pixel_clock_pin: GPIOXX
+      reset_pin: GPIOXX
       resolution: 640x480
       jpeg_quality: 10
 
@@ -37,10 +37,10 @@ Configuration variables:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
 
 Connection Options:
@@ -56,11 +56,7 @@ Connection Options:
   - **frequency** (*Optional*, float): The frequency of the external clock, must be between 10
     and 20MHz. Defaults to ``20MHz``.
 
-- **i2c_pins** (**Required**): The I²C control pins of the camera.
-
-  - **sda** (**Required**, pin): The SDA pin of the I²C interface. Also called ``SIOD``.
-  - **scl** (**Required**, pin): The SCL pin of the I²C interface. Also called ``SIOC``.
-
+- **i2c_id** (**Required**, :ref:`config-id`): The ID of the :ref:`I²C bus <i2c>` the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
   If set, this will reset the camera before the ESP boots.
 - **power_down_pin** (*Optional*, pin): The ESP pin to power down the camera.
@@ -74,30 +70,32 @@ Frame Settings:
   Up to 60Hz is possible (with reduced frame sizes), but beware of overheating. Defaults to ``10 fps``.
 - **idle_framerate** (*Optional*, float): The framerate to capture images at when no client
   is requesting a full stream. Defaults to ``0.1 fps``.
+- **frame_buffer_count** (*Optional*, int): The number of frame buffers to use when reading from the camera sensor.
+  Must be between 1 and 2.  Defaults to ``1``.
 
 Image Settings:
 
 - **resolution** (*Optional*, enum): The resolution the camera will capture images at. Higher
   resolutions require more memory, if there's not enough memory you will see an error during startup.
 
-    - ``160x120`` (QQVGA)
-    - ``176x144`` (QCIF)
-    - ``240x176`` (HQVGA)
-    - ``320x240`` (QVGA)
-    - ``400x296`` (CIF)
-    - ``640x480`` (VGA, default)
-    - ``800x600`` (SVGA)
-    - ``1024x768`` (XGA)
-    - ``1280x1024`` (SXGA)
-    - ``1600x1200`` (UXGA)
-    - ``1920x1080`` (FHD)
-    - ``720x1280`` (Portrait HD)
-    - ``864x1536`` (Portrait 3MP)
-    - ``2048x1536`` (QXGA)
-    - ``2560x1440`` (QHD)
-    - ``2560x1600`` (WQXGA)
-    - ``1080x1920`` (Portrait FHD)
-    - ``2560x1920`` (QSXGA)
+    - ``160x120`` (QQVGA, 4:3)
+    - ``176x144`` (QCIF, 11:9)
+    - ``240x176`` (HQVGA, 15:11)
+    - ``320x240`` (QVGA, 4:3)
+    - ``400x296`` (CIF, 50:37)
+    - ``640x480`` (VGA, 4:3, default)
+    - ``800x600`` (SVGA, 4:3)
+    - ``1024x768`` (XGA, 4:3)
+    - ``1280x1024`` (SXGA, 5:4)
+    - ``1600x1200`` (UXGA, 4:3)
+    - ``1920x1080`` (FHD, 16:9)
+    - ``720x1280`` (Portrait HD, 9:16)
+    - ``864x1536`` (Portrait 3MP, 9:16)
+    - ``2048x1536`` (QXGA, 4:3)
+    - ``2560x1440`` (QHD, 16:9)
+    - ``2560x1600`` (WQXGA, 8:5)
+    - ``1080x1920`` (Portrait FHD, 9:16)
+    - ``2560x1920`` (QSXGA, 4:3)
 
 
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
@@ -162,6 +160,7 @@ Automations:
   when a stream starts.
 - **on_stream_stop** (*Optional*, :ref:`Automation <automation>`): An automation to perform
   when a stream stops.
+- **on_image** (*Optional*, :ref:`Automation <automation>`): An automation called when image taken. Image is available as ``image`` variable of type :apistruct:`esp32_camera::CameraImageData`.
 
 Test Setting:
 
@@ -173,25 +172,30 @@ Test Setting:
     Camera uses PWM timer #1. If you need PWM (via the ``ledc`` platform) you need to manually specify
     a channel there (with the ``channel: 2``  parameter)
 
-Configuration for Ai-Thinker Camera
------------------------------------
+Configuration examples
+----------------------
+
+**Ai-Thinker Camera**:
 
 .. warning::
 
-    GPIO16 on this board (and possibly other boards below) is connected to onboard PSRAM. 
+    GPIO16 on this board (and possibly other boards below) is connected to onboard PSRAM.
     Using this GPIO for other purposes (eg as a button) will trigger the watchdog.
     Further information on pin notes can be found here: https://github.com/raphaelbs/esp32-cam-ai-thinker/blob/master/docs/esp32cam-pin-notes.md
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO26
+        scl: GPIO27
+
     esp32_camera:
       external_clock:
         pin: GPIO0
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO26
-        scl: GPIO27
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO18, GPIO19, GPIO21, GPIO36, GPIO39, GPIO34, GPIO35]
       vsync_pin: GPIO25
       href_pin: GPIO23
@@ -202,8 +206,7 @@ Configuration for Ai-Thinker Camera
       name: My Camera
       # ...
 
-Configuration for M5Stack Camera
---------------------------------
+**M5Stack Camera**:
 
 .. warning::
 
@@ -217,13 +220,16 @@ Configuration for M5Stack Camera
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO25
+        scl: GPIO23
+
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO22
       href_pin: GPIO26
@@ -234,19 +240,20 @@ Configuration for M5Stack Camera
       name: My Camera
       # ...
 
-Configuration for M5Stack Timer Camera X/F
-------------------------------------------
+**M5Stack Timer Camera X/F**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO25
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO32, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO22
       href_pin: GPIO26
@@ -257,38 +264,40 @@ Configuration for M5Stack Timer Camera X/F
       name: My Camera
       # ...
 
-Confguration for M5Stack M5CameraF New
---------------------------------------
+**M5Stack M5CameraF New**:
 
 .. code-block:: yaml
 
     # Example configuration entry as per https://docs.m5stack.com/en/unit/m5camera_f_new
+    i2c:
+      - id: camera_i2c
+        sda: GPIO22
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO22
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO32, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO25
       href_pin: GPIO26
       pixel_clock_pin: GPIO21
       reset_pin: GPIO15
 
-Configuration for Wrover Kit Boards
------------------------------------
+**Wrover Kit Boards**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO26
+        scl: GPIO27
     esp32_camera:
       external_clock:
         pin: GPIO21
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO26
-        scl: GPIO27
+      i2c_id: camera_i2c
       data_pins: [GPIO4, GPIO5, GPIO18, GPIO19, GPIO36, GPIO39, GPIO34, GPIO35]
       vsync_pin: GPIO25
       href_pin: GPIO23
@@ -298,19 +307,20 @@ Configuration for Wrover Kit Boards
       name: My Camera
       # ...
 
-Configuration for TTGO T-Camera V05
------------------------------------
+**TTGO T-Camera V05**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO13
+        scl: GPIO12
     esp32_camera:
       external_clock:
         pin: GPIO32
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO13
-        scl: GPIO12
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO18, GPIO23, GPIO36, GPIO39]
       vsync_pin: GPIO27
       href_pin: GPIO25
@@ -321,18 +331,20 @@ Configuration for TTGO T-Camera V05
       name: My Camera
       # ...
 
-Configuration for TTGO T-Camera V162
-------------------------------------
+**TTGO T-Camera V162**:
 
 .. code-block:: yaml
 
+    # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO18
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO4
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO18
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO34, GPIO13, GPIO14, GPIO35, GPIO39, GPIO38, GPIO37, GPIO36]
       vsync_pin: GPIO5
       href_pin: GPIO27
@@ -345,19 +357,20 @@ Configuration for TTGO T-Camera V162
       name: My Camera
       # ...
 
-Configuration for TTGO T-Camera V17
------------------------------------
+**TTGO T-Camera V17**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO13
+        scl: GPIO12
     esp32_camera:
       external_clock:
         pin: GPIO32
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO13
-        scl: GPIO12
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO18, GPIO23, GPIO36, GPIO39]
       vsync_pin: GPIO27
       href_pin: GPIO25
@@ -370,19 +383,20 @@ Configuration for TTGO T-Camera V17
       name: My Camera
       # ...
 
-Configuration for TTGO T-Journal
---------------------------------
+**TTGO T-Journal**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO25
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO27
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO25
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO17, GPIO35, GPIO34, GPIO5, GPIO39, GPIO18, GPIO36, GPIO19]
       vsync_pin: GPIO22
       href_pin: GPIO26
@@ -393,19 +407,20 @@ Configuration for TTGO T-Journal
       # ...
 
 
-Configuration for TTGO-Camera Plus
-----------------------------------
+**TTGO-Camera Plus**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO18
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO4
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO18
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO34, GPIO13, GPIO26, GPIO35, GPIO39, GPIO38, GPIO37, GPIO36]
       vsync_pin: GPIO5
       href_pin: GPIO27
@@ -417,19 +432,20 @@ Configuration for TTGO-Camera Plus
       name: My Camera
       # ...
 
-Configuration for TTGO-Camera Mini
-----------------------------------
+**TTGO-Camera Mini**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO13
+        scl: GPIO12
     esp32_camera:
       external_clock:
         pin: GPIO32
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO13
-        scl: GPIO12
+      i2c_id: camera_i2c
       data_pins: [GPIO5, GPIO14, GPIO4, GPIO15, GPIO37, GPIO38, GPIO36, GPIO39]
       vsync_pin: GPIO27
       href_pin: GPIO25
@@ -439,19 +455,20 @@ Configuration for TTGO-Camera Mini
       name: My Camera
       # ...
 
-Configuration for ESP-EYE
-----------------------------------
+**ESP-EYE**:
 
 .. code-block:: yaml
 
     # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO18
+        scl: GPIO23
     esp32_camera:
       external_clock:
         pin: GPIO4
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO18
-        scl: GPIO23
+      i2c_id: camera_i2c
       data_pins: [GPIO34, GPIO13, GPIO14, GPIO35, GPIO39, GPIO38, GPIO37, GPIO36]
       vsync_pin: GPIO5
       href_pin: GPIO27
@@ -461,8 +478,7 @@ Configuration for ESP-EYE
       name: My Camera
       # ...
 
-Configuration for ESP32S3_EYE on `Freenove ESP32-S3-DevKitC-1 <https://github.com/Freenove/Freenove_ESP32_S3_WROOM_Board>`_
----------------------------------------------------------------------------------------------------------------------------
+**ESP32S3_EYE** on `Freenove ESP32-S3-DevKitC-1 <https://github.com/Freenove/Freenove_ESP32_S3_WROOM_Board>`__:
 
 .. code-block:: yaml
 
@@ -488,6 +504,51 @@ Configuration for ESP32S3_EYE on `Freenove ESP32-S3-DevKitC-1 <https://github.co
       # Image settings
       name: My Camera
       # ...
+
+**Seeed Studio XIAO ESP32S3 Sense**:
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    i2c:
+      - id: camera_i2c
+        sda: GPIO40
+        scl: GPIO39
+    esp32_camera:
+      external_clock:
+        pin: GPIO10
+        frequency: 20MHz
+      i2c_id: camera_i2c
+      data_pins: [GPIO15, GPIO17, GPIO18, GPIO16, GPIO14, GPIO12, GPIO11, GPIO48]
+      vsync_pin: GPIO38
+      href_pin: GPIO47
+      pixel_clock_pin: GPIO13
+
+      # Image settings
+      name: My Camera
+      # ...
+
+**Waveshare ESP32-S3 ETH + OV2640 camera**:
+
+.. code-block:: yaml
+
+    esp32_camera:
+      external_clock:
+        pin: GPIO3
+        frequency: 20MHz
+      i2c_pins:
+        sda: GPIO48
+        scl: GPIO47
+      data_pins: [GPIO41, GPIO45, GPIO46, GPIO42, GPIO40, GPIO38, GPIO15, GPIO18]
+      vsync_pin: GPIO1
+      href_pin: GPIO2
+      pixel_clock_pin: GPIO39
+      power_down_pin: GPIO8
+
+      # Image settings
+      name: My Camera
+      # ...
+
 
 See Also
 --------

@@ -19,38 +19,29 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
     sensor:
       - platform: sgp30
         eco2:
-          name: "Workshop eCO2"
-          accuracy_decimals: 1
+          name: "eCO2"
         tvoc:
-          name: "Workshop TVOC"
-          accuracy_decimals: 1
-        store_baseline: yes
-        address: 0x58
-        update_interval: 1s
+          name: "TVOC"
 
 Configuration variables:
 ------------------------
 
-- **eco2** (**Required**): The information for the CO₂eq. sensor.
+- **eco2** (*Optional*): The information for the CO₂eq. sensor.
 
-  - **name** (**Required**, string): The name for the CO₂eq sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
-- **tvoc** (**Required**): The information for the total Volatile Organic Compounds sensor.
+- **tvoc** (*Optional*): The information for the total Volatile Organic Compounds sensor.
 
-  - **name** (**Required**, string): The name for the humidity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 - **store_baseline** (*Optional*, boolean): Store the sensor baselines persistently when calculated or updated.
-  Defaults to yes.
+  Defaults to ``true``.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to ``0x58``.
 
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
-  sensor. Defaults to ``1s``.
+  sensor. Defaults to ``60s``.
 
 Advanced:
 
@@ -60,24 +51,20 @@ Advanced:
 
   - **tvoc_baseline** (**Required**, int): The TVOC baseline for calibration purposes. After OTA, this value is used to calibrate the sensor.
 
-- **eco2_baseline** (*Optional*): The information for the CO₂eq. sensor baseline value. Baseline value is published in decimals.
+- **eco2_baseline** (*Optional*): The information for the CO₂eq. baseline value sensor. Baseline value is published in decimals.
 
-  - **name** (**Required**, string): The name for the CO₂eq baseline value sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
-- **tvoc_baseline** (*Optional*): The information for the TVOC baseline value sensor. Baseline value is published in in decimals.
+- **tvoc_baseline** (*Optional*): The information for the TVOC baseline value sensor. Baseline value is published in decimals.
 
-  - **name** (**Required**, string): The name for the TVOC baseline value sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
-- **compensation** (*Optional*): The block containing sensors used for compensation.
+- **compensation** (*Optional*): The block containing sensors used for compensation. Both values must be supplied in order to be able to generate the absolute humidity to be reported to the sensor.
 
   - **temperature_source** (*Optional*, :ref:`config-id`): Give an external temperature sensor ID
-    here. This can improve the sensor's internal calculations.
+    here. The data must be in Celsius. This can improve the sensor's internal calculations.
 
-  - **humidity_source** (*Optional*, :ref:`config-id`): Give an external humidity sensor ID
+  - **humidity_source** (*Optional*, :ref:`config-id`): Give an external relative humidity sensor ID
     here. This can improve the sensor's internal calculations.
 
 .. _sgp30-calibrating:

@@ -50,13 +50,21 @@ Configuration variables:
   of measurement the sensor should advertise its values with. This does
   not actually do any maths (conversion between units).
 - **device_class** (*Optional*, string): The device class for the
-  sensor. See https://developers.home-assistant.io/docs/core/entity/sensor/#available-device-classes
+  sensor. See https://www.home-assistant.io/integrations/sensor/#device-class
   for a list of available options. Set to ``""`` to remove the default device class of a sensor.
 - **state_class** (*Optional*, string): The state class for the
   sensor. See https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes
   for a list of available options. Set to ``""`` to remove the default state class of a sensor.
 - **icon** (*Optional*, icon): Manually set the icon to use for the sensor in the frontend.
-- **accuracy_decimals** (*Optional*, int): Manually set the number of decimals to use when reporting values. This does not impact the actual value reported to Home Assistant, it just sets the number of decimals to use when displaying it.
+- **accuracy_decimals** (*Optional*, int): Set the number of digits
+  after the decimal point that data consumers should use. While this
+  does not change the value sent across the API, Home Assistant's
+  ESPHome integration will round the value accordingly before using or
+  storing it. The number of digits will also be used to set the
+  entity's default display precision. Thus, one can display fewer
+  decimals, but cannot increase precision of sensor values in Home
+  Assistant. (The default value varies depending on component and
+  sensor.)
 - **filters** (*Optional*): Specify filters to use for some basic
   transforming of values. See :ref:`Sensor Filters <sensor-filters>` for more information.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
@@ -68,11 +76,12 @@ Configuration variables:
   significantly increase the database size. Defaults to ``false``.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
+  Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations:
 
@@ -111,27 +120,25 @@ MQTT Options:
 Sensor Filters
 --------------
 
-ESPHome allows you to do some basic pre-processing of
-sensor values before they’re sent to Home Assistant. This is for example
-useful if you want to apply some average over the last few values.
+ESPHome lets you pre-process sensor values before sending them to Home Assistant. This is useful, for example, if you want to apply an average to the last few readings.
 
-There are a lot of filters that sensors support. You define them by adding a ``filters``
-block in the sensor configuration (at the same level as ``platform``; or inside each sensor block
-for platforms with multiple sensors)
+Many filters are available for sensors, which you can define by adding a ``filters`` block in the sensor configuration (at the same level as ``platform`` or within each sensor block for platforms with multiple sensors).
 
-Filters are processed in the order they are defined in your configuration.
+Filters are applied in the order they are defined in your configuration.
 
 .. code-block:: yaml
 
     # Example filters:
     filters:
       - offset: 2.0
-      - multiply: 1.2
+      - multiply: !lambda return 1.2;
       - calibrate_linear:
           - 0.0 -> 0.0
           - 40.0 -> 45.0
           - 100.0 -> 102.5
-      - filter_out: 42.0
+      - filter_out:
+          - 42.0
+          - 43.0
       - median:
           window_size: 5
           send_every: 5
@@ -158,463 +165,63 @@ Filters are processed in the order they are defined in your configuration.
         - delta: 5.0
       - lambda: return x * (9.0/5.0) + 32.0;
 
-``offset``
-**********
+.. include:: sensor-filter-calibrate_linear.rst
 
-Adds a constant value to each sensor value.
+.. include:: sensor-filter-calibrate_polynomial.rst
 
-.. code-block:: yaml
+.. include:: sensor-filter-clamp.rst
 
-    # Example configuration entry
-    - platform: adc
-      # ...
-      filters:
-        - offset: 2.0
-        - multiply: 1.2
+.. include:: sensor-filter-debounce.rst
 
-``multiply``
-************
+.. include:: sensor-filter-delta.rst
 
-Multiplies each value by a constant value.
+.. include:: sensor-filter-exponential_moving_average.rst
 
-.. _sensor-filter-calibrate_linear:
+.. include:: sensor-filter-filter_out.rst
 
-``calibrate_linear``
-********************
+.. include:: sensor-filter-heartbeat.rst
 
-Calibrate your sensor values by using values you measured with an accurate "truth" source.
+.. include:: sensor-filter-lambda.rst
 
-Configuration variables:
+.. include:: sensor-filter-max.rst
 
-- **method** (*Optional*, string): The method for calculating the linear function(s).
-  One of ``least_squares`` or ``exact``. Defaults to ``least_squares``.
-- **datapoints** (**Required**): The list of datapoints.
+.. include:: sensor-filter-median.rst
 
-First, collect a bunch of values of what the sensor shows and what the real value should be.
-For temperature, this can for example be achieved by using an accurate thermometer. For other
-sensors like power sensor this can be done by connecting a known load and then writing down
-the value the sensor shows.
+.. include:: sensor-filter-min.rst
 
-.. code-block:: yaml
+.. include:: sensor-filter-multiply.rst
 
-    # Example configuration entry
-    - platform: dht
-      # ...
-      temperature:
-        name: "DHT22 Temperature"
-        filters:
-          - calibrate_linear:
-             method: least_squares
-             datapoints:
-              # Map 0.0 (from sensor) to 1.0 (true value)
-              - 0.0 -> 1.0
-              - 10.0 -> 12.1
+.. include:: sensor-filter-offset.rst
 
-The arguments are a list of data points, each in the form ``MEASURED -> TRUTH``. Depending on
-the ``method`` ESPHome will then either fit a linear equation to the values (using least squares)
-or connect the values exactly using multiple linear equations. You need to supply at least two
-values. When using ``least_squares`` and more than two values are given a linear solution will be
-calculated and may not represent each value exactly.
+.. include:: sensor-filter-or.rst
 
-.. figure:: images/sensor_filter_calibrate_linear.png
-    :align: center
-    :width: 50.0%
+.. include:: sensor-filter-quantile.rst
 
-.. _sensor-calibrate_polynomial:
+.. include:: sensor-filter-round.rst
 
-``calibrate_polynomial``
-************************
+.. include:: sensor-filter-round_to_multiple_of.rst
 
-Calibrate your sensor values by fitting them to a polynomial functions. This is similar to
-the ``calibrate_linear`` filter, but also allows for higher-order functions like quadratic polynomials.
+.. include:: sensor-filter-skip_initial.rst
 
-.. code-block:: yaml
+.. include:: sensor-filter-sliding_window_moving_average.rst
 
-    # Example configuration entry
-    - platform: adc
-      # ...
-      filters:
-        - calibrate_polynomial:
-           degree: 2
-           datapoints:
-            # Map 0.0 (from sensor) to 0.0 (true value)
-            - 0.0 -> 0.0
-            - 10.0 -> 12.1
-            - 13.0 -> 14.0
+.. include:: sensor-filter-throttle.rst
 
-The arguments are a list of data points, each in the form ``MEASURED -> TRUTH``. Additionally, you need
-to specify the degree of the resulting polynomial, the datapoints will then be fitted to the given
-degree with a least squares solver.
+.. include:: sensor-filter-throttle_average.rst
 
-``filter_out``
-**************
+.. include:: sensor-filter-timeout.rst
 
-(**Required**, number): Filter out specific values to be displayed. For example to filter out the value ``85.0``
+.. include:: sensor-filter-to_ntc_resistance.rst
 
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - filter_out: 85.0
-
-``clamp``
-*********
-
-Limits the value to the range between ``min_value`` and ``max_value``. By default, sensor values outside these bounds will be set to ``min_value`` or ``max_value``, respectively. If ``ignore_out_of_range`` is true, then sensor values outside those bounds will be ignored. If ``min_value`` is not set, there is no lower bound; if ``max_value`` is not set there is no upper bound.
-
-Configuration variables:
-
-- **min_value** (*Optional*, float): The lower bound of the range.
-- **max_value** (*Optional*, float): The upper bound of the range.
-- **ignore_out_of_range** (*Optional*, bool): If true, ignores all sensor values out of the range. Defaults to ``false``.
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - clamp:
-            min_value: 10
-            max_value: 75
-            ignore_out_of_range: true
-
-
-
-``round``
-*********
-
-Rounds the value to the given decimal places.
-
-.. code-block:: yaml
-
-    - platform: ...
-      filters:
-        - round: 1 # will round to 1 decimal place
-
-
-``quantile``
-************
-
-A `simple moving quantile <https://www.itl.nist.gov/div898/software/dataplot/refman2/auxillar/quantile.htm>`__
-over the last few values. This can be used to filter outliers from the received sensor data. A large
-window size will make the filter slow to react to input changes.
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - quantile:
-            window_size: 7
-            send_every: 4
-            send_first_at: 3
-            quantile: .9
-
-Configuration variables:
-
-- **window_size** (*Optional*, int): The number of values over which to calculate the quantile
-  when pushing out a value.
-  Defaults to ``5``.
-- **send_every** (*Optional*, int): How often a sensor value should be pushed out. For
-  example, in above configuration the quantile is calculated after every 4th
-  received sensor value, over the last 7 received values.
-  Defaults to ``5``.
-- **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
-  published. With this parameter you can specify when the very first value is to be sent.
-  Must be smaller than or equal to ``send_every``
-  Defaults to ``1``.
-- **quantile** (*Optional*, float): value from 0 to 1 to determine which quantile to pick.
-  Defaults to ``.9``.
-
-``median``
-**********
-
-A `simple moving median <https://en.wikipedia.org/wiki/Median_filter#Worked_1D_example>`__
-over the last few values. This can be used to filter outliers from the received sensor data. A large
-window size will make the filter slow to react to input changes.
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - median:
-            window_size: 7
-            send_every: 4
-            send_first_at: 3
-
-Configuration variables:
-
-- **window_size** (*Optional*, int): The number of values over which to calculate the median
-  when pushing out a value. This number should
-  be odd if you want an actual received value pushed out.
-  Defaults to ``5``.
-- **send_every** (*Optional*, int): How often a sensor value should be pushed out. For
-  example, in above configuration the median is calculated after every 4th
-  received sensor value, over the last 7 received values.
-  Defaults to ``5``.
-- **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
-  published. With this parameter you can specify when the very first value is to be sent.
-  Must be smaller than or equal to ``send_every``
-  Defaults to ``1``.
-
-``min``
-*******
-
-A moving minimum over the last few values. A large window size will make the filter slow to
-react to input changes.
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - min:
-            window_size: 7
-            send_every: 4
-            send_first_at: 3
-
-Configuration variables:
-
-- **window_size** (*Optional*, int): The number of values over which to calculate the min/max when pushing out a
-  value. Defaults to ``5``.
-- **send_every** (*Optional*, int): How often a sensor value should be pushed out. For
-  example, in above configuration the min is calculated after every 4th
-  received sensor value, over the last 7 received values.
-  Defaults to ``5``.
-- **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
-  published. With this parameter you can specify when the very first value is to be sent.
-  Must be smaller than or equal to ``send_every``
-  Defaults to ``1``.
-
-``max``
-*******
-
-A moving maximum over the last few values. A large window size will make the filter slow to
-react to input changes.
-
-Configuration variables:
-
-- **window_size** (*Optional*, int): The number of values over which to calculate the min/max
-  when pushing out a value.
-  Defaults to ``5``.
-- **send_every** (*Optional*, int): How often a sensor value should be pushed out. For
-  example, in above configuration the max is calculated after every 4th
-  received sensor value, over the last 7 received values.
-  Defaults to ``5``.
-- **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
-  published. With this parameter you can specify when the very first value is to be sent.
-  Must be smaller than or equal to ``send_every``
-  Defaults to ``1``.
-
-
-``sliding_window_moving_average``
-*********************************
-
-A `simple moving average <https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average>`__
-over the last few values. It can be used to have a short update interval on the sensor but only push
-out an average on a specific interval (thus increasing resolution).
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - sliding_window_moving_average:
-            window_size: 15
-            send_every: 15
-
-Configuration variables:
-
-- **window_size** (*Optional*, int): The number of values over which to perform an
-  average when pushing out a value.
-- **send_every** (*Optional*, int): How often a sensor value should be pushed out. For
-  example, in above configuration the weighted average is only
-  pushed out on every 15th received sensor value.
-- **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
-  published. With this parameter you can specify when the very first value is to be sent.
-  Defaults to ``1``.
-
-.. _sensor-filter-exponential_moving_average:
-
-``exponential_moving_average``
-******************************
-
-A simple `exponential moving average
-<https://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average>`__ over the last few
-values. It can be used to have a short update interval on the sensor but only push
-out an average on a specific interval (thus increasing resolution).
-
-Configuration variables:
-
-- **alpha** (*Optional*, float): The forget factor/alpha value of the filter.
-  A higher value includes more details in the output while a lower value removes more noise.
-  Defaults to ``0.1``.
-- **send_every** (*Optional*, int): How often a sensor value should be pushed out. Defaults to ``15``.
-- **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
-  published. With this parameter you can specify when the very first value is to be sent.
-  Defaults to ``1``.
-
-``skip_initial``
-****************
-
-A simple skip filter; ``skip_initial: N`` skips the first ``N`` sensor readings and passes on the
-rest. This can be used when the sensor needs a few readings to 'warm up'. After the initial
-readings have been skipped, this filter does nothing.
-
-.. code-block:: yaml
-
-    # Example configuration entry
-    - platform: wifi_signal
-      # ...
-      filters:
-        - skip_initial: 3
-
-``throttle``
-************
-
-Throttle the incoming values. When this filter gets an incoming value,
-it checks if the last incoming value is at least ``specified time period`` old.
-If it is not older than the configured value, the value is not passed forward.
-
-.. code-block:: yaml
-
-    # Example filters:
-    filters:
-      - throttle: 1s
-      - heartbeat: 5s
-      - debounce: 0.1s
-      - delta: 5.0
-      - lambda: return x * (9.0/5.0) + 32.0;
-
-``throttle_average``
-********************
-
-An average over the ``specified time period``, potentially throttling incoming values. When this filter gets incoming values, it sums up all values and pushes out the average after the ``specified time period`` passed. There are two edge cases to consider within the ``specified time period``:
-
-* no value(s) received: ``NaN`` is returned - add the ``heartbeat`` filter if periodical pushes are required and/or ``filter_out: nan`` if required
-* one value received: the value is pushed out after the ``specified time period`` passed, without calculating an average
-
-For example a ``throttle_average: 60s`` will push out a value every 60 seconds, in case at least one sensor value is received within these 60 seconds.
-
-In comparison to the ``throttle`` filter, it won't discard any values. In comparison to the ``sliding_window_moving_average`` filter, it supports variable sensor reporting rates without influencing the filter reporting interval (except for the first edge case).
-
-``heartbeat``
-*************
-
-Send the value periodically with the specified time interval.
-If the sensor value changes during the interval the interval will not reset.
-The last value of the sensor will be sent.
-
-So a value of ``10s`` will cause the filter to output values every 10s regardless
-of the input values.
-
-``timeout``
-************
-
-After the first value has been sent, if no subsequent value is published within the
-``specified time period``, send a value which defaults to ``NaN``.
-Especially useful when data is derived from some other communication
-channel, e.g. a serial port, which can potentially be interrupted.
-
-.. code-block:: yaml
-
-    # Example filters:
-    filters:
-      - timeout: 10s  # sent value will be NaN
-      - timeout:
-          timeout: 10s
-          value: 0
-
-``debounce``
-************
-
-Only send values if the last incoming value is at least ``specified time period``
-old. For example if two values come in at almost the same time, this filter will only output
-the last value and only after the specified time period has passed without any new incoming
-values.
-
-``delta``
-*********
-
-This filter stores the last value passed through this filter and only passes incoming values through
-if incoming value is sufficiently different from the previously passed one.
-This difference can be calculated in two ways an absolute difference or a percentage difference.
-
-If a number is specified, it will be used as the absolute difference required.
-For example if the filter were configured with a value of 2 and the last value passed through was 10,
-only values greater than 12 or less than 8 would be passed through.
-
-.. code-block:: yaml
-
-    filters:
-      - delta: 2.0
-
-If a percentage is specified a percentage of the last value will be used as the required difference.
-For example if the filter were configured with a value of 20% and the last value passed through was 10,
-only values greater than 12 or less than 8 would be passed through.
-However, if the last value passed through was 100 only values greater than 120 or less than 80 would be passed through.
-
-.. code-block:: yaml
-
-    filters:
-      - delta: 20%
-
-``or``
-******
-
-Pass forward a value with the first child filter that returns. Above example
-will only pass forward values that are *either* at least 1s old or are if the absolute
-difference is at least 5.0.
-
-.. code-block:: yaml
-
-    # Example filters:
-    filters:
-      - or:
-        - throttle: 1s
-        - delta: 5.0
-
-
-``lambda``
-**********
-
-Perform a simple mathematical operation over the sensor values. The input value is ``x`` and
-the result of the lambda is used as the output (use ``return``).
-
-.. code-block:: yaml
-
-    filters:
-      - lambda: return x * (9.0/5.0) + 32.0;
-
-
-Make sure to add ``.0`` to all values in the lambda, otherwise divisions of integers will
-result in integers (not floating point values).
-
-To prevent values from being published, return ``{}``:
-
-.. code-block:: yaml
-
-    filters:
-      - lambda: !lambda |-
-          if (x < 10) return {};
-          return x-10;
-
+.. include:: sensor-filter-to_ntc_temperature.rst
 
 Example: Converting Celsius to Fahrenheit
 -----------------------------------------
 
-While I personally don’t like the Fahrenheit temperature scale, I do
+While I personally don't like the Fahrenheit temperature scale, I do
 understand that having temperature values appear in the Fahrenheit unit
 is quite useful to some users. ESPHome uses the Celsius temperature
-unit internally, and I’m not planning on making converting between the
+unit internally, and I'm not planning on making converting between the
 two simple (😉), but you can use this filter to convert Celsius values to
 Fahrenheit.
 
@@ -644,7 +251,7 @@ with ``x``.
 .. code-block:: yaml
 
     sensor:
-      - platform: dallas
+      - platform: dht
         # ...
         on_value:
           then:
@@ -672,7 +279,7 @@ So for example ``above: 5`` with no below would mean the range from 5 to positiv
 .. code-block:: yaml
 
     sensor:
-      - platform: dallas
+      - platform: dht
         # ...
         on_value_range:
           - below: 5.0
@@ -704,7 +311,7 @@ trigger with ``x``.
 .. code-block:: yaml
 
     sensor:
-      - platform: dallas
+      - platform: dht
         # ...
         on_raw_value:
           then:

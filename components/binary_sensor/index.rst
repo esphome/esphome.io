@@ -27,7 +27,8 @@ you can always override it.
 
 Configuration variables:
 
-- **name** (**Required**, string): The name for the binary sensor.
+- **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
+- **name** (*Optional*, string): The name for the binary sensor. At least one of **id** and **name** must be specified.
 
   .. note::
 
@@ -35,7 +36,7 @@ Configuration variables:
       you want the binary sensor to use that name, you can set ``name: None``.
 
 - **device_class** (*Optional*, string): The device class for the
-  sensor. See https://developers.home-assistant.io/docs/core/entity/binary-sensor/#available-device-classes
+  sensor. See https://www.home-assistant.io/integrations/binary_sensor/#device-class
   for a list of available options.
 - **icon** (*Optional*, icon): Manually set the icon to use for the binary sensor in the frontend.
 - **filters** (*Optional*, list): A list of filters to apply on the binary sensor values such as
@@ -66,14 +67,37 @@ Advanced options:
   a ``name`` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Requires Home Assistant 2021.9 or newer. Defaults to ``false``.
-- **publish_initial_state** (*Optional*, boolean): If true, then the sensor will publish its initial state at boot or when
-  HA first connects, depending on the platform.  This means that any applicable triggers will be run. Defaults to ``false``.
+  Defaults to ``false``.
+- **trigger_on_initial_state** (*Optional*, boolean): If true, any applicable triggers will be fired when the binary sensor
+  state changes from ``unknown`` to a valid state. This applies to the first valid state set, and any valid state set after
+  a ``binary_sensor.invalidate_state`` action has been excuted. The default is ``false``.
+  **publish_initial_state** (*Optional*, boolean): A deprecated equivalent to ``trigger_on_initial_state``.
 - **entity_category** (*Optional*, string): The category of the entity.
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Requires Home Assistant 2021.11 or newer.
+  for a list of available options.
   Set to ``""`` to remove the default entity category.
 - If MQTT enabled, all other options from :ref:`MQTT Component <config-mqtt-component>`.
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
+
+
+Actions
+-------
+
+.. _binary_sensor-invalidate_state-action:
+
+``binary_sensor.invalidate_state`` Action
+*****************************************
+
+This action will invalidate the current state of the sensor. It is most useful with the Template binary sensor.
+After the state is invalidated, it will be reported to Home Assistant as ``unknown``. Example:
+
+.. code-block:: yaml
+
+    on_...:
+      binary_sensor.invalidate_state: my_binary_sensor_id
+
+
+The state may also be invalidated by an API call in a lambda - see the API reference linked below.
 
 .. _binary_sensor-filters:
 
@@ -208,6 +232,23 @@ Specify any :ref:`lambda <config-lambda>` for more complex filters. The input va
 the binary sensor is ``x`` and you can return ``true`` for ON, ``false`` for OFF, and ``{}`` to stop
 the filter chain.
 
+``settle``
+**********
+
+(**Required**, time, :ref:`templatable <config-templatable>`): When a signal is received, publish the state
+but wait for the received state to remain the same for specified time period before publishing any
+additional state changes. This filter complements the ``delayed_on_off`` filter but publishes value changes at
+the beginning of the delay period.
+When using a lambda call, you should return the delay value in milliseconds.
+**Useful for debouncing binary switches**.
+
+``timeout``
+***********
+
+(**Required**, time, :ref:`templatable <config-templatable>`): If no value is published for the specified
+time period, invalidate the state.
+
+
 Binary Sensor Automation
 ------------------------
 
@@ -262,7 +303,8 @@ Configuration variables: See :ref:`Automation <automation>`.
 
 This automation will be triggered when a new state is received (and thus combines ``on_press``
 and ``on_release`` into one trigger). The new state will be given as the variable ``x`` as a boolean
-and can be used in :ref:`lambdas <config-lambda>`.
+and can be used in :ref:`lambdas <config-lambda>`. It will not be called when the state is invalidated; it will be called when
+the state initially becomes valid only if ``trigger_on_initial_state`` is true.
 
 .. code-block:: yaml
 
@@ -272,6 +314,31 @@ and can be used in :ref:`lambdas <config-lambda>`.
         on_state:
           then:
             - switch.turn_off: relay_1
+
+Configuration variables: See :ref:`Automation <automation>`.
+
+.. _binary_sensor-on_state_change:
+
+``on_state_change``
+*******************
+
+An alternative to ``on_state`` that is also triggered when the binary sensor state is invalidated. It is passed two parameters, ``x`` as for ``on_change``
+will be the new value, and ``x_previous`` is the value immediately prior to the change. Both these parameters are of type ``optional<bool>`` so also indicate
+if the values were valid. Note that this is called on all state changes, including initial states.
+
+.. code-block:: yaml
+
+    binary_sensor:
+      - platform: gpio
+        # ...
+        on_state_change:
+          then:
+          - logger.log:
+              format: "Old state was %s"
+              args: ['x_previous.has_value() ? ONOFF(x_previous) : "Unknown"']
+          - logger.log:
+              format: "New state is %s"
+              args: ['x.has_value() ? ONOFF(x) : "Unknown"']
 
 Configuration variables: See :ref:`Automation <automation>`.
 

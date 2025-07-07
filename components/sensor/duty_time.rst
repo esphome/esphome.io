@@ -2,13 +2,13 @@ Duty Time
 =========
 
 .. seo::
-    :description: Instructions for setting up a sensor that tracks the duty time of the some object.
+    :description: Instructions for setting up a sensor that tracks the duty time of some object.
     :image: timer-play-outline.svg
 
-The ``duty_time`` sensor allows you to track the total duty time of the some object, for example, a light bulb, in seconds.
+The ``duty_time`` sensor allows you to track the total duty time of some object, for example, a light bulb, in seconds.
 Able to calculate the last turn-on time when an optional sensor ``last_time`` is included in the configuration.
 
-Supports boolean signal sources: ``binary_sensor`` or ``lambda`` that returns a boolean state of tracked object.
+Supports boolean signal sources: ``binary_sensor`` or ``lambda`` that returns a boolean state of the tracked object.
 As an alternative to controlling a component in automations, may be used the ``sensor.duty_time.start`` and ``sensor.duty_time.stop`` actions.
 
 

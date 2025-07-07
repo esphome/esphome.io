@@ -15,17 +15,28 @@ The BMS communicates via :ref:`UART <uart>`.
     :align: center
     :width: 100.0%
 
+Component/Hub
+-------------
 
 .. code-block:: yaml
 
-    # Example configuration entry (ESP8266)
-    uart:
-      tx_pin: GPIO1
-      rx_pin: GPIO3
-      baud_rate: 9600
-
+    # Example configuration entry
     daly_bms:
       update_interval: 20s
+
+
+Configuration variables:
+************************
+
+- **update_interval** (*Optional*, :ref:`config-time`): Delay between data requests.
+- **address** (*Optional*, int): Address to use, defaults to ``0x80``.
+
+Sensor
+------
+
+A sensor platform to read BMS data
+
+.. code-block:: yaml
 
     sensor:
       - platform: daly_bms
@@ -68,11 +79,81 @@ The BMS communicates via :ref:`UART <uart>`.
         cell_4_voltage:
           name: "Cell 4 Voltage"
 
+Configuration variables:
+************************
+
+- **voltage** (*Optional*): Voltage of the battery pack connected to Daly BMS.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **current** (*Optional*): Current flowing trough the BMS (input or output from batttery).
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **battery_level** (*Optional*): Battery level in % (SoC).
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **max_cell_voltage** (*Optional*): The cell of the battery with the higher voltage.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **max_cell_voltage_number** (*Optional*): The cell number of the battery with the higher voltage.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **min_cell_voltage** (*Optional*): The cell of the battery with the lower voltage.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **min_cell_voltage_number** (*Optional*): The cell number of the battery with the lower voltage.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **max_temperature** (*Optional*): The higher temperature measured from the temperature sensors.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **max_temperature_probe_number** (*Optional*): The sensor number which has measured the higher temperature.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **min_temperature** (*Optional*): The lower temperature measured from the temperature sensors.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **min_temperature_probe_number** (*Optional*): The sensor number which has measured the lower temperature.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **remaining_capacity** (*Optional*): The capacity in Ah left in the battery.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **cells_number** (*Optional*): The number of cells in series in the battery pack.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **temperature_1** (*Optional*): The first temperature sensor.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **temperature_2** (*Optional*): The second temperature sensor.
+  All options from :ref:`Sensor <config-sensor>`.
+
+- **cell_1_voltage** (*Optional*): The voltage of cell number 1. Cell number can be from 1 to 16.
+  All options from :ref:`Sensor <config-sensor>`.
+
+Text Sensor
+-----------
+
+Text sensor that indicates the status of BMS.
+
+.. code-block:: yaml
+
     text_sensor:
       - platform: daly_bms
         status:
           name: "BMS Status"
 
+Configuration variables:
+************************
+
+- **status** (*Optional*): The BMS Status (Charging, Discharging, Stationary).
+  All options from :ref:`Text Sensor <config-text_sensor>`.
+
+Binary Sensor
+-------------
+
+Binary sensor that indicates the status of MOS.
+
+.. code-block:: yaml
 
     binary_sensor:
       - platform: daly_bms
@@ -81,163 +162,25 @@ The BMS communicates via :ref:`UART <uart>`.
         discharging_mos_enabled:
           name: "Discharging MOS"
 
-Component/Hub
--------------
-
-Configuration variables:
-************************
-
-- **update_interval** (*Optional*, :ref:`config-time`): Delay between data requests.
-- **address** (*Optional*, int): Address to use, defaults to ``0x80``.
-
-Sensor
-------
-
-A sensor platform to read BMS data
-
-Configuration variables:
-************************
-
-- **voltage** (*Optional*): Voltage of the battery pack connected to Daly BMS.
-
-  - **name** (**Required**, string): The name for the voltage sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **current** (*Optional*): Current flowing trough the BMS (input or output from batttery).
-
-  - **name** (**Required**, string): The name for the current sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **battery_level** (*Optional*): Battery level in % (SoC).
-
-  - **name** (**Required**, string): The name for the SoC sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **max_cell_voltage** (*Optional*): The cell of the battery with the higher voltage.
-
-  - **name** (**Required**, string): The name for the Max Cell Voltage sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **max_cell_voltage_number** (*Optional*): The cell number of the battery with the higher voltage.
-
-  - **name** (**Required**, string): The name for the Max Cell Voltage Number sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **min_cell_voltage** (*Optional*): The cell of the battery with the lower voltage.
-
-  - **name** (**Required**, string): The name for the Min Cell Voltage sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **min_cell_voltage_number** (*Optional*): The cell number of the battery with the lower voltage.
-
-  - **name** (**Required**, string): The name for the Min Cell Voltage Number sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **max_temperature** (*Optional*): The higher temperature measured from the temperature sensors.
-
-  - **name** (**Required**, string): The name for the Max Temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **max_temperature_probe_number** (*Optional*): The sensor number which has measured the higher temperature.
-
-  - **name** (**Required**, string): The name for the Max Temperature Probe Number sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **min_temperature** (*Optional*): The lower temperature measured from the temperature sensors.
-
-  - **name** (**Required**, string): The name for the Min Temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **min_temperature_probe_number** (*Optional*): The sensor number which has measured the lower temperature.
-
-  - **name** (**Required**, string): The name for the Min Temperature Probe Number sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **remaining_capacity** (*Optional*): The capacity in Ah left in the battery.
-
-  - **name** (**Required**, string): The name for the Remaining Capacity sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **cells_number** (*Optional*): The number of cells in series in the battery pack.
-
-  - **name** (**Required**, string): The name for the Cells Number sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **temperature_1** (*Optional*): The first temperature sensor.
-
-  - **name** (**Required**, string): The name for the first temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **temperature_2** (*Optional*): The second temperature sensor.
-
-  - **name** (**Required**, string): The name for the second temperature sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-- **cell_1_voltage** (*Optional*): The voltage of cell number 1. Cell number can be from 1 to 16.
-
-  - **name** (**Required**, string): The name for the cell voltage sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Sensor <config-sensor>`.
-
-Text Sensor
------------
-
-Text sensor that indicates the status of BMS.
-
-Configuration variables:
-************************
-
-- **status** (*Optional*): The BMS Status (Charging, Discharging, Stationary).
-
-  - **name** (**Required**, string): The name for the BMS status text sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Text Sensor <config-text_sensor>`.
-
-Binary Sensor
--------------
-
-Binary sensor that indicates the status of MOS.
-
 Configuration variables:
 ************************
 
 - **charging_mos_enabled** (*Optional*): The BMS charging MOS status to enable the recharge of the battery.
-
-  - **name** (**Required**, string): The name for the charging MOS binary sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 - **discharging_mos_enabled** (*Optional*): The BMS discharging mos status to enable the load.
-
-  - **name** (**Required**, string): The name for the discharging MOS binary sensor.
-  - **id** (*Optional*, :ref:`config-id`): Set the ID of this sensor for use in lambdas.
-  - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+  All options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 
 Control BMS
 -----------
 At this moment Daly sensor platform don't suppport controlling you BMS, but you can make some stuff using uart.write
 
-First you need to setup binary sensors for charging and disharging MOS  
-  
-.. code-block:: yaml  
+First you need to setup binary sensors for charging and disharging MOS
 
-    
+.. code-block:: yaml
+
+
     binary_sensor:
       - platform: daly_bms
         charging_mos_enabled:
@@ -249,11 +192,11 @@ First you need to setup binary sensors for charging and disharging MOS
           id: bin_daly_dischg_mos # binary MOS sensor must have ID to use with switch
           internal: True # but you can make it internal to avoid duplication
 
-Then you can add switches  
-  
-.. code-block:: yaml  
+Then you can add switches
 
-    
+.. code-block:: yaml
+
+
     switch:
       - platform: template
         name: "Daly Charging MOS"
@@ -266,12 +209,12 @@ Then you can add switches
         turn_on_action:
           - uart.write:
               data: [0xA5, 0x40, 0xDA, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8]
-          - logger.log: 
+          - logger.log:
               format: "Send cmd to Daly: Set charge MOS on"
         turn_off_action:
           - uart.write:
               data: [0xA5, 0x40, 0xDA, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC7]
-          - logger.log: 
+          - logger.log:
               format: "Send cmd to Daly: Set charge MOS off"
 
       - platform: template
@@ -285,20 +228,20 @@ Then you can add switches
         turn_on_action:
           - uart.write:
               data: [0xA5, 0x40, 0xD9, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC7]
-          - logger.log: 
+          - logger.log:
               format: "Send cmd to Daly: Set discharge MOS on"
         turn_off_action:
           - uart.write:
               data: [0xA5, 0x40, 0xD9, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC6]
-          - logger.log: 
+          - logger.log:
               format: "Send cmd to Daly: Set discharge MOS off"
 
 
 Also you can add select to change battery level
-  
-.. code-block:: yaml  
 
-    
+.. code-block:: yaml
+
+
     select:
       - platform: template
         name: "Daly Battery Level setup"
@@ -318,7 +261,7 @@ Also you can add select to change battery level
                 then:
                   - uart.write:
                       data: [0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xE8, 0xF9]
-                  - logger.log: 
+                  - logger.log:
                       format: "Send cmd to Daly: Set SOC to 100%"
                 else:
                   - if:
@@ -327,7 +270,7 @@ Also you can add select to change battery level
                       then:
                         - uart.write:
                             data: [0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xEE, 0xFE]
-                        - logger.log: 
+                        - logger.log:
                             format: "Send cmd to Daly: Set SOC to 75%"
                       else:
                         - if:
@@ -336,7 +279,7 @@ Also you can add select to change battery level
                             then:
                               - uart.write:
                                   data: [0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xF4, 0x03]
-                              - logger.log: 
+                              - logger.log:
                                   format: "Send cmd to Daly: Set SOC to 50%"
                             else:
                               - if:
@@ -345,7 +288,7 @@ Also you can add select to change battery level
                                   then:
                                     - uart.write:
                                         data: [0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFA, 0x08]
-                                    - logger.log: 
+                                    - logger.log:
                                         format: "Send cmd to Daly: Set SOC to 25%"
                                   else:
                                     - if:
@@ -354,10 +297,10 @@ Also you can add select to change battery level
                                         then:
                                           - uart.write:
                                               data: [0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E]
-                                          - logger.log: 
+                                          - logger.log:
                                               format: "Send cmd to Daly: Set SOC to 0%"
-                                              
-                                                
+
+
 UART Connection
 ---------------
 
@@ -368,15 +311,15 @@ Connect RX from BMS to TX in ESP board and TX from BMS to RX in ESP board
     :width: 100.0%
 
     Uart Pinout.
-    
+
 **3.3v Warning:** some BMS 3.3v cant source large currents and may not work to properly power the ESP. If you are having WIFI connection issues or similar, try a different power source. There is 12-15v available on the Daly connector which via a proper step-down converter can properly power the ESP.
 
 On the ESP32 (untested on ESP8266) if you are having missing data (such as Temperature 1/2), it may be due to UART buffer size.
 Add the following to your configuration to increase the buffer from the default 256 to 512.
 
-.. code-block:: 
+.. code-block::
 
-    uart: 
+    uart:
       ...
       rx_buffer_size: 512
 

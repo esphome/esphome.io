@@ -14,28 +14,17 @@ The ``Growatt Inverter`` sensor platform allows you to use growatt inverter data
 
     Growatt Logo
 
-The communication with this integration is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
-You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
+The communication with this component is done over a :ref:`UART bus <uart>` using :ref:`Modbus <modbus>`.
+You must therefore have a ``uart:`` and ``modbus:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 .. code-block:: yaml
 
-    # Example configuration entry
-    uart:
-      - id: gw_uart
-        baud_rate: 9600
-        tx_pin: GPIO1
-        rx_pin: GPIO3
-
-    modbus:
-      uart_id: gw_uart
-      flow_control_pin: GPIO4
-
+    # Example configuration
     sensor:
       - platform: growatt_solar
-        update_interval: 10s
         protocol_version: RTU
-        
+
         inverter_status:
           name: "Growatt Status Code"
 
@@ -88,7 +77,7 @@ to some pins on your board and the baud rate set to 9600.
 
         energy_production_day:
           name: "Growatt Today's Generation"
-          
+
         total_energy_production:
           name: "Growatt Total Energy Production"
 
@@ -96,14 +85,12 @@ to some pins on your board and the baud rate set to 9600.
           name: "Growatt Inverter Module Temp"
 
 
-
-
 Configuration variables:
 ------------------------
 
 - **inverter_status** (*Optional*): Status code of the inverter (0: waiting, 1: normal, 3:fault)
 
-- **protocol_version** (*Optional*): Version of the protocol used by your inverter. 
+- **protocol_version** (*Optional*): Version of the protocol used by your inverter.
   Old inverters use RTU (default). Newer ones use RTU2 (e.g. MIC, MIN, MAX series)
 
 - **phase_a** (*Optional*): The group of exposed sensors for Phase A/1.

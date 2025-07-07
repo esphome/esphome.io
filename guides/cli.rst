@@ -20,7 +20,7 @@ ESPHome's command line interface always has the following format
 
     .. code-block:: console
 
-    esphome run livingroom.yaml kitchen.yaml
+        esphome run livingroom.yaml kitchen.yaml
 
 ``--help`` Option
 --------------------
@@ -39,6 +39,7 @@ ESPHome's command line interface always has the following format
 .. option:: -v|--verbose
 
     Enable verbose esphome logs.
+    Can also be enabled via environment variable ``ESPHOME_VERBOSE=true``.
 
 ``--quiet`` Option
 ------------------
@@ -75,6 +76,12 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
     Manually specify the upload port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
     to perform an OTA.
 
+.. option:: --upload_speed BAUD_RATE
+
+    The upload speed for serial flashing defaults to 460800 or as set with the environment variable ``ESPHOME_UPLOAD_SPEED``.
+    This can be overridden in the platformio options on a per-config
+    basis, or set with this option at the time of uploading.
+
 .. option:: --no-logs
 
     Disable starting log view.
@@ -98,6 +105,11 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
 .. option:: --host-port HOST_PORT
 
     Specify the host port to use for legacy Over the Air uploads.
+
+.. option:: --reset
+
+    If set, reset the device before starting the logs. May also be configured with the environment variable
+    ``ESPHOME_SERIAL_LOGGING_RESET=true``.
 
 ``config`` Command
 ------------------
@@ -130,6 +142,12 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
     Manually specify the upload port/IP address to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
     to perform an OTA.
 
+.. option:: --upload_speed BAUD_RATE
+
+    The upload speed for serial flashing defaults to 460800 or as set with the environment variable ``ESPHOME_UPLOAD_SPEED``.
+    This can be overridden in the platformio options on a per-config
+    basis, or set with this option at the time of uploading.
+
 .. option:: --host-port HOST_PORT
 
     Specify the host port to use for legacy Over the Air uploads.
@@ -140,7 +158,7 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
 .. program:: esphome clean-mqtt
 
 The ``esphome clean-mqtt <CONFIG>`` cleans retained MQTT discovery messages from the MQTT broker.
-See :ref:`mqtt-using_with_home_assistant`.
+See :ref:`mqtt-using_with_home_assistant_entities`.
 
 .. option:: --topic TOPIC
 
@@ -197,9 +215,18 @@ The ``esphome dashboard <CONFIG>`` command starts the ESPHome dashboard server f
 through a graphical user interface. This command accepts a configuration directory instead of a
 single configuration file.
 
+.. option:: --address ADDRESS
+
+    Manually set the address to bind to (defaults to 0.0.0.0)
+
 .. option:: --port PORT
 
     Manually set the HTTP port to open connections on (defaults to 6052)
+
+.. option:: --socket SOCKET
+
+    Manually set the unix socket to bind to. If specified along with ``--address`` or ``--port`` the values
+    for those parameters will be ignored. Cannot be used along with ``--systemd-socket``.
 
 .. option:: --username USERNAME
 
@@ -211,7 +238,8 @@ single configuration file.
 
 .. option:: --open-ui
 
-    If set, opens the dashboard UI in a browser once the server is up and running.
+    If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
+    ``--socket``.
 
 ``logs`` Command
 ---------------------
@@ -240,6 +268,11 @@ The ``esphome logs <CONFIG>`` command validates the configuration and shows all 
 
     Manually specify a serial port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``.
 
+.. option:: --reset
+
+    If set, reset the device before starting the logs. May also be configured with the environment variable
+    ``ESPHOME_SERIAL_LOGGING_RESET=true``.
+
 Using Bash or ZSH auto-completion
 ---------------------------------
 
@@ -253,3 +286,52 @@ You can register ESPHome for auto-completion by adding the following to your ~/.
 
 For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`__ documentation.
 
+Using logging tools supplied with ESPHome
+-----------------------------------------
+There are two types of logging interfaces supplied with ESPHome: API and Serial (UART) logging.
+For serial logging, there are many options including `ESPHome Web <https://web.esphome.io>`__ and
+the ESPHome CLI's ``run`` command.
+
+For basic API based logging uses, one can use the ``aioesphomeapi-logs`` command bundled with ESPHome,
+Which is especially useful for ESP devices in a remote/inaccessible location.
+
+The syntax is as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-logs <IPv4 pr IPv6 address>
+
+Some working examples include:
+
+.. code-block:: console
+
+    aioesphomeapi-logs 192.168.x.y
+    aioesphomeapi-logs fe80::cdef:0123:4567:89ab
+    aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
+
+Press ``CTRL+C`` to exit the logging view.
+
+If you have configured encryption for API, provide the key from the yaml as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-logs 192.168.x.y --noise-psk <your-api-key-from-yaml>
+
+If you do not know/wish to know the IP address of an ESPHome device,
+one can also use ``aioesphomeapi-discover`` to discover online ESPHome devices on the local network.
+
+The syntax is as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-discover
+
+The response lists info about currently available ESPHome devices:
+
+``Status |Name |Address |MAC |Version |Platform |Board``
+
+See Also
+--------
+
+- :doc:`Guides </guides/index>`
+- :ghedit:`Edit`
