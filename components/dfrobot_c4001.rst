@@ -107,8 +107,8 @@ Configuration variables:
 
 - **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are ``PRESENCE`` and ``SPEED_AND_DISTANCE``.
 
-Binary Sensor
--------------
+Binary Sensors
+--------------
 
 .. code-block:: yaml
 
@@ -128,8 +128,8 @@ Configuration variables:
 - **occupancy** (*Optional*): In ``PRESENCE`` mode this indicates presence. In ``SPEED_AND_DISTANCE`` mode this indicates a target is being tracked. 
   All Options from :ref:`Switch <config-binary_sensor>`.
 
-Button
-------
+Buttons
+-------
 
 .. code-block:: yaml
 
@@ -137,11 +137,17 @@ Button
       - platform: dfrobot_c4001
         config_save:
           name: Config Save
+        restart:
+          name: C4001 Restart
+        factory_reset:
+          name: Factory Reset
 
 Configuration variables:
 ************************
 
 - **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Switch <config-button>`.
+- **restart** (*Optional*): When you click this button the C4001 module with be restarted. All Options from :ref:`Switch <config-button>`.
+- **factory_reset** (*Optional*): When you click this button the C4001 module with be reset to factory state. All changed settings will be lost. All Options from :ref:`Switch <config-button>`.
 
 .. warning::
 
@@ -149,8 +155,8 @@ Configuration variables:
     Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
     Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
 
-Number
-------
+Numbers
+-------
 
 .. code-block:: yaml
 
@@ -202,8 +208,8 @@ Configuration variables:
 - **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is required to trigger the sensor to switch to target tracked state. 
   Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-number>`.
 
-Switch
-------
+Switches
+--------
 
 .. code-block:: yaml
 
@@ -218,7 +224,7 @@ Switch
 Configuration variables:
 ************************
 
-- **led_enable** (*Optional*): When turned on the green LED will flash when the sensor has been started. The blue LED cannot be disabled with this command. All Options from :ref:`Switch <config-switch>`.
+- **led_enable** (*Optional*): When turned on the green LED will flash when the sensor has been started. The blue LED is always on and cannot be controlled. All Options from :ref:`Switch <config-switch>`.
 - **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
 
 Sensors
@@ -238,12 +244,31 @@ Sensors
 Configuration variables:
 ************************
 
-- **target_distance** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates distance to target in meters (m). When **occupancy** binary sensor is ```false``` this sensor switches to 0.0 indicating invalid data. 
-  Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-sensor>`. 
-- **target_speed** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates target speed in meters per second (m/s). When **occupancy** binary sensor is ```false``` this sensor switches to 0.0 indicating invalid data. 
-  Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-sensor>`.
-- **target_energy** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates target energy in no units. When **occupancy** binary sensor is ```false``` this sensor switches to 0.0 indicating invalid data. 
-  Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-sensor>`.
+- **target_distance** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates distance to target in meters (m). When **occupancy** binary sensor is ``false`` this sensor switches to 0.0 indicating invalid data. 
+  Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Sensor <config-sensor>`. 
+- **target_speed** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates target speed in meters per second (m/s). When **occupancy** binary sensor is ``false`` this sensor switches to 0.0 indicating invalid data. 
+  Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Sensor <config-sensor>`.
+- **target_energy** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates target energy in no units. When **occupancy** binary sensor is ``false`` this sensor switches to 0.0 indicating invalid data. 
+  Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Sensor <config-sensor>`.
+
+Text Sensors
+------------
+
+.. code-block:: yaml
+
+    text_sensor:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        software_version:
+          name: Software Version
+        hardware_version:
+          name: Hardware Version
+
+Configuration variables:
+************************
+
+- **software_version** (*Optional*): The Software Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text-sensor>`. 
+- **hardware_version** (*Optional*): The Hardware Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text-sensor>`.
 
 
 Actions
@@ -272,6 +297,28 @@ Will perform a factory reset of the module and all configuration values will go 
 
     Each factory reset of the mmWave radar triggers a write to its internal flash/EEPROM.
     Write cycles to this memory are limited, so avoid the practice of resetting frequently.
+
+Actions
+-------
+
+``dfrobot_c4001.factory_reset`` Action
+--------------------------------------
+
+.. code-block:: yaml
+
+    # using automations
+    button:
+      - platform: template
+        name: Restart
+        on_press:
+          - dfrobot_c4001.restart: mmwave_sensor
+        entity_category: CONFIG
+
+    # using lambdas
+    - lambda: |-
+    id(mmwave_sensor).restart();
+
+Will perform restart of the module. All configuration values will remain as configured. 
 
 See Also
 --------
