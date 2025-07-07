@@ -11,6 +11,12 @@ has the advantage of being able to detect both static and moving objects. It als
 ability, making it less susceptible to factors such as temperature changes, variations in ambient light, and environmental noise. 
 Whether a person is sitting, sleeping, or in motion, the sensor can quickly detect their presence.
 
+.. figure:: images/dfrobot_sen0609_full.jpg
+    :align: center
+    :width: 75%
+
+    DFRobot mmWave C4001 (SEN0609) Radar / Presence Detection Sensor
+
 There are two variants:
 
 + SEN0609 has a 100° horizontal and 40° vertical field of view, 16 meter presence detection range and 25 meter motion detection range.
@@ -24,19 +30,6 @@ The sensor can operate in one of two modes, ``Presence`` and ``Speed and Distanc
 The presence output once presence is detected will stay on for a period that can be configured. In ``Speed and Distance`` mode the occupancy binary sensor indicates if a target is being tracked or not. 
 Each time the sensor indicates presence it also outputs target distance, target speed and target energy. In ``Speed and Distance`` mode all of these parameter update frequently. 
 There are only two settings for this mode, ``micro_motion_enable switch`` and ``threshold_factor number``.
-
-.. note::
-
-    The C4001 sensor maintains settings in flash. When powered on these settings are loaded from flash and made operational. To change the configuration of the sensor dial in the ``number`` settings you need and hit the ``config_save`` button.
-
-More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>`__.
-
-
-.. figure:: images/dfrobot_sen0609_full.jpg
-    :align: center
-    :width: 75%
-
-    DFRobot mmWave C4001 (SEN0609) Radar / Presence Detection Sensor
 
 .. code-block:: yaml
 
@@ -86,8 +79,14 @@ More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.
         led_enable:
           name: Enable LED
 
+The C4001 sensor maintains settings in EEPROM. When powered on these settings are loaded from EEPROM and made operational. To change the configuration of the sensor dial in the ``number`` 
+settings you need and hit the ``config_save`` button. Once a setting is changed but not saved to EEPROM the ``config_changed`` update sensor will change to ``Update Available```
 
-Hub Component
+More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>`__.
+
+.. _dfrobot_c4001-component:
+
+Component
 -------------
 
 The hub component ``dfrobot_c4001:`` used use to define the ``mode`` of the sensor. A ``uart:`` is required in 
@@ -107,7 +106,9 @@ Configuration variables:
 
 - **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are ``PRESENCE`` and ``SPEED_AND_DISTANCE``.
 
-Binary Sensors
+.. _dfrobot_c4001-binary_sensor:
+
+Binary Sensor
 --------------
 
 .. code-block:: yaml
@@ -128,7 +129,9 @@ Configuration variables:
 - **occupancy** (*Optional*): In ``PRESENCE`` mode this indicates presence. In ``SPEED_AND_DISTANCE`` mode this indicates a target is being tracked. 
   All Options from :ref:`Binary Sensor <config-binary_sensor>`.
 
-Buttons
+.. _dfrobot_c4001-button:
+
+Button
 -------
 
 .. code-block:: yaml
@@ -155,7 +158,9 @@ Configuration variables:
     Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
     Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
 
-Numbers
+.. _dfrobot_c4001-number:
+
+Number
 -------
 
 .. code-block:: yaml
@@ -208,26 +213,9 @@ Configuration variables:
 - **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is required to trigger the sensor to switch to target tracked state. 
   Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Number <config-number>`.
 
-Switches
---------
+.. _dfrobot_c4001-sensor:
 
-.. code-block:: yaml
-
-    switch:
-      - platform: dfrobot_c4001
-        dfrobot_c4001_id: mmwave_sensor
-        led_enable:
-          name: Enable LED
-        micro_motion_enable:
-          name: Micro Motion Enable
-
-Configuration variables:
-************************
-
-- **led_enable** (*Optional*): When turned on the green LED will flash when the sensor has been started. The blue LED is always on and cannot be controlled. All Options from :ref:`Switch <config-switch>`.
-- **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
-
-Sensors
+Sensor
 -------
 
 .. code-block:: yaml
@@ -251,6 +239,29 @@ Configuration variables:
 - **target_energy** (*Optional*): When **occupancy** binary sensor is ``true`` this sensor indicates target energy in no units. When **occupancy** binary sensor is ``false`` this sensor switches to 0.0 indicating invalid data. 
   Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Sensor <config-sensor>`.
 
+.. _dfrobot_c4001-switch:
+
+Switch
+--------
+
+.. code-block:: yaml
+
+    switch:
+      - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
+        led_enable:
+          name: Enable LED
+        micro_motion_enable:
+          name: Micro Motion Enable
+
+Configuration variables:
+************************
+
+- **led_enable** (*Optional*): When turned on the green LED will flash when the sensor has been started. The blue LED is always on and cannot be controlled. All Options from :ref:`Switch <config-switch>`.
+- **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
+
+.. _dfrobot_c4001-text_sensor:
+
 Text Sensors
 ------------
 
@@ -270,12 +281,15 @@ Configuration variables:
 - **software_version** (*Optional*): The Software Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text_sensor>`. 
 - **hardware_version** (*Optional*): The Hardware Version as reported by the C4001 module. All Options from :ref:`Text Sensor <config-text_sensor>`.
 
+.. _dfrobot_c4001-actions:
 
 Actions
 -------
 
 ``dfrobot_c4001.factory_reset`` Action
 --------------------------------------
+
+Execute a factory reset of the module and all configuration values will go back to default. The module will restart with these defaults. 
 
 .. code-block:: yaml
 
@@ -291,18 +305,20 @@ Actions
     - lambda: |-
     id(mmwave_sensor).factory_reset();
 
-Will perform a factory reset of the module and all configuration values will go back to default. The module will restart with these defaults. 
+Configuration variables:
+````````````````````````
+
+- **id** (*Optional*, :ref:`config-id`): The ID of the C4001 component. If only one radar is defined, this is optional.
 
 .. warning::
 
-    Each factory reset of the mmWave radar triggers a write to its internal flash/EEPROM.
+    Each factory reset of the mmWave radar triggers a write to its internal EEPROM.
     Write cycles to this memory are limited, so avoid the practice of resetting frequently.
-
-Actions
--------
 
 ``dfrobot_c4001.factory_reset`` Action
 --------------------------------------
+
+Execute a restart of the module. All configuration values will remain as configured. 
 
 .. code-block:: yaml
 
@@ -318,7 +334,11 @@ Actions
     - lambda: |-
     id(mmwave_sensor).restart();
 
-Will perform restart of the module. All configuration values will remain as configured. 
+Configuration variables:
+````````````````````````
+
+- **id** (*Optional*, :ref:`config-id`): The ID of the C4001 component. If only one radar is defined, this is optional.
+
 
 See Also
 --------
