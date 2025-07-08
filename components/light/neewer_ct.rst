@@ -1,5 +1,5 @@
 Neewer Light
-===========
+============
 
 .. seo::
     :description: Instructions for setting up Neewer Bi-Color lights.
