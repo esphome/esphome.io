@@ -55,7 +55,6 @@ Configuration variables:
   The first pin for determining the step value. Must not be a pin from an external I/O expander.
 - **pin_b** (**Required**, :ref:`Pin Schema <config-pin_schema>`):
   The second pin for determining the step value. Must not be a pin from an external I/O expander.
-- **name** (**Required**, string): The name of the rotary encoder sensor.
 - **pin_reset** (*Optional*, :ref:`Pin Schema <config-pin_schema>`):
   An optional pin that resets the step value. This is useful with rotary encoders that have a
   third pin. Defaults to no reset pin.
@@ -66,7 +65,6 @@ Configuration variables:
     - ``2``
     - ``4``
 
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **min_value** (*Optional*, int): The minimum value this rotary encoder will go to, turning
   the knob further will not decrease the number. Defaults to no minimum.
 - **max_value** (*Optional*, int): The maximum value this rotary encoder will go to, turning
@@ -76,8 +74,6 @@ Configuration variables:
   "unknown" value at first. If you set this option to true, the value is published once after
   boot and when it changes. Defaults to ``false``.
 - **restore_mode** (*Optional*): Control how the Rotary Encoder attempts to restore state on bootup.
-  For restoring on ESP8266s, also see ``esp8266_restore_from_flash`` in the
-  :doc:`esphome section </components/esphome>`.
 
     - ``RESTORE_DEFAULT_ZERO`` - (Default) Attempt to restore state and default to zero (0) if not possible to restore.
     - ``ALWAYS_ZERO`` - Always initialize the counter with value zero (0).

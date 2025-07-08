@@ -24,7 +24,7 @@ The ``b_parasite`` sensor platform tracks b-parasite's Bluetooth Low Energy (BLE
 
     sensor:
       - platform: b_parasite
-        mac_address: F0:CA:F0:CA:01:01
+        mac_address: XX:XX:XX:XX:XX:XX
         humidity:
           name: 'b-parasite Air Humidity'
         temperature:
@@ -42,24 +42,23 @@ Configuration variables
 - **mac_address** (**Required**): The MAC address of the device.
 - **temperature** (*Optional*): Air temperature in Celsius.
 
-  - **name** (**Required**): Sensor name.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **humidity** (*Optional*): Relative air humidity in %.
 
-  - **name** (**Required**): Sensor name.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **moisture** (*Optional*): Soil moisture in %.
 
-  - **name** (**Required**): Sensor name.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **battery_voltage** (*Optional*): Battery voltage in volts.
 
-  - **name** (**Required**): Sensor name.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
+
 - **illuminance** (*Optional*): Illuminance in lux.
 
-  - **name** (**Required**): Sensor name.
-  - All other options from :ref:`Sensor <config-sensor>`.
+  - All options from :ref:`Sensor <config-sensor>`.
 
 See Also
 --------

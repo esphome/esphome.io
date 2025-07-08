@@ -16,17 +16,9 @@ Put the ``tuya`` component in the config and it will list the possible devices f
 
 .. code-block:: yaml
 
-    # Make sure logging is not using the serial port
-    logger:
-      baud_rate: 0
-
-    uart:
-      rx_pin: GPIO3
-      tx_pin: GPIO1
-      baud_rate: 9600
-
     # Register the Tuya MCU connection
     tuya:
+
 
 Here is an example output for a Tuya fan controller:
 
@@ -148,5 +140,6 @@ See Also
 - :doc:`/components/binary_sensor/tuya`
 - :doc:`/components/sensor/tuya`
 - :doc:`/components/text_sensor/tuya`
+- :doc:`/components/number/tuya`
 - :apiref:`tuya/tuya.h`
 - :ghedit:`Edit`

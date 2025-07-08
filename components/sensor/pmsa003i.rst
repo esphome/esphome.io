@@ -30,17 +30,17 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
         pm_10_0:
           name: "PM10.0"
         pmc_0_3:
-          name: "PMC <0.3µm"
+          name: "PMC >0.3µm"
         pmc_0_5:
-          name: "PMC <0.5µm"
+          name: "PMC >0.5µm"
         pmc_1_0:
-          name: "PMC <1µm"
+          name: "PMC >1µm"
         pmc_2_5:
-          name: "PMC <2.5µm"
+          name: "PMC >2.5µm"
         pmc_5_0:
-          name: "PMC <5µm"
+          name: "PMC >5µm"
         pmc_10_0:
-          name: "PMC <10µm"
+          name: "PMC >10µm"
 
 Configuration variables:
 ------------------------

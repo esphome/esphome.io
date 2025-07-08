@@ -19,18 +19,6 @@ The display requires that an :apiclass:`AddressableLight <light::AddressableLigh
 
 .. code-block:: yaml
 
-    light:
-      - platform: fastled_clockless
-        chipset: WS2812B
-        pin: GPIO4
-        num_leds: 64
-        rgb_order: GRB
-        name: "led_matrix"
-        id: led_matrix_light
-        default_transition_length: 0s
-        color_correct: [50%, 50%, 50%]
-        restore_mode: ALWAYS_ON
-
     display:
       - platform: addressable_light
         id: led_matrix_display
@@ -61,10 +49,10 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to call the lambda to update the display.
   Defaults to ``16ms``.
 - **pixel_mapper** (*Optional*, :ref:`lambda <config-lambda>`): A lambda that returns the integer address of the LED
-  given the supplied the ``x`` and ``y`` pixel coordinate. By default, a left-to-right direct pixel mapper is used. 
+  given the supplied the ``x`` and ``y`` pixel coordinate. By default, a left-to-right direct pixel mapper is used.
 - **lambda** (*Optional*, :ref:`lambda <config-lambda>`): The lambda to use for rendering the content on the display.
   ``it`` will be an instance of :apiclass:`DisplayBuffer <display::DisplayBuffer>`.
-  See :ref:`display-engine` for more information. 
+  See :ref:`display-engine` for more information.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
 
@@ -73,7 +61,7 @@ Configuration variables:
     When enabled (the default, but also via ``it.set_enabled(true)``), any effect currently running on the
     addressable light will be disabled. When disabled (``it.set_enabled(false)``), the last configured effect will
     be restored.
-    
+
     While the display is enabled, it is still possible to control the parent addressable light component in some
     limited capacity. Changing the brightness will still work, but changing the color will have no affect. It is not
     adivsable to enable any effects (ex: rainbow, color wipe, etc) while the display is enabled, as this will cause a

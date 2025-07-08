@@ -17,8 +17,15 @@ daily energy usage in ``Wh`` or ``kWh``.
     # Example configuration entry
     sensor:
       - platform: total_daily_energy
-        name: "Total Daily Energy"
+        name: 'Total Daily Energy'
         power_id: my_power
+        unit_of_measurement: 'kWh'
+        state_class: total_increasing
+        device_class: energy
+        accuracy_decimals: 3
+        filters:
+          # Multiplication factor from W to kW is 0.001
+          - multiply: 0.001
 
       # The power sensor to convert, can be any power sensor
       - platform: hlw8012
@@ -28,16 +35,14 @@ daily energy usage in ``Wh`` or ``kWh``.
 
     # Enable time component to reset energy at midnight
     time:
-      - platform: sntp
-        id: my_time
+      - platform: homeassistant
+        id: homeassistant_time
 
 Configuration variables:
 ------------------------
 
 - **power_id** (**Required**, :ref:`config-id`): The ID of the power sensor
   to integrate over time.
-- **name** (**Required**, string): The name of the sensor.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so
   that the value can be restored upon power cycle or reboot.
   Defaults to ``true``.
@@ -64,12 +69,33 @@ Some sensors such as the :doc:`HLW8012 <hlw8012>` expose their power sensor with
             - multiply: 0.001
           unit_of_measurement: kW
 
+Lifetime instead of Daily
+-------------------------
+
+For a more-generic version of this component which does not reset every midnight, see :doc:`integration`, which can provide device-lifetime values instead of daily values with the following example settings:
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    sensor:
+      - platform: integration
+        name: 'Total Energy'
+        sensor: my_power
+        time_unit: h
+        restore: true
+        state_class: total_increasing
+        device_class: energy
+
 See Also
 --------
 
 - :ref:`sensor-filters`
 - :doc:`hlw8012`
 - :doc:`cse7766`
+- :doc:`integration`
+- :doc:`/components/sensor/pulse_counter`
+- :doc:`/components/sensor/pulse_meter`
+- :doc:`/components/time/homeassistant`
 - :doc:`/cookbook/power_meter`
 - :apiref:`total_daily_energy/total_daily_energy.h`
 - :ghedit:`Edit`

@@ -15,6 +15,7 @@ where you specify the **name** of the node.
     esphome:
         name: livingroom
         comment: Living room ESP32 controller
+        area: Living Room
 
     esp32:
         board: nodemcu-32s
@@ -29,21 +30,29 @@ Configuration variables:
   characters, digits and hyphens, and can be at most 24 characters long by default, or 31
   characters long if ``name_add_mac_suffix`` is ``false``.
   See :ref:`esphome-changing_node_name`.
-- **friendly_name** (*Optional*, string): This is the name sent to the frontend. It is used
-  by Home Assistant as the integration name, device name, and is automatically prefixed to entities
-  where necessary.
+- **friendly_name** (*Optional*, string):
+  This name is sent to the frontend and used by Home Assistant as  
+  the integration and device name. It also gets prefixed to entity  
+  names when needed. While optional, leaving it out can result in  
+  less intuitive names and a less polished experience in Home  
+  Assistant. Setting a ``friendly_name`` helps keep things clear,  
+  consistent, and easier to manage.
+- **area** (*Optional*, string or :ref:`esphome-area`): The area configuration for this device. This is sent to
+  Home Assistant to specify which area/zone the device belongs to. Can be either a simple string (e.g., ``"Living Room"``) 
+  or a structured format with ``id`` and ``name``.
 
 Advanced options:
 
 - **build_path** (*Optional*, string): Customize where ESPHome will store the build files
   for your node. By default, ESPHome puts the PlatformIO project it uses to build the
-  firmware in the ``.esphome/build/<NODE>`` directory, but you can customize this
-  behavior using this option.
+  firmware in the ``.esphome/build/<NODE>`` (or into path from ``ESPHOME_BUILD_PATH`` environment variable if specified) directory,
+  but you can customize this behavior using this option. Official docker image automatically use ``/build`` folder
+  as default one in case it is mounted to it.
 - **platformio_options** (*Optional*, mapping): Additional options to pass over to PlatformIO in the
   platformio.ini file. See :ref:`esphome-platformio_options`.
-- **includes** (*Optional*, list of files): A list of C/C++ files to include in the main (auto-generated) sketch file
-  for custom components. The paths in this list are relative to the directory where the YAML configuration file
-  is in. See :ref:`esphome-includes`.
+- **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) ``main`` file.
+  The paths in this list are relative to the directory where the YAML configuration file is located or ``<...>`` includes.
+  See :ref:`esphome-includes`.
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
   :ref:`esphome-libraries`.
 - **comment** (*Optional*, string): Additional text information about this node. Only for display in UI.
@@ -54,21 +63,18 @@ Advanced options:
 
   - **name** (**Required**, string): Name of the project
   - **version** (**Required**, string): Version of the project
+  - **on_update** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the device firmware is updated.
+    This compares the above ``version`` field with the ``version`` that was in the previous firmware
+    as long as the ``name`` matches.
+    The ``version`` is stored in flash memory when the firmware is first run for future comparisons.
 - **min_version** (*Optional*, string): The minimum ESPHome version required to compile this configuration.
   See :ref:`esphome-min_version`.
 - **compile_process_limit** (*Optional*, int): The maximum number of simultaneous compile processes to run.
   Defaults to the number of cores of the CPU which is also the maximum you can set.
+- **debug_scheduler** (*Optional*, boolean): If set, the scheduler will print debug information about scheduled tasks at log level DEBUG.
+- **areas** (*Optional*, list of :ref:`esphome-area`): Additional areas that can be referenced by devices.
+- **devices** (*Optional*, list of :ref:`esphome-devices`): Sub-devices to group entities under.
 
-Old-style platform options, which have been moved to the platform-specific :doc:`esp32 </components/esp32>` and
-:doc:`esp8266 </components/esp8266>` sections but are still accepted here for compatibility reasons (usage not
-recommended for new projects):
-
-- **platform** (**Required**, string): The platform used, either ``esp8266`` or ``esp32``.
-- **board** (**Required**, string): The board used, see
-  :doc:`esp32 </components/esp32>` and :doc:`esp8266 </components/esp8266>` for more information.
-- **arduino_version** (*Optional*, string): The version of the Arduino framework to compile the project against.
-- **esp8266_restore_from_flash** (*Optional*, boolean): For ESP8266s, whether to store some persistent preferences in flash
-  memory.
 
 Automations:
 
@@ -92,10 +98,9 @@ is already set up. You can however change this using the ``priority`` parameter.
     esphome:
       # ...
       on_boot:
-        priority: 600
-        # ...
-        then:
-          - switch.turn_off: switch_1
+        - priority: 600
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -130,9 +135,9 @@ too many WiFi/MQTT connection attempts, Over-The-Air updates being applied or th
     esphome:
       # ...
       on_shutdown:
-        priority: 700
-        then:
-          - switch.turn_off: switch_1
+        - priority: 700
+          then:
+            - switch.turn_off: switch_1
 
 Configuration variables:
 
@@ -198,9 +203,12 @@ The ``includes`` option is only a helper option that does that for you.
       # ...
       includes:
         - my_switch.h
+        - <mylib.h>
 
 This option behaves differently depending on what the included file is pointing at:
 
+ - If the include string is written as <mylib> or "<mylib>", the line ``#include <mylib>`` is
+   added to the beginning of the ``main.cpp`` file.
  - If the include string is pointing at a directory, the entire directory tree is copied into the
    src/ folder.
  - If the include string points to a header file (.h, .hpp, .tcc), it is copied in the src/ folder
@@ -214,9 +222,8 @@ This option behaves differently depending on what the included file is pointing 
 ``libraries``
 -------------
 
-With the ``libraries`` option it is possible to include libraries in the PlatformIO project. These libraries will then
-be compiled into the resulting firmware, and can be used in code from :ref:`lambdas <config-lambda>` and from
-custom components.
+The ``libraries`` option allows you to include libraries in the PlatformIO project. These libraries will then be
+compiled into the resulting firmware and may be used by :ref:`lambdas <config-lambda>`.
 
 .. code-block:: yaml
 
@@ -231,12 +238,12 @@ custom components.
         - Wire
 
         # use the git version of a library used by a component
-        - esphome/Improv=https://github.com/improv-wifi/sdk-cpp.git#v1.0.0
+        - Improv=https://github.com/improv-wifi/sdk-cpp.git#v1.0.0
 
 The most common usage of this option is to include third-party libraries that are available in the `PlatformIO registry
 <https://platformio.org/lib>`__. They can be added by listing their name under this option. It is also possible to use
 specific versions, or to fetch libraries from a file or git repository. ESPHome accepts the same syntax as the
-`pio lib install <https://docs.platformio.org/en/latest/userguide/lib/cmd_install.html>`__ command.
+`lib_deps <https://docs.platformio.org/en/latest/projectconf/sections/env/options/library/lib_deps.html>`__ option.
 
 Using ``<name>=<source>`` syntax, it is possible to override the version used for libraries that are automatically added
 by one of ESPHome's components. This can be useful during development to make ESPHome use a custom fork of a library.
@@ -247,8 +254,11 @@ this option. If they are used by another library, they should be listed before t
 
 .. _preferences-flash_write_interval:
 
-Adjusting flash writes
-------------------------
+Preferences Component
+---------------------
+
+This component is used to store data in the flash memory which is persisted across device reboots, e.g. the latest
+state of a light or the accumulated energy used by an appliance.
 
 .. code-block:: yaml
 
@@ -256,9 +266,11 @@ Adjusting flash writes
     preferences:
       flash_write_interval: 1min
 
+Configuration variables:
+
 - **flash_write_interval** (*Optional*, :ref:`config-time`): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
-  written to the flash and wearing it out. Defaults to ``1min``.
+  written to the flash and wearing it out. Defaults to ``1min``. Set to ``never`` to disable this feature.
 
 As all devices have a limited number of flash write cycles, this setting helps to reduce the number of flash writes
 due to quickly changing components. In the past, when components such as ``light``, ``switch``, ``fan`` and ``globals``
@@ -270,7 +282,7 @@ A safety feature has thus been implemented to mitigate issues resulting from the
 the state is first stored in memory before being flushed to flash after the ``flash_write_interval`` has passed. This
 results in fewer flash writes, preserving the flash health.
 
-This behavior can be disabled by setting ``flash_write_interval`` to ``0s`` to immediately commit the state to flash,
+This behavior can be modified by setting ``flash_write_interval`` to ``0s`` to commit the changes to flash as soon as possible,
 however, be aware that this may lead to increased flash wearing and a shortened device lifespan!
 
 For :doc:`ESP8266 </components/esp8266>`, ``restore_from_flash`` must also be set to ``true`` for states to be written to flash.
@@ -321,15 +333,15 @@ The same procedure can be done for changing the static IP of a device.
 Adding the MAC address as a suffix to the device name
 -----------------------------------------------------
 
-Using ``name_add_mac_suffix`` allows :doc:`creators </guides/creators>` to 
-provision multiple devices at the factory with a single firmware and still 
+Using ``name_add_mac_suffix`` allows :doc:`creators </guides/creators>` to
+provision multiple devices at the factory with a single firmware and still
 have unique identification for customer installs.
 
 .. note::
 
-    End users will need to create an individual YAML config file if they want to OTA update the 
+    End users will need to create an individual YAML config file if they want to OTA update the
     devices in the future.  Creators can facilitate this process by providing ``dashboard_import`` URL
-    for end users.  This allows them to easily update their devices as new features are made available 
+    for end users.  This allows them to easily update their devices as new features are made available
     upstream.
 
 
@@ -359,6 +371,134 @@ Minimum ESPHome version
 This allows YAML files to specify the minimum version of ESPHome required to compile.
 This is useful in the case of packages where a published package might use features only
 available in a newer version of ESPHome. This allows for a more friendly error message.
+
+.. _esphome-area:
+
+Area Configuration
+------------------
+
+Areas help organize your devices in Home Assistant by location. ESPHome supports two formats for area configuration:
+
+**Simple String Format:**
+
+.. code-block:: yaml
+
+    esphome:
+      name: my-device
+      area: "Living Room"
+
+**Structured Format:**
+
+.. code-block:: yaml
+
+    esphome:
+      name: my-device
+      area:
+        id: living_room
+        name: "Living Room"
+
+The simple string format is convenient for basic use cases where you just want to assign the ESP device to a room.
+The structured format is recommended when using sub-devices, as it allows you to reference areas by their ID.
+
+Configuration variables (structured format):
+
+- **id** (**Required**, string): Unique identifier for the area.
+- **name** (**Required**, string): Display name for the area.
+
+.. _esphome-devices:
+
+Sub-Devices
+-----------
+
+ESPHome supports creating sub-devices within a single ESP controller. This allows you to group entities
+into logical devices that appear separately in Home Assistant. This is particularly useful when:
+
+- One ESP acts as a hub/gateway for multiple physical devices (RF bridges, Modbus devices, etc.)
+- A single ESP controls multiple zones or rooms
+- You want better organization of entities in Home Assistant
+
+Configuration variables:
+
+- **id** (**Required**, string): Unique identifier for the device.
+- **name** (**Required**, string): Display name for the device.
+- **area_id** (*Optional*, string): Reference to an area ID defined in ``areas``.
+
+Example: RF Bridge Gateway
+**************************
+
+.. code-block:: yaml
+
+    # ESP32 acting as RF bridge for multiple 433MHz devices
+    esphome:
+      name: rf-bridge
+      area: "Utility Room"  # Simple string format for ESP device's area
+
+      devices:
+        - id: front_door_device
+          name: "Front Door Sensor"
+          area_id: entrance_area
+        - id: kitchen_motion_device
+          name: "Kitchen Motion"
+          area_id: kitchen_area
+        - id: garage_door_device
+          name: "Garage Door"
+          area_id: garage_area
+
+      areas:
+        - id: entrance_area
+          name: "Entrance"
+        - id: kitchen_area
+          name: "Kitchen"
+        - id: garage_area
+          name: "Garage"
+
+    # Each RF device appears as a separate device in HA
+    binary_sensor:
+      - platform: remote_receiver
+        name: "Front Door"
+        device_id: front_door_device
+        rc_switch_raw:
+          code: '101010110101'
+
+      - platform: remote_receiver
+        name: "Kitchen Motion"
+        device_id: kitchen_motion_device
+        rc_switch_raw:
+          code: '110011001100'
+
+Example: Multi-Zone Controller
+******************************
+
+.. code-block:: yaml
+
+    esphome:
+      name: multi-room-controller
+
+      devices:
+        - id: living_room_device
+          name: "Living Room Controller"
+          area_id: living_area
+        - id: kitchen_device
+          name: "Kitchen Controller"
+          area_id: kitchen_area
+
+      areas:
+        - id: living_area
+          name: "Living Room"
+        - id: kitchen_area
+          name: "Kitchen"
+
+    sensor:
+      - platform: dht
+        pin: GPIO5
+        temperature:
+          name: "Temperature"
+          device_id: living_room_device
+        humidity:
+          name: "Humidity"
+          device_id: living_room_device
+
+
 
 See Also
 --------

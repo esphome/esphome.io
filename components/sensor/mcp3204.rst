@@ -6,10 +6,9 @@ MCP3204 & MCP3208 12-Bit A/D Converters
     :keywords: MCP3204 MCP3208
     :image: mcp3204.jpg
 
-The Microchip Technology Inc. MCP3204 & MCP3208
-devices are successive approximation 12-bit Analog-to-Digital (A/D) converters with on-board sample and
-hold circuitry. This integration is common for both device types.
-configure both devices as MCP3204 and observe the maximum number of channels as per variant used.
+The Microchip Technology Inc. MCP3204 & MCP3208 devices are successive approximation 12-bit Analog-to-Digital (A/D)
+converters with on-board sample and hold circuitry. This component is common for both device types.
+Configure both devices as MCP3204 and observe the maximum number of channels as per variant used.
 
 .. figure:: images/mcp3204.jpg
     :align: center
@@ -37,24 +36,8 @@ Most configurations will set the ``reference_voltage`` = VREF pin
 
     # Example configuration entry
     mcp3204:
-      cs_pin: GPIO15
+      cs_pin: GPIOXX
       reference_voltage: 3.3V
-
-    # Example config of sensors.
-    # This is a small 1.5v solar panel power rail attached to pin 0
-    # of the MCP3204
-    sensor:
-      - platform: mcp3204             # Attached to pin 0 of the MCP3204.
-        update_interval: 1s
-        id: solar_voltage
-        number: 0                     # MCP3204 pin number
-
-    # In case MCP3208 is used. you can specify pin number > 4
-      - platform: mcp3204             # Attached to pin 7 of the MCP3208.
-        update_interval: 1s
-        id: supply_voltage
-        number: 7                     # MCP3208 pin number
-
 
 Configuration variables:
 ************************
@@ -71,14 +54,27 @@ The ``mcp3204`` sensor allows you to use your MCP3204 or MCP3208 12-Bit A/D Conv
 First, setup a :ref:`MCP3204 Hub <mcp3204-component>` for your MCP3204/8 sensor and then use this
 sensor platform to create individual sensors that will report the voltage to Home Assistant.
 
+.. code-block:: yaml
+
+    # Example config of sensors.
+    # This is a small 1.5v solar panel power rail attached to pin 0
+    # of the MCP3204
+    sensor:
+      - platform: mcp3204             # Attached to pin 0 of the MCP3204.
+        id: solar_voltage
+        number: 0                     # MCP3204 pin number
+
+    # In case MCP3208 is used. you can specify pin number > 4
+      - platform: mcp3204             # Attached to pin 7 of the MCP3208.
+        id: supply_voltage
+        number: 7                     # MCP3208 pin number
+
 Configuration variables:
 ************************
 
 - **mcp3204_id** (**Required**, :ref:`config-id`): The id of the parent MCP3204 component.
-- **name** (**Required**, string): The name of the voltage sensor.
 - **number** (**Required**, int): The pin number of the MCP3204
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the sensor. Defaults to ``60s``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also

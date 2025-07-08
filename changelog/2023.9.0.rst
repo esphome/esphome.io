@@ -1,0 +1,284 @@
+ESPHome 2023.9.0 - 27th September 2023
+======================================
+
+.. seo::
+    :description: Changelog for ESPHome 2023.9.0.
+    :image: /_static/changelog-2023.9.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    BK72xx, components/libretiny, bk72xx.svg
+    RTL87xx, components/libretiny, rtl87xx.svg
+    WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
+    PMWCS3, components/sensor/pmwcs3, pmwcs3.jpg
+    SEN0321, components/sensor/sen0321, sen0321.jpg
+    LightWaveRF, components/lightwaverf, brightness-medium.svg, dark-invert
+    BMI160, components/sensor/bmi160, bmi160.jpg
+    SPI LED Strips, components/light/spi_led_strip, apa102.jpg
+
+LibreTiny
+---------
+
+:doc:`LibreTiny </components/libretiny>` is a platform for the RTL87xx and BK72xx family of chips. ESPHome leverages
+this platform and brings the powerful yet simple YAML configuration to these chips.
+
+It has been months in the making, and many back and forwards with :ghuser:`kuba2k2`
+(and all of the contributors to LibreTiny), but we finally got there and merged it in.
+
+.. |wireguard| unicode:: WireGuard 0xAE
+
+Wireguard
+---------
+
+:doc:`WireGuard </components/wireguard>` is a new component that allows you to connect to a |wireguard| Peer.
+
+LED Strips
+----------
+
+Following on from the previously added :doc:`/components/light/esp32_rmt_led_strip`, we now have
+:doc:`SPI LED Strips </components/light/spi_led_strip>`. These are replacement components for
+:doc:`/components/light/neopixelbus` and :doc:`/components/light/fastled` that
+do not rely on the Arduino framework.
+
+Release 2023.9.1 - September 28
+-------------------------------
+
+- Tuya Number Scaling :esphomepr:`5108` by :ghuser:`InvncibiltyCloak`
+- Migrate dashboard json files to /data folder instead of wiping out :esphomepr:`5441` by :ghuser:`jesserockz`
+
+Release 2023.9.2 - October 2
+----------------------------
+
+- SPI fixes for buggy components :esphomepr:`5446` by :ghuser:`clydebarrow`
+- Fix an Issue with IR Remote Climate and Whirlpool protocol toggle :esphomepr:`5447` by :ghuser:`the-mentor`
+- Fix SPI support for second bus on 2023.9.1 :esphomepr:`5456` by :ghuser:`angelnu`
+- Ensure esphome directory exists on addon startup :esphomepr:`5464` by :ghuser:`jesserockz`
+
+Release 2023.9.3 - October 3
+----------------------------
+
+- Bump zeroconf from 0.112.0 to 0.115.0 :esphomepr:`5432` by :ghuser:`dependabot[bot]`
+- add pin config for denky_d4 :esphomepr:`5471` by :ghuser:`alucryd`
+- Support RP2040 hardware SPI :esphomepr:`5466` by :ghuser:`clydebarrow`
+- Bump zeroconf from 0.115.0 to 0.115.1 :esphomepr:`5470` by :ghuser:`dependabot[bot]`
+- Sleep mode fix for BP5758D driver :esphomepr:`5461` by :ghuser:`dwildstr`
+- Tuya Number: split "multiply" to a separate option :esphomepr:`5458` by :ghuser:`paravoid`
+
+Breaking Changes
+----------------
+
+Home Assistant Add-on
+^^^^^^^^^^^^^^^^^^^^^
+
+The ``/config/esphome/.esphome`` folder has been removed and replaced with ``/data`` when running ESPHome as a Home Assistant add-on.
+This was done because it is exactly what the add-on ``/data`` folder was made for and there were many files in the ``.esphome`` folder
+that were making the Home Assistant Backup larger for no reason at all. All files in there are generated or sourced from online based
+on your configurations files which have not been touched.
+
+.. note::
+
+    2023.9.1 makes a further small change that moves the ``json`` files used by the dashboard into the new ``/data`` folder.
+    If you had already updated to 2023.9.0 though, the files would have already been removed and they will be re-generated
+    next time you install each device.
+
+Enum device class
+^^^^^^^^^^^^^^^^^
+
+The ``enum`` device class was removed from ESPHome to keep in sync with Home Assistant. The class was already not able to be used by
+any of the built in components and only potentially used by ``external_components``.
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add pmwcs3 capacitive soil moisture & temperature sensor component :esphomepr:`4624` by :ghuser:`SeByDocKy` (new-integration)
+- Support for LibreTiny platform (RTL8710, BK7231 & other modules) :esphomepr:`3509` by :ghuser:`kuba2k2` (new-integration)
+- Adding DFRobot Ozone Sensor Support (sen0321) :esphomepr:`4782` by :ghuser:`notjj` (new-integration)
+- Integration LightwaveRF switches :esphomepr:`4812` by :ghuser:`max246` (new-integration)
+- Refactor SPI code; Add ESP-IDF hardware support :esphomepr:`5311` by :ghuser:`clydebarrow` (new-integration)
+- Add BMI160 support :esphomepr:`5143` by :ghuser:`flaviut` (new-integration)
+- Native SPI RGB LED component :esphomepr:`5288` by :ghuser:`clydebarrow` (new-integration)
+- Wireguard component :esphomepr:`4256` by :ghuser:`lhoracek` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Synchronise Device Classes from Home Assistant :esphomepr:`5328` by :ghuser:`esphomebot` (breaking-change)
+- Use /data directory for .esphome folder when running as HA add-on :esphomepr:`5374` by :ghuser:`jesserockz` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- Add patch to apt install :esphomepr:`5389` by :ghuser:`synesthesiam`
+- Fix Waveshare 7.5v2 epaper screens are always powered on :esphomepr:`5283` by :ghuser:`phoenixswiss`
+- Update radon_eye_listener.cpp :esphomepr:`5401` by :ghuser:`rmmacias`
+- Add shelly-dimmer-stm32 51.7 to known versions :esphomepr:`5400` by :ghuser:`trvrnrth`
+- Add E-Trailer Gaslevel support to Mopeka Std Check :esphomepr:`5397` by :ghuser:`Phhere`
+- fix disabled wifi power on 8266 :esphomepr:`5409` by :ghuser:`ssieb`
+- fix handling of web server version :esphomepr:`5405` by :ghuser:`ssieb`
+- Climate preset fix :esphomepr:`5407` by :ghuser:`Jorre05`
+- Remove Wi-Fi dependency from Midea component :esphomepr:`5394` by :ghuser:`AnthonyMaiorani`
+- http_request: Cleanups and safety improvements :esphomepr:`5360` by :ghuser:`kpfleming`
+- Make the pulse meter timeout on startup when no pulses are received :esphomepr:`5388` by :ghuser:`TrentHouliston`
+- Wizard: fix colored text in input prompts :esphomepr:`5313` by :ghuser:`kuba2k2`
+- support keypads with pulldowns :esphomepr:`5404` by :ghuser:`ssieb`
+- Fix SPI inverted clock on ESP8266 :esphomepr:`5416` by :ghuser:`clydebarrow`
+- [RP2040W] Fix WiFi bootloop upon LibreTiny support :esphomepr:`5414` by :ghuser:`hostcc`
+- dallas: limit addresses to 64 bits :esphomepr:`5413` by :ghuser:`oddstr13`
+- Bump zeroconf from 0.108.0 to 0.112.0 :esphomepr:`5392` by :ghuser:`dependabot[bot]`
+- LibreTiny: enable MQTT, bump to v1.4.1 :esphomepr:`5419` by :ghuser:`kuba2k2`
+- Wireguard keepalive remove uint16 type :esphomepr:`5430` by :ghuser:`glmnet`
+- Fix #4896 and #4903 :esphomepr:`5433` by :ghuser:`clydebarrow`
+
+All changes
+^^^^^^^^^^^
+
+- Updated my username in Code Owners :esphomepr:`5247` by :ghuser:`mreditor97`
+- remote_base: change dumpers log level :esphomepr:`5253` by :ghuser:`dudanov`
+- Add `libfreetype-dev` Debian package for armv7 Docker builds :esphomepr:`5262` by :ghuser:`pierlon`
+- Add delay before enabling ipv6 :esphomepr:`5256` by :ghuser:`HeMan`
+- Bump zeroconf from 0.74.0 to 0.80.0 :esphomepr:`5260` by :ghuser:`dependabot[bot]`
+- Bump click from 8.1.6 to 8.1.7 :esphomepr:`5272` by :ghuser:`dependabot[bot]`
+- Remove support for ESP-IDF version < 4 :esphomepr:`5261` by :ghuser:`HeMan`
+- Add pmwcs3 capacitive soil moisture & temperature sensor component :esphomepr:`4624` by :ghuser:`SeByDocKy` (new-integration)
+- Add manufacturer data config to BLE server :esphomepr:`5251` by :ghuser:`clydebarrow`
+- Add support for ESP32-{S2,S3,C3} to debug component :esphomepr:`4731` by :ghuser:`jayme-github`
+- Support for ESP32-C2 & ESP32-C6 :esphomepr:`4377` by :ghuser:`vidplace7`
+- Bump arduino-heatpumpir to v1.0.23 :esphomepr:`5269` by :ghuser:`rob-deutsch`
+- Fix equality check when setting current-based cover position :esphomepr:`5167` by :ghuser:`kroimon`
+- Bump platformio from 6.1.9 to 6.1.10 :esphomepr:`5237` by :ghuser:`dependabot[bot]`
+- Add Invert method for SSD1306 :esphomepr:`5292` by :ghuser:`max246`
+- Update PSRAM config params for IDF4+ :esphomepr:`5298` by :ghuser:`kbx81`
+- Fix legacy zeroconf record update method :esphomepr:`5294` by :ghuser:`bdraco`
+- Bump zeroconf from 0.80.0 to 0.86.0 :esphomepr:`5308` by :ghuser:`dependabot[bot]`
+- Add PSRAM mode and speed config :esphomepr:`5312` by :ghuser:`kbx81`
+- Add extra SLPOUT for waking up some ST7789 chips :esphomepr:`5319` by :ghuser:`clydebarrow`
+- 7789 controller fixes take 2 :esphomepr:`5320` by :ghuser:`clydebarrow`
+- Bump Arduino Pico to 3.4.0 :esphomepr:`5321` by :ghuser:`HeMan`
+- Use gzip compression for the web server component's static resources :esphomepr:`5291` by :ghuser:`EternityForest`
+- Bump zeroconf from 0.86.0 to 0.88.0 :esphomepr:`5315` by :ghuser:`dependabot[bot]`
+- Adding heating coil and fan icons, enum device_class :esphomepr:`5325` by :ghuser:`barndawgie`
+- Add dashboard API to get firmware binaries :esphomepr:`4675` by :ghuser:`kuba2k2`
+- Make uart error message go away :esphomepr:`5329` by :ghuser:`clydebarrow`
+- add heating functionality to SI7021 :esphomepr:`4828` by :ghuser:`max246`
+- Bump esphome-dashboard to 20230904.0 :esphomepr:`5339` by :ghuser:`jesserockz`
+- Added Handling for Nack "file not found" :esphomepr:`5338` by :ghuser:`croessi`
+- Prepare api and time for ESP-IDF >= 5 :esphomepr:`5332` by :ghuser:`HeMan`
+- Tweak Improv serial to build in IDF 5 :esphomepr:`5331` by :ghuser:`kbx81`
+- Support for LibreTiny platform (RTL8710, BK7231 & other modules) :esphomepr:`3509` by :ghuser:`kuba2k2` (new-integration)
+- Extend ESP32 CAN bit rates /bus speed support :esphomepr:`5280` by :ghuser:`mkaiser`
+- Debug component: add free PSRAM sensor :esphomepr:`5334` by :ghuser:`kahrendt`
+- libretiny: fix uart_port framework config :esphomepr:`5343` by :ghuser:`jesserockz`
+- Bump actions/checkout from 3 to 4 :esphomepr:`5341` by :ghuser:`dependabot[bot]`
+- Add Lilygo T-Embed to st7789v display config. :esphomepr:`5337` by :ghuser:`clydebarrow`
+- Disable IPv6 when config explicitly says false :esphomepr:`5310` by :ghuser:`HeMan`
+- Add defines.h to ethernet_component.h for ENABLE_IPV6 :esphomepr:`5344` by :ghuser:`kbx81`
+- Synchronise Device Classes from Home Assistant :esphomepr:`5328` by :ghuser:`esphomebot` (breaking-change)
+- Bump pytest from 7.4.0 to 7.4.1 :esphomepr:`5342` by :ghuser:`dependabot[bot]`
+- Fixed default temperature step values for haier climate :esphomepr:`5330` by :ghuser:`paveldn`
+- Add debug component to all tests :esphomepr:`5333` by :ghuser:`HeMan`
+- Support MaxBotix XL in addition to HRXL :esphomepr:`4510` by :ghuser:`notjj`
+- Adding DFRobot Ozone Sensor Support (sen0321) :esphomepr:`4782` by :ghuser:`notjj` (new-integration)
+- mdns: bump IDF mdns component to 1.2.0 :esphomepr:`5217` by :ghuser:`stintel`
+- Integration LightwaveRF switches :esphomepr:`4812` by :ghuser:`max246` (new-integration)
+- Bump flake8 from 6.0.0 to 6.1.0 :esphomepr:`5171` by :ghuser:`dependabot[bot]`
+- Bump tornado from 6.3.2 to 6.3.3 :esphomepr:`5236` by :ghuser:`dependabot[bot]`
+- Bump platformio from 6.1.10 to 6.1.11 :esphomepr:`5323` by :ghuser:`dependabot[bot]`
+- Only run ci-docker when ci-docker workflow changes :esphomepr:`5347` by :ghuser:`jesserockz`
+- esp32: Extra build customization :esphomepr:`5322` by :ghuser:`jesserockz`
+- Allow upload command to flash file via serial :esphomepr:`5274` by :ghuser:`jesserockz`
+- Allow "--device SERIAL" on cli to flash only via serial :esphomepr:`5351` by :ghuser:`jesserockz`
+- Fix PN532 for IDF 5 and ultralight enhancements :esphomepr:`5352` by :ghuser:`kbx81`
+- Fix cpu_ll_get_cycle_count() deprecated warning :esphomepr:`5353` by :ghuser:`kbx81`
+- Refactor SPI code; Add ESP-IDF hardware support :esphomepr:`5311` by :ghuser:`clydebarrow` (new-integration)
+- Bump actions/cache from 3.3.1 to 3.3.2 :esphomepr:`5367` by :ghuser:`dependabot[bot]`
+- Bump zeroconf from 0.88.0 to 0.102.0 :esphomepr:`5368` by :ghuser:`dependabot[bot]`
+- Fix repeat.count = 0 case :esphomepr:`5364` by :ghuser:`Xmister`
+- Fix dashboard download for ESP32 variants :esphomepr:`5355` by :ghuser:`kuba2k2`
+- Bump pytest from 7.4.1 to 7.4.2 :esphomepr:`5357` by :ghuser:`dependabot[bot]`
+- [ADC] Support measuring VCC on Raspberry Pico (W) :esphomepr:`5335` by :ghuser:`hostcc`
+- Move CONF_PHASE_A/B/C constants to const.py. :esphomepr:`5304` by :ghuser:`kpfleming`
+- Add BMI160 support :esphomepr:`5143` by :ghuser:`flaviut` (new-integration)
+- Use black-pre-commit-mirror to speed up pre-commit runs. :esphomepr:`5372` by :ghuser:`kpfleming`
+- Native SPI RGB LED component :esphomepr:`5288` by :ghuser:`clydebarrow` (new-integration)
+- Wireguard component :esphomepr:`4256` by :ghuser:`lhoracek` (new-integration)
+- Bump LibreTiny version to 1.4.0 :esphomepr:`5375` by :ghuser:`kuba2k2`
+- time: Make std::string version of strftime() avoid runaway memory allocations :esphomepr:`5348` by :ghuser:`kpfleming`
+- Fix disabled wifi crash on boot :esphomepr:`5370` by :ghuser:`Xmister`
+- debug: add ESP32-C6 support :esphomepr:`5354` by :ghuser:`stintel`
+- Make string globals persist-able using fixed size allocations :esphomepr:`5296` by :ghuser:`EternityForest`
+- Use /data directory for .esphome folder when running as HA add-on :esphomepr:`5374` by :ghuser:`jesserockz` (breaking-change)
+- Bump zeroconf from 0.102.0 to 0.108.0 :esphomepr:`5376` by :ghuser:`dependabot[bot]`
+- Bump black from 23.7.0 to 23.9.1 :esphomepr:`5377` by :ghuser:`dependabot[bot]`
+- Attempt to fix rp2040 adc with vcc :esphomepr:`5378` by :ghuser:`jesserockz`
+- Enable IPv6 for ESP8266 and Raspberry pi pico w (RP2040) :esphomepr:`4759` by :ghuser:`HeMan`
+- Workflow updates :esphomepr:`5384` by :ghuser:`jesserockz`
+- Modbus Controller added some features :esphomepr:`5318` by :ghuser:`0x3333`
+- Force heater off on setup :esphomepr:`5161` by :ghuser:`rufuswilson`
+- Add IDF 5 test yaml, add adc to IDF tests, fix adc for IDF 5 :esphomepr:`5379` by :ghuser:`kbx81`
+- Add patch to apt install :esphomepr:`5389` by :ghuser:`synesthesiam`
+- Fix Waveshare 7.5v2 epaper screens are always powered on :esphomepr:`5283` by :ghuser:`phoenixswiss`
+- Update radon_eye_listener.cpp :esphomepr:`5401` by :ghuser:`rmmacias`
+- Add shelly-dimmer-stm32 51.7 to known versions :esphomepr:`5400` by :ghuser:`trvrnrth`
+- Add E-Trailer Gaslevel support to Mopeka Std Check :esphomepr:`5397` by :ghuser:`Phhere`
+- fix disabled wifi power on 8266 :esphomepr:`5409` by :ghuser:`ssieb`
+- fix handling of web server version :esphomepr:`5405` by :ghuser:`ssieb`
+- Climate preset fix :esphomepr:`5407` by :ghuser:`Jorre05`
+- Remove Wi-Fi dependency from Midea component :esphomepr:`5394` by :ghuser:`AnthonyMaiorani`
+- http_request: Cleanups and safety improvements :esphomepr:`5360` by :ghuser:`kpfleming`
+- Make the pulse meter timeout on startup when no pulses are received :esphomepr:`5388` by :ghuser:`TrentHouliston`
+- Wizard: fix colored text in input prompts :esphomepr:`5313` by :ghuser:`kuba2k2`
+- support keypads with pulldowns :esphomepr:`5404` by :ghuser:`ssieb`
+- Fix SPI inverted clock on ESP8266 :esphomepr:`5416` by :ghuser:`clydebarrow`
+- [RP2040W] Fix WiFi bootloop upon LibreTiny support :esphomepr:`5414` by :ghuser:`hostcc`
+- dallas: limit addresses to 64 bits :esphomepr:`5413` by :ghuser:`oddstr13`
+- Bump zeroconf from 0.108.0 to 0.112.0 :esphomepr:`5392` by :ghuser:`dependabot[bot]`
+- LibreTiny: enable MQTT, bump to v1.4.1 :esphomepr:`5419` by :ghuser:`kuba2k2`
+- Wireguard keepalive remove uint16 type :esphomepr:`5430` by :ghuser:`glmnet`
+- Fix #4896 and #4903 :esphomepr:`5433` by :ghuser:`clydebarrow`
+
+Past Changelogs
+---------------
+
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

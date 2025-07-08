@@ -1,0 +1,328 @@
+ESPHome 2023.11.0 - 15th November 2023
+======================================
+
+.. seo::
+    :description: Changelog for ESPHome 2023.11.0.
+    :image: /_static/changelog-2023.11.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 4
+
+    Text Core, components/text/index, folder-open.svg, dark-invert
+    Template Text, components/text/template, description.svg, dark-invert
+    UART Button, components/button/uart, uart.svg
+    GREE Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
+
+
+    DFRobot mmWave Radar, components/dfrobot_sen0395, dfrobot_sen0395.jpg
+    LD2420, components/sensor/ld2420, ld2420.jpg
+    Qwiic PIR Motion, components/binary_sensor/qwiic_pir, qwiic_pir.jpg
+    Noblex Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
+
+    Honeywell ABP2, components/sensor/honeywellabp2_i2c, honeywellabp.jpg
+    iAQ-Core, components/sensor/iaqcore, iaqcore.jpg
+    SFA30, components/sensor/sfa30, sfa30.jpg
+    ZH/LT-01 Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
+
+    EMC2101, components/emc2101, emc2101.jpg
+    MicroNova pellet stove, components/micronova, micronova.svg
+    XGZP68xx Series, components/sensor/xgzp68xx, 6897d.jpg
+
+Text Components
+---------------
+
+We finally have implemented the :doc:`Text </components/text/index>` Components.
+Many people have been using "Text Input Helpers" to get user entered text into
+ESPHome for various reasons. Now ESPHome can expose text entities
+directly to Home Assistant. These require Home Assistant 2023.11 or above to use.
+
+Various Automations
+-------------------
+
+- BLE have had ``ble.enable`` and ``ble.disable`` actions added to turn on and off when not needed,
+  as well as a new condition ``ble.enabled`` to check the state.
+
+- Wi-Fi has new triggers for ``on_connect`` and ``on_disconnect``.
+
+- ``api`` has new triggers ``on_client_connected`` and ``on_client_disconnected`` which were
+  released in the 2023.10.5 patch version due to requiring that specific PR to not cause merge
+  conflicts later.
+
+
+Areas
+-----
+
+When you add a new ESPHome device to Home Assistant, you assign that device to an area.
+From Home Assistant 2023.12, you will be able to specify the suggested area that Home Assistant
+pre-populates when you connect the device.
+
+.. code-block:: yaml
+
+    esphome:
+      name: living-room-light
+      friendly_name: Living Room Light
+      area: Living Room
+
+
+Release 2023.11.1 - November 16
+-------------------------------
+
+- Add more VA triggers :esphomepr:`5762` by :ghuser:`kbx81`
+- Fix MY9231 flicker :esphomepr:`5765` by :ghuser:`Mat931`
+
+
+Release 2023.11.2 - November 18
+-------------------------------
+
+- Bump aioesphomeapi from 18.4.0 to 18.4.1 :esphomepr:`5767` by :ghuser:`dependabot[bot]`
+- Bump aioesphomeapi from 18.4.1 to 18.5.2 :esphomepr:`5780` by :ghuser:`dependabot[bot]`
+- fix 32-bit arm :esphomepr:`5781` by :ghuser:`ssieb`
+- Add 2MB option for partitions.csv generation and restore use of user-defined partitions :esphomepr:`5779` by :ghuser:`kbx81`
+
+
+Release 2023.11.3 - November 22
+-------------------------------
+
+- include payload_open when a lock supports OPEN :esphomepr:`5809` by :ghuser:`ccutrer`
+- dashboard: Fix online status when api is disabled :esphomepr:`5791` by :ghuser:`bdraco`
+- fix: compile errors with fonts :esphomepr:`5808` by :ghuser:`cvandesande`
+- Early return when there are no wifi scan results :esphomepr:`5797` by :ghuser:`jesserockz`
+- Add some additional VA triggers, part 2 :esphomepr:`5811` by :ghuser:`kbx81`
+
+
+Release 2023.11.4 - November 24
+-------------------------------
+
+- Allow images to be downloaded from URLs :esphomepr:`5214` by :ghuser:`landonr`
+
+
+Release 2023.11.5 - November 28
+-------------------------------
+
+- Voice Assistant improvements :esphomepr:`5827` by :ghuser:`jesserockz`
+- Fix missing include in remote_base :esphomepr:`5843` by :ghuser:`jesserockz`
+- Add 'voice_assistant.connected' condition :esphomepr:`5845` by :ghuser:`jesserockz`
+
+
+Release 2023.11.6 - November 28
+-------------------------------
+
+- Fix write_speaker without speaker in config :esphomepr:`5847` by :ghuser:`jesserockz`
+
+
+Full list of changes
+--------------------
+
+New Components
+^^^^^^^^^^^^^^
+
+- Add Support for Sensirion SFA30 sensor :esphomepr:`5519` by :ghuser:`ghsensdev` (new-integration)
+- add uart button :esphomepr:`5540` by :ghuser:`ssieb` (new-integration)
+- Add ZH/LT-01 climate component with IR receiver option :esphomepr:`4333` by :ghuser:`cfeenstra1024` (new-integration)
+- Feat: Add GREE climateir component :esphomepr:`4464` by :ghuser:`PiuPiuson` (new-integration)
+- AMS iAQ Core CO2 sensor component :esphomepr:`5192` by :ghuser:`yozik04` (new-integration)
+- Add IR Noblex climate component :esphomepr:`4913` by :ghuser:`AGalfra` (new-integration)
+- Add text component :esphomepr:`5336` by :ghuser:`EternityForest` (new-integration)
+- Add support for honeywellabp2 pressure sensor :esphomepr:`5422` by :ghuser:`jpfaff` (new-integration)
+- Add Emc2101 :esphomepr:`4491` by :ghuser:`ellull` (new-integration)
+- Add support for Qwiic PIR binary sensor :esphomepr:`5194` by :ghuser:`kahrendt` (new-integration)
+- Add dfrobot_sen0395 mmwave radar component :esphomepr:`4203` by :ghuser:`niklasweber` (new-integration)
+- Add HLK-LD2420 mmWave Radar module component. :esphomepr:`4847` by :ghuser:`descipher` (new-integration)
+- Add Micronova component :esphomepr:`4760` by :ghuser:`Jorre05` (new-integration)
+- Add differential pressure sensor support for CFSensor XGZP68xxD devices :esphomepr:`5562` by :ghuser:`gcormier` (new-integration)
+- Add spi support for ade7953 :esphomepr:`5439` by :ghuser:`angelnu` (new-integration)
+- Add resistance_sampler interface for config validation :esphomepr:`5718` by :ghuser:`jesserockz` (new-integration)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Hydreon updates :esphomepr:`5424` by :ghuser:`jj-uk` (breaking-change)
+- Fix esp32_rmt_led_strip custom timing units :esphomepr:`5696` by :ghuser:`jesserockz` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- Handle nanoseconds in config :esphomepr:`5695` by :ghuser:`jesserockz`
+- Fix esp32_rmt_led_strip custom timing units :esphomepr:`5696` by :ghuser:`jesserockz` (breaking-change)
+- Fix static assets cache logic :esphomepr:`5700` by :ghuser:`bdraco`
+- Use piwheels for armv7 docker image builds :esphomepr:`5703` by :ghuser:`bdraco`
+- fix: Fix broken bluetooth_proxy and ble_clients after BLE enable/disable :esphomepr:`5704` by :ghuser:`Rapsssito`
+- Bump aioesphomeapi to 18.2.7 :esphomepr:`5706` by :ghuser:`bdraco`
+- Update Dockerfile to use piwheels for armv7 :esphomepr:`5709` by :ghuser:`bdraco`
+- Bump zeroconf from 0.120.0 to 0.122.3 :esphomepr:`5715` by :ghuser:`dependabot[bot]`
+- Add resistance_sampler interface for config validation :esphomepr:`5718` by :ghuser:`jesserockz` (new-integration)
+- Fix zeroconf name resolution refactoring error :esphomepr:`5725` by :ghuser:`bdraco`
+- Missed ifdefs :esphomepr:`5727` by :ghuser:`descipher`
+- Bump aioesphomeapi from 18.2.7 to 18.4.0 :esphomepr:`5735` by :ghuser:`dependabot[bot]`
+- Migrate to using aioesphomeapi for the log runner to fix multiple issues :esphomepr:`5733` by :ghuser:`bdraco`
+- Bump zeroconf to 0.123.0 :esphomepr:`5736` by :ghuser:`bdraco`
+- Handle wake word not set up internally :esphomepr:`5738` by :ghuser:`jesserockz`
+- dashboard: remove usage of codecs module :esphomepr:`5741` by :ghuser:`bdraco`
+- dashboard: Run get_serial_ports in the executor :esphomepr:`5740` by :ghuser:`bdraco`
+- Generate partitions.csv based on flash size :esphomepr:`5697` by :ghuser:`kbx81`
+- Allow setup to continue past mqtt if network/wifi is disabled :esphomepr:`5754` by :ghuser:`jesserockz`
+- Dont dump wifi info when disabled :esphomepr:`5755` by :ghuser:`jesserockz`
+
+All changes
+^^^^^^^^^^^
+
+- Splits FastLed test scripts out of test1.yaml :esphomepr:`5522` by :ghuser:`nielsnl68`
+- Add round sensor filter :esphomepr:`5532` by :ghuser:`jesserockz`
+- Add Support for Sensirion SFA30 sensor :esphomepr:`5519` by :ghuser:`ghsensdev` (new-integration)
+- Change UART source clock to `UART_SCLK_DEFAULT` when IDF >=v5 :esphomepr:`5533` by :ghuser:`leoshusar`
+- add uart button :esphomepr:`5540` by :ghuser:`ssieb` (new-integration)
+- add on/off options for uart switch :esphomepr:`5539` by :ghuser:`ssieb`
+- Update docker base and packages + docker python 3.11 :esphomepr:`5473` by :ghuser:`bdraco`
+- IDF 5 fixes for various components from test1.yaml :esphomepr:`5451` by :ghuser:`kbx81`
+- Bump aioesphomeapi from 15.0.0 to 18.0.6 :esphomepr:`5557` by :ghuser:`dependabot[bot]`
+- Bump zeroconf from 0.115.1 to 0.119.0 :esphomepr:`5560` by :ghuser:`dependabot[bot]`
+- Add config to allow suppression of warnings about use of strapping pins :esphomepr:`5287` by :ghuser:`clydebarrow`
+- Hydreon updates :esphomepr:`5424` by :ghuser:`jj-uk` (breaking-change)
+- Bump actions/checkout from 4.1.0 to 4.1.1 :esphomepr:`5551` by :ghuser:`dependabot[bot]`
+- Bump pyupgrade from 3.10.1 to 3.13.0 :esphomepr:`5428` by :ghuser:`dependabot[bot]`
+- Bump tzlocal from 5.0.1 to 5.1 :esphomepr:`5480` by :ghuser:`dependabot[bot]`
+- Bump black from 23.9.1 to 23.10.0 :esphomepr:`5561` by :ghuser:`dependabot[bot]`
+- Fan no off cycle action :esphomepr:`5564` by :ghuser:`skykingjwc`
+- Bump aioesphomeapi from 18.0.6 to 18.0.7 :esphomepr:`5573` by :ghuser:`dependabot[bot]`
+- Remove unnecessary checks in Nextion component :esphomepr:`5578` by :ghuser:`edwardtfn`
+- update storage version from mdns :esphomepr:`5584` by :ghuser:`glmnet`
+- set Nextion protocol reparse mode :esphomepr:`5484` by :ghuser:`edwardtfn`
+- Add address text sensor to WireGuard :esphomepr:`5576` by :ghuser:`droscy`
+- Add LibreTiny hardwares to PR Template :esphomepr:`5575` by :ghuser:`HeMan`
+- Bump pytest-mock from 3.11.1 to 3.12.0 :esphomepr:`5571` by :ghuser:`dependabot[bot]`
+- Bump pyupgrade from 3.13.0 to 3.15.0 :esphomepr:`5570` by :ghuser:`dependabot[bot]`
+- Add ZH/LT-01 climate component with IR receiver option :esphomepr:`4333` by :ghuser:`cfeenstra1024` (new-integration)
+- Feat: Add GREE climateir component :esphomepr:`4464` by :ghuser:`PiuPiuson` (new-integration)
+- AMS iAQ Core CO2 sensor component :esphomepr:`5192` by :ghuser:`yozik04` (new-integration)
+- Add IR Noblex climate component :esphomepr:`4913` by :ghuser:`AGalfra` (new-integration)
+- Bump aioesphomeapi from 18.0.7 to 18.0.12 :esphomepr:`5597` by :ghuser:`dependabot[bot]`
+- Add text component :esphomepr:`5336` by :ghuser:`EternityForest` (new-integration)
+- Fix exception handling when loading packages :esphomepr:`5569` by :ghuser:`dentra`
+- Add support for honeywellabp2 pressure sensor :esphomepr:`5422` by :ghuser:`jpfaff` (new-integration)
+- Add Emc2101 :esphomepr:`4491` by :ghuser:`ellull` (new-integration)
+- Fix: Incorporate unique serial number in preference's hash for multiple Sensirion sensors :esphomepr:`5479` by :ghuser:`kahrendt`
+- Add support for Qwiic PIR binary sensor :esphomepr:`5194` by :ghuser:`kahrendt` (new-integration)
+- Add ignore out of range option for clamp filter :esphomepr:`5455` by :ghuser:`kahrendt`
+- Print text mqtt command topic :esphomepr:`5601` by :ghuser:`jesserockz`
+- Correctly allow mqtt topics to be none so ESPHome does not sub/pub to them :esphomepr:`5213` by :ghuser:`jesserockz`
+- SX1509 output debounce fix (resolves esphome/issues#4402) :esphomepr:`4672` by :ghuser:`tracestep`
+- Add details when error loading package :esphomepr:`5603` by :ghuser:`dentra`
+- Fallback to main secrets.yaml for packages :esphomepr:`5604` by :ghuser:`dentra`
+- Add area (zone) to esphome core config to be suggested through API and MQTT. :esphomepr:`5602` by :ghuser:`Cossid`
+- Devcontainer: allow pip install and dont warn about root user :esphomepr:`5608` by :ghuser:`jesserockz`
+- Validate test files before compiling :esphomepr:`5611` by :ghuser:`jesserockz`
+- Minor defines.h updates :esphomepr:`5610` by :ghuser:`jesserockz`
+- timeout filter: return value :esphomepr:`5612` by :ghuser:`jesserockz`
+- Add dfrobot_sen0395 mmwave radar component :esphomepr:`4203` by :ghuser:`niklasweber` (new-integration)
+- refactor mcp4728 component :esphomepr:`5609` by :ghuser:`ssieb`
+- Fix HA error related to incorrect state class :esphomepr:`5605` by :ghuser:`nagyrobi`
+- Fix xpt2046 for IDF 5 :esphomepr:`5614` by :ghuser:`kbx81`
+- IDF 5 fixes for various components from test4.yaml :esphomepr:`5622` by :ghuser:`kbx81`
+- IDF 5 fixes for various components from test2.yaml :esphomepr:`5621` by :ghuser:`kbx81`
+- Fix armv7 docker builds :esphomepr:`5630` by :ghuser:`bdraco`
+- Bump aioesphomeapi from 18.0.12 to 18.2.0 :esphomepr:`5606` by :ghuser:`dependabot[bot]`
+- Add needs-docs workflow to fail CI :esphomepr:`5643` by :ghuser:`jesserockz`
+- Add support for PCA9535 16 bit I/O expander :esphomepr:`5634` by :ghuser:`clydebarrow`
+- Fix nextion waveform sending for multiple waveforms :esphomepr:`4408` by :ghuser:`gpambrozio`
+- Allow validation of pins based on hub config :esphomepr:`5647` by :ghuser:`jesserockz`
+- Bump aioesphomeapi from 18.2.0 to 18.2.1 :esphomepr:`5653` by :ghuser:`dependabot[bot]`
+- Validate sn74hc595 pin number are within range :esphomepr:`5655` by :ghuser:`jesserockz`
+- Update PCA9554 pin checks to new facility :esphomepr:`5656` by :ghuser:`clydebarrow`
+- Update mDNS component to 1.2.2 :esphomepr:`5654` by :ghuser:`HeMan`
+- Fix return value of run_external_command :esphomepr:`5657` by :ghuser:`jesserockz`
+- Update RTTTL component to allow I2S :esphomepr:`5177` by :ghuser:`nielsnl68`
+- Bump flake8 version in pre-commit to match requirements file :esphomepr:`5658` by :ghuser:`jesserockz`
+- Bump pytest from 7.4.2 to 7.4.3 :esphomepr:`5599` by :ghuser:`dependabot[bot]`
+- Bump tzlocal from 5.1 to 5.2 :esphomepr:`5594` by :ghuser:`dependabot[bot]`
+- Bump black from 23.10.0 to 23.10.1 :esphomepr:`5593` by :ghuser:`dependabot[bot]`
+- Add Healthcheck to Dockerfile :esphomepr:`5651` by :ghuser:`JcMinarro`
+- Add HLK-LD2420 mmWave Radar module component. :esphomepr:`4847` by :ghuser:`descipher` (new-integration)
+- Add Micronova component :esphomepr:`4760` by :ghuser:`Jorre05` (new-integration)
+- Add basic shell autocompletion using argcomplete :esphomepr:`5618` by :ghuser:`Nardol`
+- Fixed int variables for user defined service in case of ESP32-C3 :esphomepr:`5675` by :ghuser:`paveldn`
+- Add callback for raw sml messages :esphomepr:`5668` by :ghuser:`micw`
+- Fix compile with latest esp-idf on esp32c6 :esphomepr:`5677` by :ghuser:`DAVe3283`
+- Null topic_prefix disables MQTT publishing/subscription unless topic is explicitly configured :esphomepr:`5644` by :ghuser:`kahrendt`
+- feat: Add ESP32 BLE enable/disable automations :esphomepr:`5616` by :ghuser:`Rapsssito`
+- ble_client rssi sensor fix when not connected :esphomepr:`5632` by :ghuser:`jesserockz`
+- Add Byron Doorbell RF protocol :esphomepr:`4718` by :ghuser:`marshn`
+- Refactor dashboard zeroconf support :esphomepr:`5681` by :ghuser:`bdraco`
+- Allow static assets to be cached if not in debug mode :esphomepr:`5684` by :ghuser:`jesserockz`
+- Remove extra code in old sgp40 :esphomepr:`5685` by :ghuser:`jesserockz`
+- Allow pulse light effect to have separate on and off transition lengths :esphomepr:`5659` by :ghuser:`jesserockz`
+- Add differential pressure sensor support for CFSensor XGZP68xxD devices :esphomepr:`5562` by :ghuser:`gcormier` (new-integration)
+- Bump zeroconf from 0.119.0 to 0.120.0 :esphomepr:`5682` by :ghuser:`dependabot[bot]`
+- Add spi support for ade7953 :esphomepr:`5439` by :ghuser:`angelnu` (new-integration)
+- Remove page jump on Nextion startup :esphomepr:`5673` by :ghuser:`edwardtfn`
+- [web_server] Adds the ability to handle Private Network Access preflight requests :esphomepr:`5669` by :ghuser:`DanielBaulig`
+- Update esphome-dashboard to version 20231107.0 :esphomepr:`5686` by :ghuser:`jesserockz`
+- add wifi.on_connect and wifi.on_disconnect triggers :esphomepr:`3639` by :ghuser:`ChemicalXandco`
+- Implement a memory cache for dashboard entries to avoid frequent disk reads :esphomepr:`5687` by :ghuser:`bdraco`
+- support spi for sn74hc595 :esphomepr:`5491` by :ghuser:`angelnu`
+- Handle on_disconnect when Wi-Fi is disabled :esphomepr:`5691` by :ghuser:`kbx81`
+- Bump aioesphomeapi from 18.2.1 to 18.2.4 :esphomepr:`5692` by :ghuser:`dependabot[bot]`
+- Handle nanoseconds in config :esphomepr:`5695` by :ghuser:`jesserockz`
+- Fix esp32_rmt_led_strip custom timing units :esphomepr:`5696` by :ghuser:`jesserockz` (breaking-change)
+- Fix static assets cache logic :esphomepr:`5700` by :ghuser:`bdraco`
+- Use piwheels for armv7 docker image builds :esphomepr:`5703` by :ghuser:`bdraco`
+- fix: Fix broken bluetooth_proxy and ble_clients after BLE enable/disable :esphomepr:`5704` by :ghuser:`Rapsssito`
+- Bump aioesphomeapi to 18.2.7 :esphomepr:`5706` by :ghuser:`bdraco`
+- Update Dockerfile to use piwheels for armv7 :esphomepr:`5709` by :ghuser:`bdraco`
+- Bump zeroconf from 0.120.0 to 0.122.3 :esphomepr:`5715` by :ghuser:`dependabot[bot]`
+- Add resistance_sampler interface for config validation :esphomepr:`5718` by :ghuser:`jesserockz` (new-integration)
+- Fix zeroconf name resolution refactoring error :esphomepr:`5725` by :ghuser:`bdraco`
+- Missed ifdefs :esphomepr:`5727` by :ghuser:`descipher`
+- Bump aioesphomeapi from 18.2.7 to 18.4.0 :esphomepr:`5735` by :ghuser:`dependabot[bot]`
+- Migrate to using aioesphomeapi for the log runner to fix multiple issues :esphomepr:`5733` by :ghuser:`bdraco`
+- Bump zeroconf to 0.123.0 :esphomepr:`5736` by :ghuser:`bdraco`
+- Handle wake word not set up internally :esphomepr:`5738` by :ghuser:`jesserockz`
+- dashboard: remove usage of codecs module :esphomepr:`5741` by :ghuser:`bdraco`
+- dashboard: Run get_serial_ports in the executor :esphomepr:`5740` by :ghuser:`bdraco`
+- Generate partitions.csv based on flash size :esphomepr:`5697` by :ghuser:`kbx81`
+- Allow setup to continue past mqtt if network/wifi is disabled :esphomepr:`5754` by :ghuser:`jesserockz`
+- Dont dump wifi info when disabled :esphomepr:`5755` by :ghuser:`jesserockz`
+
+Past Changelogs
+---------------
+
+- :doc:`2023.10.0`
+- :doc:`2023.9.0`
+- :doc:`2023.8.0`
+- :doc:`2023.7.0`
+- :doc:`2023.6.0`
+- :doc:`2023.5.0`
+- :doc:`2023.4.0`
+- :doc:`2023.3.0`
+- :doc:`2023.2.0`
+- :doc:`2022.12.0`
+- :doc:`2022.11.0`
+- :doc:`2022.10.0`
+- :doc:`2022.9.0`
+- :doc:`2022.8.0`
+- :doc:`2022.6.0`
+- :doc:`2022.5.0`
+- :doc:`2022.4.0`
+- :doc:`2022.3.0`
+- :doc:`2022.2.0`
+- :doc:`2022.1.0`
+- :doc:`2021.12.0`
+- :doc:`2021.11.0`
+- :doc:`2021.10.0`
+- :doc:`2021.9.0`
+- :doc:`2021.8.0`
+- :doc:`v1.20.0`
+- :doc:`v1.19.0`
+- :doc:`v1.18.0`
+- :doc:`v1.17.0`
+- :doc:`v1.16.0`
+- :doc:`v1.15.0`
+- :doc:`v1.14.0`
+- :doc:`v1.13.0`
+- :doc:`v1.12.0`
+- :doc:`v1.11.0`
+- :doc:`v1.10.0`
+- :doc:`v1.9.0`
+- :doc:`v1.8.0`
+- :doc:`v1.7.0`

@@ -23,13 +23,12 @@ in order to have analog outputs on any board by using :ref:`I²C <i2c>`. Devices
 
     # Set the component with default (address: 0x60 / global I²C)
     mcp4728:
-      - platform: mcp4728
-        id: dac_output
+      - id: dac_output
 
 Configuration variables:
 ------------------------
 
-- **id** (**Required**, :ref:`config-id`): The id to use for this output component.
+- **id** (*Optional*, :ref:`config-id`): The id to use for this output component.
 - **address** (*Optional*, int): Manually specify the I2C address of
   the DAC. Defaults to ``0x60``.
 - **store_in_eeprom** (*Optional*, boolean): Use SEQ_WRITE mode to also write to EEPROM sequentially. Defaults to ``false``.
@@ -57,14 +56,12 @@ The MCP4728 output component exposes 4 MCP4728 channels of a global :ref:`MCP472
       power_down: gnd_1k
     - platform: mcp4728
       id: ac_dimmer_3
-      mcp4728_id: dac_output
       channel: C
       vref: internal
       gain: X1
       power_down: normal # default
     - platform: mcp4728
       id: ac_dimmer_4
-      mcp4728_id: dac_output
       channel: D
       vref: internal
       gain: X2
@@ -96,5 +93,7 @@ When ``vref=internal``, output voltage will range from 0.000V to 2.048V with ``g
 See Also
 --------
 
+- :doc:`/components/output/index`
 - :doc:`/components/output/esp32_dac`
+- :apiref:`mcp4728/mcp4728.h`
 - :ghedit:`Edit`

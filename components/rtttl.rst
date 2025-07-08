@@ -3,6 +3,7 @@ Rtttl Buzzer
 
 .. seo::
     :description: Instructions for setting up a buzzer to play tones and rtttl songs with ESPHome.
+                  **NEW:** Or play the song using the I2S speaker.
     :image: buzzer.jpg
 
 The ``rtttl``, component allows you to easily connect a passive piezo buzzer to your microcontroller
@@ -15,8 +16,8 @@ and play monophonic songs. It accepts the Ring Tone Text Transfer Language, rttt
 
     Buzzer Module
 
-Overview
---------
+Overview Using a passive buzzer
+-------------------------------
 
 It's important that your buzzer is a **passive** one, if it beeps when you feed it with 3.3V then it is not
 a passive one and this library will not work properly.
@@ -29,22 +30,45 @@ The tone generator needs a PWM capable output to work with, currently only the
 
     # Example configuration entry
     output:
-      - platform: ledc
-        pin: GPIO22
+      - platform: ...
         id: rtttl_out
+        ...
 
     rtttl:
       output: rtttl_out
+      id: my_rtttl
+      gain: 60%
+
+Overview Using the I2S speaker
+------------------------------
+
+The tone generator can instead be used with a :doc:`Speaker </components/speaker/index>` to output the audio.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    speaker:
+      - platform: ...
+        id: my_speaker
+        ...
+
+    rtttl:
+      speaker: my_speaker
+      id: my_rtttl
+      gain: 0.8
 
 Configuration variables:
 ------------------------
 
-- **output** (**Required**, :ref:`config-id`): The id of the :ref:`float output <output>` to use for
+- **output** (**Exclusive**, :ref:`config-id`): The id of the :ref:`float output <output>` to use for
   this buzzer.
+- **speaker** (**Exclusive**, :ref:`config-id`): The id of the :ref:`speaker <i2s_audio>` to play the song on.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+- **gain** (*Optional*, Percentage): With this value you can set the volume of the sound.
 - **on_finished_playback** (*Optional*, :ref:`Automation <automation>`): An action to be
   performed when playback is finished.
 
+Note: You can only use the **output** or **speaker** variable, not both at the same time.
 
 ``rtttl.play`` Action
 ---------------------
@@ -103,7 +127,7 @@ Common beeps
 
 You can do your own beep patterns too! Here's a short collection so you can just use right away or tweak them to your like:
 
-.. code-block:: yaml
+.. code-block::
 
     two_short:d=4,o=5,b=100:16e6,16e6
     long:d=1,o=5,b=100:e6
@@ -141,7 +165,7 @@ Sample code
 
     output:
       - platform: esp8266_pwm
-        pin: D1
+        pin: GPIOXX
         id: rtttl_out
 
     rtttl:
@@ -150,8 +174,8 @@ Sample code
         - logger.log: 'Song ended!'
 
     api:
-      services:
-        - service: play_rtttl
+      actions:
+        - action: rtttl_play
           variables:
             song_str: string
           then:
@@ -160,6 +184,8 @@ Sample code
 
 See Also
 --------
-
+- :doc:`/components/output/esp8266_pwm`
+- :doc:`/components/output/ledc`
+- :doc:`/components/speaker/index`
 - :apiref:`rtttl/rtttl.h`
 - :ghedit:`Edit`

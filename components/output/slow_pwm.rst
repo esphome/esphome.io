@@ -22,7 +22,7 @@ heating element through a relay where a fast PWM update cycle would not be appro
     # Example configuration entry
     output:
       - platform: slow_pwm
-        pin: D1
+        pin: GPIOXX
         id: my_slow_pwm
         period: 15s
 

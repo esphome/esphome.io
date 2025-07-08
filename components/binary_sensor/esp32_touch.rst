@@ -130,8 +130,8 @@ an ``OFF`` state.
 
     binary_sensor:
       - platform: esp32_touch
-        name: "ESP32 Touch Pad GPIO27"
-        pin: GPIO27
+        name: "ESP32 Touch Pad"
+        pin: GPIOXX
         threshold: 1000
 
 Configuration variables:
@@ -141,13 +141,40 @@ Configuration variables:
    events on.
 -  **threshold** (**Required**, ``int``): The threshold to use to detect touch events. See
    :ref:`esp32-finding-thresholds` below for help determining this value.
--  **name** (**Required**, string): The name of the binary sensor.
--  **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 -  **wakeup_threshold** (*Optional*, ``int``): The threshold to use to detect touch events to wake-up from deep sleep.
    See :ref:`esp32-finding-thresholds` below for help determining this value. Touch pad sensors that should trigger a
    wake-up from deep sleep must specify this value. The :ref:`deep_sleep-component` must also be configured to enable
    wake-up from a touch event. Note that no filter(s) is/are active during deep sleep.
 -  All other options from :ref:`Binary Sensor <config-binary_sensor>`.
+
+
+Raw Values
+----------
+
+If access to the raw values is required, a template sensor can be created that polls for them:
+
+.. code-block:: yaml
+
+    # Example configuration entry for accessing raw values
+    esp32_touch:
+      id: esp32_touch_1
+
+    binary_sensor:
+      - platform: esp32_touch
+        id: esp32_touch_pad
+        pin: GPIOXX
+        threshold: 0
+
+    sensor:
+      - platform: template
+        name: "Raw touch value"
+        lambda: |-
+            return id(esp32_touch_pad).get_value();
+        update_interval: 3s
+
+One example of use is a wide area pressure sensor that integrates a number of smaller sensors in an area. Make two strips
+of aluminium foil that sandwich paper, and connect one wire to a touch pin and the other to ground. Set up several sensors
+under a flexible object like a plastic mat, add the raw values, and apply a threshold.
 
 .. _esp32-touch-pad-pins:
 
@@ -213,8 +240,36 @@ reduce the ESP's overall performance.
 
 .. _esp32-note-about-variants:
 
-A Note About S2 and S3 Variants
--------------------------------
+S2 and S3 Variants
+------------------
+
+.. note::
+
+    **ESP32-S2 and ESP32-S3 Touch Configuration**
+
+    The default ``measurement_duration`` and ``sleep_duration`` values are optimized for the original ESP32 and
+    **may not work at all on S2/S3 variants**. The S2/S3 touch hardware requires different timing settings.
+
+    Key differences:
+
+    - **Touch values increase** when touched (opposite of ESP32 which decreases)
+    - **Higher raw values** are returned compared to original ESP32
+    - **Lower measurement duration required** - the default 8ms is often too high for S2/S3
+
+    **Example settings for S2/S3:**
+
+    .. code-block:: yaml
+
+        esp32_touch:
+          setup_mode: false
+          measurement_duration: 0.25ms  # Much lower than the 8ms default
+          sleep_duration: 0.5ms
+
+        binary_sensor:
+          - platform: esp32_touch
+            name: "Touch Sensor"
+            pin: GPIO1
+            threshold: 1000  # Adjust based on your hardware
 
 If you're familiar with the ESP32 hardware and pick up an S2 or S3 variant, you're likely to notice some behavioral
 differences between them. In particular:
@@ -227,6 +282,10 @@ differences between them. In particular:
 These behavioral differences are due to changes in the hardware and software (ESP-IDF) interfaces and should be
 expected -- if you are moving your configuration from an original ESP32 to an S2 or S3 variant, expect that you'll need
 to make some adjustments to your configuration to accommodate this behavior.
+
+Most importantly, the default ``measurement_duration`` of 8ms (optimized for original ESP32) is often too high for
+S2/S3 variants and can prevent touch detection from working entirely. Using a much lower value like 0.25ms has been
+found to work across many S2/S3 devices, though specific parameters may still need tuning per hardware implementation.
 
 See Also
 --------

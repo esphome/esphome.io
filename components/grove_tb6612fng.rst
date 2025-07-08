@@ -14,28 +14,10 @@ At the current stage of implementation only DC motor is implemented.
 
 .. code-block:: yaml
 
-    # Example configuration grove motor
+    # Example configuration
     grove_tb6612fng:
+      - address: 0x14
         id: test_motor
-        name: motor_outside
-        address: 0x14
-
-    # Example switch trigger
-    switch:
-      - platform: template
-        name: open_vent
-        id: open_vent
-        optimistic: True
-        on_turn_on:
-          then:
-            - grove_tb6612fng.run:
-                channel: 1
-                speed: 255
-                direction: BACKWARD
-                id: test_motor
-            - delay: 10s
-            - switch.turn_on: stop_motor
-            - switch.turn_off:  open_vent
 
 Configuration variables:
 ************************
@@ -43,12 +25,11 @@ Configuration variables:
 - **id** (**Required**, :ref:`config-id`): The id to use for this TB6612FNG component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to ``0x14``.
-- **name** (*Required*, boolean): The name of the component
 
 .. grove_tb6612fng.run:
 
 ``grove_tb6612fng.run`` Action
-------------------------------------
+------------------------------
 
 Set the motor to spin by defining the direction and speed of the rotation, speed is a range from 0 to 255
 
@@ -67,7 +48,7 @@ Set the motor to spin by defining the direction and speed of the rotation, speed
 
 
 ``grove_tb6612fng.stop`` Action
--------------------------------------
+-------------------------------
 
 Set the motor to stop motion but wont stop to spin in case there is a force pulling down, you would want to use break action if this is your case
 
@@ -84,7 +65,7 @@ Set the motor to stop motion but wont stop to spin in case there is a force pull
 
 
 ``grove_tb6612fng.break`` Action
---------------------------------------
+--------------------------------
 
 Set the motor channel to be on break mode which it ensure the wheel wont spin even if forced or pushed
 
@@ -122,6 +103,21 @@ Set the board to be awake, every esphome is restarted the default mode is set to
     on_...:
       then:
         - grove_tb6612fng.no_standby
+            id: test_motor
+
+.. grove_tb6612fng.change_address:
+
+``grove_tb6612fng.change_address`` Action
+-----------------------------------------
+
+If you require connecting multiple boards at once, the address can be changed using this action. The address can be changed to a value in the range of ``0x01 - 0x7f`` inclusive.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - grove_tb6612fng.change_address:
+            address: 0x15
             id: test_motor
 
 

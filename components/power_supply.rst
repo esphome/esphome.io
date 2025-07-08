@@ -7,9 +7,9 @@ Power Supply Component
     :keywords: power, ATX
 
 The ``power_supply`` component allows you to have a high power mode for
-certain outputs. For example, if you’re using an `ATX power
+certain outputs. For example, if you're using an `ATX power
 supply <https://en.wikipedia.org/wiki/ATX>`__ to power your LED strips,
-you usually don’t want to have the power supply on all the time while
+you usually don't want to have the power supply on all the time while
 the output is not on. The power supply component can be attached to any
 :ref:`Output Component <output>` and
 will automatically switch on if any of the outputs are on. Furthermore,
@@ -21,7 +21,7 @@ after the last output has been disabled.
     # Example configuration entry
     power_supply:
       - id: 'power_supply1'
-        pin: 13
+        pin: GPIOXX
 
 Configuration variables:
 ------------------------
@@ -33,10 +33,14 @@ Configuration variables:
 - **enable_time** (*Optional*, :ref:`config-time`): The time
   that the power supply needs for startup. The output component will
   wait for this period of time after turning on the PSU and before
-  switching the output on. Defaults to ``20ms``.
+  switching the output on. Defaults to ``20ms``. Maximum of less than ``5s``.
 - **keep_on_time** (*Optional*, :ref:`config-time`): The time the
   power supply should be kept enabled after the last output that used
   it has been switch off. Defaults to ``10s``.
+- **enable_on_boot** (*Optional*, bool): If the power supply should be enabled when the power supply
+  component is setup. Defaults to false. The startup delay will be applied (other component setup will be blocked
+  until the delay has elapsed.) This is useful for power supplies that will never be turned off and avoids the need
+  to specifically configure the power supply in a different component.
 
 See the :ref:`output component base configuration <config-output>`
 for information on how to apply the power supply for a specific output.
@@ -62,7 +66,7 @@ to be inverted.
           inverted: true
 
 Then simply connect the green control wire from the ATX power supply to
-your specified pin. It’s recommended to put a small resistor (about 1kΩ)
+your specified pin. It's recommended to put a small resistor (about 1kΩ)
 in between to protect the ESP board.
 
 See Also

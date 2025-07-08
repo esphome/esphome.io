@@ -23,17 +23,19 @@ Component
     matrix_keypad:
       id: mykeypad
       rows:
-        - pin: 21
-        - pin: 19
-        - pin: 18
-        - pin: 5
+        - pin: GPIOXX
+        - pin: GPIOXX
+        - pin: GPIOXX
+        - pin: GPIOXX
       columns:
-        - pin: 17
-        - pin: 16
-        - pin: 4
-        - pin: 15
+        - pin: GPIOXX
+        - pin: GPIOXX
+        - pin: GPIOXX
+        - pin: GPIOXX
       keys: "123A456B789C*0#D"
       has_diodes: false
+      on_key:
+        - lambda: ESP_LOGI("KEY", "key %d pressed", x);
 
 
 Configuration variables:
@@ -48,6 +50,7 @@ Configuration variables:
   row by row. Required for ``key_collector`` and ``binary_sensor`` (if using key selection).
 - **has_diodes** (*Optional*, boolean): For pads where row pins are outputs, and the keys are
   connected with diodes. Defaults to ``false``.
+- **has_pulldowns** (*Optional*, boolean): For pads where the column lines have external pulldowns. Defaults to ``false``.
 
 
 Binary Sensor
@@ -78,6 +81,13 @@ Configuration variables:
 - All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 Either the ``row`` and ``col`` parameters, or the ``key`` parameter has to be provided.
+
+
+Automations:
+------------
+
+- **on_key** (*Optional*, :ref:`Automation <automation>`): An automation to perform
+  when a key has been pressed. The key is in a variable called ``x``.
 
 
 .. note::

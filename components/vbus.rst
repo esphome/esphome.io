@@ -27,7 +27,7 @@ The following table shows the currently supported models of Vbus devices.
     "Dux H3214","deltasol_bs_2009","427B", "Pump 2 unsupported"
     "DeltaSol C","deltasol_c","4212"
     "DeltaSol CS2","deltasol_cs2","1121"
-    "DeltaSol CS2 Plus","deltasol_cs2_plus","2211"
+    "DeltaSol CS Plus","deltasol_cs_plus","2211"
 
 The ``Config Value`` should be used for the ``model`` parameter in your ``sensor`` and ``binary_sensor`` entries.
 
@@ -74,16 +74,8 @@ Component
 .. code-block:: yaml
 
     # Example configuration entry
-    uart:
-      id: resol
-      rx_pin: GPIO3
-      baud_rate: 9600
-
     vbus:
       uart_id: resol
-
-    logger:
-      baud_rate: 0 # disable uart logger on ESP8266
 
 .. warning::
 
@@ -195,18 +187,19 @@ Configuration variables:
 
 - **model** (**Required**): Specify the model of the connected controller. Choose one of the config values listed in the table of supported models above.
 
-Supported sensors:
+  Supported models:
 
-- for **deltasol_bs_plus**: ``relay1``,  ``relay2``, ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``, ``collector_max``, ``collector_min``, ``collector_frost``, ``tube_collector``, ``recooling``, ``hqm``.
-- for **deltasol_bs_2009**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``, ``frost_protection_active``.
-- for **deltasol_c**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``.
-- for **deltasol_cs2**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``.
-- for **deltasol_cs_plus**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``.
+  - **``deltasol_bs_plus``**: ``relay1``,  ``relay2``, ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``, ``collector_max``, ``collector_min``, ``collector_frost``, ``tube_collector``, ``recooling``, ``hqm``.
+  - **``deltasol_bs_2009``**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``, ``frost_protection_active``.
+  - **``deltasol_c``**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``.
+  - **``deltasol_cs2``**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``.
+  - **``deltasol_cs_plus``**: ``sensor1_error``, ``sensor2_error``, ``sensor3_error``, ``sensor4_error``.
+  - **``custom``**: See below.
 
 All binary sensors are *Optional* and support all other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 
-``Custom`` VBus sensors
+``custom`` VBus sensors
 -----------------------
 
 Devices on a VBus are identified with a source address. There can be multiple devices on the same bus,
@@ -229,7 +222,6 @@ each device type has a different address.
 
 Configuration variables:
 
-- **model** (**Required**): Set to ``custom``.
 - **dest** (**Required**): The ``DFA`` value corresponding to your device (see below).
 - **source** (**Required**): The address corresponding to ``your device model`` (see below).
 - **command** (**Required**): The ``command`` corresponding to your device (see below).
@@ -244,7 +236,6 @@ Configuration variables:
 
 Configuration variables:
 
-- **model** (**Required**): Set to ``custom``.
 - **dest** (**Required**): The ``DFA`` value corresponding to your device (see below).
 - **source** (**Required**): The address corresponding to ``your device model`` (see below).
 - **command** (**Required**): The ``command`` corresponding to your device (see below).

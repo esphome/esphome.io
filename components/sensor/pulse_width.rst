@@ -7,7 +7,12 @@ Pulse Width Sensor
 
 The ``pulse_width`` sensor allows you to measure how long a given digital signal
 is HIGH. For example this can be used to measure PWM signals to transmit some
-value over a simple protocol.
+value over a simple protocol. The unit of measurement for this sensor is seconds.
+
+.. note::
+
+    This component is intended for measurements in the microsecond to seconds range! 
+    The largest period this component can measure is just over 70 minutes.
 
 .. code-block:: yaml
 

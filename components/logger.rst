@@ -9,9 +9,12 @@ Logger Component
 
 The logger component automatically logs all log messages through the
 serial port and through MQTT topics (if there is an MQTT client in the
-configuration). By default, all logs with a severity higher than
-``DEBUG`` will be shown. Decreasing the log level can help with the
-performance of the application and memory size.
+configuration). By default, all logs with a severity ``DEBUG`` or higher will be shown.
+Increasing the log level severity (to e.g ``INFO`` or ``WARN``) can help with the performance of the application and memory size.
+
+.. note::
+
+    The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the :ref:`log levels <logger-log_levels>` section.
 
 .. code-block:: yaml
 
@@ -26,6 +29,7 @@ Configuration variables:
    UART port. Defaults to ``115200``. Set to ``0`` to disable logging via UART.
 -  **level** (*Optional*, string): The global log level. Any log message
    with a lower severity will not be shown. Defaults to ``DEBUG``.
+-  **initial_level** (*Optional*, string): The initial log level, which may be varied at run time. Defaults to the same value as ``level``.
 -  **logs** (*Optional*, mapping): Manually set the log level for a
    specific component or tag. See :ref:`Manual Log Levels for more
    information <logger-manual_tag_specific_levels>`.
@@ -34,42 +38,155 @@ Configuration variables:
 Advanced settings:
 
 -  **tx_buffer_size** (*Optional*, int): The size of the buffer used
-   for log messages. Decrease this if you’re having memory problems.
+   for log messages. Decrease this if you're having memory problems.
    Defaults to ``512``.
--  **hardware_uart** (*Optional*, string): The Hardware UART to use for logging.
-   Defaults to ``UART0``.
+-  **task_log_buffer_size** (*Optional*, int): **ESP32 only**: The size of the internal thread-safe ring buffer for task log messages.
+   This prevents API disconnections when multiple threads attempt to log simultaneously.
+   Set to ``0`` to disable the log buffer. Defaults to ``768B``.
+-  **hardware_uart** (*Optional*, string): The Hardware UART to use for logging. The default varies depending on
+   the specific processor/chip and framework you are using. See the :ref:`table below <logger-default_hardware_interfaces>`.
 -  **esp8266_store_log_strings_in_flash** (*Optional*, boolean): If set to false, disables storing
    log strings in the flash section of the device (uses more memory). Defaults to true.
 -  **on_message** (*Optional*, :ref:`Automation <automation>`): An action to be
    performed when a message is to be logged. The variables ``int level``, ``const char* tag`` and
    ``const char* message`` are available for lambda processing.
--  **deassert_rts_dtr** (*Optional*, boolean): Deasserts RTS/DTR when opening
-   log over UART. This is useful if RTS/DTR signals are directly connected to
-   the reset pin or strapping pins. Note: Deassert typically means high on TTL
-   level since RTS/DTR are usually low active signals. Defaults to ``false``.
+-  **deassert_rts_dtr** (*Optional*, boolean): Causes ESPHome to sequentially drive DTR and RTS false after opening
+   a serial logging connection. Defaults to ``false``.
+   Many ESP boards use these signals to reset the chip or enter
+   bootloader mode, and the effect of setting this option will be
+   to reset the chip in application mode after opening the serial port, thus ensuring that all log messages
+   from the boot process are captured.
+   Note: Deassert typically means a TTL high level
+   level since RTS/DTR are usually low active signals.
 
 .. _logger-hardware_uarts:
 
 Hardware UARTs
 --------------
 
-The logger component makes use of platform-specific hardware UARTs for serial logging.
-By default, the logger will occupy ``UART0``. The ESP32 has three hardware UARTs, all of
-which can be used for both transmit and receive. The ESP8266 only has two hardware UARTs,
-one of which is transmit-only. The ESP8266 ``UART0`` can also be 'swapped' to TX/RX on the
-CTS/RTS pins, if you need to use GPIO1 and GPIO3 for something else. Note that the common
-NodeMCU boards have their USB-UART Adapters fixed to the default GPIOs used by ``UART0``,
-so if you use anything else you will not get log messages over the on-board USB.
+The logger component makes use of platform-specific hardware UARTs for serial logging. For example, the ESP32
+has three hardware UARTs, all of which can be used for both transmit and receive. The ESP8266 only has two
+hardware UARTs, one of which is transmit-only. The ESP8266's ``UART0`` can also be "swapped" to TX/RX on the
+CTS/RTS pins in the event that you need to use GPIO1 and GPIO3 for something else.
 
-Possible Hardware UART configurations:
+Note that many common boards have their USB-to-serial adapters fixed to the default GPIOs used by ``UART0``,
+so if you use any other configuration you will not get log messages over the on-board USB.
 
-- ``UART0`` - TX: GPIO1, RX: GPIO3
-- ``UART0_SWAP`` - TX: GPIO15, RX: GPIO13  (Only on ESP8266)
-- ``UART1`` - TX: GPIO2, RX: None  (Only on ESP8266)
-- ``UART1`` - TX: GPIO9, RX: GPIO10  (Only on ESP32)
-- ``UART2`` - TX: GPIO16, RX: GPIO17  (Only on ESP32 but not ESP32S2, ESP32S3 or ESP32C3)
-- ``USB_CDC`` - uses the USB CDC driver (Only on ESP32S2 and ESP32S3)
-- ``USB_SERIAL_JTAG`` - uses the USB Serial/JTAG driver (Only on ESP32S3 and ESP32C3)
+Default UART GPIO Pins
+**********************
+
+.. list-table::
+    :header-rows: 1
+
+    * -
+      - ``UART0``
+      - ``UART0_SWAP``
+      - ``UART1``
+      - ``UART2``
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP8266
+      - TX: 1, RX: 3
+      - TX: 15, RX: 13
+      - TX: 2, RX: N/A
+      - N/A
+      - N/A
+      - N/A
+    * - ESP32
+      - TX: 1, RX: 3
+      - N/A
+      - TX: 10, RX: 9
+      - TX: 17, RX: 16
+      - N/A
+      - N/A
+    * - ESP32-C3
+      - TX: 21, RX: 20
+      - N/A
+      - Undefined
+      - N/A
+      - N/A
+      - 18/19
+    * - ESP32-C5
+      - TX: 10, RX: 11
+      - N/A
+      - Undefined
+      - N/A
+      - N/A
+      - 13/14
+    * - ESP32-C6
+      - TX: 16, RX: 17
+      - N/A
+      - Undefined
+      - N/A
+      - N/A
+      - 12/13
+    * - ESP32-P4
+      - TX: 37, RX: 38
+      - N/A
+      - TX: 10, RX: 11
+      - N/A
+      - N/A
+      - 24/25
+    * - ESP32-S2
+      - TX: 43, RX: 44
+      - N/A
+      - TX: 17, RX: 18
+      - N/A
+      - 19/20
+      - N/A
+    * - ESP32-S3
+      - TX: 43, RX: 44
+      - N/A
+      - TX: 17, RX: 18
+      - Undefined
+      - 19/20
+      - 19/20
+
+*Undefined* means that the logger component cannot use this harware UART at this time.
+
+.. _logger-default_hardware_interfaces:
+
+Default Hardware Interfaces
+---------------------------
+
+Because of the wide variety of boards and processors/chips available, we've selected varying default
+hardware interfaces for logging. Many newer boards based on ESP32 variants (such as the C3, S2 and S3)
+are using the ESP's on-board USB hardware peripheral while boards based on older processors (such as
+the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for communication.
+
+.. list-table::
+    :header-rows: 1
+
+    * -
+      - Arduino
+      - ESP-IDF
+    * - ESP8266
+      - ``UART0``
+      - N/A
+    * - ESP32
+      - ``UART0``
+      - ``UART0``
+    * - ESP32-C3
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP32-C5
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP32-C6
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP32-P4
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - ESP32-S2
+      - ``USB_CDC``
+      - ``USB_CDC``
+    * - ESP32-S3
+      - ``USB_CDC``
+      - ``USB_SERIAL_JTAG``
+    * - RP2040
+      - ``USB_CDC``
+      - N/A
 
 .. _logger-log_levels:
 
@@ -121,7 +238,7 @@ log level for it, first identify the tag of the log messages in question
 and then disable them in your configuration.
 
 Suppose we want to have verbose log messages globally, but the MQTT
-client spams too much. In the following example, we’d first see that the
+client spams too much. In the following example, we'd first see that the
 tag of the MQTT client is ``mqtt.client`` (before the first colon) and
 the tag for MQTT components is ``mqtt.component``.
 
@@ -173,6 +290,25 @@ Configuration options:
 -  **tag** (*Optional*, string): The tag (seen in front of the message in the logs) to print the message
    with. Defaults to ``main``.
 
+``logger.set_level`` Action
+---------------------------
+
+Set the log level at runtime. The level can only be set to a level that is no less severe than the global log level.
+
+- **level** (**Required**, string): The new log level to set.
+- **tag** (*Optional*, string): The tag to set the log level for. If not set, the global log level will be set.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - logger.set_level: INFO
+
+        - logger.set_level:
+            level: DEBUG
+            tag: mqtt.client
+
+
 Logger Automation
 -----------------
 
@@ -206,5 +342,7 @@ See Also
 --------
 
 - :doc:`/components/uart`
+- :doc:`/components/select/logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :apiref:`logger/logger.h`
 - :ghedit:`Edit`
