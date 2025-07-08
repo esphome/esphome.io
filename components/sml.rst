@@ -237,7 +237,7 @@ An example on how to do this is this:
       - baud_rate: 9600
         data_bits: 8
         rx_pin:
-         number: 17 # Set to the first of the GPIO pins in multiplex_pins
+         number: GPIO17 # Set to the first of the GPIO pins in multiplex_pins
          id: uart_multiplex_rx_pin
         stop_bits: 1
         rx_buffer_size: 512
@@ -252,7 +252,6 @@ An example on how to do this is this:
             static size_t current_index = 0;
             current_index = (current_index + 1) % multiplex_pins.size();
             gpio_num_t new_rx_pin = multiplex_pins[current_index];
-            ESP_LOGD("uart_multiplex", "Switching to RX pin: %d (%d)", new_rx_pin, current_index);
             id(uart_multiplex_rx_pin).set_pin(new_rx_pin);
             id(uart_multiplexed).load_settings(true);
 
