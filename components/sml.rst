@@ -262,23 +262,12 @@ An example on how to do this is this:
       sml_id: sml_multiplexed
       server_id: "12345ab" # IMPORTANT! Set the correct server id
       obis_code: "1-0:2.8.0"
-      unit_of_measurement: kWh
-      accuracy_decimals: 2
-      device_class: energy
-      state_class: total_increasing
-      filters:
-        - multiply: 0.0001
+
     - platform: sml
       name: "Solar Carport"
       sml_id: sml_multiplexed
       server_id: "67890cd" # IMPORTANT! Set the correct server id
       obis_code: "1-0:2.8.0"
-      unit_of_measurement: kWh
-      accuracy_decimals: 2
-      device_class: energy
-      state_class: total_increasing
-      filters:
-        - multiply: 0.0001
 
 
 See Also
