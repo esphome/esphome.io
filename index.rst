@@ -504,7 +504,6 @@ Environmental
     TMP1075, components/sensor/tmp1075, tmp1075.jpg, Temperature
     TMP117, components/sensor/tmp117, tmp117.jpg, Temperature
     XGZP68xx Series, components/sensor/xgzp68xx, 6897d.jpg, Differential Pressure
-    LPS22, components/sensor/lps22, lps22.jpg, Temperature & Barometric Pressure
 
 Light
 *****
