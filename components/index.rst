@@ -285,13 +285,13 @@ Distance
 
     A01NYUB, components/sensor/a01nyub, a01nyub.jpg, Acoustic distance
     A02YYUW, components/sensor/a02yyuw, a02yyuw.jpg, Acoustic distance
+    GL-R01 Time of Flight Sensor, components/sensor/gl_r01_i2c, gl_r01.jpg, IR optical distance
     HRXL MaxSonar WR, components/sensor/hrxl_maxsonar_wr, hrxl_maxsonar_wr.jpg, Acoustic distance
     JSN-SR04T, components/sensor/jsn_sr04t, jsn-sr04t-v3.jpg, Acoustic distance
     TOF10120, components/sensor/tof10120, tof10120.jpg, IR optical distance
     Ultrasonic Sensor, components/sensor/ultrasonic, ultrasonic.jpg, Acoustic distance
     VL53L0x, components/sensor/vl53l0x, vl53l0x.jpg, IR optical distance
     Zio Ultrasonic Sensor, components/sensor/zio_ultrasonic, zio_ultrasonic.jpg, Acoustic distance
-    GL-R01 Time of Flight Sensor, components/sensor/gl_r01_i2c, gl_r01.jpg, IR optical distance
 
 Electricity
 ***********
