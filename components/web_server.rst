@@ -67,7 +67,6 @@ Configuration variables:
   `Private Network Access Permission Prompt <https://wicg.github.io/private-network-access/#permission-prompt>`__.
   Defaults to ``true``.
 - **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to ``true``.
-- **ota** (*Optional*, boolean): Turn on or off the OTA feature inside webserver. Strongly not suggested without enabled authentication settings. Defaults to ``true``. Cannot be used with the ``esp-idf`` framework.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access. Defaults to ``false``.
 - **version** (*Optional*, string): ``1``, ``2`` or ``3``. Version 1 displays as a table. Version 2 uses web components and has more functionality. Version 3 uses HA-Styling. Defaults to ``2``.
@@ -80,6 +79,21 @@ Configuration variables:
 To conserve flash size, the CSS and JS files used on the root page to show a simple user
 interface are hosted by esphome.io. If you want to use your own service, use the
 ``css_url`` and ``js_url`` options in your configuration.
+
+.. note::
+
+    **OTA Updates via Web Interface**
+
+    The ``ota`` option has been moved from the ``web_server`` component to its own OTA platform.
+    To enable OTA updates through the web interface, use the new ``web_server`` OTA platform:
+
+    .. code-block:: yaml
+
+        # Enable OTA updates via web interface
+        ota:
+          - platform: web_server
+
+    See :doc:`/components/ota/web_server` for more information.
 
 Example configurations:
 -----------------------
@@ -120,14 +134,12 @@ The following assume copies of the files with local paths - which are config dep
 
 Example ``web_server`` version 1 configuration with CSS and JS included from esphome-docs.
 CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
-Force to turn off OTA function because the missing authentication.
 
 .. code-block:: yaml
 
     web_server:
       port: 80
       version: 1
-      ota: false
       css_include: "../../../esphome-docs/_static/webserver-v1.min.css"
       css_url: ""
       js_include: "../../../esphome-docs/_static/webserver-v1.min.js"
