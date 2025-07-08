@@ -64,6 +64,8 @@ Configuration variables:
 - **update_interval** (*Optional*, :ref:`config-time`): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
+.. _modbus_controller-offline_skip_updates:
+
 - **offline_skip_updates** (*Optional*, integer): When a slave doesn't respond to a command, it is
   marked as offline, you can specify how many updates will be skipped while it is offline. If using a bus with multiple
   slaves, this avoids waiting for timeouts allowing to read other slaves in the same bus. When the slave
@@ -73,29 +75,35 @@ Configuration variables:
 
 - **server_registers** (*Optional*): A list of registers that are responded to when acting as a server.
   - **address** (**Required**, integer): start address of the first register in a range
-  - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (MSB first)
+  - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in **big endian** format (network byte order, MSB first)
 
-      - ``U_WORD``: unsigned 16 bit integer from 1 register = 16bit
-      - ``S_WORD``: signed 16 bit integer from 1 register = 16bit
-      - ``U_DWORD``: unsigned 32 bit integer from 2 registers = 32bit
-      - ``S_DWORD``: signed 32 bit integer from 2 registers = 32bit
-      - ``U_DWORD_R``: unsigned 32 bit integer from 2 registers low word first
-      - ``S_DWORD_R``: signed 32 bit integer from 2 registers low word first
-      - ``U_QWORD``: unsigned 64 bit integer from 4 registers = 64bit
-      - ``S_QWORD``: signed 64 bit integer from 4 registers = 64bit
-      - ``U_QWORD_R``: unsigned 64 bit integer from 4 registers low word first
-      - ``S_QWORD_R``: signed 64 bit integer from 4 registers low word first
-      - ``FP32``: 32 bit IEEE 754 floating point from 2 registers
-      - ``FP32_R``: 32 bit IEEE 754 floating point - same as FP32 but low word first
-
+      - ``U_WORD``: unsigned 16 bit integer, 1 register, ``uint16_t``
+      - ``S_WORD``: signed 16 bit integer, 1 register, ``int16_t``
+      - ``U_DWORD``: unsigned 32 bit integer, 2 registers, ``uint32_t``
+      - ``S_DWORD``: signed 32 bit integer, 2 registers, ``int32_t``
+      - ``U_DWORD_R``: **little endian** unsigned 32 bit integer, 2 registers, ``uint32_t``
+      - ``S_DWORD_R``: **little endian** signed 32 bit integer, 2 registers, ``int32_t``
+      - ``U_QWORD``: unsigned 64 bit integer, 4 registers, ``uint64_t``
+      - ``S_QWORD``: signed 64 bit integer, 4 registers ``int64_t``
+      - ``U_QWORD_R``: **little endian** unsigned 64 bit integer, 4 registers, ``uint64_t``
+      - ``S_QWORD_R``: **little endian** signed 64 bit integer, 4 registers, ``int64_t``
+      - ``FP32``: 32 bit IEEE 754 floating point, 2 registers, ``float``
+      - ``FP32_R``: **little endian** 32 bit IEEE 754 floating point, 2 registers, ``float``
+    
     Defaults to ``U_WORD``.
 
   - **read_lambda** (**Required**, :ref:`lambda <config-lambda>`):
     Lambda that returns the value of this register.
+  - **write_lambda** (*Optional*, :ref:`lambda <config-lambda>`):
+    Lambda that sets the value of this register. A variable ``x`` of the appropriate type (``uint16_t``, ``int32_t``, etc, see above) is provided with the value,
+    as well as ``address`` containing the address of this register. You must return ``true`` if the operation was successful, ``false`` otherwise, in which case
+    a ModBUS exception code ``4`` will be sent to the client.
 
 Automations:
 
 - **on_command_sent** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus command has been sent. See :ref:`modbus_controller-on_command_sent`
+- **on_online** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes online. See :ref:`modbus_controller-on_online`
+- **on_offline** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a modbus controller goes offline. See :ref:`modbus_controller-on_offline`
 
 Example Client
 --------------
@@ -200,7 +208,7 @@ The following code allows a ModBUS client to read a sensor value from your ESPHo
         unit_of_measurement: V
         filters:
           - multiply: 0.1
-    
+
 
 Check out the various Modbus components available at the bottom of the document in the :ref:`modbusseealso` section. They can be directly defined *(inline)* under the ``modbus_controller`` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
 
@@ -394,8 +402,8 @@ An example is an SDM meter, with interesting data in register addresses 0, 2, 4 
 
 The configuration above will generate *one* modbus command *read multiple registers from 0 to 6*.
 
-Maybe you don’t care about the data in register addresses 2 and 4, which are voltage values for Phase 2 and Phase 3 (or you have a SDM-120).
-Of course, you can delete the sensors your don’t care about, but then you'd have a gap in the addresses. If you remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*. To avoid generating multiple commands and thus reduce activity on the bus, ``register_count`` can be used to fill the gaps:
+Maybe you don't care about the data in register addresses 2 and 4, which are voltage values for Phase 2 and Phase 3 (or you have a SDM-120).
+Of course, you can delete the sensors your don't care about, but then you'd have a gap in the addresses. If you remove the registers at address 2 and 4, *two* commands will be generated -- *read register 0* and *read register 6*. To avoid generating multiple commands and thus reduce activity on the bus, ``register_count`` can be used to fill the gaps:
 
 .. code-block:: yaml
 
@@ -738,7 +746,7 @@ Automation
 ``on_command_sent``
 *******************
 
-This automation will be triggered when a command has been sent by the `modbus_controller`. In :ref:`Lambdas <config-lambda>` 
+This automation will be triggered when a command has been sent by the `modbus_controller`. In :ref:`Lambdas <config-lambda>`
 you can get the function code in ``function_code`` and the register address in ``address``.
 
 .. code-block:: yaml
@@ -749,6 +757,40 @@ you can get the function code in ``function_code`` and the register address in `
         on_command_sent:
           then:
             - number.increment: modbus_commands
+
+.. _modbus_controller-on_online:
+
+``on_online``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``online``, after been ``offline``. In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_online:
+          then:
+            - logger.log: "Controller back online!"
+
+.. _modbus_controller-on_offline:
+
+``on_offline``
+*******************
+
+This automation will be triggered when a `modbus_controller` goes ``offline`` (See :ref:`offline_skip_updates <modbus_controller-offline_skip_updates>`). In :ref:`Lambdas <config-lambda>`
+you can get the function code in ``function_code`` and the register address in ``address``.
+
+.. code-block:: yaml
+
+    modbus_controller:
+      - id: modbus_con
+        # ...
+        on_offline:
+          then:
+            - logger.log: "Controller goes offline!"
 
 See Also
 --------

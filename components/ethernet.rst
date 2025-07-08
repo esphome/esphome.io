@@ -19,7 +19,9 @@ This component and the Wi-Fi component may **not** be used simultaneously, even 
       type: LAN8720
       mdc_pin: GPIOXX
       mdio_pin: GPIOXX
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIOXX
+        mode: CLK_EXT_IN
       phy_addr: 0
 
       # Optional manual IP
@@ -56,6 +58,7 @@ Configuration variables:
   - ``KSZ8081RNA`` (RMII)
   - ``W5500`` (SPI)
   - ``OPENETH`` (QEMU, ESP-IDF only)
+  - ``DM9051`` (SPI, ESP-IDF only)
 
 RMII configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -64,13 +67,14 @@ RMII configuration variables:
   Usually this is ``GPIO23``.
 - **mdio_pin** (**Required**, :ref:`config-pin`): The MDIO pin of the board.
   Usually this is ``GPIO18``.
-- **clk_mode** (*Optional*, string): The clock mode of the data lines. See your board's
-  datasheet for more details. Must be one of the following values:
+- **clk** (**Required**, mapping):
 
-  - ``GPIO0_IN`` (Default) - External clock
-  - ``GPIO0_OUT`` - Internal clock
-  - ``GPIO16_OUT`` - Internal clock
-  - ``GPIO17_OUT`` - Internal clock
+  - **pin** (**Required**, :ref:`config-pin`): The RMII clock pin.
+  - **mode** (**Required**, string): The clock mode of the data lines. See your board's
+    datasheet for more details. Must be one of the following values:
+
+    - ``CLK_EXT_IN`` - External clock
+    - ``CLK_OUT`` - Internal clock
 
 - **phy_addr** (*Optional*, int): The PHY addr type of the Ethernet controller. Defaults to 0.
 - **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet initialization.
@@ -90,11 +94,30 @@ SPI configuration variables:
 - **miso_pin** (**Required**, :ref:`config-pin`): The SPI MISO pin.
 - **cs_pin** (**Required**, :ref:`config-pin`): The SPI chip select pin.
 - **interrupt_pin** (*Optional*, :ref:`config-pin`): The interrupt pin.
+  This variable is **required** for older frameworks. See below.
 - **reset_pin** (*Optional*, :ref:`config-pin`): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
-  Any frequency between `8Mhz` and `80Mhz` is allowed, but the nearest integer division
-  of `80Mhz` is used, i.e. `16Mhz` (`80Mhz` / 5) is used when `15Mhz` is configured.
-  Default: `26.67Mhz`.
+  Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
+  of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
+  Default: `26.67MHz`.
+- **polling_interval** (*Optional*, :ref:`config-time`): If ``interrupt_pin`` is not set,
+  set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
+  Older frameworks may not support this variable. See below for details.
+
+If you are using a framework with the latest version, ESPHome provides
+an SPI-based Ethernet module without interrupt pin.
+Support for SPI polling mode (no interrupt pin) is provided by the following frameworks:
+
+- ESP-IDF 5.3 or later
+- ESP-IDF 5.2.1 and later 5.2.x versions
+- ESP-IDF 5.1.4
+- Arduino-ESP32 3.0.0 or later (**Caution**: PlatformIO does not support these Arduino-ESP32 versions)
+
+When building with frameworks that support SPI polling mode, either ``interrupt_pin``
+or ``polling_interval`` can be set. If you set both, ESPHome will throw an error.
+
+If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
+``interrupt_pin`` is **required** and you cannot set ``polling_interval``.
 
 Advanced common configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -139,13 +162,15 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk:
+        pin: GPIO17
+        mode: CLK_OUT
       phy_addr: 0
       power_pin: GPIO12
 
 .. note::
 
-    WROVER version of Olimex POE cards change CLK to ping GPIO0, configuration must be `clk_mode: GPIO0_OUT`.
+    WROVER version of Olimex POE cards change CLK to pin GPIO0.
 
 
 **Olimex ESP32-EVB**:
@@ -156,7 +181,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIO0
+        mode: CLK_EXT_IN
       phy_addr: 0
 
 **Olimex ESP32-GATEWAY** and **LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A**:
@@ -167,7 +194,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk:
+        pin: GPIO17
+        mode: CLK_OUT
       phy_addr: 0
 
 **LILYGO TTGO T-Internet ESP32-WROVER-E LAN8270**:
@@ -178,7 +207,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_OUT
+      clk:
+        pin: GPIO0
+        mode: CLK_OUT
       phy_addr: 0
       power_pin: GPIO04
 
@@ -190,7 +221,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIO0
+        mode: CLK_EXT_IN
       phy_addr: 1
       power_pin: GPIO16
 
@@ -202,7 +235,9 @@ Configuration examples
       type: IP101
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIO0
+        mode: CLK_EXT_IN
       phy_addr: 1
       power_pin: GPIO5
 
@@ -214,7 +249,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk:
+        pin: GPIO17
+        mode: CLK_OUT
       phy_addr: 1
       power_pin: GPIO5
 
@@ -227,7 +264,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO16
       mdio_pin: GPIO17
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIO0
+        mode: CLK_EXT_IN
       phy_addr: 0
 
     # for board rev.7 and up
@@ -235,7 +274,9 @@ Configuration examples
       type: RTL8201
       mdc_pin: GPIO16
       mdio_pin: GPIO17
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIO0
+        mode: CLK_EXT_IN
       phy_addr: 0
       phy_registers:
         - address: 0x10
@@ -273,7 +314,9 @@ Configuration examples
       type: LAN8720
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO17_OUT
+      clk:
+        pin: GPIO17
+        mode: CLK_OUT
       phy_addr: 1
 
 **LILYGO T-ETH-Lite ESP32**:
@@ -284,7 +327,9 @@ Configuration examples
       type: RTL8201
       mdc_pin: GPIO23
       mdio_pin: GPIO18
-      clk_mode: GPIO0_IN
+      clk:
+        pin: GPIO0
+        mode: CLK_EXT_IN
       phy_addr: 0
       power_pin: GPIO12
 
@@ -295,6 +340,39 @@ Configuration examples
 
     ethernet:
       type: OPENETH
+
+
+**Waveshare ESP32-S3-ETH PoE**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: W5500
+      clk_pin: GPIO13
+      mosi_pin: GPIO11
+      miso_pin: GPIO12
+      cs_pin: GPIO14
+      interrupt_pin: GPIO10
+      reset_pin: GPIO9
+
+
+**ETH01-Evo**:
+
+.. code-block:: yaml
+
+    ethernet:
+      type: DM9051
+      clk_pin: GPIO07
+      mosi_pin: GPIO10
+      miso_pin: GPIO03
+      cs_pin: GPIO09
+      interrupt_pin: GPIO08
+      reset_pin: GPIO06
+      clock_speed: 8MHz
+
+.. note::
+
+    Using a higher clock_speed, including default, might cause rx errors and dropped packets.
 
 See Also
 --------

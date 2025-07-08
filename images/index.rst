@@ -10,4 +10,5 @@ that will only be used in raw HTML and thus not auto-included.
 
 .. image:: logo-docs.svg
 
-.. image:: logo-text.svg
+.. raw:: html
+    :file: ../images/logo-text.svg
