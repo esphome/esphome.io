@@ -89,24 +89,6 @@ Use Cases
 **Troubleshooting Timing Issues**
   If components are missing deadlines or behaving erratically, runtime statistics can help identify the cause.
 
-Advanced Configuration
-----------------------
-
-For more detailed analysis, you can combine runtime statistics with debug logging:
-
-.. code-block:: yaml
-
-    # Enable runtime stats with frequent logging for detailed analysis
-    runtime_stats:
-      log_interval: 10s
-    
-    # Also enable debug logging for specific components
-    logger:
-      level: INFO
-      logs:
-        sensor: DEBUG
-        wifi: DEBUG
-
 Tips for Effective Use
 ----------------------
 
