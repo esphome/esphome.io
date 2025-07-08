@@ -22,10 +22,6 @@ The :ref:`I²C <i2c>` is required to be set up in your configuration for this se
 
 .. code-block:: yaml
 
-    i2c:
-      sda: GPIO25
-      scl: GPIO22
-
     sensor:
       - platform: gl_r01_i2c
         name: "ToF"
