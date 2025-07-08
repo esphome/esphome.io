@@ -226,22 +226,22 @@ These meters can also measure the instantaneous power usage.
 
 Reading multiple meters
 ---------------------------------
-If you are reading data from more meters than your controller has UARTs available (e.g. more than 2 for an ESP32), you can use multiplexing to switch between reading data from different meters.
+If you are reading data from more meters than your controller has UARTs available (e.g. more than two for an ESP32), you can use multiplexing to switch between reading data from different meters.
 
 In order to do this, after each SML update, the used UART can be set to listen to a different pin.
 An example on how to do this is this:
 
 .. code-block:: yaml
 
-    uart:    
-     - baud_rate: 9600
-       data_bits: 8
-       rx_pin: 
-        number: 17 # Set to the first of the GPIO pins
-        id: uart_multiplex_rx_pin
-       stop_bits: 1
-       rx_buffer_size: 512
-       id: uart_multiplexed
+    uart:
+      - baud_rate: 9600
+        data_bits: 8
+        rx_pin:
+         number: 17 # Set to the first of the GPIO pins in multiplex_pins
+         id: uart_multiplex_rx_pin
+        stop_bits: 1
+        rx_buffer_size: 512
+        id: uart_multiplexed
 
     sml:
     - id: sml_multiplexed
