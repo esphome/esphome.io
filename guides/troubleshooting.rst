@@ -112,10 +112,54 @@ If you already have a stack trace but need to decode it, you can use the `ESP St
 
     This tool runs entirely in your browser - no data is sent to any server, ensuring your firmware and debug information remain private.
 
+Performance Troubleshooting
+---------------------------
+
+If your device is experiencing performance issues such as:
+
+- Slow response times
+- Missed sensor readings
+- Connectivity problems
+- Components not updating as expected
+
+The :doc:`/components/runtime_stats` component can help identify which components are consuming the most processing time or blocking the event loop.
+
+Using Runtime Statistics
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. **Add the component** to your configuration:
+
+   .. code-block:: yaml
+
+       runtime_stats:
+         log_interval: 30s  # Log every 30 seconds
+
+2. **Upload and monitor**: After uploading, monitor your logs to see which components are taking the most time:
+
+   .. code-block:: text
+
+       [09:55:52][I][runtime_stats:042]: Component Runtime Statistics
+       [09:55:52][I][runtime_stats:043]: Period stats (last 30000ms):
+       [09:55:52][I][runtime_stats:066]:   wifi: count=60, avg=0.50ms, max=15ms, total=30ms
+       [09:55:52][I][runtime_stats:066]:   dallas: count=30, avg=28.5ms, max=45ms, total=855ms
+
+3. **Identify issues**: Look for:
+   
+   - Components with high ``max`` times (potential event loop blockers)
+   - Components with high ``total`` times (overall performance impact)
+   - Unexpected execution counts (components running too frequently)
+
+4. **Remove when done**: Remember to remove or comment out the ``runtime_stats`` component after troubleshooting, as it adds overhead to your device.
+
+.. note::
+
+    Runtime statistics use millisecond resolution, so very fast operations (< 1ms) will show as 0ms. This tool is best for finding components that take multiple milliseconds to execute.
+
 See Also
 --------
 
 - :doc:`/components/logger` - Configure logging levels and outputs
 - :doc:`/components/debug` - Debug component for additional diagnostics
+- :doc:`/components/runtime_stats` - Performance analysis and debugging
 - :doc:`/components/safe_mode` - Safe Mode recovery guide
 - :doc:`/guides/faq` - Frequently asked questions

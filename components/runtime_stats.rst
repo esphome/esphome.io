@@ -17,12 +17,6 @@ The ``runtime_stats`` component allows you to collect and analyze runtime perfor
     
     Enable it when needed to find problems, then disable it once your investigation is complete.
 
-.. figure:: images/runtime_stats_output.png
-    :align: center
-    :width: 80.0%
-
-    Example runtime statistics output showing component execution times.
-
 .. code-block:: yaml
 
     # Example configuration entry
