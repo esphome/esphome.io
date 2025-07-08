@@ -235,7 +235,6 @@ Air Quality
     iAQ-Core, components/sensor/iaqcore, iaqcore.jpg, CO2 & Volatile organics
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MiCS-4514, components/sensor/mics_4514, mics_4514.jpg, Gas concentration
-    NeewerCB60B, components/light/neewerlight_ct, neewer_cb60b.png, Bi-Color LED Light
     PM1006 Sensor, components/sensor/pm1006, pm1006.jpg, Particulate
     PM2005 Sensor, components/sensor/pm2005, pm2005.png, Particulate
     PMSA003I, components/sensor/pmsa003i, pmsa003i.jpg, Particulate
@@ -858,6 +857,7 @@ Light Components
     LightWaveRF, components/lightwaverf, brightness-medium.svg, dark-invert
     LVGL widget, components/light/lvgl, lvgl_c_lig.png
     Monochromatic Light, components/light/monochromatic, brightness-medium.svg, dark-invert
+    Neewer Bi-Color LED Light, components/light/neewerlight_ct, neewer_cb60b.png, dark-invert
     NeoPixelBus Light, components/light/neopixelbus, color_lens.svg, dark-invert
     RGB Light, components/light/rgb, rgb.png
     RGBCT Light, components/light/rgbct, rgbw.png
