@@ -235,6 +235,7 @@ Air Quality
     iAQ-Core, components/sensor/iaqcore, iaqcore.jpg, CO2 & Volatile organics
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MiCS-4514, components/sensor/mics_4514, mics_4514.jpg, Gas concentration
+    NeewerCB60B, components/light/neewerlight_ct, neewer_cb60b.png, Bi-Color LED Light
     PM1006 Sensor, components/sensor/pm1006, pm1006.jpg, Particulate
     PM2005 Sensor, components/sensor/pm2005, pm2005.png, Particulate
     PMSA003I, components/sensor/pmsa003i, pmsa003i.jpg, Particulate
