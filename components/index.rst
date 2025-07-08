@@ -263,6 +263,7 @@ Analogue
     ADC128S102, components/sensor/adc128s102, adc128s102.png , 8-channel ADC
     ADS1115, components/sensor/ads1115, ads1115.jpg, 4-channel ADC
     ADS1118, components/sensor/ads1118, ads1118.jpg, 4-channel ADC
+    ADS7128, components/sensor/ads7128, ads7128.jpg, 8-Channel ADC with RMS Module
     CD74HC4067, components/sensor/cd74hc4067, cd74hc4067.jpg, 16-channel analog multiplexer
     MCP3008, components/sensor/mcp3008, mcp3008.jpg, 8-channel ADC
     MCP3204 / MCP3208, components/sensor/mcp3204, mcp3204.jpg, 4-channel ADC
