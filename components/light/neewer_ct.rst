@@ -25,7 +25,7 @@ Next step is to find out the mac address of your light. You can do this by using
 Switch the light on and then use the following configuration to scan for BLE devices:
 
 .. code-block:: yaml
-  
+
     # Find the mac address of your light
     neewerlight_ble:
 
