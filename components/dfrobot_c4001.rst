@@ -289,7 +289,7 @@ Actions
 -------
 
 ``dfrobot_c4001.factory_reset`` Action
---------------------------------------
+**************************************
 
 Execute a factory reset of the module and all configuration values will go back to default. The module will restart with these defaults. 
 
@@ -318,7 +318,7 @@ Configuration variables:
     Write cycles to this memory are limited, so avoid the practice of resetting frequently.
 
 ``dfrobot_c4001.factory_reset`` Action
---------------------------------------
+**************************************
 
 Execute a restart of the module. All configuration values will remain as configured. 
 
