@@ -16,7 +16,6 @@ The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for thi
 
     sensor:
       - platform: lps22
-        address: 0x5d
         temperature:
           name: "LPS22 Temperature"
         pressure:
