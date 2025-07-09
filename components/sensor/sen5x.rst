@@ -26,6 +26,8 @@ The SEN6X sensor only supports I²C communication so no configuration is require
     sensor:
       - platform: sen5x
         id: sen54
+        address: 0x69
+        update_interval: 10s
         model: SEN54  # required
         pm_1_0:
           name: "PM <1µm Weight concentration"
@@ -46,6 +48,11 @@ The SEN6X sensor only supports I²C communication so no configuration is require
         temperature:
           name: "Temperature"
           accuracy_decimals: 1
+        temperature_compensation:
+          offset: 0
+          normalized_offset_slope: 0
+          time_constant: 0
+        acceleration_mode: low
         humidity:
           name: "Humidity"
           accuracy_decimals: 0
@@ -58,14 +65,7 @@ The SEN6X sensor only supports I²C communication so no configuration is require
             gating_max_duration_minutes: 180
             std_initial: 50
             gain_factor: 230
-        temperature_compensation:
-          offset: 0
-          normalized_offset_slope: 0
-          time_constant: 0
-        acceleration_mode: low
         store_baseline: true
-        address: 0x69
-        update_interval: 10s
 
 .. figure:: images/sen66.jpg
     :width: 50% 
@@ -78,6 +78,8 @@ The SEN6X sensor only supports I²C communication so no configuration is require
     sensor:
       - platform: sen5x
         id: sen66
+        address: 0x69
+        update_interval: 10s
         model: SEN66
         pm_1_0:
           name: "PM <1µm Weight concentration"
@@ -101,10 +103,6 @@ The SEN6X sensor only supports I²C communication so no configuration is require
         humidity:
           name: "Humidity"
           accuracy_decimals: 0
-        co2:
-          name: "CO₂"
-          auto_self_calibration: false
-          accuracy_decimals: 0
         nox:
           name: "NOx"
           algorithm_tuning:
@@ -117,8 +115,10 @@ The SEN6X sensor only supports I²C communication so no configuration is require
         voc:
           name: "VOC"
         store_baseline: true
-        address: 0x69
-        update_interval: 10s
+        co2:
+          name: "CO₂"
+          automatic_self_calibration: false
+          accuracy_decimals: 0
 
 Configuration variables:
 ------------------------
@@ -186,7 +186,17 @@ Configuration variables:
 
 .. note::
 
-    These sensors needs about a minute "warm-up". The VOC and NOx gas index algorithm needs a number of samples before the values stabilize.
+    The SEN5X sensors need a 90 second "warm-up". The VOC and NOx gas index algorithm needs a number of samples before the values stabilize. The SEN6X sensors may need more than 90 seconds to stabilize. Plot the first 5 minutes of measurements to see how the values stabilize as they may not represent the actual air quality.
+    You can add a filter to throw away the first reading like this:
+
+    .. code-block:: yaml
+
+        sensor:
+          - platform: sen5x
+            nox:
+              name: "NOx"
+              filters:
+                - skip_initial: 120  # assuming an update_interval of 1s, this will throw away the first 2 minutes of readings
 
 
 Wiring:
