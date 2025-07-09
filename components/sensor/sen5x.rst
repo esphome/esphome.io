@@ -269,14 +269,14 @@ This :ref:`action <config-action>` manually starts a fan-cleaning cycle.
 Humidity Sensor Heater
 ----------------------
 
-The SEN6X humidity sensor can develop an offset in the humidity reading when exposed to high levels of humidity for extended periods of time. It supports a heater similar to the one in the SHT4X. The difference is no automatic mode mode instead you have to trigger ``sen5x.start_fan_autoclean`` action occasionally.
+The SEN6X humidity sensor can develop an offset in the humidity reading when exposed to high levels of humidity for extended periods of time. It supports a heater similar to the one in the SHT4X. The difference is no automatic mode. Instead you have to trigger ``sen5x.start_fan_autoclean`` action occasionally.
 
 .. _activate_heater_action:
 
 ``sen5x.activate_heater`` Action
 --------------------------------
 
-This :ref:`action <config-action>` manually starts the heater. This will turn the heater on at 200mW for 1s.
+This :ref:`action <config-action>` manually starts the heater. First all measurements are stopped, then the heater is turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the measurements. This is to ensure the heating effects are gone before temperature measurements resume.
 
 .. code-block:: yaml
 
