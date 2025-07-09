@@ -160,7 +160,7 @@ Hardware Peripheral Interfaces/Busses
 
 .. imgtable::
 
-    1-Wire, components/one_wire, one-wire.svg
+    1-Wire, components/one_wire/index, one-wire.svg
     CAN Bus, components/canbus/index, canbus.svg
     I²C Bus, components/i2c, i2c.svg
     I²S Audio, components/i2s_audio, i2s_audio.svg
@@ -191,12 +191,25 @@ I/O Expanders/Multiplexers
     WeiKai SPI/I²C UART/IO Expander, components/weikai, wk2168.jpg
     XL9535, components/xl9535, xl9535.svg
 
-CAN Bus
--------
+1-Wire Bus
+----------
+
+Platforms which specifically support or extend the :doc:`/components/one_wire/index`, allowing communication with
+1-Wire-based devices.
 
 .. imgtable::
 
-    CAN Bus, components/canbus/index, canbus.svg
+    DS2484, components/one_wire/ds2484, ds2484.svg
+    GPIO, components/one_wire/gpio, gpio.svg
+
+CAN Bus
+-------
+
+Platforms which specifically support or extend the :doc:`/components/canbus/index`, allowing communication with
+CAN-based devices.
+
+.. imgtable::
+
     ESP32 CAN, components/canbus/esp32_can, esp32.svg
     MCP2515, components/canbus/mcp2515, mcp2515.svg
 
@@ -1125,6 +1138,7 @@ ESPHome depends on and welcomes contributions from our community. If you'd like 
     binary_sensor/index
     camera/index
     canbus/index
+    one_wire/index
     climate/index
     cover/index
     fan/index
