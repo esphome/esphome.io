@@ -59,84 +59,84 @@ Basic configuration
 
 .. code-block:: yaml
 
-  hdmi_cec:
-    id: cec
-    # Pick a GPIO pin that can do both input AND output
-    pin: GPIO9 # Required
-    # The (logical) address can be anything in the [0x1 .. 0xF] range.
-    # Use 0xF if you only want to listen to the bus and not act
-    # like a standard device. Address 0x5 is for an audio device.
-    address: 0xE # Required
-    # Physical address of the device. In this case: 4.0.0.0 (HDMI4 input on the TV)
-    # Unfortunately, you will have to set this manually.
-    physical_address: 0x2000 # Required
-    # The name that will be displayed in the list of devices on your TV/receiver
-    osd_name: "my device" # Optional. Defaults to "esphome"
-    # By default, promiscuous mode is disabled, so the component only handles
-    # directly-addressed messages (matching the address configured above)
-    # and broadcast messages. Enabling promiscuous mode will make the component
-    # listen for ALL messages (both in logs and the 'on_message' triggers)
-    promiscuous_mode: false # Optional. Defaults to false
-    # By default, monitor mode is disabled, so the component can send messages and acknowledge incoming messages.
-    # Enabling monitor mode lets the component act as a passive listener, disabling active manipulation of the CEC bus.
-    monitor_mode: false # Optional. Defaults to false
-    # List of triggers to handle specific commands. Each trigger has the following optional filter parameters:
-    # - "source": match messages coming from the specified address
-    # - "destination": match messages meant for the specified address
-    # - "opcode": match messages bearing the specified opcode
-    # - "data": exact-match on message content
-    # Actions called from these triggers is called with "source", "destination" and "data" as parameters
-    on_message:
-      - opcode: 0x36 # opcode for "Standby"
-        then:
-          logger.log: "Got Standby command"
+    hdmi_cec:
+      id: cec
+      # Pick a GPIO pin that can do both input AND output
+      pin: GPIO9 # Required
+      # The (logical) address can be anything in the [0x1 .. 0xF] range.
+      # Use 0xF if you only want to listen to the bus and not act
+      # like a standard device. Address 0x5 is for an audio device.
+      address: 0xE # Required
+      # Physical address of the device. In this case: 4.0.0.0 (HDMI4 input on the TV)
+      # Unfortunately, you will have to set this manually.
+      physical_address: 0x2000 # Required
+      # The name that will be displayed in the list of devices on your TV/receiver
+      osd_name: "my device" # Optional. Defaults to "esphome"
+      # By default, promiscuous mode is disabled, so the component only handles
+      # directly-addressed messages (matching the address configured above)
+      # and broadcast messages. Enabling promiscuous mode will make the component
+      # listen for ALL messages (both in logs and the 'on_message' triggers)
+      promiscuous_mode: false # Optional. Defaults to false
+      # By default, monitor mode is disabled, so the component can send messages and acknowledge incoming messages.
+      # Enabling monitor mode lets the component act as a passive listener, disabling active manipulation of the CEC bus.
+      monitor_mode: false # Optional. Defaults to false
+      # List of triggers to handle specific commands. Each trigger has the following optional filter parameters:
+      # - "source": match messages coming from the specified address
+      # - "destination": match messages meant for the specified address
+      # - "opcode": match messages bearing the specified opcode
+      # - "data": exact-match on message content
+      # Actions called from these triggers is called with "source", "destination" and "data" as parameters
+      on_message:
+        - opcode: 0x36 # opcode for "Standby"
+          then:
+            logger.log: "Got Standby command"
     
-      # Respond to "Menu Request" (not required, example purposes only)
-      - opcode: 0x8D
-        then:
-          hdmi_cec.send:
-            # both "destination" and "data" are templatable
-            destination: !lambda return source;
-            data: [0x8E, 0x01] # 0x01 => "Menu Deactivated"
+        # Respond to "Menu Request" (not required, example purposes only)
+        - opcode: 0x8D
+          then:
+            hdmi_cec.send:
+              # both "destination" and "data" are templatable
+              destination: !lambda return source;
+              data: [0x8E, 0x01] # 0x01 => "Menu Deactivated"
 
 Example: Power-down HDMI devices
 ------------------------------------------
 
 .. code-block:: yaml
 
-  button:
-    - platform: template
-      name: "Turn everything off"
-      on_press:
-        hdmi_cec.send:
-          # "source" can optionally be set, like if you want to spoof another device's address
-          destination: 0xF # Broadcast to all hdmi devices
-          data: [0x36] # "Standby" opcode
+    button:
+      - platform: template
+        name: "Turn everything off"
+        on_press:
+          hdmi_cec.send:
+            # "source" can optionally be set, like if you want to spoof another device's address
+            destination: 0xF # Broadcast to all hdmi devices
+            data: [0x36] # "Standby" opcode
 
 Example: TV power-up and volume control
 ---------------------------------------
 
 .. code-block:: yaml
 
-  button:
-    - platform: template
-      name: "TV Power On"
-      on_press:
-        - hdmi_cec.send:
-            destination: 0x0  # to TV
-            data: [0x44, 0x6D]  # UI command, "Power On"
-    - platform: template
-      name: "TV Volume Up"
-      on_press:
-        - hdmi_cec.send:
-            destination: 0x0  # to TV
-            data: [0x44, 0x41]  # UI command, "Volume Up"
-    - platform: template
-      name: "TV Volume Down"
-      on_press:
-        # as example, using the api: component.send( destination, {opcode, parameters..} )
-        - lambda: !lambda |-
-            id(cec).send(0x0, {0x44, 0x42});  // UI command, "Volume Down"
+    button:
+      - platform: template
+        name: "TV Power On"
+        on_press:
+          - hdmi_cec.send:
+              destination: 0x0  # to TV
+              data: [0x44, 0x6D]  # UI command, "Power On"
+      - platform: template
+        name: "TV Volume Up"
+        on_press:
+          - hdmi_cec.send:
+              destination: 0x0  # to TV
+              data: [0x44, 0x41]  # UI command, "Volume Up"
+      - platform: template
+        name: "TV Volume Down"
+        on_press:
+          # as example, using the api: component.send( destination, {opcode, parameters..} )
+          - lambda: !lambda |-
+              id(cec).send(0x0, {0x44, 0x42});  // UI command, "Volume Down"
 
 Note that these cec commands for TV control are well-defined.
 However, some TVs might not respond properly as they might have an incomplete implementation.
@@ -179,30 +179,31 @@ Example: Create service for Home Assistant
 
 .. code-block:: yaml
 
-  api
-    ...
-    services:
-      - service: hdmi_cec_send
-        variables:
-          cec_destination: int
-          cec_data: int[]
-        then:
-          - hdmi_cec.send:
-              destination: !lambda "return static_cast<unsigned char>(cec_destination);"
-              data: !lambda |
-                std::vector<unsigned char> charVector;
-                for (int i : cec_data) {
-                  charVector.push_back(static_cast<unsigned char>(i));
-                }
-                return charVector;
+    api
+      ...
+      services:
+        - service: hdmi_cec_send
+          variables:
+            cec_destination: int
+            cec_data: int[]
+          then:
+            - hdmi_cec.send:
+                destination: !lambda "return static_cast<unsigned char>(cec_destination);"
+                data: !lambda |
+                  std::vector<unsigned char> charVector;
+                  for (int i : cec_data) {
+                    charVector.push_back(static_cast<unsigned char>(i));
+                  }
+                  return charVector;
 
 Extended installation
 ---------------------
 
-The basic configuration can be extended with two further enhancements:
+The basic configuration can be extended with further enhancements:
 
 a. Disconnect from the cec line on power-down
 b. Use a UART for sending messages
+c. Connect the HDMI 'Hot Plug Detect' pin
 
 The figure below shows a schematics with both those enhancements, adding a relay (for a.) and a diode (for b.):
 
@@ -210,12 +211,12 @@ The figure below shows a schematics with both those enhancements, adding a relay
     :align: center
 
 Note that the particular microcontroller type in this schematics is arbitrary,
-please select your own type based on your project requirements.
+feel free to select a type that fits your project requirements.
 
 The merits of these two enhancements are discussed below.
 
 a: Disconnect from cec on power-down
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Although the cec line uses 3.3V logic, which is fine for GPIO, there is an issue when your esphome device is powered off.
 In that case, the cec line is likely to stay at 3.3V, and a GPIO pin should NOT have a voltage above the microcontroller
@@ -230,7 +231,7 @@ when the power is switched off. The choice of relay type is not critical, but it
 small-signal and compact relay type such as a TQ2-5V or a G6K-2P-5V.
 
 b: Use a UART for sending messages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The `hdmi_cec` component receives messages by being triggered by interrupts on GPIO level changes,
 and timing of the delays between those changes. That is fine: the interrupts are short-duration software functions.
@@ -264,16 +265,16 @@ and pass its `id` to the cec component. For example:
 
 .. code-block:: yaml
 
-  uart:
-    id: cec_uart
-    tx_pin: GPIO7
-    baud_rate: 115200
+    uart:
+      id: cec_uart
+      tx_pin: GPIO7
+      baud_rate: 115200
 
-  hdmi_cec:
-    pin: GPIO9
-    uart_id: cec_uart
-    address: 0xE
-    physical_address: 0x2000
+    hdmi_cec:
+      pin: GPIO9
+      uart_id: cec_uart
+      address: 0xE
+      physical_address: 0x2000
 
 The baudrate assignment is required for a UART, but its value is not important: it will be
 re-assigned by the `hdmi_cec` component software.
@@ -285,8 +286,8 @@ Please consult the device programming manual for details.
 However, especially when choosing a relatively fast UART baud_rate, other devices on the CEC bus do not seem to be
 bothered by the weird pattern.
 
-Connecting the Hot Plug Detect
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+c: Connect the HDMI Hot Plug Detect pin
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A further HDMI signal which might be useful for your application is HPD (`Hot Plug Detect`), at HDMI pin 19.
 Strictly speaking, this signal is not part of the CEC protocol, so you would not need this for the CEC commands.
@@ -306,20 +307,20 @@ Example yaml fragment for using HPD:
 
 .. code-block:: yaml
 
-  binary_sensor:
-    - platform: gpio
-      pin:
-        number: GPIO8
-        mode:
-          input: true
-          pulldown: true
-      id: hdmi_hpd
-      name: "Hdmi TV Detect"
-      on_press:
-        then:
-          - logger.log:
-              format: "HDMI Connected"
-              level: "INFO"
+    binary_sensor:
+      - platform: gpio
+        pin:
+          number: GPIO8
+          mode:
+            input: true
+            pulldown: true
+        id: hdmi_hpd
+        name: "Hdmi TV Detect"
+        on_press:
+          then:
+            - logger.log:
+                format: "HDMI Connected"
+                level: "INFO"
 
 The HDMI standard
 -----------------
