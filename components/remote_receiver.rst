@@ -37,6 +37,7 @@ Configuration variables:
     :ref:`transmitter description <remote_transmitter-transmit_abbwelcome>` for more details.
   - **aeha**: Decode and dump AEHA infrared codes.
   - **beo4**: Decode and dump B&O Beo4 infrared codes.
+  - **brennenstuhl**: Decode and dump brennenstuhl RF codes.
   - **byronsx**: Decode and dump Byron SX doorbell RF codes.
   - **canalsat**: Decode and dump CanalSat infrared codes.
   - **canalsatld**: Decode and dump CanalSatLD infrared codes.
@@ -151,6 +152,9 @@ Automations:
   is passed to the automation for use in lambdas.
 - **on_beo4** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   B&O Beo4 infrared remote code has been decoded. A variable ``x`` of type :apistruct:`remote_base::Beo4Data`
+  is passed to the automation for use in lambdas.
+- **on_brennenstuhl** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
+  brennenstuhl RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::BrennenstuhlData`
   is passed to the automation for use in lambdas.
 - **on_byronsx** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a
   Byron SX doorbell RF code has been decoded. A variable ``x`` of type :apistruct:`remote_base::ByronSXData`
@@ -312,6 +316,10 @@ Remote code selection (exactly one of these has to be included):
 
   - **source** (**Required**, int): The 8-bit source to trigger on, e.g. 0x00=video, 0x01=audio,..., see dumper output for more info.
   - **command** (**Required**, int): The 8-bit command to listen for, e.g. 0x00=number0, 0x0C=standby,..., see dumper output for more info.
+
+- **brennenstuhl**: Trigger on a decoded brennenstuhl RF code with the given data.
+
+  - **code** (**Required**, int): The 24-bit code to trigger on, see dumper output for more info.
 
 - **byronsx**: Trigger on a decoded Byron SX Doorbell RF remote code with the given data.
 
