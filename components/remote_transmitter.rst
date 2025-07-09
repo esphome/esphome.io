@@ -211,6 +211,7 @@ companies.
 .. _remote_transmitter-transmit_beo4:
 
 ``remote_transmitter.transmit_beo4`` **Action**
+**************************************************
 
 This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
@@ -225,6 +226,24 @@ Configuration variables:
 
 - **source** (**Required**, int): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
 - **command** (**Required**, int): The command to send, e.g. 0x01=num1, 0x0d=mute,...,  see dumper output for more info.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+
+.. _remote_transmitter-transmit_brennenstuhl:
+
+``remote_transmitter.transmit_brennenstuhl`` **Action**
+**************************************************
+
+This :ref:`action <config-action>` sends a brennenstuhl protocol code to a remote transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_brennenstuhl:
+          code: '0xbd2e2c'
+
+Configuration variables:
+
+- **code** (**Required**, int): The 24-bit code to send, see dumper output for more info.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
 .. _remote_transmitter-transmit_byronsx:
