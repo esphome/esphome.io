@@ -211,7 +211,7 @@ companies.
 .. _remote_transmitter-transmit_beo4:
 
 ``remote_transmitter.transmit_beo4`` **Action**
-**************************************************
+***********************************************
 
 This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
@@ -231,7 +231,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_brennenstuhl:
 
 ``remote_transmitter.transmit_brennenstuhl`` **Action**
-**************************************************
+*******************************************************
 
 This :ref:`action <config-action>` sends a brennenstuhl protocol code to a remote transmitter.
 
