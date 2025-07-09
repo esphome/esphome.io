@@ -1,5 +1,3 @@
-.. _one_wire:
-
 1-Wire Bus
 ==========
 

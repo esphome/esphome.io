@@ -1,5 +1,3 @@
-.. _one_wire_gpio:
-
 1-Wire Bus via GPIO
 ===================
 
