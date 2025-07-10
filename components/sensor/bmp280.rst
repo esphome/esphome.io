@@ -8,7 +8,7 @@ BMP280 Temperature+Pressure Sensor
 
 The ``bmp280`` sensor platform allows you to use your BMP280
 (`datasheet <https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf>`__,
-`Adafruit`_) temperature and pressure sensors with ESPHome. The :ref:`I²C <i2c>` is
+`Adafruit`_) temperature and pressure sensors with ESPHome. The :ref:`I²C <i2c>` or :ref:`SPI <spi>` is
 required to be set up in your configuration for this sensor to work.
 
 .. figure:: images/bmp280-full.jpg
@@ -21,15 +21,26 @@ required to be set up in your configuration for this sensor to work.
 
 .. code-block:: yaml
 
-    # Example configuration entry
+    # Example configuration entry I2C
     sensor:
-      - platform: bmp280
+      - platform: bmp280_i2c
         temperature:
           name: "Outside Temperature"
           oversampling: 16x
         pressure:
           name: "Outside Pressure"
         address: 0x77
+        update_interval: 60s
+
+    # Example configuration entry SPI
+    sensor:
+      - platform: bmp280_spi
+        temperature:
+          name: "Outside Temperature"
+          oversampling: 16x
+        pressure:
+          name: "Outside Pressure"
+        cs_pin: GPIO5
         update_interval: 60s
 
 Configuration variables:
@@ -48,12 +59,21 @@ Configuration variables:
     See :ref:`Oversampling Options <bmp280-oversampling>`.
   - All other options from :ref:`Sensor <config-sensor>`.
 
-- **address** (*Optional*, int): Manually specify the I²C address of
-  the sensor. Defaults to ``0x77``. Another address can be ``0x76``.
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   ``OFF``, ``2x``, ``4x``, ``16x``. Defaults to ``OFF``.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``60s``.
+
+
+I²C Configuration variables:
+
+- **address** (*Optional*, int): Manually specify the I²C address of
+  the sensor. Defaults to ``0x77``. Another address can be ``0x76``.
+
+SPI Configuration variables:
+
+- **cs_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The CS pin of the BMP280 sensor.
+
 
 .. figure:: images/bmp280-full.jpg
     :align: center

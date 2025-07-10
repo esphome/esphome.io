@@ -155,13 +155,15 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
 
 ``gree`` **Climate**:
 
-- **model** (*Required*, string): GREE has a few different protocols depending on model. One of these will work for you.
+- **model** (**Required**, string): GREE has a few different protocols depending on model. One of these will work for you.
 
   - ``generic``
   - ``yan``
   - ``yaa``
   - ``yac``
   - ``yac1fb9``
+  - ``yx1ff``
+  - ``yag``
 
 .. code-block:: yaml
 
@@ -248,7 +250,7 @@ These air conditioners support two protocols: Midea and Coolix. Therefore, when 
 
 .. note::
 
-    - While they are identified as separate models here, the ``RAC-PT1411HWRU-C`` and ``RAC-PT1411HWRU-C`` are
+    - While they are identified as separate models here, the ``RAC-PT1411HWRU-C`` and ``RAC-PT1411HWRU-F`` are
       in fact the same physical model/unit. They are separated here only because different IR codes are used
       depending on the desired unit of measurement. This only affects how temperature is displayed on the unit itself.
 
@@ -348,8 +350,8 @@ Additional configuration must be specified for this platform:
     ``daikin_arc417``, ``daikin_arc480``, ``electroluxyal``, ``fuego``, ``fujitsu_awyz``, ``gree``, ``greeyaa``, ``greeyac``, ``greeyan``,
     ``greeyap``, ``greeyt``, ``hisense_aud``, ``hitachi``, ``hyundai``, ``ivt``, ``midea``, ``mitsubishi_fa``, ``mitsubishi_fd``,
     ``mitsubishi_fe``, ``mitsubishi_heavy_fdtc``, ``mitsubishi_heavy_zj``, ``mitsubishi_heavy_zm``, ``mitsubishi_heavy_zmp``, ``mitsubishi_kj``,
-    ``mitsubishi_msc``, ``mitsubishi_msy``, ``mitsubishi_sez``, ``nibe``, ``panasonic_altdke``, ``panasonic_ckp``, ``panasonic_dke``,
-    ``panasonic_jke``, ``panasonic_lke``, ``panasonic_nke``, ``r51m``, ``samsung_aqv``, ``samsung_aqv12msan``, ``samsung_fjm``, ``sharp``,
+    ``mitsubishi_msc``, ``mitsubishi_msy``, ``mitsubishi_sez``, ``nibe``, ``panasonic_altdke``, ``panasonic_ckp``, ``panasonic_dke``, ``panasonic_eke``,
+    ``panasonic_jke``, ``panasonic_lke``, ``panasonic_nke``, ``philco_phs32``, ``r51m``, ``samsung_aqv``, ``samsung_aqv12msan``, ``samsung_fjm``, ``sharp``,
     ``toshiba``, ``toshiba_daiseikai``, ``vaillantvai8``, ``zhjg01``, ``zhlt01``
 - **horizontal_default** (**Required**, string): What to default to when the AC unit's horizontal direction is *not* set to swing. Options are: ``left``, ``mleft``, ``middle``, ``mright``, ``right``, ``auto``
 - **vertical_default** (**Required**, string): What to default to when the AC unit's vertical direction is *not* set to swing. Options are: ``down``, ``mdown``, ``middle``, ``mup``, ``up``, ``auto``

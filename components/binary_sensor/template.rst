@@ -5,12 +5,11 @@ Template Binary Sensor
     :description: Instructions for setting up template binary sensors.
     :image: description.svg
 
-The ``template`` binary sensor platform allows you to define any :ref:`lambda template <config-lambda>`
-and construct a binary sensor out if it. The lambda will run continuously; it isn't possible to specify
-an interval at which the lambda runs.
+The ``template`` binary sensor platform allows you to define a boolean condition and use it to provide a binary sensor.
+The condition may be expressed as a C++ lambda, or as a :ref:`YAML expression <config-condition>`.
+The condition expression will be evaluated continually, on each call to the component's ``loop()`` method, which is typically every 16ms.
 
-For example, below configuration would turn the state of an ultrasonic sensor into
-a binary sensor.
+The example below polls an analog sensor and yields a value dependent on whether the sensor value is above a threshold.
 
 .. code-block:: yaml
 
@@ -31,13 +30,28 @@ Possible return values of the lambda:
 
  - ``return true;`` if the binary sensor should be ON.
  - ``return false;`` if the binary sensor should be OFF.
- - ``return {};`` if the state is not known (use last known state)
+ - ``return {};`` if the state is not known. The last known state will be maintained.
+
+As an alternative to using a lambda you may use ESPHome :ref:`condition expressions <config-condition>`:
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    binary_sensor:
+      - platform: template
+        id: engine_running
+        condition:
+          sensor.in_range:
+            id: engine_rpm
+            above: 300.0
+
 
 Configuration variables:
 ------------------------
 
 -  **lambda** (*Optional*, :ref:`lambda <config-lambda>`):
-   Lambda to be evaluated repeatedly to get the current state of the binary sensor.
+   C++ Lambda to be evaluated repeatedly to get the current state of the binary sensor.
+- **condition** (*Optional*, :ref:`Condition <config-condition>`): The condition to check to determine the value of the binary sensor. ``lambda`` and ``condition`` may not both be present in the configuration.
 -  All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 .. _binary_sensor-template-publish_action:

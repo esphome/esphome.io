@@ -60,7 +60,7 @@ Configuration variables:
   sensor. Defaults to ``60s``. Not applicable in mode 1.
 - **uart_id** (*Optional*, :ref:`config-id`): The ID of the :ref:`UART bus <uart>` you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
-- **model** (*Optional*): Sensor model. Available options: ``jsn_sr04t`` (default) and ``aj_sr04t``.
+- **model** (*Optional*): Sensor model. Available options: ``jsn_sr04t`` (default) and ``aj_sr04m``.
 - All other options from :ref:`Sensor <config-sensor>`.
 
 See Also

@@ -10,8 +10,14 @@ Over-the-Air Updates
 ESPHome supports remotely updating a device "over-the-air" (OTA). Each update mechanism is a *platform* of the base
 ``ota`` component and will have its own configuration variables.
 
-In release 2024.6.0, the ``ota`` component transistioned from a standalone component to a *platform* component. This
+In release 2024.6.0, the ``ota`` component transitioned from a standalone component to a *platform* component. This
 change was made to facilitate the use of multiple update mechanisms, enabling greater flexibility.
+
+Available platforms:
+
+- **esphome**: The default OTA method using ESPHome's native protocol (used by the dashboard and CLI)
+- **http_request**: Pull firmware updates from a remote web server
+- **web_server**: Enable firmware uploads through the device's web interface
 
 .. code-block:: yaml
 

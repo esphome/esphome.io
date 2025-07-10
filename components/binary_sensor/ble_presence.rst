@@ -82,35 +82,30 @@ Setting Up Devices
 ------------------
 
 To set up binary sensors for specific BLE beacons you first have to know which MAC address
-to track. Most devices show this screen in some setting menu. If you don't know the MAC address,
+to track. Most devices show this screen in some settings menu. If you don't know the MAC address,
 however, you can use the ``esp32_ble_tracker`` hub without any binary sensors attached and read through
 the logs to see discovered Bluetooth Low Energy devices.
 
 .. code-block:: yaml
 
-    # Example configuration entry for finding MAC addresses
-    esp32_ble_tracker:
-
-Using the configuration above, first you should see a ``Starting scan...`` debug message at
-boot-up. Then, when a BLE device is discovered, you should see messages like
-``Found device XX:XX:XX:XX:XX:XX`` together with some information about their
-address type and advertised name. If you don't see these messages, your device is unfortunately
-currently not supported.
-
-.. code-block:: yaml
-
     # Example configuration entry for finding
-    # Service UUIDs and iBeacon UUIDs and identifiers
+    # MAC addresses, Service UUIDs, iBeacon UUIDs, and identifiers
     esp32_ble_tracker:
+      on_ble_advertise:
+        - then:
 
     logger:
       level: VERY_VERBOSE
 
-You can increase the :ref:`log level <logger-log_levels>` to ``VERY_VERBOSE`` to review detailed
-data for each discovered BLE device. This will make ESPHome print Service UUIDs, iBeacon UUIDs,
-iBeacon major and minor identifiers, BLE manufacturer data, RSSI and other data useful for
-debugging purposes. Note that this is useful only during set-up and a less verbose log level
-should be specified afterwards.
+Using the configuration above, first, you should see a ``Starting scan...`` debug message at
+boot-up. Then, when a BLE device is discovered, you should see messages like
+``Parse Result:`` together with some information about their MAC address, address type,
+advertised name, Service UUIDs, iBeacon UUIDs, iBeacon major and minor identifiers,
+BLE manufacturer ID and data, RSSI, and other data useful for debugging purposes.
+You can find the official list of manufacturer IDs `here <https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/company_identifiers/company_identifiers.yaml>`__ to help find your device.
+Note that this is useful only during set-up and a less verbose log level
+should be specified afterwards. If you don't see these messages, your device is unfortunately
+currently not supported.
 
 Please note that devices that show a ``RANDOM`` address type in the logs probably use a privacy
 feature called Resolvable Private Addresses to avoid BLE tracking. Since their MAC-address periodically

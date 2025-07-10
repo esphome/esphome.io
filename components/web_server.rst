@@ -67,14 +67,33 @@ Configuration variables:
   `Private Network Access Permission Prompt <https://wicg.github.io/private-network-access/#permission-prompt>`__.
   Defaults to ``true``.
 - **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to ``true``.
-- **ota** (*Optional*, boolean): Turn on or off the OTA feature inside webserver. Strongly not suggested without enabled authentication settings. Defaults to ``true``. Cannot be used with the ``esp-idf`` framework.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access. Defaults to ``false``.
 - **version** (*Optional*, string): ``1``, ``2`` or ``3``. Version 1 displays as a table. Version 2 uses web components and has more functionality. Version 3 uses HA-Styling. Defaults to ``2``.
+- **sorting_groups** (*Optional*, list): Available only on ``version: 3``. A list of group ID's and names to group the entities. See :ref:`Webserver Entity Grouping <config-webserver-grouping>`.
+  
+  - **id** (**Required**, :ref:`config-id`): Manually specify the ID used for the group.
+  - **name** (**Required**, string): A string representing the group name which is displayed as the header of the group
+  - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller ``sorting_weight`` will be displayed first. Defaults to ``50``
 
 To conserve flash size, the CSS and JS files used on the root page to show a simple user
 interface are hosted by esphome.io. If you want to use your own service, use the
 ``css_url`` and ``js_url`` options in your configuration.
+
+.. note::
+
+    **OTA Updates via Web Interface**
+
+    The ``ota`` option has been moved from the ``web_server`` component to its own OTA platform.
+    To enable OTA updates through the web interface, use the new ``web_server`` OTA platform:
+
+    .. code-block:: yaml
+
+        # Enable OTA updates via web interface
+        ota:
+          - platform: web_server
+
+    See :doc:`/components/ota/web_server` for more information.
 
 Example configurations:
 -----------------------
@@ -115,14 +134,12 @@ The following assume copies of the files with local paths - which are config dep
 
 Example ``web_server`` version 1 configuration with CSS and JS included from esphome-docs.
 CSS and JS URL's are set to empty value, so no internet access is needed for this device to show it's web interface.
-Force to turn off OTA function because the missing authentication.
 
 .. code-block:: yaml
 
     web_server:
       port: 80
       version: 1
-      ota: false
       css_include: "../../../esphome-docs/_static/webserver-v1.min.css"
       css_url: ""
       js_include: "../../../esphome-docs/_static/webserver-v1.min.js"
@@ -148,6 +165,68 @@ Copy https://oi.esphome.io/v2/www.js to a V2 folder in your yaml folder.
 
 Version 3 features
 ---------------------------
+
+
+.. _config-webserver-sorting:
+
+Entity sorting
+**************
+
+Version `3` supports the sorting of the entities.
+You can set a ``sorting_weight`` on each entity.
+Smaller numbers will be displayed first, defaults to 50.
+``My Sensor 2`` is displayed before ``My Sensor 1``
+
+Example configuration:
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: template
+        name: "My Sensor 1"
+        web_server:
+          sorting_weight: 10
+      - platform: template
+        name: "My Sensor 2"
+        web_server:
+          sorting_weight: -1
+
+
+.. _config-webserver-grouping:
+
+Entity grouping
+***************
+
+Version `3` of the ``web_server`` allows for grouping of entities in custom groups.
+Groups can be sorted by providing a ``sorting_weight``. Groups with a smaller ``sorting_weight`` will be displayed first.
+If you don't provide a ``web_server_sorting_group`` on the component, the ``entity_category`` will be used as the group.
+
+Example configuration:
+
+.. code-block:: yaml
+
+    web_server:
+      version: 3
+      sorting_groups:
+        - id: sorting_group_time_settings
+          name: "Time Settings"
+          sorting_weight: 10
+        - id: sorting_group_number_settings
+          name: "Number settings"
+          sorting_weight: 20
+          
+    datetime:
+      - platform: template
+        ...
+        web_server:
+          sorting_group_id: sorting_group_time_settings
+
+    number:
+      - platform: template
+      ...
+        web_server:
+          sorting_group_id: sorting_group_number_settings
+
 
 Number in slider mode
 *********************
@@ -195,27 +274,6 @@ Sensor value graph
     :width: 100.0%
 
 By clicking on any sensor it will expand a graph with the historical values for that sensor.
-
-.. _config-webserver-sorting:
-
-Entity sorting
---------------
-
-``web_server`` version 3 supports the sorting of the entitys.
-You can set a ``web_server_sorting_weight`` on each entity.
-Smaller numbers will be displayed first, defaults to 50.
-Example ``sensor`` configuration.
-``My Sensor 2`` is displayed first, then ``My Sensor 1``
-
-.. code-block:: yaml
-
-    sensor:
-      - platform: template
-        name: "My Sensor 1"
-        web_server_sorting_weight: 10
-      - platform: template
-        name: "My Sensor 2"
-        web_server_sorting_weight: -1
 
 See Also
 --------

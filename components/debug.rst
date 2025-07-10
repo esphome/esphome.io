@@ -40,8 +40,10 @@ ESP heap memory (free space, maximum free block size and fragmentation level) an
           name: "Loop Time"
         psram:
           name: "Free PSRAM"
+        cpu_frequency:
+          name: "CPU Frequency"
 
-    # Logger must be at least debug (default)
+    # Logger must be configured
     logger:
       level: debug
 
@@ -89,10 +91,13 @@ Configuration variables:
 
 - **psram** (*Optional*): Reports the free PSRAM in bytes. Only available on ESP32. All options from :ref:`Sensor <config-sensor>`.
 
+- **cpu_frequency** (*Optional*): Reports the CPU frequency in Hz. All options from :ref:`Sensor <config-sensor>`.
+
 See Also
 --------
 
 - :ref:`sensor-filters`
 - :doc:`logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :apiref:`debug/debug_component.h`
 - :ghedit:`Edit`

@@ -21,7 +21,7 @@ ESPHome 2024.8.0 - 21st August 2024
     M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
     LYWSD02MMC, components/sensor/xiaomi_ble.html#lywsd02mmc, xiaomi_mijia_logo.jpg
 
-Light and Versitile Embedded Graphics Library
+Light and Versatile Embedded Graphics Library
 ---------------------------------------------
 
 Or LVGL for short, has been worked on by :ghuser:`clydebarrow` (and multiple other users doing testing and documentation etc)
@@ -33,14 +33,14 @@ some awesome dashboards being made with it.
 Online Image
 ------------
 
-The new :doc:`online_image </components/online_image>` component allows your ESPHome device to download
+:ghuser:`guillempages` created a new :doc:`online_image </components/online_image>` component that allows your ESPHome device to download
 images from the internet while it is running and show them on your display. This can also be combined with the new LVGL
 component to show dynamic images for your dashboard.
 
 Home Assistant Switch & Number
 ------------------------------
 
-New platforms have been aded for ``switch`` and ``number`` to allow importing of state and controlling
+New platforms have been added for ``switch`` and ``number`` to allow importing of state and controlling
 of switches and numbers that exist in Home Assistant (or another device via Home Assistant).
 This greatly simplifies controlling remote entities and will hopefully be extended to other platforms.
 
@@ -49,6 +49,26 @@ Thank you for your support
 
 We would like to thank all Home Assistant Cloud subscribers for their support. It allows `Nabu Casa <https://nabucasa.com/>`__ to
 employ two developers to maintain and further develop the ESPHome project.
+
+Release 2024.8.1 - August 28
+----------------------------
+
+- [lvgl] Bug fixes :esphomepr:`7338` by :ghuser:`clydebarrow`
+- [core] Clean build if the loaded integrations changed :esphomepr:`7344` by :ghuser:`clydebarrow`
+- [lvgl] Fix race condition involving numbers, switches etc. :esphomepr:`7345` by :ghuser:`clydebarrow`
+- [api] Fix sending the ``once`` flag on ha entity subscription :esphomepr:`7357` by :ghuser:`jesserockz`
+
+Release 2024.8.2 - September 3
+------------------------------
+
+- [datetime] Fix templated args :esphomepr:`7368` by :ghuser:`jesserockz`
+- Enable IPv6 when manual IPv4 is enabled :esphomepr:`7381` by :ghuser:`HeMan`
+- [core] Only clean build files with esp-idf :esphomepr:`7388` by :ghuser:`jesserockz`
+
+Release 2024.8.3 - September 3
+------------------------------
+
+- Bump Dockerfile dependencies :esphomepr:`7386` by :ghuser:`jesserockz`
 
 Full list of changes
 --------------------
@@ -79,6 +99,24 @@ Breaking Changes
 ^^^^^^^^^^^^^^^^
 
 - Remove deprecated argument parser :esphomepr:`7151` by :ghuser:`jesserockz` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- remove extra number from pronto :esphomepr:`7263` by :ghuser:`ssieb`
+- [api] Bump noise-c library version :esphomepr:`7288` by :ghuser:`clydebarrow`
+- fix some small rtttl issues :esphomepr:`6817` by :ghuser:`nielsnl68`
+- Fix overflow in ESPColorCorrection object :esphomepr:`7268` by :ghuser:`g-kiss`
+- [validation] Allow ``maybe_simple_value`` to not have default key in complex value :esphomepr:`7294` by :ghuser:`jesserockz`
+- [network] Always allow ``enable_ipv6: false`` :esphomepr:`7291` by :ghuser:`dwmw2`
+- Revert "[validation] Allow ``maybe_simple_value`` to not have default key in complex value" :esphomepr:`7305` by :ghuser:`jesserockz`
+- [lvgl] Bug fixes  :esphomepr:`7300` by :ghuser:`clydebarrow`
+- [speaker] Fix header includes :esphomepr:`7304` by :ghuser:`nielsnl68`
+- [microphone] Fix header includes :esphomepr:`7310` by :ghuser:`jesserockz`
+- Fix RP2040 Neopixel flickering issue :esphomepr:`7307` by :ghuser:`deCodeIt`
+- add the ability to add more idf components to an existing setup :esphomepr:`7302` by :ghuser:`nielsnl68`
+- Fix waveshare 2.13" epaper stride calculation error :esphomepr:`7303` by :ghuser:`serialx`
+- [rtttl] fix STOPPED state :esphomepr:`7323` by :ghuser:`NewoPL`
 
 All changes
 ^^^^^^^^^^^
@@ -127,7 +165,7 @@ All changes
 - LVGL stage 2 :esphomepr:`7129` by :ghuser:`clydebarrow`
 - [pid] Add get_min_integral() and get_max_integral() :esphomepr:`7162` by :ghuser:`FreeBear-nc`
 - [code-quality] Organise bluetooth related imports :esphomepr:`7155` by :ghuser:`jesserockz`
-- http_request watchdog as a component :esphomepr:`7161` by :ghuser:`oarcher` (new-integration)
+- http_request watchdog as a component :esphomepr:`7161` by :ghuser:`oarcher`
 - [touchscreen] Allow binary sensor to have multiple pages in config :esphomepr:`7112` by :ghuser:`jesserockz`
 - [matrix_keypad] Add `pin->setup()` to rows and cols :esphomepr:`7163` by :ghuser:`AAllport`
 - [update] Implement ``update.perform`` action and ``update.is_available`` condition :esphomepr:`7165` by :ghuser:`jesserockz` (new-feature)
@@ -147,7 +185,7 @@ All changes
 - [lvgl] Stage 5 :esphomepr:`7191` by :ghuser:`clydebarrow`
 - socket: socket::set_sockaddr() for IPv4 addresses in IPv6 builds :esphomepr:`7196` by :ghuser:`dwmw2`
 - Adds MQTT component to Alarm Control panel component :esphomepr:`7188` by :ghuser:`heythisisnate`
-- [lvgl] Final stage :esphomepr:`7184` by :ghuser:`clydebarrow` (new-integration)
+- [lvgl] Final stage :esphomepr:`7184` by :ghuser:`clydebarrow`
 - Move ``CONF_BACKGROUND_COLOR`` and ``CONF_FOREGROUND_COLOR`` to const.py :esphomepr:`7202` by :ghuser:`jesserockz`
 - [helpers] Set default flags of ExternalRAMAllocator to ALLOW_FAILURE :esphomepr:`7201` by :ghuser:`jesserockz`
 - Add runtime online image support :esphomepr:`4710` by :ghuser:`guillempages` (new-integration)
@@ -205,7 +243,7 @@ All changes
 - Implement ByteBuffer :esphomepr:`6878` by :ghuser:`clydebarrow`
 - Add min and max brightness parameters for Light dim_relative Action :esphomepr:`6971` by :ghuser:`PaoloTK`
 - [homeassistant] Native switch entity import and control :esphomepr:`7018` by :ghuser:`Links2004` (new-platform)
-- [homeassistant] Native number entity import and control :esphomepr:`6455` by :ghuser:`landonr` (new-integration)
+- [homeassistant] Native number entity import and control :esphomepr:`6455` by :ghuser:`landonr` (new-platform)
 - [lvgl] Rework events to avoid feedback loops :esphomepr:`7262` by :ghuser:`clydebarrow`
 - Add `color_filter_opa` style property :esphomepr:`7276` by :ghuser:`clydebarrow`
 - [code-quality] fix clang-tidy wake_on_lan :esphomepr:`7275` by :ghuser:`tomaszduda23`
@@ -215,7 +253,21 @@ All changes
 - support illuminance for airthings wave plus device :esphomepr:`5203` by :ghuser:`MadMonkey87`
 - [micro_wake_word] Bump ESPMicroSpeechFeatures version to 1.1.0 :esphomepr:`7249` by :ghuser:`kahrendt`
 - Implement the finish() method and action. implement the is_stopped condition :esphomepr:`7255` by :ghuser:`nielsnl68`
-- Correct offset calibration  :esphomepr:`7228` by :ghuser:`descipher` (new-integration)
+- Correct offset calibration  :esphomepr:`7228` by :ghuser:`descipher` (new-platform)
+- remove extra number from pronto :esphomepr:`7263` by :ghuser:`ssieb`
+- [api] Bump noise-c library version :esphomepr:`7288` by :ghuser:`clydebarrow`
+- fix some small rtttl issues :esphomepr:`6817` by :ghuser:`nielsnl68`
+- Fix overflow in ESPColorCorrection object :esphomepr:`7268` by :ghuser:`g-kiss`
+- [validation] Allow ``maybe_simple_value`` to not have default key in complex value :esphomepr:`7294` by :ghuser:`jesserockz`
+- [network] Always allow ``enable_ipv6: false`` :esphomepr:`7291` by :ghuser:`dwmw2`
+- Revert "[validation] Allow ``maybe_simple_value`` to not have default key in complex value" :esphomepr:`7305` by :ghuser:`jesserockz`
+- [lvgl] Bug fixes  :esphomepr:`7300` by :ghuser:`clydebarrow`
+- [speaker] Fix header includes :esphomepr:`7304` by :ghuser:`nielsnl68`
+- [microphone] Fix header includes :esphomepr:`7310` by :ghuser:`jesserockz`
+- Fix RP2040 Neopixel flickering issue :esphomepr:`7307` by :ghuser:`deCodeIt`
+- add the ability to add more idf components to an existing setup :esphomepr:`7302` by :ghuser:`nielsnl68`
+- Fix waveshare 2.13" epaper stride calculation error :esphomepr:`7303` by :ghuser:`serialx`
+- [rtttl] fix STOPPED state :esphomepr:`7323` by :ghuser:`NewoPL`
 
 Past Changelogs
 ---------------

@@ -29,7 +29,7 @@ The family of sensors includes:
 - Proximity Sensor **LTR-659ALS** (with PS gain control)
 
 The sensors are very similar and share the same datasheet. First two have default I²C address ``0x29`` and the rest
-have default I²C address ``0x23``. The sensors are available on breakout boards from a number of vendors, for 
+have default I²C address ``0x23``. The sensors are available on breakout boards from a number of vendors, for
 example `Adafruit`_ or `Pimoroni`_.
 
 Proximity sensors are the same sort of sensors that you find in phones and tablets to disable the screen when you hold
@@ -42,11 +42,11 @@ example is the CoreS3 board from M5Stack that has an LTR-559ALS sensor integrate
 Ambient light sensing
 ---------------------
 
-The sensor platform provides a linear response over a wide dynamic range from 0.01 lux to 64k lux and is well suited 
+The sensor platform provides a linear response over a wide dynamic range from 0.01 lux to 64k lux and is well suited
 to applications under high ambient brightness. There are altogether six gain settings (1X, 2X, 4X, 8X, 48X and 96X)
 available for user to configure. Use higher gain for dimmer areas.
 
-The devices consist of two photodiodes: The *CH0* diode is sensitive to both visible and infrared light and 
+The devices consist of two photodiodes: The *CH0* diode is sensitive to both visible and infrared light and
 the *CH1* diode is sensitive only to infrared light.
 
 .. figure:: images/ltr303-spectral.png
@@ -60,7 +60,7 @@ Ambient light illuminance calculation
 
 Excerpt from the datasheet:
 
-.. code-block:: 
+.. code-block::
 
     RATIO = CH1/(CH0+CH1)
     IF (RATIO < 0.45)
@@ -72,7 +72,7 @@ Excerpt from the datasheet:
     ELSE
         ALS_LUX = 0
     END
-  
+
 
 where:
 
@@ -107,7 +107,7 @@ The proximity sensor has a built-in emitter and detector. The sensor detects ref
 gives a raw count value inversely exponential to the distance. A decrease in the count value means an object is getting
 further away from the sensor, and vice-versa. Neither of the datasheets provides any information on how to convert
 the raw count value to distance. The only way to do it is to test the sensor yourself and select the threshold
-according to your needs and environment. Exact numbers will depend on the type of the object, its color and 
+according to your needs and environment. Exact numbers will depend on the type of the object, its color and
 reflectivity.
 
 
@@ -129,13 +129,13 @@ Example configuration
           then:
             - .... # do something - light up the screen for example
         ps_counts: "Proximity counts"
-        
+
 
 Configuration variables:
 ------------------------
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Default is ``0x29``.
-- **type** (*Optional*, string): The type of the sensor. Valid values are ``ALS_PS`` *(default)* for 
+- **type** (*Optional*, string): The type of the sensor. Valid values are ``ALS_PS`` *(default)* for
   integrated sensors, ``ALS`` for ambient light only or ``PS`` for proximity only devices.
 - **auto_mode** (*Optional*, boolean): Automatic gain and integration time selection. Defaults to True.
 - **gain** (*Optional*, string): The gain the device will use. Higher values are better in low-light conditions.
@@ -143,17 +143,17 @@ Configuration variables:
 - **integration_time** (*Optional*, :ref:`config-time`):
   The amount of time sensors are exposed. Longer means more accurate values.
   Valid values are: ``50ms`` *(default)*, ``100ms``, ``150ms``, ``200ms``, ``250ms``, ``300ms``, ``350ms``, ``400ms``.
-- **glass_attenuation_factor** (*Optional*, float): The attenuation factor of glass if it's behind some glass 
+- **glass_attenuation_factor** (*Optional*, float): The attenuation factor of glass if it's behind some glass
   or plastic facia.  Default is ``1.0`` means ``100%`` transmissivity. ``2`` means ``50%`` transmissivity etc.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval for checking the sensors.
   Defaults to ``60s``.
-- **ps_cooldown** (*Optional*, :ref:`config-time`): The "cooldown" period after the proximity sensor is triggered. 
+- **ps_cooldown** (*Optional*, :ref:`config-time`): The "cooldown" period after the proximity sensor is triggered.
   Helps to avoid multiple calls.  Defaults to ``5s``.
 - **ps_gain** (*Optional*, string): The gain the device will use for proximity sensor. Higher values are better in low-light conditions.
   Valid values are ``16X`` *(default)*, ``32X``, ``64X``. Only for **LTR-659ALS**.
-- **ps_high_threshold** (*Optional*, int): The threshold for the proximity sensor to trigger on object getting closer. 
+- **ps_high_threshold** (*Optional*, int): The threshold for the proximity sensor to trigger on object getting closer.
   Defaults to ``65535``, which implies it will never be triggered.
-- **ps_low_threshold** (*Optional*, int): The threshold for the proximity sensor to trigger on object getting further away. 
+- **ps_low_threshold** (*Optional*, int): The threshold for the proximity sensor to trigger on object getting further away.
   Defaults to ``0``, which implies it will never be triggered.
 - **on_ps_high_threshold** (*Optional*): Actions to perform when the proximity sensor is triggered
   on object getting closer.
@@ -163,9 +163,9 @@ Configuration variables:
 Sensors
 ^^^^^^^
 This component offers five sensors for ALS-equipped devices and one sensor for PS-equipped devices.
-You can configure all or any subset of these sensors. Each configured sensor is reported separately 
+You can configure all or any subset of these sensors. Each configured sensor is reported separately
 on each ``update_interval``. Each is an ESPHome :ref:`sensor <config-sensor>` and may be configured
-accordingly; if you don’t need to configure additional :ref:`sensor <config-sensor>` variables, you
+accordingly; if you don't need to configure additional :ref:`sensor <config-sensor>` variables, you
 may simply use the shorthand syntax for the sensor. For example: ``ambient_light: "Ambient light"``
 
 - **ambient_light** (*Optional*): Illuminance of ambient light, close to human eye spectre, lx.

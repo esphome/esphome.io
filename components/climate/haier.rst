@@ -9,7 +9,7 @@ This is an implementation of the ESPHome component to control HVAC on the base o
 
 There are two versions of the Haier protocol: the older version uses an application called SmartAir2 while the newer version uses an application called hOn. Both protocols are compatible on the transport level but utilize different commands to control appliances.
 
-Older Haier models controlled by the SmartAir2 application are using the KZW-W002 module. This module can’t be reused, and you need to replace it with an ESP or RPI Pico W module. The USB connector on the board doesn’t support the USB protocol. It is a UART port that just uses a USB connector. To connect the ESP board to your AC you can cut a USB type A cable and connect wires to the climate connector.
+Older Haier models controlled by the SmartAir2 application are using the KZW-W002 module. This module can't be reused, and you need to replace it with an ESP or RPI Pico W module. The USB connector on the board doesn't support the USB protocol. It is a UART port that just uses a USB connector. To connect the ESP board to your AC you can cut a USB type A cable and connect wires to the climate connector.
 
 .. list-table:: Haier UART pinout
     :header-rows: 1
@@ -41,7 +41,7 @@ Older Haier models controlled by the SmartAir2 application are using the KZW-W00
 
     KZW-W002 module pinout
 
-Newer Haier models using a module called ESP32-for-Haier. It is an ESP32 single-core board with an ESP32-S0WD chip. In some cases, you can reuse this module and flash it with ESPHome, but some new modules don’t support this. They look the same but have encryption enabled.
+Newer Haier models using a module called ESP32-for-Haier. It is an ESP32 single-core board with an ESP32-S0WD chip. In some cases, you can reuse this module and flash it with ESPHome, but some new modules don't support this. They look the same but have encryption enabled.
 
 **Warning!** The new generation of ESP32-Haier devices has encryption enabled, so they can only be flashed with firmware that is signed with a private key. There is no way to make them work with ESPHome, so if you try to do it, the board will get into a boot loop with the error ``rst:0x10 (RTCWDT_RTC_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)`` The only way to recover this board is to flash it with the original image. So before starting your experiments make a backup image.
 
@@ -53,7 +53,7 @@ Newer Haier models using a module called ESP32-for-Haier. It is an ESP32 single-
 
 Also, you can use any other ESP32, ESP8266, or an RPI pico W board. In this case, you will need to cut the original wire or make a connector yourself (the board has a JST SM04B-GHS-TB connector)
 
-This component requires a :ref:`uart` to be setup.
+This component requires a :ref:`UART bus <uart>` to be setup.
 
 .. code-block:: yaml
 
@@ -65,7 +65,6 @@ This component requires a :ref:`uart` to be setup.
         name: Haier AC
         uart_id: ac_port
         wifi_signal: true
-        beeper: true
         display: true
         visual:
           min_temperature: 16 °C
@@ -85,7 +84,6 @@ This component requires a :ref:`uart` to be setup.
         - BOTH
       supported_presets:
         - AWAY
-        - ECO
         - BOOST
         - SLEEP
       on_alarm_start:
@@ -124,7 +122,7 @@ Configuration variables:
 - **beeper** (*Optional*, boolean): Can be used to disable beeping on commands from AC. Supported only by hOn protocol.
 - **supported_modes** (*Optional*, list): Can be used to disable some of AC modes. Possible values: ``'OFF'``, ``HEAT_COOL``, ``COOL``, ``HEAT``, ``DRY``, ``FAN_ONLY``.
 - **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: ``'OFF'``, ``VERTICAL``, ``HORIZONTAL``, ``BOTH``.
-- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: ``AWAY``, ``BOOST``, ``COMFORT``. Possible values for hOn are: ``AWAY``, ``ECO``, ``BOOST``, ``SLEEP``. ``AWAY`` preset can be enabled only in ``HEAT`` mode, it is disabled by default.
+- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: ``AWAY``, ``BOOST``, ``COMFORT``. Possible values for hOn are: ``AWAY``, ``BOOST``, ``SLEEP``. ``AWAY`` preset can be enabled only in ``HEAT`` mode, it is disabled by default.
 - **on_alarm_start** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC activates a new alarm. See :ref:`haier-on_alarm_start`.
 - **on_alarm_end** (*Optional*, :ref:`Automation <automation>`): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See :ref:`haier-on_alarm_end`.
 - **on_status_message** (*Optional*, :ref:`Automation <automation>`): Automation to perform when status message received from AC. See :ref:`haier-on_status_message`.
@@ -343,6 +341,7 @@ See Also
 - :doc:`Haier Climate Binary Sensors </components/binary_sensor/haier>`
 - :doc:`Haier Climate Text Sensors </components/text_sensor/haier>`
 - :doc:`Haier Climate Buttons </components/button/haier>`
+- :doc:`Haier Climate Switches </components/switch/haier>`
 - :doc:`/components/climate/index`
-- :apiref:`haier/climate/haier.h`
+- :apiref:`haier/climate/haier_base.h`
 - :ghedit:`Edit`
