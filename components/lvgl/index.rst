@@ -937,7 +937,7 @@ The ``mark`` action will save the currently focused widget within the group, and
         - lvgl.widget.focus: previous
 
 ``lvgl.encoder.set_group``
-*********************
+**************************
 
 This :ref:`action <actions-action>` sets the group for an encoder. This is useful for organizing encoders into specific groups for focused input handling.
 
@@ -954,7 +954,7 @@ This :ref:`action <actions-action>` sets the group for an encoder. This is usefu
 
 
 ``lvgl.keypad.set_group``
-*********************
+*************************
 
 This :ref:`action <actions-action>` sets the group for a keypad. This is useful for organizing keypads into specific groups for focused input handling.
 
