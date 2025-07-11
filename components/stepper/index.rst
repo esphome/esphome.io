@@ -86,6 +86,7 @@ Configuration variables:
     The TMC drivers are pinout compatible but insteed of SLEEP PIN they have ENABLE PIN. In this case you need to invert the ``sleep_pin``:
 
     .. code-block:: yaml
+
         stepper:
           - platform: a4988
             # ...
