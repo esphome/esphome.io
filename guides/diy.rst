@@ -100,6 +100,7 @@ Custom Components & Code
 - `Garage Door Opener with position control using a relay and one or two reed sensors <https://github.com/tronikos/esphome-gdo>`__ by :ghuser:`tronikos`
 - `Medisana BS440 (and propably more scales) <https://github.com/bwynants/weegschaal>`__ by `bwynants <https://github.com/bwynants>`__
 - `Novy Pureline Pro extractor hood <https://github.com/bwynants/purelinepro>`__ by `bwynants <https://github.com/bwynants>`__
+- `Digoo DG-R8H and similar nexus433 sensors to MQTT component <https://github.com/FreeBear-nc/esphome-nexus433>`__ by :ghuser:`FreeBear-nc`
 
 Sample Configurations
 ---------------------

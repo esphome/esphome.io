@@ -182,7 +182,7 @@ Which microcontrollers does ESPHome support?
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-bolt"></i></div>
             <div class="feature-text">Others</div>
-            <p>Realtek RTL87xx and Beken BK72xx chips are supported.</p>
+            <p>Realtek RTL87xx and Beken BK72xx and Lightning LN882H chips are supported.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-computer"></i></div>

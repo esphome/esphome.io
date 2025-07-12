@@ -79,8 +79,6 @@ Advanced options:
 - If MQTT enabled, all other options from :ref:`MQTT Component <config-mqtt-component>`.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
-.. _binary_sensor-filters:
-
 
 Actions
 -------
@@ -101,6 +99,7 @@ After the state is invalidated, it will be reported to Home Assistant as ``unkno
 
 The state may also be invalidated by an API call in a lambda - see the API reference linked below.
 
+.. _binary_sensor-filters:
 
 Binary Sensor Filters
 ---------------------
@@ -242,6 +241,13 @@ additional state changes. This filter complements the ``delayed_on_off`` filter 
 the beginning of the delay period.
 When using a lambda call, you should return the delay value in milliseconds.
 **Useful for debouncing binary switches**.
+
+``timeout``
+***********
+
+(**Required**, time, :ref:`templatable <config-templatable>`): If no value is published for the specified
+time period, invalidate the state.
+
 
 Binary Sensor Automation
 ------------------------
