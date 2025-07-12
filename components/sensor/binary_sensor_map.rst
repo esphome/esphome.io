@@ -122,13 +122,21 @@ Configuration variables:
 ------------------------
 
 - **type** (**Required**, string): The sensor type. Should be one of: ``BAYESIAN``, ``GROUP``, or ``SUM``.
-- **channels** (**Required for GROUP or SUM types**): A list of channels that are mapped to certain values.
+
+``GROUP`` / ``SUM`` type
+************************
+
+- **channels** (**Required**): A list of channels that are mapped to certain values.
 
   - **binary_sensor** (**Required**): The id of the :doc:`binary sensor </components/binary_sensor/index>`
     to add as a channel for this sensor.
   - **value** (**Required**): The value this channel should report when its binary sensor is active.
-- **prior** (**Required for BAYESIAN type**, float between 0 and 1): The prior probability of the event.
-- **observations** (**Required for BAYESIAN type**): A list of observations that influence the Bayesian probability of the event.
+
+``BAYESIAN`` type
+*****************
+
+- **prior** (**Required**, float between 0 and 1): The prior probability of the event.
+- **observations** (**Required**): A list of observations that influence the Bayesian probability of the event.
 
   - **binary_sensor** (**Required**): The id of the :doc:`binary sensor </components/binary_sensor/index>`
     to add as an observation.

@@ -57,8 +57,8 @@ Configuration variables:
   - ``W5500`` (SPI)
   - ``OPENETH`` (QEMU, ESP-IDF only)
 
-RMII configuration variables:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``LAN8720`` / ``RTL8201`` / ``DP83848`` / ``IP101`` / ``JL1101`` / ``KSZ8081`` / ``KSZ8081RNA`` type
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - **mdc_pin** (**Required**, :ref:`config-pin`): The MDC pin of the board.
   Usually this is ``GPIO23``.
@@ -82,8 +82,8 @@ RMII configuration variables:
 - **power_pin** (*Optional*, :ref:`Pin Schema <config-pin_schema>`): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
-SPI configuration variables:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``W5500`` type
+^^^^^^^^^^^^^^
 
 - **clk_pin** (**Required**, :ref:`config-pin`): The SPI clock pin.
 - **mosi_pin** (**Required**, :ref:`config-pin`): The SPI MOSI pin.
