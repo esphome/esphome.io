@@ -50,29 +50,10 @@ Configuration variables
   update on wake regardless of ``update_interval``. Defaults to ``60s``.
 - **edges_wakeup** (*Optional*, :ref:`config-time`): After detecting the specified 
   number of pulses while being asleep, the main SoC will be woken up.
-  A number of ``0`` is disables the feature and the main SoC will only awake
+  A number of ``0`` disables the feature and the main SoC will only awake
   after the configured wakeup time.
 - **total** (*Optional*): Report the total number of pulses counted since the last reset.
 - All other options from :ref:`Sensor <config-sensor>`.
-
-.. note::
-
-    Pulse Counter ULP keeps time between reads by counting how many times the
-    ULP program runs. This count is stored in a ``uint16_t``. Accounting for
-    potential time between the last read and the start of deep sleep, the
-    recommended maximum deep sleep duration is
-    ``sleep_duration * 65535 - update_interval``.
-
-    For the default values, this is just over 20 minutes.
-
-    The counting of total pulses is not impacted by this limitation.
-    If the rate sensor is not of interest, longer sleep times can be used,
-    but the rate sensor will report invalid values.
-
-.. note::
-
-    See :doc:`integration sensor </components/sensor/integration>` for summing up pulse counter ULP
-    values over time.
 
 Converting units
 ----------------
@@ -100,7 +81,7 @@ When the total sensor is configured, the pulse_counter also reports the total
 number of pulses measured since the last reset. When used on a power meter,
 this can be used to measure the total consumed energy in kWh since the last reset.
 
-Using the total pulses is less error-prone in case of instable communication.
+Using the total pulses is less error-prone in case of unstable communication.
 Keep in mind that establishing a WiFi connection might take some time to be
 available again after deep sleep.
 
