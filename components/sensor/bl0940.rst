@@ -45,10 +45,10 @@ Configuration variables:
 
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
   to use multiple UART buses.
-- **tuya_mode** (*Optional*, boolean): Whether to use the tuya configuration from initial implementation.
+- **legacy_mode** (*Optional*, boolean): Whether to use the legacy configuration from initial implementation.
   Defaults to ``true`` to prevent breaking change.
-- **read_command** (*Optional*): The byte used for the read commands when communicating with the BL0940. By default, it is set to ``0x58`` or ``0x50`` in ``tuya_mode``.
-- **write_command** (*Optional*): byte used for the write commands when communicating with the BL0940. By default, it is set to ``0xA8`` or ``0xA0`` in ``tuya_mode``.
+- **read_command** (*Optional*): The byte used for the read commands when communicating with the BL0940. By default, it is set to ``0x58`` or ``0x50`` in ``legacy_mode``.
+- **write_command** (*Optional*): byte used for the write commands when communicating with the BL0940. By default, it is set to ``0xA8`` or ``0xA0`` in ``legacy_mode``.
 - **voltage** (*Optional*): The voltage value of the sensor in Volts.
   All options from :ref:`Sensor <config-sensor>`.
 - **current** (*Optional*): The current value of the sensor in Amperes. All options from
@@ -109,7 +109,7 @@ By default all the reference values will be calculated using the above values in
 
     this->energy_reference_ = this->power_reference_ * 3600000 / (1638.4 * 256);
 
-If ``tuya_mode`` is enabled the reference values will be set according to initial implementation.
+If ``legacy_mode`` is enabled the reference values will be set according to initial implementation.
 
 .. code-block:: cpp
 
@@ -241,7 +241,7 @@ Sample full configuration:
       - platform: bl0940
         id: bl0940_id
         uart_id: uart_bus
-        tuya_mode: false
+        legacy_mode: false
         resistor_one: 0.5113 # base voltage calibration
         resistor_shunt: 1.035 # base current calibration
         voltage:
