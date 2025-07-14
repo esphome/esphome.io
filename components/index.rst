@@ -688,6 +688,7 @@ Button Components
     Generic Output Button, components/button/output, upload.svg, dark-invert
     Restart Button, components/button/restart, restart.svg, dark-invert
     Safe Mode Button, components/button/safe_mode, restart-alert.svg, dark-invert
+    Deep_sleep Button, components/button/deep_sleep, power_settings.svg, dark-invert
     Shutdown Button, components/button/shutdown, power_settings.svg, dark-invert
     UART Button, components/button/uart, uart.svg
     Wake-on-LAN, components/button/wake_on_lan, power_settings.svg, dark-invert
@@ -1002,6 +1003,7 @@ Switch Components
     Nextion Switch, components/switch/nextion, nextion.jpg
     Restart Switch, components/switch/restart, restart.svg, dark-invert
     Safe Mode Switch, components/switch/safe_mode, restart-alert.svg, dark-invert
+    Deep_sleep Switch, components/switchdeep_sleep, power_settings.svg, dark-invert
     Shutdown Switch, components/switch/shutdown, power_settings.svg, dark-invert
     Tuya Switch, components/switch/tuya, tuya.png
     UART Switch, components/switch/uart, uart.svg
