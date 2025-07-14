@@ -99,6 +99,9 @@ ESP32 pins and Hardware Details
     * - ESP32-C3
       - GPIO0 - GPIO4
       - GPIO5
+    * - ESP32-C5
+      - GPIO1 - GPIO6
+      - no ``ADC2``
     * - ESP32-C6
       - GPIO0 - GPIO6
       - no ``ADC2``
@@ -115,9 +118,17 @@ ESP32 pins and Hardware Details
 Different ESP32 variants use different ADC calibration methods:
 
 * ESP32 standard & ESP32-S2: Use line-fitting calibration
-* ESP32-C3, ESP32-C6, ESP32-H2 & ESP32-S3: Use curve-fitting calibration
+* ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2 & ESP32-S3: Use curve-fitting calibration
 
 This is handled automatically by the code, but it's worth noting if you're debugging ADC readings or need to understand the calibration process.
+
+.. note::
+
+    ESP32-C5 requires ESP-IDF framework version 5.3.2 or later. Arduino framework is not currently supported for ESP32-C5.
+
+.. warning::
+
+    On ESP32-C5, GPIO2 is a strapping pin used during boot. While it can be used as an ADC input, avoid connecting circuits that might interfere with the boot process.
 
 
 .. _adc-raw:
