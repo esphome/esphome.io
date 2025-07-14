@@ -144,6 +144,17 @@ advanced stuff (see the full API Reference for more info).
       id(my_switch).publish_state(false);
       id(my_switch).publish_state(true);
 
+  .. note::
+
+      Keep in mind that this does not change the actual state of the switch. It only
+      changes the state in the frontend and the internal state. If you want to
+      change the actual state of the switch, you need to call ``turn_on()``, 
+      ``turn_off()`` or ``toggle()``.
+
+      For example, if you are using a :doc:`/components/switch/gpio`, calling ``publish_state()`` will
+      not change the GPIO pin level. To do that, you need to call ``turn_on()``, 
+      ``turn_off()`` or ``toggle()``. The same applies to other switch platforms.
+
 - ``state``: Retrieve the current state of the switch.
 
   .. code-block:: yaml

@@ -31,10 +31,12 @@ For showing images downloaded at runtime, take a look at the :ref:`Online Image 
 .. code-block:: yaml
 
     image:
-      - file: https://esphome.io/_images/logo.png
+      defaults:
         type: rgb565
-        id: esphome_logo
         resize: 200x162
+      images:
+        - file: https://esphome.io/_images/logo.png
+          id: esphome_logo
 
 Configuration variables:
 ------------------------
@@ -44,6 +46,10 @@ Configuration variables:
   - **Local files**: The path (relative to where the .yaml file is) of the image file.
   - **Material Design Icons**: Specify the `Material Design Icon <https://pictogrammers.com/library/mdi/>`_
     id in the format ``mdi:icon-name``, and that icon will automatically be downloaded and added to the configuration.
+  - **Material Design Light Icons**: Specify the `Material Design Light Icon <https://pictogrammers.com/library/mdil/>`_
+    id in the format ``mdil:icon-name``, and that icon will automatically be downloaded and added to the configuration.
+  - **Memory Icons**: Specify the `Memory Icon <https://pictogrammers.com/library/memory/>`_
+    id in the format ``memory:icon-name``, and that icon will automatically be downloaded and added to the configuration.
   - **Remote files**: The URL of the image file.
 
 - **id** (**Required**, :ref:`config-id`): The ID with which you will be able to reference the image later
@@ -65,6 +71,10 @@ Configuration variables:
 
   - ``NONE``: Every pixel converts to its nearest color.
   - ``FLOYDSTEINBERG``: Uses Floyd-Steinberg dither to approximate the original image luminosity levels.
+
+- **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in big endian byte order (MSB first),
+  but you can override this by setting ``byte_order`` to ``little_endian``. Options are ``big_endian`` (default) and ``little_endian``.
+  Not applicable to other image formats.
 
 .. note::
 
@@ -108,6 +118,23 @@ In addition, the default transparency type can be set within a type group by usi
           id: image2
         opaque:
         - file: "image2.png"
+
+For the situation where most or all of your images share common attributes, you can use another schema style to provide default values. In this case
+the ``defaults:`` option will provide fallback values for all images. When using this format the ``images:`` key takes only a list of image definitions.
+
+.. code-block:: yaml
+
+    image:
+      defaults:
+        type: rgb565
+        transparency: opaque
+        resize: 100x100
+      images:
+        - file: "image1.png"
+          id: image1
+        - file: "image2.png"
+          id: image2
+          resize: 200x200  # overrides the default resize
 
 Displaying Images
 -----------------

@@ -11,6 +11,7 @@ Models
 ------
 With this display driver you can control the following displays:
   - GC9A01A
+  - GC9D01N
   - ILI9341
   - ILI9342
   - ILI9481
@@ -80,7 +81,7 @@ All :ref:`graphical display configuration<display-configuration>` options are av
   - ``ILI9341``, ``ILI9342``, ``ILI9486``, ``ILI9488``, ``ILI9488_A`` (alternative gamma configuration for ILI9488)
   - ``ILI9481``, ``ILI9481-18`` (18 bit mode)
   - ``ST7789V``, ``ST7796``, ``ST7735``
-  - ``GC9A01A``, ``CUSTOM``
+  - ``GC9A01A``, ``GC9D01N``, ``CUSTOM``
 
 
 - **dc_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The DC pin.

@@ -18,7 +18,7 @@ Configuration variables:
     - ``read``: Read Input Registers - registers are 16-bit registers used for input, and may only be read. Modbus *Function Code 4 (Read Input Registers)* will be used.
 
 - **address** (**Required**, int): start address of the first register in a range (can be decimal or hexadecimal).
-- **skip_updates** (*Optional*, int): By default all sensors of a modbus_controller are updated together. For data points that don't change very frequently updates can be skipped. A value of 5 would only update this sensor range in every 5th update cycle
+- **skip_updates** (*Optional*, int): By default all sensors of a modbus_controller are updated together. For data points that don't change very frequently updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle
 - **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See :ref:`modbus_register_count` for more details.
 - **response_size** (**Required**): Number of bytes of the response.
 - **raw_encode** (*Optional*, enum): If the response is binary it can't be published directly. Since a text sensor only publishes strings the binary data can be encoded. Defaults to ``ANSI``. Possible encodings are:

@@ -37,12 +37,12 @@ Configuration variables
 -----------------------
 
 -  **sensor_id** (**Required**, :ref:`config-id`): The ID of the source sensor.
--  **threshold** (**Required**, float or mapping): Configures the reference for comparison. Accepts either a shorthand
+-  **threshold** (**Required**, float :ref:`templatable <config-templatable>` or mapping): Configures the reference for comparison. Accepts either a shorthand
    float number that will be used as both upper/lower threshold, or a mapping to define different values for each (to
    use hysteresis).
 
-   -  **upper** (**Required**, float): Upper threshold, that needs to be crossed to transition from ``low`` to ``high`` states.
-   -  **lower** (**Required**, float): Lower threshold, that needs to be crossed to transition from ``high`` to ``low`` states.
+   -  **upper** (**Required**, float :ref:`templatable <config-templatable>`): Upper threshold, that needs to be crossed to transition from ``low`` to ``high`` states.
+   -  **lower** (**Required**, float :ref:`templatable <config-templatable>`): Lower threshold, that needs to be crossed to transition from ``high`` to ``low`` states.
 -  All other options from :ref:`Binary Sensor <config-binary_sensor>`.
 
 

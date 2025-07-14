@@ -1,0 +1,56 @@
+ESP32 Hosted
+==============
+
+.. seo::
+    :description: Instructions for setting up ESP32 hosted in ESPHome.
+    :image: network-wifi.svg
+    :keywords: WiFi, Bluetooth, Hosted, ESP32
+
+ESP32 Hosted (`ESP-Hosted-MCU <https://github.com/espressif/esp-hosted-mcu>`__) is a
+solution that allows you to use ESP32 modules as communication co-processors. This
+solution provides wireless connectivity (Wi-Fi and Bluetooth) to the host module,
+enabling it to communicate with other devices.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    esp32_hosted:
+      variant: ESP32C6
+      reset_pin: GPIO15
+      cmd_pin: GPIO13
+      clk_pin: GPIO12
+      d0_pin: GPIO11
+      d1_pin: GPIO10
+      d2_pin: GPIO9
+      d3_pin: GPIO8
+
+    wifi:
+      ssid: !secret wifi_ssid
+      password: !secret wifi_password
+
+.. _esp32_hosted-configuration_variables:
+
+Configuration variables:
+------------------------
+
+- **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
+  host. One of ``ESP32``, ``ESP32S2``, ``ESP32S3``, ``ESP32C2``, ``ESP32C3`` and ``ESP32C6``.
+- **clk_pin** (*Required*, :ref:`config-pin`): The SDIO clock pin.
+- **cmd_pin** (*Required*, :ref:`config-pin`): The SDIO command pin.
+- **d0_pin** (*Required*, :ref:`config-pin`): The SDIO d0 pin.
+- **d1_pin** (*Required*, :ref:`config-pin`): The SDIO d1 pin.
+- **d2_pin** (*Required*, :ref:`config-pin`): The SDIO d2 pin.
+- **d3_pin** (*Required*, :ref:`config-pin`): The SDIO d3 pin.
+- **slot** (*Optional*, int): The SDIO slot number. Defaults to 1.
+- **reset_pin** (*Required*, :ref:`config-pin`): The reset pin of the co-processor.
+- **active_high** (*Required*, boolean): If enabled, the co-processor is active when reset is
+  high. If disabled, the co-processor is active when reset is low.
+
+See Also
+--------
+
+- :doc:`wifi`
+- :doc:`network`
+- :doc:`ethernet`
+- `ESP-Hosted-MCU <https://github.com/espressif/esp-hosted-mcu>`__ by `Espressif Systems <https://www.espressif.com/>`__
+- :ghedit:`Edit`

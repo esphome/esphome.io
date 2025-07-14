@@ -97,7 +97,7 @@ Climate component
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **address** (*Required*, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
+- **address** (**Required**, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
 - **uponor_smatrix_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the ``uponor_smatrix`` hub component if you want to use multiple hub components on one ESPHome device.
 - All options from :ref:`Climate <config-climate>`.
 
@@ -121,7 +121,7 @@ Sensor component
 Configuration variables:
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-- **address** (*Required*, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
+- **address** (**Required**, int): The 16 bit device address of the thermostat. See :ref:`uponor-gettingstarted` on how to find the address.
 - **uponor_smatrix_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the ``uponor_smatrix`` hub component if you want to use multiple hub components on one ESPHome device.
 - **humidity** (*Optional*): A sensor reading the current humidity the thermostat reports.
   All options from :ref:`Sensor <config-sensor>`.
