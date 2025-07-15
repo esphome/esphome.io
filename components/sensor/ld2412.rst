@@ -12,8 +12,10 @@ Component/Hub
 The ``ld2412`` sensor platform allows you to use HI-LINK LD2412 motion and presence sensors with ESPHome.
 
 
-The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work, ``parity`` and ``stop_bits`` **must be** respectively ``NONE`` and ``1``.
-Use of hardware UART pins is highly recommended, in order to support the out-of-the-box 115200 baud rate of the LD2412 sensor.
+The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work; ``parity`` and
+``stop_bits`` **must be** respectively ``NONE`` and ``1``.
+
+Use of a hardware UART is highly recommended as it best supports the default 115200 baud rate of the sensor module.
 
 .. figure:: images/ld2412.png
     :align: center
@@ -31,15 +33,15 @@ Use of hardware UART pins is highly recommended, in order to support the out-of-
 Configuration variables:
 ************************
 
-- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>`, which is necessary if you have multiple UARTs defined in your configuration.
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>`, which is
+  necessary if you have multiple UARTs defined in your configuration.
 - **throttle** (*Optional*, int): Time in milliseconds to control the rate of data updates. Defaults to ``1000ms``.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this :doc:`ld2412` component.
 
 Binary Sensor
 -------------
 
-The ``ld2412`` binary sensor allows you to use your :doc:`ld2412` to perform different
-measurements.
+The ``ld2412`` binary sensor allows you to use your :doc:`ld2412` to perform different measurements.
 
 .. code-block:: yaml
 
@@ -53,8 +55,6 @@ measurements.
           name: Still Target
         dynamic_background_correction_status:
           name: Dynamic Background Correction Status
-        out_pin_presence_status:
-          name: Out Pin Presence Status
 
 
 Configuration variables:
@@ -70,15 +70,13 @@ Configuration variables:
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
 - **dynamic_background_correction_status** (*Optional*): True while a the dynamic background correction is in progress.
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
-- **out_pin_presence_status** (*Optional*): True if a presence is causing the output pin to be triggered.
-  All options from :ref:`Binary Sensor <config-binary_sensor>`.
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when using multiple components.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when
+  using multiple components.
 
 Sensor
 ------
 
-The ``ld2412`` sensor allows you to use your :doc:`ld2412` to perform different
-measurements.
+The ``ld2412`` sensor allows you to use your :doc:`ld2412` to perform different measurements.
 
 .. code-block:: yaml
 
@@ -172,31 +170,30 @@ measurements.
 Configuration variables:
 ************************
 
-- **light** (*Optional*, int): When in :ref:`engineering mode<ld2412-engineering-mode>`, indicates the light sensitivity, otherwise ``unknown``.
-  Value between ``0`` and ``255`` inclusive. Note that this is an arbitrary unit and does not correspond to any particular unit of measurement for intensity.
-  All options from :ref:`Sensor <config-sensor>`.
-- **moving_distance** (*Optional*, int): Distance in cm of detected moving target.
-  All options from :ref:`Sensor <config-sensor>`.
-- **still_distance** (*Optional*, int): Distance in cm of detected still target.
-  All options from :ref:`Sensor <config-sensor>`.
-- **moving_energy** (*Optional*, int): Energy for moving target.
-  Value between ``0`` and ``100`` inclusive.
-  All options from :ref:`Sensor <config-sensor>`.
-- **still_energy** (*Optional*, int): Energy for still target.
-  Value between ``0`` and ``100`` inclusive.
-  All options from :ref:`Sensor <config-sensor>`.
-- **detection_distance** (*Optional*, int): Distance in cm of target.
-  All options from :ref:`Sensor <config-sensor>`.
-- **gate_X** (*Optional*): Energies for the Xth gate (X => 0 to 13).
+- **light** (*Optional*, int): When in :ref:`engineering mode<ld2412-engineering-mode>`, indicates the light
+  sensitivity, otherwise indicates ``unknown``. Value between ``0`` and ``255`` inclusive. Note that this is an
+  arbitrary unit and does not correspond to any particular unit of measurement for intensity. All options from
+  :ref:`Sensor <config-sensor>`.
+- **moving_distance** (*Optional*, int): Distance in cm of detected moving target. All options from
+  :ref:`Sensor <config-sensor>`.
+- **still_distance** (*Optional*, int): Distance in cm of detected still target. All options from
+  :ref:`Sensor <config-sensor>`.
+- **moving_energy** (*Optional*, int): Energy for moving target. Value between ``0`` and ``100`` inclusive. All options
+  from :ref:`Sensor <config-sensor>`.
+- **still_energy** (*Optional*, int): Energy for still target. Value between ``0`` and ``100`` inclusive. All options
+  from :ref:`Sensor <config-sensor>`.
+- **detection_distance** (*Optional*, int): Distance in cm of target. All options from :ref:`Sensor <config-sensor>`.
+- **gate_X** (*Optional*): Energy values for gate X, where X is in the range of 0 to 13.
 
-    - **move_energy** (*Optional*, int): When in :ref:`engineering mode<ld2412-engineering-mode>`, the move energy of the gate, otherwise ``unknown``.
-      Value between ``0`` and ``100`` inclusive.
-      All options from :ref:`Sensor <config-sensor>`.
-    - **still_energy** (*Optional*, int): When in :ref:`engineering mode<ld2412-engineering-mode>`, the still energy of the gate, otherwise ``unknown``.
-      Value between ``0`` and ``100`` inclusive.
-      All options from :ref:`Sensor <config-sensor>`.
+    - **move_energy** (*Optional*, int): When in :ref:`engineering mode<ld2412-engineering-mode>`, the move energy of
+      the gate, otherwise indicates ``unknown``. Value between ``0`` and ``100`` inclusive. All options from
+      :ref:`Sensor <config-sensor>`.
+    - **still_energy** (*Optional*, int): When in :ref:`engineering mode<ld2412-engineering-mode>`, the still energy of
+      the gate, otherwise indicates ``unknown``. Value between ``0`` and ``100`` inclusive. All options from
+      :ref:`Sensor <config-sensor>`.
 
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when using multiple components.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when
+  using multiple components.
 
 Switch
 ------
@@ -217,11 +214,11 @@ The ``ld2412`` switch allows you to control your :doc:`ld2412`.
 Configuration variables:
 ************************
 
-- **bluetooth** (*Optional*): Turn on/off the bluetooth adapter. Defaults to ``true``.
-  All options from :ref:`Switch <config-switch>`.
-- **engineering_mode** Turn on/off the engineering mode.
-  All options from :ref:`Switch <config-switch>`.
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when using multiple components.
+- **bluetooth** (*Optional*): Turn on/off the bluetooth adapter. Defaults to ``true``. All options from
+  :ref:`Switch <config-switch>`.
+- **engineering_mode** Turn on/off the engineering mode. All options from :ref:`Switch <config-switch>`.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when
+  using multiple components.
 
 .. _ld2412-number:
 
@@ -318,29 +315,25 @@ The ``ld2412`` number allows you to control the configuration of your :doc:`ld24
 Configuration variables:
 ************************
 
-- **timeout** (*Optional*, int): Time in seconds during which presence state will stay present
-  after leaving. Defaults to ``5s``
-  All options from :ref:`Number <config-number>`.
-- **min_distance_gate** (*Optional*, int): Maximum distance gate for movement detection.
-  Value between ``1`` and ``12`` inclusive. Defaults to ``1``.
-  All options from :ref:`Number <config-number>`.
-- **max_distance_gate** (*Optional*, int): Maximum distance gate for still detection.
-  Value between ``2`` and ``13`` inclusive. Defaults to ``13``.
-  All options from :ref:`Number <config-number>`.
-- **light_threshold** (*Optional*, int): Threshold for the light to activate the OUT pin of the sensor.
-  All options from :ref:`Number <config-number>`.
-- **gate_X** (*Optional*): Thresholds for the Xth gate (X => 0 to 8).
+- **timeout** (*Optional*, int): Time in seconds for which the presence state will remain after presence is no longer
+  detected. Defaults to ``5s``. All options from :ref:`Number <config-number>`.
+- **min_distance_gate** (*Optional*, int): Maximum distance gate for movement detection. Value between ``1`` and ``12``
+  inclusive. Defaults to ``1``. All options from :ref:`Number <config-number>`.
+- **max_distance_gate** (*Optional*, int): Maximum distance gate for still detection. Value between ``2`` and ``13``
+  inclusive. Defaults to ``13``. All options from :ref:`Number <config-number>`.
+- **light_threshold** (*Optional*, int): Threshold for the light to activate the OUT pin of the sensor. All options
+  from :ref:`Number <config-number>`.
+- **gate_X** (*Optional*): Threshold values for gate X, where X is in the range of 0 to 13.
 
-    - **move_threshold** (**Required**, int): Threshold for the gate for motion detection.
-      Above this level for the considered gate (distance), movement detection will be triggered.
-      Value between ``0`` and ``100`` inclusive. See default values below.
-      All options from :ref:`Number <config-number>`.
-    - **still_threshold** (**Required**, int): Threshold for the gate for still detection.
-      Above this level for the considered gate (distance), still detection will be triggered.
-      Value between ``0`` and ``100`` inclusive. See default values below.
-      All options from :ref:`Number <config-number>`.
+    - **move_threshold** (**Required**, int): Threshold for the gate for motion detection. For the respective gate, a
+      value above this level will result in detection of movement. Value between ``0`` and ``100`` inclusive. See
+      default values below. All options from :ref:`Number <config-number>`.
+    - **still_threshold** (**Required**, int): Threshold for the gate for still detection. For the respective gate, a
+      value below this level will result in detection of stillness. Value between ``0`` and ``100`` inclusive. See
+      default values below. All options from :ref:`Number <config-number>`.
 
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412`. Required when using multiple components.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412`. Required when using
+  multiple components.
 
 Button
 ------
@@ -365,13 +358,13 @@ Configuration variables:
 
 - **factory_reset** (*Optional*): This command is used to restore all configuration values to their original values.
   All options from :ref:`Button <config-button>`.
-- **restart** (*Optional*): Restart the device.
-  All options from :ref:`Button <config-button>`.
-- **query_params** (*Optional*): Refresh all sensors values of the device.
-  All options from :ref:`Button <config-button>`.
-- **start_dynamic_background_correction** (*Optional*): Start the Dynamic Background Correction
-  All options from :ref:`Button <config-button>`.
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when using multiple components.
+- **restart** (*Optional*): Restart the device. All options from :ref:`Button <config-button>`.
+- **query_params** (*Optional*): Refresh all sensors values of the device. All options from
+  :ref:`Button <config-button>`.
+- **start_dynamic_background_correction** (*Optional*): Start the Dynamic Background Correction All options from
+  :ref:`Button <config-button>`.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when
+  using multiple components.
 
 Text Sensor
 -----------
@@ -390,11 +383,11 @@ The ``ld2412`` text sensor allows you to get information about your :doc:`ld2412
 Configuration variables:
 ************************
 
-- **version** (*Optional*): The firmware version.
-  All options from :ref:`Text Sensor <config-text_sensor>`.
-- **mac_address** (*Optional*): The bluetooth mac address. Will be set to ``unknown`` when bluetooth is off.
-  All options from :ref:`Text Sensor <config-text_sensor>`.
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when using multiple components.
+- **version** (*Optional*): The firmware version. All options from :ref:`Text Sensor <config-text_sensor>`.
+- **mac_address** (*Optional*): The bluetooth mac address. Will be set to ``unknown`` when bluetooth is off. All
+  options from :ref:`Text Sensor <config-text_sensor>`.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when
+  using multiple components.
 
 Select
 ------
@@ -419,20 +412,24 @@ The ``ld2412`` select allows you to control your :doc:`ld2412`.
 Configuration variables:
 ************************
 
-- **distance_resolution** (*Optional*): Control the gates distance resolution. Can be ``0.75m``, ``0.5m`` or ``0.2m``. Defaults to ``0.75m``.
-  All options from :ref:`Select <config-select>`.
-- **baud_rate** (*Optional*): Alloes changing the baud rate of the LD2412's serial port. Defaults to ``115200``.
-  Once changed, normally all sensors will stop working until a fresh install with an updated :ref:`UART Component <uart>` configuration.
-  All options from :ref:`Select <config-select>`.
-- **out_pin_level** (*Optional*): Allows selection of the LD2412's OUT pin behavior when the sensor detects presence. Can be ``low`` or ``high``. Defaults to ``low``.
-  All options from :ref:`Select <config-select>`.
-- **light_function** (*Optional*): Allows selection of how the LD2412's OUT pin will react to the light level. Can be ``off``, `below`, ``above``. Note that this works in conjunction with presence detection. See the reference manual for details.
-- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when using multiple components.
+- **distance_resolution** (*Optional*): Control the gates distance resolution. Can be ``0.75m``, ``0.5m`` or ``0.2m``.
+  Defaults to ``0.75m``. All options from :ref:`Select <config-select>`.
+- **baud_rate** (*Optional*): Allows changing the baud rate of the LD2412's serial port. Defaults to ``115200``. Once
+  changed, sensors will stop working until the :ref:`UART Component <uart>` is updated with the new baud rate in your
+  device's configuration. All options from :ref:`Select <config-select>`.
+- **out_pin_level** (*Optional*): Allows selection of the LD2412's OUT pin behavior when the sensor detects presence.
+  Can be ``low`` or ``high``. Defaults to ``low``. All options from :ref:`Select <config-select>`.
+- **light_function** (*Optional*): Allows selection of how the LD2412's OUT pin will react to the light level. Can be
+  ``off``, ``below`` or ``above``. Note that this works in conjunction with presence detection. See the reference
+  manual for details.
+- **ld2412_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2412` component. Required when
+  using multiple components.
 
 OUT pin
 -------
 
-The LD2412's ``OUT`` pin provides a simple hardware mechanism which reports whether the sensor detects presence (and light) or not. If you wish, you can set up a :ref:`GPIO Binary Sensor <gpio-binary-sensor>`:
+The LD2412's ``OUT`` pin provides a simple hardware mechanism which reports whether the sensor detects presence (and
+light) or not. If you wish, you can set up a :ref:`GPIO Binary Sensor <gpio-binary-sensor>`:
 
 .. code-block:: yaml
 
@@ -453,7 +450,8 @@ To calibrate your sensor, perform the following:
 3. Change the :ref:`thresholds<ld2412-number>` and repeat step 2 until you are satisfied.
 4. Disable :ref:`engineering mode<ld2412-engineering-mode>`.
 
-As an alternative, you can simply leave the room, turn on the "Dynamic background correction" and let it calibrate itself.
+As an alternative, you can simply leave the room, turn on the "Dynamic background correction" and let it calibrate
+itself.
 
 See Also
 --------
