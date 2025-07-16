@@ -117,7 +117,7 @@ ESP32 pins and Hardware Details
 
 Different ESP32 variants use different ADC calibration methods:
 
-* ESP32 standard & ESP32-S2: Use line-fitting calibration
+* Original ESP32 (non-variant) & ESP32-S2: Use line-fitting calibration
 * ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2 & ESP32-S3: Use curve-fitting calibration
 
 This is handled automatically by the code, but it's worth noting if you're debugging ADC readings or need to understand the calibration process.
