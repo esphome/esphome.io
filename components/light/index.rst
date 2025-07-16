@@ -91,7 +91,7 @@ All light configuration schemas inherit these options.
 - **entity_category** (*Optional*, string): The category of the entity. See `this list
   <https://developers.home-assistant.io/docs/core/entity/#generic-properties>`__ for a list of available options. Set
   to ``""`` to remove the default entity category.
-- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
+- **device_id** (*Optional*, string): Identifier of the sub-device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
 - If MQTT enabled, all other options from :ref:`MQTT Component <config-mqtt-component>`.
 - If Webserver enabled and :ref:`version 3 <config-webserver-version-3-options>` is selected, all other options from
   :doc:`/components/web_server`.
