@@ -79,10 +79,10 @@ There are only two settings for this mode, ``micro_motion_enable switch`` and ``
         led_enable:
           name: Enable LED
 
-The C4001 sensor maintains settings in EEPROM. When powered on these settings are loaded from EEPROM and made operational. To change the configuration of the sensor dial in the ``number`` 
-settings you need and hit the ``config_save`` button. Once a setting is changed but not saved to EEPROM the ``config_changed`` update sensor will change to ``Update Available```
+The C4001 sensor maintains settings in flash. When powered on these settings are loaded from flash and made operational. To change the configuration of the sensor dial in the ``number`` 
+settings you need and hit the ``config_save`` button. Once a setting is changed but not saved to flash the ``config_changed`` update sensor will change to ``Update Available```
 
-More information on the C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>`__.
+The C4001 (SEN0609) sensor has a `wiki <https://www.dfrobot.com/product-2793.html>`__ and so does the C4001 (SEN0610) sensor `here <https://www.dfrobot.com/product-2795.html>`__.
 
 .. _dfrobot_c4001-component:
 
@@ -115,6 +115,7 @@ Binary Sensor
 
     binary_sensor:
       - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
         config_changed:
           name: Config Changed
         occupancy:
@@ -138,6 +139,7 @@ Button
 
     button:
       - platform: dfrobot_c4001
+        dfrobot_c4001_id: mmwave_sensor
         config_save:
           name: Config Save
         restart:
@@ -154,7 +156,7 @@ Configuration variables:
 
 .. warning::
 
-    Each change to the configuration of the mmWave radar triggers a write to its internal EEPROM.
+    Each change to the configuration of the mmWave radar triggers a write to its internal flash.
     Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
     Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
 
@@ -189,29 +191,29 @@ Configuration variables:
 ************************
 
 - **min_range** (*Optional*): This is the minimum detection range. Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The manual recommends not changing this value. 
-  The ```config_save``` button must be clicked to save the sensor configuration to EEPROM and make operational. Available only in ``PRESENCE`` mode. 
+  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available in all modes. 
   All Options from :ref:`Number <config-number>`.
-- **max_range** (*Optional*): This is the maximum detection range. Default is 6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. 
-  Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
+- **max_range** (*Optional*): This is the maximum detection range. Default is 6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
+  Available in all modes. All Options from :ref:`Number <config-number>`.
 - **trigger_range** (*Optional*): Sets the maximum range at which occupancy can switch to present. The range between max detection range and trigger detection range can NOT cause occupancy to switch to present.
-  Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. Available only in ``PRESENCE`` mode. 
+  Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
   All Options from :ref:`Number <config-number>`.
 - **hold_sensitivity** (*Optional*): The number represents the ease in which the sensor switches to the present state when someone enters the sensing range of the sensor. 
-  Default is 7 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. 
+  Default is 7 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
   Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **trigger_sensitivity** (*Optional*): This number represents ease of continued presence detection after the sensor switched to the present state. 
-  Default is 5 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational.
+  Default is 5 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational.
   Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **on_latency** (*Optional*): This time value is how long presence is detected before switching to the present state. Default is 0.050 (seconds) with a range of 0.0 to 100.0. 
-  The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. Available only in ``PRESENCE`` mode. 
+  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
   All Options from :ref:`Number <config-number>`.
 - **off_latency** (*Optional*): This time value is how long the after the sensor no longer detects presence before switching to the not present state.
-  Default is 15 (seconds) with a range of 0 to 1500. The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. 
+  Default is 15 (seconds) with a range of 0 to 1500. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
   Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **inhibit_time** (*Optional*): The dead-time after switching to the not present state before presence can be detected again. Default is 1 (seconds) with a range of 0.1 to 255.0. 
-  The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
+  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
 - **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is required to trigger the sensor to switch to target tracked state. 
-  Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to EEPROM and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Number <config-number>`.
+  Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Number <config-number>`.
 
 .. _dfrobot_c4001-sensor:
 
@@ -228,6 +230,8 @@ Sensor
         target_speed:
           name: Target Speed
         target_energy:
+          name: Target Energy
+
 
 Configuration variables:
 ************************
@@ -257,10 +261,10 @@ Switch
 Configuration variables:
 ************************
 
-- **led_enable** (*Optional*): The green LED will flash when the sensor has been started. You can turn if off with this switch. The blue LED is also controlled on the SEN0610 but seems to say on with the SEN0609.
-  The ``config_save`` button must be clicked to save the sensor configuration to EEPROM and make operational. 
+- **led_enable** (*Optional*): The green LED will flash when the sensor is running. You can turn if off with this switch. The blue LED is also controlled on the SEN0610 but seems to say on with the SEN0609.
+  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
   All Options from :ref:`Switch <config-switch>`.
-- **micro_motion_enable** (*Optional*): Turns on micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
+- **micro_motion_enable** (*Optional*): Turns on/off micro motion mode. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Switch <config-switch>`.
 
 .. _dfrobot_c4001-text_sensor:
 
@@ -314,10 +318,10 @@ Configuration variables:
 
 .. warning::
 
-    Each factory reset of the mmWave radar triggers a write to its internal EEPROM.
+    Each factory reset of the mmWave radar triggers a write to its internal flash.
     Write cycles to this memory are limited, so avoid the practice of resetting frequently.
 
-``dfrobot_c4001.factory_reset`` Action
+``dfrobot_c4001.restart`` Action
 **************************************
 
 Execute a restart of the module. All configuration values will remain as configured. 
