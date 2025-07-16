@@ -59,6 +59,9 @@ Configuration variables
   - ``RGB565``: Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel
   - ``RGB``: Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
 - **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are ``opaque`` (default), ``chroma_key`` and ``alpha_channel``. See the discussion on transparency in the  :ref:`image component <display-image>`.
+- **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in big endian byte order (MSB first),
+  but you can override this by setting ``byte_order`` to ``little_endian``. Options are ``big_endian`` (default) and ``little_endian``.
+  Not applicable to other image formats.
 - **update_interval** (*Optional*, int): Redownload the image when the specified time has elapsed. Defaults to ``never`` (i.e. the update component action needs to be called manually).
 
 Advanced options:

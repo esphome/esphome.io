@@ -97,6 +97,7 @@ Configuration variables:
       ON→OFF transitions must be preserved. However, this will increase network traffic and may impact
       WiFi performance with many rapidly-changing sensors. Only use this setting when necessary.
 
+- **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ ``CustomAPIDevice`` class. Only needed when external components register their own services via the native API. Defaults to ``false``.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
