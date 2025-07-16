@@ -150,9 +150,9 @@ Button
 Configuration variables:
 ************************
 
-- **config_save** (*Optional*): When you click this button the current configuration will be saved. All Options from :ref:`Button <config-button>`.
-- **restart** (*Optional*): When you click this button the C4001 module with be restarted. All Options from :ref:`Button <config-button>`.
-- **factory_reset** (*Optional*): When you click this button the C4001 module with be reset to factory state. All changed settings will be lost. All Options from :ref:`Button <config-button>`.
+- **config_save** (*Optional*): Clicking this button sends the new settings to the C4001 module, saves them to flash, and restarts the module with the updated configuration. All Options from :ref:`Button <config-button>`.
+- **restart** (*Optional*): When this button is clicked, the C4001 module will be restarted with the settings in flash applied. Please note that any unsaved changes will be discarded. All Options from :ref:`Button <config-button>`.
+- **factory_reset** (*Optional*): This button will restore the C4001 module to its factory settings. All Options from :ref:`Button <config-button>`.
 
 .. warning::
 
