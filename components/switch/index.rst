@@ -65,7 +65,7 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
-- **device_id** (Optional, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
+- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
 - **device_class** (*Optional*, string): The device class for the switch.
   See https://www.home-assistant.io/integrations/switch/#device-class
   for a list of available options.

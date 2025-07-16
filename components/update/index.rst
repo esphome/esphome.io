@@ -35,7 +35,7 @@ Configuration variables:
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to ``false``.
 - **entity_category** (*Optional*, string): The category of the update entity. See
   https://developers.home-assistant.io/docs/core/entity/#generic-properties for a list of available options.
-- **device_id** (Optional, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
+- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
 - **icon** (*Optional*, icon): The icon to use for the update entity in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Specifying an ``id`` without a ``name`` will
