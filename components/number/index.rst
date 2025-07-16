@@ -49,6 +49,7 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
+- **device_id** (Optional, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
   of measurement for the number.
 - **mode** (*Optional*, string): Defines how the number should be displayed in the frontend.

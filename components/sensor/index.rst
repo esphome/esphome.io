@@ -81,6 +81,7 @@ Configuration variables:
   See https://developers.home-assistant.io/docs/core/entity/#generic-properties
   for a list of available options.
   Set to ``""`` to remove the default entity category.
+- **device_id** (Optional, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry in :ref:`esphome.devices <esphome-devices>`. If omitted, the entity remains attached to the main ESP device.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See :ref:`Webserver Version 3 <config-webserver-version-3-options>`.
 
 Automations:
