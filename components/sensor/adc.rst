@@ -122,9 +122,6 @@ Different ESP32 variants use different ADC calibration methods:
 
 This is handled automatically by the code, but it's worth noting if you're debugging ADC readings or need to understand the calibration process.
 
-.. note::
-
-    ESP32-C5 requires ESP-IDF framework version 5.3.2 or later. Arduino framework is not currently supported for ESP32-C5.
 
 .. warning::
 
