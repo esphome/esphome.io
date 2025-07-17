@@ -21,7 +21,7 @@ If you are adding a new component to ESPHome and you want to use the black and w
 you can comment on this pull request with the following where the component name is written in upper case and with underscores (e.g. `COMPONENT_NAME`):
 
 ```
-@esphomebot generate image <COMPONENT_NAME>
+@esphomebot generate image COMPONENT_NAME
 ```
 
 The workflow will comment back with a link to download the svg image inside a zip file. You can then copy that svg into the `images` folder and use it
