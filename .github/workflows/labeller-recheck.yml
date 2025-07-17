@@ -19,7 +19,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log('Labeller recheck triggered for PR #' + context.issue.number);
+            console.log('Labeller recheck triggered for PR #' + context.payload.pull_request.number);
 
             // Trigger the auto-label workflow
             await github.rest.actions.createWorkflowDispatch({
@@ -28,6 +28,6 @@ jobs:
               workflow_id: 'auto-label-pr.yml',
               ref: context.payload.pull_request.base.ref,
               inputs: {
-                pr_number: context.issue.number.toString()
+                pr_number: context.payload.pull_request.number
               }
             });
