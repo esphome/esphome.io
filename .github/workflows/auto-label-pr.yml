@@ -10,6 +10,9 @@ permissions:
   pull-requests: write
   contents: read
 
+env:
+  BOT_NAME: "esphome[bot]"
+
 jobs:
   label:
     runs-on: ubuntu-latest
@@ -161,8 +164,6 @@ jobs:
               });
             } else {
               // Check if we should dismiss any existing review from this bot
-              const currentUserId = await github.rest.users.getAuthenticated().then(response => response.data.id);
-
               const { data: reviews } = await github.rest.pulls.listReviews({
                 owner,
                 repo,
@@ -172,7 +173,7 @@ jobs:
               // Find the most recent review from this bot that requested changes for wrong base branch
               const botReview = reviews
                 .filter(review =>
-                  review.user.id === currentUserId &&
+                  review.user.login === '${{ env.BOT_NAME }}' &&
                   review.state === 'CHANGES_REQUESTED' &&
                   review.body && review.body.includes('target your PR to the `next` branch')
                 )
