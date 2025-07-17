@@ -42,7 +42,7 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
             const pr_number = github.event_name === 'workflow_dispatch'
-              ? context.payload.inputs.pr_number
+              ? ${{ github.event.inputs.pr_number }}
               : context.issue.number;
 
             console.log('Processing PR #' + pr_number);
