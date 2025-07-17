@@ -15,7 +15,7 @@ enabling it to communicate with other devices.
 
     # Example configuration entry
     esp32_hosted:
-      variant: RELPACE
+      variant: ESP32C6
       reset_pin: GPIOXX
       cmd_pin: GPIOXX
       clk_pin: GPIOXX
