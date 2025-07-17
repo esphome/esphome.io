@@ -74,7 +74,7 @@ jobs:
 
             // Strategy: Branch-based labeling
             let baseRef, prBody;
-            if (process.env.PR_NUMBER !== context.issue.number.toString()) {
+            if (context.eventName === 'workflow_dispatch') {
               // Get PR details when called via workflow_dispatch
               const { data: pr } = await github.rest.pulls.get({
                 owner,
