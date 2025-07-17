@@ -12,3 +12,5 @@
 For issues, please go to [the issue tracker](https://github.com/esphome/esphome/issues).
 
 For feature requests, please see [feature requests](https://github.com/orgs/esphome/discussions).
+
+Test
