@@ -15,7 +15,8 @@
 
   - [ ] Link added in `/components/index.rst` when creating new documents for new components or cookbook.
 
-## New Component Images
+<details>
+<summary><strong>New Component Images</strong></summary>
 
 If you are adding a new component to ESPHome, you can automatically generate a standardized black and white component name image for the documentation.
 
@@ -37,3 +38,5 @@ If you are adding a new component to ESPHome, you can automatically generate a s
 ```
 @esphomebot generate image DHT22
 ```
+
+</details>
