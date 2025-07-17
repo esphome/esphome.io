@@ -4,7 +4,14 @@ on:
   # Runs only on pull_request_target due to having access to a App token.
   # This means PRs from forks will not be able to alter this workflow to get the tokens
   pull_request_target:
-    types: [labeled, opened, reopened, synchronize, edited]
+    types: [opened, reopened, synchronize, edited]
+  # Allow manual triggering for recheck functionality
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Pull Request number to process'
+        required: true
+        type: number
 
 permissions:
   pull-requests: write
@@ -34,7 +41,11 @@ jobs:
           github-token: ${{ steps.generate-token.outputs.token }}
           script: |
             const { owner, repo } = context.repo;
-            const pr_number = context.issue.number;
+            const pr_number = github.event_name === 'workflow_dispatch'
+              ? context.payload.inputs.pr_number
+              : context.issue.number;
+
+            console.log('Processing PR #' + pr_number);
 
             // Get current labels
             const { data: currentLabelsData } = await github.rest.issues.listLabelsOnIssue({
@@ -62,7 +73,22 @@ jobs:
             const labels = new Set();
 
             // Strategy: Branch-based labeling
-            const baseRef = context.payload.pull_request.base.ref;
+            let baseRef, prBody;
+            if (github.event_name === 'workflow_dispatch') {
+              // Get PR details when called via workflow_dispatch
+              const { data: pr } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pr_number
+              });
+              baseRef = pr.base.ref;
+              prBody = pr.body || '';
+            } else {
+              // Use context when called via pull_request_target
+              baseRef = context.payload.pull_request.base.ref;
+              prBody = context.payload.pull_request.body || '';
+            }
+
             console.log('Target branch:', baseRef);
 
             if (baseRef === 'current') {
@@ -72,7 +98,7 @@ jobs:
             }
 
             // Strategy: Parent PR detection
-            const prBody = context.payload.pull_request.body || '';
+            // prBody is already set above based on event type
 
             // Look for ESPHome PR links in PR body
             // Patterns to match:
