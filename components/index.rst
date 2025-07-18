@@ -915,6 +915,7 @@ Microphone Components
 
     Microphone Core, components/microphone/index, microphone.svg, dark-invert
     I2S Microphone, components/microphone/i2s_audio, i2s_audio.svg
+    Resampler Microphone, components/microphone/resampler, waveform.svg, dark-invert
 
 Number Components
 -----------------
