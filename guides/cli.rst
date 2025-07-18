@@ -73,8 +73,11 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
 
 .. option:: --device UPLOAD_PORT
 
-    Manually specify the upload port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
-    to perform an OTA.
+    Manually specify the upload port/IP to use. For example:
+
+    * ``/dev/cu.SLAB_USBtoUART`` for serial,
+    * ``192.168.1.176`` to perform an OTA,
+    * ``rfc2217://remote_host:4000`` for `remote serial  <rfc2217_>`_.
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -139,8 +142,11 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
 
 .. option:: --device UPLOAD_PORT
 
-    Manually specify the upload port/IP address to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
-    to perform an OTA.
+    Manually specify the upload port/IP to use. For example:
+
+    * ``/dev/cu.SLAB_USBtoUART`` for serial,
+    * ``192.168.1.176`` to perform an OTA,
+    * ``rfc2217://remote_host:4000`` for `remote serial  <rfc2217_>`_.
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -335,3 +341,5 @@ See Also
 
 - :doc:`Guides </guides/index>`
 - :ghedit:`Edit`
+
+.. _rfc2217: https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/tools/idf-docker-image.html#using-remote-serial-port
