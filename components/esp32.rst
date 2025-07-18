@@ -11,16 +11,25 @@ This component contains platform-specific options for the ESP32 platform.
 
     # Example configuration entry
     esp32:
-      board: esp32dev
+      variant: esp32s3
 
 Configuration variables:
 ------------------------
 
-- **board** (**Required**, string): The PlatformIO board ID that should be used. Choose the appropriate board from
+- **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of ``esp32``,
+  ``esp32s2``, ``esp32s3``, ``esp32c2``, ``esp32c3``, ``esp32c5``, ``esp32c6``, ``esp32h2`` or ``esp32p4``.
+  This must match the hardware in use, or it will fail to flash.
+- **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
   `this list <https://registry.platformio.org/platforms/platformio/espressif32/boards?version=5.3.0>`__ (the icon next
-  to the name can be used to copy the board ID). *This only affects pin aliases, flash size and some internal settings*;
-  if unsure or you cannot find your exact board, using a generic board (from Espressif) such as ``esp32dev`` almost
-  always works just fine.
+  to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
+  This setting is no longer recommended, ``variant`` should be used instead.
+
+.. note::
+
+    At least one of ``board`` or ``variant`` must be specified. If ``variant`` alone is specified (the recommended practice),
+    the board configuration will be automatically filled using a standard Espressif devkit board
+    suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
+
 - **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of ``2MB``,
   ``4MB``, ``8MB``, ``16MB`` or ``32MB``. Defaults to ``4MB``. **Warning: specifying a size larger than that available
   on your board will cause the ESP32 to fail to boot.**
@@ -28,9 +37,6 @@ Configuration variables:
   ``360MHz`` or ``400MHz``. Defaults to ``160MHz``. Not all values are available for all chips.
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
   partitioning scheme to be used. When not specified, partitions are automatically generated based on ``flash_size``.
-- **variant** (*Optional*, string): The variant of the ESP32 that is used on this board. One of ``esp32``,
-  ``esp32s2``, ``esp32s3``, ``esp32c2``, ``esp32c3``, ``esp32c5``, ``esp32c6``, ``esp32h2`` and ``esp32p4``. Defaults
-  to the variant that is detected from the board; if a board that's unknown to ESPHome is used, this option is mandatory.
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome. See :ref:`esp32-arduino_framework`
   and :ref:`esp32-espidf_framework`.
 

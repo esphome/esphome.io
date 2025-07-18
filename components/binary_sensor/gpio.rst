@@ -44,7 +44,9 @@ Configuration variables:
 
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to monitor.
 - **use_interrupt** (*Optional*, boolean): Use hardware interrupts instead of polling for better 
-  performance and lower CPU usage. Defaults to ``true``. Only supported on internal GPIO pins.
+  performance and lower CPU usage. Defaults to ``true`` for most platforms, but defaults to ``false`` 
+  for LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) due to hardware limitations. Only supported 
+  on internal GPIO pins.
 - **interrupt_type** (*Optional*, string): The type of interrupt to use. One of:
 
   - ``ANY`` (default): Trigger on any edge change (high to low or low to high)
@@ -78,6 +80,10 @@ The GPIO binary sensor supports two modes of operation:
 
     Interrupt mode is only available on internal GPIO pins. External GPIO 
     expanders (like PCF8574) will automatically fall back to polling mode.
+    
+    LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) default to polling mode 
+    due to hardware limitations with edge interrupts. You can explicitly enable 
+    interrupt mode if needed, but it may not work reliably on all pins.
 
 Activating internal pullups
 ---------------------------

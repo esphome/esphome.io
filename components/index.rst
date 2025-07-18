@@ -37,6 +37,7 @@ Supported Microcontrollers
     RTL87xx, components/libretiny, rtl87xx.svg
     LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
+    NRF52, components/nrf52, nrf52.svg
 
 Microcontroller Peripherals
 ---------------------------
@@ -160,7 +161,7 @@ Hardware Peripheral Interfaces/Busses
 
 .. imgtable::
 
-    1-Wire, components/one_wire, one-wire.svg
+    1-Wire, components/one_wire/index, one-wire.svg
     CAN Bus, components/canbus/index, canbus.svg
     I²C Bus, components/i2c, i2c.svg
     I²S Audio, components/i2s_audio, i2s_audio.svg
@@ -191,12 +192,25 @@ I/O Expanders/Multiplexers
     WeiKai SPI/I²C UART/IO Expander, components/weikai, wk2168.jpg
     XL9535, components/xl9535, xl9535.svg
 
-CAN Bus
--------
+1-Wire Bus
+----------
+
+Platforms which specifically support or extend the :doc:`/components/one_wire/index`, allowing communication with
+1-Wire-based devices.
 
 .. imgtable::
 
-    CAN Bus, components/canbus/index, canbus.svg
+    DS2484, components/one_wire/ds2484, ds2484.svg
+    GPIO, components/one_wire/gpio, gpio.svg
+
+CAN Bus
+-------
+
+Platforms which specifically support or extend the :doc:`/components/canbus/index`, allowing communication with
+CAN-based devices.
+
+.. imgtable::
+
     ESP32 CAN, components/canbus/esp32_can, esp32.svg
     MCP2515, components/canbus/mcp2515, mcp2515.svg
 
@@ -302,6 +316,7 @@ Distance
 
     A01NYUB, components/sensor/a01nyub, a01nyub.jpg, Acoustic distance
     A02YYUW, components/sensor/a02yyuw, a02yyuw.jpg, Acoustic distance
+    GL-R01 Time of Flight Sensor, components/sensor/gl_r01, gl_r01.jpg, IR optical distance
     HRXL MaxSonar WR, components/sensor/hrxl_maxsonar_wr, hrxl_maxsonar_wr.jpg, Acoustic distance
     JSN-SR04T, components/sensor/jsn_sr04t, jsn-sr04t-v3.jpg, Acoustic distance
     TOF10120, components/sensor/tof10120, tof10120.jpg, IR optical distance
@@ -386,6 +401,7 @@ Environmental
     HYT271, components/sensor/hyt271, hyt271.jpg, Temperature & Humidity
     Inkbird IBS-TH1 Mini, components/sensor/inkbird_ibsth1_mini, inkbird_isbth1_mini.jpg, Temperature & Humidity
     Internal Temperature, components/sensor/internal_temperature, thermometer.svg, Temperature, dark-invert
+    LPS22, components/sensor/lps22, lps22.avif, Temperature & Barometric Pressure
     MCP9808, components/sensor/mcp9808, mcp9808.jpg, Temperature
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MLX90614, components/sensor/mlx90614, mlx90614.jpg, Temperature
@@ -1073,6 +1089,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
     Remote Transmitter, components/remote_transmitter, remote.svg, dark-invert
     RF Bridge, components/rf_bridge, rf_bridge.jpg
     SIM800L, components/sim800l, sim800l.jpg
+    SX126x, components/sx126x, sx126x.png
     SX127x, components/sx127x, sx127x.png
 
 Miscellaneous Components
@@ -1121,7 +1138,9 @@ ESPHome depends on and welcomes contributions from our community. If you'd like 
     :hidden:
 
     binary_sensor/index
+    camera/index
     canbus/index
+    one_wire/index
     climate/index
     cover/index
     fan/index

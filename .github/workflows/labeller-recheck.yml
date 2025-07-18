@@ -1,0 +1,33 @@
+name: Labeller Recheck
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+  contents: read
+  actions: write
+
+jobs:
+  trigger-auto-label:
+    runs-on: ubuntu-latest
+    if: github.event.label.name == 'labeller-recheck'
+    steps:
+      - name: Call Auto Label workflow
+        uses: actions/github-script@v7.0.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log('Labeller recheck triggered for PR #' + context.payload.pull_request.number);
+
+            // Trigger the auto-label workflow
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'auto-label-pr.yml',
+              ref: context.payload.pull_request.base.ref,
+              inputs: {
+                pr_number: context.payload.pull_request.number.toString()
+              }
+            });

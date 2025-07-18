@@ -208,7 +208,7 @@ file.
 So now is a great time to go take a look at the :doc:`Components Index </index>`.
 Hopefully you'll find all sensors/outputs/etc. you'll need in there. If you're having any problems or
 want new features, please either create a new issue on the `GitHub issue
-tracker <https://github.com/esphome/issues/issues>`__ or find us on the
+tracker <https://github.com/esphome/esphome/issues>`__ or find us on the
 `Discord chat <https://discord.gg/KhAMKrd>`__ (also make sure to read the :doc:`FAQ <faq>`).
 
 .. _esphome-device-builder-docker:
