@@ -1,11 +1,11 @@
-MIPI SPI Display Driver
-=======================
-
 .. seo::
     :description: Details for the MIPI SPI display driver component in ESPHome
     :image: ili9341.jpg
 
 .. _mipi_spi:
+
+MIPI SPI Display Driver
+=======================
 
 Introduction
 ------------
@@ -65,6 +65,8 @@ Boards with integrated displays
     :header: "Model", "Manufacturer", "Product Description"
     :widths: 30, 20, 30
 
+    "ADAFRUIT-S2-TFT-FEATHER", "Adafruit", "https://www.adafruit.com/product/6312"
+    "ADAFRUIT-FUNHOUSE", "Adafruit", "https://www.adafruit.com/product/4985"
     "M5CORE", "M5Stack", "https://docs.m5stack.com/en/core/BASIC%20v2.6"
     "S3BOX", "Espressif", "https://www.espressif.com/en/products/devkits/esp32-s3-box"
     "S3BOXLITE", "Espressif", "https://www.espressif.com/en/products/devkits/esp32-s3-box-lite"
@@ -138,6 +140,8 @@ most of the configuration will be set by default, but can be overridden if neede
    - **mirror_y** (**Required**, boolean): If true, mirror the y axis.
 
 - **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are ``16`` (default) and ``8``. 8 bit depth will result in only 256 possible colors and should be used only if the microcontroller has limited memory. The driver will convert the 8 bit color to the display chip's required format.
+- **buffer_size** (*Optional*): The percentage of screen size to allocate buffer memory. The default is ``100%`` when PSRAM is configured, and otherwise will be calculated to
+  achieve a buffer size less than 20K bytes. See the discussion below about buffer sizes.
 
 Advanced options
 ^^^^^^^^^^^^^^^^
@@ -148,13 +152,35 @@ Advanced options
 - **data_rate** (*Optional*): The SPI data rate. Defaults to 10MHz but board presets may override this.
 - **spi_mode** (*Optional*): The SPI mode. Options are ``MODE0``, ``MODE1``, ``MODE2``, and ``MODE3``. Defaults to ``MODE0`` for single bit SPI and ``MODE3`` for octal SPI (parallel bus.)
 - **draw_rounding** (*Optional*): The rounding factor for drawing operations. Defaults to 2. Some chips require a higher value to avoid display artifacts. Must be a power of 2.
-- **draw_from_origin** (*Optional*): If true, drawing operations will always start from the origin (0,0) of the display. Defaults to false.
 - **use_axis_flips** (*Optional*): If true, the driver will use alternate bits in the MADCTL register to implement x and y mirroring. Defaults to false.
+- **byte_order** (*Optional*): The byte order of the display buffer. Options are ``big_endian`` (default) and ``little_endian``. This affects the byte order for the buffer when
+  using 16 bit color depth. The default is appropriate for the majority of displays.
 
 **Note:** The maximum achievable data rate will depend on the chip type (e.g. ESP32 vs ESP32-S3) the pins used (on ESP32 using the default SPI pins allows higher rates) and the connection type (on-board connections will support higher rates than long cables or DuPont wires.) If in doubt, start with a low speed and test higher rates to find what works. A MISO pin should preferably not be specified, as this will limit the maximum rate in some circumstances, and is not required if the SPI bus is used only for the display.
 
+
+Buffer Size
+------------
+
+The display driver writes data from a buffer to the display chip. When using :doc:`/components/lvgl/index` no buffer is required in the display driver itself, as LVGL will
+allocate and use its own buffer.
+When instead using a lambda function to update the display (and not LVGL), a buffer is required to be allocated by the display driver.
+The size of this buffer is determined by the ``buffer_size`` option. The default is ``100%`` when PSRAM is configured, and otherwise will be calculated to
+achieve a buffer size less than 20K bytes. For example a display of size 320x240 will have a buffer size of ``320 * 240 * 2`` bytes (for RGB565) = ``153600`` bytes.
+If the buffer size is set to ``50%``, then the buffer would occupy ``76800`` bytes. If 8 bit color depth is used, then each pixel occupies only 1 byte.
+
+Effect on Drawing Performance
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The buffer size is a trade-off between the size of the buffer and the performance of the display driver. A larger buffer size will provide better performance,
+but on boards with limited memory, a smaller buffer size may be required to avoid running out of memory. When using a buffer less than 100%, the driver will
+call the drawing lambda multiple times to draw each chunk of the display. For example, with a 25% buffer size, the driver will call the drawing lambda four times to draw the display.
+This has an effect on performance, and should be considered when setting the buffer size, but it is also important that the drawing lambda does not have
+side effects - this should be avoided in any case, but becomes more critical when using a buffer less than 100%.
+
+
 Additional inititialisation sequences
-*************************************
+--------------------------------------
 
 The ``init_sequence`` option allows additional configuration of the driver chip. Provided commands will be sent to the
 driver chip in addition to, and after the chosen model's pre-defined commands. It requires a list of byte sequences:
@@ -170,12 +196,12 @@ Each entry represents a single-byte command followed by zero or more data bytes.
 If converting from other code, make sure the length byte, if present, is not copied as the length of each command sequence is determined by the number of bytes in the list.
 
 CUSTOM model
-************
+------------
 
 The ``CUSTOM`` model selection is provided for otherwise unsupported displays, and requires both ``dimensions:`` and ``init_sequence:`` to be specfied. There is no pre-defined init sequence.
 
 Using the ``transform`` options
-*******************************
+-------------------------------
 
 In most cases, the ``rotation`` option will be sufficient to orient the display correctly. However, some displays may require additional transformations. The ``transform`` option allows for these transformations to be applied in any of 8 different
 combinations. It may be necessary to experiment with different combinations to achieve the desired result. When using the ``transform`` option, the ``rotation`` option should not be set unless the display does not support axis-swapping.
@@ -209,5 +235,6 @@ See Also
 --------
 
 - :doc:`index`
+- :doc:`/components/lvgl/index`
 - :apiref:`mipi_spi/mipi_spi.h`
 - :ghedit:`Edit`
