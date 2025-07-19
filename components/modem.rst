@@ -58,6 +58,9 @@ Advanced options:
 - **ton_delay** (*Optional*, :ref:`config-time`): Required if using GENERIC model and a power pin, or to override defaults. Must match the hardware specifications.
 - **toff_pulse_delay** (*Optional*, :ref:`config-time`): Required if using GENERIC model and a power pin, or to override defaults. Must match the hardware specifications.
 - **toff_delay** (*Optional*, :ref:`config-time`): Required if using GENERIC model and a power pin, or to override defaults. Must match the hardware specifications.
+- **tx_buffer_size** (*Optionnal*, int): tx buffer size, default 512
+- **rx_buffer_size** (*Optionnal*, int): rx buffer size, default 512
+- **dte_buffer_size** (*Optionnal*, int): dte buffer size, default 512. May be increased if "CMUX: Failed to defragment longer payload" warning message is raised too often.
 
 
 Automations:
