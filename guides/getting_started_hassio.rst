@@ -109,8 +109,9 @@ configuration for the "Bedroom Light" node in the picture above can be found in 
 .. note::
 
     If you have a project that consists of many files, you can also use Home Assistant's 
-    `Visual Studio Server add-on <https://github.com/hassio-addons/addon-vscode/tree/main`__, which has 
-    a pre-installed [ESPHome VSCode extension](https://marketplace.visualstudio.com/items?itemName=ESPHome.esphome-vscode).
+    `Visual Studio Server add-on <https://github.com/hassio-addons/addon-vscode/tree/main>`__, which has 
+    a pre-installed 
+    `ESPHome VSCode extension <https://marketplace.visualstudio.com/items?itemName=ESPHome.esphome-vscode>`__.
 
     Home Assistant add-ons run as individual containers, and building files are not available to other containers, 
     including the Visual Studio Server add-on. If you want them to be available in Visual Studio Code as well, then 
