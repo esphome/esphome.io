@@ -108,7 +108,22 @@ configuration for the "Bedroom Light" node in the picture above can be found in 
 
 .. note::
 
-    Home Assistant add-ons run as individual containers; this can make accessing your configuration files/logs a bit
+    If you have a project that consists of many files, you can also use Home Assistant's 
+    `Visual Studio Server add-on <https://github.com/hassio-addons/addon-vscode/tree/main`__, which has 
+    a pre-installed [ESPHome VSCode extension](https://marketplace.visualstudio.com/items?itemName=ESPHome.esphome-vscode).
+
+    Home Assistant add-ons run as individual containers, and building files are not available to other containers, 
+    including the Visual Studio Server add-on. If you want them to be available in Visual Studio Code as well, then 
+    you need to move them to the shared directory. To do that, add the following entry:
+
+    .. code-block:: yaml
+
+        esphome:
+          build_path: /config/esphome/build/project-name/
+
+.. note::
+
+    Home Assistant add-ons run as individual containers; this can make accessing ESPHome CLI a bit
     challenging. If you wish to do so, you'll need to install Home Assistant's
     `SSH add-on <https://www.home-assistant.io/common-tasks/os/#installing-and-using-the-ssh-add-on>`__, configure it
     with a username and password and also disable "Protection Mode" (please assess the risks associated with doing so).
