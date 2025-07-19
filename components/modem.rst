@@ -172,8 +172,8 @@ For example, to get internal modem voltage:
 
     int voltage,bcs,bcl;
     ESP_LOGI("main", "get modem voltage");
-    if(id(atmodem).dce) {
-      esp_modem::command_result err = id(atmodem).dce->get_battery_status(voltage, bcs, bcl);
+    if(id(atmodem).modem_handler->dce) {
+      esp_modem::command_result err = id(atmodem).modem_handler->dce->get_battery_status(voltage, bcs, bcl);
       switch (err) {
         case esp_modem::command_result::FAIL:
           ESP_LOGE("main", "get_battery_status FAIL");
