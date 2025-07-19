@@ -113,7 +113,7 @@ configuration for the "Bedroom Light" node in the picture above can be found in 
     a pre-installed 
     `ESPHome VSCode extension <https://marketplace.visualstudio.com/items?itemName=ESPHome.esphome-vscode>`__.
 
-    Home Assistant add-ons run as individual containers, and building files are not available to other containers, 
+    Home Assistant add-ons run as individual containers, and build files are not available to other containers, 
     including the Visual Studio Server add-on. If you want them to be available in Visual Studio Code as well, then 
     you need to move them to the shared directory. To do that, add the following entry:
 
