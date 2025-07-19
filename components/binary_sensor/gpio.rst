@@ -99,7 +99,7 @@ The GPIO binary sensor supports two modes of operation:
     When a pin is configured with ``allow_other_uses: true`` (for sharing with
     other components), interrupts are automatically disabled to prevent conflicts.
     This ensures compatibility with components like ``duty_cycle`` sensors that
-    need to monitor pin state changes. The sensor will use polling mode instead
+    need to monitor pin state changes. The sensor will use polling mode instead.
 
 Activating internal pullups
 ---------------------------
