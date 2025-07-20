@@ -105,6 +105,7 @@ Configuration variables:
 ************************
 
 - **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are ``PRESENCE`` and ``SPEED_AND_DISTANCE``.
+- **model** (*Required*, enumeration): This sets the model of the connected sensor. Options are ``SEN0609`` and ``SEN0610``.
 
 .. _dfrobot_c4001-binary_sensor:
 
@@ -190,13 +191,14 @@ Number
 Configuration variables:
 ************************
 
-- **min_range** (*Optional*): This is the minimum detection range. Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The manual recommends not changing this value. 
+- **min_range** (*Optional*): This is the minimum detection range. This number has a range of 0.6 to 25.0 m for the ``SEN0609`` and a range of 0.6 to 12.0 m for the ``SEN0610``. The manual recommends not changing this value.
   The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available in all modes. 
   All Options from :ref:`Number <config-number>`.
-- **max_range** (*Optional*): This is the maximum detection range. Default is 6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
+- **max_range** (*Optional*): This is the maximum detection range. This number has a range of 0.6 to 25.0 m for the ``SEN0609`` and a range of 0.6 to 12.0 m for the ``SEN0610``. 
+  The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
   Available in all modes. All Options from :ref:`Number <config-number>`.
-- **trigger_range** (*Optional*): Sets the maximum range at which occupancy can switch to present. The range between max detection range and trigger detection range can NOT cause occupancy to switch to present.
-  Default is 0.6 meters (m) with a range of 0.6 to 25.0 m. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
+- **trigger_range** (*Optional*): Sets the maximum range at which occupancy can switch to present. The range between max detection range and trigger detection range will NOT cause occupancy to switch to present.
+  This number has a range of 0.6 to 25.0 m for the ``SEN0609`` and a range of 0.6 to 12.0 m for the ``SEN0610``. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
   All Options from :ref:`Number <config-number>`.
 - **hold_sensitivity** (*Optional*): The number represents the ease in which the sensor switches to the present state when someone enters the sensing range of the sensor. 
   Default is 7 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
@@ -204,16 +206,23 @@ Configuration variables:
 - **trigger_sensitivity** (*Optional*): This number represents ease of continued presence detection after the sensor switched to the present state. 
   Default is 5 (no units) with a range of 0 to 9, higher is more sensitive. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational.
   Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
-- **on_latency** (*Optional*): This time value is how long presence is detected before switching to the present state. Default is 0.050 (seconds) with a range of 0.0 to 100.0. 
+- **on_latency** (*Optional*): This time value is how long presence is detected before switching to the present state. Default is 0.050 seconds with a range of 0.0 to 100.0 seconds. 
   The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. 
   All Options from :ref:`Number <config-number>`.
 - **off_latency** (*Optional*): This time value is how long the after the sensor no longer detects presence before switching to the not present state.
-  Default is 15 (seconds) with a range of 0 to 1500. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
+  Default is 15 (seconds) with a range of 0.0 to 1500.0. The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. 
   Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
-- **inhibit_time** (*Optional*): The dead-time after switching to the not present state before presence can be detected again. Default is 1 (seconds) with a range of 0.1 to 255.0. 
+- **inhibit_time** (*Optional*): The dead-time after switching to the not present state before presence can be detected again. Default is 1 seconds with a range of 0.1 to 255.0 seconds. 
   The ``config_save`` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``PRESENCE`` mode. All Options from :ref:`Number <config-number>`.
-- **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is required to trigger the sensor to switch to target tracked state. 
-  Default is 5 with a range of 0 to 65535. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Number <config-number>`.
+- **threshold_factor** (*Optional*): The larger the number the larger the object and more motion is required to trigger the sensor to switch to target tracked state.
+  Default is 5 (no units) with a range of 0.0 to 25.0. The ```config_save``` button must be clicked to save the sensor configuration to flash and make operational. Available only in ``SPEED_AND_DISTANCE`` mode. All Options from :ref:`Number <config-number>`.
+
+When ``trigger_range`` (only in ``PRESENCE`` mode) is defined you must define ``min_range`` and ``max_range``. ``min_range`` and ``max_range`` must always be defined together. The component will enforce the following relationships:
+
+- ``min_range`` must be less than or equal to ``max_range``.
+- ``min_range`` must be less than or equal to ``trigger_range``.
+- ``trigger_range`` must be greater than or equal to ``min_range``.
+- ``trigger_range`` must be less than or equal to ``max_range``.
 
 .. _dfrobot_c4001-sensor:
 
