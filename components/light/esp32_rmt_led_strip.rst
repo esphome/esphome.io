@@ -23,7 +23,6 @@ Only for Arduino platforms (and ESP-IDF <5 which was used until ESPHome 2025), t
 
     light:
       - platform: esp32_rmt_led_strip
-        rmt_channel: 0
         ...
 
 Configuration variables
