@@ -37,6 +37,7 @@ There are only two settings for this mode, ``micro_motion_enable switch`` and ``
     dfrobot_c4001:
       id: mmwave_sensor
       uart_id: mmwave_uart
+      model: SEN0609
       mode: PRESENCE
 
     binary_sensor:
