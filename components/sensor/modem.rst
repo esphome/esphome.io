@@ -58,7 +58,7 @@ The GNSS data can be used to create a device tracker in Home Assistant. You can 
 
 .. note::
 
-  If you get an "Action device_tracker.see not found" error in Home Assistant, you need to add ``device_tracker:`` to your ``configuration.yaml`` file.
+    If you get an "Action device_tracker.see not found" error in Home Assistant, you need to add ``device_tracker:`` to your ``configuration.yaml`` file.
 
 
 .. image:: https://my.home-assistant.io/badges/blueprint_import.svg
