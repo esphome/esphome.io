@@ -312,27 +312,23 @@ Randomly plays all tracks.
       then:
         - dfplayer.random
 
-``dfplayer.enable_loop`` Action
--------------------------------
 
-Enables loop playback of currently playing track. If the track is already playing.
+``dfplayer.set_current_track_repeat`` Action
+--------------------------------------------
 
-.. code-block:: yaml
-
-    on_...:
-      then:
-        - dfplayer.enable_loop
-
-``dfplayer.disable_loop`` Action
---------------------------------
-
-Disables loop playback of currently playing track. If the track is already playing.
+Enable or disable the current track to repeat playback. If the track is already playing.
 
 .. code-block:: yaml
 
     on_...:
       then:
-        - dfplayer.disable_loop
+        - dfplayer.set_current_track_repeat: true
+
+    on_...:
+      then:
+        - dfplayer.set_current_track_repeat:
+            enable: false
+
 
 All actions
 -----------
