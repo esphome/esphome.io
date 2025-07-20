@@ -235,7 +235,7 @@ This rotates the display into landscape mode using software rotation.
 
 
 Waveshare ESP32-S3-Touch-AMOLED-1.75 (CO5300 driver)
-************
+****************************************************
 
 .. code-block:: yaml
 
