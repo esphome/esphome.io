@@ -17,6 +17,7 @@ This driver has been tested with the following displays:
   - Lilygo T-Display S3 AMOLED
   - JC4832W535 board
   - JC3636W518 board
+  - Waveshare ESP32-S3-Touch-AMOLED-1.75 board
 
 Usage
 -----
@@ -65,6 +66,7 @@ Configuration variables:
     - ``JC4832W535``
     - ``JC3636W518``
     - ``AXS15231``
+    - ``CO5300``
     
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. This is required when using the ``CUSTOM`` model - but may be empty. If specified for other models this data will be sent after the pre-configured sequence.
 - **cs_pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The chip select pin.
@@ -230,6 +232,36 @@ This rotates the display into landscape mode using software rotation.
       transform:
         swap_xy: true
         mirror_y: true
+
+
+Waveshare ESP32-S3-Touch-AMOLED-1.75 (CO5300 driver)
+************
+
+.. code-block:: yaml
+
+    spi:
+      id: quad_spi
+      type: quad
+      clk_pin: 38
+      data_pins: [4, 5, 6, 7]
+
+    display:
+      - platform: qspi_dbi
+        model: CO5300
+        dimensions:
+          height: 466
+          width: 466
+          offset_height: 0
+          offset_width: 6
+        brightness: 128
+        cs_pin: 12
+        reset_pin: 39
+        auto_clear_enabled: false
+        show_test_card: true
+
+    psram:
+      mode: octal
+      speed: 80MHz
 
 
 See Also
