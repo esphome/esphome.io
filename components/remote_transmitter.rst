@@ -41,22 +41,22 @@ Configuration variables:
 ESP32 configuration variables:
 **********************************
 
-- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
-  internal DMA buffer. If DMA is not enabled, ``rmt_symbols`` determines the amount of RMT memory allocated to this
-  component. Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2``,
-  only half of the symbol memory is available to transmitters. Each symbol is 32 bits and contains two values.
+- **rmt_symbols** (*Optional*, int): When ``use_dma`` is enabled, this sets the size of the driver's internal DMA
+  buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
+  across all components and should be allocated in multiples of the block size. On the ``ESP32`` and ``ESP32-S2``
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
 
   .. csv-table::
-      :header: "ESP32 Variant", "Memory Size", "Block Size"
+      :header: "ESP32 Variant", "Available Memory", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-C3", "192 symbols", "48 symbols"
-      "ESP32-C5", "192 symbols", "48 symbols"
-      "ESP32-C6", "192 symbols", "48 symbols"
-      "ESP32-H2", "192 symbols", "48 symbols"
-      "ESP32-P4", "384 symbols", "48 symbols"
+      "ESP32-C3", "96 symbols", "48 symbols"
+      "ESP32-C5", "96 symbols", "48 symbols"
+      "ESP32-C6", "96 symbols", "48 symbols"
+      "ESP32-H2", "96 symbols", "48 symbols"
+      "ESP32-P4", "192 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
+      "ESP32-S3", "192 symbols", "48 symbols"
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
