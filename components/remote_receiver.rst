@@ -80,7 +80,7 @@ Configuration variables:
 - **filter** (*Optional*, :ref:`config-time`): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``50us``.
 - **idle** (*Optional*, :ref:`config-time`): The amount of time that a signal should remain stable/unchanged for it to
-  be considered complete. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``10ms``.
+  be considered complete. The maximum value is ``65536us`` on ESP32, and ``4294967295us`` on other platforms. Defaults to ``10ms``.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
