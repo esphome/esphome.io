@@ -240,8 +240,36 @@ reduce the ESP's overall performance.
 
 .. _esp32-note-about-variants:
 
-A Note About S2 and S3 Variants
--------------------------------
+S2 and S3 Variants
+------------------
+
+.. note::
+
+    **ESP32-S2 and ESP32-S3 Touch Configuration**
+
+    The default ``measurement_duration`` and ``sleep_duration`` values are optimized for the original ESP32 and
+    **may not work at all on S2/S3 variants**. The S2/S3 touch hardware requires different timing settings.
+
+    Key differences:
+
+    - **Touch values increase** when touched (opposite of ESP32 which decreases)
+    - **Higher raw values** are returned compared to original ESP32
+    - **Lower measurement duration required** - the default 8ms is often too high for S2/S3
+
+    **Example settings for S2/S3:**
+
+    .. code-block:: yaml
+
+        esp32_touch:
+          setup_mode: false
+          measurement_duration: 0.25ms  # Much lower than the 8ms default
+          sleep_duration: 0.5ms
+
+        binary_sensor:
+          - platform: esp32_touch
+            name: "Touch Sensor"
+            pin: GPIO1
+            threshold: 1000  # Adjust based on your hardware
 
 If you're familiar with the ESP32 hardware and pick up an S2 or S3 variant, you're likely to notice some behavioral
 differences between them. In particular:
@@ -254,6 +282,10 @@ differences between them. In particular:
 These behavioral differences are due to changes in the hardware and software (ESP-IDF) interfaces and should be
 expected -- if you are moving your configuration from an original ESP32 to an S2 or S3 variant, expect that you'll need
 to make some adjustments to your configuration to accommodate this behavior.
+
+Most importantly, the default ``measurement_duration`` of 8ms (optimized for original ESP32) is often too high for
+S2/S3 variants and can prevent touch detection from working entirely. Using a much lower value like 0.25ms has been
+found to work across many S2/S3 devices, though specific parameters may still need tuning per hardware implementation.
 
 See Also
 --------
