@@ -223,6 +223,8 @@ The following numerical values are available:
   * Supports ``auto_min_value``
   * Supports ``auto_max_value``
 
+
+- ``cc_request``: COMMAND_CODE send
 Switch
 ******
 
@@ -339,7 +341,7 @@ available:
 - ``device_id``: Device ID code
 - ``otc_hc_ratio_ub``: OTC heat curve ratio upper bound
 - ``otc_hc_ratio_lb``: OTC heat curve ratio lower bound
-
+- ``cc_response``: COMMAND_CODE response
 .. _on-the-fly-message-editing:
 
 On-the-fly Message Editing
@@ -376,6 +378,39 @@ for Daikin D2C boiler:
                     }
 
 You can check the :apistruct:`OpenthermData <opentherm::OpenthermData>` for the list of all available fields.
+
+
+
+Boiler lockout reset
+--------------------------
+
+.. code-block:: yaml
+
+    #lockout reset example
+    number:
+      - platform: opentherm
+        cc_request:
+          name: cc request
+          id: Rr
+          internal: false 
+    
+    
+    
+    button:
+      - platform: template
+        name: "boiler error reset"
+        on_press:
+          - number.set:
+              id: Rr
+              value: 1
+          - delay: 2s
+          - number.set:
+              id: Rr
+              value: 0
+
+
+
+
 
 Examples
 --------
