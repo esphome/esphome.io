@@ -75,6 +75,7 @@ Frame Settings:
 - **frame_buffer_location** (*Optional*, enum): The memory area used for storing the frame buffers. Defaults to ``PSRAM``.
   - ``PSRAM``
   - ``DRAM``
+- **psram_dma** (*Optional*, boolean): Enable DMA access between camera and the PSRAM frame buffer. (experimental)
 
 Image Settings:
 
