@@ -37,7 +37,7 @@ submit a feature request (see FAQ).
 +---------------------------------------+---------------------+----------------------+
 | :ref:`GREE<gree_ir>`                  | ``gree``            |                      |
 +---------------------------------------+---------------------+----------------------+
-| Hitachi                               | ``hitachi_ac344``,  | yes                  |
+| :ref:`Hitachi<hitachi_ac424>`         | ``hitachi_ac344``,  | yes                  |
 |                                       | ``hitachi_ac424``   |                      |
 +---------------------------------------+---------------------+----------------------+
 | :ref:`LG<climate_ir_lg>`              | ``climate_ir_lg``   | yes                  |
@@ -173,6 +173,24 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
         name: "AC"
         sensor: room_temperature
         model: yan
+
+.. _hitachi_ac424:
+
+``hitachi_ac424`` **Climate**:
+
+- **internal_cleaning** (*Optional*, boolean): Allows you to enable the internal cleaning function when stopping the cooling or dry mode. Defaults to ``false``.
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    climate:
+      - platform: hitachi_ac424
+        name: "AC"
+        internal_cleaning: true
+
+.. note::
+
+    - When using this component with a receiver, set the `receive_symbols` parameter (in the `remote_receiver` component) to 424 or higher to ensure proper handling of large data.
 
 .. _midea_ir:
 
