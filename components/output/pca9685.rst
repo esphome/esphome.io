@@ -53,6 +53,22 @@ global ``pca9685`` hub and give it an id, and then define the
         pca9685_id: 'pca9685_hub1'
         channel: 0
 
+.. code-block:: yaml
+
+    # Example configuration entry with disabled phase_balancer
+    pca9685:
+      - id: pca9685_hub1
+        phase_balancer: none
+
+    # Individual outputs
+    output:
+      - platform: pca9685
+        pca9685_id: 'pca9685_hub1'
+        channel: 0
+      - platform: pca9685
+        pca9685_id: 'pca9685_hub1'
+        channel: 1
+
 Configuration variables:
 ************************
 
@@ -64,6 +80,15 @@ Configuration variables:
    Defaults to ``0x40``.
 -  **id** (*Optional*, :ref:`config-id`): The id to use for
    this pca9685 component. Use this if you have multiple PCA9685s connected at the same time
+-  **phase_balancer** (*Optional*, string): The phase balancer algorithm to use (see below).
+
+Phase balancer:
+***************
+
+The PCA9685 allows to set different phase angles on the each output. ``linear`` is used by default. The following algorithmes can be used to set the phase angle of each output:
+
+- ``linear``: The Phase angle is set by distributing all defined outputs equally amoung 360°. So with 3 outputs the first would have 0°, the second 120° and the last 240°. This algorithmn can cause flickering when animating the light, because the PCA9685 chip will need an additional frame, where no pwm is generated, if the start angle is lower than the stop angle.
+- `ǹone``: The Phase angle is always 0°. This is the safer option if you control led lights.
 
 .. _pca9685-output:
 
