@@ -37,6 +37,7 @@ Supported Microcontrollers
     RTL87xx, components/libretiny, rtl87xx.svg
     LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
+    NRF52, components/nrf52, nrf52.svg
 
 Microcontroller Peripherals
 ---------------------------

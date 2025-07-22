@@ -112,10 +112,23 @@ If you already have a stack trace but need to decode it, you can use the `ESP St
 
     This tool runs entirely in your browser - no data is sent to any server, ensuring your firmware and debug information remain private.
 
+Performance Troubleshooting
+---------------------------
+
+If your device is experiencing performance issues such as:
+
+- Slow response times
+- Missed sensor readings
+- Connectivity problems
+- Components not updating as expected
+
+The :doc:`/components/runtime_stats` component can help identify which components are consuming the most processing time or blocking the event loop. See the runtime_stats documentation for detailed usage instructions and examples.
+
 See Also
 --------
 
 - :doc:`/components/logger` - Configure logging levels and outputs
 - :doc:`/components/debug` - Debug component for additional diagnostics
+- :doc:`/components/runtime_stats` - Performance analysis and debugging
 - :doc:`/components/safe_mode` - Safe Mode recovery guide
 - :doc:`/guides/faq` - Frequently asked questions

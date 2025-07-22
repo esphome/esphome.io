@@ -72,6 +72,9 @@ Frame Settings:
   is requesting a full stream. Defaults to ``0.1 fps``.
 - **frame_buffer_count** (*Optional*, int): The number of frame buffers to use when reading from the camera sensor.
   Must be between 1 and 2.  Defaults to ``1``.
+- **frame_buffer_location** (*Optional*, enum): The memory area used for storing the frame buffers. Defaults to ``PSRAM``.
+  - ``PSRAM``
+  - ``DRAM``
 
 Image Settings:
 
