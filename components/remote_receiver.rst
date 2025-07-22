@@ -86,6 +86,9 @@ Configuration variables:
   - ``32767us`` on all other ESP32 variants
   - ``4294967295us`` on all other platforms
 
+  Note: The ESP32 values listed above assume the default ``clock_resolution``. If a different ``clock_resolution`` is used,
+  the values are scaled by 1000000 / ``clock_resolution``.
+
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
