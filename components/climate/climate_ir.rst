@@ -90,6 +90,8 @@ Configuration Variables:
 
 - **sensor** (*Optional*, :ref:`config-id`): The sensor that is used to measure the ambient
   temperature. This is only for reporting the current temperature in the frontend.
+- **humidity_sensor** (*Optional*, :ref:`config-id`): The sensor that is used to measure the ambient
+  humidity. This is only for reporting the current humidity in the frontend.
 - **supports_cool** (*Optional*, boolean): Enables setting cooling mode for this climate device. Defaults to ``true``.
 - **supports_heat** (*Optional*, boolean): Enables setting heating mode for this climate device. Defaults to ``true``.
 - **receiver_id** (*Optional*, :ref:`config-id`): The id of the remote_receiver if this platform supports
