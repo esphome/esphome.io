@@ -3,174 +3,71 @@ ESPNow communication Component
 
 .. seo::
     :description: Instructions for setting up the basic ESPNow component in ESPHome.
-    :image: esp-now-logo.png
+    :image: esp-now.svg
+
+This component allows ESPHome to communicate with esp32 devices in a simple and unrestricted way.
+It enables the option to interact with other esp32 devices over the Espressif's ESP-NOW protocol, see
+`documentation <https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html>`__
 
 .. note::
 
-    To enables the option to interact with other esp32 devices over the Espressif's ESP-NOW protocol, see
-    `there documentation <https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html>`__
-
-This commponent allows ESPHome to communicate with esp32 devices in a simple and unsustricted way. You can receive using an event handler and
-and transmit data package via the `espnow.send` action, by broatcasting to every device or a specific device in your network.
-
-.. note::
-
-    Broadcast data package is not recommend, this will also reach not owned device from other vendors or users that uses the esp-now protocol.
+    Broadcasting data is not recommended, this will also reach not owned device from other vendors or users that uses the esp-now protocol.
     The best solution is to minimalice the broadcasting as much as possible and use it only for identification purposes.
-
-
-.. _config-espnow:
-
-ESP-NOW Configuration
----------------------
 
 .. code-block:: yaml
 
-    # Example espnow configuration
+    # Example configuration entry
     espnow:
-      auto_add_peer: true
-      channel: 1
-      auto_add_peer: true
-      peers:
-        - FF:FF:FF:FF:FF:FF
-      on_received:
-        - logger.log:
-            format: "Received: %s RSSI: %d"
-            args: [ packet.payload_as_bytes(), packet.rssi]
-      on_sent: 
-        - logger.log:
-            format: "Received: %s%s"
-            args: [ packet.get_payload(), status?"":" [Failed]"]
-      on_new_peer:
-        - logger.log:
-            format: "Peer %012llx is a new user. It will be added."
-            args: [ packet.peer ]
-        - espnow.add_peer: packet.peer
-
-
 
 Configuration variables:
+------------------------
 
+- **channel** (*Optional*, int): The Wi-Fi channel that the esp-now communication will use to send/receive data package.
+  Cannot be set when the :doc:`wifi` is used, as it will use the same channel as the wifi network.
 - **auto_add_peer** (*Optional*, boolean): This will allow the esp-now component to add a new incoming device to be added as peer.
-- **channel** (*Optional*, int): The wifi channel that the esp-now communication will use to send/receive data package.
-- **conformation_timeout** (*Optional*, int): Time between retries. 
-- **auto_add_peer** (*Optional*, boolean): Enable adding new peers automatically.
+  See :ref:`espnow-peers` below. Defaults to ``false``.
+- **enable_on_boot** (*Optional*, boolean): Enable the esp-now component on boot. Defaults to ``true``.
 - **peers** (*Optional*, list): A peer is the name for devices that uses esp-now. The list will have all MAC addresses from
-  the devices where this device may communicate with.
+  the devices where this device may communicate with. See :ref:`espnow-peers` below.
 
 Automations:
 
-- **on_new_peer** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a data package is received from an unknown peer. See :ref:`espnow-on_new_peer`.
+- **on_receive** (*Optional*, :ref:`Automation <automation>`): An automation to perform when data is received. See :ref:`espnow-on_receive`.
 
-- **on_received** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a data package is received. See :ref:`espnow-on_received`.
-- **on_broadcasted** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a data package is received as broadcast message. See :ref:`espnow-on_broadcasted`.
+Automations
+-----------
 
-- **on_sent_succeed** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a message is confirmed to be send. See :ref:`espnow-on_sent`.
-- **on_sent_failed** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a message was not sent properly. See :ref:`espnow-on_sent`.
+.. _espnow-on_receive:
 
-
-.. _espnow-espnowpackage:
-
-ESPNow Automation
------------------
-
-All automations below will have a "***packet***" variable that will have all information about the received data. 
-It exist of the following data:
-
-.. code-block:: c++
-
-    class ESPNowPacket {
-      public:
-        uint8_t *payload()       // pointer to the payload section of the content that was received
-        size_t size();           // size of the payload section.
-        
-        uint8_t *peer_address(); // 6 byte pointer to the mac address of the sending device
-        uint64_t peer_id();      // 64bit version of the peer address 
-        std::string peer_str();  // this will show the peer address as readable string as *aa:bb:cc:dd:ee:ff*
-        
-        std::string info();      // show all that collected in the packet. 
-        
-        uint32_t timestamp();    // shows the time when the packet was received
-        
-        uint8_t rssi();          // shows the stranged of the packet that was received
-        
-        bool is_broadcasted();   // is this received as broadcast message
-    }
-
-
-.. _espnow-on_received:
-
-``on_received``
+``on_receive``
 **************
 
-This automation will be triggered when a data package is received. You can get the package data via the "packet" variable. see :ref:`espnow-espnowpackage`.
+This automation will be triggered when data is received.
+
+There will be 3 variables available to automations. Their memory will be cleaned up after the automation is
+done and will not be available if there are any `delay` actions or others that do work "asynchronously" in the automation.
+
+- **info**: :apistruct:`espnow::ESPNowRecvInfo` with information about the received package.
+- **data**: A `const uint8_t *` - pointer to the data.
+- **size**: The size of the data in bytes.
 
 .. code-block:: yaml
 
     espnow:
       on_receive:
         - logger.log:
-            format: "Received: %s RSSI: %d"
-            args: [ packet.payload(), packet.rssi() ]
+            format: "Sent to %s from %s: %s RSSI: %ddBm"
+            args:
+              - format_mac_address_pretty(info.des_addr).c_str()
+              - format_mac_address_pretty(info.src_addr).c_str()
+              - format_hex_pretty(data, size).c_str()
+              - info.rx_ctrl->rssi
 
-Configuration variables: see :ref:`Automation <automation>`.
+Configuration variables:
 
+- **address** (*Optional*, MAC Address): Filter this trigger to packets where the source address matches. If not set, it will match any device.
 
-.. _espnow-on_sent:
-
-``on_sent_succeed``
-*******************
-
-This automation will be triggered when a data package is Sent succesvol. You can get the package data via the "packet" variable. see :ref:`espnow-espnowpackage`.
-
-.. code-block:: yaml
-
-    espnow:
-      on_sent_succeed:
-        - logger.log:
-            format: "Packet sent succesfull: %s "
-            args: [ packet.info().c_str() ]
-
-
-``on_sent_failed``
-******************
-
-This automation will be triggered when a data package failed to be is Sent. You can get the package data via the "packet" variable. see :ref:`espnow-espnowpackage`.
-
-
-.. code-block:: yaml
-
-    espnow:
-      on_sent_failed:
-        - logger.log:
-            format: "Packet sent succesfull: %s "
-            args: [ packet.info().c_str() ]
-
-
-Configuration variables: see :ref:`Automation <automation>`.
-
-.. _espnow-on_new_peer:
-
-``on_new_peer``
-***************
-
-This automation will be triggered when a data package is received from an unknown device. This trigger will only be fired when ``auto_add_peer`` is **false**.
-To the sending peer addres can be found the package data via the "packet" variable. see :ref:`espnow-espnowpackage`.
-To allow the the new device to be handled correctly you need to add it as a *new peer* with the ``espnow.add.peer`` action.
-
-.. code-block:: yaml
-
-    espnow:
-      on_new_peer:
-        - logger.log:
-            format: "Received packet from new peer: 0x012llx "
-            args: [ packet.peer_id() ]
-        - espnow.add.peer: !lambda return packet.peer_id();
-
-Configuration variables: see :ref:`Automation <automation>`.
-
-
-.. _espnow-send_action:
+.. _espnow-send-action:
 
 ``espnow.send`` Action
 ***********************
@@ -179,78 +76,73 @@ This is an :ref:`Action <config-action>` for sending a data package over the esp
 
 .. code-block:: yaml
 
-    globals:
-      - id: custom_peer
-        type: uint64_t
-        restore_value: yes
-        initial_value: '66:55:44:33:22:11'
-    
-    binary_sensor:
-      - platform: gpio
-        pin: D1
-        on_click:
-         - espnow.send:
-             peer_address: 11:22:33:44:55:66
-             payload: "The big angry wolf awakes"
-         - espnow.send: 
-             peer_address: !lambda: "return id(custom_peer);"
-             payload: [0x00, 0x00, 0x34, 0x5d]
-         - espnow.broadcast: 0x20DF10EF`
-            
+    on_...:
+      - espnow.send:
+          address: 11:22:33:44:55:66
+          data: "The big angry wolf awakes"
+      - espnow.send:
+          address: 11:22:33:44:55:66
+          data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
+      - espnow.send:
+          address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
+          data: [0x00, 0x00, 0x34, 0x5d]
+      - espnow.send:
+          address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
+          data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
+
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The ID of the espnow component to set.
-- **peer_address** (*Optional*, Peer Address): The MAC address of the receiving device to connect to. When omitted it will broadcast the package to every device.
-- **payload** (**Required**, multiple): The data that need to be send as broadcast or specific device.
+- **address** (**Required**, MAC Address): The MAC address of the receiving device to send to.
+- **data** (**Required**, :ref:`templatable <config-templatable>`, string or list of bytes): The data to be sent.
 
-You can send data as string, as an array of bytes or as integer (Litle Ending). The maximal bytes that can be send is 240 bytes; 10 less then the offical protocol;
-we will add an prefix and checksum code to the data.
+.. _espnow-peer_add-action:
 
-.. _espnow-add_peer:
-
-``espnow.add.peer`` Action
+``espnow.peer.add`` Action
 **************************
 
 This is an :ref:`Action <config-action>` to add a new peer to the internal allowed peers list.
 
 .. code-block:: yaml
 
-    espnow:
-      on_new_peer:
-        - logger.log:
-            format: "Send data: %s \n New Peer: 0x%12h "
-            args: [ packet.payload(), packet.peer_id()]
-        - espnow.add.peer: 
-             peer_address: !lambda return packet.peer_id();
-             make_default: true
+    on_...:
+      - espnow.peer.add:
+          address: 11:22:33:44:55:66
+      - espnow.peer.add:
+          address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
 
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The ID of the espnow component to set.
-- **peer_address** (**Required**, Peer Address): The Peer address that needs to be added to the list of allowed peers.
-- **make_default** (*Optional*, boolean): Makes this new peer the default peer address
+- **address** (**Required**, MAC Address): The Peer address that needs to be added to the list of allowed peers.
 
 
-.. _espnow-del_peer:
+.. _espnow-peer_delete-action:
 
-``espnow.del.peer`` Action
-**************************
+``espnow.peer.delete`` Action
+*****************************
 
 This is an :ref:`Action <config-action>` to remove a known peer from the internal allowed peers list.
 
 .. code-block:: yaml
 
       on_...:
-        - espnow.add.peer: packet.peer: 11:22:33:44:55:66
+        - espnow.peer.delete:
+            address: 11:22:33:44:55:66
+        - espnow.peer.delete:
+            address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
 
 Configuration variables:
 
-- **id** (*Optional*, :ref:`config-id`): The ID of the espnow component to set.
-- **peer_address** (**Required**, Peer Address): The Peer address that needs to be added to the list of allowed peers.
+- **address** (**Required**, MAC Address): The Peer address that needs to be removed from the list of allowed peers.
 
 
+.. _espnow-peers:
+
+Peers
+-----
+
+TBD
 
 See Also
 --------

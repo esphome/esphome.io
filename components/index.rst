@@ -1084,7 +1084,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 
 .. imgtable::
 
-    ESP-NOW, components/espnow, esp-now-logo.png
+    ESP-NOW, components/espnow, esp-now.svg
     IR Remote Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
     Remote Receiver, components/remote_receiver, remote.svg, dark-invert
     Remote Transmitter, components/remote_transmitter, remote.svg, dark-invert
