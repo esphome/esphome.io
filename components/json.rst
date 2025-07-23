@@ -59,7 +59,7 @@ Example 2: Simple JSON:
 
     {"key": 42.0, "greeting": "Hello World"}
 
-..note::
+.. note::
 
     To use the json component, you need to include it in your config:
 
@@ -134,8 +134,8 @@ See Also
 --------
 
 - :doc:`index`
-- :apiref:`http_request/http_request.h`
-- :apiref:`json/json_util.h`
+- :apiref:`http_request <http_request/http_request.h>`
+- :apiref:`json_util <json/json_util.h>`
 - `ArduinoJson <https://arduinojson.org/>`__
 - :ghedit:`Edit`
 
