@@ -11,6 +11,7 @@ ADC in your device to measure a voltage on certain pins.
 - ESP8266: Only pin A0 (GPIO17) can be used.
 - ESP32: Available pins vary by variant, see :ref:`adc-esp32_pins`.
 - RP2040: GPIO26 through GPIO29 can be used.
+- nRF52840: AIN0 through AIN7, VDD, VDDHDIV5 can be used.
 
 .. figure:: images/adc-ui.png
     :align: center
