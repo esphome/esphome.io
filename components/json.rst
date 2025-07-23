@@ -59,6 +59,13 @@ Example 2: Simple JSON:
 
     {"key": 42.0, "greeting": "Hello World"}
 
+..note::
+
+    To use the json component, you need to include it in your config:
+
+    .. code-block:: yaml
+
+    json:
 
 Parsing JSON:
 -------------
