@@ -37,6 +37,7 @@ Automations:
 Automations
 -----------
 
+
 .. _espnow-on_receive:
 
 ``on_receive``
@@ -67,6 +68,7 @@ Configuration variables:
 
 - **address** (*Optional*, MAC Address): Filter this trigger to packets where the source address matches. If not set, it will match any device.
 
+
 .. _espnow-send-action:
 
 ``espnow.send`` Action
@@ -95,6 +97,29 @@ Configuration variables:
 
 - **address** (**Required**, MAC Address): The MAC address of the receiving device to send to.
 - **data** (**Required**, :ref:`templatable <config-templatable>`, string or list of bytes): The data to be sent.
+
+
+.. _espnow-broadcast-action:
+
+``espnow.broadcast`` Action
+***************************
+
+This is an :ref:`Action <config-action>` for sending a data package over the espnow protocol to any device that is listening.
+
+.. code-block:: yaml
+
+    on_...:
+      - espnow.broadcast:
+          data: "The big angry wolf awakes"
+      - espnow.broadcast:
+          data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
+      - espnow.broadcast:
+          data: [0x00, 0x00, 0x34, 0x5d]
+
+Configuration variables:
+
+- **data** (**Required**, :ref:`templatable <config-templatable>`, string or list of bytes): The data to be sent.
+
 
 .. _espnow-peer_add-action:
 
@@ -142,7 +167,14 @@ Configuration variables:
 Peers
 -----
 
-TBD
+A peer is a device that this device is allowed to send to. Broadcast and unencrypted unicast data can be received from
+any device without explicitly adding it as a peer.
+
+If ``auto_add_peer`` is set to ``false`` and you have not added any peers, then only broadcasts can be sent and there
+will be an error when trying to send data to a peer.
+
+Setting ``auto_add_peer`` to ``true`` will allow the component to automatically add any incoming device as a peer, and will
+automatically add any peer data is sent to.
 
 See Also
 --------
