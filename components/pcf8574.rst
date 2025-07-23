@@ -33,6 +33,10 @@ not work.
       - id: 'pcf8574_hub'
         address: 0x21
         pcf8575: false
+        interrupt_pin:
+          number: 2
+          mode: INPUT_PULLUP
+          inverted: true
 
     # Individual outputs
     switch:
@@ -54,10 +58,15 @@ Configuration variables:
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to ``0x21``.
 - **pcf8575** (*Optional*, boolean): Whether this is a 16-pin PCF8575. Defaults to ``false``.
+- **interrupt_pin** (*Optional*,  :ref:`config-pin`): The pin connected to the interrupt pin of the PCF8574.
 
 .. note::
 
     If you use PCF8575, pin numbers are from 0 to 15, not 0 to 7 and 10 to 17 as datasheet states!
+
+    If the interrupt pin is configured, the PCF8574 will only be read when signalled via that pin.
+
+    All unconfigured pins are set to outputs as the datasheet states.
 
 Pin configuration variables:
 ****************************
