@@ -102,6 +102,7 @@ Network Protocols
     Network Core, components/network, server-network.svg, dark-invert
     Native API, components/api, server-network.svg, dark-invert
     MQTT, components/mqtt, mqtt.png
+    ESP-NOW, components/espnow, esp-now.svg
     HTTP Request, components/http_request, connection.svg, dark-invert
     mDNS, components/mdns, radio-tower.svg, dark-invert
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
@@ -1084,7 +1085,6 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 
 .. imgtable::
 
-    ESP-NOW, components/espnow, esp-now.svg
     IR Remote Climate, components/climate/climate_ir, air-conditioner-ir.svg, dark-invert
     Remote Receiver, components/remote_receiver, remote.svg, dark-invert
     Remote Transmitter, components/remote_transmitter, remote.svg, dark-invert
