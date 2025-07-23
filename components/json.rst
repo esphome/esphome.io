@@ -61,11 +61,7 @@ Example 2: Simple JSON:
 
 .. note::
 
-    To use the json component, you need to include it in your config:
-
-    .. code-block:: yaml
-
-    json:
+    To use the json component, you need to include it in your config. Be sure to put `json:` at the root level, along with other components like `esphome:`.
 
 Parsing JSON:
 -------------
