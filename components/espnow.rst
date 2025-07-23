@@ -151,11 +151,11 @@ This is an :ref:`Action <config-action>` to remove a known peer from the interna
 
 .. code-block:: yaml
 
-      on_...:
-        - espnow.peer.delete:
-            address: 11:22:33:44:55:66
-        - espnow.peer.delete:
-            address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
+    on_...:
+      - espnow.peer.delete:
+          address: 11:22:33:44:55:66
+      - espnow.peer.delete:
+          address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
 
 Configuration variables:
 
