@@ -11,8 +11,8 @@ It enables the option to interact with other esp32 devices over the Espressif's 
 
 .. note::
 
-    Broadcasting data is not recommended, this will also reach not owned device from other vendors or users that uses the esp-now protocol.
-    The best solution is to minimalice the broadcasting as much as possible and use it only for identification purposes.
+    Broadcasting data is not recommended, this will also reach devices not controlled by you that use the esp-now protocol.
+    The best solution is to minimize the broadcasting as much as possible and use it only for identification purposes.
 
 .. code-block:: yaml
 
@@ -22,12 +22,12 @@ It enables the option to interact with other esp32 devices over the Espressif's 
 Configuration variables:
 ------------------------
 
-- **channel** (*Optional*, int): The Wi-Fi channel that the esp-now communication will use to send/receive data package.
+- **channel** (*Optional*, int): The Wi-Fi channel that the esp-now communication will use to send/receive data packets.
   Cannot be set when the :doc:`wifi` is used, as it will use the same channel as the wifi network.
-- **auto_add_peer** (*Optional*, boolean): This will allow the esp-now component to add a new incoming device to be added as peer.
+- **auto_add_peer** (*Optional*, boolean): This will allow the esp-now component to automatically add any new incoming device as a peer.
   See :ref:`espnow-peers` below. Defaults to ``false``.
 - **enable_on_boot** (*Optional*, boolean): Enable the esp-now component on boot. Defaults to ``true``.
-- **peers** (*Optional*, list): A peer is the name for devices that uses esp-now. The list will have all MAC addresses from
+- **peers** (*Optional*, list): A peer is the name for devices that use esp-now. The list will have all MAC addresses from
   the devices where this device may communicate with. See :ref:`espnow-peers` below.
 
 Automations:
@@ -48,7 +48,7 @@ This automation will be triggered when data is received.
 There will be 3 variables available to automations. Their memory will be cleaned up after the automation is
 done and will not be available if there are any `delay` actions or others that do work "asynchronously" in the automation.
 
-- **info**: :apistruct:`espnow::ESPNowRecvInfo` with information about the received package.
+- **info**: :apistruct:`espnow::ESPNowRecvInfo` with information about the received packet.
 - **data**: A `const uint8_t *` - pointer to the data.
 - **size**: The size of the data in bytes.
 
@@ -74,14 +74,14 @@ Configuration variables:
 ``espnow.send`` Action
 ***********************
 
-This is an :ref:`Action <config-action>` for sending a data package over the espnow protocol.
+This is an :ref:`Action <config-action>` for sending a data packet over the espnow protocol.
 
 .. code-block:: yaml
 
     on_...:
       - espnow.send:
           address: 11:22:33:44:55:66
-          data: "The big angry wolf awakes"
+          data: "The big angry wolf awakens"
       - espnow.send:
           address: 11:22:33:44:55:66
           data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
@@ -104,13 +104,13 @@ Configuration variables:
 ``espnow.broadcast`` Action
 ***************************
 
-This is an :ref:`Action <config-action>` for sending a data package over the espnow protocol to any device that is listening.
+This is an :ref:`Action <config-action>` for sending a data packet over the espnow protocol to any device that is listening.
 
 .. code-block:: yaml
 
     on_...:
       - espnow.broadcast:
-          data: "The big angry wolf awakes"
+          data: "The big angry wolf awakens"
       - espnow.broadcast:
           data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
       - espnow.broadcast:
@@ -174,7 +174,7 @@ If ``auto_add_peer`` is set to ``false`` and you have not added any peers, then 
 will be an error when trying to send data to a peer.
 
 Setting ``auto_add_peer`` to ``true`` will allow the component to automatically add any incoming device as a peer, and will
-automatically add any peer data is sent to.
+automatically add any peer that data is sent to.
 
 See Also
 --------
