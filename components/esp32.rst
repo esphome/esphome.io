@@ -150,12 +150,6 @@ LWIP (Lightweight IP) behavior. Some options improve performance while others sa
   mDNS implementation, so this is rarely needed. Defaults to ``true``.
 - **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
   interfaces. Defaults to ``false``.
-- **enable_lwip_igmp_snooping** (*Optional*, boolean): Enable IGMP snooping functionality for multicast traffic optimization.
-  This feature allows switches to intelligently forward multicast traffic only to hosts that have requested it. Defaults to ``false``.
-- **enable_lwip_tcp_input_performance_measurement** (*Optional*, boolean): Enable TCP input performance measurement and statistics.
-  This adds code for measuring TCP input processing performance. Defaults to ``false``.
-- **enable_lwip_tcp_dup_ack_retransmit** (*Optional*, boolean): Enable immediate retransmission on reception of duplicate ACKs.
-  This can improve TCP performance in certain network conditions but adds additional code. Defaults to ``false``.
 - **enable_lwip_tcpip_core_locking** (*Optional*, boolean): Enable LWIP TCP/IP core locking for better socket performance.
   This uses direct function calls with mutex protection instead of mailbox message passing between threads. Enabling this
   improves socket operation performance by 20-200% but may reduce multi-threaded scalability. Defaults to ``true``.
