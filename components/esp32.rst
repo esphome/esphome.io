@@ -157,8 +157,8 @@ LWIP (Lightweight IP) behavior. Some options improve performance while others sa
 - **enable_lwip_check_thread_safety** (*Optional*, boolean): Enable LWIP thread safety checks to detect incorrect usage of
   the TCP/IP stack from multiple threads. This helps catch thread safety issues when core locking is enabled. Defaults to ``true``.
 
-Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance 
-options (defaulting to ``true``) improve socket operation performance but can be disabled if you need better 
+Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
+options (defaulting to ``true``) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
 
 **Example configuration with advanced LWIP options:**
