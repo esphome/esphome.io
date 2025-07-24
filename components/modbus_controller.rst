@@ -75,25 +75,29 @@ Configuration variables:
 
 - **server_registers** (*Optional*): A list of registers that are responded to when acting as a server.
   - **address** (**Required**, integer): start address of the first register in a range
-  - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in big endian format (MSB first)
+  - **value_type** (*Optional*): datatype of the mod_bus register data. The default data type for ModBUS is a 16 bit integer in **big endian** format (network byte order, MSB first)
 
-      - ``U_WORD``: unsigned 16 bit integer from 1 register = 16bit
-      - ``S_WORD``: signed 16 bit integer from 1 register = 16bit
-      - ``U_DWORD``: unsigned 32 bit integer from 2 registers = 32bit
-      - ``S_DWORD``: signed 32 bit integer from 2 registers = 32bit
-      - ``U_DWORD_R``: unsigned 32 bit integer from 2 registers low word first
-      - ``S_DWORD_R``: signed 32 bit integer from 2 registers low word first
-      - ``U_QWORD``: unsigned 64 bit integer from 4 registers = 64bit
-      - ``S_QWORD``: signed 64 bit integer from 4 registers = 64bit
-      - ``U_QWORD_R``: unsigned 64 bit integer from 4 registers low word first
-      - ``S_QWORD_R``: signed 64 bit integer from 4 registers low word first
-      - ``FP32``: 32 bit IEEE 754 floating point from 2 registers
-      - ``FP32_R``: 32 bit IEEE 754 floating point - same as FP32 but low word first
-
+      - ``U_WORD``: unsigned 16 bit integer, 1 register, ``uint16_t``
+      - ``S_WORD``: signed 16 bit integer, 1 register, ``int16_t``
+      - ``U_DWORD``: unsigned 32 bit integer, 2 registers, ``uint32_t``
+      - ``S_DWORD``: signed 32 bit integer, 2 registers, ``int32_t``
+      - ``U_DWORD_R``: **little endian** unsigned 32 bit integer, 2 registers, ``uint32_t``
+      - ``S_DWORD_R``: **little endian** signed 32 bit integer, 2 registers, ``int32_t``
+      - ``U_QWORD``: unsigned 64 bit integer, 4 registers, ``uint64_t``
+      - ``S_QWORD``: signed 64 bit integer, 4 registers ``int64_t``
+      - ``U_QWORD_R``: **little endian** unsigned 64 bit integer, 4 registers, ``uint64_t``
+      - ``S_QWORD_R``: **little endian** signed 64 bit integer, 4 registers, ``int64_t``
+      - ``FP32``: 32 bit IEEE 754 floating point, 2 registers, ``float``
+      - ``FP32_R``: **little endian** 32 bit IEEE 754 floating point, 2 registers, ``float``
+    
     Defaults to ``U_WORD``.
 
   - **read_lambda** (**Required**, :ref:`lambda <config-lambda>`):
     Lambda that returns the value of this register.
+  - **write_lambda** (*Optional*, :ref:`lambda <config-lambda>`):
+    Lambda that sets the value of this register. A variable ``x`` of the appropriate type (``uint16_t``, ``int32_t``, etc, see above) is provided with the value,
+    as well as ``address`` containing the address of this register. You must return ``true`` if the operation was successful, ``false`` otherwise, in which case
+    a ModBUS exception code ``4`` will be sent to the client.
 
 Automations:
 

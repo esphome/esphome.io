@@ -374,21 +374,23 @@ Not only the end, but also the start value of the bar can be set, which changes 
 
 **Configuration variables:**
 
-- **anim_time** (*Optional*, :ref:`Time <config-time>`): Sets the animation time if the value is set with ``animated: true``.
 - **animated** (*Optional*, boolean): Animate the indicator on boot to the starting value. Defaults to ``true``.
-- **indicator** (*Optional*, list): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize, all the typical background properties.
-- **max_value** (*Optional*, int8): Maximum value of the indicator. Defaults to ``100``.
-- **min_value** (*Optional*, int8): Minimum value of the indicator. Defaults to ``0``.
-- **mode** (*Optional*, string): ``NORMAL``: the indicator is drawn from the minimum value to the current. ``REVERSE``: the indicator is drawn counter-clockwise from the maximum value to the current. ``SYMMETRICAL``: the indicator is drawn from the middle point to the current value. Defaults to ``NORMAL``.
-- **value** (*Optional*, int8): Actual value of the indicator at start, in ``min_value``-``max_value`` range. Defaults to ``0``.
+- **indicator** (*Optional*, int): Settings for the indicator *part* to show the value. Supports a list of :ref:`styles <lvgl-styling>` and state-based styles to customize, all the typical background properties.
+- **max_value** (*Optional*, int): Maximum value of the indicator. Defaults to ``100``.
+- **min_value** (*Optional*, int): Minimum value of the indicator. Defaults to ``0``.
+- **mode** (*Optional*, string): The mode of the bar. Defaults to ``NORMAL``.
+   * ``NORMAL``: the indicator is drawn from the minimum value to the current value.
+   * ``RANGE``: the indicator is drawn from the start value to the current value.
+   * ``SYMMETRICAL``: the indicator is symmetrically drawn from the middle point to the current value.
+- **start_value** (*Optional*, int): For ``RANGE`` mode, the start value of the indicator. Defaults to ``0``.
+- **value** (*Optional*, int): Value for the indicator end, in ``min_value``-``max_value`` range. Defaults to ``0``.
 - Style options from :ref:`lvgl-styling`. The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Actions:**
 
 - ``lvgl.bar.update`` :ref:`action <actions-action>` updates the widget styles and properties from the specific options above, just like the :ref:`lvgl.widget.update <lvgl-automation-actions>` action is used for the common styles, states or flags.
     - **id** (**Required**): The ID or a list of IDs of bar widgets to be updated.
-    - **animated** (*Optional*, boolean): Animate the indicator to the new value. Defaults to ``true``.
-    - **value** (*Optional*, int8): New value of the indicator.
+    - Any of the bar options as listed above.
     - Style options from :ref:`lvgl-styling`. The background of the bar and it uses the typical background style properties. Adding padding will make the indicator smaller or larger.
 
 **Triggers:**
@@ -911,6 +913,7 @@ Images are the basic widgets used to display images.
 
 **Configuration variables:**
 
+- **src** (**Required**, :ref:`image <display-image>`): The ID of an existing image configuration.
 - **angle** (*Optional*, 0-360): Rotation of the image. Defaults to ``0.0``.
 - **antialias** (*Optional*): The quality of the angle or scale transformation. When anti-aliasing is enabled, the transformations are higher quality but slower. Defaults to ``false``.
 - **mode** (*Optional*): Either ``REAL`` or  ``VIRTUAL``. With ``VIRTUAL``, when the image is scaled or rotated, the real coordinates of the image object are not changed. The larger content simply overflows the object's boundaries. It also means the layouts are not affected the by the transformations. With ``REAL``, if the width/height of the object is set to ``SIZE_CONTENT``, the object's size will be set to the scaled and rotated size. If an explicit size is set, the overflowing content will be cropped. Defaults to ``VIRTUAL``.
@@ -919,7 +922,9 @@ Images are the basic widgets used to display images.
 - **pivot_x** (*Optional*): Horizontal position of the pivot point of rotation, in pixels, relative to the top left corner of the image. Defaults to the center of the image. Must be specified along with ``pivot_y``.
 - **pivot_y** (*Optional*): Vertical position of the pivot point of rotation, in pixels, relative to the top left corner of the image. Defaults to the center of the image. Must be specified along with ``pivot_x``
 - **zoom** (*Optional*, 0.1-10): Zoom of the image.
-- **src** (**Required**, :ref:`image <display-image>`): The ID of an existing image configuration.
+- **image_recolor** (*Optional*, :ref:`color <lvgl-color>`): Color to mix with every pixel of an image Note that ``image_recolor_opa`` defaults to TRANSP, so it must also be set.
+- **image_recolor_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the image recoloring.
+
 - Some style options from :ref:`lvgl-styling` for the background rectangle that uses the typical background style properties and the image itself using the image style properties.
 
 **Actions:**
@@ -953,7 +958,7 @@ Images are the basic widgets used to display images.
 
 .. note::
 
-    Currently ``RGB565`` type images are supported, with transparency using the optional parameter ``use_transparency`` set. See :ref:`display-image` for how to load an image for rendering in ESPHome.
+    Currently ``RGB565`` type images are supported, with transparency using the optional parameter ``transparency`` set. See :ref:`display-image` for how to load an image for rendering in ESPHome.
 
 .. tip::
 
