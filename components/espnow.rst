@@ -97,6 +97,13 @@ Configuration variables:
 
 - **address** (**Required**, MAC Address): The MAC address of the receiving device to send to.
 - **data** (**Required**, :ref:`templatable <config-templatable>`, string or list of bytes): The data to be sent.
+- **on_sent** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the data is sent successfully.
+- **wait_for_sent** (*Optional*, boolean): The automation will wait for the data to be sent and for the ``on_sent`` or ``on_error``
+  actions to be finished before continuing with the next action.
+  Defaults to ``true``.
+- **on_error** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the data could not be sent.
+- **continue_on_error** (*Optional*, boolean): If set to ``false``, the next action will not be triggered if the data could not be sent.
+  Defaults to ``true``.
 
 
 .. _espnow-broadcast-action:
