@@ -140,8 +140,8 @@ Advanced Configuration
 
 **LWIP Optimization Options (ESP-IDF only):**
 
-The following options are available under the ``advanced`` section when using the ESP-IDF framework to disable unused
-LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
+The following options are available under the ``advanced`` section when using the ESP-IDF framework to optimize
+LWIP (Lightweight IP) behavior. Some options improve performance while others save flash memory:
 
 - **enable_lwip_dhcp_server** (*Optional*, boolean): Enable DHCP server functionality. Only needed if the device will act
   as a DHCP server (necessary for WiFi AP mode). When the WiFi component is used, it automatically handles enabling/disabling
@@ -150,9 +150,39 @@ LWIP (Lightweight IP) features and save flash memory (approximately 4KB):
   mDNS implementation, so this is rarely needed. Defaults to ``true``.
 - **enable_lwip_bridge_interface** (*Optional*, boolean): Enable bridge interface support for bridging multiple network
   interfaces. Defaults to ``false``.
+- **enable_lwip_igmp_snooping** (*Optional*, boolean): Enable IGMP snooping functionality for multicast traffic optimization.
+  This feature allows switches to intelligently forward multicast traffic only to hosts that have requested it. Defaults to ``false``.
+- **enable_lwip_tcp_input_performance_measurement** (*Optional*, boolean): Enable TCP input performance measurement and statistics.
+  This adds code for measuring TCP input processing performance. Defaults to ``false``.
+- **enable_lwip_tcp_dup_ack_retransmit** (*Optional*, boolean): Enable immediate retransmission on reception of duplicate ACKs.
+  This can improve TCP performance in certain network conditions but adds additional code. Defaults to ``false``.
+- **enable_lwip_tcpip_core_locking** (*Optional*, boolean): Enable LWIP TCP/IP core locking for better socket performance.
+  This uses direct function calls with mutex protection instead of mailbox message passing between threads. Enabling this
+  improves socket operation performance by 20-200% but may reduce multi-threaded scalability. Defaults to ``true``.
+- **enable_lwip_check_thread_safety** (*Optional*, boolean): Enable LWIP thread safety checks to detect incorrect usage of
+  the TCP/IP stack from multiple threads. This helps catch thread safety issues when core locking is enabled. Defaults to ``true``.
 
-These optimizations are applied automatically and save flash memory without affecting typical ESPHome functionality. The
-features can be enabled if needed by setting the corresponding option to ``true``.
+The memory-saving options (defaulting to ``false``) can be disabled to save flash memory without affecting typical ESPHome 
+functionality. The performance options (defaulting to ``true``) improve socket operation performance but can be disabled 
+if you need better multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
+
+**Example configuration with advanced LWIP options:**
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    esp32:
+      board: esp32dev
+      framework:
+        type: esp-idf
+        advanced:
+          # Performance options (enabled by default)
+          enable_lwip_tcpip_core_locking: true  # Better socket performance
+          enable_lwip_check_thread_safety: true  # Thread safety validation
+          
+          # Memory saving options (disabled by default)
+          enable_lwip_dhcp_server: false  # Only needed for AP mode
+          enable_lwip_mdns_queries: false  # ESPHome has its own mDNS
 
 .. _esp32-idf_components:
 
