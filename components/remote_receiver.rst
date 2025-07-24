@@ -80,27 +80,37 @@ Configuration variables:
 - **filter** (*Optional*, :ref:`config-time`): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``50us``.
 - **idle** (*Optional*, :ref:`config-time`): The amount of time that a signal should remain stable/unchanged for it to
-  be considered complete. Allowed values are in range ``0`` to ``4294967295us``. Defaults to ``10ms``.
+  be considered complete. The maximum allowable value is:
+
+  - ``65536us`` on the ``ESP32`` and ``ESP32-S2`` variants
+  - ``32767us`` on all other ESP32 variants
+  - ``4294967295us`` on all other platforms
+
+  Note: The ESP32 values listed above assume the default ``clock_resolution``. If a different ``clock_resolution`` is used,
+  the values are scaled by 1000000 / ``clock_resolution``.
+
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
-ESP32 IDF configuration variables:
+ESP32 configuration variables:
 **********************************
 
-- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
-  internal DMA buffer. If DMA is not enabled, ``rmt_symbols`` determines the amount of RMT memory allocated to this
-  component. Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2``,
-  only half of the symbol memory is available to receivers. Each symbol is 32 bits and contains two values.
+- **rmt_symbols** (*Optional*, int): When ``use_dma`` is enabled, this sets the size of the driver's internal DMA
+  buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
+  across all components and should be allocated in multiples of the block size. On the ``ESP32`` and ``ESP32-S2``
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
 
   .. csv-table::
-      :header: "ESP32 Variant", "Memory Size", "Block Size"
+      :header: "ESP32 Variant", "Available Memory", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-C3", "192 symbols", "48 symbols"
-      "ESP32-C6", "192 symbols", "48 symbols"
-      "ESP32-H2", "192 symbols", "48 symbols"
+      "ESP32-C3", "96 symbols", "48 symbols"
+      "ESP32-C5", "96 symbols", "48 symbols"
+      "ESP32-C6", "96 symbols", "48 symbols"
+      "ESP32-H2", "96 symbols", "48 symbols"
+      "ESP32-P4", "192 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
+      "ESP32-S3", "192 symbols", "48 symbols"
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to ``rmt_symbols``.
@@ -110,26 +120,6 @@ ESP32 IDF configuration variables:
   ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
   the DMA buffer size and can be set to a large value.
-
-ESP32 Arduino configuration variables:
-**************************************
-
-- **rmt_channel** (*Optional*, int): The RMT channel to use. The following ESP32 variants have these channels available:
-
-  .. csv-table::
-      :header: "ESP32 Variant", "Channels"
-
-      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-C3", "2, 3"
-      "ESP32-C6", "2, 3"
-      "ESP32-H2", "2, 3"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "4, 5, 6, 7"
-
-- **memory_blocks** (*Optional*, int): The number of RMT memory blocks used. The maximum
-  number of blocks shared by all receivers and transmitters depends on the ESP32 variant. Defaults to ``3``.
-- **clock_divider** (*Optional*, int): The clock divider used by the RMT peripheral. A clock divider of ``80`` leads to
-  a resolution of 1 µs per tick, ``160`` leads to 2 µs. Allowed values are in range ``1`` to ``255``. Defaults to ``80``
 
 .. note::
 
@@ -266,6 +256,17 @@ The ``remote_receiver`` binary sensor lets you track when a button on a remote c
 
 Each time the pre-defined signal is received, the binary sensor will briefly go ON and then immediately OFF.
 
+.. note::
+
+    **For IR Remote Binary Sensors**: If you're using binary sensors to track IR remote button presses and
+    experiencing issues with rapid button presses not being detected (e.g., quick ON→OFF transitions being missed),
+    consider setting ``batch_delay: 0ms`` in your :doc:`API configuration </components/api>`. This will send state
+    changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
+    network traffic and should only be used when necessary.
+    
+    For new projects, consider using automations with the ``on_*`` triggers (described above)
+    instead of binary sensors, as they are better suited for handling momentary button press events.
+
 .. code-block:: yaml
 
     # Example configuration entry
@@ -275,6 +276,23 @@ Each time the pre-defined signal is received, the binary sensor will briefly go 
         panasonic:
           address: 0x4004
           command: 0x100BCBD
+
+.. code-block:: yaml
+
+    # Example with batch_delay: 0 for rapid button presses
+    api:
+      batch_delay: 0ms  # Send state changes immediately
+    
+    remote_receiver:
+      pin: GPIOXX
+      dump: all
+    
+    binary_sensor:
+      - platform: remote_receiver
+        name: "TV Remote Power"
+        nec:
+          address: 0x1234
+          command: 0x5678
 
 Configuration variables:
 ************************

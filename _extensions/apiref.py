@@ -41,6 +41,13 @@ def apiref_role(name, rawtext, text, lineno, inliner, options=None, content=None
     ref = f"{API_DOCS_URL}/{encode_doxygen(value)}.html"
     return [make_link_node(rawtext, text, ref, options)], []
 
+def apisource_role(name, rawtext, text, lineno, inliner, options=None, content=None):
+    text, value = split_text_value(text)
+    if text is None:
+        text = value
+    ref = f"{API_DOCS_URL}/{encode_doxygen(value)}_source"
+    return [make_link_node(rawtext, text, ref, options)], []
+
 
 def apiclass_role(name, rawtext, text, lineno, inliner, options=None, content=None):
     text, value = split_text_value(text)
@@ -66,6 +73,7 @@ def make_link_node(rawtext, text, ref, options=None):
 
 def setup(app):
     app.add_role("apiref", apiref_role)
+    app.add_role("apisource", apisource_role)
     app.add_role("apiclass", apiclass_role)
     app.add_role("apistruct", apistruct_role)
     return {"version": "1.0.0", "parallel_read_safe": True, "parallel_write_safe": True}
