@@ -83,6 +83,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
+    Factory Reset, components/factory_reset, restart-alert.svg, dark-invert
 
 Network Hardware
 ----------------
