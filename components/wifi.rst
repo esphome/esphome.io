@@ -92,7 +92,7 @@ Configuration variables:
 - **on_connect** (*Optional*, :ref:`Automation <automation>`): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, :ref:`Automation <automation>`): An action to be performed when the connection is dropped.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to ``true``.
-
+- **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM. Defaults to ``false``. Requires PSRAM to be configured.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 
 Access Point Mode
@@ -356,7 +356,6 @@ Configuration variables:
 - **timeout** (*Optional*, :ref:`config-time`, :ref:`templatable <config-templatable>`): The time to wait for the connection to be established. Defaults to 30 seconds.
 - **on_connect** (*Optional*, :ref:`Automation <automation>`): An action to be performed when a connection is established.
 - **on_error** (*Optional*, :ref:`Automation <automation>`): An action to be performed when the connection fails.
-- **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM. Defaults to ``false``. Requires PSRAM to be configured.
 
 .. _wifi-connected_condition:
 
