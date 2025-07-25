@@ -98,6 +98,7 @@ Configuration variables:
       WiFi performance with many rapidly-changing sensors. Only use this setting when necessary.
 
 - **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ ``CustomAPIDevice`` class. Only needed when external components register their own services via the native API. Defaults to ``false``.
+- **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ ``CustomAPIDevice::subscribe_homeassistant_state()`` method. This is automatically enabled when using any ``homeassistant`` platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to ``false``.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
