@@ -56,6 +56,7 @@ Driver chips
     "GC9D01N", "240x240"
     "AXS15231", "320x240"
     "ST7735", "128x160"
+    "CO5300", "466x466"
     "CUSTOM", "Customisable"
 
 Boards with integrated displays
@@ -72,6 +73,7 @@ Boards with integrated displays
     "S3BOXLITE", "Espressif", "https://www.espressif.com/en/products/devkits/esp32-s3-box-lite"
     "WAVESHARE-4-TFT", "Waveshare", "https://www.waveshare.com/4inch-tft-touch-shield.htm"
     "PICO-RESTOUCH-LCD-3.5", "Waveshare", "https://www.waveshare.com/pico-restouch-lcd-3.5.htm"
+    "WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.75", "Waveshare", "https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm"
     "WT32-SC01-PLUS", "Wireless-Tag", "https://www.wireless-tag.com/portfolio/wt32-sc01-plus/"
     "ESP32-2432S028", "Sunton", "https://www.espressif.com/en/products/devkits/esp32-2432s028"
     "JC3248W535", "Guition", "https://www.aliexpress.com/item/1005007566332450.html"
