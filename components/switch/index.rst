@@ -136,7 +136,7 @@ where the switch state needs to be determined at runtime using lambda expression
 
 Configuration variables:
   - **id** (*Required*, string): The ID of the switch to control.
-  - **state** (*Required*, boolean, :ref:`templatable <config-templatable>`): The state to set the switch to. You can set it based on another sensors value with a template.
+  - **state** (*Required*, boolean, :ref:`templatable <config-templatable>`): The state to set the switch to. You can set it based on another sensor's value with a template.
 
 .. _switch-is_on_condition:
 .. _switch-is_off_condition:
