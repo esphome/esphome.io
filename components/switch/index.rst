@@ -116,8 +116,9 @@ This action turns a switch with the given ID off when executed.
 *************************
 
 This action controls a switch with the given ID when executed.
-It is similar to the ``switch.turn_on`` and ``switch.turn_off`` actions,
-but it can be used in complex lambda expressions.
+Unlike the ``switch.turn_on`` and ``switch.turn_off`` actions, ``switch.control`` allows for dynamic state setting
+based on conditions or sensor values. It supports templated state control, making it ideal for advanced use cases
+where the switch state needs to be determined at runtime using lambda expressions or other logic.
 
 .. code-block:: yaml
 
