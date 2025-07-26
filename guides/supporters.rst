@@ -662,6 +662,7 @@ Contributors
 - `Fabian Affolter (@fabaff) <https://github.com/fabaff>`__
 - `Fabian (@Fabian-Schmidt) <https://github.com/Fabian-Schmidt>`__
 - `Fabian Muehlberger (@fabianmuehlberger) <https://github.com/fabianmuehlberger>`__
+- `Fabiano Arruda (@fabianoarruda) <https://github.com/fabianoarruda>`__
 - `Federico Ariel Castagnini (@facastagnini) <https://github.com/facastagnini>`__
 - `C W (@fake-name) <https://github.com/fake-name>`__
 - `Kouvaris Theofanis (@faniskou) <https://github.com/faniskou>`__
@@ -1994,6 +1995,7 @@ Contributors
 - `TJ Horner (@tjhorner) <https://github.com/tjhorner>`__
 - `Theodore Ni (@tjni) <https://github.com/tjni>`__
 - `Max Efremov (@Tmin10) <https://github.com/Tmin10>`__
+- `tmpeh (@tmpeh) <https://github.com/tmpeh>`__
 - `Christian (@Tntdruid) <https://github.com/Tntdruid>`__
 - `Lars R. (@TNTLarsn) <https://github.com/TNTLarsn>`__
 - `Snōwball (@tobias-) <https://github.com/tobias->`__
@@ -2185,4 +2187,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated July 19, 2025.*
+*This page was last updated July 23, 2025.*

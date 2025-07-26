@@ -83,6 +83,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
+    Factory Reset, components/factory_reset, restart-alert.svg, dark-invert
 
 Network Hardware
 ----------------
@@ -759,6 +760,7 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    MIPI DSI Displays, components/display/mipi_dsi, tab5.jpg
     MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg
