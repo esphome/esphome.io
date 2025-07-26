@@ -177,12 +177,12 @@ Which microcontrollers does ESPHome support?
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fa-brands fa-raspberry-pi"></i></div>
             <div class="feature-text">RP2040</div>
-            <p>Support for Raspberry Pi’s RP2040 microcontroller.</p>
+            <p>Support for Raspberry Pi's RP2040 microcontroller.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-bolt"></i></div>
             <div class="feature-text">Others</div>
-            <p>Realtek RTL87xx and Beken BK72xx chips are supported.</p>
+            <p>Realtek RTL87xx and Beken BK72xx and Lightning LN882H chips are supported.</p>
         </div>
         <div class="feature-card">
             <div class="feature-icon"><i aria-hidden="true" class="fas fa-computer"></i></div>
@@ -265,7 +265,7 @@ Here's a simple example of an ESPHome configuration file:
     wifi:
       ssid: !secret wifi_ssid
       password: !secret wifi_password
-      
+
       # Enable fallback hotspot if WiFi connection fails
       ap:
 

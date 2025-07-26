@@ -94,7 +94,7 @@ Notes
 The NPI-19 I²C has a temperature output, however the manufacturer does
 not specify its accuracy on the published datasheet. They indicate
 that the sensor should not be used as a calibrated temperature
-reading; it’s only intended for curve fitting data during
+reading; it's only intended for curve fitting data during
 compensation.
 
 

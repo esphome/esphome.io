@@ -7,7 +7,21 @@
 .. raw:: html
     :file: ../images/logo-docs.svg
 
-This page is an index of all of the hardware components and platforms ESPHome currently supports.
+This is the top-level ESPHome documentation index. Browse the tables below, use the sidebar menu, or the search
+function to find the information you're looking for.
+
+ESPHome Configuration
+---------------------
+
+ESPHome is configured in YAML files - use these links for basic and advanced
+information about ESPHome configuration files.
+
+.. imgtable::
+
+    YAML Configuration, guides/yaml, description.svg, dark-invert
+    Packages, components/packages, description.svg, dark-invert
+    Substitutions, components/substitutions, description.svg, dark-invert
+    External Components, components/external_components, external_components.svg, dark-invert
 
 .. _devices:
 
@@ -21,7 +35,9 @@ Supported Microcontrollers
     RP2040, components/rp2040, rp2040.svg
     BK72xx, components/libretiny, bk72xx.svg
     RTL87xx, components/libretiny, rtl87xx.svg
+    LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
+    NRF52, components/nrf52, nrf52.svg
 
 Microcontroller Peripherals
 ---------------------------
@@ -32,6 +48,7 @@ Peripherals which directly support the operation of the microcontroller's proces
 
     PSRAM, components/psram, psram.svg
     Deep Sleep, components/deep_sleep, hotel.svg, dark-invert
+    ESP32-P4 LDO regulator, components/esp_ldo, ldo.svg, dark-invert
 
 ESPHome Automations
 -------------------
@@ -66,17 +83,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
-
-ESPHome Configuration
----------------------
-
-Streamline your ESPHome configuration and/or use components provided by other contributors.
-
-.. imgtable::
-
-    External Components, components/external_components, external_components.svg, dark-invert
-    Packages, components/packages, description.svg, dark-invert
-    Substitutions, components/substitutions, description.svg, dark-invert
+    Factory Reset, components/factory_reset, restart-alert.svg, dark-invert
 
 Network Hardware
 ----------------
@@ -85,6 +92,8 @@ Network Hardware
 
     WiFi, components/wifi, network-wifi.svg, dark-invert
     ESP32 Ethernet, components/ethernet, ethernet.svg, dark-invert
+    ESP32 Hosted, components/esp32_hosted, network-wifi.svg, dark-invert
+    OpenThread, components/openthread, openthread.png
 
 Network Protocols
 -----------------
@@ -99,7 +108,7 @@ Network Protocols
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
     StatsD, components/statsd, connection.svg, dark-invert
     UDP, components/udp, udp.svg
-    Packet Transport, components/packet_transport/index, packet_transport.svg
+    Packet Transport, components/packet_transport/index, packet_transport.svg, dark-invert
 
 Bluetooth/BLE
 -------------
@@ -153,13 +162,15 @@ Hardware Peripheral Interfaces/Busses
 
 .. imgtable::
 
-    1-Wire, components/one_wire, one-wire.svg
+    1-Wire, components/one_wire/index, one-wire.svg
     CAN Bus, components/canbus/index, canbus.svg
     I²C Bus, components/i2c, i2c.svg
     I²S Audio, components/i2s_audio, i2s_audio.svg
     OpenTherm, components/opentherm, opentherm.png
     SPI Bus, components/spi, spi.svg
     UART, components/uart, uart.svg
+    USB Host, components/usb_host, usb.svg, dark-invert
+    USB UART, components/usb_uart, usb.svg, dark-invert
 
 I/O Expanders/Multiplexers
 --------------------------
@@ -173,6 +184,7 @@ I/O Expanders/Multiplexers
     PCA6416A, components/pca6416a, pca6416a.svg
     PCA9554, components/pca9554, pca9554a.jpg
     PCF8574, components/pcf8574, pcf8574.jpg
+    PI4IOE5V6408, components/pi4ioe5v6408, pca9554a.jpg
     SN74HC165, components/sn74hc165, sn74hc595.jpg
     SN74HC595, components/sn74hc595, sn74hc595.jpg
     SX1509, components/sx1509, sx1509.jpg
@@ -181,12 +193,25 @@ I/O Expanders/Multiplexers
     WeiKai SPI/I²C UART/IO Expander, components/weikai, wk2168.jpg
     XL9535, components/xl9535, xl9535.svg
 
-CAN Bus
--------
+1-Wire Bus
+----------
+
+Platforms which specifically support or extend the :doc:`/components/one_wire/index`, allowing communication with
+1-Wire-based devices.
 
 .. imgtable::
 
-    CAN Bus, components/canbus/index, canbus.svg
+    DS2484, components/one_wire/ds2484, ds2484.svg
+    GPIO, components/one_wire/gpio, gpio.svg
+
+CAN Bus
+-------
+
+Platforms which specifically support or extend the :doc:`/components/canbus/index`, allowing communication with
+CAN-based devices.
+
+.. imgtable::
+
     ESP32 CAN, components/canbus/esp32_can, esp32.svg
     MCP2515, components/canbus/mcp2515, mcp2515.svg
 
@@ -215,6 +240,7 @@ Air Quality
     AGS10, components/sensor/ags10, ags10.jpg, Volatile Organic Compound Sensor
     AirThings BLE, components/sensor/airthings_ble, airthings_logo.png, Radon, CO2, Volatile organics
     CCS811, components/sensor/ccs811, ccs811.jpg, CO2 & Volatile organics
+    CM1106, components/sensor/cm1106, cm1106.png, CO2
     EE895, components/sensor/ee895, EE895.png,  CO2 & Temperature & Pressure
     ENS160, components/sensor/ens160, ens160.jpg, CO2 & Air Quality
     GCJA5, components/sensor/gcja5, gcja5.svg, Particulate
@@ -291,6 +317,7 @@ Distance
 
     A01NYUB, components/sensor/a01nyub, a01nyub.jpg, Acoustic distance
     A02YYUW, components/sensor/a02yyuw, a02yyuw.jpg, Acoustic distance
+    GL-R01 Time of Flight Sensor, components/sensor/gl_r01, gl_r01.jpg, IR optical distance
     HRXL MaxSonar WR, components/sensor/hrxl_maxsonar_wr, hrxl_maxsonar_wr.jpg, Acoustic distance
     JSN-SR04T, components/sensor/jsn_sr04t, jsn-sr04t-v3.jpg, Acoustic distance
     TOF10120, components/sensor/tof10120, tof10120.jpg, IR optical distance
@@ -375,6 +402,7 @@ Environmental
     HYT271, components/sensor/hyt271, hyt271.jpg, Temperature & Humidity
     Inkbird IBS-TH1 Mini, components/sensor/inkbird_ibsth1_mini, inkbird_isbth1_mini.jpg, Temperature & Humidity
     Internal Temperature, components/sensor/internal_temperature, thermometer.svg, Temperature, dark-invert
+    LPS22, components/sensor/lps22, lps22.avif, Temperature & Barometric Pressure
     MCP9808, components/sensor/mcp9808, mcp9808.jpg, Temperature
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MLX90614, components/sensor/mlx90614, mlx90614.jpg, Temperature
@@ -433,6 +461,7 @@ Light
     LTR559, components/sensor/ltr_als_ps, ltr559.jpg, Lux & Proximity
     LTR659, components/sensor/ltr_als_ps, ltr-ps.jpg, Proximity
     MAX44009, components/sensor/max44009, max44009.svg, Lux
+    OPT3001, components/sensor/opt3001, opt3001.jpg, Lux
     TCS34725, components/sensor/tcs34725, tcs34725.jpg, Lux & RGB colour
     TSL2561, components/sensor/tsl2561, tsl2561.jpg, Lux
     TSL2591, components/sensor/tsl2591, tsl2591.jpg, Lux
@@ -446,7 +475,6 @@ Magnetic
 .. imgtable::
 
     AS5600, components/sensor/as5600, as5600.jpg, 12-Bit Magnetic Position Sensor
-    ESP32 Hall Sensor, components/sensor/esp32_hall, magnet.svg, ESP internal, dark-invert
     HMC5883L, components/sensor/hmc5883l, hmc5883l.jpg, 3-Axis magnetometer
     MLX90393, components/sensor/mlx90393, mlx90393.jpg, 3-Axis magnetometer
     MMC5603, components/sensor/mmc5603, mmc5603.jpg, 3-Axis magnetometer
@@ -470,6 +498,7 @@ Miscellaneous
     Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg, Solar rooftop
     Integration, components/sensor/integration, sigma.svg, dark-invert
     Kuntze pool sensor, components/sensor/kuntze, kuntze.jpg
+    LC709203F, components/sensor/lc709203f, lc709203f.jpg, Battery Monitor
     LVGL widget, components/sensor/lvgl, lvgl_c_num.png
     M5Stack Unit 8 Angle, components/sensor/m5stack_8angle, m5stack_8angle.png
     MAX17043, components/sensor/max17043, max17043.jpg, Battery
@@ -480,6 +509,7 @@ Miscellaneous
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
     Rotary Encoder, components/sensor/rotary_encoder, rotary_encoder.jpg
     SMT100, components/sensor/smt100, smt100.jpg, Moisture & Temperature
+    Sound Level, components/sensor/sound_level, waveform.svg, dark-invert
     Tuya Sensor, components/sensor/tuya, tuya.png
     TX20, components/sensor/tx20, tx20.jpg, Wind speed & Wind direction
     uFire EC sensor, components/sensor/ufire_ec, ufire_ec.png, EC & Temperature
@@ -647,6 +677,7 @@ Audio DAC Components
     AIC3204, components/audio_dac/aic3204, aic3204.svg
     ES8156, components/audio_dac/es8156, es8156.svg
     ES8311, components/audio_dac/es8311, es8311.svg
+    ES8388, components/audio_dac/es8388, es8388.svg
 
 Button Components
 -----------------
@@ -729,6 +760,8 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    MIPI DSI Displays, components/display/mipi_dsi, tab5.jpg
+    MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg
     ILI9342, components/display/ili9xxx, ili9342.svg
@@ -781,6 +814,8 @@ Energy/Solar Management
 
 .. imgtable::
 
+    Growatt Solar, components/sensor/growatt_solar, growatt.jpg
+    Havells Solar, components/sensor/havells_solar, havellsgti5000d_s.jpg
     PipSolar-compatible PV Inverter, components/pipsolar, pipsolar.jpg
     Power Supply, components/power_supply, power.svg, dark-invert
     Resol VBus, components/vbus, resol_deltasol_bs_plus.jpg
@@ -873,7 +908,7 @@ Media Player Components
     Media Player Core, components/media_player/index, folder-open.svg, dark-invert
     DFPlayer, components/dfplayer, dfplayer.svg, dark-invert
     I2S Audio, components/media_player/i2s_audio, i2s_audio.svg
-    Speaker, components/media_player/speaker, speaker.svg
+    Speaker, components/media_player/speaker, speaker.svg, dark-invert
 
 Microphone Components
 ---------------------
@@ -1056,6 +1091,8 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
     Remote Transmitter, components/remote_transmitter, remote.svg, dark-invert
     RF Bridge, components/rf_bridge, rf_bridge.jpg
     SIM800L, components/sim800l, sim800l.jpg
+    SX126x, components/sx126x, sx126x.png
+    SX127x, components/sx127x, sx127x.png
 
 Miscellaneous Components
 ------------------------
@@ -1089,6 +1126,7 @@ Cookbook
     Sonoff Fishpond Pump, cookbook/sonoff-fishpond-pump, cookbook-sonoff-fishpond-pump.jpg
     Arduino Port Extender, cookbook/arduino_port_extender, arduino_logo.svg
     EHMTX a matrix status/text display, cookbook/ehmtx, ehmtx.jpg
+    Pulse Catcher, cookbook/pulse-catcher, pulses.png
 
 Contributing
 ------------
@@ -1101,7 +1139,9 @@ ESPHome depends on and welcomes contributions from our community. If you'd like 
     :hidden:
 
     binary_sensor/index
+    camera/index
     canbus/index
+    one_wire/index
     climate/index
     cover/index
     fan/index

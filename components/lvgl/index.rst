@@ -153,7 +153,7 @@ The following configuration variables apply to the main ``lvgl`` component, in o
 
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to ``true``. "Interacts" means to release a touch or button, or rotate an encoder.
 - **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only ``16`` is supported (RGB565, 2 bytes/pixel), which is the default value.
-- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. Default is ``100%`` (or ``1.0``). For devices without PSRAM, the recommended value is ``25%``.
+- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is ``100%`` with runtime fallback to ``12%`` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is ``25%``.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
 - **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: ``TRACE``, ``INFO``, ``WARN``, ``ERROR``, ``USER``, ``NONE``. Defaults to ``WARN``.
 - **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either ``big_endian`` or ``little_endian``. Defaults to ``big_endian``.
@@ -202,7 +202,9 @@ Choosing a buffer size
 The ``buffer_size`` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is ``320 * 240 * 2`` bytes (for RGB565) = ``153600`` bytes. If you set the buffer size to ``50%``,
 then the buffer will be ``76800`` bytes. If you set it to ``25%``, then the buffer will be ``38400`` bytes. The default value is ``100%``.
 
-When using larger displays on devices with limited RAM (i.e. no PSRAM), you may need to reduce the buffer size to avoid running out of RAM.
+When using larger displays on devices with limited RAM (i.e. no PSRAM), you may want to reduce the buffer size to avoid running out of RAM.
+If not specified, the buffer size will be 100%, but a fallback
+at runtime to 12% will be attempted if a full size buffer fails. If a specific buffer size is set, the fallback will not be attempted.
 A failure to allocate a buffer will result in an error message in the log and the LVGL component being marked "Failed".
 
 Generally speaking a larger buffer will provide better performance, but the effect of reducing the buffer size from 100% is not as bad as you might think. The LVGL library is designed to be efficient and will only redraw the parts of the screen that have changed.
@@ -391,6 +393,8 @@ These style properties may be applied to any widget, though not all widgets use 
     - ``INTERNAL``
 - **clip_corner** (*Optional*, boolean): If set to ``true``, overflowing content will be clipped off by the widget's rounded corners (``radius`` > ``0``).
 - **color_filter_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to ``TRANSP``.
+- **image_recolor** (*Optional*, :ref:`color <lvgl-color>`): Color to mix with every pixel of an image Note that ``image_recolor_opa`` defaults to TRANSP, so it must also be set.
+- **image_recolor_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the image recoloring.
 - **outline_width** (*Optional*, int16): Set the width of the outline in pixels. Defaults to ``0``.
 - **outline_color** (*Optional*, :ref:`color <lvgl-color>`): Color used to draw an outline around the widget. Defaults to ``0`` (black).
 - **outline_opa** (*Optional*, :ref:`opacity <lvgl-opacity>`): Opacity of the outline of the widget. Defaults to ``COVER``.
@@ -521,9 +525,8 @@ The action takes a style ID and a dictionary of properties to update. The proper
     on_...:
       - lvgl.style.update:
           id: my_style
-          properties:
-            bg_color: 0xFF0000
-            border_color: 0x00FF00
+          bg_color: 0xFF0000
+          border_color: 0x00FF00
 
 .. _lvgl-layouts:
 
@@ -580,7 +583,7 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
         - ``END``: means right horizontally and bottom vertically.
         - ``CENTER``: simply center.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to ``flex_align_track``.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to ``flex_align_track``.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to ``flex_align_track``.
 
     - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
@@ -615,7 +618,11 @@ It can arrange items into a 2D "table" that has rows or columns (tracks). The it
 - *gap*: the space between the rows and columns or the items on a track.
 - *free unit (FR)*: a proportional distribution unit for the space available on the track. It accepts a unitless integer value that serves as a proportion. It dictates what amount of the available space the widget should take up. For example if all items on the track have a ``FR`` set to ``1``, the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
 
-**Configuration variables:**
+Child widgets can be placed on the grid using the ``grid_cell_row_pos`` and ``grid_cell_column_pos`` configuration variables.
+If either is specified both must be specified. If neither is specified the widget will be placed in the first available position, in a row-major order.
+Row and column spans will be taken into account when reserving space.
+
+**Configuration variables (must be placed under the layout key):**
 
     - **grid_rows** (**Required**): The number of rows in the grid, expressed a list of values in pixels, ``CONTENT`` or ``FR(n)`` (free units, where ``n`` is a proportional integer value).
     - **grid_columns** (**Required**): The number of columns in the grid, expressed a list of values in pixels, ``CONTENT`` or ``FR(n)`` (free units, where ``n`` is a proportional integer value).
@@ -624,10 +631,10 @@ It can arrange items into a 2D "table" that has rows or columns (tracks). The it
     - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
     - **pad_column** (*Optional*, int16): Set the padding between the columns, in pixels.
 
-In a grid layout, *all the widgets placed on the grid* will get some additional configuration variables to help with placement:
+In a grid layout, *all the widgets placed on the grid* can have some additional configuration variables to help with placement:
 
-    - **grid_cell_row_pos** (**Required**, int16): Position of the widget, in which row to appear (0 based count).
-    - **grid_cell_column_pos** (**Required**, int16): Position of the widget, in which column to appear (0 based count).
+    - **grid_cell_row_pos** (*Optional*, int16): Position of the widget, in which row to appear (0 based count).
+    - **grid_cell_column_pos** (*Optional*, int16): Position of the widget, in which column to appear (0 based count).
     - **grid_cell_x_align** (*Optional*, string): How to align the widget horizontally within the cell. Can also be applied through :ref:`lvgl-styling`. Possible options below.
     - **grid_cell_y_align** (*Optional*, string): How to align the widget vertically within the cell. Can also be applied through :ref:`lvgl-styling`. Possible options below.
     - **grid_cell_row_span**  (*Optional*, int16): How many rows to span across the widget. Defaults to ``1``.
@@ -635,7 +642,7 @@ In a grid layout, *all the widgets placed on the grid* will get some additional 
 
     .. note::
 
-        These ``grid_cell_`` variables apply to widget configuations!
+        These ``grid_cell_`` variables are applied to individual widgets (cells) within the grid layout!
 
 Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_align``, ``grid_cell_y_align``:
 
@@ -644,7 +651,7 @@ Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_ali
         - ``CENTER``: simply center.
         - ``STRETCH``: stretch the widget to the cell in the respective direction. Does not apply to ``grid_column_align``, ``grid_row_align``.
         - ``SPACE_EVENLY``: items are distributed so that the spacing between any two items (and the space to the edges) is equal.
-        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren’t equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
+        - ``SPACE_AROUND``: items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
         - ``SPACE_BETWEEN``: items are evenly distributed in the track: first item is on the start line, last item on the end line.
 
 .. code-block:: yaml
@@ -656,13 +663,25 @@ Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_ali
           type: grid
           grid_row_align: end
           grid_rows: [25px, fr(1), content]
-          grid_columns: [40, fr(1), fr(1)]
+          grid_columns: [fr(1), fr(1)]
           pad_row: 6px
           pad_column: 0
         widgets:
           - image:
               grid_cell_row_pos: 0
               grid_cell_column_pos: 0
+          - obj:
+              grid_cell_row_pos: 0
+              grid_cell_column_pos: 1
+          - obj:
+              grid_cell_row_pos: 2
+              grid_cell_column_pos: 0
+          - label:
+              text: "This will be placed in row 1, column 0"
+          - label:
+              text: "This will be placed in row 1, column 1"
+          - label:
+              text: "This will be placed in row 2, column 1, since 2/0 is occupied"
 
 .. tip::
 

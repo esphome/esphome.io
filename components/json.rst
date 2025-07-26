@@ -23,15 +23,16 @@ Example 1: Relatively complex JSON
 .. code-block:: json
 
     {
-     "first_name": "John",
-     "last_name": "Smith",
+     "first_name": "Chad",
+     "last_name": "Matsalla",
      "is_alive": true,
      "age": 27,
      "address": {
-       "street_address": "21 2nd Street",
-       "city": "New York",
-       "state": "NY",
-       "postal_code": "10021-3100"
+       "street_address": "42 Nowhere Street",
+       "city": "Fort Qu'Appelle",
+       "state": "Saskatchewan",
+       "postal_code": "S0G 1S0",
+       "country": "Canada"
      },
      "phone_numbers": [
        {
@@ -44,11 +45,12 @@ Example 1: Relatively complex JSON
        }
      ],
      "children": [
-       "Catherine",
-       "Thomas",
-       "Trevor"
+       "Austin",
+       "Alex",
+       "Juno",
+       "Beethoven",
      ],
-     "spouse": null
+     "spouse": "Sarah"
     }
 
 Example 2: Simple JSON:
@@ -127,6 +129,6 @@ See Also
 - :doc:`index`
 - :apiref:`http_request/http_request.h`
 - :apiref:`json/json_util.h`
-- `ArduinoJson <https://arduinojson.org/>`
+- `ArduinoJson <https://arduinojson.org/>`__
 - :ghedit:`Edit`
 
