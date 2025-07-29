@@ -23,6 +23,7 @@ can run.
     esp32_ble:
       io_capability: keyboard_only
       disable_bt_logs: true  # Default, saves flash
+      preferred_phy: 1m       # Default, best compatibility
 
 Configuration variables:
 ------------------------
@@ -43,6 +44,19 @@ Configuration variables:
     - Must be 13 characters or less when using ``name_add_mac_suffix: true`` - :ref:`esphome-mac_suffix`.
 
 - **disable_bt_logs** (*Optional*, boolean): When enabled, disables Bluetooth logging categories that are not used by the configured components. This saves flash memory by only including the loggers needed by your configuration. Defaults to ``true``.
+
+- **preferred_phy** (*Optional*, enum): The preferred BLE PHY (Physical Layer) mode for connections. Defaults to ``1m``.
+
+    - ``1m`` - 1 Mbps PHY (best compatibility, longer range)
+    - ``2m`` - 2 Mbps PHY (higher throughput, shorter range) - Only supported on ESP32-C3, S3, C6, and H2
+    - ``auto`` - Let the ESP32 auto-negotiate PHY mode
+
+    .. note::
+
+        The default ``1m`` PHY provides the best compatibility with older BLE devices and HomeKit accessories.
+        Many devices (especially older ones) do not support 2M PHY and will disconnect if the ESP32 tries to use it.
+        In practice, 2M PHY may also experience more connection issues when WiFi is active on the same ESP32.
+        Only change this setting if you need higher throughput and have confirmed all your devices support 2M PHY.
 
 .. note::
 
