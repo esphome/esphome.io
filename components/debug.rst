@@ -43,7 +43,7 @@ ESP heap memory (free space, maximum free block size and fragmentation level) an
         cpu_frequency:
           name: "CPU Frequency"
 
-    # Logger must be at least debug (default)
+    # Logger must be configured
     logger:
       level: debug
 
@@ -98,5 +98,6 @@ See Also
 
 - :ref:`sensor-filters`
 - :doc:`logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :apiref:`debug/debug_component.h`
 - :ghedit:`Edit`
