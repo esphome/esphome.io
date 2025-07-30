@@ -20,8 +20,8 @@ It requires a ``packet_transport`` component to be configured.
      packet_transport:
        - platform: ...
 
-Configuration variables
------------------------
+Configuration variables:
+------------------------
 
 -  **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 -  **provider** (**Required**, string): The name of the provider node.
