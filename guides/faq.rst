@@ -269,7 +269,7 @@ That's no good. Here are some steps that resolve some problems:
 - :ref:`Enable verbose logs<logger-log_levels>` in your ESPHome device's ``logger:`` section.
 - **If your device is crashing**: See the :doc:`/guides/troubleshooting` guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
-  `ESPHome issue tracker <https://github.com/esphome/issues/issues>`__. If not, you can create a new issue to describe your
+  `ESPHome issue tracker <https://github.com/esphome/esphome/issues>`__. If not, you can create a new issue to describe your
   problem there. We will take a look at it as soon as we can. Thanks!
 
 .. _faq-bug_report:
@@ -294,7 +294,7 @@ If you want the issue you're experiencing to be fixed quickly:
   :ref:`log level <logger-log_levels>` to ``VERY_VERBOSE`` as it may provide better insight into what is going on.
 - Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
 
-You can find our issue tracker `on GitHub <https://github.com/esphome/issues/issues>`__.
+You can find our issue tracker `on GitHub <https://github.com/esphome/esphome/issues>`__.
 
 How do I update to the latest version?
 --------------------------------------
@@ -380,7 +380,7 @@ officially supported by ESPHome, so, if you run into problems, you'll need to co
 component you're using for help.
 
 You can also create a feature request in our
-`ESPHome feature request tracker <https://github.com/esphome/feature-requests/issues>`__.
+`ESPHome feature request tracker <https://github.com/orgs/esphome/discussions>`__.
 
 I have a question... How can I contact you?
 -------------------------------------------
@@ -389,8 +389,8 @@ Sure! We are happy to help :) You can contact us here:
 
 -  `Discord <https://discord.gg/KhAMKrd>`__
 -  `Home Assistant Community Forums <https://community.home-assistant.io/c/esphome>`__
--  ESPHome `issue <https://github.com/esphome/issues/issues>`__ and
-   `feature request <https://github.com/esphome/feature-requests/issues>`__ trackers. Preferably only for issues and
+-  ESPHome `issue <https://github.com/esphome/esphome/issues>`__ and
+   `feature request <https://github.com/orgs/esphome/discussions>`__ trackers. Preferably only for issues and
    feature requests.
 -  **If your inquiry is not regarding support**, you can `e-mail us <mailto:esphome@openhomefoundation.org>`__.
 
