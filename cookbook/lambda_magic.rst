@@ -210,13 +210,19 @@ In this example a :doc:`/components/cover/time_based` is used with the GPIO conf
               if (id(my_cover).current_operation == COVER_OPERATION_IDLE) {
                 // Cover is idle, check current state and either open or close cover.
                 if (id(my_cover).is_fully_closed()) {
-                  id(my_cover).open();
+                  auto call = id(my_cover).make_call();
+                  call.set_command_open();
+                  call.perform();
                 } else {
-                  id(my_cover).close();
+                  auto call = id(my_cover).make_call();
+                  call.set_command_close();
+                  call.perform();
                 }
               } else {
                 // Cover is opening/closing. Stop it.
-                id(my_cover).stop();
+                auto call = id(my_cover).make_call();
+                call.set_command_stop();
+                call.perform();
               }
 
     switch:
