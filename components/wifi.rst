@@ -81,9 +81,10 @@ Configuration variables:
 
 - **output_power** (*Optional*, string): The amount of TX power for the WiFi interface from 8.5dB to 20.5dB. Default for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
 - **fast_connect** (*Optional*, boolean): If enabled, directly connects to WiFi network without doing a full scan
-  first. This is required for hidden networks and can significantly improve connection times. Defaults to ``off``.
+  first. This is required for hidden networks and can significantly improve connection times (thus reducing power consumption). Defaults to ``off``.
   The downside is that this option connects to the first network the ESP sees, even if that network is very far away and
-  better ones are available.
+  better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
+  In case it fails, all networks are then tested one after the other in their declared order, starting with the first one in the list.
 - **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion. Defaults to ``false``.
 
 - **enable_btm** (*Optional*, bool): Only on ``esp32`` with ``esp-idf``. Enable 802.11v BSS Transition Management support.
