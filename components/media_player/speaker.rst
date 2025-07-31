@@ -46,6 +46,7 @@ Configuration variables:
 - **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the ``announcement_pipeline``.
 - **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between ``4000`` and ``4000000``. Defaults to ``1000000``.
 - **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to ``true``.
+- **off_on_enabled** (*Optional*, boolean): Enables the supports_turn_off_on trait.  This enables additional states, actions, triggers, and conditions. Defaults to ``false``.
 - **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to ``false``.
 - **volume_increment** (*Optional*, percentage): Increment amount that the ``media_player.volume_up`` and ``media_player.volume_down`` actions will increase or decrease volume by. Defaults to ``5%``.
 - **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to ``50%``.
@@ -57,6 +58,8 @@ Configuration variables:
 - **on_mute** (*Optional*, :ref:`Automation <automation>`): An automation to perform when muted.
 - **on_unmute** (*Optional*, :ref:`Automation <automation>`): An automation to perform when unmuted.
 - **on_volume** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the volume is changed.
+- **on_turn_off** (*Optional*, :ref:`Automation <automation>`): An automation to perform when media_player is turned off, only available if off_on_enabled is true.
+- **on_turn_on** (*Optional*, :ref:`Automation <automation>`): An automation to perform when media_player is turned on, only available if off_on_enabled is true.
 - All other options from :ref:`Media Player <config-media_player>`
 
 .. _media_player-speaker-examples:
