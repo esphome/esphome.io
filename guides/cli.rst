@@ -84,7 +84,7 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
     
     .. code-block:: console
 
-        esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1 --device fe80::1234:5678:90ab:cdef
+        esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 
 .. option:: --upload_speed BAUD_RATE
 
