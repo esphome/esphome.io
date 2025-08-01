@@ -85,6 +85,7 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
     .. code-block:: console
     
         esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1 --device fe80::1234:5678:90ab:cdef
+    
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -160,6 +161,7 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
     .. code-block:: console
     
         esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
+    
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -296,6 +298,7 @@ The ``esphome logs <CONFIG>`` command validates the configuration and shows all 
     .. code-block:: console
     
         esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
+    
 
 .. option:: --reset
 
