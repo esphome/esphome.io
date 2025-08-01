@@ -1,7 +1,7 @@
 Global Variables
 ----------------
 
-In some cases you might need to share a global variable across multiple lambdas. For example, global variables can be
+In some cases you might need to share a global variable across multiple lambdas, or to remember between periods of deep_sleep. For example, global variables can be
 used to store the state of a garage door.
 
 .. code-block:: yaml
@@ -45,6 +45,8 @@ Configuration variables:
 - **initial_value** (*Optional*, string): The value with which to initialize this variable if the state
   can not be restored or if state restoration is not enabled. This needs to be wrapped in quotes! Defaults to
   the C++ default value for this type (for example ``0`` for integers).
+
+Within lambdas globals don’t have a state attribute, just a value. Note in the example above the use of id(my_global_int) where other components would require id(my_component).state.
 
 .. _globals-set_action:
 
