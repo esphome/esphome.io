@@ -51,7 +51,7 @@ Configuration variables:
 
 - **connection_timeout** (*Optional*, :ref:`config-time`): The maximum time to wait for a BLE connection to be established. Only available when using ESP-IDF framework. Defaults to ``20s``.
 
-  - Range: 1 to 180 seconds
+  - Range: 10 to 180 seconds
   - This timeout should align with the timeout used by your BLE client software to prevent connection slot waste
 
 .. note::
