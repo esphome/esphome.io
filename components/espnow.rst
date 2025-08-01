@@ -33,17 +33,13 @@ Configuration variables:
 Automations:
 
 - **on_receive** (*Optional*, :ref:`Automation <automation>`): An automation to perform when data is received. See :ref:`espnow-on_receive`.
+- **on_unknown_peer** (*Optional*, :ref:`Automation <automation>`): An automation to perform when data is received from an unknown peer.
+  Cannot be used when ``auto_add_peer`` is set to ``true``. See :ref:`espnow-on_unknown_peer`.
+- **on_broadcast** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a broadcast packet is received.
+  See :ref:`espnow-on_broadcast`.
 
 Automations
 -----------
-
-
-.. _espnow-on_receive:
-
-``on_receive``
-**************
-
-This automation will be triggered when data is received.
 
 There will be 3 variables available to automations. Their memory will be cleaned up after the automation is
 done and will not be available if there are any `delay` actions or others that do work "asynchronously" in the automation.
@@ -55,7 +51,7 @@ done and will not be available if there are any `delay` actions or others that d
 .. code-block:: yaml
 
     espnow:
-      on_receive:
+      on_...:
         - logger.log:
             format: "Sent to %s from %s: %s RSSI: %ddBm"
             args:
@@ -63,6 +59,31 @@ done and will not be available if there are any `delay` actions or others that d
               - format_mac_address_pretty(info.src_addr).c_str()
               - format_hex_pretty(data, size).c_str()
               - info.rx_ctrl->rssi
+
+.. _espnow-on_receive:
+
+``on_receive``
+**************
+
+This automation will be triggered when data is received from a registered peer.
+
+Configuration variables:
+
+- **address** (*Optional*, MAC Address): Filter this trigger to packets where the source address matches. If not set, it will match any device.
+
+.. _espnow-on_unknown_peer:
+
+``on_unknown_peer``
+*******************
+
+This automation will be triggered when data is received from a peer that is not in the list of known peers.
+
+.. _espnow-on_broadcast:
+
+``on_broadcast``
+****************
+
+This automation will be triggered when a broadcast packet is received.
 
 Configuration variables:
 
@@ -95,7 +116,7 @@ This is an :ref:`Action <config-action>` for sending a data packet over the espn
 
 Configuration variables:
 
-- **address** (**Required**, MAC Address): The MAC address of the receiving device to send to.
+- **address** (**Required**, :ref:`templatable <config-templatable>`, MAC Address): The MAC address of the receiving device to send to.
 - **data** (**Required**, :ref:`templatable <config-templatable>`, string or list of bytes): The data to be sent.
 - **on_sent** (*Optional*, :ref:`Automation <automation>`): An automation to perform when the data is sent successfully.
 - **wait_for_sent** (*Optional*, boolean): The automation will wait for the data to be sent and for the ``on_sent`` or ``on_error``
