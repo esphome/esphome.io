@@ -77,6 +77,7 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
     to perform an OTA.
     
     .. versionadded:: 2025.8
+    
         Multiple ``--device`` options can be specified to provide fallback addresses. ESPHome will 
         try each address in order until one succeeds. This is particularly useful for devices with 
         multiple IP addresses (IPv4/IPv6).
@@ -86,6 +87,7 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
         .. code-block:: console
         
             esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1 --device fe80::1234:5678:90ab:cdef
+        
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -154,6 +156,7 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
     to perform an OTA.
     
     .. versionadded:: 2025.8
+    
         Multiple ``--device`` options can be specified to provide fallback addresses. ESPHome will 
         try each address in order until one succeeds.
         
@@ -162,6 +165,7 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
         .. code-block:: console
         
             esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
+        
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -290,6 +294,7 @@ The ``esphome logs <CONFIG>`` command validates the configuration and shows all 
     Manually specify a serial port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``.
     
     .. versionadded:: 2025.8
+    
         Multiple ``--device`` options can be specified to provide fallback addresses. When using the 
         native API for logs, all addresses are passed to the API client which uses the Happy Eyeballs 
         algorithm (RFC 8305) to efficiently connect using the fastest available address.
@@ -299,6 +304,7 @@ The ``esphome logs <CONFIG>`` command validates the configuration and shows all 
         .. code-block:: console
         
             esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
+        
 
 .. option:: --reset
 
