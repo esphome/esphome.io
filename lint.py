@@ -132,7 +132,7 @@ file_types = (
     "",
 )
 docs_types = [".rst"]
-image_types = [".jpg", ".ico", ".png", ".svg", ".gif"]
+image_types = [".avif", ".jpg", ".ico", ".png", ".svg", ".gif"]
 
 LINT_FILE_CHECKS = []
 LINT_CONTENT_CHECKS = []

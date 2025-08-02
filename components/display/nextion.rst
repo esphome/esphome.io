@@ -65,26 +65,22 @@ Configuration variables:
 - **tft_url** (*Optional*, string): The URL from which to download the TFT file for display firmware updates (Nextion
   OTA). See :ref:`Nextion Upload <nextion_upload_tft>`.
 - **touch_sleep_timeout** (*Optional*, int): Sets internal No-touch-then-sleep timer in seconds.
-- **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (The Nextion will
-  display page 0 upon start-up by default).
-- **wake_up_page** (*Optional*, int): Sets the page to display after waking up.
+  Range: 0 (disabled) or 3-65535 seconds (max: ~18 hours). Values 1-2 are auto-corrected to 3.
+  When set, Nextion will automatically enter sleep mode after the specified period of no touch activity.
+  This setting persists until device reboot or reset. Note: The display will only wake up by restart or by configuring `auto_wake_on_touch: true`.
+- **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
+- **wake_up_page** (*Optional*, int): Sets the page to display after waking up
+- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to ``false``.
+- **on_setup** (*Optional*, :ref:`Action <config-action>`): An action to be performed after ESPHome connects to the Nextion. See :ref:`Nextion Automation <nextion-on_setup>`.
+- **on_sleep** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion goes to sleep. See :ref:`Nextion Automation <nextion-on_sleep>`.
+- **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See :ref:`Nextion Automation <nextion-on_sleep>`.
+- **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See :ref:`Nextion Automation <nextion-on_page>`.
+- **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or release). See :ref:`Nextion Automation <nextion-on_touch>`.
 - **auto_wake_on_touch** (*Optional*, boolean): If set to ``true``, the Nextion will be configured to wake from sleep
   when touched.
-- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the
-  display. Defaults to ``false``.
 - **skip_connection_handshake** (*Optional*, boolean): Sets whether the initial display connection handshake process is
   skipped. When set to ``true``, the connection will be established without performing the handshake. This can be
   useful when using Nextion Simulator. Defaults to ``false``.
-- **on_setup** (*Optional*, :ref:`Action <config-action>`): An action to be performed after ESPHome connects to the
-  Nextion. See :ref:`Nextion Automation <nextion-on_setup>`.
-- **on_sleep** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion goes to sleep.
-  See :ref:`Nextion Automation <nextion-on_sleep>`.
-- **on_wake** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion wakes up. See
-  :ref:`Nextion Automation <nextion-on_sleep>`.
-- **on_page** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a page change. See
-  :ref:`Nextion Automation <nextion-on_page>`.
-- **on_touch** (*Optional*, :ref:`Action <config-action>`): An action to be performed after a touch event (press or
-  release). See :ref:`Nextion Automation <nextion-on_touch>`.
 - **on_buffer_overflow** (*Optional*, :ref:`Action <config-action>`): An action to be performed when the Nextion
   reports a buffer overflow. See :ref:`Nextion Automation <nextion-on_buffer_overflow>`.
 - **command_spacing** (*Optional*, :ref:`config-time`): Sets the minimum time between commands sent to the Nextion display.
@@ -97,6 +93,8 @@ Configuration variables:
   When the limit is reached, new commands will be dropped and a warning will be logged.
   This helps prevent memory overflows or boot-time crashes in complex setups that issue a large number of commands
   in rapid succession. If not set, the queue size is unlimited.
+- **dump_device_info** (*Optional*, boolean): Shows device information (model, firmware version, serial number, flash size) in the configuration dump.
+  When disabled, device info is only logged during connection establishment to save memory. Defaults to ``false``.
 
 .. _display-nextion_lambda:
 

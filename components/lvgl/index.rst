@@ -618,7 +618,11 @@ It can arrange items into a 2D "table" that has rows or columns (tracks). The it
 - *gap*: the space between the rows and columns or the items on a track.
 - *free unit (FR)*: a proportional distribution unit for the space available on the track. It accepts a unitless integer value that serves as a proportion. It dictates what amount of the available space the widget should take up. For example if all items on the track have a ``FR`` set to ``1``, the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
 
-**Configuration variables:**
+Child widgets can be placed on the grid using the ``grid_cell_row_pos`` and ``grid_cell_column_pos`` configuration variables.
+If either is specified both must be specified. If neither is specified the widget will be placed in the first available position, in a row-major order.
+Row and column spans will be taken into account when reserving space.
+
+**Configuration variables (must be placed under the layout key):**
 
     - **grid_rows** (**Required**): The number of rows in the grid, expressed a list of values in pixels, ``CONTENT`` or ``FR(n)`` (free units, where ``n`` is a proportional integer value).
     - **grid_columns** (**Required**): The number of columns in the grid, expressed a list of values in pixels, ``CONTENT`` or ``FR(n)`` (free units, where ``n`` is a proportional integer value).
@@ -627,10 +631,10 @@ It can arrange items into a 2D "table" that has rows or columns (tracks). The it
     - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
     - **pad_column** (*Optional*, int16): Set the padding between the columns, in pixels.
 
-In a grid layout, *all the widgets placed on the grid* will get some additional configuration variables to help with placement:
+In a grid layout, *all the widgets placed on the grid* can have some additional configuration variables to help with placement:
 
-    - **grid_cell_row_pos** (**Required**, int16): Position of the widget, in which row to appear (0 based count).
-    - **grid_cell_column_pos** (**Required**, int16): Position of the widget, in which column to appear (0 based count).
+    - **grid_cell_row_pos** (*Optional*, int16): Position of the widget, in which row to appear (0 based count).
+    - **grid_cell_column_pos** (*Optional*, int16): Position of the widget, in which column to appear (0 based count).
     - **grid_cell_x_align** (*Optional*, string): How to align the widget horizontally within the cell. Can also be applied through :ref:`lvgl-styling`. Possible options below.
     - **grid_cell_y_align** (*Optional*, string): How to align the widget vertically within the cell. Can also be applied through :ref:`lvgl-styling`. Possible options below.
     - **grid_cell_row_span**  (*Optional*, int16): How many rows to span across the widget. Defaults to ``1``.
@@ -638,7 +642,7 @@ In a grid layout, *all the widgets placed on the grid* will get some additional 
 
     .. note::
 
-        These ``grid_cell_`` variables apply to widget configuations!
+        These ``grid_cell_`` variables are applied to individual widgets (cells) within the grid layout!
 
 Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_align``, ``grid_cell_y_align``:
 
@@ -659,13 +663,25 @@ Values for use with ``grid_column_align``, ``grid_row_align``, ``grid_cell_x_ali
           type: grid
           grid_row_align: end
           grid_rows: [25px, fr(1), content]
-          grid_columns: [40, fr(1), fr(1)]
+          grid_columns: [fr(1), fr(1)]
           pad_row: 6px
           pad_column: 0
         widgets:
           - image:
               grid_cell_row_pos: 0
               grid_cell_column_pos: 0
+          - obj:
+              grid_cell_row_pos: 0
+              grid_cell_column_pos: 1
+          - obj:
+              grid_cell_row_pos: 2
+              grid_cell_column_pos: 0
+          - label:
+              text: "This will be placed in row 1, column 0"
+          - label:
+              text: "This will be placed in row 1, column 1"
+          - label:
+              text: "This will be placed in row 2, column 1, since 2/0 is occupied"
 
 .. tip::
 
