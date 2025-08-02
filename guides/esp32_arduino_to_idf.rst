@@ -149,14 +149,14 @@ If you encounter compilation errors after switching to ESP-IDF:
 3. Clean your build files and try again
 4. Check the component documentation for ESP-IDF specific notes
 
-Memory Issues
-^^^^^^^^^^^^^
+Build Time
+^^^^^^^^^^
 
-ESP-IDF typically uses less flash memory, but if you encounter issues:
+ESP-IDF compilation takes longer than Arduino, especially on first build:
 
-- Review your partition table configuration
-- Consider removing unused components
-- Check if you have large static data that can be optimized
+- Initial builds can take 5-10 minutes depending on your system
+- Subsequent builds are faster due to caching
+- Consider using a faster computer or increasing parallel build jobs if build time is a concern
 
 Performance Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
