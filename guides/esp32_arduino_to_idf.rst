@@ -127,7 +127,7 @@ The following components currently require Arduino framework and don't have ESP-
 - :doc:`dsmr </components/sensor/dsmr>` - Dutch Smart Meter integration
 - :doc:`heatpumpir </components/climate/climate_ir>` - IR-based heat pump control
 - :doc:`midea </components/climate/midea>` - Midea air conditioner control
-- :ref:`WLED Effect <light-wled>` - WLED UDP Realtime Control integration
+- :doc:`WLED Effect </components/light/index>` - WLED UDP Realtime Control integration (see Light Effects section)
 
 If you need these components, you should continue using the Arduino framework.
 
