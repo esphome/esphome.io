@@ -152,11 +152,11 @@ If you encounter compilation errors after switching to ESP-IDF:
 Build Time
 ^^^^^^^^^^
 
-ESP-IDF compilation takes longer than Arduino, especially on first build:
+ESP-IDF compilation takes approximately 25% longer than Arduino:
 
-- Initial builds can take 5-10 minutes depending on your system
-- Subsequent builds are faster due to caching
-- Consider using a faster computer or increasing parallel build jobs if build time is a concern
+- On modern systems, expect about 15-30 seconds additional time for initial builds
+- Subsequent builds are marginally slower but the difference is less noticeable
+- The longer build time is due to ESP-IDF's more comprehensive optimization process
 
 Performance Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
