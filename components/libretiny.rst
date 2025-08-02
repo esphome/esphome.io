@@ -10,6 +10,7 @@ It provides support for the following microcontrollers, commonly used in Tuya de
 
 - **BK72xx**: BK7231T, BK7231N
 - **RTL87xx**: RTL8710BN, RTL8710BX
+- **LN882x**: LN882HKI
 
 Since different microcontrollers are supported, you need to include the appropriate ESPHome component,
 depending on which processor your device has.
@@ -25,6 +26,10 @@ Refer to `LibreTiny/Boards <https://docs.libretiny.eu/link/boards>`__ to find yo
     # Example configuration entry for RTL87xx
     rtl87xx:
       board: generic-rtl8710bn-2mb-788k
+
+    # Example configuration entry for LN882x
+    ln882x:
+      board: generic-ln882hki
 
 Configuration variables:
 ------------------------
@@ -50,7 +55,7 @@ Configuration variables:
   - :ref:`Advanced options <advanced-options>`
 
 - **family** (*Optional*, string): The family of LibreTiny-supported microcontrollers that is used on this board.
-  One of ``bk7231n``, ``bk7231t``, ``rtl8710b``, ``rtl8720c``, ``bk7251``, ``bk7231q``.
+  One of ``bk7231n``, ``bk7231t``, ``rtl8710b``, ``rtl8720c``, ``bk7251``, ``bk7231q``, ``ln882hki``.
   Defaults to the variant that is detected from the board, if a board that's unknown to ESPHome is used,
   this option is mandatory. **It's recommended not to include this option**.
 
@@ -77,6 +82,7 @@ Here are a few useful links:
 
 - `Flashing BK72xx by UART <https://docs.libretiny.eu/link/flashing-beken-72xx>`__
 - `Flashing RTL8710B by UART <https://docs.libretiny.eu/link/flashing-realtek-ambz>`__
+- `Flashing LN882x by UART <https://docs.libretiny.eu/docs/platform/lightning-ln882x/#flashing>`__
 - `UPK2ESPHome <https://upk.libretiny.eu/>`__ - generating ESPHome YAML automatically, from Cloudcutter profiles or Kickstart firmware (also BK72xx only)
 
 GPIO Pin Numbering
@@ -107,6 +113,13 @@ Some notes about the pins on RTL8710BN/BX:
 - ``TX2 (PA30)`` and ``RX2 (PA29)`` are used for flashing the firmware,
   as well as the default :doc:`/components/logger` UART port.
 - ``TX2 (PA30)`` is additionally used to determine the boot mode on startup (similar to ESP32).
+  Pulling it LOW on startup will enter "download mode".
+
+Some notes about the pins on LN882H:
+
+- ``TX0 (PA2)`` and ``RX0 (PA3)`` are used for flashing the firmware,
+  as well as the default :doc:`/components/logger` UART port.
+- ``BOOT1 (PA9)`` is additionally used to determine the boot mode on startup (similar to ESP32).
   Pulling it LOW on startup will enter "download mode".
 
 Example configuration entries using various naming styles:
