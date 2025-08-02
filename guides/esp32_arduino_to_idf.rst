@@ -154,9 +154,11 @@ Build Time
 
 ESP-IDF compilation takes approximately 25% longer than Arduino:
 
-- On modern systems, expect about 15-30 seconds additional time for initial builds
-- Subsequent builds are marginally slower but the difference is less noticeable
+- On modern desktop systems: ~15-30 seconds additional time
+- On Raspberry Pi or similar SBCs: 3-5 minutes additional time
+- Subsequent builds are faster but still proportionally slower
 - The longer build time is due to ESP-IDF's more comprehensive optimization process
+- Consider using a more powerful system for development if build time is critical
 
 Performance Considerations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
