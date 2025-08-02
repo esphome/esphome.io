@@ -90,19 +90,19 @@ When migrating to ESP-IDF, you may need to replace some components. ESPHome will
 **Components with ESP-IDF Alternatives:**
 
 .. list-table::
-   :header-rows: 1
-   :widths: 50 50
+    :header-rows: 1
+    :widths: 50 50
 
-   * - Arduino Component
-     - ESP-IDF Alternative
-   * - :doc:`bme680_bsec </components/sensor/bme680_bsec>`
-     - :doc:`bme68x_bsec2 </components/sensor/bme68x_bsec2>`
-   * - :doc:`fastled_clockless </components/light/fastled>`
-     - :doc:`esp32_rmt_led_strip </components/light/esp32_rmt_led_strip>`
-   * - :doc:`fastled_spi </components/light/fastled>`
-     - :doc:`spi_led_strip </components/light/spi_led_strip>`
-   * - :doc:`neopixelbus </components/light/neopixelbus>`
-     - :doc:`esp32_rmt_led_strip </components/light/esp32_rmt_led_strip>`
+    * - Arduino Component
+      - ESP-IDF Alternative
+    * - :doc:`bme680_bsec </components/sensor/bme680_bsec>`
+      - :doc:`bme68x_bsec2 </components/sensor/bme68x_bsec2>`
+    * - :doc:`fastled_clockless </components/light/fastled>`
+      - :doc:`esp32_rmt_led_strip </components/light/esp32_rmt_led_strip>`
+    * - :doc:`fastled_spi </components/light/fastled>`
+      - :doc:`spi_led_strip </components/light/spi_led_strip>`
+    * - :doc:`neopixelbus </components/light/neopixelbus>`
+      - :doc:`esp32_rmt_led_strip </components/light/esp32_rmt_led_strip>`
 
 **Arduino-Only Components:**
 
