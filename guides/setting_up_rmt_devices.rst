@@ -185,6 +185,77 @@ in the frontend. Click on it and you should see the remote signal being transmit
     repetition logs are consistent between the remote controller and the transmitter node.
     You can adjust the ``repeat:`` settings accordingly.
 
+How to handle rolling codes
+---------------------------
+
+Some RF remote-controls are using rolling codes, i.e. instead of **one unique** code, the
+buttons transmit **n different** codes in a random manner. Good-natured RF receivers have
+a simple logic: the current code must differ from the previous one. In such a case, the n
+codes can easily be determined by pressing each button several times. For example the
+*brennenstuhl comfort-line switch* generates four rolling codes per button. As can be seen
+here in the example for two buttons.
+
+.. code-block:: yaml
+
+    globals:
+      # the rolling codes
+    - id: a_on
+      type: std::vector<int>
+      initial_value: '{ 0xbfcf6c, 0xbe821c, 0xb1d75c, 0xb593ac }'
+    - id: a_off
+      type: std::vector<int>
+      initial_value: '{ 0xbd2e2c, 0xb4ed8c, 0xb2b6bc, 0xb3017c }'
+
+      # the index counters
+    - id: a_on_idx
+      type: int
+      restore_value: no
+      initial_value: '0'
+    - id: a_off_idx
+      type: int
+      restore_value: no
+      initial_value: '0'
+
+
+    button:
+    - platform: template
+      name: "A ON"
+      on_press:
+        - lambda: id(bs_transmitter)->execute(10);
+    - platform: template
+      name: "A OFF"
+      on_press:
+        - lambda: id(bs_transmitter)->execute(11);
+
+
+    remote_transmitter:
+      pin: GPIO4
+      carrier_duty_percent: 100%
+
+
+    script:
+      - id: bs_transmitter
+        mode: single
+        parameters: 
+          bs_button: int
+        then:
+          - remote_transmitter.transmit_brennenstuhl:
+              code: !lambda |-
+                uint32_t code = 0;
+                switch(bs_button) {
+                  case 10: { // A_ON
+                    code=id(a_on)[id(a_on_idx)];
+                    id(a_on_idx) = (id(a_on_idx) < 3) ? id(a_on_idx) + 1 : 0; 
+                    break;
+                  }
+                  case 11: { // A_OFF
+                    code=id(a_off)[id(a_off_idx)];
+                    id(a_off_idx) = (id(a_off_idx) < 3) ? id(a_off_idx) + 1 : 0;
+                    break;
+                  }
+                }
+                return code;
+
 See Also
 --------
 
