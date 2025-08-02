@@ -173,7 +173,7 @@ Frequently Asked Questions
 --------------------------
 
 **Q: Will Arduino framework be removed?**
-   A: No, Arduino framework will continue to be fully supported. Only the default is changing.
+   A: No, Arduino framework will continue to be supported. Only the default is changing.
 
 **Q: Do I have to migrate immediately?**
    A: No, but you should explicitly specify your framework choice to avoid the automatic change in 2026.1.0.
