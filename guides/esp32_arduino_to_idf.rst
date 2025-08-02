@@ -71,16 +71,31 @@ Migration Steps
 
 4. **Clean Build Files**: After changing frameworks, clean your build files:
 
+   **Using ESPHome CLI:**
+   
    .. code-block:: bash
 
        esphome clean your-config.yaml
 
+   **Using ESPHome Dashboard:**
+   
+   - Click on the three-dot menu for your device
+   - Select "Clean Build Files"
+
 5. **Compile and Test**: Compile your configuration and test thoroughly:
 
+   **Using ESPHome CLI:**
+   
    .. code-block:: bash
 
        esphome compile your-config.yaml
        esphome upload your-config.yaml
+
+   **Using ESPHome Dashboard:**
+   
+   - Click "INSTALL" on your device
+   - Choose your preferred upload method (USB, OTA, etc.)
+   - The dashboard will automatically compile and upload
 
 Common Component Replacements
 -----------------------------
