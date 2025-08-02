@@ -27,7 +27,19 @@ validating your configuration, ESPHome will automatically replace all occurrence
 by their value. The syntax for a substitution is based on bash and is case-sensitive: ``$substitution_key`` or
 ``${substitution_key}`` (same).
 
-Two substitution passes are performed allowing compound replacements.
+Substitution variables can be of any valid YAML type, for example:
+
+.. code-block:: yaml
+
+    substitutions:
+      device:
+        name: Kitchen AC
+        port: 12
+        enabled: true
+      color: "yellow"
+      unused_pins: [12, 23, 27]
+
+Two substitution passes are performed allowing compound replacements:
 
 .. code-block:: yaml
 
@@ -38,6 +50,97 @@ Two substitution passes are performed allowing compound replacements.
 
     something:
       test: ${bar_${foo}_value}
+
+The above is supported for backward compatibility. It is recommended that
+you use key-value dictionaries going forward:
+
+.. code-block:: yaml
+
+    substitutions:
+      foo: yellow
+      bar:
+        yellow: !secret yellow_secret
+        green: !secret green_secret
+
+    something:
+      test: ${bar[foo]}
+
+.. _jinja-expressions:
+
+Jinja expressions
+-----------------
+
+Simple Jinja expressions and filters can be used inside ``${ ... }`` syntax.
+
+All substitution variables become accessible within Jinja expressions by their name.
+
+If the substitution variable is a key-value dictionary, you can access members with a dot notation: ``${ device.name }``, or indexed ``${ device["name"] }``
+
+Lists can be indexed: ``${ unused_pins[2] }``
+
+.. code-block:: yaml
+
+    substitutions:
+      native_width: 480
+      native_height: 320
+      high_dpi: true
+      scale: 1.5
+      sensor_pin:
+        number: 3
+        inverted: true      
+      debug_label:
+        width: 200
+        height: 20
+        enabled: true
+
+    display:
+      - platform: ili9xxx
+        dimensions:
+          width: ${native_width * 2 if high_dpi else native_width}
+          height: ${native_height * 2 if high_dpi else native_height}
+
+    lvgl:
+      widgets:
+        - label:
+            id: debug_info
+            hidden: ${not debug_label.enabled}
+            width: ${ (debug_label.width * scale) | round | int }
+            height: ${ (debug_label.height * scale) | round | int }
+            text: |
+              High DPI is ${high_dpi and "enabled" or "disabled"}.
+
+    binary_sensor:
+      - platform: gpio
+        name: Binary sensor on pin ${sensor_pin.number}
+        pin: ${sensor_pin}
+
+Note that in other projects Jinja uses the ``{{ ... }}`` syntax for expression delimiters. 
+In ESPHome we have configured Jinja to use ``${...}`` instead, so it is the same as the
+existing substitution syntax and to avoid conflicts with Home Assistant's own use of Jinja.
+
+To understand what types of expressions and filters can be used,
+refer to `Jinja Expressions <https://jinja.palletsprojects.com/en/stable/templates/#expressions>`_ documentation.
+
+Mathematical operations
+^^^^^^^^^^^^^^^^^^^^^^^
+
+In addition to Jinja's native operators such as ``+``, ``-``, ``*``, ``/``, ... Python's math
+library is exposed as a module:
+
+.. code-block:: yaml
+
+    substitutions:
+      x: 20
+      y: 50
+    lvgl:
+      widgets:
+        - label:
+            x: $x
+            y: $y
+            text: Distance is ${math.sqrt(x*x+y*y)}.
+
+To see what mathematical functions ara available,
+refer to `Python math library <https://docs.python.org/3/library/math.html>`_ documentation.
 
 .. _substitute-include-variables:
 
