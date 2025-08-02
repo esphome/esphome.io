@@ -23,7 +23,6 @@ Only for Arduino platforms (and ESP-IDF <5 which was used until ESPHome 2025), t
 
     light:
       - platform: esp32_rmt_led_strip
-        rmt_channel: 0
         ...
 
 Configuration variables
@@ -54,42 +53,27 @@ Configuration variables
 - **max_refresh_rate** (*Optional*, :ref:`config-time`): A time interval used to limit the number of commands a light
   can handle per second. For example, ``16ms`` will limit the light to a refresh rate of about 60Hz. Defaults to
   sending commands as quickly as changes are made to the lights.
-- **use_psram** (*Optional*, boolean): Set to ``false`` to force internal RAM allocation even if you have the the PSRAM component enabled. This can be useful if you're experiencing issues like flickering with your leds strip. Defaults to ``true``.
-
-IDF configuration variables:
-****************************
-
-- **rmt_symbols** (*Optional*, int): The amount of RMT memory allocated to this component. Memory is shared by all
-  receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2`` only half the symbol memory is
-  available to transmitters. Each symbol is 32 bits and contains two values.
+- **use_psram** (*Optional*, boolean): Set to ``false`` to force internal RAM allocation even if you have the the PSRAM
+  component enabled. This can be useful if you're experiencing issues like flickering with your leds strip. Defaults to ``true``.
+- **rmt_symbols** (*Optional*, int): When ``use_dma`` is enabled, this sets the size of the driver's internal DMA
+  buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
+  across all components and should be allocated in multiples of the block size. On the ``ESP32`` and ``ESP32-S2``
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
 
   .. csv-table::
-      :header: "ESP32 Variant", "Memory Size", "Block Size"
+      :header: "ESP32 Variant", "Available Memory", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-C3", "192 symbols", "48 symbols"
-      "ESP32-C5", "192 symbols", "48 symbols"
-      "ESP32-C6", "192 symbols", "48 symbols"
-      "ESP32-H2", "192 symbols", "48 symbols"
-      "ESP32-P4", "384 symbols", "48 symbols"
+      "ESP32-C3", "96 symbols", "48 symbols"
+      "ESP32-C5", "96 symbols", "48 symbols"
+      "ESP32-C6", "96 symbols", "48 symbols"
+      "ESP32-H2", "96 symbols", "48 symbols"
+      "ESP32-P4", "192 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
+      "ESP32-S3", "192 symbols", "48 symbols"
 
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
   the DMA buffer size and can be set to a large value.
-
-Arduino configuration variables:
-********************************
-
-- **rmt_channel** (**Required**, int): The RMT channel to use. Each LED strip needs to use a unique channel.
-
-  .. csv-table::
-      :header: "ESP32 Variant", "Channels"
-
-      "ESP32", "0, 1, 2, 3, 4, 5, 6, 7"
-      "ESP32-C3", "0, 1"
-      "ESP32-S2", "0, 1, 2, 3"
-      "ESP32-S3", "0, 1, 2, 3"
 
 - All other options from :ref:`Light <config-light>`.
 
