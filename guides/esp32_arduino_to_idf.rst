@@ -51,7 +51,7 @@ Add the following to your ESP32 configuration:
 Option 2: Stay with Arduino
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you prefer to continue using Arduino (which will remain fully supported), explicitly specify it:
+If you prefer to continue using Arduino (which will remain supported), explicitly specify it:
 
 .. code-block:: yaml
 
