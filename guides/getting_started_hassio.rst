@@ -208,7 +208,7 @@ device. You've also learned how to enable some basic components via the configur
 
 Now is a great time to go take a look at the :doc:`Components Index </index>`. Hopefully you'll find all the hardware
 components you need there. If you're having any problems or want to request new features, please either create a new
-issue on the `GitHub issue tracker <https://github.com/esphome/issues/issues>`__ or find us on the
+issue on the `GitHub issue tracker <https://github.com/esphome/esphome/issues>`__ or find us on the
 `Discord chat <https://discord.gg/KhAMKrd>`__. Be sure to read the :doc:`FAQ <faq>`, as well!
 
 See Also
