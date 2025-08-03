@@ -16,13 +16,14 @@ enabling it to communicate with other devices.
     # Example configuration entry
     esp32_hosted:
       variant: ESP32C6
-      reset_pin: GPIO15
-      cmd_pin: GPIO13
-      clk_pin: GPIO12
-      d0_pin: GPIO11
-      d1_pin: GPIO10
-      d2_pin: GPIO9
-      d3_pin: GPIO8
+      reset_pin: GPIOXX
+      cmd_pin: GPIOXX
+      clk_pin: GPIOXX
+      d0_pin: GPIOXX
+      d1_pin: GPIOXX
+      d2_pin: GPIOXX
+      d3_pin: GPIOXX
+      active_high: true
 
     wifi:
       ssid: !secret wifi_ssid
