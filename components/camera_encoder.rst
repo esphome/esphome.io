@@ -9,7 +9,7 @@ The ``camera_encoder`` component provides image compression support for software
 internal compression. It allows raw camera frames to be compressed into a format suitable for transmission to API
 clients, such as Home Assistant, which expect JPEG-compressed images.
 
-It supports different encoder implementations, such as a default software JPEG encoder that can be configured with
+It supports different encoder implementations, such as a ESP32 Camera software JPEG encoder that can be configured with
 options like image quality, subsampling, and incremental encoding. These settings make it possible to balance image
 quality and performance depending on the use case.
 
@@ -26,29 +26,24 @@ quality and performance depending on the use case.
 Configuration variables:
 ------------------------
 
-- **type** (*Optional*): ``default``
+- **type** (*Optional*): ``esp32_camera``
 
-Default Options:
+esp32_camera Options:
 ^^^^^^^^^^^^^^^^
 
-- **quality** (*Optional*, enum): Selects compression quality. Defaults to ``HIGH``.
+- **quality** (*Optional*, int): Sets JPEG compression quality.
+  Valid values range from ``1`` (lowest quality, highest compression) to ``100`` (best quality, least compression). Defaults: ``80``.
 
-    - ``BEST`` (Least compression artifacts)
-    - ``HIGH`` (Minor artifacts)
-    - ``MED`` (Visible artifacts)
-    - ``LOW`` (Most artifacts)
+- **buffer_size** (*Optional*, int): Initial size of the output buffer in bytes, used to store the JPEG-encoded image data.
+  Must be at least ``1024``. Default: ``4096``.
 
-- **subsampling** (*Optional*, enum): Enables additional color compression to reduce image size at the expense of color fidelity. Defaults to ``444``.
-
-    - ``444`` (No color compression)
-    - ``420`` (Reduces color data to a quarter)
-
-- **mcu_count** (*Optional*, int): Limits the number of MCU blocks processed per call to support incremental encoding. Prevents blocking other components at the expense of potentially lower frame rates. Defaults to ``0`` (incremental encoding disabled).
+- **buffer_expand_size** (*Optional*, int): Number of bytes to expand the output buffer if it is too small to hold the JPEG-encoded image.
+  A value of ``0`` disables expansion. Default: ``1024``.
 
 See Also
 --------
 
 - :doc:`/components/camera/index`
-- :apiref:`camera_encoder/default_jpeg_encoder.h`
+- :apiref:`camera_encoder/esp32_camera_jpeg_encoder.h`
 - :apiref:`camera/encoder.h`
 - :ghedit:`Edit`
