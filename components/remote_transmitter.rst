@@ -1039,7 +1039,7 @@ This :ref:`action <config-action>` sets the output value of the pin.
 
 Configuration variables:
 
-- **transmitter_id** (*Optional*, :ref:`config-id`): The remote transmitter to send the remote code with. Defaults to
+- **transmitter_id** (*Optional*, :ref:`config-id`): The remote transmitter to set the pin value on. Defaults to
   the first one defined in the configuration.
 - **value** (**Required**, bool): The output value of the pin.
 
