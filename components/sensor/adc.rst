@@ -11,6 +11,7 @@ ADC in your device to measure a voltage on certain pins.
 - ESP8266: Only pin A0 (GPIO17) can be used.
 - ESP32: Available pins vary by variant, see :ref:`adc-esp32_pins`.
 - RP2040: GPIO26 through GPIO29 can be used.
+- nRF52840: AIN0 through AIN7, VDD, VDDHDIV5 can be used.
 
 .. figure:: images/adc-ui.png
     :align: center
@@ -114,11 +115,14 @@ ESP32 pins and Hardware Details
     * - ESP32-S3
       - GPIO1 - GPIO10
       - GPIO11 - GPIO20
+    * - ESP32-P4
+      - GPIO16 - GPIO23
+      - GPIO49 - GPIO54
 
 Different ESP32 variants use different ADC calibration methods:
 
 * Original ESP32 (non-variant) & ESP32-S2: Use line-fitting calibration
-* ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2 & ESP32-S3: Use curve-fitting calibration
+* ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2, ESP32-S3 & ESP32-P4: Use curve-fitting calibration
 
 This is handled automatically by the code, but it's worth noting if you're debugging ADC readings or need to understand the calibration process.
 
