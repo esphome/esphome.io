@@ -1039,8 +1039,9 @@ This :ref:`action <config-action>` sets the output value of the pin.
 
 Configuration variables:
 
+- **transmitter_id** (*Optional*, :ref:`config-id`): The remote transmitter to send the remote code with. Defaults to
+  the first one defined in the configuration.
 - **value** (**Required**, bool): The output value of the pin.
-- Does not inherit other options from :ref:`remote_transmitter-transmit_action`.
 
 .. _remote_transmitter-rc_switch-protocol:
 
