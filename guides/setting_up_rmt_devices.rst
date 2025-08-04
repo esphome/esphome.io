@@ -191,14 +191,15 @@ How to handle rolling codes
 Some RF remote-controls are using rolling codes, i.e. instead of **one unique** code, the
 buttons transmit **n different** codes in a random manner. Good-natured RF receivers have
 a simple logic: the current code must differ from the previous one. In such a case, the n
-codes can easily be determined by pressing each button several times. For example the
-*brennenstuhl comfort-line switch* generates four rolling codes per button. As can be seen
-here in the example for two buttons.
+codes can easily be recorded by pressing each button several times, e.g. the
+*brennenstuhl comfort-line switch* generates four rolling codes for each button, that can
+be stored in a code vector. Building a two buttons RF-transmitter with *code vectors* and
+rolling *index counters* can be made like so:
 
 .. code-block:: yaml
 
     globals:
-      # the rolling codes
+      # the code vectors
     - id: a_on
       type: std::vector<int>
       initial_value: '{ 0xbfcf6c, 0xbe821c, 0xb1d75c, 0xb593ac }'
@@ -206,7 +207,7 @@ here in the example for two buttons.
       type: std::vector<int>
       initial_value: '{ 0xbd2e2c, 0xb4ed8c, 0xb2b6bc, 0xb3017c }'
 
-      # the index counters
+      # the rolling index counters
     - id: a_on_idx
       type: int
       restore_value: no
