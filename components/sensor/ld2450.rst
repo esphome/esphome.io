@@ -285,6 +285,12 @@ Configuration variables:
 - **presence_timeout** (**Required**, int): The duration, in seconds, for which the
   :ref:`presence states<ld2450-binary-sensors>` will persist even after the detection is cleared. Default is ``5``
   seconds. All options from :ref:`Number <config-number>`.
+
+.. note::
+
+    The ``presence_timeout`` value applies *only* to the :ref:`presence binary sensor states<ld2450-binary-sensors>`.
+    It does **not** apply to any other sensor data, such as target count or target details.
+
 - **zone_N** (*Optional*): Configuration for the zone (N = 1 to 3), defined as a rectangular area in front of and
   relative to the sensor. A maximum of three zones can be configured: ``zone_1``, ``zone_2``, ``zone_3``. The zone
   coordinates consist of ``x1``, ``y1`` (near-left) to ``x2``, ``y2`` (far-right) and are specified in
@@ -475,7 +481,7 @@ Here is the complete example configuration for :doc:`ld2450`.
         bluetooth:
           name: "Bluetooth"
         multi_target:
-          name: Multi Target Tracking"
+          name: "Multi Target Tracking"
 
     select:
       - platform: ld2450
