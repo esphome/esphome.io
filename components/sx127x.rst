@@ -367,7 +367,6 @@ the pin should be driven low before ``set_mode_tx`` and pulled high / released b
       pa_power: 17
 
     remote_receiver:
-      id: rx_id
       pin:
         number: GPIO32
         mode:
@@ -379,7 +378,6 @@ the pin should be driven low before ``set_mode_tx`` and pulled high / released b
       dump: raw
 
     remote_transmitter:
-      id: tx_id
       pin:
         number: GPIO32
         mode:
@@ -393,12 +391,12 @@ the pin should be driven low before ``set_mode_tx`` and pulled high / released b
       on_transmit:
         then:
           - sx127x.set_mode_standby
-          - lambda: 'id(tx_id)->digital_write(false);'
+          - remote_transmitter.digital_write: false
           - sx127x.set_mode_tx
       on_complete:
         then:
           - sx127x.set_mode_standby
-          - lambda: 'id(tx_id)->digital_write(true);'
+          - remote_transmitter.digital_write: true
           - sx127x.set_mode_rx
 
     button:
