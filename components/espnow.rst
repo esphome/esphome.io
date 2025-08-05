@@ -207,7 +207,7 @@ This is an :ref:`Action <config-action>` to change the channel that espnow is se
 
 Configuration variables:
 
-- **channel** (**Required**, int): This can be a value between ``0`` and ``15``. The max number depends on the country where you are using the device. ``0`` means that espnow will set the channel number itself (most of the time it would be ``1``).
+- **channel** (**Required**, int): This can be a value between ``0`` and ``15``. The maximum channel number depends on the country or region where you are using the device (for example, channels 1-11 are allowed in the US and most of Europe, 1-13 in many other countries, and 1-14 in Japan). For details, see the `Wi-Fi channel regulations by country <https://en.wikipedia.org/wiki/List_of_WLAN_channels>`__ or consult the `Espressif ESP-NOW documentation <https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html>`__. ``0`` means that espnow will set the channel number itself (most of the time it would be ``1``).
 
 
 .. _espnow-peers:
