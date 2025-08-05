@@ -33,10 +33,19 @@ Configuration variables:
 Automations:
 
 - **on_receive** (*Optional*, :ref:`Automation <automation>`): An automation to perform when data is received. See :ref:`espnow-on_receive`.
-- **on_unknown_peer** (*Optional*, :ref:`Automation <automation>`): An automation to perform when data is received from an unknown peer.
-  Cannot be used when ``auto_add_peer`` is set to ``true``. See :ref:`espnow-on_unknown_peer`.
+- **on_unknown_peer** (*Optional*, :ref:`Automation <automation>`): An automation to perform when data is received from an unknown peer. See :ref:`espnow-on_unknown_peer`.
 - **on_broadcast** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a broadcast packet is received.
   See :ref:`espnow-on_broadcast`.
+
+Actions:
+
+- **espnow.sendd**, send a packet to an other device. See :ref:`espnow-send-action`
+- **espnow.broadcast**, send a packet to all device within its surroundings. Use this action with care, you can corrupt other device that you maybe not aware of. See :ref:`espnow-broadcast-action`
+
+- **espnow.peer.del**, See :ref:`espnow-peer_del-action`
+- **espnow.peer.add**, See :ref:`espnow-peer_add-action`
+
+- **espnow.set_channel** with this action you can switch the channel where the packets are being send and received over. See :ref:`espnow-set_channel-action`
 
 Automations
 -----------
@@ -76,7 +85,7 @@ Configuration variables:
 ``on_unknown_peer``
 *******************
 
-This automation will be triggered when data is received from a peer that is not in the list of known peers.
+This automation will be triggered when data is received from a peer that is not in the list of known peers. This trigger gives you on possiblity to decide if the unknown can be added or not. 
 
 .. _espnow-on_broadcast:
 
@@ -190,6 +199,23 @@ Configuration variables:
 - **address** (**Required**, MAC Address): The Peer address that needs to be removed from the list of allowed peers.
 
 
+``espnow.set_channel`` Action
+*****************************
+
+This is an :ref:`Action <config-action>` to change the channel where espnow is working from.
+
+.. code-block:: yaml
+
+    on_...:
+      - espnow.set_channel:
+          channel: 1
+      - espnow.set_channel: 1
+
+Configuration variables:
+
+- **channel** (**Required**, int): This can be a value between 0 and 15(*). The max number is depending on the country where you using the device. The 0 means that espnow will set the channel number it self (most of the time it would be 1).
+
+
 .. _espnow-peers:
 
 Peers
@@ -203,6 +229,7 @@ will be an error when trying to send data to a peer.
 
 Setting ``auto_add_peer`` to ``true`` will allow the component to automatically add any incoming device as a peer, and will
 automatically add any peer that data is sent to.
+
 
 See Also
 --------
