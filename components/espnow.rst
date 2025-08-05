@@ -45,7 +45,7 @@ Actions:
 - **espnow.peer.add**, See :ref:`espnow-peer_add-action`
 - **espnow.peer.del**, See :ref:`espnow-peer_delete-action`
   
-- **espnow.set_channel** with this action you can switch the channel where the packets are being send and received over. See :ref:`espnow-set_channel-action`
+- **espnow.set_channel** with this action you can switch the channel where the packets are being send and received over. **This will only work when *WIFI* is not used**. See :ref:`espnow-set_channel-action`
 
 Automations
 -----------
