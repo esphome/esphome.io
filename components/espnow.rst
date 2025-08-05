@@ -41,10 +41,10 @@ Actions:
 
 - **espnow.sendd**, send a packet to an other device. See :ref:`espnow-send-action`
 - **espnow.broadcast**, send a packet to all device within its surroundings. Use this action with care, you can corrupt other device that you maybe not aware of. See :ref:`espnow-broadcast-action`
-
-- **espnow.peer.del**, See :ref:`espnow-peer_del-action`
+  
 - **espnow.peer.add**, See :ref:`espnow-peer_add-action`
-
+- **espnow.peer.del**, See :ref:`espnow-peer_delete-action`
+  
 - **espnow.set_channel** with this action you can switch the channel where the packets are being send and received over. See :ref:`espnow-set_channel-action`
 
 Automations
