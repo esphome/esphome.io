@@ -37,16 +37,6 @@ Automations:
 - **on_broadcast** (*Optional*, :ref:`Automation <automation>`): An automation to perform when a broadcast packet is received.
   See :ref:`espnow-on_broadcast`.
 
-Actions:
-
-- **espnow.sendd**, send a packet to an other device. See :ref:`espnow-send-action`
-- **espnow.broadcast**, send a packet to all device within its surroundings. Use this action with care, you can corrupt other device that you maybe not aware of. See :ref:`espnow-broadcast-action`
-  
-- **espnow.peer.add**, See :ref:`espnow-peer_add-action`
-- **espnow.peer.del**, See :ref:`espnow-peer_delete-action`
-  
-- **espnow.set_channel** with this action you can switch the channel where the packets are being send and received over. **This will only work when *WIFI* is not used**. See :ref:`espnow-set_channel-action`
-
 Automations
 -----------
 
@@ -85,7 +75,7 @@ Configuration variables:
 ``on_unknown_peer``
 *******************
 
-This automation will be triggered when data is received from a peer that is not in the list of known peers. This trigger gives you on possiblity to decide if the unknown can be added or not. 
+This automation will be triggered when data is received from a peer that is not in the list of known peers. This trigger gives you one possibility to decide if the unknown peer can be added or not.
 
 .. _espnow-on_broadcast:
 
@@ -206,7 +196,7 @@ Configuration variables:
 ``espnow.set_channel`` Action
 *****************************
 
-This is an :ref:`Action <config-action>` to change the channel where espnow is working from.
+This is an :ref:`Action <config-action>` to change the channel that espnow is sending and receiving on.
 
 .. code-block:: yaml
 
@@ -217,7 +207,7 @@ This is an :ref:`Action <config-action>` to change the channel where espnow is w
 
 Configuration variables:
 
-- **channel** (**Required**, int): This can be a value between 0 and 15(*). The max number is depending on the country where you using the device. The 0 means that espnow will set the channel number it self (most of the time it would be 1).
+- **channel** (**Required**, int): This can be a value between ``0`` and ``15``. The max number depends on the country where you are using the device. ``0`` means that espnow will set the channel number itself (most of the time it would be ``1``).
 
 
 .. _espnow-peers:
