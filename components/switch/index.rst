@@ -110,6 +110,34 @@ This action turns a switch with the given ID off when executed.
       then:
         - switch.turn_off: relay_1
 
+.. _switch-control_action:
+
+``switch.control`` Action
+*************************
+
+This action allows you to control a switch with more flexibility than the basic ``turn_on`` and ``turn_off`` actions.
+It accepts a templatable ``state`` parameter, making it useful when the desired switch state is determined dynamically.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - switch.control:
+            id: relay_1
+            state: true
+
+        # Or with a template
+        - switch.control:
+            id: relay_1
+            state: !lambda |-
+              return id(some_sensor).state > 50.0;
+
+Configuration variables:
+
+- **id** (**Required**, :ref:`config-id`): The ID of the switch to control.
+- **state** (**Required**, boolean, :ref:`templatable <config-templatable>`): 
+  The state to set the switch to. ``true`` turns the switch on, ``false`` turns it off.
+  
 .. _switch-is_on_condition:
 .. _switch-is_off_condition:
 
