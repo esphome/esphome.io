@@ -25,6 +25,7 @@ can run.
       disable_bt_logs: true  # Default, saves flash
       connection_timeout: 20s  # Default, matches client timeout
       # advertising: true  # Only needed for advanced use cases
+      max_notifications: 12  # Default, increase if needed
 
 Configuration variables:
 ------------------------
@@ -66,6 +67,15 @@ Configuration variables:
     The ``advertising`` option is an advanced feature that manually enables BLE advertising compilation. In most cases, you don't need to set this as advertising is automatically enabled when using components that require it (like ``esp32_ble_server`` or ``esp32_ble_beacon``). This option is primarily useful for custom components or special use cases where you need advertising functionality without the standard server or beacon components.
 
 - **advertising_cycle_time** (*Optional*, :ref:`config-time`): The time interval for cycling through multiple advertisements. Only applicable when advertising is enabled. Defaults to ``10s``.
+- **max_notifications** (*Optional*, integer): The maximum number of BLE characteristics that can have notifications enabled across all connections. Only available when using ESP-IDF framework. Defaults to ``12``.
+
+  - Range: 1 to 64
+  - This is a global limit shared across all BLE connections
+  - Increase if you see ``ESP_GATT_NO_RESOURCES`` (status=128) errors when enabling notifications
+
+.. note::
+
+    The ``max_notifications`` option controls the ``CONFIG_BT_GATTC_NOTIF_REG_MAX`` ESP-IDF setting. This limit is per GATT client interface, not per connection. If you're using ESPHome as a Bluetooth proxy with multiple devices that have many characteristics requiring notifications, you may need to increase this value. The error ``status=128`` in logs indicates you've hit this limit.
 
 ``ble.disable`` Action
 -----------------------
