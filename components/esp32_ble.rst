@@ -24,6 +24,7 @@ can run.
       io_capability: keyboard_only
       disable_bt_logs: true  # Default, saves flash
       connection_timeout: 20s  # Default, matches client timeout
+      # advertising: true  # Only needed for advanced use cases
 
 Configuration variables:
 ------------------------
@@ -57,6 +58,14 @@ Configuration variables:
 .. note::
 
     The ``connection_timeout`` option is particularly important when using ESPHome as a Bluetooth proxy. The default of 20 seconds matches the timeout used by aioesphomeapi and bleak-retry-connector. If a connection attempt times out on the client side but ESP-IDF continues trying to connect, the connection slot remains occupied and unavailable for new connections. Setting this to match your client timeout ensures connection slots are freed immediately when a connection fails.
+
+- **advertising** (*Optional*, boolean): Manually enable BLE advertising support. This is automatically enabled when using :doc:`esp32_ble_server` or :doc:`esp32_ble_beacon`. Only set this to ``true`` if you need advertising functionality without those components. Defaults to ``false``.
+
+.. note::
+
+    The ``advertising`` option is an advanced feature that manually enables BLE advertising compilation. In most cases, you don't need to set this as advertising is automatically enabled when using components that require it (like ``esp32_ble_server`` or ``esp32_ble_beacon``). This option is primarily useful for custom components or special use cases where you need advertising functionality without the standard server or beacon components.
+
+- **advertising_cycle_time** (*Optional*, :ref:`config-time`): The time interval for cycling through multiple advertisements. Only applicable when advertising is enabled. Defaults to ``10s``.
 
 ``ble.disable`` Action
 -----------------------
