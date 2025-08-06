@@ -199,7 +199,7 @@ ON/OFF itself).
 .. _switch-on_state_changed_trigger:
 
 ``switch.on_state_changed`` Trigger
-***************************
+***********************************
 
 This trigger is activated each time the switch changes state (either ON or OFF).
 It provides the new state as a boolean variable ``x`` that can be used in the automation.
