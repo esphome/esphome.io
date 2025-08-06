@@ -24,6 +24,7 @@ can run.
       io_capability: keyboard_only
       disable_bt_logs: true  # Default, saves flash
       connection_timeout: 20s  # Default, matches client timeout
+      max_notifications: 12  # Default, increase if needed
 
 Configuration variables:
 ------------------------
@@ -57,6 +58,16 @@ Configuration variables:
 .. note::
 
     The ``connection_timeout`` option is particularly important when using ESPHome as a Bluetooth proxy. The default of 20 seconds matches the timeout used by aioesphomeapi and bleak-retry-connector. If a connection attempt times out on the client side but ESP-IDF continues trying to connect, the connection slot remains occupied and unavailable for new connections. Setting this to match your client timeout ensures connection slots are freed immediately when a connection fails.
+
+- **max_notifications** (*Optional*, integer): The maximum number of BLE characteristics that can have notifications enabled across all connections. Only available when using ESP-IDF framework. Defaults to ``12``.
+
+  - Range: 1 to 64
+  - This is a global limit shared across all BLE connections
+  - Increase if you see ``ESP_GATT_NO_RESOURCES`` (status=128) errors when enabling notifications
+
+.. note::
+
+    The ``max_notifications`` option controls the ``CONFIG_BT_GATTC_NOTIF_REG_MAX`` ESP-IDF setting. This limit is per GATT client interface, not per connection. If you're using ESPHome as a Bluetooth proxy with multiple devices that have many characteristics requiring notifications, you may need to increase this value. The error ``status=128`` in logs indicates you've hit this limit.
 
 ``ble.disable`` Action
 -----------------------
