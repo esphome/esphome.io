@@ -137,6 +137,14 @@ advanced stuff (see the full API Reference for more info).
 
 - ``publish_state()``: Manually cause the switch to publish a new state and store it internally.
   If it's different from the last internal state, it's additionally published to the frontend.
+  
+  .. note::
+
+    Keep in mind that this does not change the actual state of the switch. It only changes the state in the frontend and the internal state.
+    If you want to change the actual state of the switch, you need to call ``turn_on()``, ``turn_off()``, ``toggle()``, or ``control()``.
+
+    For example, if you are using a GPIO Switch, calling ``publish_state()`` will not change the GPIO pin level.
+    To do that, you need to call ``turn_on()``, ``turn_off()``, ``toggle()``, or ``control()``. The same applies to other switch platforms.
 
   .. code-block:: yaml
 
@@ -176,6 +184,16 @@ advanced stuff (see the full API Reference for more info).
       id(my_switch).turn_on();
       // Toggle the switch
       id(my_switch).toggle();
+
+- ``control()``: Control the switch state using a boolean parameter.
+  This provides a unified interface for setting switch state dynamically.
+
+  .. code-block:: yaml
+
+      // Within lambda, control switch based on a condition
+      id(my_switch).control(true);   // Turn ON
+      id(my_switch).control(false);  // Turn OFF
+      id(my_switch).control(some_condition);  // Set based on condition
 
 .. _switch-on_turn_on_off_trigger:
 
