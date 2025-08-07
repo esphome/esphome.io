@@ -7,7 +7,7 @@ This difference can be calculated in two ways an absolute difference or a percen
 
 If a number is specified, it will be used as the absolute difference required.
 For example if the filter were configured with a value of 2 and the last value passed through was 10,
-only values greater than 12 or less than 8 would be passed through.
+only values greater than or equal to 12 or less than or equal to 8 would be passed through.
 
 .. code-block:: yaml
 
@@ -16,8 +16,9 @@ only values greater than 12 or less than 8 would be passed through.
 
 If a percentage is specified a percentage of the last value will be used as the required difference.
 For example if the filter were configured with a value of 20% and the last value passed through was 10,
-only values greater than 12 or less than 8 would be passed through.
-However, if the last value passed through was 100 only values greater than 120 or less than 80 would be passed through.
+only values greater than or equal to 12 or less than or equal to 8 would be passed through.
+However, if the last value passed through was 100 only values greater than or equal to 120 or less than or
+equal to 80 would be passed through.
 
 .. code-block:: yaml
 

@@ -1024,6 +1024,24 @@ Configuration variables:
 
     Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables.
 
+.. _remote_transmitter-digital_write:
+
+``remote_transmitter.digital_write`` **Action**
+***********************************************
+
+This :ref:`action <config-action>` sets the output value of the pin.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.digital_write:
+          value: true
+
+Configuration variables:
+
+- **transmitter_id** (*Optional*, :ref:`config-id`): The remote transmitter to set the pin value on. Defaults to
+  the first one defined in the configuration.
+- **value** (**Required**, bool): The output value of the pin.
 
 .. _remote_transmitter-rc_switch-protocol:
 

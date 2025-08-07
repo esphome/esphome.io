@@ -40,6 +40,7 @@ Configuration variables:
 See Also
 --------
 
+- :doc:`/components/factory_reset`
 - :doc:`shutdown`
 - :doc:`restart`
 - :doc:`safe_mode`
