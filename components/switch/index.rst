@@ -196,10 +196,10 @@ ON/OFF itself).
         on_turn_off:
         - logger.log: "Switch Turned Off!"
 
-.. _switch-on_state_changed_trigger:
+.. _switch-on_state_trigger:
 
-``switch.on_state_changed`` Trigger
-***********************************
+``switch.on_state`` Trigger
+***************************
 
 This trigger is activated each time the switch changes state (either ON or OFF).
 It provides the new state as a boolean variable ``x`` that can be used in the automation.
@@ -209,7 +209,7 @@ It provides the new state as a boolean variable ``x`` that can be used in the au
     switch:
       - platform: gpio  # or any other platform
         # ...
-        on_state_changed:
+        on_state:
           - light.control:
               id: my_light
               state: !lambda return x;
