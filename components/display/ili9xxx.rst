@@ -41,6 +41,11 @@ ILI9341 (`datasheet <https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf>`__) a
 displays from the same chip family with ESPHome. As this is a somewhat higher resolution display and requires additional pins
 beyond the basic SPI connections, and a reasonable amount of RAM, it is not well suited for the ESP8266.
 
+.. warning::
+
+    This component has been made redundant since this class of displays is now supported by the :ref:`mipi_spi`.
+    This component may be removed in a future release.
+
 .. note::
 
     PSRAM is not automatically enabled on the ESP32 (this changed with the 2025.2 release.) If PSRAM is available, you

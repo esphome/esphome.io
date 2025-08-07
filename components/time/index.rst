@@ -30,6 +30,7 @@ Configuration variables:
   a cron-like syntax. See :ref:`time-on_time`.
 - **on_time_sync** (*Optional*, :ref:`Automation <automation>`): Automation to run when the time source
   could be (re-)synchronized.. See :ref:`time-on_time_sync`.
+- **update_interval** (*Optional*, :ref:`Time <config-time>`): How often to synchronize the device time from the source. Defaults to ``15min``.
 
 .. _time-has_time_condition:
 

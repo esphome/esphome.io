@@ -37,6 +37,7 @@ Supported Microcontrollers
     RTL87xx, components/libretiny, rtl87xx.svg
     LN882x, components/libretiny, ln882x.svg
     Host, components/host, host.svg, dark-invert
+    NRF52, components/nrf52, nrf52.svg
 
 Microcontroller Peripherals
 ---------------------------
@@ -82,6 +83,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
     Mapping, components/mapping, mapping.svg, dark-invert
     XXTEA, components/xxtea, xxtea.svg
     Script, components/script, description.svg, dark-invert
+    Factory Reset, components/factory_reset, restart-alert.svg, dark-invert
 
 Network Hardware
 ----------------
@@ -101,6 +103,7 @@ Network Protocols
     Network Core, components/network, server-network.svg, dark-invert
     Native API, components/api, server-network.svg, dark-invert
     MQTT, components/mqtt, mqtt.png
+    ESP-NOW, components/espnow, esp-now.svg
     HTTP Request, components/http_request, connection.svg, dark-invert
     mDNS, components/mdns, radio-tower.svg, dark-invert
     WireGuard, components/wireguard, wireguard_custom_logo.svg, dark-invert
@@ -401,7 +404,7 @@ Environmental
     HYT271, components/sensor/hyt271, hyt271.jpg, Temperature & Humidity
     Inkbird IBS-TH1 Mini, components/sensor/inkbird_ibsth1_mini, inkbird_isbth1_mini.jpg, Temperature & Humidity
     Internal Temperature, components/sensor/internal_temperature, thermometer.svg, Temperature, dark-invert
-    LPS22, components/sensor/lps22, lps22.jpg, Temperature & Barometric Pressure
+    LPS22, components/sensor/lps22, lps22.avif, Temperature & Barometric Pressure
     MCP9808, components/sensor/mcp9808, mcp9808.jpg, Temperature
     MH-Z19, components/sensor/mhz19, mhz19.jpg, CO2 & Temperature
     MLX90614, components/sensor/mlx90614, mlx90614.jpg, Temperature
@@ -759,6 +762,7 @@ Display Hardware Platforms
 .. imgtable::
 
     Addressable Light, components/display/addressable_light, addressable_light.jpg
+    MIPI DSI Displays, components/display/mipi_dsi, tab5.jpg
     MIPI SPI Displays, components/display/mipi_spi, t4-s3.jpg
     ILI9xxx, components/display/ili9xxx, ili9341.jpg
     ILI9341, components/display/ili9xxx, ili9341.svg

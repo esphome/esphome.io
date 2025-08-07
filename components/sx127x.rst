@@ -61,7 +61,7 @@ LoRa configuration variables:
   packet size is fixed. If not configured explicit header mode is enabled and variable packet sizes can
   be used. Maximum length is 256. Must be greater than zero when using a ``spreading_factor`` of 6.
 - **crc_enable** (**Optional**, bool): Enables a payload CRC calculation/check.
-- **preamble_size** (**Optional**, int): Length of the preamble in symbols, minimum of 6. Defaults to 8.
+- **preamble_size** (**Required**, int): Length of the preamble in symbols, minimum of 6.
 - **spreading_factor** (**Optional**, int): Spreading factor, values range from 6 to 12. Defaults to 7.
 - **coding_rate** (**Optional**, enum): Coding rate, values can be ``CR_4_5``, ``CR_4_6``, ``CR_4_7``
   or ``CR_4_8``. Defaults to ``CR_4_5``.
@@ -367,7 +367,6 @@ the pin should be driven low before ``set_mode_tx`` and pulled high / released b
       pa_power: 17
 
     remote_receiver:
-      id: rx_id
       pin:
         number: GPIO32
         mode:
@@ -379,7 +378,6 @@ the pin should be driven low before ``set_mode_tx`` and pulled high / released b
       dump: raw
 
     remote_transmitter:
-      id: tx_id
       pin:
         number: GPIO32
         mode:
@@ -393,12 +391,12 @@ the pin should be driven low before ``set_mode_tx`` and pulled high / released b
       on_transmit:
         then:
           - sx127x.set_mode_standby
-          - lambda: 'id(tx_id)->digital_write(false);'
+          - remote_transmitter.digital_write: false
           - sx127x.set_mode_tx
       on_complete:
         then:
           - sx127x.set_mode_standby
-          - lambda: 'id(tx_id)->digital_write(true);'
+          - remote_transmitter.digital_write: true
           - sx127x.set_mode_rx
 
     button:
