@@ -484,9 +484,7 @@ Configuration examples
 
     # Example configuration entry
     external_components:
-      - source:
-          type: git
-          url: https://github.com/MichaKersloot/esphome_custom_components
+      - source: github://pr#9630
         components: [ esp32_camera ]
 
     esp32_camera:
@@ -500,6 +498,7 @@ Configuration examples
       vsync_pin: GPIO6
       href_pin: GPIO7
       pixel_clock_pin: GPIO13
+      frame_buffer_location: DRAM
 
       # Image settings
       name: My Camera
