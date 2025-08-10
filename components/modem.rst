@@ -42,6 +42,7 @@ Configuration variables:
 - **enable_on_boot** (*Optional*, boolean): If enabled, the PPPoS interface will be started on boot. Defaults to ``true``.
 - **use_address** (*Optional*, string): Manually override what address to use to connect to the ESP. Defaults to auto-generated value.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+
 .. _nmea_schema:
 
 - **nmea** (*Optional*, :ref:`Nmea Schema <nmea_schema>`): Create a virtual UART bus that can be used by the :doc:`/components/gps`.
