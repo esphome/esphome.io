@@ -53,6 +53,8 @@ Media Player Actions
 All ``media_player`` actions can be used without specifying an ``id`` if you have only one ``media_player`` in
 your configuration YAML.
 
+The actions ``turn_off`` and ``turn_on`` are optional and based on the platform implementing the ``supports_turn_off_on`` trait.
+
 Configuration variables:
 
 **id** (*Optional*, :ref:`config-id`): The media player to control. Defaults to the only one in YAML.
@@ -114,6 +116,20 @@ Configuration variables:
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This action will pause or resume the current playback.
+
+.. _media_player-turn_off:
+
+``media_player.turn_off`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will turn off the media player.
+
+.. _media_player-turn_on:
+
+``media_player.turn_on`` Action
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This action will turn on the media player.
 
 .. _media_player-volume_up:
 
@@ -230,6 +246,36 @@ This trigger is activated every time the media player plays an announcement.
         on_announcement:
           - logger.log: "Announcing!"
 
+.. _media_player-on_turn_off_trigger:
+
+``media_player.on_turn_off`` Trigger
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This trigger is activated every time the media player is turned off.
+
+.. code-block:: yaml
+
+    media_player:
+      - platform: ...  # any platform implementing the ``supports_turn_off_on`` trait
+        # ...
+        on_turn_off:
+          - logger.log: "Media Player is Turned Off"
+
+.. _media_player-on_turn_on_trigger:
+
+``media_player.on_turn_on`` Trigger
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This trigger is activated every time the media player is turned on.
+
+.. code-block:: yaml
+
+    media_player:
+      - platform: ...  # any platform implementing the ``supports_turn_off_on`` trait
+        # ...
+        on_turn_on:
+          - logger.log: "Media Player is Turned On"
+
 .. _media_player-is_idle_condition:
 
 ``media_player.is_idle`` Condition
@@ -289,6 +335,36 @@ This condition checks if the media player is playing an announcement.
       if:
         condition:
           media_player.is_announcing:
+
+.. _media_player-is_off_condition:
+
+``media_player.is_off`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is turned off.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_off:
+
+.. _media_player-is_on_condition:
+
+``media_player.is_on`` Condition
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This condition checks if the media player is turned on.
+
+.. code-block:: yaml
+
+    # In some trigger:
+    on_...:
+      if:
+        condition:
+          media_player.is_on:
 
 Play media in order
 -------------------

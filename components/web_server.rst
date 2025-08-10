@@ -67,6 +67,11 @@ Configuration variables:
   `Private Network Access Permission Prompt <https://wicg.github.io/private-network-access/#permission-prompt>`__.
   Defaults to ``true``.
 - **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to ``true``.
+- **ota** (*Optional*, boolean): Explicitly disable OTA updates through the web server interface. Only accepts ``false``. 
+  This option is typically used when you have both ``web_server`` and ``captive_portal`` configured, and you want
+  OTA updates to be available only through the captive portal. Since ``captive_portal`` automatically loads the 
+  web server OTA platform, setting this to ``false`` prevents OTA access through the regular web interface while
+  maintaining it for captive portal access. To enable OTA for web server, use the ``web_server`` OTA platform instead.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access. Defaults to ``false``.
 - **version** (*Optional*, string): ``1``, ``2`` or ``3``. Version 1 displays as a table. Version 2 uses web components and has more functionality. Version 3 uses HA-Styling. Defaults to ``2``.
@@ -85,6 +90,7 @@ interface are hosted by esphome.io. If you want to use your own service, use the
     **OTA Updates via Web Interface**
 
     The ``ota`` option has been moved from the ``web_server`` component to its own OTA platform.
+    
     To enable OTA updates through the web interface, use the new ``web_server`` OTA platform:
 
     .. code-block:: yaml
@@ -92,6 +98,18 @@ interface are hosted by esphome.io. If you want to use your own service, use the
         # Enable OTA updates via web interface
         ota:
           - platform: web_server
+
+    To explicitly disable OTA updates for the web server while keeping them enabled for captive portal 
+    (useful when captive portal is configured since it automatically enables web server OTA):
+
+    .. code-block:: yaml
+
+        # Disable OTA updates for web_server only
+        # Captive portal will still have OTA access since it auto-loads the web server OTA platform
+        web_server:
+          ota: false
+        
+        captive_portal:  # This component automatically enables OTA
 
     See :doc:`/components/ota/web_server` for more information.
 
@@ -125,6 +143,19 @@ No internet/intranet required on the clients (all assets are inlined, compressed
     # Example configuration entry
     web_server:
       local: true
+
+Disabling OTA updates for web server while using captive portal (common security setup):
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    web_server:
+      port: 80
+      ota: false  # Disables OTA through regular web interface
+    
+    # Captive portal automatically enables web server OTA platform
+    # OTA will only be accessible when captive portal is active
+    captive_portal:
 
 
 Advanced usage

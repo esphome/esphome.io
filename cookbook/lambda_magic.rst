@@ -210,13 +210,19 @@ In this example a :doc:`/components/cover/time_based` is used with the GPIO conf
               if (id(my_cover).current_operation == COVER_OPERATION_IDLE) {
                 // Cover is idle, check current state and either open or close cover.
                 if (id(my_cover).is_fully_closed()) {
-                  id(my_cover).open();
+                  auto call = id(my_cover).make_call();
+                  call.set_command_open();
+                  call.perform();
                 } else {
-                  id(my_cover).close();
+                  auto call = id(my_cover).make_call();
+                  call.set_command_close();
+                  call.perform();
                 }
               } else {
                 // Cover is opening/closing. Stop it.
-                id(my_cover).stop();
+                auto call = id(my_cover).make_call();
+                call.set_command_stop();
+                call.perform();
               }
 
     switch:
@@ -276,74 +282,6 @@ will return ``NaN``, which corresponds to ``unknown`` sensor state.
       - platform: template
         id: num_from_text
         name: "Number from text"
-
-
-Factory reset after 5 quick reboots
------------------------------------
-
-One may want to restore factory settings (like Wi-Fi credentials set at runtime, or clear restore states) without having to
-disassemble or dismount the devices from their deployed location, whilst there's no network access either. The example below
-shows how to achieve that using lambdas in a script by triggering the factory reset switch after the system rebooted 5 times
-with 10-second timeframes.
-
-.. code-block:: yaml
-
-    # Example config.yaml
-    esphome:
-      name: "esphome_ld2410"
-      on_boot:
-        priority: 600.0
-        then:
-          - script.execute: fast_boot_factory_reset_script
-    esp32:
-      board: esp32-c3-devkitm-1
-
-    substitutions:
-      factory_reset_boot_count_trigger: 5 
-
-    globals:
-      - id: fast_boot
-        type: int
-        restore_value: yes
-        initial_value: '0'
-    
-    script:
-      - id: fast_boot_factory_reset_script
-        then:
-          - if:
-              condition:
-                lambda: return ( id(fast_boot) >= ${factory_reset_boot_count_trigger});
-              then:
-                - lambda: |-
-                    ESP_LOGD("Fast Boot Factory Reset", "Performing factotry reset");
-                    id(fast_boot) = 0;
-                    fast_boot->loop();
-                    global_preferences->sync();
-                - button.press: factory_reset_button
-          - lambda: |-
-              if(id(fast_boot) > 0)
-                ESP_LOGD("Fast Boot Factory Reset", "Quick reboot %d/%d, do it %d more times to factory reset", id(fast_boot), ${factory_reset_boot_count_trigger}, ${factory_reset_boot_count_trigger} - id(fast_boot));
-              id(fast_boot) += 1;
-              fast_boot->loop();
-              global_preferences->sync();
-          - delay: 10s
-          - lambda: |-
-              id(fast_boot) = 0;
-              fast_boot->loop();
-              global_preferences->sync();
-    
-    wifi:
-      id: wifi_component
-      ap:
-        ap_timeout: 0s
-      reboot_timeout: 0s
-    
-    captive_portal:
-    
-    button:
-      - platform: factory_reset
-        id: factory_reset_button
-        name: "ESPHome: Factory reset"
 
 
 See Also
