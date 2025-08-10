@@ -1,9 +1,9 @@
 HDC302x Temperature and Humidity Sensor
-===================================
+=======================================
 
 .. seo::
     :description: Instructions for setting up HDC302x temperature and humidity sensor for use with ESPHome.
-    :image: hdc302x.jpg
+    :image: hdc302x.png
     :keywords: HDC3020, HDC3021, HDC3022
 
 The `hdc302x` sensor platform allows you to use your HDC302x temperature and humidity sensor
@@ -12,7 +12,7 @@ The `hdc302x` sensor platform allows you to use your HDC302x temperature and hum
 
 The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for this sensor to work.
 
-.. figure:: images/hdc302x.jpg
+.. figure:: images/hdc302x.png
     :align: center
     :width: 80.0%
 
