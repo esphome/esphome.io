@@ -37,8 +37,8 @@ UDP, like any other network protocol, does not provide a guarantee that data wil
 even provide any indication whether data has been successfully delivered or not.
 
 
-Write Action
-------------
+``udp.write`` Action
+--------------------
 
 To write data to the UDP port, use the ``udp.write`` action. This action takes a single argument, the data to write to the UDP port.
 

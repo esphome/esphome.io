@@ -39,12 +39,23 @@ efficient state change detection with minimal CPU usage.
         name: "Legacy Sensor"
         use_interrupt: false  # Use polling instead of interrupts
 
+    # Example with shared pin (automatic polling mode)
+    binary_sensor:
+      - platform: gpio
+        pin:
+          number: GPIO15
+          allow_other_uses: true  # Pin is shared with other components
+        name: "Pump Status"
+        # Interrupts will be automatically disabled for compatibility
+
 Configuration variables:
 ------------------------
 
 - **pin** (**Required**, :ref:`Pin Schema <config-pin_schema>`): The pin to monitor.
 - **use_interrupt** (*Optional*, boolean): Use hardware interrupts instead of polling for better 
-  performance and lower CPU usage. Defaults to ``true``. Only supported on internal GPIO pins.
+  performance and lower CPU usage. Defaults to ``true`` for most platforms, but defaults to ``false``
+  for LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) due to hardware limitations. Only supported
+  on internal GPIO pins.
 - **interrupt_type** (*Optional*, string): The type of interrupt to use. One of:
 
   - ``ANY`` (default): Trigger on any edge change (high to low or low to high)
@@ -76,8 +87,19 @@ The GPIO binary sensor supports two modes of operation:
 
 .. note::
 
-    Interrupt mode is only available on internal GPIO pins. External GPIO 
+    Interrupt mode is only available on internal GPIO pins. External GPIO
     expanders (like PCF8574) will automatically fall back to polling mode.
+    
+    LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) default to polling mode
+    due to hardware limitations with edge interrupts. You can explicitly enable
+    interrupt mode if needed, but it may not work reliably on all pins.
+
+.. note::
+
+    When a pin is configured with ``allow_other_uses: true`` (for sharing with
+    other components), interrupts are automatically disabled to prevent conflicts.
+    This ensures compatibility with components like ``duty_cycle`` sensors that
+    need to monitor pin state changes. The sensor will use polling mode instead.
 
 Activating internal pullups
 ---------------------------

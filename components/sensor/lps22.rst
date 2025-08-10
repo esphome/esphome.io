@@ -9,7 +9,7 @@ The ``lps22`` sensor platform  allows you to use your LPS22HB or LPS22HH pressur
 
 The :ref:`I²C Bus <i2c>` is required to be set up in your configuration for this sensor to work.
 
-.. figure:: images/lps22.jpg
+.. figure:: images/lps22.avif
     :align: center
 
 .. code-block:: yaml

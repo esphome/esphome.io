@@ -14,7 +14,7 @@ ESPHome 2025.7.0 - 16th July 2025
     ESP32 Hosted, components/esp32_hosted, network-wifi.svg, dark-invert
     GL-R01, components/sensor/gl_r01, gl_r01.jpg
     LN882x, components/libretiny, ln882x.svg
-    LPS22, components/sensor/lps22, lps22.jpg
+    LPS22, components/sensor/lps22, lps22.avif
     OPT3001, components/sensor/opt3001, opt3001.jpg
     PI4IOE5V6408, components/pi4ioe5v6408, pca9554a.jpg
     SX126x, components/sx126x, sx126x.png
@@ -375,6 +375,103 @@ and configurations that need to adapt based on device capabilities or user prefe
 For complete documentation and more examples, see the :doc:`/components/substitutions` guide.
 
 
+ArduinoJson Library 7.x
+-----------------------
+
+.. warning::
+
+    **Breaking Change:** The ArduinoJson library has been upgraded from version 6.x to 7.2.0, introducing
+    breaking changes that may affect custom components and external integrations.
+
+ESPHome 2025.7.0 upgrades the ArduinoJson library to version 7.2.0, bringing performance improvements and
+reduced memory usage. Most users will not be affected as all standard ESPHome components have been updated.
+However, if you have external components, or lambdas that directly use ArduinoJson, you may need
+to update your code.
+
+For detailed migration information, see the `ArduinoJson migration guide <https://arduinojson.org/v7/how-to/upgrade-from-v6/>`__.
+
+
+Release 2025.7.1 - July 17
+--------------------------
+
+.. collapse:: Show
+    :open:
+
+    - [lvgl]: fix missing await keyword in meter tick_style width processing :esphomepr:`9538` by :ghuser:`theshut`
+    - Fix compilation error when using string lambdas with homeassistant services :esphomepr:`9543` by :ghuser:`bdraco`
+    - Fix format string warnings in Web Server OTA component :esphomepr:`9569` by :ghuser:`bdraco`
+    - Add helpful error message when ESP32+Arduino runs out of flash space :esphomepr:`9580` by :ghuser:`bdraco`
+    - Allow disabling OTA for web_server while keeping it enabled for captive_portal :esphomepr:`9583` by :ghuser:`bdraco`
+    - [esp32] Add missing include for helpers :esphomepr:`9579` by :ghuser:`jesserockz`
+    - Fix lwIP thread safety assertion failures on ESP32 :esphomepr:`9570` by :ghuser:`bdraco`
+
+
+Release 2025.7.2 - July 19
+--------------------------
+
+.. collapse:: Show
+    :open:
+
+    - Fix template event web_server crash :esphomepr:`9618` by :ghuser:`AzonInc`
+    - [api] Fix compilation error with char* lambdas in HomeAssistant services :esphomepr:`9638` by :ghuser:`bdraco`
+    - [wireguard] Fix boot loop when CONFIG_LWIP_TCPIP_CORE_LOCKING is enabled :esphomepr:`9637` by :ghuser:`bdraco`
+    - [scheduler] Fix cancellation of timers with empty string names :esphomepr:`9641` by :ghuser:`bdraco`
+    - [logger] fix on_message :esphomepr:`9642` by :ghuser:`ssieb`
+    - esp32_camera: deprecate i2c_pins; throw error if combined with i2c: block :esphomepr:`9615` by :ghuser:`RubenKelevra`
+    - [scheduler] Fix DelayAction cancellation in restart mode scripts :esphomepr:`9646` by :ghuser:`bdraco`
+    - [lvgl] Fix meter rotation :esphomepr:`9605` by :ghuser:`clydebarrow`
+    - [libretiny] Remove unsupported lock-free queue and event pool implementations :esphomepr:`9653` by :ghuser:`bdraco`
+    - [lvgl] Prevent keyerror on min/max value widgets with no default :esphomepr:`9660` by :ghuser:`jesserockz`
+    - Fix AsyncTCP version mismatch between platformio.ini and async_tcp component :esphomepr:`9676` by :ghuser:`bdraco`
+    - [speaker] Media player's pipeline properly returns playing state near end of file :esphomepr:`9668` by :ghuser:`kahrendt`
+    - [voice_assistant] Use media player callbacks to track TTS response status :esphomepr:`9670` by :ghuser:`kahrendt`
+    - [gpio] Disable interrupt mode by default for LibreTiny platforms :esphomepr:`9687` by :ghuser:`bdraco`
+
+
+Release 2025.7.3 - July 23
+--------------------------
+
+.. collapse:: Show
+    :open:
+
+    - [gpio] Auto-disable interrupts for shared GPIO pins in binary sensors :esphomepr:`9701` by :ghuser:`bdraco`
+    - Fix format string error in ota_web_server.cpp :esphomepr:`9711` by :ghuser:`tmpeh`
+    - [sdl][mipi_spi] Respect clipping when drawing :esphomepr:`9722` by :ghuser:`JonasB2497`
+    - [esp32_touch] Fix setup mode in v1 driver :esphomepr:`9725` by :ghuser:`swoboda1337`
+    - [tuya] Update use of fan_schema :esphomepr:`9762` by :ghuser:`jesserockz`
+    - [config_validation] Add support for suggesting alternate component/platform :esphomepr:`9757` by :ghuser:`kbx81`
+    - [core] Process pending loop enables during setup blocking phase :esphomepr:`9787` by :ghuser:`bdraco`
+    - [fastled_clockless, fastled_spi] Add suggested alternate when using IDF :esphomepr:`9784` by :ghuser:`kbx81`
+    - [neopixelbus] Add suggested alternate when using IDF :esphomepr:`9783` by :ghuser:`kbx81`
+    - [bme680_bsec] Add suggested alternate when using IDF :esphomepr:`9785` by :ghuser:`kbx81`
+
+
+Release 2025.7.4 - July 28
+--------------------------
+
+.. collapse:: Show
+    :open:
+
+    - [remote_receiver] Fix idle validation :esphomepr:`9819` by :ghuser:`swoboda1337`
+    - [gt911] i2c fixes :esphomepr:`9822` by :ghuser:`clydebarrow`
+    - fix: non-optional x/y target calculation for ld2450 :esphomepr:`9849` by :ghuser:`Hofferic`
+    - [logger] Don't allow ``logger.log`` actions without configuring the ``logger`` :esphomepr:`9821` by :ghuser:`jesserockz`
+    - Add seed flag when running setup with uv present :esphomepr:`9932` by :ghuser:`cryptk`
+    - Fail with old lerp :esphomepr:`9914` by :ghuser:`HeMan`
+
+
+Release 2025.7.5 - August 5
+---------------------------
+
+.. collapse:: Show
+    :open:
+
+    - [lvgl] Bugfix for tileview :esphomepr:`9938` by :ghuser:`clydebarrow`
+    - [api] Fix OTA progress updates not being sent when main loop is blocked :esphomepr:`10049` by :ghuser:`bdraco`
+    - [font] Catch file load exception :esphomepr:`10058` by :ghuser:`clydebarrow`
+    - [i2s_audio] Use high-pass filter for dc offset correction :esphomepr:`10005` by :ghuser:`doobry`
+
+
 Full list of changes
 --------------------
 
@@ -413,6 +510,8 @@ Breaking Changes
 - Replace custom OTA implementation in web_server_base :esphomepr:`9274` by :ghuser:`bdraco` (new-integration) (breaking-change)
 - Reduce RAM usage by optimizing Color constant storage :esphomepr:`9339` by :ghuser:`bdraco` (breaking-change)
 - Optimize logger callback API by including message length parameter :esphomepr:`9368` by :ghuser:`bdraco` (breaking-change)
+- Conditionally compile API user services to save 4.3KB flash (follow-up to #9262) :esphomepr:`9451` by :ghuser:`bdraco` (breaking-change)
+- [json] Bump ArduinoJson library to 7.4.2 :esphomepr:`8857` by :ghuser:`kahrendt` (breaking-change)
 
 Notable Changes
 ^^^^^^^^^^^^^^^
@@ -653,6 +752,50 @@ All changes
     - [esp32] Improve flexibility of ``only_on_variant`` :esphomepr:`9390` by :ghuser:`jesserockz`
     - ESP_EXT1_WAKEUP_ANY_LOW is for s2/s3/c6/h2; ESP_EXT1_WAKEUP_ALL_LOW otherwise :esphomepr:`9387` by :ghuser:`candrews`
     - [apds9960] Add 0x9E ID :esphomepr:`9392` by :ghuser:`Merikei`
+    - Fix another race in the string lifetime scheduler test :esphomepr:`9399` by :ghuser:`bdraco`
+    - [esp32_touch] Fix touch v1 :esphomepr:`9414` by :ghuser:`swoboda1337`
+    - Set lib_compat_mode to strict :esphomepr:`9408` by :ghuser:`swoboda1337`
+    - debug: bufferoverflow mitigation in DebugComponent::on_shutdown() :esphomepr:`9422` by :ghuser:`RubenKelevra`
+    - Exclude internal entities from name uniqueness validation :esphomepr:`9410` by :ghuser:`bdraco`
+    - Handle ESP32 chunked MQTT messages missing topic on non-first chunks, causing panic :esphomepr:`5786` by :ghuser:`aaliddell`
+    - Replace remaining instances of USE_ESP32_CAMERA with USE_CAMERA :esphomepr:`9401` by :ghuser:`DT-art1`
+    - Sync api.proto from aioesphomeapi :esphomepr:`9393` by :ghuser:`bdraco`
+    - Fix scheduler crash when cancelling items with NULL names :esphomepr:`9444` by :ghuser:`bdraco`
+    - [wizard] use lowercase to match :esphomepr:`9448` by :ghuser:`ssieb`
+    - Optimize API flash usage by storing message size at compile time :esphomepr:`9447` by :ghuser:`bdraco`
+    - Optimize API proto size calculations by removing redundant force parameter :esphomepr:`9449` by :ghuser:`bdraco`
+    - [ld2410] Remove redundant ``delay()`` calls, minor optimizations :esphomepr:`9453` by :ghuser:`kbx81`
+    - [ld2420] Memory optimization, code clean-up :esphomepr:`9426` by :ghuser:`kbx81`
+    - Reduce API flash usage by eliminating unnecessary template instantiations :esphomepr:`9452` by :ghuser:`bdraco`
+    - Conditionally compile API user services to save 4.3KB flash (follow-up to #9262) :esphomepr:`9451` by :ghuser:`bdraco` (breaking-change)
+    - [packet_transport] Don't run update if ping_pong not enabled. :esphomepr:`9434` by :ghuser:`clydebarrow`
+    - [sx127x, sx126x] Fix preamble_size default and validation :esphomepr:`9454` by :ghuser:`swoboda1337`
+    - Apply existing protobuf buffer optimization to nested message encoding (~2.3x speed up) :esphomepr:`9458` by :ghuser:`bdraco`
+    - Only generate protobuf encode/decode methods for the message direction they're used :esphomepr:`9461` by :ghuser:`bdraco`
+    - [usb_uart] Be flexible about descriptor layout for CDC-ACM devices :esphomepr:`9425` by :ghuser:`clydebarrow`
+    - [libretiny] Set lib_compat_mode to soft for libretiny :esphomepr:`9439` by :ghuser:`swoboda1337`
+    - (Maybe?) fix I2S speaker internal DAC mode :esphomepr:`9435` by :ghuser:`pzich`
+    - [lvgl] Post-process size arguments in meter config :esphomepr:`9466` by :ghuser:`pzich`
+    - Automatically disable interrupts for ESP8266 GPIO16 binary sensors :esphomepr:`9467` by :ghuser:`bdraco`
+    - [substitutions] Fix #7189 :esphomepr:`9469` by :ghuser:`jpeletier`
+    - Fix pre-commit CI failures by skipping local hooks that require virtual environment :esphomepr:`9476` by :ghuser:`bdraco`
+    - [esp_ldo] Component schema; default priority :esphomepr:`9479` by :ghuser:`clydebarrow`
+    - Follow logging best practices by removing redundant component prefix :esphomepr:`9481` by :ghuser:`bdraco`
+    - Fix dormant bug in RAMAllocator::reallocate() manual_size calculation :esphomepr:`9482` by :ghuser:`bdraco`
+    - Suppress spurious volatile and Python syntax warnings during builds :esphomepr:`9488` by :ghuser:`bdraco`
+    - [online_image] Support ``byte_order`` :esphomepr:`9502` by :ghuser:`clydebarrow`
+    - [json] Bump ArduinoJson library to 7.4.2 :esphomepr:`8857` by :ghuser:`kahrendt` (breaking-change)
+    - [fan] Do not save state for fan if configured as NO_RESTORE :esphomepr:`9472` by :ghuser:`skyegecko`
+    - Fix LibreTiny compilation error by updating ESPAsyncWebServer and dependencies :esphomepr:`9492` by :ghuser:`bdraco`
+    - [captive_portal] Add test case for libretiny :esphomepr:`9457` by :ghuser:`clydebarrow`
+    - [opentherm.output] Fix ``lerp`` :esphomepr:`9506` by :ghuser:`kbx81`
+    - [servo] Fix ``lerp`` :esphomepr:`9507` by :ghuser:`kbx81`
+    - Add missing clang-tidy NOLINT comments for ArduinoJson v7 in IDF webserver :esphomepr:`9508` by :ghuser:`bdraco`
+    - [core] Don't issue -Wno-volatile for host platform :esphomepr:`9511` by :ghuser:`clydebarrow`
+    - [component] Fix ``is_ready`` flag when loop disabled :esphomepr:`9501` by :ghuser:`jesserockz`
+    - [ms8607] Fix humidity calc :esphomepr:`9499` by :ghuser:`LorbusChris`
+    - Fix timing overflow when components disable themselves during loop :esphomepr:`9529` by :ghuser:`bdraco`
+    - [as3935_spi] remove unnecessary includes :esphomepr:`9528` by :ghuser:`ssieb`
 
 Dependency Changes
 ^^^^^^^^^^^^^^^^^^
@@ -676,6 +819,7 @@ Dependency Changes
     - Bump ruff from 0.12.1 to 0.12.2 :esphomepr:`9311` by :ghuser:`dependabot[bot]`
     - Bump puremagic from 1.29 to 1.30 :esphomepr:`9320` by :ghuser:`dependabot[bot]`
     - Bump aioesphomeapi from 34.1.0 to 34.2.0 :esphomepr:`9391` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 34.2.0 to 34.2.1 :esphomepr:`9460` by :ghuser:`dependabot[bot]`
 
 
 Past Changelogs
