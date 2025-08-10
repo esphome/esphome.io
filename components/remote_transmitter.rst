@@ -193,6 +193,7 @@ companies.
 .. _remote_transmitter-transmit_beo4:
 
 ``remote_transmitter.transmit_beo4`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
@@ -377,9 +378,30 @@ Configuration variables:
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from :ref:`remote_transmitter-transmit_action`.
 
+.. _remote_transmitter-transmit_dyson:
+
+``remote_transmitter.transmit_dyson`` **Action**
+************************************************
+
+This :ref:`action <config-action>` sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.transmit_dyson:
+          code: '0x1200'
+          index: '0'
+
+Configuration variables:
+
+- **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,0x122a=swing..., see dumper output for more info.
+- **index** (**Required**, int): The 8-bit rolling index [0..3], to be increased with every transmit, see dumper output for more info.
+- All other options from :ref:`remote_transmitter-transmit_action`.
+
 .. _remote_transmitter-transmit_gobox:
 
 ``remote_transmitter.transmit_gobox`` **Action**
+************************************************
 
 This :ref:`action <config-action>` sends a command to a Go-Box via the IR transmitter.
 
