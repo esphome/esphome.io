@@ -83,8 +83,8 @@ The integer members for the touch positions below are in relation to the display
 - ``state`` indicates the state of the touch. This can be **1**, indicating it is an initial touch, or **2** indicating the touch position has changed/moved.
 
 - ``x`` and ``y`` are the current position.
-- ``x_last`` and ``y_last`` are the previous position.
-- ``x_first`` and ``y_first`` are the position of the touch when it was first detected.
+- ``x_prev`` and ``y_prev`` are the previous position.
+- ``x_org`` and ``y_org`` are the position of the touch when it was first detected.
 - ``x_raw`` and ``y_raw`` are for calibrating the touchscreen in relation of the display. This replaces the properties with the same name in the touchscreen classes.
 
 .. _touchscreen-calibration:
