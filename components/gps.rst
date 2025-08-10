@@ -47,6 +47,7 @@ See :doc:`time/gps` for config options for the GPS time source.
 
 Configuration variables:
 ------------------------
+- **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>`, or of the :ref:`Nmea <nmea_schema>` from the :doc:`/components/modem`
 - **latitude** (*Optional*): Include the Latitude as a sensor
 
   - All options from :ref:`Sensor <config-sensor>`.
@@ -81,6 +82,7 @@ See Also
 --------
 
 - :ref:`sensor-filters`
+- :doc:`/components/modem`
 - `TinyGPS++ library <http://arduiniana.org/libraries/tinygpsplus/>`__
 - :apiref:`gps/gps.h`
 - :ghedit:`Edit`

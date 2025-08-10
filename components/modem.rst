@@ -42,6 +42,13 @@ Configuration variables:
 - **enable_on_boot** (*Optional*, boolean): If enabled, the PPPoS interface will be started on boot. Defaults to ``true``.
 - **use_address** (*Optional*, string): Manually override what address to use to connect to the ESP. Defaults to auto-generated value.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID used for code generation.
+.. _nmea_schema:
+
+- **nmea** (*Optional*, :ref:`Nmea Schema <nmea_schema>`): Create a virtual UART bus that can be used by the :doc:`/components/gps`.
+
+  - **id** (*Required*, :ref:`config-id`): Manually specify the ID used for code generation.
+  - **update_interval** (*Optional*, :ref:`config-time`): The interval of NMEA updates. Defaults to  ``20s``
+
 
 Advanced options:
 -----------------
@@ -268,6 +275,7 @@ See Also
 - :doc:`/components/switch/modem`
 - :doc:`/components/mqtt`
 - :doc:`/components/wireguard`
+- :doc:`/components/gps`
 - `SIM7600 AT command list <https://simcom.ee/documents/SIM7600C/SIM7500_SIM7600%20Series_AT%20Command%20Manual_V1.01.pdf>`__
 - `SIM7600 Hardware design <https://simcom.ee/documents/SIM7600E/SIM7600%20Series%20Hardware%20Design_V1.03.pdf>`__
 - `esp_modem`_
