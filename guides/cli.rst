@@ -75,6 +75,16 @@ The ``esphome run <CONFIG>`` command is the most common command for ESPHome. It
 
     Manually specify the upload port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
     to perform an OTA.
+    
+    Multiple ``--device`` options can be specified to provide fallback addresses. ESPHome will 
+    try each address in order until one succeeds. This is particularly useful for devices with 
+    multiple IP addresses (IPv4/IPv6).
+    
+    Example:
+    
+    .. code-block:: console
+
+        esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -141,6 +151,15 @@ The ``esphome upload <CONFIG>`` validates the configuration and uploads the most
 
     Manually specify the upload port/IP address to use. For example ``/dev/cu.SLAB_USBtoUART``, or ``192.168.1.176``
     to perform an OTA.
+    
+    Multiple ``--device`` options can be specified to provide fallback addresses. ESPHome will 
+    try each address in order until one succeeds.
+    
+    Example:
+    
+    .. code-block:: console
+
+        esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 
 .. option:: --upload_speed BAUD_RATE
 
@@ -267,6 +286,16 @@ The ``esphome logs <CONFIG>`` command validates the configuration and shows all 
 .. option:: --device SERIAL_PORT
 
     Manually specify a serial port/IP to use. For example ``/dev/cu.SLAB_USBtoUART``.
+    
+    Multiple ``--device`` options can be specified to provide fallback addresses. When using the 
+    native API for logs, all addresses are passed to the API client which uses the Happy Eyeballs 
+    algorithm (RFC 8305) to efficiently connect using the fastest available address.
+    
+    Example:
+    
+    .. code-block:: console
+
+        esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 
 .. option:: --reset
 
@@ -285,3 +314,53 @@ You can register ESPHome for auto-completion by adding the following to your ~/.
     eval "$(register-python-argcomplete esphome)"
 
 For more information, see `argcomplete <https://kislyuk.github.io/argcomplete/>`__ documentation.
+
+Using logging tools supplied with ESPHome
+-----------------------------------------
+There are two types of logging interfaces supplied with ESPHome: API and Serial (UART) logging.
+For serial logging, there are many options including `ESPHome Web <https://web.esphome.io>`__ and
+the ESPHome CLI's ``run`` command.
+
+For basic API based logging uses, one can use the ``aioesphomeapi-logs`` command bundled with ESPHome,
+Which is especially useful for ESP devices in a remote/inaccessible location.
+
+The syntax is as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-logs <IPv4 pr IPv6 address>
+
+Some working examples include:
+
+.. code-block:: console
+
+    aioesphomeapi-logs 192.168.x.y
+    aioesphomeapi-logs fe80::cdef:0123:4567:89ab
+    aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
+
+Press ``CTRL+C`` to exit the logging view.
+
+If you have configured encryption for API, provide the key from the yaml as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-logs 192.168.x.y --noise-psk <your-api-key-from-yaml>
+
+If you do not know/wish to know the IP address of an ESPHome device,
+one can also use ``aioesphomeapi-discover`` to discover online ESPHome devices on the local network.
+
+The syntax is as follows:
+
+.. code-block:: console
+
+    aioesphomeapi-discover
+
+The response lists info about currently available ESPHome devices:
+
+``Status |Name |Address |MAC |Version |Platform |Board``
+
+See Also
+--------
+
+- :doc:`Guides </guides/index>`
+- :ghedit:`Edit`

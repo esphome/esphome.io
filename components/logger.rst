@@ -343,5 +343,6 @@ See Also
 
 - :doc:`/components/uart`
 - :doc:`/components/select/logger`
+- :doc:`/guides/troubleshooting` - Troubleshooting guide for debugging crashes and boot failures
 - :apiref:`logger/logger.h`
 - :ghedit:`Edit`

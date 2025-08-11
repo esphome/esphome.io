@@ -132,6 +132,60 @@ Configuration example:
     will result in the battery voltage being reported once per polling
     interval.
 
+Airthings Wave Radon (Gen 2) Sensor
+***********************************
+
+AirThings Wave Radon (Gen 2) tracks radon (24h and long term), temperature, atmospheric pressure and humidity.
+
+.. note::
+
+    The Wave Gen2 device does NOT support CO2 or TVOC sensors - only radon, temperature, pressure, humidity, and illuminance are available.
+
+.. figure:: images/airthings_wave_radon.jpg
+    :align: center
+    :width: 60.0%
+
+Configuration variables:
+------------------------
+
+- **device_type** (*Optional*): Specifies the type of AirThings Wave device. Defaults to ``WAVE_PLUS``.
+  
+  - ``WAVE_PLUS``: For AirThings Wave Plus devices (supports all sensors including CO2 and TVOC)
+  - ``WAVE_GEN2``: For AirThings Wave Radon Gen 2 devices (does not support CO2 or TVOC sensors)
+
+Configuration example:
+**********************
+
+
+.. code-block:: yaml
+
+    sensor:
+      - platform: airthings_wave_plus
+        name: wave_gen2
+        ble_client_id: airthings01
+        device_type: WAVE_GEN2  # Required for Wave Gen2 devices (default is WAVE_PLUS)
+        update_interval: 5min # default
+        battery_update_interval: 24h # default
+        temperature:
+          name: "WaveG2 Temperature"
+        radon:
+          name: "WaveG2 Radon"
+        radon_long_term:
+          name: "WaveG2 Radon Long Term"
+        pressure:
+          name: "WaveG2 Pressure"
+        humidity:
+          name: "WaveG2 Humidity"
+        illuminance:
+          name: "WaveG2 ambient light"
+        battery_voltage:
+          name: "WaveG2 Battery Voltage"
+
+    ble_client:
+      - mac_address: XX:XX:XX:XX:XX:XX
+        id: airthings01
+
+    esp32_ble_tracker:
 
 Battery Level Reporting
 ***********************

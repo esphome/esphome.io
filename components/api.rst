@@ -31,6 +31,16 @@ A Python library that implements this protocol is `aioesphomeapi <https://github
     # Example configuration entry
     api:
 
+.. code-block:: yaml
+
+    # Example with more options
+    api:
+      port: 6053
+      batch_delay: 50ms  # Reduce latency for real-time applications
+      encryption:
+        key: "YOUR_ENCRYPTION_KEY_HERE"
+      reboot_timeout: 30min
+
 Configuration variables:
 ------------------------
 
@@ -75,6 +85,21 @@ Configuration variables:
         Support for configuring the encryption key on-the-fly will be implemented in a future release of Home Assistant.
 
 - **actions** (*Optional*, list): A list of user-defined actions. See :ref:`api-device-actions`.
+- **batch_delay** (*Optional*, :ref:`config-time`): The delay time for batching multiple state update messages
+  together to reduce network overhead. Lower values send updates sooner but use more network packets,
+  while higher values batch more efficiently but add latency. Must be between ``0ms`` and ``65535ms``
+  (65.535 seconds). Defaults to ``100ms``.
+  
+  .. note::
+
+      Setting ``batch_delay: 0ms`` enables immediate sending mode for state updates. This is useful for
+      applications that require real-time responsiveness, such as IR remote binary sensors where rapid
+      ON→OFF transitions must be preserved. However, this will increase network traffic and may impact
+      WiFi performance with many rapidly-changing sensors. Only use this setting when necessary.
+
+- **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ ``CustomAPIDevice`` class. Only needed when external components register their own services via the native API. Defaults to ``false``.
+- **homeassistant_services** (*Optional*, boolean): Enable compilation of Home Assistant service call support for external components that use the C++ ``CustomAPIDevice::call_homeassistant_service()`` or ``CustomAPIDevice::fire_homeassistant_event()`` methods. This is automatically enabled when using ``homeassistant.service`` or ``homeassistant.event`` actions, or the ``homeassistant`` platform for number or switch components. Only needs to be manually set when external components call Home Assistant services without using the built-in actions. Defaults to ``false``.
+- **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ ``CustomAPIDevice::subscribe_homeassistant_state()`` method. This is automatically enabled when using any ``homeassistant`` platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to ``false``.
 - **reboot_timeout** (*Optional*, :ref:`config-time`): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.

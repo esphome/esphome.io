@@ -110,6 +110,34 @@ This action turns a switch with the given ID off when executed.
       then:
         - switch.turn_off: relay_1
 
+.. _switch-control_action:
+
+``switch.control`` Action
+*************************
+
+This action allows you to control a switch with more flexibility than the basic ``turn_on`` and ``turn_off`` actions.
+It accepts a templatable ``state`` parameter, making it useful when the desired switch state is determined dynamically.
+
+.. code-block:: yaml
+
+    on_...:
+      then:
+        - switch.control:
+            id: relay_1
+            state: true
+
+        # Or with a template
+        - switch.control:
+            id: relay_1
+            state: !lambda |-
+              return id(some_sensor).state > 50.0;
+
+Configuration variables:
+
+- **id** (**Required**, :ref:`config-id`): The ID of the switch to control.
+- **state** (**Required**, boolean, :ref:`templatable <config-templatable>`): 
+  The state to set the switch to. ``true`` turns the switch on, ``false`` turns it off.
+  
 .. _switch-is_on_condition:
 .. _switch-is_off_condition:
 
@@ -143,6 +171,17 @@ advanced stuff (see the full API Reference for more info).
       // Within lambda, make the switch report a specific state
       id(my_switch).publish_state(false);
       id(my_switch).publish_state(true);
+
+  .. note::
+
+      Keep in mind that this does not change the actual state of the switch. It only
+      changes the state in the frontend and the internal state. If you want to
+      change the actual state of the switch, you need to call ``turn_on()``, 
+      ``turn_off()`` or ``toggle()``.
+
+      For example, if you are using a :doc:`/components/switch/gpio`, calling ``publish_state()`` will
+      not change the GPIO pin level. To do that, you need to call ``turn_on()``, 
+      ``turn_off()`` or ``toggle()``. The same applies to other switch platforms.
 
 - ``state``: Retrieve the current state of the switch.
 
@@ -184,6 +223,36 @@ ON/OFF itself).
         - logger.log: "Switch Turned On!"
         on_turn_off:
         - logger.log: "Switch Turned Off!"
+
+.. _switch-on_state_trigger:
+
+``switch.on_state`` Trigger
+***************************
+
+This trigger is activated each time the switch changes state (either ON or OFF).
+It provides the new state as a boolean variable ``x`` that can be used in the automation.
+
+.. code-block:: yaml
+
+    switch:
+      - platform: gpio  # or any other platform
+        # ...
+        on_state:
+          - light.control:
+              id: my_light
+              state: !lambda return x;
+          - if:
+              condition:
+                lambda: 'return x;'
+              then:
+                - logger.log: "Switch is now ON!"
+              else:
+                - logger.log: "Switch is now OFF!"
+
+The variable ``x`` is a boolean that represents the new state:
+
+- ``true`` when the switch turns ON
+- ``false`` when the switch turns OFF
 
 See Also
 --------

@@ -31,10 +31,12 @@ For showing images downloaded at runtime, take a look at the :ref:`Online Image 
 .. code-block:: yaml
 
     image:
-      - file: https://esphome.io/_images/logo.png
+      defaults:
         type: rgb565
-        id: esphome_logo
         resize: 200x162
+      images:
+        - file: https://esphome.io/_images/logo.png
+          id: esphome_logo
 
 Configuration variables:
 ------------------------
@@ -70,6 +72,10 @@ Configuration variables:
   - ``NONE``: Every pixel converts to its nearest color.
   - ``FLOYDSTEINBERG``: Uses Floyd-Steinberg dither to approximate the original image luminosity levels.
 
+- **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in big endian byte order (MSB first),
+  but you can override this by setting ``byte_order`` to ``little_endian``. Options are ``big_endian`` (default) and ``little_endian``.
+  Not applicable to other image formats.
+
 .. note::
 
     To use images you will need to have the python ``pillow`` package installed.
@@ -77,14 +83,39 @@ Configuration variables:
     additionally need to have the python ``cairosvg`` package installed. These are automatically installed when
     setting up ESPHome via the usual methods.
 
-Grouping images by type
------------------------
 
-You can group images by type to make it easier to manage them. This is useful when you have a lot of images to be encoded in the same way, and avoids having to repeat the same type for each image. The type name is used as the key for the group. For example:
+Setting defaults
+----------------
+
+For the situation where most or all of your images share common attributes, you can use another schema style to provide default values. In this case
+the ``defaults:`` option will provide fallback values for all images. When using this format the ``images:`` key takes a list of image definitions.
 
 .. code-block:: yaml
 
     image:
+      defaults:
+        type: rgb565
+        transparency: opaque
+        resize: 100x100
+      images:
+        - file: "image1.png"
+          id: image1
+        - file: "image2.png"
+          id: image2
+          resize: 200x200  # overrides the default resize
+
+Grouping images by type
+-----------------------
+
+You can group images by type to make it easier to manage them. This is useful when you have a lot of images to be encoded in the same way,
+and avoids having to repeat the same type for each image. A ``defaults:`` group can be used to specify default values other than the type.
+The type name is used as the key for the group. For example:
+
+.. code-block:: yaml
+
+    image:
+      defaults:
+        resize: 100x100
       grayscale:
         - file: "image1.png"
           id: image1
