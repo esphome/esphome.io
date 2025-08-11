@@ -233,18 +233,11 @@ Possible log levels are (sorted by severity):
 Manual Tag-Specific Log Levels
 ------------------------------
 
-If some component is spamming the logs and you want to manually set the
-log level for it, first identify the tag of the log messages in question
-and then disable them in your configuration.
+If some component is spamming the logs and you want to adjust its log
+level, first identify the tag of the log messages (text before the first
+colon) and set its level in your configuration.
 
-Suppose we want to have verbose log messages globally, but the MQTT
-client spams too much. In the following example, we'd first see that the
-tag of the MQTT client is ``mqtt.client`` (before the first colon) and
-the tag for MQTT components is ``mqtt.component``.
-
-.. figure:: images/logger-manual_log_level.png
-
-Next, we can manually set the log levels in the configuration like this:
+Example: verbose logs globally, but reduce MQTT noise:
 
 .. code-block:: yaml
 
@@ -254,11 +247,22 @@ Next, we can manually set the log levels in the configuration like this:
         mqtt.component: DEBUG
         mqtt.client: ERROR
 
-Please note that the global log level determines what log messages are
-saved in the binary. So for example an ``INFO`` global log message will
-purge all ``DEBUG`` log statements from the binary in order to conserve
-space. This however means that you cannot set tag-specific log levels
-that have a lower severity than the global log level.
+The `level` option controls which log statements are included in the
+firmware. Normally, you cannot set a tag to a more detailed level than
+the global one, because logs below that level are not compiled in.  
+However, you can override this by using `initial_level`:
+
+.. code-block:: yaml
+
+    logger:
+      level: VERBOSE
+      initial_level: ERROR
+      logs:
+        wifi: VERBOSE
+
+Here, `VERBOSE` logs are compiled in, but only the `wifi` tag starts
+with verbose output while all others start at `ERROR`.
+
 
 .. _logger-log_action:
 
