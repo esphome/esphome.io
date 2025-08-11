@@ -6,20 +6,23 @@ Belling BL0940 Energy Monitor
     :image: bl0940.png
     :keywords: BL0940
 
-The ``bl0940`` sensor platform allows you to use BL0940 energy monitors sensors with
+The ``bl0940`` component allows you to use BL0940 energy monitors sensors with
 ESPHome. These are used in some Tuya-devices (e.g. the power metering BW-SHP10) and the Vaiotech Rowi2 Smart Plug
 
 The communication with this component is done via a :ref:`UART <uart>`.
 You must therefore have a ``uart:`` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 4800 with 1 stop bit.
 
+Sensor
+------
+
 .. code-block:: yaml
 
     # Example configuration entry
     uart:
       id: uart_bus
-      tx_pin: TX
-      rx_pin: RX
+      tx_pin: GPIOXX
+      rx_pin: GPIOYY
       baud_rate: 4800
       stop_bits: 1
 
@@ -41,7 +44,7 @@ to some pins on your board and the baud rate set to 4800 with 1 stop bit.
         update_interval: 60s
 
 Configuration variables:
-------------------------
+************************
 
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
   to use multiple UART buses.
@@ -76,8 +79,8 @@ Configuration variables:
 
 .. _bl0940-calibration:
 
-Calibration
------------
+Sensor Calibration
+******************
 
 There are two fundamental calibration parameters which are dependent on the hardware design: ``voltage_reference`` and ``current_reference``.
 
@@ -130,19 +133,13 @@ Theoretically, configuring ``voltage_reference`` and ``current_reference`` shoul
     power_reference:   713.104696500825
     energy_reference:  6120.6267056536
 
-Online Calibration
-------------------
 
-It is possible to adjust the sensor readings without need to update sensor configuration using the provided number platform.
+Number
+------
+
+The ``bl0940`` number platform allows for online calibration of the sensor readings.
 
 .. code-block:: yaml
-
-    # Example configuration entry
-    sensor:
-      - platform: bl0940
-        id: bl0940_id
-        uart_id: uart_bus
-        ...
 
     number:
       - platform: bl0940
@@ -165,7 +162,7 @@ Configuration variables:
 - **energy_calibration** (*Optional*): Enables energy calibration configuration.
 
 Calibration variables:
-**********************
+^^^^^^^^^^^^^^^^^^^^^^
 - **min_value** (*Optional*, float): The minimum value this number can be. Minimal allowed value is ``-50`` defaults to ``-10``.
 - **max_value** (*Optional*, float): The maximum value this number can be. Maiximal allowed value is ``50`` defaults to ``10``.
 - **step** (*Optional*, float): The granularity with which the number can be set. Defaults to ``0.1``.
@@ -192,9 +189,11 @@ When changing calibration values on the UI all calibrated reference values will 
 
 ``voltage_calibration`` and ``current_calibration`` will affect ``power_reference`` and ``energy_reference`` if they have not been specified manually.
 
-Reset Calibration:
-******************
-To reset all external calibration values to their initial state, you can use the calibration reset button:
+
+Button
+------
+
+The ``bl0940`` button platform allows to reset all external calibration values to their initial state.
 
 .. code-block:: yaml
 
@@ -211,52 +210,6 @@ Configuration variables:
 .. figure:: images/bl0940-cal.png
     :align: center
     :width: 80.0%
-
-
-Sample full configuration:
---------------------------
-
-.. code-block:: yaml
-
-    uart:
-      id: uart_bus
-      tx_pin: TX
-      rx_pin: RX
-      baud_rate: 4800
-      stop_bits: 1
-
-    button:
-      - platform: bl0940
-        bl0940_id: bl0940_id
-        name: "Cal  Reset"
-
-    sensor:
-      - platform: bl0940
-        id: bl0940_id
-        uart_id: uart_bus
-        legacy_mode: false
-        resistor_one: 0.5113 # base voltage calibration
-        resistor_shunt: 1.035 # base current calibration
-        voltage:
-          ...
-
-    number:
-      - platform: bl0940
-        bl0940_id: bl0940_id # reference to sensor component
-        current_calibration:
-          id: current_calibration_ui
-          name: "Cal Current"
-        voltage_calibration:
-          id: voltage_calibration_ui
-          name: "Cal Voltage"
-        power_calibration:
-          id: power_calibration_ui
-          name: "Cal Power"
-          disabled_by_default: true
-        energy_calibration:
-          id: energy_calibration_ui
-          name: "Cal Energy"
-          disabled_by_default: true
 
 
 See Also
