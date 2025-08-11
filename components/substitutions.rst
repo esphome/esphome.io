@@ -147,9 +147,9 @@ Built-in functions
 
 In addition to the Jinja expressions, ESPHome supports a number of built-in functions that can be used in substitutions.
 
-- ``ord`` Returns the Unicode code point for a given character. eg: ``ord("A") == 65``.
-- ``chr`` Returns the character for a given Unicode code point. eg: ``chr(65) == "A"``.
-- ``len`` Returns the length of the string. eg: ``len("Hello") == 5``.
+- ``ord`` Returns the Unicode code point for a given character. Example: ``ord("A") == 65``.
+- ``chr`` Returns the character for a given Unicode code point. Example: ``chr(65) == "A"``.
+- ``len`` Returns the length of the string. Example: ``len("Hello") == 5``.
 
 .. _substitute-include-variables:
 
