@@ -234,8 +234,7 @@ Manual Tag-Specific Log Levels
 ------------------------------
 
 If some component is spamming the logs and you want to adjust its log
-level, first identify the tag of the log messages (text before the first
-colon) and set its level in your configuration.
+level, you can set its level in your configuration, by identifiying its tag.
 
 Example: verbose logs globally, but reduce MQTT noise:
 
@@ -248,9 +247,9 @@ Example: verbose logs globally, but reduce MQTT noise:
         mqtt.client: ERROR
 
 The `level` option controls which log statements are included in the
-firmware. Normally, you cannot set a tag to a more detailed level than
-the global one, because logs below that level are not compiled in.  
-However, you can override this by using `initial_level`:
+firmware. You cannot set a tag to a more detailed level than
+the global one, because logs higher that level are not compiled in.  
+However, you can silent them using `initial_level`, and raise them for specifics logs tags:
 
 .. code-block:: yaml
 
@@ -260,8 +259,8 @@ However, you can override this by using `initial_level`:
       logs:
         wifi: VERBOSE
 
-Here, `VERBOSE` logs are compiled in, but only the `wifi` tag starts
-with verbose output while all others start at `ERROR`.
+Here, `VERBOSE` logs are compiled, but not shown (because of `initial_level: ERROR`)
+However, the `wifi` tag has `VERBOSE` level enabled, and shown.
 
 
 .. _logger-log_action:
