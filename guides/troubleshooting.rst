@@ -112,6 +112,58 @@ If you already have a stack trace but need to decode it, you can use the `ESP St
 
     This tool runs entirely in your browser - no data is sent to any server, ensuring your firmware and debug information remain private.
 
+Adjusting Log Levels for Debugging
+-----------------------------------
+
+When troubleshooting issues with your ESPHome device, increasing the log level can provide more detailed information about what's happening internally. This is particularly useful for diagnosing component-specific problems or understanding the data flow between components.
+
+Setting Global Log Level
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+To increase the verbosity of logs globally, adjust the ``level`` in your :doc:`logger </components/logger>` configuration:
+
+.. code-block:: yaml
+
+    logger:
+      level: VERBOSE  # or VERY_VERBOSE for maximum detail
+
+Available log levels from least to most verbose:
+
+- ``NONE`` - No messages logged
+- ``ERROR`` - Only errors
+- ``WARN`` - Warnings and above
+- ``INFO`` - Informational messages and above
+- ``DEBUG`` - Debug messages and above (default)
+- ``VERBOSE`` - Detailed debug messages and above
+- ``VERY_VERBOSE`` - All internal messages including data bus traffic
+
+.. warning::
+
+    Using ``VERY_VERBOSE`` can significantly slow down your device and may cause connectivity issues due to the volume of log messages generated. Use it only for short debugging sessions.
+
+ESP-IDF Framework Log Level
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+When using the ESP-IDF framework on :doc:`ESP32 </components/esp32>`, you can also adjust the framework's internal log level to get more detailed information from the underlying system:
+
+.. code-block:: yaml
+
+    esp32:
+      framework:
+        type: esp-idf
+        log_level: VERBOSE  # Framework log level
+
+Available ESP-IDF log levels: ``NONE``, ``ERROR`` (default), ``WARN``, ``INFO``, ``DEBUG``, ``VERBOSE``
+
+Component-Specific Log Levels
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can also configure log levels for specific components to reduce noise or get more detail from individual components. See the :ref:`logger manual tag-specific log levels <logger-manual_tag_specific_levels>` documentation for detailed information and examples.
+
+.. important::
+
+    The global log level determines which messages are compiled into the binary. Component-specific log levels can only reduce verbosity, not increase it beyond the global level. For example, if the global level is ``INFO``, setting a component to ``DEBUG`` will have no effect.
+
 Performance Troubleshooting
 ---------------------------
 
