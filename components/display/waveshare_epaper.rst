@@ -114,6 +114,7 @@ Configuration variables:
   - ``2.13in-ttgo-dke`` - T5_V2.3 with DKE group display (DEPG0213BN) tested
   - ``2.13inv2`` - 2.13in V2 display (Pico e-Paper 2.13v2 and Cloud Module)
   - ``2.13inv3`` - 2.13in V3 display (Pico e-Paper 2.13v3)
+  - ``lcmen2r13efc1`` - LCMEN2R13EFC1 2.13in display, used in the Vision Master E213
   - ``2.70in`` - currently not working with the HAT Rev 2.1 version
   - ``2.70inv2``
   - ``2.70in-b`` - Black/White/Red
