@@ -877,6 +877,7 @@ Light Components
     Light Partition, components/light/partition, color_lens.svg, dark-invert
     LightWaveRF, components/lightwaverf, brightness-medium.svg, dark-invert
     LVGL widget, components/light/lvgl, lvgl_c_lig.png
+    MIPI DSI Backlight, components/light/mipi_dsi, brightness-medium.svg, dark-invert
     Monochromatic Light, components/light/monochromatic, brightness-medium.svg, dark-invert
     NeoPixelBus Light, components/light/neopixelbus, color_lens.svg, dark-invert
     RGB Light, components/light/rgb, rgb.png
