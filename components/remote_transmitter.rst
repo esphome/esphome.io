@@ -381,6 +381,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_gobox:
 
 ``remote_transmitter.transmit_gobox`` **Action**
+************************************************
 
 This :ref:`action <config-action>` sends a command to a Go-Box via the IR transmitter.
 
