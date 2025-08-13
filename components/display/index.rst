@@ -631,6 +631,11 @@ be sure to **include a link to where you purchased the display** so that we can 
 
 .. note::
 
+    If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
+
+
+.. note::
+
     For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
 
 See Also

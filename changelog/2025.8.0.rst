@@ -1,0 +1,660 @@
+ESPHome 2025.8.0 - 20th August 2025
+===================================
+
+.. seo::
+    :description: Changelog for ESPHome 2025.8.0.
+    :image: /_static/changelog-2025.8.0.png
+    :author: Jesse Hills
+    :author_twitter: @jesserockz
+
+.. imgtable::
+    :columns: 3
+
+    NRF52, components/nrf52, nrf52.svg
+    ESP-NOW, components/espnow, esp-now.svg
+    MIPI DSI Displays, components/display/mipi_dsi, tab5.jpg
+    LD2412, components/sensor/ld2412, ld2412.jpg
+    Runtime Stats, components/runtime_stats, pulse.svg, dark-invert
+
+
+Release Overview
+----------------
+
+ESPHome 2025.8.0 expands platform support with the introduction of Nordic nRF52 devices,
+adds mesh communication capabilities, and delivers significant performance improvements. This release
+focuses on architectural innovation and memory optimization while introducing new hardware possibilities.
+
+**Key Highlights:**
+
+- **New nRF52 platform** based on Zephyr RTOS opens Nordic semiconductor ecosystem
+- **ESP-NOW mesh communication** enables direct device-to-device connectivity
+- **High-performance MIPI DSI displays** for ESP32-P4 professional applications
+- **Extensive memory optimizations** with up to 10x performance improvements in key areas
+- **Python 3.11+ requirement** (breaking change - Python 3.10 support dropped)
+
+
+NRF52 Platform Support
+----------------------
+
+ESPHome 2025.8.0 introduces comprehensive support for Nordic nRF52 series microcontrollers through the new
+:doc:`/components/nrf52` platform. This implementation is built on the Zephyr RTOS, providing a robust
+foundation for Nordic semiconductor devices.
+
+**Key Features:**
+
+- **Complete platform integration** with ESPHome's component ecosystem
+- **ADC support** for analog sensor reading with configurable resolution
+- **GPIO functionality** with interrupt support and pin configuration
+- **Zephyr debug component** for advanced debugging and development
+
+The nRF52 platform opens up new possibilities for low-power, Bluetooth-enabled devices while maintaining
+the familiar ESPHome configuration syntax and component compatibility.
+
+
+ESP-NOW Communication
+---------------------
+
+The new :doc:`/components/espnow` component brings device-to-device communication to ESP32 platforms without
+requiring WiFi infrastructure. ESP-NOW enables direct communication between ESP32 devices using the 2.4GHz
+band with minimal power consumption.
+
+**Applications:**
+
+- **Mesh sensor networks** - Sensors can communicate directly without WiFi routers
+- **Remote control systems** - Direct device control with low latency
+- **Backup communication** - Fallback when WiFi is unavailable
+- **Battery-powered devices** - Efficient communication for power-constrained applications
+
+This protocol is particularly valuable for distributed sensor networks and scenarios where traditional
+WiFi infrastructure is impractical or unavailable.
+
+
+MIPI DSI Display Support
+------------------------
+
+ESPHome now supports high-performance MIPI DSI displays through the new :doc:`/components/display/mipi_dsi`
+component, specifically designed for ESP32-P4 processors with DSI interfaces.
+
+**Benefits:**
+
+- **High-resolution displays** with excellent performance
+- **Hardware acceleration** through dedicated DSI controllers
+- **Reduced CPU overhead** compared to traditional SPI displays
+- **Professional display quality** for advanced applications
+
+This addition significantly expands ESPHome's display capabilities, enabling professional-grade user interfaces
+and high-resolution graphics applications.
+
+
+Memory & Performance Optimizations
+----------------------------------
+
+ESPHome 2025.8.0 includes extensive optimizations focused on reducing memory usage and improving performance:
+
+**Flash Memory Savings:**
+
+- Conditional compilation removes unused API features (thousands of bytes saved)
+- Optimized protobuf implementations with zero-copy techniques
+- Reduced code duplication across components
+- Streamlined error handling and logging systems
+
+**Runtime Performance:**
+
+- 10x faster string encoding with optimized memcpy operations
+- Enhanced scheduler with reduced millis() calls
+- Improved BLE scanning with batched processing
+- Zero-copy protobuf fields for reduced memory allocations
+
+
+Python 3.11+ Requirement
+------------------------
+
+Starting with ESPHome 2025.8.0, **Python 3.11 or higher is required** to run ESPHome. This change enables us to:
+
+- Utilize modern Python features and improvements
+- Remove legacy compatibility code that was needed for older Python versions
+- Maintain a more secure and efficient codebase
+
+**Why This Change?**
+
+Python 3.10 reaches its `end of life in October 2026 <https://devguide.python.org/versions/>`__. This
+upgrade is necessary for the project to move forward with modern development practices and maintain
+long-term security and maintainability.
+
+**What You Need to Do**
+
+.. list-table::
+    :widths: 30 70
+    :header-rows: 1
+
+    * - Installation Method
+      - Action Required
+    * - Home Assistant Add-on
+      - **No action needed** - Already uses Python 3.12
+    * - Container Images (Docker)
+      - **No action needed** - Already uses Python 3.12
+    * - Direct Installation (pip)
+      - **Upgrade Python to 3.11+** before updating ESPHome
+
+.. warning::
+
+    If you're running ESPHome directly on your machine with Python 3.10 or older, running ``pip install -U esphome``
+    will not upgrade beyond version 2025.7.x. You must upgrade your Python installation first.
+
+
+Full list of changes
+--------------------
+
+New Features
+^^^^^^^^^^^^
+
+- [nrf52] add adc :esphomepr:`9321` by :ghuser:`tomaszduda23` (new-feature)
+- [espnow] Basic communication between ESP32 devices :esphomepr:`9582` by :ghuser:`nielsnl68` (new-component) (new-feature)
+- [esp32] Add config option to execute from PSRAM :esphomepr:`9907` by :ghuser:`clydebarrow` (new-feature)
+- [color][lvgl] Allow Color to be used for lv_color_t :esphomepr:`10016` by :ghuser:`clydebarrow` (new-feature)
+- [esp32] Add framework migration warning for upcoming ESP-IDF default change :esphomepr:`10030` by :ghuser:`bdraco` (new-feature)
+- Add CO5300 display support :esphomepr:`9739` by :ghuser:`mschnaubelt` (new-feature)
+- [remote_transmitter] Add digital_write automation :esphomepr:`10069` by :ghuser:`swoboda1337` (new-feature)
+- Support multiple --device arguments for address fallback :esphomepr:`10003` by :ghuser:`bdraco` (new-feature)
+- Add device class absolute_humidity to the absolute humidity component :esphomepr:`10100` by :ghuser:`mbo18` (new-feature)
+- [switch] Add ``switch.control`` automation action :esphomepr:`10105` by :ghuser:`edwardtfn` (new-feature)
+- [switch] Add ``control()`` method to API :esphomepr:`10118` by :ghuser:`edwardtfn` (new-feature)
+- [switch] Add trigger ``on_state`` :esphomepr:`10108` by :ghuser:`edwardtfn` (new-feature)
+- [nrf52, zephyr_debug] add zephyr debug component :esphomepr:`8319` by :ghuser:`tomaszduda23` (new-feature)
+- [sensor] Extend timeout filter with option to return last value received :esphomepr:`10115` by :ghuser:`kbx81` (new-feature)
+- [substitutions] Add some safe built-in functions to jinja parsing :esphomepr:`10178` by :ghuser:`jesserockz` (new-feature)
+- [ld2412] New component :esphomepr:`9075` by :ghuser:`Rihan9` (new-component) (new-feature) (new-platform)
+
+New Components
+^^^^^^^^^^^^^^
+
+- [nrf52, core] nrf52 core based on zephyr :esphomepr:`7049` by :ghuser:`tomaszduda23` (new-component)
+- Add runtime_stats component for performance debugging and analysis :esphomepr:`9386` by :ghuser:`bdraco` (new-component)
+- [mipi_dsi] New display driver for P4 DSI :esphomepr:`9403` by :ghuser:`clydebarrow` (new-component) (new-platform)
+- [espnow] Basic communication between ESP32 devices :esphomepr:`9582` by :ghuser:`nielsnl68` (new-component) (new-feature)
+- [ld2412] New component :esphomepr:`9075` by :ghuser:`Rihan9` (new-component) (new-feature) (new-platform)
+
+New Platforms
+^^^^^^^^^^^^^
+
+- [mipi_dsi] New display driver for P4 DSI :esphomepr:`9403` by :ghuser:`clydebarrow` (new-component) (new-platform)
+- [ld2412] New component :esphomepr:`9075` by :ghuser:`Rihan9` (new-component) (new-feature) (new-platform)
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Remove parsed advertisement support from bluetooth_proxy to save memory :esphomepr:`9489` by :ghuser:`bdraco` (breaking-change)
+- Drop Python 3.10 support, require Python 3.11+ :esphomepr:`9522` by :ghuser:`bdraco` (breaking-change)
+- Remove legacy unique_id field from entities :esphomepr:`9022` by :ghuser:`bdraco` (breaking-change)
+- [api] Remove deprecated protobuf fields to reduce flash usage :esphomepr:`9679` by :ghuser:`bdraco` (breaking-change)
+- [api] Add conditional compilation for Home Assistant state subscriptions :esphomepr:`9898` by :ghuser:`bdraco` (breaking-change)
+- [api] Add conditional compilation for Home Assistant service subscriptions :esphomepr:`9900` by :ghuser:`bdraco` (breaking-change)
+- [esp32_touch] Work around ESP-IDF v5.4 regression in `touch_pad_read_filtered` :esphomepr:`9957` by :ghuser:`bdraco` (breaking-change)
+- [ld2410] Replace ``throttle`` with native filters :esphomepr:`10019` by :ghuser:`kbx81` (breaking-change)
+- [esp32_ble] Conditionally compile BLE advertising to reduce flash usage :esphomepr:`10099` by :ghuser:`bdraco` (breaking-change)
+- [esp32_ble_client] Conditionally compile BLE service classes to reduce flash usage :esphomepr:`10114` by :ghuser:`bdraco` (breaking-change)
+- [bluetooth_proxy] Remove V1 connection support :esphomepr:`10107` by :ghuser:`bdraco` (breaking-change)
+- [esp32] Add IDF log_level option :esphomepr:`10134` by :ghuser:`swoboda1337` (breaking-change)
+- [ld2450] Replace ``throttle`` with native filters :esphomepr:`10196` by :ghuser:`kbx81` (breaking-change)
+
+All changes
+^^^^^^^^^^^
+
+.. collapse:: Show
+    :open:
+
+    - [web_server] fix ``Arudino`` typo :esphomepr:`9404` by :ghuser:`ximex`
+    - Speed up clang-tidy CI by 80%+ with incremental checking :esphomepr:`9396` by :ghuser:`bdraco`
+    - Fix PlatformIO cache in CI by adding platformio.ini hash to cache key :esphomepr:`9411` by :ghuser:`bdraco`
+    - Fix clang-tidy triggering full scan on Python-only core file changes :esphomepr:`9412` by :ghuser:`bdraco`
+    - Implement shared PlatformIO cache for integration tests  :esphomepr:`9413` by :ghuser:`bdraco`
+    - Fix Python cache for all pytest CI jobs :esphomepr:`9415` by :ghuser:`bdraco`
+    - Fix Python cache key mismatch for all pytest jobs :esphomepr:`9417` by :ghuser:`bdraco`
+    - Adding support for Airthings Wave Gen2 :esphomepr:`8460` by :ghuser:`precurse`
+    - Fix Windows virtual environment activation in CI workflows :esphomepr:`9420` by :ghuser:`bdraco`
+    - Fix clang-tidy not finding changed files on squash-merge commits :esphomepr:`9421` by :ghuser:`bdraco`
+    - [config] Add bitrate validator :esphomepr:`9423` by :ghuser:`clydebarrow`
+    - [esp32] remove debug log :esphomepr:`9424` by :ghuser:`ssieb`
+    - CI: Centralize test determination logic to reduce unnecessary job runners :esphomepr:`9432` by :ghuser:`bdraco`
+    - Disable WiFi when using Ethernet to save memory :esphomepr:`9456` by :ghuser:`bdraco`
+    - Fix pre-commit CI failures by skipping local hooks that require virtual environment :esphomepr:`9476` by :ghuser:`bdraco`
+    - Fix clang-tidy skipping when Python linters are skipped :esphomepr:`9463` by :ghuser:`bdraco`
+    - Refactor format_hex_pretty functions to eliminate code duplication :esphomepr:`9480` by :ghuser:`bdraco`
+    - Fix pre-commit CI issues by switching to lite mode :esphomepr:`9484` by :ghuser:`bdraco`
+    - Refactor WebServer request handling for improved maintainability :esphomepr:`9470` by :ghuser:`bdraco`
+    - Fix WebServer routes constant naming convention :esphomepr:`9497` by :ghuser:`bdraco`
+    - Remove redundant pyupgrade CI job (follow-up to #9484) :esphomepr:`9493` by :ghuser:`bdraco`
+    - Add pre-commit hooks to fix common formatting issues causing CI failures :esphomepr:`9494` by :ghuser:`bdraco`
+    - Remove yamllint job from CI since its now handled by pre-commit job :esphomepr:`9500` by :ghuser:`bdraco`
+    - Fix blocked CI cancellation caused by always() in clang-tidy workflow :esphomepr:`9503` by :ghuser:`bdraco`
+    - Include entire platformio.ini in clang-tidy hash calculation :esphomepr:`9509` by :ghuser:`bdraco`
+    - Enable issue tracking :esphomepr:`9515` by :ghuser:`jesserockz`
+    - [repo] Fix issue template config.yml :esphomepr:`9516` by :ghuser:`jesserockz`
+    - [ms8607] Fix humidity calc :esphomepr:`9499` by :ghuser:`LorbusChris`
+    - [nrf52, core] nrf52 core based on zephyr :esphomepr:`7049` by :ghuser:`tomaszduda23` (new-component)
+    - remove duplication from component_iterator :esphomepr:`7210` by :ghuser:`tomaszduda23`
+    - [adc] Use new library with ESP-IDF v5 :esphomepr:`9021` by :ghuser:`edwardtfn`
+    - [mipi_spi] Template code, partial buffer support :esphomepr:`9314` by :ghuser:`clydebarrow`
+    - Remove dead code: 64-bit protobuf types never used in 7 years :esphomepr:`9471` by :ghuser:`bdraco`
+    - Add runtime_stats component for performance debugging and analysis :esphomepr:`9386` by :ghuser:`bdraco` (new-component)
+    - Make API ConnectRequest optional for passwordless connections :esphomepr:`9445` by :ghuser:`bdraco`
+    - Improve API protobuf decode method readability and reduce code size :esphomepr:`9455` by :ghuser:`bdraco`
+    - Reduce API component flash usage by consolidating error logging :esphomepr:`9468` by :ghuser:`bdraco`
+    - Remove parsed advertisement support from bluetooth_proxy to save memory :esphomepr:`9489` by :ghuser:`bdraco` (breaking-change)
+    - Drop Python 3.10 support, require Python 3.11+ :esphomepr:`9522` by :ghuser:`bdraco` (breaking-change)
+    - Optimize MedianFilter memory allocation by adding vector reserve :esphomepr:`9531` by :ghuser:`bdraco`
+    - [i2c] Use new driver with IDF 5.4.2+ :esphomepr:`8483` by :ghuser:`swoboda1337`
+    - Optimize scheduler timing by reducing millis() calls :esphomepr:`9524` by :ghuser:`bdraco`
+    - Optimize API component LOGCONFIG usage for flash memory savings :esphomepr:`9526` by :ghuser:`bdraco`
+    - Skip API log message calls for unsubscribed log levels :esphomepr:`9514` by :ghuser:`bdraco`
+    - Optimize API connection batch priority message handling to reduce flash usage :esphomepr:`9510` by :ghuser:`bdraco`
+    - Reduce flash usage by replacing ProtoSize template with specialized methods :esphomepr:`9487` by :ghuser:`bdraco`
+    - [ssd1306_base] fix typo ``brighrness`` :esphomepr:`9491` by :ghuser:`ximex`
+    - Fix CI failures from merge collisions :esphomepr:`9535` by :ghuser:`bdraco`
+    - Remove legacy unique_id field from entities :esphomepr:`9022` by :ghuser:`bdraco` (breaking-change)
+    - Reduce binary size with field-level conditional compilation for protobuf messages :esphomepr:`9473` by :ghuser:`bdraco`
+    - [adc] Test platforms on IDF :esphomepr:`9536` by :ghuser:`edwardtfn`
+    - Refactor API connection entity encoding to reduce code duplication :esphomepr:`9505` by :ghuser:`bdraco`
+    - Reduce API proto vtable overhead by splitting decode functionality :esphomepr:`9541` by :ghuser:`bdraco`
+    - Add ability to have same entity names on different sub devices :esphomepr:`9355` by :ghuser:`bdraco`
+    - Synchronise Device Classes from Home Assistant :esphomepr:`9513` by :ghuser:`esphomebot`
+    - Update script/helpers.py to use ESPHome YAML parser for integration fixtures :esphomepr:`9544` by :ghuser:`bdraco`
+    - [adc] Add ESP32-C5 support :esphomepr:`9486` by :ghuser:`edwardtfn`
+    - Move CONF_ALTITUDE_COMPENSATION to const.py :esphomepr:`9563` by :ghuser:`mikelawrence`
+    - Revert "Bump ESP32 IDF version to 5.4.2 and Arduino version to 3.2.1" :esphomepr:`9574` by :ghuser:`jesserockz`
+    - Workflow to auto label PRs based on changes :esphomepr:`9585` by :ghuser:`jesserockz`
+    - [dependabot] Use specific labels for github-actions updates :esphomepr:`9586` by :ghuser:`jesserockz`
+    - [CI] Add ``by-code-owner`` labelling :esphomepr:`9589` by :ghuser:`jesserockz`
+    - [CI] Add ``needs-docs`` labelling :esphomepr:`9591` by :ghuser:`jesserockz`
+    - Skip compilation of web_server_v1.cpp when not using version 1 :esphomepr:`9590` by :ghuser:`bdraco`
+    - Update Issues / Feature Requests links in Readme :esphomepr:`9600` by :ghuser:`RubenKelevra`
+    - Add some AI instructions :esphomepr:`9606` by :ghuser:`jesserockz`
+    - Update Issues / Feature Requests links :esphomepr:`9607` by :ghuser:`RubenKelevra`
+    - [ci] Implement external component PR workflow :esphomepr:`9595` by :ghuser:`clydebarrow`
+    - [ci] attempt to fix permission for workflow :esphomepr:`9610` by :ghuser:`clydebarrow`
+    - Refactor API send_message from template to non-template implementation :esphomepr:`9561` by :ghuser:`bdraco`
+    - Fix scheduler rollover detection with concurrent task calls :esphomepr:`9624` by :ghuser:`bdraco`
+    - adds nRF52840 to PR templates :esphomepr:`9631` by :ghuser:`tomaszduda23`
+    - [code quality] move const to esphome/const.py :esphomepr:`9632` by :ghuser:`tomaszduda23`
+    - [esp32] Allow variant in place of board :esphomepr:`9427` by :ghuser:`clydebarrow`
+    - [scheduler] Fix LibreTiny compilation error due to missing atomic operations :esphomepr:`9643` by :ghuser:`bdraco`
+    - Fix bluetooth_proxy heap allocations during BLE scanning :esphomepr:`9633` by :ghuser:`bdraco`
+    - core/schedule: fixup out of sync code comment :esphomepr:`9649` by :ghuser:`RubenKelevra`
+    - [CI] New workflow to mention codeowners on issues :esphomepr:`9658` by :ghuser:`jesserockz`
+    - [CI] Add codeowners mention workflow :esphomepr:`9651` by :ghuser:`jesserockz`
+    - [CI] Fix by-code-owner labelling :esphomepr:`9661` by :ghuser:`jesserockz`
+    - [scheduler] Add integration tests for set_retry functionality :esphomepr:`9644` by :ghuser:`bdraco`
+    - Use message_source_map consistently in proto generation :esphomepr:`9542` by :ghuser:`bdraco`
+    - esp32cam: add fb location config option :esphomepr:`9630` by :ghuser:`RubenKelevra`
+    - [i2s_audio] Bugfix: cast adc_channel_t to adc1_channel_t :esphomepr:`9688` by :ghuser:`kahrendt`
+    - Add core team as codeowner of .github folder :esphomepr:`9663` by :ghuser:`jesserockz`
+    - [CI] Fix clang-tidy not running when platformio.ini changes :esphomepr:`9678` by :ghuser:`bdraco`
+    - [api] Fix missing ifdef guards for field_ifdef fields in protobuf base classes :esphomepr:`9693` by :ghuser:`bdraco`
+    - [const] Move CONF_FLIP_X and CONF_FLIP_Y to ``const.py`` :esphomepr:`9741` by :ghuser:`DT-art1`
+    - core/scheduler: Make ``millis_64_`` rollover monotonic on SMP :esphomepr:`9716` by :ghuser:`RubenKelevra`
+    - [bluetooth_proxy] Fix service discovery on disconnect and refactor connection handling :esphomepr:`9697` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Batch BLE advertisement processing to reduce overhead :esphomepr:`9699` by :ghuser:`bdraco`
+    - [api] Memory optimizations for API frame helper buffering :esphomepr:`9724` by :ghuser:`bdraco`
+    - [api] Eliminate heap allocation in ``process_batch_`` using stack-allocated PacketInfo array :esphomepr:`9703` by :ghuser:`bdraco`
+    - [api] Remove deprecated protobuf fields to reduce flash usage :esphomepr:`9679` by :ghuser:`bdraco` (breaking-change)
+    - [CI] Only mention codeowners once :esphomepr:`9727` by :ghuser:`jesserockz`
+    - [api] Consolidate error handling and remove unused code  :esphomepr:`9726` by :ghuser:`bdraco`
+    - [api] Fix missing ifdef guards for AreaInfo and DeviceInfo messages :esphomepr:`9730` by :ghuser:`bdraco`
+    - [core] Refactor scheduler to eliminate hidden side effects in ``empty_`` :esphomepr:`9743` by :ghuser:`bdraco`
+    - [api] Reduce memory usage by eliminating duplicate client info strings :esphomepr:`9740` by :ghuser:`bdraco`
+    - [CI] Label PR too-big if it has more than 1000 lines changed :esphomepr:`9744` by :ghuser:`jesserockz`
+    - [CI] Keep original labels when PR has too many lines :esphomepr:`9745` by :ghuser:`jesserockz`
+    - [CI] Fetch platform components and target platforms from hosted json file :esphomepr:`9747` by :ghuser:`jesserockz`
+    - [CI] Add url and dismiss reviews once conditions are met :esphomepr:`9748` by :ghuser:`jesserockz`
+    - [api] Split frame helper implementation into protocol-specific files :esphomepr:`9746` by :ghuser:`bdraco`
+    - [CI] Fix codeowner workflow requesting the same multiple times :esphomepr:`9750` by :ghuser:`jesserockz`
+    - [CI] Use comment marker in too-big reviews :esphomepr:`9751` by :ghuser:`jesserockz`
+    - [CI] Dont create new review if existing and dont count tests :esphomepr:`9753` by :ghuser:`jesserockz`
+    - [api] Sync uses_password field_ifdef optimization from aioesphomeapi :esphomepr:`9756` by :ghuser:`bdraco`
+    - [tests] Fix flaky scheduler retry test timing :esphomepr:`9760` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Optimize service discovery with in-place construction :esphomepr:`9765` by :ghuser:`bdraco`
+    - Factor PlatformIO buildgen out of writer.py :esphomepr:`9378` by :ghuser:`stellar-aria`
+    - [api] Implement zero-copy for all protobuf bytes fields :esphomepr:`9761` by :ghuser:`bdraco`
+    - [api] Optimize string encoding with memcpy for 10x performance improvement :esphomepr:`9778` by :ghuser:`bdraco`
+    - [api] Optimize noise handshake with memcpy for faster connection setup :esphomepr:`9779` by :ghuser:`bdraco`
+    - [nrf52] Add missing CoreModel define for scheduler :esphomepr:`9777` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Write require feature defines after all clients are registered :esphomepr:`9780` by :ghuser:`jesserockz`
+    - [api] Optimize protobuf memory usage with fixed-size arrays for Bluetooth UUIDs :esphomepr:`9782` by :ghuser:`bdraco`
+    - [api] Implement zero-copy string optimization for outgoing protobuf messages :esphomepr:`9790` by :ghuser:`bdraco`
+    - [schema-gen] fix referenced schemas when schema in component platform :esphomepr:`9755` by :ghuser:`glmnet`
+    - [audio] fix typo ``gneneral`` and ``divison`` :esphomepr:`9808` by :ghuser:`ximex`
+    - [sgp4x] Fix build :esphomepr:`9794` by :ghuser:`swoboda1337`
+    - [http_request] set correct duration_ms for failed requests :esphomepr:`9789` by :ghuser:`stas-sl`
+    - [udp] Move ``on_receive`` to const :esphomepr:`9811` by :ghuser:`jesserockz`
+    - Bump ESP32 IDF version to 5.4.2 and Arduino version to 3.2.1 :esphomepr:`9770` by :ghuser:`swoboda1337`
+    - Workflow - check all comments to find previous bot comment :esphomepr:`9815` by :ghuser:`clydebarrow`
+    - [core] Match LockFreeQueue initialization order :esphomepr:`9813` by :ghuser:`jesserockz`
+    - [CI] Paginate codeowner comments to make sure we find it :esphomepr:`9817` by :ghuser:`jesserockz`
+    - [CI] Paginate codeowner comments to make sure we find it :esphomepr:`9818` by :ghuser:`jesserockz`
+    - [core] Initialize ``looping_components_`` before setup blocking phase :esphomepr:`9820` by :ghuser:`bdraco`
+    - [i2c] Use ``i2c_master_probe`` to scan i2c bus :esphomepr:`9831` by :ghuser:`jesserockz`
+    - [core] Restore COMPONENT_STATE_LOOP_DONE check in calculate_looping_components :esphomepr:`9832` by :ghuser:`bdraco`
+    - [ci] Support C++17 nested namespace syntax in linter :esphomepr:`9826` by :ghuser:`bdraco`
+    - [modem] network component change :esphomepr:`9801` by :ghuser:`oarcher`
+    - [interval] Fix startup behaviour :esphomepr:`9793` by :ghuser:`clydebarrow`
+    - [mipi] Refactor constants and functions :esphomepr:`9853` by :ghuser:`clydebarrow` (new-component)
+    - Update post_build.py.script to Fix #7137 :esphomepr:`9578` by :ghuser:`Maeur1`
+    - [helpers] Add "unknown" value handling to ``Deduplicator`` :esphomepr:`9855` by :ghuser:`kbx81`
+    - [ld2450] Set ``accuracy_decimals=0`` as default for "target" entities :esphomepr:`9842` by :ghuser:`bharvey88`
+    - [logger] remove unnecessary call to setTxTimeoutMs :esphomepr:`9854` by :ghuser:`tjhorner`
+    - [i2s_audio] Speaker improvements: CPU core agnostic and more accurate timestamps :esphomepr:`9800` by :ghuser:`kahrendt`
+    - [esp32] Fix threading model for single-core variants (S2, C3, C6, H2) :esphomepr:`9851` by :ghuser:`bdraco`
+    - [api] Replace magic numbers with MESSAGE_TYPE constants in protobuf switch cases :esphomepr:`9776` by :ghuser:`bdraco`
+    - [api] Simplify generated authentication check code :esphomepr:`9806` by :ghuser:`bdraco`
+    - [api] Reduce code duplication in protobuf dump methods with helper functions :esphomepr:`9809` by :ghuser:`bdraco`
+    - [api] Use emplace_back for TemplatableKeyValuePair construction in HomeAssistant services :esphomepr:`9804` by :ghuser:`bdraco`
+    - [core] Fix component state documentation and add state helper method :esphomepr:`9824` by :ghuser:`bdraco`
+    - [bluetooth_proxy] [esp32_ble_tracker] [esp32_ble] Use C++17 nested namespace syntax :esphomepr:`9825` by :ghuser:`bdraco`
+    - [ld2410] Use ``Deduplicator`` for sensors :esphomepr:`9584` by :ghuser:`kbx81`
+    - [api] Use C++17 nested namespace syntax :esphomepr:`9856` by :ghuser:`bdraco`
+    - [mipi] Keep models from different drivers separate :esphomepr:`9865` by :ghuser:`clydebarrow`
+    - [ld2450] Use ``Deduplicator`` for sensors :esphomepr:`9863` by :ghuser:`kbx81`
+    - [core] Revert #9851 and rename ESPHOME_CORES to ESPHOME_THREAD :esphomepr:`9862` by :ghuser:`bdraco`
+    - [CI] Refactor auto-label workflow: modular architecture, CODEOWNERS automation, and performance improvements :esphomepr:`9860` by :ghuser:`jesserockz`
+    - [factory_reset] Allow factory reset by rapid power cycle :esphomepr:`9749` by :ghuser:`clydebarrow`
+    - [gps] Patches to build on IDF, other optimizations :esphomepr:`9728` by :ghuser:`kbx81`
+    - [sound_level] fix spelling mistake :esphomepr:`9843` by :ghuser:`tomaszduda23`
+    - rc522: fix buffer overflow in UID/buffer formatting helpers :esphomepr:`9375` by :ghuser:`RubenKelevra`
+    - [platformio.ini] Move GPS to common lib_deps :esphomepr:`9883` by :ghuser:`kbx81`
+    - [ruff] Enable SIM rules and fix code simplification violations :esphomepr:`9872` by :ghuser:`bdraco`
+    - [platformio.ini] Add GPS to nrf52-zephyr lib_deps :esphomepr:`9884` by :ghuser:`kbx81`
+    - Remove redundant platformio environments :esphomepr:`9886` by :ghuser:`jesserockz`
+    - [CI] Better mega-pr label handling :esphomepr:`9888` by :ghuser:`jesserockz`
+    - [CI] Fix auto-label workflow - codeowners & listFiles :esphomepr:`9890` by :ghuser:`jesserockz`
+    - [mqtt] Don’t log state topic subscription for buttons :esphomepr:`9887` by :ghuser:`GilDev`
+    - [scheduler] Fix retry race condition on cancellation :esphomepr:`9788` by :ghuser:`bdraco`
+    - [ruff] Enable PERF rules and fix all violations :esphomepr:`9874` by :ghuser:`bdraco`
+    - [scheduler] Fix null pointer crash :esphomepr:`9893` by :ghuser:`clydebarrow`
+    - [core] Centralize component setup logging to reduce flash usage :esphomepr:`9885` by :ghuser:`bdraco`
+    - [mipi_dsi] New display driver for P4 DSI :esphomepr:`9403` by :ghuser:`clydebarrow` (new-component) (new-platform)
+    - [api] Add missing USE_API_PASSWORD guards to reduce flash usage :esphomepr:`9899` by :ghuser:`bdraco`
+    - [api] Add conditional compilation for Home Assistant state subscriptions :esphomepr:`9898` by :ghuser:`bdraco` (breaking-change)
+    - [i2c] Fix logging level for bus scan results in dump_config :esphomepr:`9904` by :ghuser:`bdraco`
+    - [ruff] Enable FURB rules for code modernization :esphomepr:`9896` by :ghuser:`bdraco`
+    - [core] Fix format error in log printf :esphomepr:`9911` by :ghuser:`clydebarrow`
+    - [logger] Use C++17 nested namespace syntax :esphomepr:`9916` by :ghuser:`bdraco`
+    - [wifi] Allow config to use PSRAM :esphomepr:`9866` by :ghuser:`clydebarrow`
+    - [ci-custom] Report actual changes needed for absolute import :esphomepr:`9919` by :ghuser:`clydebarrow`
+    - [light] Reduce flash memory usage by optimizing validation and color mode logic :esphomepr:`9921` by :ghuser:`bdraco`
+    - [power_supply] Optimize logging, reduce flash footprint :esphomepr:`9923` by :ghuser:`kbx81`
+    - [wifi] Disallow psram config with arduino :esphomepr:`9922` by :ghuser:`clydebarrow`
+    - [core] Use nullptr defaults in status_set_error/warning to reduce flash usage :esphomepr:`9931` by :ghuser:`bdraco`
+    - [light] Reduce flash usage by 832 bytes through code optimization :esphomepr:`9924` by :ghuser:`bdraco`
+    - [api] Reduce code duplication in send_noise_encryption_set_key_response :esphomepr:`9918` by :ghuser:`bdraco`
+    - replace os.getlogin() with getpass.getuser() :esphomepr:`9928` by :ghuser:`cmaxl`
+    - [packages] add example from documentation to component tests :esphomepr:`9891` by :ghuser:`tomaszduda23`
+    - [api] Add conditional compilation for Home Assistant service subscriptions :esphomepr:`9900` by :ghuser:`bdraco` (breaking-change)
+    - [api] Fix string lifetime issue in Home Assistant service calls with templated values :esphomepr:`9909` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Fix service discovery cache pollution and descriptor count parameter bug :esphomepr:`9902` by :ghuser:`bdraco`
+    - [config_validation] extend should combine extra validations :esphomepr:`9939` by :ghuser:`clydebarrow`
+    - [scheduler] Eliminate more runtime string allocations from retry :esphomepr:`9930` by :ghuser:`bdraco`
+    - [api] Remove unnecessary string copies from optional access :esphomepr:`9897` by :ghuser:`bdraco`
+    - [heatpumpir] Bump library to 1.0.37 :esphomepr:`9944` by :ghuser:`jesserockz`
+    - [api] Optimize protobuf empty message handling to reduce flash and runtime overhead :esphomepr:`9908` by :ghuser:`bdraco`
+    - [api] Align ProtoSize API design with ProtoWriteBuffer pattern :esphomepr:`9920` by :ghuser:`bdraco`
+    - [esp32] Enable LWIP core locking on ESP-IDF to reduce socket operation overhead :esphomepr:`9857` by :ghuser:`bdraco`
+    - [sensor] Add support for default filters :esphomepr:`9934` by :ghuser:`kbx81`
+    - [binary_sensor] Add support for default filters :esphomepr:`9935` by :ghuser:`kbx81`
+    - [text_sensor] Add support for default filters :esphomepr:`9936` by :ghuser:`kbx81`
+    - [heatpumpir] Fix issue with IRremoteESP8266 being included on ESP32 :esphomepr:`9950` by :ghuser:`swoboda1337`
+    - Openthread add Teardown :esphomepr:`9275` by :ghuser:`rwrozelle`
+    - [gps] Fix slow parsing :esphomepr:`9953` by :ghuser:`kbx81`
+    - [output] Add ``set_min_power`` & ``set_max_power`` actions for ``FloatOutput`` :esphomepr:`8934` by :ghuser:`DjordjeMandic`
+    - [esp32] Bump platform to 54.03.21-1 and add support for tagged releases :esphomepr:`9926` by :ghuser:`swoboda1337`
+    - [adc] Enable ADC on ESP32-P4 :esphomepr:`9954` by :ghuser:`clydebarrow`
+    - [esp32] Fix post build :esphomepr:`9951` by :ghuser:`jesserockz`
+    - [component] Revert setup messages to LOG_CONFIG level :esphomepr:`9956` by :ghuser:`clydebarrow`
+    - Media player API enumeration alignment and feature flags :esphomepr:`9949` by :ghuser:`rwrozelle`
+    - [mipi_dsi] Add dependencies :esphomepr:`9952` by :ghuser:`clydebarrow`
+    - Fix WiFi to prefer strongest AP when multiple APs have same SSID :esphomepr:`9963` by :ghuser:`dayowe`
+    - [api] Eliminate heap allocations when populating repeated fields from containers :esphomepr:`9948` by :ghuser:`bdraco`
+    - [wifi] add more disconnect reason descriptions :esphomepr:`9955` by :ghuser:`ssieb`
+    - [sensor] Add new filter: ``throttle_with_priority`` :esphomepr:`9937` by :ghuser:`kbx81`
+    - [template] Add tests for more sensor filters :esphomepr:`9973` by :ghuser:`kbx81`
+    - [esp32_ble_client] Fix connection failures with short discovery timeout devices and speed up BLE connections :esphomepr:`9971` by :ghuser:`bdraco`
+    - media_player add off on capability :esphomepr:`9294` by :ghuser:`rwrozelle`
+    - [core] Fix regex for lambda id() replacement :esphomepr:`9975` by :ghuser:`clydebarrow`
+    - [CI] Add labels for checkboxes :esphomepr:`9991` by :ghuser:`jesserockz`
+    - [api] Bump APIVersion to 1.11 :esphomepr:`9990` by :ghuser:`rwrozelle`
+    - [api] Reduce flash usage through targeted optimizations :esphomepr:`9979` by :ghuser:`bdraco`
+    - [esp32_touch] Work around ESP-IDF v5.4 regression in `touch_pad_read_filtered` :esphomepr:`9957` by :ghuser:`bdraco` (breaking-change)
+    - [esp32_ble] Fix spurious BLE 5.0 event warnings on ESP32-S3 :esphomepr:`9969` by :ghuser:`bdraco`
+    - [tm1651] Remove dependency on Arduino Library :esphomepr:`9645` by :ghuser:`mrtoy-me`
+    - [wifi] Allow fast_connect with multiple networks :esphomepr:`9947` by :ghuser:`GilDev`
+    - [esp32_ble_client] Fix BLE connection stability for WiFi-based proxies :esphomepr:`9993` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Batch BLE service discovery messages for 67% reduction in API traffic :esphomepr:`9992` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Optimize UUID transmission with efficient short_uuid field :esphomepr:`9995` by :ghuser:`bdraco`
+    - [esp32] Bump ESP32 platform to 54.03.21-2 :esphomepr:`10000` by :ghuser:`swoboda1337`
+    - [esp32]  Fix strapping pin validation for P4 and H2 :esphomepr:`9980` by :ghuser:`clydebarrow`
+    - [bluetooth_proxy] Implement dynamic service batching based on MTU constraints :esphomepr:`10001` by :ghuser:`bdraco`
+    - [midea] Use c++17 constexpr and inline static in IrFollowMeData :esphomepr:`10002` by :ghuser:`DjordjeMandic`
+    - [image] Improve schemas :esphomepr:`9791` by :ghuser:`clydebarrow`
+    - [nrf52] add adc :esphomepr:`9321` by :ghuser:`tomaszduda23` (new-feature)
+    - [ruff] Enable RET and fix all violations :esphomepr:`9929` by :ghuser:`bdraco`
+    - [sensor] Fix bug in percentage based delta filter :esphomepr:`8157` by :ghuser:`swoboda1337`
+    - [sensor] A little bit of filter clean-up :esphomepr:`9986` by :ghuser:`kbx81`
+    - [espnow] Basic communication between ESP32 devices :esphomepr:`9582` by :ghuser:`nielsnl68` (new-component) (new-feature)
+    - [nrf52, debug] debug component for nrf52 :esphomepr:`8315` by :ghuser:`tomaszduda23`
+    - [nrf52, gpio] check different port notation :esphomepr:`9737` by :ghuser:`tomaszduda23`
+    - [esp32] Add config option to execute from PSRAM :esphomepr:`9907` by :ghuser:`clydebarrow` (new-feature)
+    - [wifi] Fix crash during WiFi reconnection on ESP32 with poor signal quality :esphomepr:`9989` by :ghuser:`bdraco`
+    - [CI] Allow multiple grep options for clang-tidy :esphomepr:`10004` by :ghuser:`jesserockz`
+    - [bluetooth_proxy] Eliminate heap allocations in connection state reporting :esphomepr:`10010` by :ghuser:`bdraco`
+    - [core] Convert entity vectors to static allocation for reduced memory usage :esphomepr:`10018` by :ghuser:`bdraco`
+    - [syslog] Fix RFC3164 timestamp compliance for single-digit days :esphomepr:`10034` by :ghuser:`Copilot`
+    - [core] Fix compilation errors when platform sections have no entities :esphomepr:`10023` by :ghuser:`bdraco`
+    - [config] Fix reversion of excessive yaml output after error :esphomepr:`10043` by :ghuser:`clydebarrow`
+    - [color][lvgl] Allow Color to be used for lv_color_t :esphomepr:`10016` by :ghuser:`clydebarrow` (new-feature)
+    - Update esp32-camera library version to 2.1.0 :esphomepr:`9527` by :ghuser:`RubenKelevra`
+    - [core] Replace std::find and std::max_element with simple loops to reduce binary size :esphomepr:`10044` by :ghuser:`bdraco`
+    - [core] Convert components, devices, and areas vectors to static allocation :esphomepr:`10020` by :ghuser:`bdraco`
+    - [core] Replace std::stable_sort with insertion sort to save 3.5KB flash :esphomepr:`10035` by :ghuser:`bdraco`
+    - [web_server_idf] Replace std::find_if with simple loop to reduce binary size :esphomepr:`10042` by :ghuser:`bdraco`
+    - [core] Optimize Application::pre_setup() to reduce duplicate MAC address operations :esphomepr:`10039` by :ghuser:`bdraco`
+    - [web_server] Reduce binary size by using EntityBase and minimizing template instantiations :esphomepr:`10033` by :ghuser:`bdraco`
+    - [web_server] Conditionally compile authentication code to save flash memory :esphomepr:`10022` by :ghuser:`bdraco`
+    - [core] Update to esptool 5.0+ command syntax :esphomepr:`10011` by :ghuser:`bdraco`
+    - [wifi] Replace std::stable_sort with insertion sort to save 2.4KB flash :esphomepr:`10037` by :ghuser:`bdraco`
+    - [esp32] Add framework migration warning for upcoming ESP-IDF default change :esphomepr:`10030` by :ghuser:`bdraco` (new-feature)
+    - [api] Use static allocation for areas and devices in DeviceInfoResponse :esphomepr:`10038` by :ghuser:`bdraco`
+    - [AI] Add note about the defines.h file needing to include all new defines added :esphomepr:`10054` by :ghuser:`jesserockz`
+    - [nfc] Rename ``binary_sensor`` source files :esphomepr:`10053` by :ghuser:`jesserockz`
+    - [core] Move docs url generator to helpers.py :esphomepr:`10056` by :ghuser:`jesserockz`
+    - [esp32_ble_tracker] Remove unnecessary STOPPED scanner state to reduce latency :esphomepr:`10055` by :ghuser:`bdraco`
+    - [esp32_ble_client] Use FAST connection parameters for all v3 connections :esphomepr:`10052` by :ghuser:`bdraco`
+    - [esp32_ble_client] Connect immediately on READY_TO_CONNECT to reduce latency :esphomepr:`10051` by :ghuser:`bdraco`
+    - [esp32_ble] Fix BLE connection slot waste by aligning ESP-IDF timeout with client timeout :esphomepr:`10013` by :ghuser:`bdraco`
+    - [gt911] Use timeout instead of delay, shortened log msg :esphomepr:`10024` by :ghuser:`DjordjeMandic`
+    - [espnow, web_server_idf] Fix IDF 5.5 compile issues :esphomepr:`10068` by :ghuser:`swoboda1337`
+    - Add CO5300 display support :esphomepr:`9739` by :ghuser:`mschnaubelt` (new-feature)
+    - [api] Add helpful compile-time errors for Custom API Device methods :esphomepr:`10076` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Warn about BLE connection timeout mismatch on Arduino framework :esphomepr:`10063` by :ghuser:`bdraco`
+    - [esp32_ble_client] Start MTU negotiation earlier following ESP-IDF examples :esphomepr:`10062` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Optimize connection by promoting client immediately after scan stop trigger :esphomepr:`10061` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Eliminate redundant ring buffer for lower latency :esphomepr:`10057` by :ghuser:`bdraco`
+    - [esp32_ble_client] Fix connection parameter timing by setting preferences before connection :esphomepr:`10059` by :ghuser:`bdraco`
+    - [tests] Add datetime entities to host_mode_many_entities integration test :esphomepr:`10032` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Optimize memory usage with fixed-size array and const string references :esphomepr:`10015` by :ghuser:`bdraco`
+    - [esp32_dac] Always use esp-idf APIs :esphomepr:`9833` by :ghuser:`jesserockz`
+    - [core] Allow extra args on cli and just ignore them :esphomepr:`9814` by :ghuser:`jesserockz`
+    - [gpio_expander] Fix bank caching :esphomepr:`10077` by :ghuser:`jesserockz`
+    - [remote_transmitter] Add digital_write automation :esphomepr:`10069` by :ghuser:`swoboda1337` (new-feature)
+    - Support multiple --device arguments for address fallback :esphomepr:`10003` by :ghuser:`bdraco` (new-feature)
+    - [core] Update core component codeowners to ``@esphome/core`` :esphomepr:`10082` by :ghuser:`jesserockz`
+    - Add myself to multiple bluetooth codeowners :esphomepr:`10083` by :ghuser:`bdraco`
+    - [speaker] Media player fixes for IDF5.4 :esphomepr:`10088` by :ghuser:`kahrendt`
+    - [espnow] Small changes and fixes :esphomepr:`10014` by :ghuser:`nielsnl68`
+    - [select] Fix new_select() not forwarding constructor args while preserving keyword-only options parameter :esphomepr:`10036` by :ghuser:`Copilot`
+    - [mcp23xxx] Use CachedGpioExpander :esphomepr:`10078` by :ghuser:`jesserockz`
+    - update espressif's esp32-camera library to 2.1.1 :esphomepr:`10090` by :ghuser:`RubenKelevra`
+    - [esp32_ble_tracker] Add missing USE_ESP32_BLE_DEVICE guard for ``already_discovered_`` member :esphomepr:`10085` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Refactor loop() method for improved readability and performance :esphomepr:`10074` by :ghuser:`bdraco`
+    - [esp32_rmt_led_strip] Work around IDFGH-16195 :esphomepr:`10093` by :ghuser:`swoboda1337`
+    - [bme680] Eliminate warnings due to unused functions :esphomepr:`9735` by :ghuser:`pgolawsk`
+    - [light] Allow light effect schema to be a schema object already :esphomepr:`10091` by :ghuser:`jesserockz`
+    - [bluetooth_proxy] Reduce flash usage by consolidating duplicate logging :esphomepr:`10094` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Simplify state machine guards with helper functions :esphomepr:`10092` by :ghuser:`bdraco`
+    - [deep_sleep] enable sleep pull up/down for wakeup pin :esphomepr:`9395` by :ghuser:`candrews`
+    - [esp32_ble] Make BLE notification limit configurable to fix ESP_GATT_NO_RESOURCES errors :esphomepr:`10098` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Replace std::find with simple loop for small fixed array :esphomepr:`10102` by :ghuser:`bdraco`
+    - [ld2410] Replace ``throttle`` with native filters :esphomepr:`10019` by :ghuser:`kbx81` (breaking-change)
+    - [esp32_ble_client] Convert to C++17 nested namespace syntax :esphomepr:`10111` by :ghuser:`bdraco`
+    - [esp32_ble] Conditionally compile BLE advertising to reduce flash usage :esphomepr:`10099` by :ghuser:`bdraco` (breaking-change)
+    - [bluetooth_proxy] Consolidate dump_config() log calls :esphomepr:`10103` by :ghuser:`bdraco`
+    - [bluetooth_proxy][esp32_ble_tracker][esp32_ble_client] Consolidate duplicate logging code to reduce flash usage :esphomepr:`10097` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Remove unnecessary heap allocation for response object :esphomepr:`10104` by :ghuser:`bdraco`
+    - Add device class absolute_humidity to the absolute humidity component :esphomepr:`10100` by :ghuser:`mbo18` (new-feature)
+    - [esp32_touch] Restore get_value() for ESP32-S2/S3 variants :esphomepr:`10112` by :ghuser:`bdraco`
+    - [esp32_ble_client] Avoid iterating empty services vector for bluetooth_proxy connections :esphomepr:`10110` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Optimize member variable ordering to reduce memory padding :esphomepr:`10113` by :ghuser:`bdraco`
+    - [esp32_ble_client] Conditionally compile BLE service classes to reduce flash usage :esphomepr:`10114` by :ghuser:`bdraco` (breaking-change)
+    - [bluetooth_proxy] Remove V1 connection support :esphomepr:`10107` by :ghuser:`bdraco` (breaking-change)
+    - [switch] Add ``switch.control`` automation action :esphomepr:`10105` by :ghuser:`edwardtfn` (new-feature)
+    - [mdns] Conditionally compile extra services to reduce flash usage :esphomepr:`10129` by :ghuser:`bdraco`
+    - [esp32_ble_client] Reduce flash usage by optimizing logging strings :esphomepr:`10119` by :ghuser:`bdraco`
+    - [wifi] Reduce flash usage by optimizing logging :esphomepr:`10127` by :ghuser:`bdraco`
+    - [cover] Reduce flash usage by optimizing validation messages :esphomepr:`10130` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Optimize connection loop to reduce CPU usage :esphomepr:`10133` by :ghuser:`bdraco`
+    - [switch] Add ``control()`` method to API :esphomepr:`10118` by :ghuser:`edwardtfn` (new-feature)
+    - [switch] Add trigger ``on_state`` :esphomepr:`10108` by :ghuser:`edwardtfn` (new-feature)
+    - [esp32_ble_tracker] Fix false reboots when event loop is blocked :esphomepr:`10144` by :ghuser:`bdraco`
+    - [esp32] Add IDF log_level option :esphomepr:`10134` by :ghuser:`swoboda1337` (breaking-change)
+    - [dashboard] Fix port fallback regression when device is offline :esphomepr:`10135` by :ghuser:`bdraco`
+    - [web_server] Reduce flash usage by consolidating parameter parsing :esphomepr:`10154` by :ghuser:`bdraco`
+    - [ade7880] Fix duplicate sensor name validation error :esphomepr:`10155` by :ghuser:`bdraco`
+    - Optimize subprocess performance with close_fds=False :esphomepr:`10145` by :ghuser:`bdraco`
+    - [CI] Print more info for when consts are duplicated :esphomepr:`10166` by :ghuser:`jesserockz`
+    - [neopixelbus] Fix neopixelbus on esp32 :esphomepr:`10123` by :ghuser:`swoboda1337`
+    - [lvgl] Various validation fixes :esphomepr:`10141` by :ghuser:`clydebarrow`
+    - [lvgl] fix allocation of reduced size buffer with rotation :esphomepr:`10147` by :ghuser:`clydebarrow`
+    - [nrf52, zephyr_debug] add zephyr debug component :esphomepr:`8319` by :ghuser:`tomaszduda23` (new-feature)
+    - [display] Disallow ``show_test_card: true`` and ``update_interval: never`` :esphomepr:`9927` by :ghuser:`ChadMatsalla`
+    - [sensor] Extend timeout filter with option to return last value received :esphomepr:`10115` by :ghuser:`kbx81` (new-feature)
+    - [esphome] Fix OTA watchdog resets during port scanning and network delays :esphomepr:`10152` by :ghuser:`bdraco`
+    - [api] Optimize single vector writes to use write() instead of writev() :esphomepr:`10193` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Replace dynamic vector with fixed array for BLE advertisements :esphomepr:`10174` by :ghuser:`bdraco`
+    - [substitutions] Add some safe built-in functions to jinja parsing :esphomepr:`10178` by :ghuser:`jesserockz` (new-feature)
+    - [core] Improve entity duplicate validation error messages :esphomepr:`10184` by :ghuser:`bdraco`
+    - [api] Add constexpr optimizations to protobuf encoding :esphomepr:`10192` by :ghuser:`bdraco`
+    - [wifi] Remove restriction from using NONE power saving mode with BLE :esphomepr:`10181` by :ghuser:`kahrendt`
+    - [const] Add CONF_POWER_MODE :esphomepr:`10173` by :ghuser:`joshuasing`
+    - [core] Reset pin registry after target platform validations :esphomepr:`10199` by :ghuser:`jesserockz`
+    - [ld2412] New component :esphomepr:`9075` by :ghuser:`Rihan9` (new-component) (new-feature) (new-platform)
+    - [atm90e32] energy meter calibration log output enhancements & software SPI fix :esphomepr:`10143` by :ghuser:`CircuitSetup`
+    - [ld2450] Replace ``throttle`` with native filters :esphomepr:`10196` by :ghuser:`kbx81` (breaking-change)
+    - [bme280_base, bmp280_base] add reasons to the fails, clean up logging :esphomepr:`10209` by :ghuser:`ssieb`
+    - [bluetooth_proxy] Remove ESPBTUUID dependency to save 296 bytes of flash :esphomepr:`10213` by :ghuser:`bdraco`
+
+Dependency Changes
+^^^^^^^^^^^^^^^^^^
+
+.. collapse:: Show
+
+    - Bump ruff from 0.12.2 to 0.12.3 :esphomepr:`9446` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 34.2.1 to 35.0.1 :esphomepr:`9474` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 35.0.1 to 36.0.0 :esphomepr:`9567` by :ghuser:`dependabot[bot]`
+    - Bump pytest-asyncio from 1.0.0 to 1.1.0 :esphomepr:`9588` by :ghuser:`dependabot[bot]`
+    - Bump pytest-xdist from 3.7.0 to 3.8.0 :esphomepr:`9287` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.12.3 to 0.12.4 :esphomepr:`9634` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 36.0.0 to 36.0.1 :esphomepr:`9636` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 36.0.1 to 37.0.0 :esphomepr:`9677` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.0.0 to 37.0.1 :esphomepr:`9685` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.0.1 to 37.0.2 :esphomepr:`9738` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.0.2 to 37.0.3 :esphomepr:`9754` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.0.3 to 37.0.4 :esphomepr:`9764` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.12.4 to 0.12.5 :esphomepr:`9871` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.0.4 to 37.1.0 :esphomepr:`9905` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.1.0 to 37.1.2 :esphomepr:`9910` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.1.2 to 37.1.3 :esphomepr:`9943` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.1.3 to 37.1.4 :esphomepr:`9964` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.1.4 to 37.1.5 :esphomepr:`9977` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.12.5 to 0.12.7 :esphomepr:`9976` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.1.5 to 37.1.6 :esphomepr:`9988` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.1.6 to 37.2.0 :esphomepr:`9996` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.2.0 to 37.2.1 :esphomepr:`9998` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.2.1 to 37.2.2 :esphomepr:`10009` by :ghuser:`dependabot[bot]`
+    - Bump esptool from 4.9.0 to 5.0.2 :esphomepr:`9983` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.2.2 to 37.2.3 :esphomepr:`10012` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.2.3 to 37.2.4 :esphomepr:`10050` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.2.4 to 37.2.5 :esphomepr:`10080` by :ghuser:`dependabot[bot]`
+    - Bump docker/login-action from 3.4.0 to 3.5.0 in the docker-actions group :esphomepr:`10081` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 37.2.5 to 38.0.0 :esphomepr:`10109` by :ghuser:`dependabot[bot]`
+    - Bump actions/download-artifact from 4.3.0 to 5.0.0 :esphomepr:`10106` by :ghuser:`dependabot[bot]`
+    - Bump actions/cache from 4.2.3 to 4.2.4 in /.github/actions/restore-python :esphomepr:`10125` by :ghuser:`dependabot[bot]`
+    - Bump actions/cache from 4.2.3 to 4.2.4 :esphomepr:`10128` by :ghuser:`dependabot[bot]`
+    - Bump ruff from 0.12.7 to 0.12.8 :esphomepr:`10126` by :ghuser:`dependabot[bot]`
+    - Bump tornado from 6.5.1 to 6.5.2 :esphomepr:`10142` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 38.0.0 to 38.1.0 :esphomepr:`10176` by :ghuser:`dependabot[bot]`
+    - Bump pylint from 3.3.7 to 3.3.8 :esphomepr:`10177` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 38.1.0 to 38.2.1 :esphomepr:`10197` by :ghuser:`dependabot[bot]`
+    - Bump actions/checkout from 4 to 5 :esphomepr:`10198` by :ghuser:`dependabot[bot]`
+
+
+Past Changelogs
+---------------
+
+.. collapse:: Show
+
+    - :doc:`2025.7.0`
+    - :doc:`2025.6.0`
+    - :doc:`2025.5.0`
+    - :doc:`2025.4.0`
+    - :doc:`2025.3.0`
+    - :doc:`2025.2.0`
+    - :doc:`2024.12.0`
+    - :doc:`2024.11.0`
+    - :doc:`2024.10.0`
+    - :doc:`2024.9.0`
+    - :doc:`2024.8.0`
+    - :doc:`2024.7.0`
+    - :doc:`2024.6.0`
+    - :doc:`2024.5.0`
+    - :doc:`2024.4.0`
+    - :doc:`2024.3.0`
+    - :doc:`2024.2.0`
+    - :doc:`2023.12.0`
+    - :doc:`2023.11.0`
+    - :doc:`2023.10.0`
+    - :doc:`2023.9.0`
+    - :doc:`2023.8.0`
+    - :doc:`2023.7.0`
+    - :doc:`2023.6.0`
+    - :doc:`2023.5.0`
+    - :doc:`2023.4.0`
+    - :doc:`2023.3.0`
+    - :doc:`2023.2.0`
+    - :doc:`2022.12.0`
+    - :doc:`2022.11.0`
+    - :doc:`2022.10.0`
+    - :doc:`2022.9.0`
+    - :doc:`2022.8.0`
+    - :doc:`2022.6.0`
+    - :doc:`2022.5.0`
+    - :doc:`2022.4.0`
+    - :doc:`2022.3.0`
+    - :doc:`2022.2.0`
+    - :doc:`2022.1.0`
+    - :doc:`2021.12.0`
+    - :doc:`2021.11.0`
+    - :doc:`2021.10.0`
+    - :doc:`2021.9.0`
+    - :doc:`2021.8.0`
+    - :doc:`v1.20.0`
+    - :doc:`v1.19.0`
+    - :doc:`v1.18.0`
+    - :doc:`v1.17.0`
+    - :doc:`v1.16.0`
+    - :doc:`v1.15.0`
+    - :doc:`v1.14.0`
+    - :doc:`v1.13.0`
+    - :doc:`v1.12.0`
+    - :doc:`v1.11.0`
+    - :doc:`v1.10.0`
+    - :doc:`v1.9.0`
+    - :doc:`v1.8.0`
+    - :doc:`v1.7.0`
