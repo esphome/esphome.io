@@ -249,7 +249,7 @@ Example: verbose logs globally, but reduce MQTT noise:
 The `level` option controls which log statements are included in the
 firmware. You cannot set a tag to a more detailed level than
 the global one, because logs higher that level are not compiled in.  
-However, you can silent them using `initial_level`, and raise them for specifics logs tags:
+However, you can suppress them using `initial_level`, and enable them for specific tags:
 
 .. code-block:: yaml
 
