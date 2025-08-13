@@ -243,7 +243,8 @@ compiled into the resulting firmware and may be used by :ref:`lambdas <config-la
 The most common usage of this option is to include third-party libraries that are available in the `PlatformIO registry
 <https://platformio.org/lib>`__. They can be added by listing their name under this option. It is also possible to use
 specific versions, or to fetch libraries from a file or git repository. ESPHome accepts the same syntax as the
-`lib_deps <https://docs.platformio.org/en/latest/projectconf/sections/env/options/library/lib_deps.html>`__ option.
+`lib_deps <https://docs.platformio.org/en/latest/projectconf/sections/env/options/library/lib_deps.html>`__ option, with
+the caveat that libraries must be explicitly named.
 
 Using ``<name>=<source>`` syntax, it is possible to override the version used for libraries that are automatically added
 by one of ESPHome's components. This can be useful during development to make ESPHome use a custom fork of a library.
