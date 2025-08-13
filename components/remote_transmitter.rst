@@ -193,6 +193,7 @@ companies.
 .. _remote_transmitter-transmit_beo4:
 
 ``remote_transmitter.transmit_beo4`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
