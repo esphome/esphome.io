@@ -294,7 +294,7 @@ See Also
 --------
 
 - :ref:`Binary Sensor Filters <binary_sensor-filters>`
-- :doc:`Inkplate 6 Plus </components/display/inkplate6>`
+- :doc:`Inkplate 6 Plus </components/display/inkplate>`
 - :doc:`EKTF2232 </components/touchscreen/ektf2232>`
 - :doc:`XPT2046 </components/touchscreen/xpt2046>`
 - :doc:`TT21100 </components/touchscreen/tt21100>`
