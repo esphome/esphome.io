@@ -28,7 +28,7 @@ Learn more at `Inkplate's documentation website <https://inkplate.readthedocs.io
         address: 0x20
 
     display:
-    - platform: inkplate6
+    - platform: inkplate
       id: inkplate_display
       greyscale: false
       partial_updating: false
@@ -239,7 +239,7 @@ Wi-Fi, API, and OTA configuration.
 
 
     display:
-    - platform: inkplate6
+    - platform: inkplate
       id: inkplate_display
       greyscale: false
       partial_updating: false
@@ -354,7 +354,7 @@ Below is a config example:
         address: 0x20
 
     display:
-    - platform: inkplate6
+    - platform: inkplate
       id: inkplate_display
       greyscale: true
       partial_updating: false
@@ -492,7 +492,7 @@ Below is a config example:
           - multiply: 2 # Compensate for voltage divider (1:2 ratio)
 
     display:
-      - platform: inkplate6
+      - platform: inkplate
         id: inkplate_display
         greyscale: true
         partial_updating: false
