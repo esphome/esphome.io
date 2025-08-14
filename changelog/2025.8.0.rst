@@ -142,6 +142,33 @@ long-term security and maintainability.
     will not upgrade beyond version 2025.7.x. You must upgrade your Python installation first.
 
 
+Breaking Changes
+----------------
+
+ESPHome 2025.8.0 includes several breaking changes that may require action on your part:
+
+**Bluetooth and BLE Changes**
+   - Bluetooth Proxy: Parsed advertisement support and V1 connection support removed to save memory
+   - BLE: Conditional compilation for advertising and service classes may reduce available features if not explicitly enabled
+   - May affect older components using deprecated Bluetooth features
+
+**API Optimizations**
+   - Deprecated protobuf fields removed (reduces flash usage)
+   - Conditional compilation for Home Assistant state/service subscriptions
+   - May affect custom API clients using deprecated fields
+
+**Component Filter Changes**
+   - :doc:`LD2410 </components/sensor/ld2410>` and :doc:`LD2450 </components/sensor/ld2450>` components now use native filters instead of ``throttle``
+   - See the component documentation for updated filter configuration
+
+**ESP32 Touch Sensor**
+   - Workaround implemented for ESP-IDF v5.4 regression
+   - May affect touch sensor behavior on newer ESP-IDF versions
+
+Most of these changes are automatic optimizations that shouldn't affect typical usage, but custom components
+or advanced configurations may need updates.
+
+
 Full list of changes
 --------------------
 
@@ -196,6 +223,15 @@ Breaking Changes
 - [bluetooth_proxy] Remove V1 connection support :esphomepr:`10107` by :ghuser:`bdraco` (breaking-change)
 - [esp32] Add IDF log_level option :esphomepr:`10134` by :ghuser:`swoboda1337` (breaking-change)
 - [ld2450] Replace ``throttle`` with native filters :esphomepr:`10196` by :ghuser:`kbx81` (breaking-change)
+
+Beta Changes
+^^^^^^^^^^^^
+
+- [entity] Allow ``device_id`` to be blank on entities :esphomepr:`10217` by :ghuser:`jesserockz` (new-feature)
+- [espnow] Set state to enabled before adding initial peers :esphomepr:`10225` by :ghuser:`jesserockz`
+- [psram] allow disabling :esphomepr:`10224` by :ghuser:`ssieb`
+- Bump aioesphomeapi from 38.2.1 to 39.0.0 :esphomepr:`10222` by :ghuser:`dependabot[bot]`
+- Bump esphome-dashboard from 20250514.0 to 20250814.0 :esphomepr:`10227` by :ghuser:`dependabot[bot]`
 
 All changes
 ^^^^^^^^^^^
@@ -549,6 +585,9 @@ All changes
     - [ld2450] Replace ``throttle`` with native filters :esphomepr:`10196` by :ghuser:`kbx81` (breaking-change)
     - [bme280_base, bmp280_base] add reasons to the fails, clean up logging :esphomepr:`10209` by :ghuser:`ssieb`
     - [bluetooth_proxy] Remove ESPBTUUID dependency to save 296 bytes of flash :esphomepr:`10213` by :ghuser:`bdraco`
+    - [entity] Allow ``device_id`` to be blank on entities :esphomepr:`10217` by :ghuser:`jesserockz` (new-feature)
+    - [espnow] Set state to enabled before adding initial peers :esphomepr:`10225` by :ghuser:`jesserockz`
+    - [psram] allow disabling :esphomepr:`10224` by :ghuser:`ssieb`
 
 Dependency Changes
 ^^^^^^^^^^^^^^^^^^
@@ -593,6 +632,8 @@ Dependency Changes
     - Bump pylint from 3.3.7 to 3.3.8 :esphomepr:`10177` by :ghuser:`dependabot[bot]`
     - Bump aioesphomeapi from 38.1.0 to 38.2.1 :esphomepr:`10197` by :ghuser:`dependabot[bot]`
     - Bump actions/checkout from 4 to 5 :esphomepr:`10198` by :ghuser:`dependabot[bot]`
+    - Bump aioesphomeapi from 38.2.1 to 39.0.0 :esphomepr:`10222` by :ghuser:`dependabot[bot]`
+    - Bump esphome-dashboard from 20250514.0 to 20250814.0 :esphomepr:`10227` by :ghuser:`dependabot[bot]`
 
 
 Past Changelogs
