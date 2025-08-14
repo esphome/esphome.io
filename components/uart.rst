@@ -66,6 +66,121 @@ Configuration variables:
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see :ref:`uart-debugging`.
+- **clock_source** (*Optional*, enum): Clock source for UART baud rate generation. ESP32 Arduino framework only. See :ref:`uart-clock-source`. Defaults to ``DEFAULT``.
+
+.. _uart-clock-source:
+
+Clock Source (ESP32 Arduino Framework Only)
+--------------------------------------------
+
+For ESP32 variants using the Arduino framework, you can specify the UART clock source to improve baud rate precision:
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    uart:
+      baud_rate: 921600
+      tx_pin: GPIO17
+      rx_pin: GPIO16
+      clock_source: APB  # Use APB clock for higher precision
+
+- **clock_source** (*Optional*, enum): The clock source for UART baud rate generation. Only available on ESP32 with Arduino framework. Options vary by chip variant:
+
+.. list-table::
+    :header-rows: 1
+
+    * - Variant
+      - DEFAULT
+      - APB
+      - REF_TICK
+      - XTAL
+      - RTC
+      - PLL_F40M
+      - PLL_F48M
+      - PLL_F80M
+    * - ESP32
+      - ✅
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ❌
+      - ❌
+      - ❌
+    * - ESP32-S2
+      - ✅
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ❌
+      - ❌
+      - ❌
+    * - ESP32-S3
+      - ✅
+      - ✅
+      - ❌
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ❌
+    * - ESP32-C2
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+    * - ESP32-C3
+      - ✅
+      - ✅
+      - ❌
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ❌
+    * - ESP32-C5
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+    * - ESP32-C6
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+    * - ESP32-H2
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+      - ✅
+      - ❌
+      - ✅
+      - ❌
+    * - ESP32-P4
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+      - ✅
+      - ❌
+      - ❌
+      - ✅
+
+Defaults to ``DEFAULT``. Use ``APB`` or ``PLL_F80M`` for high baud rates (≥115200) when available.
 
 .. _uart-hardware_uarts:
 
