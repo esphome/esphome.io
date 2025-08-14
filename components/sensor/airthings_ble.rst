@@ -53,7 +53,6 @@ Configuration example:
 
     sensor:
       - platform: airthings_wave_plus
-        name: wave_plus
         ble_client_id: airthings01
         update_interval: 5min # default
         battery_update_interval: 24h # default
