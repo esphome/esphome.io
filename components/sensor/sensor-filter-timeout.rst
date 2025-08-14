@@ -1,10 +1,14 @@
 ``timeout``
-************
+***********
 
-After the first value has been sent, if no subsequent value is published within the
-``specified time period``, send a templatable value which defaults to ``NaN``.
-Especially useful when data is derived from some other communication
-channel, e.g. a serial port, which can potentially be interrupted.
+After the first value has been sent, if no subsequent value is published within the specified ``timeout`` period, send
+a templatable value which defaults to ``NaN``. The value may also be set to ``last``, which will result in the last
+value received by the filter being sent again.
+
+This filter particularly is useful when:
+
+- data is derived from some communication channel (a serial port, for example) which can potentially be interrupted.
+- placed ahead of a throttle filter to ensure that the last value published will pass through the throttle.
 
 .. code-block:: yaml
 
@@ -14,4 +18,6 @@ channel, e.g. a serial port, which can potentially be interrupted.
       - timeout:
           timeout: 10s
           value: !lambda return 0;
-
+      - timeout:
+          timeout: 10s
+          value: last  # sent value will be the last value received by the filter

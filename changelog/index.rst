@@ -2,7 +2,7 @@ Changelog
 =========
 
 .. redirect::
-    :url: /changelog/2025.7.0.html
+    :url: /changelog/2025.8.0.html
 
 .. toctree::
     :glob:

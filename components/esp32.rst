@@ -108,6 +108,8 @@ Configuration variables:
 - **sdkconfig_options** (*Optional*, mapping): Custom sdkconfig
   `compiler options <https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options>`__
   to set in the ESP-IDF project.
+- **log_level** (*Optional*, string): Log level of the framework, one of ``ERROR`` (default), ``NONE``, ``WARN``, ``INFO``,
+  ``DEBUG`` or ``VERBOSE``.
 - **advanced** (*Optional*, mapping): See :ref:`esp32-advanced_configuration` below.
 - **components** (*Optional*, list of components): See :ref:`esp32-idf_components` below.
 

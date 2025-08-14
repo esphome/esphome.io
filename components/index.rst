@@ -525,6 +525,7 @@ Motion
     APDS9960, components/sensor/apds9960, apds9960.jpg, Colour & Gesture
     BMI160, components/sensor/bmi160, bmi160.jpg, Accelerometer & Gyroscope
     LD2410, components/sensor/ld2410, ld2410.jpg, Motion & Presence
+    LD2412, components/sensor/ld2412, ld2412.jpg, Motion & Presence
     LD2420, components/sensor/ld2420, ld2420.jpg, Motion & Presence
     LD2450, components/sensor/ld2450, ld2450.png, Motion & Presence
     MPU6050, components/sensor/mpu6050, mpu6050.jpg, Accelerometer & Gyroscope
@@ -632,6 +633,7 @@ Presence Detection
     AT581X, components/at581x, at581x.png
     DFRobot mmWave Radar, components/dfrobot_sen0395, dfrobot_sen0395.jpg
     LD2410, components/sensor/ld2410, ld2410.jpg
+    LD2412, components/sensor/ld2412, ld2412.jpg
     LD2420, components/sensor/ld2420, ld2420.jpg
     LD2450, components/sensor/ld2450, ld2450.png
     Seeed Studio MR24HPC1 mmWave, components/seeed_mr24hpc1, seeed-mr24hpc1.jpg
