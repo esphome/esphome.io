@@ -1,4 +1,8 @@
 {{- $branch := getenv "BRANCH" | default site.Params.branch -}}
+{{ $parts := split $branch "/" }}
+{{ if eq (index $parts 0) "pull" }}
+    {{ $branch = printf "pr#%s" (index $parts 1) }}
+{{ end }}
 {{- $repo_url := getenv "REPOSITORY_URL" | default site.Params.repo.url -}}
 {{- $commit_hash := getenv "COMMIT_REF" | default site.Params.commit.hash -}}
 <!DOCTYPE html>
