@@ -15,3 +15,16 @@
 [context.production]
   environment = { BASE_URL = "https://esphome.io", API_DOCS_URL = "https://api-docs.esphome.io", PRODUCTION = "YES" }
 
+
+# Caching HTML - 1 week
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# Images, CSS, JS - 1 year, immutable. CSS and JS are fingerprinted
+[[headers]]
+  for = "/*.{png,jpg,jpeg,gif,webp,svg,css,js}"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
