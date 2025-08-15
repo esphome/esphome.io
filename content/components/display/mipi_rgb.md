@@ -1,6 +1,6 @@
 ---
 description: "Instructions for setting up 16 bit \"RGB\" parallel displays"
-title: "MIPI_RGB Display Driver"
+title: "MIPI RGB Display Driver"
 params:
   seo:
     description: Instructions for setting up 16 bit "RGB" parallel displays
@@ -67,12 +67,12 @@ display:
 - **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the displays have this option set automatically to true and can't be changed.
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`  , `90°`  , `180°`  , or `270°`  . This option cannot be used with `transform`  .
 - **transform** (*Optional*): Transform the display presentation using hardware. All defaults are `false`  . This option cannot be used with `rotation`  .
-
-  - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
-  - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
+  - **mirror_x** (*Optional*, boolean): If true, mirror the x-axis.
+  - **mirror_y** (*Optional*, boolean): If true, mirror the y-axis.
     **Note:** To rotate the display in hardware by 180 degrees set both `mirror_x` and `mirror_y`  to `true`.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`  .
-- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`   if a lambda or pages are configured, false otherwise.
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`
+  if a lambda or pages are configured, false otherwise.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
@@ -123,13 +123,13 @@ Displays needing a custom init sequence require an SPI bus to be configured, plu
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. Predefined boards have a default init sequence, which can be overridden.
   A custom board can specify the init sequence using this variable. RPI displays should provide an empty sequence in which case the SPI bus is not required.
 
-The `init_sequence`   requires a list of elements, one of which may be a single integer selecting a canned init
+The `init_sequence` requires a list of elements, one of which may be a single integer selecting a canned init
 sequence (the default and currently the only sequence is 1), the remainder must be byte arrays providing additional
 init commands, each consisting of a command byte followed by zero or more data bytes.
 
 A delay may be specified with `delay <N>ms`
 
-These will be collected and sent to the display via SPI during initialisation. The SPI bus need not be implmented
+These will be collected and sent to the display via SPI during initialisation. The SPI bus need not be implemented
 in hardware (i.e. it may use `interface: software`) and it will be released after initialisation, before the RGB
 driver is configured. This caters for boards that use the SPI bus pins as RGB pins.
 
