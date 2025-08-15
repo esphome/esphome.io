@@ -1,5 +1,6 @@
 {{ $ext := lower (path.Ext .src) }}
 {{ $page := .page }}
+{{ $caption := .caption }}
 {{ $style := .style }}
 {{ $thumbSize := .thumbSize | default "180x q20" }}
 {{/* Check if image exists in local images directory first */}}
@@ -56,17 +57,19 @@
                     {{ if .href }}
                 </a>
                 {{ end }}
-                <figcaption>
-                    <em>{{ .Inner }}</em>
-                </figcaption>
+                {{ with $caption }}
+                    <figcaption>
+                        <em>{{ . | markdownify | safeHTML }}</em>
+                    </figcaption>
+                {{ end }}
             </figure>
         </noscript>
         {{ $srclist := delimit $src_set ", " }}
+        {{ $classes := printf "lazyload w-100 h-100 %s" .classes | safeHTMLAttr }}
         <figure role="none" style="max-width: {{ $maxwidth }}px;" class="{{ .classes }} lazy">
             {{ if .href }}
-            <a href='{{ .href }}'>
-                {{ end }}
-                {{ $classes := printf "lazyload w-100 h-100 %s" .classes | safeHTMLAttr }}
+                <a href='{{ .href }}'>
+            {{ end }}
                 <img class="{{ $classes }}" data-sizes="auto" src="{{ $image.RelPermalink }}" {{ if .width }}width="{{.width}}" {{ end }}
                      fetchpriority="high"
                      {{ if $style }}{{ $style }}{{ end }}
@@ -77,6 +80,11 @@
                      alt="{{ .alt }}"/>
                 {{ if .href }}
             </a>
+            {{ end }}
+            {{ with $caption }}
+                <figcaption>
+                    <em>{{ . | markdownify | safeHTML }}</em>
+                </figcaption>
             {{ end }}
         </figure>
 {{ end }}
