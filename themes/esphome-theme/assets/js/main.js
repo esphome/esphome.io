@@ -263,6 +263,12 @@ document.addEventListener('DOMContentLoaded', function () {
             buildInfoPopup.style.display = 'none';
         });
 
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' || e.key === 'Esc') {
+                buildInfoPopup.style.display = 'none';
+            }
+        });
+
         window.addEventListener('click', function(event) {
             if (event.target === buildInfoPopup) {
                 buildInfoPopup.style.display = 'none';
