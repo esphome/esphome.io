@@ -139,7 +139,7 @@ This is an example of a full custom configuration.
 
 ```yaml
 display:
-  - platform: st7701s
+  - platform: mipi_rgb
     update_interval: never
     spi_mode: MODE3
     color_order: RGB
