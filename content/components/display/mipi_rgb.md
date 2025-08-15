@@ -36,16 +36,16 @@ The `RPI` driver chip represents displays without an SPI interface, so no init s
 These boards have completely pre-filled configurations for the display driver, so the only required configuration
 option is `model`.
 
-| Board              | Driver Chip | Product link or description                                                   |
-|--------------------|-------------|-------------------------------------------------------------------------------|
-| GUITION-4848S040   | ST7701s | Guition <https://devices.esphome.io/devices/Guition-ESP32-S3-4848S040>        |
-| T-PANEL-S3  | ST7701s | Lilygo <https://lilygo.cc/products/t-panel-s3>                                |
-| T-RGB-2.1   | ST7701s | Lilygo <https://lilygo.cc/products/t-rgb>                                     |
-| T-RGB-2.8   | ST7701s | Lilygo <https://lilygo.cc/products/t-rgb>                                     |
-| SEEED-INDICATOR-D1  | ST7701s | Seeed Studio <https://www.seeedstudio.com/SenseCAP-Indicator-D1L-p-5646.html> |
-| ESP32-S3-TOUCH-LCD-4.3 | RPI | Waveshare <https://www.waveshare.com/esp32-s3-touch-lcd-4.3.htm>              |
-| ESP32-S3-TOUCH-LCD-7-800X480 | RPI | Waveshare <https://www.waveshare.com/esp32-s3-touch-lcd-7.htm>          |
-| WAVESHARE-4-480x480 | RPI | Waveshare <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>          |
+| Board              | Driver Chip | Manufacturer | Product link                                                   |
+|--------------------|-------------|--------------|----------------------------------------------------------------|
+| GUITION-4848S040   | ST7701s | Guition | <https://devices.esphome.io/devices/Guition-ESP32-S3-4848S040>        |
+| T-PANEL-S3  | ST7701s | Lilygo | <https://lilygo.cc/products/t-panel-s3>                                |
+| T-RGB-2.1   | ST7701s | Lilygo | <https://lilygo.cc/products/t-rgb>                                     |
+| T-RGB-2.8   | ST7701s | Lilygo | <https://lilygo.cc/products/t-rgb>                                     |
+| SEEED-INDICATOR-D1  | ST7701s | Seeed Studio | <https://www.seeedstudio.com/SenseCAP-Indicator-D1L-p-5646.html> |
+| ESP32-S3-TOUCH-LCD-4.3 | RPI | Waveshare | <https://www.waveshare.com/esp32-s3-touch-lcd-4.3.htm>              |
+| ESP32-S3-TOUCH-LCD-7-800X480 | RPI | Waveshare | <https://www.waveshare.com/esp32-s3-touch-lcd-7.htm>          |
+| WAVESHARE-4-480x480 | RPI | Waveshare | <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>          |
 
 ## Usage
 This component requires an ESP32 (usually an ESP32-S3 because of the number of GPIO pins required) and the use of
@@ -87,9 +87,9 @@ display:
 
 - **data_pins** (**Required**): A list of pins used for the databus. Specified in 3 groups.
 
-    - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pin numbers for the red databits, listed from least to most significant bit.
-    - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pin numbers for the green databits, listed from least to most significant bit.
-    - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pin numbers for the blue databits, listed from least to most significant bit.
+    - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the red databits, listed from least to most significant bit.
+    - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pins for the green databits, listed from least to most significant bit.
+    - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the blue databits, listed from least to most significant bit.
 
 - **de_pin** (**Required**, [Pin Schema](#config-pin_schema)): The DE pin.
 - **pclk_pin** (**Required**, [Pin Schema](#config-pin_schema)): The PCLK pin.
@@ -106,8 +106,9 @@ display:
 - **pclk_inverted** (*Optional*, bool): If the pclk is active negative (default is True)
 
 
-The horizontal and vertical `pulse_width`  , `front_porch`   and `back_porch`   values are optional, but may require
-changing for a specific display. Refer to the manufacturer's sample code for suitable values. These specify timing
+The horizontal and vertical `pulse_width`  , `front_porch`   and `back_porch`   values are optional, but will
+likely require 
+changing from the default values for a specific display. Refer to the manufacturer's sample code for suitable values. These specify timing
 requirements for the display.
 
 ## Additional Configuration for non-RPI displays
@@ -120,7 +121,7 @@ Displays needing a custom init sequence require an SPI bus to be configured, plu
 - **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is `MODE0`   but some displays require `MODE3`  .
 - **spi_id** (*Optional*, [ID](#config-id)): The ID of the SPI interface to use - may be omitted if only one SPI bus is configured.
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. Predefined boards have a default init sequence, which can be overridden.
-  A custom board can specify the init sequence using this variable. RPI displays should provide an empty sequence.
+  A custom board can specify the init sequence using this variable. RPI displays should provide an empty sequence in which case the SPI bus is not required.
 
 The `init_sequence`   requires a list of elements, one of which may be a single integer selecting a canned init
 sequence (the default and currently the only sequence is 1), the remainder must be byte arrays providing additional
