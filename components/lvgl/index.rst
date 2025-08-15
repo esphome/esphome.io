@@ -243,13 +243,21 @@ Colors can be specified anywhere in the LVGL configuration either by referencing
 
 You may also use any of the `standard CSS color names <https://developer.mozilla.org/en-US/docs/Web/CSS/named-color>`__, e.g. ``springgreen``.
 
-When using a lambda to provide a color you should use the ``lv_color_hex`` function, for example:
+When using a lambda to provide a color you can use the ``lv_color_hex`` function to convert a hex value, or
+return a :ref:`config-color` ID - this is useful when using the :doc:`/components/mapping`. Examples:
 
 .. code-block:: yaml
 
     label:
+      id: my_label
       text: 'Hello World!'
       color: !lambda return lv_color_hex(0xFF0000);
+
+    on_...:
+        lvgl.label.update:
+          id: my_label
+          text: 'Hello Mars!'
+          color: !lambda return id(mapping_color_map)[x];
 
 .. _lvgl-opacity:
 

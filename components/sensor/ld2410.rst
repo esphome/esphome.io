@@ -16,8 +16,10 @@ There are three variants with similar communication protocols:
 - LD2410B (`datasheet and user manual <https://drive.google.com/drive/folders/16zI-fium_BZeP08EyQke0rWp0BJTMvw3>`__)
 - LD2410C (`datasheet and user manual <https://drive.google.com/drive/folders/1ypOlacBmmFXY6lDQ0f1hEJFmczNe-0WG>`__)
 
-The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work, ``parity`` and ``stop_bits`` **must be** respectively ``NONE`` and ``1``.
-Use of hardware UART pins is highly recommended, in order to support the out-of-the-box 256000 baud rate of the LD2410 sensor.
+The :ref:`UART <uart>` is required to be set up in your configuration for this sensor to work, ``parity`` and
+``stop_bits`` **must be** respectively ``NONE`` and ``1``.
+
+Use of hardware UART pins is highly recommended to best support the out-of-the-box 256000 baud rate of the sensor.
 
 .. figure:: images/ld2410.jpg
     :align: center
@@ -35,14 +37,13 @@ Configuration variables:
 
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` if you want
   to use multiple UART buses.
-- **throttle** (*Optional*, int): Time in milliseconds to control the rate of data updates. Defaults to ``1000ms``.
-- **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this :doc:`ld2410` component if you need multiple components.
+- **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this :doc:`ld2410` component if you need multiple
+  components.
 
 Binary Sensor
 -------------
 
-The ``ld2410`` binary sensor allows you to use your :doc:`ld2410` to perform different
-measurements.
+The ``ld2410`` binary sensors allow you to quickly determine various states reported by the sensor.
 
 .. code-block:: yaml
 
@@ -55,7 +56,7 @@ measurements.
         has_still_target:
           name: Still Target
         out_pin_presence_status:
-          name: out pin presence status
+          name: Out pin presence status
 
 Configuration variables:
 ************************
@@ -66,23 +67,38 @@ Configuration variables:
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
 - **has_still_target** (*Optional*): If true a still target is detected.
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
-- **out_pin_presence_status** (*Optional*): When in :ref:`engineering mode<ld2410-engineering-mode>`, indicates whether the OUT pin indicates presence or not, otherwise ``false``.
-  OUT pin indication depends on the :ref:`light function<ld2410-light-function>` configuration. Might need latest firmware to work.
+- **out_pin_presence_status** (*Optional*): When in :ref:`engineering mode<ld2410-engineering-mode>`, indicates the
+  status of the OUT pin, otherwise ``false``. OUT pin indication depends on the
+  :ref:`light function<ld2410-light-function>` configuration. Might need to update to the latest firmware to use this.
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
+
+.. note::
+
+    By default, each of the :doc:`Binary Sensor </components/binary_sensor/index>` components above includes the
+    following :ref:`filter<binary_sensor-filters>` by default to prevent flooding Home Assistant with state updates:
+
+    .. code-block:: yaml
+
+        - settle: 1000ms
+    
+    If you have defined other filters, this default will be overridden; you may of course add it back to your custom
+    filter(s) as above if you wish.
+    
+    To remove the default filter for any given binary sensor instance, add ``filters: []`` to its configuration.
 
 Sensor
 ------
 
-The ``ld2410`` sensor allows you to use your :doc:`ld2410` to perform different
-measurements.
+The ``ld2410`` sensors allow reporting of various measurements the sensor takes.
 
 .. code-block:: yaml
 
     sensor:
       - platform: ld2410
         light:
-          name: light
+          name: Light
         moving_distance:
           name: Moving Distance
         still_distance:
@@ -95,57 +111,57 @@ measurements.
           name: Detection Distance
         g0:
           move_energy:
-            name: g0 move energy
+            name: G0 move energy
           still_energy:
-            name: g0 still energy
+            name: G0 still energy
         g1:
           move_energy:
-            name: g1 move energy
+            name: G1 move energy
           still_energy:
-            name: g1 still energy
+            name: G1 still energy
         g2:
           move_energy:
-            name: g2 move energy
+            name: G2 move energy
           still_energy:
-            name: g2 still energy
+            name: G2 still energy
         g3:
           move_energy:
-            name: g3 move energy
+            name: G3 move energy
           still_energy:
-            name: g3 still energy
+            name: G3 still energy
         g4:
           move_energy:
-            name: g4 move energy
+            name: G4 move energy
           still_energy:
-            name: g4 still energy
+            name: G4 still energy
         g5:
           move_energy:
-            name: g5 move energy
+            name: G5 move energy
           still_energy:
-            name: g5 still energy
+            name: G5 still energy
         g6:
           move_energy:
-            name: g6 move energy
+            name: G6 move energy
           still_energy:
-            name: g6 still energy
+            name: G6 still energy
         g7:
           move_energy:
-            name: g7 move energy
+            name: G7 move energy
           still_energy:
-            name: g7 still energy
+            name: G7 still energy
         g8:
           move_energy:
-            name: g8 move energy
+            name: G8 move energy
           still_energy:
-            name: g8 still energy
+            name: G8 still energy
 
 .. _ld2410-sensors:
 
 Configuration variables:
 ************************
 
-- **light** (*Optional*, int): When in :ref:`engineering mode<ld2410-engineering-mode>`, indicates the light sensitivity, otherwise ``unknown``.
-  Value between ``0`` and ``255`` inclusive. Though it seems that the value ``85`` is the lowest value at complete darkness.
+- **light** (*Optional*, int): When in :ref:`engineering mode<ld2410-engineering-mode>`, indicates the light
+  sensitivity, otherwise ``unknown``. Value between ``0`` and ``255`` inclusive.
   All options from :ref:`Sensor <config-sensor>`.
 - **moving_distance** (*Optional*, int): Distance in cm of detected moving target.
   All options from :ref:`Sensor <config-sensor>`.
@@ -161,40 +177,55 @@ Configuration variables:
   All options from :ref:`Sensor <config-sensor>`.
 - **gX** (*Optional*): Energies for the Xth gate (X => 0 to 8).
 
-    - **move_energy** (*Optional*, int): When in :ref:`engineering mode<ld2410-engineering-mode>`, the move energy of the gate, otherwise ``unknown``.
-      Value between ``0`` and ``100`` inclusive.
+    - **move_energy** (*Optional*, int): When in :ref:`engineering mode<ld2410-engineering-mode>`, the move energy of
+      the gate, otherwise ``unknown``. Value between ``0`` and ``100`` inclusive.
       All options from :ref:`Sensor <config-sensor>`.
-    - **still_energy** (*Optional*, int): When in :ref:`engineering mode<ld2410-engineering-mode>`, the still energy of the gate, otherwise ``unknown``.
-      Value between ``0`` and ``100`` inclusive.
+    - **still_energy** (*Optional*, int): When in :ref:`engineering mode<ld2410-engineering-mode>`, the still energy of
+      the gate, otherwise ``unknown``. Value between ``0`` and ``100`` inclusive.
       All options from :ref:`Sensor <config-sensor>`.
 
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
+
+.. note::
+
+    By default, each of the :doc:`Sensor </components/sensor/index>` components above includes the following
+    :ref:`filter<sensor-filters>` by default to prevent flooding Home Assistant with state updates:
+
+    .. code-block:: yaml
+
+        - throttle_with_priority: 1000ms
+    
+    If you have defined other filters, this default will be overridden; you may of course add it back to your custom
+    filter(s) as above if you wish.
+    
+    To remove the default filter for any given sensor instance, add ``filters: []`` to its configuration.
 
 Switch
 ------
 
-The ``ld2410`` switch allows you to control your :doc:`ld2410`.
+The ``ld2410`` switches allow you to enable or disable sensor features from the front end.
 
 .. code-block:: yaml
 
     switch:
       - platform: ld2410
         engineering_mode:
-          name: "engineering mode"
+          name: Engineering mode
         bluetooth:
-          name: "control bluetooth"
+          name: Control bluetooth
 
 .. _ld2410-engineering-mode:
 
 Configuration variables:
 ************************
 
-- **engineering_mode** (*Optional*): enable/disable engineering mode. Defaults to ``false``.
-  Notice this requires more resources and is not recommended to be enabled when not necessary.
-  All options from :ref:`Switch <config-switch>`.
+- **engineering_mode** (*Optional*): enable/disable engineering mode. Note that this requires more resources and is not
+  recommended to be enabled when not necessary. All options from :ref:`Switch <config-switch>`.
 - **bluetooth** (*Optional*): Turn on/off the bluetooth adapter. Defaults to ``true``.
   All options from :ref:`Switch <config-switch>`.
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
 
 
 .. _ld2410-number:
@@ -209,58 +240,58 @@ The ``ld2410`` number allows you to control the configuration of your :doc:`ld24
     number:
       - platform: ld2410
         timeout:
-          name: timeout
+          name: Timeout
         light_threshold:
-          name: light threshold
+          name: Light threshold
         max_move_distance_gate:
-          name: max move distance gate
+          name: Max move distance gate
         max_still_distance_gate:
-          name: max still distance gate
+          name: Max still distance gate
         g0:
           move_threshold:
-            name: g0 move threshold
+            name: G0 move threshold
           still_threshold:
-            name: g0 still threshold
+            name: G0 still threshold
         g1:
           move_threshold:
-            name: g1 move threshold
+            name: G1 move threshold
           still_threshold:
-            name: g1 still threshold
+            name: G1 still threshold
         g2:
           move_threshold:
-            name: g2 move threshold
+            name: G2 move threshold
           still_threshold:
-            name: g2 still threshold
+            name: G2 still threshold
         g3:
           move_threshold:
-            name: g3 move threshold
+            name: G3 move threshold
           still_threshold:
-            name: g3 still threshold
+            name: G3 still threshold
         g4:
           move_threshold:
-            name: g4 move threshold
+            name: G4 move threshold
           still_threshold:
-            name: g4 still threshold
+            name: G4 still threshold
         g5:
           move_threshold:
-            name: g5 move threshold
+            name: G5 move threshold
           still_threshold:
-            name: g5 still threshold
+            name: G5 still threshold
         g6:
           move_threshold:
-            name: g6 move threshold
+            name: G6 move threshold
           still_threshold:
-            name: g6 still threshold
+            name: G6 still threshold
         g7:
           move_threshold:
-            name: g7 move threshold
+            name: G7 move threshold
           still_threshold:
-            name: g7 still threshold
+            name: G7 still threshold
         g8:
           move_threshold:
-            name: g8 move threshold
+            name: G8 move threshold
           still_threshold:
-            name: g8 still threshold
+            name: G8 still threshold
 
 .. _ld2410-light-threshold:
 
@@ -290,7 +321,8 @@ Configuration variables:
       Value between ``0`` and ``100`` inclusive. See default values below.
       All options from :ref:`Number <config-number>`.
 
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
 
 .. list-table:: Default values for gate threshold
     :widths: 25 25 25
@@ -330,18 +362,18 @@ Configuration variables:
 Button
 ------
 
-The ``ld2410`` button allows you to perform actions on your :doc:`ld2410`.
+The ``ld2410`` button allows you to perform actions on your sensor.
 
 .. code-block:: yaml
 
     button:
       - platform: ld2410
         factory_reset:
-          name: "factory reset"
+          name: Factory reset
         restart:
-          name: "restart"
+          name: Restart
         query_params:
-          name: query params
+          name: Query params
 
 Configuration variables:
 ************************
@@ -352,21 +384,22 @@ Configuration variables:
   All options from :ref:`Button <config-button>`.
 - **query_params** (*Optional*): Refresh all sensors values of the device.
   All options from :ref:`Button <config-button>`.
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
 
 Text Sensor
 -----------
 
-The ``ld2410`` text sensor allows you to get information about your :doc:`ld2410`.
+The ``ld2410`` text sensors allow reporting of sensor metadata.
 
 .. code-block:: yaml
 
     text_sensor:
       - platform: ld2410
         version:
-          name: "firmware version"
+          name: Firmware version
         mac_address:
-          name: "mac address"
+          name: MAC address
 
 Configuration variables:
 ************************
@@ -375,41 +408,44 @@ Configuration variables:
   All options from :ref:`Text Sensor <config-text_sensor>`.
 - **mac_address** (*Optional*): The bluetooth mac address. Will be set to ``unknown`` when bluetooth is off.
   All options from :ref:`Text Sensor <config-text_sensor>`.
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
 
 Select
------------
+------
 
-The ``ld2410`` select allows you to control your :doc:`ld2410`.
+The ``ld2410`` selects allow you to configure your sensor hardware.
 
 .. code-block:: yaml
 
     select:
       - platform: ld2410
         distance_resolution:
-          name: "distance resolution"
+          name: Distance resolution
         baud_rate:
-          name: "baud rate"
+          name: Baud rate
         light_function:
-          name: light function
+          name: Light function
         out_pin_level:
-          name: out pin level
+          name: Out pin level
 
 .. _ld2410-light-function:
 
 Configuration variables:
 ************************
 
-- **distance_resolution** (*Optional*): Control the gates distance resolution. Can be ``0.75m`` or ``0.2m``. Defaults to ``0.75m``.
+- **distance_resolution** (*Optional*): Control the gates distance resolution. Can be ``0.75m`` or ``0.2m``.
+  Defaults to ``0.75m``. All options from :ref:`Select <config-select>`.
+- **baud_rate** (*Optional*): Control the serial port baud rate. Defaults to ``256000``. Once changed, all sensors will
+  stop working until you reinstall your configuration with an updated :ref:`UART Component <uart>` configuration.
   All options from :ref:`Select <config-select>`.
-- **baud_rate** (*Optional*): Control the serial port baud rate. Defaults to ``256000``.
-  Once changed, all sensors will stop working until a fresh install with an updated :ref:`UART Component <uart>` configuration.
-  All options from :ref:`Select <config-select>`.
-- **light_function** (*Optional*): If set, will affect the OUT pin value, based on :ref:`light threshold<ld2410-light-threshold>`. Can be ``off``, ``low`` or ``above``. Defaults to ``off``.
+- **light_function** (*Optional*): If set, will affect the OUT pin value, based on
+  :ref:`light threshold<ld2410-light-threshold>`. Can be ``off``, ``low`` or ``above``. Defaults to ``off``.
   All options from :ref:`Select <config-select>`.
 - **out_pin_level** (*Optional*): Control OUT pin ``away`` value. Can be ``low`` or ``high``. Defaults to ``low``.
   All options from :ref:`Select <config-select>`.
-- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are using multiple components.
+- **ld2410_id** (*Optional*, :ref:`config-id`): Manually specify the ID for the :doc:`ld2410` component if you are
+  using multiple components.
 
 Automations
 -----------
@@ -451,15 +487,16 @@ To change the password from HA you can use the following example config:
 OUT pin
 -------
 
-In order to monitor the presence indicated by the component, with the :ref:`light function<ld2410-light-function>` taken
-under account, you can set up a :ref:`GPIO Binary Sensor <gpio-binary-sensor>`:
+If you connect the LD2410's ``OUT`` pin to a GPIO pin, you can set up a :ref:`GPIO Binary Sensor <gpio-binary-sensor>`
+to monitor the presence status indicated by the sensor, potentially including the state of its
+:ref:`light function<ld2410-light-function>`, if enabled:
 
 .. code-block:: yaml
 
     binary_sensor:
       - platform: gpio
         pin: GPIOXX
-        name: gpio out pin presence
+        name: GPIO Out pin presence
         device_class: presence
 
 

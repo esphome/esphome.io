@@ -41,22 +41,22 @@ Configuration variables:
 ESP32 configuration variables:
 **********************************
 
-- **rmt_symbols** (*Optional*, int): If ``use_dma`` is enabled, ``rmt_symbols`` represents the size of the driver's
-  internal DMA buffer. If DMA is not enabled, ``rmt_symbols`` determines the amount of RMT memory allocated to this
-  component. Memory is shared by all receivers and transmitters. On variants other than  ``ESP32`` and ``ESP32-S2``,
-  only half of the symbol memory is available to transmitters. Each symbol is 32 bits and contains two values.
+- **rmt_symbols** (*Optional*, int): When ``use_dma`` is enabled, this sets the size of the driver's internal DMA
+  buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
+  across all components and should be allocated in multiples of the block size. On the ``ESP32`` and ``ESP32-S2``
+  variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
 
   .. csv-table::
-      :header: "ESP32 Variant", "Memory Size", "Block Size"
+      :header: "ESP32 Variant", "Available Memory", "Block Size"
 
       "ESP32", "512 symbols", "64 symbols"
-      "ESP32-C3", "192 symbols", "48 symbols"
-      "ESP32-C5", "192 symbols", "48 symbols"
-      "ESP32-C6", "192 symbols", "48 symbols"
-      "ESP32-H2", "192 symbols", "48 symbols"
-      "ESP32-P4", "384 symbols", "48 symbols"
+      "ESP32-C3", "96 symbols", "48 symbols"
+      "ESP32-C5", "96 symbols", "48 symbols"
+      "ESP32-C6", "96 symbols", "48 symbols"
+      "ESP32-H2", "96 symbols", "48 symbols"
+      "ESP32-P4", "192 symbols", "48 symbols"
       "ESP32-S2", "256 symbols", "64 symbols"
-      "ESP32-S3", "384 symbols", "48 symbols"
+      "ESP32-S3", "192 symbols", "48 symbols"
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to ``1000000``.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled ``rmt_symbols`` controls
@@ -193,6 +193,7 @@ companies.
 .. _remote_transmitter-transmit_beo4:
 
 ``remote_transmitter.transmit_beo4`` **Action**
+***********************************************
 
 This :ref:`action <config-action>` sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
@@ -380,6 +381,7 @@ Configuration variables:
 .. _remote_transmitter-transmit_gobox:
 
 ``remote_transmitter.transmit_gobox`` **Action**
+************************************************
 
 This :ref:`action <config-action>` sends a command to a Go-Box via the IR transmitter.
 
@@ -1024,6 +1026,24 @@ Configuration variables:
 
     Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying ``repeat`` and ``wait time`` configuration variables.
 
+.. _remote_transmitter-digital_write:
+
+``remote_transmitter.digital_write`` **Action**
+***********************************************
+
+This :ref:`action <config-action>` sets the output value of the pin.
+
+.. code-block:: yaml
+
+    on_...:
+      - remote_transmitter.digital_write:
+          value: true
+
+Configuration variables:
+
+- **transmitter_id** (*Optional*, :ref:`config-id`): The remote transmitter to set the pin value on. Defaults to
+  the first one defined in the configuration.
+- **value** (**Required**, bool): The output value of the pin.
 
 .. _remote_transmitter-rc_switch-protocol:
 

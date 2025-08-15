@@ -22,29 +22,39 @@ In the terminal that comes up, check that Python is installed:
 
 .. code-block:: console
 
-    > python --version
+    python --version
+
+It should show something like:
+
+.. code-block:: console
+
     Python 3.11.13
-
-.. note::
-
-    Don't copy the ``>``. That's used to show that this is a command that goes
-    in the console, and to let you see what the expected results are (shown on
-    the next line without a ``>``)
 
 Looks good? You can go ahead and install ESPHome:
 
 .. code-block:: console
 
-    > pip3 install wheel
-    > pip3 install esphome
+    pip3 install wheel
+    pip3 install esphome
 
 And you should be good to go! You can test that things are properly installed
-with the following:
+with:
 
 .. code-block:: console
 
-    > esphome version
-    Version: 2025.7.0
+    esphome version
+
+It should show something like:
+
+.. code-block:: console
+
+    Version: 2025.8.0
+
+
+.. note::
+
+    You may additionally need to install git for the external components feature.
+    Download git from `the official link <https://git-scm.com/downloads>`_
 
 Mac
 ---
@@ -62,24 +72,30 @@ An easy way for installation is via `Homebrew <https://brew.sh/>`_:
 
 .. code-block:: console
 
-    $ brew install esphome
+    brew install esphome
 
 Verify the installation:
 
 .. code-block:: console
 
-    $ esphome version
-    Version: 2025.7.0
+    esphome version
 
-If you encounter any issues with Homebrew installation, please check the
-`ESPHome Homebrew Formula <https://formulae.brew.sh/formula/esphome>`_ page
-for additional information.
+It should show something like:
+
+.. code-block:: console
+
+    Version: 2025.8.0
+
+
 
 .. note::
 
-    Homebrew may not always provide the latest version immediately. Updating Homebrew will
-    automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to
-    install ESPHome.
+    - If you encounter any issues with Homebrew installation, please check the
+      `ESPHome Homebrew Formula <https://formulae.brew.sh/formula/esphome>`_ page
+      for additional information.
+    - Homebrew may not always provide the latest version immediately. Updating Homebrew will
+      automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to
+      install ESPHome.
 
 **pip**
 
@@ -114,15 +130,20 @@ least version 3.11:
 
 .. code-block:: console
 
-    $ python3 --version
+    python3 --version
+
+It should show something like:
+
+.. code-block:: console
+
     Python 3.11.13
 
 Looks good? Now create a virtual environment to contain ESPHome and it's dependencies.
 
 .. code-block:: console
 
-    $ python3 -m venv venv
-    $ source venv/bin/activate
+    python3 -m venv venv
+    source venv/bin/activate
 
 You may or may not see ``(venv)`` at the beginning of your prompt depending on your shell configuration. This indicates that you are in the virtual environment.
 
@@ -135,7 +156,7 @@ You can go ahead and install ESPHome:
 .. caution::
 
     Don't use ``sudo`` with pip. If you do, you'll run into trouble updating
-    your OS down the road.
+    your Distro down the road.
 
     For details, see `DontBreakDebian
     <https://wiki.debian.org/DontBreakDebian#A.27make_install.27_can_conflict_with_packages>`_.
@@ -143,14 +164,19 @@ You can go ahead and install ESPHome:
     advice in the article applies to all Linux distributions, not just Debian.
 
     Some people install ESPHome without the virtual environment, which can lead to issues with PATHs etc.
-    Non virtual environment installations are considered not "supported" as people end up having to know your exact system setup.
+    Installations without `venv` are considered not "supported" as people end up having to know your exact system setup.
 
-At this point, you should be able confirm that ESPHome has been successfully installed:
+At this point, you should be able to confirm that ESPHome has been successfully installed:
 
 .. code-block:: console
 
-    $ esphome version
-    Version: 2025.7.0
+    esphome version
+
+It should show something like:
+
+.. code-block:: console
+
+    Version: 2025.8.0
 
 If you get an error like "Command not found", you need to add the binary to
 your ``PATH`` using ``export PATH=$PATH:$HOME/.local/bin``.
