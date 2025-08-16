@@ -176,6 +176,14 @@ Here's an example of _some_ of the many prometheus metrics available:
     #TYPE esphome_update_entity_info gauge
     #TYPE esphome_update_entity_failed gauge
     esphome_update_entity_failed{id="firmware_update",area="Dev",node="devidfprometheus",name="Firmware Update"} 1
+    #TYPE esphome_text_value gauge
+    #TYPE esphome_text_failed gauge
+    esphome_text_failed{id="template_text",area="Dev",node="devidfprometheus",name="Template text"} 0
+    esphome_text_value{id="template_text",area="Dev",node="devidfprometheus",name="Template text",value="Hello World"} 1.0
+    #TYPE esphome_event_value gauge
+    #TYPE esphome_event_failed gauge
+    esphome_event_failed{id="template_event",area="Dev",node="devidfprometheus",name="Template Event"} 0
+    esphome_event_value{id="template_event",area="Dev",node="devidfprometheus",name="Template Event",last_event_type="custom_event_1"} 1.0
 
 
 See Also
