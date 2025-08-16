@@ -26,7 +26,7 @@ specified, or a custom init sequence can be provided.
 
 | Driver Chip | Typical Dimensions |
 |-------------|--------------------|
-| ST7701s     | 480x480            |
+| ST7701S     | 480x480            |
 | RPI         | varies             |
 
 The `RPI` driver chip represents displays without an SPI interface, so no init sequence is required.
