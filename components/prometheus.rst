@@ -99,7 +99,7 @@ Set the ``id`` and ``name`` label values of the Prometheus metric for the sensor
           name: "Angry Pixies"
 
 ``Example Metrics``
-*******************
+-------------------
 
 Here's an example of _some_ of the many prometheus metrics available:
 
