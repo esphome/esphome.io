@@ -39,6 +39,7 @@ submit a feature request (see FAQ).
 +---------------------------------------+---------------------+----------------------+
 | Hitachi                               | ``hitachi_ac344``,  | yes                  |
 |                                       | ``hitachi_ac424``   |                      |
+|                                       | ``hitachi_168bit``  |                      |
 +---------------------------------------+---------------------+----------------------+
 | :ref:`LG<climate_ir_lg>`              | ``climate_ir_lg``   | yes                  |
 +---------------------------------------+---------------------+----------------------+
@@ -173,6 +174,25 @@ The Daikin ARC remotes (``daikin_arc`` climate, ``daikin_arc417``, ``daikin_arc4
         name: "AC"
         sensor: room_temperature
         model: yan
+
+.. _hitachi_168bit:
+
+``hitachi_168bit`` **Climate**:
+
+The ``hitachi_168bit`` platform supports certain Hitachi AC units that use a 168-bit IR protocol (e.g., DHCRA31NEWH remote).
+
+- **model** (**Optional**, string): Hitachi might have a few different protocols depending on model. Defaults to HCRA31NEWH as this is the only one supported currently.
+
+  - ``HCRA31NEWH``
+
+.. code-block:: yaml
+
+    # Example configuration entry
+    climate:
+      - platform: hitachi_168bit
+              # adjust to match your AC unit!  hitachi_ac424 / hitachi_ac344
+        name: "Hitachi AC"
+        model: HCRA31NEWH
 
 .. _midea_ir:
 
