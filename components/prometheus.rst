@@ -101,7 +101,7 @@ Set the ``id`` and ``name`` label values of the Prometheus metric for the sensor
 ``Example Metrics``
 -------------------
 
-Here's an example of __some__ of the many prometheus metrics available:
+Here's an example of some of the many prometheus metrics available:
 
 .. code-block:: text
 
