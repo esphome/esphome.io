@@ -103,6 +103,8 @@ SPI configuration variables:
 - **polling_interval** (*Optional*, :ref:`config-time`): If ``interrupt_pin`` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.
+- **interface** (*Optional*,string): Controls which ESP-IDF SPI implementation should be used.
+  Value may be one of spi1, spi2 or spi3.
 
 If you are using a framework with the latest version, ESPHome provides
 an SPI-based Ethernet module without interrupt pin.
