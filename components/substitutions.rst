@@ -87,7 +87,7 @@ Lists can be indexed: ``${ unused_pins[2] }``
       scale: 1.5
       sensor_pin:
         number: 3
-        inverted: true      
+        inverted: true
       debug_label:
         width: 200
         height: 20
@@ -114,7 +114,7 @@ Lists can be indexed: ``${ unused_pins[2] }``
         name: Binary sensor on pin ${sensor_pin.number}
         pin: ${sensor_pin}
 
-Note that in other projects Jinja uses the ``{{ ... }}`` syntax for expression delimiters. 
+Note that in other projects Jinja uses the ``{{ ... }}`` syntax for expression delimiters.
 In ESPHome we have configured Jinja to use ``${...}`` instead, so it is the same as the
 existing substitution syntax and to avoid conflicts with Home Assistant's own use of Jinja.
 
@@ -141,6 +141,15 @@ library is exposed as a module:
 
 To see what mathematical functions ara available,
 refer to `Python math library <https://docs.python.org/3/library/math.html>`_ documentation.
+
+Built-in functions
+^^^^^^^^^^^^^^^^^^
+
+In addition to the Jinja expressions, ESPHome supports a number of built-in functions that can be used in substitutions.
+
+- ``ord`` Returns the Unicode code point for a given character. Example: ``ord("A") == 65``
+- ``chr`` Returns the character for a given Unicode code point. Example: ``chr(65) == "A"``
+- ``len`` Returns the length of the string. Example: ``len("Hello") == 5``
 
 .. _substitute-include-variables:
 
