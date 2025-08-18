@@ -190,7 +190,6 @@ The ``hitachi_168bit`` platform supports certain Hitachi AC units that use a 168
     # Example configuration entry
     climate:
       - platform: hitachi_168bit
-              # adjust to match your AC unit!  hitachi_ac424 / hitachi_ac344
         name: "Hitachi AC"
         model: HCRA31NEWH
 
