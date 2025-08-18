@@ -72,6 +72,9 @@ Frame Settings:
   is requesting a full stream. Defaults to ``0.1 fps``.
 - **frame_buffer_count** (*Optional*, int): The number of frame buffers to use when reading from the camera sensor.
   Must be between 1 and 2.  Defaults to ``1``.
+- **frame_buffer_location** (*Optional*, enum): The memory area used for storing the frame buffers. Defaults to ``PSRAM``.
+  - ``PSRAM``
+  - ``DRAM``
 
 Image Settings:
 
@@ -483,17 +486,15 @@ Configuration examples
 .. code-block:: yaml
 
     # Example configuration entry
-    external_components:
-      - source: github://pr#9630
-        components: [ esp32_camera ]
-
+    i2c:
+      - id: camera_i2c
+        sda: GPIO4
+        scl: GPIO5
     esp32_camera:
       external_clock:
         pin: GPIO15
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO4
-        scl: GPIO5
+      i2c_id: camera_i2c
       data_pins: [GPIO11, GPIO9, GPIO8, GPIO10, GPIO12, GPIO18, GPIO17, GPIO16]
       vsync_pin: GPIO6
       href_pin: GPIO7
@@ -531,13 +532,15 @@ Configuration examples
 
 .. code-block:: yaml
 
+    i2c:
+      - id: camera_i2c
+        sda: GPIO48
+        scl: GPIO47
     esp32_camera:
       external_clock:
         pin: GPIO3
         frequency: 20MHz
-      i2c_pins:
-        sda: GPIO48
-        scl: GPIO47
+      i2c_id: camera_i2c
       data_pins: [GPIO41, GPIO45, GPIO46, GPIO42, GPIO40, GPIO38, GPIO15, GPIO18]
       vsync_pin: GPIO1
       href_pin: GPIO2

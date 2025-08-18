@@ -156,6 +156,11 @@ Filters are applied in the order they are defined in your configuration.
           send_every: 15
       - throttle: 1s
       - throttle_average: 1s
+      - throttle_with_priority:
+          timeout: 1s
+          value:
+            - 42.0
+            - 43.0
       - heartbeat: 5s
       - debounce: 0.1s
       - timeout: 1min
@@ -208,6 +213,8 @@ Filters are applied in the order they are defined in your configuration.
 .. include:: sensor-filter-throttle.rst
 
 .. include:: sensor-filter-throttle_average.rst
+
+.. include:: sensor-filter-throttle_with_priority.rst
 
 .. include:: sensor-filter-timeout.rst
 

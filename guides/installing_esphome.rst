@@ -28,7 +28,7 @@ It should show something like:
 
 .. code-block:: console
 
-    Python 3.10.1
+    Python 3.11.13
 
 Looks good? You can go ahead and install ESPHome:
 
@@ -48,7 +48,7 @@ It should show something like:
 
 .. code-block:: console
 
-    Version: 2025.5.2
+    Version: 2025.8.0
 
 
 .. note::
@@ -84,7 +84,7 @@ It should show something like:
 
 .. code-block:: console
 
-    Version: 2025.5.2
+    Version: 2025.8.0
 
 
 
@@ -93,18 +93,18 @@ It should show something like:
     - If you encounter any issues with Homebrew installation, please check the
       `ESPHome Homebrew Formula <https://formulae.brew.sh/formula/esphome>`_ page
       for additional information.
-    - Homebrew may not always provide the latest version immediately. Updating Homebrew will 
-      automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to 
+    - Homebrew may not always provide the latest version immediately. Updating Homebrew will
+      automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to
       install ESPHome.
 
 **pip**
 
 For the latest version, use the pip installation. This may be more difficult to set up
-and may need additional dependencies and path settings. Setting up a virtual environment is 
+and may need additional dependencies and path settings. Setting up a virtual environment is
 highly recommended. If you are not familiar with Python virtual environments, Homebrew
 may be easier.
 
-You will require Python 3.10 or newer. While your Mac may have a version of Python installed it may not be up-to-date.
+You will require Python 3.11 or newer. While your Mac may have a version of Python installed it may not be up-to-date.
 Python can be installed from the `official site <https://www.python.org/downloads>`_
 or with Homebrew. Once Python is installed, create and activate a virtual environment and install ESPHome with pip:
 
@@ -126,7 +126,7 @@ Linux
 -----
 
 Your distribution probably already has Python installed. Confirm that it is at
-least version 3.10:
+least version 3.11:
 
 .. code-block:: console
 
@@ -136,7 +136,7 @@ It should show something like:
 
 .. code-block:: console
 
-    Python 3.10.1
+    Python 3.11.13
 
 Looks good? Now create a virtual environment to contain ESPHome and it's dependencies.
 
@@ -176,7 +176,7 @@ It should show something like:
 
 .. code-block:: console
 
-    Version: 2025.5.2
+    Version: 2025.8.0
 
 If you get an error like "Command not found", you need to add the binary to
 your ``PATH`` using ``export PATH=$PATH:$HOME/.local/bin``.

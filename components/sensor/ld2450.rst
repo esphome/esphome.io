@@ -47,7 +47,6 @@ properly support the default 256000 baud rate of the LD2450 module.
     # ld2450 configuration
     ld2450:
       id: ld2450_radar
-      throttle: 1000ms
 
 Configuration variables:
 ************************
@@ -55,8 +54,6 @@ Configuration variables:
 - **id** (*Optional*, :ref:`config-id`): Manually specify the ID for this :doc:`ld2450` component.
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the :ref:`UART Component <uart>` to use.
   Required if you have multiple UARTs configured.
-- **throttle** (*Optional*, int): Time in milliseconds to control the rate of data updates. Defaults to ``1000ms``.
-
 
 .. _ld2450-binary-sensors:
 
@@ -87,6 +84,20 @@ Configuration variables:
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
 - **has_still_target** (*Optional*): True if a still target is detected.
   All options from :ref:`Binary Sensor <config-binary_sensor>`.
+
+.. note::
+
+    By default, each of the :doc:`Binary Sensor </components/binary_sensor/index>` components above includes the
+    following :ref:`filter<binary_sensor-filters>` by default to prevent flooding Home Assistant with state updates:
+
+    .. code-block:: yaml
+
+        - settle: 1000ms
+    
+    If you have defined other filters, this default will be overridden; you may of course add it back to your custom
+    filter(s) as above if you wish.
+    
+    To remove the default filter for any given binary sensor instance, add ``filters: []`` to its configuration.
 
 .. _ld2450-sensors:
 
@@ -205,6 +216,23 @@ Configuration variables:
       :ref:`Sensor <config-sensor>`.
     - **moving_target_count** (*Optional*, int): Count of moving targets in the zone. All options from
       :ref:`Sensor <config-sensor>`.
+
+.. note::
+
+    By default, each of the :doc:`Sensor </components/sensor/index>` components above includes the following
+    :ref:`filters<sensor-filters>` by default to prevent flooding Home Assistant with state updates:
+
+    .. code-block:: yaml
+
+        - timeout:
+            timeout: 1s
+            value: last
+        - throttle_with_priority: 1000ms
+    
+    If you have defined other filters, this default will be overridden; you may of course add it back to your custom
+    filter(s) as above if you wish.
+    
+    To remove the default filters for any given sensor instance, add ``filters: []`` to its configuration.
 
 .. _ld2450-switch:
 
