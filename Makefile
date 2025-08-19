@@ -1,6 +1,10 @@
 .PHONY: clean live-html check-links anchors production convert-from-rst convert-branch-in-place directories netlify repo-data all
 
-PAGEFIND=npx pagefind@1.3.0
+SHELL := bash
+.SHELLFLAGS := -euo pipefail -c
+
+
+PAGEFIND=npx --yes pagefind@1.3.0
 
 export HUGO_PARAMS_COMMIT_HASH=$(shell git rev-parse --short HEAD)
 export HUGO_PARAMS_COMMIT_TITLE=$(shell git log -1 --pretty=%s)
