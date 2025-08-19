@@ -1984,6 +1984,7 @@ Contributors
 - `Simon (@theOzzieRat) <https://github.com/theOzzieRat>`__
 - `Brian Levinsen (@therealeldaria) <https://github.com/therealeldaria>`__
 - `Vladimir Kuznetsov (@theshut) <https://github.com/theshut>`__
+- `thesleepybanana (@thesleepybanana) <https://github.com/thesleepybanana>`__
 - `thevogoncoder (@thevogoncoder) <https://github.com/thevogoncoder>`__
 - `Steve Scott (@thewishy) <https://github.com/thewishy>`__
 - `Zachery Notz (@TheZackCodec) <https://github.com/TheZackCodec>`__
@@ -2207,4 +2208,4 @@ Contributors
 - `Christian Zufferey (@zuzu59) <https://github.com/zuzu59>`__
 - `Zynth-dev (@Zynth-dev) <https://github.com/Zynth-dev>`__
 
-*This page was last updated August 14, 2025.*
+*This page was last updated August 19, 2025.*
