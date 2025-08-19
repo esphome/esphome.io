@@ -135,9 +135,9 @@ the second parameter, if true, will have the content initially opened.
 ### `docref`
 Creates a link to another page in the documentation with proper handling of anchors.
 ``` text
-{{< docref "components/sensor/dht" >}}                     <!-- Uses the target page title as link text -->
-{{< docref "components/sensor/dht" "DHT Sensor Guide" >}}  <!-- Uses custom text for the link -->
-{{< docref "components/sensor/dht#configuration" >}}       <!-- Links to a specific anchor on the page -->
+{{< docref "/components/sensor/dht" >}}                     <!-- Uses the target page title as link text -->
+{{< docref "/components/sensor/dht" "DHT Sensor Guide" >}}  <!-- Uses custom text for the link -->
+{{< docref "/components/sensor/dht#configuration" >}}       <!-- Links to a specific anchor on the page -->
 ```
 
 ### `img`
@@ -236,7 +236,7 @@ This is the help option.
 Creates a link to a GitHub pull request.
 ``` text
 {{< pr number="123" >}}                <!-- Links to esphome/esphome#123 -->
-{{< pr number="123" repo="docs" >}}    <!-- Links to esphome/docs#123 -->
+{{< pr number="123" repo="esphome-docs" >}}    <!-- Links to esphome/esphome-docs#123 -->
 ```
 
 ### `redirect`
