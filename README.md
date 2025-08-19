@@ -272,7 +272,7 @@ The script performs the following operations:
 
 ### Converting a PR that was written with RST
 
-See the `script/convert-pr.py` script for converting a PR that was written with RST.
+See the `script/convert-pr.sh` script for converting a PR that was written with RST.
 
 ## Development
 
