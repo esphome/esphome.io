@@ -8,6 +8,8 @@
 {{ $src = strings.TrimPrefix "images/" $src }}
 {{- $componentPath := printf "%s/images/%s" (path.Dir $page.File.Path) $src -}}
 {{- $globalPath := printf "images/%s" $src -}}
+{{ $maxwidth := .maxwidth | default 1500 }}
+{{ $classes := .classes  | default "" }}
 
 {{ $image := resources.Get $componentPath }}
 {{ if not $image }}
@@ -21,7 +23,27 @@
 {{ end }}
 
 {{- if and $image (in (split ".svg,.avif" ",") $ext) -}}
-    <img src="{{ $image.RelPermalink }}" {{ if .width }}width="{{.width}}" {{ end }} alt="{{ .alt }}" {{ $style }}/>
+    {{ $imgclasses := printf "w-100 h-100 %s" $classes | safeHTMLAttr }}
+    <figure role="none" style="max-width: {{ $maxwidth }}px;" class="{{ $classes }}">
+        {{ if .href }}
+        <a href='{{ .href }}'>
+            {{ end }}
+            <img class="{{ $imgclasses }}" src="{{ $image.RelPermalink }}"
+                 fetchpriority="high"
+                 {{ if $style }}{{ $style }}{{ end }}
+                 {{ if .width }}width="{{.width}}" {{ end }}
+                 {{ if .height }}height="{{.height}}" {{ end }}
+                 alt="{{ .alt }}"/>
+            {{ if .href }}
+        </a>
+        {{ end }}
+        {{ with $caption }}
+            <figcaption>
+                <em>{{ . | markdownify | safeHTML }}</em>
+            </figcaption>
+        {{ end }}
+    </figure>
+
 {{ end }}
 {{ if and $image (in (split ".jpeg,.jpg,.png,.webp" ",") $ext) }}
         {{ if isset . "fill" }}
@@ -29,7 +51,6 @@
         {{ end }}
         {{ $placeholder := ($image.Resize $thumbSize) | images.Filter (images.GaussianBlur 1) }}
         {{ $src_set := slice (print $image.RelPermalink " " $image.Width "w") }}
-        {{ $maxwidth := .maxwidth | default 1500 }}
         {{ if gt $maxwidth $image.Width }}
             {{ $maxwidth = $image.Width }}
         {{ end }}
@@ -49,7 +70,7 @@
                     display: none;
                 }
             </style>
-            <figure class="{{ .classes }}">
+            <figure class="{{ $classes }}">
                 {{ if .href }}
                 <a href='{{ .href }}'>
                     {{ end }}
@@ -65,18 +86,19 @@
             </figure>
         </noscript>
         {{ $srclist := delimit $src_set ", " }}
-        {{ $classes := printf "lazyload w-100 h-100 %s" .classes | safeHTMLAttr }}
-        <figure role="none" style="max-width: {{ $maxwidth }}px;" class="{{ .classes }} lazy">
+        {{ $imgclasses := printf "lazyload w-100 h-100 %s" $classes | safeHTMLAttr }}
+        <figure role="none" style="max-width: {{ $maxwidth }}px;" class="{{ $classes }} lazy">
             {{ if .href }}
                 <a href='{{ .href }}'>
             {{ end }}
-                <img class="{{ $classes }}" data-sizes="auto" src="{{ $image.RelPermalink }}" {{ if .width }}width="{{.width}}" {{ end }}
+                <img class="{{ $imgclasses }}" data-sizes="auto" src="{{ $image.RelPermalink }}"
                      fetchpriority="high"
                      {{ if $style }}{{ $style }}{{ end }}
                      srcset="data:image/jpeg;base64,{{ $placeholder.Content | base64Encode }}"
                      data-src="{{ $image.RelPermalink }}"
                      data-srcset="{{ $srclist }}"
-                     width="{{ $image.Width }}" height="{{ $image.Height }}"
+                     {{ if .width }}width="{{.width}}" {{ end }}
+                     {{ if .height }}height="{{.height}}" {{ end }}
                      alt="{{ .alt }}"/>
                 {{ if .href }}
             </a>
