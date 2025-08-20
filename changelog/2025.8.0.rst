@@ -175,6 +175,7 @@ Full list of changes
 New Features
 ^^^^^^^^^^^^
 
+- [output] Add ``set_min_power`` & ``set_max_power`` actions for ``FloatOutput`` :esphomepr:`8934` by :ghuser:`DjordjeMandic` (new-feature)
 - [nrf52] add adc :esphomepr:`9321` by :ghuser:`tomaszduda23` (new-feature)
 - [espnow] Basic communication between ESP32 devices :esphomepr:`9582` by :ghuser:`nielsnl68` (new-component) (new-feature)
 - [esp32] Add config option to execute from PSRAM :esphomepr:`9907` by :ghuser:`clydebarrow` (new-feature)
@@ -191,12 +192,14 @@ New Features
 - [sensor] Extend timeout filter with option to return last value received :esphomepr:`10115` by :ghuser:`kbx81` (new-feature)
 - [substitutions] Add some safe built-in functions to jinja parsing :esphomepr:`10178` by :ghuser:`jesserockz` (new-feature)
 - [ld2412] New component :esphomepr:`9075` by :ghuser:`Rihan9` (new-component) (new-feature) (new-platform)
+- [entity] Allow ``device_id`` to be blank on entities :esphomepr:`10217` by :ghuser:`jesserockz` (new-feature)
 
 New Components
 ^^^^^^^^^^^^^^
 
 - [nrf52, core] nrf52 core based on zephyr :esphomepr:`7049` by :ghuser:`tomaszduda23` (new-component)
 - Add runtime_stats component for performance debugging and analysis :esphomepr:`9386` by :ghuser:`bdraco` (new-component)
+- [mipi] Refactor constants and functions :esphomepr:`9853` by :ghuser:`clydebarrow` (new-component)
 - [mipi_dsi] New display driver for P4 DSI :esphomepr:`9403` by :ghuser:`clydebarrow` (new-component) (new-platform)
 - [espnow] Basic communication between ESP32 devices :esphomepr:`9582` by :ghuser:`nielsnl68` (new-component) (new-feature)
 - [ld2412] New component :esphomepr:`9075` by :ghuser:`Rihan9` (new-component) (new-feature) (new-platform)
@@ -223,31 +226,6 @@ Breaking Changes
 - [bluetooth_proxy] Remove V1 connection support :esphomepr:`10107` by :ghuser:`bdraco` (breaking-change)
 - [esp32] Add IDF log_level option :esphomepr:`10134` by :ghuser:`swoboda1337` (breaking-change)
 - [ld2450] Replace ``throttle`` with native filters :esphomepr:`10196` by :ghuser:`kbx81` (breaking-change)
-
-Beta Changes
-^^^^^^^^^^^^
-
-- [entity] Allow ``device_id`` to be blank on entities :esphomepr:`10217` by :ghuser:`jesserockz` (new-feature)
-- [espnow] Set state to enabled before adding initial peers :esphomepr:`10225` by :ghuser:`jesserockz`
-- [psram] allow disabling :esphomepr:`10224` by :ghuser:`ssieb`
-- Bump aioesphomeapi from 38.2.1 to 39.0.0 :esphomepr:`10222` by :ghuser:`dependabot[bot]`
-- Bump esphome-dashboard from 20250514.0 to 20250814.0 :esphomepr:`10227` by :ghuser:`dependabot[bot]`
-- [esp32_ble] Add ``USE_ESP32_BLE_UUID`` when advertising is desired :esphomepr:`10230` by :ghuser:`jesserockz`
-- Improve error reporting for add_library :esphomepr:`10226` by :ghuser:`stellar-aria`
-- [wifi] Automatically disable Enterprise WiFi support when EAP is not configured :esphomepr:`10242` by :ghuser:`bdraco`
-- [core] Trigger clean build when components are removed from configuration :esphomepr:`10235` by :ghuser:`bdraco`
-- [bluetooth_proxy] Remove redundant connection type check after V1 removal :esphomepr:`10208` by :ghuser:`bdraco`
-- [esp32_ble] Optimize BLE event memory usage by eliminating std::vector overhead :esphomepr:`10247` by :ghuser:`bdraco`
-- [web_server] fix cover_all_json_generator wrong detail :esphomepr:`10252` by :ghuser:`RFDarter`
-- [esp32_ble] Store GATTC/GATTS param and small data inline to nearly eliminate heap allocations :esphomepr:`10249` by :ghuser:`bdraco`
-- [senseair] Discard 0 ppm readings with "Out Of Range" bit set. :esphomepr:`10275` by :ghuser:`raineth`
-- [core] Fix post-OTA logs display when using esphome run and MQTT :esphomepr:`10274` by :ghuser:`raineth`
-- [core] Fix scheduler race condition where cancelled items still execute :esphomepr:`10268` by :ghuser:`bdraco`
-- [esp32] Write variant to sdkconfig file :esphomepr:`10267` by :ghuser:`jesserockz`
-- [nextion] Don't include terminating NUL in nextion text_sensor states :esphomepr:`10273` by :ghuser:`raineth`
-- [atm90e32] Only read 1 register per SPI transaction per datasheet. :esphomepr:`10258` by :ghuser:`raineth`
-- [pipsolar] fix faults_present, fix update interval :esphomepr:`10289` by :ghuser:`patagonaa`
-- [bluetooth_proxy] Fix connection slot race by deferring slot release until GATT close :esphomepr:`10303` by :ghuser:`bdraco`
 
 All changes
 ^^^^^^^^^^^
@@ -456,7 +434,7 @@ All changes
     - [heatpumpir] Fix issue with IRremoteESP8266 being included on ESP32 :esphomepr:`9950` by :ghuser:`swoboda1337`
     - Openthread add Teardown :esphomepr:`9275` by :ghuser:`rwrozelle`
     - [gps] Fix slow parsing :esphomepr:`9953` by :ghuser:`kbx81`
-    - [output] Add ``set_min_power`` & ``set_max_power`` actions for ``FloatOutput`` :esphomepr:`8934` by :ghuser:`DjordjeMandic`
+    - [output] Add ``set_min_power`` & ``set_max_power`` actions for ``FloatOutput`` :esphomepr:`8934` by :ghuser:`DjordjeMandic` (new-feature)
     - [esp32] Bump platform to 54.03.21-1 and add support for tagged releases :esphomepr:`9926` by :ghuser:`swoboda1337`
     - [adc] Enable ADC on ESP32-P4 :esphomepr:`9954` by :ghuser:`clydebarrow`
     - [esp32] Fix post build :esphomepr:`9951` by :ghuser:`jesserockz`
@@ -544,7 +522,7 @@ All changes
     - [select] Fix new_select() not forwarding constructor args while preserving keyword-only options parameter :esphomepr:`10036` by :ghuser:`Copilot`
     - [mcp23xxx] Use CachedGpioExpander :esphomepr:`10078` by :ghuser:`jesserockz`
     - update espressif's esp32-camera library to 2.1.1 :esphomepr:`10090` by :ghuser:`RubenKelevra`
-    - [esp32_ble_tracker] Add missing USE_ESP32_BLE_DEVICE guard for ``already_discovered_`` member :esphomepr:`10085` by :ghuser:`bdraco`
+    - [esp32_ble_tracker] Add missing ``USE_ESP32_BLE_DEVICE`` guard for ``already_discovered_`` member :esphomepr:`10085` by :ghuser:`bdraco`
     - [esp32_ble_tracker] Refactor loop() method for improved readability and performance :esphomepr:`10074` by :ghuser:`bdraco`
     - [esp32_rmt_led_strip] Work around IDFGH-16195 :esphomepr:`10093` by :ghuser:`swoboda1337`
     - [bme680] Eliminate warnings due to unused functions :esphomepr:`9735` by :ghuser:`pgolawsk`
@@ -601,9 +579,26 @@ All changes
     - [ld2450] Replace ``throttle`` with native filters :esphomepr:`10196` by :ghuser:`kbx81` (breaking-change)
     - [bme280_base, bmp280_base] add reasons to the fails, clean up logging :esphomepr:`10209` by :ghuser:`ssieb`
     - [bluetooth_proxy] Remove ESPBTUUID dependency to save 296 bytes of flash :esphomepr:`10213` by :ghuser:`bdraco`
+    - [CI] Fix CI job failures for PRs with >300 changed files :esphomepr:`10215` by :ghuser:`bdraco`
     - [entity] Allow ``device_id`` to be blank on entities :esphomepr:`10217` by :ghuser:`jesserockz` (new-feature)
     - [espnow] Set state to enabled before adding initial peers :esphomepr:`10225` by :ghuser:`jesserockz`
     - [psram] allow disabling :esphomepr:`10224` by :ghuser:`ssieb`
+    - [esp32_ble] Add ``USE_ESP32_BLE_UUID`` when advertising is desired :esphomepr:`10230` by :ghuser:`jesserockz`
+    - Improve error reporting for add_library :esphomepr:`10226` by :ghuser:`stellar-aria`
+    - [wifi] Automatically disable Enterprise WiFi support when EAP is not configured :esphomepr:`10242` by :ghuser:`bdraco`
+    - [core] Trigger clean build when components are removed from configuration :esphomepr:`10235` by :ghuser:`bdraco`
+    - [bluetooth_proxy] Remove redundant connection type check after V1 removal :esphomepr:`10208` by :ghuser:`bdraco`
+    - [esp32_ble] Optimize BLE event memory usage by eliminating std::vector overhead :esphomepr:`10247` by :ghuser:`bdraco`
+    - [web_server] fix cover_all_json_generator wrong detail :esphomepr:`10252` by :ghuser:`RFDarter`
+    - [esp32_ble] Store GATTC/GATTS param and small data inline to nearly eliminate heap allocations :esphomepr:`10249` by :ghuser:`bdraco`
+    - [senseair] Discard 0 ppm readings with "Out Of Range" bit set. :esphomepr:`10275` by :ghuser:`raineth`
+    - [core] Fix post-OTA logs display when using esphome run and MQTT :esphomepr:`10274` by :ghuser:`raineth`
+    - [core] Fix scheduler race condition where cancelled items still execute :esphomepr:`10268` by :ghuser:`bdraco`
+    - [esp32] Write variant to sdkconfig file :esphomepr:`10267` by :ghuser:`jesserockz`
+    - [nextion] Don't include terminating NUL in nextion text_sensor states :esphomepr:`10273` by :ghuser:`raineth`
+    - [atm90e32] Only read 1 register per SPI transaction per datasheet. :esphomepr:`10258` by :ghuser:`raineth`
+    - [pipsolar] fix faults_present, fix update interval :esphomepr:`10289` by :ghuser:`patagonaa`
+    - [bluetooth_proxy] Fix connection slot race by deferring slot release until GATT close :esphomepr:`10303` by :ghuser:`bdraco`
 
 Dependency Changes
 ^^^^^^^^^^^^^^^^^^
