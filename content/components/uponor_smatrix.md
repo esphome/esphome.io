@@ -52,15 +52,13 @@ With that you can then add `climate` or `sensor` components for the detected dev
 uponor_smatrix:
   address: 0x110B
 
+climate:
+  - platform: uponor_smatrix
+    address: 0xDE13
+    name: Thermostat Living Room
 ```
 
-    climate:
-
-- platform: uponor_smatrix
-        address: 0xDE13
-        name: Thermostat Living Room
-
-## Controller/Hub component
+## Component/Hub
 
 The main `uponor_smatrix` component is responsible for the communication with the controller and thermostats and distributes data to the climate and sensor components described below.
 
@@ -88,7 +86,7 @@ You can safely leave out those parameters in almost all cases.
 
 {{< /note >}}
 
-## Climate component
+## Climate
 
 ```yaml
 climate:
@@ -104,7 +102,7 @@ climate:
 - **uponor_smatrix_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `uponor_smatrix` hub component if you want to use multiple hub components on one ESPHome device.
 - All options from [Climate](#config-climate).
 
-## Sensor component
+## Sensor
 
 ```yaml
 sensor:

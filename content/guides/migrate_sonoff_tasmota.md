@@ -40,9 +40,9 @@ The build process of the firmware will start and the image will be automatically
 
 From your configuration files folder, run
 
-::
-
-  esphome compile <MY_DEVICE>.yaml
+```shell
+esphome compile <MY_DEVICE>.yaml
+```
 
 replacing `<MY_DEVICE>.yaml` with your configuration file and navigate to the `<MY_DEVICE>/.pioenvs/<MY_DEVICE>/` folder.
 
@@ -75,11 +75,11 @@ the dimming functionality will work as usual and no more power cycles are requir
 
 ## About image size and ESP8266
 
-    ESP8266 has very limited storage space. Trying to upload a large image will cause the
-    upgrade process to fail.
+ESP8266 has very limited storage space. Trying to upload a large image will cause the
+upgrade process to fail.
 
-    Tasmota 8.2 introduced upgrading using gzipped binaries which are smaller in size and
-    make the upgrade process easier.
+Tasmota 8.2 introduced upgrading using gzipped binaries which are smaller in size and
+make the upgrade process easier.
 
 - If you are using Tasmota 8.2 or later (recommended) you probably will want to compress the firmware generated from ESPHome with `gzip` before uploading it.
 
@@ -93,10 +93,10 @@ the dimming functionality will work as usual and no more power cycles are requir
 
 You may also use Tasmota console to invoke the upgrade with just two commands:
 
-::
-
-  OtaUrl http://<MY-ESPHOME:6052>/download.bin?configuration=<MY_DEVICE>.yaml&file=firmware.bin&compressed=1
-  Upgrade 1
+```text
+OtaUrl http://<MY-ESPHOME:6052>/download.bin?configuration=<MY_DEVICE>.yaml&file=firmware.bin&compressed=1
+Upgrade 1
+```
 
 replacing `http://<MY-ESPHOME:6052>/` with the host and port of your ESPHome installation and `<MY_DEVICE>.yaml`
 with your device configuration file name.

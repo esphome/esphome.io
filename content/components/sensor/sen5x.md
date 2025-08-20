@@ -121,7 +121,9 @@ sensor:
 
   The compensated ambient temperature is calculated as follows:
 
-      T_Ambient_Compensated = T_Ambient + (slope*T_Ambient) + offset
+  ```c++
+  T_Ambient_Compensated = T_Ambient + (slope * T_Ambient) + offset
+  ```
 
   Where slope and offset are the values set with this command, smoothed with the specified time constant. The time constant is how fast the slope and offset are applied. After the specified value in seconds, 63% of the new slope and offset are applied.
   More details about the tuning of these parameters are included in the application note [Temperature Acceleration and Compensation Instructions for SEN5x.](https://sensirion.com/media/documents/9B9DE2A7/61E957EB/Sensirion_Temperature_Acceleration_and_Compensation_Instructions_SEN.pdf)
