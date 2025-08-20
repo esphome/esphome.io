@@ -9,7 +9,7 @@ params:
 
 
 
-The `color_temperature`   light platform creates a Color Temperature
+The `color_temperature` light platform creates a Color Temperature
 light from 2 [float output components](#output). One channel controls the LED temperature,
 and the other channel controls the brightness.
 
@@ -24,7 +24,8 @@ light:
     warm_white_color_temperature: 2000 K
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **color_temperature** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the color temperature. It returns a float from 0 to 1 in the mired scale. Hereby 0 corresponds to the cold white temperature and 1 to the warm white temperature.
 - **brightness** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the brightness. It returns a float from 0 to 1.
@@ -51,4 +52,3 @@ light:
 - {{< docref "/components/output/pca9685" >}}
 - {{< docref "/components/output/tlc59208f" >}}
 - {{< apiref "color_temperature/ct_light_output.h" "color_temperature/ct_light_output.h" >}}
-

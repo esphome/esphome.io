@@ -38,8 +38,8 @@ As many of the details on here a predicated on existing installations and knowle
 Do NOT connect your device to electricity when programming it.
 Take care working with electricity at all times
 
-
 {{< /warning >}}
+
 ## 1. Configuration
 
 Here is the configuration with the basic operations outlined above.
@@ -134,6 +134,7 @@ time:
           - switch.turn_off: esp_fishpond_pump
 
 ```
+
 ### 2. Programming
 
 Follow the standard way of uploading to your Sonoff Basic.
@@ -158,6 +159,7 @@ Both options USB and OTA are done by running the command:
 esphome <some-yaml-file> run
 
 ```
+
 ### 3. Prepping and installing
 
 * Ensure power is switched off.
@@ -173,13 +175,11 @@ Connecting it
 * Test all connections are securely fastened.
 * You can toggle the on/off of the pump by pressing the toggle button.
 
-
 Once the pump is running changing the position of the float in the float sensor will cause the Sonoff to stop the pump.
 
 {{< img src="sonoff-fishpond-pump-gpio14.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
 Wires connected for easier access to connect and disconnect water level sensor
-
 
 {{< img src="sonoff-fishpond-pump-and-sensor.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
@@ -198,5 +198,5 @@ You can now add your device to home assistant via the configurations page and un
 
 ## See Also
 
-- [Flashing Sonoff Basic](https://randomnerdtutorials.com/how-to-flash-a-custom-firmware-to-sonoff/).
-- [Adding ESPHome to Home Assistant](https://www.home-assistant.io/components/esphome/).
+* [Flashing Sonoff Basic](https://randomnerdtutorials.com/how-to-flash-a-custom-firmware-to-sonoff/).
+* [Adding ESPHome to Home Assistant](https://www.home-assistant.io/components/esphome/).

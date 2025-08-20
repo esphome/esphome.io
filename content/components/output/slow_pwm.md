@@ -21,6 +21,7 @@ lights), see these outputs:
 - ESP8266: {{< docref "esp8266_pwm/" >}}
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 output:
@@ -30,28 +31,29 @@ output:
     period: 15s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
 - **period** (**Required**, [Time](#config-time)): The duration of each cycle. (i.e. a 10s
   period at 50% duty would result in the pin being turned on for 5s, then off for 5s)
 - **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to pulse.
-- **state_change_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is switched. If a lambda is used the boolean `state`   parameter holds the new status.
+- **state_change_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is switched. If a lambda is used the boolean `state` parameter holds the new status.
 - **turn_on_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned on. Can be used to control for example a switch or output component.
-- **turn_off_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned off. `turn_on_action`   and `turn_off_action`   must be configured together.
+- **turn_off_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_action` must be configured together.
 - **restart_cycle_on_state_change** (*Optional*, boolean): Restart a timer of a cycle
   when new state is set. Defaults to `false`  .
 
 - All other options from [Output](#config-output).
 
-
 {{< note >}}
-- If `pin`   is defined the GPIO pin state is writen before any action is executed.
-- `state_change_action`   and `turn_on_action`  /`turn_off_action`   can be used togther. `state_change_action`   is called before `turn_on_action`  /`turn_off_action`  . It's recommended to use either `state_change_action`   or `turn_on_action`  /`turn_off_action`   to change the state of an output. Using both automations together is only recommended for monitoring.
 
+- If `pin` is defined the GPIO pin state is writen before any action is executed.
+- `state_change_action` and `turn_on_action`  /`turn_off_action` can be used togther. `state_change_action` is called before `turn_on_action`  /`turn_off_action`  . It's recommended to use either `state_change_action` or `turn_on_action`  /`turn_off_action` to change the state of an output. Using both automations together is only recommended for monitoring.
 
 {{< /note >}}
-## Example:
+
+## Example
 
 ```yaml
 output:
@@ -66,6 +68,7 @@ output:
       - output.turn_off: output1
 
 ```
+
 {{< note >}}
 If the duty cycle is not constrained to a maximum value, the
 {{< docref "/components/output/sigma_delta_output" >}} component offers faster updates and
@@ -74,6 +77,7 @@ need some time to fully change between on and off, like eletric thermal
 actuator heads or fans.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/output" >}}
@@ -84,4 +88,3 @@ actuator heads or fans.
 - {{< docref "/components/fan/speed" >}}
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "slow_pwm/slow_pwm_output.h" "slow_pwm/slow_pwm_output.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `display`   component houses ESPHome's powerful rendering and display
+The `display` component houses ESPHome's powerful rendering and display
 engine. Fundamentally, there are these types of displays:
 
 - Character displays like {{< docref "max7219" "7-Segment displays" >}} or
@@ -25,7 +25,7 @@ For graphical displays, which offer the greatest flexibility, there are two opti
 
 {{< anchor "display-configuration" >}}
 
-## Configuration variables:
+## Configuration variables
 
 All display components inherit these configuration variables.
 
@@ -36,11 +36,10 @@ All display components inherit these configuration variables.
 
 All *graphical* displays also inherit these configuration variables.
 
-- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`   if a lambda or pages are configured, false otherwise.
-- **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to `false`  . If set, any code in the `lambda`   config option will be ignored.
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true` if a lambda or pages are configured, false otherwise.
+- **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to `false`  . If set, any code in the `lambda` config option will be ignored.
 - **rotation** (*Optional*, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to `0`  .
 - **pages** (*Optional*, list): Pages configuration - see below.
-
 
 {{< anchor "display-engine" >}}
 
@@ -66,11 +65,11 @@ please see [Troubleshooting](#troubleshooting) below.
 
 {{< /note >}}
 So, first a few basics: When setting up a display platform in ESPHome there will be a configuration
-option called `lambda:`   which will be called every time ESPHome wants to re-render the display.
+option called `lambda:` which will be called every time ESPHome wants to re-render the display.
 In each cycle, the display is automatically cleared before the lambda is executed. You can disable
 this behavior by setting `auto_clear_enabled: false`  .
 In the lambda, you can write code like in any [lambda](#config-lambda) in ESPHome. Display
-lambdas are additionally passed a variable called `it`   which represents the rendering engine object.
+lambdas are additionally passed a variable called `it` which represents the rendering engine object.
 
 {{< img src="display_rendering_line.png" alt="Image" class="align-center" >}}
 
@@ -85,6 +84,7 @@ display:
       it.line(0, 0, 50, 50);
 
 ```
+
 {{< note >}}
 Lambdas are essentially just a lightly modified version of C++. So don't forget to end each line
 with a semicolon (`;`  ). Otherwise you will be greeted by a long error message at the compilation stage.
@@ -92,13 +92,13 @@ with a semicolon (`;`  ). Otherwise you will be greeted by a long error message 
 {{< /note >}}
 If you compile and upload the configuration above, you should see a black (or white, depending on the display)
 line which starts at the top left and goes a few pixels down at a 45° angle. (If it's in another corner, use the
-`rotation:`   option to rotate the display to your liking)
+`rotation:` option to rotate the display to your liking)
 
 This already highlights one of the things you must learn before diving into writing your own custom display code:
 The **top left** is always the origin of the pixel coordinate system. Also, all points in this coordinate system
-are a pair of integers like `50, 50`   which represent the shift to the right and shift downwards. So, in other words,
+are a pair of integers like `50, 50` which represent the shift to the right and shift downwards. So, in other words,
 x always represents the horizontal axis (width) and y the vertical axis (height). And the convention in
-the rendering engine is always first specify the `x`   coordinate and then the `y`   coordinate.
+the rendering engine is always first specify the `x` coordinate and then the `y` coordinate.
 
 ### Basic Shapes
 
@@ -144,8 +144,9 @@ display:
       // Need to rotate the polygon, or retrieve the coordinates of its vertices? Check the API!
 
 ```
+
 All the above methods can optionally also be called with an argument at the end which specifies in which
-color to draw. For monochrome displays, only `COLOR_ON`   (the default if color is not given) and `COLOR_OFF`   are supported.
+color to draw. For monochrome displays, only `COLOR_ON` (the default if color is not given) and `COLOR_OFF` are supported.
 
 ```yaml
 display:
@@ -161,6 +162,7 @@ display:
       it.draw_pixel_at(50, 60, COLOR_OFF);
 
 ```
+
 For color displays (e.g. TFT displays), you can use the Color class.
 
 {{< img src="display_rendering_colors.png" alt="Image" class="align-center" >}}
@@ -182,6 +184,7 @@ display:
       it.filled_circle(100, 32, 15, white);
 
 ```
+
 Additionally, you have access to two helper methods which will fetch the width and height of the display:
 
 ```yaml
@@ -196,6 +199,7 @@ display:
       it.filled_rectangle(0, it.get_height()/2, it.get_width(), it.get_height()/2, COLOR_OFF);
 
 ```
+
 You can view the full API documentation for the rendering engine in the "API Reference" in the See Also section.
 
 {{< anchor "display-static_text" >}}
@@ -215,10 +219,11 @@ display:
       it.print(0, 10, id(my_font), "Hello World!");
 
 ```
+
 By default, ESPHome will *align* the text at the top left. That means if you enter the coordinates
-`[0,10]`   for your text, the top left of the text will be at `[0,10]`  . If you want to draw some
+`[0,10]` for your text, the top left of the text will be at `[0,10]`  . If you want to draw some
 text at the right side of the display, it is however sometimes useful to choose a different **text alignment**.
-When you enter `[0,10]`   you're really telling ESPHome that it should position the **anchor point** of the text
+When you enter `[0,10]` you're really telling ESPHome that it should position the **anchor point** of the text
 at `[0,10]`  . When using a different alignment, like `TOP_RIGHT`  , the text will be positioned left of the anchor
 pointed, so that, as the name implies, the anchor point is a the *top right* corner of the text.
 
@@ -234,6 +239,7 @@ display:
       it.print(it.get_width(), 0, id(my_font), TextAlign::TOP_RIGHT, "Right aligned");
 
 ```
+
 As with basic shapes, you can also specify a color for the text:
 
 ```yaml
@@ -245,6 +251,7 @@ display:
       it.print(0, 0, id(my_font), COLOR_ON, "Left aligned");
 
 ```
+
 In case of fonts rendered at higher bit depths, the background color has to be specified after the text in order for antialiasing to work:
 
 ```yaml
@@ -256,6 +263,7 @@ display:
       it.print(0, 0, id(my_font_with_icons), COLOR_ON, TextAlign::CENTER, "Just\U000f05d4here. Already\U000F02D1this.", COLOR_OFF);
 
 ```
+
 {{< img src="display_rendering_text.png" alt="Image" class="align-center" >}}
 
 {{< anchor "display-printf" >}}
@@ -263,11 +271,11 @@ display:
 ### Formatted Text
 
 Static text by itself is not too impressive. What we really want is to display *dynamic* content like sensor values
-on the display!. That's where `printf`   comes in. `printf`   is a formatting engine from the C era and ESPHome
+on the display!. That's where `printf` comes in. `printf` is a formatting engine from the C era and ESPHome
 chose to use because ... well, I'm too lazy to create a fully-fledged format engine where the existing stuff
 is way better documented :)
 
-`printf`   can do way more stuff than you will probably ever need, but it's also quite simple for the basic stuff.
+`printf` can do way more stuff than you will probably ever need, but it's also quite simple for the basic stuff.
 For example, a printf call can look like this:
 
 ```yaml
@@ -284,31 +292,32 @@ display:
       // If the sensor has the value 30.02, the result will be: "The sensor value is: 30.0"
 
 ```
-As you can see, when you call `printf`   most of the string is printed as-is, but when this weird percent sign with some
+
+As you can see, when you call `printf` most of the string is printed as-is, but when this weird percent sign with some
 stuff after it is encountered, it is magically replaced by the argument after the format (here `id(my_sensor).state`  ).
 
-Every time you type a percent sign `%`   in a printf format string, it will treat the following letters as a format tag
+Every time you type a percent sign `%` in a printf format string, it will treat the following letters as a format tag
 until a so-called "specifier" is encountered (in this case `f`  ). You can read more about it
 [here](https://www.tutorialspoint.com/c_standard_library/c_function_printf.htm),
 but for ESPHome there are really just a few things you need to know.
 
-Let's break `%.1f`   down:
+Let's break `%.1f` down:
 
-- `%`   - initiate the format string
-- `.1`   - round the decimal number to `1`   digits after the decimal point.
-- `f`   - the specifier which tells printf the data type of the argument. Here it is a f(loat).
+- `%` - initiate the format string
+- `.1` - round the decimal number to `1` digits after the decimal point.
+- `f` - the specifier which tells printf the data type of the argument. Here it is a f(loat).
 
-For example, if you would like to print a sensor value with two digits of accuracy, you would write `%.2f`   and with
+For example, if you would like to print a sensor value with two digits of accuracy, you would write `%.2f` and with
 zero digits of accuracy (without a decimal) `%.0f`  .
 
 Another interesting format string is `%7.2f`  , which would become the right-justified string
-`"  20.51"`   for a value of 20.506.
+`"  20.51"` for a value of 20.506.
 
-- `%`   - initiate the format
-- `7`   - means that the number will be right-justified and be padded on the left by spaces if
+- `%` - initiate the format
+- `7` - means that the number will be right-justified and be padded on the left by spaces if
   the result would be shorter than 7 characters long.
-- `.2`   - round the decimal number to `2`   digits after the decimal point.
-- `f`   - specifier: f(loat).
+- `.2` - round the decimal number to `2` digits after the decimal point.
+- `f` - specifier: f(loat).
 
 You can even have as many formatted items as you want in a single printf call. Just make sure the put the
 arguments after the format string in the right order.
@@ -322,7 +331,8 @@ display:
       it.printf(0, 0, id(my_font), "Temperature: %.1f°C, Humidity: %.1f%%", id(temperature).state, id(humidity).state);
 
 ```
-To display a text string from a `text_sensor`  , append `.c_str()`   to the end of your variable.
+
+To display a text string from a `text_sensor`  , append `.c_str()` to the end of your variable.
 
 ```yaml
 display:
@@ -332,6 +342,7 @@ display:
       it.printf(0, 0, id(my_font), "Text to follow: %s", id(template_text).state.c_str());
 
 ```
+
 When using anti-aliased fonts you will probably need to specify the color to draw the characters, and the background
 color to mix in for anti-aliasing. This requires the full version of `printf`, e.g.:
 
@@ -343,10 +354,11 @@ display:
         it.printf(10, 100, id(roboto), Color(0x123456), COLOR_OFF, display::TextAlign::BASELINE, "%f", id(heap_free).state);
 
 ```
+
 The last printf tip for use in displays I will discuss here is how to display binary sensor values. You
-*could* of course just check the state with an `if`   statement as the first few lines in the example below, but if
-you want to be efficient you can use an *inline if* too. With the `%s`   print specifier you can tell it to
-use any string you pass it, like `"ON"`   or `"OFF"`  .
+*could* of course just check the state with an `if` statement as the first few lines in the example below, but if
+you want to be efficient you can use an *inline if* too. With the `%s` print specifier you can tell it to
+use any string you pass it, like `"ON"` or `"OFF"`  .
 
 ```yaml
 binary_sensor:
@@ -367,6 +379,7 @@ display:
       it.printf(0, 0, id(my_font), "State: %s", id(my_binary_sensor).state ? "ON" : "OFF");
 
 ```
+
 {{< note >}}
 For displaying external data on the display, for example data from your Home Assistant instance,
 you can use the {{< docref "/components/text_sensor/mqtt_subscribe" >}} (see the example there for more information).
@@ -384,8 +397,8 @@ You can display current time using a time component. Please see the example [her
 
 Screen clipping can be useful when you just want to show a part of an image or make sure that what you draw on the screen does not go outside a specific region on the screen.
 
-With `start_clipping(left, top, right, bottom);`   start you the clipping process and when you are done drawing in that region
-you can stop the clipping process with `end_clipping();`   . You can nest as many `start_clipping();`   as you want as long
+With `start_clipping(left, top, right, bottom);` start you the clipping process and when you are done drawing in that region
+you can stop the clipping process with `end_clipping();` . You can nest as many `start_clipping();` as you want as long
 you end them as many times as well.
 
 ```yaml
@@ -413,10 +426,11 @@ display:
       it.end_clipping();
 
 ```
-After you started clipping you can manipulate the region with `extend_clipping(left, top, right, bottom);`
-and `shrink_clipping(left, top, right, bottom);`   within previous set clipping region.
 
-With `get_clipping();`   you get a `Rect`   object back with the latest set clipping region.
+After you started clipping you can manipulate the region with `extend_clipping(left, top, right, bottom);`
+and `shrink_clipping(left, top, right, bottom);` within previous set clipping region.
+
+With `get_clipping();` you get a `Rect` object back with the latest set clipping region.
 
 ```cpp
 class Rect {
@@ -429,14 +443,15 @@ class Rect {
   };
 
 ```
-With `is_clipping();`   tells you if clipping is activated.
+
+With `is_clipping();` tells you if clipping is activated.
 
 {{< anchor "config-color" >}}
 
 ### Color
 
 When using RGB-capable displays in ESPHome you may wish to use custom colors.
-A `color`   component exists for just this purpose:
+A `color` component exists for just this purpose:
 
 ```yaml
 color:
@@ -447,7 +462,8 @@ color:
     white: 0%
 
 ```
-Alternatively, you can use `<color>_int`   to specify the color as an int value:
+
+Alternatively, you can use `<color>_int` to specify the color as an int value:
 
 ```yaml
 color:
@@ -458,6 +474,7 @@ color:
     white_int: 0
 
 ```
+
 Or, if you are more comforatble with hex values, you can use `hex`  :
 
 ```yaml
@@ -466,20 +483,20 @@ color:
     hex: FF3340
 
 ```
+
 Configuration variables:
 
 - **red** (*Optional*, percentage): The percentage of the red component. Defaults to `100%`  .
-- **red_int** (*Optional*, integer): The brightness of the red component on a scale of `0`   to `255`  . Defaults to `255`  .
+- **red_int** (*Optional*, integer): The brightness of the red component on a scale of `0` to `255`  . Defaults to `255`  .
 - **green** (*Optional*, percentage): The percentage of the green component. Defaults to `100%`  .
-- **green_int** (*Optional*, integer): The brightness of the green component on a scale of `0`   to `255`  . Defaults to `255`  .
+- **green_int** (*Optional*, integer): The brightness of the green component on a scale of `0` to `255`  . Defaults to `255`  .
 - **blue** (*Optional*, percentage): The percentage of the blue component. Defaults to `100%`  .
-- **blue_int** (*Optional*, integer): The brightness of the blue component on a scale of `0`   to `255`  . Defaults to `255`  .
+- **blue_int** (*Optional*, integer): The brightness of the blue component on a scale of `0` to `255`  . Defaults to `255`  .
 - **white** (*Optional*, percentage): The percentage of the white component. Defaults to `100%`  .
-- **white_int** (*Optional*, integer): The brightness of the white component on a scale of `0`   to `255`  . Defaults to `255`  .
+- **white_int** (*Optional*, integer): The brightness of the white component on a scale of `0` to `255`  . Defaults to `255`  .
 - **hex** (*Optional*, string): The color in hexadecimal representation. Defaults to `FFFFFF`  .
 
 RGB displays use red, green, and blue, while grayscale displays may use white.
-
 
 {{< anchor "display-pages" >}}
 
@@ -503,6 +520,7 @@ display:
           it.print(0, 10, id(my_font), "This is page 2!");
 
 ```
+
 You can then switch between these with three different actions:
 
 **show_next** / **show_previous**: Shows the next or previous page, wraps around at the end.
@@ -520,6 +538,7 @@ interval:
       - component.update: my_display
 
 ```
+
 **display.page.show**: Show a specific page
 
 ```yaml
@@ -535,6 +554,7 @@ on_...:
       }
 
 ```
+
 {{< note >}}
 To trigger a redraw right after the page show use a [component.update](#component-update_action)
 action:
@@ -548,6 +568,7 @@ interval:
       - component.update: my_display
 
 ```
+
 {{< /note >}}
 {{< anchor "display-is_displaying_page-condition" >}}
 
@@ -570,6 +591,7 @@ on_...:
         ...
 
 ```
+
 {{< anchor "display-on_page_change-trigger" >}}
 
 **on_page_change**: This automation will be triggered when the page that is shown changes.
@@ -586,17 +608,17 @@ display:
             ESP_LOGD("display", "Page changed from 1 to 2");
 
 ```
+
 - **from** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.
 - **to** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing to this page. Defaults to all pages.
 
-Additionally the old page will be given as the variable `from`   and the new one as the variable `to`  .
-
+Additionally the old page will be given as the variable `from` and the new one as the variable `to`  .
 
 ### Troubleshooting
 
 ### Using the Color Test Card
 
-If you're experiencing issues with your color display, the `show_test_card: true`   option can help you to identify what might be wrong.
+If you're experiencing issues with your color display, the `show_test_card: true` option can help you to identify what might be wrong.
 
 - It will show bars for Red, Green and Blue, graduating to black and white.
 - Together with that it will show the letters "**R**", "**G**" and "**B**" to validate the display geometry.
@@ -613,12 +635,12 @@ be sure to **include a link to where you purchased the display** so that we can 
 {{< note >}}
 If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
 
-
 {{< /note >}}
 {{< note >}}
 For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
 
 {{< /note >}}
+
 ### See Also
 
 - {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}
@@ -629,4 +651,3 @@ For displays in 8 bit mode you will see distinct color blocks rather than a smoo
 - [Image Component](#display-image)
 - [Animation Component](#display-animation)
 - [Online Image](#online_image)
-

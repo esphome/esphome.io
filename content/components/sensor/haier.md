@@ -11,7 +11,6 @@ params:
 
 Additional sensors for Haier Climate device. **These sensors are supported only by the hOn protocol**.
 
-
 {{< img src="haier-climate.jpg" alt="Image" width="50.0%" class="align-center" >}}
 
 ```yaml
@@ -43,7 +42,8 @@ sensor:
       name: Haier Power
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **haier_id** (**Required**, [ID](#config-id)): The id of haier climate component
 - **outdoor_temperature** (*Optional*): Temperature sensor for outdoor temperature.
@@ -69,9 +69,7 @@ sensor:
 - **power** (*Optional*): Sensor for climate power consumption. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
 
-
 ## See Also
 
 - {{< docref "/components/climate/haier" "Haier Climate" >}}
 - [Sensor Filters](#sensor-filters)
-

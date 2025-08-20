@@ -25,10 +25,11 @@ sensor:
         - offset: ${bme280_temperature_offset}
 
 ```
-In the top-level `substitutions`   section, you can put as many key-value pairs as you want. Before
+
+In the top-level `substitutions` section, you can put as many key-value pairs as you want. Before
 validating your configuration, ESPHome will automatically replace all occurrences of substitutions
-by their value. The syntax for a substitution is based on bash and is case-sensitive: `$substitution_key`   or
-`${substitution_key}`   (same).
+by their value. The syntax for a substitution is based on bash and is case-sensitive: `$substitution_key` or
+`${substitution_key}` (same).
 
 Substitution variables can be of any valid YAML type, for example:
 
@@ -42,6 +43,7 @@ substitutions:
   unused_pins: [12, 23, 27]
 
 ```
+
 Two substitution passes are performed allowing compound replacements:
 
 ```yaml
@@ -54,6 +56,7 @@ something:
   test: ${bar_${foo}_value}
 
 ```
+
 The above is supported for backward compatibility. It is recommended that
 you use key-value dictionaries going forward:
 
@@ -68,11 +71,12 @@ something:
   test: ${bar[foo]}
 
 ```
+
 {{< anchor "jinja-expressions" >}}
 
 ## Jinja expressions
 
-Simple Jinja expressions and filters can be used inside `${ ... }`   syntax.
+Simple Jinja expressions and filters can be used inside `${ ... }` syntax.
 
 All substitution variables become accessible within Jinja expressions by their name.
 
@@ -116,8 +120,9 @@ binary_sensor:
     pin: ${sensor_pin}
 
 ```
-Note that in other projects Jinja uses the `{{ ... }}`   syntax for expression delimiters.
-In ESPHome we have configured Jinja to use `${...}`   instead, so it is the same as the
+
+Note that in other projects Jinja uses the `{{ ... }}` syntax for expression delimiters.
+In ESPHome we have configured Jinja to use `${...}` instead, so it is the same as the
 existing substitution syntax and to avoid conflicts with Home Assistant's own use of Jinja.
 
 To understand what types of expressions and filters can be used,
@@ -140,6 +145,7 @@ lvgl:
         text: Distance is ${math.sqrt(x*x+y*y)}.
 
 ```
+
 To see what mathematical functions ara available,
 refer to [Python math library](https://docs.python.org/3/library/math.html) documentation.
 
@@ -147,15 +153,15 @@ refer to [Python math library](https://docs.python.org/3/library/math.html) docu
 
 In addition to the Jinja expressions, ESPHome supports a number of built-in functions that can be used in substitutions.
 
-- `ord`   Returns the Unicode code point for a given character. Example: `ord("A") == 65`
-- `chr`   Returns the character for a given Unicode code point. Example: `chr(65) == "A"`
-- `len`   Returns the length of the string. Example: `len("Hello") == 5`
+- `ord` Returns the Unicode code point for a given character. Example: `ord("A") == 65`
+- `chr` Returns the character for a given Unicode code point. Example: `chr(65) == "A"`
+- `len` Returns the length of the string. Example: `len("Hello") == 5`
 
 {{< anchor "substitute-include-variables" >}}
 
 ## Substitute !include variables
 
-ESPHome's `!include`   accepts a list of variables that can be substituted within the included file.
+ESPHome's `!include` accepts a list of variables that can be substituted within the included file.
 
 ```yaml
 binary_sensor:
@@ -173,6 +179,7 @@ binary_sensor:
         id: 2
 
 ```
+
 `on-multi-click.yaml`  :
 
 ```yaml
@@ -188,13 +195,14 @@ binary_sensor:
         payload: double
 
 ```
+
 {{< anchor "command-line-substitutions" >}}
 
 ## Command line substitutions
 
-You can define or override substitutions from the command line by adding the `-s`   switch with arguments `KEY`   and
-`VALUE`  . This will override the substitution `KEY`   and assign it the value `VALUE`  . This switch can be included
-multiple times. Consider the following `example.yaml`   file:
+You can define or override substitutions from the command line by adding the `-s` switch with arguments `KEY` and
+`VALUE`  . This will override the substitution `KEY` and assign it the value `VALUE`  . This switch can be included
+multiple times. Consider the following `example.yaml` file:
 
 ```yaml
 substitutions:
@@ -204,12 +212,14 @@ esphome:
   name: $name
 
 ```
+
 ...and the following command:
 
 ```bash
 esphome -s name my_device01 config example.yaml
 
 ```
+
 You will get something like the following output:
 
 ```yaml
@@ -221,15 +231,16 @@ esphome:
   # ...
 
 ```
+
 Command line substitutions take precedence over those in your configuration file. This can be used to create generic
-"template" configuration files (like `example.yaml`   above) which can be used by multiple devices, leveraging
+"template" configuration files (like `example.yaml` above) which can be used by multiple devices, leveraging
 substitutions which are provided on the command line.
 
 {{< anchor "yaml-insertion-operator" >}}
 
 ## Bonus: YAML insertion operator
 
-Additionally, you can use the YAML insertion operator `<<`   syntax to create a single YAML file from which a number
+Additionally, you can use the YAML insertion operator `<<` syntax to create a single YAML file from which a number
 of nodes inherit:
 
 ```yaml
@@ -247,6 +258,7 @@ sensor:
     name: Humidity
 
 ```
+
 ```yaml
 # In nodemcu1.yaml
 substitutions:
@@ -255,6 +267,7 @@ substitutions:
 <<: !include common.yaml
 
 ```
+
 {{< tip >}}
 To hide these base files from the dashboard, you can
 
@@ -262,9 +275,9 @@ To hide these base files from the dashboard, you can
 - Prepend a dot to the filename, like `.base.yaml`
 
 {{< /tip >}}
+
 ## See Also
 
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "/guides/getting_started_command_line" >}}
 - {{< docref "/guides/faq" >}}
-

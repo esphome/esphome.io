@@ -9,7 +9,7 @@ params:
 
 
 
-The `ufire_ec`   sensor platform allows you to use your uFire Isolated EC sensor
+The `ufire_ec` sensor platform allows you to use your uFire Isolated EC sensor
 with ESPHome. The [I²C Bus](#i2c) is required to be set up in your
 configuration for this sensor to work. It requires also to have a temperature
 sensor in the liquid tank; this can be on the same board or an external sensor
@@ -29,7 +29,8 @@ sensor:
       name: EC
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to `0x3C`  .
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
@@ -46,7 +47,7 @@ sensor:
 
 {{< anchor "sensor-ufire_ec-calibrate_probe_action" >}}
 
-## `ufire_ec.calibrate_probe`   Action
+## `ufire_ec.calibrate_probe` Action
 
 The EC probe have to be calibrated. For this you need know the EC reference value and temperature
 of the calibration solution.
@@ -66,6 +67,7 @@ on_...:
       temperature: !lambda "return id(temperature_liquit).state;"
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire EC sensor.
@@ -74,7 +76,7 @@ Configuration options:
 
 {{< anchor "sensor-ufire_ec-reset_action" >}}
 
-## `ufire_ec.reset`   Action
+## `ufire_ec.reset` Action
 
 Reset the current calibration on the sensor.
 
@@ -91,6 +93,7 @@ on_...:
       id: ufire_ec_board
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire EC sensor.
@@ -99,4 +102,3 @@ Configuration options:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ufire_ec/ufire_ec.h" "ufire_ec/ufire_ec.h" >}}
-

@@ -9,12 +9,13 @@ params:
 
 
 
-The `hydreon_rgxx`   sensor platform allows you to use rain sensors by Hydreon. Currently supported are the RG-9 and RG-15 sensors ([model comparison](https://rainsensors.com/products/model-comparison/)).
+The `hydreon_rgxx` sensor platform allows you to use rain sensors by Hydreon. Currently supported are the RG-9 and RG-15 sensors ([model comparison](https://rainsensors.com/products/model-comparison/)).
 
 These optical rain sensors use a UART connection at 3.3V. The [UART](#uart) is
 required to be set up in your configuration for this sensor to work.
 
 Supported firmware versions:
+
 - RG-15: v1.000
 - RG-9: v1.000, v1.100, v1.200
 
@@ -44,6 +45,7 @@ binary_sensor:
       name: Emitter Saturation
 
 ```
+
 ```yaml
 # Example RG-15 entry
 sensor:
@@ -60,12 +62,12 @@ sensor:
       name: Rain Intensity
 
 ```
-## Configuration variables:
 
-- **model** (**Required**, string): Specify which rain sensor you have connected. Must be either `RG_9`   or `RG_15`  .
+## Configuration variables
+
+- **model** (**Required**, string): Specify which rain sensor you have connected. Must be either `RG_9` or `RG_15`  .
 
 - **disable_led** (*Optional*): Disables the on-board LED. Defaults to `false`  . Only on RG-9 firmware version 1.200-onwards.
-
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
   to use multiple UART buses.
@@ -78,7 +80,7 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-- **resolution** (*Optional*, string): Specify rain sensor resolution. Must be either `low`   or `high`  . Default resolution is `high`  .
+- **resolution** (*Optional*, string): Specify rain sensor resolution. Must be either `low` or `high`  . Default resolution is `high`  .
   Only applies to RG-15.
 
 - **acc** (*Optional*): Amount of rain since last message (see `update_interval`  ), in `mm`  . Only on RG-15.
@@ -99,7 +101,6 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
 
-
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
@@ -113,5 +114,3 @@ sensor:
 - [RG-9 1.000 manual](https://rainsensors.com/wp-content/uploads/sites/3/2021/03/2020.08.25-rg-9_instructions.pdf)
 - [RG-9 1.100 manual](https://rainsensors.com/wp-content/uploads/sites/3/2021/03/2021.03.11-rg-9_instructions.pdf)
 - [RG-9 1.200 manual](https://rainsensors.com/wp-content/uploads/sites/3/2022/03/2022.02.17-rev-1.200-rg-9_instructions.pdf)
-
-

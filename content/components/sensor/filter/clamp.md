@@ -5,7 +5,7 @@ headless: true
 
 
 
-Limits the value to the range between `min_value`   and `max_value`  . By default, sensor values outside these bounds will be set to `min_value`   or `max_value`  , respectively. If `ignore_out_of_range`   is true, then sensor values outside those bounds will be ignored. If `min_value`   is not set, there is no lower bound; if `max_value`   is not set there is no upper bound.
+Limits the value to the range between `min_value` and `max_value`  . By default, sensor values outside these bounds will be set to `min_value` or `max_value`  , respectively. If `ignore_out_of_range` is true, then sensor values outside those bounds will be ignored. If `min_value` is not set, there is no lower bound; if `max_value` is not set there is no upper bound.
 
 Configuration variables:
 

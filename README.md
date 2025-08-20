@@ -109,7 +109,9 @@ Hugo has a number of [built-in shortcodes](https://gohugo.io/content-management/
 several custom shortcodes:
 
 ### `anchor`
+
 Creates an HTML anchor point that can be linked to with fragment identifiers.
+
 ``` text
 {{< anchor "my-anchor-id" >}}
 ```
@@ -117,13 +119,17 @@ Creates an HTML anchor point that can be linked to with fragment identifiers.
 NOTE: Headings automatically create anchors, so it is not necessary to insert `anchor` shortcodes for them.
 
 ### `button`
+
 Creates a button with an image that links to a URL.
+
 ``` text
 {{< button href="https://example.com" img="/images/button.png" alt="Example Button" target="_self" >}}
 ```
 
 ### `collapse`
+
 Creates a collapsible section with a title that can be clicked to show/hide content.
+
 ``` text
 {{< collapse "title" true >}}
 This content will be hidden by default and can be expanded by clicking the header.
@@ -133,7 +139,9 @@ the second parameter, if true, will have the content initially opened.
 ```
 
 ### `docref`
+
 Creates a link to another page in the documentation with proper handling of anchors.
+
 ``` text
 {{< docref "/components/sensor/dht" >}}                     <!-- Uses the target page title as link text -->
 {{< docref "/components/sensor/dht" "DHT Sensor Guide" >}}  <!-- Uses custom text for the link -->
@@ -141,13 +149,17 @@ Creates a link to another page in the documentation with proper handling of anch
 ```
 
 ### `img`
+
 Displays an image with optional caption, width, height, and CSS class.
+
 ``` text
 {{< img src="example.jpg" alt="Example image" caption="This is an example" width="500" class="center" >}}
 ```
 
 ### `imgtable`
+
 Creates a component card with an image, title, and optional description that links to another page.
+
 ``` text
   {{< imgtable >}}
   Title 1, path/to/page1, image1.png
@@ -159,7 +171,9 @@ Creates a component card with an image, title, and optional description that lin
 ```
 
 ### `note`
+
 Creates a note admonition box to highlight important information.
+
 ``` text
 {{< note >}}
 This is important information that the reader should pay attention to.
@@ -168,13 +182,17 @@ You can include **Markdown** formatting within the note.
 ```
 
 ### `seo`
+
 Adds SEO metadata tags to the page for better search engine optimization and social media sharing.
+
 ``` text
 {{< seo description="Detailed guide for setting up the DHT sensor with ESPHome" image="dht-sensor.jpg" >}}
 ```
 
 ### `tip`
+
 Creates a tip admonition box to highlight helpful advice or best practices.
+
 ``` text
 {{< tip >}}
 For best results, place the sensor away from heat sources.
@@ -183,7 +201,9 @@ You can include **Markdown** formatting within the tip.
 ```
 
 ### `warning`
+
 Creates a warning admonition box to highlight important cautions or potential issues.
+
 ``` text
 {{< warning >}}
 Incorrect wiring may damage your device. Double-check connections before powering on.
@@ -192,46 +212,60 @@ You can include **Markdown** formatting within the warning.
 ```
 
 ### `apiref`
+
 Creates a link to a C++ API header file.
+
 ``` text
 {{< apiref "Component" "esphome/core/component.h" >}}
 ```
 
 ### `apiclass`
+
 Creates a link specifically to a C++ class in the API documentation.
+
 ``` text
 {{< apiclass "ClimateDevice" "esphome::climate::ClimateDevice" >}}
 {{< apiclass "WiFiComponent" "esphome::wifi::WiFiComponent" >}}
 ```
 
 ### `apistruct`
+
 Creates a link specifically to a C++ struct in the API documentation.
+
 ``` text
 {{< apistruct "SensorStateClass" "esphome::sensor::SensorStateClass" >}}
 {{< apistruct "GPIOOutputPin" "esphome::output::GPIOOutputPin" >}}
 ```
 
 ### `api-key-input`
+
 Creates an input field with a randomly generated API key and a copy button.
+
 ``` text
 {{< api-key-input >}}
 ```
 
 ### `ghuser`
+
 Creates a link to a GitHub user profile.
+
 ``` text
 {{< ghuser name="octocat" >}}                <!-- Links to @octocat -->
 {{< ghuser name="octocat" text="GitHub" >}}  <!-- Links to @octocat but displays "GitHub" -->
 ```
 
 ### `html_file`
+
 Reads a file from the static directory and inserts it as HTML.
+
 ``` text
 {{< html_file file="example.html" class="example-class" >}}
 ```
 
 ### `option`
+
 Creates an option block for documenting command-line options or configuration parameters.
+
 ``` text
 {{< option "--help|-h" >}}
 This is the help option.
@@ -239,14 +273,18 @@ This is the help option.
 ```
 
 ### `pr`
+
 Creates a link to a GitHub pull request.
+
 ``` text
 {{< pr number="123" >}}                <!-- Links to esphome/esphome#123 -->
 {{< pr number="123" repo="esphome-docs" >}}    <!-- Links to esphome/esphome-docs#123 -->
 ```
 
 ### `redirect`
+
 Creates a page that automatically redirects to another URL.
+
 ``` text
 {{< redirect url="/some/path" >}}
 ```
@@ -269,6 +307,7 @@ optional arguments:
 ```
 
 The script performs the following operations:
+
 - Builds an anchor map to maintain internal links
 - Converts RST formatting to Markdown
 - Processes special directives like notes, warnings, and tips
@@ -310,7 +349,7 @@ Contributions to improve the documentation are welcome! Please follow these step
 
 The ESPHome documentation is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
-**Documentation:** https://esphome.io/
+**Documentation:** <https://esphome.io/>
 
 For issues, please go to [the issue tracker](https://github.com/esphome/esphome/issues).
 

@@ -9,7 +9,7 @@ params:
 
 
 
-The `homeassistant`   text sensor platform allows you to create sensors that import
+The `homeassistant` text sensor platform allows you to create sensors that import
 states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
 {{< note >}}
@@ -18,6 +18,7 @@ in Home Assistant, this component still requires you to register the node under 
 [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 text_sensor:
@@ -26,6 +27,7 @@ text_sensor:
     entity_id: sensor.weather_forecast
 
 ```
+
 Entity state attributes can also be imported:
 
 ```yaml
@@ -37,7 +39,8 @@ text_sensor:
     attribute: effect
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
@@ -49,4 +52,3 @@ text_sensor:
 - [Sensor Filters](#sensor-filters)
 - [Automation](#automation)
 - {{< apiref "homeassistant/text_sensor/homeassistant_text_sensor.h" "homeassistant/text_sensor/homeassistant_text_sensor.h" >}}
-

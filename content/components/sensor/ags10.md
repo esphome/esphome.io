@@ -9,17 +9,14 @@ params:
 
 
 
-The `ags10`   sensor platform VOC sensor allows you to use your ASAIR AGS10
+The `ags10` sensor platform VOC sensor allows you to use your ASAIR AGS10
 ([datasheet](http://www.aosong.com/userfiles/files/Datasheet%20AGS10.pdf),
 `ASAIR`_ ) sensors with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
 
 {{< note >}}
-The sensor supports up to 15kHz operation, so you should specify up to `frequency: 15kHz`   in your `i2c`   configuration.
-
-
-
+The sensor supports up to 15kHz operation, so you should specify up to `frequency: 15kHz` in your `i2c` configuration.
 
 {{< /note >}}
 {{< img src="ags10.jpg" alt="Image" caption="AGS10 VOC Sensor" width="30.0%" class="align-center" >}}
@@ -32,7 +29,8 @@ sensor:
       name: TVOC
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **tvoc** (**Required**): The information for the total Volatile Organic Compounds sensor.
   All options from [Sensor](#config-sensor).
@@ -45,11 +43,11 @@ sensor:
 - **resistance** (*Optional*): The initial value of the sensor resistance.
   All options from [Sensor](#config-sensor).
 
-## Actions:
+## Actions
 
 {{< anchor "sensor-ags10setzeropointaction" >}}
 
-## `ags10.set_zero_point`   Action
+## `ags10.set_zero_point` Action
 
 Zero-point of AGS10 has been calibrated before leaving factory. User can re-calibrate the zero-point as
 needed.
@@ -68,21 +66,21 @@ on_...:
       mode: CURRENT_VALUE
 
 ```
+
 Configuration option:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the AGS10 sensor.
 - **mode** (**Required**, enum): One of supported modes:
 
-  - `FACTORY_DEFAULT`   - reset to the factory zero-point
-  - `CURRENT_VALUE`   - set zero-point calibration with current resistance
-  - `CUSTOM_VALUE`   - set zero-point calibration with resistance pointed with `value`   option
+  - `FACTORY_DEFAULT` - reset to the factory zero-point
+  - `CURRENT_VALUE` - set zero-point calibration with current resistance
+  - `CUSTOM_VALUE` - set zero-point calibration with resistance pointed with `value` option
 
 - **value** (*Optional*, int): nominated resistance value to set (unit: 0.1 kΩ).
 
-
 {{< anchor "sensor-ags10newi2caddressaction" >}}
 
-## `ags10.new_i2c_address`   Action
+## `ags10.new_i2c_address` Action
 
 I2C address of AGS10 can be modified, and it is possible to use multiple AGS10 sensors on one bus.
 After sending the command for address changing, the new address is saved and takes effect immediately even
@@ -102,14 +100,13 @@ on_...:
       address: 0x1E
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the AGS10 sensor.
 - **address** (**Required**, int): New I2C address.
 
-
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ags10/ags10.h" "ags10/ags10.h" >}}
-

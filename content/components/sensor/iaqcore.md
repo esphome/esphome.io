@@ -31,7 +31,8 @@ sensor:
         name: "iAQ Core TVOC Sensor"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **i2c_id** (*Optional*, ID): The id of the I²C Bus.
 - **address** (*Optional*, int): Manually specifiy the I²C address of the sensor. Defaults to `0x5A`  .
@@ -45,4 +46,3 @@ sensor:
 
 - [Sensor Filters](#sensor-filters)
 - {{< docref "/components/sensor" >}}
-

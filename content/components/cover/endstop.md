@@ -9,7 +9,7 @@ params:
 
 
 
-The `endstop`   cover platform allows you to create covers with position control that have
+The `endstop` cover platform allows you to create covers with position control that have
 endstops at both ends of the cover to detect the fully-open and fully-closed states.
 When any of these endstops are reached, the cover is stopped (via `stop_action`  )
 and the corresponding state is sent out.
@@ -45,7 +45,8 @@ cover:
       - switch.turn_off: close_cover_switch
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **open_action** (**Required**, [Action](#config-action)): The action that should
   be performed when the remote requests the cover to be opened.
@@ -72,4 +73,3 @@ cover:
 - {{< docref "index/" >}}
 - [Automation](#automation)
 - {{< apiref "endstop/endstop_cover.h" "endstop/endstop_cover.h" >}}
-

@@ -15,23 +15,24 @@ This component contains platform-specific options for the NRF52 platform.
 Support for all aspects of ESPHome on the NRF52 is still in development.
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 nrf52:
     board: adafruit_feather_nrf52840
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **board** (*Required*, string): The board type. Valid options are `adafruit_feather_nrf52840`  ,  `adafruit_itsybitsy_nrf52840`  , `xiao_ble`  . Other boards should work with those configuration as well.
 - **bootloader** (*Optional*, string): Bootloader type. Valid options are `mcuboot`  , `adafruit`  , `adafruit_nrf52_sd132`  , `adafruit_nrf52_sd140_v6`  , `adafruit_nrf52_sd140_v7`  . Default value depends on board type.
 
 ## Getting Started
 
-The nRF52840 requires a bootloader, with two supported options: `MCUboot`   and `Adafruit nRF52 Bootloader`  . It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
+The nRF52840 requires a bootloader, with two supported options: `MCUboot` and `Adafruit nRF52 Bootloader`  . It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
 
 Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
-
 
 ## Flashing with MCUboot
 
@@ -46,6 +47,7 @@ nrf52:
     board: adafruit_feather_nrf52840
 
 ```
+
 ## Flashing with Adafruit nRF52 Bootloader
 
 For flashing via a flash drive.
@@ -66,12 +68,13 @@ nrf52:
     board: adafruit_itsybitsy_nrf52840
 
 ```
+
 ## GPIO Pin Numbering
 
 There are two ways to reference GPIO pins:
 
-1. By pin name, e.g., `P0.15`   or `P1.11`  .
-2. By pin number, e.g., `15`   or `43`  .
+1. By pin name, e.g., `P0.15` or `P1.11`  .
+2. By pin number, e.g., `15` or `43`  .
 
 ## See Also
 

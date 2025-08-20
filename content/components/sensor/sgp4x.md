@@ -9,7 +9,7 @@ params:
 
 
 
-The `sgp4x`   sensor platform allows you to use your Sensirion SGP40
+The `sgp4x` sensor platform allows you to use your Sensirion SGP40
 ([datasheet](https://sensirion.com/media/documents/296373BB/6203C5DF/Sensirion_Gas_Sensors_Datasheet_SGP40.pdf)) or SGP41
 ([datasheet](https://sensirion.com/media/documents/5FE8673C/61E96F50/Sensirion_Gas_Sensors_Datasheet_SGP41.pdf)) with ESPHome.
 The type of sensor used is automatically detected.
@@ -35,7 +35,8 @@ sensor:
       name: "NOx Index"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **voc** (*Optional*): VOC Index
 
@@ -47,7 +48,6 @@ sensor:
     - **gating_max_duration_minutes** (*Optional*): Maximum duration of gating in minutes (freeze of estimator during high VOC index signal). Zero disables the gating. Allowed values are in range 0..3000. The default value is 180 minutes
     - **std_initial** (*Optional*): Initial estimate for standard deviation. Lower value boosts events during initial learning period, but may result in larger device-todevice variations. Allowed values are in range 10..5000. The default value is 50.
     - **gain_factor** (*Optional*): Gain factor to amplify or to attenuate the VOC index output. Allowed values are in range 1..1000. The default value is 230.
-
 
   - All other options from [Sensor](#config-sensor).
 
@@ -75,8 +75,8 @@ sensor:
   - **humidity_source** (*Optional*, [ID](#config-id)): Give an external humidity sensor ID
     here. This can improve the sensor's internal calculations. Defaults to `50`
 
-
 ## Example With Compensation
+
 ```yaml
 # Example configuration entry
 sensor:
@@ -90,6 +90,7 @@ sensor:
     temperature_source: dht1_temp
 
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
@@ -100,4 +101,3 @@ sensor:
 - {{< docref "sht3xd/" >}}
 - {{< docref "sht4x/" >}}
 - {{< apiref "sgp4x/sgp4x.h" "sgp4x/sgp4x.h" >}}
-

@@ -14,9 +14,8 @@ NeoPixelBus does **not** work with ESP-IDF.
 
 For clockless lights, you can use {{< docref "esp32_rmt_led_strip/" >}}, and for SPI LEDs see {{< docref "spi_led_strip/" >}}.
 
-
 {{< /warning >}}
-The `neopixelbus`   light platform allows you to create RGB lights
+The `neopixelbus` light platform allows you to create RGB lights
 in ESPHome for individually addressable lights like NeoPixel or WS2812.
 
 It is very similar to the {{< docref "fastled/" >}} platform.
@@ -36,7 +35,8 @@ light:
     name: "NeoPixel Light"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 **Base Options:**
 
@@ -51,7 +51,7 @@ light:
 
   The following options are supported:
 
-  - `800KBPS`   (generic option, recommended for chipsets without explicit support)
+  - `800KBPS` (generic option, recommended for chipsets without explicit support)
   - `400KBPS`
   - `WS2811`
   - `WS2812`
@@ -64,7 +64,7 @@ light:
   - `APA106`
   - `LC8812`
 
-  Additionally the following two-wire chipsets (set `data_pin`   and `clock_pin`  )
+  Additionally the following two-wire chipsets (set `data_pin` and `clock_pin`  )
   are supported:
 
   - `WS2801`
@@ -81,7 +81,7 @@ light:
 **Pin Options:**
 
 Some chipsets have two data pins to connect, others only have one.
-If you have one line, only specify `pin`  , otherwise specify both `clock_pin`   and `data_pin`  .
+If you have one line, only specify `pin`  , otherwise specify both `clock_pin` and `data_pin`  .
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
 - **clock_pin** (**Required**, [Pin](#config-pin)): The pin for the clock line of the light, for two-wire lights.
@@ -103,7 +103,7 @@ on the chipset, ESP platform and pin.
 
 Each of these has their own advantages/disadvantages regarding stability and speed. By default
 ESPHome will choose the best one that is available on the device. However, you can override this
-by manually supplying the `method`   option.
+by manually supplying the `method` option.
 
 ```yaml
 light:
@@ -115,7 +115,8 @@ light:
       async: false
 
 ```
-Use the `type`   configuration variable to select the method used. The additional configuration
+
+Use the `type` configuration variable to select the method used. The additional configuration
 settings vary by method:
 
 - **bit_bang**: The simplest method and available on all platforms. However, it can produce quite a bit of flickering,
@@ -126,7 +127,7 @@ settings vary by method:
 - **esp8266_uart**: An alternative method for ESP8266s that uses the UART peripheral to send data.
   Available on pin GPIO1 for bus 0, and GPIO2 for bus 1. Additional options:
 
-  - **bus** (*Optional*, int): The UART bus to use. If 0, the logger `baud_rate`   option must
+  - **bus** (*Optional*, int): The UART bus to use. If 0, the logger `baud_rate` option must
     be set to 0 and logs over USB/serial won't work.
   - **async** (*Optional*, boolean): Use an asynchronous transfer. Defaults to `false`  . If enabled,
     the logger must be disabled even if bus 1 is used.
@@ -143,28 +144,28 @@ settings vary by method:
   - **channel** (*Optional*): The RMT channel to use. The ESP32 has channels 0-7, ESP32-C3 0-1, ESP32-S2 0-3 and ESP32-S3 0-3.
     Defaults to 6 on ESP32, and 1 on other ESP32 variants.
 
-The following method is available only for two-wire chips (specify `data_pin`   and `clock_pin`  ):
+The following method is available only for two-wire chips (specify `data_pin` and `clock_pin`  ):
 
 - **spi**: Uses the hardware SPI interface to transmit the data. Available on both ESP platforms.
   Additional options:
 
-  - **bus** (*Optional*, string): On ESP32s the SPI bus to be used can be selected. One of `vspi`   and `hspi`  .
+  - **bus** (*Optional*, string): On ESP32s the SPI bus to be used can be selected. One of `vspi` and `hspi`  .
   - **speed** (*Optional*, int): The frequency to send data with. Defaults to `10MHz`  . One of
     `40MHz`  , `20MHz`  , `10MHz`  , `5MHz`  , `2MHz`  , `1MHz`  , `500KHz`  .
 
-  On ESP8266 only GPIO13 can be used for `data_pin`   and only GPIO14 can be used for `clock_pin`  .
+  On ESP8266 only GPIO13 can be used for `data_pin` and only GPIO14 can be used for `clock_pin`  .
 
-The `method`   key also accepts a short-hand syntax consisting of a single value for historic reasons. Usage of
+The `method` key also accepts a short-hand syntax consisting of a single value for historic reasons. Usage of
 this method is no longer recommended, but documented here for reference purposes. Possible values were:
 
-- `ESP8266_DMA`   (for `esp8266_dma`  )
-- `ESP8266_UART0`   (for `esp8266_uart`   on bus 0)
-- `ESP8266_UART1`   (for `esp8266_uart`   on bus 1)
-- `ESP8266_ASYNC_UART0`   (for `esp8266_uart`   on bus 0 with async enabled)
-- `ESP8266_ASYNC_UART1`   (for `esp8266_uart`   on bus 1 with async enabled)
-- `ESP32_I2S_0`   (for `esp32_i2s`   on bus 0)
-- `ESP32_I2S_1`   (for `esp32_i2s`   on bus 1)
-- `BIT_BANG`   (for `bit_bang`  )
+- `ESP8266_DMA` (for `esp8266_dma`  )
+- `ESP8266_UART0` (for `esp8266_uart` on bus 0)
+- `ESP8266_UART1` (for `esp8266_uart` on bus 1)
+- `ESP8266_ASYNC_UART0` (for `esp8266_uart` on bus 0 with async enabled)
+- `ESP8266_ASYNC_UART1` (for `esp8266_uart` on bus 1 with async enabled)
+- `ESP32_I2S_0` (for `esp32_i2s` on bus 0)
+- `ESP32_I2S_1` (for `esp32_i2s` on bus 1)
+- `BIT_BANG` (for `bit_bang`  )
 
 ## See Also
 
@@ -173,4 +174,3 @@ this method is no longer recommended, but documented here for reference purposes
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "neopixelbus/neopixelbus_light.h" "neopixelbus/neopixelbus_light.h" >}}
 - [NeoPixelBus library](https://github.com/Makuna/NeoPixelBus/wiki/ESP8266-NeoMethods)
-

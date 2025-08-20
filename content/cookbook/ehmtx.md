@@ -20,6 +20,7 @@ Each screen (value/text) can be associated with a 8x8 bit RGB icon or gif animat
 The values/text can be updated or deleted from the display queue. Each screen has a lifetime, if not refreshed in its lifetime it will disapear.
 
 ## ESPHome Configuration
+
 Documentation:
 
 - [Source for the component on github](https://github.com/lubeda/EsphoMaTrix)
@@ -33,4 +34,3 @@ Sample video:
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ZyaFj7ArIdY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ## See Also
-

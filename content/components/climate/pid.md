@@ -9,7 +9,7 @@ params:
 
 
 
-The `pid`   climate platform allows you to regulate a value with a
+The `pid` climate platform allows you to regulate a value with a
 [PID controller](https://en.wikipedia.org/wiki/PID_controller).
 
 PID controllers are good at modulating an output signal to get a sensor reading to a specified
@@ -52,7 +52,8 @@ climate:
       threshold_low: -0.5°C
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor** (**Required**, [ID](#config-id)): The sensor that is used to measure the current
   temperature.
@@ -61,10 +62,10 @@ climate:
 - **default_target_temperature** (**Required**, float): The default target temperature (setpoint)
   for the control algorithm. This can be dynamically set in the frontend later.
 - **heat_output** (*Optional*, [ID](#config-id)): The ID of a [float output](#config-output)
-  that increases the current temperature. At least one of `heat_output`   and `cool_output`   must
+  that increases the current temperature. At least one of `heat_output` and `cool_output` must
   be specified.
 - **cool_output** (*Optional*, [ID](#config-id)): The ID of a [float output](#config-output)
-  that decreases the current temperature. At least one of `heat_output`   and `cool_output`   must
+  that decreases the current temperature. At least one of `heat_output` and `cool_output` must
   be specified.
 - **control_parameters** (**Required**): Control parameters of the PID controller.
 
@@ -74,9 +75,9 @@ climate:
   - **kd** (*Optional*, float): The factor for the derivative term of the PID controller.
     Defaults to `0`  .
   - **min_integral** (*Optional*, float): The minimum value of the integral term multiplied by
-    `ki`   to prevent windup. Defaults to `-1`  .
+    `ki` to prevent windup. Defaults to `-1`  .
   - **max_integral** (*Optional*, float): The maximum value of the integral term multiplied by
-    `ki`   to prevent windup. Defaults to `1`  .
+    `ki` to prevent windup. Defaults to `1`  .
   - **starting_integral_term** (*Optional*, float): Set the initial output, by priming the integral
     term. This is useful for when your system is rebooted and you don't want to wait
     for it to get back equilibrium.
@@ -84,7 +85,7 @@ climate:
   - **output_averaging_samples** (*Optional*, int): average the output over this many samples. PID controllers
     can be quite sensitive to small changes on the input sensor. By averaging the last X output samples,
     the temperature can be more stable. However, the larger the sampling window, the less responsive the
-    PID controller. Defaults to `1`   which is no sampling/averaging.
+    PID controller. Defaults to `1` which is no sampling/averaging.
 
   - **derivative_averaging_samples** (*Optional*, int): average the derivative term over this many samples. Many
     controllers don't use the derivative term because it is sensitive to slight changes in the input sensor.
@@ -97,16 +98,16 @@ climate:
 
   - **threshold_high/threshold_low** (**Required**, float): Specifies a high/low
     threshold defining the deadband around the target temperature. For instance with
-    `default_target_temperature`   of `21°C`   and thresholds of `+/-0.5°C`  , the deadband will be
+    `default_target_temperature` of `21°C` and thresholds of `+/-0.5°C`  , the deadband will be
     between `20.5°C - 21.5°C`  . The PID controller will limit output changes within the deadband.
-  - **kp_multiplier** (*Optional*, float): Set the `kp`   gain when inside the deadband. Defaults to `0`  .
-  - **ki_multiplier** (*Optional*, float): Set the `ki`   gain when inside the deadband. Defaults to `0`  .
-  - **kd_multiplier** (*Optional*, float): Set the `kd`   gain when inside the deadband. Recommended this
+  - **kp_multiplier** (*Optional*, float): Set the `kp` gain when inside the deadband. Defaults to `0`  .
+  - **ki_multiplier** (*Optional*, float): Set the `ki` gain when inside the deadband. Defaults to `0`  .
+  - **kd_multiplier** (*Optional*, float): Set the `kd` gain when inside the deadband. Recommended this
     is set to `0`  . Defaults to `0`  .
 
   - **deadband_output_averaging_samples** (*Optional*, int): Typically when inside the deadband the PID Controller has
     reached a state of equilibrium, so it advantageous to use a higher number of output samples
-    like 10-30 samples. Defaults to `1`   which is no sampling/averaging.
+    like 10-30 samples. Defaults to `1` which is no sampling/averaging.
 
 - All other options from [Climate](#config-climate).
 
@@ -125,13 +126,15 @@ To set up a PID climate controller, you need a couple of components:
 
 {{< note >}}
 The sensor should have a short update interval. The PID update frequency is tied to the update
-interval of the sensor. Set a short `update_interval`   like `5s`   on the sensor.
+interval of the sensor. Set a short `update_interval` like `5s` on the sensor.
 
 We recommend putting a filter on the sensor (see filters in {{< docref "/components/sensor" >}}) and
-using `output_averaging_samples`   to calm the PID sensor from a noisy input sensor.
+using `output_averaging_samples` to calm the PID sensor from a noisy input sensor.
 
 {{< /note >}}
+
 ## Deadband Setup
+
 A deadband is used to prevent the PID controller from further adjusting the power
 once the temperature has settled within a range of the target temperature.
 
@@ -154,6 +157,7 @@ deadband_parameters:
   threshold_low: -1.0°C
 
 ```
+
 In this example the deadband is between `20.0°C - 21.5°C`  . The PID controller will limit any output
 variation inside this deadband. How it limits depends on how you set the `Deadband Multipliers`_.
 
@@ -169,12 +173,12 @@ is set to 0.05 then the final proportional term will be set to 5% of its normal 
 If all of the multipliers are set to 0, then the controller will not adjust power at all within the
 deadband. This is the default behavior.
 
-Most deadband implementations set kp and ki multipliers to a small gain like `0.05`   and set
+Most deadband implementations set kp and ki multipliers to a small gain like `0.05` and set
 derivative to 0. This means that the PID output will calmly make minor adjustments over a 20x longer
 timeframe to stay within the deadband zone.
 
-To start with we recommend just setting the `ki_multiplier`   to `0.05`   (5%). Then
-set `kp_multiplier`   to `0.05`   (5%) if the controller is falling out of the deadband too often.
+To start with we recommend just setting the `ki_multiplier` to `0.05` (5%). Then
+set `kp_multiplier` to `0.05` (5%) if the controller is falling out of the deadband too often.
 
 ```yaml
 default_target_temperature: 21°C
@@ -188,9 +192,11 @@ deadband_parameters:
   deadband_output_averaging_samples: 15   # average the output over 15 samples within the deadband
 
 ```
+
 {{< img src="deadband2.png" alt="Image" >}}
 
 ### Deadband Output Averaging Samples
+
 Since we expect the PID Controller to be at equilibrium while inside the deadband, we can
 average the output over a longer range of samples, like 15 samples. This helps even further
 with temperature and controller stability.
@@ -199,7 +205,7 @@ with temperature and controller stability.
 
 ## Autotuning
 
-Finding suitable `kp`  , `ki`   and `kd`   control parameters for the PID controller manually
+Finding suitable `kp`  , `ki` and `kd` control parameters for the PID controller manually
 needs some experience with PID controllers. ESPHome has an auto-tuning algorithm that automatically
 finds suitable PID parameters to start using an adaption of the Ziegler-Nichols method with
 relay autotuning (Åström and Hägglund).
@@ -222,6 +228,7 @@ To autotune the control parameters:
           kd: 0.0
 
 ```
+
 2. Create a {{< docref "/components/button/template" "template button" >}} to start autotuning later:
 
 ```yaml
@@ -232,6 +239,7 @@ To autotune the control parameters:
           - climate.pid.autotune: pid_climate
 
 ```
+
 3. Compile & Upload the new firmware.
 
 Now you should have a climate entity called *PID Climate Controller* and a button called
@@ -268,6 +276,7 @@ autotune will likely fail or give false results.
           # ...
 
 ```
+
 {{< note >}}
 In the output above, the autotuner is driving the heating output at 100% and trying to reach 24.25 °C.
 
@@ -294,10 +303,11 @@ heating up and cooling down oscillations the required number of times.
         Please copy these values into your YAML configuration! They will reset on the next reboot.
 
 ```
+
 As soon as the the autotune procedure finishes, the climate starts to work with the calculated parameters
 so that expected operation can be immediately verified.
 
-If satisfied, copy the values in `control_parameters`   into your configuration:
+If satisfied, copy the values in `control_parameters` into your configuration:
 
 ```yaml
       climate:
@@ -309,6 +319,7 @@ If satisfied, copy the values in `control_parameters`   into your configuration:
             kd: 12.56301
 
 ```
+
 The *PID Climate Autotune* button can be removed from the config, if the results are satisfactory,
 it's not needed anymore.
 
@@ -317,8 +328,7 @@ it's not needed anymore.
 If the calculated PID parameters are not good, you can try some of the alternative parameters
 printed below the main control parameters in the log output.
 
-
-## `climate.pid.autotune`   Action
+## `climate.pid.autotune` Action
 
 This action starts the autotune process of the PID controller.
 
@@ -335,6 +345,7 @@ on_...:
       negative_output: -25%
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): ID of the PID Climate to start autotuning for.
@@ -345,12 +356,12 @@ Configuration variables:
 - **negative_output** (*Optional*, float): The negative output power to drive the cool output at.
   Defaults to `-1.0`  .
 
-The `positive_output`   and `negative_output`   parameters can be used to compensate the heating or the
+The `positive_output` and `negative_output` parameters can be used to compensate the heating or the
 cooling process during the autotune, in the cases when they are not changing the temperature at the
 same rate, resulting in a not symmetrical oscillation. The autotune result will print a message when
 it's recommended to repeat the entire procedure with such parameters configured.
 
-## `climate.pid.set_control_parameters`   Action
+## `climate.pid.set_control_parameters` Action
 
 This action sets new values for the control parameters of the PID controller. This can be
 used to manually tune the PID controller. Make sure to take update the values you want on
@@ -365,6 +376,7 @@ on_...:
       kd: 0.0
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): ID of the PID Climate to start autotuning for.
@@ -374,7 +386,7 @@ Configuration variables:
 - **kd** (*Optional*, float): The factor for the derivative term of the PID controller.
   Defaults to `0`  .
 
-## `climate.pid.reset_integral_term`   Action
+## `climate.pid.reset_integral_term` Action
 
 This action resets the integral term of the PID controller to 0. This might be necessary under certain
 conditions to avoid the control loop to overshoot (or undershoot) a target.
@@ -385,11 +397,12 @@ on_...:
   - climate.pid.reset_integral_term: pid_climate
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): ID of the PID Climate being reset.
 
-## `pid`   Sensor
+## `pid` Sensor
 
 Additionally, the PID climate platform provides an optional sensor platform to monitor
 the calculated PID parameters to help finding good PID values.
@@ -401,20 +414,21 @@ sensor:
     type: RESULT
 
 ```
+
 Configuration variables:
 
 - **type** (**Required**, string): The value to monitor. One of
 
-  - `RESULT`   - The resulting value (sum of P, I, and D terms).
-  - `ERROR`   - The calculated error (setpoint - process_variable)
-  - `PROPORTIONAL`   - The proportional term of the PID controller.
-  - `INTEGRAL`   - The integral term of the PID controller.
-  - `DERIVATIVE`   - The derivative term of the PID controller.
-  - `HEAT`   - The resulting heating power to the supplied to the `heat_output`  .
-  - `COOL`   - The resulting cooling power to the supplied to the `cool_output`  .
-  - `KP`   - The current factor for the proportional term of the PID controller.
-  - `KI`   - The current factor for the integral term of the PID controller.
-  - `KD`   - The current factor for the differential term of the PID controller.
+  - `RESULT` - The resulting value (sum of P, I, and D terms).
+  - `ERROR` - The calculated error (setpoint - process_variable)
+  - `PROPORTIONAL` - The proportional term of the PID controller.
+  - `INTEGRAL` - The integral term of the PID controller.
+  - `DERIVATIVE` - The derivative term of the PID controller.
+  - `HEAT` - The resulting heating power to the supplied to the `heat_output`  .
+  - `COOL` - The resulting cooling power to the supplied to the `cool_output`  .
+  - `KP` - The current factor for the proportional term of the PID controller.
+  - `KI` - The current factor for the integral term of the PID controller.
+  - `KD` - The current factor for the differential term of the PID controller.
 
 - All other options from [Sensor](#config-sensor).
 
@@ -434,4 +448,3 @@ Advanced options:
 - [Principles of PID](https://blog.opticontrols.com/archives/344)
 - {{< apiref "pid/pid_climate.h" "pid/pid_climate.h" >}}
 - {{< apiref "PID Autotuner" "pid/pid_autotuner.h" >}}
-

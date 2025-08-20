@@ -11,11 +11,11 @@ params:
 
 ## Component/Hub
 
-The `seeed_mr24hpc1`   platform allows you to use Seeed Studio 24GHz mmWave Sensor -
+The `seeed_mr24hpc1` platform allows you to use Seeed Studio 24GHz mmWave Sensor -
 Human Static Presence Module Lite ([Product Page](https://www.seeedstudio.com/24GHz-mmWave-Sensor-Human-Static-Presence-Module-Lite-p-5524.html)) and
 Seeed Studio mmWave Human Detection Sensor Kit ([Product Page](https://www.seeedstudio.com/mmWave-Human-Detection-Sensor-Kit-p-5773.html)) with ESPHome.
 
-The [UART](#uart) is required to be set up in your configuration for this sensor to work, `parity`   and `stop_bits`   **must be** respectively `NONE`   and `1`  .
+The [UART](#uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`  .
 You can use the ESP32 software or hardware serial to use this MR24HPC1, its default baud rate is 115200.
 
 {{< img src="seeed-mr24hpc1.jpg" alt="Image" caption="Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite" width="50.0%" class="align-center" >}}
@@ -27,7 +27,8 @@ You can use the ESP32 software or hardware serial to use this MR24HPC1, its defa
 seeed_mr24hpc1:
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
   to use multiple UART buses.
@@ -35,7 +36,7 @@ seeed_mr24hpc1:
 
 ## Binary Sensor
 
-The `seeed_mr24hpc1`   binary sensor allows you to perform different measurements.
+The `seeed_mr24hpc1` binary sensor allows you to perform different measurements.
 
 ```yaml
 binary_sensor:
@@ -44,14 +45,15 @@ binary_sensor:
       name: "Presence Information"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **has_target** (*Optional*): If true target detect either still or in movement.
   All options from [Binary Sensor](#config-binary_sensor).
 
 ## Sensor
 
-The `seeed_mr24hpc1`   sensor allows you to perform different measurements.
+The `seeed_mr24hpc1` sensor allows you to perform different measurements.
 
 ```yaml
 sensor:
@@ -72,11 +74,12 @@ sensor:
       name: "Current Custom Mode"
 
 ```
+
 {{< anchor "seeed_mr24hpc1-spatial_static" >}}
 
 {{< anchor "seeed_mr24hpc1-spatial_mtion" >}}
 
-### Configuration variables:
+### Configuration variables
 
 - **custom_presence_of_detection** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Radar detects human breath at a straight line distance, usually no more than 3 metres.
@@ -112,7 +115,7 @@ sensor:
 
 ## Switch
 
-The `seeed_mr24hpc1`   switch allows you to control your device.
+The `seeed_mr24hpc1` switch allows you to control your device.
 
 ```yaml
 switch:
@@ -121,7 +124,8 @@ switch:
       name: Underlying Open Function Info Output Switch
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **underlying_open_function** (*Optional*): Enable/disable **underlying open function**. When this switch is off, it indicates that it is currently in **standard mode**.
   Defaults to off (standard mode). Turning on this feature allows you to observe more information about the environment and is recommended to use it
@@ -129,10 +133,9 @@ switch:
   the basic function will be disabled. Notice this requires more resources and is not recommended to be enabled when not necessary.
   All options from [Switch](#config-switch).
 
-
 ## Number
 
-The `seeed_mr24hpc1`   number allows you to control the configuration.
+The `seeed_mr24hpc1` number allows you to control the configuration.
 
 ```yaml
 number:
@@ -153,9 +156,10 @@ number:
       name: "Time For Entering No Person State (Custom Mode)"
 
 ```
+
 {{< anchor "seeed_mr24hpc1-custom_mode" >}}
 
-### Configuration variables:
+### Configuration variables
 
 - **sensitivity** (*Optional*, int): Valid only in [standard mode](#seeed_mr24hpc1-standard_mode). Used to adjust the sensitivity of the radar.
   The sensitivity setting adjusts the detection distance of the sensor for human body in static state.
@@ -164,47 +168,46 @@ number:
 
 ### Sensitivity
 
-| Sensitivity |  Detection Radius (m) |
-| --- | --- |
-| 1 |  2.5m |
-| 2 |  3m |
-| 3 |  4m |
-
+| Sensitivity | Detection Radius (m) |
+| ----------- | -------------------- |
+| 1           | 2.5m                 |
+| 2           | 3m                   |
+| 3           | 4m                   |
 
 - **custom_mode** (*Optional*, int): Settings and go to the Custom Mode option. Some of the function modules can only be set up in Custom Mode.
   There are four storage areas for custom modes. When you finish setting and click the Setup End button, the radar applies the custom mode options you have set.
   All options from [Number](#config-number).
 - **existence_threshold** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   This corresponds to [custom_spatial_static_value](#seeed_mr24hpc1-spatial_static).
-  When the value of `custom_spatial_static_value`   is greater than the set value, the radar will judge that someone is stationary,
+  When the value of `custom_spatial_static_value` is greater than the set value, the radar will judge that someone is stationary,
   otherwise it will judge that no one is.
   The default value is `33`  .
   All options from [Number](#config-number).
 - **motion_threshold** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   This corresponds to [custom_spatial_motion_value](#seeed_mr24hpc1-spatial_mtion).
-  When the value of `custom_spatial_motion_value`   is greater than the set value, the radar will judge that someone is moving,
+  When the value of `custom_spatial_motion_value` is greater than the set value, the radar will judge that someone is moving,
   otherwise it will judge that someone is stationary.
   The default value is `4`  .
   All options from [Number](#config-number).
 - **motion_trigger** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   Used for time accumulation of motion triggers, multiple judgement triggers to reduce false alarms.
-  Can be used with `motion_threshold`   and `motion_boundary`   for performance limitation.
+  Can be used with `motion_threshold` and `motion_boundary` for performance limitation.
   The default value is `150ms`  .
   All options from [Number](#config-number).
 - **motion_to_rest** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   Sets the time for the radar to judge from body motion to body at rest.
-  Can be used with `existence_threshold`   and `motion_threshold`   for performance limitation.
+  Can be used with `existence_threshold` and `motion_threshold` for performance limitation.
   The default value is `3000ms`  .
   All options from [Number](#config-number).
 - **custom_unman_time** (*Optional*, int): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   Sets the time for the radar to judge from body presence to unoccupied state.
-  Can be used with `existence_threshold`   and `existence_boundary`   for performance limitation.
+  Can be used with `existence_threshold` and `existence_boundary` for performance limitation.
   The default value is `30s`  .
   All options from [Number](#config-number).
 
 ## Button
 
-The `seeed_mr24hpc1`   button allows you to perform actions.
+The `seeed_mr24hpc1` button allows you to perform actions.
 
 ```yaml
 button:
@@ -215,17 +218,17 @@ button:
       name: "End Of Custom Mode Settings"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **restart** (*Optional*): Restart the device. All options from [Button](#config-button).
 - **custom_set_end** (*Optional*): Valid only in [custom mode settings](#seeed_mr24hpc1-custom_mode).
   This button is used to end the current custom mode setting and enable that custom mode.
   All options from [Button](#config-button).
 
-
 ## Text Sensor
 
-The `seeed_mr24hpc1`   text sensor allows you to get information about your device.
+The `seeed_mr24hpc1` text sensor allows you to get information about your device.
 
 ```yaml
 text_sensor:
@@ -248,7 +251,8 @@ text_sensor:
       name: "Custom Mode Status"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **heart_beat** (*Optional*): Sensor operating status indicator.
   All options from [Text Sensor](#config-text_sensor).
@@ -270,7 +274,7 @@ text_sensor:
 
 ## Select
 
-The `seeed_mr24hpc1`   select allows you to control the configuration.
+The `seeed_mr24hpc1` select allows you to control the configuration.
 
 ```yaml
 select:
@@ -285,7 +289,8 @@ select:
       name: "Motion Boundary"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **scene_mode** (*Optional*): Valid only in [standard mode](#seeed_mr24hpc1-standard_mode). Used to select a preset scene in standard mode.
   The function of scene mode is to adjust the maximum detection range of the sensor to recognize human movements (Maximum detection distance of the sensor).
@@ -294,13 +299,12 @@ select:
 
 ### Scene mode
 
-| Scene mode |  Detection Radius (m) |
-| --- | --- |
-| Living room |  4m - 4.5m |
-| Bedroom |  3.5m - 4m |
-| Bathroom |  2.5m - 3m |
-| Area detection |  3m - 3.5m |
-
+| Scene mode     | Detection Radius (m) |
+| -------------- | -------------------- |
+| Living room    | 4m - 4.5m            |
+| Bedroom        | 3.5m - 4m            |
+| Bathroom       | 2.5m - 3m            |
+| Area detection | 3m - 3.5m            |
 
 - **unman_time**: Valid only in [standard mode](#seeed_mr24hpc1-standard_mode).
   Same as `custom_unman_time`  , but this setting is only valid in standard mode.
@@ -402,7 +406,8 @@ For a more intuitive view of the sensor data, you can use the customised card be
       title: Custom Settings
 
 ```
-Then replace all instances of `{$DEVICE}`   with your device name
+
+Then replace all instances of `{$DEVICE}` with your device name
 
 The result:
 
@@ -416,4 +421,3 @@ The result:
 - [Product Detail Page for Seeed Studio mmWave Human Detection Sensor Kit](https://www.seeedstudio.com/mmWave-Human-Detection-Sensor-Kit-p-5773.html)
 - [Source of inspiration for implementation](https://github.com/limengdu/mmwave-kit-external-components/)
 - {{< apiref "seeed_mr24hpc1/seeed_mr24hpc1.h" "seeed_mr24hpc1/seeed_mr24hpc1.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `gpio`   platform uses the CPU to generate the bus signals on an on-board GPIO pin.
+The `gpio` platform uses the CPU to generate the bus signals on an on-board GPIO pin.
 
 ```yaml
 # Example configuration entry
@@ -18,7 +18,8 @@ one_wire:
     pin: GPIOXX
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, number): The pin which will be use for bus communication. Note that 1-wire is a bi-directional
   bus so the selected GPIO pin must support both input and output. This must be a GPIO pin internal to the

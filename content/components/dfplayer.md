@@ -9,7 +9,7 @@ params:
 
 
 
-The `dfplayer`   ([datasheet](https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299)), component
+The `dfplayer` ([datasheet](https://wiki.dfrobot.com/DFPlayer_Mini_SKU_DFR0299)), component
 allows you to play sound and music stored in an SD card or USB flash drive.
 
 {{< img src="dfplayer-full.jpg" alt="Image" caption="DF-Player mini Module." width="50.0%" class="align-center" >}}
@@ -19,11 +19,11 @@ For this component to work you need to have set up a [UART bus](#uart) in your c
 ## Overview
 
 The module can be powered by the 3.3V output of a NodeMCU. For communication you can connect only
-the `tx_pin`   of the `uart`   bus to the module's `RX`   but if you need feedback of playback active
-you will also need to connect the `rx_pin`   to the module's `TX`  .
+the `tx_pin` of the `uart` bus to the module's `RX` but if you need feedback of playback active
+you will also need to connect the `rx_pin` to the module's `TX`  .
 For best quality audio a powered stereo speaker can be connected to the modules `DAC_R`  ,
-`DAC_L`   and `GND`  , alternatively the module features a built-in 3W audio amplifier, in that case
-the pins `SPK_1`   and `SPK_2`   should be connected to one passive speaker and a 5V 1A power supply
+`DAC_L` and `GND`  , alternatively the module features a built-in 3W audio amplifier, in that case
+the pins `SPK_1` and `SPK_2` should be connected to one passive speaker and a 5V 1A power supply
 will be required.
 
 ```yaml
@@ -31,14 +31,15 @@ will be required.
 dfplayer:
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **on_finished_playback** (*Optional*, [Automation](#automation)): An action to be
   performed when playback is finished.
 
-## `dfplayer.is_playing`   Condition
+## `dfplayer.is_playing` Condition
 
 This Condition returns true while playback is active.
 
@@ -52,7 +53,8 @@ on_...:
       logger.log: 'Playback is active!'
 
 ```
-## `dfplayer.play_next`   Action
+
+## `dfplayer.play_next` Action
 
 Starts playback of next track or skips to the next track.
 
@@ -62,7 +64,8 @@ on_...:
     - dfplayer.play_next:
 
 ```
-## `dfplayer.play_previous`   Action
+
+## `dfplayer.play_previous` Action
 
 Plays the previously played track.
 
@@ -72,7 +75,8 @@ on_...:
     - dfplayer.play_previous:
 
 ```
-## `dfplayer.play`   Action
+
+## `dfplayer.play` Action
 
 Plays a track.
 
@@ -86,6 +90,7 @@ on_...:
     - dfplayer.play: 23
 
 ```
+
 Configuration options:
 
 - **file** (*Optional*, int, [templatable](#config-templatable)): The global track
@@ -93,7 +98,7 @@ Configuration options:
 - **loop** (*Optional*, boolean, [templatable](#config-templatable)): Repeats playing
   the same track. Defaults to `false`  .
 
-## `dfplayer.play_mp3`   Action
+## `dfplayer.play_mp3` Action
 
 Plays a track inside the folder `mp3`  . Files inside the folder must be numbered from 1
 to 9999, like `0001.mp3`  , `0002.mp3`  , ... etc.
@@ -110,6 +115,7 @@ If you want, you can add additional text after the number in the filename, for e
   ..
 
 ```
+
 ```yaml
 on_...:
   then:
@@ -119,13 +125,13 @@ on_...:
     - dfplayer.play_mp3: 1
 
 ```
+
 Configuration options:
 
 - **file** (**Required**, int, [templatable](#config-templatable)): The file number
-  inside the `mp3`   folder to play.
+  inside the `mp3` folder to play.
 
-
-## `dfplayer.play_folder`   Action
+## `dfplayer.play_folder` Action
 
 Plays files inside numbered folders, folders must be numbered from 1 and with leading
 zeros. Like `01`  , `02`  , ... etc. Files inside the folders must be numbered with two
@@ -145,6 +151,7 @@ from 1 to 10 and file number from 1 to 1000.
   ..
 
 ```
+
 ```yaml
 on_...:
   then:
@@ -153,18 +160,18 @@ on_...:
         file: 1
 
 ```
+
 Configuration options:
 
 - **folder** (**Required**, int, [templatable](#config-templatable)): The folder number.
 - **file** (*Optional*, int, [templatable](#config-templatable)): The file number
-  inside the folder to play. Optional only if `loop`   is not set.
+  inside the folder to play. Optional only if `loop` is not set.
 - **loop** (*Optional*, boolean, [templatable](#config-templatable)): Repeats playing
-  all files in the folder. Causes `file`   to be ignored. Defaults to `false`  .
+  all files in the folder. Causes `file` to be ignored. Defaults to `false`  .
 
+## `dfplayer.set_device` Action
 
-## `dfplayer.set_device`   Action
-
-Changes the device in use. Valid values are `TF_CARD`   and `USB`  .
+Changes the device in use. Valid values are `TF_CARD` and `USB`  .
 
 ```yaml
 on_...:
@@ -172,7 +179,8 @@ on_...:
     - dfplayer.set_device: TF_CARD
 
 ```
-## `dfplayer.set_volume`   Action
+
+## `dfplayer.set_volume` Action
 
 Changes volume.
 
@@ -185,12 +193,13 @@ on_...:
     - dfplayer.set_volume: 20
 
 ```
+
 Configuration options:
 
 - **volume** (**Required**, int, [templatable](#config-templatable)): The volume value.
-  Valid values goes from `0`   to `30`  .
+  Valid values goes from `0` to `30`  .
 
-## `dfplayer.volume_up`   Action
+## `dfplayer.volume_up` Action
 
 Turn volume up.
 
@@ -200,7 +209,8 @@ on_...:
     - dfplayer.volume_up
 
 ```
-## `dfplayer.volume_down`   Action
+
+## `dfplayer.volume_down` Action
 
 Turn volume down.
 
@@ -210,7 +220,8 @@ on_...:
     - dfplayer.volume_down
 
 ```
-## `dfplayer.set_eq`   Action
+
+## `dfplayer.set_eq` Action
 
 Changes audio equalization preset.
 
@@ -223,14 +234,15 @@ on_...:
     - dfplayer.set_eq: ROCK
 
 ```
+
 Configuration options:
 
 - **eq_preset** (**Required**): Eq Preset value. Valid values are `NORMAL`  , `POP`  , `ROCK`  , `JAZZ`  ,
-  `CLASSIC`   and `BASS`  .
+  `CLASSIC` and `BASS`  .
 
-## `dfplayer.sleep`   Action
+## `dfplayer.sleep` Action
 
-Enters sleep mode. Playback is stopped and the action `dfplayer.set_device: TF_CARD`   should be
+Enters sleep mode. Playback is stopped and the action `dfplayer.set_device: TF_CARD` should be
 send for playback to be enabled again.
 
 ```yaml
@@ -239,7 +251,8 @@ on_...:
     - dfplayer.sleep
 
 ```
-## `dfplayer.reset`   Action
+
+## `dfplayer.reset` Action
 
 Module reset.
 
@@ -249,7 +262,8 @@ on_...:
     - dfplayer.reset
 
 ```
-## `dfplayer.start`   Action
+
+## `dfplayer.start` Action
 
 Starts playing a track or resumes paused playback.
 
@@ -259,7 +273,8 @@ on_...:
     - dfplayer.start
 
 ```
-## `dfplayer.pause`   Action
+
+## `dfplayer.pause` Action
 
 Pauses playback, playback can be resumed from the same position with `dfplayer.start`  .
 
@@ -269,7 +284,8 @@ on_...:
     - dfplayer.pause
 
 ```
-## `dfplayer.stop`   Action
+
+## `dfplayer.stop` Action
 
 Stops playback.
 
@@ -279,7 +295,8 @@ on_...:
     - dfplayer.stop
 
 ```
-## `dfplayer.random`   Action
+
+## `dfplayer.random` Action
 
 Randomly plays all tracks.
 
@@ -289,21 +306,22 @@ on_...:
     - dfplayer.random
 
 ```
+
 ## All actions
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the DFPlayer if you have multiple components.
 
-
 ## Test setup
 
 With the following code you can quickly setup a node and use Home Assistant's service in the developer tools.
-E.g. for calling `dfplayer.play_folder`   select the service `esphome.test_node_dfplayer_play`   and in
+E.g. for calling `dfplayer.play_folder` select the service `esphome.test_node_dfplayer_play` and in
 service data enter
 
 ```json
 { "file": 23 }
 
 ```
+
 ### Sample code
 
 ```yaml
@@ -407,7 +425,7 @@ api:
       - dfplayer.volume_down
 
 ```
+
 ## See Also
 
 - {{< apiref "dfplayer/dfplayer.h" "dfplayer/dfplayer.h" >}}
-

@@ -100,7 +100,7 @@ If you prefer the more manual way:
 - If you're using the [ESPHome Device Builder](#installing-esphome-device-builder), you can use its "Manual
     download" method: click "Install" in the overflow menu (vertical dots) and then select "Manual download".
 - If you're using ESPHome's command line interface, the file is available in the
-    `<CONFIG_DIR>/<NODE_NAME>/.pioenvs/<NODE_NAME>/firmware.bin`   directory after the build completes.
+    `<CONFIG_DIR>/<NODE_NAME>/.pioenvs/<NODE_NAME>/firmware.bin` directory after the build completes.
 
 2. On some boards, you may need to force the microcontroller into its [programming mode](#esphome-phy-con-prg).
    This often isn't necessary on most modern boards/devices, but it's worth trying if you're experiencing difficulties.
@@ -112,25 +112,26 @@ If you prefer the more manual way:
     browser the requested permission in the pop-up box that appears. Next, select the serial device associated with
     your board, click **Install** and browse for/select the binary file you downloaded earlier (as above). Note that
     the file is processed locally and is **not** uploaded to any cloud service.
-- `esptool`   [from the GitHub repository](https://github.com/espressif/esptool/releases). It's likely available
-    as package for your OS or you can try installing it with `pip install esptool`   (in case of Linux).
+- `esptool` [from the GitHub repository](https://github.com/espressif/esptool/releases). It's likely available
+    as package for your OS or you can try installing it with `pip install esptool` (in case of Linux).
 
 {{< anchor "esphome-esptool" >}}
 
 ## What is `esptool`  ?
 
-`esptool`   is a command-line/terminal application which can be used to perform a variety of tasks on Espressif
+`esptool` is a command-line/terminal application which can be used to perform a variety of tasks on Espressif
 microcontrollers. It's not the most user-friendly approach, but it's quite powerful and can be useful if you get stuck.
 
 {{< note >}}
 Before using `esptool`  , make sure you know which serial port your board/serial adapter is connected to!
 
-- In Linux, you can use the `dmesg`   command after you plug the device into the USB port to see the name of the
+- In Linux, you can use the `dmesg` command after you plug the device into the USB port to see the name of the
   (new) serial port.
 - In Windows, look in the Device Manager to see if a new serial port appears when you plug it in and note the (new)
   port's COM number.
 
 {{< /note >}}
+
 ### Erase flash
 
 This erases your microcontroller's flash memory -- nothing (settings, data, etc.) will remain!
@@ -139,6 +140,7 @@ This erases your microcontroller's flash memory -- nothing (settings, data, etc.
 esptool --port /dev/ttyUSB0 erase_flash
 
 ```
+
 ### Write flash
 
 This will install ("flash") your binary (ESPHome) onto your microcontroller.
@@ -147,6 +149,7 @@ This will install ("flash") your binary (ESPHome) onto your microcontroller.
 esptool --port /dev/ttyUSB0 write_flash 0x0 your_node_firmware.bin
 
 ```
+
 {{< anchor "faq-usb_troubleshooting" >}}
 
 ## I can't get installation over USB to work
@@ -162,16 +165,16 @@ There are a number of reasons this may happen.
 - If you're trying to install ESPHome onto your device from within a Docker container, be sure you are mounting the
   device into your container using `--device=/dev/ttyUSB0`  .
 
-### `esptool`   Troubleshooting
+### `esptool` Troubleshooting
 
-If you're just seeing `Connecting....____....`   on the screen and installation ("flashing") fails:
+If you're just seeing `Connecting....____....` on the screen and installation ("flashing") fails:
 
 - Verify that the name of the device's port has not changed; this can happen if you disconnect and then reconnect it
-  too quickly (for example, it might change from `/dev/ttyUSB0`   to `/dev/ttyUSB1`  ).
+  too quickly (for example, it might change from `/dev/ttyUSB0` to `/dev/ttyUSB1`  ).
 - If you're using an external USB-to-serial adapter, confirm that the wires are connected correctly. The receive (RX)
   line from the adapter should be connected to the transmit (TX) line of your board (and vice-versa for the other
   wire).
-- Some devices may require you to keep `GPIO0`   and `GND`   connected at least until flashing has begun.
+- Some devices may require you to keep `GPIO0` and `GND` connected at least until flashing has begun.
 - Some devices may require you to power-cycle them to restart programming mode after erasing flash; they won't
   auto-reset.
 - Last but not least, this could be a sign that your microcontroller is defective, damaged or otherwise cannot be
@@ -184,15 +187,16 @@ transfer. Don't worry -- just try again, perhaps with a reduced baud rate for sa
 esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x0 your_node_firmware.bin
 
 ```
+
 If you *still* can't get it to work, you might want to revisit [I can't get installation over USB to work](#faq-usb_troubleshooting) above.
 
 ## Tips for using ESPHome
 
-- ESPHome supports (most of) [Home Assistant's YAML configuration directives](https://www.home-assistant.io/docs/configuration/splitting_configuration/) like `!include`   and `!secret`  .
+- ESPHome supports (most of) [Home Assistant's YAML configuration directives](https://www.home-assistant.io/docs/configuration/splitting_configuration/) like `!include` and `!secret`  .
   This allows you to store your secrets (for example, Wi-Fi passwords and API keys) in a file called `secrets.yaml`  ,
   as long as this file is in the same directory as your ESPHome configuration file.
 
-  We've enhanced ESPHome's `!include`   directive such that it accepts a list of variables that can be substituted
+  We've enhanced ESPHome's `!include` directive such that it accepts a list of variables that can be substituted
   within the included file. For example:
 
 ```yaml
@@ -211,6 +215,7 @@ If you *still* can't get it to work, you might want to revisit [I can't get inst
             id: 2
 
 ```
+
   `on-multi-click.yaml`  :
 
 ```yaml
@@ -226,6 +231,7 @@ If you *still* can't get it to work, you might want to revisit [I can't get inst
             payload: double
 
 ```
+
 - You can use {{< docref "/components/substitutions" >}} to build on the examples above and reduce repetition in your
   configuration files.
 
@@ -235,26 +241,24 @@ If you *still* can't get it to work, you might want to revisit [I can't get inst
     esphome config livingroom.yaml
 
 ```
+
 - To view the logs from your ESPHome node without uploading, run:
 
 ```bash
     esphome logs livingroom.yaml
 
 ```
-- You can always find the source ESPHome generates in the `<NODE_NAME>/src/`   directory.
+
+- You can always find the source ESPHome generates in the `<NODE_NAME>/src/` directory.
 
 - You can view the full list of command line interface options here: {{< docref "/guides/cli" >}}
 
-
-
-
-
-## Help! Something's not working!
+## Help! Something's not working
 
 That's no good. Here are some steps that resolve some problems:
 
 - **If you're having Wi-Fi problems**: See [My node keeps reconnecting randomly](#wifi-problems).
-- [Enable verbose logs](#logger-log_levels) in your ESPHome device's `logger:`   section.
+- [Enable verbose logs](#logger-log_levels) in your ESPHome device's `logger:` section.
 - **If your device is crashing**: See the {{< docref "/guides/troubleshooting" >}} guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
   [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe your
@@ -278,7 +282,7 @@ If you want the issue you're experiencing to be fixed quickly:
 - Provide a snippet of the code/configuration which triggers the issue; we'll likely want to try to reproduce it.
   Please read [How to create a Minimal, Complete, and Verifiable example](https://stackoverflow.com/help/mcve).
 - If it's a hardware communication issue (such as with an I²C or SPI device), try setting the
-  [log level](#logger-log_levels) to `VERY_VERBOSE`   as it may provide better insight into what is going on.
+  [log level](#logger-log_levels) to `VERY_VERBOSE` as it may provide better insight into what is going on.
 - Please describe what troubleshooting steps you've already tried as that may also help us track down the issue.
 
 You can find our issue tracker [on GitHub](https://github.com/esphome/esphome/issues).
@@ -295,6 +299,7 @@ pip3 install -U esphome
 docker pull ghcr.io/esphome/esphome:stable
 
 ```
+
 {{< anchor "faq-beta" >}}
 
 ## How do I update to the latest beta release?
@@ -314,15 +319,16 @@ stable channel. You can help test ESPHome (and use new features) by installing t
     docker run [...] -it ghcr.io/esphome/esphome:beta run livingroom.yaml
 
 ```
+
 The beta documentation is available at [beta.esphome.io](https://beta.esphome.io).
 
 ## How do I use the latest bleeding-edge version?
 
 First, a fair warning that the latest bleeding-edge version is not always stable. You may encounter unusual problems
-and/or undocumented/unexpected changes. We do not generally *support* running ESPHome `dev`   -- it's usually something
+and/or undocumented/unexpected changes. We do not generally *support* running ESPHome `dev` -- it's usually something
 only developers use.
 
-That aside, if you want to install the `dev`   version of ESPHome:
+That aside, if you want to install the `dev` version of ESPHome:
 
 - For Home Assistant supervised installs, search for "ESPHome" in the Add-on Store. Note that the add-ons are named
   accordingly; for the dev version, you'll want "ESPHome Device Builder (dev)".
@@ -332,6 +338,7 @@ That aside, if you want to install the `dev`   version of ESPHome:
     pip3 install https://github.com/esphome/esphome/archive/dev.zip
 
 ```
+
 - From docker, use the [ghcr.io/esphome/esphome:dev](https://github.com/esphome/esphome/pkgs/container/esphome/)
   image.
 
@@ -339,18 +346,20 @@ That aside, if you want to install the `dev`   version of ESPHome:
     docker run [...] -it ghcr.io/esphome/esphome:dev livingroom.yaml compile
 
 ```
+
 The dev documentation is available at [next.esphome.io](https://next.esphome.io/).
 
-## How do I use my Home Assistant `secrets.yaml`   file?
+## How do I use my Home Assistant `secrets.yaml` file?
 
-If you want to keep all your secrets in one place, make a `secrets.yaml`   file in your `esphome`   directory with
+If you want to keep all your secrets in one place, make a `secrets.yaml` file in your `esphome` directory with
 the following contents:
 
 ```yaml
 <<: !include ../secrets.yaml
 
 ```
-This "pulls in" the contents of your Home Assistant `secrets.yaml`   file from the parent directory.
+
+This "pulls in" the contents of your Home Assistant `secrets.yaml` file from the parent directory.
 
 ## Does ESPHome support [this device/feature]?
 
@@ -368,12 +377,12 @@ You can also create a feature request in our
 
 Sure! We are happy to help :) You can contact us here:
 
--  [Discord](https://discord.gg/KhAMKrd)
--  [Home Assistant Community Forums](https://community.home-assistant.io/c/esphome)
--  ESPHome [issue](https://github.com/esphome/esphome/issues) and
+- [Discord](https://discord.gg/KhAMKrd)
+- [Home Assistant Community Forums](https://community.home-assistant.io/c/esphome)
+- ESPHome [issue](https://github.com/esphome/esphome/issues) and
    [feature request](https://github.com/orgs/esphome/discussions) trackers. Preferably only for issues and
    feature requests.
--  **If your inquiry is not regarding support**, you can [e-mail us](mailto:esphome@openhomefoundation.org).
+- **If your inquiry is not regarding support**, you can [e-mail us](mailto:esphome@openhomefoundation.org).
 
 {{< anchor "wifi-problems" >}}
 
@@ -385,20 +394,20 @@ solution right now.
 
 Here are some steps that may help mitigate the issue:
 
-- If you're using a hidden Wi-Fi network, make sure to enable `fast_connect`   mode in your device's Wi-Fi
+- If you're using a hidden Wi-Fi network, make sure to enable `fast_connect` mode in your device's Wi-Fi
   configuration. Note that this may help with non-hidden networks, as well.
 - Give your ESPHome device a [static IP](#wifi-manual_ip).
-- Set the `power_save_mode`   to `light`   in your `wifi:`   configuration. Note, however, that this may exacerbate the
+- Set the `power_save_mode` to `light` in your `wifi:` configuration. Note, however, that this may exacerbate the
   problem in some situations. See [Power Save Mode](#wifi-power_save_mode).
 - The issue seems to happen with "cheap" boards more frequently -- especially the "cheap" NodeMCU boards from eBay
   which sometimes have bad antennas.
 - ESPHome intentionally reboots after a configured duration in specific situations, such as when the
   {{< docref "/components/wifi" "Wi-Fi connection cannot be made" >}}, {{< docref "/components/api" "API connection is lost" >}} or
   {{< docref "/components/mqtt" "MQTT connection is lost" >}}. To disable this behavior, you'll need to explicitly set the
-  `reboot_timeout`   option to `0s`   on the relevant components.
-- If you see `Error: Disconnecting <NODE_NAME>`   in your logs, ESPHome is actively closing the native API client
+  `reboot_timeout` option to `0s` on the relevant components.
+- If you see `Error: Disconnecting <NODE_NAME>` in your logs, ESPHome is actively closing the native API client
   connection. You'll need to establish a serial connection with your device to determine the reason. If you see
-  `ack timeout 4`   immediately before the disconnect, this might be because of a bug in the AsyncTCP library, for
+  `ack timeout 4` immediately before the disconnect, this might be because of a bug in the AsyncTCP library, for
   which a fix was included in ESPHome version 1.18.0. If you are running an ESPHome version, prior to 1.18.0, you
   should upgrade ESPHome and build fresh firmware for your devices.
 - We've seen an increase in disconnects while the log level is set to `VERY_VERBOSE`  , especially on single-core
@@ -416,9 +425,9 @@ Here are some steps that may help mitigate the issue:
 
 ## Component states not restored after reboot
 
-Some components, such as `climate`   and `switch`   components, are able to restore their states following a
+Some components, such as `climate` and `switch` components, are able to restore their states following a
 reboot/power-cycle of the microcontroller. If you've configured this for a given component but find that its state is
-not restored as expected, or you get periodic `ESP_ERR_NVS_NOT_ENOUGH_SPACE`   errors in your device's log, it could be
+not restored as expected, or you get periodic `ESP_ERR_NVS_NOT_ENOUGH_SPACE` errors in your device's log, it could be
 that the NVS portion of the flash memory is full. This can happen for a number of reasons, but, regardless, you can try
 wiping the NVS partition with the following commands:
 
@@ -427,7 +436,8 @@ dd if=/dev/zero of=nvs_zero bs=1 count=20480
 esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x009000 nvs_zero
 
 ```
-Change `/dev/ttyUSB0`   above to your serial port. If you have changed the partition layout, you'll need to adjust the
+
+Change `/dev/ttyUSB0` above to your serial port. If you have changed the partition layout, you'll need to adjust the
 above offsets and sizes accordingly.
 
 ## Docker Reference
@@ -443,6 +453,7 @@ docker pull ghcr.io/esphome/esphome:beta
 docker pull ghcr.io/esphome/esphome:dev
 
 ```
+
 ESPHome Command Reference:
 
 ```bash
@@ -469,6 +480,7 @@ docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/con
 alias esphome='docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome'
 
 ```
+
 Docker Compose example:
 
 ```yaml
@@ -490,6 +502,7 @@ services:
     restart: always
 
 ```
+
 {{< anchor "docker-reference-notes" >}}
 
 {{< note >}}
@@ -510,10 +523,10 @@ pfSense:
 2. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
 
 Alternatively, you can configure the [ESPHome Device Builder](#installing-esphome-device-builder) to use ICMP
-pings to check the status of devices by setting `"status_use_ping": true`   or, with Docker:
+pings to check the status of devices by setting `"status_use_ping": true` or, with Docker:
 `-e ESPHOME_DASHBOARD_USE_PING=true`
 
-See also https://github.com/esphome/issues/issues/641#issuecomment-534156628.
+See also <https://github.com/esphome/issues/issues/641#issuecomment-534156628>.
 
 {{< /note >}}
 {{< anchor "faq-notes_on_disabling_mdns" >}}
@@ -546,7 +559,7 @@ Always back up your files!
 
 ## Why shouldn't I use underscores in my device name?
 
-The top level `name:`   field in your `.yaml`   configuration file defines the node name ("hostname") on the local
+The top level `name:` field in your `.yaml` configuration file defines the node name ("hostname") on the local
 network. According to [RFC1912](https://datatracker.ietf.org/doc/html/rfc1912), underscore (`_`  ) characters in
 hostnames are not valid. In practice, some DNS/DHCP setups may work correctly with underscores while others will not.
 If you're using static IP addresses, you're unlikely to encounter any issues. In some cases, initial setup may work,
@@ -555,7 +568,7 @@ but connections might fail when Home Assistant restarts or if you change router 
 We recommend using a hyphen (`-`  ) instead of underscore.
 
 Important: follow these [instructions](/components/esphome.html#changing-esphome-node-name) to use the
-`use_address`   parameter when renaming a live device, as the connection to an existing device will only
+`use_address` parameter when renaming a live device, as the connection to an existing device will only
 work with the old name until the name change is complete.
 
 {{< anchor "strapping-warnings" >}}
@@ -584,7 +597,7 @@ high- impedance inputs with no pull-up or pull-down resistors. Note that I2C clo
 resistors and are not safe on strapping pins.
 
 If you are absolutely sure that your use of strapping pins is safe and you want to suppress the warning, you can add
-`ignore_strapping_warning: true`   to the relevant pin configuration(s).
+`ignore_strapping_warning: true` to the relevant pin configuration(s).
 
 ## How can I test a pull request?
 
@@ -604,8 +617,9 @@ external_components:
       - ccs811
 
 ```
+
 Note that this only works for pull requests that only change files within components. If any files outside
-`esphome/components/`   are added or changed, this method won't work. Those pull requests are labeled with the "core"
+`esphome/components/` are added or changed, this method won't work. Those pull requests are labeled with the "core"
 label on GitHub.
 
 ## Why do entities appear as "unavailable" during deep sleep?
@@ -618,4 +632,3 @@ re-add the device in Home Assistant.
 
 - {{< docref "/index" "ESPHome index" >}}
 - [Developer site](https://developers.esphome.io)
-

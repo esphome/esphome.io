@@ -9,7 +9,7 @@ params:
 
 
 
-The `media_player`   domain includes all platforms that implement media player
+The `media_player` domain includes all platforms that implement media player
 functionality.
 
 {{< note >}}
@@ -26,6 +26,7 @@ media_player:
     name: "Media Player Name"
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -36,41 +37,41 @@ If you have a [friendly_name](#esphome-configuration_variables) set for your dev
 you want the media player to use that name, you can set `name: None`  .
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   media player in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
   Defaults to `false`  .
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Set to `""`   to remove the default entity category.
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
+  for a list of available options. Set to `""` to remove the default entity category.
 
 {{< anchor "media_player-actions" >}}
 
 ## Media Player Actions
 
-All `media_player`   actions can be used without specifying an `id`   if you have only one `media_player`   in
+All `media_player` actions can be used without specifying an `id` if you have only one `media_player` in
 your configuration YAML.
 
-The actions `turn_off`   and `turn_on`   are optional and based on the platform implementing the `supports_turn_off_on`   trait.
+The actions `turn_off` and `turn_on` are optional and based on the platform implementing the `supports_turn_off_on` trait.
 
 Configuration variables:
 
 **id** (*Optional*, [ID](#config-id)): The media player to control. Defaults to the only one in YAML.
 
-
 {{< anchor "media_player-play" >}}
 
-### `media_player.play`   Action
+### `media_player.play` Action
 
 This action will resume playing the media player.
 
 {{< anchor "media_player-play_media" >}}
 
-### `media_player.play_media`   Action
+### `media_player.play_media` Action
 
 This action will start playing the specified media.
 
@@ -88,19 +89,20 @@ on_...:
   - media_player.play_media: !lambda 'return "http://media-url/media.mp3";'
 
 ```
+
 Configuration variables:
 
 **media_url** (**Required**, string): The media url to play.
 
 {{< anchor "media_player-pause" >}}
 
-### `media_player.pause`   Action
+### `media_player.pause` Action
 
 This action pauses the current playback.
 
 {{< anchor "media_player-stop" >}}
 
-### `media_player.stop`   Action
+### `media_player.stop` Action
 
 This action stops the current playback.
 
@@ -110,37 +112,37 @@ Configuration variables:
 
 {{< anchor "media_player-toggle" >}}
 
-### `media_player.toggle`   Action
+### `media_player.toggle` Action
 
 This action will pause or resume the current playback.
 
 {{< anchor "media_player-turn_off" >}}
 
-### `media_player.turn_off`   Action
+### `media_player.turn_off` Action
 
 This action will turn off the media player.
 
 {{< anchor "media_player-turn_on" >}}
 
-### `media_player.turn_on`   Action
+### `media_player.turn_on` Action
 
 This action will turn on the media player.
 
 {{< anchor "media_player-volume_up" >}}
 
-### `media_player.volume_up`   Action
+### `media_player.volume_up` Action
 
 This action will increase the volume of the media player.
 
 {{< anchor "media_player-volume_down" >}}
 
-### `media_player.volume_down`   Action
+### `media_player.volume_down` Action
 
 This action will decrease the volume of the media player.
 
 {{< anchor "media_player-volume_set" >}}
 
-### `media_player.volume_set`   Action
+### `media_player.volume_set` Action
 
 This action will set the volume of the media player.
 
@@ -158,13 +160,14 @@ on_...:
   - media_player.volume_set: !lambda "return 0.5;"
 
 ```
+
 Configuration variables:
 
 **volume** (**Required**, percentage): The volume to set the media player to.
 
 {{< anchor "media_player-on_state_trigger" >}}
 
-### `media_player.on_state`   Trigger
+### `media_player.on_state` Trigger
 
 This trigger is activated each time the state of the media player is updated
 (for example, if the player is stop playing audio or received some command).
@@ -177,9 +180,10 @@ media_player:
       - logger.log: "State updated!"
 
 ```
+
 {{< anchor "media_player-on_play_trigger" >}}
 
-### `media_player.on_play`   Trigger
+### `media_player.on_play` Trigger
 
 This trigger is activated each time then the media player is started playing.
 
@@ -191,9 +195,10 @@ media_player:
       - logger.log: "Playback started!"
 
 ```
+
 {{< anchor "media_player-on_pause_trigger" >}}
 
-### `media_player.on_pause`   Trigger
+### `media_player.on_pause` Trigger
 
 This trigger is activated every time the media player pauses playback.
 
@@ -205,9 +210,10 @@ media_player:
       - logger.log: "Playback paused!"
 
 ```
+
 {{< anchor "media_player-on_idle_trigger" >}}
 
-### `media_player.on_idle`   Trigger
+### `media_player.on_idle` Trigger
 
 This trigger is activated every time the media player finishes playing.
 
@@ -219,9 +225,10 @@ media_player:
       - logger.log: "Playback finished!"
 
 ```
+
 {{< anchor "media_player-on_announcement_trigger" >}}
 
-### `media_player.on_announcement`   Trigger
+### `media_player.on_announcement` Trigger
 
 This trigger is activated every time the media player plays an announcement.
 
@@ -233,37 +240,40 @@ media_player:
       - logger.log: "Announcing!"
 
 ```
+
 {{< anchor "media_player-on_turn_off_trigger" >}}
 
-### `media_player.on_turn_off`   Trigger
+### `media_player.on_turn_off` Trigger
 
 This trigger is activated every time the media player is turned off.
 
 ```yaml
 media_player:
-  - platform: ...  # any platform implementing the `supports_turn_off_on`   trait
+  - platform: ...  # any platform implementing the `supports_turn_off_on` trait
     # ...
     on_turn_off:
       - logger.log: "Media Player is Turned Off"
 
 ```
+
 {{< anchor "media_player-on_turn_on_trigger" >}}
 
-### `media_player.on_turn_on`   Trigger
+### `media_player.on_turn_on` Trigger
 
 This trigger is activated every time the media player is turned on.
 
 ```yaml
 media_player:
-  - platform: ...  # any platform implementing the `supports_turn_off_on`   trait
+  - platform: ...  # any platform implementing the `supports_turn_off_on` trait
     # ...
     on_turn_on:
       - logger.log: "Media Player is Turned On"
 
 ```
+
 {{< anchor "media_player-is_idle_condition" >}}
 
-### `media_player.is_idle`   Condition
+### `media_player.is_idle` Condition
 
 This condition checks if the media player is idle.
 
@@ -275,9 +285,10 @@ on_...:
       media_player.is_idle:
 
 ```
+
 {{< anchor "media_player-is_playing_condition" >}}
 
-### `media_player.is_playing`   Condition
+### `media_player.is_playing` Condition
 
 This condition checks if the media player is playing media.
 
@@ -289,9 +300,10 @@ on_...:
       media_player.is_playing:
 
 ```
+
 {{< anchor "media_player-is_paused_condition" >}}
 
-### `media_player.is_paused`   Condition
+### `media_player.is_paused` Condition
 
 This condition checks if the media player is paused.
 
@@ -303,9 +315,10 @@ on_...:
       media_player.is_paused:
 
 ```
+
 {{< anchor "media_player-is_announcing_condition" >}}
 
-### `media_player.is_announcing`   Condition
+### `media_player.is_announcing` Condition
 
 This condition checks if the media player is playing an announcement.
 
@@ -317,9 +330,10 @@ on_...:
       media_player.is_announcing:
 
 ```
+
 {{< anchor "media_player-is_off_condition" >}}
 
-### `media_player.is_off`   Condition
+### `media_player.is_off` Condition
 
 This condition checks if the media player is turned off.
 
@@ -331,9 +345,10 @@ on_...:
       media_player.is_off:
 
 ```
+
 {{< anchor "media_player-is_on_condition" >}}
 
-### `media_player.is_on`   Condition
+### `media_player.is_on` Condition
 
 This condition checks if the media player is turned on.
 
@@ -345,6 +360,7 @@ on_...:
       media_player.is_on:
 
 ```
+
 ## Play media in order
 
 You can use wait automation to play files one after the other:
@@ -359,4 +375,5 @@ on_...:
     - media_player.play_media: 'http://media-url/two.mp3'
 
 ```
+
 ## See Also

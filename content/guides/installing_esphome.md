@@ -24,12 +24,14 @@ In the terminal that comes up, check that Python is installed:
 python --version
 
 ```
+
 It should show something like:
 
 ```console
 Python 3.11.13
 
 ```
+
 Looks good? You can go ahead and install ESPHome:
 
 ```console
@@ -37,6 +39,7 @@ pip3 install wheel
 pip3 install esphome
 
 ```
+
 And you should be good to go! You can test that things are properly installed
 with:
 
@@ -44,17 +47,20 @@ with:
 esphome version
 
 ```
+
 It should show something like:
 
 ```console
 Version: 2025.8.0
 
 ```
+
 {{< note >}}
 You may additionally need to install git for the external components feature.
 Download git from [the official link](https://git-scm.com/downloads)
 
 {{< /note >}}
+
 ## Mac
 
 ESPHome supports macOS. There are several ways to install ESPHome on macOS:
@@ -62,7 +68,6 @@ ESPHome supports macOS. There are several ways to install ESPHome on macOS:
 - Homebrew
 - pip
 - Cloning the repository
-
 
 **Homebrew**
 
@@ -72,19 +77,23 @@ An easy way for installation is via [Homebrew](https://brew.sh/):
 brew install esphome
 
 ```
+
 Verify the installation:
 
 ```console
 esphome version
 
 ```
+
 It should show something like:
 
 ```console
 Version: 2025.8.0
 
 ```
+
 {{< note >}}
+
 - If you encounter any issues with Homebrew installation, please check the
   [ESPHome Homebrew Formula](https://formulae.brew.sh/formula/esphome) page
   for additional information.
@@ -111,7 +120,8 @@ $ source venv/bin/activate  # For bash or compatible shells. If using a differen
 (venv) $ esphome version
 
 ```
-Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above. When activated you will see `(venv)`   at the beginning of your prompt.
+
+Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above. When activated you will see `(venv)` at the beginning of your prompt.
 
 **Cloning the repository**
 
@@ -127,12 +137,14 @@ least version 3.11:
 python3 --version
 
 ```
+
 It should show something like:
 
 ```console
 Python 3.11.13
 
 ```
+
 Looks good? Now create a virtual environment to contain ESPHome and it's dependencies.
 
 ```console
@@ -140,7 +152,8 @@ python3 -m venv venv
 source venv/bin/activate
 
 ```
-You may or may not see `(venv)`   at the beginning of your prompt depending on your shell configuration. This indicates that you are in the virtual environment.
+
+You may or may not see `(venv)` at the beginning of your prompt depending on your shell configuration. This indicates that you are in the virtual environment.
 
 You can go ahead and install ESPHome:
 
@@ -148,12 +161,13 @@ You can go ahead and install ESPHome:
 pip3 install esphome
 
 ```
+
 {{< caution >}}
-Don't use `sudo`   with pip. If you do, you'll run into trouble updating
+Don't use `sudo` with pip. If you do, you'll run into trouble updating
 your Distro down the road.
 
 For details, see [DontBreakDebian](https://wiki.debian.org/DontBreakDebian#A.27make_install.27_can_conflict_with_packages).
-`pip install`   is equivalent to `make install`   in this context. The
+`pip install` is equivalent to `make install` in this context. The
 advice in the article applies to all Linux distributions, not just Debian.
 
 Some people install ESPHome without the virtual environment, which can lead to issues with PATHs etc.
@@ -166,14 +180,16 @@ At this point, you should be able to confirm that ESPHome has been successfully 
 esphome version
 
 ```
+
 It should show something like:
 
 ```console
 Version: 2025.8.0
 
 ```
+
 If you get an error like "Command not found", you need to add the binary to
-your `PATH`   using `export PATH=$PATH:$HOME/.local/bin`  .
+your `PATH` using `export PATH=$PATH:$HOME/.local/bin`  .
 
 To set this permanently, you can run ``echo 'export
 PATH=$PATH:$HOME/.local/bin' >> $HOME/.bashrc``, then log out and back in.
@@ -183,4 +199,3 @@ PATH=$PATH:$HOME/.local/bin' >> $HOME/.bashrc``, then log out and back in.
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "getting_started_command_line/" >}}
 - [Developer site](https://developers.esphome.io)
-

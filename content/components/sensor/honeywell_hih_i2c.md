@@ -25,7 +25,8 @@ sensor:
       name: "Living Room Humidity"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **temperature** (**Required**): The information for the temperature sensor.
   All options from [Sensor](#config-sensor).
@@ -35,9 +36,7 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
 
-
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "honeywell_hih_i2c/honeywell_hih.h" "honeywell_hih_i2c/honeywell_hih.h" >}}
-

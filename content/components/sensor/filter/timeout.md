@@ -5,7 +5,7 @@ headless: true
 
 
 
-After the first value has been sent, if no subsequent value is published within the specified `timeout`   period, send
+After the first value has been sent, if no subsequent value is published within the specified `timeout` period, send
 a templatable value which defaults to `NaN`  . The value may also be set to `last`  , which will result in the last
 value received by the filter being sent again.
 

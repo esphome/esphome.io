@@ -9,21 +9,21 @@ params:
 
 
 
-The `binary_sensor_map`   sensor platform allows you to map multiple {{< docref "/components/binary_sensor/index" "binary sensor" >}}
+The `binary_sensor_map` sensor platform allows you to map multiple {{< docref "/components/binary_sensor/index" "binary sensor" >}}
 to an individual value. Depending on the state of each binary sensor, its associated configured parameters, and this sensor's mapping type,
-the `binary_sensor_map`   publishes a single numerical value.
+the `binary_sensor_map` publishes a single numerical value.
 
-Use this sensor to combine one or more binary sensors' `ON`   or `OFF`   states into a numerical value. Some possible use cases include
+Use this sensor to combine one or more binary sensors' `ON` or `OFF` states into a numerical value. Some possible use cases include
 touch devices and determining Bayesian probabilities for an event.
 
 This platform supports three measurement types: `BAYESIAN`  , `GROUP`  , and `SUM`  .
-You need to specify your desired mapping with the `type:`   configuration value.
+You need to specify your desired mapping with the `type:` configuration value.
 
-When using the `BAYESIAN`   type, add your binary sensors as `observations`   to the binary sensor map.
-If you use the `GROUP`   or `SUM`   type, add your binary sensors as `channels`  .
+When using the `BAYESIAN` type, add your binary sensors as `observations` to the binary sensor map.
+If you use the `GROUP` or `SUM` type, add your binary sensors as `channels`  .
 The maximum amount of observations/channels supported is 64.
 
-- `BAYESIAN`   This type replicates Home Assistant's [Bayesian sensor](https://www.home-assistant.io/integrations/bayesian/). Based on the observation states, this sensor returns the Bayesian probability of a particular event occurring. The configured `prior:`   probability is the likelihood that the Bayesian event is true, ignoring all external influences. Every observation has its own `prob_given_true`   and `prob_given_false`   parameters. The `prob_given_true:`   value is the probability that the observation's binary sensor is `ON`   when the Bayesian event is `true`  . The `prob_given_false:`   value is the probability that the observation's binary sensor is `ON`   when the Bayesian event is `false`  . Use an {{< docref "/components/binary_sensor/analog_threshold" >}} to convert this sensor's probability to a binary `ON`   or `OFF`   by setting an appropriate threshold.
+- `BAYESIAN` This type replicates Home Assistant's [Bayesian sensor](https://www.home-assistant.io/integrations/bayesian/). Based on the observation states, this sensor returns the Bayesian probability of a particular event occurring. The configured `prior:` probability is the likelihood that the Bayesian event is true, ignoring all external influences. Every observation has its own `prob_given_true` and `prob_given_false` parameters. The `prob_given_true:` value is the probability that the observation's binary sensor is `ON` when the Bayesian event is `true`  . The `prob_given_false:` value is the probability that the observation's binary sensor is `ON` when the Bayesian event is `false`  . Use an {{< docref "/components/binary_sensor/analog_threshold" >}} to convert this sensor's probability to a binary `ON` or `OFF` by setting an appropriate threshold.
 
 ```yaml
 # Example configuration entry
@@ -51,8 +51,9 @@ binary_sensor:
   # ...
 
 ```
-- `GROUP`   Each channel has its own `value`  . The sensor publishes the average value of all active
-  binary sensors or `NAN`   if no sensors are active.
+
+- `GROUP` Each channel has its own `value`  . The sensor publishes the average value of all active
+  binary sensors or `NAN` if no sensors are active.
 
 ```yaml
 # Example configuration entry
@@ -83,8 +84,9 @@ binary_sensor:
   # ...
 
 ```
-- `SUM`   Each channel has its own `value`  . The sensor publishes the sum of all the active
-  binary sensors values or `0`   if no sensors are active.
+
+- `SUM` Each channel has its own `value`  . The sensor publishes the sum of all the active
+  binary sensors values or `0` if no sensors are active.
 
 ```yaml
 # Example configuration entry
@@ -122,7 +124,8 @@ binary_sensor:
   # ...
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **type** (**Required**, string): The sensor type. Should be one of: `BAYESIAN`  , `GROUP`  , or `SUM`  .
 - **channels** (**Required for GROUP or SUM types**): A list of channels that are mapped to certain values.
@@ -147,4 +150,3 @@ binary_sensor:
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "binary_sensor_map/binary_sensor_map.h" "binary_sensor_map/binary_sensor_map.h" >}}
 - [Bayesian sensor in Home Assistant](https://www.home-assistant.io/integrations/bayesian/)
-

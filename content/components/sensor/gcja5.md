@@ -9,13 +9,13 @@ params:
 
 
 
-The `gcja5`   sensor platform allows you to use your Panasonic SN-GCJA5 laser based particulate matter sensor
+The `gcja5` sensor platform allows you to use your Panasonic SN-GCJA5 laser based particulate matter sensor
 ([datasheet](https://na.industrial.panasonic.com/products/sensors/air-quality-gas-flow-sensors/lineup/laser-type-pm-sensor/series/123557/model/123559))
 sensors with ESPHome.
 
 As the communication with the GCJA5 is done using UART, you need
-to have an [UART bus](#uart) in your configuration with the `rx_pin`   connected to the SEND/TX. Additionally, you need to set the baud rate to 9600, and you
-MUST have `EVEN`   parity.
+to have an [UART bus](#uart) in your configuration with the `rx_pin` connected to the SEND/TX. Additionally, you need to set the baud rate to 9600, and you
+MUST have `EVEN` parity.
 
 The sensor itself will push values every second. You may wish to [filter](#sensor-filters) this value to reduce the amount of data you are ingesting.
 The sensor will internally track changes to the Laser Diode and Photo Diode over time to adjust and ensure accuracy.
@@ -34,7 +34,8 @@ sensor:
       name: "Particulate Matter <10.0µm Concentration"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pm_1_0** (*Optional*): Mass of particles with a diameter of 1 micrometres or less (μg/m^3).
   All options from [Sensor](#config-sensor).
@@ -60,4 +61,3 @@ sensor:
 - {{< docref "/components/sensor/gcja5" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "gcja5/gcja5.h" "gcja5/gcja5.h" >}}
-

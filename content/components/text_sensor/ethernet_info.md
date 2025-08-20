@@ -9,7 +9,7 @@ params:
 
 
 
-The `ethernet_info`   text sensor platform exposes different Ethernet information
+The `ethernet_info` text sensor platform exposes different Ethernet information
 via text sensors.
 
 ```yaml
@@ -34,7 +34,8 @@ text_sensor:
       name: ESP MAC Address
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **ip_address** (*Optional*): Expose the IP Address of the ESP as a text sensor. All options from
   [Text Sensor](#config-text_sensor).
@@ -50,4 +51,3 @@ text_sensor:
 
 - {{< docref "/components/ethernet" >}}
 - {{< apiref "ethernet_info/ethernet_info_text_sensor.h" "ethernet_info/ethernet_info_text_sensor.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `esp32_camera_web_server`   component allows you to use expose web server of
+The `esp32_camera_web_server` component allows you to use expose web server of
 ESP32-based camera boards in ESPHome that directly can be integrated into external
 surveillance or PVR software.
 
@@ -25,7 +25,8 @@ esp32_camera_web_server:
     mode: snapshot
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **port** (**Required**, string): The serving port.
 - **mode** (**Required**, string): The operation mode.
@@ -34,15 +35,13 @@ esp32_camera_web_server:
   - `snapshot`
   - `stream`
 
-## Integrating the mjpeg web service into an NVR:
+## Integrating the mjpeg web service into an NVR
 
 **Zoneminder**
 
 - *General -> Source Type*: `cURL (HTTP(S) only)`
 - *Source -> URL*: `http://ESP_IP_ADDRESS:8080/`
 
-
 ## See Also
 
 - {{< apiref "esp32_camera_web_server/camera_web_server.h" "esp32_camera_web_server/camera_web_server.h" >}}
-

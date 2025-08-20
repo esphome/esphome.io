@@ -34,4 +34,3 @@ title: ""
 - **voice_assistant:** `connected`  , `is_running`
 - **wifi:** `connected`  , `enabled`
 - **wireguard:** `enabled`  , `peer_online`
-

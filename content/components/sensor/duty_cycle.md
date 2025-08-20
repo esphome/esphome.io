@@ -25,7 +25,8 @@ sensor:
     name: Duty Cycle Sensor
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to observe for the duty
   cycle.
@@ -38,4 +39,3 @@ sensor:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "duty_cycle/duty_cycle_sensor.h" "duty_cycle/duty_cycle_sensor.h" >}}
-

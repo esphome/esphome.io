@@ -25,7 +25,8 @@ combination with Voice Assistant and/or other audio components.
 If you experience crashes, see the {{< docref "/guides/troubleshooting" >}} guide for how to get a backtrace.
 
 {{< /warning >}}
-## Configuration variables:
+
+## Configuration variables
 
 ```yaml
 microphone:
@@ -36,18 +37,19 @@ voice_assistant:
   microphone: mic_id
 
 ```
+
 - **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The {{< docref "/components/microphone/index" "microphone" >}} settings to use for input.
 - **micro_wake_word** (*Optional*, [ID](#config-id)): The {{< docref "/components/micro_wake_word" "micro_wake_word" >}} component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 - **speaker** (*Optional*, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to use to output the response.
-  Cannot be used with `media_player`   below.
+  Cannot be used with `media_player` below.
 - **media_player** (*Optional*, [ID](#config-id)): The {{< docref "/components/media_player/index" "media_player" >}} to use
-  to output the response. Cannot be used with `speaker`   above.
+  to output the response. Cannot be used with `speaker` above.
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`  .
 - **conversation_timeout** (*Optional*, [Time](#config-time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`  .
 - **on_intent_start** (*Optional*, [Automation](#automation)): An automation to perform when intent processing starts.
 - **on_intent_progress** (*Optional*, [Automation](#automation)): An automation to perform when intent progress happens.
-  The variable `x`   is a non-empty string containing the streaming TTS response URL only if it is sent to the media player.
+  The variable `x` is a non-empty string containing the streaming TTS response URL only if it is sent to the media player.
 - **on_intent_end** (*Optional*, [Automation](#automation)): An automation to perform when intent processing ends.
 - **on_listening** (*Optional*, [Automation](#automation)): An automation to
   perform when the voice assistant microphone starts listening.
@@ -71,14 +73,14 @@ voice_assistant:
   when the voice assistant has finished text-to-speech. A URL containing the audio response
   is available to automations as the variable `x`  .
 - **on_tts_stream_start** (*Optional*, [Automation](#automation)): An automation to perform when audio stream
-  (voice response) playback starts. Requires `speaker`   to be configured.
+  (voice response) playback starts. Requires `speaker` to be configured.
 - **on_tts_stream_end** (*Optional*, [Automation](#automation)): An automation to perform when audio stream
-  (voice response) playback ends. Requires `speaker`   to be configured.
+  (voice response) playback ends. Requires `speaker` to be configured.
 - **on_idle** (*Optional*, [Automation](#automation)): An automation to perform
   when the voice assistant is idle (no other actions/states are in progress).
 - **on_error** (*Optional*, [Automation](#automation)): An automation to perform
   when the voice assistant has encountered an error. The error code and message are available to
-  automations as the variables `code`   and `message`  .
+  automations as the variables `code` and `message`  .
 
 - **on_client_connected** (*Optional*, [Automation](#automation)): An automation to perform
   when Home Assistant has connected and is waiting for Voice Assistant commands.
@@ -93,17 +95,17 @@ voice_assistant:
   Must be larger than 0. Defaults to 1 (disabled).
 
 - **on_timer_started** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has started. The timer is available as `timer`   of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has started. The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_finished** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has finished. The timer is available as `timer`   of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has finished. The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_cancelled** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has been cancelled. The timer is available as `timer`   of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has been cancelled. The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_updated** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has been updated (paused/resumed/duration changed). The timer is available as `timer`   of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has been updated (paused/resumed/duration changed). The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_tick** (*Optional*, [Automation](#automation)): An automation to perform when the voice assistant timers
   tick is triggered.
   This is called every **1 second** while there are timers on this device.
-  The timers are available as `timers`   which is a `std::vector`   (array) of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  The timers are available as `timers` which is a `std::vector` (array) of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 
 {{< anchor "voice_assistant-actions" >}}
 
@@ -111,7 +113,7 @@ voice_assistant:
 
 The following actions are available for use in automations:
 
-### `voice_assistant.start`   Action
+### `voice_assistant.start` Action
 
 Listens for one voice command then stops.
 
@@ -121,37 +123,33 @@ Configuration variables:
 - **wake_word** (*Optional*, string): The wake word that was used to trigger the voice assistant
   when using on-device wake word such as {{< docref "/components/micro_wake_word" >}}.
 
-Call `voice_assistant.stop`   to signal the end of the voice command if `silence_detection`   is set to `false`  .
+Call `voice_assistant.stop` to signal the end of the voice command if `silence_detection` is set to `false`  .
 
-
-### `voice_assistant.start_continuous`   Action
+### `voice_assistant.start_continuous` Action
 
 Start listening for voice commands. This will start listening again after
 the response audio has finished playing. Some errors will stop the cycle.
-Call `voice_assistant.stop`   to stop the cycle.
+Call `voice_assistant.stop` to stop the cycle.
 
-
-### `voice_assistant.stop`   Action
+### `voice_assistant.stop` Action
 
 Stop listening for voice commands.
-
 
 ## Voice Assistant Conditions
 
 The following conditions are available for use in automations:
 
-### `voice_assistant.is_running`   Condition
+### `voice_assistant.is_running` Condition
 
 Returns true if the voice assistant is currently running.
 
-### `voice_assistant.connected`   Condition
+### `voice_assistant.connected` Condition
 
 Returns true if the voice assistant is currently connected to Home Assistant.
 
 ## Wake word detection
 
 See our [example YAML files on GitHub](https://github.com/esphome/firmware/blob/main/voice-assistant/m5stack-atom-echo.yaml) for continuous wake word detection.
-
 
 ## Push to Talk
 
@@ -175,6 +173,7 @@ binary_sensor:
       - voice_assistant.stop:
 
 ```
+
 ## Click to Converse
 
 ```yaml
@@ -197,8 +196,8 @@ binary_sensor:
             - voice_assistant.start_continuous:
 
 ```
+
 ## See Also
 
 - {{< docref "microphone/" >}}
 - {{< apiref "voice_assistant/voice_assistant.h" "voice_assistant/voice_assistant.h" >}}
-

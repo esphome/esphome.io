@@ -29,7 +29,8 @@ light:
     name: "Kitchen Light"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to use PWM on.
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
@@ -47,7 +48,7 @@ should fix it.
 {{< /note >}}
 {{< anchor "output-esp8266_pwm-set_frequency_action" >}}
 
-## `output.esp8266_pwm.set_frequency`   Action
+## `output.esp8266_pwm.set_frequency` Action
 
 This [Action](#config-action) allows you to manually change the frequency of an ESP8266 PWM
 channel at runtime. Use cases include controlling a passive buzzer (for pitch control).
@@ -59,6 +60,7 @@ on_...:
       frequency: 100Hz
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the PWM output to change.
@@ -73,4 +75,3 @@ Configuration variables:
 - {{< docref "/components/fan/speed" >}}
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "esp8266_pwm/esp8266_pwm.h" "esp8266_pwm/esp8266_pwm.h" >}}
-

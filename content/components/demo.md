@@ -9,7 +9,7 @@ params:
 
 
 
-The `demo`   component can be used for testing to generate sample instances of many
+The `demo` component can be used for testing to generate sample instances of many
 different components (sensors, lights, ...)
 
 {{< img src="demo-ui.png" alt="Image" width="70.0%" class="align-center" >}}
@@ -19,11 +19,11 @@ different components (sensors, lights, ...)
 demo:
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 This component has no configuration variables
 
 ## See Also
 
 - {{< apiref "demo/demo_sensor.h" "demo/demo_sensor.h" >}}
-

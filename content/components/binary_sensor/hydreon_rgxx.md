@@ -9,7 +9,7 @@ params:
 
 
 
-The `hydreon_rgxx`   binary sensor platform gives access to information provided by a Hydreon Rain Sensor.
+The `hydreon_rgxx` binary sensor platform gives access to information provided by a Hydreon Rain Sensor.
 For this sensor to work, a {{< docref "/components/sensor/hydreon_rgxx" >}} must be set up.
 
 ```yaml
@@ -30,25 +30,24 @@ binary_sensor:
       name: "too cold"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **hydreon_rgxx_id** (*Optional*, [ID](#config-id)): The ID of the Hydreon Rain Sensor display.
 
-- **too_cold** (*Optional*): `true`   if the sensor reports being too cold. Hydreon only mentions this feature for the RG-9.
+- **too_cold** (*Optional*): `true` if the sensor reports being too cold. Hydreon only mentions this feature for the RG-9.
 
   - All options from [Binary Sensor](#config-binary_sensor).
 
-- **lens_bad** (*Optional*): `true`   if the sensor reports the lens being bad.
+- **lens_bad** (*Optional*): `true` if the sensor reports the lens being bad.
 
   - All options from [Binary Sensor](#config-binary_sensor).
 
-- **em_sat** (*Optional*): `true`   if the sensor reports the Emitter being saturated.
+- **em_sat** (*Optional*): `true` if the sensor reports the Emitter being saturated.
 
   - All options from [Binary Sensor](#config-binary_sensor).
-
 
 ## See Also
 
 - {{< docref "/components/sensor/hydreon_rgxx" >}}
 - {{< docref "index/" >}}
-

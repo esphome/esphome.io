@@ -23,9 +23,9 @@ file. Then, generate and download the binary:
 
 {{< img src="download_binary.png" alt="Image" >}}
 
-- **Using the command line**: run `esphome compile livingroom.yaml`   (replacing
-  `livingroom.yaml`   with your configuration file of course) and navigate to the
-  `<NODE_NAME>/.pioenvs/<NODE_NAME>/`   folder. There you will find a `firmware.bin`   file,
+- **Using the command line**: run `esphome compile livingroom.yaml` (replacing
+  `livingroom.yaml` with your configuration file of course) and navigate to the
+  `<NODE_NAME>/.pioenvs/<NODE_NAME>/` folder. There you will find a `firmware.bin` file,
   this is the binary you will upload.
 
 ## Uploading Binary
@@ -53,4 +53,3 @@ Happy Hacking!
 - {{< docref "/components/esp32" >}}
 - {{< docref "migrate_espeasy/" >}}
 - {{< docref "migrate_sonoff_tasmota/" >}}
-

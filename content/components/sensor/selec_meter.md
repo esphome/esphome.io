@@ -9,14 +9,14 @@ params:
 
 
 
-The `selec_meter`   sensor platform allows you to use Selec Modbus energy monitors
+The `selec_meter` sensor platform allows you to use Selec Modbus energy monitors
 ([website](https://www.selec.com/product-details/energy-meter-direct-operated-em2m))
 with ESPHome.
 
 {{< img src="selec_meter_em2m.jpg" alt="Image" caption="Selec EM2M Energy Monitor." width="50.0%" class="align-center" >}}
 
 The communication with this component is done via a [UART](#uart) using [Modbus](#modbus).
-You must therefore have a `uart:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -65,7 +65,8 @@ sensor:
       name: "SelecEM2M Maximum Demand Apparent Power"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **total_active_energy** (*Optional*): Use the total active energy value of the sensor in kilo watt
   hours. All options from [Sensor](#config-sensor).
@@ -109,4 +110,3 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-

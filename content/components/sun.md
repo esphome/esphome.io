@@ -9,7 +9,7 @@ params:
 
 
 
-The `sun`   component allows you to track the sun's position in the sky. Calculations are done every 60 seconds.
+The `sun` component allows you to track the sun's position in the sky. Calculations are done every 60 seconds.
 
 ```yaml
 # Example configuration entry
@@ -22,7 +22,8 @@ time:
   - platform: homeassistant
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **latitude** (**Required**, float): The latitude for performing the calculation.
 - **longitude** (**Required**, float): The longitude for performing the calculation.
@@ -50,6 +51,7 @@ sun:
         - logger.log: Good evening!
 
 ```
+
 - **on_sunrise** (*Optional*, [Automation](#automation)): An automation to perform at sunrise
   when the sun crosses a specified angle.
 
@@ -60,7 +62,7 @@ sun:
 
   - **elevation** (*Optional*, float): The elevation to cross. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
 
-## `sun`   Sensor
+## `sun` Sensor
 
 Additionally, the sun component exposes its values over a sensor platform.
 
@@ -75,15 +77,16 @@ sensor:
     type: azimuth
 
 ```
+
 {{< img src="sun-sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
 Configuration variables:
 
-- **type** (**Required**, string): The type of value to track. One of `elevation`   and
+- **type** (**Required**, string): The type of value to track. One of `elevation` and
   `azimuth`  .
 - All other options from [Sensor](#config-sensor).
 
-## `sun`   Text Sensor
+## `sun` Text Sensor
 
 Other properties like the next sunset time can be read out with the sun text_sensor platform.
 
@@ -98,11 +101,12 @@ text_sensor:
     type: sunset
 
 ```
+
 {{< img src="sun-text_sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
 Configuration variables:
 
-- **type** (**Required**, string): The type of value to track. One of `sunrise`   and
+- **type** (**Required**, string): The type of value to track. One of `sunrise` and
   `sunset`  .
 - **elevation** (*Optional*, float): The elevation to calculate the next sunrise/sunset event
   for. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
@@ -112,9 +116,9 @@ Configuration variables:
 
 {{< anchor "sun-is_above_below_horizon-condition" >}}
 
-## `sun.is_above_horizon`   / `sun.is_below_horizon`   Conditions
+## `sun.is_above_horizon` / `sun.is_below_horizon` Conditions
 
-The `sun.is_above_horizon`   and `sun.is_below_horizon`   [conditions](#config-condition)
+The `sun.is_above_horizon` and `sun.is_below_horizon` [conditions](#config-condition)
 allow you to check if the sun is currently above or below the horizon.
 
 ```yaml
@@ -126,7 +130,7 @@ on_...:
         - logger.log: Sun is above horizon!
 
 ```
+
 ## See Also
 
 - {{< apiref "sun/sun.h" "sun/sun.h" >}}
-

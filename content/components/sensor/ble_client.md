@@ -9,7 +9,7 @@ params:
 
 
 
-The `ble_client`   component is a sensor platform that can query BLE devices for RSSI or specific
+The `ble_client` component is a sensor platform that can query BLE devices for RSSI or specific
 values of service characteristics.
 
 For text/string values, see {{< docref "/components/text_sensor/ble_client" >}}.
@@ -24,6 +24,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 esp32_ble_tracker:
 
@@ -47,7 +48,8 @@ sensor:
     name: "iTag RSSI"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **type** (**Required**): One of `rssi`  , `characteristic`  .
 
@@ -73,7 +75,7 @@ characteristic options:
 Automations:
 
 - **on_notify** (*Optional*, [Automation](#automation)): An automation to
-  perform when a notify message is received from the device. See [`on_notify`  ](#ble_sensor-on_notify).
+  perform when a notify message is received from the device. See [`on_notify`](#ble_sensor-on_notify).
 
 {{< anchor "ble-sensor-lambda" >}}
 
@@ -82,7 +84,7 @@ Automations:
 By default only the first byte of each message received on the service's characteristic is used
 for the sensor reading. For more complex messages, this behavior can be overridden by a custom
 lambda function to parse the raw data. The received data bytes are passed to the lambda as a
-variable `x`   of type `std::vector<uint8_t>`  . The function must return a single `float`   value.
+variable `x` of type `std::vector<uint8_t>`  . The function must return a single `float` value.
 
 ```yaml
 ...
@@ -98,6 +100,7 @@ sensor:
       return *((float*)(&x[0]));
 
 ```
+
 ## BLE Sensor Automation
 
 {{< anchor "ble_sensor-on_notify" >}}
@@ -107,20 +110,20 @@ sensor:
 This automation is triggered when the device/server sends a notify message for
 a characteristic. The config variable *notify* must be true or this will have
 no effect.
-A variable `x`   of type `float`   is passed to the automation for use in lambdas.
+A variable `x` of type `float` is passed to the automation for use in lambdas.
 
 ## Example UUIDs
+
 The UUIDs available on a device are dependent on the type of
 device and the functionality made available. Check the ESPHome
 device logs for those that are found on the device.
 
 Some common ones:
 
-| Service | Characteristic | Description |
-|---|---|---|
-| 180F | 2A19 | Battery level |
-| 181A | 2A6F | Humidity |
-
+| Service | Characteristic | Description   |
+| ------- | -------------- | ------------- |
+| 180F    | 2A19           | Battery level |
+| 181A    | 2A6F           | Humidity      |
 
 ## See Also
 
@@ -128,4 +131,3 @@ Some common ones:
 - {{< docref "/components/text_sensor/ble_client" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ble_sensor/ble_sensor.h" "ble_sensor/ble_sensor.h" >}}
-

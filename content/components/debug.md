@@ -9,7 +9,7 @@ params:
 
 
 
-The `debug`   component can be used to debug problems with ESPHome. At startup, it prints
+The `debug` component can be used to debug problems with ESPHome. At startup, it prints
 a bunch of useful information like reset reason, free heap size, ESPHome version and so on.
 It also allows you to get the same information as a text sensor, and to monitor the state of the
 ESP heap memory (free space, maximum free block size and fragmentation level) and the main-loop timing.
@@ -48,7 +48,9 @@ logger:
   level: debug
 
 ```
+
 ## Text Sensor
+
 Configuration variables:
 
 - **device** (*Optional*): Reports the following device information:
@@ -76,6 +78,7 @@ Configuration variables:
 - **reset_reason** (*Optional*): Reports the last reboot reason in a human-readable form. Accepts all options from [Text Sensor](#config-text_sensor).
 
 ## Sensor
+
 Configuration variables:
 
 - **free** (*Optional*): Reports the free heap size in bytes. All options from [Sensor](#config-sensor).
@@ -98,4 +101,3 @@ Configuration variables:
 - {{< docref "logger/" >}}
 - {{< docref "/guides/troubleshooting" >}} - Troubleshooting guide for debugging crashes and boot failures
 - {{< apiref "debug/debug_component.h" "debug/debug_component.h" >}}
-

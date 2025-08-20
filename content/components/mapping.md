@@ -3,9 +3,6 @@ description: "Mapping Component"
 title: "Mapping Component"
 ---
 
-
-# Mapping Component
-
 The `mapping` component allows you to create a map or dictionary that allows a one-to-one translation from keys to values. This enables e.g. mapping a string to a number or vice versa, or mapping a string such as a weather condition to an image.
 
 ```yaml
@@ -29,13 +26,14 @@ text_sensor:
        src: !lambda return id(weather_icon)[x];
 
 ```
-Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): Give the mapping an ID so that you can refer
   to it later in [lambdas](#config-lambda).
-- **from** (**Required**, string): The type of the keys in the mapping. Can be one of `string`   or `int`  .
-- **to** (**Required**, string): The type of values in the map. May be one of `string`   or `int`   or a class specifier as discussed below.
-- **entries** (**Required**, dict): A list of key-value pairs that define the mapping. The keys must be of the type specified in the `from`   field, and the values must be of the type specified in the `to`   field.
+- **from** (**Required**, string): The type of the keys in the mapping. Can be one of `string` or `int`  .
+- **to** (**Required**, string): The type of values in the map. May be one of `string` or `int` or a class specifier as discussed below.
+- **entries** (**Required**, dict): A list of key-value pairs that define the mapping. The keys must be of the type specified in the `from` field, and the values must be of the type specified in the `to` field.
 
 ## Mapping to a class
 
@@ -47,7 +45,7 @@ You can also map to a class. This is useful when you want to map to a more compl
 
 ## Using a mapping
 
-A mapping defined in this component can be used in lambdas in other components. The mapping can be accessed using the `id`   function, and the value can be looked up using the `[]`   operator as per the above example.
+A mapping defined in this component can be used in lambdas in other components. The mapping can be accessed using the `id` function, and the value can be looked up using the `[]` operator as per the above example.
 
 A more complex example follows:
 
@@ -90,8 +88,8 @@ display:
       it.printf(100, 100, id(roboto20), color, id(string_map)[random_uint32() % 3].c_str(), Color(0));
 
 ```
-# See Also
+
+## See Also
 
 - {{< docref "index/" >}}
 - {{< docref "/automations/actions" >}}
-

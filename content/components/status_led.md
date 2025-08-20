@@ -9,7 +9,7 @@ params:
 
 
 
-The `status_led`   hooks into all ESPHome components and can indicate the status of
+The `status_led` hooks into all ESPHome components and can indicate the status of
 the device. Specifically, it will:
 
 - Blink slowly (about every second) when a **warning** is active. Warnings are active when for
@@ -26,11 +26,13 @@ status_led:
   pin: GPIOXX
 
 ```
+
 {{< note >}}
 If your device has a single LED that needs to be shared use  {{< docref "/components/light/status_led" "status_led light platform" >}} instead.
 
 {{< /note >}}
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The
   GPIO pin to operate the status LED on.
@@ -38,7 +40,7 @@ If your device has a single LED that needs to be shared use  {{< docref "/compon
 
 {{< note >}}
 If your LED is in an active-LOW mode (when it's on if the output is enabled), use the
-`inverted`   option of the [Pin Schema](#config-pin_schema):
+`inverted` option of the [Pin Schema](#config-pin_schema):
 
 ```yaml
 status_led:
@@ -47,9 +49,10 @@ status_led:
     inverted: true
 
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/light/status_led" >}}
 - {{< apiref "status_led/status_led.h" "status_led/status_led.h" >}}
-

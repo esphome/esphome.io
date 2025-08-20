@@ -9,7 +9,7 @@ params:
 
 
 
-The `addressable_light`   display platform allows to display text and graphics on an addressable
+The `addressable_light` display platform allows to display text and graphics on an addressable
 light that has been arranged in a display matrix.
 
 The display requires that an {{< apiclass "AddressableLight" "light::AddressableLight" >}} component, such as
@@ -37,23 +37,23 @@ display:
           it.rectangle(3, 3, 2, 2, red);
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **addressable_light_id** (**Required**, [ID](#config-id)): The id of the addressable light component to use
   as a display.
 - **width** (**Required**, int): The width of the LED matrix in pixels.
 - **height** (**Required**, int): The height of the LED matrix in pixels.
-- **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:`   will be rotated
-  by this option. One of `0°`   (default), `90°`  , `180°`  , `270°`  .
+- **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
+  by this option. One of `0°` (default), `90°`  , `180°`  , `270°`  .
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
   Defaults to `16ms`  .
 - **pixel_mapper** (*Optional*, [lambda](#config-lambda)): A lambda that returns the integer address of the LED
-  given the supplied the `x`   and `y`   pixel coordinate. By default, a left-to-right direct pixel mapper is used.
+  given the supplied the `x` and `y` pixel coordinate. By default, a left-to-right direct pixel mapper is used.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
-  `it`   will be an instance of {{< apiclass "DisplayBuffer" "display::DisplayBuffer" >}}.
+  `it` will be an instance of {{< apiclass "DisplayBuffer" "display::DisplayBuffer" >}}.
   See [Display Rendering Engine](#display-engine) for more information.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-
 
 {{< note >}}
 When enabled (the default, but also via `it.set_enabled(true)`  ), any effect currently running on the
@@ -65,8 +65,8 @@ limited capacity. Changing the brightness will still work, but changing the colo
 adivsable to enable any effects (ex: rainbow, color wipe, etc) while the display is enabled, as this will cause a
 great deal of flickering while the effect competes with the display for rendering.
 
-
 {{< /note >}}
+
 ## pixel_mapper
 
 An addressable LED matrix is just an addressable LED strip laid out in a matrix -- the path often snaking
@@ -75,7 +75,6 @@ each pixel on a matrix is addressed as an offset from the first pixel (0). The j
 to translate a logical x-y pixel coordinate to the address of the expected physical LED.
 
 Determining the correct algorithm for the pixel mapper for your matrix will hopefully only require some graph paper and a little bit of math.
-
 
 ### Default
 
@@ -108,6 +107,7 @@ display:
     update_interval: 16ms
 
 ```
+
 It's possible to use two 8x32 LED matrices in a 16x32 configuration (one above the other) by using the following definition:
 
 ```yaml
@@ -127,6 +127,7 @@ display:
     update_interval: 16ms
 
 ```
+
 ## See Also
 
 - {{< apiref "addressable_light/addressable_light_display.h" "addressable_light/addressable_light_display.h" >}}
@@ -134,4 +135,3 @@ display:
 - {{< docref "/components/light/fastled" >}}
 - {{< docref "/components/light/neopixelbus" >}}
 - {{< docref "/components/light/partition" >}}
-

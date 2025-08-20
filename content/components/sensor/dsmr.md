@@ -41,6 +41,7 @@ text_sensor:
       name: "DSMR Version"
 
 ```
+
 Configuration variables:
 
 - **decryption_key** (*Optional*, string, [templatable](#config-templatable), 32 characters, case insensitive): The key to decrypt the
@@ -301,6 +302,7 @@ text_sensor:
       name: "gas delivered raw"
 
 ```
+
 {{< anchor "sensor-dsmr-request_pin" >}}
 
 ## P1 Data Request pin
@@ -316,14 +318,14 @@ will stop immediately in such case.
   fully processed. This separates retrieving and processing data and can thus be seen as a form of
   hardware flow control.
 - The interval at which sensor readings must be updated can be controlled cleanly by only starting a data
-  transfer when needed. This configuration option `request_interval`   can be used to define this interval.
+  transfer when needed. This configuration option `request_interval` can be used to define this interval.
 
 **Required hardware support**
 
 Many DSMR reader circuits link the +5V pin of the P1 port directly to its Data Request pin. Doing this will
 make the smart meter send telegrams at a pace as defined by the smart meter firmware. For example many
 DSMR v5 meters will send a telegram every second.
-*Circuits that use this type of wiring cannot make use of the* `request_pin`   *option.*
+*Circuits that use this type of wiring cannot make use of the* `request_pin` *option.*
 
 However, when a circuit is used that allows switching the Data Request pin between +5V and high impedance
 mode from a GPIO, then this GPIO can be configured as the `request_pin`  .
@@ -343,7 +345,7 @@ resistor instead of the 200 Ohm resistor.
 When telegrams are sometimes missed or when you get a lot of CRC errors, then you might have to do some
 changes to get better reader results.
 
-It is recommended to set the `rx_buffer_size`   option of the UART bus to at least the maximum telegram size,
+It is recommended to set the `rx_buffer_size` option of the UART bus to at least the maximum telegram size,
 which defaults to 1500 bytes. The default UART read buffer is quite small an can easily overflow, causing
 bytes of data getting lost.
 
@@ -358,6 +360,7 @@ dsmr:
   max_telegram_length: 1700
 
 ```
+
 It's best when a hardware UART is used for reading the P1 data. Whether or not hardware UART is used can
 be checked in the config dump that you get when connecting to the API logger. Example logging output:
 
@@ -373,6 +376,7 @@ be checked in the config dump that you get when connecting to the API logger. Ex
                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ```
+
 When using an ESP8266, then GPIO13 (e.g. pin D7 on a D1 Mini) can be used for hardware RX. However, to
 actually make it work, serial logging must be disabled to keep the hardware UART available for D7.
 
@@ -387,6 +391,7 @@ uart:
   baud_rate: 115200
 
 ```
+
 ## Bridging support / raw telegram logging
 
 You can use another uart to supply another P1 receiver with the same telegram. See configuration sample as used for bridging.
@@ -422,7 +427,7 @@ text_sensor:
               p1_bridge_uart->write_str(x.c_str());
 
 ```
+
 ## See Also
 
 - {{< apiref "dsmr/dsmr.h" "dsmr/dsmr.h" >}}
-

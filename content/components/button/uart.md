@@ -9,7 +9,7 @@ params:
 
 
 
-The `uart`   button platform allows you to send a pre-defined sequence of bytes on a
+The `uart` button platform allows you to send a pre-defined sequence of bytes on a
 {{< docref "/components/uart" "UART bus" >}} when triggered.
 
 ```yaml
@@ -23,7 +23,8 @@ button:
     data: [0xDE, 0xAD, 0xBE, 0xEF]
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **data** (**Required**, string or list of bytes): The data to send via UART. Either an ASCII string
   or a list of bytes.
@@ -34,4 +35,3 @@ button:
 
 - {{< docref "/components/uart" >}}
 - {{< apiref "uart/button/uart_button.h" "uart/button/uart_button.h" >}}
-

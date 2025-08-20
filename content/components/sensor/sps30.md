@@ -9,12 +9,10 @@ params:
 
 
 
-The `sps30`   sensor platform allows you to use your Sensirion SPS30
+The `sps30` sensor platform allows you to use your Sensirion SPS30
 ([datasheet](https://sensirion.com/media/documents/8600FF88/616542B5/Sensirion_PM_Sensors_Datasheet_SPS30.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. However, at the moment only I²C communication is implemented.
-
-
 
 {{< img src="sensirion-pm.png" alt="Image" width="50.0%" class="align-center" >}}
 
@@ -56,7 +54,8 @@ sensor:
     update_interval: 10s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pm_1_0** (*Optional*): The information for the **Weight Concentration** sensor for fine particles up to 1μm. Readings in µg/m³.
 
@@ -120,7 +119,6 @@ The SPS30 sensor has an automatic fan-cleaning which will accelerate the built-i
 The default automatic-cleaning interval is 168 hours (1 week) of uninterrupted use. Switching off the sensor resets this time counter.
 Disabling of automatic-cleaning or setting a manual interval is not supported at the moment.
 
-
 {{< anchor "sps30-start_fan_autoclean_action" >}}
 
 ## Manual Cleaning
@@ -133,6 +131,7 @@ on_...:
     - sps30.start_fan_autoclean: my_sps30
 
 ```
+
 To be able to trigger the fan cleaning feature from Home Assistant, add a button as shown below, and trigger it with a (periodic) automation.
 
 ```yaml
@@ -149,6 +148,7 @@ sensor:
     ...
 
 ```
+
 Sensirion recommends cleaning at least once per week.
 
 ## See Also
@@ -159,4 +159,3 @@ Sensirion recommends cleaning at least once per week.
 - {{< docref "ccs811/" >}}
 - {{< docref "sgp30/" >}}
 - {{< apiref "sps30/sps30.h" "sps30/sps30.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `speed`   fan platform lets you represent any float [Output Component](#output) as a fan that
+The `speed` fan platform lets you represent any float [Output Component](#output) as a fan that
 supports speed settings.
 
 {{< img src="fan-ui.png" alt="Image" width="80.0%" class="align-center" >}}
@@ -22,7 +22,8 @@ fan:
     name: "Living Room Fan"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The id of the [float output](#output) to use for this fan.
 - **oscillation_output** (*Optional*, [ID](#config-id)): The id of the
@@ -30,7 +31,7 @@ fan:
 - **direction_output** (*Optional*, [ID](#config-id)): The id of the
   [output](#output) to use for the direction state of the fan. Default is empty.
 - **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. The value is used
-  to calculate the percentages for each speed. E.g. `2`   means that you have 50% and 100% while `100`
+  to calculate the percentages for each speed. E.g. `2` means that you have 50% and 100% while `100`
   will allow 1% increments in the output. Defaults to `100`  .
 - **preset_modes** (*Optional*): A list of preset modes for this fan. Preset modes can be used in automations (i.e. `on_preset_set`  ).
 - All other options from [Fan Component](#config-fan).
@@ -43,4 +44,3 @@ fan:
 - {{< docref "/components/output/esp8266_pwm" >}}
 - {{< docref "/components/output/pca9685" >}}
 - {{< apiref "fan/fan_state.h" "fan/fan_state.h" >}}
-

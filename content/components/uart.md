@@ -10,7 +10,6 @@ params:
 
 {{< anchor "uart" >}}
 
-
 UART is a common serial protocol for many devices. For example, when uploading a binary to your ESP
 you have probably used UART to access the chip. UART (or for Arduino often also called Serial) usually
 consists of 2 pins:
@@ -24,7 +23,7 @@ perspective these two pins are switched (i.e. *it* sends on pin B and receives o
 need to try with the two pins switched if it doesn't work immediately.
 
 Additionally, each UART bus can operate at different speeds (baud rates), so ESPHome needs to know what speed to
-receive/send data at using the `baud_rate`   option. Two common baud rates are 9600 and 115200.
+receive/send data at using the `baud_rate` option. Two common baud rates are 9600 and 115200.
 
 In some cases only **TX** or **RX** exists as the device at the other end only accepts data or sends data.
 
@@ -39,15 +38,16 @@ higher baud rates.
 
 {{< /note >}}
 {{< note >}}
-From ESPHome 2021.8 the `ESP8266SoftwareSerial`   UART `write_byte`   function had the parity bit fixed to be correct
+From ESPHome 2021.8 the `ESP8266SoftwareSerial` UART `write_byte` function had the parity bit fixed to be correct
 for the data being sent. This could cause unexpected issues if you are using the Software UART and have devices that
-explicity check the parity. Most likely you will need to flip the `parity`   flag in YAML.
+explicity check the parity. Most likely you will need to flip the `parity` flag in YAML.
 
 {{< /note >}}
 {{< note >}}
 UART implementation for the host platform does not use TX and RX pins but port names.
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 uart:
@@ -56,11 +56,12 @@ uart:
   baud_rate: 9600
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
-- **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin schema and set `inverted: true`   to invert logic levels. Not supported by host platform.
-- **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin schema and set `inverted: true`   to invert logic levels. Not supported by host platform.
+- **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+- **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an integration that needs to read big payloads from UART. Defaults to `256`  .
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
@@ -77,15 +78,15 @@ Whenever possible, ESPHome will use the hardware UART unit on the ESP8266 for fa
 When the hardware UARTs are all occupied, ESPHome will fall back to a software implementation that may not
 be accurate at higher baud rates.
 
-`UART0`   is (by default) used by the {{< docref "/components/logger" "logger component" >}}, using `tx_pin: GPIO1`   and
+`UART0` is (by default) used by the {{< docref "/components/logger" "logger component" >}}, using `tx_pin: GPIO1` and
 `rx_pin: GPIO3`  . If you configure a UART that overlaps with these pins, you can share the hardware with the
 logger and leave others available. If you have configured the logger to use a different hardware UART, the pins
 used for hardware sharing change accordingly.
 
 The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-C3, ESP32-S2, ESP32-S3, etc) may have fewer UARTs (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
 
-The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. `UART0`   may
-use either `tx_pin: GPIO1`   and `rx_pin: GPIO3`  , or `tx_pin: GPIO15`   and `rx_pin: GPIO13`  . `UART1`   must
+The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. `UART0` may
+use either `tx_pin: GPIO1` and `rx_pin: GPIO3`  , or `tx_pin: GPIO15` and `rx_pin: GPIO13`  . `UART1` must
 use `tx_pin: GPIO2`  . Any other combination of pins will result in use of a software UART.
 
 {{< note >}}
@@ -94,7 +95,7 @@ The Software UART is only available on the ESP8266. It is not available on ESP32
 {{< /note >}}
 {{< anchor "uart-write_action" >}}
 
-## `uart.write`   Action
+## `uart.write` Action
 
 This [Action](#config-action) sends a defined UART signal to the given UART bus.
 
@@ -118,6 +119,7 @@ on_...:
       data: 'other data'
 
 ```
+
 {{< anchor "uart-debugging" >}}
 
 ## Debugging
@@ -143,6 +145,7 @@ uart:
   debug:
 
 ```
+
 - **direction** (*Optional*, enum): The direction of communication to debug, one of: "RX" (receive, incoming),
   "TX" (send, outgoing) or "BOTH". Defaults to "BOTH".
 - **dummy_receiver** (*Optional*, boolean): Whether or not to enable the dummy receiver feature. The debugger
@@ -162,8 +165,8 @@ uart:
 - **sequence** (*Optional*, [Action](#config-action)): Action(s) to perform for publishing debugging data.
   Defaults to an action that logs the bytes in hex format. The actions can make use of the following variables:
 
-  - **direction**: `uart::UART_DIRECTION_RX`   or `uart::UART_DIRECTION_TX`
-  - **bytes**: `std::vector<uint8_t>`   containing the accumulated bytes
+  - **direction**: `uart::UART_DIRECTION_RX` or `uart::UART_DIRECTION_TX`
+  - **bytes**: `std::vector<uint8_t>` containing the accumulated bytes
 
 **Helper functions for logging**
 
@@ -174,17 +177,17 @@ Helper functions are provided to make logging of debug data in various formats e
 - **UARTDebug::log_string(direction, bytes)** Log the bytes as string values, escaping unprintable characters.
 - **UARTDebug::log_int(direction, bytes, char separator)** Log the bytes as integer values, separated by the provided
   separator character.
-- **UARTDebug::log_binary(direction, bytes, char separator)** Log the bytes as `<binary> (<hex>)`   values,
+- **UARTDebug::log_binary(direction, bytes, char separator)** Log the bytes as `<binary> (<hex>)` values,
   separated by the provided separator character.
 
 **Logger buffer size**
 
-Beware that the `logger`   component uses a limited buffer size of 512 bytes by default. If the UART
+Beware that the `logger` component uses a limited buffer size of 512 bytes by default. If the UART
 debugger log lines become too long, then you will notice that they end up truncated in the log output.
 
 In that case, either make sure that the debugger outputs less data per log line (e.g. by setting the
-`after.bytes`   option to a lower value) or increase the logger buffer size using the logger
-`tx_buffer_size`   option.
+`after.bytes` option to a lower value) or increase the logger buffer size using the logger
+`tx_buffer_size` option.
 
 {{< anchor "uart-runtime_change" >}}
 
@@ -209,8 +212,9 @@ Below are the methods to read current settings and modify them dynamically:
     id(my_uart).get_baud_rate();
 
 ```
+
 - **Modifying Settings at Runtime:** You can change certain UART parameters during runtime.
-  After setting new values, invoke `load_settings()`   (ESP only) to apply these changes:
+  After setting new values, invoke `load_settings()` (ESP only) to apply these changes:
 
 ```yaml
     select:
@@ -243,6 +247,7 @@ Below are the methods to read current settings and modify them dynamically:
               }
 
 ```
+
   Available methods for runtime changes:
 
 ```cpp
@@ -261,12 +266,13 @@ Below are the methods to read current settings and modify them dynamically:
     id(my_uart).set_baud_rate(uint32_t baud_rate);
 
 ```
+
 This flexibility allows for dynamic adaptation to different communication requirements, enhancing the versatility of your ESPHome setup.
 
 ## UART component with the host platform
 
 Since the host platform does not have physical UART pins, the UART component is implemented using Unix-style ports. Instead of using pins,
-you can specify the port name to use. This implementation also supports components that have `require_tx`   and `require_rx`   options such as
+you can specify the port name to use. This implementation also supports components that have `require_tx` and `require_rx` options such as
 smt100 etc.
 
 ```yaml
@@ -276,9 +282,9 @@ uart:
   port: "/dev/ttyUSB0"
 
 ```
+
 ## See Also
 
 - {{< docref "/components/logger" >}}
 - {{< docref "/components/packet_transport/uart" >}}
 - {{< apiref "uart/uart.h" "uart/uart.h" >}}
-

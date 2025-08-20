@@ -9,7 +9,7 @@ params:
 
 
 
-The `alpha3`   component allows you to monitor a Grundfos Alpha3 Model B circulator pump over BLE.
+The `alpha3` component allows you to monitor a Grundfos Alpha3 Model B circulator pump over BLE.
 
 This component supports the following metrics:
 
@@ -50,7 +50,8 @@ sensor:
       name: "Radiator Pump Current"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **flow** (*Optional*): The estimated volume flow of the medium in `m³/h`  .
@@ -66,11 +67,7 @@ sensor:
 - **current** (*Optional*): Current in `A`  .
   All options from [Sensor](#config-sensor)
 
-
-
-
-
-## Notes:
+## Notes
 
 {{< warning >}}
 Older pumps like the Alpha2 and Alpha3 Model A are not compatible, as they don't have Bluetooth integrated.
@@ -88,8 +85,8 @@ After the initial pairing the ESP should connect automatically when the pump tur
 The pump can only be connected to one device at a time. If you want to use the GO Remote App, you have to first turn the ESP off.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/ble_client" >}}
 - {{< apiref "alpha3/alpha3.h" "alpha3/alpha3.h" >}}
-

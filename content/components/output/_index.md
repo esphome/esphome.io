@@ -10,10 +10,9 @@ params:
 
 {{< anchor "output" >}}
 
-
-Each platform of the `output`   domain exposes some output to
-ESPHome. These are grouped into two categories: `binary`   outputs
-(that can only be ON/OFF) and `float`   outputs (like PWM, can output
+Each platform of the `output` domain exposes some output to
+ESPHome. These are grouped into two categories: `binary` outputs
+(that can only be ON/OFF) and `float` outputs (like PWM, can output
 any rational value between 0 and 1).
 
 {{< anchor "config-output" >}}
@@ -33,6 +32,7 @@ output:
     max_power: 0.75
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
@@ -45,20 +45,20 @@ Configuration variables:
 Float outputs only:
 
 - **min_power** (*Optional*, float): Sets the minimum output value of this output platform.
-  Must be in range from 0 to max_power. Defaults to `0`  .  If zero_means_zero is `false`   this will be output value when the entity is turned off.
+  Must be in range from 0 to max_power. Defaults to `0`  .  If zero_means_zero is `false` this will be output value when the entity is turned off.
 - **max_power** (*Optional*, float): Sets the maximum output value of this output platform.
   Must be in range from min_power to 1. Defaults to `1`  .
 - **zero_means_zero** (*Optional*, boolean): Sets the output to use actual 0 instead of `min_power`  .
   Defaults to `false`  .
 
 {{< note >}}
-The `min_power`   and `max_power`   values are automatically clamped to ensure `0.0 ≤ min_power ≤ max_power ≤ 1.0`  .
+The `min_power` and `max_power` values are automatically clamped to ensure `0.0 ≤ min_power ≤ max_power ≤ 1.0`  .
 This prevents invalid configurations and ensures stable output behavior.
 
 {{< /note >}}
 {{< anchor "output-turn_on_action" >}}
 
-### `output.turn_on`   Action
+### `output.turn_on` Action
 
 This action turns the output with the given ID on when executed.
 
@@ -68,6 +68,7 @@ on_...:
     - output.turn_on: light_1
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -75,10 +76,11 @@ This action can also be expressed in [lambdas](#config-lambda):
 id(light_1).turn_on();
 
 ```
+
 {{< /note >}}
 {{< anchor "output-turn_off_action" >}}
 
-### `output.turn_off`   Action
+### `output.turn_off` Action
 
 This action turns the output with the given ID off when executed.
 
@@ -88,6 +90,7 @@ on_...:
     - output.turn_off: light_1
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -95,10 +98,11 @@ This action can also be expressed in [lambdas](#config-lambda):
 id(light_1).turn_off();
 
 ```
+
 {{< /note >}}
 {{< anchor "output-set_level_action" >}}
 
-### `output.set_level`   Action
+### `output.set_level` Action
 
 This action sets the float output to the given level when executed.
 
@@ -108,6 +112,7 @@ This only works with floating point outputs like {{< docref "/components/output/
 {{< docref "/components/output/sigma_delta_output" >}}, {{< docref "/components/output/slow_pwm" >}}.
 
 {{< /note >}}
+
 ```yaml
 on_...:
   then:
@@ -116,6 +121,7 @@ on_...:
         level: 50%
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -124,13 +130,14 @@ This action can also be expressed in [lambdas](#config-lambda):
 id(light_1).set_level(0.5);
 
 ```
+
 {{< /note >}}
 {{< anchor "output-set_min_power_action" >}}
 
-### `output.set_min_power`   Action
+### `output.set_min_power` Action
 
 This action sets the minimum output power level for the specified float output platform.
-It allows you to dynamically adjust the `min_power`   configuration variable at runtime.
+It allows you to dynamically adjust the `min_power` configuration variable at runtime.
 
 {{< note >}}
 This only works with floating point outputs like {{< docref "/components/output/ac_dimmer" >}},
@@ -138,6 +145,7 @@ This only works with floating point outputs like {{< docref "/components/output/
 {{< docref "/components/output/sigma_delta_output" >}}, {{< docref "/components/output/slow_pwm" >}}.
 
 {{< /note >}}
+
 ```yaml
 on_...:
   then:
@@ -146,6 +154,7 @@ on_...:
         min_power: 20%
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -154,13 +163,14 @@ This action can also be expressed in [lambdas](#config-lambda):
 id(light_1).set_min_power(0.2);
 
 ```
+
 {{< /note >}}
 {{< anchor "output-set_max_power_action" >}}
 
-### `output.set_max_power`   Action
+### `output.set_max_power` Action
 
 This action sets the maximum output power level for the specified float output platform.
-It allows you to dynamically adjust the `max_power`   configuration variable at runtime.
+It allows you to dynamically adjust the `max_power` configuration variable at runtime.
 
 {{< note >}}
 This only works with floating point outputs like {{< docref "/components/output/ac_dimmer" >}},
@@ -168,6 +178,7 @@ This only works with floating point outputs like {{< docref "/components/output/
 {{< docref "/components/output/sigma_delta_output" >}}, {{< docref "/components/output/slow_pwm" >}}.
 
 {{< /note >}}
+
 ```yaml
 on_...:
   then:
@@ -176,6 +187,7 @@ on_...:
         max_power: 80%
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -184,7 +196,9 @@ This action can also be expressed in [lambdas](#config-lambda):
 id(light_1).set_max_power(0.8);
 
 ```
+
 {{< /note >}}
+
 ## Full Output Index
 
 - {{< docref "/components/switch/output" >}}

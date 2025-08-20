@@ -9,7 +9,7 @@ params:
 
 
 
-The `template`   switch platform allows you to create simple switches out of just actions and
+The `template` switch platform allows you to create simple switches out of just actions and
 an optional value lambda. Once defined, it will automatically appear in Home Assistant
 as a switch and can be controlled through the frontend.
 
@@ -30,13 +30,14 @@ switch:
       - switch.turn_on: switch1
 
 ```
+
 Possible return values for the optional lambda:
 
-- `return true;`   if the switch should be reported as ON.
-- `return false;`   if the switch should be reported as OFF.
-- `return {};`   if the last state should be repeated.
+- `return true;` if the switch should be reported as ON.
+- `return false;` if the switch should be reported as OFF.
+- `return {};` if the last state should be repeated.
 
-## Configuration variables:
+## Configuration variables
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the switch.
@@ -54,10 +55,10 @@ Possible return values for the optional lambda:
 
 {{< anchor "switch-template-publish_action" >}}
 
-## `switch.template.publish`   Action
+## `switch.template.publish` Action
 
 You can also publish a state to a template switch from elsewhere in your YAML file
-with the `switch.template.publish`   action.
+with the `switch.template.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -78,6 +79,7 @@ on_...:
       state: !lambda 'return true;'
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the template switch.
@@ -92,11 +94,12 @@ the switch is currently on or off:
 id(template_swi).publish_state(false);
 
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/automations" >}}
 - {{< docref "/components/switch" >}}
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "template/switch/template_switch.h" "template/switch/template_switch.h" >}}
-

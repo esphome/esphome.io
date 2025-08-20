@@ -18,6 +18,7 @@ filters:
   - delta: 2.0
 
 ```
+
 If a percentage is specified a percentage of the last value will be used as the required difference.
 For example if the filter were configured with a value of 20% and the last value passed through was 10,
 only values greater than or equal to 12 or less than or equal to 8 would be passed through.

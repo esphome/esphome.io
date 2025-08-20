@@ -9,7 +9,7 @@ params:
 
 
 
-The `tuya`   light platform creates a simple brightness-only light from a
+The `tuya` light platform creates a simple brightness-only light from a
 tuya serial component.
 
 {{< warning >}}
@@ -30,6 +30,7 @@ Here is an example output for a Tuya dimmer:
 [21:50:28][C][tuya:029]:   Datapoint 1: switch (value: OFF)
 
 ```
+
 On this dimmer, the toggle switch is datapoint 1 and the dimmer value is datapoint 3.
 Now you can create the light.
 
@@ -43,7 +44,8 @@ light:
     switch_datapoint: 1
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **dimmer_datapoint** (*Optional*, int): The datapoint id number of the dimmer value.
 - **min_value_datapoint** (*Optional*, int): The datapoint id number of the MCU minimum value
@@ -60,9 +62,9 @@ light:
   If this is set, along with **color_datapoint**, then ESPHome will use this value to format
   the color sent to **color_datapoint**.
 
-    - `rgb`  : Use a 6 digit hex RGB value
-    - `hsv`  : Use a 12 digit hex HSV value
-    - `rgbhsv`  : Use a 14 digit hex RGBHSV value
+  - `rgb`  : Use a 6 digit hex RGB value
+  - `hsv`  : Use a 12 digit hex HSV value
+  - `rgbhsv`  : Use a 14 digit hex RGBHSV value
 
 - **min_value** (*Optional*, int): The lowest dimmer value allowed.  My dimmer had a
   minimum of 25 and wouldn't even accept anything lower, but this option is available if necessary.
@@ -84,13 +86,13 @@ light:
 
 {{< note >}}
 The MCU on the Tuya dimmer handles transitions and gamma correction on its own.
-Therefore the `gamma_correct`   setting default is `1.0`   and the
-`default_transition_length`   parameter is `0s`   by default.
+Therefore the `gamma_correct` setting default is `1.0` and the
+`default_transition_length` parameter is `0s` by default.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/tuya" >}}
 - {{< docref "/components/light" >}}
 - {{< apiref "tuya/light/tuya_light.h" "tuya/light/tuya_light.h" >}}
-

@@ -10,7 +10,6 @@ params:
 
 {{< anchor "display-qrcode" >}}
 
-
 Use this component to generate a QR-code containing a string on the device, which can then be drawn on compatible displays.
 
 ```yaml
@@ -19,7 +18,8 @@ qr_code:
     value: esphome.io
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the QR-code later
   in your display code.
@@ -31,7 +31,7 @@ qr_code:
   - `QUARTILE`  : The QR Code can tolerate about 25% erroneous codewords
   - `HIGH`  : The QR Code can tolerate about 30% erroneous codewords
 
-To draw the QR-code, call the `it.qr_code`   function from your render lambda:
+To draw the QR-code, call the `it.qr_code` function from your render lambda:
 
 ```yaml
 display:

@@ -9,7 +9,7 @@ params:
 
 
 
-The `copy`   component can be used to copy an existing component (like a sensor, switch, etc.)
+The `copy` component can be used to copy an existing component (like a sensor, switch, etc.)
 and create a duplicate mirroring the source's state and forwarding actions such as turning on to the source.
 
 For each of the supported platforms, the configuration consists of the required configuration
@@ -25,7 +25,8 @@ binary_sensor:
     name: "Copy of source_binary_sensor"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The binary sensor that should be mirrored.
 - All other options from [Binary Sensor](#config-binary_sensor).
@@ -40,7 +41,8 @@ button:
     name: "Copy of source_button"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The button that should be mirrored.
 - All other options from [Button](#config-button).
@@ -55,7 +57,8 @@ cover:
     name: "Copy of source_cover"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The cover that should be mirrored.
 - All other options from [Cover](#config-cover).
@@ -70,7 +73,8 @@ fan:
     name: "Copy of source_fan"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The fan that should be mirrored.
 - All other options from [Fan](#config-fan).
@@ -85,7 +89,8 @@ lock:
     name: "Copy of source_lock"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The lock that should be mirrored.
 - All other options from [Lock](#config-lock).
@@ -100,7 +105,8 @@ number:
     name: "Copy of source_number"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The number that should be mirrored.
 - All other options from [Number](#config-number).
@@ -115,7 +121,8 @@ select:
     name: "Copy of source_select"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The select that should be mirrored.
 - All other options from [Select](#config-select).
@@ -132,7 +139,8 @@ sensor:
     name: "Copy of source_sensor"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The sensor that should be mirrored.
 - All other options from [Sensor](#config-sensor).
@@ -147,7 +155,8 @@ switch:
     name: "Copy of source_switch"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The switch that should be mirrored.
 - All other options from [Switch](#config-switch).
@@ -162,7 +171,8 @@ text_sensor:
     name: "Copy of source_text_sensor"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The text sensor that should be mirrored.
 - All other options from [Text Sensor](#config-text_sensor).
@@ -177,11 +187,10 @@ text:
     name: "Copy of source_text"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The text that should be mirrored.
 - All other options from [Text](#config-text).
 
 ## See Also
-
-

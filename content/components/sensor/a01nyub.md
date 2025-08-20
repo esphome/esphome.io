@@ -27,7 +27,8 @@ sensor:
     name: "Distance"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](#uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
@@ -38,4 +39,3 @@ sensor:
 - [Sensor Filters](#sensor-filters)
 - [UART Bus](#uart)
 - {{< apiref "a01nyub/a01nyub.h" "a01nyub/a01nyub.h" >}}
-

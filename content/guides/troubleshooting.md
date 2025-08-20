@@ -15,13 +15,14 @@ This guide helps you diagnose and debug ESPHome device issues, particularly cras
 This guide assumes you have ESPHome installed and basic familiarity with the command line. For installation instructions, see {{< docref "/guides/installing_esphome" >}}.
 
 {{< /note >}}
+
 ## Getting a Stack Trace from Crashes
 
 When your ESPHome device crashes, you can obtain a decoded stack trace to help identify the cause. This requires:
 
 1. Compiling the firmware locally (to have matching debug symbols)
-2. Connecting the device via USB cable for serial console access
-3. Running the logs command to capture and decode the crash
+1. Connecting the device via USB cable for serial console access
+1. Running the logs command to capture and decode the crash
 
 ### Steps to Get a Stack Trace
 
@@ -40,19 +41,22 @@ When your ESPHome device crashes, you can obtain a decoded stack trace to help i
       esphome upload your-device.yaml
 
 ```
+
 {{< note >}}
 While you can use OTA for the upload, you'll need a USB connection anyway to capture the crash output in the next steps, so uploading via USB is usually more convenient.
 
 {{< /note >}}
-2. **Connect via USB**: Connect your device to your computer using a USB cable. The device must be connected via serial console (not over WiFi/OTA) to capture the crash output.
 
-3. **Monitor logs**: Run the logs command to monitor the device output:
+1. **Connect via USB**: Connect your device to your computer using a USB cable. The device must be connected via serial console (not over WiFi/OTA) to capture the crash output.
+
+1. **Monitor logs**: Run the logs command to monitor the device output:
 
 ```bash
       esphome logs your-device.yaml
 
 ```
-4. **Wait for crash**: When the device crashes, ESPHome will automatically detect and decode the stack trace. You'll see output similar to this:
+
+1. **Wait for crash**: When the device crashes, ESPHome will automatically detect and decode the stack trace. You'll see output similar to this:
 
 ```text
       [08:17:06]E (5906) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
@@ -73,6 +77,7 @@ While you can use OTA for the upload, you'll need a USB connection anyway to cap
        (inlined by) timer_task at /Users/bdraco/.platformio/packages/framework-espidf/components/esp_timer/src/esp_timer.c:482
 
 ```
+
 The decoded stack trace shows:
 
 - The exact function names and source files where the crash occurred
@@ -83,6 +88,7 @@ The decoded stack trace shows:
 **Important**: You must compile locally and upload the firmware before capturing the crash. The debug symbols must match the running firmware for the stack trace to be decoded correctly.
 
 {{< /note >}}
+
 ### Common Issues
 
 - **No decoded output**: Ensure you compiled and uploaded the firmware locally before capturing the crash
@@ -98,20 +104,22 @@ If you already have a stack trace but need to decode it, you can use the [ESP St
 The .elf file must be from the same compilation that produced the firmware currently running on your device. If you've recompiled since flashing, the debug symbols won't match.
 
 {{< /note >}}
-2. **Open the decoder**: Navigate to https://esphome.github.io/esp-stacktrace-decoder/
 
-3. **Upload files**:
+1. **Open the decoder**: Navigate to <https://esphome.github.io/esp-stacktrace-decoder/>
+
+1. **Upload files**:
 
 - Click "Choose File" under "ELF File" and select your downloaded .elf file
 - Paste your stack trace into the text area
 - Click "Decode Stack Trace"
 
-4. **View results**: The tool will decode the addresses and show you the function names, file paths, and line numbers
+1. **View results**: The tool will decode the addresses and show you the function names, file paths, and line numbers
 
 {{< note >}}
 This tool runs entirely in your browser - no data is sent to any server, ensuring your firmware and debug information remain private.
 
 {{< /note >}}
+
 ## Performance Troubleshooting
 
 If your device is experiencing performance issues such as:

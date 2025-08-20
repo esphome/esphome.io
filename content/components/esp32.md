@@ -17,27 +17,29 @@ esp32:
   variant: esp32s3
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **variant** (*Optional*, string): The ESP32 mcu/chip to use for this device configuration. One of `esp32`  ,
-  `esp32s2`  , `esp32s3`  , `esp32c2`  , `esp32c3`  , `esp32c5`  , `esp32c6`  , `esp32h2`   or `esp32p4`  .
+  `esp32s2`  , `esp32s3`  , `esp32c2`  , `esp32c3`  , `esp32c5`  , `esp32c6`  , `esp32h2` or `esp32p4`  .
   This must match the hardware in use, or it will fail to flash.
 - **board** (*Optional*, string): The PlatformIO board ID that should be used. Choose the appropriate board from
   [this list](https://registry.platformio.org/platforms/platformio/espressif32/boards?version=5.3.0) (the icon next
   to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
-  This setting is no longer recommended, `variant`   should be used instead.
+  This setting is no longer recommended, `variant` should be used instead.
 
 {{< note >}}
-At least one of `board`   or `variant`   must be specified. If `variant`   alone is specified (the recommended practice),
+At least one of `board` or `variant` must be specified. If `variant` alone is specified (the recommended practice),
 the board configuration will be automatically filled using a standard Espressif devkit board
 suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
 
 {{< /note >}}
+
 - **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of `2MB`  ,
-  `4MB`  , `8MB`  , `16MB`   or `32MB`  . Defaults to `4MB`  . **Warning: specifying a size larger than that available
+  `4MB`  , `8MB`  , `16MB` or `32MB`  . Defaults to `4MB`  . **Warning: specifying a size larger than that available
   on your board will cause the ESP32 to fail to boot.**
 - **cpu_frequency** (*Optional*, string): The CPU frequency to use. One of `40MHz`  , `80MHz`  , `160MHz`  , `240MHz`  ,
-  `360MHz`   or `400MHz`  . Defaults to `160MHz`  . Not all values are available for all chips.
+  `360MHz` or `400MHz`  . Defaults to `160MHz`  . Not all values are available for all chips.
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
   partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`  .
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Arduino framework](#esp32-arduino_framework)
@@ -57,14 +59,15 @@ esp32:
     type: arduino
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`  .
   Additional values are:
 
-  - `dev`  : Use the latest commit from https://github.com/espressif/arduino-esp32, note this may break at any time
-  - `latest`  : Use the latest *release* from https://github.com/espressif/arduino-esp32/releases, even if it hasn't
+  - `dev`  : Use the latest commit from <https://github.com/espressif/arduino-esp32>, note this may break at any time
+  - `latest`  : Use the latest *release* from <https://github.com/espressif/arduino-esp32/releases>, even if it hasn't
     been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
@@ -89,14 +92,15 @@ esp32:
     type: esp-idf
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases). Defaults to `recommended`  .
   Additional values are:
 
-  - `dev`  : Use the latest commit from https://github.com/espressif/esp-idf, note this may break at any time
-  - `latest`  : Use the latest *release* from https://github.com/espressif/esp-idf/releases, even if it hasn't been
+  - `dev`  : Use the latest commit from <https://github.com/espressif/esp-idf>, note this may break at any time
+  - `latest`  : Use the latest *release* from <https://github.com/espressif/esp-idf/releases>, even if it hasn't been
     recommended yet.
   - `recommended`  : Use the recommended framework version.
 
@@ -107,8 +111,8 @@ esp32:
 - **sdkconfig_options** (*Optional*, mapping): Custom sdkconfig
   [compiler options](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options)
   to set in the ESP-IDF project.
-- **log_level** (*Optional*, string): Log level of the framework, one of `ERROR`   (default), `NONE`  , `WARN`  , `INFO`  ,
-  `DEBUG`   or `VERBOSE`  .
+- **log_level** (*Optional*, string): Log level of the framework, one of `ERROR` (default), `NONE`  , `WARN`  , `INFO`  ,
+  `DEBUG` or `VERBOSE`  .
 - **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
 - **components** (*Optional*, list of components): See [IDF Components](#esp32-idf_components) below.
 
@@ -116,34 +120,34 @@ esp32:
 
 ## Advanced Configuration
 
-- **assertion_level** (*Optional*, enum): One of `ENABLE`   (default), `SILENT`   or `DISABLE`  . Changing away from
+- **assertion_level** (*Optional*, enum): One of `ENABLE` (default), `SILENT` or `DISABLE`  . Changing away from
   the default will reduce the size of the compiled binary, albeit at the expense of ease of troubleshooting. See
   [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization-assertion-level)
   for more information.
-- **compiler_optimization** (*Optional*, enum): One of `SIZE`   (default), `PERF`  , `NONE`   or `DEBUG`  . Changing
+- **compiler_optimization** (*Optional*, enum): One of `SIZE` (default), `PERF`  , `NONE` or `DEBUG`  . Changing
   away from the default will increase the size of the compiled binary but may increase performance or allow for easier
   troubleshooting. See
   [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-compiler-optimization)
   for more information.
-- **enable_lwip_assert** (*Optional*, boolean): Can be set to `false`   to reduce the size of the compiled binary by
-  disabling LWIP assertions. Defaults to `true`   (as recommended by Espressif). See
+- **enable_lwip_assert** (*Optional*, boolean): Can be set to `false` to reduce the size of the compiled binary by
+  disabling LWIP assertions. Defaults to `true` (as recommended by Espressif). See
   [Espressif's documentation](https://docs.espressif.com/projects/esp-idf/en/v5.3.3/esp32/api-reference/kconfig.html#config-lwip-esp-lwip-assert)
   for more information.
-- **execute_from_psram** (*Optional*, boolean): On ESP32S3 only may be set to `true`   to enable executing code from PSRAM.
+- **execute_from_psram** (*Optional*, boolean): On ESP32S3 only may be set to `true` to enable executing code from PSRAM.
   With octal PSRAM this can be faster than executing from FLASH memory, and enables code such as display drawing
   to execute normally when writing to FLASH, e.g. during an OTA update. The default is `false`  .
-- **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to `true`   for devices on which the burned-in custom
+- **ignore_efuse_custom_mac** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in custom
   MAC address is not valid.
-- **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true`   for devices on which the burned-in MAC
+- **ignore_efuse_mac_crc** (*Optional*, boolean): Can be set to `true` for devices on which the burned-in MAC
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
-  `Base MAC address from BLK0 of EFUSE CRC error`  . **Valid only on original ESP32 with** `esp-idf`   **framework.**
-- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true`   to enable experimental features in
+  `Base MAC address from BLK0 of EFUSE CRC error`  . **Valid only on original ESP32 with** `esp-idf` **framework.**
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features in
   the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
   other issues.
 
 **LWIP Optimization Options (ESP-IDF only):**
 
-The following options are available under the `advanced`   section when using the ESP-IDF framework to optimize
+The following options are available under the `advanced` section when using the ESP-IDF framework to optimize
 LWIP (Lightweight IP) behavior. Some options improve performance while others save flash memory:
 
 - **enable_lwip_dhcp_server** (*Optional*, boolean): Enable DHCP server functionality. Only needed if the device will act
@@ -183,11 +187,12 @@ esp32:
       enable_lwip_bridge_interface: false  # Disabled by default
 
 ```
+
 {{< anchor "esp32-idf_components" >}}
 
 ## IDF Components
 
-The `components`   option allows you to include IDF components. These components will then be compiled into the resulting
+The `components` option allows you to include IDF components. These components will then be compiled into the resulting
 firmware and may be used by [lambdas](#config-lambda). The most common usage of this option is to include third-party
 components that are available in the [ESP Component Registry](https://components.espressif.com/). They can be added by
 listing their name under this option. It is also possible to use specific versions, or to fetch components from a file or
@@ -198,7 +203,7 @@ git repository.
 - **source** (*Optional*, string): The git repository to use for the component. This can be used for a
   custom or patched version of the component.
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
-  component if `source`   is not set.
+  component if `source` is not set.
 
 ## GPIO Pin Numbering
 
@@ -207,13 +212,13 @@ worry about pin alias names or numbering...yay!
 
 Some notes about the pins on the original ESP32:
 
-- `GPIO0`   is used to determine the boot mode on startup; note that **ESP32 variants use different pins to determine
+- `GPIO0` is used to determine the boot mode on startup; note that **ESP32 variants use different pins to determine
   the boot mode.** Bootstrapping pin(s) should **not** be pulled LOW on startup to avoid booting into flash mode when
   it's not desired. You can, however, still use the strapping pins as output pins.
-- `GPIO34`   to `GPIO39`  : These pins **cannot** be used as outputs (yes, even though GPIO stands for "general purpose
+- `GPIO34` to `GPIO39`  : These pins **cannot** be used as outputs (yes, even though GPIO stands for "general purpose
   input/**output**"...).
-- `GPIO32`   to `GPIO39`  : These pins can be used with the {{< docref "/components/sensor/adc" >}} to measure voltages.
-- `GPIO2`  : On the `esp32dev`   board, this pin is connected to the blue LED. It also supports the
+- `GPIO32` to `GPIO39`  : These pins can be used with the {{< docref "/components/sensor/adc" >}} to measure voltages.
+- `GPIO2`  : On the `esp32dev` board, this pin is connected to the blue LED. It also supports the
   {{< docref "/components/binary_sensor/esp32_touch" "touch pad binary sensor" >}} (in addition to a few other pins).
 
 ```yaml
@@ -224,7 +229,7 @@ binary_sensor:
     pin: GPIO23
 
 ```
+
 ## See Also
 
 - {{< docref "esphome/" >}}
-

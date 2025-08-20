@@ -28,15 +28,13 @@ IDs are in reality just C++ variable names, they must also adhere to
 C++'s naming conventions. [C++ Variablenames](https://venus.cs.qc.cuny.edu/~krishna/cs111/lectures/D3_C++_Variables.pdf)
 …
 
--  … must start with a letter and can end with numbers.
--  … must not have a space in the name.
--  … can not have special characters except the underscore (“_“).
--  … must not be a keyword.
-
+- … must start with a letter and can end with numbers.
+- … must not have a space in the name.
+- … can not have special characters except the underscore (“_“).
+- … must not be a keyword.
 
 {{< note >}}
 These IDs are used only within ESPHome and are not translated to Home Assistant's Entity ID.
-
 
 {{< /note >}}
 {{< anchor "config-pin" >}}
@@ -44,15 +42,15 @@ These IDs are used only within ESPHome and are not translated to Home Assistant'
 ## Pin
 
 ESPHome always uses the **chip-internal GPIO numbers**. These
-internal numbers are always integers like `16`   and can be prefixed by
+internal numbers are always integers like `16` and can be prefixed by
 `GPIO`  . For example to use the pin with the **internal** GPIO number 16,
-you could type `GPIO16`   or just `16`  .
+you could type `GPIO16` or just `16`  .
 
 Most boards however have aliases for certain pins. For example the NodeMCU
-ESP8266 uses pin names `D0`   through `D8`   as aliases for the internal GPIO
+ESP8266 uses pin names `D0` through `D8` as aliases for the internal GPIO
 pin numbers. Each board (defined in {{< docref "/components/esphome" "ESPHome section" >}})
 has their own aliases and so not all of them are supported yet. For example,
-for the `D0`   (as printed on the PCB silkscreen) pin on the NodeMCU ESP8266
+for the `D0` (as printed on the PCB silkscreen) pin on the NodeMCU ESP8266
 has the internal GPIO name `GPIO16`  , but also has an alias `D0`  . So using
 either one of these names in your configuration will lead to the same result.
 
@@ -65,6 +63,7 @@ some_config_option:
   pin: D0
 
 ```
+
 {{< anchor "config-pin_schema" >}}
 
 ## Pin Schema
@@ -85,36 +84,37 @@ some_config_option:
       pullup: true
 
 ```
+
 Configuration variables:
 
--  **number** (**Required**, pin): The pin number.
--  **inverted** (*Optional*, boolean): If all read and written values
+- **number** (**Required**, pin): The pin number.
+- **inverted** (*Optional*, boolean): If all read and written values
    should be treated as inverted. Defaults to `false`  .
--  **allow_other_uses** (*Optional*, boolean): If the pin is also specified elsewhere in the configuration.
+- **allow_other_uses** (*Optional*, boolean): If the pin is also specified elsewhere in the configuration.
    By default multiple uses of the same pin will be flagged as an error. This option will suppress the error and is
    intended for rare cases where a pin is shared between multiple components. Defaults to `false`  .
 
--  **mode** (*Optional*, string or mapping): Configures the pin to behave in different
+- **mode** (*Optional*, string or mapping): Configures the pin to behave in different
    modes like input or output. The default value depends on the context.
    Accepts either a shorthand string or a mapping where each feature can be individually
    enabled/disabled:
 
-   - **input** (*Optional*, boolean): If true, configure the pin as an input.
-   - **output** (*Optional*, boolean): If true, configure the pin as an output.
-   - **pullup** (*Optional*, boolean): Activate internal pullup resistors on the pin.
-   - **pulldown** (*Optional*, boolean): Activate internal pulldown resistors on the pin.
-   - **open_drain** (*Optional*, boolean): Set the pin to open-drain (as opposed to push-pull).
+  - **input** (*Optional*, boolean): If true, configure the pin as an input.
+  - **output** (*Optional*, boolean): If true, configure the pin as an output.
+  - **pullup** (*Optional*, boolean): Activate internal pullup resistors on the pin.
+  - **pulldown** (*Optional*, boolean): Activate internal pulldown resistors on the pin.
+  - **open_drain** (*Optional*, boolean): Set the pin to open-drain (as opposed to push-pull).
      The active pin state will then result in a high-impedance state.
 
    For compatibility some shorthand modes can also be used.
 
-   - `INPUT`
-   - `OUTPUT`
-   - `OUTPUT_OPEN_DRAIN`
-   - `ANALOG`
-   - `INPUT_PULLUP`
-   - `INPUT_PULLDOWN`
-   - `INPUT_OUTPUT_OPEN_DRAIN`
+  - `INPUT`
+  - `OUTPUT`
+  - `OUTPUT_OPEN_DRAIN`
+  - `ANALOG`
+  - `INPUT_PULLUP`
+  - `INPUT_PULLDOWN`
+  - `INPUT_OUTPUT_OPEN_DRAIN`
 
 Advanced options:
 
@@ -128,7 +128,7 @@ Advanced options:
   For more detail see [Why am I getting a warning about strapping pins?](#strapping-warnings).
 
   If you are *absolutely* sure that you are using a strapping pin for I/O in a way that will not cause problems,
-  you can suppress the warning by setting this option to `true`   in the pin configuration.
+  you can suppress the warning by setting this option to `true` in the pin configuration.
 
 {{< anchor "config-time" >}}
 
@@ -163,9 +163,9 @@ some_config_option:
   update_interval: always # same as 0ms
 
 ```
+
 ## See Also
 
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "getting_started_command_line/" >}}
 - {{< docref "faq/" >}}
-

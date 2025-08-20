@@ -9,7 +9,7 @@ params:
 
 
 
-The `homeassistant`   binary sensor platform allows you to create binary sensors that **import**
+The `homeassistant` binary sensor platform allows you to create binary sensors that **import**
 states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
 {{< note >}}
@@ -18,6 +18,7 @@ in Home Assistant, this component still requires you to register the node under 
 [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 binary_sensor:
@@ -26,6 +27,7 @@ binary_sensor:
     entity_id: input_boolean.state_home
 
 ```
+
 With Home Assistant 2021.6 or newer, entity state attributes can also be imported.
 
 ```yaml
@@ -37,7 +39,8 @@ binary_sensor:
     attribute: is_volume_muted
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
@@ -48,4 +51,3 @@ binary_sensor:
 
 - [Automation](#automation)
 - {{< apiref "homeassistant/binary_sensor/homeassistant_binary_sensor.h" "homeassistant/binary_sensor/homeassistant_binary_sensor.h" >}}
-

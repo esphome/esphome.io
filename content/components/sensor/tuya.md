@@ -9,7 +9,7 @@ params:
 
 
 
-The `tuya`   sensor platform creates a sensor from a tuya component
+The `tuya` sensor platform creates a sensor from a tuya component
 and requires {{< docref "/components/tuya" >}} to be configured.
 
 ```text
@@ -23,6 +23,7 @@ and requires {{< docref "/components/tuya" >}} to be configured.
 [13:46:01][C][tuya:046]:   Product: '{"p":"ynjanlglr4qa6dxf","v":"1.0.0","m":0}'
 
 ```
+
 On this controller, the datapoint 5 represents the countdown timer in minutes
 which is what we are interested in reading using this platform.
 
@@ -36,7 +37,8 @@ sensor:
     sensor_datapoint: 5
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
 - All other options from [Sensor](#config-sensor).
@@ -46,4 +48,3 @@ sensor:
 - {{< docref "/components/tuya" >}}
 - {{< docref "/components/sensor" >}}
 - {{< apiref "tuya/sensor/tuya_sensor.h" "tuya/sensor/tuya_sensor.h" >}}
-

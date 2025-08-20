@@ -10,8 +10,7 @@ params:
 
 {{< anchor "nextion_text_sensor" >}}
 
-
-The `nextion`   text sensor platform supports text strings. It can be a component or variable in the Nextion display.
+The `nextion` text sensor platform supports text strings. It can be a component or variable in the Nextion display.
 It is best to set the components vscope to global in the Nextion Editor. This way the component will be available
 if the page is shown or not.
 
@@ -33,7 +32,8 @@ text_sensor:
   component_name: text0
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **nextion_id** (*Optional*, [ID](#config-id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
@@ -49,6 +49,7 @@ text_sensor:
 See [How things Update](#nextion_text_sensor_how_things_update) for additional information
 
 ### Globals
+
 The Nextion does not retain data on Nextion page changes. Additionally, if a page is changed and the **component_name** does not exist on that page then
 nothing will be updated. To get around this, the Nextion components can be changed to have a vscope of `global`  . If this is set, then the **component_name**
 should be prefixed with the page name (page0/page1 or whatever you have changed it to).
@@ -59,10 +60,10 @@ should be prefixed with the page name (page0/page1 or whatever you have changed 
 
 {{< anchor "text_sensor-nextion-publish_action" >}}
 
-## `text_sensor.nextion.publish`   Action
+## `text_sensor.nextion.publish` Action
 
 You can also publish a state to a Nextion text sensor from elsewhere in your YAML file
-with the `text_sensor.nextion.publish`   action.
+with the `text_sensor.nextion.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -87,6 +88,7 @@ on_...:
       send_to_nextion: true
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the Nextion text sensor.
@@ -119,11 +121,12 @@ some more advanced functions (see the full {{< apiref "nextion/text_sensor/nexti
 
 - `set_background_color(Color color)`  : Sets the background color to **Color**
 - `set_foreground_color(Color color)`  : Sets the background color to **Color**
-- `set_visible(bool visible)`   : Sets visible or not. If set to false, no updates will be sent to the component
+- `set_visible(bool visible)` : Sets visible or not. If set to false, no updates will be sent to the component
 
 {{< anchor "nextion_text_sensor_how_things_update" >}}
 
 ## How things Update
+
 A Nextion component with an integer value (.val) or Nextion variable will be automatically polled if **update_interval** is set.
 To have the Nextion send the data you can use the [Nextion Custom Text Sensor Protocol](#nextion_custom_text_sensor_protocol) for this. Add the [Nextion Custom Text Sensor Protocol](#nextion_custom_text_sensor_protocol) to the
 component or function you want to trigger the send. Typically this is in *Touch Press Event* but some components, like a slider, should have it
@@ -136,18 +139,19 @@ since this will be sending the real value to esphome.
 
 {{< /note >}}
 Using the above yaml example:
-- "text0" will poll the Nextion for `text0.txt`   value and set the state accordingly.
+
+- "text0" will poll the Nextion for `text0.txt` value and set the state accordingly.
 
 - [Lambda Calls](#nextion_text_sensor_lambda_calls).
 
 {{< note >}}
 No updates will be sent to the Nextion if it is sleeping. Once it wakes, the components will be updated. If a component is invisible, `visible(false)`, then it won't update until it is set to be visible.
 
-
 {{< /note >}}
 {{< anchor "nextion_custom_text_sensor_protocol" >}}
 
 ## Nextion Custom Text Sensor Protocol
+
 All lines are required
 
 ```c
@@ -159,19 +163,18 @@ printh 00
 printh FF FF FF
 
 ```
+
 *Explanation*
 
-- `printh 92`   Tells the library this is text sensor
-- `prints "text0",0`   Sends the name that matches **component_name** or **variable_name**
-- `printh 00`   Sends a NULL
-- `prints text0.txt,0`   The actual text to send. For a variable use the Nextion variable name `text0`   with out `.txt`
-- `printh 00`   Sends a NULL
-- `printh FF FF FF`   Nextion command ack
-
+- `printh 92` Tells the library this is text sensor
+- `prints "text0",0` Sends the name that matches **component_name** or **variable_name**
+- `printh 00` Sends a NULL
+- `prints text0.txt,0` The actual text to send. For a variable use the Nextion variable name `text0` with out `.txt`
+- `printh 00` Sends a NULL
+- `printh FF FF FF` Nextion command ack
 
 ## See Also
 
 - {{< docref "/components/display/nextion" >}}
 - {{< docref "index/" >}}
 - {{< apiref "nextion/text_sensor/nextion_textsensor.h" "nextion/text_sensor/nextion_textsensor.h" >}}
-

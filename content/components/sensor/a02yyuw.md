@@ -27,7 +27,8 @@ sensor:
     name: "Distance"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](#uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
@@ -37,9 +38,9 @@ sensor:
 [PWM and RS485](https://www.dypcn.com/uploads/A02-Datasheet.pdf) versions of the A02YYUW are not supported by this component.
 
 {{< /note >}}
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - [UART Bus](#uart)
 - {{< apiref "a02yyuw/a02yyuw.h" "a02yyuw/a02yyuw.h" >}}
-

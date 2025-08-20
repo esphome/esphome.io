@@ -45,9 +45,9 @@ cover:
     assumed_state: true
 
 ```
+
 ## See Also
 
 - {{< docref "/automations" >}}
 - {{< docref "/components/switch/gpio" >}}
 - {{< docref "/components/cover/template" >}}
-

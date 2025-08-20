@@ -25,7 +25,8 @@ switch:
       name: Haier quiet mode
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **haier_id** (**Required**, [ID](#config-id)): The id of Haier climate component
 - **beeper** (*Optional*): (supported only by hOn) A switch that enables or disables Haier climate sound feedback.
@@ -40,4 +41,3 @@ switch:
 ## See Also
 
 - {{< docref "/components/climate/haier" "Haier Climate" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `binary`   fan platform lets you represent any binary [Output Component](#output) as a fan.
+The `binary` fan platform lets you represent any binary [Output Component](#output) as a fan.
 
 {{< img src="fan-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -21,7 +21,8 @@ fan:
     name: "Living Room Fan"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The id of the
   binary output component to use for this fan.
@@ -37,4 +38,3 @@ fan:
 - {{< docref "/components/output/gpio" >}}
 - {{< docref "/components/fan" >}}
 - {{< apiref "fan/fan_state.h" "fan/fan_state.h" >}}
-

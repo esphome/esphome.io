@@ -9,7 +9,7 @@ params:
 
 
 
-The `remote_receiver`   component lets you receive and decode various common remote control signals, such as infrared
+The `remote_receiver` component lets you receive and decode various common remote control signals, such as infrared
 or 433 MHz radio frequency (RF) signals.
 
 The component is split into two parts:
@@ -27,13 +27,14 @@ remote_receiver:
   dump: all
 
 ```
+
 Multiple remote receivers can be configured as a list of dict definitions within `remote_receiver`  .
 
-## Configuration variables:
+## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin to receive the remote signal on.
 - **dump** (*Optional*, list): Decode and dump these remote codes in the logs (at log.level=DEBUG).
-  Set to `all`   to dump all available codecs:
+  Set to `all` to dump all available codecs:
 
   - **abbwelcome**: Decode and dump ABB-Welcome codes. Messages are sent via copper wires. See
     [transmitter description](#remote_transmitter-transmit_abbwelcome) for more details.
@@ -73,45 +74,44 @@ Multiple remote receivers can be configured as a list of dict definitions within
 - **tolerance** (*Optional*, int, [Time](#config-time) or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process.  Defaults to `25%`  .
 
-  - **type** (**Required**, enum): Set the type of the tolerance. Can be `percentage`   or `time`  .
+  - **type** (**Required**, enum): Set the type of the tolerance. Can be `percentage` or `time`  .
   - **value** (**Required**, int or [Time](#config-time)): The percentage or time value. Allowed values are in range `0`
-    to `100%`   or `0`   to `4294967295us`  .
+    to `100%` or `0` to `4294967295us`  .
 
 - **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to `10kB`
-  on the ESP32 and `1kB`   on the ESP8266.
+  on the ESP32 and `1kB` on the ESP8266.
 - **filter** (*Optional*, [Time](#config-time)): Filter any pulses that are shorter than this. Useful for removing
-  glitches from noisy signals. Allowed values are in range `0`   to `4294967295us`  . Defaults to `50us`  .
+  glitches from noisy signals. Allowed values are in range `0` to `4294967295us`  . Defaults to `50us`  .
 - **idle** (*Optional*, [Time](#config-time)): The amount of time that a signal should remain stable/unchanged for it to
   be considered complete. The maximum allowable value is:
 
-  - `65536us`   on the `ESP32`   and `ESP32-S2`   variants
-  - `32767us`   on all other ESP32 variants
-  - `4294967295us`   on all other platforms
+  - `65536us` on the `ESP32` and `ESP32-S2` variants
+  - `32767us` on all other ESP32 variants
+  - `4294967295us` on all other platforms
 
-  Note: The ESP32 values listed above assume the default `clock_resolution`  . If a different `clock_resolution`   is used,
+  Note: The ESP32 values listed above assume the default `clock_resolution`  . If a different `clock_resolution` is used,
   the values are scaled by 1000000 / `clock_resolution`  .
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
-### ESP32 configuration variables:
+### ESP32 configuration variables
 
-- **rmt_symbols** (*Optional*, int): When `use_dma`   is enabled, this sets the size of the driver's internal DMA
+- **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
   buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
-  across all components and should be allocated in multiples of the block size. On the `ESP32`   and `ESP32-S2`
+  across all components and should be allocated in multiples of the block size. On the `ESP32` and `ESP32-S2`
   variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
 
 | ESP32 Variant | Available Memory | Block Size |
-| --- | --- | --- |
-| ESP32 | 512 symbols | 64 symbols |
-| ESP32-C3 | 96 symbols | 48 symbols |
-| ESP32-C5 | 96 symbols | 48 symbols |
-| ESP32-C6 | 96 symbols | 48 symbols |
-| ESP32-H2 | 96 symbols | 48 symbols |
-| ESP32-P4 | 192 symbols | 48 symbols |
-| ESP32-S2 | 256 symbols | 64 symbols |
-| ESP32-S3 | 192 symbols | 48 symbols |
-
+| ------------- | ---------------- | ---------- |
+| ESP32         | 512 symbols      | 64 symbols |
+| ESP32-C3      | 96 symbols       | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to `rmt_symbols`  .
@@ -119,7 +119,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   `filter_symbols`  . Useful for filtering out short bursts of noise.
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to
   `1000000`  .
-- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols`   controls
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
 {{< note >}}
@@ -127,109 +127,109 @@ The dumped **raw** code is sequence of pulse widths (durations in microseconds),
 and negative for off-pulses (space). Usually you can to copy this directly to the configuration or automation
 to be used later.
 
-
 {{< /note >}}
-## Automations:
+
+## Automations
 
 - **on_abbwelcome** (*Optional*, [Automation](#automation)): An automation to perform when a
-  ABB-Welcome code has been decoded. A variable `x`   of type {{< apiclass "remote_base::ABBWelcomeData" "remote_base::ABBWelcomeData" >}}
+  ABB-Welcome code has been decoded. A variable `x` of type {{< apiclass "remote_base::ABBWelcomeData" "remote_base::ABBWelcomeData" >}}
   is passed to the automation for use in lambdas.
 - **on_aeha** (*Optional*, [Automation](#automation)): An automation to perform when a
-  AEHA remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::AEHAData" "remote_base::AEHAData" >}}
+  AEHA remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::AEHAData" "remote_base::AEHAData" >}}
   is passed to the automation for use in lambdas.
 - **on_beo4** (*Optional*, [Automation](#automation)): An automation to perform when a
-  B&O Beo4 infrared remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::Beo4Data" "remote_base::Beo4Data" >}}
+  B&O Beo4 infrared remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::Beo4Data" "remote_base::Beo4Data" >}}
   is passed to the automation for use in lambdas.
 - **on_byronsx** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Byron SX doorbell RF code has been decoded. A variable `x`   of type {{< apistruct "remote_base::ByronSXData" "remote_base::ByronSXData" >}}
+  Byron SX doorbell RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::ByronSXData" "remote_base::ByronSXData" >}}
   is passed to the automation for use in lambdas.
 - **on_canalsat** (*Optional*, [Automation](#automation)): An automation to perform when a
-  CanalSat remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::CanalSatData" "remote_base::CanalSatData" >}}
+  CanalSat remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::CanalSatData" "remote_base::CanalSatData" >}}
   is passed to the automation for use in lambdas.
 - **on_canalsatld** (*Optional*, [Automation](#automation)): An automation to perform when a
-  CanalSatLD remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::CanalSatLDData" "remote_base::CanalSatLDData" >}}
+  CanalSatLD remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::CanalSatLDData" "remote_base::CanalSatLDData" >}}
   is passed to the automation for use in lambdas.
 - **on_coolix** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Coolix remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::CoolixData" "remote_base::CoolixData" >}}
+  Coolix remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::CoolixData" "remote_base::CoolixData" >}}
   is passed to the automation for use in lambdas.
 - **on_dish** (*Optional*, [Automation](#automation)): An automation to perform when a
-  dish network remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::DishData" "remote_base::DishData" >}}
+  dish network remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::DishData" "remote_base::DishData" >}}
   is passed to the automation for use in lambdas.
   Beware that Dish remotes use a different carrier frequency (57.6kHz) that many receiver hardware don't decode.
 - **on_dooya** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Dooya RF remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::DooyaData" "remote_base::DooyaData" >}}
+  Dooya RF remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::DooyaData" "remote_base::DooyaData" >}}
   is passed to the automation for use in lambdas.
 - **on_drayton** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Drayton Digistat RF code has been decoded. A variable `x`   of type {{< apistruct "remote_base::DraytonData" "remote_base::DraytonData" >}}
+  Drayton Digistat RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::DraytonData" "remote_base::DraytonData" >}}
   is passed to the automation for use in lambdas.
 - **on_gobox** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Go-Box remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::GoboxData" "remote_base::GoboxData" >}}
+  Go-Box remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::GoboxData" "remote_base::GoboxData" >}}
   is passed to the automation for use in lambdas.
 - **on_jvc** (*Optional*, [Automation](#automation)): An automation to perform when a
-  JVC remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::JVCData" "remote_base::JVCData" >}}
+  JVC remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::JVCData" "remote_base::JVCData" >}}
   is passed to the automation for use in lambdas.
 - **on_keeloq** (*Optional*, [Automation](#automation)): An automation to perform when a
-  KeeLoq RF code has been decoded. A variable `x`   of type {{< apistruct "remote_base::KeeloqData" "remote_base::KeeloqData" >}}
+  KeeLoq RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::KeeloqData" "remote_base::KeeloqData" >}}
   is passed to the automation for use in lambdas.
 - **on_haier** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Haier remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::HaierData" "remote_base::HaierData" >}}
+  Haier remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::HaierData" "remote_base::HaierData" >}}
   is passed to the automation for use in lambdas.
 - **on_lg** (*Optional*, [Automation](#automation)): An automation to perform when a
-  LG remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::LGData" "remote_base::LGData" >}}
+  LG remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::LGData" "remote_base::LGData" >}}
   is passed to the automation for use in lambdas.
 - **on_magiquest** (*Optional*, [Automation](#automation)): An automation to perform when a
-  MagiQuest wand remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::MagiQuestData" "remote_base::MagiQuestData" >}}
+  MagiQuest wand remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::MagiQuestData" "remote_base::MagiQuestData" >}}
   is passed to the automation for use in lambdas.
 - **on_midea** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Midea remote code has been decoded. A variable `x`   of type {{< apiclass "remote_base::MideaData" "remote_base::MideaData" >}}
+  Midea remote code has been decoded. A variable `x` of type {{< apiclass "remote_base::MideaData" "remote_base::MideaData" >}}
   is passed to the automation for use in lambdas.
 - **on_nec** (*Optional*, [Automation](#automation)): An automation to perform when a
-  NEC remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::NECData" "remote_base::NECData" >}}
+  NEC remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::NECData" "remote_base::NECData" >}}
   is passed to the automation for use in lambdas.
 - **on_nexa** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Nexa RF code has been decoded. A variable `x`   of type {{< apistruct "remote_base::NexaData" "remote_base::NexaData" >}}
+  Nexa RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::NexaData" "remote_base::NexaData" >}}
   is passed to the automation for use in lambdas.
 - **on_panasonic** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Panasonic remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::PanasonicData" "remote_base::PanasonicData" >}}
+  Panasonic remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::PanasonicData" "remote_base::PanasonicData" >}}
   is passed to the automation for use in lambdas.
 - **on_pioneer** (*Optional*, [Automation](#automation)): An automation to perform when a
-  pioneer remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::PioneerData" "remote_base::PioneerData" >}}
+  pioneer remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::PioneerData" "remote_base::PioneerData" >}}
   is passed to the automation for use in lambdas.
 - **on_pronto** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Pronto remote code has been decoded. A variable `x`   of type `std::string`
+  Pronto remote code has been decoded. A variable `x` of type `std::string`
   is passed to the automation for use in lambdas.
 - **on_raw** (*Optional*, [Automation](#automation)): An automation to perform when a
-  raw remote code has been decoded. A variable `x`   of type `std::vector<int>`
+  raw remote code has been decoded. A variable `x` of type `std::vector<int>`
   is passed to the automation for use in lambdas.
 - **on_rc5** (*Optional*, [Automation](#automation)): An automation to perform when a
-  RC5 remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::RC5Data" "remote_base::RC5Data" >}}
+  RC5 remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::RC5Data" "remote_base::RC5Data" >}}
   is passed to the automation for use in lambdas.
 - **on_rc6** (*Optional*, [Automation](#automation)): An automation to perform when a
-  RC6 remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::RC6Data" "remote_base::RC6Data" >}}
+  RC6 remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::RC6Data" "remote_base::RC6Data" >}}
   is passed to the automation for use in lambdas.
 - **on_rc_switch** (*Optional*, [Automation](#automation)): An automation to perform when a
-  RCSwitch RF code has been decoded. A variable `x`   of type {{< apistruct "remote_base::RCSwitchData" "remote_base::RCSwitchData" >}}
+  RCSwitch RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::RCSwitchData" "remote_base::RCSwitchData" >}}
   is passed to the automation for use in lambdas.
 - **on_roomba** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Roomba remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::RoombaData" "remote_base::RoombaData" >}}
+  Roomba remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::RoombaData" "remote_base::RoombaData" >}}
   is passed to the automation for use in lambdas.
 - **on_samsung** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Samsung remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::SamsungData" "remote_base::SamsungData" >}}
+  Samsung remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::SamsungData" "remote_base::SamsungData" >}}
   is passed to the automation for use in lambdas.
 - **on_samsung36** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Samsung36 remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::Samsung36Data" "remote_base::Samsung36Data" >}}
+  Samsung36 remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::Samsung36Data" "remote_base::Samsung36Data" >}}
   is passed to the automation for use in lambdas.
 - **on_sony** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Sony remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::SonyData" "remote_base::SonyData" >}}
+  Sony remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::SonyData" "remote_base::SonyData" >}}
   is passed to the automation for use in lambdas.
 - **on_toshiba_ac** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Toshiba AC remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::ToshibaAcData" "remote_base::ToshibaAcData" >}}
+  Toshiba AC remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::ToshibaAcData" "remote_base::ToshibaAcData" >}}
   is passed to the automation for use in lambdas.
 - **on_mirage** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Mirage remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::MirageData" "remote_base::MirageData" >}}
+  Mirage remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::MirageData" "remote_base::MirageData" >}}
   is passed to the automation for use in lambdas.
 - **on_toto** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Toto remote code has been decoded. A variable `x`   of type {{< apistruct "remote_base::TotoData" "remote_base::TotoData" >}}
+  Toto remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::TotoData" "remote_base::TotoData" >}}
   is passed to the automation for use in lambdas.
 
 ```yaml
@@ -247,25 +247,27 @@ remote_receiver:
           - ...
 
 ```
+
 {{< anchor "remote-receiver-binary-sensor" >}}
 
 ## Binary Sensor
 
-The `remote_receiver`   binary sensor lets you track when a button on a remote control is pressed.
+The `remote_receiver` binary sensor lets you track when a button on a remote control is pressed.
 
 Each time the pre-defined signal is received, the binary sensor will briefly go ON and then immediately OFF.
 
 {{< note >}}
 **For IR Remote Binary Sensors**: If you're using binary sensors to track IR remote button presses and
 experiencing issues with rapid button presses not being detected (e.g., quick ON→OFF transitions being missed),
-consider setting `batch_delay: 0ms`   in your {{< docref "/components/api" "API configuration" >}}. This will send state
+consider setting `batch_delay: 0ms` in your {{< docref "/components/api" "API configuration" >}}. This will send state
 changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
 network traffic and should only be used when necessary.
 
-For new projects, consider using automations with the `on_*`   triggers (described above)
+For new projects, consider using automations with the `on_*` triggers (described above)
 instead of binary sensors, as they are better suited for handling momentary button press events.
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 binary_sensor:
@@ -276,6 +278,7 @@ binary_sensor:
       command: 0x100BCBD
 
 ```
+
 ```yaml
 # Example with batch_delay: 0 for rapid button presses
 api:
@@ -293,7 +296,8 @@ binary_sensor:
       command: 0x5678
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **receiver_id** (*Optional*, [ID](#config-id)): The remote receiver to receive the remote code with. Required if
   multiple receivers configured.
@@ -306,9 +310,9 @@ Remote code selection (exactly one of these has to be included):
 
   - **source_address** (**Required**, int): The source address to trigger on.
   - **destination_address** (**Required**, int): The destination address to trigger on.
-  - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. `false`   means
-    two bytes and `true`   means three bytes. Defaults to `false`  .
-  - **retransmission** (*Optional*, boolean): `true`   if the message was re-transmitted. Defaults to `false`  .
+  - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. `false` means
+    two bytes and `true` means three bytes. Defaults to `false`  .
+  - **retransmission** (*Optional*, boolean): `true` if the message was re-transmitted. Defaults to `false`  .
   - **message_type** (**Required**, int): The message type to trigger on.
   - **message_id** (*Optional*, int): The random message ID to trigger on, see dumper output for more info. Defaults
     to any ID.
@@ -352,7 +356,7 @@ Remote code selection (exactly one of these has to be included):
 
   - **first** (**Required**, uint32_t): The first 24-bit Coolix code to trigger on, see dumper output for more info.
   - **second** (*Optional*, uint32_t): The second 24-bit Coolix code to trigger on, see dumper output for more info.
-    If not set, trigger on on only single non-strict packet, specified by the `first`   parameter.
+    If not set, trigger on on only single non-strict packet, specified by the `first` parameter.
 
 - **dish**: Trigger on a decoded Dish Network remote code with the given data.
   Beware that Dish remotes use a different carrier frequency (57.6kHz) that many receiver hardware don't decode.
@@ -458,7 +462,7 @@ Remote code selection (exactly one of these has to be included):
 - **rc_switch_raw**: Trigger on a decoded RC Switch raw remote code with the given data.
 
   - **code** (**Required**, string): The remote code to listen for, copy this from the dumper output. To ignore a bit
-    in the received data, use `x`   at that place in the **code**.
+    in the received data, use `x` at that place in the **code**.
   - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol) for
     more info.
 
@@ -480,7 +484,7 @@ Remote code selection (exactly one of these has to be included):
 
 - **rc_switch_type_c**: Trigger on a decoded RC Switch Type C remote code with the given data.
 
-  - **family** (**Required**, string): The family. Range is `a`   to `p`  .
+  - **family** (**Required**, string): The family. Range is `a` to `p`  .
   - **group** (**Required**, int): The group. Range is 1 to 4.
   - **device** (**Required**, int): The device. Range is 1 to 4.
   - **state** (**Required**, boolean): The on/off state to trigger on.
@@ -536,14 +540,12 @@ Remote code selection (exactly one of these has to be included):
 The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
 Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
-
 {{< /note >}}
 {{< note >}}
 **NEC codes**: In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with
 the NEC standard. Therefore, if the configuration file has come from an earlier version of ESPhome, it is necessary
 to reverse the order of the address and command bits when moving to 2021.12 or above. For example,
-`address: 0x84ED`  , `command: 0x13EC`   becomes `0xB721`   and `0x37C8`  , respectively.
-
+`address: 0x84ED`  , `command: 0x13EC` becomes `0xB721` and `0x37C8`  , respectively.
 
 {{< /note >}}
 {{< note >}}
@@ -560,6 +562,7 @@ remote_receiver:
   dump: all
 
 ```
+
 {{< /note >}}
 {{< note >}}
 For the black Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
@@ -576,6 +579,7 @@ remote_transmitter:
   carrier_duty_percent: 100%
 
 ```
+
 There's also a software ["hack"](https://github.com/mightymos/RF-Bridge-OB38S003) that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
 rendering the hardware hack uncessary. This software passthrough mode can be used for the OB38S003 (white) and EFM8BB1 (black) sonoff RF bridge. Then use this configuration for the remote receiver/transmitter hubs:
 
@@ -596,7 +600,9 @@ remote_transmitter:
   carrier_duty_percent: 100%
 
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "index/" >}}
@@ -606,4 +612,3 @@ remote_transmitter:
 - {{< docref "/components/rf_bridge" >}}
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
 - {{< apiref "remote/remote_receiver.h" "remote/remote_receiver.h" >}}
-

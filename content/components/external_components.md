@@ -44,6 +44,7 @@ external_components:
     components: [my_awesome_component]
 
 ```
+
 Configuration variables:
 
 - **source**: The location of the components you want to retrieve. See [Local](#external-components_local)
@@ -57,7 +58,7 @@ Configuration variables:
   - **ref** (*Optional*, string): Git ref (branch or tag). If not specified the default branch is used.
   - **username** (*Optional*, string): Username for the Git server, if one is required
   - **password** (*Optional*, string): Password for the Git server, if one is required
-  - **path** (*Optional*, string): Path inside the repo, if different from `components`   or `esphome/components`
+  - **path** (*Optional*, string): Path inside the repo, if different from `components` or `esphome/components`
 
   local options:
 
@@ -68,7 +69,6 @@ Configuration variables:
 
 - **refresh** (*Optional*, [Time](#config-time)): The interval the source will be checked. Has no
   effect on `local`  . See [Refresh](#external-components_refresh). for more info. Defaults to `1day`  .
-
 
 {{< anchor "external-components_local" >}}
 
@@ -87,8 +87,9 @@ external_components:
   - source: my_components
 
 ```
-Notice that relative paths are supported, so you can enter `my_components`   as the source path and then
-ESPHome will load components from a `my_components`   folder in the same folder where your YAML configuration
+
+Notice that relative paths are supported, so you can enter `my_components` as the source path and then
+ESPHome will load components from a `my_components` folder in the same folder where your YAML configuration
 is.
 
 ### Example of local components
@@ -112,15 +113,16 @@ Given the above example of `my_components`  , the folder structure must look lik
         └── switch.py
 
 ```
+
 {{< anchor "external-components_git" >}}
 
 ## Git
 
 Retrieving components from git is the easiest way to use components not included in ESPHome by default.
-The source components should be inside a `components`   folder or inside an `esphome/components`
+The source components should be inside a `components` folder or inside an `esphome/components`
 folder. The latter makes sharing a component from a forked ESPHome repository easier.
 
-The url to the repository may be remote (`http:`   or `https:`   scheme) or local (`file:`   scheme with an absolute path.)
+The url to the repository may be remote (`http:` or `https:` scheme) or local (`file:` scheme with an absolute path.)
 
 ### Example of git repositories
 
@@ -142,6 +144,7 @@ example_component1.yaml        <- not required but recommended
 README.md
 
 ```
+
 or, this structure is also supported, which makes handy to share components from a **forked** ESPHome
 repository:
 
@@ -162,6 +165,7 @@ esphome
 ...
 
 ```
+
 HTTP git repositories in general are supported with this configuration:
 
 ```yaml
@@ -176,6 +180,7 @@ external_components:
     ref: branch_or_tag
 
 ```
+
 The source field accepts a short hand **github://** resource:
 
 ```yaml
@@ -184,6 +189,7 @@ external_components:
   source: github://<user or org>/<repository name>[@<branch or tag>]
 
 ```
+
 The source field also accepts a short hand **github://** pull request from the ESPHome repository:
 
 ```yaml
@@ -192,33 +198,31 @@ external_components:
   source: github://pr#<number>
 
 ```
+
 Under the hood, during validation, ESPHome will clone the git repository into the hidden `.esphome`
 folder and components will then be loaded from this local copy. The local path of the cloned repository
 varies per repository name and ref name, so repositories with different refs are considered different
 repositories and updated independently.
 
 If required, you can supply a username and password to use when authenticating with the remote git
-server using the `username`   and `password`   fields. This is most useful when combined with the
-`!secret`    feature, to load the values in from a `secrets.yaml`   file. This is not a comprehensive
+server using the `username` and `password` fields. This is most useful when combined with the
+`!secret`  feature, to load the values in from a `secrets.yaml` file. This is not a comprehensive
 security measure; your username and password will necessarily be stored in clear text within the
-`.esphome`   directory.
+`.esphome` directory.
 
 {{< anchor "external-components_refresh" >}}
 
 ### Refresh
 
 Components are initially cloned into a cache directory, then the repository is checked for updates
-(via *git pull*) after the `refresh:`   time passes since last check.
+(via *git pull*) after the `refresh:` time passes since last check.
 
 You can make ESPHome check the repository every time by setting this option to `0s`  , however since
 ESPHome is validating the configuration continuously while using the dashboard or the vscode extension,
 it is not recommended to set this value to less than a few minutes to avoid validation slow down and
 excessive repository checks.
 
-Likewise, you can set this setting to `never`   and ESPHome will never
-**update** the repository, useful e.g. when `ref`   points to a **tag**.
-
+Likewise, you can set this setting to `never` and ESPHome will never
+**update** the repository, useful e.g. when `ref` points to a **tag**.
 
 ## See Also
-
-

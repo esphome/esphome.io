@@ -9,7 +9,7 @@ params:
 
 
 
-The `tuya`   select platform creates a select from a tuya serial component
+The `tuya` select platform creates a select from a tuya serial component
 and requires {{< docref "/components/tuya" >}} to be configured.
 
 ```text
@@ -32,6 +32,7 @@ and requires {{< docref "/components/tuya" >}} to be configured.
 [08:51:09][C][tuya:063]:   Product: '{"p":"gogb05wrtredz3bs","v":"1.0.0","m":0}'
 
 ```
+
 On this controller, the datapoint 36 represents the temperature sensor selection
 setting which is what we are interested in controlling using this platform.
 
@@ -50,7 +51,8 @@ select:
       2: Both
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **enum_datapoint** (**Required**, int): The enum datapoint id number for the select.
   At least one of *enum_datapoint* or *int_datapoint* is required.
@@ -63,9 +65,7 @@ select:
   any command sent to the Select will immediately update the reported state.
 - All other options from [Select](#config-select).
 
-
 ## See Also
 
 - {{< docref "/components/select" >}}
 - {{< apiref "tuya/select/tuya_select.h" "tuya/select/tuya_select.h" >}}
-

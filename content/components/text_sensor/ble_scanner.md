@@ -9,7 +9,7 @@ params:
 
 
 
-The `ble_scanner`   text sensor platform lets you track reachable BLE devices.
+The `ble_scanner` text sensor platform lets you track reachable BLE devices.
 
 See the [BLE Tracker Configuration variables](#config-esp32_ble_tracker) for instructions for setting up scan parameters.
 
@@ -27,6 +27,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 esp32_ble_tracker:
@@ -36,6 +37,7 @@ text_sensor:
     name: "BLE Devices Scanner"
 
 ```
+
 Example json log:
 
 ```json
@@ -47,7 +49,8 @@ Example json log:
 }
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Text Sensor](#config-text_sensor).
 
@@ -56,4 +59,3 @@ Example json log:
 - {{< docref "/components/esp32_ble_tracker" >}}
 - {{< docref "/components/text_sensor" >}}
 - {{< apiref "ble_scanner/ble_scanner.h" "ble_scanner/ble_scanner.h" >}}
-

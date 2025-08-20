@@ -17,6 +17,7 @@ Newer variants (ESP32-C6, ESP32-H2, ESP32-P4, etc.) already default to ESP-IDF
 as they have limited or no Arduino support.
 
 {{< /note >}}
+
 ## Why the Change?
 
 ESP-IDF (Espressif IoT Development Framework) is the official development framework for ESP32. It offers several advantages:
@@ -48,6 +49,7 @@ esp32:
     type: esp-idf
 
 ```
+
 ### Option 2: Stay with Arduino
 
 If you prefer to continue using Arduino (which will remain supported), explicitly specify it:
@@ -59,6 +61,7 @@ esp32:
     type: arduino
 
 ```
+
 ## Migration Steps
 
 1. **Backup Your Configuration**: Always keep a backup of your working configuration before making changes.
@@ -75,6 +78,7 @@ esp32:
       esphome clean your-config.yaml
 
 ```
+
    **Using ESPHome Dashboard:**
 
 - Click on the three-dot menu for your device
@@ -89,6 +93,7 @@ esp32:
       esphome upload your-config.yaml
 
 ```
+
    **Using ESPHome Dashboard:**
 
 - Click "INSTALL" on your device
@@ -108,7 +113,6 @@ When migrating to ESP-IDF, you may need to replace some components. ESPHome will
 | {{< docref "/components/light/fastled" "fastled_spi" >}} |  {{< docref "/components/light/spi_led_strip" "spi_led_strip" >}} |
 | {{< docref "/components/light/neopixelbus" "neopixelbus" >}} |  {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
 
-
 **Arduino-Only Components:**
 
 The following components currently require Arduino framework and don't have ESP-IDF alternatives yet:
@@ -126,6 +130,7 @@ Component compatibility is constantly improving. Check the component documentati
 or try compiling with ESP-IDF to see if alternatives have become available.
 
 {{< /note >}}
+
 ## Troubleshooting
 
 ### Compilation Errors

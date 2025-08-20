@@ -9,7 +9,7 @@ params:
 
 
 
-The `uart`   switch platform allows you to send a pre-defined sequence of bytes on a
+The `uart` switch platform allows you to send a pre-defined sequence of bytes on a
 {{< docref "/components/uart" "UART bus" >}} when triggered.
 
 ```yaml
@@ -32,7 +32,8 @@ switch:
       turn_off: "TurnOff\r\n"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - **data** (*Optional*, string or list of bytes): The data to send via UART. Either an ASCII string
@@ -47,4 +48,3 @@ switch:
 
 - {{< docref "/components/uart" >}}
 - {{< apiref "uart/switch/uart_switch.h" "uart/switch/uart_switch.h" >}}
-

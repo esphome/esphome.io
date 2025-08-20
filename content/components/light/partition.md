@@ -9,7 +9,7 @@ params:
 
 
 
-The `partition`   light platform allows you to combine multiple addressable light segments
+The `partition` light platform allows you to combine multiple addressable light segments
 (like {{< docref "fastled/" >}} or {{< docref "neopixelbus/" >}}) and/or individual lights (like {{< docref "rgb/" >}}) into a single addressable light.
 This platform also allows splitting up an addressable light into multiple segments, so that
 segments can be individually controlled.
@@ -18,7 +18,7 @@ segments can be individually controlled.
 
 If you want to split a strip, you may run into strange behavior like that the original light entity (e.g., `fastled_clockless`  )
 may be conflicting with the partition. For better control over which segments of the strip will overlap each other,
-mark the original `light`   as `internal: true`  .
+mark the original `light` as `internal: true`  .
 
 ```yaml
 # Example configuration entry
@@ -47,6 +47,7 @@ light:
     # Other settings
 
 ```
+
 ## Joining multiple LED lights into one
 
 ```yaml
@@ -89,7 +90,8 @@ light:
     # Other settings
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **segments** (**Required**, list): A list of segments included in this partition.
 
@@ -113,13 +115,13 @@ Do *not* use this platform to control each LED on your addressable light - the l
 objects have a moderate overhead and if you try to create many lights you will run out
 of memory quickly.
 
-See [`light.addressable_set`   Action](#light-addressable_set_action) for that.
+See [`light.addressable_set` Action](#light-addressable_set_action) for that.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/light" >}}
 - {{< docref "/components/light/fastled" >}}
 - {{< docref "/components/light/neopixelbus" >}}
 - {{< apiref "partition/light_partition.h" "partition/light_partition.h" >}}
-

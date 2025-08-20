@@ -16,11 +16,11 @@ This page is incomplete and could use some work. If you want to contribute, plea
 - Images/screenshots/example configs of this device being used in action.
 
 {{< /note >}}
-The `pzemdc`   sensor platform allows you to use various DC Peacefair PZEM energy monitors
+The `pzemdc` sensor platform allows you to use various DC Peacefair PZEM energy monitors
 with ESPHome. The supported models are: PZEM-003, PZEM-014, PZEM-016 and PZEM-017.
 
 The communication with this component is via a [UART](#uart).
-You must therefore have a `uart:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 {{< img src="pzem-dc.png" alt="Image" caption="PZEM-0xx Energy Monitor." width="80.0%" class="align-center" >}}
@@ -46,7 +46,8 @@ sensor:
     update_interval: 60s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
   [Sensor](#config-sensor).
@@ -63,7 +64,7 @@ sensor:
 
 {{< anchor "pzemdc-reset_energy_action" >}}
 
-### `pzemdc.reset_energy`   Action
+### `pzemdc.reset_energy` Action
 
 This action resets the total energy value of the pzemdc device with the given ID when executed.
 
@@ -73,10 +74,10 @@ on_...:
     - pzemdc.reset_energy: pzemdc_1
 
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< docref "pzem004t/" >}}
 - {{< docref "pzemac/" >}}
 - {{< apiref "pzemdc/pzemdc.h" "pzemdc/pzemdc.h" >}}
-

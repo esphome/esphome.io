@@ -9,7 +9,7 @@ params:
 
 
 
-The `libretiny`   text sensor platform exposes various LibreTiny core
+The `libretiny` text sensor platform exposes various LibreTiny core
 information via text sensors.
 
 ```yaml
@@ -20,14 +20,13 @@ text_sensor:
       name: LibreTiny Version
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **version** (*Optional*): Expose the version of LibreTiny core as a text sensor. All options from
   [Text Sensor](#config-text_sensor).
-
 
 ## See Also
 
 - {{< docref "/components/libretiny" >}}
 - {{< apiref "libretiny/lt_component.h" "libretiny/lt_component.h" >}}
-

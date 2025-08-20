@@ -9,7 +9,7 @@ params:
 
 
 
-The `homeassistant`   Switch platform allows you to create Switch that **import**
+The `homeassistant` Switch platform allows you to create Switch that **import**
 states and allow **control** via your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
 {{< note >}}
@@ -18,6 +18,7 @@ in Home Assistant, this component still requires you to register the node under 
 [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 switch:
@@ -26,7 +27,8 @@ switch:
     entity_id: switch.my_cool_switch
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **entity_id** (**Required**, string): The entity ID to import / control from Home Assistant.
 - All other options from [Switch](#config-switch).
@@ -48,4 +50,3 @@ The following entity domains from Home Assistant are supported by this platform.
 
 - [Automation](#automation)
 - {{< apiref "homeassistant/switch/homeassistant_switch.h" "homeassistant/switch/homeassistant_switch.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `midea`   component creates a Midea air conditioner climate device.
+The `midea` component creates a Midea air conditioner climate device.
 
 {{< note >}}
 This protocol also used by some vendors:
@@ -70,7 +70,8 @@ climate:
       name: Humidity
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the {{< docref "../uart" >}} if you want
   to use multiple UART buses.
@@ -104,7 +105,7 @@ climate:
 
 {{< anchor "midea_ac-power_on_action" >}}
 
-### `midea_ac.power_on`   Action
+### `midea_ac.power_on` Action
 
 This action turn on power. The mode and preset will be restored to the last state before turned off.
 
@@ -114,9 +115,10 @@ on_...:
     - midea_ac.power_on:
 
 ```
+
 {{< anchor "midea_ac-power_off_action" >}}
 
-### `midea_ac.power_off`   Action
+### `midea_ac.power_off` Action
 
 This action turn off power.
 
@@ -126,9 +128,10 @@ on_...:
     - midea_ac.power_off:
 
 ```
+
 {{< anchor "midea_ac-power_toggle_action" >}}
 
-### `midea_ac.power_toggle`   Action
+### `midea_ac.power_toggle` Action
 
 This action toggle the power state. Identical to pressing the power button on the remote control.
 
@@ -138,9 +141,10 @@ on_...:
     - midea_ac.power_toggle:
 
 ```
+
 {{< anchor "midea_ac-follow_me_action" >}}
 
-### `midea_ac.follow_me`   Action
+### `midea_ac.follow_me` Action
 
 This action transmits an IR FollowMe command telling the air conditioner a more accurate
 room temperature value to be used instead of the internal indoor unit sensor.
@@ -154,24 +158,24 @@ on_...:
         beeper: false
 
 ```
+
 Configuration variables:
 
 - **temperature** (**Required**, float, [templatable](#config-templatable)):
   Sets the value of an internal temperature sensor. The value will be **clamped** to the range:
 
-  - *0 °C to 37 °C* when `use_fahrenheit`   is `false`  .
-  - *32 °F to 99 °F* when `use_fahrenheit`   is `true`  .
+  - *0 °C to 37 °C* when `use_fahrenheit` is `false`  .
+  - *32 °F to 99 °F* when `use_fahrenheit` is `true`  .
 
 - **use_fahrenheit** (*Optional*, boolean, [templatable](#config-templatable)):
-  Specifies if the `temperature`   value is in Fahrenheit. When set to `true`  , the temperature is parsed and sent in Fahrenheit. Defaults to `false`   (Celsius).
+  Specifies if the `temperature` value is in Fahrenheit. When set to `true`  , the temperature is parsed and sent in Fahrenheit. Defaults to `false` (Celsius).
 
 - **beeper** (*Optional*, boolean, [templatable](#config-templatable)):
   Sets beep on update. Defaults to `false`  .
 
-
 {{< anchor "midea_ac-display_toggle_action" >}}
 
-### `midea_ac.display_toggle`   Action
+### `midea_ac.display_toggle` Action
 
 This action toggle ac screen. Works via UART if supported or {{< docref "../remote_transmitter" >}}.
 
@@ -181,9 +185,10 @@ on_...:
     - midea_ac.display_toggle:
 
 ```
+
 {{< anchor "midea_ac-swing_step_action" >}}
 
-### `midea_ac.swing_step`   Action
+### `midea_ac.swing_step` Action
 
 This action adjust the louver by one step. {{< docref "../remote_transmitter" >}} required.
 
@@ -193,9 +198,10 @@ on_...:
     - midea_ac.swing_step:
 
 ```
+
 {{< anchor "midea_ac-beeper_on_action" >}}
 
-### `midea_ac.beeper_on`   Action
+### `midea_ac.beeper_on` Action
 
 This action turn on beeper feedback.
 
@@ -205,9 +211,10 @@ on_...:
     - midea_ac.beeper_on:
 
 ```
+
 {{< anchor "midea_ac-beeper_off_action" >}}
 
-### `midea_ac.beeper_off`   Action
+### `midea_ac.beeper_off` Action
 
 This action turn off beeper feedback.
 
@@ -217,6 +224,7 @@ on_...:
     - midea_ac.beeper_off:
 
 ```
+
 ## Additional control options using IR commands
 
 It is possible to use the FollowMe function and some other features available only through IR commands.
@@ -257,6 +265,7 @@ button:
       midea_ac.swing_step:
 
 ```
+
 ## Example of Beeper Control Using a Switch
 
 ```yaml
@@ -271,13 +280,14 @@ switch:
       midea_ac.beeper_off:
 
 ```
-## Acknowledgments:
+
+## Acknowledgments
 
 Thanks to the following people for their contributions to reverse engineering the UART protocol and source code in the following repositories:
 
-* [Mac Zhou](https://github.com/mac-zhou/midea-msmart)
-* [NeoAcheron](https://github.com/NeoAcheron/midea-ac-py)
-* [Rene Klootwijk](https://github.com/reneklootwijk/midea-uart)
+- [Mac Zhou](https://github.com/mac-zhou/midea-msmart)
+- [NeoAcheron](https://github.com/NeoAcheron/midea-ac-py)
+- [Rene Klootwijk](https://github.com/reneklootwijk/midea-uart)
 
 Special thanks to the project [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266) for describing the IR protocol.
 
@@ -285,4 +295,3 @@ Special thanks to the project [IRremoteESP8266](https://github.com/crankyoldgit/
 
 - {{< docref "/components/climate" >}}
 - {{< apiref "climate/midea_ac.h" "climate/midea_ac.h" >}}
-

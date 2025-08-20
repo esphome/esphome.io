@@ -9,7 +9,7 @@ params:
 
 
 
-The `tuya`   switch platform creates a sensor from a tuya serial component
+The `tuya` switch platform creates a sensor from a tuya serial component
 and requires {{< docref "/components/tuya" >}} to be configured.
 
 ```text
@@ -23,6 +23,7 @@ and requires {{< docref "/components/tuya" >}} to be configured.
 [13:46:01][C][tuya:046]:   Product: '{"p":"ynjanlglr4qa6dxf","v":"1.0.0","m":0}'
 
 ```
+
 On this controller, the datapoint 2 represents the child lock switch
 setting which is what we are interested in controlling using this platform.
 
@@ -36,7 +37,8 @@ switch:
     switch_datapoint: 2
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **switch_datapoint** (**Required**, int): The datapoint id number of the switch.
 - All other options from [Switch](#config-switch).
@@ -45,4 +47,3 @@ switch:
 
 - {{< docref "/components/switch" >}}
 - {{< apiref "tuya/switch/tuya_switch.h" "tuya/switch/tuya_switch.h" >}}
-

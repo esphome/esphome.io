@@ -9,7 +9,7 @@ params:
 
 
 
-The `valve`   component is a generic representation of valves in ESPHome. A valve can (currently) either be *closed* or
+The `valve` component is a generic representation of valves in ESPHome. A valve can (currently) either be *closed* or
 *open* and supports three commands: *open*, *close* and *stop*.
 
 {{< note >}}
@@ -30,6 +30,7 @@ valve:
     device_class: water
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -40,18 +41,19 @@ If you have a [friendly_name](#esphome-configuration_variables) set for your dev
 to use that name, you can set `name: None`  .
 
 {{< /note >}}
+
 - **device_class** (*Optional*, string): The device class for the sensor. See
-  https://www.home-assistant.io/components/valve/ for a list of available options.
+  <https://www.home-assistant.io/components/valve/> for a list of available options.
 - **icon** (*Optional*, icon): Manually set the icon to use for the valve in the frontend.
 
 Advanced options:
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
-  frontend (like Home Assistant). Only specifying an `id`   without a `name`   will implicitly set this to true.
+  frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to `false`  .
 - **entity_category** (*Optional*, string): The category of the entity. See
-  https://developers.home-assistant.io/docs/core/entity/#generic-properties for a list of available options. Set to `""`   to remove the default entity category.
+  <https://developers.home-assistant.io/docs/core/entity/#generic-properties> for a list of available options. Set to `""` to remove the default entity category.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT options:
@@ -60,10 +62,9 @@ MQTT options:
 - **position_command_topic** (*Optional*, string): The topic to receive valve position commands on.
 - All other options from [MQTT Component](#config-mqtt-component).
 
-
 {{< anchor "valve-open_action" >}}
 
-## `valve.open`   Action
+## `valve.open` Action
 
 This [action](#config-action) opens the valve with the given ID when executed.
 
@@ -73,6 +74,7 @@ on_...:
     - valve.open: valve_1
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -82,10 +84,11 @@ call.set_command_open();
 call.perform();
 
 ```
+
 {{< /note >}}
 {{< anchor "valve-close_action" >}}
 
-## `valve.close`   Action
+## `valve.close` Action
 
 This [action](#config-action) closes the valve with the given ID when executed.
 
@@ -95,6 +98,7 @@ on_...:
     - valve.close: valve_1
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -104,10 +108,11 @@ call.set_command_close();
 call.perform();
 
 ```
+
 {{< /note >}}
 {{< anchor "valve-stop_action" >}}
 
-## `valve.stop`   Action
+## `valve.stop` Action
 
 This [action](#config-action) stops the valve with the given ID when executed.
 
@@ -117,6 +122,7 @@ on_...:
     - valve.stop: valve_1
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -126,10 +132,11 @@ call.set_command_stop();
 call.perform();
 
 ```
+
 {{< /note >}}
 {{< anchor "valve-toggle_action" >}}
 
-## `valve.toggle`   Action
+## `valve.toggle` Action
 
 This [action](#config-action) toggles the valve with the given ID when executed, cycling through the states
 close/stop/open/stop... This allows the valve to be controlled by a single push button.
@@ -140,6 +147,7 @@ on_...:
     - valve.toggle: valve_1
 
 ```
+
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
 
@@ -149,10 +157,11 @@ call.set_command_toggle();
 call.perform();
 
 ```
+
 {{< /note >}}
 {{< anchor "valve-control_action" >}}
 
-## `valve.control`   Action
+## `valve.control` Action
 
 This [action](#config-action) is a more generic version of the other valve actions and allows all valve attributes
 to be set.
@@ -165,15 +174,16 @@ on_...:
         position: 50%
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The valve to control.
 - **stop** (*Optional*, boolean): Whether to stop the valve.
-- **state** (*Optional*, string): The state to set the valve to - one of `OPEN`   or `CLOSE`  .
+- **state** (*Optional*, string): The state to set the valve to - one of `OPEN` or `CLOSE`  .
 - **position** (*Optional*, float): The valve position to set.
 
-  - `0.0`   = `0%`   = `CLOSED`
-  - `1.0`   = `100%`   = `OPEN`
+  - `0.0` = `0%` = `CLOSED`
+  - `1.0` = `100%` = `OPEN`
 
 {{< note >}}
 This action can also be expressed in [lambdas](#config-lambda):
@@ -185,15 +195,16 @@ call.set_position(0.5);
 call.perform();
 
 ```
+
 {{< /note >}}
 {{< anchor "valve-lambda_calls" >}}
 
 ## Lambdas
 
 From [lambdas](#config-lambda), you can access the current state of the valve (note that these fields are
-read-only, if you want to act on the valve, use the `make_call()`   method as shown above).
+read-only, if you want to act on the valve, use the `make_call()` method as shown above).
 
-- `position`  : Retrieve the current position of the valve, as a value between `0.0`   (closed) and `1.0`   (open).
+- `position`  : Retrieve the current position of the valve, as a value between `0.0` (closed) and `1.0` (open).
 
 ```cpp
         if (id(my_valve).position == VALVE_OPEN) {
@@ -205,6 +216,7 @@ read-only, if you want to act on the valve, use the `make_call()`   method as sh
         }
 
 ```
+
 - `current_operation`  : The operation the valve is currently performing:
 
 ```cpp
@@ -217,9 +229,10 @@ read-only, if you want to act on the valve, use the `make_call()`   method as sh
         }
 
 ```
+
 {{< anchor "valve-on_open_trigger" >}}
 
-### `valve.on_open`   Trigger
+### `valve.on_open` Trigger
 
 This trigger is activated each time the valve reaches a fully open state.
 
@@ -231,9 +244,10 @@ valve:
       - logger.log: "Valve is Open!"
 
 ```
+
 {{< anchor "valve-on_closed_trigger" >}}
 
-### `valve.on_closed`   Trigger
+### `valve.on_closed` Trigger
 
 This trigger is activated each time the valve reaches a fully closed state.
 
@@ -245,7 +259,7 @@ valve:
       - logger.log: "Valve is Closed!"
 
 ```
+
 ## See Also
 
 - {{< apiref "valve/valve.h" "valve/valve.h" >}}
-

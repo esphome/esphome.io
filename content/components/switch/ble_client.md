@@ -9,7 +9,7 @@ params:
 
 
 
-The `ble_client`   component is a switch platform that is used to enable and disable a `ble_client`  . This has
+The `ble_client` component is a switch platform that is used to enable and disable a `ble_client`  . This has
 several uses, such as minimizing battery usage or for allowing other clients (Eg phone apps) to connect to the device.
 
 For more information on BLE services and characteristics, see {{< docref "/components/ble_client" >}}.
@@ -22,6 +22,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 esp32_ble_tracker:
 
@@ -35,7 +36,8 @@ switch:
     name: "Enable iTag"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **ble_client_id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - All other options from [Switch](#config-switch).
@@ -44,4 +46,3 @@ switch:
 
 - {{< docref "/components/ble_client" >}}
 - {{< apiref "ble_client/switch/ble_switch.h" "ble_client/switch/ble_switch.h" >}}
-

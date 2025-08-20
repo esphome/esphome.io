@@ -12,7 +12,6 @@ params:
 StatsD is a [protocol](https://github.com/statsd/statsd/blob/master/docs/metric_types.md) to send metrics to a Daemon to store and aggregate them.
 Today there are many monitoring solutions that support receiving metrics via the StatsD protocol.
 
-
 ```yaml
 # Example configuration entry
 statsd:
@@ -26,10 +25,10 @@ sensor:
   id: some_sensor
 
 ```
+
 This example will generate a metric named `test1.sensor` with the value of the `some_sensor` sensor.
 
-
-## Configuration variables:
+## Configuration variables
 
 - **host** (**Required**, ip): The Host IP of your StatsD Server.
 - **port** (*Optional*, uint16): The Port of your StatsD Server. Defaults to `8125`  .
@@ -48,4 +47,3 @@ This example will generate a metric named `test1.sensor` with the value of the `
 ## See Also
 
 - {{< apiref "statsd/statsd.h" "statsd/statsd.h" >}}
-

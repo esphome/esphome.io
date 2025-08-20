@@ -8,7 +8,7 @@ params:
 
 
 
-The `feedback`   cover platform allows you to create covers with position control that
+The `feedback` cover platform allows you to create covers with position control that
 can optionally have feedback from sensors to detect the fully-open and fully-closed states (endstops),
 and from sensors to detect actual movement (opening/closing). In all the cases the current
 position is approximated with the time the cover has been moving in a direction.
@@ -40,6 +40,7 @@ cover:
       - switch.turn_off: close_cover_switch
 
 ```
+
 ## Use Cases
 
 It is a versatile cover that can accommodate for a number of DIY setups, or monitoring an externally controlled cover:
@@ -58,7 +59,7 @@ stopped (via `stop_action`  ). The state is not assumed.
 
 The extension also handles the case where the cover has builtin endstops, which stops the movement, independently to
 the component's logic. In this case, when the cover is fully closed (either if timed based or sensor based) the
-`stop_action`   is not triggered.
+`stop_action` is not triggered.
 
 It is a drop-in replacement of {{< docref "/components/cover/endstop" >}}.
 
@@ -72,7 +73,7 @@ When there are no specific endstop sensors, and if the cover has builtin endstop
 these movement sensors can optionally be use to infer the endstop state.
 When the movement stops (with no stop action being requested) it is assumed that it was caused by
 the builtin endstops, and so the close/open state (according to current direction) was reached.
-This function is activated setting `infer_endstop`   to True.
+This function is activated setting `infer_endstop` to True.
 
 It can be used to replace a {{< docref "/components/cover/current_based" >}}, with some modifications in the yaml. See [Migrating Current-Based Cover](#migrating_current_based)
 
@@ -84,7 +85,6 @@ To protect the cover hardware from damage, some safety options are available:
 - *Direction change wait time*, like an interlock wait time, to protect motors from sudden direction changes
 - *Obstacle sensors* and *rollback*, possibility to stop and optionally rollback the cover when some external sensors detects an obstacle
   (it might be a sensor for high current consumption or an infrared light detecting an obstruction in the path).
-
 
 ## Configuration variables
 
@@ -122,14 +122,14 @@ Close options:
 Additional options:
 
 - **has_built_in_endstop** (*Optional*, boolean): Indicates that the cover has built in end stop
-  detectors. In this configuration the `stop_action`   is not performed when the open or close
+  detectors. In this configuration the `stop_action` is not performed when the open or close
   time is completed and if the cover is commanded to open or close the corresponding actions
   will be performed without checking current state. Defaults to `false`  .
 - **infer_endstop_from_movement** (*Optional*, boolean): Whether to infer endstop state from the movement sensor.
   Requires movement sensors to be set, no endstop sensors and to have builtin endstops. Defaults to `false`  .
 - **assumed_state** (*Optional*, boolean): Whether the true state of the cover is not known.
   This will make the Home Assistant frontend show buttons for both OPEN and CLOSE actions, instead
-  of hiding or disabling one of them. Defaults to `true`   if no sensor is available to known
+  of hiding or disabling one of them. Defaults to `true` if no sensor is available to known
   the actual state of the cover.
 - **max_duration** (*Optional*, [Time](#config-time)): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional endstops.
@@ -160,14 +160,13 @@ Additional options:
 
 Most options can be left untouched, but some modifications are needed:
 
-
 1. All current sensing related options must be moved to auxiliary {{< docref "/components/binary_sensor/analog_threshold" >}},
    to convert current readings to binary sensors, using the corresponding thresholds and delays.
 
    If there where any open/close obstacle current threshold defined, a separate binary sensor with that threshold should be defined.
-   The option `start_sensing_delay`   should be directly replaced by a `delayed_off`   filter in the movement sensors, or alternatively
+   The option `start_sensing_delay` should be directly replaced by a `delayed_off` filter in the movement sensors, or alternatively
    hysteresis options could be used to reduce the noise.
-2. To have the very same behavior implicit in current based cover, you must always set `has_built_in_endstop`   and `infer_endstop_from_movement`
+2. To have the very same behavior implicit in current based cover, you must always set `has_built_in_endstop` and `infer_endstop_from_movement`
    to True.
 
 ```yaml
@@ -207,6 +206,7 @@ Most options can be left untouched, but some modifications are needed:
         #... rest of options
 
 ```
+
 3. Malfunction detection is not directly supported by Feedback Cover, as the malfunction was very narrowly defined to a specific use case
    (while in other hardware configurations, the same situation is perfectly valid).
 
@@ -245,9 +245,9 @@ Most options can be left untouched, but some modifications are needed:
                 - logger.log: "Malfunction detected. Relay welded."
 
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
 - [Automation](#automation)
 - {{< apiref "feedback/feedback_cover.h" "feedback/feedback_cover.h" >}}
-

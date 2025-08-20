@@ -21,7 +21,8 @@ grove_tb6612fng:
     id: test_motor
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this TB6612FNG component.
 - **address** (*Optional*, int): The I²C address of the driver.
@@ -29,7 +30,7 @@ grove_tb6612fng:
 
 .. grove_tb6612fng.run:
 
-### `grove_tb6612fng.run`   Action
+### `grove_tb6612fng.run` Action
 
 Set the motor to spin by defining the direction and speed of the rotation, speed is a range from 0 to 255
 
@@ -43,10 +44,10 @@ on_...:
         id: test_motor
 
 ```
+
 .. grove_tb6612fng.stop:
 
-
-### `grove_tb6612fng.stop`   Action
+### `grove_tb6612fng.stop` Action
 
 Set the motor to stop motion but wont stop to spin in case there is a force pulling down, you would want to use break action if this is your case
 
@@ -57,10 +58,10 @@ on_...:
         channel: 1
 
 ```
+
 .. grove_tb6612fng.break:
 
-
-### `grove_tb6612fng.break`   Action
+### `grove_tb6612fng.break` Action
 
 Set the motor channel to be on break mode which it ensure the wheel wont spin even if forced or pushed
 
@@ -72,9 +73,10 @@ on_...:
         id: test_motor
 
 ```
+
 .. grove_tb6612fng.standby:
 
-### `grove_tb6612fng.standby`   Action
+### `grove_tb6612fng.standby` Action
 
 Set the board to be on standby when is not used for a long time which reduces power consumptions and any jerking motion when stationary
 
@@ -85,9 +87,10 @@ on_...:
         id: test_motor
 
 ```
+
 .. grove_tb6612fng.no_standby:
 
-### `grove_tb6612fng.no_standby`   Action
+### `grove_tb6612fng.no_standby` Action
 
 Set the board to be awake, every esphome is restarted the default mode is set to standby to ensure the motor wont spin accidentally
 
@@ -98,11 +101,12 @@ on_...:
         id: test_motor
 
 ```
+
 .. grove_tb6612fng.change_address:
 
-### `grove_tb6612fng.change_address`   Action
+### `grove_tb6612fng.change_address` Action
 
-If you require connecting multiple boards at once, the address can be changed using this action. The address can be changed to a value in the range of `0x01 - 0x7f`   inclusive.
+If you require connecting multiple boards at once, the address can be changed using this action. The address can be changed to a value in the range of `0x01 - 0x7f` inclusive.
 
 ```yaml
 on_...:
@@ -112,8 +116,8 @@ on_...:
         id: test_motor
 
 ```
+
 ### See Also
 
 - [I²C Bus](#i2c)
 - {{< docref "switch/gpio" >}}
-

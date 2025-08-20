@@ -9,7 +9,7 @@ params:
 
 
 
-The `current_based`   cover platform allows you to create covers with position control by using current
+The `current_based` cover platform allows you to create covers with position control by using current
 sensors to detect the fully-open and fully-closed states. This is pretty useful when using motors with
 integrated mechanical endstops. During cover operation, the component monitors the current consumption
 to detect when the motor has stopped.
@@ -31,6 +31,7 @@ Verify your setup to ensure the current consumption will increase enough to be d
 any physical damage. Use it at your own risk.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 cover:
@@ -59,7 +60,8 @@ cover:
     start_sensing_delay: 0.8s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **open_sensor** (**Required**, [ID](#config-id)): The open current sensor.
 - **open_action** (**Required**, [Action](#config-action)): The action that should
@@ -108,7 +110,7 @@ It is strongly recommended to monitor the device temperature using the NTC tempe
 This safety feature is also present in the original firmware.
 
 {{< warning >}}
-The ADE7953 IRQ line is connected to the GPIO16. The `irq_pin`   parameter for the {{< docref "/components/sensor/ade7953" "ADE7953" >}} MUST be
+The ADE7953 IRQ line is connected to the GPIO16. The `irq_pin` parameter for the {{< docref "/components/sensor/ade7953" "ADE7953" >}} MUST be
 set to GPIO16 to prevent device overheat (>70ºC idling).
 
 {{< /warning >}}
@@ -243,6 +245,7 @@ status_led:
     inverted: yes
 
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
@@ -250,4 +253,3 @@ status_led:
 - {{< docref "/components/sensor/ade7953" >}}
 - [Automation](#automation)
 - {{< apiref "current_based/current_based_cover.h" "current_based/current_based_cover.h" >}}
-

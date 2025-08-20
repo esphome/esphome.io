@@ -9,7 +9,7 @@ params:
 
 
 
-The `ufire_ise`   sensor platform allows you to use your uFire ISE pH sensor with
+The `ufire_ise` sensor platform allows you to use your uFire ISE pH sensor with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
 It required also to have an temperature sensor in the liquid tank; this can
@@ -29,7 +29,8 @@ sensor:
       name: pH
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to `0x3f`  .
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
@@ -43,7 +44,7 @@ sensor:
 
 {{< anchor "sensor-ufire_ise-calibrate_probe_high_action" >}}
 
-## `ufire_ise.calibrate_probe_high`   Action
+## `ufire_ise.calibrate_probe_high` Action
 
 The pH probe have to be calibrated. For this you need know the pH reference value and temperature
 of the calibration high solution.
@@ -63,6 +64,7 @@ on_...:
       temperature: !lambda "return id(temperature_liquid).state;"
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire pH sensor.
@@ -70,7 +72,7 @@ Configuration options:
 
 {{< anchor "sensor-ufire_ise-calibrate_probe_low_action" >}}
 
-## `ufire_ise.calibrate_probe_low`   Action
+## `ufire_ise.calibrate_probe_low` Action
 
 The pH probe have to be calibrated. For this you need know the pH reference value and temperature
 of the calibration low solution.
@@ -90,6 +92,7 @@ on_...:
       temperature: !lambda "return id(temperature_liquid).state;"
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire pH sensor.
@@ -97,7 +100,7 @@ Configuration options:
 
 {{< anchor "sensor-ufire_ise-reset_action" >}}
 
-## `ufire_ise.reset`   Action
+## `ufire_ise.reset` Action
 
 Reset the current calibration on the sensor.
 
@@ -114,6 +117,7 @@ on_...:
       id: ufire_ise_board
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire pH sensor.
@@ -122,4 +126,3 @@ Configuration options:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ufire_ise/ufire_ise.h" "ufire_ise/ufire_ise.h" >}}
-

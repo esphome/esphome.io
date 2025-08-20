@@ -9,7 +9,7 @@ params:
 
 
 
-The `sonoff_d1`   light platform creates a simple brightness-only light for the
+The `sonoff_d1` light platform creates a simple brightness-only light for the
 hardware found in [Sonoff D1 dimmer](https://itead.cc/product/sonoff-d1-smart-dimmer-switch/). Installations with Sonoff RM433 433MHz radio
 remotes are also supported. Use this component to integrate Sonoff D1 dimmer into
 ESPHome / Home Assistant ecosystem.
@@ -19,7 +19,7 @@ ESPHome / Home Assistant ecosystem.
 Sonoff D1 uses another MCU for light dimming and handling of radio commands.
 It's hooked up to ESP8266 via UART bus with default RX / TX pins being used on
 ESP8266 side. Bi-directional symmetric request / response protocol is implemented
-between ESP8266 and MCU. `sonoff_d1`   component implements this protocol and
+between ESP8266 and MCU. `sonoff_d1` component implements this protocol and
 translates between HA light commands and serial messages.
 
 To replace the stock firmware with ESPHome you will need to locate GPIO0 pin and serial port. Photos below should help.
@@ -32,9 +32,8 @@ Before using this components make sure:
 
 - board is configured to `esp8285`
 - [UART bus](#uart) is configured with default RX / TX pins and 9600 baud rate
-- {{< docref "/components/logger" "logger" >}} to the serial port is disabled by setting `baud_rate`   to `0`
-- in case you need light state restoration on power up, make sure `restore_from_flash`   is set to `true`   in the {{< docref "/components/esp8266" "ESP8266 platform" >}}
-
+- {{< docref "/components/logger" "logger" >}} to the serial port is disabled by setting `baud_rate` to `0`
+- in case you need light state restoration on power up, make sure `restore_from_flash` is set to `true` in the {{< docref "/components/esp8266" "ESP8266 platform" >}}
 
 This component is useless for devices other than Sonoff D1 dimmer.
 
@@ -82,14 +81,15 @@ light:
     default_transition_length: 1s
 
 ```
-## Configuration variables:
 
-- **use_rm433_remote** (*Optional*, boolean): Set to `True`   if your setup uses Sonoff RM433
+## Configuration variables
+
+- **use_rm433_remote** (*Optional*, boolean): Set to `True` if your setup uses Sonoff RM433
   or any other radio remote control. Properly setting this parameter allows the platform to
   identify what to do with incoming UART commands. RF chip is known to catch random commands
   if not paired with a real remote (so called ghost commands). This problem is observed even
   with the stock firmware and most probably is a bug in the MCU firmware or in the RF chip
-  firmware. Setting this to `False`   instructs the platform to properly ignore such commands
+  firmware. Setting this to `False` instructs the platform to properly ignore such commands
   and thus prevent unexpected switches or light intensity changes.
 - **min_value** (*Optional*, int): The lowest dimmer value allowed. Acceptable value for your
   setup will depend on actual light bulbs installed and number of them. Start with the default
@@ -101,11 +101,9 @@ light:
   flickering at high brightness values. Defaults to 100.
 - All other options from [Light](#config-light).
 
-
 ## See Also
 
 - {{< docref "/components/light" >}}
 - {{< docref "/components/uart" >}}
 - {{< docref "/components/logger" >}}
 - {{< docref "/components/esp8266" >}}
-

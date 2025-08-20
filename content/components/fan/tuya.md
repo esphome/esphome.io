@@ -9,7 +9,7 @@ params:
 
 
 
-The `tuya`   fan platform creates a variable speed fan from a
+The `tuya` fan platform creates a variable speed fan from a
 tuya component.
 
 {{< img src="tuyafan.jpg" alt="Image" caption="A Tuya based fan controller wall plate." width="40%" class="align-center" >}}
@@ -28,6 +28,7 @@ Here is an example output for a Tuya fan controller:
 [12:39:45][C][tuya:046]:   Product: '{"p":"hqq73kftvzh8c92u","v":"1.0.0","m":0}'
 
 ```
+
 On this controller, the data points are:
 
 - 1 represents the fan on/off state.
@@ -46,7 +47,8 @@ fan:
     speed_datapoint: 3
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **speed_datapoint** (**Required**, int): The datapoint id number of the fan speed.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the fan switch.
@@ -62,9 +64,9 @@ The MCU on the Tuya dimmer handles the LEDs and they dont seem to be controllabl
 over the serial bus.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/tuya" >}}
 - {{< docref "/components/fan" >}}
 - {{< apiref "tuya/fan/tuya_fan.h" "tuya/fan/tuya_fan.h" >}}
-

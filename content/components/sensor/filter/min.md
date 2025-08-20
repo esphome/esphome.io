@@ -19,6 +19,7 @@ react to input changes.
         send_first_at: 3
 
 ```
+
 Configuration variables:
 
 - **window_size** (*Optional*, int): The number of values over which to calculate the min/max when pushing out a
@@ -31,4 +32,3 @@ Configuration variables:
   published. With this parameter you can specify when the very first value is to be sent.
   Must be smaller than or equal to `send_every`
   Defaults to `1`  .
-

@@ -35,7 +35,8 @@ ln882x:
   board: generic-ln882hki
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **board** (**Required**, string): The PlatformIO board ID that should be used. Choose the appropriate board from
   [this list](https://registry.platformio.org/packages/platforms/kuba2k2/libretiny/boards)
@@ -49,8 +50,8 @@ ln882x:
   - **version** (*Optional*, string): The LibreTiny version number to use, from
     [LibreTiny platform releases](https://github.com/kuba2k2/libretiny/releases). Defaults to `recommended`  . Additional values
 
-    - `dev`  : Use the latest commit from https://github.com/kuba2k2/libretiny, note this may break at any time
-    - `latest`  : Use the latest *release* from https://github.com/kuba2k2/libretiny/releases, even if it hasn't been recommended yet.
+    - `dev`  : Use the latest commit from <https://github.com/kuba2k2/libretiny>, note this may break at any time
+    - `latest`  : Use the latest *release* from <https://github.com/kuba2k2/libretiny/releases>, even if it hasn't been recommended yet.
     - `recommended`  : Use the recommended framework version.
 
   - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to use a custom or patched version of the framework.
@@ -68,6 +69,7 @@ Support for the LibreTiny platform is still in development and there could be is
 Please report any issues on [LibreTiny GitHub](https://github.com/kuba2k2/libretiny).
 
 {{< /note >}}
+
 ## Getting Started
 
 Since BK72xx and RTL87xx chips are relatively new on the IoT Open Source development stage,
@@ -100,27 +102,27 @@ Most of the popular boards (often incorrectly called "chips"), that are usually 
 are *supported by LibreTiny*, which means that a pinout drawing is available, with all GPIOs described.
 Visit [LibreTiny/Boards](https://docs.libretiny.eu/link/boards) to find all supported boards.
 
-The `Pin functions`   table outlines all GPIOs available on the chosen board.
+The `Pin functions` table outlines all GPIOs available on the chosen board.
 *You can use any of the visible names* to access a particular GPIO.
 
 Some notes about the pins on BK72xx:
 
-- `TX2 (P0)`   and `RX2 (P1)`   are used for the default {{< docref "/components/logger" >}} UART port.
-- `TX1 (P11)`   and `RX1 (P10)`   are used for flashing firmware, as well as for {{< docref "/components/tuya" >}}.
-- `ADC3 (P23)`   is the only {{< docref "/components/sensor/adc" >}} available on BK7231.
+- `TX2 (P0)` and `RX2 (P1)` are used for the default {{< docref "/components/logger" >}} UART port.
+- `TX1 (P11)` and `RX1 (P10)` are used for flashing firmware, as well as for {{< docref "/components/tuya" >}}.
+- `ADC3 (P23)` is the only {{< docref "/components/sensor/adc" >}} available on BK7231.
 
 Some notes about the pins on RTL8710BN/BX:
 
-- `TX2 (PA30)`   and `RX2 (PA29)`   are used for flashing the firmware,
+- `TX2 (PA30)` and `RX2 (PA29)` are used for flashing the firmware,
   as well as the default {{< docref "/components/logger" >}} UART port.
-- `TX2 (PA30)`   is additionally used to determine the boot mode on startup (similar to ESP32).
+- `TX2 (PA30)` is additionally used to determine the boot mode on startup (similar to ESP32).
   Pulling it LOW on startup will enter "download mode".
 
 Some notes about the pins on LN882H:
 
-- `TX0 (PA2)`   and `RX0 (PA3)`   are used for flashing the firmware,
+- `TX0 (PA2)` and `RX0 (PA3)` are used for flashing the firmware,
   as well as the default {{< docref "/components/logger" >}} UART port.
-- `BOOT1 (PA9)`   is additionally used to determine the boot mode on startup (similar to ESP32).
+- `BOOT1 (PA9)` is additionally used to determine the boot mode on startup (similar to ESP32).
   Pulling it LOW on startup will enter "download mode".
 
 Example configuration entries using various naming styles:
@@ -164,6 +166,7 @@ uart:
 tuya:
 
 ```
+
 {{< anchor "advanced-options" >}}
 
 ## Advanced options
@@ -188,17 +191,18 @@ bk72xx:
       LT_AUTO_DOWNLOAD_REBOOT: 1
 
 ```
+
 - **loglevel** (*Optional*, string): Logging level for LibreTiny core. Controls the output of logging messages
   from the core (doesn't affect ESPHome logger!). *These messages are only visible on the physical UART*.
-  One of `verbose`  , `trace`   (same as `verbose`  ), `debug`  , `info`  ,
-  `warn`   (default), `error`  , `fatal`  , `none`  .
+  One of `verbose`  , `trace` (same as `verbose`  ), `debug`  , `info`  ,
+  `warn` (default), `error`  , `fatal`  , `none`  .
 
 - **debug** (*Optional*, string or string list): Modules to enable LibreTiny debugging for.
   Refer to [LibreTiny/Configuration](https://docs.libretiny.eu/link/config-debug)
   for more information - some modules are enabled by default.
   One or more of `wifi`  , `client`  , `server`  , `ssl`  , `ota`  , `fdb`  ,
   `mdns`  , `lwip`  , `lwip_assert`  .
-  Specifying `none`   will disable all modules. You can also combine `none`   with one or more of the modules.
+  Specifying `none` will disable all modules. You can also combine `none` with one or more of the modules.
 
 - **sdk_silent** (*Optional*, string): Define the SDK logging "silent mode".
   This disables messages from vendor SDKs, which makes UART output more readable, but can hide some error messages.
@@ -228,4 +232,3 @@ bk72xx:
 - {{< docref "/components/text_sensor/libretiny" >}}
 - [LibreTiny Documentation](https://docs.libretiny.eu/) (external)
 - {{< docref "/components/tuya" >}}
-

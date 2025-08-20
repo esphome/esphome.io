@@ -33,6 +33,7 @@ ethernet:
     subnet: 255.255.255.0
 
 ```
+
 ```yaml
 # Example configuration entry for SPI chips
 ethernet:
@@ -45,24 +46,25 @@ ethernet:
   reset_pin: GPIOXX
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **type** (**Required**, string): The type of LAN chipset/phy.
 
   Supported chipsets are:
 
-  - `LAN8720`   (RMII)
-  - `RTL8201`   (RMII)
-  - `DP83848`   (RMII)
-  - `IP101`   (RMII)
-  - `JL1101`   (RMII)
-  - `KSZ8081`   (RMII)
-  - `KSZ8081RNA`   (RMII)
-  - `W5500`   (SPI)
-  - `OPENETH`   (QEMU, ESP-IDF only)
-  - `DM9051`   (SPI, ESP-IDF only)
+  - `LAN8720` (RMII)
+  - `RTL8201` (RMII)
+  - `DP83848` (RMII)
+  - `IP101` (RMII)
+  - `JL1101` (RMII)
+  - `KSZ8081` (RMII)
+  - `KSZ8081RNA` (RMII)
+  - `W5500` (SPI)
+  - `OPENETH` (QEMU, ESP-IDF only)
+  - `DM9051` (SPI, ESP-IDF only)
 
-### RMII configuration variables:
+### RMII configuration variables
 
 - **mdc_pin** (**Required**, [Pin](#config-pin)): The MDC pin of the board.
   Usually this is `GPIO23`  .
@@ -74,20 +76,20 @@ ethernet:
   - **mode** (**Required**, string): The clock mode of the data lines. See your board's
     datasheet for more details. Must be one of the following values:
 
-    - `CLK_EXT_IN`   - External clock
-    - `CLK_OUT`   - Internal clock
+    - `CLK_EXT_IN` - External clock
+    - `CLK_OUT` - Internal clock
 
 - **phy_addr** (*Optional*, int): The PHY addr type of the Ethernet controller. Defaults to 0.
 - **phy_registers** (*Optional*, mapping): Arbitrary PHY register values to set after Ethernet initialization.
 
-  - **address** (**Required**, hex): The register address as a hex number (e.g. `0x10`   for address 16)
+  - **address** (**Required**, hex): The register address as a hex number (e.g. `0x10` for address 16)
   - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. `0x1FFA`  )
-  - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07`   for page 7)
+  - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07` for page 7)
 
 - **power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
-### SPI configuration variables:
+### SPI configuration variables
 
 - **clk_pin** (**Required**, [Pin](#config-pin)): The SPI clock pin.
 - **mosi_pin** (**Required**, [Pin](#config-pin)): The SPI MOSI pin.
@@ -100,7 +102,7 @@ ethernet:
   Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
-- **polling_interval** (*Optional*, [Time](#config-time)): If `interrupt_pin`   is not set,
+- **polling_interval** (*Optional*, [Time](#config-time)): If `interrupt_pin` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.
 
@@ -114,12 +116,12 @@ Support for SPI polling mode (no interrupt pin) is provided by the following fra
 - Arduino-ESP32 3.0.0 or later (**Caution**: PlatformIO does not support these Arduino-ESP32 versions)
 
 When building with frameworks that support SPI polling mode, either `interrupt_pin`
-or `polling_interval`   can be set. If you set both, ESPHome will throw an error.
+or `polling_interval` can be set. If you set both, ESPHome will throw an error.
 
 If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
-`interrupt_pin`   is **required** and you cannot set `polling_interval`  .
+`interrupt_pin` is **required** and you cannot set `polling_interval`  .
 
-### Advanced common configuration variables:
+### Advanced common configuration variables
 
 - **manual_ip** (*Optional*): Manually configure the static IP of the node.
 
@@ -137,7 +139,6 @@ If you are using a framework that does not support SPI-based ethernet modules wi
   Defaults to `.local`  .
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
-
 {{< note >}}
 If your Ethernet board is not designed with an ESP32 built in, it's common to attempt
 to use flying leads, dupont wires, etc. to connect the Ethernet controller to the ESP32.
@@ -150,6 +151,7 @@ information and wiring details refer to the link in the *See also* section.
 SPI based chips do *not* use {{< docref "spi/" >}}. This means that SPI pins can't be shared with other devices.
 
 {{< /note >}}
+
 ## Configuration examples
 
 **Olimex ESP32-POE**:
@@ -166,9 +168,9 @@ ethernet:
   power_pin: GPIO12
 
 ```
+
 {{< note >}}
 WROVER version of Olimex POE cards change CLK to pin GPIO0.
-
 
 {{< /note >}}
 **Olimex ESP32-EVB**:
@@ -184,6 +186,7 @@ ethernet:
   phy_addr: 0
 
 ```
+
 **Olimex ESP32-GATEWAY** and **LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A**:
 
 ```yaml
@@ -197,6 +200,7 @@ ethernet:
   phy_addr: 0
 
 ```
+
 **LILYGO TTGO T-Internet ESP32-WROVER-E LAN8270**:
 
 ```yaml
@@ -211,6 +215,7 @@ ethernet:
   power_pin: GPIO04
 
 ```
+
 **Wireless Tag WT32-ETH01** and **SMLIGHT SLZB-06 PoE Zigbee**:
 
 ```yaml
@@ -225,6 +230,7 @@ ethernet:
   power_pin: GPIO16
 
 ```
+
 **M5Stack PoESP32** and **ESP32-Ethernet-Kit**:
 
 ```yaml
@@ -239,6 +245,7 @@ ethernet:
   power_pin: GPIO5
 
 ```
+
 **AiThinker ESP32-G Gateway**:
 
 ```yaml
@@ -253,6 +260,7 @@ ethernet:
   power_pin: GPIO5
 
 ```
+
 **wESP32**:
 
 ```yaml
@@ -281,9 +289,9 @@ ethernet:
       page_id: 0x07
 
 ```
+
 {{< note >}}
 Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY.
-
 
 {{< /note >}}
 **OpenHacks LAN8720**:
@@ -296,11 +304,11 @@ ethernet:
   phy_addr: 1
 
 ```
+
 {{< note >}}
 This board has an issue that might cause the ESP32 to boot in program mode. When testing, make sure
 you are monitoring the serial output and reboot the device several times to see if it boots into the
 program properly.
-
 
 {{< /note >}}
 **Esp32-Stick-Eth** and **Esp32-Stick-PoE-P** and **Esp32-Stick-PoE-A**:
@@ -316,6 +324,7 @@ ethernet:
   phy_addr: 1
 
 ```
+
 **LILYGO T-ETH-Lite ESP32**:
 
 ```yaml
@@ -330,6 +339,7 @@ ethernet:
   power_pin: GPIO12
 
 ```
+
 **QEMU qemu-system-xtensa**:
 
 ```yaml
@@ -337,6 +347,7 @@ ethernet:
   type: OPENETH
 
 ```
+
 **Waveshare ESP32-S3-ETH PoE**:
 
 ```yaml
@@ -350,6 +361,7 @@ ethernet:
   reset_pin: GPIO9
 
 ```
+
 **ETH01-Evo**:
 
 ```yaml
@@ -364,14 +376,15 @@ ethernet:
   clock_speed: 8MHz
 
 ```
+
 {{< note >}}
 Using a higher clock_speed, including default, might cause rx errors and dropped packets.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "network/" >}}
 - {{< docref "text_sensor/ethernet_info" >}}
 - {{< apiref "ethernet/ethernet_component.h" "ethernet/ethernet_component.h" >}}
 - [ESP32 Ethernet PHY connection info](https://pcbartists.com/design/embedded/esp32-ethernet-phy-schematic-design/)
-

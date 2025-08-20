@@ -9,7 +9,7 @@ params:
 
 
 
-The `sts3x`   sensor platform Temperature sensor allows you to use your Sensirion STS30-DIS, STS31-DIS or STS35-DIS
+The `sts3x` sensor platform Temperature sensor allows you to use your Sensirion STS30-DIS, STS31-DIS or STS35-DIS
 ([datasheet](https://sensirion.com/media/documents/1DA31AFD/61641F76/Sensirion_Temperature_Sensors_STS3x_Datasheet.pdf),
 [Sensirion STS3x](https://www.sensirion.com/sts3x/)) sensors with
 ESPHome. The [I²C Bus](#i2c) is
@@ -26,7 +26,8 @@ sensor:
     update_interval: 60s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x4A`  .
@@ -43,4 +44,3 @@ sensor:
 - {{< docref "htu21d/" >}}
 - {{< docref "sht3xd/" >}}
 - {{< apiref "sts3x/sts3x.h" "sts3x/sts3x.h" >}}
-

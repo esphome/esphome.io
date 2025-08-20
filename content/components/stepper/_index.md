@@ -9,7 +9,7 @@ params:
 
 
 
-The `stepper`   component allows you to use stepper motors with ESPHome.
+The `stepper` component allows you to use stepper motors with ESPHome.
 Currently only the A4988 stepper driver
 ([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf))
 and ULN2003 ([datasheet](http://www.ti.com/lit/ds/symlink/uln2003a.pdf)) are supported.
@@ -27,15 +27,15 @@ All stepper configuration schemas inherit these options.
 
 Configuration variables:
 
-- **max_speed** (**Required**, float): The maximum speed in `steps/s`   (steps per seconds) to drive the
+- **max_speed** (**Required**, float): The maximum speed in `steps/s` (steps per seconds) to drive the
   stepper at. Note most steppers can't step properly with speeds higher than 250 steps/s.
-- **acceleration** (*Optional*, float): The acceleration in `steps/s^2`   (steps per seconds squared)
-  to use when starting to move. The default is `inf`   which means infinite acceleration, so the
+- **acceleration** (*Optional*, float): The acceleration in `steps/s^2` (steps per seconds squared)
+  to use when starting to move. The default is `inf` which means infinite acceleration, so the
   stepper will try to drive with the full speed immediately. This value is helpful if that first motion of
   the motor is too jerky for what it's moving.  If you make this a small number, it will take the motor a
   moment to get up  to speed.
 - **deceleration** (*Optional*, float): The same as `acceleration`  , but for when the motor is decelerating
-  shortly before reaching the set position. Defaults to `inf`   (immediate deceleration).
+  shortly before reaching the set position. Defaults to `inf` (immediate deceleration).
 
 ## A4988 Component
 
@@ -55,14 +55,15 @@ stepper:
     deceleration: inf
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
-- **step_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `STEP`   pin of the A4988
+- **step_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `STEP` pin of the A4988
   stepper driver.
-- **dir_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `DIRECTION`   pin of the A4988
+- **dir_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `DIRECTION` pin of the A4988
   stepper driver.
-- **sleep_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Optionally also use the `SLEEP`   pin
+- **sleep_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Optionally also use the `SLEEP` pin
   of the A4988 stepper driver. If specified, the driver will be put into sleep mode as soon as the stepper
   reaches the target steps.
 
@@ -80,10 +81,11 @@ stepper:
       inverted: true
 
 ```
+
 {{< /note >}}
 {{< note >}}
-TMC drivers are pin-compatible with the A4988, but instead of a `SLEEP`   pin they expose an `ENABLE`   pin.
-When using a TMC driver with the `a4988`   platform you therefore need to invert the `sleep_pin`  :
+TMC drivers are pin-compatible with the A4988, but instead of a `SLEEP` pin they expose an `ENABLE` pin.
+When using a TMC driver with the `a4988` platform you therefore need to invert the `sleep_pin`  :
 
 ```yaml
 stepper:
@@ -94,7 +96,9 @@ stepper:
       inverted: true
 
 ```
+
 {{< /note >}}
+
 ## ULN2003 Component
 
 Put this code into the configuration file on ESPHome for this device.
@@ -115,6 +119,7 @@ stepper:
     deceleration: inf
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
@@ -126,15 +131,15 @@ Configuration variables:
   reached the target position
 - **step_mode** (*Optional*, string): The step mode to operate the motor with. One of:
 
-    - `FULL_STEP`   (Default)
-    - `HALF_STEP`
-    - `WAVE_DRIVE`
+  - `FULL_STEP` (Default)
+  - `HALF_STEP`
+  - `WAVE_DRIVE`
 
 - All other from [Base Stepper Configuration](#base_stepper_config).
 
 {{< anchor "stepper-set_target_action" >}}
 
-## `stepper.set_target`   Action
+## `stepper.set_target` Action
 
 To use your stepper motor in [automations](#automation) or templates, you can use this action to set the target
 position (in steps). The stepper will always run towards the target position and stop once it has reached the target.
@@ -157,6 +162,7 @@ on_...:
         }
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the stepper.
@@ -178,12 +184,13 @@ on_...:
         target: 150
 
 ```
+
 {{< /warning >}}
 {{< anchor "stepper-report_position_action" >}}
 
-## `stepper.report_position`   Action
+## `stepper.report_position` Action
 
-All steppers start out with a target and current position of `0`   on boot. However, if you for example want to home
+All steppers start out with a target and current position of `0` on boot. However, if you for example want to home
 a stepper motor, it can be useful to **report** the stepper where it is currently at.
 
 With this action, you can set the stepper's internal position counter to a specific value (in steps). Please note
@@ -213,6 +220,7 @@ on_...:
         }
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the stepper.
@@ -220,7 +228,7 @@ Configuration variables:
 
 {{< anchor "stepper-set_speed_action" >}}
 
-## `stepper.set_speed`   Action
+## `stepper.set_speed` Action
 
 This [Action](#config-action) allows you to set the speed of a stepper at runtime.
 
@@ -231,15 +239,16 @@ on_...:
       speed: 250 steps/s
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the stepper.
 - **speed** (**Required**, [templatable](#config-templatable), float): The speed
-  in `steps/s`   (steps per seconds) to drive the stepper at.
+  in `steps/s` (steps per seconds) to drive the stepper at.
 
 {{< anchor "stepper-set_acceleration_action" >}}
 
-## `stepper.set_acceleration`   Action
+## `stepper.set_acceleration` Action
 
 This [Action](#config-action) allows you to set the acceleration of a stepper at runtime.
 
@@ -250,15 +259,16 @@ on_...:
       acceleration: 250 steps/s^2
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the stepper.
 - **acceleration** (**Required**, [templatable](#config-templatable), float): The acceleration
-  in `steps/s^2`   (steps per seconds squared) to use when starting to move.
+  in `steps/s^2` (steps per seconds squared) to use when starting to move.
 
 {{< anchor "stepper-set_deceleration_action" >}}
 
-## `stepper.set_deceleration`   Action
+## `stepper.set_deceleration` Action
 
 This [Action](#config-action) allows you to set the deceleration of a stepper at runtime.
 
@@ -269,6 +279,7 @@ on_...:
       deceleration: 250 steps/s^2
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the stepper.
@@ -279,7 +290,7 @@ Configuration variables:
 
 ## Home Assistant Configuration
 
-The easiest way to control your stepper from Home Assistant is to add a `number`   to your ESPHome
+The easiest way to control your stepper from Home Assistant is to add a `number` to your ESPHome
 configuration. See [Number](#config-number) for more information.
 
 ```yaml
@@ -301,6 +312,7 @@ stepper:
     id: my_stepper
 
 ```
+
 {{< anchor "stepper-lambda_calls" >}}
 
 ## lambda calls
@@ -316,6 +328,7 @@ advanced stuff (see the full API Reference for more info).
         id(my_stepper).set_target(250);
 
 ```
+
 - `report_position`  : Report the current position as an integer.
 
 ```cpp
@@ -323,19 +336,21 @@ advanced stuff (see the full API Reference for more info).
         id(my_stepper).report_position(250);
 
 ```
+
 - `current_position`  : Get the current position of the stepper as an integer.
 
 ```cpp
         int pos = id(my_stepper).current_position;
 
 ```
+
 - `target_position`  : Get the set target position of the stepper  as an integer.
 
 ```cpp
         int pos = id(my_stepper).target_position;
 
 ```
+
 ## See Also
 
 - {{< apiref "stepper/stepper.h" "stepper/stepper.h" >}}
-

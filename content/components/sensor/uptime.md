@@ -9,7 +9,7 @@ params:
 
 
 
-The `uptime`   sensor allows you to track the time the ESP has stayed up for in seconds.
+The `uptime` sensor allows you to track the time the ESP has stayed up for in seconds.
 Time rollovers are automatically handled.
 
 ```yaml
@@ -20,11 +20,12 @@ sensor:
     name: Uptime Sensor
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **type** (*Optional*): Either:
 
-  - `seconds`   (*default*): A simple counter.
+  - `seconds` (*default*): A simple counter.
   - `timestamp`  : presents the time ESPHome last booted up. Requires a {{< docref "/components/time" >}}.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The sensor reporting interval. Defaults to `60s`  .
@@ -36,4 +37,3 @@ sensor:
 - {{< docref "/components/text_sensor/uptime" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "uptime/uptime_sensor.h" "uptime/uptime_sensor.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `resistance`   platform is a helper sensor that allows you to convert readings
+The `resistance` platform is a helper sensor that allows you to convert readings
 from a voltage sensor (such as the {{< docref "adc" "ADC Sensor" >}}) into resistance readings
 in Ω (ohm).
 
@@ -43,8 +43,10 @@ sensor:
     pin: A0
 
 ```
-## Note:
-Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accurate result because they have built-in voltage divider on ADC pin (https://arduino.stackexchange.com/a/71952)
+
+## Note
+
+Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accurate result because they have built-in voltage divider on ADC pin (<https://arduino.stackexchange.com/a/71952>)
 
 ```yaml
 # Example source sensor:
@@ -55,11 +57,12 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
       - multiply: 3.3
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor** (**Required**, [ID](#config-id)): The sensor to read the voltage values from
   to convert to resistance readings.
-- **configuration** (**Required**, string): The type of circuit, one of `DOWNSTREAM`   or
+- **configuration** (**Required**, string): The type of circuit, one of `DOWNSTREAM` or
   `UPSTREAM`  .
 - **resistor** (**Required**, float): The value of the resistor with a constant value.
 
@@ -72,4 +75,3 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
 - {{< docref "ntc/" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "resistance/resistance_sensor.h" "resistance/resistance_sensor.h" >}}
-

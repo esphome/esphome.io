@@ -20,7 +20,6 @@ Events in ESPHome are designed to trigger an action in Home Assistant, and have 
 Home Assistant event entities are different from events on event bus. If you just want to trigger an event on the
 Home Assistant event bus, you should use a [Home Assistant event](#api-homeassistant_event_action) instead.
 
-
 {{< /note >}}
 {{< note >}}
 Home Assistant Core 2024.5 or higher is required for ESPHome event entities to work.
@@ -47,9 +46,10 @@ event:
         - logger.log: "Event triggered"
 
 ```
+
 Configuration variables:
 
-One of `id`   or `name`   is required.
+One of `id` or `name` is required.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the event. At least one of **id** and **name** must be specified.
@@ -59,15 +59,16 @@ If you have a [friendly_name](#esphome-configuration_variables) set for your dev
 you want the event to use that name, you can set `name: None`  .
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the event in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Set to `""`   to remove the default entity category.
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
+  for a list of available options. Set to `""` to remove the default entity category.
 - **device_class** (*Optional*, string): The device class for the event. The following device classes are supported by event entities:
 
   - None: Generic event. This is the default and doesn't need to be set.
@@ -75,7 +76,7 @@ you want the event to use that name, you can set `name: None`  .
   - `doorbell`  : Specifically for buttons that are used as a doorbell.
   - `motion`  : For motion events detected by a motion sensor.
 
-  See https://www.home-assistant.io/integrations/event/#device-class
+  See <https://www.home-assistant.io/integrations/event/#device-class>
   for a list of available options.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
@@ -106,9 +107,10 @@ event:
             ESP_LOGD("main", "Event %s triggered.", event_type.c_str());
 
 ```
+
 Configuration variables: see [Automation](#automation).
 
-### `event.trigger`   Action
+### `event.trigger` Action
 
 This action allows for the triggering of an event from within an automation.
 
@@ -118,6 +120,7 @@ This action allows for the triggering of an event from within an automation.
     event_type: "custom_event"
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the event.
@@ -136,7 +139,7 @@ From [lambdas](#config-lambda), you can trigger an event.
     id(my_event).trigger("custom_event");
 
 ```
+
 ## See Also
 
 - {{< apiref "event/event.h" "event/event.h" >}}
-

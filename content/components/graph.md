@@ -10,7 +10,6 @@ params:
 
 {{< anchor "display-graphs" >}}
 
-
 You can display a graph of a sensor value(s) using this component. The states used for the graph are stored in
 memory at the time the sensor updates and will be lost when the device reboots.
 
@@ -51,7 +50,8 @@ graph:
         color: my_green
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the graph later
   in your display code.
@@ -113,11 +113,12 @@ color:
     blue: 0%
 
 ```
+
 {{< note >}}
 Here are some things to note:
-- Setting `y_grid`   will expand any specified range to the nearest multiple of grid spacings.
+
+- Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
 - Axis labels are currently not possible without manually placing them.
 - The grid and border color is set with it.graph(), while the traces are defined separately.
-
 
 {{< /note >}}

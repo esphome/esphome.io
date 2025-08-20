@@ -19,6 +19,7 @@ out an average on a specific interval (thus increasing resolution).
         send_every: 15
 
 ```
+
 Configuration variables:
 
 - **window_size** (*Optional*, int): The number of values over which to perform an
@@ -31,4 +32,3 @@ Configuration variables:
   Defaults to `1`  .
 
 {{< anchor "sensor-filter-exponential_moving_average" >}}
-

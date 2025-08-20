@@ -22,7 +22,8 @@ button:
       name: Haier start 56°C steri-cleaning
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **haier_id** (**Required**, [ID](#config-id)): The id of Haier climate component
 - **self_cleaning** (*Optional*): A button that starts Haier climate self cleaning.
@@ -33,4 +34,3 @@ button:
 ## See Also
 
 - {{< docref "/components/climate/haier" "Haier Climate" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `sdm_meter`   sensor platform allows you to use Eastron SDM modbus energy monitors
+The `sdm_meter` sensor platform allows you to use Eastron SDM modbus energy monitors
 ([website](http://www.eastrongroup.com/product_detail.php?id=170&menu1=&menu2=))
 with ESPHome.
 
@@ -17,7 +17,7 @@ with ESPHome.
 
 The communication with this component is done via a [UART](#uart) using the [Modbus protocol](#modbus)
 over RS485 wiring. You will need an RS485 to UART converter for communication.
-You must therefore have a `uart:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600bps.
 ! For the SDM230M, SDM120M Energy Monitor the default factory baud rate is 2400bps. You either need to change the code to 2400bps for these models or change the settings on your Energy Meter For more information search for your model: ([eastron's website](https://www.eastroneurope.com/products/category/din-rail-mounted-metering)).
 
@@ -61,7 +61,8 @@ sensor:
     update_interval: 60s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **phase_a** (*Optional*): The group of exposed sensors for Phase A/1.
 
@@ -109,5 +110,3 @@ sensor:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "sdm220m/sdm220m.h" "sdm220m/sdm220m.h" >}}
-
-

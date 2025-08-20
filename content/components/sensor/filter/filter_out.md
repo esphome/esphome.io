@@ -15,8 +15,8 @@ headless: true
     - filter_out: 85.0
 
 ```
-A list of values may be supplied, and values are templatable:
 
+A list of values may be supplied, and values are templatable:
 
 ```yaml
 # Example configuration entry

@@ -9,7 +9,7 @@ params:
 
 
 
-The `esp32_camera`   component allows you to use ESP32-based camera boards in ESPHome that
+The `esp32_camera` component allows you to use ESP32-based camera boards in ESPHome that
 directly integrate into Home Assistant through the native API.
 
 Requires an {{< docref "/components/i2c" >}} to be set up.
@@ -31,20 +31,21 @@ esp32_camera:
   jpeg_quality: 10
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **name** (**Required**, string): The name of the camera.
 - **icon** (*Optional*, icon): Manually set the icon to use for the camera in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
   Defaults to `false`  .
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
-  Set to `""`   to remove the default entity category.
+  Set to `""` to remove the default entity category.
 
 Connection Options:
 
@@ -84,25 +85,24 @@ Image Settings:
 - **resolution** (*Optional*, enum): The resolution the camera will capture images at. Higher
   resolutions require more memory, if there's not enough memory you will see an error during startup.
 
-    - `160x120`   (QQVGA, 4:3)
-    - `176x144`   (QCIF, 11:9)
-    - `240x176`   (HQVGA, 15:11)
-    - `320x240`   (QVGA, 4:3)
-    - `400x296`   (CIF, 50:37)
-    - `640x480`   (VGA, 4:3, default)
-    - `800x600`   (SVGA, 4:3)
-    - `1024x768`   (XGA, 4:3)
-    - `1280x1024`   (SXGA, 5:4)
-    - `1600x1200`   (UXGA, 4:3)
-    - `1920x1080`   (FHD, 16:9)
-    - `720x1280`   (Portrait HD, 9:16)
-    - `864x1536`   (Portrait 3MP, 9:16)
-    - `2048x1536`   (QXGA, 4:3)
-    - `2560x1440`   (QHD, 16:9)
-    - `2560x1600`   (WQXGA, 8:5)
-    - `1080x1920`   (Portrait FHD, 9:16)
-    - `2560x1920`   (QSXGA, 4:3)
-
+  - `160x120` (QQVGA, 4:3)
+  - `176x144` (QCIF, 11:9)
+  - `240x176` (HQVGA, 15:11)
+  - `320x240` (QVGA, 4:3)
+  - `400x296` (CIF, 50:37)
+  - `640x480` (VGA, 4:3, default)
+  - `800x600` (SVGA, 4:3)
+  - `1024x768` (XGA, 4:3)
+  - `1280x1024` (SXGA, 5:4)
+  - `1600x1200` (UXGA, 4:3)
+  - `1920x1080` (FHD, 16:9)
+  - `720x1280` (Portrait HD, 9:16)
+  - `864x1536` (Portrait 3MP, 9:16)
+  - `2048x1536` (QXGA, 4:3)
+  - `2560x1440` (QHD, 16:9)
+  - `2560x1600` (WQXGA, 8:5)
+  - `1080x1920` (Portrait FHD, 9:16)
+  - `2560x1920` (QSXGA, 4:3)
 
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
   From 10 (best) to 63 (worst). Defaults to `10`  .
@@ -111,22 +111,22 @@ Image Settings:
 - **contrast** (*Optional*, int): The contrast to apply to the picture, from -2 to 2. Defaults to `0`  .
 - **brightness** (*Optional*, int): The brightness to apply to the picture, from -2 to 2. Defaults to `0`  .
 - **saturation** (*Optional*, int): The saturation to apply to the picture, from -2 to 2. Defaults to `0`  .
-- **special_effect** (*Optional*, enum): The effect to apply to the picture. Defaults to `none`   (picture without effect).
+- **special_effect** (*Optional*, enum): The effect to apply to the picture. Defaults to `none` (picture without effect).
 
-    - `none`  : Picture without effect
-    - `negative`  : Colors of picture are inverted
-    - `grayscale`  : Only luminance of picture is kept
-    - `red_tint`  : Picture appear red-tinted
-    - `green_tint`  : Picture appear green-tinted
-    - `blue_tint`  : Picture appear blue-tinted
-    - `sepia`  : Sepia effect is applied to picture
+  - `none`  : Picture without effect
+  - `negative`  : Colors of picture are inverted
+  - `grayscale`  : Only luminance of picture is kept
+  - `red_tint`  : Picture appear red-tinted
+  - `green_tint`  : Picture appear green-tinted
+  - `blue_tint`  : Picture appear blue-tinted
+  - `sepia`  : Sepia effect is applied to picture
 
 Exposure Settings:
 
-- **aec_mode** (*Optional*, enum): The mode of exposure module. Defaults to `auto`   (leave camera to automatically adjust exposure).
+- **aec_mode** (*Optional*, enum): The mode of exposure module. Defaults to `auto` (leave camera to automatically adjust exposure).
 
-    - `manual`  : Exposure can be manually set, with **aec_value** parameter. **ae_level** has no effect here
-    - `auto`  : Camera manage exposure automatically. Compensation can be applied, thanks to **ae_level** parameter. **aec_value** has no effect here
+  - `manual`  : Exposure can be manually set, with **aec_value** parameter. **ae_level** has no effect here
+  - `auto`  : Camera manage exposure automatically. Compensation can be applied, thanks to **ae_level** parameter. **aec_value** has no effect here
 
 - **aec2** (*Optional*, boolean): Whether to enable Auto Exposure Control 2. Seems to change computation method of automatic exposure. Defaults to `false`  .
 - **ae_level** (*Optional*, int): The auto exposure level to apply to the picture (when **aec_mode** is set to `auto`  ), from -2 to 2. Defaults to `0`  .
@@ -134,31 +134,31 @@ Exposure Settings:
 
 Sensor Gain Settings:
 
-- **agc_mode** (*Optional*, enum): The mode of gain control module. Defaults to `auto`   (leave camera to automatically adjust sensor gain).
+- **agc_mode** (*Optional*, enum): The mode of gain control module. Defaults to `auto` (leave camera to automatically adjust sensor gain).
 
-    - `manual`  : Gain can be manually set, with **agc_value** parameter. **agc_gain_ceiling** has no effect here
-    - `auto`  : Camera manage sensor gain automatically. Maximum gain can be defined, thanks to **agc_gain_ceiling** parameter. **agc_value** has no effect here
+  - `manual`  : Gain can be manually set, with **agc_value** parameter. **agc_gain_ceiling** has no effect here
+  - `auto`  : Camera manage sensor gain automatically. Maximum gain can be defined, thanks to **agc_gain_ceiling** parameter. **agc_value** has no effect here
 
 - **agc_value** (*Optional*, int): The gain value to apply to the picture (when **aec_mode** is set to `manual`  ), from 0 to 30. Defaults to `0`  .
 - **agc_gain_ceiling** (*Optional*, enum): The maximum gain allowed, when **agc_mode** is set to `auto`  . This parameter seems act as "ISO" setting. Defaults to `2x`  .
 
-    - `2x`  : Camera is less sensitive, picture is clean (without visible noise)
-    - `4x`
-    - `8x`
-    - `16x`
-    - `32x`
-    - `64x`
-    - `128x`  : Camera is more sensitive, but picture contain lot of noise
+  - `2x`  : Camera is less sensitive, picture is clean (without visible noise)
+  - `4x`
+  - `8x`
+  - `16x`
+  - `32x`
+  - `64x`
+  - `128x`  : Camera is more sensitive, but picture contain lot of noise
 
 White Balance Setting:
 
 - **wb_mode** (*Optional*, enum): The mode of white balace module. Defaults to `auto`  .
 
-    - `auto`  : Camera choose best white balance setting
-    - `sunny`  : White balance sunny mode
-    - `cloudy`  : White balance cloudy mode
-    - `office`  : White balance office mode
-    - `home`  : White balance home mode
+  - `auto`  : Camera choose best white balance setting
+  - `sunny`  : White balance sunny mode
+  - `cloudy`  : White balance cloudy mode
+  - `office`  : White balance office mode
+  - `home`  : White balance home mode
 
 Automations:
 
@@ -166,18 +166,18 @@ Automations:
   when a stream starts.
 - **on_stream_stop** (*Optional*, [Automation](#automation)): An automation to perform
   when a stream stops.
-- **on_image** (*Optional*, [Automation](#automation)): An automation called when image taken. Image is available as `image`   variable of type {{< apistruct "esp32_camera::CameraImageData" "esp32_camera::CameraImageData" >}}.
+- **on_image** (*Optional*, [Automation](#automation)): An automation called when image taken. Image is available as `image` variable of type {{< apistruct "esp32_camera::CameraImageData" "esp32_camera::CameraImageData" >}}.
 
 Test Setting:
 
 - **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`  .
 
-
 {{< note >}}
-Camera uses PWM timer #1. If you need PWM (via the `ledc`   platform) you need to manually specify
-a channel there (with the `channel: 2`    parameter)
+Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
+a channel there (with the `channel: 2`  parameter)
 
 {{< /note >}}
+
 ## Configuration examples
 
 **Ai-Thinker Camera**:
@@ -185,9 +185,10 @@ a channel there (with the `channel: 2`    parameter)
 {{< warning >}}
 GPIO16 on this board (and possibly other boards below) is connected to onboard PSRAM.
 Using this GPIO for other purposes (eg as a button) will trigger the watchdog.
-Further information on pin notes can be found here: https://github.com/raphaelbs/esp32-cam-ai-thinker/blob/master/docs/esp32cam-pin-notes.md
+Further information on pin notes can be found here: <https://github.com/raphaelbs/esp32-cam-ai-thinker/blob/master/docs/esp32cam-pin-notes.md>
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 i2c:
@@ -211,6 +212,7 @@ esp32_camera:
   # ...
 
 ```
+
 **M5Stack Camera**:
 
 {{< warning >}}
@@ -222,6 +224,7 @@ If the camera is not recognized after a reboot and the unit feels warm, try wait
 it to cool down and check again - if that still doesn't work try enabling the test pattern.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 i2c:
@@ -245,6 +248,7 @@ esp32_camera:
   # ...
 
 ```
+
 **M5Stack Timer Camera X/F**:
 
 ```yaml
@@ -269,6 +273,7 @@ esp32_camera:
   # ...
 
 ```
+
 **M5Stack M5CameraF New**:
 
 ```yaml
@@ -289,6 +294,7 @@ esp32_camera:
   reset_pin: GPIO15
 
 ```
+
 **Wrover Kit Boards**:
 
 ```yaml
@@ -312,6 +318,7 @@ esp32_camera:
   # ...
 
 ```
+
 **TTGO T-Camera V05**:
 
 ```yaml
@@ -336,6 +343,7 @@ esp32_camera:
   # ...
 
 ```
+
 **TTGO T-Camera V162**:
 
 ```yaml
@@ -362,6 +370,7 @@ esp32_camera:
   # ...
 
 ```
+
 **TTGO T-Camera V17**:
 
 ```yaml
@@ -388,6 +397,7 @@ esp32_camera:
   # ...
 
 ```
+
 **TTGO T-Journal**:
 
 ```yaml
@@ -411,6 +421,7 @@ esp32_camera:
   # ...
 
 ```
+
 **TTGO-Camera Plus**:
 
 ```yaml
@@ -436,6 +447,7 @@ esp32_camera:
   # ...
 
 ```
+
 **TTGO-Camera Mini**:
 
 ```yaml
@@ -459,6 +471,7 @@ esp32_camera:
   # ...
 
 ```
+
 **ESP-EYE**:
 
 ```yaml
@@ -482,6 +495,7 @@ esp32_camera:
   # ...
 
 ```
+
 **ESP32S3_EYE** on [Freenove ESP32-S3-DevKitC-1](https://github.com/Freenove/Freenove_ESP32_S3_WROOM_Board):
 
 ```yaml
@@ -506,6 +520,7 @@ esp32_camera:
   # ...
 
 ```
+
 **Seeed Studio XIAO ESP32S3 Sense**:
 
 ```yaml
@@ -529,6 +544,7 @@ esp32_camera:
   # ...
 
 ```
+
 **Waveshare ESP32-S3 ETH + OV2640 camera**:
 
 ```yaml
@@ -552,7 +568,7 @@ esp32_camera:
   # ...
 
 ```
+
 ## See Also
 
 - {{< apiref "esp32_camera/esp32_camera.h" "esp32_camera/esp32_camera.h" >}}
-

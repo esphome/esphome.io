@@ -9,7 +9,7 @@ params:
 
 
 
-The `rgbct`   light platform creates an RGBWT (color temperature + white brightness)
+The `rgbct` light platform creates an RGBWT (color temperature + white brightness)
 light from 5 [float output components](#output) (one for each channel).
 
 ```yaml
@@ -26,7 +26,8 @@ light:
     warm_white_color_temperature: 500 mireds
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **red** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the red channel.
 - **green** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the green channel.
@@ -60,4 +61,3 @@ light:
 - {{< docref "/components/output/my9231" >}}
 - {{< docref "/components/output/sm16716" >}}
 - {{< apiref "rgbct/rgbct_light_output.h" "rgbct/rgbct_light_output.h" >}}
-

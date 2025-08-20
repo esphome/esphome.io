@@ -24,7 +24,9 @@ ESPHome team. If an API changes or there's a breaking change, it's up to the aut
 the post.
 
 {{< /warning >}}
+
 ## Blog Posts & Videos
+
 - [Build a cheap air quality sensor](https://www.pieterbrinkman.com/2021/02/03/build-a-cheap-air-quality-meter-using-esphome-home-assistant-and-a-particulate-matter-sensor/) by [Pieter](http://www.pieterbrinkman.com)
 - [Track your water usage using a proximity sensor](https://www.pieterbrinkman.com/2022/02/02/build-a-cheap-water-usage-sensor-using-esphome-home-assistant-and-a-proximity-sensor/) by [Pieter](http://www.pieterbrinkman.com)
 - [Collecting Temperature Data from ELA Bluetooth Puck with ESPHome](https://blog.weinreich.org/posts/2020/2020-12-14-esphome-ble-ela/) by [lairsdragon](https://www.weinreich.org/)

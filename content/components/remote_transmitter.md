@@ -9,7 +9,7 @@ params:
 
 
 
-The `remote_transmitter`   component lets you send various common remote control signals, such as infrared
+The `remote_transmitter` component lets you send various common remote control signals, such as infrared
 or 433 MHz radio frequency (RF) signals.
 
 The component is split into two parts:
@@ -24,6 +24,7 @@ This component performs best with an ESP32 or variant; they have a dedicated har
 accurate signal timing.
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 remote_transmitter:
@@ -31,41 +32,41 @@ remote_transmitter:
   carrier_duty_percent: 50%
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin to transmit the remote signal on.
 - **carrier_duty_percent** (*Optional*, int): How much of the time the remote is on. For example, infrared protocols
-  modulate the signal using a carrier signal. Set this to `50%`   if you're using IR LEDs and `100%`   for RF
+  modulate the signal using a carrier signal. Set this to `50%` if you're using IR LEDs and `100%` for RF
   applications like 433 MHz transmitters.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
 
-### ESP32 configuration variables:
+### ESP32 configuration variables
 
-- **rmt_symbols** (*Optional*, int): When `use_dma`   is enabled, this sets the size of the driver's internal DMA
+- **rmt_symbols** (*Optional*, int): When `use_dma` is enabled, this sets the size of the driver's internal DMA
   buffer. When DMA is disabled, it specifies how much RMT memory is allocated to the component. RMT memory is shared
-  across all components and should be allocated in multiples of the block size. On the `ESP32`   and `ESP32-S2`
+  across all components and should be allocated in multiples of the block size. On the `ESP32` and `ESP32-S2`
   variants, RMT memory is shared between RX and TX components. On other variants, RX and TX have dedicated RMT memory.
 
 | ESP32 Variant | Available Memory | Block Size |
-| --- | --- | --- |
-| ESP32 | 512 symbols | 64 symbols |
-| ESP32-C3 | 96 symbols | 48 symbols |
-| ESP32-C5 | 96 symbols | 48 symbols |
-| ESP32-C6 | 96 symbols | 48 symbols |
-| ESP32-H2 | 96 symbols | 48 symbols |
-| ESP32-P4 | 192 symbols | 48 symbols |
-| ESP32-S2 | 256 symbols | 64 symbols |
-| ESP32-S3 | 192 symbols | 48 symbols |
-
+| ------------- | ---------------- | ---------- |
+| ESP32         | 512 symbols      | 64 symbols |
+| ESP32-C3      | 96 symbols       | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`  .
-- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols`   controls
+- **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
-- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to `false`   unless `pin`
+- **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to `false` unless `pin`
   is set to inverted or open-drain.
 
-## Automations:
+## Automations
 
 - **on_transmit** (*Optional*, [Automation](#automation)): An automation to perform before
   data is sent. Useful if the radio / IR hardware needs to change state or power on.
@@ -84,6 +85,7 @@ remote_transmitter:
       - switch.turn_off: tx_enable
 
 ```
+
 {{< anchor "remote_transmitter-transmit_action" >}}
 
 ## Remote Transmitter Actions
@@ -100,6 +102,7 @@ on_...:
         wait_time: 10ms
 
 ```
+
 Configuration variables:
 
 - **repeat** (*Optional*): Defines the number of times the code is repeated when transmitted. By default, codes are
@@ -112,12 +115,12 @@ Configuration variables:
 - **transmitter_id** (*Optional*, [ID](#config-id)): The remote transmitter to send the remote code with. Defaults to
   the first one defined in the configuration.
 
-If you're looking for the same functionality as is default in the `rpi_rf`   integration in Home Assistant, you'll want
+If you're looking for the same functionality as is default in the `rpi_rf` integration in Home Assistant, you'll want
 to set the **times** to 10 and the **wait_time** to 0s.
 
 {{< anchor "remote_transmitter-transmit_abbwelcome" >}}
 
-### `remote_transmitter.transmit_abbwelcome`   **Action**
+### `remote_transmitter.transmit_abbwelcome` **Action**
 
 This [action](#config-action) sends a ABB-Welcome message to the intercom bus. The
 message type, addresses, address length and data can vary a lot between ABB-Welcome
@@ -134,6 +137,7 @@ on_...:
       data: [0xab, 0xcd, 0xef]  # message data, see receiver dump
 
 ```
+
 Configuration variables:
 
 - **source_address** (**Required**, int): The source address to send the command from,
@@ -143,10 +147,10 @@ Configuration variables:
 - **destination_address** (**Required**, int): The destination address to send the command to,
   see received messages for more info.
 - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. `false`
-  means two bytes and `true`   means three bytes. Please check the received messages to see which address length
-  is used by your system. For example, `[XXXX > XXXX]`   appears in the receiver log for two byte addresses and
-  `[XXXXXX > XXXXXX]`   for three byte addresses. Defaults to `false`  .
-- **retransmission** (*Optional*, boolean): Should only be `true`   if this message has been transmitted
+  means two bytes and `true` means three bytes. Please check the received messages to see which address length
+  is used by your system. For example, `[XXXX > XXXX]` appears in the receiver log for two byte addresses and
+  `[XXXXXX > XXXXXX]` for three byte addresses. Defaults to `false`  .
+- **retransmission** (*Optional*, boolean): Should only be `true` if this message has been transmitted
   before with the same `message_id`  . Typically, messages are transmitted up to three times with a 1 second
   interval if no reply is received. Defaults to `false`  .
 - **message_type** (**Required**, int): The message type, see dumper output for more info.
@@ -165,7 +169,7 @@ A custom receiver and transmitter circuit is required.
 {{< /note >}}
 {{< anchor "remote_transmitter-transmit_aeha" >}}
 
-### `remote_transmitter.transmit_aeha`   **Action**
+### `remote_transmitter.transmit_aeha` **Action**
 
 This [action](#config-action) sends a AEHA code to a remote transmitter.
 
@@ -176,6 +180,7 @@ on_...:
       data: [0x1F, 0x3E, 0x06, 0x5F]
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The address to send the command to, see dumper output for more details.
@@ -189,7 +194,7 @@ companies.
 
 {{< anchor "remote_transmitter-transmit_beo4" >}}
 
-### `remote_transmitter.transmit_beo4`   **Action**
+### `remote_transmitter.transmit_beo4` **Action**
 
 This [action](#config-action) sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
@@ -200,6 +205,7 @@ on_...:
       command: '0x0d'
 
 ```
+
 Configuration variables:
 
 - **source** (**Required**, int): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
@@ -208,7 +214,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_byronsx" >}}
 
-### `remote_transmitter.transmit_byronsx`   **Action**
+### `remote_transmitter.transmit_byronsx` **Action**
 
 This [action](#config-action) sends a Byron Doorbell RF protocol code to a remote transmitter.
 
@@ -219,6 +225,7 @@ on_...:
       command: '0x2'
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The 8-bit ID to send, see dumper output for more info.
@@ -227,7 +234,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_canalsat" >}}
 
-### `remote_transmitter.transmit_canalsat`   **Action**
+### `remote_transmitter.transmit_canalsat` **Action**
 
 This [action](#config-action) sends a CanalSat infrared remote code to a remote transmitter.
 
@@ -236,6 +243,7 @@ The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and
 Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 {{< /note >}}
+
 ```yaml
 on_...:
   - remote_transmitter.transmit_canalsat:
@@ -244,6 +252,7 @@ on_...:
       command: 0x02
 
 ```
+
 Configuration variables:
 
 - **device** (**Required**, int): The device to send to, see dumper output for more details.
@@ -254,7 +263,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_canalsatld" >}}
 
-### `remote_transmitter.transmit_canalsatld`   **Action**
+### `remote_transmitter.transmit_canalsatld` **Action**
 
 This [action](#config-action) sends a CanalSatLD infrared remote code to a remote transmitter.
 
@@ -263,6 +272,7 @@ The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and
 Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
 {{< /note >}}
+
 ```yaml
 on_...:
   - remote_transmitter.transmit_canalsatld:
@@ -271,6 +281,7 @@ on_...:
       command: 0x02
 
 ```
+
 Configuration variables:
 
 - **device** (**Required**, int): The device to send to, see dumper output for more details.
@@ -281,7 +292,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_coolix" >}}
 
-### `remote_transmitter.transmit_coolix`   **Action**
+### `remote_transmitter.transmit_coolix` **Action**
 
 This [action](#config-action) sends one or two 24-bit Coolix infrared remote codes to a remote transmitter.
 
@@ -292,6 +303,7 @@ on_...:
       second: 0xB23FE4
 
 ```
+
 Configuration variables:
 
 - **first** (**Required**, [templatable](#config-templatable), uint32_t): The first 24-bit Coolix code to send;
@@ -302,7 +314,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_dish" >}}
 
-### `remote_transmitter.transmit_dish`   **Action**
+### `remote_transmitter.transmit_dish` **Action**
 
 This [action](#config-action) sends a Dish Network infrared remote code to a remote transmitter.
 
@@ -313,6 +325,7 @@ on_...:
       command: 16
 
 ```
+
 Configuration variables:
 
 - **address** (*Optional*, int): The number of the receiver to target, between 1 and 16 inclusive. Defaults to `1`  .
@@ -324,7 +337,7 @@ You can find a list of commands in the
 
 {{< anchor "remote_transmitter-transmit_dooya" >}}
 
-### `remote_transmitter.transmit_dooya`   **Action**
+### `remote_transmitter.transmit_dooya` **Action**
 
 This [action](#config-action) sends a Dooya RF remote code to a remote transmitter.
 
@@ -337,6 +350,7 @@ on_...:
       check: 3
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, int): The 24-bit ID to send. Each remote has a unique one.
@@ -348,7 +362,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_drayton" >}}
 
-### `remote_transmitter.transmit_drayton`   **Action**
+### `remote_transmitter.transmit_drayton` **Action**
 
 This [action](#config-action) sends a Draton Digistat RF remote code to a remote transmitter.
 
@@ -360,6 +374,7 @@ on_...:
       command: '0x02'
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The 16-bit ID to send, see dumper output for more info.
@@ -369,7 +384,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_gobox" >}}
 
-### `remote_transmitter.transmit_gobox`   **Action**
+### `remote_transmitter.transmit_gobox` **Action**
 
 This [action](#config-action) sends a command to a Go-Box via the IR transmitter.
 
@@ -379,6 +394,7 @@ on_...:
       code: 0xfa05
 
 ```
+
 Configuration variables:
 
 - **code** (**Required**, int): The command to send. Known commands are:
@@ -400,7 +416,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_jvc" >}}
 
-### `remote_transmitter.transmit_jvc`   **Action**
+### `remote_transmitter.transmit_jvc` **Action**
 
 This [action](#config-action) sends a JVC infrared remote code to a remote transmitter.
 
@@ -410,6 +426,7 @@ on_...:
       data: 0x1234
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, int): The JVC code to send, see dumper output for more info.
@@ -417,7 +434,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_keeloq" >}}
 
-### `remote_transmitter.transmit_keeloq`   **Action**
+### `remote_transmitter.transmit_keeloq` **Action**
 
 This [action](#config-action) sends KeeLoq RF remote code to a remote transmitter.
 
@@ -432,6 +449,7 @@ on_...:
         wait_time: 15ms
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The 32-bit address to send, see dumper output for more info.
@@ -443,7 +461,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_haier" >}}
 
-### `remote_transmitter.transmit_haier`   **Action**
+### `remote_transmitter.transmit_haier` **Action**
 
 This [action](#config-action) sends a 104-bit Haier code to a remote transmitter. The 8-bit checksum is added
 automatically.
@@ -454,6 +472,7 @@ on_...:
       code: [0xA6, 0xDA, 0x00, 0x00, 0x40, 0x40, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x05]
 
 ```
+
 Configuration variables:
 
 - **code** (**Required**, list): The 13 byte Haier code to send.
@@ -461,7 +480,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_lg" >}}
 
-### `remote_transmitter.transmit_lg`   **Action**
+### `remote_transmitter.transmit_lg` **Action**
 
 This [action](#config-action) sends an LG infrared remote code to a remote transmitter.
 
@@ -472,6 +491,7 @@ on_...:
       nbits: 32
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, int): The LG code to send, see dumper output for more info.
@@ -480,7 +500,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_magiquest" >}}
 
-### `remote_transmitter.transmit_magiquest`   **Action**
+### `remote_transmitter.transmit_magiquest` **Action**
 
 This [action](#config-action) sends a MagiQuest wand code to a remote transmitter.
 
@@ -491,6 +511,7 @@ on_...:
       magnitude: 0x080C
 
 ```
+
 Configuration variables:
 
 - **wand_id** (**Required**, int): The wand ID to send, as a hex integer.  See the dumper output for your wand ID.
@@ -500,7 +521,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_midea" >}}
 
-### `remote_transmitter.transmit_midea`   **Action**
+### `remote_transmitter.transmit_midea` **Action**
 
 This [action](#config-action) sends a 40-bit Midea code to a remote transmitter. 8-bits of checksum added
 automatically.
@@ -517,13 +538,14 @@ on_...:
         return {0xA4, 0x82, 0x48, 0x7F, (uint8_t)(id(temp_sensor).state + 1)};
 
 ```
+
 Configuration variables:
 
 - **code** (**Required**, list, [templatable](#config-templatable)): The 40-bit Midea code to send as a list of
   hex or integers.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
-### `remote_transmitter.transmit_nec`   **Action**
+### `remote_transmitter.transmit_nec` **Action**
 
 This [action](#config-action) sends an NEC infrared remote code to a remote transmitter.
 
@@ -531,11 +553,12 @@ This [action](#config-action) sends an NEC infrared remote code to a remote tran
 In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with the NEC
 standard. Therefore, if the configuration file has come from an earlier version of ESPhome, it is necessary to
 reverse the order of the address and command bits when moving to 2021.12 or above. For example,
-`address: 0x84ED`  , `command: 0x13EC`   becomes `0xB721`   and `0x37C8`  , respectively. In additional, ESPHome
+`address: 0x84ED`  , `command: 0x13EC` becomes `0xB721` and `0x37C8`  , respectively. In additional, ESPHome
 does not automatically generate parity bits or pad values to 2 bytes. For example, to send command `0x0`  , you
-need to use `0xFF00`   (`0x00`   being the command and `0xFF`   being the logical inverse).
+need to use `0xFF00` (`0x00` being the command and `0xFF` being the logical inverse).
 
 {{< /note >}}
+
 ```yaml
 on_...:
   - remote_transmitter.transmit_nec:
@@ -544,6 +567,7 @@ on_...:
       command_repeats: 1
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
@@ -552,7 +576,7 @@ Configuration variables:
   Defaults to `1`  .
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
-### `remote_transmitter.transmit_nexa`   **Action**
+### `remote_transmitter.transmit_nexa` **Action**
 
 This [action](#config-action) a Nexa RF remote code to a remote transmitter.
 
@@ -566,6 +590,7 @@ on_...:
       level: 0
 
 ```
+
 Configuration variables:
 
 - **device** (**Required**, int): The Nexa device code to send, see dumper output for more info.
@@ -578,7 +603,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_panasonic" >}}
 
-### `remote_transmitter.transmit_panasonic`   **Action**
+### `remote_transmitter.transmit_panasonic` **Action**
 
 This [action](#config-action) sends a Panasonic infrared remote code to a remote transmitter.
 
@@ -589,6 +614,7 @@ on_...:
       command: 0x1F3E065F
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The address to send the command to, see dumper output for more details.
@@ -597,7 +623,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_pioneer" >}}
 
-### `remote_transmitter.transmit_pioneer`   **Action**
+### `remote_transmitter.transmit_pioneer` **Action**
 
 This [action](#config-action) sends a Pioneer infrared remote code to a remote transmitter.
 
@@ -610,12 +636,13 @@ on_...:
         times: 2
 
 ```
+
 Configuration variables:
 
 - **rc_code_1** (**Required**, int): The remote control code to send, see dumper output for more details.
 - **rc_code_2** (*Optional*, int): The secondary remote control code to send; some codes are sent in
   two parts.
-- Note that `repeat`   is still optional, however **Pioneer devices may require that a given code is
+- Note that `repeat` is still optional, however **Pioneer devices may require that a given code is
   received multiple times before they will act on it.** Add this if your device does not respond to
   commands sent with this action.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -627,7 +654,7 @@ are largely shared among devices within a given class.
 
 {{< anchor "remote_transmitter-transmit_pronto" >}}
 
-### `remote_transmitter.transmit_pronto`   **Action**
+### `remote_transmitter.transmit_pronto` **Action**
 
 This [action](#config-action) sends a raw code to a remote transmitter specified in Pronto format.
 
@@ -637,15 +664,16 @@ on_...:
       data: "0000 006D 0010 0000 0008 0020 0008 0046 000A 0020 0008 0020 0008 001E 000A 001E 000A 0046 000A 001E 0008 0020 0008 0020 0008 0046 000A 0046 000A 0046 000A 001E 000A 001E 0008 06C3"
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, string): The raw code to send specified as a string. Many remote control Pronto codes can be
-  found on http://remotecentral.com
+  found on <http://remotecentral.com>
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_raw" >}}
 
-### `remote_transmitter.transmit_raw`   **Action**
+### `remote_transmitter.transmit_raw` **Action**
 
 This [action](#config-action) sends a raw code to a remote transmitter.
 
@@ -661,6 +689,7 @@ on_...:
              512, -1019, 510, -509]
 
 ```
+
 Configuration variables:
 
 - **code** (**Required**, list): The raw code to send as a list of integers.
@@ -672,7 +701,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc5" >}}
 
-### `remote_transmitter.transmit_rc5`   **Action**
+### `remote_transmitter.transmit_rc5` **Action**
 
 This [action](#config-action) sends an RC5 infrared remote code to a remote transmitter.
 
@@ -683,6 +712,7 @@ on_...:
       command: 0x3F
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The address to send, see dumper output for more details.
@@ -691,7 +721,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc6" >}}
 
-### `remote_transmitter.transmit_rc6`   **Action**
+### `remote_transmitter.transmit_rc6` **Action**
 
 This [action](#config-action) sends an RC6 infrared remote code to a remote transmitter.
 
@@ -702,6 +732,7 @@ on_...:
       command: 0x3F
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The address to send, see dumper output for more details.
@@ -710,7 +741,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc_switch_raw" >}}
 
-### `remote_transmitter.transmit_rc_switch_raw`   **Action**
+### `remote_transmitter.transmit_rc_switch_raw` **Action**
 
 This [action](#config-action) sends a raw RC-Switch code to a
 remote transmitter.
@@ -722,6 +753,7 @@ on_...:
       protocol: 1
 
 ```
+
 Configuration variables:
 
 - **code** (**Required**, string): The raw code to send, copy this from the dump output.
@@ -731,7 +763,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_a" >}}
 
-### `remote_transmitter.transmit_rc_switch_type_a`   **Action**
+### `remote_transmitter.transmit_rc_switch_type_a` **Action**
 
 This [action](#config-action) sends a type A RC-Switch code to a
 remote transmitter.
@@ -745,6 +777,7 @@ on_...:
       protocol: 1
 
 ```
+
 Configuration variables:
 
 - **group** (**Required**, string): The group to send the command to.
@@ -756,7 +789,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_b" >}}
 
-### `remote_transmitter.transmit_rc_switch_type_b`   **Action**
+### `remote_transmitter.transmit_rc_switch_type_b` **Action**
 
 This [action](#config-action) sends a type B RC-Switch code to a
 remote transmitter.
@@ -770,6 +803,7 @@ on_...:
       protocol: 1
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The address to send the command to.
@@ -781,7 +815,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_c" >}}
 
-### `remote_transmitter.transmit_rc_switch_type_c`   **Action**
+### `remote_transmitter.transmit_rc_switch_type_c` **Action**
 
 This [action](#config-action) sends a type C RC-Switch code to a
 remote transmitter.
@@ -796,9 +830,10 @@ on_...:
       protocol: 1
 
 ```
+
 Configuration variables:
 
-- **family** (**Required**, string): The family to send the command to. Range is `a`   to `p`  .
+- **family** (**Required**, string): The family to send the command to. Range is `a` to `p`  .
 - **group** (**Required**, int): The group to send the command to. Range is 1 to 4.
 - **device** (**Required**, int): The device to send the command to. Range is 1 to 4.
 - **state** (**Required**, boolean): The on/off state to send.
@@ -808,7 +843,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_d" >}}
 
-### `remote_transmitter.transmit_rc_switch_type_d`   **Action**
+### `remote_transmitter.transmit_rc_switch_type_d` **Action**
 
 This [action](#config-action) sends a type D RC-Switch code to a
 remote transmitter.
@@ -822,6 +857,7 @@ on_...:
       protocol: 1
 
 ```
+
 Configuration variables:
 
 - **group** (**Required**, int): The group to send the command to. Range is 1 to 4.
@@ -833,7 +869,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_roomba" >}}
 
-### `remote_transmitter.transmit_roomba`   **Action**
+### `remote_transmitter.transmit_roomba` **Action**
 
 This [action](#config-action) sends a Roomba infrared remote code to a remote transmitter.
 
@@ -846,6 +882,7 @@ on_...:
         wait_time: 17ms
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, int): The Roomba code to send, see dumper output for more info.
@@ -853,14 +890,14 @@ Configuration variables:
 
 **Important:**
 
-- While `repeat`   is optional, **Roomba vacuums require that a given code is received at least three times before they
+- While `repeat` is optional, **Roomba vacuums require that a given code is received at least three times before they
   will respond to it.** If your Roomba does not respond to the command, increase this value.
-- While `wait_time`   is optional, the Roomba Remote uses a 17 ms wait time between commands. However, it appears to
+- While `wait_time` is optional, the Roomba Remote uses a 17 ms wait time between commands. However, it appears to
   work without this parameter.
 
 {{< anchor "remote_transmitter-transmit_samsung" >}}
 
-### `remote_transmitter.transmit_samsung`   **Action**
+### `remote_transmitter.transmit_samsung` **Action**
 
 This [action](#config-action) sends a Samsung infrared remote code to a remote transmitter.
 It transmits codes up to 64 bits in length in a single packet.
@@ -875,6 +912,7 @@ on_...:
       nbits: 48
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, int): The data to send, see dumper output for more details.
@@ -883,10 +921,10 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_samsung36" >}}
 
-### `remote_transmitter.transmit_samsung36`   **Action**
+### `remote_transmitter.transmit_samsung36` **Action**
 
 This [action](#config-action) sends a Samsung36 infrared remote code to a remote transmitter.
-It transmits the `address`   and `command`   in two packets separated by a "space".
+It transmits the `address` and `command` in two packets separated by a "space".
 
 ```yaml
 on_...:
@@ -895,6 +933,7 @@ on_...:
       command: 0x000E00FF
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, int): The address to send, see dumper output for more details.
@@ -903,7 +942,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_sony" >}}
 
-### `remote_transmitter.transmit_sony`   **Action**
+### `remote_transmitter.transmit_sony` **Action**
 
 This [action](#config-action) a Sony infrared remote code to a remote transmitter.
 
@@ -914,6 +953,7 @@ on_...:
       nbits: 12
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, int): The Sony code to send, see dumper output for more info.
@@ -922,7 +962,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_toshiba_ac" >}}
 
-### `remote_transmitter.transmit_toshiba_ac`   **Action**
+### `remote_transmitter.transmit_toshiba_ac` **Action**
 
 This [action](#config-action) sends a Toshiba AC infrared remote code to a remote transmitter.
 
@@ -930,6 +970,7 @@ This [action](#config-action) sends a Toshiba AC infrared remote code to a remot
 This action transmits codes using the new(er) Toshiba AC protocol and likely will not work with older units.
 
 {{< /note >}}
+
 ```yaml
 on_...:
   - remote_transmitter.transmit_toshiba_ac:
@@ -937,6 +978,7 @@ on_...:
       rc_code_2: 0xD5660001003C
 
 ```
+
 Configuration variables:
 
 - **rc_code_1** (**Required**, int): The remote control code to send, see dumper output for more details.
@@ -946,7 +988,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_mirage" >}}
 
-### `remote_transmitter.transmit_mirage`   **Action**
+### `remote_transmitter.transmit_mirage` **Action**
 
 This [action](#config-action) sends a 112-bit Mirage code to a remote transmitter. 8-bits of checksum added
 automatically.
@@ -957,6 +999,7 @@ on_...:
       code: [0x56, 0x77, 0x00, 0x00, 0x22, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
 
 ```
+
 Configuration variables:
 
 - **code** (**Required**, list): The 14 byte Mirage code to send.
@@ -964,7 +1007,7 @@ Configuration variables:
 
 {{< anchor "remote_transmitter-transmit_toto" >}}
 
-### `remote_transmitter.transmit_toto`   **Action**
+### `remote_transmitter.transmit_toto` **Action**
 
 This [action](#config-action) sends a Toto infrared remote code to a remote transmitter.
 
@@ -977,6 +1020,7 @@ on_...:
       # Repeats 3 times at a 36ms interval by default
 
 ```
+
 Configuration variables:
 
 - **command** (**Required**, int): The 1-byte Toto command code to send. Range is 0 to 0xFF.
@@ -985,12 +1029,12 @@ Configuration variables:
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< note >}}
-Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying `repeat`   and `wait time`   configuration variables.
+Toto remotes repeat all codes three times at a 36ms interval. This behavior will occur by default, but may be overridden by specifying `repeat` and `wait time` configuration variables.
 
 {{< /note >}}
 {{< anchor "remote_transmitter-digital_write" >}}
 
-### `remote_transmitter.digital_write`   **Action**
+### `remote_transmitter.digital_write` **Action**
 
 This [action](#config-action) sets the output value of the pin.
 
@@ -1000,6 +1044,7 @@ on_...:
       value: true
 
 ```
+
 Configuration variables:
 
 - **transmitter_id** (*Optional*, [ID](#config-id)): The remote transmitter to set the pin value on. Defaults to
@@ -1010,7 +1055,7 @@ Configuration variables:
 
 ### RC Switch Protocol
 
-All RC Switch `protocol`   settings have these settings:
+All RC Switch `protocol` settings have these settings:
 
 - Either the value is an integer, then the inbuilt protocol definition with the given number
   is used.
@@ -1025,7 +1070,7 @@ All RC Switch `protocol`   settings have these settings:
 
 ### Lambda calls
 
-Actions may also be called from [lambdas](#config-lambda). The `.transmit()`   call can be populated with
+Actions may also be called from [lambdas](#config-lambda). The `.transmit()` call can be populated with
 encoded data for a specific protocol by following the example below.
 See the full API Reference for more info.
 
@@ -1040,6 +1085,7 @@ See the full API Reference for more info.
     call.perform();
 
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
@@ -1050,4 +1096,3 @@ See the full API Reference for more info.
 - [Delaying Remote Transmissions](#lambda_magic_rf_queues)
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
 - {{< apiref "remote_transmitter/remote_transmitter.h" "remote_transmitter/remote_transmitter.h" >}}
-

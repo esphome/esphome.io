@@ -9,7 +9,7 @@ params:
 
 
 
-The `mopeka_std_check`   sensor platform lets you track the output of Mopeka
+The `mopeka_std_check` sensor platform lets you track the output of Mopeka
 Standard Check LP Bluetooth Low Energy devices using the
 {{< docref "/components/esp32_ble_tracker" >}}. This component will track the tank level,
 distance, temperature, and battery percentage of a Mopeka Standard Check LP BLE
@@ -56,7 +56,8 @@ sensor:
         name: "Propane c test battery level"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the Mopeka
   device.
@@ -101,19 +102,19 @@ sensor:
 
 Currently supported Tank types are:
 
-- `NORTH_AMERICA_20LB_VERTICAL`   - 20 LB vertical tank
-- `NORTH_AMERICA_30LB_VERTICAL`   - 30 LB vertical tank
-- `NORTH_AMERICA_40LB_VERTICAL`   - 40 LB vertical tank
-- `EUROPE_6KG`   - 6kg vertical tank
-- `EUROPE_11KG`   - 11kg vertical tank
-- `EUROPE_14KG`   - 14kg vertical tank
-- `CUSTOM`   - Allows you to define your own full and empty points
+- `NORTH_AMERICA_20LB_VERTICAL` - 20 LB vertical tank
+- `NORTH_AMERICA_30LB_VERTICAL` - 30 LB vertical tank
+- `NORTH_AMERICA_40LB_VERTICAL` - 40 LB vertical tank
+- `EUROPE_6KG` - 6kg vertical tank
+- `EUROPE_11KG` - 11kg vertical tank
+- `EUROPE_14KG` - 14kg vertical tank
+- `CUSTOM` - Allows you to define your own full and empty points
 
 ## Setting Up Devices
 
 To set up Mopeka Standard Check devices you first need to find their MAC Address so that
 ESPHome can identify them. So first, create a simple configuration with the `esp32_ble_tracker`
-and the `mopeka_ble`   component like so:
+and the `mopeka_ble` component like so:
 
 ```yaml
 esp32_ble_tracker:
@@ -121,25 +122,27 @@ esp32_ble_tracker:
 mopeka_ble:
 
 ```
+
 After uploading, the ESP32 will immediately try to scan for BLE devices. For Mopeka Standard devices you must press and hold the green sync button for it to be identified.
-Or alternativly set the configuration flag `show_sensors_without_sync: true`   to see all devices.
-For all sensors found the `mopeka_ble`   component will print a message like this one:
+Or alternativly set the configuration flag `show_sensors_without_sync: true` to see all devices.
+For all sensors found the `mopeka_ble` component will print a message like this one:
 
 ```
 [20:43:26][I][mopeka_ble:056]: MOPEKA STD (CC2540) SENSOR FOUND: XX:XX:XX:XX:XX:XX
 
 ```
+
 Then just copy the address (`XX:XX:XX:XX:XX:XX`  ) into a new
-`sensor.mopeka_std_check`   platform entry like in the configuration example at the top.
+`sensor.mopeka_std_check` platform entry like in the configuration example at the top.
 
 {{< note >}}
 The ESPHome Mopeka Standard Check BLE component listens passively to packets the Mopeka device sends by itself.
 ESPHome therefore has no impact on the battery life of the device.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/esp32_ble_tracker" >}}
 - {{< docref "/components/sensor" >}}
 - {{< apiref "mopeka_std_check/mopeka_std_check.h" "mopeka_std_check/mopeka_std_check.h" >}}
-

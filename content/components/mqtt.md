@@ -15,10 +15,11 @@ in which case this is not needed.
 
 {{< warning >}}
 If you enable MQTT and you do *not* use the {{< docref "/components/api" >}}, you must
-remove the `api:`   configuration or set `reboot_timeout: 0s`  , otherwise the ESP will
+remove the `api:` configuration or set `reboot_timeout: 0s`  , otherwise the ESP will
 reboot every 15 minutes because no client connected to the native API.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 mqtt:
@@ -27,12 +28,13 @@ mqtt:
   password: !secret mqtt_password
 
 ```
+
 {{< note >}}
 Support for esp-idf is still experimental. Please report issues you have with MQTT using the ESP-IDF framework.
 
-
 {{< /note >}}
-## Configuration variables:
+
+## Configuration variables
 
 - **broker** (**Required**, string): The host of your MQTT broker.
 - **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to `true`  .
@@ -56,23 +58,23 @@ Support for esp-idf is still experimental. Please report issues you have with MQ
   Assistant's MQTT discovery. Should not contain trailing slash.
   Defaults to `homeassistant`  .
 - **discovery_unique_id_generator** (*Optional*, string): The unique_id generator
-  to use. Can be one of `legacy`   or `mac`  . Defaults to `legacy`  , which
+  to use. Can be one of `legacy` or `mac`  . Defaults to `legacy`  , which
   generates unique_id in format `ESP<component_type><default_object_id>`  .
-  `mac`   generator uses format `<mac_address>-<component_type>-<fnv1_hash(friendly_name)>`  .
+  `mac` generator uses format `<mac_address>-<component_type>-<fnv1_hash(friendly_name)>`  .
 - **discovery_object_id_generator** (*Optional*, string): The object_id generator
-  to use. Can be one of `none`   or `device_name`  . Defaults to `none`   which
-  does not generate object_id. `device_name`   generator uses format `<device_name>_<friendly_name>`  .
+  to use. Can be one of `none` or `device_name`  . Defaults to `none` which
+  does not generate object_id. `device_name` generator uses format `<device_name>_<friendly_name>`  .
 - **use_abbreviations** (*Optional*, boolean): Whether to use
   [Abbreviations](https://www.home-assistant.io/docs/mqtt/discovery/)
   in discovery messages. Defaults to `true`  .
 - **topic_prefix** (*Optional*, string): The prefix used for all MQTT
   messages. Should not contain trailing slash. Defaults to `<APP_NAME>`  .
-  Use `null`   to disable publishing or subscribing of any MQTT topic unless
+  Use `null` to disable publishing or subscribing of any MQTT topic unless
   it is explicitly configured.
 - **log_topic** (*Optional*, [MQTTMessage](#mqtt-message)): The topic to send MQTT log
-  messages to. Use `null`   if you want to disable sending logs to MQTT.
+  messages to. Use `null` if you want to disable sending logs to MQTT.
 
-  The `log_topic`   has an additional configuration option:
+  The `log_topic` has an additional configuration option:
 
   - **level** (*Optional*, string): The log level to use for MQTT logs. See
     [Log Levels](#logger-log_levels) for options.
@@ -107,11 +109,11 @@ Support for esp-idf is still experimental. Please report issues you have with MQ
 - **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection
   to the broker is dropped.
 - **on_message** (*Optional*, [Automation](#automation)): An action to be
-  performed when a message on a specific MQTT topic is received. See [`on_message`   Trigger](#mqtt-on_message).
+  performed when a message on a specific MQTT topic is received. See [`on_message` Trigger](#mqtt-on_message).
 - **on_json_message** (*Optional*, [Automation](#automation)): An action to be
-  performed when a JSON message on a specific MQTT topic is received. See [`on_json_message`   Trigger](#mqtt-on_json_message).
+  performed when a JSON message on a specific MQTT topic is received. See [`on_json_message` Trigger](#mqtt-on_json_message).
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **publish_nan_as_none** (*Optional*, bool): Publish `None`   instead of `NaN`   to handle Unknown/Unavailable sensor
+- **publish_nan_as_none** (*Optional*, bool): Publish `None` instead of `NaN` to handle Unknown/Unavailable sensor
   states in Home Assistant. Defaults to `false`  .
 - **wait_for_connection** (*Optional*, bool): Blocks other components from starting until the MQTT connection is
   established. Defaults to `false`  .
@@ -138,27 +140,27 @@ some_option:
   retain: true
 
 ```
+
 Configuration options:
 
--  **topic** (**Required**, string): The MQTT topic to publish the message.
--  **payload** (**Required**, string): The message content. Will be filled by the actual payload with some
+- **topic** (**Required**, string): The MQTT topic to publish the message.
+- **payload** (**Required**, string): The message content. Will be filled by the actual payload with some
    options, like log_topic.
--  **qos** (*Optional*, int): The [Quality of   Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
+- **qos** (*Optional*, int): The [Quality of   Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
--  **retain** (*Optional*, boolean): If the published message should
+- **retain** (*Optional*, boolean): If the published message should
    have a retain flag on or not. Defaults to `true`  .
-
 
 {{< anchor "mqtt-device_discovery" >}}
 
 ## MQTT device discovery
 
-The ESPHome device will respond to the following MQTT topics if `mqtt.discover_ip`   is enabled.
+The ESPHome device will respond to the following MQTT topics if `mqtt.discover_ip` is enabled.
 
-- `esphome/discover`   (All ESPHome device will answer)
+- `esphome/discover` (All ESPHome device will answer)
 - `esphome/ping/<APP_NAME>`
 
-The response will be sent to `esphome/discover/<APP_NAME>`   and is a JSON encoded message.
+The response will be sent to `esphome/discover/<APP_NAME>` and is a JSON encoded message.
 
 The MQTT device discovery is currently used for:
 
@@ -183,22 +185,23 @@ Example Payload:
 }
 
 ```
+
 JSON keys:
 
--  **ip** (**Required**, ip): The IP address of the ESPHome device.
--  **name** (**Required**, string): Name of the device (`esphome.name`  ).
--  **mac** (**Required**, string): MAC address of the device.
--  **board** (**Required**, string): Board used for the device.
--  **version** (**Required**, string): ESPHome version.
--  **port** (*Optional*, port): Port of the ESPHome API (if enabled).
--  **ipX** (*Optional*, ip): Additional IP addresses (X is a number starting at 1).
--  **friendly_name** (*Optional*, string): Friendly name of the device (`esphome.friendly_name`  ).
--  **platform** (*Optional*, string): Platform of the device (e.g. ESP32 or ESP8266)
--  **network** (*Optional*, string): Network type.
--  **project_name** (*Optional*, string): `esphome.project.name`  .
--  **project_version** (*Optional*, string): `esphome.project.version`  .
--  **project_version** (*Optional*, string): `dashboard_import.package_import_url`  .
--  **api_encryption** (*Optional*, string): API encryption type.
+- **ip** (**Required**, ip): The IP address of the ESPHome device.
+- **name** (**Required**, string): Name of the device (`esphome.name`  ).
+- **mac** (**Required**, string): MAC address of the device.
+- **board** (**Required**, string): Board used for the device.
+- **version** (**Required**, string): ESPHome version.
+- **port** (*Optional*, port): Port of the ESPHome API (if enabled).
+- **ipX** (*Optional*, ip): Additional IP addresses (X is a number starting at 1).
+- **friendly_name** (*Optional*, string): Friendly name of the device (`esphome.friendly_name`  ).
+- **platform** (*Optional*, string): Platform of the device (e.g. ESP32 or ESP8266)
+- **network** (*Optional*, string): Network type.
+- **project_name** (*Optional*, string): `esphome.project.name`  .
+- **project_version** (*Optional*, string): `esphome.project.version`  .
+- **project_version** (*Optional*, string): `dashboard_import.package_import_url`  .
+- **api_encryption** (*Optional*, string): API encryption type.
 
 {{< anchor "mqtt-using_device_discovery_with_home_assistant" >}}
 
@@ -209,8 +212,8 @@ This allows Home Assistant to find the ESPHome device and connect
 to it via the ESPHome API which allows the usage
 of more features then MQTT entity discovery alone (e.g. Bluetooth Proxy, Voice Assistant).
 
-This can be achieved by enabling `api`   and `mqtt`   with `mqtt.discover_ip`   enabled.
-It may makes sense to disable `mqtt.discovery`   since there will be no need to use the
+This can be achieved by enabling `api` and `mqtt` with `mqtt.discover_ip` enabled.
+It may makes sense to disable `mqtt.discovery` since there will be no need to use the
 MQTT entity discovery if Home Assistant will connect to the ESPHome API.
 
 Example configuration:
@@ -228,6 +231,7 @@ mqtt:
   discover_ip: True # enable device discovery
 
 ```
+
 {{< anchor "mqtt-using_with_home_assistant_entities" >}}
 
 ## Using with Home Assistant MQTT entities
@@ -243,6 +247,7 @@ mqtt:
   broker: ...
 
 ```
+
 And that should already be it 🎉 All devices defined through ESPHome should show up automatically
 in the entities section of Home Assistant.
 
@@ -260,24 +265,26 @@ retained messages for you:
 esphome clean-mqtt configuration.yaml
 
 ```
+
 With Docker:
 
 ```bash
 docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome clean-mqtt configuration.yaml
 
 ```
+
 This will remove all retained messages with the topic
 `<DISCOVERY_PREFIX>/+/NODE_NAME/#`  . If you want to purge on another
-topic, simply add `--topic <your_topic>`   to the command.
+topic, simply add `--topic <your_topic>` to the command.
 
 Home Assistant generates entity names for all discovered devices based on entity type and
 entity name (e.g. `sensor.uptime`  ). Numeric suffixes are appended to entity names when
 multiple devices use the same name for a sensor, making it harder to distinguish between
 similar sensors on different devices. Home Assistant 2021.12 allows MQTT devices to change
-this behaviour by specifying the `object_id`   discovery attribute which replaces the sensor
+this behaviour by specifying the `object_id` discovery attribute which replaces the sensor
 name part of the generated entity name. Setting `discovery_object_id_generator: device_name`
 in the ESPHome MQTT component configuration will cause Home Assistant to include device name
-in the generated entity names (e.g. `sensor.uptime`   becomes `sensor.<device name>_uptime`  ),
+in the generated entity names (e.g. `sensor.uptime` becomes `sensor.<device name>_uptime`  ),
 making it easier to distinguish the entities in various entity lists.
 
 {{< anchor "mqtt-defaults" >}}
@@ -285,15 +292,15 @@ making it easier to distinguish the entities in various entity lists.
 ## Defaults
 
 By default, ESPHome will prefix all messages with your node name or
-`topic_prefix`   if you have specified it manually. The client id will
+`topic_prefix` if you have specified it manually. The client id will
 automatically be generated by using your node name and adding the MAC
 address of your device to it. Next, discovery is enabled by default with
 Home Assistant's default prefix `homeassistant`  .
 
 If you want to prefix all MQTT messages with a different prefix, like
-`home/living_room`  , you can specify a custom `topic_prefix`   in the
+`home/living_room`  , you can specify a custom `topic_prefix` in the
 configuration. That way, you can use your existing wildcards like
-`home/+/#`   together with ESPHome. All other features of ESPHome
+`home/+/#` together with ESPHome. All other features of ESPHome
 (like availability) should still work correctly.
 
 {{< anchor "mqtt-last_will_birth" >}}
@@ -308,12 +315,12 @@ will show all its entities as unavailable (a feature 😉).
 {{< img src="mqtt-availability.png" alt="Image" width="50.0%" class="align-center" >}}
 
 By default, ESPHome will send a retained MQTT message to
-`<TOPIC_PREFIX>/status`   with payload `online`  , and will tell the
-broker to send a message `<TOPIC_PREFIX>/status`   with payload
-`offline`   if the connection drops.
+`<TOPIC_PREFIX>/status` with payload `online`  , and will tell the
+broker to send a message `<TOPIC_PREFIX>/status` with payload
+`offline` if the connection drops.
 
-You can change these messages by overriding the `birth_message`   and
-`will_message`   with the following options.
+You can change these messages by overriding the `birth_message` and
+`will_message` with the following options.
 
 ```yaml
 mqtt:
@@ -326,6 +333,7 @@ mqtt:
     payload: offline
 
 ```
+
 - **birth_message** (*Optional*, [MQTTMessage](#mqtt-message))
 - **will_message** (*Optional*, [MQTTMessage](#mqtt-message))
 
@@ -345,7 +353,7 @@ update the fingerprints variable. Additionally, SHA1 is known to be partially in
 and with some computing power the fingerprint can be faked.
 
 To get this fingerprint, first put the broker and port options in the configuration and
-then run the `mqtt-fingerprint`   script of ESPHome to get the certificate:
+then run the `mqtt-fingerprint` script of ESPHome to get the certificate:
 
 ```bash
 esphome mqtt-fingerprint livingroom.yaml
@@ -353,6 +361,7 @@ esphome mqtt-fingerprint livingroom.yaml
 > Copy above string into mqtt.ssl_fingerprints section of livingroom.yaml
 
 ```
+
 ```yaml
 mqtt:
   # ...
@@ -360,6 +369,7 @@ mqtt:
     - a502ff13999f8b398ef1834f1123650b3236fc07
 
 ```
+
 {{< anchor "mqtt-tls-idf" >}}
 
 ## TLS with esp-idf (esp32)
@@ -369,7 +379,7 @@ The servers CA certificate is required to validate the connection.
 
 You have to download the server CA certificate in PEM format and add it to `certificate_authority`  .
 Usually these are .crt files and you can open them with any text editor.
-Also make sure to change the `port`   of the MQTT broker. Most brokers use port 8883 for TLS connections.
+Also make sure to change the `port` of the MQTT broker. Most brokers use port 8883 for TLS connections.
 
 {{< warning >}}
 MbedTLS, the library that handles TLS for the esp-idf, doesn't validate wildcard certificates.
@@ -385,7 +395,9 @@ If a secure connection is necessary for your device, you really want to set:
 skip_cert_cn_check: false
 
 ```
+
 {{< /warning >}}
+
 ```yaml
 mqtt:
   broker: test.mymqtt.local
@@ -422,6 +434,7 @@ mqtt:
     -----END CERTIFICATE-----
 
 ```
+
 {{< anchor "config-mqtt-component" >}}
 
 ## MQTT Component Base Configuration
@@ -443,36 +456,37 @@ command_topic: livingroom/custom_command_topic
 command_retain: false
 
 ```
+
 Configuration variables:
 
--  **name** (**Required**, string): The name to use for the MQTT
+- **name** (**Required**, string): The name to use for the MQTT
    Component.
--  **qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+- **qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
    level for publishing. Defaults to 0.
--  **retain** (*Optional*, boolean): If all MQTT state messages should
+- **retain** (*Optional*, boolean): If all MQTT state messages should
    be retained. Defaults to `true`  .
--  **discovery** (*Optional*, boolean): Manually enable/disable
+- **discovery** (*Optional*, boolean): Manually enable/disable
    discovery for a component. Defaults to the global default.
--  **subscribe_qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
+- **subscribe_qos** (*Optional*, int): The [Quality of Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels/)
    level advertised in discovery for subscribing (only if discovery is enabled). Defaults to 0.
--  **availability** (*Optional*): Manually set what should be sent to
+- **availability** (*Optional*): Manually set what should be sent to
    Home Assistant for showing entity availability. Default derived from
    [global birth/last will message](#mqtt-last_will_birth).
--  **state_topic** (*Optional*, string): The topic to publish state
+- **state_topic** (*Optional*, string): The topic to publish state
    updates to. Defaults to
    `<TOPIC_PREFIX>/<COMPONENT_TYPE>/<COMPONENT_NAME>/state`  .
 
    ESPHome will always publish a manually configured state topic, even if
-   the component is internal. Use `null`   to disable publishing the
+   the component is internal. Use `null` to disable publishing the
    component's state.
--  **command_topic** (*Optional*, string): The topic to subscribe to for
+- **command_topic** (*Optional*, string): The topic to subscribe to for
    commands from the remote. Defaults to
    `<TOPIC_PREFIX>/<COMPONENT_TYPE>/<COMPONENT_NAME>/command`  .
 
    ESPHome will always subscribe to a manually configured command topic,
-   even if the component is internal. Use `null`   to disable subscribing
+   even if the component is internal. Use `null` to disable subscribing
    to the component's command topic.
--  **command_retain** (*Optional*, boolean): Whether MQTT command messages
+- **command_retain** (*Optional*, boolean): Whether MQTT command messages
    sent to the device should be retained or not. Default to `false`  .
 
 {{< warning >}}
@@ -482,7 +496,7 @@ This is because Home Assistant only discovers a device once in every Home Assist
 {{< /warning >}}
 {{< anchor "mqtt-on_connect_disconnect" >}}
 
-## `on_connect`   / `on_disconnect`   Trigger
+## `on_connect` / `on_disconnect` Trigger
 
 This trigger is activated when a connection to the MQTT broker is established or dropped.
 
@@ -495,13 +509,14 @@ mqtt:
     - switch.turn_off: switch1
 
 ```
+
 {{< anchor "mqtt-on_message" >}}
 
-## `on_message`   Trigger
+## `on_message` Trigger
 
 With this configuration option you can write complex automations whenever an MQTT
 message on a specific topic is received. To use the message content, use a [lambda](#config-lambda)
-template, the message payload is available under the name `x`   inside that lambda.
+template, the message payload is available under the name `x` inside that lambda.
 
 ```yaml
 mqtt:
@@ -513,6 +528,7 @@ mqtt:
       - switch.turn_on: some_switch
 
 ```
+
 Configuration variables:
 
 - **topic** (**Required**, string): The MQTT topic to subscribe to and listen for MQTT
@@ -525,7 +541,7 @@ Configuration variables:
   you specify with this option is received, the automation will be executed.
 
 {{< note >}}
-You can even specify multiple `on_message`   triggers by using a YAML list:
+You can even specify multiple `on_message` triggers by using a YAML list:
 
 ```yaml
 mqtt:
@@ -538,6 +554,7 @@ mqtt:
          - # ...
 
 ```
+
 {{< /note >}}
 {{< note >}}
 This action can also be used in [lambdas](#config-lambda):
@@ -548,27 +565,29 @@ mqtt:
   id: mqtt_client
 
 ```
+
 ```cpp
 id(mqtt_client).subscribe("the/topic", [=](const std::string &topic, const std::string &payload) {
     // do something with payload
 });
 
 ```
+
 {{< /note >}}
 {{< anchor "mqtt-on_json_message" >}}
 
-## `on_json_message`   Trigger
+## `on_json_message` Trigger
 
 With this configuration option you can write complex automations whenever a JSON-encoded MQTT
 message is received. To use the message content, use a [lambda](#config-lambda)
-template, the decoded message payload is available under the name `x`   inside that lambda.
+template, the decoded message payload is available under the name `x` inside that lambda.
 
-The `x`   object is of type `JsonObject`   by the [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
+The `x` object is of type `JsonObject` by the [ArduinoJson](https://github.com/bblanchon/ArduinoJson)
 library, and you can use all of the methods of that library to access data.
 
-Basically, you can access elements by typing `x["THE_KEY"]`   and save them into local variables.
+Basically, you can access elements by typing `x["THE_KEY"]` and save them into local variables.
 Please note that it's a good idea to check if the key exists in the Json Object by calling
-`containsKey`   first as the ESP will crash if an element that does not exist is accessed.
+`containsKey` first as the ESP will crash if an element that does not exist is accessed.
 
 ```yaml
 mqtt:
@@ -594,6 +613,7 @@ mqtt:
             return effect;
 
 ```
+
 Configuration variables:
 
 - **topic** (**Required**, string): The MQTT topic to subscribe to and listen for MQTT
@@ -604,7 +624,7 @@ Configuration variables:
 
 {{< note >}}
 Due to the way this trigger works internally it is incompatible with certain actions and will
-trigger a compile failure. For example with the `delay`   action.
+trigger a compile failure. For example with the `delay` action.
 
 {{< /note >}}
 {{< note >}}
@@ -616,16 +636,18 @@ mqtt:
   id: mqtt_client
 
 ```
+
 ```cpp
 id(mqtt_client).subscribe_json("the/topic", [=](const std::string &topic, JsonObject root) {
     // do something with JSON-decoded value root
 });
 
 ```
+
 {{< /note >}}
 {{< anchor "mqtt-publish_action" >}}
 
-## `mqtt.publish`   Action
+## `mqtt.publish` Action
 
 Publish an MQTT message on a topic using this action in automations.
 
@@ -645,17 +667,17 @@ on_...:
           return id(reed_switch).state ? "YES" : "NO";
 
 ```
+
 Configuration options:
 
--  **topic** (**Required**, string, [templatable](#config-templatable)):
+- **topic** (**Required**, string, [templatable](#config-templatable)):
    The MQTT topic to publish the message.
--  **payload** (**Required**, string, [templatable](#config-templatable)): The message content.
--  **qos** (*Optional*, int, [templatable](#config-templatable)): The `Quality of
+- **payload** (**Required**, string, [templatable](#config-templatable)): The message content.
+- **qos** (*Optional*, int, [templatable](#config-templatable)): The `Quality of
    Service <https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels>`__
    level of the topic. Defaults to 0.
--  **retain** (*Optional*, boolean, [templatable](#config-templatable)): If the published message should
+- **retain** (*Optional*, boolean, [templatable](#config-templatable)): If the published message should
    have a retain flag on or not. Defaults to `false`  .
-
 
 {{< note >}}
 This action can also be written in [lambdas](#config-lambda):
@@ -666,20 +688,22 @@ mqtt:
   id: mqtt_client
 
 ```
+
 ```cpp
 id(mqtt_client).publish("the/topic", "The Payload");
 
 ```
+
 {{< /note >}}
 {{< anchor "mqtt-publish_json_action" >}}
 
-## `mqtt.publish_json`   Action
+## `mqtt.publish_json` Action
 
 Publish a JSON-formatted MQTT message on a topic using this action in automations.
 
 The JSON message will be constructed using the [ArduinoJson](https://github.com/bblanchon/ArduinoJson) library.
-In the `payload`   option you have access to a `root`   object which will represents the base object
-of the JSON message. You can assign values to keys by using the `root["KEY_NAME"] = VALUE;`   syntax
+In the `payload` option you have access to a `root` object which will represents the base object
+of the JSON message. You can assign values to keys by using the `root["KEY_NAME"] = VALUE;` syntax
 as seen below.
 
 ```yaml
@@ -695,16 +719,16 @@ on_...:
         # {"key": 42.0, "greeting": "Hello World"}
 
 ```
+
 Configuration options:
 
--  **topic** (**Required**, string, [templatable](#config-templatable)):
+- **topic** (**Required**, string, [templatable](#config-templatable)):
    The MQTT topic to publish the message.
--  **payload** (**Required**, [lambda](#config-lambda)): The message content.
--  **qos** (*Optional*, int): The [Quality of   Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
+- **payload** (**Required**, [lambda](#config-lambda)): The message content.
+- **qos** (*Optional*, int): The [Quality of   Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
--  **retain** (*Optional*, boolean): If the published message should
+- **retain** (*Optional*, boolean): If the published message should
    have a retain flag on or not. Defaults to `false`  .
-
 
 {{< note >}}
 This action can also be written in [lambdas](#config-lambda):
@@ -715,14 +739,17 @@ mqtt:
   id: mqtt_client
 
 ```
+
 ```cpp
 id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
   root["something"] = id(my_sensor).state;
 });
 
 ```
+
 {{< /note >}}
-## `mqtt.disable`   Action
+
+## `mqtt.disable` Action
 
 This action turns off the MQTT component on demand.
 
@@ -732,12 +759,13 @@ on_...:
     - mqtt.disable:
 
 ```
-{{< note >}}
-The configuration option `enable_on_boot`   can be set to `false`   if you do not want MQTT to be enabled on boot.
 
+{{< note >}}
+The configuration option `enable_on_boot` can be set to `false` if you do not want MQTT to be enabled on boot.
 
 {{< /note >}}
-## `mqtt.enable`   Action
+
+## `mqtt.enable` Action
 
 This action turns on the MQTT component on demand.
 
@@ -747,12 +775,14 @@ on_...:
     - mqtt.enable:
 
 ```
+
 {{< note >}}
-The configuration option `enable_on_boot`   can be set to `false`   if you do not want MQTT to be enabled on boot.
-`mqtt.enable`   can be useful for custom setups. For example, if the broker name is negotiated dynamically and
+The configuration option `enable_on_boot` can be set to `false` if you do not want MQTT to be enabled on boot.
+`mqtt.enable` can be useful for custom setups. For example, if the broker name is negotiated dynamically and
 saved in a global variable.
 
 {{< /note >}}
+
 ```yaml
 mqtt:
   id: mqtt_id
@@ -772,9 +802,10 @@ on_...:
     - mqtt.enable:
 
 ```
+
 {{< anchor "mqtt-connected_condition" >}}
 
-## `mqtt.connected`   Condition
+## `mqtt.connected` Condition
 
 This [Condition](#config-condition) checks if the MQTT client is currently connected to
 the MQTT broker.
@@ -788,6 +819,7 @@ on_...:
       - logger.log: MQTT is connected!
 
 ```
+
 {{< note >}}
 This action can also be written in [lambdas](#config-lambda):
 
@@ -797,14 +829,16 @@ mqtt:
   id: mqtt_client
 
 ```
+
 ```cpp
 if (id(mqtt_client)->is_connected()) {
   // do something if MQTT is connected
 }
 
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< apiref "mqtt/mqtt_client.h" "mqtt/mqtt_client.h" >}}
-

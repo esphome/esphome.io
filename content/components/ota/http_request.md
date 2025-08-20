@@ -25,13 +25,14 @@ ota:
   - platform: http_request
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All [automations](#automation) supported by {{< docref "/components/ota" >}}.
 
 {{< anchor "ota_http_request-flash_action" >}}
 
-## `ota.http_request.flash`   Action
+## `ota.http_request.flash` Action
 
 This action triggers the download and installation of the updated firmware from the configured URL. As it's an
 ESPHome [action](#config-action), it may be used in any ESPHome [automation(s)](#automation).
@@ -45,14 +46,15 @@ on_...:
     - logger.log: "This message should be not displayed because the device reboots"
 
 ```
-## Configuration variables:
+
+### Configuration variables
 
 - **md5** (*Optional*, string, [templatable](#config-templatable)): The
-  [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url`   (below). May not be used
-  with `md5_url`   (below); must be specified if `md5_url`   is not.
+  [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
+  with `md5_url` (below); must be specified if `md5_url` is not.
 - **md5_url** (*Optional*, string, [templatable](#config-templatable)): The URL of the file containing an
-  [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url`   (below). May not be used
-  with `md5`   (above); must be specified if `md5`   is not.
+  [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
+  with `md5` (above); must be specified if `md5` is not.
 - **url** (**Required**, string, [templatable](#config-templatable)): The URL of the binary file containing the
   (new) firmware to be installed.
 - **username** (*Optional*, string, [templatable](#config-templatable)): The username to use for HTTP basic
@@ -61,20 +63,21 @@ on_...:
   authentication.
 
 {{< note >}}
-- You can obtain the `firmware.ota.bin`   file from either:
+
+- You can obtain the `firmware.ota.bin` file from either:
 
   - **ESPHome dashboard** (HA add-on): download in *"OTA format"* (formerly "legacy format")
   - **ESPHome CLI**: the directory `.esphome/build/project/.pioenvs/project/firmware.ota.bin`
 
     ...where *"project"* is the name of your ESPHome device/project.
 
-  You **cannot** use `firmware.factory.bin`   or *"Factory format"* (formerly "Modern format") with this component.
+  You **cannot** use `firmware.factory.bin` or *"Factory format"* (formerly "Modern format") with this component.
 
-- `username`   and `password`   must be [URL-encoded](https://en.wikipedia.org/wiki/Percent-encoding)  if they
+- `username` and `password` must be [URL-encoded](https://en.wikipedia.org/wiki/Percent-encoding)  if they
   include special characters.
 
 - The [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware binary file is an ASCII file (also known
-  as "plain text", typically found in files with a `.txt`   extension) consisting of 32 lowercase hexadecimal
+  as "plain text", typically found in files with a `.txt` extension) consisting of 32 lowercase hexadecimal
   characters. It can be obtained and saved to a file with the following command(s):
 
   - On macOS:
@@ -83,30 +86,33 @@ on_...:
         md5 -q firmware.ota.bin > firmware.md5
 
 ```
-  - On most Linux distributions:
+
+- On most Linux distributions:
 
 ```shell
         md5sum firmware.ota.bin > firmware.md5
 
 ```
-  - On Windows/PowerShell:
+
+- On Windows/PowerShell:
 
 ```shell
         (Get-FileHash -Path firmware.ota.bin -Algorithm md5).Hash.ToLower() | Out-File -FilePath firmware.md5 -Encoding ASCII
 
 ```
-  This will generate the MD5 hash of the `firmware.ota.bin`   file and write the resulting hash value to the
-  `firmware.md5`   file. The `md5_url`   configuration variable should point to this file on the web server.
+
+  This will generate the MD5 hash of the `firmware.ota.bin` file and write the resulting hash value to the
+  `firmware.md5` file. The `md5_url` configuration variable should point to this file on the web server.
   It is used by the OTA updating mechanism to ensure the integrity of the (new) firmware as it is installed.
 
   **If, for any reason, the MD5sum provided does not match the MD5sum computed as the firmware is installed, the
   device will continue to use the original firmware and the new firmware is discarded.**
 
 {{< /note >}}
+
 ## See Also
 
 - {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
 - {{< docref "/components/ota" >}}
 - {{< docref "/components/ota/esphome" >}}
 - {{< docref "/components/safe_mode" >}}
-

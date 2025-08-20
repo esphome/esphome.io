@@ -9,7 +9,7 @@ params:
 
 
 
-The `liygo_t5_47`   touchscreen platform allows using the touchscreen controller
+The `liygo_t5_47` touchscreen platform allows using the touchscreen controller
 for the Lilygo T5 4.7" e-Paper Display with ESPHome.
 The [I²C](#i2c) is required to be set up in your configuration for this touchscreen to work.
 
@@ -20,7 +20,8 @@ touchscreen:
     interrupt_pin: GPIOXX
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The touch detection pin. Must be `GPIO13`  .
@@ -30,4 +31,3 @@ touchscreen:
 
 - {{< docref "index" "Touchscreen" >}}
 - {{< apiref "lilygo_t5_47/touchscreen/lilygo_t5_47_touchscreen.h" "lilygo_t5_47/touchscreen/lilygo_t5_47_touchscreen.h" >}}
-

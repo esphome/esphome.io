@@ -25,10 +25,11 @@ To use the sensor, set up an [I²C Bus](#i2c) and connect the sensor to the spec
   id: filter_pressure
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **address** (*Optional*, int): The I²C address of the sensor. Defaults to `0x21`  .
-- **measurement_mode** (*Optional*): The measurement mode of the sensor. Valid options are `differential_pressure`   and `mass_flow`  . Defaults to `differential_pressure`  .
+- **measurement_mode** (*Optional*): The measurement mode of the sensor. Valid options are `differential_pressure` and `mass_flow`  . Defaults to `differential_pressure`  .
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
 - All other options from [Sensor](#config-sensor).
 
@@ -36,4 +37,3 @@ To use the sensor, set up an [I²C Bus](#i2c) and connect the sensor to the spec
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "sdp3x/sdp3x.h" "sdp3x/sdp3x.h" >}}
-

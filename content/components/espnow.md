@@ -18,12 +18,14 @@ Broadcasting data is not recommended, this will also reach devices not controlle
 The best solution is to minimize the broadcasting as much as possible and use it only for identification purposes.
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 espnow:
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **channel** (*Optional*, int): The Wi-Fi channel that the esp-now communication will use to send/receive data packets.
   Cannot be set when the {{< docref "wifi/" >}} is used, as it will use the same channel as the wifi network.
@@ -35,10 +37,10 @@ espnow:
 
 Automations:
 
-- **on_receive** (*Optional*, [Automation](#automation)): An automation to perform when data is received. See [`on_receive`  ](#espnow-on_receive).
-- **on_unknown_peer** (*Optional*, [Automation](#automation)): An automation to perform when data is received from an unknown peer. See [`on_unknown_peer`  ](#espnow-on_unknown_peer).
+- **on_receive** (*Optional*, [Automation](#automation)): An automation to perform when data is received. See [`on_receive`](#espnow-on_receive).
+- **on_unknown_peer** (*Optional*, [Automation](#automation)): An automation to perform when data is received from an unknown peer. See [`on_unknown_peer`](#espnow-on_unknown_peer).
 - **on_broadcast** (*Optional*, [Automation](#automation)): An automation to perform when a broadcast packet is received.
-  See [`on_broadcast`  ](#espnow-on_broadcast).
+  See [`on_broadcast`](#espnow-on_broadcast).
 
 ## Automations
 
@@ -61,6 +63,7 @@ espnow:
           - info.rx_ctrl->rssi
 
 ```
+
 {{< anchor "espnow-on_receive" >}}
 
 ### `on_receive`
@@ -87,10 +90,9 @@ Configuration variables:
 
 - **address** (*Optional*, MAC Address): Filter this trigger to packets where the source address matches. If not set, it will match any device.
 
-
 {{< anchor "espnow-send-action" >}}
 
-### `espnow.send`   Action
+### `espnow.send` Action
 
 This is an [Action](#config-action) for sending a data packet over the espnow protocol.
 
@@ -110,11 +112,12 @@ on_...:
       data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, [templatable](#config-templatable), MAC Address): The MAC address of the receiving device to send to.
 - **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
-- **wait_for_sent** (*Optional*, boolean): The automation will wait for the data to be sent and for the `on_sent`   or `on_error`
+- **wait_for_sent** (*Optional*, boolean): The automation will wait for the data to be sent and for the `on_sent` or `on_error`
   actions to be finished before continuing with the next action.
   Defaults to `true`  .
 - **continue_on_error** (*Optional*, boolean): If set to `false`  , the next action will not be triggered if the data could not be sent.
@@ -125,10 +128,9 @@ Automations:
 - **on_sent** (*Optional*, [Automation](#automation)): An automation to perform when the data is sent successfully.
 - **on_error** (*Optional*, [Automation](#automation)): An automation to perform when the data could not be sent.
 
-
 {{< anchor "espnow-broadcast-action" >}}
 
-### `espnow.broadcast`   Action
+### `espnow.broadcast` Action
 
 This is an [Action](#config-action) for sending a data packet over the espnow protocol to any device that is listening.
 
@@ -142,14 +144,14 @@ on_...:
       data: [0x00, 0x00, 0x34, 0x5d]
 
 ```
+
 Configuration variables:
 
 - **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
 
-
 {{< anchor "espnow-peer_add-action" >}}
 
-### `espnow.peer.add`   Action
+### `espnow.peer.add` Action
 
 This is an [Action](#config-action) to add a new peer to the internal allowed peers list.
 
@@ -161,14 +163,14 @@ on_...:
       address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, MAC Address): The Peer address that needs to be added to the list of allowed peers.
 
-
 {{< anchor "espnow-peer_delete-action" >}}
 
-### `espnow.peer.delete`   Action
+### `espnow.peer.delete` Action
 
 This is an [Action](#config-action) to remove a known peer from the internal allowed peers list.
 
@@ -180,13 +182,14 @@ on_...:
       address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
 
 ```
+
 Configuration variables:
 
 - **address** (**Required**, MAC Address): The Peer address that needs to be removed from the list of allowed peers.
 
 {{< anchor "espnow-set_channel-action" >}}
 
-### `espnow.set_channel`   Action
+### `espnow.set_channel` Action
 
 This is an [Action](#config-action) to change the channel that espnow is sending and receiving on.
 
@@ -197,10 +200,10 @@ on_...:
   - espnow.set_channel: 1
 
 ```
+
 Configuration variables:
 
-- **channel** (**Required**, int): This can be a value between `0`   and `15`  . The maximum channel number depends on the country or region where you are using the device (for example, channels 1-11 are allowed in the US and most of Europe, 1-13 in many other countries, and 1-14 in Japan). For details, see the [Wi-Fi channel regulations by country](https://en.wikipedia.org/wiki/List_of_WLAN_channels) or consult the [Espressif ESP-NOW documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html). `0`   means that espnow will set the channel number itself (most of the time it would be `1`  ).
-
+- **channel** (**Required**, int): This can be a value between `0` and `15`  . The maximum channel number depends on the country or region where you are using the device (for example, channels 1-11 are allowed in the US and most of Europe, 1-13 in many other countries, and 1-14 in Japan). For details, see the [Wi-Fi channel regulations by country](https://en.wikipedia.org/wiki/List_of_WLAN_channels) or consult the [Espressif ESP-NOW documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html). `0` means that espnow will set the channel number itself (most of the time it would be `1`  ).
 
 {{< anchor "espnow-peers" >}}
 
@@ -209,14 +212,12 @@ Configuration variables:
 A peer is a device that this device is allowed to send to. Broadcast and unencrypted unicast data can be received from
 any device without explicitly adding it as a peer.
 
-If `auto_add_peer`   is set to `false`   and you have not added any peers, then only broadcasts can be sent and there
+If `auto_add_peer` is set to `false` and you have not added any peers, then only broadcasts can be sent and there
 will be an error when trying to send data to a peer.
 
-Setting `auto_add_peer`   to `true`   will allow the component to automatically add any incoming device as a peer, and will
+Setting `auto_add_peer` to `true` will allow the component to automatically add any incoming device as a peer, and will
 automatically add any peer that data is sent to.
-
 
 ## See Also
 
 - {{< apiref "espnow/espnow.h" "espnow/espnow.h" >}}
-

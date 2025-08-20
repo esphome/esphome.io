@@ -9,7 +9,7 @@ params:
 
 
 
-The `ntc`   platform is a helper sensor that allows you to convert resistance readings
+The `ntc` platform is a helper sensor that allows you to convert resistance readings
 from a NTC thermistor to temperature readings.
 
 First, you need to get resistance readings from the sensor - you can set this up with the
@@ -34,6 +34,7 @@ sensor:
       reference_resistance: 10kOhm
 
 ```
+
 If you don't have access to the datasheet or want to calculate these values yourself,
 you have to first measure three resistance values at different temperatures.
 Heat/cool the NTC to three different temperatures (best if temperatures are far apart)
@@ -51,6 +52,7 @@ sensor:
       - 14.674kOhm -> 15°C
 
 ```
+
 ```yaml
 # Example configuration entry
 sensor:
@@ -74,7 +76,8 @@ sensor:
     pin: A0
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor** (**Required**, [ID](#config-id)): The sensor to read the resistance values from
   to convert to temperature readings.
@@ -90,7 +93,7 @@ More info [here](https://learn.adafruit.com/thermistor/using-a-thermistor#self-h
 
 To do this, replace the 3.3V side of the voltage divider with a connection to a GPIO pin. This GPIO pin will
 be switched HIGH (3.3V) only during the measurement, thus preventing the sensor from heating up.
-In the example below, the pin `D0`   is the "top" side of the voltage divider:
+In the example below, the pin `D0` is the "top" side of the voltage divider:
 
 ```yaml
 sensor:
@@ -118,10 +121,10 @@ interval:
       - switch.turn_off: ntc_vcc
 
 ```
+
 ## See Also
 
 - {{< docref "adc/" >}}
 - {{< docref "resistance/" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ntc/ntc.h" "ntc/ntc.h" >}}
-

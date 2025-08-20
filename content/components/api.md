@@ -12,7 +12,7 @@ params:
 The ESPHome native API is used to communicate with clients directly, with a highly-optimized
 network protocol. Currently, only the ESPHome tool, Home Assistant and ioBroker use this native API.
 
-After adding an `api:`   line to your ESPHome configuration you can go to the Home Assistant
+After adding an `api:` line to your ESPHome configuration you can go to the Home Assistant
 web interface and navigate to the "Integrations" screen in the "Configuration" panel. Then wait
 for the ESPHome device to show up under the discovered section (can take up to 5 minutes) or add
 the device manually by choosing "ESPHome" from the integration overview and entering
@@ -25,15 +25,17 @@ A Python library that implements this protocol is [aioesphomeapi](https://github
 {{< note >}}
 **Actions** were previously called **Services**. ESPHome changed the name in line with
 [Home Assistant](https://developers.home-assistant.io/blog/2024/07/16/service-actions/)
-but will continue to support YAML with `services`   and `homeassistant.service`   for the foreseeable future.
+but will continue to support YAML with `services` and `homeassistant.service` for the foreseeable future.
 Documentation will only refer to **Actions**.
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 api:
 
 ```
+
 ```yaml
 # Example with more options
 api:
@@ -44,7 +46,8 @@ api:
   reboot_timeout: 30min
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`  .
 - **encryption** (*Optional*): If present, encryption will be enabled for the API. Using encryption helps to secure the
@@ -60,33 +63,35 @@ api:
 Support for configuring the encryption key on-the-fly will be implemented in a future release of Home Assistant.
 
 {{< /note >}}
+
 - **actions** (*Optional*, list): A list of user-defined actions. See [User-defined Actions](#api-device-actions).
 - **batch_delay** (*Optional*, [Time](#config-time)): The delay time for batching multiple state update messages
   together to reduce network overhead. Lower values send updates sooner but use more network packets,
-  while higher values batch more efficiently but add latency. Must be between `0ms`   and `65535ms`
+  while higher values batch more efficiently but add latency. Must be between `0ms` and `65535ms`
   (65.535 seconds). Defaults to `100ms`  .
 
 {{< note >}}
-Setting `batch_delay: 0ms`   enables immediate sending mode for state updates. This is useful for
+Setting `batch_delay: 0ms` enables immediate sending mode for state updates. This is useful for
 applications that require real-time responsiveness, such as IR remote binary sensors where rapid
 ON→OFF transitions must be preserved. However, this will increase network traffic and may impact
 WiFi performance with many rapidly-changing sensors. Only use this setting when necessary.
 
 {{< /note >}}
-- **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ `CustomAPIDevice`   class. Only needed when external components register their own services via the native API. Defaults to `false`  .
-- **homeassistant_services** (*Optional*, boolean): Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAPIDevice::call_homeassistant_service()`   or `CustomAPIDevice::fire_homeassistant_event()`   methods. This is automatically enabled when using `homeassistant.service`   or `homeassistant.event`   actions, or the `homeassistant`   platform for number or switch components. Only needs to be manually set when external components call Home Assistant services without using the built-in actions. Defaults to `false`  .
-- **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ `CustomAPIDevice::subscribe_homeassistant_state()`   method. This is automatically enabled when using any `homeassistant`   platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to `false`  .
+
+- **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ `CustomAPIDevice` class. Only needed when external components register their own services via the native API. Defaults to `false`  .
+- **homeassistant_services** (*Optional*, boolean): Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAPIDevice::call_homeassistant_service()` or `CustomAPIDevice::fire_homeassistant_event()` methods. This is automatically enabled when using `homeassistant.service` or `homeassistant.event` actions, or the `homeassistant` platform for number or switch components. Only needs to be manually set when external components call Home Assistant services without using the built-in actions. Defaults to `false`  .
+- **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ `CustomAPIDevice::subscribe_homeassistant_state()` method. This is automatically enabled when using any `homeassistant` platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to `false`  .
 - **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
   Can be disabled by setting this to `0s`  . Defaults to `15min`  .
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **password** (*Optional*, **Deprecated**, string): The password to protect the API Server with. Defaults
-  to no password. It is recommended to use the `encryption`   -> `key`   above instead of the the `password`  .
+  to no password. It is recommended to use the `encryption` -> `key` above instead of the the `password`  .
 - **on_client_connected** (*Optional*, [Action](#config-action)): An automation to perform when a client
-  connects to the API. See [`on_client_connected`   Trigger](#api-on_client_connected_trigger).
+  connects to the API. See [`on_client_connected` Trigger](#api-on_client_connected_trigger).
 - **on_client_disconnected** (*Optional*, [Action](#config-action)): An automation to perform when a client
-  disconnects from the API. See [`on_client_disconnected`   Trigger](#api-on_client_disconnected_trigger).
+  disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
 {{< anchor "api-actions" >}}
 
@@ -97,17 +102,20 @@ perform actions.
 
 Open the ESPHome integration page on your Home Assistant instance:
 
-{{< button href="https://my.home-assistant.io/redirect/integration/?domain=esphome" img="https://my.home-assistant.io/badges/integration.svg" alt="Open your Home Assistant instance and show an integration." >}}
+{{< button href="<https://my.home-assistant.io/redirect/integration/?domain=esphome>" img="<https://my.home-assistant.io/badges/integration.svg>" alt="Open your Home Assistant instance and show an integration." >}}
 Then:
 
-#. Find your device in the device list
-#. Click the "configure" button next to it
-#. Check the "Allow the device to perform Home Assistant actions" box
-#. Then click "submit".
+1. Find your device in the device list
+
+1. Click the "configure" button next to it
+
+1. Check the "Allow the device to perform Home Assistant actions" box
+
+1. Then click "submit"
 
 {{< anchor "api-homeassistant_event_action" >}}
 
-### `homeassistant.event`   Action
+### `homeassistant.event` Action
 
 {{< note >}}
 Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
@@ -127,7 +135,8 @@ on_...:
         message: Button was pressed
 
 ```
-#### Configuration variables:
+
+#### Configuration variables
 
 - **event** (**Required**, string): The event to create - must begin with `esphome.`
 - **data** (*Optional*, mapping): Optional *static* data to pass along with the event.
@@ -138,7 +147,7 @@ on_...:
 
 {{< anchor "api-homeassistant_action-action" >}}
 
-### `homeassistant.action`   Action
+### `homeassistant.action` Action
 
 {{< note >}}
 Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
@@ -167,7 +176,8 @@ on_...:
           return id(my_sensor).state;
 
 ```
-#### Configuration variables:
+
+#### Configuration variables
 
 - **action** (**Required**, string): The Home Assistant [Action](https://www.home-assistant.io/docs/scripts/service-calls/)
   to perform.
@@ -196,6 +206,7 @@ script:
         - '{{ blue }}'
 
 ```
+
 Then, in ESPHome:
 
 ```yaml
@@ -210,9 +221,10 @@ on_...:
         blue: '71'
 
 ```
+
 {{< anchor "api-homeassistant_tag_scanned_action" >}}
 
-### `homeassistant.tag_scanned`   Action
+### `homeassistant.tag_scanned` Action
 
 {{< note >}}
 Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
@@ -229,7 +241,8 @@ on_...:
   - homeassistant.tag_scanned: some-tag
 
 ```
-#### Configuration variables:
+
+#### Configuration variables
 
 - **tag** (**Required**, [templatable](#config-templatable), string): The id of the scanned tag
 
@@ -237,10 +250,10 @@ on_...:
 
 {{< anchor "api-on_client_connected_trigger" >}}
 
-### `on_client_connected`   Trigger
+### `on_client_connected` Trigger
 
 This trigger is activated each time a client connects to the API. Two variables of
-type `std::string`   are available for use by actions called from within this trigger:
+type `std::string` are available for use by actions called from within this trigger:
 
 - `client_address`  : the IP address of the client that connected
 - `client_info`  : the name of the client that connected
@@ -254,12 +267,13 @@ api:
         args: ["client_info.c_str()", "client_address.c_str()"]
 
 ```
+
 {{< anchor "api-on_client_disconnected_trigger" >}}
 
-### `on_client_disconnected`   Trigger
+### `on_client_disconnected` Trigger
 
 This trigger is activated each time the API disconnects from the API. Two variables of
-type `std::string`   are available for use by actions called from within this trigger:
+type `std::string` are available for use by actions called from within this trigger:
 
 - `client_address`  : the IP address of the client that disconnected
 - `client_info`  : the name of the client that disconnected
@@ -271,9 +285,10 @@ api:
     - logger.log: "API client disconnected!"
 
 ```
+
 {{< anchor "api-connected_condition" >}}
 
-## `api.connected`   Condition
+## `api.connected` Condition
 
 This [Condition](#config-condition) checks if at least one client is connected to the ESPHome
 native API. Please note client not only includes Home Assistant, but also ESPHome's OTA log output
@@ -288,6 +303,7 @@ on_...:
       - logger.log: API is connected!
 
 ```
+
 The lambda equivalent for this is `id(api_id).is_connected()`  .
 
 {{< anchor "api-device-actions" >}}
@@ -309,8 +325,9 @@ api:
         - switch.turn_off: relay
 
 ```
+
 For example with the configuration seen above, after uploading you will see an action
-called `esphome.livingroom_start_laundry`   (livingroom is the node name) which you can
+called `esphome.livingroom_start_laundry` (livingroom is the node name) which you can
 then call.
 
 Additionally, you can also transmit data from Home Assistant to ESPHome with this method:
@@ -330,7 +347,8 @@ api:
             effect: !lambda 'return my_effect;'
 
 ```
-Using the `variables`   key you can tell ESPHome which variables to expect from Home Assistant.
+
+Using the `variables` key you can tell ESPHome which variables to expect from Home Assistant.
 For example the action seen above would be executed with something like this:
 
 ```yaml
@@ -341,9 +359,10 @@ data_template:
   my_effect: "Rainbow"
 
 ```
-Then each variable you define in the `variables`   section is accessible in the automation
+
+Then each variable you define in the `variables` section is accessible in the automation
 triggered by the user-defined action through the name you gave it in the variables section
-(note: this is a local variable, so do not wrap it in `id(...)`   to access it).
+(note: this is a local variable, so do not wrap it in `id(...)` to access it).
 
 There are currently 4 types of variables:
 
@@ -377,4 +396,3 @@ never be removed. Features of native API (vs. MQTT):
 ## See Also
 
 - {{< apiref "api/api_server.h" "api/api_server.h" >}}
-

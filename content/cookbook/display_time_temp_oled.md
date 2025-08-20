@@ -19,15 +19,16 @@ ESPHome has support for several different types of displays. The display used he
 
 Hardware is easy! Only four connections are needed:
 
-- `VCC`   - Power (my display could use either 3.3V or 5V)
-- `GND`   - Ground
-- `SDA`   - Serial Data
-- `SCL`   - Serial Clock
+- `VCC` - Power (my display could use either 3.3V or 5V)
+- `GND` - Ground
+- `SDA` - Serial Data
+- `SCL` - Serial Clock
 
 {{< warning >}}
 Ensure your display handles 5V if you use that.
 
 {{< /warning >}}
+
 ## Software configuration
 
 ### Getting Time
@@ -40,13 +41,14 @@ time:
     id: esptime
 
 ```
+
 ### Getting Temperature
 
 Next, we want to get one temperature sensor and the [weather forecast](https://www.home-assistant.io/integrations/weather/) imported from Home Assistant.
 
-I named them `inside_temperature`   and `outside_temperature`  . You will use those references later.
+I named them `inside_temperature` and `outside_temperature`  . You will use those references later.
 
-By adding `internal: true`   to the sensors they won't be published back to Home Assistant.
+By adding `internal: true` to the sensors they won't be published back to Home Assistant.
 
 ```yaml
 sensor:
@@ -68,11 +70,12 @@ text_sensor:
     internal: true
 
 ```
+
 ### Define the Fonts
 
 - TrueType fonts are used. If you ever worked with fonts on microcontrollers you will love this!
-- Save font files in `/config/esphome`   folder where your ESPHome configuration is stored.
-- The `.ttf`   suffix must be lowercase and of course match your filename.
+- Save font files in `/config/esphome` folder where your ESPHome configuration is stored.
+- The `.ttf` suffix must be lowercase and of course match your filename.
 - Selection of fonts can be a little bit tricky for small sizes to look good. Experiment and share your findings in the comments below!
 
 ```yaml
@@ -90,7 +93,8 @@ font:
     size: 14
 
 ```
-- (Optional) You can also use Google fonts with the `gfonts://`   scheme instead of including font files.
+
+- (Optional) You can also use Google fonts with the `gfonts://` scheme instead of including font files.
 - Find out more in the {{< docref "/components/font" >}} documentation.
 
 ```yaml
@@ -106,13 +110,14 @@ font:
     size: 15
 
 ```
+
 ### Display Definition
 
 Now setup the communication to the display and start fill the screen with live data!
 
-The `reset_pin`   was not used in my hardware configuration as the display didn't have that pin exposed.
+The `reset_pin` was not used in my hardware configuration as the display didn't have that pin exposed.
 
-Note your `address`   and `model`   might be different, use the scan option to find the address of your display.
+Note your `address` and `model` might be different, use the scan option to find the address of your display.
 
 ```yaml
 i2c:
@@ -145,10 +150,11 @@ display:
       }
 
 ```
+
 ## Rendering
 
-- Alignment of text can use different reference points, for example `TOP_RIGHT`   or `BASELINE_LEFT`  , which all are defined in {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}.
-- The property `has_state()`   on a sensor is useful as it can take some seconds to get the data from Home Assistant and you may not want to display `Nan`
+- Alignment of text can use different reference points, for example `TOP_RIGHT` or `BASELINE_LEFT`  , which all are defined in {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}.
+- The property `has_state()` on a sensor is useful as it can take some seconds to get the data from Home Assistant and you may not want to display `Nan`
 - Refer to the rendering engine [Display Rendering Engine](#display-engine) for more features (it can draw lines and circles too!)
 
 ## Add a Text-Based Sensor
@@ -172,9 +178,9 @@ display:
       it.printf(64, 0, id(small), TextAlign::TOP_CENTER, "Alarm State: %s", id(alarm_state).state.c_str());
 
 ```
+
 ## See Also
 
 - {{< docref "/components/display/ssd1306" >}}
 - {{< docref "/components/display" >}}
 - {{< docref "/components/sensor/homeassistant" >}}
-

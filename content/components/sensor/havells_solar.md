@@ -9,14 +9,14 @@ params:
 
 
 
-The `Havells Inverter`   sensor platform allows you to use Havells inverter data reading on modbus
+The `Havells Inverter` sensor platform allows you to use Havells inverter data reading on modbus
 ([website](https://www.havells.com/en/consumer/solar/solar-on-grid-inverter-and-solutions/solar-on-grid-inverter.html))
 with ESPHome.
 
 {{< img src="havellsgti5000d.jpg" alt="Image" caption="Havells On Grid Solar Inverter." width="50.0%" class="align-center" >}}
 
 The communication with this component is done via a [UART](#uart) using [Modbus](#modbus).
-You must therefore have a `uart:`   and `modbus:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` and `modbus:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -93,7 +93,8 @@ sensor:
       name: "HAVELLS DCI Of T"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **phase_a** (*Optional*): The group of exposed sensors for Phase A/1.
 
@@ -165,4 +166,3 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-

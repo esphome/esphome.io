@@ -9,7 +9,7 @@ params:
 
 
 
-The `wifi_info`   text sensor platform exposes different WiFi information
+The `wifi_info` text sensor platform exposes different WiFi information
 via text sensors.
 
 ```yaml
@@ -40,7 +40,8 @@ text_sensor:
       name: ESP DNS Address
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **ip_address** (*Optional*): Expose the IP Address of the ESP as a text sensor.
   All options from [Text Sensor](#config-text_sensor).
@@ -58,10 +59,8 @@ text_sensor:
 - **dns_address** (*Optional*): Expose the DNS Address of the ESP as text sensor.
   [Text Sensor](#config-text_sensor).
 
-
 ## See Also
 
 - {{< docref "/components/wifi" >}}
 - {{< docref "/components/sensor/wifi_signal" >}}
 - {{< apiref "wifi_info/wifi_info_text_sensor.h" "wifi_info/wifi_info_text_sensor.h" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `safe_mode`   switch allows you to remotely reboot your node into {{< docref "/components/safe_mode" >}}. This is useful in certain situations where a misbehaving component, or low memory state is preventing Over-The-Air updates from completing successfully.
+The `safe_mode` switch allows you to remotely reboot your node into {{< docref "/components/safe_mode" >}}. This is useful in certain situations where a misbehaving component, or low memory state is preventing Over-The-Air updates from completing successfully.
 
 This component requires {{< docref "/components/safe_mode" >}} to be configured.
 
@@ -22,7 +22,8 @@ switch:
     name: "Living Room Restart (Safe Mode)"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Switch](#config-switch).
 
@@ -34,4 +35,3 @@ switch:
 - {{< docref "/components/button/safe_mode" >}}
 - {{< docref "template/" >}}
 - {{< apiref "safe_mode/safe_mode_switch.h" "safe_mode/safe_mode_switch.h" >}}
-

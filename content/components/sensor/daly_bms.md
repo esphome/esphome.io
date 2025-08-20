@@ -9,7 +9,7 @@ params:
 
 
 
-The `daly_bms`   sensor platform allows you to use a Daly Smart BMS
+The `daly_bms` sensor platform allows you to use a Daly Smart BMS
 ([more info](https://dalyelec.en.made-in-china.com/))
 with ESPHome.
 
@@ -25,7 +25,8 @@ daly_bms:
   update_interval: 20s
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **update_interval** (*Optional*, [Time](#config-time)): Delay between data requests.
 - **address** (*Optional*, int): Address to use, defaults to `0x80`  .
@@ -77,7 +78,8 @@ sensor:
       name: "Cell 4 Voltage"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **voltage** (*Optional*): Voltage of the battery pack connected to Daly BMS.
   All options from [Sensor](#config-sensor).
@@ -138,7 +140,8 @@ text_sensor:
       name: "BMS Status"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **status** (*Optional*): The BMS Status (Charging, Discharging, Stationary).
   All options from [Text Sensor](#config-text_sensor).
@@ -156,7 +159,8 @@ binary_sensor:
       name: "Discharging MOS"
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **charging_mos_enabled** (*Optional*): The BMS charging MOS status to enable the recharge of the battery.
   All options from [Binary Sensor](#config-binary_sensor).
@@ -164,8 +168,8 @@ binary_sensor:
 - **discharging_mos_enabled** (*Optional*): The BMS discharging mos status to enable the load.
   All options from [Binary Sensor](#config-binary_sensor).
 
-
 ## Control BMS
+
 At this moment Daly sensor platform don't suppport controlling you BMS, but you can make some stuff using uart.write
 
 First you need to setup binary sensors for charging and disharging MOS
@@ -183,6 +187,7 @@ binary_sensor:
       internal: True # but you can make it internal to avoid duplication
 
 ```
+
 Then you can add switches
 
 ```yaml
@@ -226,6 +231,7 @@ switch:
           format: "Send cmd to Daly: Set discharge MOS off"
 
 ```
+
 Also you can add select to change battery level
 
 ```yaml
@@ -288,6 +294,7 @@ select:
                                           format: "Send cmd to Daly: Set SOC to 0%"
 
 ```
+
 ## UART Connection
 
 Connect RX from BMS to TX in ESP board and TX from BMS to RX in ESP board
@@ -305,8 +312,8 @@ uart:
   rx_buffer_size: 512
 
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "daly_bms/daly_bms.h" "daly_bms/daly_bms.h" >}}
-

@@ -30,6 +30,7 @@ wifi:
     subnet: 255.255.255.0
 
 ```
+
 ```yaml
 # It is highly recommended to use secrets
 wifi:
@@ -37,9 +38,10 @@ wifi:
   password: !secret wifi_password
 
 ```
+
 {{< anchor "wifi-configuration_variables" >}}
 
-## Configuration variables:
+## Configuration variables
 
 - **ssid** (*Optional*, string): The name (or [service set  identifier](https://www.lifewire.com/definition-of-service-set-identifier-816547))
   of the WiFi access point your device should connect to.
@@ -88,8 +90,8 @@ wifi:
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first one in the list.
 - **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion. Defaults to `false`  .
 
-- **enable_btm** (*Optional*, bool): Only on `esp32`   with `esp-idf`  . Enable 802.11v BSS Transition Management support.
-- **enable_rrm** (*Optional*, bool): Only on `esp32`   with `esp-idf`  . Enable 802.11k Radio Resource Management support.
+- **enable_btm** (*Optional*, bool): Only on `esp32` with `esp-idf`  . Enable 802.11v BSS Transition Management support.
+- **enable_rrm** (*Optional*, bool): Only on `esp32` with `esp-idf`  . Enable 802.11k Radio Resource Management support.
 
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection is dropped.
@@ -112,7 +114,8 @@ wifi:
     password: "W1PBGyrokfLz"
 
 ```
-You can also create a simple `ap`   config which will set up the access point to have the
+
+You can also create a simple `ap` config which will set up the access point to have the
 devices name as the ssid with no password.
 
 ```yaml
@@ -126,13 +129,13 @@ wifi:
     password: "W1PBGyrokfLz"
 
 ```
+
 ## User Entered Credentials
 
 Some components such as {{< docref "captive_portal/" >}}, {{< docref "improv_serial/" >}} and {{< docref "esp32_improv/" >}}
 enable the user to send and save Wi-Fi credentials to the device. Beginning in 2022.11.0,
 as long as no credentials are set in the config file, and firmware is uploaded without erasing
 the flash (via OTA), the device will keep the saved credentials.
-
 
 {{< anchor "wifi-manual_ip" >}}
 
@@ -142,7 +145,7 @@ If you're having problems with your node not connecting to WiFi or the connectio
 process taking a long time, it can be a good idea to assign a static IP address
 to the ESP. This way, the ESP doesn't need to go through the slow DHCP process.
 
-You can do so with the `manual_ip:`   option in the WiFi configuration.
+You can do so with the `manual_ip:` option in the WiFi configuration.
 
 ```yaml
 wifi:
@@ -156,11 +159,12 @@ wifi:
     subnet: 255.255.255.0
 
 ```
+
 After putting a manual IP in your configuration, the ESP will no longer need to negotiate
 a dynamic IP address with the router, thus improving the time until connection.
 
 Additionally, this can help with {{< docref "/components/ota" >}} if for example the
-network doesn't allow for `.local`   addresses. When a manual IP is in your configuration,
+network doesn't allow for `.local` addresses. When a manual IP is in your configuration,
 the OTA process will automatically choose that as the target for the upload.
 
 {{< note >}}
@@ -176,9 +180,9 @@ WiFi. While some options *can* reduce the power usage of the ESP, they generally
 reliability of the WiFi connection, with frequent disconnections from the router in the highest
 power saving mode.
 
-- `NONE`   (least power saving, Default for ESP8266)
-- `LIGHT`   (Default for ESP32)
-- `HIGH`   (most power saving)
+- `NONE` (least power saving, Default for ESP8266)
+- `LIGHT` (Default for ESP32)
+- `HIGH` (most power saving)
 
 ```yaml
 wifi:
@@ -186,6 +190,7 @@ wifi:
   power_save_mode: none
 
 ```
+
 {{< anchor "wifi-networks" >}}
 
 ## Connecting to Multiple Networks
@@ -193,8 +198,8 @@ wifi:
 You can give ESPHome a number of WiFi networks to connect to.
 ESPHome will then attempt to connect to the one with the highest signal strength.
 
-To enable this mode, remove the `ssid`   and `password`   options from your wifi configuration
-and move everything under the `networks`   key:
+To enable this mode, remove the `ssid` and `password` options from your wifi configuration
+and move everything under the `networks` key:
 
 ```yaml
 # Example configuration entry
@@ -208,6 +213,7 @@ wifi:
   # ...
 
 ```
+
 Configuration variables:
 
 - **ssid** (*Optional*, string): The SSID or WiFi network name.
@@ -259,6 +265,7 @@ wifi:
       key: key.pem
 
 ```
+
 Configuration variables:
 
 - **identity** (*Optional*, string): The outer identity to pass to the EAP authentication server.
@@ -268,14 +275,14 @@ Configuration variables:
   For EAP-TLS this password may be set to decrypt to private key instead.
 - **certificate_authority** (*Optional*, string): Path to a PEM encoded certificate to use when validating the authentication server.
 - **certificate** (*Optional*, string): Path to a PEM encoded certificate to use for EAP-TLS authentication.
-- **key** (*Optional*, string): Path to a PEM encoded private key matching `certificate`   for EAP-TLS authentication.
+- **key** (*Optional*, string): Path to a PEM encoded private key matching `certificate` for EAP-TLS authentication.
   Optionally encrypted with `password`  .
 - **ttls_phase_2** (*Optional*, string): The Phase 2 Authentication Method for EAP-TTLS.
-  Can be `pap`  , `eap`  , `mschap`  , `mschapv2`   or `chap`  , defaults to `mschapv2`  .
+  Can be `pap`  , `eap`  , `mschap`  , `mschapv2` or `chap`  , defaults to `mschapv2`  .
 
 {{< anchor "wifi-on_connect_disconnect" >}}
 
-## `on_connect`   / `on_disconnect`   Trigger
+## `on_connect` / `on_disconnect` Trigger
 
 This trigger is activated when a WiFi connection is established or dropped.
 
@@ -288,9 +295,10 @@ wifi:
     - switch.turn_off: switch1
 
 ```
+
 {{< anchor "wifi-on_disable" >}}
 
-## `wifi.disable`   Action
+## `wifi.disable` Action
 
 This action turns off the WiFi interface on demand.
 
@@ -300,13 +308,14 @@ on_...:
     - wifi.disable:
 
 ```
+
 {{< note >}}
 Be aware that if you disable WiFi, the API timeout will need to be disabled otherwise the device will reboot.
 
 {{< /note >}}
 {{< anchor "wifi-on_enable" >}}
 
-## `wifi.enable`   Action
+## `wifi.enable` Action
 
 This action turns on the WiFi interface on demand.
 
@@ -316,13 +325,14 @@ on_...:
     - wifi.enable:
 
 ```
+
 {{< note >}}
-The configuration option `enable_on_boot`   can be set to `false`   if you do not want wifi to be enabled on boot.
+The configuration option `enable_on_boot` can be set to `false` if you do not want wifi to be enabled on boot.
 
 {{< /note >}}
 {{< anchor "wifi-configure" >}}
 
-## `wifi.configure`   Action
+## `wifi.configure` Action
 
 This action connects to an SSID and password, optionally saving it in persistent memory so that the next time the WiFi interface is enabled, it will connect to the stored access point.
 
@@ -340,6 +350,7 @@ on_...:
           - logger.log: "Failed to connect to WiFi!"
 
 ```
+
 Configuration variables:
 
 - **ssid** (**Required**, string, [templatable](#config-templatable)): The name of the WiFi access point.
@@ -351,7 +362,7 @@ Configuration variables:
 
 {{< anchor "wifi-connected_condition" >}}
 
-## `wifi.connected`   Condition
+## `wifi.connected` Condition
 
 This [Condition](#config-condition) checks if the WiFi client is currently connected to a station.
 
@@ -364,12 +375,12 @@ on_...:
       - logger.log: WiFi is connected!
 
 ```
-The lambda equivalent for this is `id(wifi_id).is_connected()`  .
 
+The lambda equivalent for this is `id(wifi_id).is_connected()`  .
 
 {{< anchor "wifi-enabled_condition" >}}
 
-## `wifi.enabled`   Condition
+## `wifi.enabled` Condition
 
 This [Condition](#config-condition) checks if WiFi is currently enabled or not.
 
@@ -383,8 +394,8 @@ on_...:
         - wifi.enable:
 
 ```
-The lambda equivalent for this is `!id(wifi_id).is_disabled()`  .
 
+The lambda equivalent for this is `!id(wifi_id).is_disabled()`  .
 
 ## See Also
 
@@ -395,4 +406,3 @@ The lambda equivalent for this is `!id(wifi_id).is_disabled()`  .
 - {{< docref "/components/ethernet" >}}
 - {{< docref "api/" >}}
 - {{< apiref "wifi/wifi_component.h" "wifi/wifi_component.h" >}}
-

@@ -18,4 +18,3 @@ Configuration variables:
 - **send_first_at** (*Optional*, int): By default, the very first raw value on boot is immediately
   published. With this parameter you can specify when the very first value is to be sent.
   Defaults to `1`  .
-

@@ -86,10 +86,12 @@ light:
       - strobe:
 
 ```
+
 {{< warning >}}
 Consider the warning in {{< docref "/components/light/partition" >}} regarging the increased memory usage.
 
 {{< /warning >}}
+
 ## Home Assistant configuration
 
 The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is done in Home Assistant, but could also be implemented using ESPHome [Automations](#automation).
@@ -139,6 +141,7 @@ automation:
           {{ map[state] if state in map else 'white' }}
 
 ```
+
 {{< img src="infostrip-lights-ui.png" alt="Image" caption="Each pixel is used as a light entity." width="50.0%" class="align-center" >}}
 
 ## See Also
@@ -146,4 +149,3 @@ automation:
 - {{< docref "/components/light/fastled" >}}
 - {{< docref "/components/light/partition" >}}
 - {{< docref "/components/sensor/mhz19" >}}
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `template`   valve platform allows you to create simple valves out of just a few actions and a value lambda. Once
+The `template` valve platform allows you to create simple valves out of just a few actions and a value lambda. Once
 defined, it will automatically appear in Home Assistant as a valve and can be controlled through the frontend.
 
 {{< img src="valve-ui.png" alt="Image" class="align-center" >}}
@@ -34,13 +34,14 @@ valve:
     optimistic: true
 
 ```
+
 Possible return values for the optional lambda:
 
-- `return VALVE_OPEN;`   if the valve should be reported as OPEN.
-- `return VALVE_CLOSED;`   if the valve should be reported as CLOSED.
-- `return {};`   if the last state should be repeated.
+- `return VALVE_OPEN;` if the valve should be reported as OPEN.
+- `return VALVE_CLOSED;` if the valve should be reported as CLOSED.
+- `return {};` if the last state should be repeated.
 
-## Configuration variables:
+## Configuration variables
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the valve.
@@ -54,7 +55,7 @@ Possible return values for the optional lambda:
   the template valve will immediately update the reported state and no lambda needs to be used. Defaults to `false`  .
 - **restore_mode** (*Optional*, enum): Control how the valve attempts to restore state on bootup.
 
-  - `NO_RESTORE`   (Default): Do not save or restore state.
+  - `NO_RESTORE` (Default): Do not save or restore state.
   - `RESTORE`  : Attempts to restore the state on startup, but doesn't instruct the valve to return to that state.
   - `RESTORE_AND_CALL`  : Attempts to restore the state on startup and instructs the valve to return to the restored state.
 
@@ -64,14 +65,14 @@ Possible return values for the optional lambda:
   By default (`false`  ), the valve only publishes OPEN/CLOSED position.
 - **position_action** (*Optional*, [Action](#config-action)): The action that should be performed when the remote
   (like Home Assistant's frontend) requests the valve be set to a specific position. The desired position is available
-  in the lambda in the `pos`   variable. Requires `has_position`   (above) to be set to `true`  .
+  in the lambda in the `pos` variable. Requires `has_position` (above) to be set to `true`  .
 - All other options from [Valve](#config-valve).
 
 {{< anchor "valve-template-publish_action" >}}
 
-## `valve.template.publish`   Action
+## `valve.template.publish` Action
 
-You can also publish a state to a template valve from elsewhere in your YAML filewith the `valve.template.publish`   action.
+You can also publish a state to a template valve from elsewhere in your YAML filewith the `valve.template.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -92,15 +93,16 @@ on_...:
       state: !lambda 'return VALVE_OPEN;'
 
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the template valve.
 - **state** (*Optional*, [templatable](#config-templatable)):
-  The state to publish. One of `OPEN`  , `CLOSED`  . If using a lambda, use `VALVE_OPEN`   or `VALVE_CLOSED`  .
+  The state to publish. One of `OPEN`  , `CLOSED`  . If using a lambda, use `VALVE_OPEN` or `VALVE_CLOSED`  .
 - **position** (*Optional*, [templatable](#config-templatable), float):
   The position to publish, from 0 (CLOSED) to 1.0 (OPEN)
 - **current_operation** (*Optional*, [templatable](#config-templatable), string):
-  The current operation mode to publish. One of `IDLE`  , `OPENING`   and `CLOSING`  . If using a lambda, use
+  The current operation mode to publish. One of `IDLE`  , `OPENING` and `CLOSING`  . If using a lambda, use
   `VALVE_OPERATION_IDLE`  , `VALVE_OPERATION_OPENING`  , and `VALVE_OPERATION_CLOSING`  .
 
 {{< note >}}
@@ -111,11 +113,12 @@ id(my_template_valve).position = VALVE_OPEN;
 id(my_template_valve).publish_state();
 
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/valve" >}}
 - [Automation](#automation)
 - {{< docref "/cookbook/garage-door" >}}
 - {{< apiref "template/valve/template_valve.h" "template/valve/template_valve.h" >}}
-

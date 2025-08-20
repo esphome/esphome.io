@@ -23,7 +23,7 @@ this will be overwritten by any subsequent serial upload so make sure to also up
 Additionally, you can upload a new firmware file.
 
 When you connect to the fallback network, the web interface should open automatically (see also
-login to network notifications). If that does not work, you can also navigate to http://192.168.4.1/
+login to network notifications). If that does not work, you can also navigate to <http://192.168.4.1/>
 manually in your browser.
 
 ```yaml
@@ -37,8 +37,8 @@ wifi:
 captive_portal:
 
 ```
-No configuration variables.
 
+No configuration variables.
 
 ## See Also
 
@@ -46,4 +46,3 @@ No configuration variables.
 - {{< docref "improv_serial/" >}}
 - {{< docref "esp32_improv/" >}}
 - {{< apiref "captive_portal/captive_portal.h" "captive_portal/captive_portal.h" >}}
-

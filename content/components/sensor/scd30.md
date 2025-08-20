@@ -9,7 +9,7 @@ params:
 
 
 
-The `scd30`   sensor platform allows you to use your Sensirion SCD30 CO₂
+The `scd30` sensor platform allows you to use your Sensirion SCD30 CO₂
 ([datasheet](https://sensirion.com/media/documents/4EAF6AF8/61652C3C/Sensirion_CO2_Sensors_SCD30_Datasheet.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -33,7 +33,8 @@ sensor:
     update_interval: 5s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **co2** (*Optional*): The information for the CO₂ sensor.
 
@@ -69,8 +70,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Available range: [2 … 1800]. Defaults to `60s`  .
 
-
-## Manual calibration:
+## Manual calibration
 
 ```yaml
 # Example on how to implement a UI section in HA for manual calibration.
@@ -96,6 +96,7 @@ number:
     entity_category: "config"
 
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
@@ -105,4 +106,3 @@ number:
 - {{< docref "hdc1080/" >}}
 - {{< docref "htu21d/" >}}
 - {{< apiref "scd30/scd30.h" "scd30/scd30.h" >}}
-

@@ -9,12 +9,12 @@ params:
 
 
 
-The `lvgl`   select platform creates a select from an LVGL widget
+The `lvgl` select platform creates a select from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
-Supported widgets are [`dropdown`  ](#lvgl-widget-dropdown) and [`roller`  ](#lvgl-widget-roller). A single select supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome select component.
+Supported widgets are [`dropdown`](#lvgl-widget-dropdown) and [`roller`](#lvgl-widget-roller). A single select supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome select component.
 
-## Configuration variables:
+## Configuration variables
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the select.
 - **restore_value**: (*Optional*, bool) Restore the value of the select from non-volatile memory when the device is restarted. Defaults to `false`  .
@@ -29,11 +29,14 @@ select:
     name: LVGL Dropdown
 
 ```
+
 {{< note >}}
 Widget-specific actions (`lvgl.dropdown.update`  , `lvgl.roller.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
 
 {{< /note >}}
+
 ## See Also
+
 - {{< docref "/components/lvgl/index" "LVGL Main component" >}}
 - [Roller widget](#lvgl-widget-roller)
 - [Dropdown widget](#lvgl-widget-dropdown)
@@ -44,4 +47,3 @@ Widget-specific actions (`lvgl.dropdown.update`  , `lvgl.roller.update`  ) will 
 - {{< docref "/components/light/lvgl" >}}
 - {{< docref "/components/text/lvgl" >}}
 - {{< docref "/components/text_sensor/lvgl" >}}
-

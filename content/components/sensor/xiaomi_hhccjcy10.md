@@ -30,7 +30,8 @@ sensor:
       name: "Xiaomi HHCCJCY10 Battery Level"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **mac_address** (**Required**, string): The MAC address of the device.
 - **temperature** (*Optional*): The temperature sensor.
@@ -44,8 +45,6 @@ sensor:
 - **battery_level** (*Optional*): The battery level sensor.
   All options from [Sensor](#config-sensor).
 
-
 ## See Also
 
 - {{< docref "ble_client/" >}}
-

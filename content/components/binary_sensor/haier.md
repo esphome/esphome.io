@@ -11,7 +11,6 @@ params:
 
 Additional sensors for Haier Climate device. **These sensors are supported only by the hOn protocol**.
 
-
 {{< img src="haier-climate.jpg" alt="Image" width="50.0%" class="align-center" >}}
 
 ```yaml
@@ -33,7 +32,8 @@ binary_sensor:
       name: Haier Outdoor Fan Status
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **haier_id** (**Required**, [ID](#config-id)): The id of haier climate component
 - **compressor_status** (*Optional*): A binary sensor that indicates Haier climate compressor activity.
@@ -52,4 +52,3 @@ binary_sensor:
 ## See Also
 
 - {{< docref "/components/climate/haier" "Haier Climate" >}}
-

@@ -9,24 +9,25 @@ params:
 
 
 
-The `nextion`   display platform allows you to use Nextion LCD displays
+The `nextion` display platform allows you to use Nextion LCD displays
 ([datasheet](https://nextion.itead.cc/resources/datasheets/), [iTead](https://www.itead.cc/display/nextion.html))
 with ESPHome.
 
 {{< img src="nextion-full.jpg" alt="Image" caption="Nextion display" width="75.0%" class="align-center" >}}
 
 Communication with the Nextion display is done via a serial interface, so you'll need to have a [UART Bus](#uart)
-in your configuration with both `rx_pin`   and `tx_pin`   configured. These pins must then be connected to the
+in your configuration with both `rx_pin` and `tx_pin` configured. These pins must then be connected to the
 respective pins on the display.
 
 Nextion displays use a baud rate of 9600 by default. You may configure the Nextion display to use a higher speed by
-editing the `program.s`   source file in the Nextion Editor. For example:
+editing the `program.s` source file in the Nextion Editor. For example:
 
 ```c
 baud=115200   // Sets the baud rate to 115200; for other supported rates, see https://nextion.tech/instruction-set/
 bkcmd=0       // Tells the Nextion to not send responses on commands. This is the current default but can be set just in case
 
 ```
+
 This permits faster communication with the Nextion display and it is highly recommended when using
 [Hardware UARTs](#uart-hardware_uarts).
 
@@ -40,6 +41,7 @@ If you **must** use a software UART, note that baud rates greater than 9600 are 
 In short, avoid using software UARTs with Nextion displays.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 display:
@@ -50,7 +52,8 @@ display:
       it.set_component_text("textview", "Hello World!");
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART Bus](#uart) you wish to use for this display. Specify this
   when you have multiple UART configurations.
@@ -84,7 +87,7 @@ display:
   reports a buffer overflow. See [Nextion Automation](#nextion-on_buffer_overflow).
 - **command_spacing** (*Optional*, [Time](#config-time)): Sets the minimum time between commands sent to the Nextion display.
   A higher value can help prevent buffer overflows but will result in slower interface updates.
-  Range is `0-255ms`  . Defaults to `0ms`   (disabled).
+  Range is `0-255ms`  . Defaults to `0ms` (disabled).
 - **max_commands_per_loop** (*Optional*, integer): Limits the number of commands processed per loop cycle.
   This helps prevent stack overflows when a large number of commands are queued.
   Lower values (for example, `20`  ) may help improve stability in constrained environments.
@@ -123,13 +126,14 @@ display:
       it.set_component_text_printf("textview", "The uptime is: %.1f", id(uptime_sensor).state);
 
 ```
+
 {{< note >}}
 Although you can use the rendering lambda, most, if not all, updates to the Nextion can be handled by the
 individual Nextion components/platforms. **See Below**
 
 {{< /note >}}
-See [Formatted Text](#display-printf) for a quick introduction to the `printf`   formatting rules and [Displaying Time](#display-strftime) for
-an introduction to `strftime`   time formatting.
+See [Formatted Text](#display-printf) for a quick introduction to the `printf` formatting rules and [Displaying Time](#display-strftime) for
+an introduction to `strftime` time formatting.
 
 ### Using Lambdas
 
@@ -149,6 +153,7 @@ The list below calls out a few commonly-used methods:
     id(nextion1).update_all_components();
 
 ```
+
 {{< anchor "update_components_by_prefix" >}}
 
 - `update_components_by_prefix(std::string page)`  : This will send the current state of any **component_name**
@@ -159,6 +164,7 @@ The list below calls out a few commonly-used methods:
     id(nextion1).update_components_by_prefix("page0.");
 
 ```
+
 {{< anchor "set_nextion_sensor_state" >}}
 
 - Set various sensor states (See [Queue Types](#nextion_queue_types) below):
@@ -191,20 +197,20 @@ api:
             id(nextion1).set_nextion_text_state(name,state);
 
 ```
+
 {{< /note >}}
 {{< anchor "nextion_queue_types" >}}
 
 **Queue Types**
 
-| Type |  Value |
-| --- | --- |
-| `SENSOR` |  `0` |
-| `BINARY_SENSOR` |  `1` |
-| `SWITCH` |  `2` |
-| `TEXT_SENSOR` |  `3` |
-| `WAVEFORM_SENSOR` |  `4` |
-| `NO_RESULT` |  `5` |
-
+| Type              | Value |
+| ----------------- | ----- |
+| `SENSOR`          | `0`   |
+| `BINARY_SENSOR`   | `1`   |
+| `SWITCH`          | `2`   |
+| `TEXT_SENSOR`     | `3`   |
+| `WAVEFORM_SENSOR` | `4`   |
+| `NO_RESULT`       | `5`   |
 
 {{< anchor "display-nextion_automation" >}}
 
@@ -244,6 +250,7 @@ display:
             }
 
 ```
+
 {{< anchor "nextion-on_sleep" >}}
 
 #### `on_sleep`  /`on_wake`
@@ -257,17 +264,17 @@ updates while in sleep mode; these triggers may be used to cope with this. For e
 #### `on_page`
 
 This automation is triggered when the page is changed on display. This includes both ESPHome-initiated and
-Nextion-initiated page changes. ESPHome initiates a page change by calling either the `goto_page("page_name")`   or
-`goto_page(page_id)`   functions. The Nextion itself can also change pages as a reaction to user activity (touching
+Nextion-initiated page changes. ESPHome initiates a page change by calling either the `goto_page("page_name")` or
+`goto_page(page_id)` functions. The Nextion itself can also change pages as a reaction to user activity (touching
 some display UI element) or by using a timer. In either case, this automation can be useful to update on-screen
 controls for the newly displayed page.
 
-If you fully own your Nextion HMI design and follow the best practice of setting `vscope`   to "global" for UI
+If you fully own your Nextion HMI design and follow the best practice of setting `vscope` to "global" for UI
 components you've defined in the Nextion Editor, you'll probably never need this trigger. However, if this is not the
-case and some/all of your UI components have their `vscope`   set to "local", `on_page`   will be your remedy -- it
+case and some/all of your UI components have their `vscope` set to "local", `on_page` will be your remedy -- it
 enables you to initiate updates of the relevant components.
 
-Before updating components, you need to know which page the Nextion is displaying. The `x`   argument will contain an
+Before updating components, you need to know which page the Nextion is displaying. The `x` argument will contain an
 integer which indicates the current page ID number.
 
 Given the page ID, the appropriate components can be updated. Two strategies are be possible:
@@ -288,6 +295,7 @@ Given the page ID, the appropriate components can be updated. Two strategies are
             }
 
 ```
+
 {{< anchor "nextion-on_touch" >}}
 
 #### `on_touch`
@@ -300,7 +308,7 @@ The following arguments will be available:
 - `component_id`  : Contains the ID (integer) of the component touched. **You must have "Send Component ID" enabled
     for "Touch Press Event" and/or "Touch Release Event" for the UI element in your HMI configuration in the**
     [Nextion Editor](https://nextion.tech/nextion-editor/).
-- `touch_event`  : It will be `true`   for a "press" event, or `false`   for a "release" event.
+- `touch_event`  : It will be `true` for a "press" event, or `false` for a "release" event.
 
 ```yaml
 on_touch:
@@ -312,6 +320,7 @@ on_touch:
         ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
 
 ```
+
 {{< anchor "nextion-on_buffer_overflow" >}}
 
 #### `on_buffer_overflow`
@@ -330,6 +339,7 @@ on_buffer_overflow:
         ESP_LOGW("nextion.on_buffer_overflow", "Nextion reported a buffer overflow event!");
 
 ```
+
 ### Actions
 
 {{< anchor "nextion-set_brightness" >}}
@@ -344,6 +354,7 @@ on_...:
     - display.nextion.set_brightness: 50%
 
 ```
+
 Or, if you happen to have multiple Nextion displays connected, you may need to use the long form:
 
 ```yaml
@@ -354,11 +365,12 @@ on_...:
         brightness: 50%
 
 ```
+
 {{< anchor "nextion_upload_tft_file" >}}
 
 ## Uploading A TFT File
 
-This will use the file specified for `tft_url`   to update ("OTA") the Nextion.
+This will use the file specified for `tft_url` to update ("OTA") the Nextion.
 
 Once completed, both ESPHome and the Nextion will reboot. ESPHome will be unresponsive during the upload process and no
 logging or other {{< docref "/automations/index" "automations" >}} will occur. This process uses the same protocol as the
@@ -388,9 +400,10 @@ button:
         - lambda: 'id(nextion1)->upload_tft();'
 
 ```
+
 ### Home Assistant
 
-To host the TFT file from Home Assistant, create a `www`   directory (if it doesn't already exist) in your `config`
+To host the TFT file from Home Assistant, create a `www` directory (if it doesn't already exist) in your `config`
 directory. If you wish, you may also create a subdirectory for your TFT files.
 
 For example, if the file is located in your configuration directory `www/tft/default.tft`  , the URL to access it will
@@ -406,7 +419,7 @@ updates are sent. To work around this, after the Nextion wakes up, all component
 Nextion.
 
 {{< /note >}}
-With the exception of the {{< docref "../binary_sensor/nextion" >}} that has the `page_id`  /`component_id`   options configured,
+With the exception of the {{< docref "../binary_sensor/nextion" >}} that has the `page_id`  /`component_id` options configured,
 the example below illustrates:
 
 - Polling the Nextion for updates
@@ -425,6 +438,7 @@ the example below illustrates:
       update_interval: 1s
 
 ```
+
 Note that the first one requires a custom protocol to be included in the Nextion display's HMI code/configuration. See
 the individual components (linked below) for more detail.
 
@@ -439,4 +453,3 @@ the individual components (linked below) for more detail.
 - {{< apiref "nextion/nextion.h" "nextion/nextion.h" >}}
 - [Simple Nextion Library](https://github.com/bborncr/nextion) by [Bentley Born](https://github.com/bborncr)
 - [Official Nextion Library](https://github.com/itead/ITEADLIB_Arduino_Nextion) by [iTead](https://www.itead.cc/)
-

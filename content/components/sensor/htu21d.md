@@ -12,7 +12,6 @@ params:
 The HTU21D Temperature & Humidity component allows you to use HTU21D, Si7021 and SHT21 sensors with
 ESPHome. The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
-
 Example sensors:
 
 - ([Adafruit](https://www.adafruit.com/product/1899))
@@ -34,7 +33,8 @@ sensor:
       name: "Heater"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **temperature** (*Optional*): The information for the temperature sensor.
   All options from [Sensor](#config-sensor).
@@ -61,4 +61,3 @@ The heater may be enabled to help correct the reading; see the datasheet for mor
 - {{< docref "sht3xd/" >}}
 - {{< apiref "htu21d/htu21d.h" "htu21d/htu21d.h" >}}
 - [i2cdevlib](https://github.com/jrowberg/i2cdevlib) by [Jeff Rowberg](https://github.com/jrowberg)
-

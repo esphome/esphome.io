@@ -10,7 +10,6 @@ params:
 
 {{< anchor "udp-packet-transport" >}}
 
-
 The [Packet Transport Component](#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel.
 The UDP implementation of the platform uses UDP as a communication medium. See the [Packet Transport Component](#packet-transport) and [UDP Component](#udp) for more information.
 
@@ -34,6 +33,7 @@ sensor:
         id: dht_temp
 
 ```
+
 ## See Also
 
 - [Packet Transport Component](#packet-transport)
@@ -42,4 +42,3 @@ sensor:
 - {{< docref "/components/sensor/packet_transport" >}}
 - [Automation](#automation)
 - {{< apiref "packet_transport/packet_transport.h" "packet_transport/packet_transport.h" >}}
-

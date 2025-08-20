@@ -9,7 +9,7 @@ params:
 
 
 
-The `power_supply`   component allows you to have a high power mode for
+The `power_supply` component allows you to have a high power mode for
 certain outputs. For example, if you're using an [ATX powersupply](https://en.wikipedia.org/wiki/ATX) to power your LED strips,
 you usually don't want to have the power supply on all the time while
 the output is not on. The power supply component can be attached to any
@@ -25,7 +25,8 @@ power_supply:
     pin: GPIOXX
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id of the
   power supply so that it can be used by the outputs.
@@ -63,6 +64,7 @@ power_supply:
       inverted: true
 
 ```
+
 Then simply connect the green control wire from the ATX power supply to
 your specified pin. It's recommended to put a small resistor (about 1kΩ)
 in between to protect the ESP board.
@@ -71,4 +73,3 @@ in between to protect the ESP board.
 
 - {{< docref "output/" >}}
 - {{< apiref "power_supply/power_supply.h" "power_supply/power_supply.h" >}}
-

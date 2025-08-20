@@ -11,7 +11,7 @@ params:
 
 ## Component/Hub
 
-The `teleinfo`   component allows you to retrieve data from a
+The `teleinfo` component allows you to retrieve data from a
 French electrical counter using Teleinformation ([datasheet](https://www.enedis.fr/media/2035/download)). It works with Linky electrical
 counter but also legacy EDF electrical counter.
 
@@ -45,8 +45,8 @@ teleinfo:
   id: myteleinfo
 
 ```
-## Configuration variables:
 
+## Configuration variables
 
 In teleinfo platform:
 
@@ -86,6 +86,7 @@ sensor:
     teleinfo_id: myteleinfo
 
 ```
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
 - **teleinfo_id** (*Optional*, [ID](#config-id)): Specify the ID of used hub.
 - All other options from [Sensor](#config-sensor).
@@ -100,12 +101,11 @@ text_sensor:
     teleinfo_id: myteleinfo
 
 ```
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
 - **teleinfo_id** (*Optional*, [ID](#config-id)): Specify the ID of used hub.
 - All other options from [Text Sensor](#config-text_sensor).
 
-
 ## See Also
 
 - {{< apiref "teleinfo/teleinfo.h" "teleinfo/teleinfo.h" >}}
-

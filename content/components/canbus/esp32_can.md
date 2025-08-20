@@ -24,7 +24,8 @@ canbus:
       ...
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **rx_pin** (**Required**, [Pin](#config-pin)): Receive pin.
 - **tx_pin** (**Required**, [Pin](#config-pin)): Transmit pin.
@@ -78,4 +79,3 @@ If you prefer to only have a 3.3V power supply, special 3.3V CAN transceivers ar
 
 - {{< docref "index/" >}}
 - {{< apiref "canbus/canbus.h" "canbus/canbus.h" >}}
-

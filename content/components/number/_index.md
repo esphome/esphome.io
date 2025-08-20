@@ -31,6 +31,7 @@ name: Livingroom Volume
 icon: "mdi:volume-high"
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -41,39 +42,39 @@ If you have a [friendly_name](#esphome-configuration_variables) set for your dev
 you want the number to use that name, you can set `name: None`  .
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the number in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
   Defaults to `false`  .
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
-  Set to `""`   to remove the default entity category.
+  Set to `""` to remove the default entity category.
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
   of measurement for the number.
 - **mode** (*Optional*, string): Defines how the number should be displayed in the frontend.
-  See https://developers.home-assistant.io/docs/core/entity/number/#properties
+  See <https://developers.home-assistant.io/docs/core/entity/number/#properties>
   for a list of available options.
   Defaults to `"auto"`  .
 - **device_class** (*Optional*, string): The device class for the number.
-  See https://www.home-assistant.io/integrations/number/#device-class
+  See <https://www.home-assistant.io/integrations/number/#device-class>
   for a list of available options.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 Automations:
 
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
-  when a new value is published. See [`on_value`  ](#number-on_value).
+  when a new value is published. See [`on_value`](#number-on_value).
 - **on_value_range** (*Optional*, [Automation](#automation)): An automation to perform
-  when a published value transition from outside to a range to inside. See [`on_value_range`  ](#number-on_value_range).
+  when a published value transition from outside to a range to inside. See [`on_value_range`](#number-on_value_range).
 
 MQTT Options:
 
 - All other options from [MQTT Component](#config-mqtt-component).
-
 
 ## Number Automation
 
@@ -98,6 +99,7 @@ number:
             red: !lambda "return x/255;"
 
 ```
+
 Configuration variables: See [Automation](#automation).
 
 {{< anchor "number-on_value_range" >}}
@@ -110,8 +112,8 @@ This trigger will only trigger when the new value is inside the range and the pr
 was outside the range. On startup, the last state before reboot is restored and if the value crossed
 the boundary during the boot process, the trigger is also executed.
 
-Define the range with `above`   and `below`  . If only one of them is defined, the interval is half-open.
-So for example `above: 5`   with no below would mean the range from 5 to positive infinity.
+Define the range with `above` and `below`  . If only one of them is defined, the interval is half-open.
+So for example `above: 5` with no below would mean the range from 5 to positive infinity.
 
 ```yaml
 number:
@@ -124,6 +126,7 @@ number:
         - switch.turn_on: relay_1
 
 ```
+
 Configuration variables:
 
 - **above** (*Optional*, float): The minimum for the trigger.
@@ -132,12 +135,12 @@ Configuration variables:
 
 {{< anchor "number-in_range_condition" >}}
 
-### `number.in_range`   Condition
+### `number.in_range` Condition
 
 This condition passes if the state of the given number is inside a range.
 
-Define the range with `above`   and `below`  . If only one of them is defined, the interval is half-open.
-So for example `above: 5`   with no below would mean the range from 5 to positive infinity.
+Define the range with `above` and `below`  . If only one of them is defined, the interval is half-open.
+So for example `above: 5` with no below would mean the range from 5 to positive infinity.
 
 ```yaml
 # in a trigger:
@@ -151,6 +154,7 @@ on_...:
       - script.execute: my_script
 
 ```
+
 Configuration variables:
 
 - **above** (*Optional*, float): The minimum for the condition.
@@ -158,7 +162,7 @@ Configuration variables:
 
 {{< anchor "number-set_action" >}}
 
-### `number.set`   Action
+### `number.set` Action
 
 This is an [Action](#config-action) for setting a number state.
 
@@ -168,6 +172,7 @@ This is an [Action](#config-action) for setting a number state.
     value: 42
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the number to set.
@@ -176,7 +181,7 @@ Configuration variables:
 
 {{< anchor "number-increment_action" >}}
 
-### `number.increment`   Action
+### `number.increment` Action
 
 This is an [Action](#config-action) for incrementing a number value by its
 step size (default: 1).
@@ -190,6 +195,7 @@ step size (default: 1).
 - number.increment: my_number
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the number component to update.
@@ -200,7 +206,7 @@ Configuration variables:
 
 {{< anchor "number-decrement_action" >}}
 
-### `number.decrement`   Action
+### `number.decrement` Action
 
 This is an [Action](#config-action) for decrementing a number value by its
 step size (default: 1).
@@ -214,6 +220,7 @@ step size (default: 1).
 - number.decrement: my_number
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the number component to update.
@@ -224,7 +231,7 @@ Configuration variables:
 
 {{< anchor "number-to-min_action" >}}
 
-### `number.to_min`   Action
+### `number.to_min` Action
 
 This is an [Action](#config-action) seting a number to its minimum value, given
 a number component that has a minimum value defined for it.
@@ -237,13 +244,14 @@ a number component that has a minimum value defined for it.
 - number.to_min: my_number
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the number component to update.
 
 {{< anchor "number-to-max_action" >}}
 
-### `number.to_max`   Action
+### `number.to_max` Action
 
 This is an [Action](#config-action) seting a number to its maximum value (given
 a number component that has a maximum value defined for it.
@@ -256,13 +264,14 @@ a number component that has a maximum value defined for it.
 - number.to_max: my_number
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the number component to update.
 
 {{< anchor "number-operation_action" >}}
 
-### `number.operation`   Action
+### `number.operation` Action
 
 This is an [Action](#config-action) that can be used to perform an operation
 on a number component (set to minimum or maximum value, decrement, increment),
@@ -282,17 +291,18 @@ using a generic templatable action call.
     cycle: !lambda "return true;"
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the number to update.
 - **operation** (**Required**, string, [templatable](#config-templatable)):
   What operation to perform on the number component. One of `TO_MIN`  ,
-  `TO_MAX`  , `DECREMENT`   or `INCREMENT`   (case insensitive). When writing a
+  `TO_MAX`  , `DECREMENT` or `INCREMENT` (case insensitive). When writing a
   lambda for this field, then return one of the following enum values:
-  `NUMBER_OP_TO_MIN`  , `NUMBER_OP_TO_MAX`  , `NUMBER_OP_DECREMENT`   or
+  `NUMBER_OP_TO_MIN`  , `NUMBER_OP_TO_MAX`  , `NUMBER_OP_DECREMENT` or
   `NUMBER_OP_INCREMENT`  .
 - **cycle** (*Optional*, bool, [templatable](#config-templatable)):
-  Can be used with `DECREMENT`   or `INCREMENT`   to specify whether or not to
+  Can be used with `DECREMENT` or `INCREMENT` to specify whether or not to
   wrap around the value when respectively the minimum or maximum value of the
   number is exceeded.
 
@@ -312,20 +322,21 @@ advanced stuff (see the full API Reference for more info).
     call.perform();
 
 ```
+
   Check the API reference for information on the methods that are available for
-  the `NumberCall`   object. You can for example also use `call.number_to_min()`
-  to set the number to its minimum value or `call.number_increment(true)`   to increment
+  the `NumberCall` object. You can for example also use `call.number_to_min()`
+  to set the number to its minimum value or `call.number_increment(true)` to increment
   the number by its step size with the cycle feature enabled.
 
-- `.state`  : Retrieve the current value of the number. Is `NAN`   if no value has been read or set.
+- `.state`  : Retrieve the current value of the number. Is `NAN` if no value has been read or set.
 
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my number: %f", id(my_number).state);
 
 ```
+
 ## See Also
 
 - {{< apiref "Number" "number/number.h" >}}
 - {{< apiref "NumberCall" "number/number_call.h" >}}
-

@@ -15,11 +15,11 @@ signal by using a fast switching frequency, the hardware DAC can output a *real*
 no need for additional filtering.
 
 The DAC spans across two pins, each on its own channel:
+
 - ESP32: GPIO25 (Channel 0) and GPIO26 (Channel 1).
 - ESP32 S2: GPIO17 (Channel 0) and GPIO18 (Channel 1).
 
 The output level is a percentage of the board supply voltage (VDD_A) - generally this will be 3.3 V.
-
 
 ```yaml
 # Example configuration entry
@@ -43,7 +43,8 @@ light:
     id: mono_light
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to use DAC on. See above for valid pin numbers.
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
@@ -68,4 +69,3 @@ light:
 - {{< docref "/components/fan/speed" >}}
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "esp32_dac/esp32_dac.h" "esp32_dac/esp32_dac.h" >}}
-

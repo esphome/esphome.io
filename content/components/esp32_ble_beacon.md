@@ -9,7 +9,7 @@ params:
 
 
 
-The `esp32_ble_beacon`   component creates a Bluetooth Low Energy Beacon with your ESP32 device.
+The `esp32_ble_beacon` component creates a Bluetooth Low Energy Beacon with your ESP32 device.
 Beacons are BLE devices that repeatedly just send out a pre-defined packet of data. This packet
 can then be received by devices like smartphones and can then be used to track a phone's location.
 
@@ -21,6 +21,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 esp32_ble_beacon:
@@ -28,7 +29,8 @@ esp32_ble_beacon:
   uuid: 'c29ce823-e67a-4e71-bff2-abaa32e77a98'
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **type** (**Required**): The type of beacon to create, currently only supports `iBeacon`  .
 - **uuid** (**Required**): The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
@@ -43,10 +45,10 @@ Advanced options:
 - **minor** (*Optional*, int): The iBeacon minor identifier of this beacon. Usually used to
   identify beacons within an iBeacon group. Defaults to `61958`  .
 - **min_interval** (*Optional*, [Time](#config-time)): The iBeacon minimum transmit interval in milliseconds from 20 to 10240.
-  Setting this less than `max_interval`   gives the BLE hardware a better chance to avoid
+  Setting this less than `max_interval` gives the BLE hardware a better chance to avoid
   collisions with other BLE transmissions. Defaults to the iBeacon specification's defined interval: `100ms`  .
 - **max_interval** (*Optional*, [Time](#config-time)): The iBeacon maximum transmit interval in milliseconds from 20 to 10240.
-  Setting this greater than `min_interval`   gives the BLE hardware a better chance to avoid
+  Setting this greater than `min_interval` gives the BLE hardware a better chance to avoid
   collisions with other BLE transmissions. Defaults to the iBeacon specification's defined interval: `100ms`  .
 - **measured_power** (*Optional*, int): The RSSI of the iBeacon as measured 1 meter from the device.
   This is used to calibrate the ranging calculations in iOS. The procedure for setting this value can
@@ -92,4 +94,3 @@ It can work with multiple beacons simultaneously.
 - {{< docref "binary_sensor/ble_presence" >}}
 - {{< apiref "esp32_ble_beacon/esp32_ble_beacon.h" "esp32_ble_beacon/esp32_ble_beacon.h" >}}
 - [ESP32 BLE for Arduino](https://github.com/nkolban/ESP32_BLE_Arduino) by [Neil Kolban](https://github.com/nkolban).
-

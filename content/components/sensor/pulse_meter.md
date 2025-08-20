@@ -11,9 +11,9 @@ params:
 
 The pulse meter sensor allows you to count the number and frequency of pulses on any pin. It is intended to be a drop-in replacement
 for the {{< docref "/components/sensor/pulse_counter" "pulse counter component" >}}.
-Rather than counting pulses over a fixed time interval, the pulse meter sensor measures the time between pulses. The precise manner in which this is done depends on the `internal_filter_mode`   option. This leads to a higher resolution, especially for low pulse rates, as the pulse counter sensor is limited by the number of pulses within a time interval.
+Rather than counting pulses over a fixed time interval, the pulse meter sensor measures the time between pulses. The precise manner in which this is done depends on the `internal_filter_mode` option. This leads to a higher resolution, especially for low pulse rates, as the pulse counter sensor is limited by the number of pulses within a time interval.
 
-Here's a comparison of the two sensors.  The pulse meter is the smoother line.  Both are set to an update interval of 10 seconds (using the `update_interval`   and the `throttle_average`   option respectively):
+Here's a comparison of the two sensors.  The pulse meter is the smoother line.  Both are set to an update interval of 10 seconds (using the `update_interval` and the `throttle_average` option respectively):
 
 {{< img src="pulse-counter_vs_pulse-meter.png" alt="Image" width="50.0%" class="align-center" >}}
 
@@ -27,6 +27,7 @@ sensor:
     name: "Pulse Meter"
 
 ```
+
 ## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin to count pulses on.
@@ -36,9 +37,9 @@ sensor:
   This acts as a debounce filter to eliminate input noise, so choose a value a little less than your expected minimum pulse width.
 
 - **internal_filter_mode** (*Optional*, string): Determines how the internal filter is applied.
-  One of `EDGE`   or `PULSE`  . Defaults to `EDGE`  .
-  - In `EDGE`    mode, subsequent rising edges are compared and if they fall into an interval lesser than the `internal filter`   value, the last one is discarded. This is useful if your input signal bounces, but is otherwise clean.
-  - In `PULSE`   mode, the rising edge is discarded if any further interrupts are detected before the `internal_filter`   time has passed. In other words, a high pulse must be at least `internal_filter`   long to be counted. This is useful if you have a noisy input signal that may have bounces before and/or after the main pulse.
+  One of `EDGE` or `PULSE`  . Defaults to `EDGE`  .
+  - In `EDGE`  mode, subsequent rising edges are compared and if they fall into an interval lesser than the `internal filter` value, the last one is discarded. This is useful if your input signal bounces, but is otherwise clean.
+  - In `PULSE` mode, the rising edge is discarded if any further interrupts are detected before the `internal_filter` time has passed. In other words, a high pulse must be at least `internal_filter` long to be counted. This is useful if you have a noisy input signal that may have bounces before and/or after the main pulse.
 
 - **timeout** (*Optional*, [Time](#config-time)): If we don't see a pulse for this length of time, we assume *0 pulses/s*. Defaults to `5 min`  .
 - **total** (*Optional*, [ID](#config-id)): An additional sensor that outputs the total number of pulses counted.
@@ -65,9 +66,10 @@ sensor:
       - multiply: 6 # (60s / impulse constant) * (1000W / 1kW)
 
 ```
+
 ## Counting total pulses
 
-When the total sensor is configured, `pulse_meter`   also reports the total
+When the total sensor is configured, `pulse_meter` also reports the total
 number of pulses measured.
 
 ```yaml
@@ -79,10 +81,11 @@ sensor:
       name: "Total Pulses"
 
 ```
+
 ## (Re)Setting the total pulse count
 
 Using this action, you are able to reset/set the total pulse count. This can be useful
-if you would like the `total`   sensor to match what you see on your meter you are
+if you would like the `total` sensor to match what you see on your meter you are
 trying to match.
 
 ```yaml
@@ -97,10 +100,12 @@ api:
             value: !lambda 'return new_total;'
 
 ```
+
 {{< note >}}
 This value is the raw count of pulses, and not the value you see after the filters
 
 {{< /note >}}
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
@@ -109,4 +114,3 @@ This value is the raw count of pulses, and not the value you see after the filte
 - {{< docref "/cookbook/power_meter" >}}
 - [Home Assistant Glow 🌟](https://github.com/klaasnicolaas/home-assistant-glow/).
 - {{< apiref "pulse_meter/pulse_meter_sensor.h" "pulse_meter/pulse_meter_sensor.h" >}}
-

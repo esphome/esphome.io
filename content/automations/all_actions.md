@@ -81,4 +81,3 @@ title: ""
 - **voice_assistant:** `start`  , `start_continuous`  , `stop`
 - **wifi:** `disable`  , `enable`
 - **wireguard:** `disable`  , `enable`
-

@@ -9,7 +9,7 @@ params:
 
 
 
-The `speaker`   domain contains common functionality shared across the
+The `speaker` domain contains common functionality shared across the
 speaker platforms.
 
 {{< anchor "config-speaker" >}}
@@ -21,6 +21,7 @@ speaker:
   - platform: ...
 
 ```
+
 Configuration variables:
 
 - **audio_dac** (*Optional*, [ID](#config-id)): The {{< docref "/components/audio_dac/index" "audio DAC" >}} to use for volume control.
@@ -29,12 +30,12 @@ Configuration variables:
 
 ## Speaker Actions
 
-All `speaker`   actions can be used without specifying an `id`   if you have only one `speaker`   in
+All `speaker` actions can be used without specifying an `id` if you have only one `speaker` in
 your configuration YAML.
 
 {{< anchor "speaker-play" >}}
 
-### `speaker.play`   Action
+### `speaker.play` Action
 
 This action will start playing raw audio data from the speaker.
 
@@ -52,6 +53,7 @@ on_...:
       data: [...]
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, [ID](#config-id)): The speaker to control. Defaults to the only one in YAML.
@@ -59,7 +61,7 @@ Configuration variables:
 
 {{< anchor "speaker-stop" >}}
 
-### `speaker.stop`   Action
+### `speaker.stop` Action
 
 This action will stop playing audio data from the speaker and discard the unplayed data.
 
@@ -69,7 +71,7 @@ Configuration variables:
 
 {{< anchor "speaker-finish" >}}
 
-### `speaker.finish`   Action
+### `speaker.finish` Action
 
 This action will stop playing audio data from the speaker after all data **is** played.
 
@@ -79,7 +81,7 @@ Configuration variables:
 
 {{< anchor "speaker-mute_on" >}}
 
-### `speaker.mute_on`   Action
+### `speaker.mute_on` Action
 
 This action will mute the speaker.
 
@@ -89,7 +91,7 @@ Configuration variables:
 
 {{< anchor "speaker-mute_off" >}}
 
-### `speaker.mute_off`   Action
+### `speaker.mute_off` Action
 
 This action will unmute the speaker.
 
@@ -99,7 +101,7 @@ Configuration variables:
 
 {{< anchor "speaker-volume_set" >}}
 
-### `speaker.volume_set`   Action
+### `speaker.volume_set` Action
 
 This action will set the volume of the speaker.
 
@@ -117,6 +119,7 @@ on_...:
   -  speaker.volume_set: !lambda "return 0.5;"
 
 ```
+
 Configuration variables:
 
 **volume** (**Required**, percentage): The volume to set the speaker to.
@@ -125,12 +128,12 @@ Configuration variables:
 
 ## Speaker Conditions
 
-All `speaker`   conditions can be used without specifying an `id`   if you have only one `speaker`   in
+All `speaker` conditions can be used without specifying an `id` if you have only one `speaker` in
 your configuration YAML.
 
 {{< anchor "speaker-is_playing" >}}
 
-### `speaker.is_playing`   Condition
+### `speaker.is_playing` Condition
 
 This condition will check if the speaker is currently playing audio data.
 
@@ -140,18 +143,17 @@ Configuration variables:
 
 {{< anchor "speaker-is_stopped" >}}
 
-### `speaker.is_stopped`   Condition
+### `speaker.is_stopped` Condition
 
 This condition will check if the speaker is fully stopped audio data and is in idle mode.
 
 .. note:
 
-Between the time `speaker.is_playing`   is false and `speaker.is_stopped`   is true the 'speaker' component is closing down structures that where used to play the data correctly. *It better to check if the speaker is stopped then that if it plays.*
+Between the time `speaker.is_playing` is false and `speaker.is_stopped` is true the 'speaker' component is closing down structures that where used to play the data correctly. *It better to check if the speaker is stopped then that if it plays.*
 
 Configuration variables:
 
 - **id** (*Optional*, [ID](#config-id)): The speaker to check. Defaults to the only one in YAML.
-
 
 ## Platforms
 
@@ -159,4 +161,3 @@ Configuration variables:
 
 - {{< docref "/guides/audio_clips_for_i2s" >}}
 - {{< docref "/components/speaker/i2s_audio" >}}
-

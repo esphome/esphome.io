@@ -9,7 +9,7 @@ params:
 
 
 
-The `mqtt_subscribe`   sensor platform allows you to get external data into ESPHome.
+The `mqtt_subscribe` sensor platform allows you to get external data into ESPHome.
 The sensor will subscribe to messages on the given MQTT topic and parse each message into
 a floating point number.
 
@@ -26,7 +26,8 @@ sensor:
     topic: the/topic
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **topic** (**Required**, string): The MQTT topic to listen for numeric messages.
 - **qos** (*Optional*, int): The MQTT QoS to subscribe with. Defaults to `0`  .
@@ -36,4 +37,3 @@ sensor:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "mqtt_subscribe/sensor/mqtt_subscribe_sensor.h" "mqtt_subscribe/sensor/mqtt_subscribe_sensor.h" >}}
-

@@ -36,7 +36,8 @@ sensor:
     name: "Ultrasonic Sensor"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **trigger_pin** (**Required**, [Pin Schema](#config-pin_schema)): The output pin to
   periodically send the trigger pulse to.
@@ -59,4 +60,3 @@ Advanced options:
 - [Sensor Filters](#sensor-filters)
 - {{< docref "template/" >}}
 - {{< apiref "ultrasonic/ultrasonic_sensor.h" "ultrasonic/ultrasonic_sensor.h" >}}
-

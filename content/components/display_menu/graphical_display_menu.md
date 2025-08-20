@@ -10,10 +10,9 @@ params:
 
 {{< anchor "graphical_display_menu" >}}
 
-
 The component provides an infrastructure for setting up a hierarchical menu
 on graphical displays. This offers the user an interactive method to display
-labels, control entities like `switch`  , `select`  , `number`    available locally on the
+labels, control entities like `switch`  , `select`  , `number`  available locally on the
 ESPHome node, without the requirement of a network connection.
 
 {{< img src="graphical_display_menu.png" alt="Image" width="60.0%" class="align-center" >}}
@@ -41,6 +40,7 @@ graphical_display_menu:
     ...
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
@@ -75,6 +75,7 @@ Pop Up Mode requires that your display makes use of [pages](#display-pages). If 
 behave as expected. Instead you will have to use Advanced Mode
 
 {{< /note >}}
+
 ### Advanced Drawing Mode
 
 If you do not specify a **display** when setting up a menu you will be responsible for controlling drawing of the menu. This also allows you to
@@ -103,6 +104,7 @@ display:
         it.menu(half_display_width, 0, id(my_menu), half_display_width, display_height);
 
 ```
+
 ### Emulating Pop Up Mode
 
 If you wish to emulate Pop Up Mode the following sample will emulate the same behaviour. This can
@@ -134,6 +136,7 @@ display:
       }
 
 ```
+
 ## Controlling Menu Item Rendering
 
 By default menu items with a value will be rendered between a set of parenthesis. This can be
@@ -160,10 +163,12 @@ graphical_display_menu:
     return label;
 
 ```
+
 {{< note >}}
 Ensure that all characters you use in the menu_item_value are available glyphs for your [font](#display-fonts)
 
 {{< /note >}}
+
 ## User Interaction Example
 
 The below example is a more complete example showing how you might use a rotary encoder and button to display/hide the menu and move through the available options
@@ -225,6 +230,7 @@ binary_sensor:
         - display_menu.show:  my_graphical_display_menu
 
 ```
+
 ## See Also
 
 - [Display Menu](#display_menu)
@@ -232,4 +238,3 @@ binary_sensor:
 - [Font Renderer Component](#display-fonts)
 - [Display Pages](#display-pages)
 - {{< apiref "graphical_display_menu/graphical_display_menu.h" "graphical_display_menu/graphical_display_menu.h" >}}
-

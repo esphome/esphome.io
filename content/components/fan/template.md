@@ -9,7 +9,7 @@ params:
 
 
 
-The `template`   fan platform lets you create a fan interface using only triggers.
+The `template` fan platform lets you create a fan interface using only triggers.
 
 {{< img src="fan-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -24,7 +24,8 @@ fan:
       - do something
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **has_direction** (*Optional*, boolean): Indicates if there should be a control for direction.  Default is `false`  .
 - **has_oscillating** (*Optional*, boolean): Indicates if there should be a control for oscillating.  Default is `false`  .
@@ -36,4 +37,3 @@ fan:
 
 - {{< docref "/components/fan" >}}
 - {{< apiref "template/fan/template_fan.h" "template/fan/template_fan.h" >}}
-

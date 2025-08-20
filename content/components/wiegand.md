@@ -9,7 +9,7 @@ params:
 
 
 
-The `wiegand`   component allows you to integrate Wiegand-standard key
+The `wiegand` component allows you to integrate Wiegand-standard key
 input and card or tag reader panels in Home Assistant.
 
 {{< img src="wiegand.jpg" alt="Image" caption="S20-ID keypad and tag reader" class="align-center" >}}
@@ -20,8 +20,8 @@ devices. In order to work with this component, they may need to
 be reconfigured to act as *Wiegand 26 output* or *Wiegand 34 output*
 devices.
 
-
 {{< /note >}}
+
 ## Component
 
 ```yaml
@@ -38,16 +38,16 @@ wiegand:
       - lambda: ESP_LOGI("RAW", "received raw %d bits, value %llx", bits, value);
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this device for use in lambdas.
-- **d0** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D0`   output
+- **d0** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D0` output
   of the Wiegand's interface connects.
-- **d1** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D1`   output
+- **d1** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D1` output
   of the Wiegand's interface connects.
 
-
-## Automations:
+## Automations
 
 - **on_key** (*Optional*, [Automation](#automation)): An automation to perform
   when a key has been pressed on the pad. The key is in a variable called `x`  .
@@ -59,17 +59,15 @@ Configuration variables:
   bits is in a variable called `bits`  .  Note that this will include parity bits as well and
   no parity checking is done.
 
-
 {{< note >}}
 Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
 the [Key Collector](#key_collector) component.
 
-Keys 10 and 11 are `*`   and `#`  .  They might be labelled as `ENT`   or `ESC`  ,
+Keys 10 and 11 are `*` and `#`  .  They might be labelled as `ENT` or `ESC`  ,
 but check the logs to see which key code you get and use the corresponding character.
 
-
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/key_collector" >}}
-

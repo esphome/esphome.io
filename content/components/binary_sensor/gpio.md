@@ -10,7 +10,6 @@ params:
 
 {{< anchor "gpio-binary-sensor" >}}
 
-
 The GPIO Binary Sensor platform allows you to use any input pin on your
 device as a binary sensor. By default, it uses hardware interrupts for
 efficient state change detection with minimal CPU usage.
@@ -50,16 +49,17 @@ binary_sensor:
     # Interrupts will be automatically disabled for compatibility
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to monitor.
 - **use_interrupt** (*Optional*, boolean): Use hardware interrupts instead of polling for better
-  performance and lower CPU usage. Defaults to `true`   for most platforms, but defaults to `false`
+  performance and lower CPU usage. Defaults to `true` for most platforms, but defaults to `false`
   for LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) due to hardware limitations. Only supported
   on internal GPIO pins.
 - **interrupt_type** (*Optional*, string): The type of interrupt to use. One of:
 
-  - `ANY`   (default): Trigger on any edge change (high to low or low to high)
+  - `ANY` (default): Trigger on any edge change (high to low or low to high)
   - `RISING`  : Trigger only on rising edge (low to high)
   - `FALLING`  : Trigger only on falling edge (high to low)
 
@@ -95,12 +95,13 @@ interrupt mode if needed, but it may not work reliably on all pins.
 
 {{< /note >}}
 {{< note >}}
-When a pin is configured with `allow_other_uses: true`   (for sharing with
+When a pin is configured with `allow_other_uses: true` (for sharing with
 other components), interrupts are automatically disabled to prevent conflicts.
-This ensures compatibility with components like `duty_cycle`   sensors that
+This ensures compatibility with components like `duty_cycle` sensors that
 need to monitor pin state changes. The sensor will use polling mode instead.
 
 {{< /note >}}
+
 ## Activating internal pullups
 
 If you're hooking up a button without an external pullup or see lots of ON/OFF events
@@ -120,9 +121,10 @@ binary_sensor:
     name: ...
 
 ```
+
 ## Inverting Values
 
-Use the `inverted`   property of the [Pin Schema](#config-pin_schema) to invert the binary
+Use the `inverted` property of the [Pin Schema](#config-pin_schema) to invert the binary
 sensor:
 
 ```yaml
@@ -135,6 +137,7 @@ binary_sensor:
     name: ...
 
 ```
+
 ## Debouncing Values
 
 Some binary sensors are a bit unstable and quickly transition between the ON and OFF state while
@@ -150,6 +153,7 @@ binary_sensor:
       - delayed_on: 10ms
 
 ```
+
 Above example will only make the signal go high if the button has stayed high for more than 10ms.
 Alternatively, below configuration will make the binary sensor publish an ON value immediately, but
 will wait 10ms before publishing an OFF value:
@@ -164,9 +168,9 @@ binary_sensor:
       - delayed_off: 10ms
 
 ```
+
 ## See Also
 
 - {{< docref "/components/binary_sensor" >}}
 - [Pin Schema](#config-pin_schema)
 - {{< apiref "gpio/binary_sensor/gpio_binary_sensor.h" "gpio/binary_sensor/gpio_binary_sensor.h" >}}
-

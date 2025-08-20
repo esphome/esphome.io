@@ -9,7 +9,7 @@ params:
 
 
 
-The `ble_client`   component is a text sensor platform that can
+The `ble_client` component is a text sensor platform that can
 query BLE devices for specific values of service characteristics.
 
 For more information on BLE services and characteristics, see
@@ -30,7 +30,8 @@ text_sensor:
     characteristic_uuid: '2a38'
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **ble_client_id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service on the device.
@@ -44,8 +45,7 @@ text_sensor:
 Automations:
 
 - **on_notify** (*Optional*, [Automation](#automation)): An automation to
-  perform when a notify message is received from the device. See [`on_notify`  ](#ble_text_sensor-on_notify).
-
+  perform when a notify message is received from the device. See [`on_notify`](#ble_text_sensor-on_notify).
 
 ## BLE Sensor Automation
 
@@ -56,7 +56,7 @@ Automations:
 This automation is triggered when the device/server sends a notify message for
 a characteristic. The config variable *notify* must be true or this will have
 no effect.
-A variable `x`   of type `std::string`   is passed to the automation for use in lambdas.
+A variable `x` of type `std::string` is passed to the automation for use in lambdas.
 
 ## See Also
 
@@ -64,4 +64,3 @@ A variable `x`   of type `std::string`   is passed to the automation for use in 
 - {{< docref "/components/sensor/ble_client" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ble_text_sensor/ble_text_sensor.h" "ble_text_sensor/ble_text_sensor.h" >}}
-

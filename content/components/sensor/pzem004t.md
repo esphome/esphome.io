@@ -17,7 +17,7 @@ This page is incomplete and could use some work. If you want to contribute, plea
 - Images/screenshots/example configs of this device being used in action.
 
 {{< /note >}}
-The `pzem004t`   sensor platform allows you to use PZEM-004 (version with 8-segment screens, [website](https://www.instructables.com/Power-Peacefair-PZEM-004-ESP8266-Arduino-Nano/)) and PZEM-004T V1 energy monitors
+The `pzem004t` sensor platform allows you to use PZEM-004 (version with 8-segment screens, [website](https://www.instructables.com/Power-Peacefair-PZEM-004-ESP8266-Arduino-Nano/)) and PZEM-004T V1 energy monitors
 ([website](https://innovatorsguru.com/ac-digital-multifunction-meter-using-pzem-004t/)) sensors with
 ESPHome.
 
@@ -28,7 +28,7 @@ For using the newer V3 variant of this sensor please see {{< docref "pzemac" "pz
 
 {{< /warning >}}
 The communication with this component is done via a [UART](#uart).
-You must therefore have a `uart:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -51,7 +51,8 @@ sensor:
     update_interval: 60s
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
   [Sensor](#config-sensor).
@@ -64,7 +65,8 @@ sensor:
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
   to use multiple UART buses.
 
-## Hardware considerations:
+## Hardware considerations
+
 These devices have optocouplers on the UART port and the resistors mounted on the board have been designed to work with 5V devices.
 ESPs need a [Level Shifter](https://www.adafruit.com/product/1875) to be compatible with TTL levels.
 
@@ -83,4 +85,3 @@ Your ESP shall be powered by an external power supply and cannot be connected to
 - {{< docref "pzemac/" >}}
 - {{< docref "pzemdc/" >}}
 - {{< apiref "pzem004t/pzem004t.h" "pzem004t/pzem004t.h" >}}
-

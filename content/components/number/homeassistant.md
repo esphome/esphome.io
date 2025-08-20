@@ -9,7 +9,7 @@ params:
 
 
 
-The `homeassistant`   number platform allows you to create a number that is synchronized
+The `homeassistant` number platform allows you to create a number that is synchronized
 with Home Assistant. Min, Max and Step are not configurable for this platform because they are taken from the Home Assistant entity.
 
 {{< note >}}
@@ -18,6 +18,7 @@ in Home Assistant, this component still requires you to register the node under 
 [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 number:
@@ -26,18 +27,18 @@ number:
     entity_id: number.my_number
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **entity_id** (**Required**, string): The Home Assistant entity ID of the number to synchronize with.
 - All other options from [Number](#config-number).
 
-## `number.set`   Action
+## `number.set` Action
 
 You can also set the number for the Home Assistant number from elsewhere in your YAML file
-with the [`number.set`   Action](#number-set_action).
+with the [`number.set` Action](#number-set_action).
 
 ## See Also
 
 - [Automation](#automation)
 - {{< apiref "homeassistant/number/homeassistant_number.h" "homeassistant/number/homeassistant_number.h" >}}
-

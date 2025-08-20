@@ -36,6 +36,7 @@ rtttl:
   gain: 60%
 
 ```
+
 ## Overview Using the I2S speaker
 
 The tone generator can instead be used with a {{< docref "/components/speaker/index" "Speaker" >}} to output the audio.
@@ -53,7 +54,8 @@ rtttl:
   gain: 0.8
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Exclusive**, [ID](#config-id)): The id of the [float output](#output) to use for
   this buzzer.
@@ -65,7 +67,7 @@ rtttl:
 
 Note: You can only use the **output** or **speaker** variable, not both at the same time.
 
-## `rtttl.play`   Action
+## `rtttl.play` Action
 
 Plays an rtttl tone.
 
@@ -75,16 +77,16 @@ on_...:
     - rtttl.play: 'siren:d=8,o=5,b=100:d,e,d,e,d,e,d,e'
 
 ```
+
 Configuration options:
 
 - **rtttl** (**Required**, string, [templatable](#config-templatable)): The rtttl string.
 
-You can find many rtttl strings online on the web, they must start with a name, then a colon: `:`   symbol
+You can find many rtttl strings online on the web, they must start with a name, then a colon: `:` symbol
 and more codes of the song itself. Tip: you can try playing with the values of d=16,o=6,b=95 and make the
 song play at a different pace or pitch, e.g. setting o=7 instead will cause the song to play on a higher pitch.
 
-
-## `rtttl.stop`   Action
+## `rtttl.stop` Action
 
 Stops playback.
 
@@ -94,11 +96,12 @@ on_...:
     - rtttl.stop
 
 ```
+
 ## All actions
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the rtttl if you have multiple components.
 
-## `rtttl.is_playing`   Condition
+## `rtttl.is_playing` Condition
 
 This Condition returns true while playback is active.
 
@@ -112,6 +115,7 @@ on_...:
       logger.log: 'Playback is active!'
 
 ```
+
 ## Common beeps
 
 You can do your own beep patterns too! Here's a short collection so you can just use right away or tweak them to your like:
@@ -126,15 +130,17 @@ mission_imp:d=16,o=6,b=95:32d,32d#,32d,32d#,32d,32d#,32d,32d#,32d,32d,32d#,32e,3
 mario:d=4,o=5,b=100:16e6,16e6,32p,8e6,16c6,8e6,8g6,8p,8g,8p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,16p,8c6,16p,8g,16p,8e,16p,8a,8b,16a#,8a,16g.,16e6,16g6,8a6,16f6,8g6,8e6,16c6,16d6,8b,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16c7,16p,16c7,16c7,p,16g6,16f#6,16f6,16d#6,16p,16e6,16p,16g#,16a,16c6,16p,16a,16c6,16d6,8p,16d#6,8p,16d6,8p,16c6
 
 ```
+
 ## Test setup
 
 With the following code you can quickly setup a node and use Home Assistant's service in the developer tools.
-E.g. for calling `rtttl.play`   select the service `esphome.test_esp8266_rtttl_play`   and in service data enter
+E.g. for calling `rtttl.play` select the service `esphome.test_esp8266_rtttl_play` and in service data enter
 
 ```yaml
 song_str: 'scale_up:d=32,o=5,b=100:c,c#,d#,e,f#,g#,a#,b'
 
 ```
+
 ### Sample code
 
 ```yaml
@@ -168,9 +174,10 @@ api:
             rtttl: !lambda 'return song_str;'
 
 ```
+
 ## See Also
+
 - {{< docref "/components/output/esp8266_pwm" >}}
 - {{< docref "/components/output/ledc" >}}
 - {{< docref "/components/speaker" >}}
 - {{< apiref "rtttl/rtttl.h" "rtttl/rtttl.h" >}}
-

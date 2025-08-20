@@ -8,7 +8,7 @@ params:
 
 
 
-The `tuya`   binary sensor platform creates a binary sensor from a
+The `tuya` binary sensor platform creates a binary sensor from a
 tuya component and requires {{< docref "/components/tuya" >}} to be configured.
 
 You can create the binary sensor as follows:
@@ -21,7 +21,8 @@ binary_sensor:
     sensor_datapoint: 1
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the binary sensor.
 - All other options from [Binary Sensor](#config-binary_sensor).
@@ -31,4 +32,3 @@ binary_sensor:
 - {{< docref "/components/tuya" >}}
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "tuya/binary_sensor/tuya_binary_sensor.h" "tuya/binary_sensor/tuya_binary_sensor.h" >}}
-

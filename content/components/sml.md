@@ -9,7 +9,7 @@ params:
 
 
 
-The `SML`   component connects to smart meters which use the *Smart Message Language* (SML) protocol.
+The `SML` component connects to smart meters which use the *Smart Message Language* (SML) protocol.
 
 Although the SML protocol is well defined, it gives a lot of freedom to the manufacturers how to store
 and identify the transmitted data. Within a telegram the physical values are identified by *OBIS* codes
@@ -49,6 +49,7 @@ sml:
         }
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
@@ -72,12 +73,12 @@ sensor:
       - multiply: 0.0001
 
 ```
+
 - **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, [ID](#config-id)): The ID of the [SML platform](#sml-platform)
 - All other options from [Sensor](#config-sensor).
-
 
 ## Text Sensor
 
@@ -91,6 +92,7 @@ text_sensor:
     format: text
 
 ```
+
 - **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
@@ -98,20 +100,18 @@ text_sensor:
 - **format** (*Optional*, string): Override the automatic interpretation of the transmitted binary data value. Possible values (`int`, `uint`, `bool`, `hex`, `text`).
 - All other options from [Text Sensor](#config-text_sensor).
 
-
-## Automations:
+## Automations
 
 - **on_data** (*Optional*, [Automation](#automation)): An automation to perform when a
-  SML message is received. See [`on_data`   Trigger](#sml-on-data).
+  SML message is received. See [`on_data` Trigger](#sml-on-data).
 
 {{< anchor "sml-on-data" >}}
 
-### `on_data`   Trigger
+### `on_data` Trigger
 
-This automation will be triggered when a valid SML message is received. The variable `bytes`   (of type
+This automation will be triggered when a valid SML message is received. The variable `bytes` (of type
 `std::vector<uint8_t>`  ) contains the raw sml data including start/end sequence. The variable `valid`
 (of type `bool`  ) contains the result of the checksum verification.
-
 
 ## Getting OBIS codes and sensor ids
 
@@ -130,8 +130,8 @@ Your log output will show something like this:
 Each line represents a combination of the server id (in brackets), the OBIS code and the transmitted hex value
 (in square brackets).
 
-
 ## Precision errors
+
 Many smart meters emit very huge numbers for certain OBIS codes (like the accumulated total active energy).
 This may lead to precision errors for the values reported by the sensor component to ESPHome. This shows in
 the fact that slightly wrong numbers may be reported to HomeAssistant. This is a result from internal limitations
@@ -152,6 +152,7 @@ text_sensor:
     format: uint
 
 ```
+
 The `format` parameter is optional. If ommited, the SML component will try to guess the correct datatype
 from the received SML message.
 
@@ -171,6 +172,7 @@ template:
           {% endif %}
 
 ```
+
 Usually the template sensor's value would turn to 0 if the ESP device is unavailable.
 This results in problems when using the sensor in combination with the [Utility Meter](https://www.home-assistant.io/integrations/utility_meter/) integration.
 The state template provided above checks for the sensor's availability and keeps the
@@ -197,6 +199,7 @@ sensor:
       - multiply: 0.0001
 
 ```
+
 These meters can also measure the instantaneous power usage.
 
 ```yaml
@@ -211,7 +214,7 @@ sensor:
     state_class: measurement
 
 ```
+
 ## See Also
 
 - {{< apiref "sml/sml.h" "sml/sml.h" >}}
-

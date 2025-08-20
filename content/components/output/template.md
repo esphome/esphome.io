@@ -9,7 +9,7 @@ params:
 
 
 
-The `template`   output component can be used to create templated binary and float outputs in ESPHome.
+The `template` output component can be used to create templated binary and float outputs in ESPHome.
 
 ```yaml
 # Example configuration entry
@@ -31,10 +31,11 @@ output:
     id: output2
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
-- **type** (**Required**, string): The type of output. One of `binary`   and `float`  .
+- **type** (**Required**, string): The type of output. One of `binary` and `float`  .
 - **write_action** (**Required**, [Automation](#automation)): An automation to perform
   when the state of the output is updated.
 - All other options from [Output](#config-output).
@@ -48,9 +49,9 @@ components that can be attached to for example lights.
 {{< /warning >}}
 {{< anchor "output-template-on_write_action" >}}
 
-## `write_action`   Trigger
+## `write_action` Trigger
 
-When the state for this output is updated, the `write_action`   is triggered.
+When the state for this output is updated, the `write_action` is triggered.
 It is possible to access the state value inside Lambdas:
 
 ```yaml
@@ -67,10 +68,10 @@ It is possible to access the state value inside Lambdas:
             - output.turn_off: button_off
 
 ```
+
 Complete example: [Sonoff Dual Light Switch](https://devices.esphome.io/devices/Sonoff-Dual-DIY-light).
 
 ## See Also
 
 - {{< docref "/components/output" >}}
 - [Automation](#automation)
-

@@ -14,11 +14,9 @@ time:
     id: gps_time
 
 ```
+
 ## Configuration variables
 
 - All options from [Base Time Configuration](#base_time_config).
 
-
 ## See Also
-
-

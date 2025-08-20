@@ -9,7 +9,7 @@ params:
 
 
 
-The `prometheus`   component enables an HTTP endpoint for the
+The `prometheus` component enables an HTTP endpoint for the
 {{< docref "web_server/" >}} in order to integrate a [Prometheus](https://prometheus.io/) installation.
 
 This can be used to scrape data directly into your Prometheus-based monitoring and alerting-system,
@@ -26,12 +26,13 @@ web_server:
 prometheus:
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **include_internal** (*Optional*, boolean): Whether `internal`   entities should be displayed on the
+- **include_internal** (*Optional*, boolean): Whether `internal` entities should be displayed on the
   web interface. Defaults to `false`  .
-- **relabel** (*Optional*): Override metric labels. See [`relabel`  ](#prometheus-relabel)
+- **relabel** (*Optional*): Override metric labels. See [`relabel`](#prometheus-relabel)
 
 {{< note >}}
 Example integration into the configuration of your prometheus:
@@ -43,47 +44,49 @@ scrape_configs:
       - targets: [<ip or node_name.local>]
 
 ```
+
 {{< /note >}}
+
 ## Supported ESPHome Components
 
--  Sensor
--  Binary Sensor
--  Fan
--  Light
--  Cover
--  Switch
--  Lock
--  Text Sensor
--  Number
--  Select
--  Media Player
--  Update
--  Valve
--  Climate
+- Sensor
+- Binary Sensor
+- Fan
+- Light
+- Cover
+- Switch
+- Lock
+- Text Sensor
+- Number
+- Select
+- Media Player
+- Update
+- Valve
+- Climate
 
 ## Supported Prometheus Labels
 
 The following labels are supported in all Prometheus metrics. Some metrics may have more labels.
 
--  entity id
--  entity name
--  entity friendly name
--  area
--  node name
+- entity id
+- entity name
+- entity friendly name
+- area
+- node name
 
 ## Metric Relabeling
 
 ESPHome allows you to do some basic relabeling of Prometheus metrics.
 This is useful if you want to have different metric names or IDs than those shown in Home Assistant or the web interface.
 
-You can relabel metric name or ID labels by adding a `relabel`   block in the `prometheus`   configuration,
-and then adding a block with `id`   and/or `name`   fields for each sensor whose labels your want to override.
+You can relabel metric name or ID labels by adding a `relabel` block in the `prometheus` configuration,
+and then adding a block with `id` and/or `name` fields for each sensor whose labels your want to override.
 
 {{< anchor "prometheus-relabel" >}}
 
 ### `relabel`
 
-Set the `id`   and `name`   label values of the Prometheus metric for the sensor with the specified ID.
+Set the `id` and `name` label values of the Prometheus metric for the sensor with the specified ID.
 
 ```yaml
 # Example configuration entry
@@ -94,6 +97,7 @@ prometheus:
       name: "Angry Pixies"
 
 ```
+
 ## See Also
 
 - {{< docref "/components/web_server" >}}
@@ -101,4 +105,3 @@ prometheus:
 - {{< docref "/components/http_request" >}}
 - {{< apiref "prometheus/prometheus_handler.h" "prometheus/prometheus_handler.h" >}}
 - [Prometheus](https://prometheus.io/)
-

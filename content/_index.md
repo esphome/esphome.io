@@ -8,7 +8,7 @@ params:
 ---
 
 
-# What is ESPHome?
+## What is ESPHome?
 
 ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular WiFi-enabled microcontrollers. With ESPHome, you can:
 
@@ -46,7 +46,7 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
 {{< /feature-grid >}}
 {{< anchor "who-uses-esphome" >}}
 
-# Who Uses ESPHome?
+## Who Uses ESPHome?
 
 {{< feature-grid >}}
 [
@@ -72,7 +72,8 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
   }
 ]
 {{< /feature-grid >}}
-# Which microcontrollers does ESPHome support?
+
+## Which microcontrollers does ESPHome support?
 
 {{< feature-grid >}}
 [
@@ -100,7 +101,7 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
 {{< /feature-grid >}}
 {{< anchor "getting-started" >}}
 
-# Getting Started
+## Getting Started
 
 Getting started with ESPHome is easy. Choose the method that works best for you:
 
@@ -132,4 +133,3 @@ Getting started with ESPHome is easy. Choose the method that works best for you:
   }
 ]
 {{< /getting-started-grid >}}
-

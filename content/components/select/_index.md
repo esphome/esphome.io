@@ -31,6 +31,7 @@ id: my_select
 icon: "mdi:emoticon-outline"
 
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -41,23 +42,24 @@ If you have a [friendly_name](#esphome-configuration_variables) set for your dev
 you want the select to use that name, you can set `name: None`  .
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the select in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
   Defaults to `false`  .
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
-  Set to `""`   to remove the default entity category.
+  Set to `""` to remove the default entity category.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 Automations:
 
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
-  when a new value is published. See [`on_value`  ](#select-on_value).
+  when a new value is published. See [`on_value`](#select-on_value).
 
 MQTT Options:
 
@@ -74,7 +76,7 @@ For more information on using lambdas with select, see [lambda calls](#select-la
 ### `on_value`
 
 This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](#config-lambda)
-you can get the value from the trigger with `x`   and the index offset of the selected value with `i`  .
+you can get the value from the trigger with `x` and the index offset of the selected value with `i`  .
 
 ```yaml
 select:
@@ -87,11 +89,12 @@ select:
             args: ["x.c_str()", "i"]
 
 ```
+
 Configuration variables: See [Automation](#automation).
 
 {{< anchor "select-set_action" >}}
 
-### `select.set`   Action
+### `select.set` Action
 
 This is an [Action](#config-action) for setting the active option using an option value.
 
@@ -101,6 +104,7 @@ This is an [Action](#config-action) for setting the active option using an optio
     option: "Happy"
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
@@ -112,7 +116,7 @@ the select is left as-is.
 
 {{< anchor "select-set_index_action" >}}
 
-### `select.set_index`   Action
+### `select.set_index` Action
 
 This is an [Action](#config-action) for setting the active option using its index offset.
 
@@ -122,6 +126,7 @@ This is an [Action](#config-action) for setting the active option using its inde
     index: 3
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
@@ -133,7 +138,7 @@ the select is left as-is.
 
 {{< anchor "select-next_action" >}}
 
-### `select.next`   Action
+### `select.next` Action
 
 This is an [Action](#config-action) for selecting the next option in a select component.
 
@@ -146,6 +151,7 @@ This is an [Action](#config-action) for selecting the next option in a select co
 - select.next: my_select
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
@@ -154,7 +160,7 @@ Configuration variables:
 
 {{< anchor "select-previous_action" >}}
 
-### `select.previous`   Action
+### `select.previous` Action
 
 This is an [Action](#config-action) for selecting the previous option in
 a select component.
@@ -168,6 +174,7 @@ a select component.
 - select.previous: my_select
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
@@ -176,7 +183,7 @@ Configuration variables:
 
 {{< anchor "select-first_action" >}}
 
-### `select.first`   Action
+### `select.first` Action
 
 This is an [Action](#config-action) for selecting the first option in
 a select component.
@@ -189,13 +196,14 @@ a select component.
 - select.first: my_select
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 
 {{< anchor "select-last_action" >}}
 
-### `select.last`   Action
+### `select.last` Action
 
 This is an [Action](#config-action) for selecting the last option in
 a select component.
@@ -208,13 +216,14 @@ a select component.
 - select.last: my_select
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 
 {{< anchor "select-operation_action" >}}
 
-### `select.operation`   Action
+### `select.operation` Action
 
 This is an [Action](#config-action) that can be used to change the active
 option in a select component (first, last, previous or next), using a generic
@@ -234,16 +243,17 @@ templatable action call.
     cycle: !lambda "return true;"
 
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 - **operation** (**Required**, string, [templatable](#config-templatable)): The
-  operation to perform. One of `FIRST`  , `LAST`  , `PREVIOUS`   or
-  `NEXT`   (case insensitive). When writing a lambda for this field, then return
+  operation to perform. One of `FIRST`  , `LAST`  , `PREVIOUS` or
+  `NEXT` (case insensitive). When writing a lambda for this field, then return
   one of the following enum values: `SELECT_OP_FIRST`  , `SELECT_OP_LAST`  ,
-  `SELECT_OP_PREVIOUS`   or `SELECT_OP_NEXT`  .
+  `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`  .
 - **cycle** (*Optional*, bool, [templatable](#config-templatable)):
-  Can be used for options `NEXT`   and `PREVIOUS`   to specify whether or not to
+  Can be used for options `NEXT` and `PREVIOUS` to specify whether or not to
   wrap around the options list when respectively the last or first option in
   the select is currently active.
 
@@ -263,9 +273,10 @@ advanced stuff (see the full API Reference for more info).
     call.perform();
 
 ```
+
   Check the API reference for information on the methods that are available for
-  the `SelectCall`   object. You can for example also use `call.select_first()`
-  to select the first option or `call.select_next(true)`   to select the next
+  the `SelectCall` object. You can for example also use `call.select_first()`
+  to select the first option or `call.select_next(true)` to select the next
   option with the cycle feature enabled.
 
 - `.state`  : Retrieve the currently selected option of the select.
@@ -276,6 +287,7 @@ advanced stuff (see the full API Reference for more info).
     ESP_LOGI("main", "Option of my select: %s", state);
 
 ```
+
 ```yaml
     # Check if a specific option is selected
     - if:
@@ -283,6 +295,7 @@ advanced stuff (see the full API Reference for more info).
           - lambda: 'return id(my_select).state == "my_option_value";'
 
 ```
+
 - `.size()`  : Retrieve the number of options in the select.
 
 ```cpp
@@ -290,6 +303,7 @@ advanced stuff (see the full API Reference for more info).
     ESP_LOGI("main", "Select has %d options", size);
 
 ```
+
 - `.index_of(<option value>)`  : Retrieve the index offset for an option value.
 
 ```cpp
@@ -301,6 +315,7 @@ advanced stuff (see the full API Reference for more info).
     }
 
 ```
+
 - `.active_index()`  : Retrieve the index of the currently active option.
 
 ```cpp
@@ -312,6 +327,7 @@ advanced stuff (see the full API Reference for more info).
     }
 
 ```
+
 - `.at(<index offset>)`  : Retrieve the option value at a given index offset.
 
 ```cpp
@@ -325,6 +341,7 @@ advanced stuff (see the full API Reference for more info).
     }
 
 ```
+
 - `.has_option(<option value>)`  : Check if the select contains the given option value.
 
 ```cpp
@@ -334,6 +351,7 @@ advanced stuff (see the full API Reference for more info).
     }
 
 ```
+
 - `.has_index(<index offset>)`  : Check if the select contains an option value for the given index offset.
 
 ```cpp
@@ -343,6 +361,7 @@ advanced stuff (see the full API Reference for more info).
     }
 
 ```
+
 ## Example
 
 Setting up three options and set component state to selected option value.
@@ -364,8 +383,8 @@ select:
           args: ["x.c_str()"]
 
 ```
+
 ## See Also
 
 - {{< apiref "Select" "select/select.h" >}}
 - {{< apiref "SelectCall" "select/select_call.h" >}}
-

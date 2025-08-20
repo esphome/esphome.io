@@ -21,7 +21,8 @@ binary_sensor:
     name: "Living Room Status"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Binary Sensor](#config-binary_sensor). (Inverted mode is not supported)
 
@@ -30,4 +31,3 @@ binary_sensor:
 - {{< docref "/components/binary_sensor" >}}
 - {{< docref "/components/mqtt" >}}
 - {{< apiref "status/status_binary_sensor.h" "status/status_binary_sensor.h" >}}
-

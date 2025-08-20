@@ -32,12 +32,13 @@ wifi:
   password: !secret wifi_password
 
 ```
+
 {{< anchor "esp32_hosted-configuration_variables" >}}
 
-## Configuration variables:
+## Configuration variables
 
 - **variant** (*Required*, string): The variant of the ESP32 co-processor that is used by the
-  host. One of `ESP32`  , `ESP32S2`  , `ESP32S3`  , `ESP32C2`  , `ESP32C3`   and `ESP32C6`  .
+  host. One of `ESP32`  , `ESP32S2`  , `ESP32S3`  , `ESP32C2`  , `ESP32C3` and `ESP32C6`  .
 - **clk_pin** (*Required*, [Pin](#config-pin)): The SDIO clock pin.
 - **cmd_pin** (*Required*, [Pin](#config-pin)): The SDIO command pin.
 - **d0_pin** (*Required*, [Pin](#config-pin)): The SDIO d0 pin.
@@ -55,4 +56,3 @@ wifi:
 - {{< docref "network/" >}}
 - {{< docref "ethernet/" >}}
 - [ESP-Hosted-MCU](https://github.com/espressif/esp-hosted-mcu) by [Espressif Systems](https://www.espressif.com/)
-

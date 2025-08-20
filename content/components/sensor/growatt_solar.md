@@ -9,12 +9,12 @@ params:
 
 
 
-The `Growatt Inverter`   sensor platform allows you to use growatt inverter data reading on modbus with ESPHome.
+The `Growatt Inverter` sensor platform allows you to use growatt inverter data reading on modbus with ESPHome.
 
 {{< img src="growatt.jpg" alt="Image" caption="Growatt Logo" width="50.0%" class="align-center" >}}
 
 The communication with this component is done over a [UART bus](#uart) using [Modbus](#modbus).
-You must therefore have a `uart:`   and `modbus:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` and `modbus:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -83,7 +83,8 @@ sensor:
       name: "Growatt Inverter Module Temp"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **inverter_status** (*Optional*): Status code of the inverter (0: waiting, 1: normal, 3:fault)
 
@@ -142,4 +143,3 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-

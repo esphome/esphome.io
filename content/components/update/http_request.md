@@ -25,9 +25,10 @@ update:
     source: http://example.com/manifest.json
 
 ```
+
 {{< anchor "update_http_request-configuration_variables" >}}
 
-## Configuration variables:
+## Configuration variables
 
 - **source** (**Required**, string): The URL of the YAML manifest file containing the firmware metadata.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval at which to check for (**not install**) updates.
@@ -39,7 +40,7 @@ update:
 ## Update Manifest Format
 
 This component expects the [ESP-Web-Tools manifest](https://github.com/esphome/esp-web-tools) with an extension in
-the `ota`   block that is structured as follows:
+the `ota` block that is structured as follows:
 
 ```json
 {
@@ -59,15 +60,16 @@ the `ota`   block that is structured as follows:
 }
 
 ```
-While `release_url`   and `summary`   are optional, all other fields shown here are required.
 
-If `path`   begins with:
+While `release_url` and `summary` are optional, all other fields shown here are required.
 
-- `http`   or `https`  : `path`   is treated as full URL which will be used to obtain the firmware binary.
-- A forward slash (`/`  ): `path`   will be appended to the hostname (an "absolute" path) specified for `source`   (as above).
-- Any other character: `path`   will be appended to `source`   (as specified above) after trimming the manifest file name.
+If `path` begins with:
 
-Note that there may be multiple `builds`   specified within a single JSON file.
+- `http` or `https`  : `path` is treated as full URL which will be used to obtain the firmware binary.
+- A forward slash (`/`  ): `path` will be appended to the hostname (an "absolute" path) specified for `source` (as above).
+- Any other character: `path` will be appended to `source` (as specified above) after trimming the manifest file name.
+
+Note that there may be multiple `builds` specified within a single JSON file.
 
 ## See Also
 
@@ -75,4 +77,3 @@ Note that there may be multiple `builds`   specified within a single JSON file.
 - {{< docref "/components/ota/http_request" >}}
 - {{< docref "/components/ota" >}}
 - {{< apiref "update/update_entity.h" "update/update_entity.h" >}}
-

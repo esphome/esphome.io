@@ -10,8 +10,8 @@ params:
 
 {{< anchor "sdl_touchscreen" >}}
 
-The `sdl`   touchscreen platform allows emulating a touch screen by using the mouse with the `sdl`   display driver.
-The `sdl`   display component must be configured to use this.
+The `sdl` touchscreen platform allows emulating a touch screen by using the mouse with the `sdl` display driver.
+The `sdl` display component must be configured to use this.
 
 ## Base Touchscreen Configuration
 
@@ -21,15 +21,14 @@ touchscreen:
   platform: sdl
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually set the ID of this touchscreen.
 
 - All other options from [Touchscreen](#config-touchscreen).
 
-
 ## See Also
 
 - [SDL display](#sdl)
 - {{< apiref "sdl/sdl_touchscreen.h" "sdl/sdl_touchscreen.h" >}}
-

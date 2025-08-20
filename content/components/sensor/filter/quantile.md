@@ -21,6 +21,7 @@ window size will make the filter slow to react to input changes.
         quantile: .9
 
 ```
+
 Configuration variables:
 
 - **window_size** (*Optional*, int): The number of values over which to calculate the quantile
@@ -36,4 +37,3 @@ Configuration variables:
   Defaults to `1`  .
 - **quantile** (*Optional*, float): value from 0 to 1 to determine which quantile to pick.
   Defaults to `.9`  .
-

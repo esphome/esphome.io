@@ -9,14 +9,12 @@ params:
 
 
 
-The `LightWaveRF`   light platform creates a module to dump and send commands to light switches
+The `LightWaveRF` light platform creates a module to dump and send commands to light switches
 
 {{< img src="lightwaverf.jpg" alt="Image" width="40.0%" class="align-center" >}}
 
 LightwaveRF switches are very common in UK automation. They allow control of lights, sockets, relays and more via RF remote or via a hub.
 Using an inexpensive RF transmitter and receiver you can control your devices via ESPHome.
-
-
 
 ```yaml
 # Example configuration entry
@@ -27,18 +25,17 @@ lightwaverf:
   write_pin: GPIOXX
 
 ```
-Note: To gather the RAW codes from the remote, setup the `read_pin`   and observe in the logs the printing of the codes.
 
-## Configuration variables:
+Note: To gather the RAW codes from the remote, setup the `read_pin` and observe in the logs the printing of the codes.
+
+## Configuration variables
 
 - **read_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin that the receiver is connected to
 - **write_pin** (**Required**, [Pin Schema](#config-pin_schema)): the pin that the transmitter is connected to
 
-
 .. lightwaverf.send_raw:
 
-
-## `lightwaverf.send_raw`   Action
+## `lightwaverf.send_raw` Action
 
 Send the raw data that has been captured via the dump system
 
@@ -51,13 +48,13 @@ on_...:
         repeat: 1
 
 ```
-## Configuration variables:
+
+### Configuration variables
 
 - **name** (*Optional*, string): The name to give for the action
 - **code** (**Required**, list hex): The raw dump in an array of hex
 - **repeat** (*Optional*, int): The number of times the message will be repeated
 - **inverted** (*Optional*, boolean): Send the signal inverted
-
 
 ## Compatible Hardware
 
@@ -71,8 +68,6 @@ Compatible receiver:
 
 - RXB6
 
-
 ## See Also
 
 - {{< docref "/components/light" >}}
-

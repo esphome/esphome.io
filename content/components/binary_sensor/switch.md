@@ -9,7 +9,6 @@ params:
 
 {{< anchor "switch-binary-sensor" >}}
 
-
 The Switch Binary Sensor platform allows you to view the state of any switch component as a
 read-only binary sensor.
 
@@ -26,7 +25,8 @@ switch:
     pin: GPIOXX
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The source switch to observe.
 - All other options from [Binary Sensor](#config-binary_sensor).
@@ -35,4 +35,3 @@ switch:
 
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "switch/binary_sensor/switch_binary_sensor.h" "switch/binary_sensor/switch_binary_sensor.h" >}}
-

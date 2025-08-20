@@ -24,7 +24,8 @@ text_sensor:
       name: Haier protocol version
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **haier_id** (**Required**, [ID](#config-id)): The id of haier climate component
 - **appliance_name** (*Optional*): A text sensor that indicates Haier appliance name.
@@ -37,4 +38,3 @@ text_sensor:
 ## See Also
 
 - {{< docref "/components/climate/haier" "Haier Climate" >}}
-

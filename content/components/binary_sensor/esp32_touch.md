@@ -19,7 +19,7 @@ In ESPHome, it is configured in two parts:
 
 ## Component/Hub
 
-The `esp32_touch`   component creates a global hub enabling (capacitive) touch detection on GPIO pins
+The `esp32_touch` component creates a global hub enabling (capacitive) touch detection on GPIO pins
 [supported by ESP32, ESP32-S2 or ESP32-S3 processors](#esp32-touch-pad-pins). With this enabled,
 [binary sensors](#esp32-touch-binary-sensor) may then be configured to permit touch detection.
 
@@ -29,13 +29,14 @@ esp32_touch:
   setup_mode: false
 
 ```
-### Configuration variables:
 
--  **setup_mode** (*Optional*, boolean): Whether debug messages with the touch pad value should
+### Configuration variables
+
+- **setup_mode** (*Optional*, boolean): Whether debug messages with the touch pad value should
    be displayed in the logs. Useful for finding out suitable thresholds for the binary sensors, but
    will spam the logs. See [setting up touch pads](#esp32-touch-binary-sensor)
    for more information. Defaults to `false`  .
--  **id** (*Optional*, [ID](#config-id)): Manually specify the ID for code generation.
+- **id** (*Optional*, [ID](#config-id)): Manually specify the ID for code generation.
 
 **Advanced options**
 
@@ -75,14 +76,14 @@ options below do not have any default values; in other words, they are inactive 
 Filter configuration:
 
 - **filter_mode** (*Optional*): Sets the filter mode. Must be one of `IIR_4`  , `IIR_8`  , `IIR_16`  ,
-  `IIR_32`  , `IIR_64`  , `IIR_128`  , `IIR_256`   or `JITTER`  .
-- **debounce_count** (*Optional*, `int`   range 0-7): Sets the debounce count; if the measured values continue to
-  exceed the threshold for `n + 1`   times, the touch sensor state changes.
-- **noise_threshold** (*Optional*, `int`   range 0-3): Noise threshold coefficient. Higher = More noise resistance. The
+  `IIR_32`  , `IIR_64`  , `IIR_128`  , `IIR_256` or `JITTER`  .
+- **debounce_count** (*Optional*, `int` range 0-7): Sets the debounce count; if the measured values continue to
+  exceed the threshold for `n + 1` times, the touch sensor state changes.
+- **noise_threshold** (*Optional*, `int` range 0-3): Noise threshold coefficient. Higher = More noise resistance. The
   actual noise should be less than (noise coefficient * touch threshold). The coefficient is 0: 4/8; 1: 3/8; 2: 2/8; 3: 1.
-- **jitter_step** (*Optional*, `int`   range 0-15): Set jitter filter step size.
+- **jitter_step** (*Optional*, `int` range 0-15): Set jitter filter step size.
 - **smooth_mode** (*Optional*): Level of filter applied on the original data against large noise interference.
-  Must be one of `OFF`  , `IIR_2`  , `IIR_4`   or `IIR_8`  .
+  Must be one of `OFF`  , `IIR_2`  , `IIR_4` or `IIR_8`  .
 
 For a more detailed explanation of the filter configuration, please see the
 [ESP-IDF documentation.](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-reference/peripherals/touch_pad.html#_CPPv419touch_filter_config)
@@ -90,9 +91,9 @@ For a more detailed explanation of the filter configuration, please see the
 Denoise configuration:
 
 - **denoise_grade** (*Optional*): Sets the denoise range of the denoise channel. Determined by measuring the noise
-  amplitude of the denoise channel. Must be one of `BIT12`  , `BIT10`  , `BIT8`   or `BIT4`  .
+  amplitude of the denoise channel. Must be one of `BIT12`  , `BIT10`  , `BIT8` or `BIT4`  .
 - **denoise_cap_level** (*Optional*): Select internal reference capacitance of denoise channel. Must be one
-  of `L0`  , `L1`  , `L2`  , `L3`  , `L4`  , `L5`  , `L6`   or `L7`  .
+  of `L0`  , `L1`  , `L2`  , `L3`  , `L4`  , `L5`  , `L6` or `L7`  .
 
 For a more detailed explanation of the denoise configuration, please see the
 [ESP-IDF documentation.](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-reference/peripherals/touch_pad.html#_CPPv417touch_pad_denoise)
@@ -103,7 +104,7 @@ Waterproof configuration:
   pad is used to detect the large area of water covering the touch panel.
 - **waterproof_shield_driver** (*Optional*): Shield channel drive capability configuration; the larger the
   parasitic capacitance on the shielding channel, the higher the drive capability needs to be set. Must be one of
-  `L0`  , `L1`  , `L2`  , `L3`  , `L4`  , `L5`  , `L6`   or `L7`  .
+  `L0`  , `L1`  , `L2`  , `L3`  , `L4`  , `L5`  , `L6` or `L7`  .
 
 For a more detailed explanation of the waterproof configuration, please see the
 [ESP-IDF documentation.](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/api-reference/peripherals/touch_pad.html#_CPPv420touch_pad_waterproof)
@@ -112,13 +113,13 @@ For a more detailed explanation of the waterproof configuration, please see the
 
 ## Binary Sensor
 
-The `esp32_touch`   binary sensor platform lets you use the touch peripheral of the
+The `esp32_touch` binary sensor platform lets you use the touch peripheral of the
 ESP32 to detect if a certain pin is being "touched".
 
 First, you need to setup the [global touch hub](#esp32-touch-component). Then
 you can add individual touch pads as binary sensors. When a touch is detected on these pins, the binary
-sensor will report an `ON`   state. And, of course, if no touch is detected, the binary sensor will report
-an `OFF`   state.
+sensor will report an `ON` state. And, of course, if no touch is detected, the binary sensor will report
+an `OFF` state.
 
 {{< img src="esp32_touch-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -133,18 +134,18 @@ binary_sensor:
     threshold: 1000
 
 ```
-### Configuration variables:
 
--  **pin** (**Required**, [Pin](#config-pin)): The pin to detect touch
+### Configuration variables
+
+- **pin** (**Required**, [Pin](#config-pin)): The pin to detect touch
    events on.
--  **threshold** (**Required**, `int`  ): The threshold to use to detect touch events. See
+- **threshold** (**Required**, `int`  ): The threshold to use to detect touch events. See
    [Finding Thresholds](#esp32-finding-thresholds) below for help determining this value.
--  **wakeup_threshold** (*Optional*, `int`  ): The threshold to use to detect touch events to wake-up from deep sleep.
+- **wakeup_threshold** (*Optional*, `int`  ): The threshold to use to detect touch events to wake-up from deep sleep.
    See [Finding Thresholds](#esp32-finding-thresholds) below for help determining this value. Touch pad sensors that should trigger a
    wake-up from deep sleep must specify this value. The [Deep Sleep Component](#deep_sleep-component) must also be configured to enable
    wake-up from a touch event. Note that no filter(s) is/are active during deep sleep.
--  All other options from [Binary Sensor](#config-binary_sensor).
-
+- All other options from [Binary Sensor](#config-binary_sensor).
 
 ## Raw Values
 
@@ -169,6 +170,7 @@ sensor:
     update_interval: 3s
 
 ```
+
 One example of use is a wide area pressure sensor that integrates a number of smaller sensors in an area. Make two strips
 of aluminium foil that sandwich paper, and connect one wire to a touch pin and the other to ground. Set up several sensors
 under a flexible object like a plastic mat, add the raw values, and apply a threshold.
@@ -180,10 +182,9 @@ under a flexible object like a plastic mat, add the raw values, and apply a thre
 Various pins on the ESP32, ESP32-S2 and ESP32-S3 can be used to detect touches. They are as follows (using the default
 "raw" pin names/numbers):
 
-| ESP32 |  ESP32-S2 |  ESP32-S3 |
-| --- | --- | --- |
-| GPIO4, GPIO0, GPIO2, GPIO15, GPIO13, GPIO12, GPIO14, GPIO27, GPIO33, GPIO32 |  GPIO1 - GPIO14 |  GPIO1 - GPIO14 |
-
+| ESP32                                                                       | ESP32-S2       | ESP32-S3       |
+| --------------------------------------------------------------------------- | -------------- | -------------- |
+| GPIO4, GPIO0, GPIO2, GPIO15, GPIO13, GPIO12, GPIO14, GPIO27, GPIO33, GPIO32 | GPIO1 - GPIO14 | GPIO1 - GPIO14 |
 
 {{< anchor "esp32-finding-thresholds" >}}
 
@@ -198,7 +199,7 @@ Exact values reported by the sensor hardware will vary based on the processor, P
 environmental factors.
 
 To find suitable threshold values, first configure the [ESP32 touch hub](#esp32-touch-component) to log measured
-values using the `setup_mode:`   configuration option. Next, add some binary sensors for the touch pads you want to
+values using the `setup_mode:` configuration option. Next, add some binary sensors for the touch pads you want to
 observe. You'll also need to put some (temporary) threshold values into the configuration (as shown below) to make the
 validator happy; we'll replace these in a moment once we determine suitable values.
 
@@ -214,6 +215,7 @@ binary_sensor:
     threshold: 1000
 
 ```
+
 Upload the program/configuration and watch the device's logs; you'll see values being logged by the hub component.
 Touching the sensor's pins/pads should result in a (significant) change in the values being logged. Experiment with
 different amounts of force applied to the touch pad; a pattern should emerge, revealing a value that falls between
@@ -224,7 +226,7 @@ different amounts of force applied to the touch pad; a pattern should emerge, re
 Once you've determined an appropriate value, update the threshold parameter in your configuration and test the updated
 configuration. You may need to repeat this process a few times to fine-tune the behavior and get it just right.
 
-Finally, don't forget to disable the `setup_mode`   option by setting it back to `false`  ; leaving it enabled will
+Finally, don't forget to disable the `setup_mode` option by setting it back to `false`  ; leaving it enabled will
 reduce the ESP's overall performance.
 
 {{< anchor "esp32-note-about-variants" >}}
@@ -234,7 +236,7 @@ reduce the ESP's overall performance.
 {{< note >}}
 **ESP32-S2 and ESP32-S3 Touch Configuration**
 
-The default `measurement_duration`   and `sleep_duration`   values are optimized for the original ESP32 and
+The default `measurement_duration` and `sleep_duration` values are optimized for the original ESP32 and
 **may not work at all on S2/S3 variants**. The S2/S3 touch hardware requires different timing settings.
 
 Key differences:
@@ -258,6 +260,7 @@ binary_sensor:
     threshold: 1000  # Adjust based on your hardware
 
 ```
+
 {{< /note >}}
 If you're familiar with the ESP32 hardware and pick up an S2 or S3 variant, you're likely to notice some behavioral
 differences between them. In particular:
@@ -271,7 +274,7 @@ These behavioral differences are due to changes in the hardware and software (ES
 expected -- if you are moving your configuration from an original ESP32 to an S2 or S3 variant, expect that you'll need
 to make some adjustments to your configuration to accommodate this behavior.
 
-Most importantly, the default `measurement_duration`   of 8ms (optimized for original ESP32) is often too high for
+Most importantly, the default `measurement_duration` of 8ms (optimized for original ESP32) is often too high for
 S2/S3 variants and can prevent touch detection from working entirely. Using a much lower value like 0.25ms has been
 found to work across many S2/S3 devices, though specific parameters may still need tuning per hardware implementation.
 
@@ -280,4 +283,3 @@ found to work across many S2/S3 devices, though specific parameters may still ne
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "esp32_touch/esp32_touch.h" "esp32_touch/esp32_touch.h" >}}
 - [esp-idf Touch Sensor API](https://esp-idf.readthedocs.io/en/latest/api-reference/peripherals/touch_pad.html)
-

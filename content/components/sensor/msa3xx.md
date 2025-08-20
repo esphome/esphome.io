@@ -13,7 +13,7 @@ params:
 
 ## Component/Hub
 
-The `msa3xx`   sensor platform allows you to use your MSA301 and MSA311 tri-axial,
+The `msa3xx` sensor platform allows you to use your MSA301 and MSA311 tri-axial,
 low-g accelerometers ([datasheet](https://cdn-shop.adafruit.com/product-files/5309/MSA311-V1.1-ENG.pdf))
 with ESPHome. The [I²C](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -36,20 +36,21 @@ msa3xx:
   update_interval: 10s
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 The configuration is made up of three parts: The central component, acceleration sensors,
 text sensors with orientation information, and binary sensors for taps and movement detection.
 
 Base Configuration:
 
-- **type** (**Required**, string): Sensor type. Either `msa301`   or `msa311`  .
+- **type** (**Required**, string): Sensor type. Either `msa301` or `msa311`  .
 - **update_interval** (*Optional*, [Time](#config-time)): The interval for updating acceleration sensors.
   Defaults to `10s`  .
 - **range** (*Optional*, string): The range of the sensor measurements. One of `2G`  , `4G`  , `8G`  , `16G`  .
-  Defaults to `2G`   which means it picks up accelerations between `-2g`   and `2g`  .
-- **resolution** (*Optional*, int): The ADC resolution of the sensor in bits. Supported values for `msa301`   are `8`  , `10`  , `12`  , `14`   (*default*).
-  For `msa311`   the only resolution supported is `12`   (and it is *default*).
+  Defaults to `2G` which means it picks up accelerations between `-2g` and `2g`  .
+- **resolution** (*Optional*, int): The ADC resolution of the sensor in bits. Supported values for `msa301` are `8`  , `10`  , `12`  , `14` (*default*).
+  For `msa311` the only resolution supported is `12` (and it is *default*).
 - **calibration** (*Optional*):
 
   - **offset_x** (*Optional*, float): X-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to `0`  .
@@ -62,7 +63,6 @@ Base Configuration:
   - **mirror_y** (*Optional*, boolean): Mirror Y-axis. Defaults to `false`  .
   - **mirror_z** (*Optional*, boolean): Mirror Z-axis. Defaults to `false`  .
   - **swap_xy** (*Optional*, boolean): Swap X and Y axis. Defaults to `false`  .
-
 
 ## Binary Sensor
 
@@ -81,17 +81,17 @@ binary_sensor:
         - delayed_off: 5000ms # example of prolongation of movement detection signal
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **tap** (*Optional*): Single tap detection.
 - **double_tap** (*Optional*): Double tap detection.
 - **active** (*Optional*): Movement detection.
 
-
 ## Sensor
 
 Acceleration data is available through sensors configuration.
-You can use shorthand notation like `acceleration_x: "Acceleration X"`   or use regular notation. For
+You can use shorthand notation like `acceleration_x: "Acceleration X"` or use regular notation. For
 regular notation only the **name** is required. All options from [Sensor](#config-sensor).
 
 ```yaml
@@ -102,7 +102,8 @@ sensor:
     acceleration_z: Accel Z
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **acceleration_x** (*Optional*): X-axis acceleration, m/s².
 - **acceleration_y** (*Optional*): Y-axis acceleration, m/s².
@@ -111,7 +112,7 @@ sensor:
 ## Text Sensor
 
 Text sensor provides orientation information. You can use shorthand notation like
-`orientation_xy: "Orientation XY"`   or use regular notation.
+`orientation_xy: "Orientation XY"` or use regular notation.
 
 ```yaml
 text_sensor:
@@ -120,7 +121,8 @@ text_sensor:
     orientation_z: Orientation Z
 
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **orientation_xy** (*Optional*): XY orientation. Can be one of `Portrait Upright`  ,
   `Portrait Upside Down`  , `Landscape Left`  , `Landscape Right`  .
@@ -128,7 +130,7 @@ text_sensor:
 
 ## Automations
 
-### `on_tap`   trigger
+### `on_tap` trigger
 
 This automation will be triggered when single tap is detected.
 
@@ -141,7 +143,8 @@ msa3xx:
         - logger.log: "Tapped"
 
 ```
-### `on_double_tap`   trigger
+
+### `on_double_tap` trigger
 
 This automation will be triggered when double tap is detected.
 
@@ -154,7 +157,8 @@ msa3xx:
         - logger.log: "Double tapped"
 
 ```
-### `on_active`   trigger
+
+### `on_active` trigger
 
 This automation will be triggered when device detects changes in motion.
 
@@ -167,7 +171,8 @@ msa3xx:
         - logger.log: "Activity detected"
 
 ```
-### `on_orientation`   trigger
+
+### `on_orientation` trigger
 
 This automation will be triggered when device orientation is changed with respect to the gravitation field vector `g`  .
 
@@ -180,6 +185,7 @@ msa3xx:
         - logger.log: "Orientation change detected"
 
 ```
+
 ### Using both MSA301 and MSA311 at the same time
 
 Should you wish to use both sensors in the same configuration, you can do so by specifying ID for each sensor.
@@ -205,8 +211,8 @@ binary_sensor:
     tap: Single tap
 
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "msa3xxx/msa3xxx.h" "msa3xxx/msa3xxx.h" >}}
-
