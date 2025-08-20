@@ -37,17 +37,28 @@ function trapTouchScroll(el) {
     }, {passive: true});
 }
 
-let originalSrcs = new Map(); // Store original base64 srcs
+function printCleanup(originalSrcs) {
+    window.addEventListener('afterprint', () => {
+        originalSrcs.forEach((base64Src, img) => {
+            // Restore only if its src was changed for print
+            if (img.dataset.src && img.src !== base64Src) {
+                img.src = base64Src; // Restore the base64 thumbnail
+                img.classList.remove("loaded-for-print");
+                img.classList.remove("loading-for-print");
+                img.classList.remove("loaded"); // If you use this class
+            }
+        });
+    }, {once: true});
+}
 
 function prepareAndPrint() {
-    console.log("Custom print button clicked: Starting image preload for print.");
+    let originalSrcs = new Map(); // Store original base64 srcs
     const imagesToLoad = document.querySelectorAll("img.lazyload[data-src]");
     let imagesLoadedCount = 0;
     const totalImages = imagesToLoad.length;
+    console.log(`Starting image preload for print., ${totalImages} images found.`);
 
     if (totalImages === 0) {
-        console.log("No lazy images found. Printing directly.");
-        window.print();
         return;
     }
 
@@ -59,10 +70,8 @@ function prepareAndPrint() {
         // If the image is already loaded (from scrolling), don't re-trigger onload
         if (img.src === img.dataset.src) {
             imagesLoadedCount++; // Count it as already loaded
-            console.log(`  - Image already full-loaded: ${img.src}`);
         } else {
             // Temporarily set the src to trigger download
-            console.log(`  - Initiating load for: ${img.dataset.src}`);
             img.src = img.dataset.src;
             img.srcset = img.dataset.srcset;
             img.classList.add("loading-for-print"); // Add a class for visual feedback if needed
@@ -71,18 +80,13 @@ function prepareAndPrint() {
             // Use an onload listener to track completion
             const handleLoad = () => {
                 imagesLoadedCount++;
-                console.log(`  - Loaded: ${img.src} (${imagesLoadedCount}/${totalImages})`);
                 img.removeEventListener('load', handleLoad); // Remove listener to prevent multiple calls
                 img.classList.remove("loading-for-print");
                 img.classList.add("loaded-for-print");
 
                 if (imagesLoadedCount === totalImages) {
-                    console.log("All print images loaded. Calling window.print().");
                     // All images are loaded, now trigger print
-                    window.print();
-                    // Call afterprint cleanup immediately after print dialog opens
-                    // This ensures state is restored even if user cancels
-                    window.onafterprint(); // Manually trigger cleanup
+                    printCleanup(originalSrcs);
                 }
             };
             img.addEventListener('load', handleLoad);
@@ -94,9 +98,7 @@ function prepareAndPrint() {
                 img.classList.remove("loading-for-print");
                 img.classList.add("failed-to-load-for-print");
                 if (imagesLoadedCount === totalImages) {
-                    console.log("All print images processed (some may have failed). Calling window.print().");
-                    window.print();
-                    window.onafterprint();
+                    printCleanup(originalSrcs);
                 }
             });
         }
@@ -104,26 +106,10 @@ function prepareAndPrint() {
 
     // Handle case where all images were already loaded (e.g., after scrolling)
     if (imagesLoadedCount === totalImages) {
-        console.log("All images were already full-loaded. Printing directly.");
-        window.print();
-        window.onafterprint(); // Trigger cleanup
+        printCleanup(originalSrcs);
     }
 }
 
-// The onafterprint event is still useful for cleanup after the print dialog closes
-window.onafterprint = function() {
-    console.log("onafterprint: Fired. Restoring image state and cleaning up.");
-    originalSrcs.forEach((base64Src, img) => {
-        // Restore only if its src was changed for print
-        if (img.dataset.src && img.src !== base64Src) {
-            img.src = base64Src; // Restore the base64 thumbnail
-            img.classList.remove("loaded-for-print");
-            img.classList.remove("loading-for-print");
-            img.classList.remove("loaded"); // If you use this class
-        }
-    });
-    originalSrcs.clear();
-};
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -133,6 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
         trapScroll(scrollers[i]);
         trapTouchScroll(scrollers[i]);
     }
+
+    window.addEventListener("beforeprint", (event) => {
+        event.preventDefault();
+        prepareAndPrint(); }
+    );
 
     document.querySelectorAll('.copy-link').forEach(button => {
         button.addEventListener('click', async () => {

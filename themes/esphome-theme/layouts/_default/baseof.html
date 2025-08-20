@@ -61,7 +61,11 @@
     </script>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ "/images/logo.svg" | relURL }}">
+    <link rel="icon" type="image/png" sizes="512x512" href={{ "/favicon-512x512.png" | relURL }}>
+    <link rel="icon" type="image/png" sizes="256x256" href={{ "/favicon-256x256.png" | relURL }}>
+    <link rel="icon" type="image/png" sizes="192x192" href={{ "/favicon-192x192.png" | relURL }}>
+    <link rel="icon" type="image/png" sizes="128x128" href={{ "/favicon-128x128.png" | relURL }}>
+    <link rel="icon" type="image/png" sizes="32x32" href={{ "/favicon-32x32.png" | relURL }}>
 
     <!-- CSS -->
     {{ partial "asset.html" (dict "path" "css/main.css" "defer" false) }}
@@ -185,10 +189,6 @@
                     </div>
                 {{ end }}
             </div>
-            <button id="print-button" onclick="prepareAndPrint();" class="print-button" title="Print this page">
-                <img src="/images/icons/print.svg" alt="Print this page">
-            </button>
-
             <div class="build-info">
                 <button id="build-info-button" class="build-info-button" title="Show build information">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -203,33 +203,35 @@
                 </button>
             </div>
         </div>
-        <div id="build-info-popup" class="build-info-popup">
-            <div class="build-info-content">
-                <span id="build-info-close" class="build-info-close">&times;</span>
-                <h4>Build Information</h4>
-                <div class="build-info-grid">
-                    <div class="build-info-label">Version:</div>
-                    <div class="build-info-value">{{ .Site.Data.version.version }}</div>
-                    {{ if ne .Site.Data.version.release .Site.Data.version.version }}
-                        <div class="build-info-label">Release:</div>
-                        <div class="build-info-value">{{ .Site.Data.version.release }}</div>
-                    {{ end }}
-                    <div class="build-info-label">Branch:</div>
-                    <div class="build-info-value">{{ $branch }}</div>
+        {{ if ne $branch "current" }}
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">{{ .Site.Data.version.version }}</div>
+                        {{ if ne .Site.Data.version.release .Site.Data.version.version }}
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">{{ .Site.Data.version.release }}</div>
+                        {{ end }}
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">{{ $branch }}</div>
 
-                    {{ $repo := strings.TrimSuffix ".git" $repo_url }}
-                    <div class="build-info-label">Commit hash:</div>
-                    <div class="build-info-value"><a href="{{ $repo }}/commit/{{ .Site.Params.commit.hash }}"
-                                                     target="_blank">{{ .Site.Params.commit.hash }}</a></div>
+                        {{ $repo := strings.TrimSuffix ".git" $repo_url }}
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="{{ $repo }}/commit/{{ .Site.Params.commit.hash }}"
+                                                         target="_blank">{{ .Site.Params.commit.hash }}</a></div>
 
-                    <div class="build-info-label">Message:</div>
-                    <div class="build-info-value">{{ .Site.Params.commit.title }}</div>
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">{{ .Site.Params.commit.title }}</div>
 
-                    <div class="build-info-label">Build date:</div>
-                    <div class="build-info-value">{{ now.Format "2006-01-02" }}</div>
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">{{ now.Format "2006-01-02" }}</div>
+                    </div>
                 </div>
             </div>
-        </div>
+        {{ end }}
     </footer>
     <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
         <a class="footer-logo" href="https://www.openhomefoundation.org/">
