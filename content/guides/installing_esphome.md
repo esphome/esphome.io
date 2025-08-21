@@ -84,12 +84,14 @@ Version: 2025.8.0
 ```
 
 {{< note >}}
+
 - If you encounter any issues with Homebrew installation, please check the
   [ESPHome Homebrew Formula](https://formulae.brew.sh/formula/esphome) page
   for additional information.
 - Homebrew may not always provide the latest version immediately. Updating Homebrew will
   automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to
   install ESPHome.
+
 {{< /note >}}
 
 ### pip
