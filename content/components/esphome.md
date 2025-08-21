@@ -211,7 +211,7 @@ esphome:
 
 This option behaves differently depending on what the included file is pointing at:
 
-- If the include string is written as <mylib> or "<mylib>", the line `#include <mylib>` is
+- If the include string is written as `<mylib>` or `"<mylib>"`, the line `#include <mylib>` is
    added to the beginning of the `main.cpp` file.
 - If the include string is pointing at a directory, the entire directory tree is copied into the
    src/ folder.

@@ -32,5 +32,6 @@ Documentation:
 
 Sample video:
 
+<!-- markdownlint-disable-next-line MD033 -->
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ZyaFj7ArIdY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 ## See Also

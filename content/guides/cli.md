@@ -14,18 +14,15 @@ ESPHome's command line interface always has the following format
 
 ```shell
 esphome [OPTIONS] <COMMAND> <CONFIGURATION...> [ARGUMENTS]
-
 ```
 
 {{< note >}}
 You can specify multiple configuration files in the command line interface for some commands,
-just list all files after the <COMMAND> like so:
+just list all files after the `<COMMAND>` like so:
 
 ```shell
 esphome run livingroom.yaml kitchen.yaml
-
 ```
-
 {{< /note >}}
 
 ## Options
@@ -33,13 +30,12 @@ esphome run livingroom.yaml kitchen.yaml
 ### `--help` Option
 
 {{< option "-h|--help" >}}
-Output possible <commands> and [arguments].
+Output possible `<commands>` and `[arguments]`.
 Note: you can also use `--help` for any command to get arguments specific to that command.
 {{< /option >}}
 
 ```shell
 esphome <some_command> --help
-
 ```
 
 ### `--verbose` Option

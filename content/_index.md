@@ -68,7 +68,7 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
   {
     "icon": "industry",
     "title": "Manufacturers",
-    "description": "Create <a href=\"/guides/made_for_esphome\">Made for ESPHome</a> certified products with standardized firmware"
+    "description": "Create [Made for ESPHome](/guides/made_for_esphome) certified products with standardized firmware"
   }
 ]
 {{< /feature-grid >}}
@@ -95,7 +95,7 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
   {
     "icon": "computer",
     "title": "Desktop",
-    "description": "Many ESPHome components can be run on a desktop computer using the <i>host</i> platform!"
+    "description": "Many ESPHome components can be run on a desktop computer using the *host* platform!"
   }
 ]
 {{< /feature-grid >}}

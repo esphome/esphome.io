@@ -62,7 +62,9 @@ Advanced options:
 First, you'll need to set up the configuration for ESPHome. Just copy the configuration above and
 change the UUID to something unique. For example, you can copy this randomly generated UUID:
 
+<!-- markdownlint-disable-next-line MD033 -->
 <input type="text" id="ble-uuid" onclick="this.focus();this.select()" style="width: 240px;" readonly="readonly">
+<!-- markdownlint-disable-next-line MD033 -->
 <script>
   // https://stackoverflow.com/a/105074/8924614
   function guid() {
@@ -75,6 +77,7 @@ change the UUID to something unique. For example, you can copy this randomly gen
   }
   document.getElementById("ble-uuid").value = guid();
 </script>
+
 Then, just compile and flash the ESP32.
 
 When everything is set up correctly, you should see a show up using your iBeacon scanner of choice. On iPhones,
