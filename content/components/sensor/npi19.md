@@ -69,10 +69,10 @@ filters:
 ### Calibrated
 
 1. Expose the sensor to a low known pressure, for example `5` psi.
-2. Observe the value of the raw pressure sensor, for example `1500`  .
-3. Expose the sensor to a high pressure, for example `90` psi.
-4. Observe the value of the raw pressure sensor, for example `14500`  .
-5. Use `calibrate_linear` filter to map the incoming value to the calibrated one:
+1. Observe the value of the raw pressure sensor, for example `1500`  .
+1. Expose the sensor to a high pressure, for example `90` psi.
+1. Observe the value of the raw pressure sensor, for example `14500`  .
+1. Use `calibrate_linear` filter to map the incoming value to the calibrated one:
 
 ```yaml
 # Extract of configuration

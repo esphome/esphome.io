@@ -341,9 +341,9 @@ The built site will be in the `public` directory.
 Contributions to improve the documentation are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a new branch for your changes
-3. Make your changes
-4. Submit a pull request
+1. Create a new branch for your changes
+1. Make your changes
+1. Submit a pull request
 
 ## License
 

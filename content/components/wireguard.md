@@ -356,9 +356,9 @@ will not work and you have to add the device **manually**.
 These are the steps:
 
 1. go to the Home Assistant "Integrations" page
-2. click on the "Add Integration" button (bottom right corner)
-3. select "ESPHome" from the list
-4. insert the configured IP [address](#wireguard-address)
+1. click on the "Add Integration" button (bottom right corner)
+1. select "ESPHome" from the list
+1. insert the configured IP [address](#wireguard-address)
    as the host name
 
 The device should now be linked to your remote Home Assistant.

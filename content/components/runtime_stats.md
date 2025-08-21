@@ -96,13 +96,13 @@ Components are sorted by total execution time (descending) to highlight the most
 
 1. **Start with default interval**: The 60-second default provides a good balance between detail and log volume.
 
-2. **Focus on outliers**: Components with significantly higher execution times than others are usually the best optimization targets.
+1. **Focus on outliers**: Components with significantly higher execution times than others are usually the best optimization targets.
 
-3. **Consider execution frequency**: A component that takes 1ms but runs 1000 times per minute has more impact than one that takes 10ms but runs once per minute.
+1. **Consider execution frequency**: A component that takes 1ms but runs 1000 times per minute has more impact than one that takes 10ms but runs once per minute.
 
-4. **Watch for patterns**: Execution times that increase over time may indicate memory leaks or resource exhaustion.
+1. **Watch for patterns**: Execution times that increase over time may indicate memory leaks or resource exhaustion.
 
-5. **Disable when done**: Always remove or comment out the runtime_stats component when you're finished debugging.
+1. **Disable when done**: Always remove or comment out the runtime_stats component when you're finished debugging.
 
 ## See Also
 

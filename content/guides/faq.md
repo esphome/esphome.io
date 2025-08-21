@@ -97,23 +97,33 @@ If you prefer the more manual way:
 
 1. You need to obtain the firmware file to install:
 
-- If you're using the [ESPHome Device Builder](#installing-esphome-device-builder), you can use its "Manual
-    download" method: click "Install" in the overflow menu (vertical dots) and then select "Manual download".
-- If you're using ESPHome's command line interface, the file is available in the
-    `<CONFIG_DIR>/<NODE_NAME>/.pioenvs/<NODE_NAME>/firmware.bin` directory after the build completes.
+   - **Using ESPHome CLI**
 
-2. On some boards, you may need to force the microcontroller into its [programming mode](#esphome-phy-con-prg).
+     The file is available in the `<CONFIG_DIR>/<NODE_NAME>/.pioenvs/<NODE_NAME>/firmware.bin` directory after the build completes.
+
+   - **Using ESPHome Dashboard**
+
+     1. Click on the three-dot menu for your device
+     1. Select "Install"
+     1. Choose "Manual download"
+
+1. On some boards, you may need to force the microcontroller into its [programming mode](#esphome-phy-con-prg).
    This often isn't necessary on most modern boards/devices, but it's worth trying if you're experiencing difficulties.
-3. Finally, to install a firmware file, you can use:
 
-- [ESPHome Web](https://web.esphome.io/), our web-based installer. This is the easiest approach but requires a
-    browser that supports WebSerial, like Google Chrome or Microsoft Edge. Connect the board to your computer, make
-    sure it's detected as a [serial port](#esphome-phy-con-drv) and click **Connect**. If prompted, allow your
-    browser the requested permission in the pop-up box that appears. Next, select the serial device associated with
-    your board, click **Install** and browse for/select the binary file you downloaded earlier (as above). Note that
-    the file is processed locally and is **not** uploaded to any cloud service.
-- `esptool` [from the GitHub repository](https://github.com/espressif/esptool/releases). It's likely available
-    as package for your OS or you can try installing it with `pip install esptool` (in case of Linux).
+1. Finally, to install a firmware file, you can use:
+
+   - [ESPHome Web](https://web.esphome.io/), our web-based installer. This is the easiest approach but requires a
+       browser that supports WebSerial, like Google Chrome or Microsoft Edge. 
+       
+       1. Connect the board to your computer, make sure it's detected as a [serial port](#esphome-phy-con-drv) and click **Connect**. 
+       1. If prompted, allow your browser the requested permission in the pop-up box that appears. 
+       1. Select the serial device associated with your board
+       1. Click **Install** and browse for/select the binary file you downloaded earlier (as above). 
+
+       Note that the file is processed locally and is **not** uploaded to any cloud service.
+
+   - `esptool` [from the GitHub repository](https://github.com/espressif/esptool/releases). It's likely available
+       as package for your OS or you can try installing it with `pip install esptool` (in case of Linux).
 
 {{< anchor "esphome-esptool" >}}
 
@@ -520,7 +530,7 @@ If your router supports Avahi, you can configure mDNS to work across different s
 pfSense:
 
 1. Enable Avahi on both subnets (install Avahi modules on OpenWRT or pfSense).
-2. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
+1. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
 
 Alternatively, you can configure the [ESPHome Device Builder](#installing-esphome-device-builder) to use ICMP
 pings to check the status of devices by setting `"status_use_ping": true` or, with Docker:

@@ -39,7 +39,7 @@ Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
 Flashing this bootloader requires an SWD connection, for which a programmer is necessary. A cheap ST-Link V2 can be utilized.
 
 1. Connect the board to the PC via SWD.
-2. Run `esphome upload yourfile.yaml --device PYOCD`  .
+1. Run `esphome upload yourfile.yaml --device PYOCD`  .
 
 ```yaml
 # Example configuration entry
@@ -53,14 +53,14 @@ nrf52:
 For flashing via a flash drive.
 
 1. Connect the board to the PC via USB.
-2. Quickly short the reset pin to ground twice.
-3. Copy the UF2 package to the flash drive.
+1. Quickly short the reset pin to ground twice.
+1. Copy the UF2 package to the flash drive.
 
 This bootloader supports updates over USB CDC.
 
 1. Connect the board to the PC via USB.
-2. Quickly short the reset pin to ground twice.
-3. Run `esphome upload yourfile.yaml`  .
+1. Quickly short the reset pin to ground twice.
+1. Run `esphome upload yourfile.yaml`  .
 
 ```yaml
 # Example configuration entry
@@ -74,7 +74,7 @@ nrf52:
 There are two ways to reference GPIO pins:
 
 1. By pin name, e.g., `P0.15` or `P1.11`  .
-2. By pin number, e.g., `15` or `43`  .
+1. By pin number, e.g., `15` or `43`  .
 
 ## See Also
 

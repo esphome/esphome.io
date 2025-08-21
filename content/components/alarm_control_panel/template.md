@@ -77,7 +77,7 @@ The `delayed_follower` trigger mode is typically specifed for interior passive i
 
 1. When the alarm panel is in the armed state, a fault on a zone with `delayed_follower` specified will cause the alarm control panel to go directly to the `triggered` state.
 
-2. When the alarm panel is in the pending state, a fault on a zone with `delayed_follower` specified will remain in the `pending` state.
+1. When the alarm panel is in the pending state, a fault on a zone with `delayed_follower` specified will remain in the `pending` state.
 
 The `delayed_follower` trigger mode offers better protection if someone enters a premises via an unprotected window or door. If there is a PIR guarding the main hallway, it will cause an instant trigger of the alarm panel as someone
 entered the premises in a unusual manner. Likewise, if someone enters the premises though a door set to the `delayed` trigger mode, and then triggers the PIR, the alarm will stay in the `pending` state until either they disarm the alarm, or

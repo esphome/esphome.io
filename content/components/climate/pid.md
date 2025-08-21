@@ -214,7 +214,7 @@ To autotune the control parameters:
 
 1. Set up the PID controller with all control parameters set to zero:
 
-```yaml
+    ```yaml
     climate:
       - platform: pid
         id: pid_climate
@@ -226,107 +226,106 @@ To autotune the control parameters:
           kp: 0.0
           ki: 0.0
           kd: 0.0
+    ```
 
-```
+1. Create a {{< docref "/components/button/template" "template button" >}} to start autotuning later:
 
-2. Create a {{< docref "/components/button/template" "template button" >}} to start autotuning later:
-
-```yaml
+    ```yaml
     button:
       - platform: template
         name: "PID Climate Autotune"
         on_press:
           - climate.pid.autotune: pid_climate
+    ```
 
-```
+1. Compile & Upload the new firmware.
 
-3. Compile & Upload the new firmware.
+    Now you should have a climate entity called *PID Climate Controller* and a button called
+    *PID Climate Autotune* visible in your frontend of choice.
 
-Now you should have a climate entity called *PID Climate Controller* and a button called
-*PID Climate Autotune* visible in your frontend of choice.
+    The autotune algorithm works by repeatedly switching the heat/cool output to full power and off.
+    This induces an oscillation of the observed temperature and the measured period and amplitude
+    is automatically calculated. To do this, it needs to observe at least 3 oscillation cycles.
 
-The autotune algorithm works by repeatedly switching the heat/cool output to full power and off.
-This induces an oscillation of the observed temperature and the measured period and amplitude
-is automatically calculated. To do this, it needs to observe at least 3 oscillation cycles.
+    {{< note >}}
+    You **have to set the setpoint** of the climate controller to a value the
+    device can reach. For example if the temperature of a room is to be controlled, the setpoint needs
+    to be above the ambient temperature. If the ambient temperature is 20°C, the setpoint of the
+    climate device should be set to at least ~24°C so that an oscillation can be induced.
 
-{{< note >}}
-You **have to set the setpoint** of the climate controller to a value the
-device can reach. For example if the temperature of a room is to be controlled, the setpoint needs
-to be above the ambient temperature. If the ambient temperature is 20°C, the setpoint of the
-climate device should be set to at least ~24°C so that an oscillation can be induced.
+    Also take care of external influences, like for example when room temperature is severely affected by
+    outdoor weather like sun, if it starts to warm up the room in parallel with the heating
+    autotune will likely fail or give false results.
 
-Also take care of external influences, like for example when room temperature is severely affected by
-outdoor weather like sun, if it starts to warm up the room in parallel with the heating
-autotune will likely fail or give false results.
+    {{< /note >}}
 
-{{< /note >}}
-4. Set an appropriate setpoint (see note above) and turn on the climate controller (Heat, Cool or Auto).
+1. Set an appropriate setpoint (see note above) and turn on the climate controller (Heat, Cool or Auto).
 
-5. Click the *PID Climate Autotune* button and look at the the logs of the device.
+1. Click the *PID Climate Autotune* button and look at the the logs of the device.
 
-   You should see output like
+    You should see output like
 
-```text
-      PID Autotune:
-        Autotune is still running!
-        Status: Trying to reach 24.25 °C
-        Stats so far:
-          Phases: 4
-          Detected 5 zero-crossings
-          # ...
+    ```text
+    PID Autotune:
+      Autotune is still running!
+      Status: Trying to reach 24.25 °C
+      Stats so far:
+        Phases: 4
+        Detected 5 zero-crossings
+        # ...
 
-```
+    ```
 
-{{< note >}}
-In the output above, the autotuner is driving the heating output at 100% and trying to reach 24.25 °C.
+    {{< note >}}
+    In the output above, the autotuner is driving the heating output at 100% and trying to reach 24.25 °C.
 
-This will continue for some time until data for 3 phases (6 crossings of the setpoint; or a bit more, depending on
-the data quality) have been acquired.
+    This will continue for some time until data for 3 phases (6 crossings of the setpoint; or a bit more, depending on
+    the data quality) have been acquired.
 
-The autotune algorithm may take a long time to complete, it depends on the time needed to reproduce the
-heating up and cooling down oscillations the required number of times.
+    The autotune algorithm may take a long time to complete, it depends on the time needed to reproduce the
+    heating up and cooling down oscillations the required number of times.
 
-{{< /note >}}
-6. When the PID autotuner has succeeded, output like the one below can be seen:
+    {{< /note >}}
 
-```text
-      PID Autotune:
-        State: Succeeded!
-        All checks passed!
-        Calculated PID parameters ("Ziegler-Nichols PID" rule):
+1. When the PID autotuner has succeeded, output like the one below can be seen:
 
+    ```text
+    PID Autotune:
+      State: Succeeded!
+      All checks passed!
+      Calculated PID parameters ("Ziegler-Nichols PID" rule):
+
+      control_parameters:
+        kp: 0.49460
+        ki: 0.00487
+        kd: 12.56301
+
+      Please copy these values into your YAML configuration! They will reset on the next reboot.
+    ```
+
+    As soon as the the autotune procedure finishes, the climate starts to work with the calculated parameters
+    so that expected operation can be immediately verified.
+
+    If satisfied, copy the values in `control_parameters` into your configuration:
+
+    ```yaml
+    climate:
+      - platform: pid
+        # ...
         control_parameters:
           kp: 0.49460
           ki: 0.00487
           kd: 12.56301
 
-        Please copy these values into your YAML configuration! They will reset on the next reboot.
+    ```
 
-```
+    The *PID Climate Autotune* button can be removed from the config, if the results are satisfactory,
+    it's not needed anymore.
 
-As soon as the the autotune procedure finishes, the climate starts to work with the calculated parameters
-so that expected operation can be immediately verified.
+1. Complete, compile & upload the updated firmware.
 
-If satisfied, copy the values in `control_parameters` into your configuration:
-
-```yaml
-      climate:
-        - platform: pid
-          # ...
-          control_parameters:
-            kp: 0.49460
-            ki: 0.00487
-            kd: 12.56301
-
-```
-
-The *PID Climate Autotune* button can be removed from the config, if the results are satisfactory,
-it's not needed anymore.
-
-7. Complete, compile & upload the updated firmware.
-
-If the calculated PID parameters are not good, you can try some of the alternative parameters
-printed below the main control parameters in the log output.
+    If the calculated PID parameters are not good, you can try some of the alternative parameters
+    printed below the main control parameters in the log output.
 
 ## `climate.pid.autotune` Action
 

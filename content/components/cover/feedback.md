@@ -166,10 +166,10 @@ Most options can be left untouched, but some modifications are needed:
    If there where any open/close obstacle current threshold defined, a separate binary sensor with that threshold should be defined.
    The option `start_sensing_delay` should be directly replaced by a `delayed_off` filter in the movement sensors, or alternatively
    hysteresis options could be used to reduce the noise.
-2. To have the very same behavior implicit in current based cover, you must always set `has_built_in_endstop` and `infer_endstop_from_movement`
+1. To have the very same behavior implicit in current based cover, you must always set `has_built_in_endstop` and `infer_endstop_from_movement`
    to True.
 
-```yaml
+    ```yaml
     # Example original sensor configuration
     cover:
       - platform: current_based
@@ -204,16 +204,15 @@ Most options can be left untouched, but some modifications are needed:
         open_sensor: open_binary_sensor
         open_obstacle_sensor: open_obstacle_binary_sensor
         #... rest of options
+    ```
 
-```
-
-3. Malfunction detection is not directly supported by Feedback Cover, as the malfunction was very narrowly defined to a specific use case
+1. Malfunction detection is not directly supported by Feedback Cover, as the malfunction was very narrowly defined to a specific use case
    (while in other hardware configurations, the same situation is perfectly valid).
 
    The malfunction alerted specifically when there was current in the opposite direction of the requested operation (possibly due to a relay welded).
    This detection can still be achieved by putting the logic directly in the switch, (or whatever needed according to your specific use case).
 
-```yaml
+    ```yaml
     # Example original malfunction configuration
     cover:
       - platform: current_based
@@ -243,8 +242,7 @@ Most options can be left untouched, but some modifications are needed:
                 # on sensor.in_range open_current
               then:
                 - logger.log: "Malfunction detected. Relay welded."
-
-```
+    ```
 
 ## See Also
 

@@ -109,11 +109,11 @@ ota:
 ## Using the Web Interface
 
 1. Navigate to your device's web interface at `http://<device-ip>/` or `http://<device-name>.local/`
-2. If authentication is enabled, enter your username and password
-3. Scroll down to the "OTA Update" section
-4. Click "Choose File" and select your firmware file (`firmware.bin`  )
-5. Click "Update" to start the upload
-6. Wait for the upload to complete - the device will automatically reboot with the new firmware
+1. If authentication is enabled, enter your username and password
+1. Scroll down to the "OTA Update" section
+1. Click "Choose File" and select your firmware file (`firmware.bin`  )
+1. Click "Update" to start the upload
+1. Wait for the upload to complete - the device will automatically reboot with the new firmware
 
 {{< warning >}}
 

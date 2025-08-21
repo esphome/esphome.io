@@ -66,39 +66,37 @@ esp32:
 
 1. **Backup Your Configuration**: Always keep a backup of your working configuration before making changes.
 
-2. **Check Component Compatibility**: When you compile with ESP-IDF, ESPHome will automatically notify you if any components are incompatible and suggest alternatives.
+1. **Check Component Compatibility**: When you compile with ESP-IDF, ESPHome will automatically notify you if any components are incompatible and suggest alternatives.
 
-3. **Update Your Configuration**: Add the framework specification as shown above.
+1. **Update Your Configuration**: Add the framework specification as shown above.
 
-4. **Clean Build Files**: After changing frameworks, clean your build files:
+1. **Clean Build Files**: After changing frameworks, clean your build files:
 
-   **Using ESPHome CLI:**
+   - **Using ESPHome CLI**
 
-```bash
-      esphome clean your-config.yaml
+     ```shell
+     esphome clean your-config.yaml
+     ```
 
-```
+   - **Using ESPHome Dashboard**
 
-   **Using ESPHome Dashboard:**
+     1. Click on the three-dot menu for your device
+     1. Select "Clean Build Files"
 
-- Click on the three-dot menu for your device
-- Select "Clean Build Files"
+1. **Compile and Test**: Compile your configuration and test thoroughly:
 
-5. **Compile and Test**: Compile your configuration and test thoroughly:
+   - **Using ESPHome CLI**
 
-   **Using ESPHome CLI:**
+     ```shell
+     esphome compile your-config.yaml
+     esphome upload your-config.yaml
+     ```
 
-```bash
-      esphome compile your-config.yaml
-      esphome upload your-config.yaml
+   - **Using ESPHome Dashboard**
 
-```
-
-   **Using ESPHome Dashboard:**
-
-- Click "INSTALL" on your device
-- Choose your preferred upload method (USB, OTA, etc.)
-- The dashboard will automatically compile and upload
+     1. Click "INSTALL" on your device
+     1. Choose your preferred upload method (USB, OTA, etc.)
+     1. The dashboard will automatically compile and upload
 
 ## Common Component Replacements
 
@@ -106,12 +104,12 @@ When migrating to ESP-IDF, you may need to replace some components. ESPHome will
 
 **Components with ESP-IDF Alternatives:**
 
-| Arduino Component |  ESP-IDF Alternative |
-| --- | --- |
-| {{< docref "/components/sensor/bme680_bsec" "bme680_bsec" >}} |  {{< docref "/components/sensor/bme68x_bsec2" "bme68x_bsec2" >}} |
-| {{< docref "/components/light/fastled" "fastled_clockless" >}} |  {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
-| {{< docref "/components/light/fastled" "fastled_spi" >}} |  {{< docref "/components/light/spi_led_strip" "spi_led_strip" >}} |
-| {{< docref "/components/light/neopixelbus" "neopixelbus" >}} |  {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
+| Arduino Component                                              | ESP-IDF Alternative                                                          |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| {{< docref "/components/sensor/bme680_bsec" "bme680_bsec" >}}  | {{< docref "/components/sensor/bme68x_bsec2" "bme68x_bsec2" >}}              |
+| {{< docref "/components/light/fastled" "fastled_clockless" >}} | {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
+| {{< docref "/components/light/fastled" "fastled_spi" >}}       | {{< docref "/components/light/spi_led_strip" "spi_led_strip" >}}             |
+| {{< docref "/components/light/neopixelbus" "neopixelbus" >}}   | {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
 
 **Arduino-Only Components:**
 
@@ -138,9 +136,9 @@ or try compiling with ESP-IDF to see if alternatives have become available.
 If you encounter compilation errors after switching to ESP-IDF:
 
 1. Check the error message for component compatibility issues
-2. Look for suggested alternatives in the error output
-3. Clean your build files and try again
-4. Check the component documentation for ESP-IDF specific notes
+1. Look for suggested alternatives in the error output
+1. Clean your build files and try again
+1. Check the component documentation for ESP-IDF specific notes
 
 ### Build Time
 
@@ -182,9 +180,9 @@ ESP-IDF generally offers better performance, but:
 If you encounter issues during migration:
 
 1. Check the [ESPHome Discord](https://discord.gg/KhAMKrd) for community support
-2. Review component-specific documentation
-3. Search existing [GitHub issues](https://github.com/esphome/esphome/issues)
-4. Create a new issue if you find a bug
+1. Review component-specific documentation
+1. Search existing [GitHub issues](https://github.com/esphome/esphome/issues)
+1. Create a new issue if you find a bug
 
 Remember, the migration is optional, and both frameworks will continue to be supported. Choose the option that best fits your needs!
 
