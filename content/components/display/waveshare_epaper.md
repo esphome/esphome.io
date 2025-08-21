@@ -26,6 +26,10 @@ Currently, most displays managed by Esphome are single-color E-Ink displays; but
 
 {{< img src="waveshare_epaper_7color_acep-full.jpg" alt="Image" caption="Waveshare E-Paper 7.3 Inch ACeP 7-Color E-Paper Display." width="75.0%" class="align-center" >}}
 
+In addition, the [Seeed Studio reTerminal E1002](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html), which features a 6-color full-color E-Paper display (not manufactured by Waveshare), has been tested and is also compatible with this platform.
+
+{{< img src="seeed_reterminal_E10xx.jpg" alt="Image" caption="Seeed Studio reTerminal E1001 and reTerminal E1002." width="75.0%" class="align-center" >}}
+
 The communication ESPHome has chosen to use for this integration is 4-wire [SPI](#spi), as it's the most stable and high-speed. So you need to make sure your board is set to the 4-wire SPI mode and have an `spi:`   section in your
 configuration.
 
@@ -116,6 +120,7 @@ lambda: |-
   - `5.83inv2`
   - `gdey0583t81`   - GoodDisplay GDEY0583T81 5.83" B/W
   - `7.30in-f`   - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
+  - `7.30in-e`   - 7.3in 6-color display (black, white, red, yellow, blue, and green)
   - `7.50in`
   - `7.50in-bV2`   - also supports v3, B/W rendering only
   - `7.50in-bV3`   - display with the '(V3)' sticker on the back, B/W rendering only
