@@ -23,6 +23,7 @@ just list all files after the `<COMMAND>` like so:
 ```shell
 esphome run livingroom.yaml kitchen.yaml
 ```
+
 {{< /note >}}
 
 ## Options
@@ -89,6 +90,7 @@ Example:
 ```shell
 esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
+
 {{< /option >}}
 
 {{< option "--upload_speed BAUD_RATE" >}}
@@ -159,6 +161,7 @@ Example:
 ```shell
 esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
+
 {{< /option >}}
 
 {{< option "--upload_speed BAUD_RATE" >}}
@@ -280,6 +283,7 @@ Example:
 ```shell
 esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 ```
+
 {{< /option >}}
 
 {{< option "--reset" >}}

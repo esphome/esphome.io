@@ -113,12 +113,12 @@ If you prefer the more manual way:
 1. Finally, to install a firmware file, you can use:
 
    - [ESPHome Web](https://web.esphome.io/), our web-based installer. This is the easiest approach but requires a
-       browser that supports WebSerial, like Google Chrome or Microsoft Edge. 
-       
-       1. Connect the board to your computer, make sure it's detected as a [serial port](#esphome-phy-con-drv) and click **Connect**. 
-       1. If prompted, allow your browser the requested permission in the pop-up box that appears. 
+       browser that supports WebSerial, like Google Chrome or Microsoft Edge.
+
+       1. Connect the board to your computer, make sure it's detected as a [serial port](#esphome-phy-con-drv) and click **Connect**.
+       1. If prompted, allow your browser the requested permission in the pop-up box that appears.
        1. Select the serial device associated with your board
-       1. Click **Install** and browse for/select the binary file you downloaded earlier (as above). 
+       1. Click **Install** and browse for/select the binary file you downloaded earlier (as above).
 
        Note that the file is processed locally and is **not** uploaded to any cloud service.
 
