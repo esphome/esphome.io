@@ -37,7 +37,7 @@ esp32_camera_web_server:
 
 ## Integrating the mjpeg web service into an NVR
 
-**Zoneminder**
+### Zoneminder
 
 - *General -> Source Type*: `cURL (HTTP(S) only)`
 - *Source -> URL*: `http://ESP_IP_ADDRESS:8080/`

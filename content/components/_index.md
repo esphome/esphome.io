@@ -52,7 +52,7 @@ Peripherals which directly support the operation of the microcontroller's proces
 
 ## ESPHome Automations
 
-*"When this happens, I want it to do that..."*
+> *"When this happens, I want it to do that..."*
 
 Automations are how we customize ESPHome devices to respond/behave exactly how you want them to.
 

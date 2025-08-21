@@ -20,7 +20,7 @@ This example is very basic in its operation.
 * Manually start and stop the pump with the toggle button on the Sonoff Basic.
 * Use a water float sensor and stop the pump if water level is too low.
 
-*Some of the later Sonoff Basics does not have GPIO pin available, check your board first*
+*Some of the later Sonoff Basics does not have GPIO pin available, check your board first.*
 
 This example is using ESPHome 1.10.1 and Home Assistant 0.85.1
 

@@ -73,15 +73,13 @@ climate:
   receiver. see: [Using a Receiver](#ir-receiver_id).
 - All other options from [Climate](#config-climate).
 
-**Advanced Options**
+### Advanced Options
 
 - **transmitter_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the remote transmitter.
 
-**Specific configuration variables:**
-
 {{< anchor "climate_ir_lg" >}}
 
-`climate_ir_lg` **Climate**:
+### `climate_ir_lg`
 
 - **header_high** (*Optional*, [Time](#config-time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
 - **header_low** (*Optional*, [Time](#config-time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
@@ -102,7 +100,7 @@ climate:
 
 {{< anchor "daikin_brc" >}}
 
-`daikin_brc` **Climate**:
+### `daikin_brc`
 
 The Daikin BRC remotes are used by the ceiling cassette model of Daikin heatpumps.
 
@@ -120,19 +118,19 @@ climate:
 
 {{< anchor "delonghi_ir" >}}
 
-`delonghi` **Climate**:
+### `delonghi`
 
 The `delonghi` climate currently supports the protocol used by some Delonghi portable units, known working with Delonghi PAC WE 120HP.
 
 {{< anchor "daikin_arc" >}}
 
-`daikin_arc` **Climate**:
+### `daikin_arc`
 
 The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`  , `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
 
 {{< anchor "gree_ir" >}}
 
-`gree` **Climate**:
+### `gree`
 
 - **model** (**Required**, string): GREE has a few different protocols depending on model. One of these will work for you.
 
@@ -156,7 +154,7 @@ climate:
 
 {{< anchor "midea_ir" >}}
 
-`midea_ir` **Climate**:
+### `midea_ir`
 
 These air conditioners support two protocols: Midea and Coolix. Therefore, when using an IR receiver, it considers both protocols and publishes the received states.
 
@@ -180,7 +178,7 @@ climate:
 {{< /note >}}
 {{< anchor "mitsubishi" >}}
 
-`mitsubishi` **Climate**:
+### `mitsubishi`
 
 {{< note >}}
 
@@ -227,7 +225,7 @@ climate:
 
 {{< anchor "toshiba" >}}
 
-`toshiba` **Climate**:
+### `toshiba`
 
 - **model** (*Optional*, string): There are two valid models
 
@@ -256,7 +254,7 @@ climate:
 {{< /note >}}
 {{< anchor "whirlpool" >}}
 
-`whirlpool` **Climate**:
+### `whirlpool`
 
 - **model** (*Optional*, string): There are two valid models to choose from:
 
@@ -265,7 +263,7 @@ climate:
 
 {{< anchor "whynter" >}}
 
-`whynter` **Climate**:
+### `whynter`
 
 - **use_fahrenheit** (*Optional*, boolean): Allows you to transfer the temperature to the air conditioner in degrees Fahrenheit. The air conditioner display also shows the temperature in Fahrenheit. Defaults to `false`  .
 
@@ -282,7 +280,7 @@ climate:
 
 {{< anchor "zhlt01" >}}
 
-`zhlt01` **Climate**:
+### `zhlt01`
 
 The `zhlt01` climate and protocol, based on the ZH/LT-01 remote controller, is used with many locally branded airconditioners, like: Eurom, Chigo, Tristar, Tecnomaster, Elgin, Geant, Tekno, Topair, Proma, Sumikura, JBS, Turbo Air, Nakatomy, Celestial Air, Ager, Blueway, Airlux, etc.
 

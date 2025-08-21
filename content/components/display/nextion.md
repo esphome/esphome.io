@@ -167,7 +167,7 @@ The list below calls out a few commonly-used methods:
 
 {{< anchor "set_nextion_sensor_state" >}}
 
-- Set various sensor states (See [Queue Types](#nextion_queue_types) below):
+- Set various sensor states (See [Queue Types](#queue-types) below):
 
   - `set_nextion_sensor_state(NextionQueueType queue_type, std::string name, float state);`
   - `set_nextion_sensor_state(int queue_type, std::string name, float state);`
@@ -199,9 +199,8 @@ api:
 ```
 
 {{< /note >}}
-{{< anchor "nextion_queue_types" >}}
 
-**Queue Types**
+### Queue Types
 
 | Type              | Value |
 | ----------------- | ----- |
@@ -253,7 +252,7 @@ display:
 
 {{< anchor "nextion-on_sleep" >}}
 
-#### `on_sleep`  /`on_wake`
+#### `on_sleep` / `on_wake`
 
 These automations will be triggered upon sleep or upon wake (respectively). The Nextion does not accept commands or
 updates while in sleep mode; these triggers may be used to cope with this. For example, you could use them to

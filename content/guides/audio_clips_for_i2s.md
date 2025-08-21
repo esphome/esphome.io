@@ -14,14 +14,14 @@ It is possible to create sound clips to include in your build to use with I²S s
 
 - Convert again, this time with [SOX](https://github.com/chirlu/sox).
 
-```console
+```shell
 sox startup.wav --bits 8 --encoding signed-integer --endian little startup_again.raw
 
 ```
 
 - Now convert it into a hexadecimal string using [xxd](https://github.com/ckormanyos/xxd) into a C++ file.
 
-```console
+```shell
 xxd -i startup_again.raw startup.c
 
 ```

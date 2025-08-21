@@ -498,7 +498,7 @@ sensors:
 To minimize the required transactions all registers with the same base address are read in one request.
 The response is mapped to the sensor based on `register_count` and offset in bytes. For example:
 
-**Request**
+**Request:**
 
 | data      | description                            |
 | --------- | -------------------------------------- |
@@ -511,7 +511,7 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 | 0x3f (63) | crc                                    |
 | 0xc  (12) | crc                                    |
 
-**Response**
+**Response:**
 
 | offset | data       | value (type)       | description                                |
 | ------ | ---------- | ------------------ | ------------------------------------------ |

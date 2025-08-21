@@ -259,7 +259,7 @@ Default values depend on widget specifics.
 
 Two font choices are available:
 
-**ESPHome fonts**
+#### ESPHome fonts
 
 You can use [fonts configured normally](#display-fonts), the glyphs will be rendered while building the binary. This has the advantage that you can define custom sets of glyphs of any size, with icons or diacritic characters of your choice, for any language, from any TrueType/OpenType font, allowing a more optimal flash space usage because you don't need to include all glyphs for all sizes you wish to use.
 
@@ -269,7 +269,7 @@ For best results, set `bpp: 4` to get the glyphs rendered with proper anti-alias
 {{< /tip >}}
 Check out [MDI icons in text](#lvgl-cookbook-icontext), [Toggle state icon button](#lvgl-cookbook-iconstat) and [Battery status icon](#lvgl-cookbook-iconbatt) in the Cookbook for examples which demonstrate how to use icons and text with TrueType/OpenType fonts.
 
-**Library fonts**
+#### Library fonts
 
 The LVGL library offers by default prerendered sets with ASCII characters (`0x20-0x7F`  ), the degree symbol (`0xB0`  ), the bullet symbol (`0x2022`  ) from [Montserrat Medium](https://fonts.google.com/specimen/Montserrat), and 60 symbols from [FontAwesome](https://fontawesome.com/) (see below). You can use the IDs below when specifying the `text_font` parameter:
 
@@ -525,13 +525,13 @@ Check out [Flex layout positioning](#lvgl-cookbook-flex), [Grid layout positioni
 
 The `hidden`  , `ignore_layout` and `floating` [flags](#lvgl-widget-flags) can be used on widgets to ignore them in layout calculations.
 
-**Configuration variables:**
+#### Configuration variables
 
 - **layout** (*Optional*, dict): A dictionary describing the layout configuration:
   - **type** (*Optional*, string): `FLEX`  , `GRID` or `NONE`  . Defaults to `NONE`  .
   - Further options from below depending on the chosen type.
 
-**Flex**
+#### Flex
 
 The Flex layout in LVGL is a subset implementation of [CSS Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
 
@@ -591,7 +591,7 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
 
 ```
 
-**Grid**
+#### Grid
 
 The Grid layout in LVGL is a subset implementation of [CSS Grid](https://css-tricks.com/snippets/css/complete-guide-grid//).
 

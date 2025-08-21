@@ -10,7 +10,7 @@ params:
 
 {{< anchor "nextion_binary_sensor" >}}
 
-The `nextion` binary sensor platform supports the many switched components in the Nextion as well as integer variables (>0 == true). It can be a component or variable in the Nextion display.
+The `nextion`   binary sensor platform supports the many switched components in the Nextion as well as integer variables (>0 == true). It can be a component or variable in the Nextion display.
 It is best to set the components vscope to global in the Nextion Editor. This way the component will be available if the page is shown or not.
 
 See {{< docref "/components/display/nextion" >}} for setting up the display
@@ -44,8 +44,8 @@ binary_sensor:
 
 - **nextion_id** (*Optional*, [ID](#config-id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
-- **variable_name** (*Optional*, string): The name of the Nextion variable. Any value over `0` is considered to be **on**
-- **page_id** (*Optional*, string): The ID of the page the component is on. Use `0` for the default page.
+- **variable_name** (*Optional*, string): The name of the Nextion variable. Any value over `0`   is considered to be **on**
+- **page_id** (*Optional*, string): The ID of the page the component is on. Use `0`   for the default page.
 - **component_id** (*Optional*, string): The ID (the number, not name!) of the component to track.
 - **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Binary Sensor Protocol](#nextion_custom_binary_sensor_protocol) this should not be used
 - **background_color** (*Optional*, [Color](#config-color)):  The background color
@@ -58,7 +58,7 @@ The Nextion will send a **page_id** and **component_id** when the *Send Componen
 this native event **page_id** and **component_id** are required. No [Nextion Custom Binary Sensor Protocol](#nextion_custom_binary_sensor_protocol) is required. If **page_id** and **component_id** are set then the component will only react to touch events from the Nextion. Setting **component_name** will allow setting options like foreground color.
 
 {{< note >}}
-`background_color(s)` , `foreground_color(s)` and `visible` do not retain their state on page change. [Binary Sensor Settings](#nextion_binary_sensor_settings).
+`background_color(s)`   , `foreground_color(s)`   and `visible`   do not retain their state on page change. [Binary Sensor Settings](#nextion_binary_sensor_settings).
 A [Nextion Sensor](#nextion_sensor) with a custom protocol sending the current page can be used to execute the API call [Update Components By Prefix](#update_components_by_prefix) to update all the components for that page
 
 {{< /note >}}
@@ -84,9 +84,7 @@ The Nextion does not retain data on Nextion page changes. Additionally if a page
 nothing will be updated. To get around this the Nextion components can be changed to have a vscope of `global`  . If this is set then the **nextion_component_name**
 should be prefixed with the page name (page0/page1).
 
-*Example*
-
-`nextion_component_name: page0.r0`
+*Example:* `nextion_component_name: page0.r0`
 
 {{< anchor "binary_sensor-nextion-publish_action" >}}
 
@@ -119,7 +117,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The ID of the Nextion switch.
 - **state** (**Required**, string, [templatable](#config-templatable)): The boolean state to publish.
@@ -134,7 +132,7 @@ This action can also be written in lambdas. See [Lambda Calls](#nextion_binary_s
 {{< /note >}}
 {{< anchor "nextion_binary_sensor_lambda_calls" >}}
 
-### Lambda Calls
+## Lambda Calls
 
 From [lambdas](#config-lambda), you can call several methods to access some
 more advanced functions (see the full {{< apiref "nextion/binary_sensor/nextion_binarysensor.h" "nextion/binary_sensor/nextion_binarysensor.h" >}} for more info).
@@ -153,7 +151,7 @@ more advanced functions (see the full {{< apiref "nextion/binary_sensor/nextion_
 - `set_background_pressed_color(Color color)`  : Sets the background color to **Color**
 - `set_foreground_color(Color color)`  : Sets the background color to **Color**
 - `set_foreground_pressed_color(Color color)`  : Sets the background color to **Color**
-- `set_visible(bool visible)` : Sets visible or not. If set to false, no updates will be sent to the component
+- `set_visible(bool visible)`   : Sets visible or not. If set to false, no updates will be sent to the component
 
 {{< anchor "nextion_binary_sensor_how_things_update" >}}
 
@@ -173,8 +171,8 @@ but make sure you have both checked for a touch sensor.
 {{< /note >}}
 Using the above yaml example:
 
-- "mode" is a touch sensor and will trigger when a user presess the component with ID `8` in page `0`
-- "Radio 0 Binary Sensor" will poll the Nextion for the `r0.val` value and set the state accordingly.
+- "mode" is a touch sensor and will trigger when a user presess the component with ID `8`   in page `0`
+- "Radio 0 Binary Sensor" will poll the Nextion for the `r0.val`   value and set the state accordingly.
 - "Is Darkmode Set" will NOT poll the Nextion. Either the Nextion will need to use the [Nextion Custom Binary Sensor Protocol](#nextion_custom_binary_sensor_protocol) or use a lambda:
 
 - [Lambda Calls](#nextion_binary_sensor_lambda_calls).
@@ -198,13 +196,13 @@ printh FF FF FF
 
 ```
 
-*Explanation*
+### Explanation
 
-- `printh 93` Tells the library this is a binary sensor bool/integer data
-- `prints "r0",0` Sends the name that matches **nextion_component_name** or **nextion_variable_name**
-- `printh 00` Sends a NULL
-- `prints r0.val,0` The actual value to send. For a variable use the Nextion variable name `r0` with out `.val`
-- `printh FF FF FF` Nextion command ack
+- `printh 93`   Tells the library this is a binary sensor bool/integer data
+- `prints "r0",0`   Sends the name that matches **nextion_component_name** or **nextion_variable_name**
+- `printh 00`   Sends a NULL
+- `prints r0.val,0`   The actual value to send. For a variable use the Nextion variable name `r0`   with out `.val`
+- `printh FF FF FF`   Nextion command ack
 
 ## See Also
 

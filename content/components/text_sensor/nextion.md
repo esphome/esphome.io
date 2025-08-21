@@ -54,9 +54,7 @@ The Nextion does not retain data on Nextion page changes. Additionally, if a pag
 nothing will be updated. To get around this, the Nextion components can be changed to have a vscope of `global`  . If this is set, then the **component_name**
 should be prefixed with the page name (page0/page1 or whatever you have changed it to).
 
-*Example*
-
-`component_name: page0.text0`
+*Example:* `component_name: page0.text0`
 
 {{< anchor "text_sensor-nextion-publish_action" >}}
 
@@ -164,7 +162,7 @@ printh FF FF FF
 
 ```
 
-*Explanation*
+### Explanation
 
 - `printh 92` Tells the library this is text sensor
 - `prints "text0",0` Sends the name that matches **component_name** or **variable_name**

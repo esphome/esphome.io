@@ -312,7 +312,7 @@ From the P1 companion guide: The P1 port is activated (start sending data) by se
 To stop receiving data OSM needs to drop "Data Request" line (set it to "high impedance" mode). Data transfer
 will stop immediately in such case.
 
-**Advantages when using a request pin:**
+### Advantages when using a request pin
 
 - After reading a telegram, the dsmr component will stop the data transfer until the telegram has been
   fully processed. This separates retrieving and processing data and can thus be seen as a form of
@@ -320,7 +320,7 @@ will stop immediately in such case.
 - The interval at which sensor readings must be updated can be controlled cleanly by only starting a data
   transfer when needed. This configuration option `request_interval` can be used to define this interval.
 
-**Required hardware support**
+### Required hardware support
 
 Many DSMR reader circuits link the +5V pin of the P1 port directly to its Data Request pin. Doing this will
 make the smart meter send telegrams at a pace as defined by the smart meter firmware. For example many

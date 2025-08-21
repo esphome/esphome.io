@@ -146,6 +146,8 @@ uart:
 
 ```
 
+### Configuration variables
+
 - **direction** (*Optional*, enum): The direction of communication to debug, one of: "RX" (receive, incoming),
   "TX" (send, outgoing) or "BOTH". Defaults to "BOTH".
 - **dummy_receiver** (*Optional*, boolean): Whether or not to enable the dummy receiver feature. The debugger
@@ -168,26 +170,26 @@ uart:
   - **direction**: `uart::UART_DIRECTION_RX` or `uart::UART_DIRECTION_TX`
   - **bytes**: `std::vector<uint8_t>` containing the accumulated bytes
 
-**Helper functions for logging**
+  **Helper functions for logging**
 
-Helper functions are provided to make logging of debug data in various formats easy:
+  Helper functions are provided to make logging of debug data in various formats easy:
 
-- **UARTDebug::log_hex(direction, bytes, char separator)** Log the bytes as hex values, separated by the provided
-  separator character.
-- **UARTDebug::log_string(direction, bytes)** Log the bytes as string values, escaping unprintable characters.
-- **UARTDebug::log_int(direction, bytes, char separator)** Log the bytes as integer values, separated by the provided
-  separator character.
-- **UARTDebug::log_binary(direction, bytes, char separator)** Log the bytes as `<binary> (<hex>)` values,
-  separated by the provided separator character.
+  - **UARTDebug::log_hex(direction, bytes, char separator)** Log the bytes as hex values, separated by the provided
+    separator character.
+  - **UARTDebug::log_string(direction, bytes)** Log the bytes as string values, escaping unprintable characters.
+  - **UARTDebug::log_int(direction, bytes, char separator)** Log the bytes as integer values, separated by the provided
+    separator character.
+  - **UARTDebug::log_binary(direction, bytes, char separator)** Log the bytes as `<binary> (<hex>)` values,
+    separated by the provided separator character.
 
-**Logger buffer size**
+  **Logger buffer size**
 
-Beware that the `logger` component uses a limited buffer size of 512 bytes by default. If the UART
-debugger log lines become too long, then you will notice that they end up truncated in the log output.
+  Beware that the `logger` component uses a limited buffer size of 512 bytes by default. If the UART
+  debugger log lines become too long, then you will notice that they end up truncated in the log output.
 
-In that case, either make sure that the debugger outputs less data per log line (e.g. by setting the
-`after.bytes` option to a lower value) or increase the logger buffer size using the logger
-`tx_buffer_size` option.
+  In that case, either make sure that the debugger outputs less data per log line (e.g. by setting the
+  `after.bytes` option to a lower value) or increase the logger buffer size using the logger
+  `tx_buffer_size` option.
 
 {{< anchor "uart-runtime_change" >}}
 
