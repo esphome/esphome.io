@@ -12,7 +12,6 @@
 [github-link]: https://github.com/esphome/esphome/releases
 
 <a href="https://esphome.io/">
-  <picture>
   <style>
       :root {
         --logo-text-color: black;
@@ -23,6 +22,7 @@
       }
     }
   </style>
+  <picture>
   <img src="https://esphome.io/images/logo-docs.svg" alt="ESPHome Logo">
   </picture>
 </a>
