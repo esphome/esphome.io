@@ -88,28 +88,28 @@ the pending timer expires.
 ## State Flow
 
 1. The alarm starts in `DISARMED` state
-2. When the `arm_...` method is invoked
+1. When the `arm_...` method is invoked
 
-  - `arming_..._time` is greater than 0 the state is `ARMING`
-  - `arming_..._time` is 0 or after the delay the state is `ARMED_...`
+    - `arming_..._time` is greater than 0 the state is `ARMING`
+    - `arming_..._time` is 0 or after the delay the state is `ARMED_...`
 
-3. When the alarm is tripped by a sensor state changing to `on` or `alarm_control_panel_pending_action` invoked
+1. When the alarm is tripped by a sensor state changing to `on` or `alarm_control_panel_pending_action` invoked
 
-4. If `trigger_mode` is set to `delayed`  :
+1. If `trigger_mode` is set to `delayed`  :
 
-  - `pending_time` greater than 0 the state is `PENDING`
-  - `pending_time` is 0 or after the `pending_time` delay the state is `TRIGGERED`
+    - `pending_time` greater than 0 the state is `PENDING`
+    - `pending_time` is 0 or after the `pending_time` delay the state is `TRIGGERED`
 
-5. If `trigger_mode` is set to `instant` or `instant_always`  :
+1. If `trigger_mode` is set to `instant` or `instant_always`  :
 
-  - The state is set to `TRIGGERED`
+    - The state is set to `TRIGGERED`
 
-6. If the `trigger_mode` is set to `interior_follower`:
+1. If the `trigger_mode` is set to `interior_follower`:
 
- - If the current state is `ARMED_...` the state will be set to `TRIGGERED`
- - If the current state is `PENDING` then nothing will happen and it will stay in the `PENDING` state.
+   - If the current state is `ARMED_...` the state will be set to `TRIGGERED`
+   - If the current state is `PENDING` then nothing will happen and it will stay in the `PENDING` state.
 
-7. If `trigger_time` greater than 0 and no sensors are `on` after `trigger_time` delay
+1. If `trigger_time` greater than 0 and no sensors are `on` after `trigger_time` delay
    the state returns to `ARM_...`
 
 {{< note >}}

@@ -36,12 +36,12 @@ micro_wake_word:
   - **id** (*Optional*, [ID](#config-id)): The optional ID used for the model actions below.
   - **model** (**Required**, string): This can be one of:
 
-      - A simple name of a model that exists in the official [ESPHome Models repository](https://github.com/esphome/micro-wake-word-models).
-        e.g. `okay_nabu`  .
-      - A github shorthand URL to a model JSON file.
-        e.g. `github://esphome/micro-wake-word-models/models/okay_nabu.json@main`  .
-      - A full URL to a model JSON file.
-        e.g. `https://github.com/esphome/micro-wake-word-models/raw/main/models/okay_nabu.json`  .
+    - A simple name of a model that exists in the official [ESPHome Models repository](https://github.com/esphome/micro-wake-word-models).
+      e.g. `okay_nabu`  .
+    - A github shorthand URL to a model JSON file.
+      e.g. `github://esphome/micro-wake-word-models/models/okay_nabu.json@main`  .
+    - A full URL to a model JSON file.
+      e.g. `https://github.com/esphome/micro-wake-word-models/raw/main/models/okay_nabu.json`  .
 
   - **probability_cutoff** (*Optional*, percentage): The probability cutoff for the wake word detection.
     If the probability of the wake word is below this value, the wake word is not detected.
@@ -54,10 +54,10 @@ micro_wake_word:
 
   - **model** (*Optional*, string): This can be one of:
 
-      - A github shorthand URL to a model JSON file.
-        e.g. `github://esphome/micro-wake-word-models/models/v2/vad.json@main`  .
-      - A full URL to a model JSON file.
-        e.g. `https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/vad.json`  .
+    - A github shorthand URL to a model JSON file.
+      e.g. `github://esphome/micro-wake-word-models/models/v2/vad.json@main`  .
+    - A full URL to a model JSON file.
+      e.g. `https://github.com/esphome/micro-wake-word-models/raw/main/models/v2/vad.json`  .
 
   - **probability_cutoff** (*Optional*, percentage): The probability cutoff for voice activity detection.
     If the probability is below this value, then no wake word will be accepted.
