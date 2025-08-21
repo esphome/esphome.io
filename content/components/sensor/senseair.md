@@ -7,8 +7,6 @@ params:
     image: senseair_s8.jpg
 ---
 
-
-
 The `senseair` sensor platform allows you to use SenseAir CO_2 sensor
 (`website`_) with ESPHome.
 
@@ -34,7 +32,7 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
   to use multiple UART buses.

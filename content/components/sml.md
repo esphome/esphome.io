@@ -7,8 +7,6 @@ params:
     image: sml.svg
 ---
 
-
-
 The `SML` component connects to smart meters which use the *Smart Message Language* (SML) protocol.
 
 Although the SML protocol is well defined, it gives a lot of freedom to the manufacturers how to store
@@ -22,7 +20,7 @@ This component is passive, it does not transmit any data to your equipment. Usua
 a telegram at regular intervals (2-4 seconds) on its own.
 This component decodes and updates the configured sensors at the pace the data is received.
 
-Most smart meters transmit the telegrams using an infrared optical interface. As a sensor a  suitable photo
+Most smart meters transmit the telegrams using an infrared optical interface. As a sensor a suitable photo
 transistor (e.g. BPW40) can be attached to the ESP's UART (emitter to `GND` and collector to `RX` pin). A more
 mature solution can be found (in German) on the [Volkszaehler Wiki](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-ttl-ausgang).
 There are plenty of other examples and ready to buy solutions on the web.
@@ -76,6 +74,7 @@ sensor:
 
 - **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
+
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, [ID](#config-id)): The ID of the [SML platform](#sml-platform)
 - All other options from [Sensor](#config-sensor).
@@ -96,6 +95,7 @@ text_sensor:
 
 - **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
+
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, [ID](#config-id)): The ID of the [SML platform](#sml-platform)
 - **format** (*Optional*, string): Override the automatic interpretation of the transmitted binary data value. Possible values (`int`, `uint`, `bool`, `hex`, `text`).
@@ -180,7 +180,7 @@ current state in case of unavailability.
 ## Holley DTZ541 Smart Meters
 
 The Holley DTZ541 series of electricity meters have a faulty implementation of the SML protocol.
-These meters send multiple conflicting values with the OBIS code `1-0:1.8.0`  , the code for the meter's energy reading.
+These meters send multiple conflicting values with the OBIS code `1-0:1.8.0`, the code for the meter's energy reading.
 Because the first value of every package is the correct value, in order to discard the erroneous values a throttle filter of 0.5s can be applied.
 
 ```yaml

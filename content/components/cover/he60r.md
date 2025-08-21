@@ -7,8 +7,6 @@ params:
     image: he60r.jpg
 ---
 
-
-
 {{< img src="he60r.jpg" alt="Image" class="align-right" >}}
 
 The `he60r` cover platform allows you to control a HomEntry HE60R

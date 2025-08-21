@@ -7,8 +7,6 @@ params:
     image: home-assistant.svg
 ---
 
-
-
 The `homeassistant` sensor platform allows you to create sensors that import
 states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
@@ -49,12 +47,13 @@ from Home Assistant, use the {{< docref "/components/text_sensor/homeassistant" 
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
   specified entity. The entity state is used when this option is omitted.
+
 - All other options from [Sensor](#config-sensor).
 
 {{< note >}}
-The sensors implemented by this component are by default `internal`  , to avoid exporting them back to
+The sensors implemented by this component are by default `internal`, to avoid exporting them back to
 Home Assistant. Should you still want to do that (eg. because you use ESPHome's very efficient filters
-on them) you need to specifically configure `internal: false`  . Also, `state_class`  , `unit_of_measurement`
+on them) you need to specifically configure `internal: false`. Also, `state_class`, `unit_of_measurement`
 are not inherited from the imported sensor so you need to set them manually.
 
 {{< /note >}}

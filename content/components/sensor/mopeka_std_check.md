@@ -7,8 +7,6 @@ params:
     image: mopeka_std_check.jpg
 ---
 
-
-
 The `mopeka_std_check` sensor platform lets you track the output of Mopeka
 Standard Check LP Bluetooth Low Energy devices using the
 {{< docref "/components/esp32_ble_tracker" >}}. This component will track the tank level,
@@ -64,10 +62,10 @@ sensor:
 - **tank_type** (**Required**): The tank type the sensor is measuring. See below.
 
 - **custom_distance_full** (*Optional*): distance sensor will read when it should be
-  considered full (100%).  This is only used when tank_type = CUSTOM
+  considered full (100%). This is only used when tank_type = CUSTOM
 
 - **custom_distance_empty** (*Optional*): distance sensor will read when it should be
-  considered empty (0%).  This is only used when tank_type = CUSTOM
+  considered empty (0%). This is only used when tank_type = CUSTOM
 
 - **propane_butane_mix** (*Optional*): Mixture of propane and butane.
 
@@ -93,7 +91,7 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **battery_level** (*Optional*): The information for the battery percentage
-  sensor.  Sensor uses a standard CR2032 battery.
+  sensor. Sensor uses a standard CR2032 battery.
 
   - All options from [Sensor](#config-sensor).
 

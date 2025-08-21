@@ -7,8 +7,6 @@ params:
     image: tuya.png
 ---
 
-
-
 The `tuya` component creates a serial connection to the Tuya MCU for platforms to use.
 
 {{< img src="tuya.png" alt="Image" width="40%" class="align-center" >}}
@@ -64,7 +62,7 @@ Here is another example output for a Tuya ME-81H thermostat:
   Specify the pin reported in the config dump or leave empty otherwise.
   More about this on the [Tuya Developer Documentation](https://developer.tuya.com/en/docs/iot/tuya-cloud-universal-serial-port-access-protocol?id=K9hhi0xxtn9cb#title-6-Query%20working%20mode).
 
-- **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for.  Useful for certain broken/erratic hardware and debugging.
+- **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for certain broken/erratic hardware and debugging.
 
 Automations:
 

@@ -7,8 +7,6 @@ params:
     image: haier.svg
 ---
 
-
-
 Additional sensors for Haier Climate device. **These sensors are supported only by the hOn protocol**.
 
 ```yaml
@@ -29,8 +27,10 @@ text_sensor:
 - **haier_id** (**Required**, [ID](#config-id)): The id of haier climate component
 - **appliance_name** (*Optional*): A text sensor that indicates Haier appliance name.
   All options from [Text Sensor](#config-text_sensor).
+
 - **cleaning_status** (*Optional*): A text sensor that indicates cleaning status. Possible values "No cleaning", "Self clean", "56°C Steri-Clean".
   All options from [Text Sensor](#config-text_sensor).
+
 - **protocol_version** (*Optional*): A text sensor that indicates Haier protocol version.
   All options from [Text Sensor](#config-text_sensor).
 

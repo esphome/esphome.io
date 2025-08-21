@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 In ESPHome, `light` components allow you to create lights usable from Home Assistant's frontend and have many
 features such as colors, transitions and even effects.
 
@@ -30,20 +28,23 @@ light:
 - **platform** (**Required**, platform): A light platform.
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be
   specified.
+
 - **name** (*Optional*, string): The name of the light. At least one of **id** and **name** must be specified.
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and you want the light
-to use that name, you can set `name: None`  .
+to use that name, you can set `name: None`.
 {{< /note >}}
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the light in the frontend.
 - **effects** (*Optional*, list): A list of [light effects](#light-effects) to use for this light.
-- **gamma_correct** (*Optional*, float): Apply a [gamma correction factor](https://en.wikipedia.org/wiki/Gamma_correction) to the light channels. Defaults to `2.8`  .
+- **gamma_correct** (*Optional*, float): Apply a [gamma correction factor](https://en.wikipedia.org/wiki/Gamma_correction) to the light channels. Defaults to `2.8`.
 - **default_transition_length** (*Optional*, [Time](#config-time)): The default transition length to use when no
-  transition length is set in the light call. Defaults to `1s`  .
+  transition length is set in the light call. Defaults to `1s`.
+
 - **flash_transition_length** (*Optional*, [Time](#config-time)): The transition length to use when flash is called.
-  Defaults to `0s`  .
+  Defaults to `0s`.
+
 - **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
   when the state is **not** restored based on `restore_mode` (below).
 
@@ -63,8 +64,10 @@ to use that name, you can set `name: None`  .
 
 - **on_turn_on** (*Optional*, [Action](#config-action)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
+
 - **on_turn_off** (*Optional*, [Action](#config-action)): An automation to perform when the light is turned off.
   See [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
+
 - **on_state** (*Optional*, [Action](#config-action)): An automation to perform when the light's set state is
   changed. See [`light.on_state` Trigger](#light-on_state_trigger).
 
@@ -73,6 +76,7 @@ to use that name, you can set `name: None`  .
 - **color_correct** (*Optional*, list of float): Apply a color correction to each color channel. This defines the
   maximum brightness of each channel. For example `[100%, 50%, 100%]` would set the green channel to be at most at
   50% brightness.
+
 - **power_supply** (*Optional*, [ID](#config-id)): The {{< docref "/components/power_supply" >}} to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
 
@@ -80,10 +84,13 @@ to use that name, you can set `name: None`  .
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
   frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
-  (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to `false`  .
+  (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity. See [this list](https://developers.home-assistant.io/docs/core/entity/#generic-properties) for a list of available options. Set
   to `""` to remove the default entity category.
+
 - If MQTT enabled, all other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and [version 3](#config-webserver-version-3-options) is selected, all other options from
   {{< docref "/components/web_server" >}}.
@@ -104,29 +111,42 @@ configuration variables:
   - `BRIGHTNESS`  : Only brightness control. Accepts `brightness` parameter.
   - `WHITE`  : Single white channel only. Accepts `brightness` and `white` parameters.
   - `COLOR_TEMPERATURE`  : Color-temperature controlled white channel. Accepts `brightness` and `color_temperature`
+
       parameters.
-  - `COLD_WARM_WHITE`  : Cold and warm white channels. Accepts `brightness`  , `color_temperature`  , `cold_white` and
+
+  - `COLD_WARM_WHITE`  : Cold and warm white channels. Accepts `brightness`, `color_temperature`, `cold_white` and
+
       `warm_white` parameters.
-  - `RGB`  : RGB color channels. Accepts `brightness`  , `color_brightness`  , `red`  , `green` and `blue` parameters.
+
+  - `RGB`  : RGB color channels. Accepts `brightness`, `color_brightness`, `red`, `green` and `blue` parameters.
   - `RGB_WHITE`  : RGB color channels and a separate white channel. Accepts parameters from `RGB` and `WHITE`
+
       color modes.
+
   - `RGB_COLOR_TEMPERATURE`  : RGB color channels and a separate color-temperature controlled white channel. Accepts
+
       parameters from `RGB` and `COLOR_TEMPERATURE` color modes.
+
   - `RGB_COLD_WARM_WHITE`  : RGB color channels and two separate cold and warm white channels. Accepts parameters
+
       from `RGB` and `COLD_WARM_WHITE` color modes.
 
 - **brightness** (*Optional*, percentage, [templatable](#config-templatable)): The primary brightness of the light;
   applies to all channels (both color and white) of the light.
+
 - **color_brightness** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the color
   lights. Useful to control brightness of colored and white lights separately for RGBW lights.
+
 - **red** (*Optional*, percentage, [templatable](#config-templatable)): The red channel of the light.
 - **green** (*Optional*, percentage, [templatable](#config-templatable)): The green channel of the light.
 - **blue** (*Optional*, percentage, [templatable](#config-templatable)): The blue channel of the light.
 - **white** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the white channel.
 - **color_temperature** (*Optional*, float, [templatable](#config-templatable)): The color temperature (in `mireds
   <https://en.wikipedia.org/wiki/Mired>`__ or Kelvin) of the white channel.
+
 - **cold_white** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the cold white
   channel. Cannot be used at the same time as *color_temperature*.
+
 - **warm_white** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the warm white
   channel. Cannot be used at the same time as *color_temperature*.
 
@@ -197,10 +217,13 @@ on_...:
 - **id** (**Required**, [ID](#config-id)): The ID of the light.
 - **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
   transition if the light supports it.
+
 - **flash_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): If set, will flash the
   given color for this period of time and then go back to the previous state.
+
 - **effect** (*Optional*, string, [templatable](#config-templatable)): If set, will attempt to start an effect
   with the given name.
+
 - All other options from [light state](#light-state_config).
 
 {{< note >}}
@@ -220,7 +243,7 @@ call.set_effect("The Effect");
 call.perform();
 ```
 
-Shorter example using auto call , call.set_brightness and call.perform.
+Shorter example using auto call, call.set_brightness and call.perform.
 
 ```cpp
 id(light_1).turn_on().set_brightness(1.0).perform();
@@ -228,14 +251,14 @@ id(light_1).turn_on().set_brightness(1.0).perform();
 
 {{< /note >}}
 {{< note >}}
-The `red`  , `green` and `blue` values only control the color of the light, not its brightness! If you assign
+The `red`, `green` and `blue` values only control the color of the light, not its brightness! If you assign
 `50%` to all RGB channels it will be interpreted as 100% on. Only use `brightness` or `color_brightness` to
 control the brightness of the light.
 
 {{< /note >}}
 {{< note >}}
 The master brightness (`brightness`  ) and separate brightness controls for the color and white channels
-(`color_brightness`  , `white`  , `cold_white` and `warm_white`  ) are multiplied together. Thus, this will
+(`color_brightness`, `white`, `cold_white` and `warm_white`  ) are multiplied together. Thus, this will
 result in color at 40% brightness and white at 60% brightness:
 
 ```yaml
@@ -321,13 +344,16 @@ on_...:
 - **id** (**Required**, [ID](#config-id)): The ID of the light.
 - **relative_brightness** (**Required**, [templatable](#config-templatable), percentage): The relative brightness
   to dim the light by.
+
 - **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
   transition.
+
 - **brightness_limits** (*Optional*): Limits in the brightness range.
-  - **min_brightness** (*Optional*, percentage): The minimum brightness to dim the light to. Defaults to `0%`  .
-  - **max_brightness** (*Optional*, percentage): The maximum brightness to dim the light to. Defaults to `100%`  .
+  - **min_brightness** (*Optional*, percentage): The minimum brightness to dim the light to. Defaults to `0%`.
+  - **max_brightness** (*Optional*, percentage): The maximum brightness to dim the light to. Defaults to `100%`.
   - **limit_mode** (*Optional*): What to do when the current brightness is outside of the limit range. Defaults to
-      `CLAMP`  . Valid limit modes are:
+
+      `CLAMP`. Valid limit modes are:
 
     - `CLAMP`  : Clamp the brightness to the limit range.
     - `DO_NOTHING`  : No dimming if the brightness is outside the limit range.
@@ -378,10 +404,13 @@ on_...:
 - **id** (**Required**, [ID](#config-id)): The ID of the addressable light to control.
 - **range_from** (*Optional*, [templatable](#config-templatable), int): The beginning of the range of LEDs to
   control, inclusive, using zero-based indexing. Defaults to 0 (the beginning of the strip).
+
 - **range_to** (*Optional*, [templatable](#config-templatable), int): The end of the range of LEDs to control,
   inclusive, using zero-based indexing. Defaults to the end of the strip (`num_leds` - 1).
+
 - **color_brightness** (*Optional*, [templatable](#config-templatable), percentage): The brightness to set the
   color channel to.
+
 - **red** (*Optional*, [templatable](#config-templatable), percentage): The value to set the red channel to.
 - **green** (*Optional*, [templatable](#config-templatable), percentage): The value to set the green channel to.
 - **blue** (*Optional*, [templatable](#config-templatable), percentage): The value to set the blue channel to.
@@ -475,8 +504,8 @@ After setting a light effect, it is possible to reset the in-use effect back to 
 
 ### Pulse Effect
 
-This effect makes a pulsating light. The period can be defined by `update_interval`  , the transition length with
-`transition_length`  . `transition_length` should be set to less than `update_interval`  , setting
+This effect makes a pulsating light. The period can be defined by `update_interval`, the transition length with
+`transition_length`. `transition_length` should be set to less than `update_interval`, setting
 `transition_length` to `1s` and `update_interval` to `2s` will result in a transition from 0% to 100% lasting
 1 second, 1 second full light, a transition from 100% to 0% for 1 second and off for 1 second.
 
@@ -506,21 +535,22 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Pulse`  .
-- **transition_length** (*Optional*, [Time](#config-time)): The duration of each transition. Defaults to `1s`  . Can be a
+- **name** (*Optional*, string): The name of the effect. Defaults to `Pulse`.
+- **transition_length** (*Optional*, [Time](#config-time)): The duration of each transition. Defaults to `1s`. Can be a
   single time or split for on and off using these nested options.
 
   - **on_length** (*Optional*, [Time](#config-time)): The duration of the transition when the light is turned on.
   - **off_length** (*Optional*, [Time](#config-time)): The duration of the transition when the light is turned off.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval when the new transition is started. Defaults to
-  `1s`  .
+  `1s`.
+
 - **min_brightness** (*Optional*, percentage): The minimum brightness value. Defaults to `0%`
 - **max_brightness** (*Optional*, percentage): The maximum brightness value. Defaults to `100%`
 
 ### Random Effect
 
 This effect makes a transition (of length `transition_length`  ) to a randomly-chosen color and/or brightness (for
-monochromatic) every `update_interval`  .
+monochromatic) every `update_interval`.
 
 ```yaml
 light:
@@ -536,8 +566,8 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Random`  .
-- **transition_length** (*Optional*, [Time](#config-time)): The duration of each transition to start. Defaults to `5s`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Random`.
+- **transition_length** (*Optional*, [Time](#config-time)): The duration of each transition to start. Defaults to `5s`.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval with which a new color is selected and
   transitioned to.
 
@@ -572,23 +602,24 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Strobe`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Strobe`.
 - **colors** (*Optional*, list): A list of colors to cycle through. Defaults to a quick cycle between ON and OFF.
 
-  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `true`  .
+  - **state** (*Optional*, boolean): The on/off state to show. Defaults to `true`.
   - **color_mode** (*Optional*, string): The color mode of the light. Defaults to the current color mode.
-  - **brightness** (*Optional*, percentage): The brightness of the light. Defaults to `100%`  .
-  - **color_brightness** (*Optional*, percentage): The brightness of the RGB lights, if applicable. Defaults to `100%`  .
-  - **red** (*Optional*, percentage): The red channel of the light, if applicable. Defaults to `100%`  .
-  - **green** (*Optional*, percentage): The green channel of the light, if applicable. Defaults to `100%`  .
-  - **blue** (*Optional*, percentage): The blue channel of the light, if applicable. Defaults to `100%`  .
-  - **white** (*Optional*, percentage): The white channel of the light, if applicable. Defaults to `100%`  .
+  - **brightness** (*Optional*, percentage): The brightness of the light. Defaults to `100%`.
+  - **color_brightness** (*Optional*, percentage): The brightness of the RGB lights, if applicable. Defaults to `100%`.
+  - **red** (*Optional*, percentage): The red channel of the light, if applicable. Defaults to `100%`.
+  - **green** (*Optional*, percentage): The green channel of the light, if applicable. Defaults to `100%`.
+  - **blue** (*Optional*, percentage): The blue channel of the light, if applicable. Defaults to `100%`.
+  - **white** (*Optional*, percentage): The white channel of the light, if applicable. Defaults to `100%`.
   - **color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired)
     or Kelvin) of the light, if applicable.
-  - **cold_white** (*Optional*, percentage): The cold white channel of the light, if applicable. Defaults to `100%`  .
-  - **warm_white** (*Optional*, percentage): The warm white channel of the light, if applicable. Defaults to `100%`  .
+
+  - **cold_white** (*Optional*, percentage): The cold white channel of the light, if applicable. Defaults to `100%`.
+  - **warm_white** (*Optional*, percentage): The warm white channel of the light, if applicable. Defaults to `100%`.
   - **duration** (**Required**, [Time](#config-time)): The duration this color should be active.
-  - **transition_length** (*Optional*, [Time](#config-time)): The duration of each transition. Defaults to `0s`  .
+  - **transition_length** (*Optional*, [Time](#config-time)): The duration of each transition. Defaults to `0s`.
 
 See [light state](#light-state_config) for more information on the various color fields.
 
@@ -610,11 +641,12 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Flicker`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Flicker`.
 - **alpha** (*Optional*, percentage): The percentage that the last color value should affect the light. More or less
-  the "forget-factor" of an exponential moving average. Defaults to `95%`  .
+  the "forget-factor" of an exponential moving average. Defaults to `95%`.
+
 - **intensity** (*Optional*, percentage): The intensity of the flickering, basically the maximum amplitude of the
-  random offsets. Defaults to `1.5%`  .
+  random offsets. Defaults to `1.5%`.
 
 ### Lambda Effect
 
@@ -657,7 +689,8 @@ light:
 
 - **name** (**Required**, string): The name of the custom effect.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval with which the lambda code is executed. A value of
-  `0ms` means that the lambda is always executed, without a cool-down. Defaults to `0ms`  .
+  `0ms` means that the lambda is always executed, without a cool-down. Defaults to `0ms`.
+
 - **lambda** (**Required**, [lambda](#config-lambda)): The code to execute. `static` variables are especially
   useful.
 
@@ -680,14 +713,14 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Rainbow`  .
-- **speed** (*Optional*, int): The speed of the effect, unitless. Defaults to `10`  .
-- **width** (*Optional*, int): The "width" of a full-scale rainbow, unitless. Defaults to `50`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Rainbow`.
+- **speed** (*Optional*, int): The speed of the effect, unitless. Defaults to `10`.
+- **width** (*Optional*, int): The "width" of a full-scale rainbow, unitless. Defaults to `50`.
 
 ### Addressable Color Wipe Effect
 
 A light effect for individually-addressable LEDs that continuously introduces new colors at the beginning of the strip
-and shifts them forward every `add_led_interval`  .
+and shifts them forward every `add_led_interval`.
 
 ```yaml
 light:
@@ -713,23 +746,26 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Color Wipe`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Color Wipe`.
 - **colors** (*Optional*, list): The colors to shift in at the beginning of the strip. Defaults to shifting in random
   colors.
 
-  - **red** (*Optional*, percentage): The percentage the red color channel should be on. Defaults to `100%`  .
-  - **green** (*Optional*, percentage): The percentage the green color channel should be on. Defaults to `100%`  .
-  - **blue** (*Optional*, percentage): The percentage the blue color channel should be on. Defaults to `100%`  .
-  - **random** (*Optional*, boolean): If set to `true`  , will overwrite the RGB colors by a new, randomly-chosen
-    color each time. Defaults to `false`  .
+  - **red** (*Optional*, percentage): The percentage the red color channel should be on. Defaults to `100%`.
+  - **green** (*Optional*, percentage): The percentage the green color channel should be on. Defaults to `100%`.
+  - **blue** (*Optional*, percentage): The percentage the blue color channel should be on. Defaults to `100%`.
+  - **random** (*Optional*, boolean): If set to `true`, will overwrite the RGB colors by a new, randomly-chosen
+    color each time. Defaults to `false`.
+
   - **num_leds** (**Required**, positive int): The number of LEDs of this type to have before transitioning to the next
     color. If `gradient` is true, this will be the number of LEDs over which the color transition will occur.
+
   - **gradient** (*Optional*, boolean): If `true` the current color will transition with a gradient over `num_leds`
-    to the next color. Defaults to `false`  .
+    to the next color. Defaults to `false`.
 
 - **add_led_interval** (*Optional*, [Time](#config-time)): The interval with which to shift in new LEDs at the beginning
-  of the strip. Defaults to `100ms`  .
-- **reverse** (*Optional*, boolean): Whether to reverse the direction of the color wipe. Defaults to `false`  .
+  of the strip. Defaults to `100ms`.
+
+- **reverse** (*Optional*, boolean): Whether to reverse the direction of the color wipe. Defaults to `false`.
 
 ### Addressable Scan Effect
 
@@ -750,10 +786,11 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Scan`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Scan`.
 - **move_interval** (*Optional*, [Time](#config-time)): The interval with which to move the dot/line one LED forward.
-  Defaults to `100ms`  .
-- **scan_width** (*Optional*, int): The number of LEDs to use. Defaults to `1`  .
+  Defaults to `100ms`.
+
+- **scan_width** (*Optional*, int): The number of LEDs to use. Defaults to `1`.
 
 ### Addressable Twinkle Effect
 
@@ -774,15 +811,16 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Twinkle`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Twinkle`.
 - **twinkle_probability** (*Optional*, percentage): The percentage with which, at any time step, a randomly-chosen LED
   should start its twinkle animation.
+
 - **progress_interval** (*Optional*, [Time](#config-time)): The interval with which to progress the effect. This affects
-  the duration of a twinkle animation. Defaults to `4ms`  .
+  the duration of a twinkle animation. Defaults to `4ms`.
 
 ### Addressable Random Twinkle Effect
 
-A light effect similar to `addressable_twinkle`  , but using random colors for each twinkle animation.
+A light effect similar to `addressable_twinkle`, but using random colors for each twinkle animation.
 
 ```yaml
 light:
@@ -798,11 +836,12 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Random Twinkle`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Random Twinkle`.
 - **twinkle_probability** (*Optional*, percentage): The percentage with which, at any time step, a randomly-chosen LED
   should start its twinkle animation.
+
 - **progress_interval** (*Optional*, [Time](#config-time)): The interval with which to progress the effect. This affects
-  the duration of a twinkle animation. Defaults to `4ms`  .
+  the duration of a twinkle animation. Defaults to `4ms`.
 
 ### Addressable Fireworks Effect
 
@@ -825,16 +864,19 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Fireworks`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Fireworks`.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval with which to progress the effect. Defaults to
-  `32ms`  .
+  `32ms`.
+
 - **spark_probability** (*Optional*, percentage): The probability to start a new firework spark at a randomly-chosen
-  LED at any given time step. Defaults to `10%`  .
+  LED at any given time step. Defaults to `10%`.
+
 - **use_random_color** (*Optional*, boolean): Whether to use random colors for new firework sparks. Defaults to using
   the currently active light color.
+
 - **fade_out_rate** (*Optional*, int): The rate with which to fade out the LED strip, unitless. Needs to be carefully
   chosen so that the whole strip doesn't light up forever if the fade out rate is too low or that the firework
-  sparks do not propagate for a long time. Defaults to `120`  .
+  sparks do not propagate for a long time. Defaults to `120`.
 
 ### Addressable Flicker Effect
 
@@ -855,11 +897,12 @@ light:
 
 **Configuration variables:**
 
-- **name** (*Optional*, string): The name of the effect. Defaults to `Addressable Flicker`  .
+- **name** (*Optional*, string): The name of the effect. Defaults to `Addressable Flicker`.
 - **update_interval** (*Optional*, [Time](#config-time)): The time interval for updating the random offsets. Defaults to
-  `16ms`  .
+  `16ms`.
+
 - **intensity** (*Optional*, percentage): The intensity of the effect, basically how much the random values can offset
-  the currently active light color. Defaults to `5%`  .
+  the currently active light color. Defaults to `5%`.
 
 ### Addressable Lambda Effect
 
@@ -868,7 +911,7 @@ This effect allows you to access each LED individually in a custom light effect.
 Available variables in the lambda:
 
 - **it** - {{< apiclass "AddressableLight" "light::AddressableLight" >}} instance (see API reference for more info).
-- **current_color**  - {{< apistruct "ESPColor" "light::ESPColor" >}} instance (see API reference for more info).
+- **current_color** - {{< apistruct "ESPColor" "light::ESPColor" >}} instance (see API reference for more info).
 - **initial_run** - A bool which is true on the first execution of the lambda. Useful to reset static variables when
   restarting an effect.
 
@@ -993,8 +1036,8 @@ light:
 **Configuration variables:**
 
 - **universe** (**Required**, int): The value of universe, between 1 to 512.
-- **channels** (*Optional*): The type of data. This is used to specify if it is a `MONO`  , `RGB` or `RGBW` light
-  and in which order the colors are. Defaults to `RGB`  .
+- **channels** (*Optional*): The type of data. This is used to specify if it is a `MONO`, `RGB` or `RGBW` light
+  and in which order the colors are. Defaults to `RGB`.
 
 There are three modes of operation:
 
@@ -1014,9 +1057,9 @@ The [E1.31 Effect](#e131-light-effect) requires a component hub for the `e131` l
 
 **Configuration variables:**
 
-- **method** (*Optional*): Listening method, one of `multicast` or `unicast`  . Defaults to `multicast`  .
+- **method** (*Optional*): Listening method, one of `multicast` or `unicast`. Defaults to `multicast`.
 
-ESPHome will listen on UDP port `5568`  .
+ESPHome will listen on UDP port `5568`.
 
 ### Adalight Effect
 
@@ -1057,7 +1100,7 @@ This effect enables controlling addressable lights using the `UDP Realtime Contr
 creation of realtime ambient lighting effects.
 
 Prismatik_and/or LedFx_ can be used to control addressable lights over the network on ESPHome. Use the connection type
-`udp` on the default port and add the data prefix `0201`  .
+`udp` on the default port and add the data prefix `0201`.
 
 ```yaml
 wled:
@@ -1074,8 +1117,8 @@ light:
 
 **Configuration variables:**
 
-- **port** (*Optional*, int): The port to run the UDP server on. Defaults to `21324`  .
-- **blank_on_start** (*Optional*, boolean): Whether or not to blank all LEDs when effect starts. Deaults to `True`  .
+- **port** (*Optional*, int): The port to run the UDP server on. Defaults to `21324`.
+- **blank_on_start** (*Optional*, boolean): Whether or not to blank all LEDs when effect starts. Deaults to `True`.
 - **sync_group_mask** (*Optional*, int): Used with WLED Notifier. The Sync Group mask value that specifies which WLED
   Sync Groups to listen to. Defaults to `0` (All Sync Groups). Sync Groups 1, 2, 3, 4, 5, 6, 7, 8 use masks 1, 2, 4,
   8, 16, 32, 64, 128. Combine mask values to listen to multiple Sync Groups.

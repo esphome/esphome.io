@@ -38,12 +38,16 @@ globals:
 
 - **id** (**Required**, [ID](#config-id)): Give the global variable an ID so that you can refer
   to it later in [lambdas](#config-lambda).
+
 - **type** (**Required**, string): The C++ type of the global variable, for example `bool` (for `true`  /`false`  ),
   `int` (for integers), `float` (for decimal numbers), `int[50]` for an array of 50 integers, etc.
+
 - **restore_value** (*Optional*, boolean): Whether to try to restore the state on boot up.
-  Be careful: on the ESP8266, you only have a total of 96 bytes available for this! Defaults to `no`  .
-- **max_restore_data_length** (*Optional*, integer): Only applies to variables of type `std::string`  .  ESPHome will allocate enough space for this many characters,
+  Be careful: on the ESP8266, you only have a total of 96 bytes available for this! Defaults to `no`.
+
+- **max_restore_data_length** (*Optional*, integer): Only applies to variables of type `std::string`. ESPHome will allocate enough space for this many characters,
   plus single character of overhead. Strings longer than this will not be saved. The max value of this variable is 254 characters, and the default is 63 characters.
+
 - **initial_value** (*Optional*, string): The value with which to initialize this variable if the state
   can not be restored or if state restoration is not enabled. This needs to be wrapped in quotes! Defaults to
   the C++ default value for this type (for example `0` for integers).

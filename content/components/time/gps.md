@@ -3,8 +3,6 @@ description: "GPS Time Source"
 title: "GPS Time Source"
 ---
 
-
-
 You first need to set up the {{< docref "/components/gps" "GPS" >}} component.
 
 ```yaml

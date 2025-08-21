@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `lock` domain includes all platforms that should function like a lock
 with lock/unlock actions.
 
@@ -29,25 +27,31 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the lock to use that name, you can set `name: None`  .
+you want the lock to use that name, you can set `name: None`.
 
 {{< /note >}}
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   lock in the frontend.
+
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **on_lock** (*Optional*, [Action](#config-action)): An automation to perform
   when the lock is locked. See [`lock.on_lock` / `lock.on_unlock` Trigger](#lock-on_lock_unlock_trigger).
+
 - **on_unlock** (*Optional*, [Action](#config-action)): An automation to perform
   when the lock is unlocked. See [`lock.on_lock` / `lock.on_unlock` Trigger](#lock-on_lock_unlock_trigger)..
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options. Set to `""` to remove the default entity category.
+
 - If MQTT enabled, All other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
@@ -128,8 +132,8 @@ advanced stuff (see the full API Reference for more info).
     }
 ```
 
-- `unlock()`  /`lock()`  /`open()`  : Manually lock/unlock/open a  lock from code.
-  Similar to the `lock.lock`  , `lock.unlock`  , and `lock.open` actions,
+- `unlock()`  /`lock()`  /`open()`  : Manually lock/unlock/open a lock from code.
+  Similar to the `lock.lock`, `lock.unlock`, and `lock.open` actions,
   but can be used in complex lambda expressions.
 
 ```yaml

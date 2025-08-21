@@ -7,7 +7,6 @@ params:
     image: /images/lvgl.png
 ---
 
-
 {{< anchor "lvgl-cookbook" >}}
 
 Here are a couple recipes for various interesting things you can do with {{< docref "/components/lvgl" >}} in ESPHome.
@@ -151,8 +150,8 @@ lvgl:
 Note that Home Assistant expects an integer at the `brightness` parameter of the `light.turn_on` action call, and since
 ESPHome uses floats, `x` needs to be converted.
 
-This is applicable to action calls like `fan.set_percentage` or `valve.set_valve_position`  , too; the only difference
-is that `max_value` has to be `100`  .
+This is applicable to action calls like `fan.set_percentage` or `valve.set_valve_position`, too; the only difference
+is that `max_value` has to be `100`.
 
 {{< anchor "lvgl-cookbook-volume" >}}
 
@@ -165,8 +164,8 @@ media player, which uses float values.
 
 With a sensor we retrieve the current volume level of the media player, which is stored in Home Assistant as an
 attribute of the entity, and is a float value between `0` (min) and `1` (max). Since LVGL only handles integers,
-it's convenient to set the slider's possible values to be between `0` and `100`  . Thus a conversion is needed back
-and forth, meaning that when we read the value from Home Assistant we have to multiply it by `100`  , and when we set
+it's convenient to set the slider's possible values to be between `0` and `100`. Thus a conversion is needed back
+and forth, meaning that when we read the value from Home Assistant we have to multiply it by `100`, and when we set
 the volume through the action call, we have to divide it by `100`  :
 
 ```yaml
@@ -328,7 +327,7 @@ A thermometer with a precise gauge also made from a [`meter`](#lvgl-widget-meter
 
 Whenever a new value comes from the sensor, we update the needle indicator as well as the text in the
 [`label`](#lvgl-widget-label). Since LVGL only handles integer values on the [`meter`](#lvgl-widget-meter) scale,
-but the sensor's value is a `float`  , we use the same approach as in the examples above; we multiply the sensor's
+but the sensor's value is a `float`, we use the same approach as in the examples above; we multiply the sensor's
 values by `10` and feed this value to the [`meter`](#lvgl-widget-meter). It's essentially two scales on top of each
 other: one to set the needle based on the multiplied value and the other to show sensor's original value in the
 [`label`](#lvgl-widget-label).
@@ -1210,7 +1209,7 @@ lvgl:
 
 The big advantage here is that whenever you need to add, for example, an extra column of buttons for a new cover, you
 just simply append it to the `grid_columns` variable, and add the corresponding widgets as above. With `STRETCH` their
-sizes and positions will automatically be calculated to fill in the cells, while the parent's `pad_all`  , `pad_row`
+sizes and positions will automatically be calculated to fill in the cells, while the parent's `pad_all`, `pad_row`
 and `pad_column` can help with spacing between them. See [Weather forecast panel](#lvgl-cookbook-weather) further down
 this page for another example relying on **Grid**.
 
@@ -1322,9 +1321,11 @@ Follow these steps to choose your MDI icons:
 - icon and note its codepoint (it's the hexadecimal number near the download options).
 - To get the TrueType font with all the icons in it, head on to the
 - [Pictogrammers GitHub repository](https://github.com/Pictogrammers/pictogrammers.github.io/tree/main/%40mdi/font/)
+
 -and from a recent version folder, download the `materialdesignicons-webfont.ttf` file and place it in your ESPHome
 config directory under a folder named `fonts` (to match the example above).
-- To use the desired icon, prepend the copied codepoint with `\U000`  . The Unicode character escape sequence has to
+
+- To use the desired icon, prepend the copied codepoint with `\U000`. The Unicode character escape sequence has to
 - start with capital `\U` and have exactly 8 hexadecimal digits.
 - To translate the escape sequence into the real glyph, make sure you enclose your strings in double quotes.
 
@@ -1610,7 +1611,7 @@ binary_sensor:
         - lvgl.widget.hide: ani_battery_charging
 ```
 
-Use `x`  , `y`  , `align` widget properties for precise positioning.
+Use `x`, `y`, `align` widget properties for precise positioning.
 
 {{< /tip >}}
 {{< anchor "lvgl-cookbook-clock" >}}

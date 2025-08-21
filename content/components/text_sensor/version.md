@@ -7,8 +7,6 @@ params:
     image: new-box.svg
 ---
 
-
-
 The `version` text sensor platform exposes the ESPHome version the firmware
 was compiled against as a text sensor.
 
@@ -23,7 +21,7 @@ text_sensor:
 
 ## Configuration variables
 
-- **hide_timestamp** (*Optional*, boolean): Allows you to hide the compilation timestamp from the version string. Defaults to `false`  .
+- **hide_timestamp** (*Optional*, boolean): Allows you to hide the compilation timestamp from the version string. Defaults to `false`.
 - All other options from [Text Sensor](#config-text_sensor).
 
 ## Disabling the compilation timestamp

@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_bns.png
 ---
 
-
-
 The `lvgl` binary sensor platform creates a binary sensor from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 

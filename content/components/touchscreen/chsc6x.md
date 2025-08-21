@@ -7,8 +7,6 @@ params:
     image: chsc6x.png
 ---
 
-
-
 The `chsc6x` touchscreen platform allows using the touch screen controllers based on the chsc6x chip with ESPHome.
 The [I²C](#i2c) is required to be set up in your configuration for this touchscreen to work.
 

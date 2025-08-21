@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `media_player` domain includes all platforms that implement media player
 functionality.
 
@@ -33,18 +31,21 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the media player to use that name, you can set `name: None`  .
+you want the media player to use that name, you can set `name: None`.
 
 {{< /note >}}
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   media player in the frontend.
+
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options. Set to `""` to remove the default entity category.
@@ -106,7 +107,7 @@ This action stops the current playback.
 
 Configuration variables:
 
-**announcement** (*Optional*, boolean): Whether to target announcements or regular media files, if supported by the media player. Defaults to `false`  .
+**announcement** (*Optional*, boolean): Whether to target announcements or regular media files, if supported by the media player. Defaults to `false`.
 
 {{< anchor "media_player-toggle" >}}
 

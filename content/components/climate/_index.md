@@ -7,11 +7,9 @@ params:
     image: folder-open.svg
 ---
 
-
-
 ESPHome has support for climate devices. Climate devices can represent different types of
 hardware, but the defining factor is that climate devices have a settable target temperature
-and can be put in different modes like `HEAT`  , `COOL`  , `HEAT_COOL` or `OFF`  .
+and can be put in different modes like `HEAT`, `COOL`, `HEAT_COOL` or `OFF`.
 
 {{< img src="climate-ui.png" alt="Image" caption="Climate Device UI in Home Assistant." width="60.0%" class="align-center" >}}
 
@@ -23,7 +21,7 @@ Not all climate components support all possible features. Check the correspondin
 
 ## Base Climate Configuration
 
-All climate platforms in ESPHome inherit from the climate configuration schema. In ESPHome, `°C` is assumed for all temperature values. Some platforms allow conversion or setting in `°F`  , this is specified separately.
+All climate platforms in ESPHome inherit from the climate configuration schema. In ESPHome, `°C` is assumed for all temperature values. Some platforms allow conversion or setting in `°F`, this is specified separately.
 
 ```yaml
 climate:
@@ -50,7 +48,7 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the climate to use that name, you can set `name: None`  .
+you want the climate to use that name, you can set `name: None`.
 
 {{< /note >}}
 
@@ -61,8 +59,10 @@ you want the climate to use that name, you can set `name: None`  .
 
   - **min_temperature** (*Optional*, float): The minimum temperature the climate device can reach.
     Used to set the range of the frontend gauge.
+
   - **max_temperature** (*Optional*, float): The maximum temperature the climate device can reach.
     Used to set the range of the frontend gauge.
+
   - **temperature_step** (*Optional*, float): The granularity with which the target temperature
     can be controlled. Can be a single number, or split as below:
 
@@ -71,6 +71,7 @@ you want the climate to use that name, you can set `name: None`  .
 
   - **min_humidity** (*Optional*, percentage): The minimum humidity the climate device can reach.
     Used to set the range of the frontend gauge.
+
   - **max_humidity** (*Optional*, percentage): The maximum humidity the climate device can reach.
     Used to set the range of the frontend gauge.
 
@@ -79,55 +80,77 @@ Advanced options:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT options:
 
 - **action_state_topic** (*Optional*, string): The topic to publish
   climate device action changes to.
+
 - **current_temperature_state_topic** (*Optional*, string): The topic to publish
   current temperature changes to.
+
 - **current_humidity_state_topic** (*Optional*, string): The topic to publish
   current humidity changes to.
+
 - **fan_mode_state_topic** (*Optional*, string): The topic to publish
   fan mode changes to.
+
 - **fan_mode_command_topic** (*Optional*, string): The topic to receive
   fan mode commands on.
+
 - **mode_state_topic** (*Optional*, string): The topic to publish
   climate device mode changes to.
+
 - **mode_command_topic** (*Optional*, string): The topic to receive
   climate device mode commands on.
+
 - **preset_state_topic** (*Optional*, string): The topic to publish
   preset changes to.
+
 - **preset_command_topic** (*Optional*, string): The topic to receive
   preset commands on.
+
 - **swing_mode_state_topic** (*Optional*, string): The topic to publish
   swing mode changes to.
+
 - **swing_mode_command_topic** (*Optional*, string): The topic to receive
   swing mode commands on.
+
 - **target_temperature_state_topic** (*Optional*, string): The topic to publish
   target temperature changes to.
+
 - **target_temperature_command_topic** (*Optional*, string): The topic to receive
   target temperature commands on.
+
 - **target_temperature_high_state_topic** (*Optional*, string): The topic to publish
   higher target temperature changes to.
+
 - **target_temperature_high_command_topic** (*Optional*, string): The topic to receive
   higher target temperature commands on.
+
 - **target_temperature_low_state_topic** (*Optional*, string): The topic to publish
   lower target temperature changes to.
+
 - **target_temperature_low_command_topic** (*Optional*, string): The topic to receive
   lower target temperature commands on.
+
 - **target_humidity_state_topic** (*Optional*, string): The topic to publish
   target humidity changes to.
+
 - **target_humidity_command_topic** (*Optional*, string): The topic to receive
   target humidity commands on.
+
 - All other options from [MQTT Component](#config-mqtt-component).
 
 ## Climate Automation
@@ -161,24 +184,32 @@ Configuration variables:
 
 - **target_temperature** (*Optional*, float, [templatable](#config-templatable)): Set the
   target temperature of a climate device.
+
 - **target_temperature_low** (*Optional*, float, [templatable](#config-templatable)): Set the
   lower target temperature of a climate device with a two-point target temperature.
+
 - **target_temperature_high** (*Optional*, float, [templatable](#config-templatable)): Set the
   higher target temperature of a climate device with a two-point target temperature.
+
 - **target_humidity** (*Optional*, float, [templatable](#config-templatable)): Set the
   target humidity of a climate device.
+
 - **preset** (*Optional*, string, [templatable](#config-templatable)): Set the preset
-  of the climate device. One of `ECO`  , `AWAY`  , `BOOST`  , `COMFORT`  , `HOME`  , `SLEEP`  ,
-  `ACTIVITY`  .
+  of the climate device. One of `ECO`, `AWAY`, `BOOST`, `COMFORT`, `HOME`, `SLEEP`,
+  `ACTIVITY`.
+
 - **custom_preset** (*Optional*, string, [templatable](#config-templatable)): Set one of the
   supported custom_presets of the climate device.
+
 - **fan_mode** (*Optional*, string, [templatable](#config-templatable)): Set the fan mode
-  of the climate device. One of `ON`  , `OFF`  , `AUTO`  , `LOW`  , `MEDIUM`  , `HIGH`  , `MIDDLE`  ,
-  `FOCUS`  , `DIFFUSE`  , `QUIET`  .
+  of the climate device. One of `ON`, `OFF`, `AUTO`, `LOW`, `MEDIUM`, `HIGH`, `MIDDLE`,
+  `FOCUS`, `DIFFUSE`, `QUIET`.
+
 - **custom_fan_mode** (*Optional*, string, [templatable](#config-templatable)): Set one of the
   supported custom_fan_modes of the climate device.
+
 - **swing_mode** (*Optional*, string, [templatable](#config-templatable)): Set the swing mode
-  of the climate device. One of `OFF`  , `BOTH`  , `VERTICAL`  , `HORIZONTAL`  .
+  of the climate device. One of `OFF`, `BOTH`, `VERTICAL`, `HORIZONTAL`.
 
 {{< anchor "climate-lambda_calls" >}}
 
@@ -233,7 +264,7 @@ advanced stuff.
 
 This trigger is activated each time the state of the climate device is updated
 (for example, if the current temperature measurement or the mode set by the users changes).
-The `Climate` itself is available to automations as the reference `x`  .
+The `Climate` itself is available to automations as the reference `x`.
 
 ```yaml
 climate:
@@ -252,8 +283,8 @@ climate:
 
 This trigger is activated each time a *control* input of the climate device
 is updated via a `ClimateCall` (which includes changes coming in from Home
-Assistant).  That is, this trigger is activated for, for example, changes to
-the mode, *but not* on temperature measurements.  It will be invoked prior to
+Assistant). That is, this trigger is activated for, for example, changes to
+the mode, *but not* on temperature measurements. It will be invoked prior to
 the `on_state` trigger, if both are defined. The `ClimateCall` control
 object is available to automations as the reference `x` that can be changed.
 

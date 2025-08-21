@@ -7,8 +7,6 @@ params:
     image: analog_threshold.svg
 ---
 
-
-
 The `analog_threshold` binary sensor platform allows you to convert analog values
 (i.e. {{< docref "/components/sensor/index" "sensor" >}} readings)
 into boolean values, using a threshold as a reference.
@@ -21,7 +19,7 @@ Additionally a [delay filter](#binary_sensor-filters) could be used to only chan
 after a new state has been kept a minimum time.
 
 If the source sensor is uninitialized at the moment of component creation, the initial
-state of the binary sensor wil be `false`  , if later it has some reading errors, those
+state of the binary sensor wil be `false`, if later it has some reading errors, those
 invalid source updates will be ignored, and the binary sensor will keep it´s last state.
 
 For example, below configuration would turn the readings of current sensor into

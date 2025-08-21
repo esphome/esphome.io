@@ -7,8 +7,6 @@ params:
     image: sps30.jpg
 ---
 
-
-
 The `sps30` sensor platform allows you to use your Sensirion SPS30
 ([datasheet](https://sensirion.com/media/documents/8600FF88/616542B5/Sensirion_PM_Sensors_Datasheet_SPS30.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
@@ -99,9 +97,10 @@ sensor:
 - **auto_cleaning_interval** (*Optional*): The interval in seconds of the periodic fan-cleaning.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x69`  .
+  Defaults to `0x69`.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 ## Wiring
 

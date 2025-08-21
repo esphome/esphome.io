@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 ESPHome has support for components to create a select entity. A select entity is
 basically an option list that can be set by either yaml, hardware or the user/frontend.
 
@@ -38,7 +36,7 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the select to use that name, you can set `name: None`  .
+you want the select to use that name, you can set `name: None`.
 
 {{< /note >}}
 
@@ -46,13 +44,16 @@ you want the select to use that name, you can set `name: None`  .
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 Automations:
@@ -67,7 +68,7 @@ MQTT Options:
 ## Select Automation
 
 You can access the most recent state of the select in [lambdas](#config-lambda) using
-`id(select_id).state`  .
+`id(select_id).state`.
 For more information on using lambdas with select, see [lambda calls](#select-lambda_calls).
 
 {{< anchor "select-on_value" >}}
@@ -75,7 +76,7 @@ For more information on using lambdas with select, see [lambda calls](#select-la
 ### `on_value`
 
 This automation will be triggered whenever a value is set/published, even if the value is the same as before. In [Lambdas](#config-lambda)
-you can get the value from the trigger with `x` and the index offset of the selected value with `i`  .
+you can get the value from the trigger with `x` and the index offset of the selected value with `i`.
 
 ```yaml
 select:
@@ -151,7 +152,7 @@ Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump back to the first option
-  of the select when the last option is currently selected. Defaults to `true`  .
+  of the select when the last option is currently selected. Defaults to `true`.
 
 {{< anchor "select-previous_action" >}}
 
@@ -173,7 +174,7 @@ Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump to the last option
-  of the select when the first option is currently selected. Defaults to `true`  .
+  of the select when the first option is currently selected. Defaults to `true`.
 
 {{< anchor "select-first_action" >}}
 
@@ -239,10 +240,11 @@ Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the select to set.
 - **operation** (**Required**, string, [templatable](#config-templatable)): The
-  operation to perform. One of `FIRST`  , `LAST`  , `PREVIOUS` or
+  operation to perform. One of `FIRST`, `LAST`, `PREVIOUS` or
   `NEXT` (case insensitive). When writing a lambda for this field, then return
-  one of the following enum values: `SELECT_OP_FIRST`  , `SELECT_OP_LAST`  ,
-  `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`  .
+  one of the following enum values: `SELECT_OP_FIRST`, `SELECT_OP_LAST`,
+  `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`.
+
 - **cycle** (*Optional*, bool, [templatable](#config-templatable)):
   Can be used for options `NEXT` and `PREVIOUS` to specify whether or not to
   wrap around the options list when respectively the last or first option in

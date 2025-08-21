@@ -7,17 +7,17 @@ params:
     image: led-on.svg
 ---
 
-
-
 The `status_led` hooks into all ESPHome components and can indicate the status of
 the device. Specifically, it will:
 
 - Blink slowly (about every second) when a **warning** is active. Warnings are active when for
   example reading a sensor value fails temporarily, the WiFi/MQTT connections are disrupted, or
   if the native API component is included but no client is connected.
+
 - Blink quickly (multiple times per second) when an **error** is active. Errors indicate that
   ESPHome has found an error while setting up. In most cases, ESPHome will still try to
   recover from the error and continue with all other operations.
+
 - Stay off otherwise.
 
 ```yaml
@@ -27,7 +27,7 @@ status_led:
 ```
 
 {{< note >}}
-If your device has a single LED that needs to be shared use  {{< docref "/components/light/status_led" "status_led light platform" >}} instead.
+If your device has a single LED that needs to be shared use {{< docref "/components/light/status_led" "status_led light platform" >}} instead.
 
 {{< /note >}}
 
@@ -35,6 +35,7 @@ If your device has a single LED that needs to be shared use  {{< docref "/compon
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The
   GPIO pin to operate the status LED on.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 {{< note >}}

@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `stepper` component allows you to use stepper motors with ESPHome.
 Currently only the A4988 stepper driver
 ([datasheet](https://www.pololu.com/file/0J450/a4988_DMOS_microstepping_driver_with_translator.pdf))
@@ -29,12 +27,14 @@ Configuration variables:
 
 - **max_speed** (**Required**, float): The maximum speed in `steps/s` (steps per seconds) to drive the
   stepper at. Note most steppers can't step properly with speeds higher than 250 steps/s.
+
 - **acceleration** (*Optional*, float): The acceleration in `steps/s^2` (steps per seconds squared)
   to use when starting to move. The default is `inf` which means infinite acceleration, so the
   stepper will try to drive with the full speed immediately. This value is helpful if that first motion of
-  the motor is too jerky for what it's moving.  If you make this a small number, it will take the motor a
-  moment to get up  to speed.
-- **deceleration** (*Optional*, float): The same as `acceleration`  , but for when the motor is decelerating
+  the motor is too jerky for what it's moving. If you make this a small number, it will take the motor a
+  moment to get up to speed.
+
+- **deceleration** (*Optional*, float): The same as `acceleration`, but for when the motor is decelerating
   shortly before reaching the set position. Defaults to `inf` (immediate deceleration).
 
 ## A4988 Component
@@ -60,8 +60,10 @@ Configuration variables:
 - **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
 - **step_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `STEP` pin of the A4988
   stepper driver.
+
 - **dir_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `DIRECTION` pin of the A4988
   stepper driver.
+
 - **sleep_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Optionally also use the `SLEEP` pin
   of the A4988 stepper driver. If specified, the driver will be put into sleep mode as soon as the stepper
   reaches the target steps.
@@ -125,6 +127,7 @@ Configuration variables:
 - **pin_d** (**Required**, [Pin Schema](#config-pin_schema)): The pin **d** of the stepper control board.
 - **sleep_when_done** (*Optional*, boolean): Whether to turn off all coils when the stepper has
   reached the target position
+
 - **step_mode** (*Optional*, string): The step mode to operate the motor with. One of:
 
   - `FULL_STEP` (Default)
@@ -273,7 +276,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the stepper.
-- **deceleration** (**Required**, [templatable](#config-templatable), float): The same as `acceleration`  ,
+- **deceleration** (**Required**, [templatable](#config-templatable), float): The same as `acceleration`,
   but for when the motor is decelerating shortly before reaching the set position.
 
 {{< anchor "stepper-ha-config" >}}
@@ -330,7 +333,7 @@ advanced stuff (see the full API Reference for more info).
         int pos = id(my_stepper).current_position;
 ```
 
-- `target_position`  : Get the set target position of the stepper  as an integer.
+- `target_position`  : Get the set target position of the stepper as an integer.
 
 ```cpp
         int pos = id(my_stepper).target_position;

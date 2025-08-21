@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `ble_presence` binary sensor platform lets you track the presence of a Bluetooth Low Energy device.
 
 {{< warning >}}
@@ -48,32 +46,39 @@ binary_sensor:
 
 {{< note >}}
 Service UUID can be 16 bit long, as in the example, but it can also be 32 bit long
-like `1122aaff`  , or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`  .
+like `1122aaff`, or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`.
 
 {{< /note >}}
 
 ## Configuration variables
 
 - **mac_address** (*Optional*, MAC Address): The MAC address to track for this
-   binary sensor. Note that exactly one of `mac_address`  , `irk`  , `service_uuid` or `ibeacon_uuid`
+   binary sensor. Note that exactly one of `mac_address`, `irk`, `service_uuid` or `ibeacon_uuid`
    must be present.
+
 - **irk** (*Optional*, 16 byte hex string): The Identity Resolving Key (IRK) to track for this
-   binary sensor. Note that exactly one of `mac_address`  , `irk`  , `service_uuid` or `ibeacon_uuid`
+   binary sensor. Note that exactly one of `mac_address`, `irk`, `service_uuid` or `ibeacon_uuid`
    must be present.
+
 - **service_uuid** (*Optional*, string): 16 bit, 32 bit, or 128 bit BLE Service UUID
    which can be tracked if the device randomizes the MAC address. Note that exactly one of
-   `mac_address`  , `irk`  , `service_uuid` or `ibeacon_uuid` must be present.
+   `mac_address`, `irk`, `service_uuid` or `ibeacon_uuid` must be present.
+
 - **ibeacon_uuid** (*Optional*, string): The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
-   to identify the beacon that needs to be tracked. Note that exactly one of `mac_address`  ,
-   `irk`  , `service_uuid` or `ibeacon_uuid` must be present.
+   to identify the beacon that needs to be tracked. Note that exactly one of `mac_address`,
+   `irk`, `service_uuid` or `ibeacon_uuid` must be present.
+
 - **ibeacon_major** (*Optional*, int): The iBeacon major identifier of the beacon that needs
    to be tracked. Usually used to group beacons, for example for grouping all beacons in the
    same building.
+
 - **ibeacon_minor** (*Optional*, int): The iBeacon minor identifier of the beacon that needs
    to be tracked. Usually used to identify beacons within an iBeacon group.
+
 - **min_rssi** (*Optional*, int): at which minimum RSSI level would the component report the device be present.
 - **timeout** (*Optional*, [Time](#config-time)): The delay after last detecting the device before publishing not present state.
    The default is 5 minutes.
+
 - All other options from [Binary Sensor](#config-binary_sensor).
 
 {{< anchor "esp32_ble_tracker-setting_up_devices" >}}

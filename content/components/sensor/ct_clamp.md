@@ -7,8 +7,6 @@ params:
     image: ct_clamp.jpg
 ---
 
-
-
 The Current Transformer Clamp (`ct_clamp`  ) sensor allows you to hook up a CT Clamp to an analog
 voltage sensor (like the {{< docref "adc" "ADC sensor" >}}) and convert the readings to measured single phase AC current.
 
@@ -39,8 +37,10 @@ sensor:
 - **sensor** (**Required**, [ID](#config-id)): The source sensor to measure voltage values from.
 - **sample_duration** (*Optional*, [Time](#config-time)): The time duration to sample the current clamp
   with. Higher values can increase accuracy. Defaults to `200ms` which would be 10 whole cycles on a 50Hz system.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval
-  to check the sensor. Defaults to `60s`  . The **update_interval** for `ct_clamp` has to be greater than **sample_duration**.
+  to check the sensor. Defaults to `60s`. The **update_interval** for `ct_clamp` has to be greater than **sample_duration**.
+
 - All other options from [Sensor](#config-sensor).
 
 ## Calibration

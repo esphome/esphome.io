@@ -7,13 +7,11 @@ params:
     image: content-copy.svg
 ---
 
-
-
 The `copy` component can be used to copy an existing component (like a sensor, switch, etc.)
 and create a duplicate mirroring the source's state and forwarding actions such as turning on to the source.
 
 For each of the supported platforms, the configuration consists of the required configuration
-variable `source_id`  , which is used to indicate the source of the object being mirorred.
+variable `source_id`, which is used to indicate the source of the object being mirorred.
 
 ## Copy Binary Sensor
 

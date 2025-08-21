@@ -7,7 +7,6 @@ params:
     image: ezo-pmp.jpg
 ---
 
-
 The `ezo_pmp` component allows you to use an Atlas Scientific Peristaltic Pump with ESPHome.
 Both the EZO-PMP ([datasheet](https://files.atlas-scientific.com/EZO_PMP_Datasheet.pdf))
 and EZO-PMP-L ([datasheet](https://files.atlas-scientific.com/EZO_PMP_L_Datasheet.pdf)) are supported.
@@ -35,7 +34,7 @@ ezo_pmp:
 - **id** (**Required**, [ID](#config-id)): Specify the ID of the pump so that you can control it.
 - **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to 103.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 ## Sensor
 
@@ -288,7 +287,7 @@ on_...:
 ### `ezo_pmp.dose_volume_over_time` Action
 
 Use this action in an [automations](#automation) to have the peristaltic pump dose an specific `volume` (in milliliters)
-over the provided `duration` (in minutes). At the end of the time period the pump will have dosed the specified `volume`  .
+over the provided `duration` (in minutes). At the end of the time period the pump will have dosed the specified `volume`.
 If the volume is negative the pump will run backwards.
 
 ```yaml
@@ -319,7 +318,7 @@ on_...:
 ### `ezo_pmp.dose_with_constant_flow_rate` Action
 
 Use this action in an [automations](#automation) to have the peristaltic pump dose an specific `volume` (in milliliters) every minute
-for the provided `duration` (in minutes). At the end of the time period the pump will have dosed the specified `volume` times the `duration`  .
+for the provided `duration` (in minutes). At the end of the time period the pump will have dosed the specified `volume` times the `duration`.
 If the volume is negative the pump will run backwards.
 
 ```yaml

@@ -7,8 +7,6 @@ params:
     image: esp-now.svg
 ---
 
-
-
 This component allows ESPHome to communicate with esp32 devices in a simple and unrestricted way.
 It enables the option to interact with other esp32 devices over the Espressif's ESP-NOW protocol, see
 [documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html)
@@ -28,9 +26,11 @@ espnow:
 
 - **channel** (*Optional*, int): The Wi-Fi channel that the esp-now communication will use to send/receive data packets.
   Cannot be set when the {{< docref "wifi/" >}} is used, as it will use the same channel as the wifi network.
+
 - **auto_add_peer** (*Optional*, boolean): This will allow the esp-now component to automatically add any new incoming device as a peer.
-  See [Peers](#espnow-peers) below. Defaults to `false`  .
-- **enable_on_boot** (*Optional*, boolean): Enable the esp-now component on boot. Defaults to `true`  .
+  See [Peers](#espnow-peers) below. Defaults to `false`.
+
+- **enable_on_boot** (*Optional*, boolean): Enable the esp-now component on boot. Defaults to `true`.
 - **peers** (*Optional*, list): A peer is the name for devices that use esp-now. The list will have all MAC addresses from
   the devices where this device may communicate with. See [Peers](#espnow-peers) below.
 
@@ -116,9 +116,10 @@ on_...:
 - **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
 - **wait_for_sent** (*Optional*, boolean): The automation will wait for the data to be sent and for the `on_sent` or `on_error`
   actions to be finished before continuing with the next action.
-  Defaults to `true`  .
-- **continue_on_error** (*Optional*, boolean): If set to `false`  , the next action will not be triggered if the data could not be sent.
-  Defaults to `true`  .
+  Defaults to `true`.
+
+- **continue_on_error** (*Optional*, boolean): If set to `false`, the next action will not be triggered if the data could not be sent.
+  Defaults to `true`.
 
 Automations:
 
@@ -196,7 +197,7 @@ on_...:
 
 #### Configuration variables
 
-- **channel** (**Required**, int): This can be a value between `0` and `15`  . The maximum channel number depends on the country or region where you are using the device (for example, channels 1-11 are allowed in the US and most of Europe, 1-13 in many other countries, and 1-14 in Japan). For details, see the [Wi-Fi channel regulations by country](https://en.wikipedia.org/wiki/List_of_WLAN_channels) or consult the [Espressif ESP-NOW documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html). `0` means that espnow will set the channel number itself (most of the time it would be `1`  ).
+- **channel** (**Required**, int): This can be a value between `0` and `15`. The maximum channel number depends on the country or region where you are using the device (for example, channels 1-11 are allowed in the US and most of Europe, 1-13 in many other countries, and 1-14 in Japan). For details, see the [Wi-Fi channel regulations by country](https://en.wikipedia.org/wiki/List_of_WLAN_channels) or consult the [Espressif ESP-NOW documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html). `0` means that espnow will set the channel number itself (most of the time it would be `1`  ).
 
 {{< anchor "espnow-peers" >}}
 

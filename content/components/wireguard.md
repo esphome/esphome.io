@@ -6,10 +6,6 @@ params:
     description: Instructions to setup WireGuard for your ESP board.
 ---
 
-
-
-
-
 [WireGuard®](https://www.wireguard.org/) is an extremely simple yet fast and modern VPN that utilizes
 state-of-the-art cryptography. This component uses a **custom**
 implementation not developed by original authors and currently
@@ -86,7 +82,7 @@ wireguard:
   to copy this value to the `use_address` parameter of the {{< docref "wifi/" >}}.
 
 - **netmask** (*Optional*, IPv4 address): The netmask for the configured address.
-  Default to `255.255.255.255`  .
+  Default to `255.255.255.255`.
 
   See section [Static routes and outgoing connections](#wireguard-static-routes) if outgoing connections are
   expected to transit through the VPN link (e.g. with {{< docref "mqtt/" >}} to a
@@ -97,7 +93,7 @@ wireguard:
 - **peer_endpoint** (**Required**, string): The hostname of the remote peer.
 
 - **peer_port** (*Optional*, UDP port): The port where remote peer is listening on.
-  The WireGuard® default is `51820`  .
+  The WireGuard® default is `51820`.
 
 - **peer_public_key** (**Required**, string): The public key of the remote peer.
 
@@ -109,7 +105,7 @@ wireguard:
   By default this feature is disabled (`0s`  ).
 
   If there are NATs or firewalls between the device and the remote peer set
-  this value to something like `25s`  .
+  this value to something like `25s`.
 
 - **peer_allowed_ips** (*Optional*, list of IPv4 networks): A list of networks
   in CIDR notation (*IP/mask*) to be allowed through the tunnel. Any host
@@ -123,11 +119,11 @@ wireguard:
 
 - **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait
   before rebooting the device when the remote peer is unreachable. Can be disabled
-  by setting this to `0s`  . Default to `15min`  .
+  by setting this to `0s`. Default to `15min`.
 
 - **require_connection_to_proceed** (*Optional*, boolean): Set to `true` to
   wait for the remote peer to be up before continuing to boot the device.
-  Default to `false`  .
+  Default to `false`.
 
   This can be used to delay the initialization of components that use the
   VPN tunnel as long as the VPN isn't ready. For example if you are using
@@ -138,7 +134,7 @@ wireguard:
   order to not initialize MQTT until the remote peer is up.
 
 - **update_interval** (*Optional*, [Time](#config-time)): How often to check
-  the connection status and the latest handshake value. Default to `10s`  .
+  the connection status and the latest handshake value. Default to `10s`.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
@@ -158,7 +154,7 @@ by `address/netmask` will be routed to the tunnel.
 This means that the user has to tweak the `netmask` parameter
 to "cover" **all** the networks in the allowed IPs list in order
 to successfully establish *outgoing* connections to remote hosts.
-Incoming connections are not affected by `netmask`  .
+Incoming connections are not affected by `netmask`.
 
 Let's explain with some examples:
 
@@ -166,12 +162,12 @@ Let's explain with some examples:
 | ------------ | ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | 172.16.0.100 | *omitted* or 255.255.255.255 | *omitted* or any other value                   | **none**, no routes are created                                                                                                            |
 |              | 255.255.255.0                | *omitted*                                      | only to `172.16.0.0/24`                                                                                                                    |
-|              |                              | - 172.16.0.0/24 - 192.168.0.0/24 - *any other* | and any other network will be outside `172.16.0.0/24`                                                                                      |
-|              |                              | -   192.168.0.0/24                             | **none** because `192.168.0.0/24` is not part of `172.16.0.0/24`                                                                           |
-| 10.44.0.100  | 255.0.0.0                    | *omitted*                                      | to `10.0.0.0/8` network                                                                                                                    |
-|              |                              | - 10.44.0.0/16 - 10.10.0.0/16                  | only to the networks in the allowed list because the netmask will route the whole `10.0.0.0/8` but wireguard allows only those two subnets |
-| any          | 0.0.0.0                      | *omitted*                                      | **any**                                                                                                                                    |
-|              |                              | - 172.16.0.0/24 - 10.44.0.0/16 - 10.10.0.0/16  | to any network that is in the list of allowed IPs because the netmask will route any traffic but wireguard allows only its own list        |
+| | | - 172.16.0.0/24 - 192.168.0.0/24 - *any other* | and any other network will be outside `172.16.0.0/24`                                                                                      |
+| | | - 192.168.0.0/24 | **none** because `192.168.0.0/24` is not part of `172.16.0.0/24`                                                                           |
+| 10.44.0.100 | 255.0.0.0 | *omitted* | to `10.0.0.0/8` network |
+| | | - 10.44.0.0/16 - 10.10.0.0/16 | only to the networks in the allowed list because the netmask will route the whole `10.0.0.0/8` but wireguard allows only those two subnets |
+| any | 0.0.0.0 | *omitted* | **any** |
+| | | - 172.16.0.0/24 - 10.44.0.0/16 - 10.10.0.0/16 | to any network that is in the list of allowed IPs because the netmask will route any traffic but wireguard allows only its own list |
 
 {{< note >}}
 Setting the `netmask` to `0.0.0.0` has the effect of routing
@@ -261,7 +257,7 @@ on_...:
     - wireguard.disable:
 ```
 
-The lambda equivalent is `id(wireguard_id).disable()`  .
+The lambda equivalent is `id(wireguard_id).disable()`.
 
 {{< note >}}
 To disable WireGuard® since device boot you can execute this action
@@ -279,7 +275,7 @@ on_...:
     - wireguard.enable:
 ```
 
-The lambda equivalent is `id(wireguard_id).enable()`  .
+The lambda equivalent is `id(wireguard_id).enable()`.
 
 {{< anchor "wireguard-conditions" >}}
 
@@ -301,7 +297,7 @@ on_...:
         - ...
 ```
 
-The lambda equivalent is `id(wireguard_id).is_enabled()`  .
+The lambda equivalent is `id(wireguard_id).is_enabled()`.
 
 ### `wireguard.peer_online`
 
@@ -317,7 +313,7 @@ on_...:
         - ...
 ```
 
-The lambda equivalent is `id(wireguard_id).is_peer_up()`  .
+The lambda equivalent is `id(wireguard_id).is_peer_up()`.
 
 {{< anchor "wireguard-installation" >}}
 

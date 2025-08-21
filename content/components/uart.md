@@ -7,7 +7,6 @@ params:
     image: uart.svg
 ---
 
-
 {{< anchor "uart" >}}
 
 UART is a common serial protocol for many devices. For example, when uploading a binary to your ESP
@@ -62,13 +61,16 @@ uart:
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
 - **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+
 - **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
-  integration that needs to read big payloads from UART. Defaults to `256`  .
+  integration that needs to read big payloads from UART. Defaults to `256`.
+
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
-- **parity** (*Optional*): The parity used on the UART bus. Options: `NONE`  , `EVEN`  , `ODD`  . Defaults to `NONE`  .
+- **parity** (*Optional*): The parity used on the UART bus. Options: `NONE`, `EVEN`, `ODD`. Defaults to `NONE`.
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this UART hub if you need multiple UART hubs.
 - **debug** (*Optional*, mapping): Options for debugging communication on the UART hub, see [Debugging](#uart-debugging).
@@ -82,7 +84,7 @@ When the hardware UARTs are all occupied, ESPHome will fall back to a software i
 be accurate at higher baud rates.
 
 `UART0` is (by default) used by the {{< docref "/components/logger" "logger component" >}}, using `tx_pin: GPIO1` and
-`rx_pin: GPIO3`  . If you configure a UART that overlaps with these pins, you can share the hardware with the
+`rx_pin: GPIO3`. If you configure a UART that overlaps with these pins, you can share the hardware with the
 logger and leave others available. If you have configured the logger to use a different hardware UART, the pins
 used for hardware sharing change accordingly.
 
@@ -90,8 +92,8 @@ The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-C3, ESP32-S2, ESP32-S
 (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
 
 The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. `UART0` may
-use either `tx_pin: GPIO1` and `rx_pin: GPIO3`  , or `tx_pin: GPIO15` and `rx_pin: GPIO13`  . `UART1` must
-use `tx_pin: GPIO2`  . Any other combination of pins will result in use of a software UART.
+use either `tx_pin: GPIO1` and `rx_pin: GPIO3`, or `tx_pin: GPIO15` and `rx_pin: GPIO13`. `UART1` must
+use `tx_pin: GPIO2`. Any other combination of pins will result in use of a software UART.
 
 {{< note >}}
 The Software UART is only available on the ESP8266. It is not available on ESP32 and variants.
@@ -152,17 +154,20 @@ uart:
 
 - **direction** (*Optional*, enum): The direction of communication to debug, one of: "RX" (receive, incoming),
   "TX" (send, outgoing) or "BOTH". Defaults to "BOTH".
+
 - **dummy_receiver** (*Optional*, boolean): Whether or not to enable the dummy receiver feature. The debugger
   will only accumulate bytes that are actually read or sent by a UART device component. This feature is
   useful when you want to debug all incoming communication, while no UART device component is configured
   for the UART bus (yet). This is especially useful for developers. Normally you'd want to leave this
   option disabled. Defaults to false.
+
 - **after** (*Optional*, mapping): The debugger accumulates bytes of communication. This option defines when
   to trigger publishing the accumulated bytes. The possible options are:
 
   - **bytes** (*Optional*, int): Trigger after accumulating the specified number of bytes. Defaults to 150.
   - **timeout** (*Optional*, [Time](#config-time)): Trigger after no communication has been seen during the
     specified timeout, while one or more bytes have been accumulated. Defaults to 100ms.
+
   - **delimiter** (*Optional*, string or list of bytes): Trigger after the specified sequence of bytes is
     detected in the communication.
 
@@ -178,9 +183,11 @@ uart:
 
   - **UARTDebug::log_hex(direction, bytes, char separator)** Log the bytes as hex values, separated by the provided
     separator character.
+
   - **UARTDebug::log_string(direction, bytes)** Log the bytes as string values, escaping unprintable characters.
   - **UARTDebug::log_int(direction, bytes, char separator)** Log the bytes as integer values, separated by the provided
     separator character.
+
   - **UARTDebug::log_binary(direction, bytes, char separator)** Log the bytes as `<binary> (<hex>)` values,
     separated by the provided separator character.
 

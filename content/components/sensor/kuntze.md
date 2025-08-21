@@ -7,8 +7,6 @@ params:
     image: kuntze.jpg
 ---
 
-
-
 The `kuntze` component allows you to integrate the Kuntze water measurement
 instrument in ESPHome. It uses [UART](#uart) (ModBUS) for communication.
 
@@ -25,9 +23,9 @@ your only unit connected to ESPHome, you should activate bus termination in the
 Network menu (this component doesn't support multiple Kuntze devices on the same
 bus). ModBUS address should remain at factory default value.
 
-The device communicates at `19200` baud `8E1`  . To connect to ESPHome, an RS485
+The device communicates at `19200` baud `8E1`. To connect to ESPHome, an RS485
 transceiver is needed. Choose a type which does not need a trigger to send and
-receive data,  for example:
+receive data, for example:
 
 {{< img src="rs485.jpg" alt="Image" >}}
 

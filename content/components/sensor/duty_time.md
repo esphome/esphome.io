@@ -7,8 +7,6 @@ params:
     image: timer-play-outline.svg
 ---
 
-
-
 The `duty_time` sensor allows you to track the total duty time of some object, for example, a light bulb, in seconds.
 Able to calculate the last turn-on time when an optional sensor `last_time` is included in the configuration.
 
@@ -35,15 +33,19 @@ sensor:
 ## Configuration variables
 
 - **sensor** (*Optional*, [ID](#config-id)): The ID of the `binary_sensor` to track the duty time. *May not be
-  used with* `lambda`  .
+  used with* `lambda`.
+
 - **lambda** (*Optional*, [lambda](#config-lambda)): Lambda that will be called in a loop to get the current
-  state of the tracked object. *May not be used with* `sensor`  .
+  state of the tracked object. *May not be used with* `sensor`.
+
 - **last_time** (*Optional*): Information of the last switch-on time sensor.
   All options from [Sensor](#config-sensor).
+
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so that the value can be
   restored upon power cycle or reboot.
-  Warning: this option can wear out your flash. Defaults to `false`  .
-- **update_interval** (*Optional*, [Time](#config-time)): The update interval. Defaults to `60s`  .
+  Warning: this option can wear out your flash. Defaults to `false`.
+
+- **update_interval** (*Optional*, [Time](#config-time)): The update interval. Defaults to `60s`.
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](#config-sensor).
 

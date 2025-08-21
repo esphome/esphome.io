@@ -6,7 +6,6 @@ params:
     description: Matrix key input panel
 ---
 
-
 {{< anchor "matrix_keypad" >}}
 
 The `matrix_keypad` component allows you to integrate pads which
@@ -41,15 +40,19 @@ matrix_keypad:
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this device for use in lambdas.
 - **rows** (**Required**, list): A list of [pins](#config-pin_schema) where the horrizontal
-  matrix lines are connected, in order from top to bottom.  These pins need to be output capable.
+  matrix lines are connected, in order from top to bottom. These pins need to be output capable.
+
 - **columns** (**Required**, list): A list of [pins](#config-pin_schema) where the vertical
-  matrix lines are connected, in order from left to right.  These pins need to be input capable
-  with pullups enabled.  If there is no internal pullup, then an external one is required.
+  matrix lines are connected, in order from left to right. These pins need to be input capable
+  with pullups enabled. If there is no internal pullup, then an external one is required.
+
 - **keys** (*Optional*, string): The keys present on the matrix, from top left to bottom right,
   row by row. Required for `key_collector` and `binary_sensor` (if using key selection).
+
 - **has_diodes** (*Optional*, boolean): For pads where row pins are outputs, and the keys are
-  connected with diodes. Defaults to `false`  .
-- **has_pulldowns** (*Optional*, boolean): For pads where the column lines have external pulldowns. Defaults to `false`  .
+  connected with diodes. Defaults to `false`.
+
+- **has_pulldowns** (*Optional*, boolean): For pads where the column lines have external pulldowns. Defaults to `false`.
 
 ## Binary Sensor
 
@@ -82,7 +85,7 @@ Either the `row` and `col` parameters, or the `key` parameter has to be provided
 ## Automations
 
 - **on_key** (*Optional*, [Automation](#automation)): An automation to perform
-  when a key has been pressed. The key is in a variable called `x`  .
+  when a key has been pressed. The key is in a variable called `x`.
 
   {{< note >}}
   Automatic handling of multiple keys (e.g. PIN code entry) is possible with the

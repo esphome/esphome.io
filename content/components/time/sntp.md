@@ -3,8 +3,6 @@ description: "SNTP Time Source"
 title: "SNTP Time Source"
 ---
 
-
-
 ```yaml
 # Example configuration entry
 time:
@@ -20,7 +18,8 @@ time:
 ## Configuration variables
 
 - **servers** (*Optional*, list of strings): Choose up to 3 NTP servers that are used for the clock source.
-  Defaults to `0.pool.ntp.org`  , `1.pool.ntp.org` and `2.pool.ntp.org`
+  Defaults to `0.pool.ntp.org`, `1.pool.ntp.org` and `2.pool.ntp.org`
+
 - All other options from [Base Time Configuration](#base_time_config).
 
 {{< note >}}

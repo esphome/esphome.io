@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up a modbus_controller device output.
 ---
 
-
-
 The `modbus_controller` platform creates an output from a modbus_controller. The goal is to write a value to a modbus register on a device.
 
 ## Configuration variables
@@ -32,10 +30,10 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
   - `coil`  : Write Coil - Write the ON/OFF status of a discrete coil in the device with *Function Code 5 or 15*. This will create a binary output.
   - `holding`  : Write Holding Registers - write contents of holding registers in the device with *Function Code 6 or 16*. This will create a float output.
 
-- **multiply** (*Optional*, float): multiply the incoming value with this factor before writing it to the device. Ignored if `write_lambda` is defined. Only valid for `register_type: holding`  .
-- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`  .
+- **multiply** (*Optional*, float): multiply the incoming value with this factor before writing it to the device. Ignored if `write_lambda` is defined. Only valid for `register_type: holding`.
+- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
 - **write_lambda** (*Optional*, [lambda](#config-lambda)):
-  Lambda is evaluated before the modbus write command is created. The value is passed in as `float x` and an empty vector is passed in as `std::vector<uint16_t>&payload`  .
+  Lambda is evaluated before the modbus write command is created. The value is passed in as `float x` and an empty vector is passed in as `std::vector<uint16_t>&payload`.
   You can directly define the payload by adding data to payload then the return value is ignored and the content of payload is used.
 
   Parameters passed into the lambda
@@ -47,7 +45,7 @@ The `modbus_controller` platform creates an output from a modbus_controller. The
     - for `register_type: coil`  : empty vector for the payload. If payload is set in the lambda it is sent as a custom command and must include all required bytes for a modbus request
       note: because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
 
-  - **item** (const pointer to a SensorItem derived object):  The sensor object itself.
+  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 

@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up a modbus_controller device sensor.
 ---
 
-
-
 The `modbus_controller` platform creates a Number from a modbus_controller.
 When the Number is updated a modbus write command is created sent to the device.
 
@@ -33,7 +31,7 @@ When the Number is updated a modbus write command is created sent to the device.
 - **max_value** (*Optional*, float): The maximum value this number can be.
 - **step** (*Optional*, float): The granularity with which the number can be set. Defaults to 1.
 - **multiply** (*Optional*, float): multiply the new value with this factor before sending the requests. Ignored if lambda is defined.
-- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`  .
+- **use_write_multiple** (*Optional*, boolean): By default the modbus command *Function Code 6 (Preset Single Registers)* is used for setting the holding register if only one register is set. If your device only supports *Function Code 16 (Preset Multiple Registers)* set this option to `true`.
 - **skip_updates** (*Optional*, int): By default, all sensors of a modbus_controller are updated together. For data points that don't change very frequently, updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle. Note: The modbus_controller groups components by address ranges to reduce number of transactions. All components with the same starting address will be updated in one request. `skip_updates` applies for *all* components in the same range.
 - **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See [Optimizing modbus communications](#modbus_register_count) for more details.
 - **response_size** (*Optional*): Size of the response for the register in bytes. Defaults to register_count*2.
@@ -42,6 +40,7 @@ When the Number is updated a modbus write command is created sent to the device.
 - **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
   custom data must contain all required bytes including the modbus device address. The crc is automatically calculated and appended to the command.
   See [Using `custom_command`](#modbus_custom_command) how to use `custom_command`
+
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor.
 
@@ -50,7 +49,8 @@ When the Number is updated a modbus write command is created sent to the device.
   - **x** (float): The parsed float value of the modbus data
   - **data** (std::vector<uint8_t): vector containing the complete raw modbus response bytes for this sensor
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
-  - **item** (const pointer to a SensorItem derived object):  The sensor object itself.
+
+  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
@@ -65,7 +65,8 @@ When the Number is updated a modbus write command is created sent to the device.
   - **x** (float): The float value to be sent to the modbus device
   - **payload** (`std::vector<uint16_t>&payload`  ): empty vector for the payload. The lambda can add 16 bit raw modbus register words.
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
-  - **item** (const pointer to a SensorItem derived object):  The sensor object itself.
+
+  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 

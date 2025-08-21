@@ -7,8 +7,6 @@ params:
     image: system-update.svg
 ---
 
-
-
 {{< anchor "config-ota" >}}
 
 ESPHome supports remotely updating a device "over-the-air" (OTA). Each update mechanism is a *platform* of the base
@@ -35,12 +33,16 @@ ota:
 
 - **on_begin** (*Optional*, [Automation](#automation)): An action to be performed when an OTA update is started.
    See [`on_begin`](#ota-on_begin).
+
 - **on_progress** (*Optional*, [Automation](#automation)): An action to be performed (approximately each second)
    while an OTA update is in progress. See [`on_progress`](#ota-on_progress).
+
 - **on_end** (*Optional*, [Automation](#automation)): An action to be performed after a successful OTA update.
    See [`on_end`](#ota-on_end).
+
 - **on_error** (*Optional*, [Automation](#automation)): An action to be performed after a failed OTA update.
    See [`on_error`](#ota-on_error).
+
 - **on_state_change** (*Optional*, [Automation](#automation)): An action to be performed when an OTA update state
    change happens. See [`on_state_change`](#ota-on_state_change).
 
@@ -55,6 +57,7 @@ update process. When using these automation triggers, note that:
   components that update their output only from within their `loop()` method. Explained differently: if you try to
   display the OTA progress using component X, but the update only appears after the OTA update finished, then component
   X cannot be used for providing OTA update feedback.
+
 - Your automation action(s) must not consume any significant amount of time; if they do, OTA updates may fail.
 
 {{< anchor "ota-on_begin" >}}
@@ -76,7 +79,7 @@ ota:
 ### `on_progress`
 
 Using this automation, it is possible to report on the OTA update progress. It will be triggered repeatedly during the
-OTA update. You can get the actual progress percentage (a value between 0 and 100) from the trigger with variable `x`  .
+OTA update. You can get the actual progress percentage (a value between 0 and 100) from the trigger with variable `x`.
 
 ```yaml
 ota:
@@ -111,7 +114,7 @@ ota:
 
 ### `on_error`
 
-This automation will be triggered when an OTA update has failed. You can get the internal error code with variable `x`  .
+This automation will be triggered when an OTA update has failed. You can get the internal error code with variable `x`.
 
 Just like for [`on_end`](#ota-on_end), you can safely use an automation that takes some time to complete as the OTA update
 process has already finished.
@@ -130,7 +133,7 @@ ota:
 
 ### `on_state_change`
 
-This automation will be triggered on every state change. You can get the actual state with variable `state`  , which
+This automation will be triggered on every state change. You can get the actual state with variable `state`, which
 will contain one of values for the `OTAState` enum. These values are:
 
 - `ota::OTA_STARTED`

@@ -7,8 +7,6 @@ params:
     image: inkbird_isbth1_mini.jpg
 ---
 
-
-
 The `inkbird_ibsth1_mini` sensor platform lets you track the output of Inkbird IBS-TH1, IBS-TH1 Mini, and IBS-TH2 Bluetooth
 Low Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}. This component will track the
 temperature, external temperature (non mini only), humidity and the battery level of the IBS-TH1 device every time the

@@ -7,8 +7,6 @@ params:
     image: led-on.svg
 ---
 
-
-
 The `status_led` light platform allows to share a single LED for indicating the status of
 the device (when on error/warning state) or as binary light (when on OK state).
 This is useful for devices with only one LED available.

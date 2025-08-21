@@ -7,8 +7,6 @@ params:
     image: color_lens.svg
 ---
 
-
-
 {{< warning >}}
 NeoPixelBus does **not** work with ESP-IDF.
 
@@ -45,7 +43,8 @@ light:
 
 - **type** (*Optional*, string): The type of light. This is used to specify
   if it is an RGBW or RGB light and in which order the colors are. Defaults to
-  `GRB`  . Change this if you have lights with white channel and/or the colors are in the wrong order.
+  `GRB`. Change this if you have lights with white channel and/or the colors are in the wrong order.
+
 - **variant** (**Required**, string): The chipset of the light.
 
   The following options are supported:
@@ -75,12 +74,12 @@ light:
 - **method** (*Optional*, string): The method used to transmit the data. By default, ESPHome will try to use the best method
   available for this chipset, ESP platform, and the given pin. See [methods](#neopixelbus-methods) for more information.
 
-- **invert** (*Optional*, boolean): Invert data output, for use with n-type transistors. Defaults to `no`  .
+- **invert** (*Optional*, boolean): Invert data output, for use with n-type transistors. Defaults to `no`.
 
 **Pin Options:**
 
 Some chipsets have two data pins to connect, others only have one.
-If you have one line, only specify `pin`  , otherwise specify both `clock_pin` and `data_pin`  .
+If you have one line, only specify `pin`, otherwise specify both `clock_pin` and `data_pin`.
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
 - **clock_pin** (**Required**, [Pin](#config-pin)): The pin for the clock line of the light, for two-wire lights.
@@ -127,14 +126,15 @@ settings vary by method:
 
   - **bus** (*Optional*, int): The UART bus to use. If 0, the logger `baud_rate` option must
     be set to 0 and logs over USB/serial won't work.
-  - **async** (*Optional*, boolean): Use an asynchronous transfer. Defaults to `false`  . If enabled,
+
+  - **async** (*Optional*, boolean): Use an asynchronous transfer. Defaults to `false`. If enabled,
     the logger must be disabled even if bus 1 is used.
 
 - **esp32_i2s**: The recommended method for ESP32, but not available on the ESP32-C3 or ESP32-S3.
   Available on all output pins. Additional options:
 
   - **bus** (*Optional*): The I2S bus to use. The ESP32 has bus 0 or 1 available, but the ESP32-S2 only bus 0.
-    One of `0`  , `1`  , `dynamic`  .
+    One of `0`, `1`, `dynamic`.
 
 - **esp32_rmt**: An alternative method for ESP32 that uses the RMT peripheral to send data.
   Available on all output pins. Additional options:
@@ -147,11 +147,11 @@ The following method is available only for two-wire chips (specify `data_pin` an
 - **spi**: Uses the hardware SPI interface to transmit the data. Available on both ESP platforms.
   Additional options:
 
-  - **bus** (*Optional*, string): On ESP32s the SPI bus to be used can be selected. One of `vspi` and `hspi`  .
-  - **speed** (*Optional*, int): The frequency to send data with. Defaults to `10MHz`  . One of
-    `40MHz`  , `20MHz`  , `10MHz`  , `5MHz`  , `2MHz`  , `1MHz`  , `500KHz`  .
+  - **bus** (*Optional*, string): On ESP32s the SPI bus to be used can be selected. One of `vspi` and `hspi`.
+  - **speed** (*Optional*, int): The frequency to send data with. Defaults to `10MHz`. One of
+    `40MHz`, `20MHz`, `10MHz`, `5MHz`, `2MHz`, `1MHz`, `500KHz`.
 
-  On ESP8266 only GPIO13 can be used for `data_pin` and only GPIO14 can be used for `clock_pin`  .
+  On ESP8266 only GPIO13 can be used for `data_pin` and only GPIO14 can be used for `clock_pin`.
 
 The `method` key also accepts a short-hand syntax consisting of a single value for historic reasons. Usage of
 this method is no longer recommended, but documented here for reference purposes. Possible values were:

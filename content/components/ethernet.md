@@ -7,8 +7,6 @@ params:
     image: ethernet.svg
 ---
 
-
-
 This ESPHome component enables *wired* Ethernet connections for ESP32s.
 
 Ethernet for ESP8266 is not supported.
@@ -65,9 +63,11 @@ ethernet:
 ### RMII configuration variables
 
 - **mdc_pin** (**Required**, [Pin](#config-pin)): The MDC pin of the board.
-  Usually this is `GPIO23`  .
+  Usually this is `GPIO23`.
+
 - **mdio_pin** (**Required**, [Pin](#config-pin)): The MDIO pin of the board.
-  Usually this is `GPIO18`  .
+  Usually this is `GPIO18`.
+
 - **clk** (**Required**, mapping):
 
   - **pin** (**Required**, [Pin](#config-pin)): The RMII clock pin.
@@ -95,11 +95,13 @@ ethernet:
 - **cs_pin** (**Required**, [Pin](#config-pin)): The SPI chip select pin.
 - **interrupt_pin** (*Optional*, [Pin](#config-pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
+
 - **reset_pin** (*Optional*, [Pin](#config-pin)): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
   Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
+
 - **polling_interval** (*Optional*, [Time](#config-time)): If `interrupt_pin` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.
@@ -117,7 +119,7 @@ When building with frameworks that support SPI polling mode, either `interrupt_p
 or `polling_interval` can be set. If you set both, ESPHome will throw an error.
 
 If you are using a framework that does not support SPI-based ethernet modules without interrupt pin,
-`interrupt_pin` is **required** and you cannot set `polling_interval`  .
+`interrupt_pin` is **required** and you cannot set `polling_interval`.
 
 ### Advanced common configuration variables
 
@@ -132,9 +134,11 @@ If you are using a framework that does not support SPI-based ethernet modules wi
 - **use_address** (*Optional*, string): Manually override what address to use to connect
   to the ESP. Defaults to auto-generated value. For example, if you have changed your
   static IP and want to flash OTA to the previously configured IP address.
+
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
-  For example, if it's set to `.local`  , all uploads will be sent to `<HOSTNAME>.local`  .
-  Defaults to `.local`  .
+  For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
+  Defaults to `.local`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 {{< note >}}

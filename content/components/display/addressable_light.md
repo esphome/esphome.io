@@ -7,8 +7,6 @@ params:
     image: addressable_light.jpg
 ---
 
-
-
 The `addressable_light` display platform allows to display text and graphics on an addressable
 light that has been arranged in a display matrix.
 
@@ -41,17 +39,22 @@ display:
 
 - **addressable_light_id** (**Required**, [ID](#config-id)): The id of the addressable light component to use
   as a display.
+
 - **width** (**Required**, int): The width of the LED matrix in pixels.
 - **height** (**Required**, int): The height of the LED matrix in pixels.
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
-  by this option. One of `0°` (default), `90°`  , `180°`  , `270°`  .
+  by this option. One of `0°` (default), `90°`, `180°`, `270°`.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
-  Defaults to `16ms`  .
+  Defaults to `16ms`.
+
 - **pixel_mapper** (*Optional*, [lambda](#config-lambda)): A lambda that returns the integer address of the LED
   given the supplied the `x` and `y` pixel coordinate. By default, a left-to-right direct pixel mapper is used.
+
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   `it` will be an instance of {{< apiclass "DisplayBuffer" "display::DisplayBuffer" >}}.
   See [Display Rendering Engine](#display-engine) for more information.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 {{< note >}}

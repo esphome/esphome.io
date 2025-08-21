@@ -7,8 +7,6 @@ params:
     image: pwm.png
 ---
 
-
-
 The LEDC output component exposes a [LEDC PWMchannel](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/ledc.html)
 of the ESP32 as an output component.
 
@@ -21,11 +19,12 @@ bit depth which means the output is not that accurate for frequencies above ~300
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
 - **frequency** (*Optional*, float): At which frequency to run the LEDC
   channel's timer. Defaults to 1000Hz.
+
 - All other options from [Output](#config-output).
 
 Advanced options:
 
-- **channel** (*Optional*, int): Manually set the [LEDC  channel](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/ledc.html#configure-channel)
+- **channel** (*Optional*, int): Manually set the [LEDC channel](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/ledc.html#configure-channel)
   to use. Two adjacent channels share the same timer. Defaults to an automatic selection.
 
 Note: When configuring custom frequencies for two or more outputs, ensure that you manually specify
@@ -100,9 +99,9 @@ a long transition, e.g. turning slowly off.
 | ------------- | ------------- | ----------------------------------- |
 | 1220Hz        | 16            | 65536                               |
 | 2441Hz        | 15            | 32768                               |
-| 4882Hz        | 14            | 16384                               |
-| 9765Hz        | 13            | 8192                                |
-| 19531Hz       | 12            | 4096                                |
+| 4882Hz | 14 | 16384 |
+| 9765Hz | 13 | 8192 |
+| 19531Hz | 12 | 4096 |
 
 The ESP8266 for instance has *usually* a frequency of 1000Hz with a resolution of 10 bits.
 This means that there are only 4 steps between each value.

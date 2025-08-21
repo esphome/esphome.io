@@ -6,12 +6,10 @@ params:
     description: Instructions for setting up a combination sensor
 ---
 
-
-
 The `combination` sensor platform allows you to combine the state of several
 sensors into one. To use this sensor, specify the combination type and add your source sensors.
 
-The `unit_of_measurement`  , `device_class`  , `entity_category`  , `icon`  , and
+The `unit_of_measurement`, `device_class`, `entity_category`, `icon`, and
 `accuracy_decimals` properties are by default inherited from the first sensor.
 `state_class` is explicitly not inherited, because `total_increasing` states
 could still decrease when multiple sensors are used for several of the combination types.
@@ -55,8 +53,8 @@ sensor:
         coeffecient: -1.0
 ```
 
-- `MAXIMUM`  , `MEAN`  , `MEDIAN`  , `MINIMUM`  , `MOST_RECENTLY_UPDATED`  ,
-  `RANGE`  , `SUM` combinations: These types compute the specified combination among
+- `MAXIMUM`, `MEAN`, `MEDIAN`, `MINIMUM`, `MOST_RECENTLY_UPDATED`,
+  `RANGE`, `SUM` combinations: These types compute the specified combination among
   all source sensor states.
 
 ```yaml
@@ -74,19 +72,22 @@ sensor:
 ## Configuration variables
 
 - **type** (**Required**, enum): Combination statistic type, should be one of
-  `KALMAN`  , `LINEAR`  , `MAXIMUM`  , `MEAN`  , `MEDIAN`  , `MINIMUM`  ,
-  `MOST_RECENTLY_UPDATED`  , `RANGE`  , or `SUM`  .
+  `KALMAN`, `LINEAR`, `MAXIMUM`, `MEAN`, `MEDIAN`, `MINIMUM`,
+  `MOST_RECENTLY_UPDATED`, `RANGE`, or `SUM`.
+
 - **sources** (**Required**, list): A list of sensors to use as source.
 
   - **source** (**Required**, [ID](#config-id) of a {{< docref "/components/sensor" >}}): The
     sensor id that is used as sample source.
+
   - **error** (**Required**, only for `KALMAN` type, float, [templatable](#config-templatable)):
     The standard deviation of the sensor's measurements. This works like the `process_std_dev`
     parameter, with low values marking accurate data. If implemented as a template, the
-    measurement is in parameter `x`  .
+    measurement is in parameter `x`.
+
   - **coeffecient** (**Required**, only for `LINEAR` type, float, [templatable](#config-templatable)):
     The coeffecient to multiply the sensor's state by before summing all source sensor states.
-    If implemented as a template, the measurement is in parameter `x`  .
+    If implemented as a template, the measurement is in parameter `x`.
 
 - **process_std_dev** (**Required**, only for `KALMAN` type, float): The standard deviation of the
   measurement's change per second (e.g. `1/3600 = 0.000277` if the
@@ -94,8 +95,10 @@ sensor:
   will place high importance on the current state and be slow to respond to
   changes in the measured samples. A high value will update faster, but also be
   more noisy.
+
 - **std_dev** (*Optional*, only for `KALMAN` type, [Sensor](#config-sensor)): A sensor
   that publishes the current standard deviation of the state with each update.
+
 - All other options from [Sensor](#config-sensor).
 
 ## See Also

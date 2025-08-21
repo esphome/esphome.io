@@ -7,7 +7,6 @@ params:
     image: uart.svg
 ---
 
-
 {{< anchor "uart-packet-transport" >}}
 
 The [Packet Transport Component](#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel.

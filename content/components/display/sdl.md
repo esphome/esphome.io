@@ -7,8 +7,6 @@ params:
     image: sdl.png
 ---
 
-
-
 {{< anchor "sdl" >}}
 
 ## Usage
@@ -36,7 +34,8 @@ display:
 
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
 - **sdl_options** (*Optional*, string): Build arguments if required to specify include or library paths. Should not be required if SDL2 is properly installed.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
@@ -73,7 +72,7 @@ brew link sdl2 libsodium
 ```
 
 To ensure that the files are symlinked correctly.
-You can check installation with the command `sdl2-config --libs --cflags`  .
+You can check installation with the command `sdl2-config --libs --cflags`.
 
 You will need the XCode command-line tools installed to build for the host platform.
 
@@ -86,7 +85,7 @@ tools installed, and you must be using a desktop system with a graphic display.
 apt install libsdl2-dev libsodium-dev build-essential git
 ```
 
-You can check installation with the command `sdl2-config --libs --cflags`  .
+You can check installation with the command `sdl2-config --libs --cflags`.
 
 ## Microsoft Windows
 

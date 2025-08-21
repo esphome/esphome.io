@@ -7,7 +7,6 @@ params:
     image: /_static/made-for-esphome-black-on-white.png
 ---
 
-
 {{< anchor "made_for_esphome" >}}
 
 ESPHome has a wonderful and active community that loves creating and sharing projects.
@@ -37,6 +36,7 @@ Note that these are **not** required for projects that only provide a physical/w
 - All components/platforms used must have an `id` specified so users can easily refer to,
   [Extend](#config-packages_extend) and/or [Remove](#config-packages_remove) configuration variables should they choose to
   "take control"
+
 - Your project supports adoption via the `dashboard_import` feature of ESPHome (see
   {{< docref "/guides/creators" "Sharing" >}}). In particular:
 
@@ -52,8 +52,10 @@ Note that these are **not** required for projects that only provide a physical/w
 - Create a new pull request in our [esphome-devices](https://github.com/esphome/esphome-devices/pulls) repository to
   add your device on the [devices website](https://devices.esphome.io). We will review and merge this PR upon
   confirming that your project meets all of the requirements listed above.
+
 - Apply for permission to carry the logo by emailing <esphome@openhomefoundation.org> -- **include a link to the PR** you've
   created (as above) so we can associate your application with your PR and device(s).
+
 - We will review your application and reply to your email. We may request changes to your project if we find it does
   not quite meet one or more of the requirements above. If we find everything is in order, we will approve your project.
 

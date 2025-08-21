@@ -3,8 +3,6 @@ description: "GL-R01 I²C - Time Of Flight Mini LiDAR Laser Ranging Sensor"
 title: "GL-R01 I²C - Time Of Flight Mini LiDAR Laser Ranging Sensor"
 ---
 
-
-
 The `GL-R01 I²C` sensor platform allows you to use your GL-R01 I²C
 Time Of Flight Mini LiDAR Laser Ranging sensor with ESPHome.
 
@@ -35,7 +33,7 @@ sensor:
 I²C Configuration variables:
 
 - **address** (*Optional*, int): Manually specify the I²C address of
-  the sensor. Defaults to `0x74`  . If unsure, check I²C scan logs and adjust address by its output.
+  the sensor. Defaults to `0x74`. If unsure, check I²C scan logs and adjust address by its output.
 
 - **i2c_id** (*Optional*): Manually specify the I²C bus ID. Only needed if multiple buses are used.
 

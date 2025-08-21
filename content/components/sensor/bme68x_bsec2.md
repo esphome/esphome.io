@@ -7,8 +7,6 @@ params:
     image: bme680.jpg
 ---
 
-
-
 ## Component/Hub
 
 The `bme68x_bsec2_i2c` sensor platform allows you to use your
@@ -44,25 +42,32 @@ bme68x_bsec2_i2c:
 
 ### Configuration variables
 
-- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`  . The sensor can
-  also be configured to use `0x77`  .
+- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`. The sensor can
+  also be configured to use `0x77`.
+
 - **i2c_id** (**Optional**, [ID](#config-id)): The ID of the [I²C bus](#i2c) the bme68x is connected to.
-- **model** (_Required_, string): The model of the connected sensor; either `BME680` or `BME688`  .
+- **model** (_Required_, string): The model of the connected sensor; either `BME680` or `BME688`.
 - **algorithm_output** (_Optional_, string): The output of the BSEC2 algorithm. Either `classification` (default) or
-  `regression`  . _Only valid when model is BME688._
+  `regression`. _Only valid when model is BME688._
+
 - **operating_age** (_Optional_, string): The history BSEC2 considers for the automatic background calibration of the
   IAQ in days. That means changes in this time period will influence the IAQ value. Either `4d` or `28d` (default).
+
 - **sample_rate** (_Optional_, string): Sample rate. Default is `LP` for low power consumption, sampling every 3
   seconds. Can be `ULP` for ultra-low power, sampling every 5 minutes. This controls the sampling rate for
   gas-dependent sensors and will govern the interval at which the sensor heater is operated. By default, this rate will
   also be used for temperature, humidity and pressure sensors but can be overridden per-sensor if required.
-- **supply_voltage** (_Optional_, string): Supply voltage of the sensor. Default is `3.3V`  . Can be set to `1.8V` if
+
+- **supply_voltage** (_Optional_, string): Supply voltage of the sensor. Default is `3.3V`. Can be set to `1.8V` if
   your sensor is powerd with 1.8 volts (for example, the Pimoroni PIM357 BME680 breakout module).
+
 - **temperature_offset** (_Optional_, float): Temperature offset if device is in enclosure and reads too high. This
   value is subtracted from the reading (for example, if the sensor reads 5°C higher than expected, set this to `5`  )
-  and also corrects the relative humidity readings. Defaults to `0`  .
+  and also corrects the relative humidity readings. Defaults to `0`.
+
 - **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save the calibrated BSEC2
-  algorithm state to flash so that calibration doesn't have to start from scratch on device restart. Defaults to `6h`  .
+  algorithm state to flash so that calibration doesn't have to start from scratch on device restart. Defaults to `6h`.
+
 - **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor
   section to refer to the correct BME68x sensor if you have more than one device. This will also be used to refer to
   the calibrated BSEC2 algorithm state saved to flash.
@@ -96,18 +101,21 @@ sensor:
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
     consumption, sampling every 3 seconds or `ULP` for ultra-low power, sampling every 5 minutes.
+
   - All other options from [Sensor](#config-sensor).
 
 - **pressure** (_Optional_): Configuration for the pressure sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
     consumption, sampling every 3 seconds or `ULP` for ultra-low power, sampling every 5 minutes.
+
   - All other options from [Sensor](#config-sensor).
 
 - **humidity** (_Optional_): Configuration for the humidity sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
     consumption, sampling every 3 seconds or `ULP` for ultra-low power, sampling every 5 minutes.
+
   - All other options from [Sensor](#config-sensor).
 
 - **gas_resistance** (_Optional_): Configuration for the gas sensor.
@@ -149,8 +157,9 @@ text_sensor:
 
 - **bme68x_bsec2_id** (_Optional_, [ID](#config-id)): The ID of the `bme68x_bsec2_i2c` component the text sensor
   will refer to. Useful when multiple devices are present in your configuration.
-- **iaq_accuracy** (_Optional_): Configuration for the IAQ accuracy sensor. Shows: `Stabilizing`  , `Uncertain`  ,
-  `Calibrating`  , `Calibrated`  .
+
+- **iaq_accuracy** (_Optional_): Configuration for the IAQ accuracy sensor. Shows: `Stabilizing`, `Uncertain`,
+  `Calibrating`, `Calibrated`.
 
   - All other options from [Text Sensor](#config-text_sensor).
 
@@ -158,17 +167,17 @@ text_sensor:
 
 The measurements are expressed with an index scale ranging from 0 to 500. The index itself is deduced from tests using
 ethanol gas, as well as important VOC in the exhaled breath of healthy humans. The VOC values themselves are derived
-from several publications on breath analysis studies.  The BSEC2 software library defines the levels as follows:
+from several publications on breath analysis studies. The BSEC2 software library defines the levels as follows:
 
 | IAQ Index | Air Quality         |
 | --------- | ------------------- |
 | 0 - 50    | Excellent           |
 | 51 - 100  | Good                |
-| 101 - 150 | Lightly polluted    |
+| 101 - 150 | Lightly polluted |
 | 151 - 200 | Moderately polluted |
-| 201 - 250 | Heavily polluted    |
-| 251 - 350 | Severely polluted   |
-| > 351     | Extremely polluted  |
+| 201 - 250 | Heavily polluted |
+| 251 - 350 | Severely polluted |
+| > 351 | Extremely polluted |
 
 This can be represented by a template text sensor such as below
 
@@ -209,9 +218,9 @@ The selected b-VOC gasses are as follows:
 | ------------------ | -------------- |
 | `Ethane`_          | 5 ppm          |
 | `Isoprene`_        | 10 ppm         |
-| `Ethanol`_         | 10 ppm         |
-| `Acetone`_         | 50 ppm         |
-| `Carbon Monoxide`_ | 15 ppm         |
+| `Ethanol`_ | 10 ppm |
+| `Acetone`_ | 50 ppm |
+| `Carbon Monoxide`_ | 15 ppm |
 
 {{< anchor "bsec2-calibration" >}}
 
@@ -224,10 +233,11 @@ value of 200 to a “typical polluted” level. The IAQ Accuracy sensor will ind
 - `Stabilizing`  : The device has just started, and the sensor is stabilizing (this typically lasts 5 minutes)
 - `Uncertain`  : The background history of BSEC2 is uncertain. This typically means the gas sensor data was too stable
   for BSEC2 to clearly define its reference.
+
 - `Calibrating`  : BSEC2 found new calibration data and is currently calibrating.
 - `Calibrated`  : BSEC2 calibrated successfully.
 
-Every `state_save_interval`  , or as soon thereafter when full calibration is reached, the current algorithm state is
+Every `state_save_interval`, or as soon thereafter when full calibration is reached, the current algorithm state is
 saved to flash so that the process does not have to start from scratch on device restart.
 
 ## See Also

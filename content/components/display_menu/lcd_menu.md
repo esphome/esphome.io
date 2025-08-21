@@ -7,12 +7,11 @@ params:
     image: lcd_menu.png
 ---
 
-
 {{< anchor "lcd_menu" >}}
 
 The component provides an infrastructure for setting up a hierarchical menu
 on character based LCD displays. This offers the user an interactive method to display
-labels, control entities like `switch`  , `select`  , `number`  available locally on the
+labels, control entities like `switch`, `select`, `number`  available locally on the
 ESPHome node, without the requirement of a network connection.
 
 {{< img src="lcd_menu.png" alt="Image" width="60.0%" class="align-center" >}}
@@ -96,12 +95,15 @@ Configuration variables:
 - **display_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the LCD display.
 - **mark_back** (*Optional*, 0-255): Code of the character used to mark menu items going back
   one level. As the character set lacks a good looking back arrow, using a user defined character
-  is advisable (use `8` to reference one at  position `0` to avoid problems with zeros
+  is advisable (use `8` to reference one at position `0` to avoid problems with zeros
   in a string). Defaults to `0x5e` (`^`  ).
+
 - **mark_selected** (*Optional*, 0-255): Code of the character used to mark menu item selected.
   Defaults to `0x3e` (`>`  ).
+
 - **mark_editing** (*Optional*, 0-255): Code of the character used to mark menu item editing mode.
   Defaults to `0x2a` (`*`  ).
+
 - **mark_submenu** (*Optional*, 0-255): Code of the character used to mark menu item leading to a
   submenu. Defaults to `0x7e` (a right arrow).
 

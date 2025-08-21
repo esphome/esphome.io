@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `esp32_ble_tracker` component creates a global hub so that you can track bluetooth low energy devices
 using your ESP32 node.
 
@@ -76,28 +74,33 @@ you can use OTA updates again.
 
   - **interval** (*Optional*, [Time](#config-time)): The interval between each consecutive scan window.
     This is the time the ESP spends on each of the 3 BLE advertising channels.
-    Defaults to `320ms`  .
+    Defaults to `320ms`.
+
   - **window** (*Optional*, [Time](#config-time)): The time the ESP is actively listening for packets
     on a channel during each scan interval. If this is close to the `interval` value, the ESP will
     spend more time listening to packets (but also consume more power). Defaults to `30ms`
+
   - **duration** (*Optional*, [Time](#config-time)): The duration of each complete scan. This has no real
-    impact on the device but can be used to debug the BLE stack. Defaults to `5min`  .
+    impact on the device but can be used to debug the BLE stack. Defaults to `5min`.
+
   - **active** (*Optional*, boolean): Whether to actively send scan requests to request more data
     after having received an advertising packet. With some devices this is necessary to receive all data,
     but also drains those devices' power a bit more. Some devices don't need this, in that case
-    you can save power and RF pollution by setting it to `false`  . Defaults to `true`  .
+    you can save power and RF pollution by setting it to `false`. Defaults to `true`.
+
   - **continuous** (*Optional*, boolean): Whether to scan continuously (forever) or to only scan when
-    asked to start a scan (with start_scan action). Defaults to `true`  .
+    asked to start a scan (with start_scan action). Defaults to `true`.
+
   - **software_coexistence** (*Optional*, boolean): When enabled, software coexistence will
     briefly prioritize Bluetooth over Wi-Fi during the initial establishment of BLE connections,
     which can improve reliability. Only available if `wifi` component is configured.
-    Defaults to `true`  .
+    Defaults to `true`.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this ESP32 BLE Hub.
 - **max_connections** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM. It is recommended not to exceed `5`
-  connection slots to avoid memory issues. Defaults to `3`  .
-  This can only be adjusted when using the `esp-idf` framework up to a maximum of `9`  .
+  connection slots to avoid memory issues. Defaults to `3`.
+  This can only be adjusted when using the `esp-idf` framework up to a maximum of `9`.
   This value cannot exceed the total number of `connection_slots` for the
   {{< docref "bluetooth_proxy/" >}} component combined with the total
   configured {{< docref "ble_client/" >}} instances.
@@ -106,12 +109,15 @@ Automations:
 
 - **on_ble_advertise** (*Optional*, [Automation](#automation)): An automation to perform
   when a Bluetooth advertising is received. See [`on_ble_advertise` Trigger](#esp32_ble_tracker-on_ble_advertise).
+
 - **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](#automation)): An automation to
   perform when a Bluetooth advertising with manufacturer data is received. See
   [`on_ble_manufacturer_data_advertise` Trigger](#esp32_ble_tracker-on_ble_manufacturer_data_advertise).
+
 - **on_ble_service_data_advertise** (*Optional*, [Automation](#automation)): An automation to
   perform when a Bluetooth advertising with service data is received. See
   [`on_ble_service_data_advertise` Trigger](#esp32_ble_tracker-on_ble_service_data_advertise).
+
 - **on_scan_end** (*Optional*, [Automation](#automation)): An automation to perform when
   a BLE scan has completed (the duration of the scan). This works with continuous set to true or false.
 

@@ -7,8 +7,6 @@ params:
     image: modbus.png
 ---
 
-
-
 The `modbus_controller` binary sensor platform creates a binary sensor from a modbus_controller component
 and requires {{< docref "/components/modbus_controller" >}} to be configured.
 
@@ -29,19 +27,20 @@ and requires {{< docref "/components/modbus_controller" >}} to be configured.
 - **force_new_range** (*Optional*, boolean): If possible sensors with sequential addresses are grouped together and requested in one range. Setting `force_new_range: true` enforces the start of a new range at that address.
 - **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
   Custom data must contain all required bytes including the modbus device address. The CRC is automatically calculated and appended to the command.
-  See [Using `custom_command`](#modbus_custom_command) how to use `custom_command`  .
+  See [Using `custom_command`](#modbus_custom_command) how to use `custom_command`.
+
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor. Parameters:
 
   - **x** (bool): The parsed float value of the modbus data
   - **data** (std::vector<uint8_t>): vector containing the complete raw modbus response bytes for this sensor
-  - **item** (const pointer to a ModbusBinarySensor object):  The sensor object itself.
+  - **item** (const pointer to a ModbusBinarySensor object): The sensor object itself.
 
   Possible return values for the lambda:
 
   - `return true/false;` the new value for the sensor.
 
-- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. If a binary_sensor is created from an input register, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`  .
+- **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command, this value is used to find the start of this datapoint relative to the start address. The component calculates the size of the range based on offset and size of the value type. The value for offset depends on the register type. If a binary_sensor is created from an input register, the offset is in bytes. For coil and discrete input resisters, the LSB of the first data byte contains the coil addressed in the request. The other coils follow toward the high-order end of this byte and from low order to high order in subsequent bytes. For registers, the offset is the position of the relevant bit. To get the value of the coil register, 2 can be retrieved using `address: 2` / `offset: 0` or `address: 0` / `offset 2`.
 
 - All other options from [Binary Sensor](#config-binary_sensor).
 

@@ -7,8 +7,6 @@ params:
     image: brightness-medium.svg
 ---
 
-
-
 The `hbridge` light platform creates a dual color brightness controlled light from two
 [float output component](#output).
 

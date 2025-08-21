@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_lig.png
 ---
 
-
-
 The `lvgl` light platform creates a light from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
@@ -29,7 +27,7 @@ light:
 ```
 
 {{< note >}}
-To have linear brightness control, `gamma_correct` of the light is set by default to `0`  .
+To have linear brightness control, `gamma_correct` of the light is set by default to `0`.
 
 {{< /note >}}
 

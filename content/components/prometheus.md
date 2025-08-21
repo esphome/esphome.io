@@ -7,8 +7,6 @@ params:
     image: prometheus.svg
 ---
 
-
-
 The `prometheus` component enables an HTTP endpoint for the
 {{< docref "web_server/" >}} in order to integrate a [Prometheus](https://prometheus.io/) installation.
 
@@ -16,7 +14,7 @@ This can be used to scrape data directly into your Prometheus-based monitoring a
 without the need of any other software.
 
 The list of available metrics can be found by directly browsing your node under
-`<ip or node_name.local>/metrics`  , and may be increased in the future.
+`<ip or node_name.local>/metrics`, and may be increased in the future.
 
 ```yaml
 # Example configuration entry
@@ -30,7 +28,8 @@ prometheus:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **include_internal** (*Optional*, boolean): Whether `internal` entities should be displayed on the
-  web interface. Defaults to `false`  .
+  web interface. Defaults to `false`.
+
 - **relabel** (*Optional*): Override metric labels. See [`relabel`](#prometheus-relabel)
 
 {{< note >}}

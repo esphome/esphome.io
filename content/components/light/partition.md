@@ -7,8 +7,6 @@ params:
     image: color_lens.svg
 ---
 
-
-
 The `partition` light platform allows you to combine multiple addressable light segments
 (like {{< docref "fastled/" >}} or {{< docref "neopixelbus/" >}}) and/or individual lights (like {{< docref "rgb/" >}}) into a single addressable light.
 This platform also allows splitting up an addressable light into multiple segments, so that
@@ -18,7 +16,7 @@ segments can be individually controlled.
 
 If you want to split a strip, you may run into strange behavior like that the original light entity (e.g., `fastled_clockless`  )
 may be conflicting with the partition. For better control over which segments of the strip will overlap each other,
-mark the original `light` as `internal: true`  .
+mark the original `light` as `internal: true`.
 
 ```yaml
 # Example configuration entry
@@ -98,8 +96,9 @@ light:
   - **id** (**Required**, [ID](#config-id)): The ID of the addressable light to be controlled by this segment.
   - **from** (**Required**, int): The index of the first LED to address in the segment. Counting starts with 0,
     so first LED is 0.
+
   - **to** (**Required**, int): The index of the last LED to address in this segment.
-  - **reversed** (*Optional*, boolean): Whether to reverse the order of LEDs in this segment. Defaults to `false`  .
+  - **reversed** (*Optional*, boolean): Whether to reverse the order of LEDs in this segment. Defaults to `false`.
 
   *For single light segments:*
 

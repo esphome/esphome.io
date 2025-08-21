@@ -7,8 +7,6 @@ params:
     image: settings.svg
 ---
 
-
-
 ESPHome has a powerful way to reduce repetition in configuration files: substitutions.
 With substitutions, you can have a single generic source file for all nodes of one kind and
 substitute expressions in as required.
@@ -76,7 +74,7 @@ Simple Jinja expressions and filters can be used inside `${ ... }` syntax.
 
 All substitution variables become accessible within Jinja expressions by their name.
 
-If the substitution variable is a key-value dictionary, you can access members with a dot notation: `${ device.name }`  , or indexed `${ device["name"] }`
+If the substitution variable is a key-value dictionary, you can access members with a dot notation: `${ device.name }`, or indexed `${ device["name"] }`
 
 Lists can be indexed: `${ unused_pins[2] }`
 
@@ -125,7 +123,7 @@ refer to [Jinja Expressions](https://jinja.palletsprojects.com/en/stable/templat
 
 ### Mathematical operations
 
-In addition to Jinja's native operators such as `+`  , `-`  , `*`  , `/`  , ... Python's math
+In addition to Jinja's native operators such as `+`, `-`, `*`, `/`, ... Python's math
 library is exposed as a module:
 
 ```yaml
@@ -193,7 +191,7 @@ binary_sensor:
 ## Command line substitutions
 
 You can define or override substitutions from the command line by adding the `-s` switch with arguments `KEY` and
-`VALUE`  . This will override the substitution `KEY` and assign it the value `VALUE`  . This switch can be included
+`VALUE`. This will override the substitution `KEY` and assign it the value `VALUE`. This switch can be included
 multiple times. Consider the following `example.yaml` file:
 
 ```yaml

@@ -7,8 +7,6 @@ params:
     image: ../components/images/opentherm-shield.png
 ---
 
-
-
 OpenTherm (OT) is a standard communications protocol used in central heating systems for the communication between
 central heating appliances and a thermostatic controller. As a standard, OpenTherm is independent of any single
 manufacturer. A controller from manufacturer A can in principle be used to control a boiler from manufacturer B.
@@ -49,12 +47,15 @@ opentherm:
 
 - **in_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `out` on the
   board.
+
 - **out_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `in` on the
   board.
+
 - **sync_mode** (*Optional*, boolean, default **false**): Synchronous communication mode prevents other components
   from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
   invalid response errors (very likely to happen while using Dallas temperature sensors).
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.  Required if you have
+
+- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
 
 #### Optional Boiler-specific Configuration
@@ -64,12 +65,16 @@ correctly. You can use the following settings in hub configuration to make your 
 
 - **controller_product_type** (*Optional*, byte [0-255], OpenTherm message id `126` high byte): Controller product
   type
+
 - **controller_product_version** (*Optional*, byte [0-255], OpenTherm message id `126` low byte): Controller product
   version
+
 - **opentherm_version_controller** (*Optional*, float, OpenTherm message id `124`  ): Version of OpenTherm implemented
   by controller
+
 - **controller_configuration** (*Optional*, byte [0-255], OpenTherm message id `2` high byte): Controller
   configuration
+
 - **controller_id** (*Optional*, byte [0-255], OpenTherm message id `2` low byte): Controller ID code
 
 #### Automations
@@ -156,10 +161,13 @@ output and number components by default:
 
 - `min_value` (float): The minimum value. For a number this is the minimum value you are allowed to input. For an
   output this is the number that will be sent to the boiler when the output is at 0%.
+
 - `max_value` (float): The maximum value. For a number this is the maximum value you are allowed to input. For an
   output this is the number that will be sent to the boiler when the output is at 100%.
+
 - `auto_max_value` (boolean): Automatically configure the maximum value to a value reported by the boiler. Not
   available for all inputs.
+
 - `auto_min_value` (boolean): Automatically configure the minimum value to a value reported by the boiler. Not
   available for all inputs.
 
@@ -339,9 +347,10 @@ Some boilers use non-standard message ids and formats. For example,
 introduced two automations that allow editing the low-level OpenTherm message:
 
 - **before_send**: fired just before the fully formed message is sent to the boiler. When you use a lambda, the message
-  is passed by reference as `x`  .
+  is passed by reference as `x`.
+
 - **before_process_response**: fired when response message is received from the boiler and is about to be processed.
-  When you use a lambda, the message is passed by reference as `x`  .
+  When you use a lambda, the message is passed by reference as `x`.
 
 This allows to make arbitrary alterations to any message. Here is an example of overriding message id for DHW setpoint
 for Daikin D2C boiler:
@@ -473,5 +482,6 @@ climate:
 - {{< apiref "API Reference: OpenthermSwitch" "opentherm/switch/switch.h" >}}
 - [OpenTherm thermostat with ESPHome and Home Assistant](https://olegtarasov.me/opentherm-thermostat-esphome/) —
   real-world use case for this component.
+
 - [Development repository](https://github.com/olegtarasov/esphome-opentherm) — new features will be tested here
   before proposing them to ESPHome core.

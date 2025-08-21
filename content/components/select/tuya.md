@@ -7,8 +7,6 @@ params:
     image: tuya.png
 ---
 
-
-
 The `tuya` select platform creates a select from a tuya serial component
 and requires {{< docref "/components/tuya" >}} to be configured.
 
@@ -54,13 +52,17 @@ select:
 
 - **enum_datapoint** (**Required**, int): The enum datapoint id number for the select.
   At least one of *enum_datapoint* or *int_datapoint* is required.
+
 - **int_datapoint** (**Required**, int): The int datapoint id number for the select.
   At least one of *enum_datapoint* or *int_datapoint* is required.
+
 - **options** (**Required**, Map[int, str]): Provide a mapping from values (int) of
   this Select to options (str) of the *enum_datapoint* and vice versa. All options and
   all values have to be unique.
+
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the Select will immediately update the reported state.
+
 - All other options from [Select](#config-select).
 
 ## See Also

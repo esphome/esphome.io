@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `ble_client` component is a output that can write a binary value to service characteristics of BLE devices.
 
 For more information on BLE services and characteristics, see {{< docref "/components/ble_client" >}}.
@@ -45,6 +43,7 @@ output:
 - **id** (*Optional*, [ID](#config-id)): The ID to use for code generation, and for reference by dependent components.
 - **require_response** (*Optional*, boolean): Control whether to require a remote response from the device when writing.
   Whether or not this is required will vary by device. Defaults to `false`
+
 - All other options from [Output](#config-output).
 
 ## See Also

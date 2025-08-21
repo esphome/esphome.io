@@ -7,8 +7,6 @@ params:
     image: camera.svg
 ---
 
-
-
 The `esp32_camera` component allows you to use ESP32-based camera boards in ESPHome that
 directly integrate into Home Assistant through the native API.
 
@@ -38,9 +36,11 @@ esp32_camera:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
@@ -50,6 +50,7 @@ Connection Options:
 
 - **data_pins** (**Required**, list of pins): The data lanes of the camera, this must be a list
   of 8 GPIO pins.
+
 - **vsync_pin** (**Required**, pin): The pin the VSYNC line of the camera is connected to.
 - **href_pin** (**Required**, pin): The pin the HREF line of the camera is connected to.
 - **pixel_clock_pin** (**Required**, pin): The pin the pixel clock line of the camera is connected to.
@@ -57,25 +58,30 @@ Connection Options:
 
   - **pin** (**Required**, pin): The pin the external clock line is connected to.
   - **frequency** (*Optional*, float): The frequency of the external clock, must be between 10
-    and 20MHz. Defaults to `20MHz`  .
+    and 20MHz. Defaults to `20MHz`.
 
 - **i2c_id** (**Required**, [ID](#config-id)): The ID of the [I²C bus](#i2c) the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
   If set, this will reset the camera before the ESP boots.
+
 - **power_down_pin** (*Optional*, pin): The ESP pin to power down the camera.
   If set, this will power down the camera while it is inactive.
+
 - **test_pattern** (*Optional*, boolean): When enabled, the camera will show a test pattern
   that can be used to debug connection issues.
 
 Frame Settings:
 
 - **max_framerate** (*Optional*, float): The maximum framerate the camera will generate images at.
-  Up to 60Hz is possible (with reduced frame sizes), but beware of overheating. Defaults to `10 fps`  .
+  Up to 60Hz is possible (with reduced frame sizes), but beware of overheating. Defaults to `10 fps`.
+
 - **idle_framerate** (*Optional*, float): The framerate to capture images at when no client
-  is requesting a full stream. Defaults to `0.1 fps`  .
+  is requesting a full stream. Defaults to `0.1 fps`.
+
 - **frame_buffer_count** (*Optional*, int): The number of frame buffers to use when reading from the camera sensor.
-  Must be between 1 and 2.  Defaults to `1`  .
-- **frame_buffer_location** (*Optional*, enum): The memory area used for storing the frame buffers. Defaults to `PSRAM`  .
+  Must be between 1 and 2. Defaults to `1`.
+
+- **frame_buffer_location** (*Optional*, enum): The memory area used for storing the frame buffers. Defaults to `PSRAM`.
   - `PSRAM`
   - `DRAM`
 
@@ -104,12 +110,13 @@ Image Settings:
   - `2560x1920` (QSXGA, 4:3)
 
 - **jpeg_quality** (*Optional*, int): The JPEG quality that the camera should encode images with.
-  From 10 (best) to 63 (worst). Defaults to `10`  .
-- **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically. Defaults to `true`  .
-- **horizontal_mirror** (*Optional*, boolean): Whether to mirror the image horizontally. Defaults to `true`  .
-- **contrast** (*Optional*, int): The contrast to apply to the picture, from -2 to 2. Defaults to `0`  .
-- **brightness** (*Optional*, int): The brightness to apply to the picture, from -2 to 2. Defaults to `0`  .
-- **saturation** (*Optional*, int): The saturation to apply to the picture, from -2 to 2. Defaults to `0`  .
+  From 10 (best) to 63 (worst). Defaults to `10`.
+
+- **vertical_flip** (*Optional*, boolean): Whether to flip the image vertically. Defaults to `true`.
+- **horizontal_mirror** (*Optional*, boolean): Whether to mirror the image horizontally. Defaults to `true`.
+- **contrast** (*Optional*, int): The contrast to apply to the picture, from -2 to 2. Defaults to `0`.
+- **brightness** (*Optional*, int): The brightness to apply to the picture, from -2 to 2. Defaults to `0`.
+- **saturation** (*Optional*, int): The saturation to apply to the picture, from -2 to 2. Defaults to `0`.
 - **special_effect** (*Optional*, enum): The effect to apply to the picture. Defaults to `none` (picture without effect).
 
   - `none`  : Picture without effect
@@ -127,9 +134,9 @@ Exposure Settings:
   - `manual`  : Exposure can be manually set, with **aec_value** parameter. **ae_level** has no effect here
   - `auto`  : Camera manage exposure automatically. Compensation can be applied, thanks to **ae_level** parameter. **aec_value** has no effect here
 
-- **aec2** (*Optional*, boolean): Whether to enable Auto Exposure Control 2. Seems to change computation method of automatic exposure. Defaults to `false`  .
-- **ae_level** (*Optional*, int): The auto exposure level to apply to the picture (when **aec_mode** is set to `auto`  ), from -2 to 2. Defaults to `0`  .
-- **aec_value** (*Optional*, int): The Exposure value to apply to the picture (when **aec_mode** is set to `manual`  ), from 0 to 1200. Defaults to `300`  .
+- **aec2** (*Optional*, boolean): Whether to enable Auto Exposure Control 2. Seems to change computation method of automatic exposure. Defaults to `false`.
+- **ae_level** (*Optional*, int): The auto exposure level to apply to the picture (when **aec_mode** is set to `auto`  ), from -2 to 2. Defaults to `0`.
+- **aec_value** (*Optional*, int): The Exposure value to apply to the picture (when **aec_mode** is set to `manual`  ), from 0 to 1200. Defaults to `300`.
 
 Sensor Gain Settings:
 
@@ -138,8 +145,8 @@ Sensor Gain Settings:
   - `manual`  : Gain can be manually set, with **agc_value** parameter. **agc_gain_ceiling** has no effect here
   - `auto`  : Camera manage sensor gain automatically. Maximum gain can be defined, thanks to **agc_gain_ceiling** parameter. **agc_value** has no effect here
 
-- **agc_value** (*Optional*, int): The gain value to apply to the picture (when **aec_mode** is set to `manual`  ), from 0 to 30. Defaults to `0`  .
-- **agc_gain_ceiling** (*Optional*, enum): The maximum gain allowed, when **agc_mode** is set to `auto`  . This parameter seems act as "ISO" setting. Defaults to `2x`  .
+- **agc_value** (*Optional*, int): The gain value to apply to the picture (when **aec_mode** is set to `manual`  ), from 0 to 30. Defaults to `0`.
+- **agc_gain_ceiling** (*Optional*, enum): The maximum gain allowed, when **agc_mode** is set to `auto`. This parameter seems act as "ISO" setting. Defaults to `2x`.
 
   - `2x`  : Camera is less sensitive, picture is clean (without visible noise)
   - `4x`
@@ -151,7 +158,7 @@ Sensor Gain Settings:
 
 White Balance Setting:
 
-- **wb_mode** (*Optional*, enum): The mode of white balace module. Defaults to `auto`  .
+- **wb_mode** (*Optional*, enum): The mode of white balace module. Defaults to `auto`.
 
   - `auto`  : Camera choose best white balance setting
   - `sunny`  : White balance sunny mode
@@ -163,13 +170,15 @@ Automations:
 
 - **on_stream_start** (*Optional*, [Automation](#automation)): An automation to perform
   when a stream starts.
+
 - **on_stream_stop** (*Optional*, [Automation](#automation)): An automation to perform
   when a stream stops.
+
 - **on_image** (*Optional*, [Automation](#automation)): An automation called when image taken. Image is available as `image` variable of type {{< apistruct "esp32_camera::CameraImageData" "esp32_camera::CameraImageData" >}}.
 
 Test Setting:
 
-- **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`  .
+- **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`.
 
 {{< note >}}
 Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify

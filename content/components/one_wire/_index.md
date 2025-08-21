@@ -7,8 +7,6 @@ params:
     image: one-wire.svg
 ---
 
-
-
 The `one_wire` component allows you to use supported 1-Wire devices in ESPHome.
 
 The 1-Wire bus the devices are connected to should have an external pull-up resistor of about 4.7KΩ. A resistor of

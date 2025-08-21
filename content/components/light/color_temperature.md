@@ -7,8 +7,6 @@ params:
     image: brightness-medium.svg
 ---
 
-
-
 The `color_temperature` light platform creates a Color Temperature
 light from 2 [float output components](#output). One channel controls the LED temperature,
 and the other channel controls the brightness.
@@ -31,9 +29,11 @@ light:
 - **cold_white_color_temperature** (**Required**, float): The coldest color temperature supported by this light. This
   is the lowest value when expressed in [mireds](https://en.wikipedia.org/wiki/Mired), or the highest value when
   expressed in Kelvin.
+
 - **warm_white_color_temperature** (**Required**, float): The warmest color temperature supported by this light. This
   is the highest value when expressed in [mireds](https://en.wikipedia.org/wiki/Mired), or the lowest value when
   expressed in Kelvin.
+
 - All other options from [Light](#config-light).
 
 ## See Also

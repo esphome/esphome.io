@@ -7,8 +7,6 @@ params:
     image: upload.svg
 ---
 
-
-
 The `output` switch platform allows you to use any output component as a switch.
 
 {{< img src="output-ui.png" alt="Image" width="80.0%" class="align-center" >}}

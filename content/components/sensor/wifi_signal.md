@@ -7,8 +7,6 @@ params:
     image: network-wifi.svg
 ---
 
-
-
 The `wifi_signal` sensor platform allows you to read the signal
 strength of the currently connected {{< docref "/components/wifi" "WiFi Access Point" >}}.
 
@@ -49,7 +47,8 @@ sensor:
 ## Configuration variables
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval
-  to check the sensor. Defaults to `60s`  .
+  to check the sensor. Defaults to `60s`.
+
 - All other options from [Sensor](#config-sensor).
 
 {{< warning >}}

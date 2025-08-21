@@ -7,8 +7,6 @@ params:
     image: resol_deltasol_bs_plus.jpg
 ---
 
-
-
 The `VBus` Component provides status reading connectivity to solar heat energy collector controllers using VBus
 protocol. These devices are mainly produced by Resol, often also found under different brand names like Viessmann,
 Kioto, Wagner etc. The component currently supports natively the models in the table below
@@ -26,10 +24,10 @@ The following table shows the currently supported models of Vbus devices.
 | ---------------- | ---------------- | ----------- | ------------------- |
 | DeltaSol BS Plus | deltasol_bs_plus | 4221        |                     |
 | DeltaSol BS 2009 | deltasol_bs_2009 | 427B        | DeltaSol BS Plus V2 |
-| Dux H3214        | deltasol_bs_2009 | 427B        | Pump 2 unsupported  |
-| DeltaSol C       | deltasol_c       | 4212        |                     |
-| DeltaSol CS2     | deltasol_cs2     | 1121        |                     |
-| DeltaSol CS Plus | deltasol_cs_plus | 2211        |                     |
+| Dux H3214 | deltasol_bs_2009 | 427B | Pump 2 unsupported |
+| DeltaSol C | deltasol_c | 4212 | |
+| DeltaSol CS2 | deltasol_cs2 | 1121 | |
+| DeltaSol CS Plus | deltasol_cs_plus | 2211 | |
 
 The `Config Value` should be used for the `model` parameter in your `sensor` and `binary_sensor` entries.
 
@@ -129,10 +127,10 @@ sensor:
 
 Supported sensors:
 
-- for **deltasol_bs_plus** and **deltasol_bs_2009**: `temperature_1`  ,  `temperature_2`  , `temperature_3`  , `temperature_4`  , `pump_speed_1`  , `pump_speed_2`  , `operating_hours_1`  , `operating_hours_2`  , `heat_quantity`  , `time`  , `version`  .
-- for **deltasol_c**: `temperature_1`  ,  `temperature_2`  , `temperature_3`  , `temperature_4`  , `pump_speed_1`  , `pump_speed_2`  , `operating_hours_1`  , `operating_hours_2`  , `heat_quantity`  , `time`  .
-- for **deltasol_cs2**: `temperature_1`  ,  `temperature_2`  , `temperature_3`  , `temperature_4`  ,  `pump_speed`  , `operating_hours`  , `heat_quantity`  , `version`  .
-- for **deltasol_cs_plus**: `temperature_1`  ,  `temperature_2`  , `temperature_3`  , `temperature_4`  , `temperature_5`  , `pump_speed_1`  , `pump_speed_2`  , `operating_hours_1`  , `operating_hours_2`  , `heat_quantity`  , `time`  , `version`  , `flow_rate`  .
+- for **deltasol_bs_plus** and **deltasol_bs_2009**: `temperature_1`, `temperature_2`, `temperature_3`, `temperature_4`, `pump_speed_1`, `pump_speed_2`, `operating_hours_1`, `operating_hours_2`, `heat_quantity`, `time`, `version`.
+- for **deltasol_c**: `temperature_1`, `temperature_2`, `temperature_3`, `temperature_4`, `pump_speed_1`, `pump_speed_2`, `operating_hours_1`, `operating_hours_2`, `heat_quantity`, `time`.
+- for **deltasol_cs2**: `temperature_1`, `temperature_2`, `temperature_3`, `temperature_4`, `pump_speed`, `operating_hours`, `heat_quantity`, `version`.
+- for **deltasol_cs_plus**: `temperature_1`, `temperature_2`, `temperature_3`, `temperature_4`, `temperature_5`, `pump_speed_1`, `pump_speed_2`, `operating_hours_1`, `operating_hours_2`, `heat_quantity`, `time`, `version`, `flow_rate`.
 
 All sensors are *Optional* and support all other options from [Sensor](#config-sensor).
 
@@ -181,11 +179,11 @@ binary_sensor:
 
   Supported models:
 
-  - **`deltasol_bs_plus`**: `relay1`  ,  `relay2`  , `sensor1_error`  , `sensor2_error`  , `sensor3_error`  , `sensor4_error`  , `collector_max`  , `collector_min`  , `collector_frost`  , `tube_collector`  , `recooling`  , `hqm`  .
-  - **`deltasol_bs_2009`**: `sensor1_error`  , `sensor2_error`  , `sensor3_error`  , `sensor4_error`  , `frost_protection_active`  .
-  - **`deltasol_c`**: `sensor1_error`  , `sensor2_error`  , `sensor3_error`  , `sensor4_error`  .
-  - **`deltasol_cs2`**: `sensor1_error`  , `sensor2_error`  , `sensor3_error`  , `sensor4_error`  .
-  - **`deltasol_cs_plus`**: `sensor1_error`  , `sensor2_error`  , `sensor3_error`  , `sensor4_error`  .
+  - **`deltasol_bs_plus`**: `relay1`, `relay2`, `sensor1_error`, `sensor2_error`, `sensor3_error`, `sensor4_error`, `collector_max`, `collector_min`, `collector_frost`, `tube_collector`, `recooling`, `hqm`.
+  - **`deltasol_bs_2009`**: `sensor1_error`, `sensor2_error`, `sensor3_error`, `sensor4_error`, `frost_protection_active`.
+  - **`deltasol_c`**: `sensor1_error`, `sensor2_error`, `sensor3_error`, `sensor4_error`.
+  - **`deltasol_cs2`**: `sensor1_error`, `sensor2_error`, `sensor3_error`, `sensor4_error`.
+  - **`deltasol_cs_plus`**: `sensor1_error`, `sensor2_error`, `sensor3_error`, `sensor4_error`.
   - **`custom`**: See below.
 
 All binary sensors are *Optional* and support all other options from [Binary Sensor](#config-binary_sensor).
@@ -216,7 +214,7 @@ sensor:
 - **sensors** (**Required**): A list of [Sensor](#config-sensor) definitions that include a `lambda` to do the decoding and return a `float` value.
 
 - **lambda** (**Required**, [lambda](#config-lambda)): Code to parse a value from the incoming data packets and return it.
-  The data packet is in a `std::vector<uint8_t>` called `x`  .
+  The data packet is in a `std::vector<uint8_t>` called `x`.
 
 ## `custom` VBus binary sensors
 
@@ -228,12 +226,12 @@ sensor:
 - **binary_sensors** (**Required**): A list of [Binary Sensor](#config-binary_sensor) definitions that include a `lambda` to do the decoding and return a `bool` value.
 
 - **lambda** (**Required**, [lambda](#config-lambda)): Code to parse a value from the incoming data packets and return it.
-  The data packet is in a `std::vector<uint8_t>` called `x`  .
+  The data packet is in a `std::vector<uint8_t>` called `x`.
 
 To determine the correct values for the parameters above, visit [packet definitions list](http://danielwippermann.github.io/resol-vbus/#/vsf). In the search field of the **Packets** table, enter the name of your device.
 
 To extract the values with a [lambda](#config-lambda), look in the packet structure by clicking the **Bytes** link in the table. Each value is placed at an `offset` within the packet.
-For `float` values, let's look at the temperature example: the value is stored as a `16`  -bit value in `2` bytes little-endian format. Since it's always the second byte containing the upper byte, it needs to be shifted by `8` bits (multiplied by `256`  ) (e.g. `0x34, 0x12 -> 0x1234`  ). The result needs to be multiplied by the factor, which is `0.1`  , to obtain the correct values: `((x[1] << 8) + x[0]) * 0.1f)`  . The number within the square brackets is the `[offset]`  .
+For `float` values, let's look at the temperature example: the value is stored as a `16`  -bit value in `2` bytes little-endian format. Since it's always the second byte containing the upper byte, it needs to be shifted by `8` bits (multiplied by `256`  ) (e.g. `0x34, 0x12 -> 0x1234`  ). The result needs to be multiplied by the factor, which is `0.1`, to obtain the correct values: `((x[1] << 8) + x[0]) * 0.1f)`. The number within the square brackets is the `[offset]`.
 For `binary` values, multiple binary values are stored within a single numeric value encoded with a bitmask. To extract the binary value all you have to do is to apply *bitwise AND* operator `&` between the value at the corresponding offset and the `mask` shown in the table.
 
 For example to decode some sensors of `DeltaSol BS Plus` via lambdas:

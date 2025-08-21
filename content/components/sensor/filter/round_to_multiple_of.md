@@ -3,8 +3,6 @@ description: ""
 headless: true
 ---
 
-
-
 Rounds the value to the nearest multiple. Takes a float greater than zero.
 
 ```yaml

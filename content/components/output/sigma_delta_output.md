@@ -3,8 +3,6 @@ description: "Sigma-Delta Output"
 title: "Sigma-Delta Output"
 ---
 
-
-
 This component uses [sigma-delta modulation](https://en.wikipedia.org/wiki/Delta-sigma_modulation)
 to output a floating-point value on a binary output. Unlike with {{< docref "/components/output/slow_pwm" >}},
 it is possible to update the output value with each update cycle, not just at the end of a longer period.
@@ -61,7 +59,7 @@ Configuration variables:
 {{< note >}}
 
 - If `pin` is defined, the GPIO pin state is writen before any action is executed.
-- `state_change_action` and `turn_on_action`  /`turn_off_action` can be used togther. `state_change_action` is called before `turn_on_action`  /`turn_off_action`  . It's recommended to use either `state_change_action` or `turn_on_action`  /`turn_off_action` to change the state of an output. Using both automations together is only recommended for monitoring.
+- `state_change_action` and `turn_on_action`  /`turn_off_action` can be used togther. `state_change_action` is called before `turn_on_action`  /`turn_off_action`. It's recommended to use either `state_change_action` or `turn_on_action`  /`turn_off_action` to change the state of an output. Using both automations together is only recommended for monitoring.
 
 {{< /note >}}
 {{< note >}}

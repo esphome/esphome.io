@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `esp32_ble` component in ESPHome sets up the Bluetooth LE stack on the device so that a {{< docref "esp32_ble_server/" >}}
 can run.
 
@@ -34,7 +32,7 @@ esp32_ble:
 
 ## Configuration variables
 
-- **io_capability** (*Optional*, enum): The IO capability of this ESP32, used for securely connecting to other BLE devices. Defaults to `none`  .
+- **io_capability** (*Optional*, enum): The IO capability of this ESP32, used for securely connecting to other BLE devices. Defaults to `none`.
 
   - `none` - No IO capability (Connections that require PIN code authentication will fail)
   - `keyboard_only` - Only a keyboard to enter PIN codes (or a fixed PIN code)
@@ -42,21 +40,21 @@ esp32_ble:
   - `keyboard_display` - A keyboard and a display
   - `display_yes_no` - A display to show PIN codes and buttons to confirm or deny the connection
 
-- **enable_on_boot** (*Optional*, boolean): If enabled, the BLE interface will be enabled on boot. Defaults to `true`  .
+- **enable_on_boot** (*Optional*, boolean): If enabled, the BLE interface will be enabled on boot. Defaults to `true`.
 
 - **name** (*Optional*, string): The name of the BLE device.
   - Defaults to the hostname of the device.
   - Must be 20 characters or less.
   - Must be 13 characters or less when using `name_add_mac_suffix: true` - [Adding the MAC address as a suffix to the device name](#esphome-mac_suffix).
 
-- **disable_bt_logs** (*Optional*, boolean): When enabled, disables Bluetooth logging categories that are not used by the configured components. This saves flash memory by only including the loggers needed by your configuration. Defaults to `true`  .
+- **disable_bt_logs** (*Optional*, boolean): When enabled, disables Bluetooth logging categories that are not used by the configured components. This saves flash memory by only including the loggers needed by your configuration. Defaults to `true`.
 
 {{< note >}}
 The `disable_bt_logs` option intelligently disables only the Bluetooth logging categories that are not required by your configuration. Each Bluetooth component registers the specific loggers it needs, and all unused loggers are automatically disabled during compilation. This includes loggers for Classic Bluetooth features (like RFCOMM, A2DP, HID) that are not used by ESPHome's BLE implementation.
 
 {{< /note >}}
 
-- **connection_timeout** (*Optional*, [Time](#config-time)): The maximum time to wait for a BLE connection to be established. Only available when using ESP-IDF framework. Defaults to `20s`  .
+- **connection_timeout** (*Optional*, [Time](#config-time)): The maximum time to wait for a BLE connection to be established. Only available when using ESP-IDF framework. Defaults to `20s`.
 
   - Range: 10 to 180 seconds
   - This timeout should align with the timeout used by your BLE client software to prevent connection slot waste
@@ -66,15 +64,15 @@ The `connection_timeout` option is particularly important when using ESPHome as 
 
 {{< /note >}}
 
-- **advertising** (*Optional*, boolean): Manually enable BLE advertising support. This is automatically enabled when using {{< docref "esp32_ble_server/" >}} or {{< docref "esp32_ble_beacon/" >}}. Only set this to `true` if you need advertising functionality without those components. Defaults to `false`  .
+- **advertising** (*Optional*, boolean): Manually enable BLE advertising support. This is automatically enabled when using {{< docref "esp32_ble_server/" >}} or {{< docref "esp32_ble_beacon/" >}}. Only set this to `true` if you need advertising functionality without those components. Defaults to `false`.
 
 {{< note >}}
 The `advertising` option is an advanced feature that manually enables BLE advertising compilation. In most cases, you don't need to set this as advertising is automatically enabled when using components that require it (like `esp32_ble_server` or `esp32_ble_beacon`  ). This option is primarily useful for custom components or special use cases where you need advertising functionality without the standard server or beacon components.
 
 {{< /note >}}
 
-- **advertising_cycle_time** (*Optional*, [Time](#config-time)): The time interval for cycling through multiple advertisements. Only applicable when advertising is enabled. Defaults to `10s`  .
-- **max_notifications** (*Optional*, integer): The maximum number of BLE characteristics that can have notifications enabled across all connections. Only available when using ESP-IDF framework. Defaults to `12`  .
+- **advertising_cycle_time** (*Optional*, [Time](#config-time)): The time interval for cycling through multiple advertisements. Only applicable when advertising is enabled. Defaults to `10s`.
+- **max_notifications** (*Optional*, integer): The maximum number of BLE characteristics that can have notifications enabled across all connections. Only available when using ESP-IDF framework. Defaults to `12`.
 
   - Range: 1 to 64
   - This is a global limit shared across all BLE connections
@@ -130,7 +128,7 @@ on_...:
         - ble.enable:
 ```
 
-The lambda equivalent for this is `id(ble_id).is_active()`  .
+The lambda equivalent for this is `id(ble_id).is_active()`.
 
 ## See Also
 

@@ -7,8 +7,6 @@ params:
     image: tasmota.svg
 ---
 
-
-
 Migrating from previous Tasmota setups is very easy. You just need to have
 ESPHome create a binary for you and then upload that in the Tasmota web interface.
 
@@ -88,6 +86,7 @@ make the upgrade process easier.
 
 - If you are using any version older than 8.2: first upload `tasmota-minimal.bin` from Tasmota repository. Then
   upload the firmware generated from ESPHome.
+
 - Alternatively, first upgrade Tasmota to the latest version. Then use the first (gzip, recommended) method.
 
     If you are using Tasmota 7.2+ it may be necessary to run the command `SetOption78 1` in the

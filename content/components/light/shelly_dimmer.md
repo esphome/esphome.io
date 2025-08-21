@@ -7,10 +7,8 @@ params:
     image: shellydimmer2.jpg
 ---
 
-
-
 The `shelly_dimmer` component adds support for the dimming and power-metering functionality that can be found the [Shelly Dimmer 2](https://shelly.cloud/knowledge-base/devices/shelly-dimmer-2/). The interaction with mains is done via an STM32 microcontroller that is automatically (when configured) flashed with an [open source firmware](https://github.com/jamesturton/shelly-dimmer-stm32).
-A detailed analysis of the Shelly Dimmer 2 hardware is given  on<https://github.com/arendst/Tasmota/issues/6914>.
+A detailed analysis of the Shelly Dimmer 2 hardware is given on<https://github.com/arendst/Tasmota/issues/6914>.
 
 Warning!!! At the time of writing there seems to be no way to revert back to the "stock firmware", because there seems to be no way to revert to firmware of the STM32 co-processor.
 
@@ -60,14 +58,15 @@ uart:
 
 {{< /note >}}
 
-- **leading_edge** (*Optional*, boolean): [Dimming mode](https://en.wikipedia.org/wiki/Dimmer#Solid-state_dimmer): `true` means leading edge, `false` is trailing edge. Defaults to `false`  .
+- **leading_edge** (*Optional*, boolean): [Dimming mode](https://en.wikipedia.org/wiki/Dimmer#Solid-state_dimmer): `true` means leading edge, `false` is trailing edge. Defaults to `false`.
 - **min_brightness** (*Optional*, int): Minimum brightness value on a scale from 0..1000, the default is 0.
 - **max_brightness** (*Optional*, int): Maximum brightness value on a scale from 0..1000, the default is 1000.
 - **warmup_brightness** (*Optional*, int): Brightness threshold below which the dimmer switches on later in mains current cycle. [This might help with dimming LEDs](https://github.com/jamesturton/shelly-dimmer-stm32/pull/23). The value is from 0..1000 with an default of 0.
-- **nrst_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "NRST" of STM32. The  default is "GPIO5".
-- **boot0_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "BOOT0" of STM32. The  default is "GPIO4".
+- **nrst_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "NRST" of STM32. The default is "GPIO5".
+- **boot0_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
 - **current** (*Optional*): Sensor of the current in Amperes. All options from
   [Sensor](#config-sensor).
+
 - **voltage** (*Optional*): Sensor of the voltage in Volts. Only accurate if neutral is connected. All options from [Sensor](#config-sensor).
 - **power** (*Optional*): Sensor of the active power in Watts. Only accurate if neutral is connected. All options from [Sensor](#config-sensor).
 - **firmware** (*Optional*):

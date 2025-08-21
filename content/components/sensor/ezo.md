@@ -7,8 +7,6 @@ params:
     image: ezo-ph-circuit.png
 ---
 
-
-
 The `ezo` sensor platform allows you to use your EZO sensor circuits with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
@@ -40,22 +38,28 @@ sensor:
 
 - **address** (**Required**, int): Specify the I²C address of the sensor.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - All other options from [Sensor](#config-sensor).
 
 Automation triggers:
 
 - **on_led** (*Optional*, [Action](#config-action)): Triggered when the result of `get_led_state()` is ready. The LED
-  state is provided as a boolean variable named `x`  .
+  state is provided as a boolean variable named `x`.
+
 - **on_device_information** (*Optional*, [Action](#config-action)): Triggered when the result of `get_device_information()`
-  is ready.  The result is provided as a `std::string` variable named `x`  .
-- **on_slope** (*Optional*, [Action](#config-action)): Triggered when the result of `get_slope()` is ready.  The result
-  is provided as a `std::string` variable named `x`  .
+  is ready. The result is provided as a `std::string` variable named `x`.
+
+- **on_slope** (*Optional*, [Action](#config-action)): Triggered when the result of `get_slope()` is ready. The result
+  is provided as a `std::string` variable named `x`.
+
 - **on_calibration** (*Optional*, [Action](#config-action)): Triggered when the result of `get_calibration()` is ready.
-  The result is provided as a `std::string` variable named `x`  .
-- **on_t** (*Optional*, [Action](#config-action)): Triggered when the result of `get_t()` is ready.  The result is provided
-  as a `std::string` variable named `x`  .
-- **on_custom** (*Optional*, [Action](#config-action)): Triggered when the result of `get_custom()` is ready.  The result is provided as a `std::string` variable named `x`  .
+  The result is provided as a `std::string` variable named `x`.
+
+- **on_t** (*Optional*, [Action](#config-action)): Triggered when the result of `get_t()` is ready. The result is provided
+  as a `std::string` variable named `x`.
+
+- **on_custom** (*Optional*, [Action](#config-action)): Triggered when the result of `get_custom()` is ready. The result is provided as a `std::string` variable named `x`.
 
 {{< anchor "ezo_lambda_calls" >}}
 
@@ -76,7 +80,7 @@ with the information retrieved from the sensor. For more information on the comm
     id(ph_ezo).get_device_information();
 ```
 
-- `set_sleep()`  :  Put the device to sleep
+- `set_sleep()`  : Put the device to sleep
 
 ```cpp
     id(ph_ezo).set_sleep();
@@ -160,7 +164,7 @@ with the information retrieved from the sensor. For more information on the comm
     id(ph_ezo).set_led_state(true);
 ```
 
-- `send_custom(const std::string &payload, uint16_t delay_ms = 300, bool response_expected = false)`  : Runs a custom command. This sends exactly what is in `payload`  . Optionally you can set a `delay` and if a response is expected that should be parsed. Defaults to `false` for custom commands.  Triggers `on_custom:` if there's a response.
+- `send_custom(const std::string &payload, uint16_t delay_ms = 300, bool response_expected = false)`  : Runs a custom command. This sends exactly what is in `payload`. Optionally you can set a `delay` and if a response is expected that should be parsed. Defaults to `false` for custom commands. Triggers `on_custom:` if there's a response.
 
 ```cpp
     // Run a custom command to turn on the LED

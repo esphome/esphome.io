@@ -7,8 +7,6 @@ params:
     image: server-network.svg
 ---
 
-
-
 The ESPHome native API is used to communicate with clients directly, with a highly-optimized
 network protocol. Currently, only the ESPHome tool, Home Assistant and ioBroker use this native API.
 
@@ -47,7 +45,7 @@ api:
 
 ## Configuration variables
 
-- **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`  .
+- **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`.
 - **encryption** (*Optional*): If present, encryption will be enabled for the API. Using encryption helps to secure the
   communication between the device running ESPHome and the connected client(s).
 
@@ -66,7 +64,7 @@ Support for configuring the encryption key on-the-fly will be implemented in a f
 - **batch_delay** (*Optional*, [Time](#config-time)): The delay time for batching multiple state update messages
   together to reduce network overhead. Lower values send updates sooner but use more network packets,
   while higher values batch more efficiently but add latency. Must be between `0ms` and `65535ms`
-  (65.535 seconds). Defaults to `100ms`  .
+  (65.535 seconds). Defaults to `100ms`.
 
 {{< note >}}
 Setting `batch_delay: 0ms` enables immediate sending mode for state updates. This is useful for
@@ -76,18 +74,21 @@ WiFi performance with many rapidly-changing sensors. Only use this setting when 
 
 {{< /note >}}
 
-- **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ `CustomAPIDevice` class. Only needed when external components register their own services via the native API. Defaults to `false`  .
-- **homeassistant_services** (*Optional*, boolean): Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAPIDevice::call_homeassistant_service()` or `CustomAPIDevice::fire_homeassistant_event()` methods. This is automatically enabled when using `homeassistant.service` or `homeassistant.event` actions, or the `homeassistant` platform for number or switch components. Only needs to be manually set when external components call Home Assistant services without using the built-in actions. Defaults to `false`  .
-- **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ `CustomAPIDevice::subscribe_homeassistant_state()` method. This is automatically enabled when using any `homeassistant` platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to `false`  .
+- **custom_services** (*Optional*, boolean): Enable compilation of custom API services for external components that use the C++ `CustomAPIDevice` class. Only needed when external components register their own services via the native API. Defaults to `false`.
+- **homeassistant_services** (*Optional*, boolean): Enable compilation of Home Assistant service call support for external components that use the C++ `CustomAPIDevice::call_homeassistant_service()` or `CustomAPIDevice::fire_homeassistant_event()` methods. This is automatically enabled when using `homeassistant.service` or `homeassistant.event` actions, or the `homeassistant` platform for number or switch components. Only needs to be manually set when external components call Home Assistant services without using the built-in actions. Defaults to `false`.
+- **homeassistant_states** (*Optional*, boolean): Enable compilation of Home Assistant state subscription support for external components that use the C++ `CustomAPIDevice::subscribe_homeassistant_state()` method. This is automatically enabled when using any `homeassistant` platform components (sensor, binary_sensor, text_sensor, switch, or number). Only needs to be manually set when external components subscribe to Home Assistant states without using the built-in components. Defaults to `false`.
 - **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
   client connects to the API. This is needed because sometimes the low level ESP functions report that
   the ESP is connected to the network, when in fact it is not - only a full reboot fixes it.
-  Can be disabled by setting this to `0s`  . Defaults to `15min`  .
+  Can be disabled by setting this to `0s`. Defaults to `15min`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **password** (*Optional*, **Deprecated**, string): The password to protect the API Server with. Defaults
-  to no password. It is recommended to use the `encryption` -> `key` above instead of the the `password`  .
+  to no password. It is recommended to use the `encryption` -> `key` above instead of the the `password`.
+
 - **on_client_connected** (*Optional*, [Action](#config-action)): An automation to perform when a client
   connects to the API. See [`on_client_connected` Trigger](#api-on_client_connected_trigger).
+
 - **on_client_disconnected** (*Optional*, [Action](#config-action)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
@@ -139,7 +140,8 @@ on_...:
 - **data** (*Optional*, mapping): Optional *static* data to pass along with the event.
 - **data_template** (*Optional*, mapping): Optional template data to pass along with the event.
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
-- **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`  .
+
+- **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
   Values are [lambdas](#config-lambda) and will be evaluated before sending the request.
 
 {{< anchor "api-homeassistant_action-action" >}}
@@ -177,10 +179,12 @@ on_...:
 
 - **action** (**Required**, string): The Home Assistant [Action](https://www.home-assistant.io/docs/scripts/service-calls/)
   to perform.
+
 - **data** (*Optional*, mapping): Optional *static* data to perform the action with.
 - **data_template** (*Optional*, mapping): Optional template data to perform the action with.
   This is evaluated on the Home Assistant side with Home Assistant's templating engine.
-- **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`  .
+
+- **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
   Values are [lambdas](#config-lambda) and will be evaluated before sending the request.
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
@@ -294,7 +298,7 @@ on_...:
       - logger.log: API is connected!
 ```
 
-The lambda equivalent for this is `id(api_id).is_connected()`  .
+The lambda equivalent for this is `id(api_id).is_connected()`.
 
 {{< anchor "api-device-actions" >}}
 
@@ -371,12 +375,16 @@ never be removed. Features of native API (vs. MQTT):
 
 - **Much more efficient:** ESPHome encodes all messages in a highly optimized format with
   protocol buffers - for example binary sensor state messages are about 1/10 of the size.
+
 - **One-click configuration:** ESPHome just needs one click to set up in Home Assistant -
   no more messing around with retained MQTT discovery messages and alike.
+
 - **One less single point of failure:** In the ESPHome native API each ESP is its own server.
   With MQTT, when the broker shuts off nothing can communicate anymore.
+
 - **Stability:** Since ESPHome has far more control over the protocol than with MQTT,
   it's really easy for us to roll out stability improvements.
+
 - **Low Latency:** The native API is optimized for very low latency, usually this is only
   a couple of milliseconds and far less than can be noticed by the eye.
 

@@ -7,8 +7,6 @@ params:
     image: dac.svg
 ---
 
-
-
 The ESP32 DAC platform allows you to output analog voltages using the 8-bit digital-to-analog
 converter of the ESP32. Unlike the {{< docref "/components/output/ledc" >}}, which can simulate an analog
 signal by using a fast switching frequency, the hardware DAC can output a *real* analog signal with
@@ -53,10 +51,12 @@ light:
 
 - Generating a specific (and dynamic) reference voltage for an external sensor or ADC, such as the
   {{< docref "/components/sensor/ads1115" >}}
+
 - Controlling the bias of a transistor
 - Driving a bar graph or large amount of LEDs using an analog-controlled LED driver like the LM3914
   ([datasheet](https://www.ti.com/lit/ds/symlink/lm3914.pdf)); this can allow you to make tank
   level indicators, temperature gauges, and so on from a single output pin
+
 - Generating 0-10 V for a dimmable light (operational amplifier required)
 
 ## See Also

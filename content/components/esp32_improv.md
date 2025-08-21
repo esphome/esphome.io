@@ -7,8 +7,6 @@ params:
     image: improv-social.png
 ---
 
-
-
 The `esp32_improv` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESP32 device by using Bluetooth Low Energy (BLE) to receive the credentials.
 
@@ -36,20 +34,27 @@ esp32_improv:
 
 - **authorizer** (**Required**, [ID](#config-id)): A {{< docref "binary_sensor/index" "binary sensor" >}} to authorize with.
   Also accepts `none` to skip authorization.
+
 - **authorized_duration** (*Optional*, [Time](#config-time)): The amount of time until authorization times out and needs
-  to be re-authorized. Defaults to `1min`  .
+  to be re-authorized. Defaults to `1min`.
+
 - **status_indicator** (*Optional*, [ID](#config-id)): An {{< docref "output/index" "output" >}} to display feedback to the user.
-- **identify_duration** (*Optional*, [Time](#config-time)): The amount of time to identify for. Defaults to `10s`  .
+- **identify_duration** (*Optional*, [Time](#config-time)): The amount of time to identify for. Defaults to `10s`.
 - **wifi_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before starting the Improv service
-  after Wi-Fi is no longer connected. Defaults to `1min`  .
+  after Wi-Fi is no longer connected. Defaults to `1min`.
+
 - **on_start** (*Optional*, [Automation](#automation)): An action to be performed when Improv is waiting for
   authorization and/or upon authorization. See [`on_start`](#improv-on_start).
+
 - **on_provisioned** (*Optional*, [Automation](#automation)): An action to be performed when provisioning has
   completed. See [`on_provisioned`](#improv-on_provisioned).
+
 - **on_provisioning** (*Optional*, [Automation](#automation)): An action to be performed when the device begins the
   provisioning process. See [`on_provisioning`](#improv-on_provisioning).
+
 - **on_stop** (*Optional*, [Automation](#automation)): An action to be performed when Improv has stopped.
   See [`on_stop`](#improv-on_stop).
+
 - **on_state** (*Optional*, [Automation](#automation)): An action to be performed when an Improv state change
   happens. See [`on_state`](#improv-on_state).
 
@@ -121,7 +126,7 @@ This automation will be triggered on every state change.
 
 Two variables are available for use in [lambdas](#config-lambda) within this automation. They are:
 
-- `state`  , an `enum` named `improv::State`  , having one of the following values:
+- `state`, an `enum` named `improv::State`, having one of the following values:
 
   - `improv::STATE_STOPPED`
   - `improv::STATE_AWAITING_AUTHORIZATION`
@@ -129,7 +134,7 @@ Two variables are available for use in [lambdas](#config-lambda) within this aut
   - `improv::STATE_PROVISIONING`
   - `improv::STATE_PROVISIONED`
 
-- `error`  , an `enum` named `improv::Error`  , having one of the following values:
+- `error`, an `enum` named `improv::Error`, having one of the following values:
 
   - `improv::ERROR_NONE`
   - `improv::ERROR_INVALID_RPC`

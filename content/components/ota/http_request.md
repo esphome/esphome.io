@@ -7,8 +7,6 @@ params:
     image: system-update.svg
 ---
 
-
-
 The OTA (Over The Air) via HTTP Request update component allows your devices to install updated firmware on their own.
 To use it, in your device's configuration, you specify a URL from which the device will download the binary
 file (firmware). To trigger the update, an ESPHome [action](#config-action) is used which initiates the
@@ -50,13 +48,17 @@ on_...:
 - **md5** (*Optional*, string, [templatable](#config-templatable)): The
   [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
   with `md5_url` (below); must be specified if `md5_url` is not.
+
 - **md5_url** (*Optional*, string, [templatable](#config-templatable)): The URL of the file containing an
   [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
   with `md5` (above); must be specified if `md5` is not.
+
 - **url** (**Required**, string, [templatable](#config-templatable)): The URL of the binary file containing the
   (new) firmware to be installed.
+
 - **username** (*Optional*, string, [templatable](#config-templatable)): The username to use for HTTP basic
   authentication.
+
 - **password** (*Optional*, string, [templatable](#config-templatable)): The password to use for HTTP basic
   authentication.
 
@@ -71,7 +73,7 @@ on_...:
 
   You **cannot** use `firmware.factory.bin` or *"Factory format"* (formerly "Modern format") with this component.
 
-- `username` and `password` must be [URL-encoded](https://en.wikipedia.org/wiki/Percent-encoding)  if they
+- `username` and `password` must be [URL-encoded](https://en.wikipedia.org/wiki/Percent-encoding) if they
   include special characters.
 
 - The [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware binary file is an ASCII file (also known

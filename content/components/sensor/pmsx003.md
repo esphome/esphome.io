@@ -7,8 +7,6 @@ params:
     image: pmsx003.svg
 ---
 
-
-
 The `pmsx003` sensor platform allows you to use your Plantower PMS5003, PMS7003, ... laser based particulate matter sensors
 ([datasheet](http://www.aqmd.gov/docs/default-source/aq-spec/resources-page/plantower-pms5003-manual_v2-3.pdf))
 sensors with ESPHome.
@@ -20,10 +18,10 @@ to have an [UART bus](#uart) in your configuration with the `rx_pin` connected t
 This platform supports three sensor types, which you need to specify using the `type:` configuration
 value:
 
-- `PMSX003` for generic PMS5003, PMS7003, ...; these sensors support `pm_1_0`  , `pm_2_5` and `pm_10_0` output.
-- `PMS5003S` for PMS5003S. These support `pm_1_0`  , `pm_2_5` and `pm_10_0` and `formaldehyde`  .
-- `PMS5003T` for PMS5003T. These support `pm_1_0`  , `pm_2_5` and `pm_10_0`  , `temperature` and `humidity`  .
-- `PMS5003ST` for PMS5003ST. These support `pm_2_5`  , `temperature`  , `humidity` and `formaldehyde`  .
+- `PMSX003` for generic PMS5003, PMS7003, ...; these sensors support `pm_1_0`, `pm_2_5` and `pm_10_0` output.
+- `PMS5003S` for PMS5003S. These support `pm_1_0`, `pm_2_5` and `pm_10_0` and `formaldehyde`.
+- `PMS5003T` for PMS5003T. These support `pm_1_0`, `pm_2_5` and `pm_10_0`, `temperature` and `humidity`.
+- `PMS5003ST` for PMS5003ST. These support `pm_2_5`, `temperature`, `humidity` and `formaldehyde`.
 
 ## Sensor Longevity
 
@@ -49,36 +47,52 @@ sensor:
 
 - **pm_1_0_std** (*Optional*): Use the concentration of particulates of size less than 1.0µm in µg per cubic meter at standard particle.
   All options from [Sensor](#config-sensor).
+
 - **pm_2_5_std** (*Optional*): Use the concentration of particulates of size less than 2.5µm in µg per cubic meter at standard particle.
   All options from [Sensor](#config-sensor).
+
 - **pm_10_0_std** (*Optional*): Use the concentration of particulates of size less than 10.0µm in µg per cubic meter at standard particle.
   All options from [Sensor](#config-sensor).
+
 - **pm_1_0** (*Optional*): Use the concentration of particulates of size less than 1.0µm in µg per cubic meter under atmospheric environment.
   All options from [Sensor](#config-sensor).
+
 - **pm_2_5** (*Optional*): Use the concentration of particulates of size less than 2.5µm in µg per cubic meter under atmospheric environment.
   All options from [Sensor](#config-sensor).
+
 - **pm_10_0** (*Optional*): Use the concentration of particulates of size less than 10.0µm in µg per cubic meter under atmospheric environment.
   All options from [Sensor](#config-sensor).
+
 - **pm_0_3um** (*Optional*): Use the number of particles with diameter beyond 0.3um in 0.1L of air.
   All options from [Sensor](#config-sensor).
+
 - **pm_0_5um** (*Optional*): Use the number of particles with diameter beyond 0.5um in 0.1L of air.
   All options from [Sensor](#config-sensor).
+
 - **pm_1_0um** (*Optional*): Use the number of particles with diameter beyond 1.0um in 0.1L of air.
   All options from [Sensor](#config-sensor).
+
 - **pm_2_5um** (*Optional*): Use the number of particles with diameter beyond 2.5um in 0.1L of air.
   All options from [Sensor](#config-sensor).
+
 - **pm_5_0um** (*Optional*): Use the number of particles with diameter beyond 5.0um in 0.1L of air. Not supported by the `PMS5003T` type sensors.
   All options from [Sensor](#config-sensor).
+
 - **pm_10_0um** (*Optional*): Use the number of particles with diameter beyond 10.0um in 0.1L of air. Not supported by the `PMS5003T` type sensors.
   All options from [Sensor](#config-sensor).
+
 - **temperature** (*Optional*): Use the temperature value in °C for the `PMS5003T` and `PMS5003ST` type sensors.
   All options from [Sensor](#config-sensor).
+
 - **humidity** (*Optional*): Use the humidity value in % for the `PMS5003T` and `PMS5003ST` type sensors.
   All options from [Sensor](#config-sensor).
+
 - **formaldehyde** (*Optional*): Use the formaldehyde (HCHO) concentration in µg per cubic meter for the `PMS5003S` and `PMS5003ST` type sensors.
   All options from [Sensor](#config-sensor).
+
 - **update_interval** (*Optional*): Amount of time to wait between generating measurements. If this is longer than 30
   seconds, and if `tx_pin` is set in the UART configuration, the fan will be spun down between measurements. Default to `0s` (forward data as it's coming in from the sensor).
+
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
   to use multiple UART buses.
 

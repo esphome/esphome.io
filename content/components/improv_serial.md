@@ -7,8 +7,6 @@ params:
     image: improv-social.png
 ---
 
-
-
 The `improv_serial` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESPHome device by using a serial connection to the device, eg. USB.
 

@@ -6,7 +6,6 @@ params:
     description: Instructions for setting up switch binary sensors with ESPHome.
 ---
 
-
 {{< anchor "switch-binary-sensor" >}}
 
 The Switch Binary Sensor platform allows you to view the state of any switch component as a

@@ -7,7 +7,6 @@ params:
     image: gpio.svg
 ---
 
-
 {{< anchor "gpio-binary-sensor" >}}
 
 The GPIO Binary Sensor platform allows you to use any input pin on your
@@ -56,6 +55,7 @@ binary_sensor:
   performance and lower CPU usage. Defaults to `true` for most platforms, but defaults to `false`
   for LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) due to hardware limitations. Only supported
   on internal GPIO pins.
+
 - **interrupt_type** (*Optional*, string): The type of interrupt to use. One of:
 
   - `ANY` (default): Trigger on any edge change (high to low or low to high)

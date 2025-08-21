@@ -7,8 +7,6 @@ params:
     image: gcja5.svg
 ---
 
-
-
 The `gcja5` sensor platform allows you to use your Panasonic SN-GCJA5 laser based particulate matter sensor
 ([datasheet](https://na.industrial.panasonic.com/products/sensors/air-quality-gas-flow-sensors/lineup/laser-type-pm-sensor/series/123557/model/123559))
 sensors with ESPHome.
@@ -38,20 +36,28 @@ sensor:
 
 - **pm_1_0** (*Optional*): Mass of particles with a diameter of 1 micrometres or less (μg/m^3).
   All options from [Sensor](#config-sensor).
+
 - **pm_2_5** (*Optional*): Mass of particles with a diameter of 2.5 micrometres or less (μg/m^3).
   All options from [Sensor](#config-sensor).
+
 - **pm_10_0** (*Optional*): Mass of particles with a diameter of 10 micrometres or less (μg/m^3).
   All options from [Sensor](#config-sensor).
+
 - **pmc_0_3** (*Optional*): Count of particles with diameter > 0.3 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](#config-sensor).
+
 - **pmc_0_5** (*Optional*): Count of particles with diameter > 0.5 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](#config-sensor).
+
 - **pmc_1_0** (*Optional*): Count of particles with diameter > 1 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](#config-sensor).
+
 - **pmc_2_5** (*Optional*): Count of particles with diameter > 2.5 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](#config-sensor).
+
 - **pmc_5_0** (*Optional*): Count of particles with diameter > 5 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](#config-sensor).
+
 - **pmc_10_0** (*Optional*): Count of particles with diameter > 10 um in 0.1 L of air (#/0.1L).
   All options from [Sensor](#config-sensor).
 

@@ -7,9 +7,7 @@ params:
     image: bluetooth.svg
 ---
 
-
-
-The `ble_client` component is a switch platform that is used to enable and disable a `ble_client`  . This has
+The `ble_client` component is a switch platform that is used to enable and disable a `ble_client`. This has
 several uses, such as minimizing battery usage or for allowing other clients (Eg phone apps) to connect to the device.
 
 For more information on BLE services and characteristics, see {{< docref "/components/ble_client" >}}.

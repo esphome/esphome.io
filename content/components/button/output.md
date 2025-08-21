@@ -7,8 +7,6 @@ params:
     image: upload.svg
 ---
 
-
-
 The `output` button platform allows you to use any output component as a button. This can for example be used to
 momentarily set a GPIO pin using a button.
 

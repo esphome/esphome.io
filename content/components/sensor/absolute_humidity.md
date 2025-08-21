@@ -7,8 +7,6 @@ params:
     image: water-drop.svg
 ---
 
-
-
 The `absolute_humidity` platform allows you to calculate absolute humidity from air temperature and relative humidity.
 
 See the links at the bottom of the page for details on absolute humidity and the different saturated vapor pressure equations.

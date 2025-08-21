@@ -7,8 +7,6 @@ params:
     image: honeywellabp.jpg
 ---
 
-
-
 The `honeywellabp2_i2c` sensor platform allows you to use your Honeywell ABP
 ([website](https://sps.honeywell.com/us/en/products/advanced-sensing-technologies/healthcare-sensing/board-mount-pressure-sensors/basic-abp2-series),
 [datasheet](https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/siot/en-us/products/sensors/pressure-sensors/board-mount-pressure-sensors/basic-abp2-series/documents/sps-siot-abp2-series-datasheet-32350268-en.pdf?download=false))
@@ -49,7 +47,7 @@ datasheet indicates that the sensor does not measure temperature.
   All options from [Sensor](#config-sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 ## See Also
 

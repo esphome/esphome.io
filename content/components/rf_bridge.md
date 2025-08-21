@@ -7,14 +7,12 @@ params:
     image: rf_bridge.jpg
 ---
 
-
-
 The `RF Bridge` component provides the ability to send and receive 433MHz signals (like RF remotes/key fobs) using radio microcontrollers found on RF bridge devices ( eg., Sonoff RF Bridge).
 
 * The black Sonoff RF Bridge (R1, R2 V1.0) has an ESP8266 (for WIFI/ESPHome) and an embedded EFM8BB1 microcontroller (433 MHz).
 * The white Sonoff RF Bridge (R2 V2.0) has ESP8266 and an embedded OB38S003 microcontroller (433 MHz).
 
-This component implements a communication protocol between the ESP8266 and the firmware of `EFM8BB1` or `OB38S003`  .
+This component implements a communication protocol between the ESP8266 and the firmware of `EFM8BB1` or `OB38S003`.
 The radio microcontroller is connected to the ESP8266 via the
 {{< docref "/components/uart" "UART bus" >}}. The uart bus must be configured at the same speed of the module
 which is 19200bps.
@@ -53,7 +51,7 @@ rf_bridge:
 With this configuration option you can write complex automations whenever a code is
 received by the bridge. To use the code, use a [lambda](#config-lambda) template.
 The code and the corresponding protocol timings are available inside that lambda under the
-variables named `code`  , `sync`  , `high` and `low`  .
+variables named `code`, `sync`, `high` and `low`.
 
 ```yaml
 on_code_received:
@@ -195,7 +193,7 @@ You can see a list of available commands and format in the [Portisch Wiki](https
 
 Similar to [`on_code_received` Trigger](#rf_bridge-on_code_received), this trigger receives the codes after advanced sniffing is started.
 To use the code, use a [lambda](#config-lambda) template, the code and the corresponding protocol and length
-are available inside that lambda under the variables named `code`  , `protocol` and `length`  .
+are available inside that lambda under the variables named `code`, `protocol` and `length`.
 
 ```yaml
 on_advanced_code_received:
@@ -211,7 +209,7 @@ on_advanced_code_received:
 
 ### `rf_bridge.send_advanced_code` Action
 
-Send an  RF code using this action in automations.
+Send an RF code using this action in automations.
 
 ```yaml
 on_...:

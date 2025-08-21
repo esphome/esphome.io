@@ -7,11 +7,9 @@ params:
     image: mqtt.png
 ---
 
-
-
 The `mqtt_subscribe` text sensor platform allows you to get external data into ESPHome.
 The sensor will subscribe to messages on the given MQTT topic and save the most recent value
-in its `id(mysensor).state`  .
+in its `id(mysensor).state`.
 
 ```yaml
 # Example configuration entry
@@ -25,7 +23,7 @@ text_sensor:
 ## Configuration variables
 
 - **topic** (**Required**, string): The MQTT topic to listen for string data.
-- **qos** (*Optional*, int): The MQTT QoS to subscribe with. Defaults to `0`  .
+- **qos** (*Optional*, int): The MQTT QoS to subscribe with. Defaults to `0`.
 - All other options from [Text Sensor](#config-text_sensor).
 
 ## Example Usage for Displays

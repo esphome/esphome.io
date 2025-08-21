@@ -7,8 +7,6 @@ params:
     image: color_lens.svg
 ---
 
-
-
 This is a component using the Beken SPI DMA interface to drive addressable LED strips.
 
 {{< warning >}}
@@ -44,8 +42,8 @@ light:
   - `BGR`
   - `BRG`
 
-- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`  .
-- **is_wrgb** (*Optional*, boolean): Set to `true` if the strip is WRGB. Defaults to `false`  .
+- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
+- **is_wrgb** (*Optional*, boolean): Set to `true` if the strip is WRGB. Defaults to `false`.
 - **max_refresh_rate** (*Optional*, [Time](#config-time)):
   A time interval used to limit the number of commands a light can handle per second. For example
   16ms will limit the light to a refresh rate of about 60Hz. Defaults to sending commands as quickly as

@@ -7,8 +7,6 @@ params:
     image: bug-report.svg
 ---
 
-
-
 This guide helps you diagnose and debug ESPHome device issues, particularly crashes and boot failures. Whether you're
 experiencing random resets, watchdog timeouts, or need to analyze stack traces, this guide provides step-by-step
 instructions for capturing and understanding crash data.

@@ -7,9 +7,6 @@ params:
     image: xiaomi_hhccjcy10.jpg
 ---
 
-
-
-
 MiFlora, tuya (pink) version, measures temperature, moisture, ambient light and nutrient levels in the soil.
 
 {{< img src="xiaomi_hhccjcy10.jpg" alt="Image" width="60.0%" class="align-center" >}}
@@ -35,12 +32,16 @@ sensor:
 - **mac_address** (**Required**, string): The MAC address of the device.
 - **temperature** (*Optional*): The temperature sensor.
   All options from [Sensor](#config-sensor).
+
 - **moisture** (*Optional*): The moisture sensor.
   All options from [Sensor](#config-sensor).
+
 - **illuminance** (*Optional*): The illuminance sensor.
   All options from [Sensor](#config-sensor).
+
 - **conductivity** (*Optional*): The conductivity sensor.
   All options from [Sensor](#config-sensor).
+
 - **battery_level** (*Optional*): The battery level sensor.
   All options from [Sensor](#config-sensor).
 

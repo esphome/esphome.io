@@ -7,8 +7,6 @@ params:
     image: mixer.svg
 ---
 
-
-
 The `mixer` speaker platform allows you to mix audio sent to different source speakers into one output which is sent to another {{< docref "/components/speaker/index" "speaker component" >}}. Individual source speakers may be ducked (made quieter) with the [apply ducking action](#mixer_speaker-apply_ducking).
 
 When mixing multiple audio streams into one, they must have the same sample rate. If they are different, enable queue mode so that only one source speaker's audio is played at a time. Otherwise, use a {{< docref "/components/speaker/resampler" "resampler speaker" >}} to send audio to the source speakers.
@@ -39,13 +37,13 @@ speaker:
 - **output_speaker** (**Required**, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the mixed audio.
 - **source_speakers** (**Required**, list): A list of source speaker inputs. Must have at least 2 and at most 8 speakers.
 
-  - **buffer_duration** (*Optional*, [Time](#config-time)): The duration of the internal ring buffer. Larger values can reduce stuttering but use more memory. Defaults to `100ms`  .
-  - **timeout** (*Optional*, [Time](#config-time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`  .
+  - **buffer_duration** (*Optional*, [Time](#config-time)): The duration of the internal ring buffer. Larger values can reduce stuttering but use more memory. Defaults to `100ms`.
+  - **timeout** (*Optional*, [Time](#config-time)): How long to wait after finishing playback before releasing the bus. Set to `never` to never stop the speaker due to a timeout. Defaults to `500ms`.
   - All other options from [Speaker Component](#config-speaker).
 
-- **num_channels** (*Optional*, positive integer): The number of audio channels to send to the output speaker. Either `1` or `2`  . Defaults to the output speaker's number of channels.
+- **num_channels** (*Optional*, positive integer): The number of audio channels to send to the output speaker. Either `1` or `2`. Defaults to the output speaker's number of channels.
 - **queue_mode** (*Optional*, boolean): Enables queue mode. If enabled, audio isn't mixed but instead each source speaker's audio is played successively, starting with the first listed source speaker.
-- **task_stack_in_psram** (*Optional*, boolean): Only with `esp-idf`  . Run the audio tasks in external memory. Defaults to `false`  .
+- **task_stack_in_psram** (*Optional*, boolean): Only with `esp-idf`. Run the audio tasks in external memory. Defaults to `false`.
 
 ## Automations
 
@@ -66,7 +64,7 @@ on_...:
 Configuration variables:
 
 - **decibel_reduction** (**Required**, int, templatable): The reduction of the media stream in decibels. Must be between 0 and 50.
-- **duration** (*Optional*, [Time](#config-time), templatable): The length of time to transition between the current reduction level and the new reduction level. Defaults to `0s`  .
+- **duration** (*Optional*, [Time](#config-time), templatable): The length of time to transition between the current reduction level and the new reduction level. Defaults to `0s`.
 
 ## See also
 

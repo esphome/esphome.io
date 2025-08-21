@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up Radon Eye bluetooth-based sensors in ESPHome.
 ---
 
-
-
 The `radon_eye_rd200` sensor platforms lets you track the output of Radon Eye RD200 Bluetooth Low Energy device.
 
 This component will track radon concentration.

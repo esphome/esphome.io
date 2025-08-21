@@ -6,8 +6,6 @@ params:
     description: Documentation for the command line interface of ESPHome.
 ---
 
-
-
 ## Base Usage
 
 ESPHome's command line interface always has the following format
@@ -43,7 +41,7 @@ esphome <some_command> --help
 
 {{< option "-v|--verbose" >}}
 Enable verbose esphome logs.
-Can also be enabled via environment variable `ESPHOME_VERBOSE=true`  .
+Can also be enabled via environment variable `ESPHOME_VERBOSE=true`.
 
 {{< /option >}}
 
@@ -78,7 +76,7 @@ The `esphome run <CONFIG>` command is the most common command for ESPHome. It
 #### Options
 
 {{< option "--device UPLOAD_PORT" >}}
-Manually specify the upload port/IP to use. For example `/dev/cu.SLAB_USBtoUART`  , or `192.168.1.176`
+Manually specify the upload port/IP to use. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
 to perform an OTA.
 
 Multiple `--device` options can be specified to provide fallback addresses. ESPHome will
@@ -94,7 +92,7 @@ esphome run my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 {{< /option >}}
 
 {{< option "--upload_speed BAUD_RATE" >}}
-The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`  .
+The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
 This can be overridden in the platformio options on a per-config
 basis, or set with this option at the time of uploading.
 
@@ -150,7 +148,7 @@ The `esphome upload <CONFIG>` validates the configuration and uploads the most r
 #### Options
 
 {{< option "--device UPLOAD_PORT" >}}
-Manually specify the upload port/IP address to use. For example `/dev/cu.SLAB_USBtoUART`  , or `192.168.1.176`
+Manually specify the upload port/IP address to use. For example `/dev/cu.SLAB_USBtoUART`, or `192.168.1.176`
 to perform an OTA.
 
 Multiple `--device` options can be specified to provide fallback addresses. ESPHome will
@@ -165,7 +163,7 @@ esphome upload my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 {{< /option >}}
 
 {{< option "--upload_speed BAUD_RATE" >}}
-The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`  .
+The upload speed for serial flashing defaults to 460800 or as set with the environment variable `ESPHOME_UPLOAD_SPEED`.
 This can be overridden in the platformio options on a per-config
 basis, or set with this option at the time of uploading.
 {{< /option >}}
@@ -233,7 +231,7 @@ Manually set the HTTP port to open connections on (defaults to 6052)
 
 {{< option "--socket SOCKET" >}}
 Manually set the unix socket to bind to. If specified along with `--address` or `--port` the values
-for those parameters will be ignored. Cannot be used along with `--systemd-socket`  .
+for those parameters will be ignored. Cannot be used along with `--systemd-socket`.
 {{< /option >}}
 
 {{< option "--username USERNAME" >}}
@@ -246,7 +244,7 @@ The optional password to require for authentication.
 
 {{< option "--open-ui" >}}
 If set, opens the dashboard UI in a browser once the server is up and running. Does not work when using
-`--socket`  .
+`--socket`.
 {{< /option >}}
 
 ### `logs` Command
@@ -272,7 +270,7 @@ Manually set the client id.
 {{< /option >}}
 
 {{< option "--device SERIAL_PORT" >}}
-Manually specify a serial port/IP to use. For example `/dev/cu.SLAB_USBtoUART`  .
+Manually specify a serial port/IP to use. For example `/dev/cu.SLAB_USBtoUART`.
 
 Multiple `--device` options can be specified to provide fallback addresses. When using the
 native API for logs, all addresses are passed to the API client which uses the Happy Eyeballs
@@ -288,7 +286,7 @@ esphome logs my-device.yaml --device 192.168.1.100 --device 2001:db8::1
 
 {{< option "--reset" >}}
 If set, reset the device before starting the logs. May also be configured with the environment variable
-`ESPHOME_SERIAL_LOGGING_RESET=true`  .
+`ESPHOME_SERIAL_LOGGING_RESET=true`.
 {{< /option >}}
 
 ## Using Bash or ZSH auto-completion

@@ -7,8 +7,6 @@ params:
     image: ../components/light/images/apa102.jpg
 ---
 
-
-
 The `spi_led_strip` light platform drives one or more SPI interfaced RGB LEDs. These LEDs are often used in strips, where
 each LED is individually addressable. This component requires an SPI interface to be configured.
 
@@ -40,7 +38,7 @@ perceived intensity of different colors will generally vary. This can be done by
 ## Configuration variables
 
 - **num_leds** (*Optional*, int): The number of LEDs attached. The default is 1.
-- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of `80MHz`  , `40MHz`  , `20MHz`  , `10MHz`  , `5MHz`  , `2MHz`  , `1MHz` (default), `200kHz`  , `75kHz` or `1kHz`  .
+- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`, `5MHz`, `2MHz`, `1MHz` (default), `200kHz`, `75kHz` or `1kHz`.
 - All other options from [Light](#config-light).
 
 You may also need to configure an `output` GPIO pin to control power to the LEDs, depending on your hardware. The

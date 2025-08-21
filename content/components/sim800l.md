@@ -7,15 +7,13 @@ params:
     image: sim800l.jpg
 ---
 
-
-
 ## Component/Hub
 
 The `SIM800L` Component provides the ability to dial, answer calls, send/receive SMS text messages and
 send/receive USSD codes. The device must be connected via a {{< docref "/components/uart" "UART bus" >}}
 supporting both receiving and transmitting line. The UART bus must be configured at the same speed
-of the module which is by default 9600bps. The required connection wires are `+VCC`  , `GND`  ,
-`RX` and `TX`  .
+of the module which is by default 9600bps. The required connection wires are `+VCC`, `GND`,
+`RX` and `TX`.
 
 {{< warning >}}
 If you are using the {{< docref "logger/" >}} make sure you are not using the same pins for `TX` and `RX` or
@@ -45,11 +43,14 @@ sim800l:
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **on_sms_received** (*Optional*, [Automation](#automation)): An action to be
   performed when an SMS is received. See [`on_sms_received` Trigger](#sim800l-on_sms_received).
+
 - **on_incoming_call** (*Optional*, [Automation](#automation)): An action to be
   performed when a call is received. See [`on_incoming_call` Trigger](#sim800l-on_incoming_call).
+
 - **on_call_connected** (*Optional*, [Automation](#automation)): An action to be
   performed when a call is connected, either because an outgoing call accepted is
   accepted or an incoming call answered.
+
 - **on_call_disconnected** (*Optional*, [Automation](#automation)): An action to be
   performed when a call is disconnected.
 
@@ -161,6 +162,7 @@ on_...:
 
 - **recipient** (**Required**, string, [templatable](#config-templatable)): The message recipient.
   number.
+
 - **message** (**Required**, string, [templatable](#config-templatable)): The message content.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the SIM800L if you have multiple components.
 

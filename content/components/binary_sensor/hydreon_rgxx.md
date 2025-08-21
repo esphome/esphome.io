@@ -7,8 +7,6 @@ params:
     image: hydreon_rg9.jpg
 ---
 
-
-
 The `hydreon_rgxx` binary sensor platform gives access to information provided by a Hydreon Rain Sensor.
 For this sensor to work, a {{< docref "/components/sensor/hydreon_rgxx" >}} must be set up.
 

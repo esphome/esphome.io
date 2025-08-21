@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `template` switch platform allows you to create simple switches out of just actions and
 an optional value lambda. Once defined, it will automatically appear in Home Assistant
 as a switch and can be controlled through the frontend.
@@ -40,16 +38,21 @@ Possible return values for the optional lambda:
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the switch.
+
 - **turn_on_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the switch to be turned on.
+
 - **turn_off_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the switch to be turned off.
+
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the template switch will immediately update the reported state.
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **assumed_state** (*Optional*, boolean): Whether the true state of the switch is not known.
   This will make the Home Assistant frontend show buttons for both ON and OFF actions, instead
-  of hiding one of them when the switch is ON/OFF. Defaults to `false`  .
+  of hiding one of them when the switch is ON/OFF. Defaults to `false`.
+
 - All other options from [Switch](#config-switch).
 
 {{< anchor "switch-template-publish_action" >}}

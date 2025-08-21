@@ -7,8 +7,6 @@ params:
     image: air-conditioner.svg
 ---
 
-
-
 The `bang_bang` climate platform allows you to regulate a value with a
 [bang-bang controller](https://en.wikipedia.org/wiki/Bang%E2%80%93bang_control) (also called hysteresis controller).
 
@@ -26,7 +24,7 @@ the observed value.
 The range that the controller will try to keep the observed value in can be controlled through the
 front-end with the `target_temperature_low` and `target_temperature_high` values (see screenshot below).
 As soon as the observed temperature dips below or above this range it will activate one of the
-defined actions `cool_action`  , `heat_action` and `idle_action`  .
+defined actions `cool_action`, `heat_action` and `idle_action`.
 
 There are three types of bang bang controllers this platform can represent:
 
@@ -72,17 +70,23 @@ climate:
 - **sensor** (**Required**, [ID](#config-id)): The sensor that is used to measure the current temperature.
 - **humidity_sensor** (*Optional*, [ID](#config-id)): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
+
 - **default_target_temperature_low** (**Required**, float): The default low target temperature for
   the control algorithm. This can be dynamically set in the frontend later.
+
 - **default_target_temperature_high** (**Required**, float): The default high target temperature for
   the control algorithm. This can be dynamically set in the frontend later.
+
 - **idle_action** (**Required**, [Action](#config-action)): The action to call when
   the climate device wants to enter idle mode.
+
 - **heat_action** (*Optional*, [Action](#config-action)): The action to call when
   the climate device wants to heating mode and increase the current temperature. At least one
   of `heat_action` and `cool_action` need to be specified.
+
 - **cool_action** (*Optional*, [Action](#config-action)): The action to call when
   the climate device wants to cooling mode and decrease the current temperature.
+
 - All other options from [Climate](#config-climate).
 
 Advanced options:
@@ -93,6 +97,7 @@ Advanced options:
 
   - **default_target_temperature_low** (**Required**, float): The default low target temperature for
     the control algorithm during away mode.
+
   - **default_target_temperature_high** (**Required**, float): The default high target temperature for
     the control algorithm during away mode.
 
@@ -148,7 +153,7 @@ and as such will continue to heat the air until the element fully cools down to 
 The {{< docref "thermostat" "thermostat" >}} component differs in that there is hysteresis around *each* set point. For example,
 if the `target_temperature_low` set point is 20 °C, and the (default) hysteresis value of 0.5 °C is used,
 `heat_action` is called at a temperature of 19.5 °C and `idle_action` is called at 20.5 °C. If cooling, as defined
-by `target_temperature_high`  , is set to 22 °C, `cool_action` would be called at 22.5 °C and `idle_action` called
+by `target_temperature_high`, is set to 22 °C, `cool_action` would be called at 22.5 °C and `idle_action` called
 at 21.5 °C. Again, it is essentially two bang-bang controllers in one.
 
 Behavioral differences aside, there is another important difference between these two components: user interface.
@@ -174,6 +179,7 @@ It comes down to two points:
 
 - If you have a dual-function system (both heating and cooling), you'll almost certainly want to use the
   {{< docref "thermostat" "thermostat" >}} component.
+
 - If you have a single-function system *and* have a specific need or desire to manually control both the upper and
   lower bounds for hysteresis, use the bang-bang controller.
 

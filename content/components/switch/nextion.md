@@ -7,7 +7,6 @@ params:
     image: nextion.jpg
 ---
 
-
 {{< anchor "nextion_switch" >}}
 
 The `nextion` switch platform supports the many switched components in the Nextion as well as integer variables. It can be a component or variable in the Nextion display.
@@ -40,11 +39,11 @@ switch:
 - **component_name** (*Optional*, string): The name of the Nextion component.
 - **variable_name** (*Optional*, string): The name of the Nextion variable. Any value over `0` is considered to be **on**
 - **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Switch Protocol](#nextion_custom_switch_protocol) this should not be used
-- **background_color** (*Optional*, [Color](#config-color)):  The background color
-- **background_pressed_color** (*Optional*, [Color](#config-color)):  The background color when pressed
-- **foreground_color** (*Optional*, [Color](#config-color)):  The foreground color
-- **foreground_pressed_color** (*Optional*, [Color](#config-color)):  The foreground color when pressed
-- **visible** (*Optional*, boolean):  Visible or not
+- **background_color** (*Optional*, [Color](#config-color)): The background color
+- **background_pressed_color** (*Optional*, [Color](#config-color)): The background color when pressed
+- **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
+- **foreground_pressed_color** (*Optional*, [Color](#config-color)): The foreground color when pressed
+- **visible** (*Optional*, boolean): Visible or not
 - All other options from [Switch](#config-switch).
 
 **Only one** *component_name* **or** *variable_name* **can be set**
@@ -54,7 +53,7 @@ See [How things Update](#nextion_switch_how_things_update) for additional inform
 ### Globals
 
 The Nextion does not retain data on Nextion page changes. Additionally, if a page is changed and the **component_name** does not exist on that page then
-nothing will be updated. To get around this, the Nextion components can be changed to have a vscope of `global`  . If this is set then the **component_name**
+nothing will be updated. To get around this, the Nextion components can be changed to have a vscope of `global`. If this is set then the **component_name**
 should be prefixed with the page name (page0/page1 or whatever you have changed it to).
 
 *Example:* `component_name: page0.r0`
@@ -95,6 +94,7 @@ Configuration options:
 - **state** (**Required**, string, [templatable](#config-templatable)): The boolean state to publish.
 - **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
   Default is true.
+
 - **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
   display which will update component. Default is true.
 

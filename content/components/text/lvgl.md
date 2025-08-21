@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_txt.png
 ---
 
-
-
 The `lvgl` text platform creates an editable text component from an LVGL textual widget and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
 Supported widgets are [`label`](#lvgl-widget-label) and [`textarea`](#lvgl-widget-textarea). A single text supports only a single widget; in other words, it's not possible to have multiple widgets associated with a single ESPHome text component.
@@ -28,7 +26,7 @@ text:
 ```
 
 {{< note >}}
-Widget-specific actions (`lvgl.label.update`  , `lvgl.textarea.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
+Widget-specific actions (`lvgl.label.update`, `lvgl.textarea.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
 
 {{< /note >}}
 

@@ -7,8 +7,6 @@ params:
     image: xiaomi_mijia_logo.jpg
 ---
 
-
-
 The `xiaomi_ble` sensor platform lets you track the output of Xiaomi Bluetooth Low Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}. This component will track, for example, the temperature, humidity, moisture, conductivity, illuminance, formaldehyde, mosquito tablet and battery level of the device every time the sensor sends out a BLE broadcast. Contrary to other implementations, `xiaomi_ble` listens passively to advertisement packets and does not pair with the device. Hence ESPHome has no impact on battery life. Thus, if you only use such sensors, you can safely set `scan_parameters.active: false` in `esp32_ble_tracker` configuration, to save from spamming your RF environment with useless scan requests.
 
 {{< note >}}
@@ -594,10 +592,12 @@ For this, you load the [application](https://zaluthar.github.io/TelinkFlasher.ht
   the key will not change again until the device is removed and re-added in the Xiaomi app.
 
   - The easiest method to retrieve the bindkey from the cloud is to use the
+
       [Cloud Tokens Extractor](https://github.com/PiotrMachowski/Xiaomi-cloud-tokens-extractor), written by one of Home Assistant users.
       If you prefer to not use the executable, read [the Home Assistant Documentation](https://www.home-assistant.io/integrations/xiaomi_miio/#xiaomi-cloud-tokens-extractor).
 
   - Another option is to use a SSL packet sniffer. It can be setup on either an Android phone or the iPhone. A good choice for Android is the
+
       [Remote PCAP](https://play.google.com/store/apps/details?id=com.egorovandreyrm.pcapremote&hl=en) in combination with
       [Wireshark](https://www.wireshark.org/). A tutorial on how to setup the Remote PCAP packet sniffer can be found
       [in this tutorial](https://egorovandreyrm.com/pcap-remote-tutorial/) and in [ahpohl/xiaomi_lywsd03mmc](https://github.com/ahpohl/xiaomi_lywsd03mmc) on GitHub.
@@ -642,6 +642,7 @@ You should at least protect your sensors with a custom pairing PIN code. Choose 
 - {{< docref "/components/bluetooth_proxy" >}}
 - Passive BLE monitor integration for Home Assistant (ble_monitor custom component) `<https://github.com/custom-components/ble_monitor>`__
   by [@Magalex2x14](https://github.com/Magalex2x14) and [@Ernst79](https://github.com/Ernst79)
+
 - Custom firmware (PVVX) for the Xiaomi Thermometer LYWSD03MMC `<https://github.com/pvvx/ATC_MiThermometer>`__
 - TeLink flasher application (PVVX) `<https://pvvx.github.io/ATC_MiThermometer/TelinkMiFlasher.html>`__
 - Custom firmware (ATC) for the Xiaomi Thermometer LYWSD03MMC `<https://github.com/atc1441/ATC_MiThermometer>`__

@@ -7,8 +7,6 @@ params:
     image: uart.svg
 ---
 
-
-
 The `uart` button platform allows you to send a pre-defined sequence of bytes on a
 {{< docref "/components/uart" "UART bus" >}} when triggered.
 
@@ -27,6 +25,7 @@ button:
 
 - **data** (**Required**, string or list of bytes): The data to send via UART. Either an ASCII string
   or a list of bytes.
+
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - All other options from [Button](#config-button).
 

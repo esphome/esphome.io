@@ -7,8 +7,6 @@ params:
     image: language-cpp.svg
 ---
 
-
-
 Here are a couple recipes for various interesting things you can do with [Lambdas](#config-lambda) in ESPHome.
 These don't require external components and demonstrate how powerful [Lambdas](#config-lambda) can be.
 
@@ -259,7 +257,7 @@ theres's one to convert text to numbers.
 In the example below we have a text input and a template sensor which can be updated from the text input field. What
 the lambda does, is to parse and convert the text string to a number - which only succeedes if the entered string
 contains characters represesenting a float number (such as digits, `-` and `.`  ). If the entered string contains
-any other characters, the lambda will return `NaN`  , which corresponds to `unknown` sensor state.
+any other characters, the lambda will return `NaN`, which corresponds to `unknown` sensor state.
 
 ```yaml
 text:

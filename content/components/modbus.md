@@ -6,7 +6,6 @@ params:
     description: Instructions for setting up Modbus in ESPHome.
 ---
 
-
 {{< anchor "modbus" >}}
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
@@ -18,12 +17,12 @@ The various sub-components implement some of the Modbus functions below (dependi
 | ------------- | -------------------------- |
 | 1             | Read Coil Status           |
 | 2             | Read Discrete input Status |
-| 3             | Read Holding Registers     |
-| 4             | Read Input Registers       |
-| 5             | Write Single Coil          |
-| 6             | Write Single Register      |
-| 15            | Write Multiple Coils       |
-| 16            | Write Multiple Registers   |
+| 3 | Read Holding Registers |
+| 4 | Read Input Registers |
+| 5 | Write Single Coil |
+| 6 | Write Single Register |
+| 15 | Write Multiple Coils |
+| 16 | Write Multiple Registers |
 
 Modbus RTU requires a [UART Bus](#uart) to communicate.
 
@@ -50,9 +49,9 @@ modbus:
   Set this value to the maximum time required for the slowest device on the bus to begin responding (time to first byte).
   If a device starts responding within this time, the next command will be queued and sent after the response is finished, no matter how long the response.
 
-- **disable_crc** (*Optional*, boolean): Ignores a bad CRC if set to `true`  . Defaults to `false`
+- **disable_crc** (*Optional*, boolean): Ignores a bad CRC if set to `true`. Defaults to `false`
 
-- **role** (*Optional*, string): The role of this component, `client` or `server`  . Defaults to `client`  .
+- **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
 
 ## See Also
 

@@ -7,8 +7,6 @@ params:
     image: fingerprint.svg
 ---
 
-
-
 The `fingerprint_grow` component allows you to use your R307, R503, R503-RGB, ZFM-20, ... fingerprint sensors with ESPHome.
 
 {{< img src="r307-full.jpg" alt="Image" caption="R307/ZFM-20 Optical Fingerprint Reader ([datasheet](https://cdn-shop.adafruit.com/datasheets/ZFM+user+manualV15.pdf), [Adafruit](https://www.adafruit.com/product/751)). Image by [Adafruit](https://www.adafruit.com/product/751)." width="50.0%" class="align-center" >}}
@@ -17,7 +15,7 @@ The `fingerprint_grow` component allows you to use your R307, R503, R503-RGB, ZF
 
 ## Component/Hub
 
-The reader can be powered by the 3.3V output of an NodeMCU. As the communication with the reader is done using UART (default baud rate is 57600), you need to have an [UART bus](#uart) in your configuration with the `rx_pin` connected to the reader's `TX` and the `tx_pin` connected to the reader's `RX`  .
+The reader can be powered by the 3.3V output of an NodeMCU. As the communication with the reader is done using UART (default baud rate is 57600), you need to have an [UART bus](#uart) in your configuration with the `rx_pin` connected to the reader's `TX` and the `tx_pin` connected to the reader's `RX`.
 
 If available on your reader model, it's recommended to connect 3.3VT (touch induction power supply) & 3.3V to 3.3V; WAKEUP (finger detection signal) to a free GPIO pin and define it with the `sensing_pin` option to allow the polling function to quickly return when there's no finger on the reader.
 
@@ -58,9 +56,9 @@ Base Configuration:
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **sensing_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Pin connected to the reader's finger detection signal (WAKEUP) output.
 - **sensor_power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Output pin responsible for toogling the sensor power on and off.
-- **password** (*Optional*, int): Password to use for authentication. Defaults to `0x00`  .
+- **password** (*Optional*, int): Password to use for authentication. Defaults to `0x00`.
 - **new_password** (*Optional*, int): Sets a new password to use for authentication. See [Setting a New Password](#fingerprint_grow-set_new_password) for more information.
-- **idle_period_to_sleep** (*Optional*, [Time](#config-time)): The sensor idle period to wait before powering it off (sleep). Defaults to `5s`  . See [Sleep Mode](#fingerprint_grow-sleep_mode) for more information.
+- **idle_period_to_sleep** (*Optional*, [Time](#config-time)): The sensor idle period to wait before powering it off (sleep). Defaults to `5s`. See [Sleep Mode](#fingerprint_grow-sleep_mode) for more information.
 - **on_finger_scan_start** (*Optional*, [Automation](#automation)): An action to be performed when the finger touches the sensor. See [`on_finger_scan_start` Trigger](#fingerprint_grow-on_finger_scan_start).
 - **on_finger_scan_matched** (*Optional*, [Automation](#automation)): An action to be performed when an enrolled fingerprint is scanned. See [`on_finger_scan_matched` Trigger](#fingerprint_grow-on_finger_scan_matched).
 - **on_finger_scan_unmatched** (*Optional*, [Automation](#automation)): An action to be performed when an unknown fingerprint is scanned. See [`on_finger_scan_unmatched` Trigger](#fingerprint_grow-on_finger_scan_unmatched).
@@ -181,7 +179,7 @@ on_finger_scan_invalid:
 ### `on_finger_scan_matched` Trigger
 
 With this configuration option you can write complex automations whenever a finger scan is matched to an enrolled fingerprint.
-To use the variables, use a [lambda](#config-lambda) template, the matched slot number and the confidence are available inside that lambda under the variables named `finger_id` and `confidence`  .
+To use the variables, use a [lambda](#config-lambda) template, the matched slot number and the confidence are available inside that lambda under the variables named `finger_id` and `confidence`.
 
 ```yaml
 on_finger_scan_matched:
@@ -237,7 +235,7 @@ on_finger_scan_misplaced:
 ### `on_enrollment_scan` Trigger
 
 With this configuration option you can write complex automations whenever a finger is scanned during enrollment.
-To use the variables, use a [lambda](#config-lambda) template, the scan number and the slot number to be enrolled into are available inside that lambda under the variables named `scan_num` and `finger_id`  .
+To use the variables, use a [lambda](#config-lambda) template, the scan number and the slot number to be enrolled into are available inside that lambda under the variables named `scan_num` and `finger_id`.
 
 ```yaml
 on_enrollment_scan:
@@ -251,7 +249,7 @@ on_enrollment_scan:
 ### `on_enrollment_done` Trigger
 
 With this configuration option you can write complex automations whenever a finger is successfully enrolled.
-To use the variables, use a [lambda](#config-lambda) template, the slot number enrolled into is available inside that lambda under the variable named `finger_id`  .
+To use the variables, use a [lambda](#config-lambda) template, the slot number enrolled into is available inside that lambda under the variable named `finger_id`.
 
 ```yaml
 on_enrollment_done:
@@ -265,7 +263,7 @@ on_enrollment_done:
 ### `on_enrollment_failed` Trigger
 
 With this configuration option you can write complex automations whenever a finger failed to be enrolled.
-To use the variables, use a [lambda](#config-lambda) template, the slot number that failed to be enrolled into is available inside that lambda under the variable named `finger_id`  .
+To use the variables, use a [lambda](#config-lambda) template, the slot number that failed to be enrolled into is available inside that lambda under the variable named `finger_id`.
 
 ```yaml
 on_enrollment_failed:
@@ -364,7 +362,7 @@ on_...:
 
 ### `fingerprint_grow.aura_led_control` Action
 
-Controls the Aura LED on the reader. Only available on select models.  NOTE: The R503 has 2 variants with different LED colour options.
+Controls the Aura LED on the reader. Only available on select models. NOTE: The R503 has 2 variants with different LED colour options.
 
 ```yaml
 on_...:
@@ -435,9 +433,9 @@ on...:
 
 #### Configuration variables
 
-- **state** (**Required**, string, [templatable](#config-templatable)): The state to set the LED. One of `BREATHING`  , `FLASHING`  , `ALWAYS_ON`  , `ALWAYS_OFF`  , `GRADUAL_ON` and `GRADUAL_OFF`  .
-- **speed** (**Required**, int, [templatable](#config-templatable)): The duration each cycle lasts, a factor of 10ms. Only relevant for `BREATHING`  , `FLASHING`  , `GRADUAL_ON` and `GRADUAL_OFF` states. The total duration is defined by 10ms *speed* count. Range is 0 to 255.
-- **color** (**Required**, string, [templatable](#config-templatable)): The LED color to activate. For R503, one of `RED`  , `BLUE` and `PURPLE`  .  For R503-RGB, one of `RED`  , `BLUE`  , `PURPLE`  , `GREEN`  , `YELLOW`  , `CYAN` and `WHITE`  .
+- **state** (**Required**, string, [templatable](#config-templatable)): The state to set the LED. One of `BREATHING`, `FLASHING`, `ALWAYS_ON`, `ALWAYS_OFF`, `GRADUAL_ON` and `GRADUAL_OFF`.
+- **speed** (**Required**, int, [templatable](#config-templatable)): The duration each cycle lasts, a factor of 10ms. Only relevant for `BREATHING`, `FLASHING`, `GRADUAL_ON` and `GRADUAL_OFF` states. The total duration is defined by 10ms *speed* count. Range is 0 to 255.
+- **color** (**Required**, string, [templatable](#config-templatable)): The LED color to activate. For R503, one of `RED`, `BLUE` and `PURPLE`. For R503-RGB, one of `RED`, `BLUE`, `PURPLE`, `GREEN`, `YELLOW`, `CYAN` and `WHITE`.
 - **count** (**Required**, int, [templatable](#config-templatable)): How many times to repeat the pattern. Only relevant for `BREATHING` and `FLASHING` states. 0 for infinite, or 1 to 255.
 
 ## Test setup

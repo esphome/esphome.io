@@ -7,7 +7,6 @@ params:
     image: udp.svg
 ---
 
-
 {{< anchor "udp" >}}
 
 This component allows reception and transmission of data over a network using the [User Datagram Protocol (UDP)](https://en.wikipedia.org/wiki/User_Datagram_Protocol).
@@ -23,13 +22,14 @@ udp:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **port** (*Optional*, int): The destination UDP port number to use. Defaults to `18511`  . Different listen and broadcast ports can be specified via a map instead of a single port number.:
+- **port** (*Optional*, int): The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specified via a map instead of a single port number.:
   - **listen_port** (**Required**, int): The port to listen on for received packets.
   - **broadcast_port** (**Required**, int): The port to send packets to.
 - **addresses** (*Optional*, list of IPv4 addresses): One or more IP addresses to broadcast data to. Defaults to `255.255.255.255`
   which is the local network broadcast address.
+
 - **listen_address** (*Optional*, IPv4 address): Changes to multicast, adding an address to listen to. Defaults to no multicast address, just
-  local network broadcast address `255.255.255.255`  . **NOTE**: Adding a multicast address stops it from listening on the broadcast address.
+  local network broadcast address `255.255.255.255`. **NOTE**: Adding a multicast address stops it from listening on the broadcast address.
 
 ## Reliability
 

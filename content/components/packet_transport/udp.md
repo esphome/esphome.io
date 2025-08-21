@@ -7,7 +7,6 @@ params:
     image: udp.svg
 ---
 
-
 {{< anchor "udp-packet-transport" >}}
 
 The [Packet Transport Component](#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel.

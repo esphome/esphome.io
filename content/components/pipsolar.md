@@ -7,8 +7,6 @@ params:
     image: pipsolar.jpg
 ---
 
-
-
 The PipSolar component allows you to integrate PIP-compatible Inverters in ESPHome.
 It uses [UART](#uart) for communication.
 

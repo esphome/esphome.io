@@ -7,7 +7,6 @@ params:
     image: auto-fix.svg
 ---
 
-
 {{< anchor "config-lambda" >}}
 
 *Templates* (also known as *lambdas*) allow you to do almost *anything* in ESPHome. For example, if you want to only
@@ -40,15 +39,15 @@ lambdas is not that hard! Here's a bit of a primer:
 First, you might have already wondered what the `lambda: !lambda |-` part is supposed to mean. `!lambda` tells
 ESPHome that the following block is supposed to be interpreted as a lambda, or C++ code. Note that here, the
 `lambda:` key would actually implicitly make the following block a lambda, so in this context, you could also have
-written `lambda: |-`  .
+written `lambda: |-`.
 
 Next, there's the weird `|-` character combination. This tells the YAML parser to treat the following **indented**
 block as plaintext. Without it, the YAML parser would attempt to read the following block as if it were made up of YAML
-keys like `cover:` for example. (You may also have seen variations of this like `>-` or just `|` or `>`  . There
+keys like `cover:` for example. (You may also have seen variations of this like `>-` or just `|` or `>`. There
 is a slight difference in how these different styles deal with whitespace, but for our purposes we can ignore that).
 
 With `if (...) { ... } else { ... }` we create a *condition*. What this effectively says that if the thing inside the
-first parentheses evaluates to `true` then execute the first block (in this case `return COVER_OPEN;`  , or else
+first parentheses evaluates to `true` then execute the first block (in this case `return COVER_OPEN;`, or else
 evaluate the second block. `return ...;` makes the code block give back a value to the template. In this case, we're
 either *returning* `COVER_OPEN` or `COVER_CLOSED` to indicate that the cover is closed or open.
 
@@ -59,7 +58,7 @@ retrieving the current state of the end stop using `.state` and using it to cons
 {{< note >}}
 ESPHome does not check the validity of lambda expressions you enter and will blindly copy them into the generated
 C++ code. If compilation fails or something else is not working as expected with lambdas, it's always best to look
-at the generated C++ source file under `<NODE_NAME>/src/main.cpp`  .
+at the generated C++ source file under `<NODE_NAME>/src/main.cpp`.
 
 {{< /note >}}
 {{< tip >}}

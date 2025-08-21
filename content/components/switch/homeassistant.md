@@ -7,8 +7,6 @@ params:
     image: home-assistant.svg
 ---
 
-
-
 The `homeassistant` Switch platform allows you to create Switch that **import**
 states and allow **control** via your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 

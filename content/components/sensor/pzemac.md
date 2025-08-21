@@ -7,8 +7,6 @@ params:
     image: pzem-ac.jpg
 ---
 
-
-
 {{< note >}}
 This page is incomplete and could use some work. If you want to contribute, please see our
 [developer site](https://developers.esphome.io). This page is missing:
@@ -69,20 +67,28 @@ sensor:
 
 - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
   [Sensor](#config-sensor).
+
 - **energy** (*Optional*): Use the (active) energy value of the sensor in watt*hours. All options from
   [Sensor](#config-sensor).
+
 - **power** (*Optional*): Use the (active) power value of the sensor in watts. All options from
   [Sensor](#config-sensor).
+
 - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
   All options from [Sensor](#config-sensor).
+
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
   All options from [Sensor](#config-sensor).
+
 - **power_factor** (*Optional*): Use the power factor value of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
-  the same UART bus. You will need to set the address of each device manually. Defaults to `1`  .
+  the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
+
 - **modbus_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the Modbus hub.
 
 {{< anchor "pzemac-reset_energy_action" >}}

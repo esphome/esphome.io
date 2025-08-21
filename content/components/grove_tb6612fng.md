@@ -7,9 +7,7 @@ params:
     image: grove_tb6612fng.jpg
 ---
 
-
-
-The Grove TBB6612FNG a runs over  I²C bus and has the capability to control DC and Stepper motors.
+The Grove TBB6612FNG a runs over I²C bus and has the capability to control DC and Stepper motors.
 At the current stage of implementation only DC motor is implemented.
 
 {{< img src="grove_tb6612fng.jpg" alt="Image" width="50.0%" class="align-center" >}}
@@ -25,7 +23,7 @@ grove_tb6612fng:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this TB6612FNG component.
 - **address** (*Optional*, int): The I²C address of the driver.
-  Defaults to `0x14`  .
+  Defaults to `0x14`.
 
 .. grove_tb6612fng.run:
 

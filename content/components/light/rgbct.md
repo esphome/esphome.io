@@ -7,8 +7,6 @@ params:
     image: rgbw.png
 ---
 
-
-
 The `rgbct` light platform creates an RGBWT (color temperature + white brightness)
 light from 5 [float output components](#output) (one for each channel).
 
@@ -33,16 +31,21 @@ light:
 - **blue** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the blue channel.
 - **color_temperature** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the
   color temperature channel.
+
 - **white_brightness** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the brightness
   of the white leds.
+
 - **cold_white_color_temperature** (**Required**, float): The coldest color temperature supported by this light. This
   is the lowest value when expressed in [mireds](https://en.wikipedia.org/wiki/Mired), or the highest value when
   expressed in Kelvin.
+
 - **warm_white_color_temperature** (**Required**, float): The warmest color temperature supported by this light. This
   is the highest value when expressed in [mireds](https://en.wikipedia.org/wiki/Mired), or the lowest value when
   expressed in Kelvin.
+
 - **color_interlock** (*Optional*, boolean): When enabled, this will prevent white leds being on at the same
-  time as RGB leds. See [Color Interlock](#rgbw_color_interlock) for more information. Defaults to `false`  .
+  time as RGB leds. See [Color Interlock](#rgbw_color_interlock) for more information. Defaults to `false`.
+
 - All other options from [Light](#config-light).
 
 ## See Also

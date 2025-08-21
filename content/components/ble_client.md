@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `ble_client` component enables connections to Bluetooth Low Energy devices in order to query and
 control them. This component does not expose any sensors or output components itself, but merely manages
 connections to them for use by other components.
@@ -54,12 +52,16 @@ Automations:
 
 - **on_connect** (*Optional*, [Automation](#automation)): An automation to perform
   when the client connects to a device. See [`on_connect`](#ble_client-on_connect).
+
 - **on_disconnect** (*Optional*, [Automation](#automation)): An automation to perform
   when the client disconnects from a device. See [`on_disconnect`](#ble_client-on_disconnect).
+
 - **on_passkey_request** (*Optional*, [Automation](#automation)): An automation to enter
   the passkey required by the other BLE device. See [`on_passkey_request`](#ble_client-on_passkey_request).
+
 - **on_passkey_notification** (*Optional*, [Automation](#automation)): An automation to
   display the passkey to the user. See [`on_passkey_notification`](#ble_client-on_passkey_notification).
+
 - **on_numeric_comparison_request** (*Optional*, [Automation](#automation)): An automation to
   compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#ble_client-on_numeric_comparison_request).
 
@@ -205,7 +207,7 @@ Execution of the automation block sequence resumes after the disconnect has comp
 ## `ble_client.ble_write` Action
 
 This action triggers a write to a specified BLE characteristic. The write is attempted in
-a best-effort fashion and will only succeed if the `ble_client`  's  connection has been
+a best-effort fashion and will only succeed if the `ble_client`  's connection has been
 established and the peripheral exposes the expected BLE service and characteristic.
 Execution of the automation block sequence resumes after the write has completed. A write failure will *not*
 stop execution of succeeding actions (this allows a disconnect to be executed, for example.)
@@ -247,7 +249,7 @@ switch:
 
 ## `ble_client.passkey_reply` Action
 
-This action triggers an authentication attempt using the specified `passkey`  .
+This action triggers an authentication attempt using the specified `passkey`.
 
 Example usage:
 

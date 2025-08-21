@@ -7,9 +7,7 @@ params:
     image: buzzer.jpg
 ---
 
-
-
-The `rtttl`  , component allows you to easily connect a passive piezo buzzer to your microcontroller
+The `rtttl`, component allows you to easily connect a passive piezo buzzer to your microcontroller
 and play monophonic songs. It accepts the Ring Tone Text Transfer Language, rtttl format ([Wikipedia](https://en.wikipedia.org/wiki/Ring_Tone_Transfer_Language)) which allows to store simple melodies.
 
 {{< img src="buzzer.jpg" alt="Image" caption="Buzzer Module" width="50.0%" class="align-center" >}}
@@ -57,6 +55,7 @@ rtttl:
 
 - **output** (**Exclusive**, [ID](#config-id)): The id of the [float output](#output) to use for
   this buzzer.
+
 - **speaker** (**Exclusive**, [ID](#config-id)): The id of the [speaker](#i2s_audio) to play the song on.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **gain** (*Optional*, Percentage): With this value you can set the volume of the sound.

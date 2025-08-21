@@ -7,8 +7,6 @@ params:
     image: color_lens.svg
 ---
 
-
-
 This is a component using the RP2040 PIO peripheral to drive most addressable LED strips.
 
 ```yaml
@@ -27,7 +25,7 @@ light:
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
-- **pio** (**Required**, int): The PIO peripheral to use. If using multiple strips, you can use up to 4 strips per PIO. Must be one of `0` or `1`  .
+- **pio** (**Required**, int): The PIO peripheral to use. If using multiple strips, you can use up to 4 strips per PIO. Must be one of `0` or `1`.
 
 - **chipset** (**Required**, enum): The chipset to apply known timings from.
   - `WS2812`
@@ -43,7 +41,7 @@ light:
   - `BGR`
   - `BRG`
 
-- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`  .
+- **is_rgbw** (*Optional*, boolean): Set to `true` if the strip is RGBW. Defaults to `false`.
 
 - All other options from [Light](#config-light).
 

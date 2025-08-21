@@ -7,8 +7,6 @@ params:
     image: grove-gas-mc-v2.png
 ---
 
-
-
 The `grove_gas_mc_v2` sensor platform allows you to use your [Grove Multichannel GasSensor V2](https://wiki.seeedstudio.com/Grove-Multichannel-Gas-Sensor-V2)
 with ESPHome. It exposes 4 different gas sensors for qualitatively measuring
 Nitrogen Dioxide (NO2), Carbon Monoxide (CO), Ethanol (C2H5OH), and Volatile Organic
@@ -43,15 +41,18 @@ sensor:
 
 - **nitrogen_dioxide** (**Required**): The Nitrogen Dioxide sensor data.
   All options from [Sensor](#config-sensor).
+
 - **ethanol** (**Required**): The Ethanol (C2H5OH) sensor data.
   All options from [Sensor](#config-sensor).
+
 - **carbon_monoxide** (**Required**): The Carbon Monoxide sensor data.
   All options from [Sensor](#config-sensor).
+
 - **tvoc** (**Required**): The Total Volatile Organic Compounds (TVOC) sensor data.
   All options from [Sensor](#config-sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 Advanced:
 

@@ -7,8 +7,6 @@ params:
     image: http.svg
 ---
 
-
-
 The `web_server` component creates a simple web server on the node that can be accessed
 through any browser and a simple [REST API](#api-rest). Please note that enabling this component
 will take up *a lot* of memory and may decrease stability, especially on ESP8266.
@@ -32,43 +30,53 @@ web_server:
 
 - **port** (*Optional*, int): The port the web server should open its socket on.
 - **css_url** (*Optional*, url): The URL that should be used for the CSS stylesheet. Defaults
-  to <https://esphome.io/_static/webserver-v1.min.css> (updates will go to `v2`  , `v3`  , etc). Can be set to empty string.
+  to <https://esphome.io/_static/webserver-v1.min.css> (updates will go to `v2`, `v3`, etc). Can be set to empty string.
+
 - **css_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.css` and used as CSS stylesheet by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
+
 - **js_url** (*Optional*, url): The URL that should be used for the JS script. Defaults
   to <https://esphome.io/_static/webserver-v1.min.js>. Can be set to empty string.
+
 - **js_include** (*Optional*, local file): Path to local file to be included in web server index page.
   Contents of this file will be served as `/0.js` and used as JS script by internal webserver.
   Useful when building device without internet access, where you want to use built-in AP and webserver.
+
 - **auth** (*Optional*): Enables a simple *Digest* authentication with username and password.
 
   - **username** (**Required**, string): The username to use for authentication.
   - **password** (**Required**, string): The password to check for authentication.
 
 - **include_internal** (*Optional*, boolean): Whether `internal` entities should be displayed on the
-  web interface. Defaults to `false`  .
+  web interface. Defaults to `false`.
+
 - **enable_private_network_access** (*Optional*, boolean): Enables support for
   [Private Network Access](https://wicg.github.io/private-network-access) and the
   [Private Network Access Permission Prompt](https://wicg.github.io/private-network-access/#permission-prompt).
-  Defaults to `true`  .
-- **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to `true`  .
-- **ota** (*Optional*, boolean): Explicitly disable OTA updates through the web server interface. Only accepts `false`  .
+  Defaults to `true`.
+
+- **log** (*Optional*, boolean): Turn on or off the log feature inside webserver. Defaults to `true`.
+- **ota** (*Optional*, boolean): Explicitly disable OTA updates through the web server interface. Only accepts `false`.
   This option is typically used when you have both `web_server` and `captive_portal` configured, and you want
   OTA updates to be available only through the captive portal. Since `captive_portal` automatically loads the
   web server OTA platform, setting this to `false` prevents OTA access through the regular web interface while
   maintaining it for captive portal access. To enable OTA for web server, use the `web_server` OTA platform instead.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access.
-  Defaults to `false`  .
-- **version** (*Optional*, string): `1`  , `2` or `3`  . Version 1 displays as a table. Version 2 uses web components
-  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`  .
-- **sorting_groups** (*Optional*, list): Available only on `version: 3`  . A list of group ID's and names to group the
+  Defaults to `false`.
+
+- **version** (*Optional*, string): `1`, `2` or `3`. Version 1 displays as a table. Version 2 uses web components
+  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`.
+
+- **sorting_groups** (*Optional*, list): Available only on `version: 3`. A list of group ID's and names to group the
   entities. See [Webserver Entity Grouping](#config-webserver-grouping).
 
   - **id** (**Required**, [ID](#config-id)): Manually specify the ID used for the group.
   - **name** (**Required**, string): A string representing the group name which is displayed as the header of the group
   - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller
+
   `sorting_weight` will be displayed first. Defaults to `50`
 
 To conserve flash size, the CSS and JS files used on the root page to show a simple user
@@ -210,7 +218,7 @@ sensor:
 ### Entity grouping
 
 Version `3` of the `web_server` allows for grouping of entities in custom groups.
-Groups can be sorted by providing a `sorting_weight`  . Groups with a smaller `sorting_weight` will be displayed first.
+Groups can be sorted by providing a `sorting_weight`. Groups with a smaller `sorting_weight` will be displayed first.
 If you don't provide a `web_server_sorting_group` on the component, the `entity_category` will be used as the group.
 
 Example configuration:

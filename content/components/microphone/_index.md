@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `microphone` domain contains common functionality shared across the
 microphone platforms.
 
@@ -32,9 +30,11 @@ Configuration variables:
 - **microphone** (**Required**, [ID](#config-id)): The {{< docref "/components/microphone/index" "microphone" >}} to use for input.
 - **bits_per_sample** (*Optional*, int): The bits per sample to use as input to the component.
   May be restricted by the component to a specific value.
+
 - **channels** (*Optional*, list): A list of 0-indexed channel numbers enabling them to use as
   input to the component. The total amount may be restricted by the component. Defaults to 0,
   the first channel read by the microphone.
+
 - **gain_factor** (*Optional*, int): The gain factor to apply to audio read from the microphone. Ranges from 1 to 64.
   Defaults to 1, no gain.
 
@@ -72,7 +72,7 @@ This action will apply a software mute to the audio data from the microphone bef
 
 ### `microphone.unmute` Action
 
-This action will disable applying a software mute initiated with `microphone.mute`  .
+This action will disable applying a software mute initiated with `microphone.mute`.
 
 {{< anchor "microphone-triggers" >}}
 
@@ -83,7 +83,7 @@ This action will disable applying a software mute initiated with `microphone.mut
 ### `microphone.on_data` Trigger
 
 This trigger will fire when new data is received from the microphone.
-The data is available as a `std::vector<uint8_t>` in the variable `x`  .
+The data is available as a `std::vector<uint8_t>` in the variable `x`.
 This data is the raw microphone audio and includes all the read bits per sample and channels.
 
 ```yaml

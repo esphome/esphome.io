@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `template` text sensor platform allows you to create a text sensor with templated values
 using [lambdas](#config-lambda).
 
@@ -24,16 +22,19 @@ text_sensor:
 
 Possible return values for the lambda:
 
-- `return {"STRING LITERAL"};` the new value for the sensor of type `std::string`  . **Has to be** in
+- `return {"STRING LITERAL"};` the new value for the sensor of type `std::string`. **Has to be** in
    brackets `{}`  !
+
 - `return {};` if you don't want to publish a new state (advanced).
 
 ## Configuration variables
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the text sensor
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  text sensor. Set to `never` to disable updates. Defaults to `60s`  .
+  text sensor. Set to `never` to disable updates. Defaults to `60s`.
+
 - All other options from [Text Sensor](#config-text_sensor).
 
 {{< anchor "text_sensor-template-publish_action" >}}

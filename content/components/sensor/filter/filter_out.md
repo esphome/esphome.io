@@ -3,8 +3,6 @@ description: ""
 headless: true
 ---
 
-
-
 (**Required**, number): Filter out specific values to be displayed, e.g., filtering out the value `85.0`
 
 ```yaml

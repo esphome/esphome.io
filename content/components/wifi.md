@@ -7,8 +7,6 @@ params:
     image: network-wifi.svg
 ---
 
-
-
 This core ESPHome component sets up WiFi connections to access points
 for you. You need to have a network configuration (either Wifi or Ethernet)
 or ESPHome will fail in the config validation stage. You also can't have both Wifi
@@ -41,12 +39,15 @@ wifi:
 
 ## Configuration variables
 
-- **ssid** (*Optional*, string): The name (or [service set  identifier](https://www.lifewire.com/definition-of-service-set-identifier-816547))
+- **ssid** (*Optional*, string): The name (or [service set identifier](https://www.lifewire.com/definition-of-service-set-identifier-816547))
   of the WiFi access point your device should connect to.
+
 - **password** (*Optional*, string): The password (or PSK) for your
   WiFi network. Leave empty for no password.
+
 - **networks** (*Optional*): Configure multiple WiFi networks to connect to, the best one
   that is reachable will be connected to. See [Connecting to Multiple Networks](#wifi-networks).
+
 - **manual_ip** (*Optional*): Manually configure the static IP of the node.
 
   - **static_ip** (**Required**, IPv4 address): The static IP of your node.
@@ -63,28 +64,35 @@ wifi:
 
   - **ssid** (*Optional*, string): The name of the access point to create. Leave empty to use
     the device name.
+
   - **password** (*Optional*, string): The password for the access point. Leave empty for
     no password.
+
   - **channel** (*Optional*, int): The channel the AP should operate on from 1 to 14.
     Defaults to 1.
+
   - **manual_ip** (*Optional*): Manually set the IP options for the AP. Same options as
     manual_ip for station mode.
+
   - **ap_timeout** (*Optional*, [Time](#config-time)): The time after which to enable the
-    configured fallback hotspot. Can be disabled by setting this to `0s`  , which requires manually starting the AP by
-    other means (eg: from a button press). Defaults to `1min`  .
+    configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
+    other means (eg: from a button press). Defaults to `1min`.
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
-  For example, if it's set to `.local`  , all uploads will be sent to `<HOSTNAME>.local`  .
-  Defaults to `.local`  .
+  For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
+  Defaults to `.local`.
+
 - **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
-  WiFi connection exists. Can be disabled by setting this to `0s`  , but note that the low level IP stack currently
+  WiFi connection exists. Can be disabled by setting this to `0s`, but note that the low level IP stack currently
   seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
   Does not apply when in access point mode.
+
 - **power_save_mode** (*Optional*, string): The power save mode for the WiFi interface.
   See [Power Save Mode](#wifi-power_save_mode)
 
 - **output_power** (*Optional*, string): The amount of TX power for the WiFi interface from 8.5dB to 20.5dB. Default
   for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
+
 - **fast_connect** (*Optional*, boolean): If enabled, directly connects to WiFi network without doing a full scan
   first. This is required for hidden networks and can significantly improve connection times (thus reducing power
   consumption). Defaults to `off`.
@@ -92,17 +100,19 @@ wifi:
   better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
   In case it fails, all networks are then tested one after the other in their declared order, starting with the first
   one in the list.
-- **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
-  Defaults to `false`  .
 
-- **enable_btm** (*Optional*, bool): Only on `esp32` with `esp-idf`  . Enable 802.11v BSS Transition Management support.
-- **enable_rrm** (*Optional*, bool): Only on `esp32` with `esp-idf`  . Enable 802.11k Radio Resource Management support.
+- **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
+  Defaults to `false`.
+
+- **enable_btm** (*Optional*, bool): Only on `esp32` with `esp-idf`. Enable 802.11v BSS Transition Management support.
+- **enable_rrm** (*Optional*, bool): Only on `esp32` with `esp-idf`. Enable 802.11k Radio Resource Management support.
 
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection is dropped.
-- **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`  .
+- **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
 - **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM.
-  Defaults to `false`  . Requires PSRAM to be configured.
+  Defaults to `false`. Requires PSRAM to be configured.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 ## Access Point Mode
@@ -220,7 +230,7 @@ wifi:
 - **ssid** (*Optional*, string): The SSID or WiFi network name.
 - **password** (*Optional*, string): The password to use for authentication. Leave empty for no password.
 - **manual_ip** (*Optional*): Manually configure the static IP of the node when using this network. Note that
-  when using different static IP addresses on each network, it is required to set `use_address`  , as ESPHome
+  when using different static IP addresses on each network, it is required to set `use_address`, as ESPHome
   cannot infer to which network the node is connected.
 
   - **static_ip** (**Required**, IPv4 address): The static IP of your node.
@@ -232,13 +242,16 @@ wifi:
 - **eap** (*Optional*): See [Enterprise Authentication](#eap).
 - **channel** (*Optional*, int): The channel of the network (1-14). If given, only connects to networks
   that are on this channel.
+
 - **bssid** (*Optional*, string): The connection's BSSID (MAC address). BSSIDs must consist of six
   two-digit hexadecimal values separated by colon characters ("`:`  "). All letters must be in upper case.
+
 - **hidden** (*Optional*, boolean): Whether this network is hidden. Defaults to false.
   If you add this option you also have to specify ssid.
+
 - **priority** (*Optional*, float): The priority of this network. After each time, the network with
   the highest priority is chosen. If the connection fails, the priority is decreased by one.
-  Defaults to `0`  .
+  Defaults to `0`.
 
 {{< anchor "eap" >}}
 
@@ -270,16 +283,20 @@ wifi:
 
 - **identity** (*Optional*, string): The outer identity to pass to the EAP authentication server.
   This is required for EAP-TLS.
+
 - **username** (*Optional*, string): The username to present to the authenticating server.
 - **password** (*Optional*, string): The password to present to the authentication server.
   For EAP-TLS this password may be set to decrypt to private key instead.
+
 - **certificate_authority** (*Optional*, string): Path to a PEM encoded certificate to use when validating the
   authentication server.
+
 - **certificate** (*Optional*, string): Path to a PEM encoded certificate to use for EAP-TLS authentication.
 - **key** (*Optional*, string): Path to a PEM encoded private key matching `certificate` for EAP-TLS authentication.
-  Optionally encrypted with `password`  .
+  Optionally encrypted with `password`.
+
 - **ttls_phase_2** (*Optional*, string): The Phase 2 Authentication Method for EAP-TTLS.
-  Can be `pap`  , `eap`  , `mschap`  , `mschapv2` or `chap`  , defaults to `mschapv2`  .
+  Can be `pap`, `eap`, `mschap`, `mschapv2` or `chap`, defaults to `mschapv2`.
 
 {{< anchor "wifi-on_connect_disconnect" >}}
 
@@ -356,10 +373,13 @@ on_...:
 - **ssid** (**Required**, string, [templatable](#config-templatable)): The name of the WiFi access point.
 - **password** (**Required**, string, [templatable](#config-templatable)): The password of the WiFi access point.
   Leave empty for no password.
-- **save** (*Optional*, boolean, [templatable](#config-templatable)): If set to `true`  , the SSID and password will be
-  saved in persistent memory. Defaults to `true`  .
+
+- **save** (*Optional*, boolean, [templatable](#config-templatable)): If set to `true`, the SSID and password will be
+  saved in persistent memory. Defaults to `true`.
+
 - **timeout** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The time to wait for the connection
   to be established. Defaults to 30 seconds.
+
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
 - **on_error** (*Optional*, [Automation](#automation)): An action to be performed when the connection fails.
 
@@ -380,7 +400,7 @@ on_...:
       - logger.log: WiFi is connected!
 ```
 
-The lambda equivalent for this is `id(wifi_id).is_connected()`  .
+The lambda equivalent for this is `id(wifi_id).is_connected()`.
 
 {{< anchor "wifi-enabled_condition" >}}
 
@@ -398,7 +418,7 @@ on_...:
         - wifi.enable:
 ```
 
-The lambda equivalent for this is `!id(wifi_id).is_disabled()`  .
+The lambda equivalent for this is `!id(wifi_id).is_disabled()`.
 
 ## See Also
 

@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 ESPHome has support for components to create a datetime entity. A datetime entity
 currently represents a date that can be set by the user/frontend.
 
@@ -37,7 +35,7 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the datetime to use that name, you can set `name: None`  .
+you want the datetime to use that name, you can set `name: None`.
 
 {{< /note >}}
 
@@ -45,15 +43,19 @@ you want the datetime to use that name, you can set `name: None`  .
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - **time_id** (*Optional*, [ID](#config-id)): The ID of the time entity. Automatically set
   to the ID of a time component if only a single one is defined. Required if `on_time` is used.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT Options:
@@ -63,7 +65,7 @@ MQTT Options:
 Time and DateTime Options:
 
 - **on_time** (*Optional*, [Automation](#automation)): Automation to run when the current datetime or time matches the current state.
-  Only valid on `time` or `datetime` types.  Use of `on_time` causes `time_id` to be required, `time_id` will be automatically assigned if a time source exists in the config, and will cause an invalid configuration if there is no {{< docref "/components/time" >}} configured.
+  Only valid on `time` or `datetime` types. Use of `on_time` causes `time_id` to be required, `time_id` will be automatically assigned if a time source exists in the config, and will cause an invalid configuration if there is no {{< docref "/components/time" >}} configured.
 
 ## Automation
 
@@ -74,7 +76,7 @@ You can access the most recent state as a `ESPTime` object by `id(datetime_id).s
 ### `on_value`
 
 This automation will be triggered when a new value is published. In [Lambdas](#config-lambda)
-you can get the value as a ESPTime object from the trigger with `x`  .
+you can get the value as a ESPTime object from the trigger with `x`.
 
 ```yaml
 datetime:
@@ -148,9 +150,9 @@ advanced stuff (see the full API Reference for more info).
   Check the API reference for information on the methods that are available for
   the `DateCall` object.
 
-- `.year`  : Retrieve the current year of the `date`  . It will be `0` if no value has been set.
-- `.month`  : Retrieve the current month of the `date`  . It will be `0` if no value has been set.
-- `.day`  : Retrieve the current day of the `date`  . It will be `0` if no value has been set.
+- `.year`  : Retrieve the current year of the `date`. It will be `0` if no value has been set.
+- `.month`  : Retrieve the current month of the `date`. It will be `0` if no value has been set.
+- `.day`  : Retrieve the current day of the `date`. It will be `0` if no value has been set.
 - `.state_as_esptime()`  : Retrieve the current value of the datetime as a {{< apistruct "ESPTime" "ESPTime" >}} object.
 
 ```cpp
@@ -214,9 +216,9 @@ advanced stuff (see the full API Reference for more info).
   Check the API reference for information on the methods that are available for
   the `TimeCall` object.
 
-- `.hour`  : Retrieve the current hour of the `time`  . It will be `0` if no value has been set.
-- `.minute`  : Retrieve the current minute of the `time`  . It will be `0` if no value has been set.
-- `.second`  : Retrieve the current second of the `time`  . It will be `0` if no value has been set.
+- `.hour`  : Retrieve the current hour of the `time`. It will be `0` if no value has been set.
+- `.minute`  : Retrieve the current minute of the `time`. It will be `0` if no value has been set.
+- `.second`  : Retrieve the current second of the `time`. It will be `0` if no value has been set.
 - `.state_as_esptime()`  : Retrieve the current value of the datetime as a {{< apistruct "ESPTime" "ESPTime" >}} object.
 
 ```cpp
@@ -282,12 +284,12 @@ For more complex use cases, several methods are available for use on datetimes f
   Check the API reference for information on the methods that are available for
   the `DateTimeCall` object.
 
-- `.year`  : Retrieve the current year of the `datetime`  . It will be `0` if no value has been set.
-- `.month`  : Retrieve the current month of the `datetime`  . It will be `0` if no value has been set.
-- `.day`  : Retrieve the current day of the `datetime`  . It will be `0` if no value has been set.
-- `.hour`  : Retrieve the current hour of the `datetime`  . It will be `0` if no value has been set.
-- `.minute`  : Retrieve the current minute of the `datetime`  . It will be `0` if no value has been set.
-- `.second`  : Retrieve the current second of the `datetime`  . It will be `0` if no value has been set.
+- `.year`  : Retrieve the current year of the `datetime`. It will be `0` if no value has been set.
+- `.month`  : Retrieve the current month of the `datetime`. It will be `0` if no value has been set.
+- `.day`  : Retrieve the current day of the `datetime`. It will be `0` if no value has been set.
+- `.hour`  : Retrieve the current hour of the `datetime`. It will be `0` if no value has been set.
+- `.minute`  : Retrieve the current minute of the `datetime`. It will be `0` if no value has been set.
+- `.second`  : Retrieve the current second of the `datetime`. It will be `0` if no value has been set.
 - `.state_as_esptime()`  : Retrieve the current value of the datetime as a {{< apistruct "ESPTime" "ESPTime" >}} object.
 
 ```cpp

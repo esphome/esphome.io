@@ -7,8 +7,6 @@ params:
     image: ntc.jpg
 ---
 
-
-
 The `ntc` platform is a helper sensor that allows you to convert resistance readings
 from a NTC thermistor to temperature readings.
 
@@ -78,8 +76,10 @@ sensor:
 
 - **sensor** (**Required**, [ID](#config-id)): The sensor to read the resistance values from
   to convert to temperature readings.
+
 - **calibration** (**Required**, float): The calibration parameters of the sensor - see above
   for more details.
+
 - All other options from [Sensor](#config-sensor).
 
 ## Self-Heating

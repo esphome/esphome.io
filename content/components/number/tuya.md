@@ -7,8 +7,6 @@ params:
     image: upload.svg
 ---
 
-
-
 The `tuya` number platform allows you to create a number that controls
 a tuya serial component. This platform requires {{< docref "/components/tuya" >}} to be configured.
 
@@ -96,8 +94,8 @@ Therefore there is also an option to store them on the ESPHome side and they wil
 - **datapoint_hidden** (*Optional*): Specify information required for hidden datapoints.
 
   - **datapoint_type** (**Required**, string): The datapoint type, one of *int*, *uint*, *enum*.
-  - **initial_value** (*Optional*, float): The value to be written at initialization. Must be between `min_value` and `max_value`  .
-  - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash. Defaults to `false`  .
+  - **initial_value** (*Optional*, float): The value to be written at initialization. Must be between `min_value` and `max_value`.
+  - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash. Defaults to `false`.
 
 - All other options from [Number](#config-number).
 

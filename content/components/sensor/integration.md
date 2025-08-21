@@ -7,8 +7,6 @@ params:
     image: sigma.svg
 ---
 
-
-
 The `integration` sensor is a helper sensor that can integrate values from other sensors over
 time. This can for example be useful to integrate the values of a water flow sensor (in m^3/s) over
 time (result is in m^3).
@@ -33,12 +31,15 @@ sensor:
 
 - **sensor** (**Required**, [ID](#config-id)): The ID of the sensor to integrate over time.
 - **time_unit** (**Required**, string): The time unit to integrate with, one of
-  `ms`  , `s`  , `min`  , `h` or `d`  .
+  `ms`, `s`, `min`, `h` or `d`.
+
 - **integration_method** (*Optional*, string): The integration method to use. One of
-  `trapezoid`  , `left` or `right`  . Defaults to `trapezoid`  .
+  `trapezoid`, `left` or `right`. Defaults to `trapezoid`.
+
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so
   that the value can be restored upon power cycle or reboot.
-  Warning: this option can wear out your flash. Defaults to `false`  .
+  Warning: this option can wear out your flash. Defaults to `false`.
+
 - All other options from [Sensor](#config-sensor).
 
 {{< anchor "sensor-integration-reset_action" >}}

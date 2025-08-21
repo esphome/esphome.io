@@ -3,8 +3,6 @@ description: ""
 headless: true
 ---
 
-
-
 Send the value periodically with the specified time interval.
 If the sensor value changes during the interval the interval will not reset.
 The last value of the sensor will be sent.

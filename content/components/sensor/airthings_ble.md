@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up AirThings bluetooth-based sensors in ESPHome.
 ---
 
-
-
 The `airthings_wave_plus` and `airthings_wave_mini` sensor platforms lets you track the output of AirThings Bluetooth Low Energy devices.
 
 This component will track radon, airborne chemicals, CO2, temperature and humidity and others depending on the device sensors.
@@ -118,7 +116,7 @@ The sensor uses active polling of devices every 5 minutes as per the device repo
 Battery-voltage reporting defaults to once every 24 hours in order
 to reduce BLE traffic (obtaining the battery voltage requires quite
 a few BLE commands/responses); if you wish to have it reported
-more frequently configure the `battery_update_interval`  . The main
+more frequently configure the `battery_update_interval`. The main
 sensor `update_interval` controls the overall polling frequency
 so setting the interval for the battery voltage to a lower value
 will result in the battery voltage being reported once per polling
@@ -138,7 +136,7 @@ The Wave Gen2 device does NOT support CO2 or TVOC sensors - only radon, temperat
 
 ## Configuration variables
 
-- **device_type** (*Optional*): Specifies the type of AirThings Wave device. Defaults to `WAVE_PLUS`  .
+- **device_type** (*Optional*): Specifies the type of AirThings Wave device. Defaults to `WAVE_PLUS`.
 
   - `WAVE_PLUS`  : For AirThings Wave Plus devices (supports all sensors including CO2 and TVOC)
   - `WAVE_GEN2`  : For AirThings Wave Radon Gen 2 devices (does not support CO2 or TVOC sensors)

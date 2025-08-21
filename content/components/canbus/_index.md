@@ -7,8 +7,6 @@ params:
     image: canbus.svg
 ---
 
-
-
 The Controller Area Network (CAN) bus is a serial bus protocol to connect individual systems and sensors
 as an alternative to conventional multi-wire looms. It allows automotive components to communicate on a
 single or dual-wire data bus at speeds up to 1Mbps.
@@ -66,7 +64,7 @@ canbus:
   - `true`  : Extended 29-bit IDs
 
 - **bit_rate** (*Optional*, enum): One of the supported bit rates. See [this table](#esp32-can-bit-rate) for a
-  list of supported bit rates by the internal CAN (TWAI) controllers of different ESP32 variants. Defaults to `125KBPS`  .
+  list of supported bit rates by the internal CAN (TWAI) controllers of different ESP32 variants. Defaults to `125KBPS`.
 
   - `1KBPS` - Support by `esp32_can` depends on ESP32 variant
   - `5KBPS` - Support by `esp32_can` depends on ESP32 variant
@@ -150,7 +148,8 @@ canbus:
 - **can_id** (**Required**, int): The CAN ID which, when received, will trigger this automation.
 - **can_id_mask** (*Optional*, int): The bit mask to apply to the received CAN ID before trying to match it
   with *can_id*. Defaults to `0x1fffffff` (all bits of received CAN ID are compared with *can_id*).
-- **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id` to match on. Defaults to `false`  .
+
+- **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id` to match on. Defaults to `false`.
 - **remote_transmission_request** (*Optional*, boolean): Whether to run for CAN frames with the "remote
   transmission request" bit set or not set. Defaults to not checking (the automation will run for both cases).
 
@@ -178,8 +177,10 @@ on_...:
 
 - **data** (**Required**, binary data, [templatable](#config-templatable)): Data to transmit, up to eight
   bytes/characters are supported by CAN bus per frame.
+
 - **canbus_id** (*Optional*): Sets the CAN bus ID to use for transmitting the frame. Required if you are have multiple
   CAN bus platforms defined in your configuration.
+
 - **can_id** (*Optional*, int): Allows overriding the `can_id` configured for the CAN bus device.
 - **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id`  :
 
@@ -187,7 +188,7 @@ on_...:
   - `true`  : Extended 29-bit IDs
 
 - **remote_transmission_request** (*Optional*, boolean): Set to send CAN bus frame to request data from another node.
-  If a certain data length code needs to be sent, include the necessary (dummy) bytes in `data`  . Defaults to `false`  .
+  If a certain data length code needs to be sent, include the necessary (dummy) bytes in `data`. Defaults to `false`.
 
 ## Extended ID
 

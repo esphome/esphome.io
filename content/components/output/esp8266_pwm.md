@@ -7,8 +7,6 @@ params:
     image: pwm.png
 ---
 
-
-
 The ESP8266 Software PWM platform allows you to use a software PWM on
 the pins GPIO0-GPIO16 on your ESP8266. Note that this is a software PWM,
 so there can be some flickering during periods of high WiFi activity. Hardware PWMs
@@ -34,7 +32,8 @@ light:
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to use PWM on.
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
 - **frequency** (*Optional*, frequency): The frequency to run the PWM with. Lower frequencies
-  have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`  .
+  have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`.
+
 - All other options from [Output](#config-output).
 
 {{< note >}}

@@ -7,7 +7,6 @@ params:
     image: hotel.svg
 ---
 
-
 {{< anchor "deep_sleep-component" >}}
 
 The `deep_sleep` component can be used to automatically enter a deep sleep mode on the
@@ -18,10 +17,10 @@ To use `deep_sleep` first specify how long the node should be active, i.e. how l
 check sensor values and report them, using the `run_duration` option.
 
 Next, tell the node how it should wakeup. On the ESP8266, you can only put the node into deep sleep
-for a duration using `sleep_duration`  , note that on the ESP8266 `GPIO16` must be connected to
+for a duration using `sleep_duration`, note that on the ESP8266 `GPIO16` must be connected to
 the `RST` pin so that it will wake up again. On the ESP32, you additionally have the option
-to wake up on any RTC pin (`GPIO0`  , `GPIO2`  , `GPIO4`  , `GPIO12`  , `GPIO13`  , `GPIO14`  ,
-`GPIO15`  , `GPIO25`  , `GPIO26`  , `GPIO27`  , `GPIO32`  , `GPIO39`  ).
+to wake up on any RTC pin (`GPIO0`, `GPIO2`, `GPIO4`, `GPIO12`, `GPIO13`, `GPIO14`,
+`GPIO15`, `GPIO25`, `GPIO26`, `GPIO27`, `GPIO32`, `GPIO39`  ).
 
 While in deep sleep mode, the node will not do any work and not respond to any network traffic,
 even Over The Air updates. If the device's entities are appearing as **Unavailable** while your device is actively
@@ -53,11 +52,14 @@ Some ESP8266s have an onboard USB chip (e.g. D1 mini) on the chips' control line
 - **sleep_duration** (*Optional*, [Time](#config-time)): The time duration to stay in deep sleep mode.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](#esp32-touch-binary-sensor) must be configured properly.
+
 - **wakeup_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Only on ESP32. A pin to wake up to once
   in deep sleep mode. Use the inverted property to wake up to LOW signals.
+
 - **wakeup_pin_mode** (*Optional*): Only on ESP32. Specify how to handle waking up from a `wakeup_pin` if
   the wakeup pin is already in the state with which it would wake up when attempting to enter deep sleep.
   See [ESP32 Wakeup Pin Mode](#deep_sleep-esp32_wakeup_pin_mode). Defaults to `IGNORE`
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 Advanced features:
@@ -83,8 +85,10 @@ when the deep sleep should start? There are three ways of handling this using th
 
 - `IGNORE` (Default): Ignore the fact that we will immediately exit the deep sleep mode because the wakeup
   pin is already active.
+
 - `KEEP_AWAKE`  : Keep the ESP32 awake while the wakeup pin is still active. Or in other words: defer the
   activation of the deep sleep until the wakeup pin is no longer active.
+
 - `INVERT_WAKEUP`  : When deep sleep was set up to wake up on a HIGH signal, but the wakeup pin is already HIGH,
   then re-configure deep sleep to wake up on a LOW signal and vice versa. Useful in situations when you want to
   use observe the state changes of a pin using deep sleep and the ON/OFF values last longer.
@@ -176,8 +180,8 @@ use a MQTT client to publish a retained MQTT message described below. When the n
 it will no longer enter deep sleep mode and you can upload your OTA update.
 
 Remember to turn "OTA mode" off again after the OTA update by sending a MQTT message with the payload
-`OFF`  . To enter the deep sleep again after the OTA update send a message on the topic `livingroom/sleep_mode`
-with payload `ON`  . Deep sleep will start immediately. Don't forget to delete the payload before the node
+`OFF`. To enter the deep sleep again after the OTA update send a message on the topic `livingroom/sleep_mode`
+with payload `ON`. Deep sleep will start immediately. Don't forget to delete the payload before the node
 wakes up again.
 
 ```yaml

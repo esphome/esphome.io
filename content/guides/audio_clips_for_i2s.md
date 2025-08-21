@@ -3,7 +3,6 @@ description: "Create audio clip files for use with I²S Speakers"
 title: "Create audio clip files for use with I²S Speakers"
 ---
 
-
 .. audio_clips_for_i2s:
 
 It is possible to create sound clips to include in your build to use with I²S speakers. No need for a media player component!
@@ -28,7 +27,7 @@ xxd -i startup_again.raw startup.c
   Open in an editor and change
   `unsigned char startup_again_raw[] = {…[SNIP]…}`
   to
-  `std::vector<unsigned char> startup_raw = {…[SNIP]…}`  .
+  `std::vector<unsigned char> startup_raw = {…[SNIP]…}`.
 
 Now you can rename the file to startup.h, put it inside the esphome configuration directory and put it in a include
 in your device config like this:

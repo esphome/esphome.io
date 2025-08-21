@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 With the `fan` domain you can create components that appear as fans in
 the Home Assistant frontend. A fan can be switched on or off, optionally
 has a speed between 1 and the maximum supported speed of the fan, and can have an
@@ -33,7 +31,7 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the fan to use that name, you can set `name: None`  .
+you want the fan to use that name, you can set `name: None`.
 
 {{< /note >}}
 
@@ -51,49 +49,66 @@ you want the fan to use that name, you can set `name: None`  .
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT options:
 
 - **direction_state_topic** (*Optional*, string): The topic to
   publish fan direction state changes to (options: forward, reverse).
+
 - **direction_command_topic** (*Optional*, string): The topic to
   receive fan direction commands on (options: forward, reverse, toggle).
+
 - **oscillation_state_topic** (*Optional*, string): The topic to
   publish fan oscillation state changes to.
+
 - **oscillation_command_topic** (*Optional*, string): The topic to
   receive oscillation commands on.
+
 - **speed_level_state_topic** (*Optional*, int): The topic to publish
   numeric fan speed state changes to (range: 0 to speed count).
+
 - **speed_level_command_topic** (*Optional*, int): The topic to receive
   numeric speed commands on (range: 0 to speed count).
+
 - **speed_state_topic** (*Optional*, string): The topic to publish fan
   speed state changes to (options: LOW, MEDIUM, HIGH).
+
 - **speed_command_topic** (*Optional*, string): The topic to receive
   speed commands on (options: LOW, MEDIUM, HIGH).
+
 - All other options from [MQTT Component](#config-mqtt-component).
 
 Automation triggers:
 
 - **on_state** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan state is changed. See [`fan.on_state` Trigger](#fan-on_state_trigger).
+
 - **on_turn_on** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan is turned on. See [`fan.on_turn_on` / `fan.on_turn_off` Trigger](#fan-on_turn_on_off_trigger).
+
 - **on_turn_off** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan is turned off. See [`fan.on_turn_on` / `fan.on_turn_off` Trigger](#fan-on_turn_on_off_trigger).
+
 - **on_direction_set** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan direction is changed. See [`fan.on_direction_set` Trigger](#fan-on_direction_set_trigger).
+
 - **on_oscillating_set** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan oscillating state is changed. See [`fan.on_oscillating_set` Trigger](#fan-on_oscillating_set_trigger).
+
 - **on_speed_set** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan speed is changed. See [`fan.on_speed_set` Trigger](#fan-on_speed_set_trigger).
+
 - **on_preset_set** (*Optional*, [Action](#config-action)): An automation to perform
   when the fan preset mode is changed. See [`fan.on_preset_set` Trigger](#fan-on_preset_set_trigger).
 
@@ -141,16 +156,18 @@ Configuration options:
 - **id** (**Required**, [ID](#config-id)): The ID of the fan.
 - **oscillating** (*Optional*, boolean, [templatable](#config-templatable)):
   Set the oscillation state of the fan. Defaults to not affecting oscillation.
+
 - **speed** (*Optional*, int, [templatable](#config-templatable)):
   Set the speed level of the fan. Can be a number between 1 and the maximum speed level of the fan.
+
 - **direction** (*Optional*, string, [templatable](#config-templatable)):
-  Set the direction of the fan. Can be either `forward` or `reverse`  . Defaults to not changing the direction.
+  Set the direction of the fan. Can be either `forward` or `reverse`. Defaults to not changing the direction.
 
 {{< anchor "fan-cycle_speed_action" >}}
 
 ## `fan.cycle_speed` Action
 
-Increments through speed levels of the fan with the given ID when executed. If the fan's speed level is set to maximum when executed, fan will cycle off unless `off_speed_cycle` is set to `false`  .
+Increments through speed levels of the fan with the given ID when executed. If the fan's speed level is set to maximum when executed, fan will cycle off unless `off_speed_cycle` is set to `false`.
 
 ```yaml
 on_...:
@@ -165,7 +182,7 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the fan.
-- **off_speed_cycle** (*Optional*, boolean, [templatable](#config-templatable)): Determines if the fan will cycle off after cycling though its highest speed. Can be `true` or `false`  . If `false` fan will cycle to its lowest speed instead of turning off.  Defaults to `true`  .
+- **off_speed_cycle** (*Optional*, boolean, [templatable](#config-templatable)): Determines if the fan will cycle off after cycling though its highest speed. Can be `true` or `false`. If `false` fan will cycle to its lowest speed instead of turning off. Defaults to `true`.
 
 {{< anchor "fan-is_on_condition" >}}
 {{< anchor "fan-is_off_condition" >}}
@@ -190,7 +207,7 @@ on_...:
 ## `fan.on_state` Trigger
 
 This trigger is activated each time the fan state is changed. It will fire when the state is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
-A pointer to the `Fan` is available as a variable called `x`  .
+A pointer to the `Fan` is available as a variable called `x`.
 
 ```yaml
 fan:
@@ -224,7 +241,7 @@ fan:
 ## `fan.on_direction_set` Trigger
 
 This trigger is activated each time the fan direction is changed. It will fire when the direction is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
-The new direction is available as a variable called `x`  .  (`0` is FORWARD, `1` is REVERSE)
+The new direction is available as a variable called `x`. (`0` is FORWARD, `1` is REVERSE)
 
 ```yaml
 fan:
@@ -241,7 +258,7 @@ fan:
 ## `fan.on_oscillating_set` Trigger
 
 This trigger is activated each time the fan oscillating state is changed. It will fire when the state is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
-The new oscillating state is available as a variable called `x`  .
+The new oscillating state is available as a variable called `x`.
 
 ```yaml
 fan:
@@ -258,7 +275,7 @@ fan:
 ## `fan.on_speed_set` Trigger
 
 This trigger is activated each time the fan speed is changed. It will fire when the speed is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
-The new speed is available as a variable called `x`  .
+The new speed is available as a variable called `x`.
 
 ```yaml
 fan:
@@ -275,7 +292,7 @@ fan:
 ## `fan.on_preset_set` Trigger
 
 This trigger is activated each time the fan preset mode is changed. It will fire when the preset mode is either set via API e.g. in Home Assistant or locally by an automation or a lambda function.
-The new mode is available as a variable called `x`  .
+The new mode is available as a variable called `x`.
 
 ```yaml
 fan:
@@ -348,7 +365,7 @@ advanced stuff (see the full API Reference for more info).
 ```
 
 - `turn_off()`  /`turn_on()`  /`toggle()`  : Manually turn the fan ON/OFF from code.
-  Similar to the `fan.turn_on`  , `fan.turn_off`  , and `fan.toggle` actions,
+  Similar to the `fan.turn_on`, `fan.turn_off`, and `fan.toggle` actions,
   but can be used in complex lambda expressions.
 
 ```yaml

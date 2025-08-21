@@ -7,8 +7,6 @@ params:
     image: connection.svg
 ---
 
-
-
 The `http_request` component lets you make HTTP/HTTPS requests. To do so, you need to add it to your device's configuration:
 
 ```yaml
@@ -21,17 +19,19 @@ http_request:
 ## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`  .
-- **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`  .
-- **timeout** (*Optional*, [Time](#config-time)): Timeout for request. Defaults to `4.5s`  .
+- **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
+- **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
+- **timeout** (*Optional*, [Time](#config-time)): Timeout for request. Defaults to `4.5s`.
 - **useragent** (*Optional*, string): User-Agent header for requests. Defaults to
   `ESPHome/<version> (https://esphome.io)` where `<version>` is the version of ESPHome the device is running.
   For example: `ESPHome/2024.6.0 (https://esphome.io)`
+
 - **verify_ssl** (*Optional*, boolean): When set to `true` (default), SSL/TLS certificates will be validated upon
   connection; if invalid, the connection will be aborted. To accomplish this, ESP-IDF's default ESP x509 certificate
   bundle is included in the build. This certificate bundle includes the complete list of root certificates from
   Mozilla's NSS root certificate store. **May only be set to true when using the ESP-IDF framework; must be explicitly
   set to false when using the Arduino framework.**
+
 - **watchdog_timeout** (*Optional*, [Time](#config-time)): Change the watchdog timeout during connection/data transfer.
   May be useful on slow connections or connections with high latency. **Do not change this value unless you are
   experiencing device reboots due to watchdog timeouts;** doing so may prevent the device from rebooting due to a
@@ -39,8 +39,8 @@ http_request:
 
 **For the ESP32 when using ESP-IDF:**
 
-- **buffer_size_rx** (*Optional*, integer): Change HTTP receive buffer size. Defaults to `512`  .
-- **buffer_size_tx** (*Optional*, integer): Change HTTP transmit buffer size. Defaults to `512`  .
+- **buffer_size_rx** (*Optional*, integer): Change HTTP receive buffer size. Defaults to `512`.
+- **buffer_size_tx** (*Optional*, integer): Change HTTP transmit buffer size. Defaults to `512`.
 
 **For the ESP8266:**
 
@@ -48,7 +48,7 @@ http_request:
   firmware binary. Excluding the SSL libraries from your build will result in a smaller binary, which may be
   necessary for memory-constrained devices (512 kB or 1 MB). If you see
   `Error: ESP does not have enough space to store OTA file` in your device's logs, you may need to enable this
-  option. Defaults to `false`  . By setting this option to `true`  :
+  option. Defaults to `false`. By setting this option to `true`  :
 
   - HTTPS connections will not be possible
   - `verify_ssl: false` is implied
@@ -75,7 +75,7 @@ To maximize security, do not set `verify_ssl` to `false` *unless:*
 
 {{< note >}}
 To use SSL on Linux you must have the `libssl-dev` package installed (e.g. `sudo apt install libssl-dev`  ).
-A typical value on Linux for `ca_certificate_path` would be `/etc/ssl/certs/ca-certificates.crt`  .
+A typical value on Linux for `ca_certificate_path` would be `/etc/ssl/certs/ca-certificates.crt`.
 
 {{< /note >}}
 
@@ -111,10 +111,12 @@ on_...:
 - **url** (**Required**, string, [templatable](#config-templatable)): URL to which to send the request.
 - **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](#config-templatable).
 - **collect_headers** (*Optional*, list of strings): List of the names of HTTP headers to collect from the response.
-- **capture_response** (*Optional*, boolean): when set to `true`  , the response data will be captured and placed into
-  the `body` variable as a `std::string` for use in [lambdas](#config-lambda). Defaults to `false`  .
+- **capture_response** (*Optional*, boolean): when set to `true`, the response data will be captured and placed into
+  the `body` variable as a `std::string` for use in [lambdas](#config-lambda). Defaults to `false`.
+
 - **max_response_buffer_size** (*Optional*, integer): The maximum buffer size to be used to store the response.
-  Defaults to `1 kB`  .
+  Defaults to `1 kB`.
+
 - **on_response** (*Optional*, [Automation](#automation)): An automation to perform after the request is received.
 - **on_error** (*Optional*, [Automation](#automation)): An automation to perform if the request cannot be completed.
 
@@ -141,6 +143,7 @@ on_...:
 - **body** (*Optional*, string, [templatable](#config-templatable)): A HTTP body string to send with request.
 - **json** (*Optional*, mapping): A HTTP body in JSON format. Values are [templatable](#config-templatable).
   See [Examples](#http_request-examples).
+
 - All other options from [`http_request.get` Action](#http_request-get_action).
 
 {{< anchor "http_request-send_action" >}}
@@ -161,7 +164,7 @@ on_...:
 
 #### Configuration variables
 
-- **method** (**Required**, string): HTTP method to use (`GET`  , `POST`  , `PUT`  , `DELETE`  , `PATCH`  ).
+- **method** (**Required**, string): HTTP method to use (`GET`, `POST`, `PUT`, `DELETE`, `PATCH`  ).
 - All other options from [`http_request.post` Action](#http_request-post_action) and [`http_request.get` Action](#http_request-get_action).
 
 ## Triggers
@@ -176,11 +179,11 @@ The following variables are available for use in [lambdas](#config-lambda):
 - `response` as a pointer to `HttpContainer` object which contains `content_length`, `status_code` and `  duration_ms``.
 - `std::string get_response_header(const std::string &header_name)` to read response headers (only headers with names specified in the `collect_headers` are available).
 - `body` as `std::string` which contains the response body when `capture_response`
-  (see [`http_request.get` Action](#http_request-get_action)) is set to `true`  .
+  (see [`http_request.get` Action](#http_request-get_action)) is set to `true`.
 
 {{< note >}}
 The `status_code` should be checked before using the `body` variable. A successful response will usually have
-a status code of `200`  . Server errors such as "not found" (404) or "internal server error" (500) will have an appropriate status code, and may contain an error message in the `body` variable.
+a status code of `200`. Server errors such as "not found" (404) or "internal server error" (500) will have an appropriate status code, and may contain an error message in the `body` variable.
 
 {{< /note >}}
 
@@ -281,7 +284,7 @@ This example assumes that the server returns a response as a JSON object similar
 `{"status":"play","vol":"42","mute":"0"}`
 
 If you want to retrieve the value for the `vol` key and assign it to a template `sensor` or `number` component
-whose `id` is  set to `player_volume`  :
+whose `id` is set to `player_volume`  :
 
 ```yaml
 on_...:

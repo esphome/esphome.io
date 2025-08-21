@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `cover` component is a generic representation of covers in ESPHome.
 A cover can (currently) either be *closed* or *open* and supports three types of
 commands: *open*, *close* and *stop*.
@@ -34,12 +32,13 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the cover to use that name, you can set `name: None`  .
+you want the cover to use that name, you can set `name: None`.
 
 {{< /note >}}
 
 - **device_class** (*Optional*, string): The device class for the
   sensor. See <https://www.home-assistant.io/integrations/cover/#device-class> for a list of available options.
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the cover in the frontend.
 
 Advanced options:
@@ -47,25 +46,32 @@ Advanced options:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT options:
 
 - **position_state_topic** (*Optional*, string): The topic to publish
   cover position changes to.
+
 - **position_command_topic** (*Optional*, string): The topic to receive
   cover position commands on.
+
 - **tilt_state_topic** (*Optional*, string): The topic to publish cover
   cover tilt state changes to.
+
 - **tilt_command_topic** (*Optional*, string): The topic to receive
   cover tilt commands on.
+
 - All other options from [MQTT Component](#config-mqtt-component).
 
 {{< anchor "cover-open_action" >}}
@@ -178,7 +184,7 @@ Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The cover to control.
 - **stop** (*Optional*, boolean): Whether to stop the cover.
-- **state** (*Optional*, string): The state to set the cover to - one of `OPEN` or `CLOSE`  .
+- **state** (*Optional*, string): The state to set the cover to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float): The cover position to set.
 
   - `0.0` = `0%` = `CLOSED`
@@ -216,7 +222,7 @@ fields are read-only, if you want to act on the cover, use the `make_call()` met
         }
 ```
 
-- `tilt`  : Retrieve the current tilt position of the cover, as a value between `0.0` and `1.0`  .
+- `tilt`  : Retrieve the current tilt position of the cover, as a value between `0.0` and `1.0`.
 
 - `current_operation`  : The operation the cover is currently performing:
 

@@ -7,8 +7,6 @@ params:
     image: upload.svg
 ---
 
-
-
 The `tuya` switch platform creates a sensor from a tuya serial component
 and requires {{< docref "/components/tuya" >}} to be configured.
 

@@ -7,8 +7,6 @@ params:
     image: wiegand.jpg
 ---
 
-
-
 The `wiegand` component allows you to integrate Wiegand-standard key
 input and card or tag reader panels in Home Assistant.
 
@@ -41,26 +39,29 @@ wiegand:
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this device for use in lambdas.
 - **d0** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D0` output
   of the Wiegand's interface connects.
+
 - **d1** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D1` output
   of the Wiegand's interface connects.
 
 ### Triggers
 
 - **on_key** (*Optional*, [Automation](#automation)): An automation to perform
-  when a key has been pressed on the pad. The key is in a variable called `x`  .
+  when a key has been pressed on the pad. The key is in a variable called `x`.
+
 - **on_tag** (*Optional*, [Automation](#automation)): An automation to perform
   when a Wiegand-compatible card or a tag has been read by the device. The tag code is
-  in a variable called `x`  .
+  in a variable called `x`.
+
 - **on_raw** (*Optional*, [Automation](#automation)): An automation to perform
-  for any data sent by the device. The value is in a variable called `value`  , the number of
-  bits is in a variable called `bits`  .  Note that this will include parity bits as well and
+  for any data sent by the device. The value is in a variable called `value`, the number of
+  bits is in a variable called `bits`. Note that this will include parity bits as well and
   no parity checking is done.
 
 {{< note >}}
 Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
 the [Key Collector](#key_collector) component.
 
-Keys 10 and 11 are `*` and `#`  .  They might be labelled as `ENT` or `ESC`  ,
+Keys 10 and 11 are `*` and `#`. They might be labelled as `ENT` or `ESC`,
 but check the logs to see which key code you get and use the corresponding character.
 
 {{< /note >}}

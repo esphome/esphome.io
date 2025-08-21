@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `ble_client` component is a text sensor platform that can
 query BLE devices for specific values of service characteristics.
 
@@ -37,8 +35,9 @@ text_sensor:
 - **characteristic_uuid** (**Required**, UUID): UUID of the service's characteristic to query.
 - **descriptor_uuid** (*Optional*, UUID): UUID of the characteristic's descriptor to query.
 - **notify** (*Optional*, boolean): Instruct the server to send notifications for this
-  characteristic. Defaults to `false`  .
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to poll the device. Defaults to `60s`  .
+  characteristic. Defaults to `false`.
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to poll the device. Defaults to `60s`.
 - All other options from [Text Sensor](#config-text_sensor).
 
 Automations:

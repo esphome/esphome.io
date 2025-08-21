@@ -7,13 +7,12 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `display` component houses ESPHome's powerful rendering and display
 engine. Fundamentally, there are these types of displays:
 
 - Character displays like {{< docref "max7219" "7-Segment displays" >}} or
   {{< docref "lcd_display" "LCD displays" >}}.
+
 - Serial displays like {{< docref "nextion/" >}} that have their own processors for graphics rendering.
 - Graphical displays with fully addressable pixels, like {{< docref "waveshare_epaper" "E-Paper" >}},
   {{< docref "ssd1306" "OLED" >}} or {{< docref "ili9xxx" "TFT" >}} displays.
@@ -30,15 +29,15 @@ For graphical displays, which offer the greatest flexibility, there are two opti
 All display components inherit these configuration variables.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if there are multiple displays.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`  .
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 
 All *graphical* displays also inherit these configuration variables.
 
 - **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true` if a lambda or pages are configured, false otherwise.
-- **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to `false`  . If set, any code in the `lambda` config option will be ignored.
-- **rotation** (*Optional*, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to `0`  .
+- **show_test_card** (*Optional*, boolean): If the display should show a test card. Defaults to `false`. If set, any code in the `lambda` config option will be ignored.
+- **rotation** (*Optional*, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to `0`.
 - **pages** (*Optional*, list): Pages configuration - see below.
 
 {{< anchor "display-engine" >}}
@@ -67,7 +66,7 @@ please see [Troubleshooting](#troubleshooting) below.
 So, first a few basics: When setting up a display platform in ESPHome there will be a configuration
 option called `lambda:` which will be called every time ESPHome wants to re-render the display.
 In each cycle, the display is automatically cleared before the lambda is executed. You can disable
-this behavior by setting `auto_clear_enabled: false`  .
+this behavior by setting `auto_clear_enabled: false`.
 In the lambda, you can write code like in any [lambda](#config-lambda) in ESPHome. Display
 lambdas are additionally passed a variable called `it` which represents the rendering engine object.
 
@@ -215,10 +214,10 @@ display:
 ```
 
 By default, ESPHome will *align* the text at the top left. That means if you enter the coordinates
-`[0,10]` for your text, the top left of the text will be at `[0,10]`  . If you want to draw some
+`[0,10]` for your text, the top left of the text will be at `[0,10]`. If you want to draw some
 text at the right side of the display, it is however sometimes useful to choose a different **text alignment**.
 When you enter `[0,10]` you're really telling ESPHome that it should position the **anchor point** of the text
-at `[0,10]`  . When using a different alignment, like `TOP_RIGHT`  , the text will be positioned left of the anchor
+at `[0,10]`. When using a different alignment, like `TOP_RIGHT`, the text will be positioned left of the anchor
 pointed, so that, as the name implies, the anchor point is a the *top right* corner of the text.
 
 ```yaml
@@ -298,14 +297,15 @@ Let's break `%.1f` down:
 - `f` - the specifier which tells printf the data type of the argument. Here it is a f(loat).
 
 For example, if you would like to print a sensor value with two digits of accuracy, you would write `%.2f` and with
-zero digits of accuracy (without a decimal) `%.0f`  .
+zero digits of accuracy (without a decimal) `%.0f`.
 
-Another interesting format string is `%7.2f`  , which would become the right-justified string
+Another interesting format string is `%7.2f`, which would become the right-justified string
 `"  20.51"` for a value of 20.506.
 
 - `%` - initiate the format
 - `7` - means that the number will be right-justified and be padded on the left by spaces if
   the result would be shorter than 7 characters long.
+
 - `.2` - round the decimal number to `2` digits after the decimal point.
 - `f` - specifier: f(loat).
 
@@ -321,7 +321,7 @@ display:
       it.printf(0, 0, id(my_font), "Temperature: %.1f°C, Humidity: %.1f%%", id(temperature).state, id(humidity).state);
 ```
 
-To display a text string from a `text_sensor`  , append `.c_str()` to the end of your variable.
+To display a text string from a `text_sensor`, append `.c_str()` to the end of your variable.
 
 ```yaml
 display:
@@ -345,7 +345,7 @@ display:
 The last printf tip for use in displays I will discuss here is how to display binary sensor values. You
 *could* of course just check the state with an `if` statement as the first few lines in the example below, but if
 you want to be efficient you can use an *inline if* too. With the `%s` print specifier you can tell it to
-use any string you pass it, like `"ON"` or `"OFF"`  .
+use any string you pass it, like `"ON"` or `"OFF"`.
 
 ```yaml
 binary_sensor:
@@ -384,7 +384,7 @@ You can display current time using a time component. Please see the example on t
 Screen clipping can be useful when you just want to show a part of an image or make sure that what you draw on the screen does not go outside a specific region on the screen.
 
 With `start_clipping(left, top, right, bottom);` start you the clipping process and when you are done drawing in that region
-you can stop the clipping process with `end_clipping();` . You can nest as many `start_clipping();` as you want as long
+you can stop the clipping process with `end_clipping();`. You can nest as many `start_clipping();` as you want as long
 you end them as many times as well.
 
 ```yaml
@@ -467,15 +467,15 @@ color:
 
 Configuration variables:
 
-- **red** (*Optional*, percentage): The percentage of the red component. Defaults to `100%`  .
-- **red_int** (*Optional*, integer): The brightness of the red component on a scale of `0` to `255`  . Defaults to `255`  .
-- **green** (*Optional*, percentage): The percentage of the green component. Defaults to `100%`  .
-- **green_int** (*Optional*, integer): The brightness of the green component on a scale of `0` to `255`  . Defaults to `255`  .
-- **blue** (*Optional*, percentage): The percentage of the blue component. Defaults to `100%`  .
-- **blue_int** (*Optional*, integer): The brightness of the blue component on a scale of `0` to `255`  . Defaults to `255`  .
-- **white** (*Optional*, percentage): The percentage of the white component. Defaults to `100%`  .
-- **white_int** (*Optional*, integer): The brightness of the white component on a scale of `0` to `255`  . Defaults to `255`  .
-- **hex** (*Optional*, string): The color in hexadecimal representation. Defaults to `FFFFFF`  .
+- **red** (*Optional*, percentage): The percentage of the red component. Defaults to `100%`.
+- **red_int** (*Optional*, integer): The brightness of the red component on a scale of `0` to `255`. Defaults to `255`.
+- **green** (*Optional*, percentage): The percentage of the green component. Defaults to `100%`.
+- **green_int** (*Optional*, integer): The brightness of the green component on a scale of `0` to `255`. Defaults to `255`.
+- **blue** (*Optional*, percentage): The percentage of the blue component. Defaults to `100%`.
+- **blue_int** (*Optional*, integer): The brightness of the blue component on a scale of `0` to `255`. Defaults to `255`.
+- **white** (*Optional*, percentage): The percentage of the white component. Defaults to `100%`.
+- **white_int** (*Optional*, integer): The brightness of the white component on a scale of `0` to `255`. Defaults to `255`.
+- **hex** (*Optional*, string): The color in hexadecimal representation. Defaults to `FFFFFF`.
 
 RGB displays use red, green, and blue, while grayscale displays may use white.
 
@@ -587,7 +587,7 @@ display:
 - **from** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.
 - **to** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing to this page. Defaults to all pages.
 
-Additionally the old page will be given as the variable `from` and the new one as the variable `to`  .
+Additionally the old page will be given as the variable `from` and the new one as the variable `to`.
 
 ### Troubleshooting
 

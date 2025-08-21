@@ -7,10 +7,8 @@ params:
     image: sgp30.jpg
 ---
 
-
-
 The `sgp30` sensor platform allows you to use your Sensirion SGP30 multi-pixel gas
-([datasheet](https://sensirion.com/media/documents/984E0DD5/61644B8B/Sensirion_Gas_Sensors_Datasheet_SGP30.pdf)) sensors or the SVM30 breakout-boards  ([product page](https://sensirion.com/products/catalog/SVM30/)) with ESPHome.
+([datasheet](https://sensirion.com/media/documents/984E0DD5/61644B8B/Sensirion_Gas_Sensors_Datasheet_SGP30.pdf)) sensors or the SVM30 breakout-boards ([product page](https://sensirion.com/products/catalog/SVM30/)) with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
 {{< img src="eco2-tvoc.png" alt="Image" width="80.0%" class="align-center" >}}
@@ -36,13 +34,13 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **store_baseline** (*Optional*, boolean): Store the sensor baselines persistently when calculated or updated.
-  Defaults to `true`  .
+  Defaults to `true`.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x58`  .
+  Defaults to `0x58`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 Advanced:
 
@@ -83,7 +81,7 @@ Using the **store_baseline** option will automatically store the baseline values
 
 Another method is to manually specify the baseline values in the configuration file. To do this, let the sensor boot up with no baseline set and let the sensor calibrate itself.
 After around 12 hours you can then view the remote logs on the ESP. The nexttime the sensor is read out, you will see a log message with something like
-`Current eCO2 baseline: 0x86C5, TVOC baseline: 0x8B38`  .
+`Current eCO2 baseline: 0x86C5, TVOC baseline: 0x8B38`.
 
 Another way to obtain the baseline values is to configure the eco2 and TVOC baseline value sensors. Values will be published to your Home Automation system.
 Convert the decimal value to hex value before use (e.g. 37577 --> 0x92C9)

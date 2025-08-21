@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `homeassistant` number platform allows you to create a number that is synchronized
 with Home Assistant. Min, Max and Step are not configurable for this platform because they are taken from the Home Assistant entity.
 

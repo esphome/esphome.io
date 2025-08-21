@@ -7,8 +7,6 @@ params:
     image: crosshairs-gps.svg
 ---
 
-
-
 The `gps` component allows you to connect GPS modules to your ESPHome project.
 Any GPS module that uses the standardized NMEA communication protocol will work.
 
@@ -73,7 +71,7 @@ See {{< docref "time/gps" >}} for config options for the GPS time source.
 
   - All options from [Sensor](#config-sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval of sensor updates. Defaults to  `20s`  .
+- **update_interval** (*Optional*, [Time](#config-time)): The interval of sensor updates. Defaults to `20s`.
 
 ## See Also
 

@@ -7,8 +7,6 @@ params:
     image: tuya.png
 ---
 
-
-
 The `tuya` text sensor platform creates a sensor from a tuya component
 and requires {{< docref "/components/tuya" >}} to be configured.
 

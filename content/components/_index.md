@@ -7,9 +7,7 @@ params:
     image: logo-docs.svg
 ---
 
-
-
-{{< html_file file="images/logo-docs.svg"  >}}
+{{< html_file file="images/logo-docs.svg" >}}
 
 This is the top-level ESPHome documentation index. Browse the tables below, use the sidebar menu, or the search
 function to find the information you're looking for.
@@ -552,7 +550,7 @@ multiple times.
 {{< imgtable >}}
 "CAP1188 Capacitive Touch Sensor","components/binary_sensor/cap1188","cap1188.jpg",""
 "ESP32 Touch Pad","components/binary_sensor/esp32_touch","touch.svg","dark-invert"
-"MPR121  Capacitive Touch Sensor","components/binary_sensor/mpr121","mpr121.jpg",""
+"MPR121 Capacitive Touch Sensor","components/binary_sensor/mpr121","mpr121.jpg",""
 "TTP229","components/binary_sensor/ttp229","ttp229.jpg",""
 {{< /imgtable >}}
 

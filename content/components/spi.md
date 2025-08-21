@@ -7,7 +7,6 @@ params:
     image: spi.svg
 ---
 
-
 {{< anchor "spi" >}}
 
 SPI is a very common high-speed protocol for a lot of devices. The ESPHome SPI component implements only the host controller
@@ -16,12 +15,15 @@ role, where it controls the bus, and writes or reads data from peripherals attac
 The SPI bus usually consists of 4 wires:
 
 - **CLK**: Is used to tell the receiving device when to read data. All devices on the bus can
-  share this line. Sometimes also called `SCK`  .
+  share this line. Sometimes also called `SCK`.
+
 - **CS** (chip select): Is used to tell the receiving device when it should listen for data. Each device has
-  an individual CS line. Sometimes also called `SS`  . If the SPI bus has a single device, its CS pin
+  an individual CS line. Sometimes also called `SS`. If the SPI bus has a single device, its CS pin
   can sometimes be connected to ground to tell it that it is always selected.
+
 - **MOSI** (aka SDO - Serial Data Out): Is used to send data from the controller (the ESP) to the peripheral device.
   All devices on the bus share this line.
+
 - **MISO** (also SDI - Serial Data In): Is used to receive data. All devices on the bus share this line.
 
 In some cases one of **MOSI** or **MISO** does not exist as the receiving device only accepts data or sends data.
@@ -71,11 +73,11 @@ spi:
 
 ## Configuration variables
 
-- **type** (*Optional*): Choose between `single` for standard 1 bit bus SPI (the default), `quad` and `octal`  .
+- **type** (*Optional*): Choose between `single` for standard 1 bit bus SPI (the default), `quad` and `octal`.
 - **clk_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin used for the clock line of the SPI bus.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
-  Value may be one of `any` (default), `software`  , `hardware`  , `spi`  , `spi2` or `spi3`  , depending on
+  Value may be one of `any` (default), `software`, `hardware`, `spi`, `spi2` or `spi3`, depending on
   the type and the particular chip used. See discussion below.
 
 For the conventional `single` bit bus at least one of `miso_pin` or `mosi_pin` is required.
@@ -144,15 +146,18 @@ spi_device:
 
 ### Configuration variables
 
-- **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`  , `40MHz`  , `20MHz`  , `10MHz`  ,
-  `5MHz`  , `4MHz`  , `2MHz`  , `1MHz` (default), `200kHz`  , `75kHz` or `1kHz`  . A numeric value in Hz can alternatively
+- **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`,
+  `5MHz`, `4MHz`, `2MHz`, `1MHz` (default), `200kHz`, `75kHz` or `1kHz`. A numeric value in Hz can alternatively
   be specified.
-- **spi_mode** (*Optional*): Set the controller mode - one of `mode0`  , `mode1`  , `mode2`  , `mode3`  . The default is `mode3`  .
+
+- **spi_mode** (*Optional*): Set the controller mode - one of `mode0`, `mode1`, `mode2`, `mode3`. The default is `mode3`.
   See table below for more information
-- **bit_order** (*Optional*): Set the bit order - choose one of `msb_first` (default) or `lsb_first`  .
+
+- **bit_order** (*Optional*): Set the bit order - choose one of `msb_first` (default) or `lsb_first`.
 - **cs_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The CS pin.
 - **release_device** (*Optional*, boolean): For ESP-IDF, release the bus device between transactions. Default isk
-  `False`  . Setting this to `True` will enable more than 6 devices to be connected to hardware SPI buses.
+  `False`. Setting this to `True` will enable more than 6 devices to be connected to hardware SPI buses.
+
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
 
 ## SPI modes
@@ -166,8 +171,8 @@ of the specific peripheral chip.
 | ---- | ------------------- | ----------- | ------------------------------ | --------------- |
 | 0    | low                 | leading     | /CS activation and falling CLK | rising CLK      |
 | 1    | low                 | trailing    | rising CLK                     | falling CLK     |
-| 2    | high                | leading     | /CS activation and rising CLK  | falling CLK     |
-| 3    | high                | trailing    | falling CLK                    | rising CLK      |
+| 2 | high | leading | /CS activation and rising CLK | falling CLK |
+| 3 | high | trailing | falling CLK | rising CLK |
 
 ## ESP-IDF limit on bus devices
 

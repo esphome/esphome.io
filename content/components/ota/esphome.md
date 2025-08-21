@@ -7,8 +7,6 @@ params:
     image: system-update.svg
 ---
 
-
-
 {{< anchor "config-ota_esphome" >}}
 
 ESPHome's Over-The-Air (OTA) platform allows you to remotely install modified/updated firmware binaries onto your
@@ -39,12 +37,13 @@ ota:
   - `8892` for Beken chips
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
-   ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`  .
+   ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
+
 - All [automations](#automation) supported by {{< docref "/components/ota" >}}.
 
 {{< note >}}
 After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
-update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`  , the ESP module/board
+update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
 must be power-cycled.
 
 {{< /note >}}

@@ -7,8 +7,6 @@ params:
     image: speaker.svg
 ---
 
-
-
 The `speaker` domain contains common functionality shared across the
 speaker platforms.
 

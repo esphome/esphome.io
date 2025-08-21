@@ -6,8 +6,6 @@ params:
     description: Configuration for the ESP32-P4 LDO peripherals for ESPHome.
 ---
 
-
-
 The ESP32-P4 has 4 Low-Dropout linear regulators that can be used to power on- and off-chip peripherals. This
 component allows those regulators to be configured and enabled.
 

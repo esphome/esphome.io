@@ -7,8 +7,6 @@ params:
     image: libretiny.svg
 ---
 
-
-
 This component contains platform-specific options for the [LibreTiny](https://docs.libretiny.eu/) platform.
 It provides support for the following microcontrollers, commonly used in Tuya devices, amongst others:
 
@@ -42,12 +40,12 @@ ln882x:
   (the icon next to the name can be used to copy the board ID).
 
   **This affects CPU selection and some internal settings** - make sure to choose the right CPU.
-  If unsure about the choice of a particular board, choose a generic board such as `generic-bk7231n-qfn32-tuya`  .
+  If unsure about the choice of a particular board, choose a generic board such as `generic-bk7231n-qfn32-tuya`.
 
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome.
 
   - **version** (*Optional*, string): The LibreTiny version number to use, from
-    [LibreTiny platform releases](https://github.com/kuba2k2/libretiny/releases). Defaults to `recommended`  . Additional values
+    [LibreTiny platform releases](https://github.com/kuba2k2/libretiny/releases). Defaults to `recommended`. Additional values
 
     - `dev`  : Use the latest commit from <https://github.com/kuba2k2/libretiny>, note this may break at any time
     - `latest`  : Use the latest *release* from <https://github.com/kuba2k2/libretiny/releases>, even if it hasn't been recommended yet.
@@ -58,7 +56,7 @@ ln882x:
   - [Advanced options](#advanced-options)
 
 - **family** (*Optional*, string): The family of LibreTiny-supported microcontrollers that is used on this board.
-  One of `bk7231n`  , `bk7231t`  , `rtl8710b`  , `rtl8720c`  , `bk7251`  , `bk7231q`  , `ln882hki`  .
+  One of `bk7231n`, `bk7231t`, `rtl8710b`, `rtl8720c`, `bk7251`, `bk7231q`, `ln882hki`.
   Defaults to the variant that is detected from the board, if a board that's unknown to ESPHome is used,
   this option is mandatory. **It's recommended not to include this option**.
 
@@ -114,6 +112,7 @@ Some notes about the pins on RTL8710BN/BX:
 
 - `TX2 (PA30)` and `RX2 (PA29)` are used for flashing the firmware,
   as well as the default {{< docref "/components/logger" >}} UART port.
+
 - `TX2 (PA30)` is additionally used to determine the boot mode on startup (similar to ESP32).
   Pulling it LOW on startup will enter "download mode".
 
@@ -121,6 +120,7 @@ Some notes about the pins on LN882H:
 
 - `TX0 (PA2)` and `RX0 (PA3)` are used for flashing the firmware,
   as well as the default {{< docref "/components/logger" >}} UART port.
+
 - `BOOT1 (PA9)` is additionally used to determine the boot mode on startup (similar to ESP32).
   Pulling it LOW on startup will enter "download mode".
 
@@ -191,14 +191,14 @@ bk72xx:
 
 - **loglevel** (*Optional*, string): Logging level for LibreTiny core. Controls the output of logging messages
   from the core (doesn't affect ESPHome logger!). *These messages are only visible on the physical UART*.
-  One of `verbose`  , `trace` (same as `verbose`  ), `debug`  , `info`  ,
-  `warn` (default), `error`  , `fatal`  , `none`  .
+  One of `verbose`, `trace` (same as `verbose`  ), `debug`, `info`,
+  `warn` (default), `error`, `fatal`, `none`.
 
 - **debug** (*Optional*, string or string list): Modules to enable LibreTiny debugging for.
   Refer to [LibreTiny/Configuration](https://docs.libretiny.eu/link/config-debug)
   for more information - some modules are enabled by default.
-  One or more of `wifi`  , `client`  , `server`  , `ssl`  , `ota`  , `fdb`  ,
-  `mdns`  , `lwip`  , `lwip_assert`  .
+  One or more of `wifi`, `client`, `server`, `ssl`, `ota`, `fdb`,
+  `mdns`, `lwip`, `lwip_assert`.
   Specifying `none` will disable all modules. You can also combine `none` with one or more of the modules.
 
 - **sdk_silent** (*Optional*, string): Define the SDK logging "silent mode".
@@ -216,7 +216,7 @@ bk72xx:
   One of 0, 1, 2. The default value is chip-specific and is chosen by LibreTiny appropriately.
 
 - **gpio_recover** (*Optional*, boolean): Disable JTAG/SWD debugging peripherals. This may be needed
-  to free GPIOs that should be used for other functions. Defaults to `true`  .
+  to free GPIOs that should be used for other functions. Defaults to `true`.
 
 - **options** (*Optional*, mapping): Custom options passed to LibreTiny platform.
   Refer to [LibreTiny/Configuration](https://docs.libretiny.eu/link/config) to see all options.

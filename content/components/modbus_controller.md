@@ -7,8 +7,6 @@ params:
     image: modbus.png
 ---
 
-
-
 The `modbus_controller` component creates a RS485 connection to either:
 
 - control a Modbus server (slave) device, letting your ESPHome node to act as a Modbus client (master). You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
@@ -26,18 +24,18 @@ You need an RS485 transceiver module:
 
 See [How is this RS485 module working?](https://electronics.stackexchange.com/questions/244425/how-is-this-rs485-module-working) on stackexchange for more details.
 
-The transceiver connects to the UART of the MCU. For ESP32, pin `16` to `TXD` and pin `17` to `RXD` are the default ones but any other pins can be used as well. `3.3V` to `VCC` and naturally `GND` to `GND`  .
+The transceiver connects to the UART of the MCU. For ESP32, pin `16` to `TXD` and pin `17` to `RXD` are the default ones but any other pins can be used as well. `3.3V` to `VCC` and naturally `GND` to `GND`.
 
 On the bus side, you need 120 Ohm termination resistors at the ends of the bus cable as per Modbus standard. Some transceivers have this already soldered onboard, while some slave devices may have them available via a jumper or a DIP switch.
 
 {{< note >}}
-If you are using an ESP8266, serial logging may cause problems reading from UART. For best results, hardware serial is recommended. Software serial may not be able to read all received data if other components spend a lot of time in the `loop()`  .
+If you are using an ESP8266, serial logging may cause problems reading from UART. For best results, hardware serial is recommended. Software serial may not be able to read all received data if other components spend a lot of time in the `loop()`.
 
-For hardware serial only a limited set of pins can be used. Either `tx_pin: GPIO1` and `rx_pin: GPIO3`  or `tx_pin: GPIO15` and `rx_pin: GPIO13`  .
+For hardware serial only a limited set of pins can be used. Either `tx_pin: GPIO1` and `rx_pin: GPIO3`  or `tx_pin: GPIO15` and `rx_pin: GPIO13`.
 
 The disadvantage of using the hardware UART is that you can't use serial logging because the serial logs would be sent to the Modbus device(s) instead, causing errors.
 
-Serial logging can be disabled by setting `baud_rate: 0`  .
+Serial logging can be disabled by setting `baud_rate: 0`.
 
 See {{< docref "logger/" >}} for more details
 
@@ -55,9 +53,9 @@ logger:
 
 - **address** (**Required**, [ID](#config-id)): The Modbus address of the slave device.
 
-- **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to `false`  .
+- **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to `false`.
 
-- **command_throttle** (*Optional*, [Time](#config-time)): minimum time in between 2 requests to the device. Default is `0ms`  .
+- **command_throttle** (*Optional*, [Time](#config-time)): minimum time in between 2 requests to the device. Default is `0ms`.
   Some Modbus slave devices limit the rate of requests from the master, so this allows the interval between requests to be altered.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval that the sensors should be checked.
@@ -89,12 +87,13 @@ logger:
     - `FP32`  : 32 bit IEEE 754 floating point, 2 registers, `float`
     - `FP32_R`  : **little endian** 32 bit IEEE 754 floating point, 2 registers, `float`
 
-    Defaults to `U_WORD`  .
+    Defaults to `U_WORD`.
 
   - **read_lambda** (**Required**, [lambda](#config-lambda)):
     Lambda that returns the value of this register.
+
   - **write_lambda** (*Optional*, [lambda](#config-lambda)):
-    Lambda that sets the value of this register. A variable `x` of the appropriate type (`uint16_t`  , `int32_t`  , etc, see above) is provided with the value,
+    Lambda that sets the value of this register. A variable `x` of the appropriate type (`uint16_t`, `int32_t`, etc, see above) is provided with the value,
     as well as `address` containing the address of this register. You must return `true` if the operation was successful, `false` otherwise, in which case
     a ModBUS exception code `4` will be sent to the client.
 
@@ -218,22 +217,22 @@ Some devices use decimal values in read registers to show multiple binary states
 | ---------- | ---------------- | --------- | --------- |
 | bit 0      | Binary Sensor 0  | 1         | 1         |
 | bit 1      | Binary Sensor 1  | 2         | 2         |
-| bit 2      | Binary Sensor 2  | 4         | 4         |
-| bit 3      | Binary Sensor 3  | 8         | 8         |
-| bit 4      | Binary Sensor 4  | 16        | 10        |
-| bit 5      | Binary Sensor 5  | 32        | 20        |
-| bit 6      | Binary Sensor 6  | 64        | 40        |
-| bit 7      | Binary Sensor 7  | 128       | 80        |
-| bit 8      | Binary Sensor 8  | 256       | 100       |
-| bit 9      | Binary Sensor 9  | 512       | 200       |
-| bit 10     | Binary Sensor 10 | 1024      | 400       |
-| bit 11     | Binary Sensor 11 | 2048      | 800       |
-| bit 12     | Binary Sensor 12 | 4096      | 1000      |
-| bit 13     | Binary Sensor 13 | 8192      | 2000      |
-| bit 14     | Binary Sensor 14 | 16384     | 4000      |
-| bit 15     | Binary Sensor 15 | 32768     | 8000      |
+| bit 2 | Binary Sensor 2 | 4 | 4 |
+| bit 3 | Binary Sensor 3 | 8 | 8 |
+| bit 4 | Binary Sensor 4 | 16 | 10 |
+| bit 5 | Binary Sensor 5 | 32 | 20 |
+| bit 6 | Binary Sensor 6 | 64 | 40 |
+| bit 7 | Binary Sensor 7 | 128 | 80 |
+| bit 8 | Binary Sensor 8 | 256 | 100 |
+| bit 9 | Binary Sensor 9 | 512 | 200 |
+| bit 10 | Binary Sensor 10 | 1024 | 400 |
+| bit 11 | Binary Sensor 11 | 2048 | 800 |
+| bit 12 | Binary Sensor 12 | 4096 | 1000 |
+| bit 13 | Binary Sensor 13 | 8192 | 2000 |
+| bit 14 | Binary Sensor 14 | 16384 | 4000 |
+| bit 15 | Binary Sensor 15 | 32768 | 8000 |
 
-In the example below, register `15`  , holds several binary values. It stores the decimal value `12288`  , which is the sum of `4096` + `8192`  , meaning the corresponding bits `12` and `13` are `1`  , the other bits are `0`  .
+In the example below, register `15`, holds several binary values. It stores the decimal value `12288`, which is the sum of `4096` + `8192`, meaning the corresponding bits `12` and `13` are `1`, the other bits are `0`.
 
 To gather some of these bits as binary sensors in ESPHome, use `bitmask`  :
 
@@ -340,7 +339,7 @@ sensors:
 
 `register_count` is an option only required for uncommon response encodings or to optimizie modbus communications.
 
-It describes the number of registers this data point spans, overriding the defaults determined by `value_type`  . If no value for `register_count` is provided, it is calculated based on the register type. The default size for one register is 16 bits (one word). Some devices are not adhering to this convention and have registers larger than 16 bits. In this case, `register_count` and  `response_size` must be set. For example, if your Modbus device uses one register for a FP32 value (instead of the default of two), set `register_count: 1` and `response_size: 4`  .
+It describes the number of registers this data point spans, overriding the defaults determined by `value_type`. If no value for `register_count` is provided, it is calculated based on the register type. The default size for one register is 16 bits (one word). Some devices are not adhering to this convention and have registers larger than 16 bits. In this case, `register_count` and `response_size` must be set. For example, if your Modbus device uses one register for a FP32 value (instead of the default of two), set `register_count: 1` and `response_size: 4`.
 
 `register_count` can also be used to skip a number of registers in consecutive range.
 
@@ -496,12 +495,12 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 | --------- | -------------------------------------- |
 | 0x1  (01) | device address                         |
 | 0x4  (04) | function code 4 (Read Input Registers) |
-| 0x30 (48) | start address high byte                |
-| 0x0  (00) | start address low byte                 |
-| 0x0  (00) | number of registers to read high byte  |
-| 0x9  (09) | number of registers to read low byte   |
-| 0x3f (63) | crc                                    |
-| 0xc  (12) | crc                                    |
+| 0x30 (48) | start address high byte |
+| 0x0 (00) | start address low byte |
+| 0x0 (00) | number of registers to read high byte |
+| 0x9 (09) | number of registers to read low byte |
+| 0x3f (63) | crc |
+| 0xc (12) | crc |
 
 **Response:**
 
@@ -509,27 +508,27 @@ The response is mapped to the sensor based on `register_count` and offset in byt
 | ------ | ---------- | ------------------ | ------------------------------------------ |
 | H      | 0x1  (01)  |                    | device address                             |
 | H      | 0x4  (04)  |                    | function code                              |
-| H      | 0x12 (18)  |                    | byte count                                 |
-| 0      | 0x27 (39)  | U_WORD             | array_rated_voltage  high byte             |
-| 1      | 0x10 (16)  | 0x2710 (100000)    | array_rated_voltage  low byte              |
-| 2      | 0x7  (7)   | U_WORD             | array_rated_current  high byte             |
-| 3      | 0xd0 (208) | 0x7d0 (2000)       | array_rated_current  low byte              |
-| 4      | 0xcb (203) | U_DWORD_R          | array_rated_power high byte of low word    |
-| 5      | 0x20 (32)  | spans 2 register   | array_rated_power low byte of low word     |
-| 6      | 0x0  (0)   |                    | array_rated_power high byte of high word   |
-| 7      | 0x0  (0)   | 0x0000CB20 (52000) | array_rated_power low byte of high word    |
-| 8      | 0x9  (09)  | U_WORD             | battery_rated_voltage high byte            |
-| 9      | 0x60 (96)  | 0x960 (2400)       | battery_rated_voltage low byte             |
-| 10     | 0x7  (07)  | U_WORD             | battery_rated_current high word            |
-| 11     | 0xd0 (208) | 0x7d0 (2000)       | battery_rated_current high word            |
-| 12     | 0xcb (203) | U_DWORD_R          | battery_rated_power high byte of low word  |
-| 13     | 0x20 (32)  | spans 2 register   | battery_rated_power low byte of low word   |
-| 14     | 0x0  (0)   |                    | battery_rated_power high byte of high word |
-| 15     | 0x0  (0)   | 0x0000CB20 (52000) | battery_rated_power low byte of high word  |
-| 16     | 0x0  (0)   | U_WORD             | charging_mode high byte                    |
-| 17     | 0x2  (02)  | 0x2 (MPPT)         | charging_mode low  byte                    |
-| C      | 0x2f (47)  |                    | crc                                        |
-| C      | 0x31 (49)  |                    | crc                                        |
+| H | 0x12 (18) | | byte count |
+| 0 | 0x27 (39) | U_WORD | array_rated_voltage high byte |
+| 1 | 0x10 (16) | 0x2710 (100000) | array_rated_voltage low byte |
+| 2 | 0x7 (7) | U_WORD | array_rated_current high byte |
+| 3 | 0xd0 (208) | 0x7d0 (2000) | array_rated_current low byte |
+| 4 | 0xcb (203) | U_DWORD_R | array_rated_power high byte of low word |
+| 5 | 0x20 (32) | spans 2 register | array_rated_power low byte of low word |
+| 6 | 0x0 (0) | | array_rated_power high byte of high word |
+| 7 | 0x0 (0) | 0x0000CB20 (52000) | array_rated_power low byte of high word |
+| 8 | 0x9 (09) | U_WORD | battery_rated_voltage high byte |
+| 9 | 0x60 (96) | 0x960 (2400) | battery_rated_voltage low byte |
+| 10 | 0x7 (07) | U_WORD | battery_rated_current high word |
+| 11 | 0xd0 (208) | 0x7d0 (2000) | battery_rated_current high word |
+| 12 | 0xcb (203) | U_DWORD_R | battery_rated_power high byte of low word |
+| 13 | 0x20 (32) | spans 2 register | battery_rated_power low byte of low word |
+| 14 | 0x0 (0) | | battery_rated_power high byte of high word |
+| 15 | 0x0 (0) | 0x0000CB20 (52000) | battery_rated_power low byte of high word |
+| 16 | 0x0 (0) | U_WORD | charging_mode high byte |
+| 17 | 0x2 (02) | 0x2 (MPPT) | charging_mode low byte |
+| C | 0x2f (47) | | crc |
+| C | 0x31 (49) | | crc |
 
 {{< note >}}
 Write support is only implemented for switches and selects; however, the C++ code provides the required API to write to a Modbus device.
@@ -681,7 +680,7 @@ sensor:
 ### `on_command_sent`
 
 This automation will be triggered when a command has been sent by the `modbus_controller`. In [Lambdas](#config-lambda)
-you can get the function code in `function_code` and the register address in `address`  .
+you can get the function code in `function_code` and the register address in `address`.
 
 ```yaml
 modbus_controller:
@@ -696,8 +695,8 @@ modbus_controller:
 
 ### `on_online`
 
-This automation will be triggered when a `modbus_controller` goes `online`  , after been `offline`  . In [Lambdas](#config-lambda)
-you can get the function code in `function_code` and the register address in `address`  .
+This automation will be triggered when a `modbus_controller` goes `online`, after been `offline`. In [Lambdas](#config-lambda)
+you can get the function code in `function_code` and the register address in `address`.
 
 ```yaml
 modbus_controller:
@@ -713,7 +712,7 @@ modbus_controller:
 ### `on_offline`
 
 This automation will be triggered when a `modbus_controller` goes `offline` (See [offline_skip_updates](#modbus_controller-offline_skip_updates)). In [Lambdas](#config-lambda)
-you can get the function code in `function_code` and the register address in `address`  .
+you can get the function code in `function_code` and the register address in `address`.
 
 ```yaml
 modbus_controller:

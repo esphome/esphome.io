@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 With ESPHome you can use different types of binary sensors. They will
 automatically appear in the Home Assistant front-end and have several
 configuration options.
@@ -34,13 +32,14 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the binary sensor to use that name, you can set `name: None`  .
+you want the binary sensor to use that name, you can set `name: None`.
 
 {{< /note >}}
 
 - **device_class** (*Optional*, string): The device class for the
   sensor. See <https://www.home-assistant.io/integrations/binary_sensor/#device-class>
   for a list of available options.
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the binary sensor in the frontend.
 - **filters** (*Optional*, list): A list of filters to apply on the binary sensor values such as
   inverting signals. See [Binary Sensor Filters](#binary_sensor-filters).
@@ -49,16 +48,21 @@ Automations:
 
 - **on_press** (*Optional*, [Automation](#automation)): An automation to perform
   when the button is pressed. See [`on_press`](#binary_sensor-on_press).
+
 - **on_release** (*Optional*, [Automation](#automation)): An automation to perform
   when the button is released. See [`on_release`](#binary_sensor-on_release).
+
 - **on_state** (*Optional*, [Automation](#automation)): An automation to perform
   when a state change is published. See [`on_state`](#binary_sensor-on_state).
+
 - **on_click** (*Optional*, [Automation](#automation)): An automation to perform
   when the button is held down for a specified period of time.
   See [`on_click`](#binary_sensor-on_click).
+
 - **on_double_click** (*Optional*, [Automation](#automation)): An automation to perform
   when the button is pressed twice for specified periods of time.
   See [`on_double_click`](#binary_sensor-on_double_click).
+
 - **on_multi_click** (*Optional*, [Automation](#automation)): An automation to perform
   when the button is pressed in a specific sequence.
   See [`on_multi_click`](#binary_sensor-on_multi_click).
@@ -68,17 +72,21 @@ Advanced options:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **trigger_on_initial_state** (*Optional*, boolean): If true, any applicable triggers will be fired when the binary sensor
   state changes from `unknown` to a valid state. This applies to the first valid state set, and any valid state set after
-  a `binary_sensor.invalidate_state` action has been excuted. The default is `false`  .
-  **publish_initial_state** (*Optional*, boolean): A deprecated equivalent to `trigger_on_initial_state`  .
+  a `binary_sensor.invalidate_state` action has been excuted. The default is `false`.
+  **publish_initial_state** (*Optional*, boolean): A deprecated equivalent to `trigger_on_initial_state`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - If MQTT enabled, all other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
@@ -89,7 +97,7 @@ Advanced options:
 ### `binary_sensor.invalidate_state` Action
 
 This action will invalidate the current state of the sensor. It is most useful with the Template binary sensor.
-After the state is invalidated, it will be reported to Home Assistant as `unknown`  . Example:
+After the state is invalidated, it will be reported to Home Assistant as `unknown`. Example:
 
 ```yaml
 on_...:
@@ -213,9 +221,9 @@ set to default values.
 
 Configuration variables:
 
-- **delay** (*Optional*, [Time](#config-time)): Delay to proceed to the next timing. Defaults to `1s`  .
-- **time_off** (*Optional*, [Time](#config-time)): Interval to hold the output at OFF. Defaults to `100ms`  .
-- **time_on** (*Optional*, [Time](#config-time)): Interval to hold the output at ON. Defaults to `900ms`  .
+- **delay** (*Optional*, [Time](#config-time)): Delay to proceed to the next timing. Defaults to `1s`.
+- **time_off** (*Optional*, [Time](#config-time)): Interval to hold the output at OFF. Defaults to `100ms`.
+- **time_on** (*Optional*, [Time](#config-time)): Interval to hold the output at ON. Defaults to `900ms`.
 
 ### `lambda`
 
@@ -243,7 +251,7 @@ The triggers for binary sensors in ESPHome use the lingo from computer mouses.
 For example, a `press` is triggered in the first moment when the button on your mouse is pushed down.
 
 You can access the current state of the binary sensor in [lambdas](#config-lambda) using
-`id(binary_sensor_id).state`  .
+`id(binary_sensor_id).state`.
 
 {{< anchor "binary_sensor-on_press" >}}
 
@@ -330,7 +338,7 @@ Configuration variables: See [Automation](#automation).
 ### `on_click`
 
 This automation will be triggered when a button is pressed down for a time period of length
-`min_length` to `max_length`  . Any click longer or shorter than this will not trigger the automation.
+`min_length` to `max_length`. Any click longer or shorter than this will not trigger the automation.
 The automation is therefore also triggered on the falling edge of the signal.
 
 ```yaml
@@ -346,8 +354,8 @@ binary_sensor:
 
 Configuration variables:
 
-- **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`  .
-- **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`  .
+- **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`.
+- **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`.
 - See [Automation](#automation).
 
 {{< note >}}
@@ -375,8 +383,8 @@ binary_sensor:
 ### `on_double_click`
 
 This automation will be triggered when a button is pressed down twice, with the first click lasting between
-`min_length` and `max_length`  . When a second leading edge then happens within `min_length` and
-`max_length`  , the automation is triggered.
+`min_length` and `max_length`. When a second leading edge then happens within `min_length` and
+`max_length`, the automation is triggered.
 
 ```yaml
 binary_sensor:
@@ -391,8 +399,8 @@ binary_sensor:
 
 Configuration variables:
 
-- **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`  .
-- **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`  .
+- **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`.
+- **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`.
 - See [Automation](#automation).
 
 {{< anchor "binary_sensor-on_multi_click" >}}
@@ -426,12 +434,13 @@ Configuration variables:
 
 - **invalid_cooldown** (*Optional*, [Time](#config-time)): If a multi click is started, but the timing
   set in `timing` does not match, a "cool down" period will be activated during which no timing
-  will be matched. Defaults to `1s`  .
+  will be matched. Defaults to `1s`.
+
 - See [Automation](#automation).
 
 {{< note >}}
 Getting the timing right for your use-case can sometimes be a bit difficult. If you set the
-[global log level](#logger-log_levels) to `VERBOSE`  , the multi click trigger shows logs
+[global log level](#logger-log_levels) to `VERBOSE`, the multi click trigger shows logs
 about what stopped the trigger from happening.
 
 {{< /note >}}

@@ -7,15 +7,13 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 Home Assistant can expand its Bluetooth reach by communicating through the Bluetooth proxy component in ESPHome.
 The individual device integrations in Home Assistant (such as BTHome) will receive the data from the Bluetooth
 Integration in Home Assistant which automatically aggregates all ESPHome Bluetooth proxies with any USB Bluetooth
 Adapters you might have. This exceptional feature offers fault tolerant connection between the Bluetooth devices
 and Home Assistant.
 
-Note that while this component is named `bluetooth_proxy`  , only BLE devices (and their Home Assistant integrations)
+Note that while this component is named `bluetooth_proxy`, only BLE devices (and their Home Assistant integrations)
 are supported.
 
 If you're looking to create an ESPHome node that is just a Bluetooth Proxy, see
@@ -32,7 +30,7 @@ separately from these, and is not limited to a specific number.
 
 The {{< docref "esp32/" >}} component should be configured to use the `esp-idf` framework, as the `arduino` framework
 uses significantly more memory and performs poorly with the Bluetooth proxy enabled. When switching from
-`arduino` to `esp-idf`  , make sure to update the device with a serial cable as the partition table is
+`arduino` to `esp-idf`, make sure to update the device with a serial cable as the partition table is
 different between the two frameworks as {{< docref "/components/ota" >}} updates will not change the partition table.
 
 The {{< docref "web_server/" >}} component should be disabled as the device is likely
@@ -49,12 +47,12 @@ please search for it in the [Home Assistant Integrations](https://www.home-assis
 bluetooth_proxy:
 ```
 
-- **active** (*Optional*, boolean): Enables proxying active connections. Defaults to `false`  .
+- **active** (*Optional*, boolean): Enables proxying active connections. Defaults to `false`.
 - **cache_services** (*Optional*, boolean): Enables caching GATT services in NVS flash storage which significantly speeds up active connections. Defaults to `true` when using the ESP-IDF framework.
 - **connection_slots** (*Optional*, int): The maximum number of BLE connection slots to use.
   Each configured slot consumes ~1KB of RAM. This can only be adjusted when using
-  the `esp-idf` framework up to a maximum of `9`  . It is recommended not to exceed `5`
-  connection slots to avoid memory issues. Defaults to `3`  .
+  the `esp-idf` framework up to a maximum of `9`. It is recommended not to exceed `5`
+  connection slots to avoid memory issues. Defaults to `3`.
   The value must not exceed the total configured `max_connections`
   for {{< docref "esp32_ble_tracker/" >}}.
 

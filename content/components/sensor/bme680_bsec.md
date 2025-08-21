@@ -7,8 +7,6 @@ params:
     image: bme680.jpg
 ---
 
-
-
 ## Component/Hub
 
 The `bme680_bsec` sensor platform allows you to use your BME680
@@ -90,15 +88,15 @@ text_sensor:
 
 Configuration variables:
 
-- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`  . Another address can be `0x77`  .
+- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`. Another address can be `0x77`.
 
 - **temperature_offset** (_Optional_, float): Temperature offset if device is in enclosure and reads too high. This value is subtracted
-  from the reading (e.g. if the sensor reads 5°C higher than expected, set this to `5`  ) and also corrects the relative humidity readings. Defaults to `0`  .
+  from the reading (e.g. if the sensor reads 5°C higher than expected, set this to `5`  ) and also corrects the relative humidity readings. Defaults to `0`.
 
 - **iaq_mode** (_Optional_, string): IAQ calculation mode. Default is `static` for static applications (e.g. fixed indoor devices).
   Can be `mobile` for mobile applications (e.g. carry-on devices).
 
-- **supply_voltage** (_Optional_, string): Supply voltage of the sensor. Default is `3.3V`  .
+- **supply_voltage** (_Optional_, string): Supply voltage of the sensor. Default is `3.3V`.
   Can be set to `1.8V` if your sensor is 1.8V-powered (e.g. the Pimoroni PIM357 BME680 Breakout module).
 
 - **sample_rate** (_Optional_, string): Sample rate. Default is `lp` for low power consumption, sampling every 3 seconds.
@@ -107,7 +105,7 @@ Configuration variables:
   By default, this rate will also be used for temperature, pressure, and humidity sensors but these can be overridden on a per-sensor level if required.
 
 - **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save calibrated BSEC algorithm state to
-  flash so that calibration doesn't have to start from zero on device restart. Defaults to `6h`  .
+  flash so that calibration doesn't have to start from zero on device restart. Defaults to `6h`.
 
 - **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor section to refer to the correct BME680 if you have more than one device. This will also be used to refer to the calibrated BSEC algorithm state saved to flash.
 
@@ -285,7 +283,7 @@ text_sensor:
 
 ## Multiple sensors
 
-The following configuration shows how to set up multiple BME680 devices. They can be configured to use the same I²C bus or to use different busses, but remember that the BME680 can only be set to operate on I²C address `0x76` or `0x77`  . There is no limit on the number of BME680 devices that can be connected.
+The following configuration shows how to set up multiple BME680 devices. They can be configured to use the same I²C bus or to use different busses, but remember that the BME680 can only be set to operate on I²C address `0x76` or `0x77`. There is no limit on the number of BME680 devices that can be connected.
 
 ```yaml
 # I2C bus for the BME680 devices
@@ -355,18 +353,18 @@ text_sensor:
 
 The measurements are expressed with an index scale ranging from 0 to 500. The index itself is deduced
 from tests using ethanol gas, as well as important VOC in the exhaled breath of healthy humans.
-The VOC values themselves are derived from several publications on breath analysis studies.  The BSEC
+The VOC values themselves are derived from several publications on breath analysis studies. The BSEC
 software library defines the levels as follows:
 
 | IAQ Index | Air Quality         |
 | --------- | ------------------- |
 | 0 - 50    | Excellent           |
 | 51 - 100  | Good                |
-| 101 - 150 | Lightly polluted    |
+| 101 - 150 | Lightly polluted |
 | 151 - 200 | Moderately polluted |
-| 201 - 250 | Heavily polluted    |
-| 251 - 350 | Severely polluted   |
-| > 351     | Extremely polluted  |
+| 201 - 250 | Heavily polluted |
+| 251 - 350 | Severely polluted |
+| > 351 | Extremely polluted |
 
 The selected b-VOC gasses are as follows:
 
@@ -374,9 +372,9 @@ The selected b-VOC gasses are as follows:
 | ------------------ | -------------- |
 | `Ethane`_          | 5 ppm          |
 | `Isoprene`_        | 10 ppm         |
-| `Ethanol`_         | 10 ppm         |
-| `Acetone`_         | 50 ppm         |
-| `Carbon Monoxide`_ | 15 ppm         |
+| `Ethanol`_ | 10 ppm |
+| `Acetone`_ | 50 ppm |
+| `Carbon Monoxide`_ | 15 ppm |
 
 {{< anchor "bsec-calibration" >}}
 
@@ -389,10 +387,11 @@ level and a value of 200 to a “typical polluted” level. The IAQ Accuracy sen
 - `Stabilizing`  : The device has just started, and the sensor is stabilizing (this typically lasts 5 minutes)
 - `Uncertain`  : The background history of BSEC is uncertain. This typically means the gas sensor data was too
   stable for BSEC to clearly define its reference.
+
 - `Calibrating`  : BSEC found new calibration data and is currently calibrating.
 - `Calibrated`  : BSEC calibrated successfully.
 
-Every `state_save_interval`  , or as soon thereafter as full calibration is reached, the current algorithm state is saved to flash
+Every `state_save_interval`, or as soon thereafter as full calibration is reached, the current algorithm state is saved to flash
 so that the process does not have to start from zero on device restart.
 
 ## See Also

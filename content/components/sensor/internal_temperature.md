@@ -7,8 +7,6 @@ params:
     image: thermometer.svg
 ---
 
-
-
 The `internal_temperature` sensor platform allows you to use the integrated
 temperature sensor of the ESP32, RP2040 and BK72XX chip.
 
@@ -29,7 +27,8 @@ sensor:
 ## Configuration variables
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval
-  to check the sensor. Defaults to `60s`  .
+  to check the sensor. Defaults to `60s`.
+
 - All other options from [Sensor](#config-sensor).
 
 ## See Also

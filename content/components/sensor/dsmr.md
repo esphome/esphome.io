@@ -7,8 +7,6 @@ params:
     image: dsmr.svg
 ---
 
-
-
 ## Component/Hub
 
 The DSMR component connects to Dutch Smart Meters which comply to DSMR (Dutch Smart Meter
@@ -45,21 +43,27 @@ Configuration variables:
 
 - **decryption_key** (*Optional*, string, [templatable](#config-templatable), 32 characters, case insensitive): The key to decrypt the
   telegrams. Used in Lux only.
-- **gas_mbus_id** (*Optional*, int): The id of the gas meter. Defaults to `1`  .
+
+- **gas_mbus_id** (*Optional*, int): The id of the gas meter. Defaults to `1`.
 - **crc_check** (*Optional*, boolean): Specifies if the CRC check must be done. This is required to be set to false for
-  older DSMR versions as they do not provide a CRC. Defaults to `true`  .
+  older DSMR versions as they do not provide a CRC. Defaults to `true`.
+
 - **max_telegram_length** (*Optional*, integer): The size of the buffer used for reading DSMR telegrams. Increase
-  if you are reading from a smart meter that sends large telegrams. Defaults to `1500`  .
+  if you are reading from a smart meter that sends large telegrams. Defaults to `1500`.
+
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - **request_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin that can be used for controlling
   the P1 port's Data Request pin. Defaults to not using a Data Request pin.
   See [Using the P1 Data Request pin](#sensor-dsmr-request_pin).
+
 - **request_interval** (*Optional*, [Time](#config-time)): The minimum time between two telegram readings.
-  Defaults to `0ms`  , meaning that the pace at which the smart meter sends its data determines the update frequency.
-  This works best in combination with a `request_pin`  , but this option will work without one too.
+  Defaults to `0ms`, meaning that the pace at which the smart meter sends its data determines the update frequency.
+  This works best in combination with a `request_pin`, but this option will work without one too.
+
 - **receive_timeout** (*Optional*, [Time](#config-time)): The timeout on incoming data while reading a telegram.
   When no new data arrive within the given timeout, the device will consider the current telegram a loss and
-  starts looking for the header of the next telegram. Defaults to `200ms`  .
+  starts looking for the header of the next telegram. Defaults to `200ms`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the DSMR if you have multiple components.
 
 ## Sensor
@@ -315,6 +319,7 @@ will stop immediately in such case.
 - After reading a telegram, the dsmr component will stop the data transfer until the telegram has been
   fully processed. This separates retrieving and processing data and can thus be seen as a form of
   hardware flow control.
+
 - The interval at which sensor readings must be updated can be controlled cleanly by only starting a data
   transfer when needed. This configuration option `request_interval` can be used to define this interval.
 
@@ -326,7 +331,7 @@ DSMR v5 meters will send a telegram every second.
 *Circuits that use this type of wiring cannot make use of the* `request_pin` *option.*
 
 However, when a circuit is used that allows switching the Data Request pin between +5V and high impedance
-mode from a GPIO, then this GPIO can be configured as the `request_pin`  .
+mode from a GPIO, then this GPIO can be configured as the `request_pin`.
 
 Best results have been achieved by using an optocoupler circuit to handle the switching. Direct GPIO output
 or a transistor-based circuit are not feasible options. Here's an example circuit design:

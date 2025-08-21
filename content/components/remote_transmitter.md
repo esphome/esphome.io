@@ -7,8 +7,6 @@ params:
     image: remote.svg
 ---
 
-
-
 The `remote_transmitter` component lets you send various common remote control signals, such as infrared
 or 433 MHz radio frequency (RF) signals.
 
@@ -38,6 +36,7 @@ remote_transmitter:
 - **carrier_duty_percent** (*Optional*, int): How much of the time the remote is on. For example, infrared protocols
   modulate the signal using a carrier signal. Set this to `50%` if you're using IR LEDs and `100%` for RF
   applications like 433 MHz transmitters.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
 
@@ -52,16 +51,17 @@ remote_transmitter:
 | ------------- | ---------------- | ---------- |
 | ESP32         | 512 symbols      | 64 symbols |
 | ESP32-C3      | 96 symbols       | 48 symbols |
-| ESP32-C5      | 96 symbols       | 48 symbols |
-| ESP32-C6      | 96 symbols       | 48 symbols |
-| ESP32-H2      | 96 symbols       | 48 symbols |
-| ESP32-P4      | 192 symbols      | 48 symbols |
-| ESP32-S2      | 256 symbols      | 64 symbols |
-| ESP32-S3      | 192 symbols      | 48 symbols |
+| ESP32-C5 | 96 symbols | 48 symbols |
+| ESP32-C6 | 96 symbols | 48 symbols |
+| ESP32-H2 | 96 symbols | 48 symbols |
+| ESP32-P4 | 192 symbols | 48 symbols |
+| ESP32-S2 | 256 symbols | 64 symbols |
+| ESP32-S3 | 192 symbols | 48 symbols |
 
-- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`  .
+- **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
+
 - **eot_level** (*Optional*, boolean): Overrides the default end of transmit level. Defaults to `false` unless `pin`
   is set to inverted or open-drain.
 
@@ -69,6 +69,7 @@ remote_transmitter:
 
 - **on_transmit** (*Optional*, [Automation](#automation)): An automation to perform before
   data is sent. Useful if the radio / IR hardware needs to change state or power on.
+
 - **on_complete** (*Optional*, [Automation](#automation)): An automation to perform after
   data has been sent. Useful if the radio / IR hardware needs to change state or power off.
 
@@ -140,21 +141,28 @@ on_...:
   see received messages for more info. For indoor stations the last byte of the address
   represents the apartment number set by the dials on the back of the indoor station and is
   transmitted in hexadecimal format.
+
 - **destination_address** (**Required**, int): The destination address to send the command to,
   see received messages for more info.
+
 - **three_byte_address** (*Optional*, boolean): The length of the source and destination address. `false`
   means two bytes and `true` means three bytes. Please check the received messages to see which address length
   is used by your system. For example, `[XXXX > XXXX]` appears in the receiver log for two byte addresses and
-  `[XXXXXX > XXXXXX]` for three byte addresses. Defaults to `false`  .
+  `[XXXXXX > XXXXXX]` for three byte addresses. Defaults to `false`.
+
 - **retransmission** (*Optional*, boolean): Should only be `true` if this message has been transmitted
-  before with the same `message_id`  . Typically, messages are transmitted up to three times with a 1 second
-  interval if no reply is received. Defaults to `false`  .
+  before with the same `message_id`. Typically, messages are transmitted up to three times with a 1 second
+  interval if no reply is received. Defaults to `false`.
+
 - **message_type** (**Required**, int): The message type, see dumper output for more info.
   The highest bit indicates a reply.
+
 - **message_id** (*Optional*, int): The message ID, see dumper output for more info.
   Defaults to a randomly generated ID if this message is not a reply or retransmission.
+
 - **data** (*Optional*, 0-7 bytes list): The code to send.
   Usually you only need to copy this directly from the dumper output. Defaults to `[]`
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< note >}}
@@ -181,7 +189,8 @@ on_...:
 - **address** (**Required**, int): The address to send the command to, see dumper output for more details.
 - **data** (**Required**, list): The command to send, A length of 2-35 bytes can be specified for one packet.
 - **carrier_frequency** (*Optional*, float): Set a frequency to send the signal
-  with for infrared signals. Defaults to `38000Hz`  .
+  with for infrared signals. Defaults to `38000Hz`.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 AEHA refers to the Association for Electric Home Appliances in Japan, a format used by Panasonic and many other
@@ -203,7 +212,7 @@ on_...:
 #### Configuration variables
 
 - **source** (**Required**, int): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
-- **command** (**Required**, int): The command to send, e.g. 0x01=num1, 0x0d=mute,...,  see dumper output for more info.
+- **command** (**Required**, int): The command to send, e.g. 0x01=num1, 0x0d=mute,..., see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_byronsx" >}}
@@ -249,7 +258,8 @@ on_...:
 
 - **device** (**Required**, int): The device to send to, see dumper output for more details.
 - **address** (*Optional*, int): The address (or sub-device) to send to, see dumper output for more details.
-  Defaults to `0`  .
+  Defaults to `0`.
+
 - **command** (**Required**, int): The command to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
@@ -277,7 +287,8 @@ on_...:
 
 - **device** (**Required**, int): The device to send to, see dumper output for more details.
 - **address** (*Optional*, int): The address (or sub-device) to send to, see dumper output for more details.
-  Defaults to `0`  .
+  Defaults to `0`.
+
 - **command** (**Required**, int): The command to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
@@ -298,8 +309,10 @@ on_...:
 
 - **first** (**Required**, [templatable](#config-templatable), uint32_t): The first 24-bit Coolix code to send;
   see dumper output for more info.
+
 - **second** (*Optional*, [templatable](#config-templatable), uint32_t): The second 24-bit Coolix code to send;
   see dumper output for more info.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_dish" >}}
@@ -317,7 +330,7 @@ on_...:
 
 #### Configuration variables
 
-- **address** (*Optional*, int): The number of the receiver to target, between 1 and 16 inclusive. Defaults to `1`  .
+- **address** (*Optional*, int): The number of the receiver to target, between 1 and 16 inclusive. Defaults to `1`.
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
@@ -346,6 +359,7 @@ on_...:
 - **button** (**Required**, int): The 4-bit button to send, between 0 and 15 inclusive.
 - **check** (**Required**, int): The 4-bit check to send. Includes an indication that a button is being held down.
   See dumper output for more info.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_drayton" >}}
@@ -477,7 +491,7 @@ on_...:
 #### Configuration variables
 
 - **data** (**Required**, int): The LG code to send, see dumper output for more info.
-- **nbits** (*Optional*, int): The number of bits to send. Defaults to `28`  .
+- **nbits** (*Optional*, int): The number of bits to send. Defaults to `28`.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_magiquest" >}}
@@ -495,9 +509,10 @@ on_...:
 
 #### Configuration variables
 
-- **wand_id** (**Required**, int): The wand ID to send, as a hex integer.  See the dumper output for your wand ID.
-- **magnitude** (*Optional*, int): The magnitude of swishes and swirls the wand should transmit.  See the dumper output
-  for examples.  If omitted, sends 0xFFFF (which the real wand never uses).
+- **wand_id** (**Required**, int): The wand ID to send, as a hex integer. See the dumper output for your wand ID.
+- **magnitude** (*Optional*, int): The magnitude of swishes and swirls the wand should transmit. See the dumper output
+  for examples. If omitted, sends 0xFFFF (which the real wand never uses).
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_midea" >}}
@@ -523,6 +538,7 @@ on_...:
 
 - **code** (**Required**, list, [templatable](#config-templatable)): The 40-bit Midea code to send as a list of
   hex or integers.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 ### `remote_transmitter.transmit_nec` **Action**
@@ -533,8 +549,8 @@ This [action](#config-action) sends an NEC infrared remote code to a remote tran
 In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with the NEC
 standard. Therefore, if the configuration file has come from an earlier version of ESPhome, it is necessary to
 reverse the order of the address and command bits when moving to 2021.12 or above. For example,
-`address: 0x84ED`  , `command: 0x13EC` becomes `0xB721` and `0x37C8`  , respectively. In additional, ESPHome
-does not automatically generate parity bits or pad values to 2 bytes. For example, to send command `0x0`  , you
+`address: 0x84ED`, `command: 0x13EC` becomes `0xB721` and `0x37C8`, respectively. In additional, ESPHome
+does not automatically generate parity bits or pad values to 2 bytes. For example, to send command `0x0`, you
 need to use `0xFF00` (`0x00` being the command and `0xFF` being the logical inverse).
 
 {{< /note >}}
@@ -552,7 +568,8 @@ on_...:
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
 - **command** (**Required**, int): The 16-bit NEC command to send.
 - **command_repeats** (*Optional*, int): The number of times the command bytes are sent in one transmission.
-  Defaults to `1`  .
+  Defaults to `1`.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 ### `remote_transmitter.transmit_nexa` **Action**
@@ -574,6 +591,7 @@ on_...:
 - **device** (**Required**, int): The Nexa device code to send, see dumper output for more info.
 - **state** (**Required**, int): The Nexa state code to send (0-OFF, 1-ON, 2-DIMMER LEVEL), see dumper output for more
   info.
+
 - **group** (**Required**, int): The Nexa group code to send, see dumper output for more info.
 - **channel** (**Required**, int): The Nexa channel code to send, see dumper output for more info.
 - **level** (**Required**, int): The Nexa level code to send, see dumper output for more info.
@@ -618,9 +636,11 @@ on_...:
 - **rc_code_1** (**Required**, int): The remote control code to send, see dumper output for more details.
 - **rc_code_2** (*Optional*, int): The secondary remote control code to send; some codes are sent in
   two parts.
+
 - Note that `repeat` is still optional, however **Pioneer devices may require that a given code is
   received multiple times before they will act on it.** Add this if your device does not respond to
   commands sent with this action.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 At the time this action was created, Pioneer maintained listings of [IR codes](https://www.pioneerelectronics.com/PUSA/Support/Home-Entertainment-Custom-Install/IR+Codes) used for their devices.
@@ -643,6 +663,7 @@ on_...:
 
 - **data** (**Required**, string): The raw code to send specified as a string. Many remote control Pronto codes can be
   found on <http://remotecentral.com>
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_raw" >}}
@@ -668,8 +689,10 @@ on_...:
 - **code** (**Required**, list): The raw code to send as a list of integers.
   Positive numbers represent a digital high signal and negative numbers a digital low signal.
   The number itself encodes how long the signal should last (in microseconds).
+
 - **carrier_frequency** (*Optional*, float): Optionally set a frequency to send the signal
-  with for infrared signals. Defaults to `0Hz`  .
+  with for infrared signals. Defaults to `0Hz`.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_rc5" >}}
@@ -729,6 +752,7 @@ on_...:
 - **code** (**Required**, string): The raw code to send, copy this from the dump output.
 - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
   for more information.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_a" >}}
@@ -754,6 +778,7 @@ on_...:
 - **state** (**Required**, boolean): The on/off state to send.
 - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
   for more information.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_b" >}}
@@ -779,6 +804,7 @@ on_...:
 - **state** (**Required**, boolean): The on/off state to send.
 - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
   for more information.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_c" >}}
@@ -800,12 +826,13 @@ on_...:
 
 #### Configuration variables
 
-- **family** (**Required**, string): The family to send the command to. Range is `a` to `p`  .
+- **family** (**Required**, string): The family to send the command to. Range is `a` to `p`.
 - **group** (**Required**, int): The group to send the command to. Range is 1 to 4.
 - **device** (**Required**, int): The device to send the command to. Range is 1 to 4.
 - **state** (**Required**, boolean): The on/off state to send.
 - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
   for more information.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_rc_switch_type_d" >}}
@@ -831,6 +858,7 @@ on_...:
 - **state** (**Required**, boolean): The on/off state to send.
 - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
   for more information.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_roomba" >}}
@@ -857,6 +885,7 @@ on_...:
 
 - While `repeat` is optional, **Roomba vacuums require that a given code is received at least three times before they
   will respond to it.** If your Roomba does not respond to the command, increase this value.
+
 - While `wait_time` is optional, the Roomba Remote uses a 17 ms wait time between commands. However, it appears to
   work without this parameter.
 
@@ -880,7 +909,7 @@ on_...:
 #### Configuration variables
 
 - **data** (**Required**, int): The data to send, see dumper output for more details.
-- **nbits** (*Optional*, int): The number of bits to send. Defaults to `32`  .
+- **nbits** (*Optional*, int): The number of bits to send. Defaults to `32`.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_samsung36" >}}
@@ -919,7 +948,7 @@ on_...:
 #### Configuration variables
 
 - **data** (**Required**, int): The Sony code to send, see dumper output for more info.
-- **nbits** (*Optional*, int): The number of bits to send. Defaults to `12`  .
+- **nbits** (*Optional*, int): The number of bits to send. Defaults to `12`.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_toshiba_ac" >}}
@@ -945,6 +974,7 @@ on_...:
 - **rc_code_1** (**Required**, int): The remote control code to send, see dumper output for more details.
 - **rc_code_2** (*Optional*, int): The secondary remote control code to send; some codes are sent in
   two parts.
+
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< anchor "remote_transmitter-transmit_mirage" >}}
@@ -1007,6 +1037,7 @@ on_...:
 
 - **transmitter_id** (*Optional*, [ID](#config-id)): The remote transmitter to set the pin value on. Defaults to
   the first one defined in the configuration.
+
 - **value** (**Required**, bool): The output value of the pin.
 
 {{< anchor "remote_transmitter-rc_switch-protocol" >}}
@@ -1017,14 +1048,16 @@ All RC Switch `protocol` settings have these settings:
 
 - Either the value is an integer, then the inbuilt protocol definition with the given number
   is used.
+
 - Or a key-value mapping is given, then there are these settings:
 
   - **pulse_length** (**Required**, int): The pulse length of the protocol - how many microseconds
     one pulse should last for.
+
   - **sync** (*Optional*): The number of high/low pulses for the sync header, defaults to `[1, 31]`
   - **zero** (*Optional*): The number of high/low pulses for a zero bit, defaults to `[1, 3]`
   - **one** (*Optional*): The number of high/low pulses for a one bit, defaults to `[3, 1]`
-  - **inverted** (*Optional*, boolean): If this protocol is inverted. Defaults to `false`  .
+  - **inverted** (*Optional*, boolean): If this protocol is inverted. Defaults to `false`.
 
 ### Lambda calls
 

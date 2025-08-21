@@ -7,8 +7,6 @@ params:
     image: one-wire.svg
 ---
 
-
-
 The `gpio` platform uses the CPU to generate the bus signals on an on-board GPIO pin.
 
 ```yaml
@@ -23,6 +21,7 @@ one_wire:
 - **pin** (**Required**, number): The pin which will be use for bus communication. Note that 1-wire is a bi-directional
   bus so the selected GPIO pin must support both input and output. This must be a GPIO pin internal to the
   microcontroller and cannot be a pin located on an I/O expander or similar device.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
 

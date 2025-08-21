@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up touch screen emulation with the sdl display driver.
 ---
 
-
-
 {{< anchor "sdl_touchscreen" >}}
 
 The `sdl` touchscreen platform allows emulating a touch screen by using the mouse with the `sdl` display driver.

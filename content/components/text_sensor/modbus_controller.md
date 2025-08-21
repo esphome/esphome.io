@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up a modbus_controller modbus text sensor.
 ---
 
-
-
 The `modbus_controller` sensor platform creates a text sensor from a modbus_controller component
 and requires {{< docref "/components/modbus_controller" >}} to be configured.
 
@@ -24,15 +22,15 @@ and requires {{< docref "/components/modbus_controller" >}} to be configured.
 - **skip_updates** (*Optional*, int): By default all sensors of a modbus_controller are updated together. For data points that don't change very frequently updates can be skipped. A value of 5 would only update this sensor range in every 6th update cycle
 - **register_count** (*Optional*, int): The number of consecutive registers this read request should span or skip in a single command. Default is 1. See [Optimizing modbus communications](#modbus_register_count) for more details.
 - **response_size** (**Required**): Number of bytes of the response.
-- **raw_encode** (*Optional*, enum): If the response is binary it can't be published directly. Since a text sensor only publishes strings the binary data can be encoded. Defaults to `ANSI`  . Possible encodings are:
+- **raw_encode** (*Optional*, enum): If the response is binary it can't be published directly. Since a text sensor only publishes strings the binary data can be encoded. Defaults to `ANSI`. Possible encodings are:
 
   - `NONE`  : Don't encode data.
-  - `HEXBYTES`  :  2 byte hex string. 0x2011 will be sent as "2011".
+  - `HEXBYTES`  : 2 byte hex string. 0x2011 will be sent as "2011".
   - `COMMA`  : Byte values as integers, delimited by a coma. 0x2011 will be sent as "32,17".
   - `ANSI`  : Each byte is treated as an `ANSI` character. All control characters are ignored.
 
 {{< note >}}
-From version 2024.7, default encoding is `ANSI`  . Thus, all control characters are now ignored. If you need to receive all characters, use `NONE` encoding.
+From version 2024.7, default encoding is `ANSI`. Thus, all control characters are now ignored. If you need to receive all characters, use `NONE` encoding.
 
 {{< /note >}}
 
@@ -40,6 +38,7 @@ From version 2024.7, default encoding is `ANSI`  . Thus, all control characters 
 - **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
   custom command must contain all required bytes including the modbus device address. The crc is automatically calculated and appended to the command.
   See [Using `custom_command`](#modbus_custom_command) how to use `custom_command`
+
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor. It is called after the encoding according to **raw_encode**.
 
@@ -48,7 +47,8 @@ From version 2024.7, default encoding is `ANSI`  . Thus, all control characters 
   - **x** (std:string): The parsed value of the modbus data according to **raw_encode**
   - **data** (std::vector<uint8_t>): vector containing the complete raw modbus response bytes for this sensor
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
-  - **item** (const pointer to a SensorItem derived object):  The sensor object itself.
+
+  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 

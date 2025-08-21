@@ -7,8 +7,6 @@ params:
     image: air-conditioner.svg
 ---
 
-
-
 The `tuya` climate platform creates a climate device from a tuya component.
 
 Tuya climate requires a {{< docref "/components/tuya" >}} to be configured.
@@ -67,8 +65,8 @@ climate:
 
 ## Configuration variables
 
-- **supports_heat** (*Optional*, boolean): Specifies if the device has a heating mode. Defaults to `true`  .
-- **supports_cool** (*Optional*, boolean): Specifies if the device has a cooling mode. Defaults to `false`  .
+- **supports_heat** (*Optional*, boolean): Specifies if the device has a heating mode. Defaults to `true`.
+- **supports_cool** (*Optional*, boolean): Specifies if the device has a cooling mode. Defaults to `false`.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the climate switch (device on/off).
 - **active_state** (*Optional*): Configuration for the Active State detection (or HVAC mode setting and reporting).
 
@@ -94,17 +92,17 @@ climate:
 
   - **datapoint** (**Required**, int): The datapoint id number of the Fan value state.
   - **auto_value** (*Optional*, int): The datapoint value the device reports when the fan is on `auto` speed.
-  - **low_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `low` speed.
-  - **medium_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `medium` speed.
-  - **middle_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `middle` speed. (May set to device's `high` value if you have a `Turbo` option).
-  - **high_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `high` speed. (Sometimes called `Turbo`  ).
+  - **low_value** (*Optional*, int): The datapoint value the device reports when the fan is on `low` speed.
+  - **medium_value** (*Optional*, int): The datapoint value the device reports when the fan is on `medium` speed.
+  - **middle_value** (*Optional*, int): The datapoint value the device reports when the fan is on `middle` speed. (May set to device's `high` value if you have a `Turbo` option).
+  - **high_value** (*Optional*, int): The datapoint value the device reports when the fan is on `high` speed. (Sometimes called `Turbo`  ).
 - **heating_state_pin** (*Optional*, [Pin](#config-pin)): The input pin indicating that the device is heating - [see below](#active_state_detection). Only used if **active_state_datapoint** is not configured.
 - **cooling_state_pin** (*Optional*, [Pin](#config-pin)): The input pin indicating that the device is cooling - [see below](#active_state_detection). Only used if **active_state_datapoint** is not configured.
 - **target_temperature_datapoint** (**Required**, int): The datapoint id number of the target temperature.
 - **current_temperature_datapoint** (**Required**, int): The datapoint id number of the current temperature.
 - **temperature_multiplier** (*Optional*, float): A multiplier to modify the incoming and outgoing temperature values - [see below](#temperature-multiplier).
 
-- **reports_fahrenheit** (*Optional*, boolean): Set to `true` if the device reports temperatures in Fahrenheit. ESPHome expects all climate temperatures to be in Celcius, otherwise unexpected conversions will take place when it is published to Home Assistant. Defaults to `false`  .
+- **reports_fahrenheit** (*Optional*, boolean): Set to `true` if the device reports temperatures in Fahrenheit. ESPHome expects all climate temperatures to be in Celcius, otherwise unexpected conversions will take place when it is published to Home Assistant. Defaults to `false`.
 
 If the device has different multipliers for current and target temperatures, **temperature_multiplier** can be replaced with both of:
 

@@ -7,8 +7,6 @@ params:
     image: hrxl_maxsonar_wr.jpg
 ---
 
-
-
 This sensor allows you to use HRXL MaxSonar WR series ultrasonic sensors by MaxBotix
 ([datasheet](https://www.maxbotix.com/documents/HRXL-MaxSonar-WR_Datasheet.pdf))
 or the XL MaxSonar WR series

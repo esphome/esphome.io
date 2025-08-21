@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_num.png
 ---
 
-
-
 The `lvgl` sensor platform creates a sensor component from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
@@ -29,7 +27,7 @@ sensor:
 ```
 
 {{< note >}}
-Widget-specific actions (`lvgl.arc.update`  , `lvgl.bar.update`  , `lvgl.slider.update`  , `lvgl.spinbox.update`  , `lvgl.spinbox.decrement`  , `lvgl.spinbox.increment`  ) will trigger corresponding component updates to be sent to Home Assistant.
+Widget-specific actions (`lvgl.arc.update`, `lvgl.bar.update`, `lvgl.slider.update`, `lvgl.spinbox.update`, `lvgl.spinbox.decrement`, `lvgl.spinbox.increment`  ) will trigger corresponding component updates to be sent to Home Assistant.
 
 {{< /note >}}
 

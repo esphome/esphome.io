@@ -7,8 +7,6 @@ params:
     image: exposure_notifications.png
 ---
 
-
-
 The `exposure_notifications` component uses the {{< docref "/components/esp32_ble_tracker" >}} to discover
 nearby COVID-19 exposure notification bluetooth messages sent by phones running the
 [Google/Apple Exposure Notification service](https://www.google.com/covid19/exposurenotifications/).

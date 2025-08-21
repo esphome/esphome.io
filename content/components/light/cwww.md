@@ -7,8 +7,6 @@ params:
     image: brightness-medium.svg
 ---
 
-
-
 The `cwww` light platform creates a cold white + warm white light from 2
 [float output components](#output) (one for each channel). The two channels
 can be controlled individually or together.
@@ -42,9 +40,11 @@ calculation assumes that both lights have the same illuminance, which might not 
 - **warm_white** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the warm white channel.
 - **cold_white_color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin)
   of the cold white channel. Note that this option is required to control the mixing from Home Assistant.
+
 - **warm_white_color_temperature** (*Optional*, float): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin)
   of the warm white channel. Note that this option is required to control the mixing from Home Assistant.
-- **constant_brightness** (*Optional*, boolean): When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting the combined output to 100% of a single channel. This reduces the possible overall brightness but is necessary for some power supplies that are not able to run both channels at full brightness at once. Defaults to `false`  .
+
+- **constant_brightness** (*Optional*, boolean): When enabled, this will keep the overall brightness of the cold and warm white channels constant by limiting the combined output to 100% of a single channel. This reduces the possible overall brightness but is necessary for some power supplies that are not able to run both channels at full brightness at once. Defaults to `false`.
 - All other options from [Light](#config-light).
 
 ## See Also

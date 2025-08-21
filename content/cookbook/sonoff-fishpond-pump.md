@@ -7,8 +7,6 @@ params:
     image: cookbook-sonoff-fishpond-pump.jpg
 ---
 
-
-
 {{< img src="sonoff-fishpond.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
 The Sonoff range of products containing the ESP chips from Espressif has a myriad of uses and best of all, you can
@@ -146,12 +144,12 @@ For USB uploads this generally includes:
 * Modifications (soldering) made on the PCB for USB UART / FTDI uploads.
 * The relevant USB UART / FTDI uploads device connected to you PC and to your Sonoff.
 * Start Sonoff in programming mode.
-* Compile and upload the firmware via USB using `esphome <some-yaml-file> run`  .
+* Compile and upload the firmware via USB using `esphome <some-yaml-file> run`.
 
 For OTA the generally includes:
 
 * Ensure device is on.
-* Compile and upload the firmware via USB using `esphome <some-yaml-file> run`  .
+* Compile and upload the firmware via USB using `esphome <some-yaml-file> run`.
 
 Both options USB and OTA are done by running the command:
 

@@ -7,8 +7,6 @@ params:
     image: scd30.jpg
 ---
 
-
-
 The `scd30` sensor platform allows you to use your Sensirion SCD30 CO₂
 ([datasheet](https://sensirion.com/media/documents/4EAF6AF8/61652C3C/Sensirion_CO2_Sensors_SCD30_Datasheet.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
@@ -53,7 +51,7 @@ sensor:
   setting a temperature offset.
 
 - **automatic_self_calibration** (*Optional*, boolean): Whether to enable
-  automatic self calibration (ASC). Defaults to `true`  .
+  automatic self calibration (ASC). Defaults to `true`.
 
 - **ambient_pressure_compensation** (*Optional*, int): Enable compensation
   of measured CO₂ values based on given ambient pressure in mBar.
@@ -64,10 +62,10 @@ sensor:
   is set.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x61`  .
+  Defaults to `0x61`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Available range: [2 … 1800]. Defaults to `60s`  .
+  sensor. Available range: [2 … 1800]. Defaults to `60s`.
 
 ## Manual calibration
 

@@ -7,7 +7,6 @@ params:
     image: image-sync-outline.svg
 ---
 
-
 {{< anchor "online_image" >}}
 
 With this component you can define images that will be downloaded, decoded and drawn at runtime.
@@ -44,6 +43,7 @@ online_image:
 - **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](#config-templatable).
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the image later
   in your display code.
+
 - **format** (**Required**): The format that the image is encoded with.
 
   - `BMP`  : The image on the server is encoded in BMP format.
@@ -51,19 +51,23 @@ online_image:
   - `PNG`  : The image on the server is encoded in PNG format.
 - **resize** (*Optional*, string): If set, this will resize the image to fit inside the given dimensions `WIDTHxHEIGHT`
   and preserve the aspect ratio.
+
 - **placeholder** (*Optional*, [ID](#config-id)): ID of an {{< docref "/components/image" "Image" >}} to display while the downloaded image is not yet ready.
-  This placeholder image will **not** be resized; regardless of the `resize` option value for the `online_image`  .
+  This placeholder image will **not** be resized; regardless of the `resize` option value for the `online_image`.
+
 - **type** (*Required*): Specifies how to encode image internally.
 
   - `BINARY`  : Two colors, suitable for 1 color displays or 2 color image in color displays. Uses 1 bit
     per pixel, 8 pixels per byte. Only `chroma_key` transparency is available.
+
   - `GRAYSCALE`  : Full scale grey. Uses 8 bits per pixel, 1 pixel per byte.
   - `RGB565`  : Lossy RGB color stored. Uses 2 bytes per pixel, 3 with an alpha channel
   - `RGB`  : Full RGB color stored. Uses 3 bytes per pixel, 4 with an alpha channel.
-- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `chroma_key` and `alpha_channel`  . See the discussion on transparency in the  [image component](#display-image).
+- **transparency** (*Optional*): If set the alpha channel of the input image will be taken into account. The possible values are `opaque` (default), `chroma_key` and `alpha_channel`. See the discussion on transparency in the [image component](#display-image).
 - **byte_order** (*Optional*, string): For RGB565 images, the pixels are converted to 16 bit values. By default these will be stored in big endian byte order (MSB first),
-  but you can override this by setting `byte_order` to `little_endian`  . Options are `big_endian` (default) and `little_endian`  .
+  but you can override this by setting `byte_order` to `little_endian`. Options are `big_endian` (default) and `little_endian`.
   Not applicable to other image formats.
+
 - **update_interval** (*Optional*, int): Redownload the image when the specified time has elapsed. Defaults to `never` (i.e. the update component action needs to be called manually).
 
 Advanced options:
@@ -111,7 +115,7 @@ Change the URL where the image is downloaded from. A re-download will be automat
 
 - **id** (**Required**, [ID](#config-id)): The image to update the URL for.
 - **url** (**Required**, url): The new URL to download the image from.
-- **update** (*Optional*, bool): If `true`  , the image will be updated (fetched) immediately after setting the new URL. If `false`  , the URL will be set but the image will **not** be updated until you call the `update` action. Defaults to `true`
+- **update** (*Optional*, bool): If `true`, the image will be updated (fetched) immediately after setting the new URL. If `false`, the URL will be set but the image will **not** be updated until you call the `update` action. Defaults to `true`
 
 ```yaml
 on_...:
@@ -176,7 +180,7 @@ display:
 By default `online_image` is configured to not automatically update/download the image; in order to do the initial download, you can either:
 
 - Add a `component.update <image_id>` in the `on_connect:` action on the {{< docref "/components/wifi" >}} component.
-- Explicitly set an `update_interval`  .
+- Explicitly set an `update_interval`.
 - Call `component.update <image_id>` in an {{< docref "/components/interval" >}} block.
 - Call `component.update <image_id>` where you need the image to be downloaded/updated.
 

@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_txt.png
 ---
 
-
-
 The `lvgl` text sensor platform creates a Text Sensor from an LVGL textual widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
@@ -29,7 +27,7 @@ text_sensor:
 ```
 
 {{< note >}}
-Widget-specific actions (`lvgl.label.update`  , `lvgl.textarea.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
+Widget-specific actions (`lvgl.label.update`, `lvgl.textarea.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
 
 {{< /note >}}
 

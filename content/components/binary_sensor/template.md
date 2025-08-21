@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `template` binary sensor platform allows you to define a boolean condition and use it to provide a binary sensor.
 The condition may be expressed as a C++ lambda, or as a [YAML expression](#config-condition).
 The condition expression will be evaluated continually, on each call to the component's `loop()` method, which is typically every 16ms.
@@ -53,6 +51,7 @@ binary_sensor:
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
    C++ Lambda to be evaluated repeatedly to get the current state of the binary sensor.
+
 - **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine the value of the binary sensor. `lambda` and `condition` may not both be present in the configuration.
 - All other options from [Binary Sensor](#config-binary_sensor).
 

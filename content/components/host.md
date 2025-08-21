@@ -7,8 +7,6 @@ params:
     image: host.svg
 ---
 
-
-
 The `host` platform allows ESPHome configurations to be compiled and run on a desktop computer. This is known
 to work on MacOS and Linux. On Windows [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) (Windows Subsystem for Linux) can be used to create a Linux environment that will run ESPHome.
 
@@ -23,7 +21,7 @@ ESPHome *API* port (`6053`  ) must be allowed through the firewall.
 See {{< docref "/components/api" >}} for details.
 {{< /note >}}
 
-Many components, especially those interfacing to actual hardware, will not be available when using `host`  . Do not
+Many components, especially those interfacing to actual hardware, will not be available when using `host`. Do not
 configure wifi - network will automatically be available using the host computer.
 
 ```yaml

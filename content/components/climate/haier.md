@@ -7,8 +7,6 @@ params:
     image: air-conditioner.svg
 ---
 
-
-
 This is an implementation of the ESPHome component to control HVAC on the base of the SmartAir2 and hOn Haier protocols (AC that is controlled by the hOn or SmartAir2 application).
 
 There are two versions of the Haier protocol: the older version uses an application called SmartAir2 while the newer version uses an application called hOn. Both protocols are compatible on the transport level but utilize different commands to control appliances.
@@ -21,8 +19,8 @@ Older Haier models controlled by the SmartAir2 application are using the KZW-W00
 | ----- | ----- | ---------- | ------- |
 | 5V    | VCC   | red        | 5V      |
 | GND   | GND   | black      | GND     |
-| TX    | DATA+ | green      | RX      |
-| RX    | DATA- | white      | TX      |
+| TX | DATA+ | green | RX |
+| RX | DATA- | white | TX |
 
 {{< img src="usb_pinout.png" alt="Image" caption="KZW-W002 module pinout" width="70.0%" class="align-center" >}}
 
@@ -89,19 +87,19 @@ climate:
 ## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): ID of the UART port to communicate with AC.
-- **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: `hon` or `smartair2`  . The default value is `smartair2`  .
+- **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: `hon` or `smartair2`. The default value is `smartair2`.
 - **wifi_signal** (*Optional*, boolean): If `true` - send wifi signal level to AC.
-- **answer_timeout** (*Optional*, [Time](#config-time)): Responce timeout. The default value is `200ms`  .
+- **answer_timeout** (*Optional*, [Time](#config-time)): Responce timeout. The default value is `200ms`.
 - **alternative_swing_control** (*Optional*, boolean): (supported by smartAir2 only) If `true` - use alternative values to control swing mode. Use only if the original control method is not working for your AC.
-- **status_message_header_size** (*Optional*, int): (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variations. Use only if you are sure what you are doing. The default value: `0`  .
-- **control_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use bigger packets. The default value: `10`  .
-- **sensors_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the sensor packet of the status message. Can help with some models of ACs that have bigger sensor packet. The default value: `22`  , minimum value: `18`  .
+- **status_message_header_size** (*Optional*, int): (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variations. Use only if you are sure what you are doing. The default value: `0`.
+- **control_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use bigger packets. The default value: `10`.
+- **sensors_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the sensor packet of the status message. Can help with some models of ACs that have bigger sensor packet. The default value: `22`, minimum value: `18`.
 - **control_method** (*Optional*, list): (supported only by hOn) Defines control method (should be supported by AC). Supported values: `MONITOR_ONLY` - no control, just monitor status, `SET_GROUP_PARAMETERS` - set all AC parameters with one command (default method), `SET_SINGLE_PARAMETER` - set each parameter individually (this method is supported by some new ceiling ACs like AD71S2SM3FA)
 - **display** (*Optional*, boolean): Can be used to set the AC display off.
 - **beeper** (*Optional*, boolean): Can be used to disable beeping on commands from AC. Supported only by hOn protocol.
-- **supported_modes** (*Optional*, list): Can be used to disable some of AC modes. Possible values: `'OFF'`  , `HEAT_COOL`  , `COOL`  , `HEAT`  , `DRY`  , `FAN_ONLY`  .
-- **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: `'OFF'`  , `VERTICAL`  , `HORIZONTAL`  , `BOTH`  .
-- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: `AWAY`  , `BOOST`  , `COMFORT`  . Possible values for hOn are: `AWAY`  , `BOOST`  , `SLEEP`  . `AWAY` preset can be enabled only in `HEAT` mode, it is disabled by default.
+- **supported_modes** (*Optional*, list): Can be used to disable some of AC modes. Possible values: `'OFF'`, `HEAT_COOL`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`.
+- **supported_swing_modes** (*Optional*, list): Can be used to disable some swing modes if your AC does not support it. Possible values: `'OFF'`, `VERTICAL`, `HORIZONTAL`, `BOTH`.
+- **supported_presets** (*Optional*, list): Can be used to disable some presets. Possible values for smartair2 are: `AWAY`, `BOOST`, `COMFORT`. Possible values for hOn are: `AWAY`, `BOOST`, `SLEEP`. `AWAY` preset can be enabled only in `HEAT` mode, it is disabled by default.
 - **on_alarm_start** (*Optional*, [Automation](#automation)): (supported only by hOn) Automation to perform when AC activates a new alarm. See [`on_alarm_start` Trigger](#haier-on_alarm_start).
 - **on_alarm_end** (*Optional*, [Automation](#automation)): (supported only by hOn) Automation to perform when AC deactivates a new alarm. See [`on_alarm_end` Trigger](#haier-on_alarm_end).
 - **on_status_message** (*Optional*, [Automation](#automation)): Automation to perform when status message received from AC. See [`on_status_message` Trigger](#haier-on_status_message).
@@ -265,7 +263,7 @@ on_...:
 
 ### `climate.haier.set_horizontal_airflow` Action
 
-(supported only by hOn) Set direction for horizontal airflow if the horizontal swing is disabled. Possible values: `Max_Left`  , `Left`  , `Center`  , `Right`  , `Max_Right`  .
+(supported only by hOn) Set direction for horizontal airflow if the horizontal swing is disabled. Possible values: `Max_Left`, `Left`, `Center`, `Right`, `Max_Right`.
 
 ```yaml
 on_...:

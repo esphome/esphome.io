@@ -7,8 +7,6 @@ params:
     image: radio-tower.svg
 ---
 
-
-
 The `mdns` component makes the node announce itself on the local network using the multicast DNS (mDNS) protocol.
 
 Both Home Assistant and the ESPHome dashboard use mDNS to identify the IP address of all ESPHome nodes on the network.

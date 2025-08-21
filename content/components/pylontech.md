@@ -7,8 +7,6 @@ params:
     image: pylontech.jpg
 ---
 
-
-
 The Pylontech component allows you to pull data from Pylontech Batteries into ESPHome.
 It uses [UART](#uart) for communication.
 
@@ -33,7 +31,7 @@ If you have multiple batteries you need to connect to the master battery's conso
 | -------- | -------------- | -------------- | ------------ | -------------------------- |
 | 3        | White/Green    | White/Orange   | Pylontech TX | ESPHome RX via transceiver |
 | 6        | Green          | Orange         | Pylontech RX | ESPHome TX via transceiver |
-| 8        | Brown          | Brown          | GND          | GND                        |
+| 8 | Brown | Brown | GND | GND |
 
 {{< img src="rj45_pinout.jpg" alt="Image" caption="RJ45 pinout" width="70.0%" class="align-center" >}}
 
@@ -43,7 +41,7 @@ If you have multiple batteries you need to connect to the master battery's conso
 | -------- | ------------ | -------------------------- |
 | 2        | Pylontech RX | ESPHome TX via transceiver |
 | 3        | Pylontech TX | ESPHome RX via transceiver |
-| 4        | GND          | GND                        |
+| 4 | GND | GND |
 
 ## Component/Hub
 
@@ -56,7 +54,7 @@ pylontech:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this Pylontech component.
 - **uart_id** (*Optional*): The uart Bus ID
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
 ## Sensor
 
@@ -108,10 +106,10 @@ text_sensor:
 
 - **pylontech_id** (*Optional*): Manually specify the ID of the pylontech instance if there are multiple.
 - **battery** (**Required**): Which battery to monitor. 1 stands for the main battery, 2..16 for child batteries.
-- **base_state** (*Optional*): Base state. Usually reads `Dischg`  , `Charge` or `Idle`  . All options from [Text Sensor](#config-text_sensor).
-- **voltage_state** (*Optional*): Voltage state. Usually reads `Normal`  . All options from [Text Sensor](#config-text_sensor).
-- **current_state** (*Optional*): Current state. Usually reads `Normal`  . All options from [Text Sensor](#config-text_sensor).
-- **temperature_state** (*Optional*): Temperature state. Usually reads `Normal`  . All options from [Text Sensor](#config-text_sensor).
+- **base_state** (*Optional*): Base state. Usually reads `Dischg`, `Charge` or `Idle`. All options from [Text Sensor](#config-text_sensor).
+- **voltage_state** (*Optional*): Voltage state. Usually reads `Normal`. All options from [Text Sensor](#config-text_sensor).
+- **current_state** (*Optional*): Current state. Usually reads `Normal`. All options from [Text Sensor](#config-text_sensor).
+- **temperature_state** (*Optional*): Temperature state. Usually reads `Normal`. All options from [Text Sensor](#config-text_sensor).
 
 ## Energy Monitoring
 

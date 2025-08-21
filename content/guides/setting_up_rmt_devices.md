@@ -166,7 +166,6 @@ button:
             times: 10
             wait_time: 0s
 
-
 # Or for raw code
 button:
   - platform: template

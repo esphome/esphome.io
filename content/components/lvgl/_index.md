@@ -7,8 +7,6 @@ params:
     image: /images/lvgl.png
 ---
 
-
-
 [LVGL](https://lvgl.io/) (Light and Versatile Graphics Library) is a free and open-source
 embedded graphics library to create beautiful UIs for any MCU, MPU and display type. ESPHome supports [LVGL version 8](https://docs.lvgl.io/8.4/).
 
@@ -18,7 +16,7 @@ embedded graphics library to create beautiful UIs for any MCU, MPU and display t
 
 To use LVGL with a [display](#display-hw) in ESPHome, you'll need an ESP32 or RP2040. PSRAM is not a strict requirement but it is generally recommended, especially for large color displays.
 
-The graphic display should be configured with `auto_clear_enabled: false` and should not have any `lambda` set. The LVGL component will take care of the display rendering. For most displays, the `update_interval` should be set to `never`  , but note that some displays such as OLED and ePaper will need the update interval set to a suitable value.
+The graphic display should be configured with `auto_clear_enabled: false` and should not have any `lambda` set. The LVGL component will take care of the display rendering. For most displays, the `update_interval` should be set to `never`, but note that some displays such as OLED and ePaper will need the update interval set to a suitable value.
 
 For interactivity, a {{< docref "/components/touchscreen/index" "Touchscreen" >}} (capacitive highly preferred), a {{< docref "/components/sensor/rotary_encoder" >}} or a custom keypad made up from discrete {{< docref "/components/binary_sensor/index" "Binary Sensors" >}} can be used.
 
@@ -67,10 +65,10 @@ Some widgets integrate also as native ESPHome components:
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
 | `button`                       | {{< docref "/components/switch/lvgl" "Switch" >}}, {{< docref "/components/binary_sensor/lvgl" "Binary Sensor" >}} |
 | `switch`  , `checkbox`         | {{< docref "/components/switch/lvgl" "Switch" >}}                                                                  |
-| `slider`  , `arc`  , `spinbox` | {{< docref "/components/number/lvgl" "Number" >}}, {{< docref "/components/sensor/lvgl" "Sensor" >}}               |
-| `dropdown`  ,  `roller`        | {{< docref "/components/select/lvgl" "Select" >}}                                                                  |
-| `label`  , `textarea`          | {{< docref "/components/text/lvgl" "Text" >}}, {{< docref "/components/text_sensor/lvgl" "Text Sensor" >}}         |
-| `led`                          | {{< docref "/components/light/lvgl" "Light" >}}                                                                    |
+| `slider`, `arc`, `spinbox` | {{< docref "/components/number/lvgl" "Number" >}}, {{< docref "/components/sensor/lvgl" "Sensor" >}} |
+| `dropdown`, `roller`        | {{< docref "/components/select/lvgl" "Select" >}} |
+| `label`, `textarea`          | {{< docref "/components/text/lvgl" "Text" >}}, {{< docref "/components/text_sensor/lvgl" "Text Sensor" >}} |
+| `led`                          | {{< docref "/components/light/lvgl" "Light" >}} |
 
 These are useful with [Home Assistant automations](https://www.home-assistant.io/docs/automation/) interacting directly with the widgets.
 
@@ -87,8 +85,8 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **displays** (*Optional*, list, [ID](#config-id)): A list of display IDs where LVGL should perform rendering based on its configuration. This may be omitted if there is a single display configured, which will be used automatically.
 - **touchscreens** (*Optional*, list): A list of touchscreens interacting with the LVGL widgets on the display. If you configure a single touchscreen it will be used automatically, and this config entry will not be required.
   - **touchscreen_id** (**Required**, [ID](#config-id)): ID of a touchscreen configuration related to a display.
-  - **long_press_time** (*Optional*, [Time](#config-time)): For the touchscreen, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`  .
-  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the touchscreen, repeated interval after `long_press_time`  , when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`  .
+  - **long_press_time** (*Optional*, [Time](#config-time)): For the touchscreen, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`.
+  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the touchscreen, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`.
 - **encoders** (*Optional*, list): A list of rotary encoders interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the the input device. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
   - **initial_focus** (*Optional*, [ID](#config-id)): An optional ID for a widget to be given focus on startup (especially useful if there is only one focusable widget.)
@@ -96,8 +94,8 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **sensor** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/sensor/rotary_encoder" >}}; or a list with buttons for left/right interaction with the widgets:
     - **left_button** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `LEFT` key.
     - **right_button** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `RIGHT` key.
-  - **long_press_time** (*Optional*, [Time](#config-time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`  . Can be disabled with `never`  .
-  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the rotary encoder, repeated interval after `long_press_time`  , when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`  . Can be disabled with `never`  .
+  - **long_press_time** (*Optional*, [Time](#config-time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
+  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the rotary encoder, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 - **keypads** (*Optional*, list): A list of keypads interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the the input device. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
   - **up** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `UP` key.
@@ -112,11 +110,11 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **prev** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `PREV` key.
   - **home** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `HOME` key.
   - **end** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `END` key.
-  - **long_press_time** (*Optional*, [Time](#config-time)): For the keypad, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`  . Can be disabled with `never`  .
-  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the keypad, repeated interval after `long_press_time`  , when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`  . Can be disabled with `never`  .
+  - **long_press_time** (*Optional*, [Time](#config-time)): For the keypad, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
+  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the keypad, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 
 {{< tip >}}
-When using binary sensors (from physical keys) to interact with LVGL, if there are only three keys available, they are best used when configured as a rotary encoder, where `LEFT` and `RIGHT` act like the rotary wheel, and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers). With four or more keys, a keypad configuration is generally more appropriate. For example, a keypad consisting of five keys might use `PREV`  , `NEXT`  , `UP`  , `DOWN` and `ENTER`  ; `PREV`  /`NEXT` are used to select a widget within the group, `UP`  /`DOWN` changes the selected value and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers).
+When using binary sensors (from physical keys) to interact with LVGL, if there are only three keys available, they are best used when configured as a rotary encoder, where `LEFT` and `RIGHT` act like the rotary wheel, and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers). With four or more keys, a keypad configuration is generally more appropriate. For example, a keypad consisting of five keys might use `PREV`, `NEXT`, `UP`, `DOWN` and `ENTER`  ; `PREV`  /`NEXT` are used to select a widget within the group, `UP`  /`DOWN` changes the selected value and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers).
 
 The `long_press_time` and `long_press_repeat_time` can be fine-tuned also by setting them to `never` and using the `autorepeat` filter on each binary sensor separately.
 
@@ -131,14 +129,14 @@ When using an encoder input device the navigation works as follows:
 
 {{< /tip >}}
 
-- **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to `true`  . "Interacts" means to release a touch or button, or rotate an encoder.
+- **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to `true`. "Interacts" means to release a touch or button, or rotate an encoder.
 - **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only `16` is supported (RGB565, 2 bytes/pixel), which is the default value.
-- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is `100%` with runtime fallback to `12%` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is `25%`  .
+- **buffer_size** (*Optional*, percentage): The percentage of screen size to allocate buffer memory. If unconfigured, the default is `100%` with runtime fallback to `12%` if a full size buffer allocation fails. For devices without PSRAM, the recommended value is `25%`.
 - **draw_rounding** (*Optional*, int): An optional value to use for rounding draw areas to a specified boundary. Defaults to 2. Useful for displays that require draw windows to be on specified boundaries (usually powers of 2.)
-- **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: `TRACE`  , `INFO`  , `WARN`  , `ERROR`  , `USER`  , `NONE`  . Defaults to `WARN`  .
-- **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`  . Defaults to `big_endian`  .
+- **log_level** (*Optional*, string): Set the logger level specifically for the messages of the LVGL library: `TRACE`, `INFO`, `WARN`, `ERROR`, `USER`, `NONE`. Defaults to `WARN`.
+- **byte_order** (*Optional*, int16): The byte order of the data LVGL outputs; either `big_endian` or `little_endian`. Defaults to `big_endian`.
 - **disp_bg_color** (*Optional*, [color](#lvgl-color)): Solid color used to fill the background. Can be changed at runtime with the `lvgl.update` action.
-- **disp_bg_image** (*Optional*, [image](#display-image)):  The ID of an existing image configuration, to be used as background wallpaper. To change the image at runtime use the `lvgl.update` action. Also see [`image`](#lvgl-widget-image) for a note regarding supported image formats. May also be set to `none` to clear the background image.`
+- **disp_bg_image** (*Optional*, [image](#display-image)): The ID of an existing image configuration, to be used as background wallpaper. To change the image at runtime use the `lvgl.update` action. Also see [`image`](#lvgl-widget-image) for a note regarding supported image formats. May also be set to `none` to clear the background image.`
 - **disp_bg_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the background image or color of the display.
 - **default_font** (*Optional*, ID): The ID of the [font](#lvgl-fonts) used by default to render the text or symbols. Defaults to LVGL's internal `montserrat_14` if not specified.
 - **style_definitions** (*Optional*, list): A batch of style definitions to use in LVGL widget's `styles` configuration. See [below](#lvgl-theme) for more details.
@@ -146,16 +144,16 @@ When using an encoder input device the navigation works as follows:
 - **theme** (*Optional*, list): A list of styles to be applied to all widgets. See [below](#lvgl-theme) for more details.
 - **widgets** (*Optional*, list): A list of {{< docref "/components/lvgl/widgets" >}} to be drawn on the root display. May not be used if `pages` (below) is configured.
 - **pages** (*Optional*, list): A list of page IDs. Each page acts as a parent for widgets placed on it. May not be used with `widgets` (above). Options for each page:
-  - **skip** (*Optional*, boolean): Option to skip this page when navigating between them with [`lvgl.page.next`  , `lvgl.page.previous`](#lvgl-page-next-previous-action).
-  - **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`  .
+  - **skip** (*Optional*, boolean): Option to skip this page when navigating between them with [`lvgl.page.next`, `lvgl.page.previous`](#lvgl-page-next-previous-action).
+  - **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`.
   - **widgets** (*Optional*, list): A list of {{< docref "/components/lvgl/widgets" >}} to be drawn on the page.
   - All other options from [Style properties](#lvgl-styling) to be applied to this page.
-- **page_wrap** (*Optional*, boolean): Wrap from the last to the first page when navigating between them with [`lvgl.page.next`  , `lvgl.page.previous`](#lvgl-page-next-previous-action). Defaults to `true`  .
+- **page_wrap** (*Optional*, boolean): Wrap from the last to the first page when navigating between them with [`lvgl.page.next`, `lvgl.page.previous`](#lvgl-page-next-previous-action). Defaults to `true`.
 - **top_layer** (*Optional*, list): A special kind of *Always on Top* page, which acts as a parent for widgets placed on it. It's shown above all the pages, which may be useful for widgets which always need to be visible.
-  - **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`  .
+  - **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`.
   - **widgets** (*Optional*, list): A list of {{< docref "/components/lvgl/widgets" >}} to be drawn on the page.
   - All other options from [Style properties](#lvgl-styling) to be applied to this page.
-- **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`  .
+- **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`.
 - All other options from [Style properties](#lvgl-styling) to be applied to all widgets directly.
 
 **Example:**
@@ -177,8 +175,8 @@ See [Page navigation footer](#lvgl-cookbook-navigator) in the Cookbook for an ex
 
 ### Choosing a buffer size
 
-The `buffer_size` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is `320 * 240 * 2` bytes (for RGB565) = `153600` bytes. If you set the buffer size to `50%`  ,
-then the buffer will be `76800` bytes. If you set it to `25%`  , then the buffer will be `38400` bytes. The default value is `100%`  .
+The `buffer_size` option is a percentage of the display size. For example, if you have a 320x240 display, the buffer size is `320 * 240 * 2` bytes (for RGB565) = `153600` bytes. If you set the buffer size to `50%`,
+then the buffer will be `76800` bytes. If you set it to `25%`, then the buffer will be `38400` bytes. The default value is `100%`.
 
 When using larger displays on devices with limited RAM (i.e. no PSRAM), you may want to reduce the buffer size to avoid running out of RAM.
 If not specified, the buffer size will be 100%, but a fallback
@@ -217,7 +215,7 @@ lvgl:
 
 Colors can be specified anywhere in the LVGL configuration either by referencing a preconfigured [ESPHome color](#config-color) ID or by representing the color in the common hexadecimal notation. For example, `0xFF0000` would be red.
 
-You may also use any of the [standard CSS color names](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color), e.g. `springgreen`  .
+You may also use any of the [standard CSS color names](https://developer.mozilla.org/en-US/docs/Web/CSS/named-color), e.g. `springgreen`.
 
 When using a lambda to provide a color you can use the `lv_color_hex` function to convert a hex value, or
 return a [Color](#config-color) ID - this is useful when using the {{< docref "/components/mapping" >}}. Examples:
@@ -241,9 +239,9 @@ on_...:
 
 Various parts of the widgets (like background, borders etc.) support opacity. It can be specified in one of several ways:
 
-- As a string:  `TRANSP` for fully transparent, `COVER` for fully opaque
+- As a string: `TRANSP` for fully transparent, `COVER` for fully opaque
 - As a floating point value in the range 0.0-1.0
-- As a percentage between `0%` and `100%`  .
+- As a percentage between `0%` and `100%`.
 - From a lambda - return an integer in the range 0-255.
 
 Default values depend on widget specifics.
@@ -292,7 +290,7 @@ The LVGL library offers by default prerendered sets with ASCII characters (`0x20
 
 The binary will only include any of the above if used in the configuration.
 
-You can display the embedded symbols among the text by their codepoint address preceded by `\u`  . For example: `\uF00C`  :
+You can display the embedded symbols among the text by their codepoint address preceded by `\u`. For example: `\uF00C`  :
 
 {{< img src="lvgl_symbols.png" alt="Image" class="align-center" >}}
 
@@ -335,7 +333,7 @@ floating point, instead uses scaled integers. Properties with the following nati
 - **opacity** LVGL opacity is an integer between 0 and 255.
 - **brightness** Similarly, an integer from 0 to 255.
 - **angle** LVGL angles are represented in 1/10 degree, so usually in the range 0 - 3600.
-- **color** LVGL uses an internal color type - to construct a color in a lambda use `lv_color_hex(0xRRGGBB)`  .
+- **color** LVGL uses an internal color type - to construct a color in a lambda use `lv_color_hex(0xRRGGBB)`.
 - **zoom** Zoom levels should be multiplied by 256 (valid range is 0 to 2560, corresponding to 0-10.0).
 - **percentage** To convert a fractional value to a percentage, use `lv_pct(value * 100)`
 
@@ -346,21 +344,21 @@ These style properties may be applied to any widget, though not all widgets use 
 - **bg_color** (*Optional*, [color](#lvgl-color)): Color for the background of the widget. Defaults to `0xFFFFFF` (white).
 - **bg_grad** (*Optional*, [gradient](#lvgl-gradients)): A gradient to apply to the background.
 - **bg_grad_color** (*Optional*, [color](#lvgl-color)): Color to make the background gradually fade to. Defaults to `0` (black).
-- **bg_dither_mode** (*Optional*, dict): Set dithering of the background gradient. One of `NONE`  , `ORDERED`  , `ERR_DIFF`  . Defaults to `NONE`  .
-- **bg_grad_dir** (*Optional*, dict): Choose the direction of the background gradient: `NONE`  , `HOR`  , `VER`  . Defaults to `NONE`  .
-- **bg_main_stop** (*Optional*, 0-255): Specify where the gradient should start: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `0`  .
-- **bg_grad_stop** (*Optional*, 0-255): Specify where the gradient should stop: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `255`  .
-- **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire widget. Inherited from parent. Defaults to `COVER`  .
+- **bg_dither_mode** (*Optional*, dict): Set dithering of the background gradient. One of `NONE`, `ORDERED`, `ERR_DIFF`. Defaults to `NONE`.
+- **bg_grad_dir** (*Optional*, dict): Choose the direction of the background gradient: `NONE`, `HOR`, `VER`. Defaults to `NONE`.
+- **bg_main_stop** (*Optional*, 0-255): Specify where the gradient should start: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `0`.
+- **bg_grad_stop** (*Optional*, 0-255): Specify where the gradient should stop: `0` = upper left, `128` = in the center, `255` = lower right. Defaults to `255`.
+- **opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire widget. Inherited from parent. Defaults to `COVER`.
 - **bg_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the widget background.
-- **opa_layered** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire layer the widget is on. Inherited from parent. Defaults to `COVER`  .
-- **bg_image_src** (*Optional*, [image](#display-image)):  The ID of an existing image configuration, to show as the background of the widget.
+- **opa_layered** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the entire layer the widget is on. Inherited from parent. Defaults to `COVER`.
+- **bg_image_src** (*Optional*, [image](#display-image)): The ID of an existing image configuration, to show as the background of the widget.
 - **bg_image_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the background image of the widget.
 - **bg_image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of the background image of the widget.
 - **bg_image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the recoloring of the background image of the widget.
-- **border_width** (*Optional*, int16): Set the width of the border in pixels. Defaults to `0`  .
+- **border_width** (*Optional*, int16): Set the width of the border in pixels. Defaults to `0`.
 - **border_color** (*Optional*, [color](#lvgl-color)): Color to draw borders of the widget. Defaults to `0` (black).
-- **border_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the borders of the widget.  Defaults to `COVER`  .
-- **border_post** (*Optional*, boolean): If `true` the border will be drawn after all children of the widget have been drawn. Defaults to `false`  .
+- **border_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the borders of the widget. Defaults to `COVER`.
+- **border_post** (*Optional*, boolean): If `true` the border will be drawn after all children of the widget have been drawn. Defaults to `false`.
 - **border_side** (*Optional*, list): Select which borders of the widgets to show (multiple can be specified as a YAML list, defaults to `NONE`  ):
   - `NONE`
   - `TOP`
@@ -368,14 +366,14 @@ These style properties may be applied to any widget, though not all widgets use 
   - `LEFT`
   - `RIGHT`
   - `INTERNAL`
-- **clip_corner** (*Optional*, boolean): If set to `true`  , overflowing content will be clipped off by the widget's rounded corners (`radius` > `0`  ).
-- **color_filter_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to `TRANSP`  .
+- **clip_corner** (*Optional*, boolean): If set to `true`, overflowing content will be clipped off by the widget's rounded corners (`radius` > `0`  ).
+- **color_filter_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the color filter. Currently color filters are applied only by the default LVGL theme, this option allows the effect of those to be disabled by setting to `TRANSP`.
 - **image_recolor** (*Optional*, [color](#lvgl-color)): Color to mix with every pixel of an image Note that `image_recolor_opa` defaults to TRANSP, so it must also be set.
 - **image_recolor_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the image recoloring.
-- **outline_width** (*Optional*, int16): Set the width of the outline in pixels. Defaults to `0`  .
+- **outline_width** (*Optional*, int16): Set the width of the outline in pixels. Defaults to `0`.
 - **outline_color** (*Optional*, [color](#lvgl-color)): Color used to draw an outline around the widget. Defaults to `0` (black).
-- **outline_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the outline of the widget. Defaults to `COVER`  .
-- **outline_pad** (*Optional*, int16): Distance between the outline and the widget itself. Defaults to `0`  .
+- **outline_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the outline of the widget. Defaults to `COVER`.
+- **outline_pad** (*Optional*, int16): Distance between the outline and the widget itself. Defaults to `0`.
 - **pad_all** (*Optional*, int16): Set the padding in all directions, in pixels.
 - **pad_top** (*Optional*, int16): Set the padding on the top, in pixels.
 - **pad_bottom** (*Optional*, int16): Set the padding on the bottom, in pixels.
@@ -385,16 +383,16 @@ These style properties may be applied to any widget, though not all widgets use 
 - **pad_column** (*Optional*, int16): Set the padding between the columns of the children elements, in pixels.
 - **radius** (*Optional*, uint16): The radius to be used to form the widget's rounded corners. 0 = no radius (square corners); 65535 (max) = pill shaped widget (true circle if it has same width and height, radius then should be set to half the width/height).
 - **shadow_color** (*Optional*, [color](#lvgl-color)): Color used to create a drop shadow under the widget. Defaults to `0` (black).
-- **shadow_ofs_x** (*Optional*, int16): Horizontal offset of the shadow, in pixels. Defaults to `0`  .
-- **shadow_ofs_y** (*Optional*, int16): Vertical offset of the shadow, in pixels. Defaults to `0`  .
-- **shadow_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the shadow. Defaults to `COVER`  .
-- **shadow_spread** (*Optional*, int16): Spread of the shadow, in pixels. Defaults to `0`  .
-- **shadow_width** (*Optional*, int16): Width of the shadow, in pixels. Defaults to `0`  .
+- **shadow_ofs_x** (*Optional*, int16): Horizontal offset of the shadow, in pixels. Defaults to `0`.
+- **shadow_ofs_y** (*Optional*, int16): Vertical offset of the shadow, in pixels. Defaults to `0`.
+- **shadow_opa** (*Optional*, [opacity](#lvgl-opacity)): Opacity of the shadow. Defaults to `COVER`.
+- **shadow_spread** (*Optional*, int16): Spread of the shadow, in pixels. Defaults to `0`.
+- **shadow_width** (*Optional*, int16): Width of the shadow, in pixels. Defaults to `0`.
 - **transform_angle** (*Optional*, 0-360): Transformation angle of the widget (eg. rotation)
 - **transform_height** (*Optional*, int16 or percentage): Transformation height of the widget (eg. stretching)
 - **transform_pivot_x** (*Optional*, int16): Horizontal anchor point of the transformation. Relative to the widget's top left corner.
 - **transform_pivot_y** (*Optional*, int16): Vertical anchor point of the transformation. Relative to the widget's top left corner.
-- **transform_zoom** (*Optional*, 0.1-10):  Transformation zoom of the widget (eg. resizing)
+- **transform_zoom** (*Optional*, 0.1-10): Transformation zoom of the widget (eg. resizing)
 - **translate_x** (*Optional*, int16 or percentage): Movement of the widget with this value in horizontal direction.
 - **translate_y** (*Optional*, int16 or percentage): Movement of the widget with this value in vertical direction.
 
@@ -402,7 +400,7 @@ These style properties may be applied to any widget, though not all widgets use 
 
 ### Themes
 
-You can configure a global theme for all widgets of a given type at the top level with the `theme:` configuration variable. In the example below, all the `arc`  , `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](#lvgl-widgetproperty-state) can be chosen for every widget.
+You can configure a global theme for all widgets of a given type at the top level with the `theme:` configuration variable. In the example below, all the `arc`, `slider` and `button` widgets will, by default, use the styles and properties defined here. A combination of styles and [states](#lvgl-widgetproperty-state) can be chosen for every widget.
 
 ```yaml
 lvgl:
@@ -509,16 +507,16 @@ on_...:
 
 Layouts aim to position widgets automatically, eliminating the need to specify `x` and `y` coordinates to position each widget. This is a great way to simplify your configuration as it allows you to omit alignment options.
 
-The layout configuration options are applied to any parent widget or page, influencing the appearance of the children. The position and size calculated by the layout overwrites the *normal* `x`  , `y`  , `width`  , and `height` settings of the children.
+The layout configuration options are applied to any parent widget or page, influencing the appearance of the children. The position and size calculated by the layout overwrites the *normal* `x`, `y`, `width`, and `height` settings of the children.
 
 Check out [Flex layout positioning](#lvgl-cookbook-flex), [Grid layout positioning](#lvgl-cookbook-grid) and [Weather forecast panel](#lvgl-cookbook-weather) in the Cookbook for examples which demonstrate how to automate widget positioning, potentially reducing the size of your device's YAML configuration, and saving you from lots of manual calculations.
 
-The `hidden`  , `ignore_layout` and `floating` [flags](#lvgl-widget-flags) can be used on widgets to ignore them in layout calculations.
+The `hidden`, `ignore_layout` and `floating` [flags](#lvgl-widget-flags) can be used on widgets to ignore them in layout calculations.
 
 #### Configuration variables
 
 - **layout** (*Optional*, dict): A dictionary describing the layout configuration:
-  - **type** (*Optional*, string): `FLEX`  , `GRID` or `NONE`  . Defaults to `NONE`  .
+  - **type** (*Optional*, string): `FLEX`, `GRID` or `NONE`. Defaults to `NONE`.
   - Further options from below depending on the chosen type.
 
 #### Flex
@@ -533,7 +531,7 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
 - *cross direction*: perpendicular to the main direction.
 - *wrap*: if there is no more space in the track a new track is started.
 - *gap*: the space between the rows and columns or the items on a track.
-- *grow*: if set on an item it will grow to fill the remaining space on the track. The available space will be distributed among items respective to their grow value (larger value means more space). It dictates what amount of the available space the widget should take up. For example if all items on the track have a `grow` set to `1`  , the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
+- *grow*: if set on an item it will grow to fill the remaining space on the track. The available space will be distributed among items respective to their grow value (larger value means more space). It dictates what amount of the available space the widget should take up. For example if all items on the track have a `grow` set to `1`, the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
 
 **Configuration variables:**
 
@@ -551,18 +549,18 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
 - **flex_align_cross** (*Optional*, string): Determines how to distribute the items in their track on the *cross* axis. For example, if the items have different height place them to the bottom of the track (known as *align-items* in CSS). Possible options below.
 - **flex_align_track** (*Optional*, string): Determines how to distribute the tracks (known as *align-content* in CSS). Possible options below.
 
-    Values for use with  `flex_align_main`  , `flex_align_cross`  , `flex_align_track`  :
+    Values for use with `flex_align_main`, `flex_align_cross`, `flex_align_track`  :
 
 - `START`  : means left horizontally and top vertically (default).
 - `END`  : means right horizontally and bottom vertically.
 - `CENTER`  : simply center.
-- `SPACE_EVENLY`  : items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to `flex_align_track`  .
-- `SPACE_AROUND`  : items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to `flex_align_track`  .
-- `SPACE_BETWEEN`  : items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to `flex_align_track`  .
+- `SPACE_EVENLY`  : items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to `flex_align_track`.
+- `SPACE_AROUND`  : items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to `flex_align_track`.
+- `SPACE_BETWEEN`  : items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to `flex_align_track`.
 
 - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
 - **pad_column** (*Optional*, int16): Set the padding between the columns, in pixels.
-- **flex_grow** (*Optional*, int16): Can be used to make one or more children fill the available space on the track. When one or more children have `flex_grow` set, the available space will be distributed proportionally to the grow values. Defaults to `0`  , which disables growing.
+- **flex_grow** (*Optional*, int16): Can be used to make one or more children fill the available space on the track. When one or more children have `flex_grow` set, the available space will be distributed proportionally to the grow values. Defaults to `0`, which disables growing.
 
 ```yaml
 # Example flex layout
@@ -590,7 +588,7 @@ It can arrange items into a 2D "table" that has rows or columns (tracks). The it
 
 - *tracks*: the rows or the columns.
 - *gap*: the space between the rows and columns or the items on a track.
-- *free unit (FR)*: a proportional distribution unit for the space available on the track. It accepts a unitless integer value that serves as a proportion. It dictates what amount of the available space the widget should take up. For example if all items on the track have a `FR` set to `1`  , the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
+- *free unit (FR)*: a proportional distribution unit for the space available on the track. It accepts a unitless integer value that serves as a proportion. It dictates what amount of the available space the widget should take up. For example if all items on the track have a `FR` set to `1`, the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
 
 Child widgets can be placed on the grid using the `grid_cell_row_pos` and `grid_cell_column_pos` configuration variables.
 If either is specified both must be specified. If neither is specified the widget will be placed in the first available position, in a row-major order.
@@ -611,19 +609,19 @@ In a grid layout, *all the widgets placed on the grid* can have some additional 
 - **grid_cell_column_pos** (*Optional*, int16): Position of the widget, in which column to appear (0 based count).
 - **grid_cell_x_align** (*Optional*, string): How to align the widget horizontally within the cell. Can also be applied through [Style properties](#lvgl-styling). Possible options below.
 - **grid_cell_y_align** (*Optional*, string): How to align the widget vertically within the cell. Can also be applied through [Style properties](#lvgl-styling). Possible options below.
-- **grid_cell_row_span**  (*Optional*, int16): How many rows to span across the widget. Defaults to `1`  .
-- **grid_cell_column_span** (*Optional*, int16): How many columns to span across the widget. . Defaults to `1`  .
+- **grid_cell_row_span** (*Optional*, int16): How many rows to span across the widget. Defaults to `1`.
+- **grid_cell_column_span** (*Optional*, int16): How many columns to span across the widget.. Defaults to `1`.
 
 {{< note >}}
 These `grid_cell_` variables are applied to individual widgets (cells) within the grid layout!
 
 {{< /note >}}
-Values for use with `grid_column_align`  , `grid_row_align`  , `grid_cell_x_align`  , `grid_cell_y_align`  :
+Values for use with `grid_column_align`, `grid_row_align`, `grid_cell_x_align`, `grid_cell_y_align`  :
 
 - `START`  : means left horizontally and top vertically (default).
 - `END`  : means right horizontally and bottom vertically.
 - `CENTER`  : simply center.
-- `STRETCH`  : stretch the widget to the cell in the respective direction. Does not apply to `grid_column_align`  , `grid_row_align`  .
+- `STRETCH`  : stretch the widget to the cell in the respective direction. Does not apply to `grid_column_align`, `grid_row_align`.
 - `SPACE_EVENLY`  : items are distributed so that the spacing between any two items (and the space to the edges) is equal.
 - `SPACE_AROUND`  : items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
 - `SPACE_BETWEEN`  : items are evenly distributed in the track: first item is on the start line, last item on the end line.
@@ -669,8 +667,8 @@ A gradient is a sequence of colors which can be applied to an object using the `
  Each entry has the following options:
 
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the gradient later.
-- **direction** (*Optional*, string): The direction of the gradient. Possible options are `none` (the default) `hor` or `ver`  .
-- **dither** (*Optional*, string): A dithering selection. Possible options are `none` (the default) `err_diff` or `ordered`  .
+- **direction** (*Optional*, string): The direction of the gradient. Possible options are `none` (the default) `hor` or `ver`.
+- **dither** (*Optional*, string): A dithering selection. Possible options are `none` (the default) `err_diff` or `ordered`.
 - **stops** (**Required**, list): A list of at least 2 color stop points. Each stop point has the following options:
   - **color** (**Required**, [Color](#lvgl-color)): The color of the stop point.
   - **position** (**Required**, float): The position of the stop point. Must be a float between 0.0 and 1.0, a percentage between 0% and 100%, or an integer between 0 and 255.
@@ -794,12 +792,12 @@ on_...:
 
 {{< anchor "lvgl-page-next-previous-action" >}}
 
-### `lvgl.page.next`  , `lvgl.page.previous`
+### `lvgl.page.next`, `lvgl.page.previous`
 
 This [action](#actions-action) changes the page to the next/previous based on the configuration (pages with their `skip` option enabled are...skipped). Page changes will wrap around at the end.
 
-- **animation** (*Optional*): Animate page changes as specified. One of: `NONE`  , `OVER_LEFT`  , `OVER_RIGHT`  , `OVER_TOP`  , `OVER_BOTTOM`  , `MOVE_LEFT`  , `MOVE_RIGHT`  , `MOVE_TOP`  , `MOVE_BOTTOM`  , `FADE_IN`  , `FADE_OUT`  , `OUT_LEFT`  , `OUT_RIGHT`  , `OUT_TOP`  , `OUT_BOTTOM`  . Defaults to `NONE`  .
-- **time** (*Optional*, [Time](#config-time)): Duration of the page change animation. Defaults to `50ms`  .
+- **animation** (*Optional*): Animate page changes as specified. One of: `NONE`, `OVER_LEFT`, `OVER_RIGHT`, `OVER_TOP`, `OVER_BOTTOM`, `MOVE_LEFT`, `MOVE_RIGHT`, `MOVE_TOP`, `MOVE_BOTTOM`, `FADE_IN`, `FADE_OUT`, `OUT_LEFT`, `OUT_RIGHT`, `OUT_TOP`, `OUT_BOTTOM`. Defaults to `NONE`.
+- **time** (*Optional*, [Time](#config-time)): Duration of the page change animation. Defaults to `50ms`.
 
 ```yaml
 on_...:
@@ -822,8 +820,8 @@ on_...:
 This [action](#actions-action) shows a specific page (including pages with their `skip` option enabled).
 
 - **id** (**Required**): The ID of the page to be shown.
-- **animation** (*Optional*): Animate page changes as specified. One of: `NONE`  , `OVER_LEFT`  , `OVER_RIGHT`  , `OVER_TOP`  , `OVER_BOTTOM`  , `MOVE_LEFT`  , `MOVE_RIGHT`  , `MOVE_TOP`  , `MOVE_BOTTOM`  , `FADE_IN`  , `FADE_OUT`  , `OUT_LEFT`  , `OUT_RIGHT`  , `OUT_TOP`  , `OUT_BOTTOM`  . Defaults to `NONE`  .
-- **time** (*Optional*, [Time](#config-time)): Duration of the page change animation. Defaults to `50ms`  .
+- **animation** (*Optional*): Animate page changes as specified. One of: `NONE`, `OVER_LEFT`, `OVER_RIGHT`, `OVER_TOP`, `OVER_BOTTOM`, `MOVE_LEFT`, `MOVE_RIGHT`, `MOVE_TOP`, `MOVE_BOTTOM`, `FADE_IN`, `FADE_OUT`, `OUT_LEFT`, `OUT_RIGHT`, `OUT_TOP`, `OUT_BOTTOM`. Defaults to `NONE`.
+- **time** (*Optional*, [Time](#config-time)): Duration of the page change animation. Defaults to `50ms`.
 
 ```yaml
 on_...:
@@ -853,7 +851,7 @@ The required config options take one of several forms:
 
 or
 
-- **action** (**Required**): Should be one of `next`  , `previous`  , `mark` or `restore`  .
+- **action** (**Required**): Should be one of `next`, `previous`, `mark` or `restore`.
 - **group** (*Optional*): The ID of the group within which to move the focus. The default group will be used if not specified
 - **freeze** (*Optional*, boolean): If true will lock the focus to the now selected widget.
 
@@ -955,7 +953,7 @@ Widget level [interaction triggers](#lvgl-automation-triggers) are available, pl
 
 LVGL has a notion of screen inactivity -- i.e. the time since the last user interaction with the screen is tracked. This can, for example, be used to dim the display backlight or turn it off after a moment of inactivity (like a screen saver). Every use of an input device (touchscreen, rotary encoder) counts as an activity and resets the inactivity counter.
 
-The `on_idle` [triggers](#automation) are activated when inactivity time becomes longer than the specified `timeout`  . You can configure any desired number of timeouts with different actions.
+The `on_idle` [triggers](#automation) are activated when inactivity time becomes longer than the specified `timeout`. You can configure any desired number of timeouts with different actions.
 
 - **timeout** (**Required**, [templatable](#config-templatable), int): [Time](#config-time) that has elapsed since the last touch event, after which the trigger will be invoked.
 

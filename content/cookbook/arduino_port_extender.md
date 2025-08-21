@@ -7,8 +7,6 @@ params:
     image: arduino_logo.svg
 ---
 
-
-
 With this sketch you can control pins of a remote Arduino board through ESPHome. The Arduino acts as a port
 expander, allowing you to use more pins than a standard ESP8266/ESP32 has.
 
@@ -47,9 +45,9 @@ i2c:
 ```
 
 By default ESP8266 uses `SDA` pin `GPIO4` which you need to connect to Arduino's `A4` and the `SCL`
-is `GPIO5` which goes to Arduino's `A5`  .
+is `GPIO5` which goes to Arduino's `A5`.
 
-Then create a `custom_component`  , this will be the main component we will be referencing later when creating
+Then create a `custom_component`, this will be the main component we will be referencing later when creating
 individual IOs.
 
 ```yaml
@@ -103,7 +101,7 @@ automations and filters.
 ## Sensor
 
 Sensors allows for reading the analog value of an analog pin, those are from `A0` to `A7` except for
-`A4` and `A5`  . The value returned goes from 0 to 1023 (the value returned by the Arduino `analogRead`
+`A4` and `A5`. The value returned goes from 0 to 1023 (the value returned by the Arduino `analogRead`
 function).
 
 Arduino analog inputs measures voltage. By default the sketch is configured to use the Arduino internal VREF
@@ -264,7 +262,6 @@ switch:
     name: Tank pump
     id: tank_pump
     output: relay_4
-
 
 # define binary sensors, use the Arduino PIN number for digital pins and
 # for analog use 14 for A0, 15 for A1 and so on...

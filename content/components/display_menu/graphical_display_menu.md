@@ -7,12 +7,11 @@ params:
     image: lcd_menu.png
 ---
 
-
 {{< anchor "graphical_display_menu" >}}
 
 The component provides an infrastructure for setting up a hierarchical menu
 on graphical displays. This offers the user an interactive method to display
-labels, control entities like `switch`  , `select`  , `number`  available locally on the
+labels, control entities like `switch`, `select`, `number`  available locally on the
 ESPHome node, without the requirement of a network connection.
 
 {{< img src="graphical_display_menu.png" alt="Image" width="60.0%" class="align-center" >}}
@@ -45,9 +44,11 @@ Configuration variables:
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **display** (*Optional*, [ID](#config-id)): ID of the display to render to. See
   [Drawing Modes](#drawing_modes) for more details
+
 - **font** (**Required**, [Font](#display-fonts)): Specifies the font to use
 - **foreground_color** (*Optional*, [Color](#config-color)): Specifies the foreground color to use.
   Defaults to COLOR_ON
+
 - **background_color** (*Optional*, [Color](#config-color)): Specifies the background color to use.
   Defaults to COLOR_OFF
 
@@ -55,7 +56,7 @@ Automations:
 
 - **on_redraw** (*Optional*, [Automation](#automation)): An automation to perform
   when the menu needs to be redrawn. This can be useful if your display has slow refresh rates.
-  For example E-Ink displays that are used with `display_interval: never`  .
+  For example E-Ink displays that are used with `display_interval: never`.
 
 Additional configuration is described in the [Display Menu](#display_menu) component.
 

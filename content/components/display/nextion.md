@@ -7,8 +7,6 @@ params:
     image: nextion.jpg
 ---
 
-
-
 The `nextion` display platform allows you to use Nextion LCD displays
 ([datasheet](https://nextion.itead.cc/resources/datasheets/), [iTead](https://www.itead.cc/display/nextion.html))
 with ESPHome.
@@ -55,46 +53,57 @@ display:
 
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART Bus](#uart) you wish to use for this display. Specify this
   when you have multiple UART configurations.
+
 - **brightness** (*Optional*, percentage): When specified, the display brightness will be set to this value at boot.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the Nextion
   display. See [Rendering Lambda](#display-nextion_lambda) for more information. This is typically empty. The individual components
   for the Nextion will handle almost all functions needed for updating display elements.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
-  Defaults to `5s`  .
+  Defaults to `5s`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **tft_url** (*Optional*, string): The URL from which to download the TFT file for display firmware updates (Nextion
   OTA). See [Nextion Upload](#nextion_upload_tft).
+
 - **touch_sleep_timeout** (*Optional*, int): Sets internal No-touch-then-sleep timer in seconds.
   Range: 0 (disabled) or 3-65535 seconds (max: ~18 hours). Values 1-2 are auto-corrected to 3.
   When set, Nextion will automatically enter sleep mode after the specified period of no touch activity.
   This setting persists until device reboot or reset. Note: The display will only wake up by restart or by configuring `auto_wake_on_touch: true`.
+
 - **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
 - **wake_up_page** (*Optional*, int): Sets the page to display after waking up
-- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to `false`  .
+- **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to `false`.
 - **on_setup** (*Optional*, [Action](#config-action)): An action to be performed after ESPHome connects to the Nextion. See [Nextion Automation](#nextion-on_setup).
 - **on_sleep** (*Optional*, [Action](#config-action)): An action to be performed when the Nextion goes to sleep. See [Nextion Automation](#nextion-on_sleep).
 - **on_wake** (*Optional*, [Action](#config-action)): An action to be performed when the Nextion wakes up. See [Nextion Automation](#nextion-on_sleep).
 - **on_page** (*Optional*, [Action](#config-action)): An action to be performed after a page change. See [Nextion Automation](#nextion-on_page).
 - **on_touch** (*Optional*, [Action](#config-action)): An action to be performed after a touch event (press or release). See [Nextion Automation](#nextion-on_touch).
-- **auto_wake_on_touch** (*Optional*, boolean): If set to `true`  , the Nextion will be configured to wake from sleep
+- **auto_wake_on_touch** (*Optional*, boolean): If set to `true`, the Nextion will be configured to wake from sleep
   when touched.
+
 - **skip_connection_handshake** (*Optional*, boolean): Sets whether the initial display connection handshake process is
-  skipped. When set to `true`  , the connection will be established without performing the handshake. This can be
-  useful when using Nextion Simulator. Defaults to `false`  .
+  skipped. When set to `true`, the connection will be established without performing the handshake. This can be
+  useful when using Nextion Simulator. Defaults to `false`.
+
 - **on_buffer_overflow** (*Optional*, [Action](#config-action)): An action to be performed when the Nextion
   reports a buffer overflow. See [Nextion Automation](#nextion-on_buffer_overflow).
+
 - **command_spacing** (*Optional*, [Time](#config-time)): Sets the minimum time between commands sent to the Nextion display.
   A higher value can help prevent buffer overflows but will result in slower interface updates.
-  Range is `0-255ms`  . Defaults to `0ms` (disabled).
+  Range is `0-255ms`. Defaults to `0ms` (disabled).
+
 - **max_commands_per_loop** (*Optional*, integer): Limits the number of commands processed per loop cycle.
   This helps prevent stack overflows when a large number of commands are queued.
   Lower values (for example, `20`  ) may help improve stability in constrained environments.
+
 - **max_queue_size** (*Optional*, integer): Sets the maximum number of commands that can be queued at once.
   When the limit is reached, new commands will be dropped and a warning will be logged.
   This helps prevent memory overflows or boot-time crashes in complex setups that issue a large number of commands
   in rapid succession. If not set, the queue size is unlimited.
+
 - **dump_device_info** (*Optional*, boolean): Shows device information (model, firmware version, serial number, flash size) in the configuration dump.
-  When disabled, device info is only logged during connection establishment to save memory. Defaults to `false`  .
+  When disabled, device info is only logged during connection establishment to save memory. Defaults to `false`.
 
 {{< anchor "display-nextion_lambda" >}}
 
@@ -105,7 +114,7 @@ sends *instructions* to the display to tell it *how* to render something and/or 
 
 First, you need to use the [Nextion Editor](https://nextion.tech/nextion-editor/) to create a "TFT" display file and
 "install" it onto the display, typically via an SD card onto which you'll copy the "TFT" file and then insert into the
-display for installation/updating. Then, in the rendering `lambda`  , you can use the various API calls to populate the
+display for installation/updating. Then, in the rendering `lambda`, you can use the various API calls to populate the
 display with data:
 
 ```yaml
@@ -273,6 +282,7 @@ Given the page ID, the appropriate components can be updated. Two strategies are
 
 - Use [Nextion Sensors](#nextion_sensor) for every UI field and use one of the
   [update functions](#nextion_update_all_components).
+
 - Manually set component text or value for each field:
 
 ```yaml
@@ -297,8 +307,10 @@ The following arguments will be available:
 
 - `page_id`  : Contains the ID (integer) of the page where the touch happened.
 - `component_id`  : Contains the ID (integer) of the component touched. **You must have "Send Component ID" enabled
+
     for "Touch Press Event" and/or "Touch Release Event" for the UI element in your HMI configuration in the**
     [Nextion Editor](https://nextion.tech/nextion-editor/).
+
 - `touch_event`  : It will be `true` for a "press" event, or `false` for a "release" event.
 
 ```yaml
@@ -392,7 +404,7 @@ button:
 To host the TFT file from Home Assistant, create a `www` directory (if it doesn't already exist) in your `config`
 directory. If you wish, you may also create a subdirectory for your TFT files.
 
-For example, if the file is located in your configuration directory `www/tft/default.tft`  , the URL to access it will
+For example, if the file is located in your configuration directory `www/tft/default.tft`, the URL to access it will
 be `http(s)://your_home_assistant_url:port/local/tft/default.tft`
 
 ## Components

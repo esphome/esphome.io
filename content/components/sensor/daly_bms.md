@@ -7,8 +7,6 @@ params:
     image: daly_bms.jpg
 ---
 
-
-
 The `daly_bms` sensor platform allows you to use a Daly Smart BMS
 ([more info](https://dalyelec.en.made-in-china.com/))
 with ESPHome.
@@ -28,7 +26,7 @@ daly_bms:
 ### Configuration variables
 
 - **update_interval** (*Optional*, [Time](#config-time)): Delay between data requests.
-- **address** (*Optional*, int): Address to use, defaults to `0x80`  .
+- **address** (*Optional*, int): Address to use, defaults to `0x80`.
 
 ## Sensor
 

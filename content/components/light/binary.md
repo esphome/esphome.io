@@ -7,8 +7,6 @@ params:
     image: lightbulb.svg
 ---
 
-
-
 The `binary` light platform creates a simple ON/OFF-only light from a
 [binary output component](#output).
 

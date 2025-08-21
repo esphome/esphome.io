@@ -7,8 +7,6 @@ params:
     image: server-network.svg
 ---
 
-
-
 The Status Binary Sensor exposes the node state (if it's connected to via MQTT/native API)
 for Home Assistant.
 

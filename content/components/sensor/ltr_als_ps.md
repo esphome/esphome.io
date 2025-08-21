@@ -7,8 +7,6 @@ params:
     image: ltr303.jpg
 ---
 
-
-
 {{< img src="ltr303-full.jpg" alt="Image" caption="LTR-329 and LTR-303 Ambient Light Sensors." width="90.0%" class="align-center" >}}
 
 {{< img src="ltr303-ui.png" alt="Image" caption="LTR-303 Sensor in Home Assistant UI." width="60.0%" class="align-center" >}}
@@ -23,7 +21,7 @@ The family of sensors includes:
 - Proximity Sensor **LTR-659ALS** (with PS gain control)
 
 The sensors are very similar and share the same datasheet. First two have default I²C address `0x29` and the rest
-have default I²C address `0x23`  . The sensors are available on breakout boards from a number of vendors, for
+have default I²C address `0x23`. The sensors are available on breakout boards from a number of vendors, for
 example `Adafruit`_or `Pimoroni`_.
 
 Proximity sensors are the same sort of sensors that you find in phones and tablets to disable the screen when you hold
@@ -72,10 +70,10 @@ The table lists gain values and corresponding illuminance range:
 | ----- | -------------------------- |
 | `1X`  | 1 lux to 64k lux (default) |
 | `2X`  | 0.5 lux to 32k lux         |
-| `4X`  | 0.25 lux to 16k lux        |
-| `8X`  | 0.125 lux to 8k lux        |
-| `48X` | 0.02 lux to 1.3k lux       |
-| `96X` | 0.01 lux to 600 lux        |
+| `4X`  | 0.25 lux to 16k lux |
+| `8X`  | 0.125 lux to 8k lux |
+| `48X` | 0.02 lux to 1.3k lux |
+| `96X` | 0.01 lux to 600 lux |
 
 This Wikipedia [article](https://en.wikipedia.org/wiki/Lux) has a table of some lux values for comparison.
 
@@ -109,29 +107,39 @@ sensor:
 ## Configuration variables
 
 - **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation.
-- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Default is `0x29`  .
+- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Default is `0x29`.
 - **type** (_Optional_, string): The type of the sensor. Valid values are `ALS_PS` _(default)_ for
   integrated sensors, `ALS` for ambient light only or `PS` for proximity only devices.
+
 - **auto_mode** (_Optional_, boolean): Automatic gain and integration time selection. Defaults to True.
 - **gain** (_Optional_, string): The gain the device will use. Higher values are better in low-light conditions.
-  Valid values are `1X` _(default)_, `2X`  , `4X`  , `8X`  , `48X`  , `96X`  .
+  Valid values are `1X` _(default)_, `2X`, `4X`, `8X`, `48X`, `96X`.
+
 - **integration_time** (_Optional_, [Time](#config-time)):
   The amount of time sensors are exposed. Longer means more accurate values.
-  Valid values are: `50ms` _(default)_, `100ms`  , `150ms`  , `200ms`  , `250ms`  , `300ms`  , `350ms`  , `400ms`  .
+  Valid values are: `50ms` _(default)_, `100ms`, `150ms`, `200ms`, `250ms`, `300ms`, `350ms`, `400ms`.
+
 - **glass_attenuation_factor** (_Optional_, float): The attenuation factor of glass if it's behind some glass
-  or plastic facia.  Default is `1.0` means `100%` transmissivity. `2` means `50%` transmissivity etc.
+  or plastic facia. Default is `1.0` means `100%` transmissivity. `2` means `50%` transmissivity etc.
+
 - **update_interval** (_Optional_, [Time](#config-time)): The interval for checking the sensors.
-  Defaults to `60s`  .
+  Defaults to `60s`.
+
 - **ps_cooldown** (_Optional_, [Time](#config-time)): The "cooldown" period after the proximity sensor is triggered.
-  Helps to avoid multiple calls.  Defaults to `5s`  .
+  Helps to avoid multiple calls. Defaults to `5s`.
+
 - **ps_gain** (_Optional_, string): The gain the device will use for proximity sensor. Higher values are better in low-light conditions.
-  Valid values are `16X` _(default)_, `32X`  , `64X`  . Only for **LTR-659ALS**.
+  Valid values are `16X` _(default)_, `32X`, `64X`. Only for **LTR-659ALS**.
+
 - **ps_high_threshold** (_Optional_, int): The threshold for the proximity sensor to trigger on object getting closer.
-  Defaults to `65535`  , which implies it will never be triggered.
+  Defaults to `65535`, which implies it will never be triggered.
+
 - **ps_low_threshold** (_Optional_, int): The threshold for the proximity sensor to trigger on object getting further away.
-  Defaults to `0`  , which implies it will never be triggered.
+  Defaults to `0`, which implies it will never be triggered.
+
 - **on_ps_high_threshold** (_Optional_): Actions to perform when the proximity sensor is triggered
   on object getting closer.
+
 - **on_ps_low_threshold** (_Optional_): Actions to perform when the proximity sensor is triggered
   on object getting further away.
 
@@ -139,7 +147,7 @@ sensor:
 
 This component offers five sensors for ALS-equipped devices and one sensor for PS-equipped devices.
 You can configure all or any subset of these sensors. Each configured sensor is reported separately
-on each `update_interval`  . Each is an ESPHome [sensor](#config-sensor) and may be configured
+on each `update_interval`. Each is an ESPHome [sensor](#config-sensor) and may be configured
 accordingly; if you don't need to configure additional [sensor](#config-sensor) variables, you
 may simply use the shorthand syntax for the sensor. For example: `ambient_light: "Ambient light"`
 

@@ -7,8 +7,6 @@ params:
     image: wifi-strength-alert-outline.svg
 ---
 
-
-
 The captive portal component in ESPHome is a fallback mechanism for when connecting to the
 configured {{< docref "wifi" "WiFi" >}} fails.
 

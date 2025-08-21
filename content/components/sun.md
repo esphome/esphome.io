@@ -7,8 +7,6 @@ params:
     image: weather-sunny.svg
 ---
 
-
-
 The `sun` component allows you to track the sun's position in the sky. Calculations are done every 60 seconds.
 
 ## Component/Hub
@@ -81,7 +79,8 @@ sensor:
 ### Configuration variables
 
 - **type** (**Required**, string): The type of value to track. One of `elevation` and
-  `azimuth`  .
+  `azimuth`.
+
 - All other options from [Sensor](#config-sensor).
 
 ## Text Sensor
@@ -104,11 +103,14 @@ text_sensor:
 ### Configuration variables
 
 - **type** (**Required**, string): The type of value to track. One of `sunrise` and
-  `sunset`  .
+  `sunset`.
+
 - **elevation** (*Optional*, float): The elevation to calculate the next sunrise/sunset event
   for. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
+
 - **format** (*Optional*, string): The format to format the time value with, see [strftime](#strftime)
-  for more information. Defaults to `%X`  .
+  for more information. Defaults to `%X`.
+
 - All other options from [Text Sensor](#config-text_sensor).
 
 {{< anchor "sun-is_above_below_horizon-condition" >}}

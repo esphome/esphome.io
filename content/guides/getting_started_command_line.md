@@ -7,8 +7,6 @@ params:
     image: console.svg
 ---
 
-
-
 ESPHome is the perfect solution for creating custom firmwares for
 your ESP8266/ESP32 boards. In this guide we'll go through how to set up a
 basic “node” in a few simple steps.
@@ -59,12 +57,15 @@ better:
 - `latest` and `stable` point to the latest stable release available. It's
   not recommended to automatically update the container based on those tags
   because of the possible breaking changes between releases.
+
 - Release-tracking tag `YEAR.MONTH` (e.g. `2022.8`  ) points to the latest
   stable patch release available within the required version. There should
   never be a breaking change when upgrading the containers based on tags like
   that.
+
 - `beta` points to the latest released beta version, and to the latest stable
   release when there is no fresh beta release.
+
 - `dev` is the bleeding edge release; built daily based on the latest changes
   in the `dev` branch.
 
@@ -114,7 +115,7 @@ The configuration format should hopefully immediately seem similar to
 you. ESPHome has tried to keep it as close to Home Assistant's
 `configuration.yaml` schema as possible. In the above example, we're
 simply adding a switch that's called “Living Room Dehumidifier” (could control
-anything really, for example lights) and is connected to pin `GPIO5`  .
+anything really, for example lights) and is connected to pin `GPIO5`.
 The nice thing about ESPHome is that it will automatically also try
 to translate pin numbers for you based on the board. For example in the
 above configuration, if using a NodeMCU board, you could have just as
@@ -233,7 +234,7 @@ docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
 docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
 ```
 
-After that, you will be able to access the ESPHome Device Builder at `localhost:6052`  .
+After that, you will be able to access the ESPHome Device Builder at `localhost:6052`.
 
 Logging level can be set with the env var `ESPHOME_LOG_LEVEL` (default is `INFO`).
 

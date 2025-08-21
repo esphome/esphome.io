@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 Text sensors are a lot like normal {{< docref "/components/sensor/index" "sensors" >}}.
 But where the "normal" sensors only represent sensors that output **numbers**, this
 component can represent any *text*.
@@ -32,7 +30,7 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the text sensor to use that name, you can set `name: None`  .
+you want the text sensor to use that name, you can set `name: None`.
 
 {{< /note >}}
 
@@ -41,16 +39,20 @@ you want the text sensor to use that name, you can set `name: None`  .
   sensor. Only the `timestamp` and `date` device classes are supported.
   Set to `""` to remove the default device class of a sensor.
   Requires Home Assistant 2024.3 or newer.
+
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - If MQTT enabled, All other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
@@ -58,6 +60,7 @@ Automations:
 
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
   when a new value is published. See [`on_value`](#text_sensor-on_value).
+
 - **on_raw_value** (*Optional*, [Automation](#automation)): An automation to perform
   when a new value is received that hasn't passed through any filters. See [`on_raw_value`](#text_sensor-on_raw_value).
 
@@ -150,7 +153,7 @@ Search the current value of the text sensor for a string, and replace it with an
       - "pre -> bar"
 ```
 
-The arguments are a list of substitutions, each in the form `TO_FIND -> REPLACEMENT`  .
+The arguments are a list of substitutions, each in the form `TO_FIND -> REPLACEMENT`.
 
 ### `map`
 
@@ -167,7 +170,7 @@ Does not change the value of the text sensor if the current value wasn't found.
       - low -> Off
 ```
 
-The arguments are a list of substitutions, each in the form `LOOKUP -> REPLACEMENT`  .
+The arguments are a list of substitutions, each in the form `LOOKUP -> REPLACEMENT`.
 
 ### `lambda`
 
@@ -187,14 +190,14 @@ filters:
 ## Text Sensor Automation
 
 You can access the most recent state of the sensor in [lambdas](#config-lambda) using
-`id(sensor_id).state`  .
+`id(sensor_id).state`.
 
 {{< anchor "text_sensor-on_value" >}}
 
 ### `on_value`
 
 This automation will be triggered when a new value is published.
-In [Lambdas](#config-lambda) you can get the value from the trigger with `x`  .
+In [Lambdas](#config-lambda) you can get the value from the trigger with `x`.
 
 ```yaml
 text_sensor:
@@ -213,7 +216,7 @@ Configuration variables: See [Automation](#automation).
 ### `on_raw_value`
 
 This automation will be triggered when a new value is received that hasn't passed
-through any filters. In [Lambdas](#config-lambda) you can get the value from the trigger with `x`  .
+through any filters. In [Lambdas](#config-lambda) you can get the value from the trigger with `x`.
 
 ```yaml
 text_sensor:

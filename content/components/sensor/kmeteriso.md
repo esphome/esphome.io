@@ -7,8 +7,6 @@ params:
     image: kmeteriso.jpg
 ---
 
-
-
 The `kmeteriso` sensor platform allows you to use your KMeterISO
 ([product](https://docs.m5stack.com/en/unit/KMeterISO%20Unit),
 `M5Stack`_) K-Type thermocouple temperature sensor with ESPHome.
@@ -32,7 +30,7 @@ sensor:
 - **temperature** (*Optional*): The information for the temperature sensor. All options from [Sensor](#config-sensor).
 - **internal_temperature** (*Optional*): The information for the temperature sensor inside the probe. All options from [Sensor](#config-sensor).
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `5s`  .
+  sensor. Defaults to `5s`.
 
 ## See Also
 

@@ -7,8 +7,6 @@ params:
     image: lcd_menu.png
 ---
 
-
-
 {{< anchor "display_menu" >}}
 
 The component provides a menu primarily intended to be controlled either by a rotary encoder
@@ -80,13 +78,17 @@ Configuration variables:
 
 - **root_item_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the root menu item.
 - **active** (*Optional*, boolean): Whether the menu should start as active, meaning accepting
-  user interactions and displaying output. Defaults to `true`  .
-- **mode** (*Optional*, enum): Defines the navigation logic. Defaults to `rotary`  .
+  user interactions and displaying output. Defaults to `true`.
+
+- **mode** (*Optional*, enum): Defines the navigation logic. Defaults to `rotary`.
 
   - `rotary`  : Rotary mode expects the clockwise movement wired to [display_menu.down](#display_menu-down_action),
+
       the anticlockwise one to [display_menu.up](#display_menu-up_action) and the switch
       to [display_menu.enter](#display_menu-enter_action) action.
+
   - `joystick`  : Joystick mode expects the up, down, left and right buttons wired to the [display_menu.up](#display_menu-up_action),
+
       [display_menu.down](#display_menu-down_action), [display_menu.left](#display_menu-left_action)
       and [display_menu.right](#display_menu-right_action) actions and the middle button
       to the [display_menu.enter](#display_menu-enter_action) action.
@@ -97,6 +99,7 @@ Automations:
 
 - **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
   when the menu level (here the root one) is entered. See [`on_enter`](#display_menu-on_enter).
+
 - **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
   when the menu level is not displayed anymore.
   See [`on_leave`](#display_menu-on_leave).
@@ -118,7 +121,7 @@ The component manages a hierarchy of menu items. The common configuration variab
 Some of the menu items provide a way to edit values either by selecting from a list of options
 or changing a numeric one. Such items can be configured in two ways.
 
-If the `immediate_edit` configuration is `false`  , the editing mode has to be activated
+If the `immediate_edit` configuration is `false`, the editing mode has to be activated
 first by activating the rotary encoder's switch or the joystick's center button.
 On the activation the `on_enter` automation is called and the item is marked as editable
 (the `>` selection marker changes to `*` as default). The value can be then
@@ -177,6 +180,7 @@ Automations:
 
 - **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
   when the menu level is entered. See [`on_enter`](#display_menu-on_enter).
+
 - **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
   when the menu level is not displayed anymore.
   See [`on_leave`](#display_menu-on_leave).
@@ -228,21 +232,25 @@ associated `select` component.
 Configuration variables:
 
 - **immediate_edit** (*Optional*, boolean): Whether the item can be immediately edited when
-  selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`  .
+  selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`.
+
 - **select** (**Required**, [ID](#config-id)): A `select` component managing
   the edited value.
+
 - **value_lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda returning a string to be displayed as value. The lambda gets an `it` argument
-  pointing to the `MenuItem`  . If not specified the selected option name of the `select`
+  pointing to the `MenuItem`. If not specified the selected option name of the `select`
   component is used as the value.
 
 Automations:
 
 - **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
+
 - **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
+
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
@@ -281,37 +289,42 @@ number:
 The menu item of the type `number` allows editing a floating point number.
 On click the `on_enter` automation is called and the item is marked as editable
 (the `>` selection marker changes to `*` as default). Up and down events
-then increase and decrease the value by steps defined in the `number`  ,
-respecting the `min_value` and `max_value`  . The editing mode is exited
+then increase and decrease the value by steps defined in the `number`,
+respecting the `min_value` and `max_value`. The editing mode is exited
 by another click.
 
 Note that the fractional floating point values do not necessarily add nicely and
-ten times `0.100000` is not necessarily `1.000000`  . Use steps that are
+ten times `0.100000` is not necessarily `1.000000`. Use steps that are
 powers of two (such as `0.125`  ) or take care of the rounding explicitly.
 
 Configuration variables:
 
 - **immediate_edit** (*Optional*, boolean): Whether the item can be immediately edited when
   selected. See [Editing Values](#display_menu-edit_mode). Ignored in the `rotary` mode.
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **number** (**Required**, [ID](#config-id)): A `number` component managing
   the edited value. If on entering the value is less than `min_value` or more than
-  `max_value`  , the value is capped to fall into the range.
+  `max_value`, the value is capped to fall into the range.
+
 - **format** (*Optional*, string): A `printf`  -like format string specifying
   exactly one `f` or `g`  -type conversion used to display the current value.
-  Defaults to `%.1f`  .
+  Defaults to `%.1f`.
+
 - **value_lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda returning a string to be displayed as value. The lambda gets an `it` argument
-  pointing to the `MenuItem`  . If not specified the value of the `number` component
+  pointing to the `MenuItem`. If not specified the value of the `number` component
   formatted according to the `format` is used as the value.
 
 Automations:
 
 - **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
+
 - **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
+
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
@@ -348,22 +361,26 @@ The menu item of the type `switch` allows toggling the associated `switch` compo
 Configuration variables:
 
 - **immediate_edit** (*Optional*, boolean): Whether the item can be immediately edited when
-  selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`  .
-- **on_text** (*Optional*, string): The text for the `ON` state. Defaults to `On`  .
-- **off_text** (*Optional*, string): The text for the `OFF` state. Defaults to `Off`  .
+  selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`.
+
+- **on_text** (*Optional*, string): The text for the `ON` state. Defaults to `On`.
+- **off_text** (*Optional*, string): The text for the `OFF` state. Defaults to `Off`.
 - **switch** (**Required**, [ID](#config-id)): A `switch` component managing
   the edited value.
+
 - **value_lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda returning a string to be displayed as value. The lambda gets an `it` argument
-  pointing to the `MenuItem`  . If not specified the `on_text` / `off_text` is used.
+  pointing to the `MenuItem`. If not specified the `on_text` / `off_text` is used.
 
 Automations:
 
 - **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
+
 - **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
+
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
@@ -406,29 +423,34 @@ lcd_menu:
 ```
 
 The menu item of the type `custom` delegates navigating the values to the automations
-and displaying the value to the `value_lambda`  .
+and displaying the value to the `value_lambda`.
 
 Configuration variables:
 
 - **immediate_edit** (*Optional*, boolean): Whether the item can be immediately edited when
-  selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`  .
+  selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`.
+
 - **value_lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda returning a string to be displayed as value. The lambda gets an `it` argument
-  pointing to the `MenuItem`  .
+  pointing to the `MenuItem`.
 
 Automations:
 
 - **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
+
 - **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
+
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
+
 - **on_next** (*Optional*, [Automation](#automation)): An automation to perform
   when the user navigates to the next value.
   See [`on_next`](#display_menu-on_next).
+
 - **on_prev** (*Optional*, [Automation](#automation)): An automation to perform
   when the user navigates to the previous value.
   See [`on_prev`](#display_menu-on_prev).

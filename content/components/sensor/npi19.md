@@ -7,8 +7,6 @@ params:
     image: npi19.jpg
 ---
 
-
-
 The `npi19` sensor platform allows you to use your NPI-19 ([datasheet](https://www.amphenol-sensors.com/hubfs/AAS-920-699F-NovaSensor-NPI-19-I2C-061322-web.pdf),
 [product page](https://www.amphenol-sensors.com/en/novasensor/pressure-sensors/3358-npi-19-i2c)) pressure sensors with ESPHome.
 
@@ -41,7 +39,7 @@ sensor:
 - **i2c_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [I²C Component](#i2c). Defaults to the default I²C bus.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  All known sensors currently configured to `0x28`  . Defaults to `0x28`  .
+  All known sensors currently configured to `0x28`. Defaults to `0x28`.
 
 {{< anchor "npi19-converting" >}}
 
@@ -67,9 +65,9 @@ filters:
 ### Calibrated
 
 1. Expose the sensor to a low known pressure, for example `5` psi.
-1. Observe the value of the raw pressure sensor, for example `1500`  .
+1. Observe the value of the raw pressure sensor, for example `1500`.
 1. Expose the sensor to a high pressure, for example `90` psi.
-1. Observe the value of the raw pressure sensor, for example `14500`  .
+1. Observe the value of the raw pressure sensor, for example `14500`.
 1. Use `calibrate_linear` filter to map the incoming value to the calibrated one:
 
 ```yaml

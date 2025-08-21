@@ -7,8 +7,6 @@ params:
     image: max7219digit.jpg
 ---
 
-
-
 The `max7219` display platform allows you to use MAX7219 digit with ESPHome. Please note that this component
 is *only* for the digit "matrix" display, for the 7 segment display see {{< docref "max7219/" >}}.
 
@@ -42,32 +40,40 @@ display:
 
 - **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin you have the CS line hooked up to.
 - **num_chips** (*Optional*, int): The number of chips you wish to use for daisy chaining. Defaults to
-  `4`  .
-- **rotate_chip** (*Optional*): Rotates every 8x8 chip. Valid values are `0`  , `90`  , `180` and `270`  .
-  Defaults to `0`  .
-- **scroll_enable** (*Optional*, boolean): Turn scroll mode on when content does not fit. Defaults to `true`  .
-- **scroll_mode** (*Optional*): Set the scroll mode. One of `CONTINUOUS` or `STOP`  . Defaults to `CONTINUOUS`
+  `4`.
+
+- **rotate_chip** (*Optional*): Rotates every 8x8 chip. Valid values are `0`, `90`, `180` and `270`.
+  Defaults to `0`.
+
+- **scroll_enable** (*Optional*, boolean): Turn scroll mode on when content does not fit. Defaults to `true`.
+- **scroll_mode** (*Optional*): Set the scroll mode. One of `CONTINUOUS` or `STOP`. Defaults to `CONTINUOUS`
 
   - `CONTINUOUS`  : Always scrolls and the text repeats continuously, you might need to add some
+
       separation at the end.
+
   - `STOP`  : When text is over it waits the `scroll_dwell` time and scroll is set back to the start.
 
 - **scroll_speed** (*Optional*, [Time](#config-time)): Set scroll speed. Defaults to `250ms`
-- **scroll_delay** (*Optional*, [Time](#config-time)): Set delay time before scroll starts. Defaults to `1s`  .
+- **scroll_delay** (*Optional*, [Time](#config-time)): Set delay time before scroll starts. Defaults to `1s`.
 - **scroll_dwell** (*Optional*, [Time](#config-time)): Sets the wait time at the end of the scroll before starting
-  over. This is only used in mode `STOP`  . Defaults to `1s`  .
-- **reverse_enable** (*Optional*, boolean): For some displays the order of the displays is reversed ("DCBA"). This option will reverse the display to ("ABCD") again. Defaults to  `false`  .
+  over. This is only used in mode `STOP`. Defaults to `1s`.
+
+- **reverse_enable** (*Optional*, boolean): For some displays the order of the displays is reversed ("DCBA"). This option will reverse the display to ("ABCD") again. Defaults to `false`.
 - **intensity** (*Optional*, int): The intensity with which the MAX7219 should drive the outputs. Range is
-  from `0`  , least intense to `15` the brightest. Defaults to `15`  .
+  from `0`, least intense to `15` the brightest. Defaults to `15`.
+
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the
   MAX7219. See [Rendering Lambda](#display-max7219digit_lambda) for more information.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
 - **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
   to use multiple SPI buses.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **num_chip_lines** (*Optional*, int): Number of lines if you want to use the displays in Multiline Mode. Defaults to `1` Example: <https://github.com/esphome/esphome/pull/1622#issue-836179156>
-- **chip_lines_style** (*Optional*): How are the lines in Multiline Mode connected? Possible values are `zigzag` and `snake`  . Defaults to `snake`
-- **flip_x** (*Optional*, boolean): Flip the horizontal axis on the screen. Defaults to `false`  .
+- **chip_lines_style** (*Optional*): How are the lines in Multiline Mode connected? Possible values are `zigzag` and `snake`. Defaults to `snake`
+- **flip_x** (*Optional*, boolean): Flip the horizontal axis on the screen. Defaults to `false`.
 
 {{< anchor "display-max7219digit_actions" >}}
 
@@ -79,7 +85,7 @@ The following actions are replicas of the LAMBDA functions shown in the next sec
 
 ### `MAX7219.invert_on` & `MAX7219.invert_off` Action
 
-This action  `MAX7219.invert_on` will invert the display. So background pixels are on and texts pixels are
+This action `MAX7219.invert_on` will invert the display. So background pixels are on and texts pixels are
 off. `MAX7219.invert_off` sets the display back to normal. The background pixels are only set at the next update, the pixels drawn in
 the various function like print, line, etc. are directly influenced by the invert command.
 
@@ -102,7 +108,7 @@ With this actions you can reverse the display direction from left to right to ri
 The intensity of the screen can be set "dynamically" within the lambda code with the following command: it.intensity(`0` .. `15`  ).
 
 - **intensity** (int): The intensity with which the MAX7219 should drive the outputs. Range is
-  from `0`  , least intense to `15` the brightest. Defaults to `15`  .
+  from `0`, least intense to `15` the brightest. Defaults to `15`.
 
 {{< anchor "display-max7219digit_lambda" >}}
 
@@ -141,7 +147,7 @@ This is roughly the code used to display the MAX7219 pictured in the image.
 
 Because 8x8 matrix displays has a limited height of 8 pixels only, the use of TrueType fonts for displaying text
 is not recommended. While rendering the single characters easily unattractive artifacts will occur. Bitmap-based
-fonts in [bdf format](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format)  are more suitable.
+fonts in [bdf format](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format) are more suitable.
 For example 5x7.bdf or 5x8.bdf
 
 ### Scrolling
@@ -232,7 +238,7 @@ display:
 ```
 
 For a quick display some additional commands are embedded in the code with a related 8 pixel font. Three methods
-(`printdigit`  , `printdigitf` and `strftimedigit`  ) can be used for displaying characters. Each 8 X 8 grid is used to
+(`printdigit`, `printdigitf` and `strftimedigit`  ) can be used for displaying characters. Each 8 X 8 grid is used to
 display a single character. So not very space efficient. The format of the command is: `it.printdigit("1234");` or
 `it.printdigitf("%s","1234")`  ;
 

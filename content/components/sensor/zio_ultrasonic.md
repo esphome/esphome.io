@@ -7,8 +7,6 @@ params:
     image: zio_ultrasonic.jpg
 ---
 
-
-
 The Zio Ultrasonic Distance sensor allows you to use your compatible
 ([datasheet](https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf),
 [sparkfun](https://www.sparkfun.com/products/17777))
@@ -30,8 +28,8 @@ sensor:
 
 ## Configuration variables
 
-- **address** (*Optional*, int): Manually specifiy the I²C address of the sensor. Defaults to `0x00`  .
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
+- **address** (*Optional*, int): Manually specifiy the I²C address of the sensor. Defaults to `0x00`.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 - All other options from [Sensor](#config-sensor).
 
 ## See Also

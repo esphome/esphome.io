@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up ESPHome External Components.
 ---
 
-
-
 You can easily import community or personal components using the external components feature.
 Bundled components can be overridden using this feature.
 
@@ -49,7 +47,7 @@ external_components:
 - **source**: The location of the components you want to retrieve. See [Local](#external-components_local)
   and [external-components_git](#external-components_git).
 
-  - **type** (**Required**): Repository type. One of `local`  , `git`  .
+  - **type** (**Required**): Repository type. One of `local`, `git`.
 
   git options:
 
@@ -61,13 +59,13 @@ external_components:
 
   local options:
 
-  - **path** (**Required**):  Path to use when using local components. See [Local](#external-components_local).
+  - **path** (**Required**): Path to use when using local components. See [Local](#external-components_local).
 
 - **components** (*Optional*, list): The list of components to use from the external source.
   By default, all available components are used.
 
 - **refresh** (*Optional*, [Time](#config-time)): The interval the source will be checked. Has no
-  effect on `local`  . See [Refresh](#external-components_refresh). for more info. Defaults to `1day`  .
+  effect on `local`. See [Refresh](#external-components_refresh). for more info. Defaults to `1day`.
 
 {{< anchor "external-components_local" >}}
 
@@ -92,7 +90,7 @@ is.
 
 ### Example of local components
 
-Given the above example of `my_components`  , the folder structure must look like:
+Given the above example of `my_components`, the folder structure must look like:
 
 ```text
 <CONFIG_DIR>
@@ -209,7 +207,7 @@ security measure; your username and password will necessarily be stored in clear
 Components are initially cloned into a cache directory, then the repository is checked for updates
 (via *git pull*) after the `refresh:` time passes since last check.
 
-You can make ESPHome check the repository every time by setting this option to `0s`  , however since
+You can make ESPHome check the repository every time by setting this option to `0s`, however since
 ESPHome is validating the configuration continuously while using the dashboard or the vscode extension,
 it is not recommended to set this value to less than a few minutes to avoid validation slow down and
 excessive repository checks.

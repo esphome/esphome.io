@@ -7,8 +7,6 @@ params:
     image: gpio.svg
 ---
 
-
-
 The `gpio` switch platform allows you to use any pin on your node as a
 switch. You can for example hook up a relay to a GPIO pin and use it
 through this platform.
@@ -27,8 +25,10 @@ switch:
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The
   GPIO pin to use for the switch.
+
 - **interlock** (*Optional*, list): A list of other GPIO switches in an interlock group. See
   [Interlocking](#switch-gpio-interlocking).
+
 - **interlock_wait_time** (*Optional*, [Time](#config-time)): For interlocking mode, set how long
   to wait after other items in an interlock group have been disabled before re-activating.
   Useful for motors where immediately turning on in the other direction could cause problems.

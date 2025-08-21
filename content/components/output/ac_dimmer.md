@@ -7,8 +7,6 @@ params:
     image: ac_dimmer.svg
 ---
 
-
-
 {{< warning >}}
 This component has not been fully tested yet, if you are testing this component
 please share your experience with the dimmer hardware and light model and
@@ -47,11 +45,13 @@ light:
 
 - **gate_pin** (**Required**, [Pin](#config-pin)): The pin used to control the Triac or
   Mosfet.
+
 - **zero_cross_pin** (**Required**, [Pin](#config-pin)): The pin used to sense the AC
   Zero cross event, you can have several dimmers controlled with the same zero cross
   detector, in such case duplicate the `zero_cross_pin` config on each output. When
   doing so, `allow_other_uses` pin schema option **must** be set to `true` to
   avoid configuration errors due to pin reuse.
+
 - **method** (*Optional*): Set the method for dimming, can be:
 
   - `leading pulse`  : (default) a short pulse to trigger a triac.
@@ -61,7 +61,8 @@ light:
 
 - **init_with_half_cycle** (*Optional*, boolean): Will send the first full half AC cycle
   Try to use this for dimmable LED lights, it might help turning on at low brightness
-  levels. On Halogen lamps it might show at initial flicker. Defaults to `false`  .
+  levels. On Halogen lamps it might show at initial flicker. Defaults to `false`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - All other options from [Output](#config-output).
 

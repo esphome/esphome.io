@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `x9c` output platform allows you to add an output that controls a [X9C digital potentiometer](https://www.renesas.com/us/en/document/dst/x9c102-x9c103-x9c104-x9c503-datasheet).
 
 {{< img src="x9c.jpg" alt="Image" caption="X9C digital potentiometer" width="70.0%" class="align-center" >}}
@@ -41,8 +39,8 @@ output:
 - **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): Chip Select pin
 - **inc_pin** (**Required**, [Pin Schema](#config-pin_schema)): Increment pin
 - **ud_pin** (**Required**, [Pin Schema](#config-pin_schema)): Up/Down pin
-- **initial_value** (*Optional*, float): Manually specify the initial potentiometer value, between `0.01` and `1.0`  . Defaults to `1.0`  .
-- **step_delay** (*Optional*, int): Manually specify the delay between steps (in microseconds) between `1us` and `100us`  . Defaults to `1us`  .
+- **initial_value** (*Optional*, float): Manually specify the initial potentiometer value, between `0.01` and `1.0`. Defaults to `1.0`.
+- **step_delay** (*Optional*, int): Manually specify the delay between steps (in microseconds) between `1us` and `100us`. Defaults to `1us`.
 - All other options from [Output](#config-output).
 
 ## See Also

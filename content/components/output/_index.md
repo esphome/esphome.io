@@ -7,7 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
 {{< anchor "output" >}}
 
 Each platform of the `output` domain exposes some output to
@@ -35,23 +34,26 @@ output:
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
-- **power_supply** (*Optional*, [ID](#config-id)): The {{< docref "/components/power_supply" "power  supply" >}} to connect to
+- **power_supply** (*Optional*, [ID](#config-id)): The {{< docref "/components/power_supply" "power supply" >}} to connect to
   this output. When the output is enabled, the power supply will
   automatically be switched on too.
+
 - **inverted** (*Optional*, boolean): If the output should be treated
-  as inverted. Defaults to `false`  .
+  as inverted. Defaults to `false`.
 
 Float outputs only:
 
 - **min_power** (*Optional*, float): Sets the minimum output value of this output platform.
-  Must be in range from 0 to max_power. Defaults to `0`  .  If zero_means_zero is `false` this will be output value when the entity is turned off.
+  Must be in range from 0 to max_power. Defaults to `0`. If zero_means_zero is `false` this will be output value when the entity is turned off.
+
 - **max_power** (*Optional*, float): Sets the maximum output value of this output platform.
-  Must be in range from min_power to 1. Defaults to `1`  .
-- **zero_means_zero** (*Optional*, boolean): Sets the output to use actual 0 instead of `min_power`  .
-  Defaults to `false`  .
+  Must be in range from min_power to 1. Defaults to `1`.
+
+- **zero_means_zero** (*Optional*, boolean): Sets the output to use actual 0 instead of `min_power`.
+  Defaults to `false`.
 
 {{< note >}}
-The `min_power` and `max_power` values are automatically clamped to ensure `0.0 ≤ min_power ≤ max_power ≤ 1.0`  .
+The `min_power` and `max_power` values are automatically clamped to ensure `0.0 ≤ min_power ≤ max_power ≤ 1.0`.
 This prevents invalid configurations and ensures stable output behavior.
 
 {{< /note >}}

@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `touchscreen` component contains the base code for most touchscreen driver components
 available in ESPHome and is responsible for passing the touch events to
 `binary_sensors` with the `touchscreen` platform. It is also used by the LVGL component.
@@ -41,30 +39,39 @@ touchscreen:
 ### Configuration variables
 
 - **display** (**Required**, [ID](#config-id)): The display to use this touchscreen with.
-- **transform** (*Optional*): Transform the touchscreen presentation using hardware. All defaults are `false`  .
+- **transform** (*Optional*): Transform the touchscreen presentation using hardware. All defaults are `false`.
 
   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
   - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
   - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`  .
+- **update_interval** (*Optional*, [Time](#config-time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
 - **touch_timeout** (*Optional*, [Time](#config-time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
 - **calibration** (*Optional*): Some touchscreens require calibration on a per-device basis.
 
   - **x_min** (**Required**, int): The raw value corresponding to the left
+
       (or top if `swap_xy` is specified) edge of the touchscreen. See [Calibration](#touchscreen-calibration)
       for the process to calibrate the touchscreen.
+
   - **x_max** (**Required**, int): The raw value corresponding to the right
+
       (or bottom if `swap_xy` is specified) edge of the touchscreen.
+
   - **y_min** (**Required**, int): The raw value corresponding to the top
+
       (or left if `swap_xy` is specified) edge of the touchscreen.
+
   - **y_max** (**Required**, int): The raw value corresponding to the bottom
+
       (or right if `swap_xy` is specified) edge of the touchscreen.
 
 - **on_touch** (*Optional*, [Automation](#automation)): An automation to perform
   when the touchscreen is touched. See [`on_touch` Trigger](#touchscreen-on_touch).
+
 - **on_update** (*Optional*, [Automation](#automation)): An automation to perform
   when the touchscreen is touched. See [`on_update` Trigger](#touchscreen-on_update).
+
 - **on_release** (*Optional*, [Automation](#automation)): An automation to perform
   when the touchscreen is no longer touched. See [`on_release` Trigger](#touchscreen-on_release).
 
@@ -141,8 +148,8 @@ That means that the minimum raw x is 281, maximum 3848, minimum y 347 and maximu
 
 Identify which raw value is the display's x direction and what the y one. In our case
 moving right decreases the x raw value and going down increases the y one so the axes
-match and we *don't* need to use `swap_xy`  . If the raw x is the display's y,
-use `swap_xy = true`  .
+match and we *don't* need to use `swap_xy`. If the raw x is the display's y,
+use `swap_xy = true`.
 
 If one of the coordinates goes in the "wrong" direction it needs to be inverted.
 The inversion is performed by setting the `mirror_x` and/or `mirror_y` to true.
@@ -267,11 +274,13 @@ binary_sensor:
 - **y_min** (**Required**, int): Top coordinate of the screen area to be detected as the virtual button.
 - **y_max** (**Required**, int): Bottom coordinate of the screen area to be detected as the virtual button.
 - **page_id** (*Optional*, [ID](#config-id)): Only trigger this binary sensor if the display is showing this page.
-  Cannot be used with `pages`  .
+  Cannot be used with `pages`.
+
 - **pages** (*Optional*, list of [ID](#config-id)): Only trigger this binary sensor if the display is showing one of these pages.
-  Cannot be used with `page_id`  .
+  Cannot be used with `page_id`.
+
 - **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and use this extra
-  area for touch buttons. To allow the sensor to register touches outside the display area set this to `true`  .
+  area for touch buttons. To allow the sensor to register touches outside the display area set this to `true`.
   The calibration values as above should be set to the display bounds.
 
 - All other options from [Binary Sensor](#config-binary_sensor).

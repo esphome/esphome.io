@@ -3,8 +3,6 @@ description: ""
 headless: true
 ---
 
-
-
 Rounds the value to the given decimal places.
 
 ```yaml

@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up a Tuya device binary sensor.
 ---
 
-
-
 The `tuya` binary sensor platform creates a binary sensor from a
 tuya component and requires {{< docref "/components/tuya" >}} to be configured.
 

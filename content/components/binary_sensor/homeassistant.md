@@ -7,8 +7,6 @@ params:
     image: home-assistant.svg
 ---
 
-
-
 The `homeassistant` binary sensor platform allows you to create binary sensors that **import**
 states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
@@ -43,6 +41,7 @@ binary_sensor:
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
   specified entity. The entity state is used when this option is omitted.
+
 - All other options from [Binary Sensor](#config-binary_sensor).
 
 ## See Also

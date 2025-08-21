@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up conditions that can remotely invalidate all ESPHome preferences stored in flash and reboot ESP.
 ---
 
-
-
 The `factory_reset` component allows you to invalidate (reset) all ESPHome [preferences](#preferences-flash_write_interval) stored in flash memory and reboot your node.
 After reboot all states, parameters and variables will be reinitialized with their default values. This is useful:
 
@@ -33,8 +31,10 @@ connected with a serial cable. The required number of power cycles and the maxim
 
 - The maximum delay affects only the time when the device is powered on,
   not the time when it is powered off (this can't be measured).
+
 - The reset count will be cleared to zero when any other kind of reset occurs,
   or if the device remains powered on and running for longer than the maximum delay.
+
 - Not available on RP2040 and RP2350 as the reset cause is not able to be determined.
 - On ESP8266 this feature requires the `restore_from_flash` feature to be enabled in the {{< docref "/components/esp8266" "ESP8266 platform" >}}.
 
@@ -48,6 +48,7 @@ factory_reset:
 
 - **resets_required** (*Optional*, integer): The number of power cycles after which the device will be reset.
   No default, if not configured the power cycle reset feature will be disabled
+
 - **max_delay** (*Optional*, [Time](#config-time)): The maximum delay between power cycles. Default: 10s
 
 ## `on_increment` Trigger

@@ -7,8 +7,6 @@ params:
     image: modbus.png
 ---
 
-
-
 The `modbus_controller` sensor platform creates a sensor from a modbus_controller component
 and requires {{< docref "/components/modbus_controller" >}} to be configured.
 
@@ -50,7 +48,8 @@ and requires {{< docref "/components/modbus_controller" >}} to be configured.
   - **x** (float): The parsed float value of the modbus data
   - **data** (std::vector<uint8_t): vector containing the complete raw modbus response bytes for this sensor
     *note:* because the response contains data for all registers in the same range you have to use `data[item->offset]` to get the first response byte for your sensor.
-  - **item** (const pointer to a SensorItem derived object):  The sensor object itself.
+
+  - **item** (const pointer to a SensorItem derived object): The sensor object itself.
 
   Possible return values for the lambda:
 
@@ -60,6 +59,7 @@ and requires {{< docref "/components/modbus_controller" >}} to be configured.
 - **custom_command** (*Optional*, list of bytes): raw bytes for modbus command. This allows using non-standard commands. If `custom_command` is used `address` and `register_type` can't be used.
   Custom data must contain all required bytes including the modbus device address. The CRC is automatically calculated and appended to the command.
   See [Using `custom_command`](#modbus_custom_command) how to use `custom_command`
+
 - **offset** (*Optional*, int): Offset from start address in bytes (only required for uncommon response encodings). If more than one register is written in a command this value is used to find the start of this datapoint relative to start address. The component calculates the size of the range based on offset and size of the value type. For `coil` or `discrete_input` registers offset is the position of the coil/register because these registers encode 8 coils in one byte.
 
 - All other options from [Sensor](#config-sensor).

@@ -7,9 +7,7 @@ params:
     image: bluetooth.svg
 ---
 
-
-
-The `esp32_ble_server` component in ESPHome sets up a  BLE GATT server that exposes the device name,
+The `esp32_ble_server` component in ESPHome sets up a BLE GATT server that exposes the device name,
 manufacturer and board. BLE GATT services and characteristics can be added to the server to expose data and control.
 
 {{< warning >}}
@@ -37,13 +35,14 @@ esp32_ble_server:
 
 ## Configuration variables
 
-- **manufacturer** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The name of the manufacturer/firmware creator. Defaults to `ESPHome`  .
+- **manufacturer** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The name of the manufacturer/firmware creator. Defaults to `ESPHome`.
 - **model** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The model name of the device. Defaults to the project's name defined in the [core configuration](#esphome-creators_project) if present, otherwise to the friendly name of the `board` chosen in the [core configuration](#esphome-configuration_variables).
-- **appearance** (*Optional*, int): Sets the [appearance](https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/core/appearance_values.yaml) of the device (included in advertising data.) Defaults to `0`  .
+- **appearance** (*Optional*, int): Sets the [appearance](https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/core/appearance_values.yaml) of the device (included in advertising data.) Defaults to `0`.
 - **firmware_version** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The firmware version of the device. Defaults to the project's version defined in the [core configuration](#esphome-creators_project) if present, otherwise to the ESPHome version.
 - **manufacturer_data** (*Optional*, list of bytes): The manufacturer-specific data to include in the advertising
   packet. Should be a list of bytes, where the first two are the little-endian representation of the 16-bit
   manufacturer ID as assigned by the Bluetooth SIG.
+
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a client connects to the BLE server. It provides the `id` variable which contains the ID of the client that connected.
 - **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when a client disconnects from the BLE server. It provides the `id` variable which contains the ID of the client that disconnected.
 - **services** (*Optional*, list of [Service Configuration](#esp32_ble_server-service)): A list of services to expose on the BLE GATT server.
@@ -69,7 +68,7 @@ esp32_ble_server:
 ### Configuration variables
 
 - **uuid** (**Required**, string, int): The UUID of the service.
-- **advertise** (*Optional*, boolean): If the service should be advertised. Defaults to `false`  .
+- **advertise** (*Optional*, boolean): If the service should be advertised. Defaults to `false`.
 - **characteristics** (*Optional*, list of [Characteristic Configuration](#esp32_ble_server-characteristic)): A list of characteristics to expose in this service.
 
 {{< anchor "esp32_ble_server-characteristic" >}}
@@ -103,12 +102,12 @@ esp32_ble_server:
 - **id** (*Optional*, string): An ID to refer to this characteristic in automations.
 - **uuid** (**Required**, string, int): The UUID of the characteristic.
 - **description** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The description of the characteristic - not templatable. It will add a `CUD` descriptor (0x2901) to the characteristic with the value of the description.
-- **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to `false`  .
-- **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to `false`  .
-- **broadcast** (*Optional*, boolean): If the characteristic should be broadcast. Defaults to `false`  .
-- **notify** (*Optional*, boolean): If the characteristic supports notifications. If `true`  , a `CCCD` descriptor will be automatically added to the characteristic. Defaults to `false`  .
-- **indicate** (*Optional*, boolean): If the characteristic supports indications. If `true`  , a `CCCD` descriptor will be automatically added to the characteristic. Defaults to `false`  .
-- **write_no_response** (*Optional*, boolean): If the characteristic should be writable without a response. Defaults to `false`  .
+- **read** (*Optional*, boolean): If the characteristic should be readable. Defaults to `false`.
+- **write** (*Optional*, boolean): If the characteristic should be writable. Defaults to `false`.
+- **broadcast** (*Optional*, boolean): If the characteristic should be broadcast. Defaults to `false`.
+- **notify** (*Optional*, boolean): If the characteristic supports notifications. If `true`, a `CCCD` descriptor will be automatically added to the characteristic. Defaults to `false`.
+- **indicate** (*Optional*, boolean): If the characteristic supports indications. If `true`, a `CCCD` descriptor will be automatically added to the characteristic. Defaults to `false`.
+- **write_no_response** (*Optional*, boolean): If the characteristic should be writable without a response. Defaults to `false`.
 - **value** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The value of the characteristic.
 - **descriptors** (*Optional*, list of [Descriptor Configuration](#esp32_ble_server-descriptor)): A list of descriptors to expose in this characteristic.
 - **on_write** (*Optional*, [Automation](#automation)): An action to be performed when the characteristic is written to. The characteristic must have the `write` property. See [`on_write` Trigger](#esp32_ble_server-characteristic-on_write).
@@ -181,9 +180,9 @@ esp32_ble_server:
 ### Configuration variables
 
 - **data** (**Required**, string, int, float, boolean, list of bytes, [templatable](#config-templatable)): The value of the characteristic or descriptor. For [templatable](#config-templatable) values, the lambda function must return a `std::vector<uint8_t>` (you may use the `bytebuffer::ByteBuffer` helper class to transform different data types into a byte array). The value is computed each time the characteristic is read.
-- **type** (*Optional*, string): The C++ type of the value. The available values are `uint8_t`  , `uint16_t`  , `uint32_t`  , `uint64_t`  , `int8_t`  , `int16_t`  , `int32_t`  , `int64_t`  , `float`  , `double` and `string`  . It must be defined if the value is not [templatable](#config-templatable).
-- **endianness** (*Optional*, string): The endianness of the value. Can be `BIG` or `LITTLE`  . Defaults to `LITTLE`  .
-- **string_encoding** (*Optional*, string): The encoding of the string. Only applicable if the type is `string`  . The conversion is done in Python before compilation, so the encoding must be a valid [Python encoding](https://docs.python.org/3/library/codecs.html#standard-encodings). Defaults to `utf-8`  .
+- **type** (*Optional*, string): The C++ type of the value. The available values are `uint8_t`, `uint16_t`, `uint32_t`, `uint64_t`, `int8_t`, `int16_t`, `int32_t`, `int64_t`, `float`, `double` and `string`. It must be defined if the value is not [templatable](#config-templatable).
+- **endianness** (*Optional*, string): The endianness of the value. Can be `BIG` or `LITTLE`. Defaults to `LITTLE`.
+- **string_encoding** (*Optional*, string): The encoding of the string. Only applicable if the type is `string`. The conversion is done in Python before compilation, so the encoding must be a valid [Python encoding](https://docs.python.org/3/library/codecs.html#standard-encodings). Defaults to `utf-8`.
 
 {{< anchor "esp32_ble_server-characteristic-on_write" >}}
 

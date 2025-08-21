@@ -7,8 +7,6 @@ params:
     image: waveshare_touch-s3.jpg
 ---
 
-
-
 {{< anchor "rpi_dpi_rgb" >}}
 
 ## Models
@@ -83,12 +81,13 @@ display:
 - **vsync_pulse_width** (*Optional*, int): The vertical sync pulse width.
 - **vsync_front_porch** (*Optional*, int): The vertical front porch length.
 - **vsync_back_porch** (*Optional*, int): The vertical back porch length.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`  .
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
 - **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true` if a lambda or pages are configured, false otherwise.
   or to keep the existing display content (must overwrite explicitly, e.g., only on data change).
+
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`  .
+- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`.
 - **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys.
 
   - **height** (**Required**, int): Specifies height of display in pixels.
@@ -99,11 +98,11 @@ display:
 - **pclk_frequency** (*Optional*): Set the pixel clock speed. Default is 16MHz.
 - **pclk_inverted** (*Optional*, bool): If the pclk is active negative (default is True)
 - **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the displays have this option set automatically to true and can't be changed.
-- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`  , `90°`  , `180°`  , or `270°`  .
+- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 
-The horizontal and vertical `pulse_width`  , `front_porch` and `back_porch` values are optional, but may require
+The horizontal and vertical `pulse_width`, `front_porch` and `back_porch` values are optional, but may require
 changing for a specific display. Refer to the manufacturer's sample code for suitable values. These specify timing
 requirements for the display.
 

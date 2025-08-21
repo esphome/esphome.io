@@ -7,7 +7,6 @@ params:
     image: auto-fix.svg
 ---
 
-
 {{< anchor "ready_made_projects" >}}
 
 Unleash the potential of your device by installing ready-made ESPHome
@@ -15,4 +14,4 @@ projects from this page. Connect your device to your PC, a few clicks in the bro
 and your ESPHome device is ready to do its magic - as a Bluetooth proxy or a media player.
 No programming or other software required.
 
-{{< html_file file="./installer.html"  >}}
+{{< html_file file="./installer.html" >}}

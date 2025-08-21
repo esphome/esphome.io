@@ -7,7 +7,6 @@ params:
     image: logo.svg
 ---
 
-
 ## What is ESPHome?
 
 ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular

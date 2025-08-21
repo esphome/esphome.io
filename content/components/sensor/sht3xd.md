@@ -7,8 +7,6 @@ params:
     image: sht3xd.jpg
 ---
 
-
-
 The `sht3xd` sensor platform Temperature+Humidity sensor allows you to use your Sensirion SHT31-D/SHT3x
 ([datasheet](https://cdn-shop.adafruit.com/product-files/2857/Sensirion_Humidity_SHT3x_Datasheet_digital-767294.pdf),
 `Adafruit`_) and SHT85 ([datasheet](https://sensirion.com/media/documents/4B40CEF3/640B2346/Sensirion_Humidity_Sensors_SHT85_Datasheet.pdf),
@@ -40,13 +38,15 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **address** (_Optional_, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x44`  . For SHT3x, an alternate address can be `0x45` while SHT85 supports only address `0x44`
+  Defaults to `0x44`. For SHT3x, an alternate address can be `0x45` while SHT85 supports only address `0x44`
+
 - **update_interval** (_Optional_, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **heater_enabled** (_Optional_, bool): Turn on/off heater at boot.
   This may help provide [more accurate readings in condensing conditions](https://forum.arduino.cc/t/atmospheric-sensors-in-condensing-conditions/412167),
   but can also increase temperature readings and decrease humidity readings as a side effect.
-  Defaults to `false`  .
+  Defaults to `false`.
 
 ## I²C Configuration when using Higher I²C Frequencies
 

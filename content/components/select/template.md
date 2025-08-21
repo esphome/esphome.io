@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `template` Select platform allows you to create a Select with templated values
 using [lambdas](#config-lambda).
 
@@ -30,19 +28,25 @@ select:
 - **options** (**Required**, list): The list of options this Select has.
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the current option of the select.
+
 - **set_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests to set the Select option.
   The new option is available to lambdas in the `x` variable.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval on which to update the select
-  by executing the `lambda`  . Defaults to `60s`  .
+  by executing the `lambda`. Defaults to `60s`.
+
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the Template Select will immediately update the reported state.
-  Cannot be used with `lambda`  . Defaults to `false`  .
+  Cannot be used with `lambda`. Defaults to `false`.
+
 - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash.
-  Cannot be used with `lambda`  . Defaults to `false`  .
+  Cannot be used with `lambda`. Defaults to `false`.
+
 - **initial_option** (*Optional*, string): The option to set the option to on setup if not
-  restored with `restore_value`  .
-  Cannot be used with `lambda`  . Defaults to the first option in the `options` list.
+  restored with `restore_value`.
+  Cannot be used with `lambda`. Defaults to the first option in the `options` list.
+
 - All other options from [Select](#config-select).
 
 {{< note >}}

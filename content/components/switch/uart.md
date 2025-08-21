@@ -7,8 +7,6 @@ params:
     image: uart.svg
 ---
 
-
-
 The `uart` switch platform allows you to send a pre-defined sequence of bytes on a
 {{< docref "/components/uart" "UART bus" >}} when triggered.
 

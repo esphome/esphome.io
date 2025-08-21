@@ -7,8 +7,6 @@ params:
     image: earth.svg
 ---
 
-
-
 This is a curated list of awesome creations with ESPHome containing various
 external components, blog posts, videos and sample configurations. It should serve as a means of
 finding inspiration for new projects and finding other ESPHome-enthusiasts on the web.

@@ -7,8 +7,6 @@ params:
     image: packet_transport.svg
 ---
 
-
-
 The `packet_transport` sensor platform allows you to receive numeric sensor data directly from another ESPHome node.
 It requires a `packet_transport` component to be configured.
 
@@ -28,7 +26,7 @@ sensor:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **provider** (**Required**, string): The name of the provider node.
-- **remote_id** (*Optional*, [ID](#config-id)): The ID of the original sensor in the provider node. If not specified defaults to the ID configured with `id:`  .
+- **remote_id** (*Optional*, [ID](#config-id)): The ID of the original sensor in the provider node. If not specified defaults to the ID configured with `id:`.
 - **name** (*Optional*, string): The name of the sensor.
 - **internal** (*Optional*, boolean): Whether the sensor should be exposed via API (e.g. to Home Assistant.) Defaults to `true` if name is not set, required if name is provided.
 - All other options from [Sensor](#config-sensor).

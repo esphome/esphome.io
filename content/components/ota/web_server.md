@@ -7,8 +7,6 @@ params:
     image: system-update.svg
 ---
 
-
-
 {{< anchor "config-ota_web_server" >}}
 
 The Web Server OTA platform allows you to upload new firmware binaries to your ESPHome devices directly through the

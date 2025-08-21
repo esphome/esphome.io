@@ -7,8 +7,6 @@ params:
     image: pulse.svg
 ---
 
-
-
 The `pulse_width` sensor allows you to measure how long a given digital signal
 is HIGH. For example this can be used to measure PWM signals to transmit some
 value over a simple protocol. The unit of measurement for this sensor is seconds.
@@ -31,8 +29,9 @@ sensor:
 
 - **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to observe for the
   pulse width.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor.
-  Defaults to `60s`  .
+  Defaults to `60s`.
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](#config-sensor).

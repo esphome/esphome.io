@@ -7,8 +7,6 @@ params:
     image: mhz19.jpg
 ---
 
-
-
 The `mhz19` sensor platform allows you to use MH-Z19 CO_2 and temperature sensors
 (`Revspace`_) with ESPHome.
 The CO_2 measurement also works with the MH-Z16 and MH-Z14 sensors.
@@ -40,7 +38,7 @@ sensor:
   All options from [Sensor](#config-sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
   to use multiple UART buses.

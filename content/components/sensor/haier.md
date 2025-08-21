@@ -7,8 +7,6 @@ params:
     image: haier.svg
 ---
 
-
-
 Additional sensors for Haier Climate device. **These sensors are supported only by the hOn protocol**.
 
 {{< img src="haier-climate.jpg" alt="Image" width="50.0%" class="align-center" >}}
@@ -47,24 +45,34 @@ sensor:
 - **haier_id** (**Required**, [ID](#config-id)): The id of haier climate component
 - **outdoor_temperature** (*Optional*): Temperature sensor for outdoor temperature.
   All options from [Sensor](#config-sensor).
+
 - **humidity** (*Optional*): Sensor for indoor humidity. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **compressor_current** (*Optional*): Sensor for climate compressor current. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **compressor_frequency** (*Optional*): Sensor for climate compressor frequency. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **expansion_valve_open_degree** (*Optional*): Sensor for climate's expansion valve open degree. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **indoor_coil_temperature** (*Optional*): Temperature sensor for indoor coil temperature. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **outdoor_coil_temperature** (*Optional*): Temperature sensor for outdoor coil temperature. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **outdoor_defrost_temperature** (*Optional*): Temperature sensor for outdoor defrost temperature. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
+
 - **outdoor_in_air_temperature** (*Optional*): Temperature sensor incoming air temperature.
   All options from [Sensor](#config-sensor).
+
 - **outdoor_out_air_temperature** (*Optional*): Temperature sensor for outgoing air temperature.
   All options from [Sensor](#config-sensor).
+
 - **power** (*Optional*): Sensor for climate power consumption. Make sure that your climate model supports this type of sensor.
   All options from [Sensor](#config-sensor).
 

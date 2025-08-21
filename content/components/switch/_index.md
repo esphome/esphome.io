@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `switch` domain includes all platforms that should show up like a
 switch and can only be turned ON or OFF.
 
@@ -30,18 +28,21 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the switch to use that name, you can set `name: None`  .
+you want the switch to use that name, you can set `name: None`.
 
 {{< /note >}}
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   sensor in the frontend.
+
 - **inverted** (*Optional*, boolean): Whether to invert the binary
   state, i.e. report ON states as OFF and vice versa. Defaults
-  to `false`  .
+  to `false`.
+
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
+
 - **restore_mode** (*Optional*): Control how the switch attempts to restore state on bootup.
   **NOTE** : Not all components consider **restore_mode**. Check the documentation of the specific component to understand how
   this feature works for a particular component or device.
@@ -56,22 +57,27 @@ you want the switch to use that name, you can set `name: None`  .
   - `ALWAYS_ON` - Always initialize the switch as ON on bootup.
   - `DISABLED` - Does nothing and leaves it up to the downstream platform component to decide. For example, the component could read hardware and determine the state, or have a specific configuration option to regulate initial state.
 
-  Unless a specific platform defines another default value, the default is `ALWAYS_OFF`  .
+  Unless a specific platform defines another default value, the default is `ALWAYS_OFF`.
 
 - **on_turn_on** (*Optional*, [Action](#config-action)): An automation to perform
   when the switch is turned on. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
+
 - **on_turn_off** (*Optional*, [Action](#config-action)): An automation to perform
   when the switch is turned off. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
   Set to `""` to remove the default entity category.
+
 - **device_class** (*Optional*, string): The device class for the switch.
   See <https://www.home-assistant.io/integrations/switch/#device-class>
   for a list of available options.
+
 - If MQTT enabled, All other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
@@ -173,12 +179,12 @@ advanced stuff (see the full API Reference for more info).
 {{< note >}}
 Keep in mind that this does not change the actual state of the switch. It only
 changes the state in the frontend and the internal state. If you want to
-change the actual state of the switch, you need to call `turn_on()`  ,
-`turn_off()` or `toggle()`  .
+change the actual state of the switch, you need to call `turn_on()`,
+`turn_off()` or `toggle()`.
 
 For example, if you are using a {{< docref "/components/switch/gpio" >}}, calling `publish_state()` will
-not change the GPIO pin level. To do that, you need to call `turn_on()`  ,
-`turn_off()` or `toggle()`  . The same applies to other switch platforms.
+not change the GPIO pin level. To do that, you need to call `turn_on()`,
+`turn_off()` or `toggle()`. The same applies to other switch platforms.
 
 {{< /note >}}
 

@@ -7,8 +7,6 @@ params:
     image: fan.svg
 ---
 
-
-
 The `tuya` fan platform creates a variable speed fan from a
 tuya component.
 
@@ -52,9 +50,11 @@ fan:
 - **switch_datapoint** (**Required**, int): The datapoint id number of the fan switch.
 - **oscillation_datapoint** (*Optional*, int): The datapoint id number of the oscillation
   switch. Probably not supported on any Tuya controllers currently, but it's there if need be.
+
 - **direction_datapoint** (*Optional*, int): The datapoint id number of the direction
   switch. Supported by some ceiling fans.
-- **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`  .
+
+- **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`.
 - All other options from [Fan](#config-fan).
 
 {{< note >}}

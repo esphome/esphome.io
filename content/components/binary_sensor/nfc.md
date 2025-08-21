@@ -7,8 +7,6 @@ params:
     image: nfc.png
 ---
 
-
-
 {{< anchor "nfc-platform" >}}
 
 The `nfc` binary sensor platform provides an easy way for you to determine if an NFC tag is presented to the reader.
@@ -39,11 +37,14 @@ binary_sensor:
 
 - **ndef_contains** (*Optional*, string): A (sub)string that must appear in the tag's NDEF message. May not be used
   with `tag_id` and/or `uid` (below).
+
 - **tag_id** (*Optional*, string): A string that identifies the tag; in effect, its name. Specifically, this looks
   for the Home Assistant URI encoded into one of the tag's NDEF records and then looks for this specific string. May
-  not be used with `ndef_contains` and/or `uid`  .
+  not be used with `ndef_contains` and/or `uid`.
+
 - **uid** (*Optional*, string): The unique ID of the NFC tag. This is a hyphen-separated list of hexadecimal values.
-  For example: `74-10-37-94`  . May not be used with `ndef_contains` and/or `tag_id` (above).
+  For example: `74-10-37-94`. May not be used with `ndef_contains` and/or `tag_id` (above).
+
 - All other options from [Binary Sensor](#config-binary_sensor).
 
 {{< anchor "nfc-setting_up_tags" >}}
@@ -57,6 +58,7 @@ To obtain a tag's UID:
 
 - Set up a simple NFC component (such as the {{< docref "pn532" "PN532" >}}, {{< docref "../pn7150" "PN7150" >}} or {{< docref "../pn7160" "PN716x" >}})
   configuration without any binary sensors.
+
 - Approach the NFC reader with an NFC tag. When the tag is sufficiently close to the reader, you'll see a message in the
   ESPHome device's logs similar to this:
 
@@ -69,6 +71,7 @@ To obtain a tag's UID:
   - Copy this ID and use it to create a `binary_sensor` entry as shown in the configuration example above, or...
   - Use the tag ID (as determined when it was prepared with the Home Assistant Companion app) to define the `tag_id`
     parameter for the `binary_sensor` as shown above, or...
+
   - Choose a substring contained within the tag's NDEF message and use this to define the `ndef_contains` parameter
     as shown in the example above. If present, the tag's NDEF records will appear in the log on the lines just below
     the message shown above.

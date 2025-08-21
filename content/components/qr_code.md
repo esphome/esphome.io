@@ -7,7 +7,6 @@ params:
     image: qr-code.svg
 ---
 
-
 {{< anchor "display-qrcode" >}}
 
 Use this component to generate a QR-code containing a string on the device, which can then be drawn on compatible displays.
@@ -22,8 +21,9 @@ qr_code:
 
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the QR-code later
   in your display code.
+
 - **value** (**Required**, string): The string which you want to encode in the QR-code.
-- **ecc** (*Optional*, string): The error correction code level you want to use. Defaults to `LOW`  . You can use one of the following values:
+- **ecc** (*Optional*, string): The error correction code level you want to use. Defaults to `LOW`. You can use one of the following values:
 
   - `LOW`  : The QR Code can tolerate about 7% erroneous codewords
   - `MEDIUM`  : The QR Code can tolerate about 15% erroneous codewords

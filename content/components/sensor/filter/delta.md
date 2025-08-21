@@ -3,8 +3,6 @@ description: ""
 headless: true
 ---
 
-
-
 This filter stores the last value passed through this filter and only passes incoming values through
 if incoming value is sufficiently different from the previously passed one.
 This difference can be calculated in two ways an absolute difference or a percentage difference.

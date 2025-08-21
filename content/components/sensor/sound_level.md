@@ -7,9 +7,7 @@ params:
     image: waveform.svg
 ---
 
-
-
-The `sound_level` sensor platform allows you to measure a {{< docref "/components/microphone/index" "microphone" >}}'s average and peak sound pressure levels over a specified measurement duration. The sensors output in **relative** `dB`  , where `0 dB` represents the loudest sound the microphone can measure.
+The `sound_level` sensor platform allows you to measure a {{< docref "/components/microphone/index" "microphone" >}}'s average and peak sound pressure levels over a specified measurement duration. The sensors output in **relative** `dB`, where `0 dB` represents the loudest sound the microphone can measure.
 
 {{< warning >}}
 Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
@@ -34,7 +32,7 @@ sensor:
 ## Configuration variables
 
 - **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The {{< docref "/components/microphone/index" "microphone" >}} settings to use for input. Multiple channels may be selected.
-- **measurement_duration** (*Optional*, [Time](#config-time)): The time duration for each sound level measurement. Ranges from `50ms` to `60s`  . Defaults to `1000ms`  .
+- **measurement_duration** (*Optional*, [Time](#config-time)): The time duration for each sound level measurement. Ranges from `50ms` to `60s`. Defaults to `1000ms`.
 - **passive** (**Required**, boolean). Whether passive mode is enabled. See [Passive Mode](#sound_level-passive).
 - **peak** (*Optional*): The information for the peak loudness sensor.
 

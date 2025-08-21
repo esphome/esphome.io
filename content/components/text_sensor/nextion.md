@@ -7,7 +7,6 @@ params:
     image: nextion.jpg
 ---
 
-
 {{< anchor "nextion_text_sensor" >}}
 
 The `nextion` text sensor platform supports text strings. It can be a component or variable in the Nextion display.
@@ -37,10 +36,10 @@ text_sensor:
 - **nextion_id** (*Optional*, [ID](#config-id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
 - **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Text Sensor Protocol](#nextion_custom_text_sensor_protocol) this should not be used
-- **background_color** (*Optional*, [Color](#config-color)):  The background color
-- **foreground_color** (*Optional*, [Color](#config-color)):  The foreground color
-- **font_id** (*Optional*, int):  The font id for the component
-- **visible** (*Optional*, boolean):  Visible or not
+- **background_color** (*Optional*, [Color](#config-color)): The background color
+- **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
+- **font_id** (*Optional*, int): The font id for the component
+- **visible** (*Optional*, boolean): Visible or not
 - All other options from [Text Sensor](#config-text_sensor).
 
 **Only one** *component_name* **or** *variable_name* **can be set**
@@ -50,7 +49,7 @@ See [How things Update](#nextion_text_sensor_how_things_update) for additional i
 ### Globals
 
 The Nextion does not retain data on Nextion page changes. Additionally, if a page is changed and the **component_name** does not exist on that page then
-nothing will be updated. To get around this, the Nextion components can be changed to have a vscope of `global`  . If this is set, then the **component_name**
+nothing will be updated. To get around this, the Nextion components can be changed to have a vscope of `global`. If this is set, then the **component_name**
 should be prefixed with the page name (page0/page1 or whatever you have changed it to).
 
 *Example:* `component_name: page0.text0`
@@ -91,6 +90,7 @@ Configuration variables:
 - **state** (**Required**, string, [templatable](#config-templatable)): The string to publish.
 - **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
   Default is true.
+
 - **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
   display which will update component. Default is true.
 

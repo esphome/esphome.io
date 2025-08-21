@@ -3,8 +3,6 @@ description: "Kamstrup Meter Protocol [KMP]"
 title: "Kamstrup Meter Protocol [KMP]"
 ---
 
-
-
 {{< img src="kamstrup_kmp.jpg" alt="Image" caption="Kamstrup MULTICAL 403" >}}
 
 The Kamstrup Meter Protocol (KMP) is used by certain Kamstrup utility
@@ -51,32 +49,41 @@ Configuration variables:
 
 - **heat_energy** (*Optional*): Heat energy delivered.
   All options from [Sensor](#config-sensor).
+
 - **power** (*Optional*): Current power delivered.
   All options from [Sensor](#config-sensor).
+
 - **temp1** (*Optional*): Temperatue of sensor 1.
   All options from [Sensor](#config-sensor).
+
 - **temp2** (*Optional*): Temperatue of sensor 2.
   All options from [Sensor](#config-sensor).
+
 - **temp_diff** (*Optional*): Temperature difference between the 2 sensors.
   All options from [Sensor](#config-sensor).
+
 - **flow** (*Optional*): Water flow.
   All options from [Sensor](#config-sensor).
+
 - **volume** (*Optional*): Volume.
   All options from [Sensor](#config-sensor).
+
 - **custom** (*Optional*): List of custom sensors.
 
   - **command** (**Required**, 2-byte hex): The KMP command code (e.g. 0x003C).
   - All other options from [Sensor](#config-sensor).
 
-- **update_interval** (*Optional*): The polling interval. Defaults to `60s`  .
+- **update_interval** (*Optional*): The polling interval. Defaults to `60s`.
 
 {{< note >}}
 
 - The uart baudrate has to be set to 1200 baud and the stop bits to 2.
   It is recommended to use pins associated with a hardware UART.
   For more information regarding uart configuration, refer to [UART](#uart).
+
 - Only the provided sensors will appear as sensor, and only those are read from
   the meter.
+
 - Custom sensors can be used to receive measurements from the Kampstrup meter,
   other than the ones provided natively with this component. To request extra
   measurements, add one or multiple sensors to the `custom` setting and provide the
@@ -84,6 +91,7 @@ Configuration variables:
   the command code for heat energy. In the example above, two custom sensors were
   added. These request the Heat Energy and Heat Power respectively. This will be the
   same as the native `heat_energy` and `power` sensors.
+
 - Keep in mind that the meter is battery operated. The more sensors read and the
   lower the update interval, the faster the battery will drain.
 

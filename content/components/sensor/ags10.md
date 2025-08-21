@@ -7,8 +7,6 @@ params:
     image: ags10.jpg
 ---
 
-
-
 The `ags10` sensor platform VOC sensor allows you to use your ASAIR AGS10
 ([datasheet](http://www.aosong.com/userfiles/files/Datasheet%20AGS10.pdf),
 `ASAIR`_ ) sensors with
@@ -33,12 +31,16 @@ sensor:
 
 - **tvoc** (**Required**): The information for the total Volatile Organic Compounds sensor.
   All options from [Sensor](#config-sensor).
+
 - **address** (*Optional*, int): Manually specify the I²C address of
-  the sensor. Defaults to `0x1A`  .
+  the sensor. Defaults to `0x1A`.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **version** (*Optional*): The firmware version of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **resistance** (*Optional*): The initial value of the sensor resistance.
   All options from [Sensor](#config-sensor).
 

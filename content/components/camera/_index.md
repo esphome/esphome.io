@@ -7,8 +7,6 @@ params:
     image: camera.svg
 ---
 
-
-
 The `camera` component is the base abstraction layer for camera implementations in ESPHome. It provides a
 standardized interface between camera hardware/software implementations and the ESPHome API layer.
 

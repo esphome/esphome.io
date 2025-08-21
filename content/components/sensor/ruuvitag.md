@@ -7,8 +7,6 @@ params:
     image: ruuvitag.jpg
 ---
 
-
-
 The `ruuvitag` sensor platform lets you track the output of RuuviTag
 Bluetooth Low Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}.
 This component will track the temperature, humidity, acceleration and battery
@@ -55,6 +53,7 @@ sensor:
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the RuuviTag
   device.
+
 - **humidity** (*Optional*): The information for the humidity sensor
 
   - All options from [Sensor](#config-sensor).

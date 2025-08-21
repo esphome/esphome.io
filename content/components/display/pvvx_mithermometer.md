@@ -7,8 +7,6 @@ params:
     image: /components/sensor/images/xiaomi_lywsd03mmc.jpg
 ---
 
-
-
 The `pvvx_mithermometer` display platform allows you to use devices running the [ATC_MiThermometer firmware](https://github.com/pvvx/ATC_MiThermometer) by pvvx as display drivers with ESPHome.
 
 {{< img src="xiaomi_lywsd03mmc.jpg" alt="Image" caption="Xiaomi LYWSD03MMC." width="75.0%" class="align-center" >}}
@@ -47,13 +45,15 @@ display:
 
 - **ble_client_id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - **time_id** (*Optional*, [ID](#config-id)): ID of a {{< docref "/components/time" >}}. If set, the time will be synchronized with every connection.
-- **disconnect_delay** (*Optional*, [Time](#config-time)): The amount of time the BLE connection is maintained before being disconnected again. Defaults to `5s`  .
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to transmit the display data. Defaults to `60s`  .
-- **validity_period** (*Optional*, [Time](#config-time)): The time periode for which the pvvx device should display the information. Defaults to `5min`  .
+- **disconnect_delay** (*Optional*, [Time](#config-time)): The amount of time the BLE connection is maintained before being disconnected again. Defaults to `5s`.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to transmit the display data. Defaults to `60s`.
+- **validity_period** (*Optional*, [Time](#config-time)): The time periode for which the pvvx device should display the information. Defaults to `5min`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use to define the information to be displayed.
   See [Rendering Lambda](#display-pvvx_mithermometer_lambda) for more information.
+
 - **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display data before each lambda call,
   or to keep the existing display content (must overwrite explicitly, e.g., only on data change). Defaults to `true` if a lambda or pages are configured, false otherwise.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 {{< anchor "display-pvvx_mithermometer_lambda" >}}
@@ -90,9 +90,9 @@ display:
       // The final result is "(Δ△Δ)"
 ```
 
-Valid values for the big number (`it.print_bignum()`  ) are from -99.5 to 1999.5. Smaller values are displayed as `Lo`  , larger ones as `Hi`  . It will be printed to the screen. If not defined, a 0 will be displayed.
+Valid values for the big number (`it.print_bignum()`  ) are from -99.5 to 1999.5. Smaller values are displayed as `Lo`, larger ones as `Hi`. It will be printed to the screen. If not defined, a 0 will be displayed.
 
-Valid values for the small number (`it.print_smallnum()`  ) are from -9 to 99. Smaller values are displayed as `Lo`  , larger ones as `Hi`  . If not defined, a 0 will be displayed.
+Valid values for the small number (`it.print_smallnum()`  ) are from -9 to 99. Smaller values are displayed as `Lo`, larger ones as `Hi`. If not defined, a 0 will be displayed.
 
 Possible values for the unit of the big number (`it.print_unit()`  ) are:
 
@@ -105,18 +105,18 @@ Possible values for the unit of the big number (`it.print_unit()`  ) are:
 - `pvvx_mithermometer::UNIT_LINES`  : show `=`
 - `pvvx_mithermometer::UNIT_DEG_E`  : show `°E`
 
-The appearance of the smiley can be defined by combining the functions `it.print_happy()`  , `it.print_sad()` and  `it.print_bracket(true)`  :
+The appearance of the smiley can be defined by combining the functions `it.print_happy()`, `it.print_sad()` and `it.print_bracket(true)`  :
 
 | `print_bracket()` | `print_sad()` | `print_happy()` | result  |
 | ----------------- | ------------- | --------------- | ------- |
 | false             | false         | false           |         |
 | false             | false         | true            | `^_^`   |
-| false             | true          | false           | `-∧-`   |
-| false             | true          | true            | `Δ△Δ`   |
-| true              | false         | false           | `(   )` |
-| true              | false         | true            | `(^_^)` |
-| true              | true          | false           | `(-∧-)` |
-| true              | true          | true            | `(Δ△Δ)` |
+| false | true | false | `-∧-`   |
+| false | true | true | `Δ△Δ`   |
+| true | false | false | `(   )` |
+| true | false | true | `(^_^)` |
+| true | true | false | `(-∧-)` |
+| true | true | true | `(Δ△Δ)` |
 
 ### Display states of other sensors
 

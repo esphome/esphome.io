@@ -7,7 +7,6 @@ params:
     image: tab5.jpg
 ---
 
-
 {{< anchor "mipi_dsi" >}}
 
 ## Introduction
@@ -45,8 +44,8 @@ specified, or a custom init sequence can be provided.
 | ---------------------- | ------------ | ----------------------------------------------------------------------------- |
 | JC1060P470             | Guition      | <https://aliexpress.com/item/1005008328088576.html>                           |
 | M5STACK-TAB5           | M5Stack      | <https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4> |
-| WAVESHARE-P4-NANO-10.1 | Waveshare    | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031>                       |
-| WAVESHARE-P4-86-PANEL  | Waveshare    | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570>         |
+| WAVESHARE-P4-NANO-10.1 | Waveshare | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031> |
+| WAVESHARE-P4-86-PANEL | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
 
 ## Configuration
 
@@ -66,7 +65,8 @@ most of the configuration will be set by default, but can be overridden if neede
 - **reset_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The RESET pin, if required.
 - **enable_pin** (*Optional*, [Pin Schema](#config-pin_schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
-- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`  . This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`  . It does not affect the color order of the display buffer, which is always RGB.
+
+- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.
 - **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected. This is required for the `CUSTOM` model, and is optional for other models. The dimensions are specified in pixels, and the width and height must be greater than 0. The following keys are available:
 
   - **height** (**Required**, int): Specifies height of display in pixels.
@@ -74,8 +74,8 @@ most of the configuration will be set by default, but can be overridden if neede
   - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
   - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
-- **invert_colors** (*Optional*, boolean): Specifies whether the display colors should be inverted. Options are `true` or `false`  . Defaults to `false`  .
-- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`  , `90°`  , `180°`  , or `270°`  . If the driver chip supports hardware rotation for the given orientation this will be translated to the appropriate hardware command. If hardware rotation is not supported, the display will be rotated in software.
+- **invert_colors** (*Optional*, boolean): Specifies whether the display colors should be inverted. Options are `true` or `false`. Defaults to `false`.
+- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`. If the driver chip supports hardware rotation for the given orientation this will be translated to the appropriate hardware command. If hardware rotation is not supported, the display will be rotated in software.
 - **transform** (*Optional*): If `rotation` is not sufficient, use this to transform the display. If this option is specified, then the `dimensions` option must also be provided. Options are:
 
   - **swap_xy** (**Required**, boolean): If true, exchange the x and y axes.
@@ -96,8 +96,8 @@ most of the configuration will be set by default, but can be overridden if neede
 ### Advanced options
 
 - **init_sequence** (*Optional*): Allows custom initialisation sequences to be added. See below for more information.
-- **pixel_mode** (*Optional*): Select the interface mode for the display driver. Options are `16bit` (default) and `24bit`  .
-- **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are `16` (default) and `24`  . Preferably should be the same as the `pixel_mode` option.
+- **pixel_mode** (*Optional*): Select the interface mode for the display driver. Options are `16bit` (default) and `24bit`.
+- **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are `16` (default) and `24`. Preferably should be the same as the `pixel_mode` option.
 - **draw_rounding** (*Optional*): The rounding factor for drawing operations. Defaults to 2. Some chips require a higher value to avoid display artifacts. Must be a power of 2.
 - **use_axis_flips** (*Optional*): If true, the driver will use alternate bits in the MADCTL register to implement x and y mirroring. Defaults to false.
 - **byte_order** (*Optional*): The byte order of the display buffer. Options are `big_endian` and `little_endian` (default). This affects the byte order for the buffer when

@@ -7,8 +7,6 @@ params:
     image: libretiny.svg
 ---
 
-
-
 The `libretiny` text sensor platform exposes various LibreTiny core
 information via text sensors.
 

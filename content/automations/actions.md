@@ -7,7 +7,6 @@ params:
     image: auto-fix.svg
 ---
 
-
 {{< anchor "actions-triggers" >}}
 
 ESPHome *actions* are how we make an ESPHome device *do something.*
@@ -80,7 +79,7 @@ binary_sensor:
 We now attach a special attribute `on_press` to the binary sensor (which represents the button). This part is called
 a "trigger". In this example, the *automation* which follows on the next few lines will execute whenever someone
 *begins* to press the button. Note the terminology follows what you would call these events on mouse buttons. A *press*
-happens when you begin pressing the button. There are also other triggers like `on_release`  , `on_click` or
+happens when you begin pressing the button. There are also other triggers like `on_release`, `on_click` or
 `on_double_click` available.
 
 ```yaml
@@ -94,7 +93,7 @@ on_press:
 
 ## Actions
 
-Now comes the actual automation block. With `then`  , you tell ESPHome what should happen when the press happens.
+Now comes the actual automation block. With `then`, you tell ESPHome what should happen when the press happens.
 Within this block, you can define several "actions" that will be executed sequentially. For example, `switch.toggle`
 and the line after that form an action. Each action is separated by a dash and multiple actions can be executed in
 sequence simply by adding another `-` like so:
@@ -213,16 +212,20 @@ on_...:
 
 #### Configuration variables
 
-At least one of `condition`  , `all` or `any` must be provided.
+At least one of `condition`, `all` or `any` must be provided.
 
 - **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine which branch to take.
   If this is configured with a list of conditions then they must all be true for the condition to be true.
+
 - **all** (*Optional*, [Condition](#config-condition)): Takes a list of conditions, all of which must be true (and is
   therefore equivalent to `condition`  .)
+
 - **any** (*Optional*, [Condition](#config-condition)): Takes a list of conditions; if at least one is true, the
   condition will be true.
+
 - **then** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to true.
   Defaults to doing nothing.
+
 - **else** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to false.
   Defaults to doing nothing.
 
@@ -259,8 +262,9 @@ on_...:
 
 #### Configuration variables
 
-- **count** (**Required**, int): The number of times the action should be repeated.  The counter is available to
+- **count** (**Required**, int): The number of times the action should be repeated. The counter is available to
   lambdas using the reserved word "iteration".
+
 - **then** (**Required**, [Action](#config-action)): The action to repeat.
 
 {{< anchor "wait_until_action" >}}
@@ -318,7 +322,9 @@ on_...:
 
 #### Configuration variables
 
-- **condition** (**Required**, [Condition](#config-condition)): The condition to check to determine whether or not to execute.
+- **condition** (**Required**, [Condition](#config-condition)): The condition to check to determine whether or not to
+  execute.
+
 - **then** (**Required**, [Action](#config-action)): The action to perform until the condition evaluates to false.
 
 {{< anchor "component-update_action" >}}
@@ -409,8 +415,8 @@ on_...:
 
 ### `and` / `all` / `or` / `any` / `xor` / `not` Condition
 
-Check a combination of conditions. `all` is a synonym for `and`  , and `any` is a synonym for `or`  .
-`all` and `any` may also be used directly in place of `condition`  .
+Check a combination of conditions. `all` is a synonym for `and`, and `any` is a synonym for `or`.
+`all` and `any` may also be used directly in place of `condition`.
 
 ```yaml
 on_...:
@@ -452,6 +458,7 @@ on_...:
 
 - **time** (**Required**, [templatable](#config-templatable), [Time](#config-time)):
   The time for which the condition has to have been true.
+
 - **condition** (**Required**, [condition](#config-condition)): The condition to check.
 
 {{< anchor "lambda_condition" >}}
@@ -510,7 +517,7 @@ power-cycle the device if it proves to be/remain unreachable on the network.
 ### Timers and Timeouts
 
 While ESPHome does not provide a construction for timers, you can easily implement them by
-combining `script` and `delay`  . You can have an absolute timeout or sliding timeout by
+combining `script` and `delay`. You can have an absolute timeout or sliding timeout by
 using script modes `single` and `restart` respectively.
 
 ```yaml

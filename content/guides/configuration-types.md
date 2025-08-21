@@ -7,8 +7,6 @@ params:
     image: settings.svg
 ---
 
-
-
 ESPHome's configuration files have several configuration types. This
 page describes them.
 
@@ -43,15 +41,15 @@ These IDs are used only within ESPHome and are not translated to Home Assistant'
 
 ESPHome always uses the **chip-internal GPIO numbers**. These
 internal numbers are always integers like `16` and can be prefixed by
-`GPIO`  . For example to use the pin with the **internal** GPIO number 16,
-you could type `GPIO16` or just `16`  .
+`GPIO`. For example to use the pin with the **internal** GPIO number 16,
+you could type `GPIO16` or just `16`.
 
 Most boards however have aliases for certain pins. For example the NodeMCU
 ESP8266 uses pin names `D0` through `D8` as aliases for the internal GPIO
 pin numbers. Each board (defined in {{< docref "/components/esphome" "ESPHome section" >}})
 has their own aliases and so not all of them are supported yet. For example,
 for the `D0` (as printed on the PCB silkscreen) pin on the NodeMCU ESP8266
-has the internal GPIO name `GPIO16`  , but also has an alias `D0`  . So using
+has the internal GPIO name `GPIO16`, but also has an alias `D0`. So using
 either one of these names in your configuration will lead to the same result.
 
 ```yaml
@@ -87,10 +85,11 @@ Configuration variables:
 
 - **number** (**Required**, pin): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
-   should be treated as inverted. Defaults to `false`  .
+   should be treated as inverted. Defaults to `false`.
+
 - **allow_other_uses** (*Optional*, boolean): If the pin is also specified elsewhere in the configuration.
    By default multiple uses of the same pin will be flagged as an error. This option will suppress the error and is
-   intended for rare cases where a pin is shared between multiple components. Defaults to `false`  .
+   intended for rare cases where a pin is shared between multiple components. Defaults to `false`.
 
 - **mode** (*Optional*, string or mapping): Configures the pin to behave in different
    modes like input or output. The default value depends on the context.
@@ -117,8 +116,9 @@ Configuration variables:
 Advanced options:
 
 - **drive_strength** (*Optional*, string): On ESP32s with esp-idf framework the pad drive strength,
-  i.e. the maximum amount of current can additionally be set. Defaults to `20mA`  .
-  Options are `5mA`  , `10mA`  , `20mA`  , `40mA`  .
+  i.e. the maximum amount of current can additionally be set. Defaults to `20mA`.
+  Options are `5mA`, `10mA`, `20mA`, `40mA`.
+
 - **ignore_strapping_warning** (*Optional*, boolean): Certain pins on ESP32s are designated *strapping pins* and are read
   by the chip on reset to configure initial operation, e.g. to enable bootstrap mode.
   Using such pins for I/O should be avoided and ESPHome will warn if I/O is configured on a strapping pin.

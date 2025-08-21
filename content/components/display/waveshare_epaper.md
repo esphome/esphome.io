@@ -7,8 +7,6 @@ params:
     image: waveshare_epaper.jpg
 ---
 
-
-
 The `waveshare_epaper` display platform allows you to use
 some E-Paper displays sold by [Waveshare](https://www.waveshare.com/product/displays/e-paper.htm)
 with ESPHome. The 2.13" [TTGO module](https://github.com/lewisxhe/TTGO-EPaper-Series) and the
@@ -33,12 +31,12 @@ configuration.
 | ------------------ | ----------- | ------------------ |
 | `VCC`              | `3.3V`      | N/A                |
 | `GND`              | `GND`       | N/A                |
-| `CLK`              | Any GPIO    | `spi.clk_pin`      |
-| `DIN`              | Any GPIO    | `spi.mosi_pin`     |
-| `CS`               | Any GPIO    | `cs_pin`           |
-| `DC`               | Any GPIO    | `dc_pin`           |
-| `BUSY` (Optional)  | Any GPIO    | `busy_pin`         |
-| `RESET` (Optional) | Any GPIO    | `reset_pin`        |
+| `CLK`              | Any GPIO | `spi.clk_pin`      |
+| `DIN`              | Any GPIO | `spi.mosi_pin`     |
+| `CS`               | Any GPIO | `cs_pin`           |
+| `DC`               | Any GPIO | `dc_pin`           |
+| `BUSY` (Optional) | Any GPIO | `busy_pin`         |
+| `RESET` (Optional) | Any GPIO | `reset_pin`        |
 
 {{< img src="waveshare_epaper-pins.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
@@ -131,7 +129,7 @@ lambda: |-
   - `13.3in-k` - 13.3in, with the K model, 960x680, B/W rendering only
 
 {{< warning >}}
-The BUSY pin on the `gdew0154m09`  , the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
+The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
 
 {{< /warning >}}
 
@@ -139,22 +137,28 @@ The BUSY pin on the `gdew0154m09`  , the `Waveshare 7.30in-f` and the `Waveshare
 - **reset_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The RESET pin. Defaults to not connected.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
   The 2.13" B74 and V2 display variants require the reset pin.
+
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
-  by this option. One of `0°` (default), `90°`  , `180°`  , `270°`  .
+  by this option. One of `0°` (default), `90°`, `180°`, `270°`.
+
 - **full_update_every** (*Optional*, int): E-Paper displays have two modes of switching to the next image: A partial
   update that only changes the pixels that have changed and a full update mode that first clears the entire display
   and then re-draws the image. The former is much quicker and nicer, but every so often a full update needs to happen
-  because artifacts accumulate. On the `1.54in`  , `1.54inv2`  , `2.13in`  , `2.13inv2`  , `2.90in`  , `2.90inv2`  ,  `7.50inV2p` and `gdew029t5` models, you have the option to only
+  because artifacts accumulate. On the `1.54in`, `1.54inv2`, `2.13in`, `2.13inv2`, `2.90in`, `2.90inv2`, `7.50inV2p` and `gdew029t5` models, you have the option to only
   do a full-redraw every x-th time using this option. Defaults to `30` on the described models and a full update for
   all other models.
-- **reset_duration** (*Optional*, [Time](#config-time)): Duration for the display reset operation. Defaults to `200ms`  .
+
+- **reset_duration** (*Optional*, [Time](#config-time)): Duration for the display reset operation. Defaults to `200ms`.
   Setting this value to `2ms` may resolve issues with newer e-Paper Driver modules (e.g. Rev 2.1).
+
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`  , use `never` to only manually update the screen via `component.update`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`, use `never` to only manually update the screen via `component.update`.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 - **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
   to use multiple SPI buses.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 ## See Also

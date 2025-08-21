@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_swi.png
 ---
 
-
-
 The `lvgl` switch platform creates a switch from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 

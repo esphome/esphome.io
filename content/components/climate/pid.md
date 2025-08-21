@@ -7,8 +7,6 @@ params:
     image: function.svg
 ---
 
-
-
 The `pid` climate platform allows you to regulate a value with a
 [PID controller](https://en.wikipedia.org/wiki/PID_controller).
 
@@ -56,27 +54,36 @@ climate:
 
 - **sensor** (**Required**, [ID](#config-id)): The sensor that is used to measure the current
   temperature.
+
 - **humidity_sensor** (*Optional*, [ID](#config-id)): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
+
 - **default_target_temperature** (**Required**, float): The default target temperature (setpoint)
   for the control algorithm. This can be dynamically set in the frontend later.
+
 - **heat_output** (*Optional*, [ID](#config-id)): The ID of a [float output](#config-output)
   that increases the current temperature. At least one of `heat_output` and `cool_output` must
   be specified.
+
 - **cool_output** (*Optional*, [ID](#config-id)): The ID of a [float output](#config-output)
   that decreases the current temperature. At least one of `heat_output` and `cool_output` must
   be specified.
+
 - **control_parameters** (**Required**): Control parameters of the PID controller.
 
   - **kp** (**Required**, float): The factor for the proportional term of the PID controller.
   - **ki** (*Optional*, float): The factor for the integral term of the PID controller.
-    Defaults to `0`  .
+    Defaults to `0`.
+
   - **kd** (*Optional*, float): The factor for the derivative term of the PID controller.
-    Defaults to `0`  .
+    Defaults to `0`.
+
   - **min_integral** (*Optional*, float): The minimum value of the integral term multiplied by
-    `ki` to prevent windup. Defaults to `-1`  .
+    `ki` to prevent windup. Defaults to `-1`.
+
   - **max_integral** (*Optional*, float): The maximum value of the integral term multiplied by
-    `ki` to prevent windup. Defaults to `1`  .
+    `ki` to prevent windup. Defaults to `1`.
+
   - **starting_integral_term** (*Optional*, float): Set the initial output, by priming the integral
     term. This is useful for when your system is rebooted and you don't want to wait
     for it to get back equilibrium.
@@ -97,12 +104,13 @@ climate:
 
   - **threshold_high/threshold_low** (**Required**, float): Specifies a high/low
     threshold defining the deadband around the target temperature. For instance with
-    `default_target_temperature` of `21°C` and thresholds of `+/-0.5°C`  , the deadband will be
-    between `20.5°C - 21.5°C`  . The PID controller will limit output changes within the deadband.
-  - **kp_multiplier** (*Optional*, float): Set the `kp` gain when inside the deadband. Defaults to `0`  .
-  - **ki_multiplier** (*Optional*, float): Set the `ki` gain when inside the deadband. Defaults to `0`  .
+    `default_target_temperature` of `21°C` and thresholds of `+/-0.5°C`, the deadband will be
+    between `20.5°C - 21.5°C`. The PID controller will limit output changes within the deadband.
+
+  - **kp_multiplier** (*Optional*, float): Set the `kp` gain when inside the deadband. Defaults to `0`.
+  - **ki_multiplier** (*Optional*, float): Set the `ki` gain when inside the deadband. Defaults to `0`.
   - **kd_multiplier** (*Optional*, float): Set the `kd` gain when inside the deadband. Recommended this
-    is set to `0`  . Defaults to `0`  .
+    is set to `0`. Defaults to `0`.
 
   - **deadband_output_averaging_samples** (*Optional*, int): Typically when inside the deadband the PID Controller has
     reached a state of equilibrium, so it advantageous to use a higher number of output samples
@@ -142,7 +150,7 @@ We do this by specifying a high/low threshold of the target temperature.
 To understand the benefit, consider a heating/cooling HVAC which is constantly
 oscillating between heating and cooling as the thermostat records very minor
 changes from +0.1º to -0.1º. Clearly this is undesirable and will cause wear
-and tear as the HVAC oscillates.  With a deadband in place the heater won't
+and tear as the HVAC oscillates. With a deadband in place the heater won't
 activate until the thermostat breaches the low_threshold and the cooler won't activate
 until the thermostat breaches the high_threshold.
 
@@ -156,7 +164,7 @@ deadband_parameters:
   threshold_low: -1.0°C
 ```
 
-In this example the deadband is between `20.0°C - 21.5°C`  . The PID controller will limit any output
+In this example the deadband is between `20.0°C - 21.5°C`. The PID controller will limit any output
 variation inside this deadband. How it limits depends on how you set the `Deadband Multipliers`_.
 
 {{< img src="deadband1.png" alt="Image" >}}
@@ -202,7 +210,7 @@ with temperature and controller stability.
 
 ## Autotuning
 
-Finding suitable `kp`  , `ki` and `kd` control parameters for the PID controller manually
+Finding suitable `kp`, `ki` and `kd` control parameters for the PID controller manually
 needs some experience with PID controllers. ESPHome has an auto-tuning algorithm that automatically
 finds suitable PID parameters to start using an adaption of the Ziegler-Nichols method with
 relay autotuning (Åström and Hägglund).
@@ -345,11 +353,13 @@ Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): ID of the PID Climate to start autotuning for.
 - **noiseband** (*Optional*, float): The noiseband of the process (=sensor) variable. The value
-  of the PID controller must be able to reach this value. Defaults to `0.25`  .
+  of the PID controller must be able to reach this value. Defaults to `0.25`.
+
 - **positive_output** (*Optional*, float): The positive output power to drive the heat output at.
-  Defaults to `1.0`  .
+  Defaults to `1.0`.
+
 - **negative_output** (*Optional*, float): The negative output power to drive the cool output at.
-  Defaults to `-1.0`  .
+  Defaults to `-1.0`.
 
 The `positive_output` and `negative_output` parameters can be used to compensate the heating or the
 cooling process during the autotune, in the cases when they are not changing the temperature at the
@@ -376,9 +386,10 @@ Configuration variables:
 - **id** (**Required**, [ID](#config-id)): ID of the PID Climate to start autotuning for.
 - **kp** (**Required**, float): The factor for the proportional term of the PID controller.
 - **ki** (*Optional*, float): The factor for the integral term of the PID controller.
-  Defaults to `0`  .
+  Defaults to `0`.
+
 - **kd** (*Optional*, float): The factor for the derivative term of the PID controller.
-  Defaults to `0`  .
+  Defaults to `0`.
 
 ## `climate.pid.reset_integral_term` Action
 
@@ -416,8 +427,8 @@ Configuration variables:
   - `PROPORTIONAL` - The proportional term of the PID controller.
   - `INTEGRAL` - The integral term of the PID controller.
   - `DERIVATIVE` - The derivative term of the PID controller.
-  - `HEAT` - The resulting heating power to the supplied to the `heat_output`  .
-  - `COOL` - The resulting cooling power to the supplied to the `cool_output`  .
+  - `HEAT` - The resulting heating power to the supplied to the `heat_output`.
+  - `COOL` - The resulting cooling power to the supplied to the `cool_output`.
   - `KP` - The current factor for the proportional term of the PID controller.
   - `KI` - The current factor for the integral term of the PID controller.
   - `KD` - The current factor for the differential term of the PID controller.
@@ -432,8 +443,10 @@ Advanced options:
 
 - Ziegler-Nichols Method: Nichols, N. B. and J. G. Ziegler (1942), 'Optimum settings for automatic
   controllers', Transactions of the ASME, 64, 759-768
+
 - Åström, K. J. and T. Hägglund (1984a), 'Automatic tuning of simple regulators',
   Proceedings of IFAC 9th World Congress, Budapest, 1867-1872
+
 - {{< docref "/components/climate" >}}
 - {{< docref "/components/output/sigma_delta_output" >}}
 - {{< docref "/components/output/slow_pwm" >}}

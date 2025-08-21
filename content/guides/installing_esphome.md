@@ -3,7 +3,6 @@ description: "Installing ESPHome Manually"
 title: "Installing ESPHome Manually"
 ---
 
-
 ## Windows
 
 Download Python from [the official site](https://www.python.org/downloads/).
@@ -17,7 +16,7 @@ installer.
 
 Log out and back in, or restart your computer. Whichever is easiest.
 
-Open the start menu and type `cmd`  . Press the enter key.
+Open the start menu and type `cmd`. Press the enter key.
 
 In the terminal that comes up, check that Python is installed:
 
@@ -90,6 +89,7 @@ Version: 2025.8.0
 - If you encounter any issues with Homebrew installation, please check the
   [ESPHome Homebrew Formula](https://formulae.brew.sh/formula/esphome) page
   for additional information.
+
 - Homebrew may not always provide the latest version immediately. Updating Homebrew will
   automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to
   install ESPHome.
@@ -178,7 +178,7 @@ Version: 2025.8.0
 ```
 
 If you get an error like "Command not found", you need to add the binary to
-your `PATH` using `export PATH=$PATH:$HOME/.local/bin`  .
+your `PATH` using `export PATH=$PATH:$HOME/.local/bin`.
 
 To set this permanently, you can run ``echo 'export
 PATH=$PATH:$HOME/.local/bin' >> $HOME/.bashrc``, then log out and back in.

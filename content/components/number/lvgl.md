@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_num.png
 ---
 
-
-
 The `lvgl` number platform creates a number component from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
@@ -17,9 +15,9 @@ Supported widgets are [`arc`](#lvgl-widget-arc), [`bar`](#lvgl-widget-bar), [`sl
 ## Configuration variables
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the number.
-- **animated** (*Optional*, boolean): Whether to set the value of the widget with an animation (if supported by the widget). Defaults to `true`  .
+- **animated** (*Optional*, boolean): Whether to set the value of the widget with an animation (if supported by the widget). Defaults to `true`.
 - **update_on_release** (*Optional*, boolean): By default the number will publish a new value each time the value of the associated widget changes. If this option is `true` then the value will only be published when touch is released.
-- **restore_value**: (*Optional*, bool) Restore the value of the number from non-volatile memory when the device is restarted. Defaults to `false`  .
+- **restore_value**: (*Optional*, bool) Restore the value of the number from non-volatile memory when the device is restarted. Defaults to `false`.
 - All other variables from [Number](#config-number).
 
 Example:
@@ -32,7 +30,7 @@ number:
 ```
 
 {{< note >}}
-Widget-specific actions (`lvgl.arc.update`  , `lvgl.bar.update`  , `lvgl.slider.update`  , `lvgl.spinbox.update`  , `lvgl.spinbox.decrement`  , `lvgl.spinbox.increment`  ) will trigger correspponding component updates to be sent to Home Assistant.
+Widget-specific actions (`lvgl.arc.update`, `lvgl.bar.update`, `lvgl.slider.update`, `lvgl.spinbox.update`, `lvgl.spinbox.decrement`, `lvgl.spinbox.increment`  ) will trigger correspponding component updates to be sent to Home Assistant.
 
 {{< /note >}}
 

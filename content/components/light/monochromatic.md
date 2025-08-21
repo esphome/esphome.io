@@ -7,8 +7,6 @@ params:
     image: brightness-medium.svg
 ---
 
-
-
 The `monochromatic` light platform creates a simple brightness-only light from an
 [float output component](#output).
 

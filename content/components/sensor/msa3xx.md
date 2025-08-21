@@ -7,8 +7,6 @@ params:
     image: msa311.jpg
 ---
 
-
-
 {{< anchor "msa3xx-component" >}}
 
 ## Component/Hub
@@ -43,25 +41,28 @@ text sensors with orientation information, and binary sensors for taps and movem
 
 Base Configuration:
 
-- **type** (**Required**, string): Sensor type. Either `msa301` or `msa311`  .
+- **type** (**Required**, string): Sensor type. Either `msa301` or `msa311`.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval for updating acceleration sensors.
-  Defaults to `10s`  .
-- **range** (*Optional*, string): The range of the sensor measurements. One of `2G`  , `4G`  , `8G`  , `16G`  .
-  Defaults to `2G` which means it picks up accelerations between `-2g` and `2g`  .
-- **resolution** (*Optional*, int): The ADC resolution of the sensor in bits. Supported values for `msa301` are `8`  , `10`  , `12`  , `14` (*default*).
+  Defaults to `10s`.
+
+- **range** (*Optional*, string): The range of the sensor measurements. One of `2G`, `4G`, `8G`, `16G`.
+  Defaults to `2G` which means it picks up accelerations between `-2g` and `2g`.
+
+- **resolution** (*Optional*, int): The ADC resolution of the sensor in bits. Supported values for `msa301` are `8`, `10`, `12`, `14` (*default*).
   For `msa311` the only resolution supported is `12` (and it is *default*).
+
 - **calibration** (*Optional*):
 
-  - **offset_x** (*Optional*, float): X-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to `0`  .
-  - **offset_y** (*Optional*, float): Y-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to `0`  .
-  - **offset_z** (*Optional*, float): Z-axis zero position calibration, in m/s². From -4.5 to 4.5.  Defaults to `0`  .
+  - **offset_x** (*Optional*, float): X-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
+  - **offset_y** (*Optional*, float): Y-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
+  - **offset_z** (*Optional*, float): Z-axis zero position calibration, in m/s². From -4.5 to 4.5. Defaults to `0`.
 
 - **transform** (*Optional*):
 
-  - **mirror_x** (*Optional*, boolean): Mirror X-axis. Defaults to `false`  .
-  - **mirror_y** (*Optional*, boolean): Mirror Y-axis. Defaults to `false`  .
-  - **mirror_z** (*Optional*, boolean): Mirror Z-axis. Defaults to `false`  .
-  - **swap_xy** (*Optional*, boolean): Swap X and Y axis. Defaults to `false`  .
+  - **mirror_x** (*Optional*, boolean): Mirror X-axis. Defaults to `false`.
+  - **mirror_y** (*Optional*, boolean): Mirror Y-axis. Defaults to `false`.
+  - **mirror_z** (*Optional*, boolean): Mirror Z-axis. Defaults to `false`.
+  - **swap_xy** (*Optional*, boolean): Swap X and Y axis. Defaults to `false`.
 
 ## Binary Sensor
 
@@ -120,9 +121,10 @@ text_sensor:
 
 ### Configuration variables
 
-- **orientation_xy** (*Optional*): XY orientation. Can be one of `Portrait Upright`  ,
-  `Portrait Upside Down`  , `Landscape Left`  , `Landscape Right`  .
-- **orientation_z** (*Optional*): Z orientation. Can be one of `Upwards looking`  , `Downwards looking`
+- **orientation_xy** (*Optional*): XY orientation. Can be one of `Portrait Upright`,
+  `Portrait Upside Down`, `Landscape Left`, `Landscape Right`.
+
+- **orientation_z** (*Optional*): Z orientation. Can be one of `Upwards looking`, `Downwards looking`
 
 ## Automations
 
@@ -167,7 +169,7 @@ msa3xx:
 
 ### `on_orientation` trigger
 
-This automation will be triggered when device orientation is changed with respect to the gravitation field vector `g`  .
+This automation will be triggered when device orientation is changed with respect to the gravitation field vector `g`.
 
 ```yaml
 msa3xx:

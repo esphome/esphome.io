@@ -7,8 +7,6 @@ params:
     image: pwm.png
 ---
 
-
-
 The LibreTiny PWM platform allows you to use a hardware PWM on BK72xx and RTL87xx chips.
 Refer to [LibreTiny/Boards](https://docs.libretiny.eu/link/boards) to find your board
 and which PWM pins it supports.
@@ -33,7 +31,8 @@ light:
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to use PWM on.
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
 - **frequency** (*Optional*, frequency): The frequency to run the PWM with. Lower frequencies
-  have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`  .
+  have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`.
+
 - All other options from [Output](#config-output).
 
 {{< anchor "output-libretiny_pwm-set_frequency_action" >}}

@@ -7,8 +7,6 @@ params:
     image: htu31d.jpg
 ---
 
-
-
 The HTU31D Temperature & Humidity component allows you to use HTU31D sensors with
 ESPHome. The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -38,7 +36,7 @@ sensor:
 - **humidity** (*Optional*): The information for the humidity sensor.
   All options from [Sensor](#config-sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
 ## See Also
 

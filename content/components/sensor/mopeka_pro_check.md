@@ -7,13 +7,11 @@ params:
     image: mopeka_pro_check.jpg
 ---
 
-
-
 The `mopeka_pro_check` sensor platform lets you track the output of Mopeka Pro
-Check LP, Mopeka Pro Plus, Mopeka Pro Universal or Lippert Propane Tank Sensors,   Bluetooth Low
+Check LP, Mopeka Pro Plus, Mopeka Pro Universal or Lippert Propane Tank Sensors, Bluetooth Low
 Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}. This component
 will track the tank level, distance, temperature, battery percentage, and sensor reading quality of a
-device every time the sensor sends out a BLE broadcast.  There are additional configuration options
+device every time the sensor sends out a BLE broadcast. There are additional configuration options
 to control handling of poor quality readings and reporting reading quality issues.
 
 {{< warning >}}
@@ -84,12 +82,12 @@ sensor:
 + **tank_type** (**Required**): The tank type the sensor is measuring. See below.
 
 + **custom_distance_full** (*Optional*): distance sensor will read when it should be
-  considered full (100%).  This is only used when tank_type = CUSTOM
+  considered full (100%). This is only used when tank_type = CUSTOM
 
 + **custom_distance_empty** (*Optional*): distance sensor will read when it should be
-  considered empty (0%).  This is only used when tank_type = CUSTOM
+  considered empty (0%). This is only used when tank_type = CUSTOM
 
-+ **level** (*Optional*): The percentage of full for the tank sensor.  If
++ **level** (*Optional*): The percentage of full for the tank sensor. If
   read is ignored due to quality this sensor will not be updated.
 
   + All options from [Sensor](#config-sensor).
@@ -105,7 +103,7 @@ sensor:
   + All options from [Sensor](#config-sensor).
 
 + **battery_level** (*Optional*): The information for the battery percentage
-  sensor.  Sensor uses a standard CR2032 battery.
+  sensor. Sensor uses a standard CR2032 battery.
 
   + All options from [Sensor](#config-sensor).
 
@@ -115,8 +113,8 @@ sensor:
   + All options from [Sensor](#config-sensor).
 
 + **ignored_reads** (*Optional*): A diagnostic sensor indicating the number
-  of consecutive ignored reads.  This resets to zero each time the read is
-  equal or greater than the configured ignored quality.  Only the distance
+  of consecutive ignored reads. This resets to zero each time the read is
+  equal or greater than the configured ignored quality. Only the distance
   and level sensors are not reported.
 
   + All options from [Sensor](#config-sensor).
@@ -124,7 +122,7 @@ sensor:
 + **minimum_signal_quality** (*Optional*, enum): Each report from the sensor
   indicates the quality or confidence in the distance the sensor calculated. Physical
   sensor placement, tank material or quality, or other factors can influence the
-  sensors ability to read with confidence.  As quality gets lower, the accuracy of the
+  sensors ability to read with confidence. As quality gets lower, the accuracy of the
   distance reading may not align with expectations. This value allows configuration of
   the minimum quality level that the distance should be evaluated/reported.
   Acceptable Values:
@@ -158,7 +156,7 @@ esp32_ble_tracker:
 mopeka_ble:
 ```
 
-After uploading, the ESP32 will immediately try to scan for BLE devices.  Press and hold the sync button for it to be identified.
+After uploading, the ESP32 will immediately try to scan for BLE devices. Press and hold the sync button for it to be identified.
 Or alternatively set the configuration flag `show_sensors_without_sync: true` to see all devices.
 For all sensors found the `mopeka_ble` component will print a message like this one:
 

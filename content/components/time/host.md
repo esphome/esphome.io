@@ -3,8 +3,6 @@ description: "Host Time Source"
 title: "Host Time Source"
 ---
 
-
-
 ```yaml
 # Example configuration entry
 time:

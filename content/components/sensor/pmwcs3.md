@@ -7,8 +7,6 @@ params:
     image: pmwcs3.jpg
 ---
 
-
-
 The `pmwcs3` sensor platform allows you to use your PMWCS3
 ([informations](https://tinovi.com/wp-content/uploads/2020/01/PM-WCS-3-I2C.pdf))
 capacitive soil moisture and temperature sensor with ESPHome. The [I²C bus](#i2c) is required to be set up in
@@ -35,16 +33,21 @@ sensor:
 
 - **e25** (*Optional*): Electrical Conductivity, reference at 25°C in dS/m.
   All options from [Sensor](#config-sensor).
+
 - **ec** (*Optional*): Electrical Conductivity in mS/m.
   All options from [Sensor](#config-sensor).
+
 - **temperature** (*Optional*): Soil temperature in °C.
   All options from [Sensor](#config-sensor).
+
 - **vwc** (*Optional*): Volumetric Water Content in cm3cm−3.
   All options from [Sensor](#config-sensor).
+
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x63`  .
+  Defaults to `0x63`.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 {{< anchor "sensor-pmwcs3aircalibrationaction" >}}
 

@@ -7,8 +7,6 @@ params:
     image: /cookbook/images/infostrip-detail.jpg
 ---
 
-
-
 Showing the current status of sensor states using a Neopixel (WS2812B) strip is a simple way to communicate states to
 the user. Compared to a dashboard screen the infostrip can only communicate the information like a binary sensor.
 

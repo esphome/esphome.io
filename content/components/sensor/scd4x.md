@@ -7,9 +7,7 @@ params:
     image: scd4x.jpg
 ---
 
-
-
-The `scd4x` sensor platform  allows you to use your Sensirion SCD4X CO₂
+The `scd4x` sensor platform allows you to use your Sensirion SCD4X CO₂
 ([datasheet](https://sensirion.com/media/documents/48C4B7FB/67FE0194/CD_DS_SCD4x_Datasheet_D1.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -41,14 +39,14 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-- **temperature_offset** (*Optional*, float):  The temperature offset can depend
+- **temperature_offset** (*Optional*, float): The temperature offset can depend
   on various factors such as the SCD4x measurement mode, self-heating of close
   components, the ambient temperature and air flow. This variable allows the
   compensation of those effects by setting a temperature offset. Defaults to
-  `4°C`  .
+  `4°C`.
 
 - **automatic_self_calibration** (*Optional*, boolean): Whether to enable
-  automatic self calibration (ASC). Defaults to `true`  .
+  automatic self calibration (ASC). Defaults to `true`.
 
 - **ambient_pressure_compensation** (*Optional*, int): Enable compensation
   of measured CO₂ values based on given ambient pressure in mBar.
@@ -65,16 +63,17 @@ sensor:
   - `single_shot`  : A measurement is started in every update interval. A measurement takes 5 seconds. This mode is only available on scd41 and useful if low power consumption is required.
     The automatic self-calibration is optimized for single shot measurements performed every 5 minutes.
     To reduce noise levels, you can can perform several single shot measurements in a row and average the output values using a [Sensor Filters](#sensor-filters).
+
   - `single_shot_rht_only`  : A measurement is started in every update interval. A measurement takes 50 ms. Only humidity and temperature is measured. CO2 is reported as 0 ppm. This mode is only available on scd41 and useful if low power consumption is required.
 
 - **ambient_pressure_compensation_source** (*Optional*, [ID](#config-id)): Set an external pressure sensor ID used for ambient pressure compensation.
   The pressure sensor must report pressure in hPa. the correction is applied before updating the state of the co2 sensor.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x62`  .
+  Defaults to `0x62`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 ## Actions
 

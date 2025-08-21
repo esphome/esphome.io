@@ -30,7 +30,8 @@ text_sensor:
 
 - **id** (**Required**, [ID](#config-id)): Give the mapping an ID so that you can refer
   to it later in [lambdas](#config-lambda).
-- **from** (**Required**, string): The type of the keys in the mapping. Can be one of `string` or `int`  .
+
+- **from** (**Required**, string): The type of the keys in the mapping. Can be one of `string` or `int`.
 - **to** (**Required**, string): The type of values in the map. May be one of `string` or `int` or a class specifier as discussed below.
 - **entries** (**Required**, dict): A list of key-value pairs that define the mapping. The keys must be of the type specified in the `from` field, and the values must be of the type specified in the `to` field.
 
@@ -40,7 +41,7 @@ You can also map to a class. This is useful when you want to map to a more compl
 
 - `image`  : Maps to an image as defined in the {{< docref "/components/image" >}} component. The values should each be an image ID.
 - `color`  : Maps to a predefined [Color](#config-color). The values should each be a color ID.
-- The name of a C++ class defined by ESPHome, e.g. `Component`  . The values should each be a ID of that class.
+- The name of a C++ class defined by ESPHome, e.g. `Component`. The values should each be a ID of that class.
 
 ## Using a mapping
 

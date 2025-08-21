@@ -7,8 +7,6 @@ params:
     image: bme280.jpg
 ---
 
-
-
 The {{< docref "/components/sensor/bme280" >}} is a simple temperature, humidity, and pressure sensor with communication
 over [I²C](#i2c) or [SPI](#spi).
 With some simple math it is possible to either determine the height of the sensor, or the current pressure at sea level.
@@ -61,7 +59,7 @@ sensor:
 
 ## Altitude and absolute humidity
 
-The first block `sensor` starts with the normal bme280 sensor components `temperature`  , `pressure`  ,
+The first block `sensor` starts with the normal bme280 sensor components `temperature`, `pressure`,
 and `humidity` with each their own id.
 After the bme280 sensor, a {{< docref "/components/sensor/template" >}} is defined to calculate the altitude in a lambda.
 The variable `STANDARD_SEA_LEVEL_PRESSURE` (in hPa), should be filled in for your location.

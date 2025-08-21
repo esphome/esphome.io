@@ -7,8 +7,6 @@ params:
     image: ../images/lvgl_c_sel.png
 ---
 
-
-
 The `lvgl` select platform creates a select from an LVGL widget
 and requires {{< docref "/components/lvgl/index" "LVGL" >}} to be configured.
 
@@ -17,7 +15,7 @@ Supported widgets are [`dropdown`](#lvgl-widget-dropdown) and [`roller`](#lvgl-w
 ## Configuration variables
 
 - **widget** (**Required**): The ID of a supported widget configured in LVGL, which will reflect the state of the select.
-- **restore_value**: (*Optional*, bool) Restore the value of the select from non-volatile memory when the device is restarted. Defaults to `false`  .
+- **restore_value**: (*Optional*, bool) Restore the value of the select from non-volatile memory when the device is restarted. Defaults to `false`.
 - All other variables from [Select](#config-select).
 
 Example:
@@ -30,7 +28,7 @@ select:
 ```
 
 {{< note >}}
-Widget-specific actions (`lvgl.dropdown.update`  , `lvgl.roller.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
+Widget-specific actions (`lvgl.dropdown.update`, `lvgl.roller.update`  ) will trigger correspponding component updates to be sent to Home Assistant.
 
 {{< /note >}}
 

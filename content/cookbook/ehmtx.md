@@ -7,8 +7,6 @@ params:
     image: ehmtx.jpg
 ---
 
-
-
 Based on a cheap 8x32 RGB matrix you can build flexible status displays for all kind of informations. It is expandable
 with sensors etc.
 

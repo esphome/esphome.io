@@ -7,8 +7,6 @@ params:
     image: restart.svg
 ---
 
-
-
 The `restart` button platform allows you to restart your node remotely
 through Home Assistant.
 

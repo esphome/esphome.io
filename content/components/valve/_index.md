@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 The `valve` component is a generic representation of valves in ESPHome. A valve can (currently) either be *closed* or
 *open* and supports three commands: *open*, *close* and *stop*.
 
@@ -37,22 +35,26 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and you want the valve
-to use that name, you can set `name: None`  .
+to use that name, you can set `name: None`.
 
 {{< /note >}}
 
 - **device_class** (*Optional*, string): The device class for the sensor. See
   <https://www.home-assistant.io/components/valve/> for a list of available options.
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the valve in the frontend.
 
 Advanced options:
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
   frontend (like Home Assistant). Only specifying an `id` without a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, this entity should not be added to any client's frontend,
-  (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to `false`  .
+  (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity. See
   <https://developers.home-assistant.io/docs/core/entity/#generic-properties> for a list of available options. Set to `""` to remove the default entity category.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT options:
@@ -169,7 +171,7 @@ Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The valve to control.
 - **stop** (*Optional*, boolean): Whether to stop the valve.
-- **state** (*Optional*, string): The state to set the valve to - one of `OPEN` or `CLOSE`  .
+- **state** (*Optional*, string): The state to set the valve to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float): The valve position to set.
 
   - `0.0` = `0%` = `CLOSED`

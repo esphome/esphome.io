@@ -3,7 +3,6 @@ description: "YAML Configuration in ESPHome"
 title: "YAML Configuration in ESPHome"
 ---
 
-
 {{< anchor "yaml-configuration" >}}
 
 ## Overview
@@ -21,9 +20,9 @@ be read before any validation or processing is done.
 
 - **Comments:** Any text after a `#` is a comment.
 - **Scalars:** Strings, numbers, booleans.
-- **Sequences:** Lists of items, using `-` or `[ ... ]`  .
-- **Mappings:** Key-value pairs, using `key: value` or `{ ... }`  .
-- **Anchors and Aliases:** Reuse blocks of YAML with `&anchor` and `*alias`  .
+- **Sequences:** Lists of items, using `-` or `[ ... ]`.
+- **Mappings:** Key-value pairs, using `key: value` or `{ ... }`.
+- **Anchors and Aliases:** Reuse blocks of YAML with `&anchor` and `*alias`.
 - **Multi-line Strings:** Use `|` or `>` for multi-line text.
 
 ### Comments
@@ -91,7 +90,6 @@ data_pins:
   - 39
   - 40
 
-
 sensors:
 # A list of sensors, each is a mapping
   - platform: gpio
@@ -143,7 +141,7 @@ two errors:
 
 ### Mappings
 
-A YAML mapping is a list of key-value pairs, using `key: value` or `{ ... }`  . Keys can be any valid YAML scalar
+A YAML mapping is a list of key-value pairs, using `key: value` or `{ ... }`. Keys can be any valid YAML scalar
 (though usually they will be confined to strings from a predefined set), while values can be any valid YAML scalar,
 list, or mapping. A mapping can also be referred to as a dictionary, associative array or hashtable. The keys used in
 a single mapping must be unique.
@@ -175,7 +173,7 @@ widgets:
     text: Temperature 2
 ```
 
-Note that the sequence marker `-` is *not* indented below the mapping key `widgets`  . This technically incorrect,
+Note that the sequence marker `-` is *not* indented below the mapping key `widgets`. This technically incorrect,
 but will be interpreted correctly by the YAML parser. It is recommended that you stick to the correct format,
 but if you see this used in a YAML file, understand that it does work - and it can be useful to limit indentation
 depth with complex configurations.
@@ -204,7 +202,7 @@ sensor:
     name: "Temperature 2"
 ```
 
-In this example, both sensors share the metadata from `common_adc`  , but the second sensor overrides the `pin` and
+In this example, both sensors share the metadata from `common_adc`, but the second sensor overrides the `pin` and
 `name` values.
 
 ### Multi-line Strings

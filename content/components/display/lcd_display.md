@@ -7,8 +7,6 @@ params:
     image: lcd.jpg
 ---
 
-
-
 The `lcd_pcf8574` and `lcd_gpio` display components allow you to use HD44780-compatible, character-based LCDs
 with ESPHome. This component is only for LCDs that display individual characters on a screen
 (usually 8-40 columns and 2-4 rows), and not for LCDs that can control each pixel individually.
@@ -51,12 +49,14 @@ display:
 
 ### Configuration variables
 
-- **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`  . If you're not
+- **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`. If you're not
   sure, power the display up and just count them.
-- **address** (*Optional*, int): The [I²C](#i2c) address of the PCF8574 chip, defaults to `0x3F`  .
+
+- **address** (*Optional*, int): The [I²C](#i2c) address of the PCF8574 chip, defaults to `0x3F`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 {{< note >}}
@@ -92,18 +92,21 @@ display:
 
 ### Configuration variables
 
-- **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`  . If you're not
+- **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`. If you're not
   sure, power the display on, turn contrast high up and just count them.
+
 - **data_pins** (**Required**, list of [pins](#config-pin_schema)): A list of the data pins you
   have hooked up to the LCD. The list can either be 4 items long (operating in 4-bit mode with
   either the first 4 data pins connected or the last 4 data pins connected), or 8 items long (when you have
   connected all 8 data pins).
+
 - **enable_pin** (**Required**, [pin](#config-pin_schema)): The pin you have `E` (`06`  ) hooked up to.
 - **rs_pin** (**Required**, [pin](#config-pin_schema)): The pin you have `RS` (`04`  ) hooked up to.
-- **rw_pin** (*Optional*, [pin](#config-pin_schema)): Optionally set the pin you have `R/W` (`05`  ) hooked up to. You can also just permanently connect that pin to `GND`  .
+- **rw_pin** (*Optional*, [pin](#config-pin_schema)): Optionally set the pin you have `R/W` (`05`  ) hooked up to. You can also just permanently connect that pin to `GND`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 {{< note >}}
@@ -117,12 +120,12 @@ pin of the board. You can use a potentiometer to make it adjustable.
 
 The LCD displays has a similar API to the fully fledged [Display Rendering Engine](#display-engine), but it's only a subset as LCD displays
 don't have a concept of individual pixels. In the lambda you're passed a variable called `it`
-as with all other displays. In this case however, `it` is an instance of either `GPIOLCDDisplay` or `PCF8574LCDDisplay`  .
+as with all other displays. In this case however, `it` is an instance of either `GPIOLCDDisplay` or `PCF8574LCDDisplay`.
 
 The most basic operation with LCD Displays is writing static text to the screen as in the configuration example
 at the top of this page.
 
-Each of the three methods (`print`  , `printf` and `strftime`  ) all optionally take a column and row arguments at the
+Each of the three methods (`print`, `printf` and `strftime`  ) all optionally take a column and row arguments at the
 beginning which can be used to print the text at a specific position. These arguments are set to `0` (column) and `0` (row)
 by default which means the character at the top left.
 
@@ -202,11 +205,11 @@ Try this [custom character generator](https://omerk.github.io/lcdchargen/) to de
 
 With the `lcd_pcf8574` the backlight can be turned on by `it.backlight()` and off by `it.no_backlight()` in the
 display lambda definition. The jumper on the PCF8574 board needs to be closed for the backlight control to work.
-Keep in mind that the display lambda runs for every `update_interval`  , so if the backlight is turned on/off there,
+Keep in mind that the display lambda runs for every `update_interval`, so if the backlight is turned on/off there,
 it cannot be overridden from other parts.
 
-With the `lcd_gpio`  , the backlight is lit by applying `Vcc` to the `BLA` (`15`  ) pin and connect `BLK` (`16`  )
-pin to `GND`  . The backlight can draw more power than the microcontroller output pins can supply, so it is advisable
+With the `lcd_gpio`, the backlight is lit by applying `Vcc` to the `BLA` (`15`  ) pin and connect `BLK` (`16`  )
+pin to `GND`. The backlight can draw more power than the microcontroller output pins can supply, so it is advisable
 to use a transistor as a switch to control the power for the backlight pins.
 
 Below an example for a typical use-case where the backlight is turned on when a motion sensor activates and

@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up a display in ESPHome to show sensor values from Home Assistant
 ---
 
-
-
 {{< img src="display_time_temp_oled_1.jpg" alt="Image" width="75.0%" class="align-left" >}}
 
 In this example I have used a {{< docref "/components/display/ssd1306" "SSD1306 OLED Display over I²C" >}} to
@@ -47,7 +45,7 @@ time:
 Next, we want to get one temperature sensor and the [weather forecast](https://www.home-assistant.io/integrations/weather/)
 imported from Home Assistant.
 
-I named them `inside_temperature` and `outside_temperature`  . You will use those references later.
+I named them `inside_temperature` and `outside_temperature`. You will use those references later.
 
 By adding `internal: true` to the sensors they won't be published back to Home Assistant.
 
@@ -152,10 +150,12 @@ display:
 
 ## Rendering
 
-- Alignment of text can use different reference points, for example `TOP_RIGHT` or `BASELINE_LEFT`  , which all are
+- Alignment of text can use different reference points, for example `TOP_RIGHT` or `BASELINE_LEFT`, which all are
   defined in {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}.
+
 - The property `has_state()` on a sensor is useful as it can take some seconds to get the data from Home Assistant and
   you may not want to display `Nan`
+
 - Refer to the rendering engine [Display Rendering Engine](#display-engine) for more features (it can draw lines and
   circles too!)
 

@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `template` alarm control panel platform allows you to turn your binary sensors into a state machine
 managed alarm control panel.
 
@@ -29,19 +27,19 @@ alarm_control_panel:
 
 - **codes** (*Optional*, list of string): A list of codes for disarming the alarm, if *requires_code_to_arm* set to true then for arming the alarm too.
 - **requires_code_to_arm** (*Optional*, boolean): Code required for arming the alarm, *codes* must be provided.
-- **arming_away_time** (*Optional*, [Time](#config-time)): The exit delay before the alarm is armed to away mode. Defaults to `0s`  .
+- **arming_away_time** (*Optional*, [Time](#config-time)): The exit delay before the alarm is armed to away mode. Defaults to `0s`.
 - **arming_home_time** (*Optional*, [Time](#config-time)): The exit delay before the alarm is armed to home mode.
 - **arming_night_time** (*Optional*, [Time](#config-time)): The exit delay before the alarm is armed to night mode.
-- **pending_time** (*Optional*, [Time](#config-time)): The entry delay before the alarm is triggered. Defaults to `0s`  .
-- **trigger_time** (*Optional*, [Time](#config-time)): The time after a triggered alarm before resetting to previous state if the sensors are cleared/off. Defaults to `0s`  .
+- **pending_time** (*Optional*, [Time](#config-time)): The entry delay before the alarm is triggered. Defaults to `0s`.
+- **trigger_time** (*Optional*, [Time](#config-time)): The time after a triggered alarm before resetting to previous state if the sensors are cleared/off. Defaults to `0s`.
 - **binary_sensors** (*Optional*, *list*): A list of binary sensors the panel should use. Each consists of:
 
   - **input** (**Required**, string): The id of the binary sensor component
   - **bypass_armed_home** (*Optional*, boolean): This binary sensor will not trigger the alarm when in `armed_home` state.
   - **bypass_armed_night** (*Optional*, boolean): This binary sensor will not trigger the alarm when in `armed_night` state.
   - **bypass_auto** (*Optional*, boolean): This binary sensor will be automatically bypassed if left on/open at the time of arming.
-  - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor. One of `delayed`  , `instant`  , `instant_always`  , or `delayed_follower`  . (`delayed` is the default if not specified)
-  - **chime** (*Optional*, boolean): When set `true`  , the chime callback will be called whenever the sensor goes from closed to open. (`false` is the default if not specified)
+  - **trigger_mode** (*Optional*, string): Sets the trigger mode for this sensor. One of `delayed`, `instant`, `instant_always`, or `delayed_follower`. (`delayed` is the default if not specified)
+  - **chime** (*Optional*, boolean): When set `true`, the chime callback will be called whenever the sensor goes from closed to open. (`false` is the default if not specified)
 
 - **restore_mode** (*Optional*, enum):
 
@@ -68,9 +66,9 @@ Each binary sensor "zone" supports 4 trigger modes. The modes are:
 
 The `delayed` trigger mode is typically specified for exterior doors where entry is required to access an alarm keypad or other arm/disarm method. If the alarm panel is armed, and a zone set to `delayed` is "faulted" (i.e. the zone state is `true`  ) the alarm state will change from the `armed` state to the `pending` state. During the `pending` state, the user has a preset time to disarm the alarm before it changes to the `triggered` state. This is the default trigger mode if not specified.
 
-The `instant` trigger mode is typically used for exterior zones (e.g. windows, and glass break detectors).  If the alarm control panel is armed, a fault on this type of zone will cause the alarm to go from the `armed` state directly to the `triggered` state.
+The `instant` trigger mode is typically used for exterior zones (e.g. windows, and glass break detectors). If the alarm control panel is armed, a fault on this type of zone will cause the alarm to go from the `armed` state directly to the `triggered` state.
 
-The `instant_always` trigger mode is typically used for tamper inputs.  Irrespective of whether the alarm control panel is armed, a fault will always cause the alarm to go directly to the `triggered` state.
+The `instant_always` trigger mode is typically used for tamper inputs. Irrespective of whether the alarm control panel is armed, a fault will always cause the alarm to go directly to the `triggered` state.
 
 The `delayed_follower` trigger mode is typically specifed for interior passive infared (PIR) or microwave sensors. One of two things happen when a `delayed_follower` zone is faulted:
 
@@ -112,10 +110,10 @@ the pending timer expires.
    the state returns to `ARM_...`
 
 {{< note >}}
-Although the interface supports all arming modes only `away` , `home` and `night` have been implemented for now.
+Although the interface supports all arming modes only `away`, `home` and `night` have been implemented for now.
 `arm_...` is for either `arm_away` or `arm_home`
-`arming_..._time` is for either `arming_away_time` , `arming_home_time` , or `arming_night_time`
-`ARMED_...` is for either `ARMED_AWAY` , `ARMED_HOME` , or `ARMED_NIGHT`
+`arming_..._time` is for either `arming_away_time`, `arming_home_time`, or `arming_night_time`
+`ARMED_...` is for either `ARMED_AWAY`, `ARMED_HOME`, or `ARMED_NIGHT`
 
 {{< /note >}}
 

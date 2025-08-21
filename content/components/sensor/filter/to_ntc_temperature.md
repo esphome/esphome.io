@@ -3,8 +3,6 @@ description: ""
 headless: true
 ---
 
-
-
 Convert your sensor values available as resistance values into corresponding
 temperatures using an NTC characteristic curve.
 

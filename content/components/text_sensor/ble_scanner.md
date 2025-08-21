@@ -7,8 +7,6 @@ params:
     image: bluetooth.svg
 ---
 
-
-
 The `ble_scanner` text sensor platform lets you track reachable BLE devices.
 
 See the [BLE Tracker Configuration variables](#config-esp32_ble_tracker) for instructions for setting up scan parameters.

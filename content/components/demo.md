@@ -7,8 +7,6 @@ params:
     image: description.svg
 ---
 
-
-
 The `demo` component can be used for testing to generate sample instances of many
 different components (sensors, lights, ...)
 

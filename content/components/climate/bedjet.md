@@ -7,8 +7,6 @@ params:
     image: bedjet.png
 ---
 
-
-
 The `bedjet` component allows you to communicate with a BedJet V3 Climate Comfort
 Sleep System.
 
@@ -47,8 +45,9 @@ bedjet:
 - **ble_client_id** (**Required**, [ID](#config-id)): The ID of the BLE Client.
 - **time_id** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/time" >}} which
   can be used to set the time on the BedJet device.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to dispatch status
-  changes to child components. Defaults to `5s`  . Each child component can decide whether to
+  changes to child components. Defaults to `5s`. Each child component can decide whether to
   publish its own updated state on this interval, or use another (longer) update interval to
   throttle its own updates.
 
@@ -119,9 +118,13 @@ climate:
   climate entity's current temperature:
 
   - `ambient` (Default) - The temperature of the room the BedJet is in will be
+
       reported as the climate entity's current temperature.
+
   - `outlet` - The temperature of the air being discharged by the BedJet will be
+
       reported as the climate entity's current temperature.
+
 - All other options from [Climate](#config-climate).
 
 ## `bedjet` Fan
@@ -130,7 +133,7 @@ The `fan` platform exposes the BedJet's fan-related functionality, including
 on/off and speed control.
 
 When the BedJet is already on, turning the Fan component off will set the BedJet unit's mode to
-`OFF`  . If it was not already on, it will be turned on to mode `FAN_ONLY`  .
+`OFF`. If it was not already on, it will be turned on to mode `FAN_ONLY`.
 
 ```yaml
 fan:

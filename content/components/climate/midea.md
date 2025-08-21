@@ -7,8 +7,6 @@ params:
     image: air-conditioner.svg
 ---
 
-
-
 The `midea` component creates a Midea air conditioner climate device.
 
 {{< note >}}
@@ -26,7 +24,7 @@ This protocol also used by some vendors:
 Control is possible with a custom dongle. Example of hardware implementation is [IoT Uni Dongle](https://github.com/dudanov/iot-uni-dongle) or [Midea SLWF-01pro](https://smartlight.me/smart-home-devices/wifi-devices/wifi-dongle-air-conditioners-midea-idea-electrolux-for-home-assistant) ([CloudFree](https://cloudfree.shop/product/ductless-hvac-wi-fi-module/), [Tindie](https://www.tindie.com/products/smartlightme/wifi-dongle-for-air-conditioners-midea-electrolux)).
 
 {{< /note >}}
-The Midea air conditioner requires the UART to be configured with `baud_rate: 9600`  .  The hardware requires **5V logic levels** and does not appear to work with 3.3V logic levels. Use a logic level shifter if building your own dongle.
+The Midea air conditioner requires the UART to be configured with `baud_rate: 9600`. The hardware requires **5V logic levels** and does not appear to work with 3.3V logic levels. Use a logic level shifter if building your own dongle.
 
 ```yaml
 # Example configuration entry
@@ -74,18 +72,20 @@ climate:
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the {{< docref "../uart" >}} if you want
   to use multiple UART buses.
+
 - **transmitter_id** (*Optional*, [ID](#config-id)): Defined and used automatically when using {{< docref "../remote_transmitter" >}} component for IR commands transmit.
-- **period** (*Optional*, [Time](#config-time)): Minimal period between requests to the appliance. Defaults to `1s`  .
-- **timeout** (*Optional*, [Time](#config-time)): Request response timeout until next request attempt. Defaults to `2s`  .
-- **num_attempts** (*Optional*, int): Number of request attempts between 1 and 5 inclusive. Defaults to `3`  .
+- **period** (*Optional*, [Time](#config-time)): Minimal period between requests to the appliance. Defaults to `1s`.
+- **timeout** (*Optional*, [Time](#config-time)): Request response timeout until next request attempt. Defaults to `2s`.
+- **num_attempts** (*Optional*, int): Number of request attempts between 1 and 5 inclusive. Defaults to `3`.
 - **autoconf** (*Optional*, boolean): Get capabilities automatically. Allows you not to manually define most of the capabilities of the appliance.
-  Defaults to `True`  .
-- **beeper** (*Optional*, boolean): Beeper feedback on command. Defaults to `False`  .
-- **supported_modes** (*Optional*, list): List of supported modes. Possible values are: `HEAT_COOL`  , `COOL`  , `HEAT`  , `DRY`  , `FAN_ONLY`  .
-- **custom_fan_modes** (*Optional*, list): List of supported custom fan modes. Possible values are: `SILENT`  , `TURBO`  .
-- **supported_presets** (*Optional*, list): List of supported presets. Possible values are: `ECO`  , `BOOST`  , `SLEEP`  .
-- **custom_presets** (*Optional*, list): List of supported custom presets. Possible values are: `FREEZE_PROTECTION`  .
-- **supported_swing_modes** (*Optional*, list): List of supported swing modes. Possible values are: `VERTICAL`  , `HORIZONTAL`  , `BOTH`  .
+  Defaults to `True`.
+
+- **beeper** (*Optional*, boolean): Beeper feedback on command. Defaults to `False`.
+- **supported_modes** (*Optional*, list): List of supported modes. Possible values are: `HEAT_COOL`, `COOL`, `HEAT`, `DRY`, `FAN_ONLY`.
+- **custom_fan_modes** (*Optional*, list): List of supported custom fan modes. Possible values are: `SILENT`, `TURBO`.
+- **supported_presets** (*Optional*, list): List of supported presets. Possible values are: `ECO`, `BOOST`, `SLEEP`.
+- **custom_presets** (*Optional*, list): List of supported custom presets. Possible values are: `FREEZE_PROTECTION`.
+- **supported_swing_modes** (*Optional*, list): List of supported swing modes. Possible values are: `VERTICAL`, `HORIZONTAL`, `BOTH`.
 - **outdoor_temperature** (*Optional*): The information for the outdoor temperature
   sensor.
 
@@ -159,14 +159,14 @@ Configuration variables:
 - **temperature** (**Required**, float, [templatable](#config-templatable)):
   Sets the value of an internal temperature sensor. The value will be **clamped** to the range:
 
-  - *0 °C to 37 °C* when `use_fahrenheit` is `false`  .
-  - *32 °F to 99 °F* when `use_fahrenheit` is `true`  .
+  - *0 °C to 37 °C* when `use_fahrenheit` is `false`.
+  - *32 °F to 99 °F* when `use_fahrenheit` is `true`.
 
 - **use_fahrenheit** (*Optional*, boolean, [templatable](#config-templatable)):
-  Specifies if the `temperature` value is in Fahrenheit. When set to `true`  , the temperature is parsed and sent in Fahrenheit. Defaults to `false` (Celsius).
+  Specifies if the `temperature` value is in Fahrenheit. When set to `true`, the temperature is parsed and sent in Fahrenheit. Defaults to `false` (Celsius).
 
 - **beeper** (*Optional*, boolean, [templatable](#config-templatable)):
-  Sets beep on update. Defaults to `false`  .
+  Sets beep on update. Defaults to `false`.
 
 {{< anchor "midea_ac-display_toggle_action" >}}
 

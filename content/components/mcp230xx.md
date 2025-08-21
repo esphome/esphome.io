@@ -7,8 +7,6 @@ params:
     image: mcp230xx.svg
 ---
 
-
-
 The Microchip MCP230xx series of general purpose, parallel I/O expansion for I²C bus applications.
 
 **Supported Variants :**
@@ -60,7 +58,8 @@ binary_sensor:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this MCP23008 component.
 - **address** (*Optional*, int): The I²C address of the driver.
-  Defaults to `0x20`  .
+  Defaults to `0x20`.
+
 - **open_drain_interrupt** (*Optional*, boolean): Configure the interrupt pin to open-drain mode.
   Useful when the MCP23008's power supply is greater than 3.3 volts. Note that this pin
   will require a pull-up resistor (to 3.3 volts) when this mode is enabled.
@@ -68,11 +67,12 @@ binary_sensor:
 ### Pin configuration variables
 
 - **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23008 component.
-- **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`  , `RISING`  , `FALLING`  .
+- **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
-  should be treated as inverted. Defaults to `false`  .
-- **mode** (*Optional*, string): A pin mode to set for the pin at. One of `INPUT` or `OUTPUT`  .
+  should be treated as inverted. Defaults to `false`.
+
+- **mode** (*Optional*, string): A pin mode to set for the pin at. One of `INPUT` or `OUTPUT`.
 
 {{< anchor "mcp23016-label" >}}
 
@@ -121,7 +121,7 @@ binary_sensor:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this MCP23016 component.
 - **address** (*Optional*, int): The I²C address of the driver.
-  Defaults to `0x20`  .
+  Defaults to `0x20`.
 
 ### Pin configuration variables
 
@@ -182,7 +182,8 @@ binary_sensor:
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this MCP23017 component.
 - **address** (*Optional*, int): The I²C address of the driver.
-  Defaults to `0x20`  .
+  Defaults to `0x20`.
+
 - **open_drain_interrupt** (*Optional*, boolean): Configure interrupt pins to open-drain mode.
   Useful when the MCP23017's power supply is greater than 3.3 volts. Note that these pins
   will require pull-up resistors (to 3.3 volts) when this mode is enabled.
@@ -190,7 +191,7 @@ binary_sensor:
 ### Pin configuration variables
 
 - **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23017 component.
-- **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`  , `RISING`  , `FALLING`  .
+- **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - All other options from [Pin Schema](#config-pin_schema)
 
 ## See Also

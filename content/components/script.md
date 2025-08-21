@@ -20,8 +20,9 @@ script:
 
 - **id** (**Required**, [ID](#config-id)): The [ID](#config-id) of the script. Use this to interact with the script
   using the script actions.
+
 - **mode** (*Optional*, string): Controls what happens when a script is invoked while it is still running from one or
-  more previous invocations. Default to `single`  .
+  more previous invocations. Default to `single`.
 
   - `single`  : Do not start a new run. Issue a warning.
   - `restart`  : Start a new run after first stopping previous run.
@@ -29,10 +30,12 @@ script:
   - `parallel`  : Start a new, independent run in parallel with previous runs.
 
 - **max_runs** (*Optional*, int): Allows limiting the maximum number of runs when using script modes `queued` and
-  `parallel`  , use value `0` for unlimited runs. Defaults to `0`  .
+  `parallel`, use value `0` for unlimited runs. Defaults to `0`.
+
 - **parameters** (*Optional*, [Script Parameters](#script-parameters)): A script can define one or more parameters
   that must be provided in order to execute. All parameters defined here are mandatory and must be given when calling
   the script.
+
 - **then** (**Required**, [Action](#config-action)): The action to perform.
 
 {{< anchor "script-parameters" >}}
@@ -152,7 +155,7 @@ This can't be used in a lambda as it would block all functioning of the device. 
 ## `script.is_running` Condition
 
 This [condition](#config-condition) allows you to check if a given script is running. In case scripts are run in
-`parallel`  , this condition only tells you if at least one script of the given id is running, not how many. Not
+`parallel`, this condition only tells you if at least one script of the given id is running, not how many. Not
 designed for use with [while](#while_action); instead try [script.wait](#script-wait_action).
 
 ```yaml
