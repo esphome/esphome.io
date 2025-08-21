@@ -13,7 +13,8 @@ params:
 In this example I have used a {{< docref "/components/display/ssd1306" "SSD1306 OLED Display over I²C" >}} to
 show current time and two different temperature values from Home Assistant.
 
-ESPHome has support for several different types of displays. The display used here is 1.3" with 128x64 monochrome pixels (`SH1106 128x64`  ).
+ESPHome has support for several different types of displays. The display used here is 1.3" with 128x64 monochrome pixels
+(`SH1106 128x64`).
 
 ## Hardware configuration
 
@@ -43,7 +44,8 @@ time:
 
 ### Getting Temperature
 
-Next, we want to get one temperature sensor and the [weather forecast](https://www.home-assistant.io/integrations/weather/) imported from Home Assistant.
+Next, we want to get one temperature sensor and the [weather forecast](https://www.home-assistant.io/integrations/weather/)
+imported from Home Assistant.
 
 I named them `inside_temperature` and `outside_temperature`  . You will use those references later.
 
@@ -74,7 +76,8 @@ text_sensor:
 - TrueType fonts are used. If you ever worked with fonts on microcontrollers you will love this!
 - Save font files in `/config/esphome` folder where your ESPHome configuration is stored.
 - The `.ttf` suffix must be lowercase and of course match your filename.
-- Selection of fonts can be a little bit tricky for small sizes to look good. Experiment and share your findings in the comments below!
+- Selection of fonts can be a little bit tricky for small sizes to look good. Experiment and share your findings in the
+  comments below!
 
 ```yaml
 font:
@@ -142,19 +145,24 @@ display:
 
       // Print outside temperature (from homeassistant weather)
       if (id(outside_temperature).has_state()) {
-        it.printf(127, 60, id(medium), TextAlign::BASELINE_RIGHT , "%.1f%s", id(outside_temperature).state, id(outside_temperature_unit).state.c_str());
+        it.printf(127, 60, id(medium), TextAlign::BASELINE_RIGHT , "%.1f%s",
+                  id(outside_temperature).state, id(outside_temperature_unit).state.c_str());
       }
 ```
 
 ## Rendering
 
-- Alignment of text can use different reference points, for example `TOP_RIGHT` or `BASELINE_LEFT`  , which all are defined in {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}.
-- The property `has_state()` on a sensor is useful as it can take some seconds to get the data from Home Assistant and you may not want to display `Nan`
-- Refer to the rendering engine [Display Rendering Engine](#display-engine) for more features (it can draw lines and circles too!)
+- Alignment of text can use different reference points, for example `TOP_RIGHT` or `BASELINE_LEFT`  , which all are
+  defined in {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}.
+- The property `has_state()` on a sensor is useful as it can take some seconds to get the data from Home Assistant and
+  you may not want to display `Nan`
+- Refer to the rendering engine [Display Rendering Engine](#display-engine) for more features (it can draw lines and
+  circles too!)
 
 ## Add a Text-Based Sensor
 
-Below follows an example that replaces the "Time and Temperature" top printout with the alarm status from the alarm component in Home Assistant.
+Below follows an example that replaces the "Time and Temperature" top printout with the alarm status from the alarm
+component in Home Assistant.
 
 ```yaml
 text_sensor:

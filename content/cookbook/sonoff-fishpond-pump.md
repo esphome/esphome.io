@@ -11,7 +11,8 @@ params:
 
 {{< img src="sonoff-fishpond.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
-The Sonoff range of products containing the ESP chips from Espressif has a myriad of uses and best of all, you can customize it, aka hackable.
+The Sonoff range of products containing the ESP chips from Espressif has a myriad of uses and best of all, you can
+customize it, aka hackable.
 This quick cookbook aims to provide a clear, simple working example.
 
 This example is very basic in its operation.
@@ -188,7 +189,8 @@ This needs to be submersed, pump (bio filter) and sensor connected in single hou
 In this PVC housing the plates are secured using cabinet door magnets for easier access and maintenance.
 
 * Ensure you are using a proper and compliant waterproof box to house your electrical equipment (Sonoff Basic) in.
-* Ensure you plan to be able to remove the unit with minimal effort should you need to manually USB reflash it again in future.
+* Ensure you plan to be able to remove the unit with minimal effort should you need to manually USB reflash it
+  again in future.
 
 ### 2.6. Home Assistant
 

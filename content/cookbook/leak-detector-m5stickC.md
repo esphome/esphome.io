@@ -6,43 +6,47 @@ params:
     description: Water leak detector with ESPHome on an M5StickC ESP32
 ---
 
-
-| ESP32 Water Leak Detector (with notification) |
-| --------------------------------------------- |
-
-Using the ESP32's capacitive touch GPIOs, it's relatively easy to build a water leak detector using ESPHome.  M5StickC was chosen as a platform due to the integrated Grove connector for clean connections and the fact it's well housed.  The built-in display is a bonus, but not strictly necessary.  Notifications are performed via HomeAssistant's 'alert' and 'notify' facilities, which send via Pushover to iOS & Android.
+Using the ESP32's capacitive touch GPIOs, it's relatively easy to build a water leak detector using ESPHome.
+M5StickC was chosen as a platform due to the integrated Grove connector for clean connections and the fact it's well
+housed. The built-in display is a bonus, but not strictly necessary.  Notifications are performed via HomeAssistant's
+'alert' and 'notify' facilities, which send via Pushover to iOS & Android.
 
 {{< img src="leak-detector-m5stickC_LeakDetected.gif" alt="Image" class="align-center" >}}
 
 ## Things you'll need
 
 - [M5Stick axp192 custom component](https://github.com/airy10/esphome-m5stickC)
-    This is needed to power up the display.  You don't need the st7735 display driver, as it is already included with ESPHome >1.16.0.
+  This is needed to power up the display.  You don't need the st7735 display driver, as it is already included
+  with ESPHome >1.16.0.
 
 - M5StickC ESP32 development kit
-   [M5Stack Link](https://m5stack.com/collections/m5-core/products/stick-c)
+  [M5Stack Link](https://m5stack.com/collections/m5-core/products/stick-c)
 
 {{< img src="leak-detector-m5stickC-m5stickC.png" alt="Image" class="align-center" >}}
 
 - Moisture sensor
-    This example uses a [Guardian Remote Sensor Probe](https://www.amazon.com/gp/product/B07G5BMD7L)
-    which has a 6' cord.
+  This example uses a [Guardian Remote Sensor Probe](https://www.amazon.com/gp/product/B07G5BMD7L)
+  which has a 6' cord.
 
 {{< img src="leak-detector-m5stickC_probe.jpg" alt="Image" class="align-center" >}}
 
 - Grove connector pigtail
-    [Amazon Link](https://www.amazon.com/gp/product/B01CNZ9EEC)
+  [Amazon Link](https://www.amazon.com/gp/product/B01CNZ9EEC)
 
 {{< img src="leak-detector-m5stickC_grove1.jpg" alt="Image" class="align-center" >}}
 
 - USB power supply with USB-C cable
-    (the M5StickC comes with the short black USB cable seen in the pictures)
+  (the M5StickC comes with the short black USB cable seen in the pictures)
 
 ------------
 
 ## Probe Connection
 
-Since the probe comes with an integrated 3.5mm male plug, a 3.5mm female jack has been connected to the Grove port to allow easy probe replacement in the future.  Orange connects to orange, blue connects to blue.  The pads on the opposite side of the probe are internally-connected identically to the front.  The two middle rings on the 3.5mm jack are unused.  There is no polarity -- simply connect one terminal (orange or blue) to Grove GND, and the other to Grove G33.
+Since the probe comes with an integrated 3.5mm male plug, a 3.5mm female jack has been connected to the Grove port
+to allow easy probe replacement in the future.  Orange connects to orange, blue connects to blue.  The pads on the
+opposite side of the probe are internally-connected identically to the front.  The two middle rings on the 3.5mm
+jack are unused.  There is no polarity -- simply connect one terminal (orange or blue) to Grove GND, and the other
+to Grove G33.
 
 {{< img src="leak-detector-m5stickC_pinout.jpg" alt="Image" class="align-center" >}}
 
@@ -60,11 +64,16 @@ the unit on USB power 24/7.
 
 ## Display Font
 
-You'll need to place the [OpenSans-Regular](https://fonts.google.com/specimen/Open+Sans) font (or another of your choosing) alongside your ESPHome yaml file.  See - {{< docref "/components/display" >}}.
+You'll need to place the [OpenSans-Regular](https://fonts.google.com/specimen/Open+Sans) font (or another of your
+choosing) alongside your ESPHome yaml file.  See - {{< docref "/components/display" >}}.
 
 ## Calibration & Testing
 
-Once everything is hooked up and flashed, enable `esp32_touch:` `setup_mode: true` and proceed to adjust the threshold setting on the touch-sensitive binary sensor (GPIO33) to find the proper value for your particular moisture sensor and cabling situation.  Grab a glass of water for testing, another for yourself, and dip away while watching the logs.  Your goal is to find a threshold value that is sufficient to trigger the binary sensor in water, but not otherwise.  See [ESP32 Touch Pad](#esp32-touch-binary-sensor) for more information.
+Once everything is hooked up and flashed, enable `esp32_touch:` `setup_mode: true` and proceed to adjust the threshold
+setting on the touch-sensitive binary sensor (GPIO33) to find the proper value for your particular moisture sensor and
+cabling situation.  Grab a glass of water for testing, another for yourself, and dip away while watching the logs.
+Your goal is to find a threshold value that is sufficient to trigger the binary sensor in water, but not otherwise.
+See [ESP32 Touch Pad](#esp32-touch-binary-sensor) for more information.
 
 ------------
 

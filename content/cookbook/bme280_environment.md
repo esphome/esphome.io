@@ -9,7 +9,8 @@ params:
 
 
 
-The {{< docref "/components/sensor/bme280" >}} is a simple temperature, humidity, and pressure sensor with communication over [I²C](#i2c) or [SPI](#spi).
+The {{< docref "/components/sensor/bme280" >}} is a simple temperature, humidity, and pressure sensor with communication
+over [I²C](#i2c) or [SPI](#spi).
 With some simple math it is possible to either determine the height of the sensor, or the current pressure at sea level.
 This guide can be applied to any sensor measuring temperature and pressure at the same time, like the
 {{< docref "/components/sensor/bmp280" >}}, or {{< docref "/components/sensor/bme680" >}}.
@@ -18,7 +19,8 @@ This guide can be applied to any sensor measuring temperature and pressure at th
 
 The first step is to connect the sensor as described {{< docref "/components/sensor/bme280" "here" >}}.
 After validating the sensor is working, we can proceed and add some formulas.
-In the example below, modify `platform: bme280` as appropriate for your hardware (either `bme280_i2c` or `bme280_spi`  ). See {{< docref "/components/sensor/bme280" >}} for specific details.
+In the example below, modify `platform: bme280` as appropriate for your hardware (either `bme280_i2c` or `bme280_spi`).
+See {{< docref "/components/sensor/bme280" >}} for specific details.
 
 ```yaml
 sensor:
@@ -63,14 +65,16 @@ The first block `sensor` starts with the normal bme280 sensor components `temper
 and `humidity` with each their own id.
 After the bme280 sensor, a {{< docref "/components/sensor/template" >}} is defined to calculate the altitude in a lambda.
 The variable `STANDARD_SEA_LEVEL_PRESSURE` (in hPa), should be filled in for your location.
-The formula derived from [finitespace/BME280](https://github.com/finitespace/BME280/blob/master/src/EnvironmentCalculations.cpp) on GitHub,
+The formula derived from [finitespace/BME280](https://github.com/finitespace/BME280/blob/master/src/EnvironmentCalculations.cpp)
+on GitHub,
 converts the currently measured pressure to the altitudes in meters including temperature compensation.
 
 The second block uses the {{< docref "/components/sensor/absolute_humidity" >}} component which
 converts the currently measured temperature and relative humidity to absolute humidity (grams/m^3).
 
 {{< note >}}
-Calculating the altitude with the BME280 sensor accurately requires this value to be known at sea level for your location and day.
+Calculating the altitude with the BME280 sensor accurately requires this value to be known at sea level for your
+location and day.
 
 This can be achieved by replacing the global constant `STANDARD_SEA_LEVEL_PRESSURE` by for example
 pulling this value live from the internet or a stationary sensor via MQTT.
@@ -79,7 +83,8 @@ pulling this value live from the internet or a stationary sensor via MQTT.
 
 ## Equivalent sea level pressure
 
-Calculating the sea level pressure with a statically mounted sensor can be used as reference for moving sensors as mentioned in the note above.
+Calculating the sea level pressure with a statically mounted sensor can be used as reference for moving sensors as
+mentioned in the note above.
 
 ```yaml
 sensor:

@@ -9,15 +9,17 @@ params:
 
 
 
-Showing the current status of sensor states using a Neopixel (WS2812B) strip is a simple way to communicate states to the user.
-Compared to a dashboard screen the infostrip can only communicate the information like a binary sensor.
+Showing the current status of sensor states using a Neopixel (WS2812B) strip is a simple way to communicate states to
+the user. Compared to a dashboard screen the infostrip can only communicate the information like a binary sensor.
 
 - color (e.g., red = error/warning, orange = warning, green = ok, blue = active)
 - intensity (off, scaled brightness)
 - mode (continuous vs. flashing, flashing or strobe is not recommend)
 - light position on stripe
 
-{{< img src="infostrip-detail.jpg" alt="Image" caption="Wemos D1 mini, Neopixel, CO2 sensor on a blackboard, pixel meanings are described by the chalk drawn icons." width="75.0%" class="align-center" >}}
+{{< img src="infostrip-detail.jpg" alt="Image"
+  caption="Wemos D1 mini, Neopixel, CO2 sensor on a blackboard, pixelmeanings are described by the chalk drawn icons."
+  width="75.0%" class="align-center" >}}
 
 ## ESPHome configuration
 
@@ -93,7 +95,8 @@ Consider the warning in {{< docref "/components/light/partition" >}} regarging t
 
 ## Home Assistant configuration
 
-The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is done in Home Assistant, but could also be implemented using ESPHome [Automations](#automation).
+The automation to show the CO2 warning light (e.g. red if CO2 > 1000 ppm) is done in Home Assistant, but could also be
+implemented using ESPHome [Automations](#automation).
 
 ```yaml
 # Turn on a light with the related color
@@ -140,7 +143,8 @@ automation:
           {{ map[state] if state in map else 'white' }}
 ```
 
-{{< img src="infostrip-lights-ui.png" alt="Image" caption="Each pixel is used as a light entity." width="50.0%" class="align-center" >}}
+{{< img src="infostrip-lights-ui.png" alt="Image" caption="Each pixel is used as a light entity."
+  width="50.0%" class="align-center" >}}
 
 ## See Also
 
