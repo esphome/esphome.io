@@ -9,7 +9,8 @@ params:
 
 
 
-ESPHome devices with a microphone are able to stream the audio to Home Assistant and be processed there by [assist](https://www.home-assistant.io/voice_control/).
+ESPHome devices with a microphone are able to stream the audio to Home Assistant and be processed there by
+[assist](https://www.home-assistant.io/voice_control/).
 
 {{< note >}}
 Voice Assistant requires Home Assistant 2023.5 or later.
@@ -33,12 +34,14 @@ voice_assistant:
 
 ## Configuration variables
 
-- **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The {{< docref "/components/microphone/index" "microphone" >}} settings to use for input.
-- **micro_wake_word** (*Optional*, [ID](#config-id)): The {{< docref "/components/micro_wake_word" "micro_wake_word" >}} component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
-- **speaker** (*Optional*, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to use to output the response.
-  Cannot be used with `media_player` below.
-- **media_player** (*Optional*, [ID](#config-id)): The {{< docref "/components/media_player/index" "media_player" >}} to use
-  to output the response. Cannot be used with `speaker` above.
+- **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The
+  {{< docref "/components/microphone/index" "microphone" >}} settings to use for input.
+- **micro_wake_word** (*Optional*, [ID](#config-id)): The {{< docref "/components/micro_wake_word" "micro_wake_word" >}}
+  component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
+- **speaker** (*Optional*, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to use to output
+  the response. Cannot be used with `media_player` below.
+- **media_player** (*Optional*, [ID](#config-id)): The {{< docref "/components/media_player/index" "media_player" >}}
+  to use to output the response. Cannot be used with `speaker` above.
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`  .
 - **conversation_timeout** (*Optional*, [Time](#config-time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`  .
@@ -90,17 +93,22 @@ voice_assistant:
   Must be larger than 0. Defaults to 1 (disabled).
 
 - **on_timer_started** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has started. The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has started. The timer is available as `timer` of type
+  {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_finished** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has finished. The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has finished. The timer is available as `timer` of type
+  {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_cancelled** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has been cancelled. The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has been cancelled. The timer is available as `timer` of type
+  {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_updated** (*Optional*, [Automation](#automation)): An automation to perform when a voice assistant
-  timer has been updated (paused/resumed/duration changed). The timer is available as `timer` of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  timer has been updated (paused/resumed/duration changed). The timer is available as `timer` of type
+  {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 - **on_timer_tick** (*Optional*, [Automation](#automation)): An automation to perform when the voice assistant timers
   tick is triggered.
   This is called every **1 second** while there are timers on this device.
-  The timers are available as `timers` which is a `std::vector` (array) of type {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
+  The timers are available as `timers` which is a `std::vector` (array) of type
+  {{< apistruct "voice_assistant::Timer" "voice_assistant::Timer" >}}.
 
 {{< anchor "voice_assistant-actions" >}}
 
@@ -144,7 +152,8 @@ Returns true if the voice assistant is currently connected to Home Assistant.
 
 ## Wake word detection
 
-See our [example YAML files on GitHub](https://github.com/esphome/firmware/blob/main/voice-assistant/m5stack-atom-echo.yaml) for continuous wake word detection.
+See our [example YAML files on GitHub](https://github.com/esphome/firmware/blob/main/voice-assistant/m5stack-atom-echo.yaml)
+for continuous wake word detection.
 
 ## Push to Talk
 

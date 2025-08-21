@@ -59,13 +59,17 @@ web_server:
   web server OTA platform, setting this to `false` prevents OTA access through the regular web interface while
   maintaining it for captive portal access. To enable OTA for web server, use the `web_server` OTA platform instead.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access. Defaults to `false`  .
-- **version** (*Optional*, string): `1`  , `2` or `3`  . Version 1 displays as a table. Version 2 uses web components and has more functionality. Version 3 uses HA-Styling. Defaults to `2`  .
-- **sorting_groups** (*Optional*, list): Available only on `version: 3`  . A list of group ID's and names to group the entities. See [Webserver Entity Grouping](#config-webserver-grouping).
+- **local** (*Optional*, boolean): Include supporting javascript locally allowing it to work without internet access.
+  Defaults to `false`  .
+- **version** (*Optional*, string): `1`  , `2` or `3`  . Version 1 displays as a table. Version 2 uses web components
+  and has more functionality. Version 3 uses HA-Styling. Defaults to `2`  .
+- **sorting_groups** (*Optional*, list): Available only on `version: 3`  . A list of group ID's and names to group the
+  entities. See [Webserver Entity Grouping](#config-webserver-grouping).
 
   - **id** (**Required**, [ID](#config-id)): Manually specify the ID used for the group.
   - **name** (**Required**, string): A string representing the group name which is displayed as the header of the group
-  - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller `sorting_weight` will be displayed first. Defaults to `50`
+  - **sorting_weight** (*Optional*, float): A float representing the weight of the group. A group with a smaller
+  `sorting_weight` will be displayed first. Defaults to `50`
 
 To conserve flash size, the CSS and JS files used on the root page to show a simple user
 interface are hosted by esphome.io. If you want to use your own service, use the
@@ -240,7 +244,8 @@ number:
 {{< img src="number-slider-popup.png" alt="Image" width="100.0%" class="align-left" >}}
 
 You can change the value by moving the slider.
-If you wish to enter a precise number you can click and hold the current value. A popup input field will appear where you can enter a number and confirm your input by pressing the enter key.
+If you wish to enter a precise number you can click and hold the current value. A popup input field will appear where
+you can enter a number and confirm your input by pressing the enter key.
 
 {{< img src="number-slider-popup-input-field.png" alt="Image" width="100.0%" class="align-left" >}}
 
@@ -251,9 +256,11 @@ If you wish to enter a precise number you can click and hold the current value. 
 By double-clicking on any group header you can expand the controls to fill up the whole screen.
 You can do the same for the logs.
 
-{{< img src="tab-header-expand-controls-expanded.png" alt="Image" caption="Expanded Controls" width="100.0%" class="align-center" >}}
+{{< img src="tab-header-expand-controls-expanded.png" alt="Image" caption="Expanded Controls"
+  width="100.0%" class="align-center" >}}
 
-{{< img src="tab-header-expand-logs-expanded.png" alt="Image" caption="Expanded Logs" width="100.0%" class="align-center" >}}
+{{< img src="tab-header-expand-logs-expanded.png" alt="Image" caption="Expanded Logs"
+  width="100.0%" class="align-center" >}}
 
 ### Sensor value graph
 

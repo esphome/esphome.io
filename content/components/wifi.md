@@ -56,7 +56,8 @@ wifi:
   - **dns2** (*Optional*, IPv4 address): The backup DNS server to use.
 
 - **use_address** (*Optional*, string): Manually override what address to use to connect
-  to the ESP. Defaults to auto-generated value. Example, if you have changed your static IP and want to flash OTA to the previously configured IP address.
+  to the ESP. Defaults to auto-generated value. Example, if you have changed your static IP and want to flash OTA to
+  the previously configured IP address.
 
 - **ap** (*Optional*): Enable an access point mode on the node.
 
@@ -69,24 +70,30 @@ wifi:
   - **manual_ip** (*Optional*): Manually set the IP options for the AP. Same options as
     manual_ip for station mode.
   - **ap_timeout** (*Optional*, [Time](#config-time)): The time after which to enable the
-    configured fallback hotspot. Can be disabled by setting this to `0s`  , which requires manually starting the AP by other means (eg: from a button press). Defaults to `1min`  .
+    configured fallback hotspot. Can be disabled by setting this to `0s`  , which requires manually starting the AP by
+    other means (eg: from a button press). Defaults to `1min`  .
 
 - **domain** (*Optional*, string): Set the domain of the node hostname used for uploading.
   For example, if it's set to `.local`  , all uploads will be sent to `<HOSTNAME>.local`  .
   Defaults to `.local`  .
 - **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
   WiFi connection exists. Can be disabled by setting this to `0s`  , but note that the low level IP stack currently
-  seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`  . Does not apply when in access point mode.
+  seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
+  Does not apply when in access point mode.
 - **power_save_mode** (*Optional*, string): The power save mode for the WiFi interface.
   See [Power Save Mode](#wifi-power_save_mode)
 
-- **output_power** (*Optional*, string): The amount of TX power for the WiFi interface from 8.5dB to 20.5dB. Default for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
+- **output_power** (*Optional*, string): The amount of TX power for the WiFi interface from 8.5dB to 20.5dB. Default
+  for ESP8266 is 20dB, 20.5dB might cause unexpected restarts.
 - **fast_connect** (*Optional*, boolean): If enabled, directly connects to WiFi network without doing a full scan
-  first. This is required for hidden networks and can significantly improve connection times (thus reducing power consumption). Defaults to `off`  .
+  first. This is required for hidden networks and can significantly improve connection times (thus reducing power
+  consumption). Defaults to `off`.
   The downside is that this option connects to the first network the ESP sees, even if that network is very far away and
   better ones are available. If multiple networks are configured, the last successfully connected one is tested first.
-  In case it fails, all networks are then tested one after the other in their declared order, starting with the first one in the list.
-- **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion. Defaults to `false`  .
+  In case it fails, all networks are then tested one after the other in their declared order, starting with the first
+  one in the list.
+- **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
+  Defaults to `false`  .
 
 - **enable_btm** (*Optional*, bool): Only on `esp32` with `esp-idf`  . Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32` with `esp-idf`  . Enable 802.11k Radio Resource Management support.
@@ -94,7 +101,8 @@ wifi:
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
 - **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection is dropped.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`  .
-- **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM. Defaults to `false`  . Requires PSRAM to be configured.
+- **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM.
+  Defaults to `false`  . Requires PSRAM to be configured.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 ## Access Point Mode
@@ -128,8 +136,8 @@ wifi:
 
 ## User Entered Credentials
 
-Some components such as {{< docref "captive_portal/" >}}, {{< docref "improv_serial/" >}} and {{< docref "esp32_improv/" >}}
-enable the user to send and save Wi-Fi credentials to the device. Beginning in 2022.11.0,
+Some components such as {{< docref "captive_portal/" >}}, {{< docref "improv_serial/" >}} and
+{{< docref "esp32_improv/" >}} enable the user to send and save Wi-Fi credentials to the device. Beginning in 2022.11.0,
 as long as no credentials are set in the config file, and firmware is uploaded without erasing
 the flash (via OTA), the device will keep the saved credentials.
 
@@ -265,7 +273,8 @@ wifi:
 - **username** (*Optional*, string): The username to present to the authenticating server.
 - **password** (*Optional*, string): The password to present to the authentication server.
   For EAP-TLS this password may be set to decrypt to private key instead.
-- **certificate_authority** (*Optional*, string): Path to a PEM encoded certificate to use when validating the authentication server.
+- **certificate_authority** (*Optional*, string): Path to a PEM encoded certificate to use when validating the
+  authentication server.
 - **certificate** (*Optional*, string): Path to a PEM encoded certificate to use for EAP-TLS authentication.
 - **key** (*Optional*, string): Path to a PEM encoded private key matching `certificate` for EAP-TLS authentication.
   Optionally encrypted with `password`  .
@@ -325,7 +334,8 @@ The configuration option `enable_on_boot` can be set to `false` if you do not wa
 
 ### `wifi.configure` Action
 
-This action connects to an SSID and password, optionally saving it in persistent memory so that the next time the WiFi interface is enabled, it will connect to the stored access point.
+This action connects to an SSID and password, optionally saving it in persistent memory so that the next time the WiFi
+interface is enabled, it will connect to the stored access point.
 
 ```yaml
 on_...:
@@ -344,9 +354,12 @@ on_...:
 #### Configuration variables
 
 - **ssid** (**Required**, string, [templatable](#config-templatable)): The name of the WiFi access point.
-- **password** (**Required**, string, [templatable](#config-templatable)): The password of the WiFi access point. Leave empty for no password.
-- **save** (*Optional*, boolean, [templatable](#config-templatable)): If set to `true`  , the SSID and password will be saved in persistent memory. Defaults to `true`  .
-- **timeout** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The time to wait for the connection to be established. Defaults to 30 seconds.
+- **password** (**Required**, string, [templatable](#config-templatable)): The password of the WiFi access point.
+  Leave empty for no password.
+- **save** (*Optional*, boolean, [templatable](#config-templatable)): If set to `true`  , the SSID and password will be
+  saved in persistent memory. Defaults to `true`  .
+- **timeout** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The time to wait for the connection
+  to be established. Defaults to 30 seconds.
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
 - **on_error** (*Optional*, [Automation](#automation)): An action to be performed when the connection fails.
 

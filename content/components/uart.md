@@ -27,8 +27,9 @@ receive/send data at using the `baud_rate` option. Two common baud rates are 960
 
 In some cases only **TX** or **RX** exists as the device at the other end only accepts data or sends data.
 
-The UART component may be used as a platform for the [Packet Transport Component](#packet-transport) component, enabling sensor data to be sent
-directly from one ESPHome node to another over a UART bus. When using RS485 this can operate in a multi-drop configuration.
+The UART component may be used as a platform for the [Packet Transport Component](#packet-transport) component, enabling
+sensor data to be sent directly from one ESPHome node to another over a UART bus. When using RS485 this can operate in
+a multi-drop configuration.
 
 {{< note >}}
 On the ESP32, this component uses the hardware UART units and is thus very accurate. On the ESP8266 however,
@@ -59,10 +60,13 @@ uart:
 ## Configuration variables
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
-- **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin schema and set `inverted: true` to invert logic levels. Not supported by host platform.
-- **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+- **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin
+  schema and set `inverted: true` to invert logic levels. Not supported by host platform.
+- **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin
+  schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
-- **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an integration that needs to read big payloads from UART. Defaults to `256`  .
+- **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
+  integration that needs to read big payloads from UART. Defaults to `256`  .
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
 - **parity** (*Optional*): The parity used on the UART bus. Options: `NONE`  , `EVEN`  , `ODD`  . Defaults to `NONE`  .
 - **stop_bits** (*Optional*, int): The number of stop bits to send. Options: 1, 2. Defaults to 1.
@@ -82,7 +86,8 @@ be accurate at higher baud rates.
 logger and leave others available. If you have configured the logger to use a different hardware UART, the pins
 used for hardware sharing change accordingly.
 
-The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-C3, ESP32-S2, ESP32-S3, etc) may have fewer UARTs (usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
+The ESP32 has three UARTs. ESP32 lite variant chips (ESP32-C3, ESP32-S2, ESP32-S3, etc) may have fewer UARTs
+(usually two). Any pair of GPIO pins can be used, as long as they support the proper output/input modes.
 
 The ESP8266 has two UARTs; the second of which is TX-only. Only a limited set of pins can be used. `UART0` may
 use either `tx_pin: GPIO1` and `rx_pin: GPIO3`  , or `tx_pin: GPIO15` and `rx_pin: GPIO13`  . `UART1` must
@@ -238,7 +243,8 @@ Below are the methods to read current settings and modify them dynamically:
           - lambda: |-
               id(my_uart).flush();
               uint32_t new_baud_rate = stoi(x);
-              ESP_LOGD("change_baud_rate", "Changing baud rate from %i to %i",id(my_uart).get_baud_rate(), new_baud_rate);
+              ESP_LOGD("change_baud_rate", "Changing baud rate from %i to %i",id(my_uart).get_baud_rate(), 
+                       new_baud_rate);
               if (id(my_uart).get_baud_rate() != new_baud_rate) {
                 id(my_uart).set_baud_rate(new_baud_rate);
                 id(my_uart).load_settings();
@@ -263,13 +269,14 @@ Below are the methods to read current settings and modify them dynamically:
     id(my_uart).set_baud_rate(uint32_t baud_rate);
 ```
 
-This flexibility allows for dynamic adaptation to different communication requirements, enhancing the versatility of your ESPHome setup.
+This flexibility allows for dynamic adaptation to different communication requirements, enhancing the versatility of
+your ESPHome setup.
 
 ## UART component with the host platform
 
-Since the host platform does not have physical UART pins, the UART component is implemented using Unix-style ports. Instead of using pins,
-you can specify the port name to use. This implementation also supports components that have `require_tx` and `require_rx` options such as
-smt100 etc.
+Since the host platform does not have physical UART pins, the UART component is implemented using Unix-style ports.
+Instead of using pins, you can specify the port name to use. This implementation also supports components that have
+`require_tx` and `require_rx` options such as smt100 etc.
 
 ```yaml
 # Example configuration entry for host platform
