@@ -298,7 +298,7 @@ stuff after it is encountered, it is magically replaced by the argument after th
 
 Every time you type a percent sign `%` in a printf format string, it will treat the following letters as a format tag
 until a so-called "specifier" is encountered (in this case `f`  ). You can read more about it
-[here](https://www.tutorialspoint.com/c_standard_library/c_function_printf.htm),
+at <https://www.tutorialspoint.com/c_standard_library/c_function_printf.htm>,
 but for ESPHome there are really just a few things you need to know.
 
 Let's break `%.1f` down:
@@ -389,7 +389,7 @@ you can use the {{< docref "/components/text_sensor/mqtt_subscribe" >}} (see the
 
 ### Displaying Time
 
-You can display current time using a time component. Please see the example [here](#strftime).
+You can display current time using a time component. Please see the example on the [time documentation](#strftime).
 
 {{< anchor "clipping" >}}
 

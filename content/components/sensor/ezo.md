@@ -12,7 +12,7 @@ params:
 The `ezo` sensor platform allows you to use your EZO sensor circuits with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
-All embedded solutions from EZO can be found [here](https://atlas-scientific.com/embedded-solutions/).
+All embedded solutions from EZO can be found [on their website](https://atlas-scientific.com/embedded-solutions/).
 If a certain command is not supported directly, it can be executed with the `send_custom()` method call.
 
 {{< img src="ezo-ph-circuit.png" alt="Image" width="80.0%" class="align-center" >}}

@@ -64,7 +64,7 @@ The first block `sensor` starts with the normal bme280 sensor components `temper
 and `humidity` with each their own id.
 After the bme280 sensor, a {{< docref "/components/sensor/template" >}} is defined to calculate the altitude in a lambda.
 The variable `STANDARD_SEA_LEVEL_PRESSURE` (in hPa), should be filled in for your location.
-The formula derived from [here](https://github.com/finitespace/BME280/blob/master/src/EnvironmentCalculations.cpp),
+The formula derived from [finitespace/BME280](https://github.com/finitespace/BME280/blob/master/src/EnvironmentCalculations.cpp) on GitHub,
 converts the currently measured pressure to the altitudes in meters including temperature compensation.
 
 The second block uses the {{< docref "/components/sensor/absolute_humidity" >}} component which

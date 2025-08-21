@@ -24,7 +24,7 @@ This component decodes and updates the configured sensors at the pace the data i
 
 Most smart meters transmit the telegrams using an infrared optical interface. As a sensor a  suitable photo
 transistor (e.g. BPW40) can be attached to the ESP's UART (emitter to `GND` and collector to `RX` pin). A more
-mature solution can be found [here](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-ttl-ausgang) (in German).
+mature solution can be found (in German) on the [Volkszaehler Wiki](https://wiki.volkszaehler.org/hardware/controllers/ir-schreib-lesekopf-ttl-ausgang).
 There are plenty of other examples and ready to buy solutions on the web.
 
 {{< anchor "sml-platform" >}}

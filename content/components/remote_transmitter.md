@@ -647,8 +647,7 @@ Configuration variables:
   commands sent with this action.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
-At the time this action was created, Pioneer maintained listings of IR codes used for their devices
-[here](https://www.pioneerelectronics.com/PUSA/Support/Home-Entertainment-Custom-Install/IR+Codes).
+At the time this action was created, Pioneer maintained listings of [IR codes](https://www.pioneerelectronics.com/PUSA/Support/Home-Entertainment-Custom-Install/IR+Codes) used for their devices.
 If unable to find your specific device in the documentation, find a device in the same class; the codes
 are largely shared among devices within a given class.
 

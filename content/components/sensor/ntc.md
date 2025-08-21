@@ -89,7 +89,7 @@ sensor:
 
 A constant voltage supply to the NTC sensor causes it to heat up and therefore creates unreliable temperature values.
 So it's recommended to only supply the NTC sensor (and voltage divider) during the actual measurement.
-More info [here](https://learn.adafruit.com/thermistor/using-a-thermistor#self-heating-3-22).
+More info [on Adafruit](https://learn.adafruit.com/thermistor/using-a-thermistor#self-heating-3-22).
 
 To do this, replace the 3.3V side of the voltage divider with a connection to a GPIO pin. This GPIO pin will
 be switched HIGH (3.3V) only during the measurement, thus preventing the sensor from heating up.

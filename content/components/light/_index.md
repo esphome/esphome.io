@@ -961,7 +961,7 @@ light:
 ```
 
 Examples of this API can be found
-[here](https://github.com/esphome/esphome/blob/dev/esphome/components/light/addressable_light_effect.h)
+in [the source code](https://github.com/esphome/esphome/blob/dev/esphome/components/light/addressable_light_effect.h)
 (the built-in addressable light effects).
 
 ### Automation Light Effect

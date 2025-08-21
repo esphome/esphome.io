@@ -1132,9 +1132,9 @@ to use the sprinkler controller's {{< apiref "API" "sprinkler/sprinkler.h" >}} t
 the goal of indicating this on some form of {{< docref "/components/display/index" "display" >}} hardware. Note that this
 discussion largely revolves around C++ code (as is used in ESPHome lambdas).
 
-Many of the methods used to determine the sprinkler controller's state return a type of value known as an `optional`  .
+Many of the methods used to determine the sprinkler controller's state return a type of value known as an `optional`.
 If you are curious, a general reference for the `optional` type may be found
-[here](https://en.cppreference.com/w/cpp/utility/optional), but what is important for now is:
+on [cppreference.com](https://en.cppreference.com/w/cpp/utility/optional), but what is important for now is:
 
 - The `optional` type *may* or *may not* contain a value
 
