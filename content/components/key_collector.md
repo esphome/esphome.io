@@ -43,10 +43,9 @@ key_collector:
       - logger.log:
           format: "input timeout: '%s', started by '%c'"
           args: [ 'x.c_str()', "(start == 0 ? '~' : start)" ]
-
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this entry for use in lambdas.
 - **source_id** (*Optional*, [ID](#config-id)): The ID of the key input device.
@@ -68,7 +67,7 @@ At least one of `end_keys` or `max_length` have to be specified. The rest are op
 If both `end_keys` and `max_length` are specified, then once `max_length` keys are collected, no more will be
 accepted until an end key is pressed.
 
-## Automations
+## Triggers
 
 - **on_progress** (*Optional*, [Automation](#automation)): An automation to perform
   when keys are pressed. The current sequence of pressed keys is placed in a `vector<uint8_t>` variable `x`
@@ -84,33 +83,33 @@ accepted until an end key is pressed.
   if the timeout happens. The current sequence of pressed keys is placed in a `vector<uint8_t>` variable `x`
   and `start` holds the start key that activated this sequence or else `0`  .
 
-## `key_collector.enable` Action
+## Actions
 
-This action activates a `key_collector`  .  It will start accepting keys.
+### `key_collector.enable` Action
+
+This action activates a `key_collector`. It will start accepting keys.
 If there is more than one key collector, you will need to provide the `id` of the one to enable.
 
 ```yaml
 on_...:
   then:
     - key_collector.enable:
-
 ```
 
-## `key_collector.disable` Action
+### `key_collector.disable` Action
 
-This action deactivates a `key_collector`  .  It will stop accepting keys and will clear any already collected ones.
+This action deactivates a `key_collector`. It will stop accepting keys and will clear any already collected ones.
 If there is more than one key collector, you will need to provide the `id` of the one to disable.
 
 ```yaml
 on_...:
   then:
     - key_collector.disable:
-
 ```
 
 ## Lambda
 
-- **send_key(uint8_t key)**: Send a key to the collector directly.
+- `send_key(uint8_t key)`: Send a key to the collector directly.
 
 ## See Also
 

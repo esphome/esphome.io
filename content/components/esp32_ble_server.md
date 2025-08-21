@@ -68,7 +68,7 @@ esp32_ble_server:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **uuid** (**Required**, string, int): The UUID of the service.
 - **advertise** (*Optional*, boolean): If the service should be advertised. Defaults to `false`  .
@@ -101,7 +101,7 @@ esp32_ble_server:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (*Optional*, string): An ID to refer to this characteristic in automations.
 - **uuid** (**Required**, string, int): The UUID of the characteristic.
@@ -135,7 +135,7 @@ esp32_ble_server:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (*Optional*, string): An ID to refer to this descriptor in automations.
 - **uuid** (**Required**, string, int): The UUID of the descriptor.
@@ -183,7 +183,7 @@ esp32_ble_server:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **data** (**Required**, string, int, float, boolean, list of bytes, [templatable](#config-templatable)): The value of the characteristic or descriptor. For [templatable](#config-templatable) values, the lambda function must return a `std::vector<uint8_t>` (you may use the `bytebuffer::ByteBuffer` helper class to transform different data types into a byte array). The value is computed each time the characteristic is read.
 - **type** (*Optional*, string): The C++ type of the value. The available values are `uint8_t`  , `uint16_t`  , `uint32_t`  , `uint64_t`  , `int8_t`  , `int16_t`  , `int32_t`  , `int64_t`  , `float`  , `double` and `string`  . It must be defined if the value is not [templatable](#config-templatable).
@@ -223,7 +223,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, string): The ID of the characteristic to set the value of.
 - **value** (**Required**, [Value Configuration](#esp32_ble_server-value)): The new value of the characteristic.
@@ -240,7 +240,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, string): The ID of the characteristic to notify the client about (must have the `notify` property).
 
@@ -259,7 +259,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, string): The ID of the descriptor to set the value of.
 - **value** (**Required**, [Value Configuration](#esp32_ble_server-value)): The new value of the descriptor.

@@ -50,7 +50,7 @@ sml:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
@@ -74,6 +74,8 @@ sensor:
 
 ```
 
+### Configuration variables
+
 - **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
@@ -92,6 +94,8 @@ text_sensor:
     format: text
 
 ```
+
+### Configuration variables
 
 - **obis_code** (**Required**, string): Specify the OBIS code you want to retrieve data for from the device.
   The format must be (A-B:C.D.E, e.g. 1-0:1.8.0)

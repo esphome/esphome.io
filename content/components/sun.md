@@ -11,6 +11,8 @@ params:
 
 The `sun` component allows you to track the sun's position in the sky. Calculations are done every 60 seconds.
 
+## Component/Hub
+
 ```yaml
 # Example configuration entry
 sun:
@@ -23,14 +25,13 @@ time:
 
 ```
 
-## Configuration variables
+### Configuration variables
 
 - **latitude** (**Required**, float): The latitude for performing the calculation.
 - **longitude** (**Required**, float): The longitude for performing the calculation.
-
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
-Automation:
+## Triggers
 
 ```yaml
 # Example configuration entry
@@ -62,7 +63,7 @@ sun:
 
   - **elevation** (*Optional*, float): The elevation to cross. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
 
-## `sun` Sensor
+## Sensor
 
 Additionally, the sun component exposes its values over a sensor platform.
 
@@ -80,13 +81,13 @@ sensor:
 
 {{< img src="sun-sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
-Configuration variables:
+### Configuration variables
 
 - **type** (**Required**, string): The type of value to track. One of `elevation` and
   `azimuth`  .
 - All other options from [Sensor](#config-sensor).
 
-## `sun` Text Sensor
+## Text Sensor
 
 Other properties like the next sunset time can be read out with the sun text_sensor platform.
 
@@ -104,7 +105,7 @@ text_sensor:
 
 {{< img src="sun-text_sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
-Configuration variables:
+### Configuration variables
 
 - **type** (**Required**, string): The type of value to track. One of `sunrise` and
   `sunset`  .

@@ -91,7 +91,7 @@ remote_transmitter:
 ## Remote Transmitter Actions
 
 Remote transmitters support a number of [actions](#config-action) that can be used to send remote codes. All
-supported protocols are listed below. All actions have these additional configuration variables:
+supported protocols are listed below. All actions have these additional #### Configuration variables
 
 ```yaml
 on_...:
@@ -103,7 +103,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **repeat** (*Optional*): Defines the number of times the code is repeated when transmitted. By default, codes are
   sent only once.
@@ -138,7 +138,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **source_address** (**Required**, int): The source address to send the command from,
   see received messages for more info. For indoor stations the last byte of the address
@@ -181,7 +181,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The address to send the command to, see dumper output for more details.
 - **data** (**Required**, list): The command to send, A length of 2-35 bytes can be specified for one packet.
@@ -206,7 +206,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **source** (**Required**, int): The 8-bit source to send, e.g. 0x00=video,0x01=audio,..., see dumper output for more info.
 - **command** (**Required**, int): The command to send, e.g. 0x01=num1, 0x0d=mute,...,  see dumper output for more info.
@@ -226,7 +226,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The 8-bit ID to send, see dumper output for more info.
 - **command** (**Required**, int): The command to send, see dumper output for more info.
@@ -253,7 +253,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **device** (**Required**, int): The device to send to, see dumper output for more details.
 - **address** (*Optional*, int): The address (or sub-device) to send to, see dumper output for more details.
@@ -282,7 +282,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **device** (**Required**, int): The device to send to, see dumper output for more details.
 - **address** (*Optional*, int): The address (or sub-device) to send to, see dumper output for more details.
@@ -304,7 +304,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **first** (**Required**, [templatable](#config-templatable), uint32_t): The first 24-bit Coolix code to send;
   see dumper output for more info.
@@ -326,7 +326,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (*Optional*, int): The number of the receiver to target, between 1 and 16 inclusive. Defaults to `1`  .
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
@@ -351,7 +351,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **id** (**Required**, int): The 24-bit ID to send. Each remote has a unique one.
 - **channel** (**Required**, int): The 8-bit channel to send, between 0 and 255 inclusive.
@@ -375,7 +375,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The 16-bit ID to send, see dumper output for more info.
 - **channel** (**Required**, int): The switch/channel to send, between 0 and 127 inclusive.
@@ -395,7 +395,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **code** (**Required**, int): The command to send. Known commands are:
   - MENU = 0xaa55,
@@ -427,7 +427,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, int): The JVC code to send, see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -450,7 +450,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The 32-bit address to send, see dumper output for more info.
 - **command** (**Required**, int): The 4 bit command/button code to send, see dumper output for more info.
@@ -473,7 +473,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **code** (**Required**, list): The 13 byte Haier code to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -492,7 +492,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, int): The LG code to send, see dumper output for more info.
 - **nbits** (*Optional*, int): The number of bits to send. Defaults to `28`  .
@@ -512,7 +512,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **wand_id** (**Required**, int): The wand ID to send, as a hex integer.  See the dumper output for your wand ID.
 - **magnitude** (*Optional*, int): The magnitude of swishes and swirls the wand should transmit.  See the dumper output
@@ -539,7 +539,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **code** (**Required**, list, [templatable](#config-templatable)): The 40-bit Midea code to send as a list of
   hex or integers.
@@ -568,7 +568,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The 16-bit address to send, see dumper output for more details.
 - **command** (**Required**, int): The 16-bit NEC command to send.
@@ -591,7 +591,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **device** (**Required**, int): The Nexa device code to send, see dumper output for more info.
 - **state** (**Required**, int): The Nexa state code to send (0-OFF, 1-ON, 2-DIMMER LEVEL), see dumper output for more
@@ -615,7 +615,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The address to send the command to, see dumper output for more details.
 - **command** (**Required**, int): The command to send.
@@ -637,7 +637,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **rc_code_1** (**Required**, int): The remote control code to send, see dumper output for more details.
 - **rc_code_2** (*Optional*, int): The secondary remote control code to send; some codes are sent in
@@ -664,7 +664,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, string): The raw code to send specified as a string. Many remote control Pronto codes can be
   found on <http://remotecentral.com>
@@ -689,7 +689,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **code** (**Required**, list): The raw code to send as a list of integers.
   Positive numbers represent a digital high signal and negative numbers a digital low signal.
@@ -712,7 +712,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The address to send, see dumper output for more details.
 - **command** (**Required**, int): The RC5 command to send.
@@ -732,7 +732,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The address to send, see dumper output for more details.
 - **command** (**Required**, int): The RC6 command to send.
@@ -753,7 +753,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **code** (**Required**, string): The raw code to send, copy this from the dump output.
 - **protocol** (*Optional*): The RC Switch protocol to use, see [RC Switch Protocol](#remote_transmitter-rc_switch-protocol)
@@ -777,7 +777,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **group** (**Required**, string): The group to send the command to.
 - **device** (**Required**, string): The device in the group to send the command to.
@@ -803,7 +803,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The address to send the command to.
 - **channel** (**Required**, int): The channel to send the command to.
@@ -830,7 +830,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **family** (**Required**, string): The family to send the command to. Range is `a` to `p`  .
 - **group** (**Required**, int): The group to send the command to. Range is 1 to 4.
@@ -857,7 +857,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **group** (**Required**, int): The group to send the command to. Range is 1 to 4.
 - **device** (**Required**, int): The device to send the command to. Range is 1 to 3.
@@ -882,7 +882,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, int): The Roomba code to send, see dumper output for more info.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -912,7 +912,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, int): The data to send, see dumper output for more details.
 - **nbits** (*Optional*, int): The number of bits to send. Defaults to `32`  .
@@ -933,7 +933,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, int): The address to send, see dumper output for more details.
 - **command** (**Required**, int): The Samsung36 command to send, see dumper output for more details.
@@ -953,7 +953,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, int): The Sony code to send, see dumper output for more info.
 - **nbits** (*Optional*, int): The number of bits to send. Defaults to `12`  .
@@ -978,7 +978,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **rc_code_1** (**Required**, int): The remote control code to send, see dumper output for more details.
 - **rc_code_2** (*Optional*, int): The secondary remote control code to send; some codes are sent in
@@ -999,7 +999,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **code** (**Required**, list): The 14 byte Mirage code to send.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -1020,7 +1020,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **command** (**Required**, int): The 1-byte Toto command code to send. Range is 0 to 0xFF.
 - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to send. Range is 0 to 0xF.
@@ -1044,7 +1044,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **transmitter_id** (*Optional*, [ID](#config-id)): The remote transmitter to set the pin value on. Defaults to
   the first one defined in the configuration.

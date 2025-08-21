@@ -105,9 +105,11 @@ A good example for that is to update the display component after the download su
 
 ## Actions
 
-**online_image.set_url**: Change the URL where the image is downloaded from. A re-download will be automatically triggered unless `update` is set to `false`  .
+### `online_image.set_url` Action
 
-Configuration variables:
+Change the URL where the image is downloaded from. A re-download will be automatically triggered unless `update` is set to `false`.
+
+#### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The image to update the URL for.
 - **url** (**Required**, url): The new URL to download the image from.
@@ -122,9 +124,11 @@ on_...:
 
 ```
 
-**online_image.release**: Release the memory currently used by an image. Can be used if different display pages need different images, to avoid wasting memory on an image that is currently not being displayed.
+### `online_image.release` Action
 
-Configuration variables:
+Release the memory currently used by an image. Can be used if different display pages need different images, to avoid wasting memory on an image that is currently not being displayed.
+
+#### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The image to update the URL for.
 

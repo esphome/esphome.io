@@ -49,7 +49,7 @@ fingerprint_grow:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 The configuration is made up of three parts: The central component, optional individual sensors, and the optional enrolling binary sensor.
 
@@ -73,11 +73,13 @@ Base Configuration:
 
 ## Binary Sensor
 
-Configuration variables:
+### Configuration variables
 
 - All options from [Binary Sensor](#config-binary_sensor).
 
 ## Sensor
+
+### Configuration variables
 
 - **fingerprint_count**: The number of enrolled fingerprints stored on the reader.
   All options from [Sensor](#config-sensor).
@@ -148,9 +150,11 @@ fingerprint_grow:
 
 ```
 
+## Triggers
+
 {{< anchor "fingerprint_grow-on_finger_scan_start" >}}
 
-## `on_finger_scan_start` Trigger
+### `on_finger_scan_start` Trigger
 
 With this configuration option, you can trigger an automation when a finger is detected touching the sensor. Very useful to indicate to the user via AuraLed that the sensor has detected the finger touch and will perform the scan. This trigger will **only** activate if your fingerprint sensor is configured with the `sensing_pin` option.
 
@@ -166,7 +170,7 @@ on_finger_scan_start:
 
 {{< anchor "fingerprint_grow-on_finger_scan_invalid" >}}
 
-## `on_finger_scan_invalid` Trigger
+### `on_finger_scan_invalid` Trigger
 
 With this configuration option you can write complex automations whenever a scan fails, e.g. when the finger is not placed correctly on the reader. This is different from `on_finger_scan_unmatched` which is triggered when an unknown fingerprint is scanned. This option works best with the `sensing_pin` option defined.
 
@@ -180,7 +184,7 @@ on_finger_scan_invalid:
 
 {{< anchor "fingerprint_grow-on_finger_scan_matched" >}}
 
-## `on_finger_scan_matched` Trigger
+### `on_finger_scan_matched` Trigger
 
 With this configuration option you can write complex automations whenever a finger scan is matched to an enrolled fingerprint.
 To use the variables, use a [lambda](#config-lambda) template, the matched slot number and the confidence are available inside that lambda under the variables named `finger_id` and `confidence`  .
@@ -210,7 +214,7 @@ on_finger_scan_matched:
 
 {{< anchor "fingerprint_grow-on_finger_scan_unmatched" >}}
 
-## `on_finger_scan_unmatched` Trigger
+### `on_finger_scan_unmatched` Trigger
 
 With this configuration option you can write complex automations whenever an unknown fingerprint is scanned.
 
@@ -224,7 +228,7 @@ on_finger_scan_unmatched:
 
 {{< anchor "fingerprint_grow-on_finger_scan_misplaced" >}}
 
-## `on_finger_scan_misplaced` Trigger
+### `on_finger_scan_misplaced` Trigger
 
 With this configuration option, you can create automations for situations when the finger is in contact with the sensor but not fully covering it, enabling you to perform a successful scan.
 This trigger will **only** activate if your fingerprint sensor is configured with the `sensing_pin` option. It serves as a useful indicator to alert the user when their touch on the sensor is insufficient.
@@ -239,7 +243,7 @@ on_finger_scan_misplaced:
 
 {{< anchor "fingerprint_grow-on_enrollment_scan" >}}
 
-## `on_enrollment_scan` Trigger
+### `on_enrollment_scan` Trigger
 
 With this configuration option you can write complex automations whenever a finger is scanned during enrollment.
 To use the variables, use a [lambda](#config-lambda) template, the scan number and the slot number to be enrolled into are available inside that lambda under the variables named `scan_num` and `finger_id`  .
@@ -254,7 +258,7 @@ on_enrollment_scan:
 
 {{< anchor "fingerprint_grow-on_enrollment_done" >}}
 
-## `on_enrollment_done` Trigger
+### `on_enrollment_done` Trigger
 
 With this configuration option you can write complex automations whenever a finger is successfully enrolled.
 To use the variables, use a [lambda](#config-lambda) template, the slot number enrolled into is available inside that lambda under the variable named `finger_id`  .
@@ -269,7 +273,7 @@ on_enrollment_done:
 
 {{< anchor "fingerprint_grow-on_enrollment_failed" >}}
 
-## `on_enrollment_failed` Trigger
+### `on_enrollment_failed` Trigger
 
 With this configuration option you can write complex automations whenever a finger failed to be enrolled.
 To use the variables, use a [lambda](#config-lambda) template, the slot number that failed to be enrolled into is available inside that lambda under the variable named `finger_id`  .
@@ -289,7 +293,9 @@ on_enrollment_failed:
 
 ```
 
-## `fingerprint_grow.enroll` Action
+## Actions
+
+### `fingerprint_grow.enroll` Action
 
 Starts the fingerprint enrollment process on the slot number defined.
 
@@ -308,12 +314,12 @@ on_...:
 
 ```
 
-Configuration options:
+#### Configuration variables
 
 - **finger_id** (**Required**, int, [templatable](#config-templatable)): The slot number to enroll the new fingerprint into. Limited to the fingerprint capacity available on the reader.
 - **num_scans** (*Optional*, int, [templatable](#config-templatable)): Number of times to scan the finger to be enrolled. Limited to the number of character buffers available on the reader. Defaults to 2.
 
-## `fingerprint_grow.cancel_enroll` Action
+### `fingerprint_grow.cancel_enroll` Action
 
 Cancels the current fingerprint enrollment process. Triggers the `on_enrollment_failed` trigger.
 
@@ -324,7 +330,7 @@ on_...:
 
 ```
 
-## `fingerprint_grow.delete` Action
+### `fingerprint_grow.delete` Action
 
 Removes the enrolled fingerprint from the slot number defined.
 
@@ -338,7 +344,7 @@ on_...:
 
 ```
 
-Configuration options:
+#### Configuration variables
 
 - **finger_id** (**Required**, int, [templatable](#config-templatable)): The slot number of the enrolled fingerprint to delete.
 
@@ -353,7 +359,7 @@ on_...:
 
 ```
 
-## `fingerprint_grow.led_control` Action
+### `fingerprint_grow.led_control` Action
 
 Turns on or off the LED on the reader. Only available on select models. If you have the R503 or R503-RGB use [`fingerprint_grow.aura_led_control` Action](#fingerprint_grow-aura_led_control) instead.
 
@@ -367,13 +373,13 @@ on_...:
 
 ```
 
-Configuration options:
+#### Configuration variables
 
 - **state** (**Required**, boolean, [templatable](#config-templatable)): The state to set the LED.
 
 {{< anchor "fingerprint_grow-aura_led_control" >}}
 
-## `fingerprint_grow.aura_led_control` Action
+### `fingerprint_grow.aura_led_control` Action
 
 Controls the Aura LED on the reader. Only available on select models.  NOTE: The R503 has 2 variants with different LED colour options.
 
@@ -445,16 +451,12 @@ on...:
 
 ```
 
-Configuration options:
+#### Configuration variables
 
 - **state** (**Required**, string, [templatable](#config-templatable)): The state to set the LED. One of `BREATHING`  , `FLASHING`  , `ALWAYS_ON`  , `ALWAYS_OFF`  , `GRADUAL_ON` and `GRADUAL_OFF`  .
 - **speed** (**Required**, int, [templatable](#config-templatable)): The duration each cycle lasts, a factor of 10ms. Only relevant for `BREATHING`  , `FLASHING`  , `GRADUAL_ON` and `GRADUAL_OFF` states. The total duration is defined by 10ms *speed* count. Range is 0 to 255.
 - **color** (**Required**, string, [templatable](#config-templatable)): The LED color to activate. For R503, one of `RED`  , `BLUE` and `PURPLE`  .  For R503-RGB, one of `RED`  , `BLUE`  , `PURPLE`  , `GREEN`  , `YELLOW`  , `CYAN` and `WHITE`  .
 - **count** (**Required**, int, [templatable](#config-templatable)): How many times to repeat the pattern. Only relevant for `BREATHING` and `FLASHING` states. 0 for infinite, or 1 to 255.
-
-## All actions
-
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the Grow fingerprint reader if you have multiple components.
 
 ## Test setup
 

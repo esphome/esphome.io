@@ -32,7 +32,6 @@ globals:
        }
 
        ESP_LOGD(TAG, "%s: %d", id(my_global_string).c_str(), id(my_global_int));
-
 ```
 
 ## Configuration variables
@@ -63,10 +62,9 @@ on_...:
   - globals.set:
       id: my_global_var
       value: '10'
-
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The [ID](#config-id) of the global variable to set.
 - **value** (**Required**, [templatable](#config-templatable)): The value to set the global
@@ -77,7 +75,6 @@ This action can also be written in lambdas:
 
 ```cpp
 id(my_global_var) = 10;
-
 ```
 
 {{< /note >}}

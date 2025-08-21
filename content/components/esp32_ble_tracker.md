@@ -151,7 +151,7 @@ esp32_ble_tracker:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **mac_address** (*Optional*, list of MAC Address): The MAC address to filter for this automation.
 - See [Automation](#automation).
@@ -181,7 +181,7 @@ esp32_ble_tracker:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
 - **manufacturer_id** (**Required**, string): 16 bit, 32 bit, or 128 bit BLE Manufacturer ID.
@@ -209,7 +209,7 @@ esp32_ble_tracker:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
 - **service_uuid** (**Required**, string): 16 bit, 32 bit, or 128 bit BLE Service UUID.
@@ -230,7 +230,7 @@ esp32_ble_tracker:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - None
 
@@ -250,7 +250,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **continuous** (*Optional*, boolean): Whether to start the scan in continuous mode. Defaults to `false`
 

@@ -221,7 +221,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 At least one of `condition`  , `all` or `any` must be provided.
 
@@ -266,7 +266,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **count** (**Required**, int): The number of times the action should be repeated.  The counter is available to lambdas using the reserved word "iteration".
 - **then** (**Required**, [Action](#config-action)): The action to repeat.
@@ -302,7 +302,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **condition** (**Required**, [Condition](#config-condition)): The condition to wait to become true.
 - **timeout** (*Optional*, [Time](#config-time)): Time to wait before timing out. Defaults to never timing out.
@@ -327,7 +327,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **condition** (**Required**, [Condition](#config-condition)): The condition to check to determine whether or not to execute.
 - **then** (**Required**, [Action](#config-action)): The action to perform until the condition evaluates to false.
@@ -464,7 +464,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **time** (**Required**, [templatable](#config-templatable), [Time](#config-time)):
   The time for which the condition has to have been true.

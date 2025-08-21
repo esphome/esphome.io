@@ -36,7 +36,7 @@ esp32:
 
 {{< anchor "config-openthread" >}}
 
-## Configuration examples
+## Full Configuration
 
 This example show how to configure Thread Dataset for a node.
 
@@ -58,7 +58,7 @@ openthread:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`  . Defaults to `FTD`  .
 - **channel** (int): Channel number from 11 to 26
@@ -69,7 +69,7 @@ Configuration variables:
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
 - **mesh_local_prefix** (ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
 
-## Configuration examples with dataset TLV
+## Dataset TLV Configuration
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
 
@@ -80,7 +80,7 @@ openthread:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
 

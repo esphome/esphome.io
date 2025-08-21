@@ -105,7 +105,7 @@ esphome:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **priority** (*Optional*, float): The priority to execute your custom initialization code. A higher value
   means a high priority and thus also your code being executed earlier. Please note this is an ESPHome-internal
@@ -143,7 +143,7 @@ esphome:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **priority** (*Optional*, float): The priority to execute your custom shutdown code. A higher value
   means a high priority and in case of shutdown triggers that the code is executed **later**.
@@ -269,7 +269,7 @@ preferences:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **flash_write_interval** (*Optional*, [Time](#config-time)): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
@@ -417,7 +417,7 @@ into logical devices that appear separately in Home Assistant. This is particula
 - A single ESP controls multiple zones or rooms
 - You want better organization of entities in Home Assistant
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, string): Unique identifier for the device.
 - **name** (**Required**, string): Display name for the device.

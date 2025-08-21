@@ -45,7 +45,7 @@ external_components:
 
 ```
 
-Configuration variables:
+## Configuration variables
 
 - **source**: The location of the components you want to retrieve. See [Local](#external-components_local)
   and [external-components_git](#external-components_git).

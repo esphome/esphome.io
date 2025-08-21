@@ -51,7 +51,7 @@ logger:
 
 ## Text Sensor
 
-Configuration variables:
+### Configuration variables
 
 - **device** (*Optional*): Reports the following device information:
 
@@ -79,7 +79,7 @@ Configuration variables:
 
 ## Sensor
 
-Configuration variables:
+### Configuration variables
 
 - **free** (*Optional*): Reports the free heap size in bytes. All options from [Sensor](#config-sensor).
 

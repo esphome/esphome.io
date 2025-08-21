@@ -15,7 +15,7 @@ of a matrix.
 
 {{< img src="matrix_keypad.jpg" alt="Image" class="align-center" >}}
 
-## Component
+## Component/Hub
 
 ```yaml
 # Example configuration entry
@@ -38,7 +38,7 @@ matrix_keypad:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this device for use in lambdas.
 - **rows** (**Required**, list): A list of [pins](#config-pin_schema) where the horrizontal
@@ -70,7 +70,7 @@ binary_sensor:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **keypad_id** (*Optional*, [ID](#config-id)): The ID of the keypad to process keypresses from.
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this key for use in lambdas.
@@ -86,11 +86,11 @@ Either the `row` and `col` parameters, or the `key` parameter has to be provided
 - **on_key** (*Optional*, [Automation](#automation)): An automation to perform
   when a key has been pressed. The key is in a variable called `x`  .
 
-{{< note >}}
-Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
-the [Key Collector](#key_collector) component.
+  {{< note >}}
+  Automatic handling of multiple keys (e.g. PIN code entry) is possible with the
+  the [Key Collector](#key_collector) component.
 
-{{< /note >}}
+  {{< /note >}}
 
 ## See Also
 

@@ -70,7 +70,7 @@ espnow:
 
 This automation will be triggered when data is received from a registered peer.
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (*Optional*, MAC Address): Filter this trigger to packets where the source address matches. If not set, it will match any device.
 
@@ -86,7 +86,7 @@ This automation will be triggered when data is received from a peer that is not 
 
 This automation will be triggered when a broadcast packet is received.
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (*Optional*, MAC Address): Filter this trigger to packets where the source address matches. If not set, it will match any device.
 
@@ -113,7 +113,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, [templatable](#config-templatable), MAC Address): The MAC address of the receiving device to send to.
 - **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
@@ -145,7 +145,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
 
@@ -164,7 +164,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, MAC Address): The Peer address that needs to be added to the list of allowed peers.
 
@@ -183,7 +183,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **address** (**Required**, MAC Address): The Peer address that needs to be removed from the list of allowed peers.
 
@@ -201,7 +201,7 @@ on_...:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **channel** (**Required**, int): This can be a value between `0` and `15`  . The maximum channel number depends on the country or region where you are using the device (for example, channels 1-11 are allowed in the US and most of Europe, 1-13 in many other countries, and 1-14 in Japan). For details, see the [Wi-Fi channel regulations by country](https://en.wikipedia.org/wiki/List_of_WLAN_channels) or consult the [Espressif ESP-NOW documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/network/esp_now.html). `0` means that espnow will set the channel number itself (most of the time it would be `1`  ).
 

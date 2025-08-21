@@ -244,7 +244,7 @@ switch:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service to write to.
@@ -268,7 +268,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - **passkey** (**Required**, int): The 6-digit passkey.
@@ -290,7 +290,7 @@ on_...:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - **accept** (**Required**, boolean): Should be `true` if the passkeys
@@ -316,7 +316,7 @@ ble_client:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 

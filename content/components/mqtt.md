@@ -457,7 +457,7 @@ command_retain: false
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **name** (**Required**, string): The name to use for the MQTT
    Component.
@@ -494,9 +494,12 @@ When changing these options and you're using MQTT discovery, you will need to re
 This is because Home Assistant only discovers a device once in every Home Assistant start.
 
 {{< /warning >}}
+
+## Triggers
+
 {{< anchor "mqtt-on_connect_disconnect" >}}
 
-## `on_connect` / `on_disconnect` Trigger
+### `on_connect` / `on_disconnect` Trigger
 
 This trigger is activated when a connection to the MQTT broker is established or dropped.
 
@@ -512,7 +515,7 @@ mqtt:
 
 {{< anchor "mqtt-on_message" >}}
 
-## `on_message` Trigger
+### `on_message` Trigger
 
 With this configuration option you can write complex automations whenever an MQTT
 message on a specific topic is received. To use the message content, use a [lambda](#config-lambda)
@@ -529,7 +532,7 @@ mqtt:
 
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **topic** (**Required**, string): The MQTT topic to subscribe to and listen for MQTT
   messages on. Every time a message with **this exact topic** is received, the automation will trigger.
@@ -556,6 +559,7 @@ mqtt:
 ```
 
 {{< /note >}}
+
 {{< note >}}
 This action can also be used in [lambdas](#config-lambda):
 
@@ -574,6 +578,7 @@ id(mqtt_client).subscribe("the/topic", [=](const std::string &topic, const std::
 ```
 
 {{< /note >}}
+
 {{< anchor "mqtt-on_json_message" >}}
 
 ## `on_json_message` Trigger
@@ -614,7 +619,7 @@ mqtt:
 
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **topic** (**Required**, string): The MQTT topic to subscribe to and listen for MQTT
   messages on. Every time a message with **this exact topic** is received, the automation will trigger.
@@ -645,9 +650,12 @@ id(mqtt_client).subscribe_json("the/topic", [=](const std::string &topic, JsonOb
 ```
 
 {{< /note >}}
+
+## Actions
+
 {{< anchor "mqtt-publish_action" >}}
 
-## `mqtt.publish` Action
+### `mqtt.publish` Action
 
 Publish an MQTT message on a topic using this action in automations.
 
@@ -668,7 +676,7 @@ on_...:
 
 ```
 
-Configuration options:
+#### Configuration variables
 
 - **topic** (**Required**, string, [templatable](#config-templatable)):
    The MQTT topic to publish the message.
@@ -695,9 +703,10 @@ id(mqtt_client).publish("the/topic", "The Payload");
 ```
 
 {{< /note >}}
+
 {{< anchor "mqtt-publish_json_action" >}}
 
-## `mqtt.publish_json` Action
+### `mqtt.publish_json` Action
 
 Publish a JSON-formatted MQTT message on a topic using this action in automations.
 
@@ -720,7 +729,7 @@ on_...:
 
 ```
 
-Configuration options:
+### Configuration variables
 
 - **topic** (**Required**, string, [templatable](#config-templatable)):
    The MQTT topic to publish the message.
@@ -749,7 +758,7 @@ id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
 
 {{< /note >}}
 
-## `mqtt.disable` Action
+### `mqtt.disable` Action
 
 This action turns off the MQTT component on demand.
 
@@ -765,7 +774,7 @@ The configuration option `enable_on_boot` can be set to `false` if you do not wa
 
 {{< /note >}}
 
-## `mqtt.enable` Action
+### `mqtt.enable` Action
 
 This action turns on the MQTT component on demand.
 
@@ -803,9 +812,11 @@ on_...:
 
 ```
 
+## Conditions
+
 {{< anchor "mqtt-connected_condition" >}}
 
-## `mqtt.connected` Condition
+### `mqtt.connected` Condition
 
 This [Condition](#config-condition) checks if the MQTT client is currently connected to
 the MQTT broker.

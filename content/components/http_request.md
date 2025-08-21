@@ -80,7 +80,7 @@ A typical value on Linux for `ca_certificate_path` would be `/etc/ssl/certs/ca-c
 
 {{< /note >}}
 
-## HTTP Request Actions
+## Actions
 
 The `http_request` component supports a number of [actions](#config-action) that can be used to send requests.
 
@@ -108,7 +108,7 @@ on_...:
 
 ```
 
-**Configuration variables:**
+#### Configuration variables
 
 - **url** (**Required**, string, [templatable](#config-templatable)): URL to which to send the request.
 - **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](#config-templatable).
@@ -139,7 +139,7 @@ on_...:
 
 ```
 
-**Configuration variables:**
+#### Configuration variables
 
 - **body** (*Optional*, string, [templatable](#config-templatable)): A HTTP body string to send with request.
 - **json** (*Optional*, mapping): A HTTP body in JSON format. Values are [templatable](#config-templatable).
@@ -163,14 +163,16 @@ on_...:
 
 ```
 
-**Configuration variables:**
+#### Configuration variables
 
 - **method** (**Required**, string): HTTP method to use (`GET`  , `POST`  , `PUT`  , `DELETE`  , `PATCH`  ).
 - All other options from [`http_request.post` Action](#http_request-post_action) and [`http_request.get` Action](#http_request-get_action).
 
+## Triggers
+
 {{< anchor "http_request-on_response" >}}
 
-## `on_response` Trigger
+### `on_response` Trigger
 
 This automation will be triggered when the HTTP request is complete.
 The following variables are available for use in [lambdas](#config-lambda):
@@ -211,7 +213,7 @@ on_...
 
 {{< anchor "http_request-on_error" >}}
 
-## `on_error` Trigger
+### `on_error` Trigger
 
 This automation will be triggered when the HTTP request fails to complete. This may be e.g. when the network is not available,
 or the server is not reachable. This will *not* be triggered if the request
