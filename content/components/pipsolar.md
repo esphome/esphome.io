@@ -7,8 +7,6 @@ params:
     image: pipsolar.jpg
 ---
 
-
-
 The PipSolar component allows you to integrate PIP-compatible Inverters in ESPHome.
 It uses [UART](#uart) for communication.
 
@@ -30,20 +28,19 @@ A documentation about the communication protocol mostly supported can be found r
 This component will poll the needed polling commands in a loop. If there is a command to send for controlling the inverter this command will be queued and fired as next after the current polling command ends.
 There is a buffer to buffer up to 10 commands.
 
-
-
 ```yaml
 # Example configuration entry
 pipsolar:
   - id: inverter0
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this pipsolar component.
 - **uart_id** (*Optional*): The uart Bus ID
 
 ## Sensor
+
 ```yaml
 # Example configuration entry
 sensor:
@@ -61,9 +58,10 @@ sensor:
     ac_output_active_power:
       id: inverter0_ac_output_active_power
       name: inverter0_ac_output_active_power
-
 ```
-### Configuration variables:
+
+### Configuration variables
+
 All sensors are normal sensors... so all sensor variables are working to.
 
 - **grid_rating_voltage** (*Optional*): grid rating voltage
@@ -125,9 +123,10 @@ binary_sensor:
     configuration_status:
       id: inverter0_configuration_status
       name: inverter0_configuration_status
-
 ```
-### Configuration variables:
+
+### Configuration variables
+
 All sensors are normal binary sensors... so all binary sensor variables are working to.
 
 - **add_sbu_priority_version** (*Optional*): add sbu priority version
@@ -202,9 +201,10 @@ text_sensor:
       id: inverter0_last_qpigs
       name: inverter0_last_qpigs
     last_qpiri:
-
 ```
-### Configuration variables:
+
+### Configuration variables
+
 All sensors are normal text sensors... so all text sensor variables are working to.
 
 - **device_mode** (*Optional*): device mode response
@@ -239,9 +239,10 @@ switch:
       name: inverter0_pv_ok_condition_for_parallel
     pv_power_balance:
       name: inverter0_pv_power_balance
-
 ```
-### Configuration variables:
+
+### Configuration variables
+
 All sensors are normal text sensors... so all text sensor variables are working to.
 
 - **output_source_priority_utility** (*Optional*): output source priority utility
@@ -263,9 +264,10 @@ output:
     pipsolar_id: inverter0
     battery_recharge_voltage:
       id: inverter0_battery_recharge_voltage_out
-
 ```
-### Configuration variables:
+
+### Configuration variables
+
 All sensors are normal text sensors... so all text sensor variables are working to.
 
 - **battery_recharge_voltage** (*Optional*): battery recharge voltage;
@@ -298,7 +300,7 @@ All sensors are normal text sensors... so all text sensor variables are working 
 
 {{< anchor "pipsolaroutput_set_level_action" >}}
 
-## `output.pipsolar.set_level`   Action
+## `output.pipsolar.set_level` Action
 
 To use your outputs in [automations](#automation) or templates, you can use this action to set the
 target level of the output.
@@ -309,15 +311,13 @@ on_...:
   - output.pipsolar.set_level:
       id: my_pipsolar_output
       value: 48.0
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the output.
 - **value** (*Optional*, percentage, [templatable](#config-templatable)): The target level.
 
-
 ## See Also
 
 - [UART Bus](#uart)
-

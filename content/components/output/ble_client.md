@@ -7,9 +7,7 @@ params:
     image: bluetooth.svg
 ---
 
-
-
-The `ble_client`   component is a output that can write a binary value to service characteristics of BLE devices.
+The `ble_client` component is a output that can write a binary value to service characteristics of BLE devices.
 
 For more information on BLE services and characteristics, see {{< docref "/components/ble_client" >}}.
 
@@ -21,6 +19,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 esp32_ble_tracker:
 
@@ -34,9 +33,9 @@ output:
     service_uuid: "10110000-5354-4F52-5A26-4249434B454C"
     characteristic_uuid: "10110013-5354-4f52-5a26-4249434b454c"
     require_response: false
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **ble_client_id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service on the device.
@@ -44,10 +43,10 @@ output:
 - **id** (*Optional*, [ID](#config-id)): The ID to use for code generation, and for reference by dependent components.
 - **require_response** (*Optional*, boolean): Control whether to require a remote response from the device when writing.
   Whether or not this is required will vary by device. Defaults to `false`
+
 - All other options from [Output](#config-output).
 
 ## See Also
 
 - {{< docref "/components/output" >}}
 - {{< docref "/components/ble_client" >}}
-

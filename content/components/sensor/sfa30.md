@@ -7,9 +7,7 @@ params:
     image: sfa30.jpg
 ---
 
-
-
-The `sfa30`   sensor platform  allows you to use your Sensirion SFA30 Formaldehyde
+The `sfa30` sensor platform allows you to use your Sensirion SFA30 Formaldehyde
 ([datasheet](https://sensirion.com/media/documents/DEB1C6D6/63D92360/Sensirion_formaldehyde_sensors_datasheet_SFA30.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. However, at the moment only I²C communication is implemented.
@@ -26,9 +24,9 @@ sensor:
       name: "Temperature"
     humidity:
       name: "Humidity"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **formaldehyde** (*Optional*): The information for the Formaldehyde sensor.
   All options from [Sensor](#config-sensor).
@@ -36,21 +34,17 @@ sensor:
 - **temperature** (*Optional*): The information for the Temperature sensor.
   All options from [Sensor](#config-sensor).
 
-
 - **humidity** (*Optional*): The information for the Humidity sensor.
   All options from [Sensor](#config-sensor).
 
-
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x5D`  .
+  Defaults to `0x5D`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
-
+  sensor. Defaults to `60s`.
 
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< docref "absolute_humidity/" >}}
 - {{< apiref "sfa30/sfa30.h" "sfa30/sfa30.h" >}}
-

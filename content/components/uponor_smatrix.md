@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up an Uponor Smatrix Base Pulse underfloor heating control system in ESPHome.
 ---
 
-
-
 The Uponor Smatrix component allows you to integrate an Uponor Smatrix Base Pulse underfloor heating control system in ESPHome without the need for an Smatrix Pulse Com R-208 communication module.
 It directly communicates with the controller and thermostats via the RS485 thermostat bus.
 
@@ -29,8 +27,8 @@ Start with a basic configuration that just contains the UART and Uponor hub comp
 
 ```yaml
 uponor_smatrix:
-
 ```
+
 When you upload this configuration to your ESPHome device and connect it to the Uponor Smatrix bus, it will print a list of detected addresses to the log output.
 
 ```text
@@ -42,25 +40,23 @@ When you upload this configuration to your ESPHome device and connect it to the 
 [00:00:00][C][uponor_smatrix:033]:     0xDE72
 [00:00:00][C][uponor_smatrix:033]:     0xDE4A
 [00:00:00][C][uponor_smatrix:033]:     0xDE13
-
 ```
-With that you can then add `climate`   or `sensor`   components for the detected devices. Optionally, you can also statically add the detected system address to your `uponor_smatrix`   configuration.
+
+With that you can then add `climate` or `sensor` components for the detected devices. Optionally, you can also statically add the detected system address to your `uponor_smatrix` configuration.
 
 ```yaml
 uponor_smatrix:
   address: 0x110B
 
+climate:
+  - platform: uponor_smatrix
+    address: 0xDE13
+    name: Thermostat Living Room
 ```
 
-    climate:
-- platform: uponor_smatrix
-        address: 0xDE13
-        name: Thermostat Living Room
+## Component/Hub
 
-
-## Controller/Hub component
-
-The main `uponor_smatrix`   component is responsible for the communication with the controller and thermostats and distributes data to the climate and sensor components described below.
+The main `uponor_smatrix` component is responsible for the communication with the controller and thermostats and distributes data to the climate and sensor components described below.
 
 It is also able to synchronize the date and time of the thermostats with a time source in case your system has thermostats that can be programmed with a time schedule.
 
@@ -69,9 +65,9 @@ uponor_smatrix:
   address: 0x110B
   uart_id: my_uart
   time_id: my_time
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **address** (*Optional*, int): The 16 bit system/controller address. This will be automatically detected from the bus if not specified. See [Getting started](#uponor-gettingstarted) on how to find the address.
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want to use multiple UART buses.
@@ -84,22 +80,23 @@ The system address and the address of the thermostat keeping the time will be au
 You can safely leave out those parameters in almost all cases.
 
 {{< /note >}}
-## Climate component
+
+## Climate
 
 ```yaml
 climate:
   - platform: uponor_smatrix
     address: 0xDE13
     name: Thermostat Living Room
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **address** (**Required**, int): The 16 bit device address of the thermostat. See [Getting started](#uponor-gettingstarted) on how to find the address.
-- **uponor_smatrix_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `uponor_smatrix`   hub component if you want to use multiple hub components on one ESPHome device.
+- **uponor_smatrix_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `uponor_smatrix` hub component if you want to use multiple hub components on one ESPHome device.
 - All options from [Climate](#config-climate).
 
-## Sensor component
+## Sensor
 
 ```yaml
 sensor:
@@ -113,25 +110,26 @@ sensor:
       name: Floor Temperature Living Room
     target_temperature:
       name: Thermostat Target Temperature Living Room
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **address** (**Required**, int): The 16 bit device address of the thermostat. See [Getting started](#uponor-gettingstarted) on how to find the address.
-- **uponor_smatrix_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `uponor_smatrix`   hub component if you want to use multiple hub components on one ESPHome device.
+- **uponor_smatrix_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `uponor_smatrix` hub component if you want to use multiple hub components on one ESPHome device.
 - **humidity** (*Optional*): A sensor reading the current humidity the thermostat reports.
   All options from [Sensor](#config-sensor).
+
 - **temperature** (*Optional*): A sensor reading the current temperature the thermostat reports.
   All options from [Sensor](#config-sensor).
+
 - **external_temperature** (*Optional*): A sensor reading the current external temperature the thermostat reports.
   This comes from an optionally attached external temperature sensor that can measure the floor or outdoor temperature.
   All options from [Sensor](#config-sensor).
+
 - **target_temperature** (*Optional*): A sensor reading the currently set target temperature the thermostat reports.
   All options from [Sensor](#config-sensor).
-
 
 ## See Also
 
 - [Protocol Analysis](https://github.com/kroimon/uponor-smatrix-analysis)
 - {{< apiref "uponor_smatrix/uponor_smatrix.h" "uponor_smatrix/uponor_smatrix.h" >}}
-

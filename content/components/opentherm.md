@@ -7,8 +7,6 @@ params:
     image: ../components/images/opentherm-shield.png
 ---
 
-
-
 OpenTherm (OT) is a standard communications protocol used in central heating systems for the communication between
 central heating appliances and a thermostatic controller. As a standard, OpenTherm is independent of any single
 manufacturer. A controller from manufacturer A can in principle be used to control a boiler from manufacturer B.
@@ -27,6 +25,7 @@ This component acts only as an OpenTherm master (for example, a thermostat or co
 gateway. Your existing thermostat is not usable while you use ESPHome with this component to control your boiler.
 
 {{< /note >}}
+
 ## Quick glossary
 
 - CH: Central Heating
@@ -34,41 +33,49 @@ gateway. Your existing thermostat is not usable while you use ESPHome with this 
 
 ## Hub
 
-First, you need to define the OpenTherm hub in your configuration. Note that most OpenTherm adapters label `in`   and
-`out`   pins relative to themselves; this component labels its `in`   and `out`   pins relative to the microcontroller
-ESPHome runs on. As such, your bridge's `in`   pin becomes the hub's `out`   pin and vice-versa.
+First, you need to define the OpenTherm hub in your configuration. Note that most OpenTherm adapters label `in` and
+`out` pins relative to themselves; this component labels its `in` and `out` pins relative to the microcontroller
+ESPHome runs on. As such, your bridge's `in` pin becomes the hub's `out` pin and vice-versa.
 
 ```yaml
 opentherm:
   in_pin: GPIOXX
   out_pin: GPIOXX
-
 ```
-### Configuration variables:
 
-- **in_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `out`   on the
+### Configuration variables
+
+- **in_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `out` on the
   board.
-- **out_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `in`   on the
+
+- **out_pin** (**Required**, number): The pin of the OpenTherm hardware bridge which is usually labeled `in` on the
   board.
+
 - **sync_mode** (*Optional*, boolean, default **false**): Synchronous communication mode prevents other components
   from disabling interrupts while we are talking to the boiler. Enable if you experience a lot of random intermittent
   invalid response errors (very likely to happen while using Dallas temperature sensors).
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.  Required if you have
+
+- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Required if you have
   multiple busses.
 
 #### Optional Boiler-specific Configuration
+
 Some boilers require certain OpenTherm messages to be sent by thermostat on initialization in order to work
 correctly. You can use the following settings in hub configuration to make your particular boiler happy.
 
-- **controller_product_type** (*Optional*, byte [0-255], OpenTherm message id `126`   high byte): Controller product
+- **controller_product_type** (*Optional*, byte [0-255], OpenTherm message id `126` high byte): Controller product
   type
-- **controller_product_version** (*Optional*, byte [0-255], OpenTherm message id `126`   low byte): Controller product
+
+- **controller_product_version** (*Optional*, byte [0-255], OpenTherm message id `126` low byte): Controller product
   version
+
 - **opentherm_version_controller** (*Optional*, float, OpenTherm message id `124`  ): Version of OpenTherm implemented
   by controller
-- **controller_configuration** (*Optional*, byte [0-255], OpenTherm message id `2`   high byte): Controller
+
+- **controller_configuration** (*Optional*, byte [0-255], OpenTherm message id `2` high byte): Controller
   configuration
-- **controller_id** (*Optional*, byte [0-255], OpenTherm message id `2`   low byte): Controller ID code
+
+- **controller_id** (*Optional*, byte [0-255], OpenTherm message id `2` low byte): Controller ID code
 
 #### Automations
 
@@ -82,9 +89,9 @@ See [On-the-fly Message Editing](#on-the-fly-message-editing) for details.
 The use of some components (like Dallas temperature sensors) may result in lost frames and protocol warnings from
 OpenTherm. Since OpenTherm is resilient by design and transmits its messages in a constant loop, these dropped frames
 don't usually cause any problems. Still, if you want to decrease the number of protocol warnings in your logs, you can
-enable `sync_mode`   which will block ESPHome's main application loop until a single conversation with the boiler is
+enable `sync_mode` which will block ESPHome's main application loop until a single conversation with the boiler is
 complete. This can greatly reduce the number of dropped frames, but usually won't eliminate them entirely. With
-`sync_mode`   enabled, in some cases, ESPHome's main application loop may be blocked for longer than is recommended,
+`sync_mode` enabled, in some cases, ESPHome's main application loop may be blocked for longer than is recommended,
 resulting in warnings in the logs. If this bothers you, you can adjust ESPHome's log level by adding the following to
 your configuration:
 
@@ -92,8 +99,8 @@ your configuration:
 logger:
   logs:
     component: ERROR
-
 ```
+
 ## Usage as a thermostat
 
 The most important function for a thermostat is to set the boiler temperature setpoint. This component has three ways
@@ -116,8 +123,8 @@ There are three ways to set a numerical value:
       - platform: homeassistant
         id: setpoint_sensor
         entity_id: sensor.boiler_setpoint
-
 ```
+
   This can be useful if you have an external thermostat-like device that provides the setpoint as a sensor.
 
 - As a number:
@@ -127,8 +134,8 @@ There are three ways to set a numerical value:
       - platform: opentherm
         t_set:
           name: Boiler Setpoint
-
 ```
+
   This is useful if you want full control over your boiler and want to manually set all values.
 
 - As an output:
@@ -138,8 +145,8 @@ There are three ways to set a numerical value:
       - platform: opentherm
       t_set:
         id: setpoint
-
 ```
+
   This is especially useful in combination with the PID Climate component:
 
 ```yaml
@@ -147,75 +154,77 @@ There are three ways to set a numerical value:
       - platform: pid
         heat_output: setpoint
         # ...
-
 ```
+
 For the output and number variants, there are four more properties you can configure beyond those included in the
 output and number components by default:
 
-- `min_value`   (float): The minimum value. For a number this is the minimum value you are allowed to input. For an
+- `min_value` (float): The minimum value. For a number this is the minimum value you are allowed to input. For an
   output this is the number that will be sent to the boiler when the output is at 0%.
-- `max_value`   (float): The maximum value. For a number this is the maximum value you are allowed to input. For an
+
+- `max_value` (float): The maximum value. For a number this is the maximum value you are allowed to input. For an
   output this is the number that will be sent to the boiler when the output is at 100%.
-- `auto_max_value`   (boolean): Automatically configure the maximum value to a value reported by the boiler. Not
+
+- `auto_max_value` (boolean): Automatically configure the maximum value to a value reported by the boiler. Not
   available for all inputs.
-- `auto_min_value`   (boolean): Automatically configure the minimum value to a value reported by the boiler. Not
+
+- `auto_min_value` (boolean): Automatically configure the minimum value to a value reported by the boiler. Not
   available for all inputs.
 
 The following numerical values are available:
 
 - `t_set`  : Control setpoint: temperature setpoint for the boiler's supply water (°C)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 100
-  * Supports `auto_max_value`
+  - Default `min_value`  : 0
+  - Default `max_value`  : 100
+  - Supports `auto_max_value`
 - `t_set_ch2`  : Control setpoint 2: temperature setpoint for the boiler's supply water on the second heating circuit
   (°C)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 100
-  * Supports `auto_max_value`
+  - Default `min_value`  : 0
+  - Default `max_value`  : 100
+  - Supports `auto_max_value`
 - `cooling_control`  : Cooling control signal (%)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 100
+  - Default `min_value`  : 0
+  - Default `max_value`  : 100
 - `t_dhw_set`  : Domestic hot water temperature setpoint (°C)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 127
-  * Supports `auto_min_value`
-  * Supports `auto_max_value`
+  - Default `min_value`  : 0
+  - Default `max_value`  : 127
+  - Supports `auto_min_value`
+  - Supports `auto_max_value`
 - `max_t_set`  : Maximum allowable CH water setpoint (°C)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 127
-  * Supports `auto_min_value`
-  * Supports `auto_max_value`
+  - Default `min_value`  : 0
+  - Default `max_value`  : 127
+  - Supports `auto_min_value`
+  - Supports `auto_max_value`
 - `t_room_set`  : Current room temperature setpoint (informational) (°C)
 
-  * Default `min_value`  : -40
-  * Default `max_value`  : 127
+  - Default `min_value`  : -40
+  - Default `max_value`  : 127
 - `t_room_set_ch2`  : Current room temperature setpoint on CH2 (informational) (°C)
 
-  * Default `min_value`  : -40
-  * Default `max_value`  : 127
+  - Default `min_value`  : -40
+  - Default `max_value`  : 127
 - `t_room`  : Current sensed room temperature (informational) (°C)
 
-  * Default `min_value`  : -40
-  * Default `max_value`  : 127
+  - Default `min_value`  : -40
+  - Default `max_value`  : 127
 - `max_rel_mod_level`  : Maximum relative modulation level (%)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 100
-  * Supports `auto_min_value`
+  - Default `min_value`  : 0
+  - Default `max_value`  : 100
+  - Supports `auto_min_value`
 - `otc_hc_ratio`  : OTC heat curve ratio (°C)
 
-  * Default `min_value`  : 0
-  * Default `max_value`  : 127
-  * Supports `auto_min_value`
-  * Supports `auto_max_value`
+  - Default `min_value`  : 0
+  - Default `max_value`  : 127
+  - Supports `auto_min_value`
+  - Supports `auto_max_value`
 
 ### Switch
-
 
 Switches are available to allow manual toggling of any of the following seven status codes:
 
@@ -233,8 +242,8 @@ If you do not wish to have switches, the same values can be permanently set in t
 opentherm:
   ch_enable: true
   dhw_enable: true
-
 ```
+
 This is useful when you'd never want to toggle it after the initial configuration.
 
 The default values for these configuration variables are listed below.
@@ -338,9 +347,10 @@ Some boilers use non-standard message ids and formats. For example,
 introduced two automations that allow editing the low-level OpenTherm message:
 
 - **before_send**: fired just before the fully formed message is sent to the boiler. When you use a lambda, the message
-  is passed by reference as `x`  .
+  is passed by reference as `x`.
+
 - **before_process_response**: fired when response message is received from the boiler and is about to be processed.
-  When you use a lambda, the message is passed by reference as `x`  .
+  When you use a lambda, the message is passed by reference as `x`.
 
 This allows to make arbitrary alterations to any message. Here is an example of overriding message id for DHW setpoint
 for Daikin D2C boiler:
@@ -360,8 +370,8 @@ opentherm:
                 if (x.id == 162) { // We substitute the original id back, so that esphome is not confused.
                 x.id = 56;
                 }
-
 ```
+
 You can check the {{< apistruct "OpenthermData" "opentherm::OpenthermData" >}} for the list of all available fields.
 
 ## Examples
@@ -381,8 +391,8 @@ number:
   - platform: opentherm
     t_set:
       name: "Boiler Control setpoint"
-
 ```
+
 {{< anchor "thermostat-pid-basic" >}}
 
 ### Basic PID thermostat
@@ -461,8 +471,8 @@ climate:
     control_parameters:
       kp: 0.4
       ki: 0.004
-
 ```
+
 ## See Also
 
 - {{< apiref "API Reference: OpenthermHub" "opentherm/hub.h" >}}
@@ -472,6 +482,6 @@ climate:
 - {{< apiref "API Reference: OpenthermSwitch" "opentherm/switch/switch.h" >}}
 - [OpenTherm thermostat with ESPHome and Home Assistant](https://olegtarasov.me/opentherm-thermostat-esphome/) —
   real-world use case for this component.
+
 - [Development repository](https://github.com/olegtarasov/esphome-opentherm) — new features will be tested here
   before proposing them to ESPHome core.
-

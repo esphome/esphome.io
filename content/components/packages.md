@@ -7,14 +7,12 @@ params:
     image: settings.svg
 ---
 
-
-
 When you have many ESPHome devices (or are producing and distributing them at scale), a common need tends to surface:
 configuration modularization. You'll likely want to break your configuration into common (groups of) elements, building
 it into reusable pieces which can subsequently be used by many/all devices. Only unique pieces of your configuration
 remain in any given device's YAML configuration file.
 
-This can be accomplished with ESPHome's `packages`   feature.
+This can be accomplished with ESPHome's `packages` feature.
 
 All definitions from packages will be merged with your device's main configuration in a non-destructive way. This
 allows overriding (parts of) configuration contained in the package(s). Substitutions in your main configuration will
@@ -23,9 +21,9 @@ override substitutions with the same name in a package.
 Dictionaries are merged key-by-key. Lists of components are merged by component ID (if specified). Other lists are
 merged by concatenation. All other configuration values are replaced with the later value.
 
-ESPHome uses `!include`   to "bring in" packages from other files; this feature is described in [!include](#yaml-include).
+ESPHome uses `!include` to "bring in" packages from other files; this feature is described in [!include](#yaml-include).
 
-The `packages:`   key may have a value that is a list of valid package references, or a mapping of keys to package references.
+The `packages:` key may have a value that is a list of valid package references, or a mapping of keys to package references.
 When a mapping is used, the keys are for reference only and have no significance in themselves.
 Where only a single package reference is required, it may be used directly rather than in a list.
 Examples of all formats are shown below.
@@ -35,7 +33,7 @@ Examples of all formats are shown below.
 Consider the following example where the author put common pieces of configuration (like Wi-Fi and API) into base files
 and then extends it with some device-specific configuration in the main configuration.
 
-Note how the piece of configuration describing `api`   component in `device_base.yaml`   gets merged with the actions
+Note how the piece of configuration describing `api` component in `device_base.yaml` gets merged with the actions
 definitions from main configuration file.
 
 ```yaml
@@ -51,15 +49,15 @@ api:
         - switch.turn_on: relay
 
 # any additional configuration...
-
 ```
+
 ```yaml
 # In wifi.yaml
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
 ```
+
 ```yaml
 # In device_base.yaml
 esphome:
@@ -73,8 +71,8 @@ logger:
 api:
   encryption:
     key: !secret api_encryption_key
-
 ```
+
 {{< anchor "config-git_packages" >}}
 
 ## Remote/Git Packages
@@ -84,10 +82,11 @@ Packages can also be loaded from a Git repository by utilizing the correct confi
 them locally with their own substitution value.
 
 {{< note >}}
-Remote packages cannot have `secret`   lookups in them. They should instead make use of substitutions with an
+Remote packages cannot have `secret` lookups in them. They should instead make use of substitutions with an
 optional default in the packaged YAML, which the local device YAML can set using values from the local secrets.
 
 {{< /note >}}
+
 ```yaml
 # Git repo examples as a mapping
 packages:
@@ -114,9 +113,9 @@ packages:
       - file2.yml
     ref: main  # optional
     refresh: 1d  # optional
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 For each package:
 
@@ -127,22 +126,22 @@ For each package:
 - **files** (**Required**): List of files to include. Can be one of:
 
   - list of file paths
-  - list of objects containing `path`   and `vars`
+  - list of objects containing `path` and `vars`
 
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
 - **refresh** (*Optional*, [Time](#config-time)): The interval at which the content from the repository should be refreshed.
 
 ## Packages as Templates
 
-Since packages are incorporated using the `!include`   system, variables can be provided to them. This means that
+Since packages are incorporated using the `!include` system, variables can be provided to them. This means that
 packages can be used as *templates*, allowing complex or repetitive configurations to be stored in a package file
 and then incorporated into the configuration more than once.
 
-Packages may also contain a `defaults`   block which provides subsitutions for variables not provided by the
-`!include`   block.
+Packages may also contain a `defaults` block which provides subsitutions for variables not provided by the
+`!include` block.
 
-As an example, if the configuration needed to support three garage doors using the `gpio`   switch platform and the
-`time_based`   cover platform, it could be constructed like this:
+As an example, if the configuration needed to support three garage doors using the `gpio` switch platform and the
+`time_based` cover platform, it could be constructed like this:
 
 ```yaml
 # In config.yaml
@@ -159,22 +158,22 @@ packages:
     file: garage-door.yaml
     vars:
       door_name: Right
-
 ```
+
 ```yaml
 # In garage-door.yaml
 switch:
   - name: ${door_name} Garage Door Switch
     platform: gpio
     # ...
-
 ```
+
 {{< anchor "config-packages_extend" >}}
 
 ## Extend
 
-To make changes or add additional configuration to included configurations, `!extend config_id`   can be used, where
-`config_id`   is the ID of the configuration to modify.
+To make changes or add additional configuration to included configurations, `!extend config_id` can be used, where
+`config_id` is the ID of the configuration to modify.
 
 For example, to set a specific update interval on a common uptime sensor that is shared between configurations:
 
@@ -186,8 +185,8 @@ sensor:
   - platform: uptime
     id: uptime_sensor
     update_interval: 1min
-
 ```
+
 ```yaml
 # only one package is included here, no need for a list
 packages: !include common.yaml
@@ -195,13 +194,13 @@ packages: !include common.yaml
 sensor:
   - id: !extend uptime_sensor
     update_interval: 10s
-
 ```
+
 {{< anchor "config-packages_remove" >}}
 
 ## Remove
 
-To remove existing entries from included configurations, `!remove [config_id]`   can be used, where `config_id`   is
+To remove existing entries from included configurations, `!remove [config_id]` can be used, where `config_id` is
 the ID of the entry to modify.
 
 For example, to remove a common uptime sensor that is shared between configurations:
@@ -211,16 +210,16 @@ packages: !include common.yaml  # see above
 
 sensor:
   - id: !remove uptime_sensor
-
 ```
+
 To remove captive portal for a specific device:
 
 ```yaml
 packages: !include common.yaml  # see above
 
 captive_portal: !remove
-
 ```
+
 To remove only an attribute for a specific device:
 
 ```yaml
@@ -230,11 +229,10 @@ packages:
 sensor:
   - id: !extend uptime_sensor
     update_interval: !remove
-
 ```
+
 ## See Also
 
 - {{< docref "/index" "ESPHome index" >}}
 - {{< docref "/guides/getting_started_command_line" >}}
 - {{< docref "/guides/faq" >}}
-

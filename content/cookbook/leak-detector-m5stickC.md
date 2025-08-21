@@ -6,49 +6,53 @@ params:
     description: Water leak detector with ESPHome on an M5StickC ESP32
 ---
 
-
-|  ESP32 Water Leak Detector (with notification) |
-| --- |
-
-Using the ESP32's capacitive touch GPIOs, it's relatively easy to build a water leak detector using ESPHome.  M5StickC was chosen as a platform due to the integrated Grove connector for clean connections and the fact it's well housed.  The built-in display is a bonus, but not strictly necessary.  Notifications are performed via HomeAssistant's 'alert' and 'notify' facilities, which send via Pushover to iOS & Android.
+Using the ESP32's capacitive touch GPIOs, it's relatively easy to build a water leak detector using ESPHome.
+M5StickC was chosen as a platform due to the integrated Grove connector for clean connections and the fact it's well
+housed. The built-in display is a bonus, but not strictly necessary. Notifications are performed via HomeAssistant's
+'alert' and 'notify' facilities, which send via Pushover to iOS & Android.
 
 {{< img src="leak-detector-m5stickC_LeakDetected.gif" alt="Image" class="align-center" >}}
 
-# Things you'll need
+## Things you'll need
 
--  [M5Stick axp192 custom component](https://github.com/airy10/esphome-m5stickC)
-    This is needed to power up the display.  You don't need the st7735 display driver, as it is already included with ESPHome >1.16.0.
+- [M5Stick axp192 custom component](https://github.com/airy10/esphome-m5stickC)
+  This is needed to power up the display. You don't need the st7735 display driver, as it is already included
+  with ESPHome >1.16.0.
 
 - M5StickC ESP32 development kit
-   [M5Stack Link](https://m5stack.com/collections/m5-core/products/stick-c)
+  [M5Stack Link](https://m5stack.com/collections/m5-core/products/stick-c)
 
 {{< img src="leak-detector-m5stickC-m5stickC.png" alt="Image" class="align-center" >}}
 
--  Moisture sensor
-    This example uses a [Guardian Remote Sensor Probe](https://www.amazon.com/gp/product/B07G5BMD7L)
-    which has a 6' cord.
+- Moisture sensor
+  This example uses a [Guardian Remote Sensor Probe](https://www.amazon.com/gp/product/B07G5BMD7L)
+  which has a 6' cord.
 
 {{< img src="leak-detector-m5stickC_probe.jpg" alt="Image" class="align-center" >}}
 
 - Grove connector pigtail
-    [Amazon Link](https://www.amazon.com/gp/product/B01CNZ9EEC)
+  [Amazon Link](https://www.amazon.com/gp/product/B01CNZ9EEC)
 
 {{< img src="leak-detector-m5stickC_grove1.jpg" alt="Image" class="align-center" >}}
 
 - USB power supply with USB-C cable
-    (the M5StickC comes with the short black USB cable seen in the pictures)
+  (the M5StickC comes with the short black USB cable seen in the pictures)
 
 ------------
 
-# Probe Connection
+## Probe Connection
 
-Since the probe comes with an integrated 3.5mm male plug, a 3.5mm female jack has been connected to the Grove port to allow easy probe replacement in the future.  Orange connects to orange, blue connects to blue.  The pads on the opposite side of the probe are internally-connected identically to the front.  The two middle rings on the 3.5mm jack are unused.  There is no polarity -- simply connect one terminal (orange or blue) to Grove GND, and the other to Grove G33.
+Since the probe comes with an integrated 3.5mm male plug, a 3.5mm female jack has been connected to the Grove port
+to allow easy probe replacement in the future. Orange connects to orange, blue connects to blue. The pads on the
+opposite side of the probe are internally-connected identically to the front. The two middle rings on the 3.5mm
+jack are unused. There is no polarity -- simply connect one terminal (orange or blue) to Grove GND, and the other
+to Grove G33.
 
 {{< img src="leak-detector-m5stickC_pinout.jpg" alt="Image" class="align-center" >}}
 
 {{< img src="leak-detector-m5stickC_grove2.jpg" alt="Image" class="align-center" >}}
 
-# Assembled Components
+## Assembled Components
 
 {{< img src="leak-detector-m5stickC_overview2.jpg" alt="Image" class="align-center" >}}
 
@@ -57,25 +61,31 @@ Even though the M5StickC has a battery inside (which might be enough to cover sh
 the unit on USB power 24/7.
 
 {{< /note >}}
-# Display Font
 
-You'll need to place the [OpenSans-Regular](https://fonts.google.com/specimen/Open+Sans) font (or another of your choosing) alongside your ESPHome yaml file.  See - {{< docref "/components/display" >}}.
+## Display Font
 
-# Calibration & Testing
+You'll need to place the [OpenSans-Regular](https://fonts.google.com/specimen/Open+Sans) font (or another of your
+choosing) alongside your ESPHome yaml file. See - {{< docref "/components/display" >}}.
 
-Once everything is hooked up and flashed, enable `esp32_touch:`   `setup_mode: true`   and proceed to adjust the threshold setting on the touch-sensitive binary sensor (GPIO33) to find the proper value for your particular moisture sensor and cabling situation.  Grab a glass of water for testing, another for yourself, and dip away while watching the logs.  Your goal is to find a threshold value that is sufficient to trigger the binary sensor in water, but not otherwise.  See [ESP32 Touch Pad](#esp32-touch-binary-sensor) for more information.
+## Calibration & Testing
+
+Once everything is hooked up and flashed, enable `esp32_touch:` `setup_mode: true` and proceed to adjust the threshold
+setting on the touch-sensitive binary sensor (GPIO33) to find the proper value for your particular moisture sensor and
+cabling situation. Grab a glass of water for testing, another for yourself, and dip away while watching the logs.
+Your goal is to find a threshold value that is sufficient to trigger the binary sensor in water, but not otherwise.
+See [ESP32 Touch Pad](#esp32-touch-binary-sensor) for more information.
 
 ------------
 
-## Normal state
+### Normal state
 
 {{< img src="leak-detector-m5stickC_dry.jpg" alt="Image" class="align-center" >}}
 
-## Wet state
+### Wet state
 
 {{< img src="leak-detector-m5stickC_wet.jpg" alt="Image" class="align-center" >}}
 
-## Installed Project
+### Installed Project
 
 {{< img src="leak-detector-m5stickC_overview1.jpg" alt="Image" class="align-center" >}}
 
@@ -83,7 +93,7 @@ Not shown: Probe is placed on the floor in the corner, out of the way, in the lo
 
 ------------
 
-# ESPHome configuration
+## ESPHome configuration
 
 ```yaml
 substitutions:
@@ -245,9 +255,9 @@ display:
         it.print(42, 32, id(font1), id(color_dry), TextAlign::TOP_CENTER, "R");
         it.print(42, 85, id(font1), id(color_dry), TextAlign::TOP_CENTER, "Y");
       }
-
 ```
-# HomeAssistant configuration
+
+## HomeAssistant configuration
 
 There are two sections: one for alert criteria, and another for notification via Pushover.
 See HomeAssistant's [Pushover integration docs](https://www.home-assistant.io/integrations/pushover/) for more details.
@@ -276,15 +286,14 @@ notify:
           data:
             # Pushover-provided sound effect (https://pushover.net/api#sounds)
             sound: alien
-
 ```
+
 Enjoy your locally-controlled leak detector with push notification!
 
 {{< img src="leak-detector-m5stickC-ha_interface.jpg" alt="Image" class="align-center" >}}
 
-# See Also
+## See Also
 
 - {{< docref "/components/display" >}}
 - {{< docref "/components/display/st7735" >}}
 - {{< docref "/components/binary_sensor/esp32_touch" >}}
-

@@ -7,9 +7,7 @@ params:
     image: chart-line.svg
 ---
 
-
 {{< anchor "display-graphs" >}}
-
 
 You can display a graph of a sensor value(s) using this component. The states used for the graph are stored in
 memory at the time the sensor updates and will be lost when the device reboots.
@@ -49,12 +47,13 @@ graph:
         line_type: DOTTED
         line_thickness: 2
         color: my_green
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the graph later
   in your display code.
+
 - **width** (**Required**, int): The graph width in pixels
 - **height** (**Required**, int): The graph height in pixels
 - **duration** (**Required**, [Time](#config-time)): The total graph history duration.
@@ -71,8 +70,8 @@ Trace specific fields:
 
 - **sensor** (*Optional*, [ID](#config-id)): The sensor value to plot
 - **line_thickness** (*Optional*): Defaults to 3
-- **line_type** (*Optional*): Specifies the plot line-type. Can be one of the following: `SOLID`  , `DOTTED`  , `DASHED`  . Defaults to `SOLID`  .
-- **continuous** (*Optional*): connects the individual points to make a continuous line.  Defaults to `false`  .
+- **line_type** (*Optional*): Specifies the plot line-type. Can be one of the following: `SOLID`, `DOTTED`, `DASHED`. Defaults to `SOLID`.
+- **continuous** (*Optional*): connects the individual points to make a continuous line. Defaults to `false`.
 - **color** (*Optional*): Sets the color of the sensor trace.
 
 And then later in code:
@@ -111,13 +110,13 @@ color:
     red: 100%
     green: 100%
     blue: 0%
-
 ```
+
 {{< note >}}
 Here are some things to note:
-- Setting `y_grid`   will expand any specified range to the nearest multiple of grid spacings.
+
+- Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
 - Axis labels are currently not possible without manually placing them.
 - The grid and border color is set with it.graph(), while the traces are defined separately.
-
 
 {{< /note >}}

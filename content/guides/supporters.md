@@ -3,8 +3,6 @@ description: "Contributors"
 title: "Contributors"
 ---
 
-
-
 ESPHome is an open-source project of the [Open Home Foundation](https://www.openhomefoundation.org/),
 and everybody can contribute to it to make this project awesome. This list contains a list of people who have
 submitted patches that have made it into the [ESPHome organization's](https://github.com/esphome) repositories.
@@ -120,7 +118,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [AndersWestman (@AndersWestman)](https://github.com/AndersWestman)
 - [andig (@andig)](https://github.com/andig)
 - [Andi Egli (@andilge)](https://github.com/andilge)
-- [Kieren  (@ando023)](https://github.com/ando023)
+- [Kieren (@ando023)](https://github.com/ando023)
 - [András Bíró (@andrasbiro)](https://github.com/andrasbiro)
 - [Andre (@andre68723)](https://github.com/andre68723)
 - [Andreas Brett (@andreasbrett)](https://github.com/andreasbrett)
@@ -534,7 +532,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Lucio Tarantino (@dianlight)](https://github.com/dianlight)
 - [diesel437 (@diesel437)](https://github.com/diesel437)
 - [Alain Turbide (@Dilbert66)](https://github.com/Dilbert66)
-- [Mark  (@Diramu)](https://github.com/Diramu)
+- [Mark (@Diramu)](https://github.com/Diramu)
 - [Dirk Heinke (@DirkHeinke)](https://github.com/DirkHeinke)
 - [Dirk Jahnke (@dirkj)](https://github.com/dirkj)
 - [Dennis (@dirrgang)](https://github.com/dirrgang)
@@ -571,7 +569,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Dan Maloney (@dpsm64)](https://github.com/dpsm64)
 - [dr-oblivium (@dr-oblivium)](https://github.com/dr-oblivium)
 - [DrBlokmeister (@DrBlokmeister)](https://github.com/DrBlokmeister)
-- [Jean  Louis-Guerin (@DrCoolzic)](https://github.com/DrCoolzic)
+- [Jean Louis-Guerin (@DrCoolzic)](https://github.com/DrCoolzic)
 - [Drew Perttula (@drewp)](https://github.com/drewp)
 - [drmodding (@drmodding)](https://github.com/drmodding)
 - [drmpf (@drmpf)](https://github.com/drmpf)
@@ -1040,7 +1038,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Jared Sanson (@jorticus)](https://github.com/jorticus)
 - [joseph douce (@josephdouce)](https://github.com/josephdouce)
 - [JosephTang (@JosephTang)](https://github.com/JosephTang)
-- [Joshua Baran  (@joshbaran)](https://github.com/joshbaran)
+- [Joshua Baran (@joshbaran)](https://github.com/joshbaran)
 - [Joshua M. Boniface (@joshuaboniface)](https://github.com/joshuaboniface)
 - [Joshua Spence (@joshuaspence)](https://github.com/joshuaspence)
 - [joskfg (@joskfg)](https://github.com/joskfg)
@@ -1279,7 +1277,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [marshn (@marshn)](https://github.com/marshn)
 - [marsjan155 (@marsjan155)](https://github.com/marsjan155)
 - [Martin (@martgras)](https://github.com/martgras)
-- [martijn  (@martijnvwezel)](https://github.com/martijnvwezel)
+- [martijn (@martijnvwezel)](https://github.com/martijnvwezel)
 - [Martin Hjelmare (@MartinHjelmare)](https://github.com/MartinHjelmare)
 - [MartinWelsch (@MartinWelsch)](https://github.com/MartinWelsch)
 - [M-A (@maruel)](https://github.com/maruel)
@@ -1329,7 +1327,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [MeIchthys (@meichthys)](https://github.com/meichthys)
 - [meijerwynand (@meijerwynand)](https://github.com/meijerwynand)
 - [Meilily (@meilily)](https://github.com/meilily)
-- [Marco  (@Melkor82)](https://github.com/Melkor82)
+- [Marco (@Melkor82)](https://github.com/Melkor82)
 - [Melopero (@melopero)](https://github.com/melopero)
 - [melyux (@melyux)](https://github.com/melyux)
 - [Merlin Schumacher (@merlinschumacher)](https://github.com/merlinschumacher)

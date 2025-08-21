@@ -7,8 +7,6 @@ params:
     image: a02yyuw.jpg
 ---
 
-
-
 This sensor allows you to use A02YYUW waterproof ultrasonic sensor by DFRobot
 ([datasheet](https://wiki.dfrobot.com/_A02YYUW_Waterproof_Ultrasonic_Sensor_SKU_SEN0311))
 with ESPHome to measure distances. This sensor can measure
@@ -25,21 +23,22 @@ To use the sensor, first set up an [UART Bus](#uart) with a baud rate of 9600 an
 sensor:
   - platform: "a02yyuw"
     name: "Distance"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](#uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
+
 - All other options from [Sensor](#config-sensor).
 
 {{< note >}}
 [PWM and RS485](https://www.dypcn.com/uploads/A02-Datasheet.pdf) versions of the A02YYUW are not supported by this component.
 
 {{< /note >}}
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - [UART Bus](#uart)
 - {{< apiref "a02yyuw/a02yyuw.h" "a02yyuw/a02yyuw.h" >}}
-

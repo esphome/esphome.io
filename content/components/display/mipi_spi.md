@@ -7,9 +7,7 @@ params:
     image: ili9341.jpg
 ---
 
-
 {{< anchor "mipi_spi" >}}
-
 
 ## Introduction
 
@@ -41,9 +39,9 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 ### Driver chips
 
 | Driver Chip | Typical Dimensions |
-| --- | --- |
-| RM690B0 | 320x240 |
-| ILI9341 | 320x240 |
+| ----------- | ------------------ |
+| RM690B0     | 320x240            |
+| ILI9341     | 320x240            |
 | ILI9481 | 320x480 |
 | ILI9486 | 320x480 |
 | ILI9488 | 320x480 |
@@ -57,33 +55,30 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | CO5300 | 466x466 |
 | CUSTOM | Customisable |
 
-
 ### Boards with integrated displays
 
-| Model | Manufacturer | Product Description |
-| --- | --- | --- |
-| ADAFRUIT-S2-TFT-FEATHER | Adafruit | https://www.adafruit.com/product/6312 |
-| ADAFRUIT-FUNHOUSE | Adafruit | https://www.adafruit.com/product/4985 |
-| M5CORE | M5Stack | https://docs.m5stack.com/en/core/BASIC%20v2.6 |
-| S3BOX | Espressif | https://www.espressif.com/en/products/devkits/esp32-s3-box |
-| S3BOXLITE | Espressif | https://www.espressif.com/en/products/devkits/esp32-s3-box-lite |
-| WAVESHARE-4-TFT | Waveshare | https://www.waveshare.com/4inch-tft-touch-shield.htm |
-| PICO-RESTOUCH-LCD-3.5 | Waveshare | https://www.waveshare.com/pico-restouch-lcd-3.5.htm |
-| WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.75 | Waveshare | https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm |
-| WT32-SC01-PLUS | Wireless-Tag | https://www.wireless-tag.com/portfolio/wt32-sc01-plus/ |
-| ESP32-2432S028 | Sunton | https://www.espressif.com/en/products/devkits/esp32-2432s028 |
-| JC3248W535 | Guition | https://www.aliexpress.com/item/1005007566332450.html |
-| JC3636W518 | Guition | https://www.aliexpress.com/item/1005007890666293.html |
-| LANBON-L8 | Lanbon | https://www.lanbon.cn/product/lanbon-l8 |
-| T4-S3-AMOLED | Lilygo | https://www.lilygo.cc/products/t4-s3 |
-| T-EMBED | Lilygo | https://www.lilygo.cc/products/t-embed |
-| T-DISPLAY | Lilygo | https://www.lilygo.cc/products/t-display |
-| T-DISPLAY-S3 | Lilygo | https://www.lilygo.cc/products/t-display-s3 |
-| T-DISPLAY-S3-PRO | Lilygo | https://www.lilygo.cc/products/t-display-s3-pro |
-| T-DISPLAY-S3-AMOLED | Lilygo | https://www.lilygo.cc/products/t-display-s3-amoled |
-| T-DISPLAY-S3-AMOLED-PLUS | Lilygo | https://www.lilygo.cc/products/t-display-s3-amoled-plus |
-
-
+| Model                                | Manufacturer | Product Description                                               |
+| ------------------------------------ | ------------ | ----------------------------------------------------------------- |
+| ADAFRUIT-S2-TFT-FEATHER              | Adafruit     | <https://www.adafruit.com/product/6312>                           |
+| ADAFRUIT-FUNHOUSE                    | Adafruit     | <https://www.adafruit.com/product/4985>                           |
+| M5CORE | M5Stack | <https://docs.m5stack.com/en/core/BASIC%20v2.6> |
+| S3BOX | Espressif | <https://www.espressif.com/en/products/devkits/esp32-s3-box> |
+| S3BOXLITE | Espressif | <https://www.espressif.com/en/products/devkits/esp32-s3-box-lite> |
+| WAVESHARE-4-TFT | Waveshare | <https://www.waveshare.com/4inch-tft-touch-shield.htm> |
+| PICO-RESTOUCH-LCD-3.5 | Waveshare | <https://www.waveshare.com/pico-restouch-lcd-3.5.htm> |
+| WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.75 | Waveshare | <https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm> |
+| WT32-SC01-PLUS | Wireless-Tag | <https://www.wireless-tag.com/portfolio/wt32-sc01-plus/> |
+| ESP32-2432S028 | Sunton | <https://www.espressif.com/en/products/devkits/esp32-2432s028> |
+| JC3248W535 | Guition | <https://www.aliexpress.com/item/1005007566332450.html> |
+| JC3636W518 | Guition | <https://www.aliexpress.com/item/1005007890666293.html> |
+| LANBON-L8 | Lanbon | <https://www.lanbon.cn/product/lanbon-l8> |
+| T4-S3-AMOLED | Lilygo | <https://www.lilygo.cc/products/t4-s3> |
+| T-EMBED | Lilygo | <https://www.lilygo.cc/products/t-embed> |
+| T-DISPLAY | Lilygo | <https://www.lilygo.cc/products/t-display> |
+| T-DISPLAY-S3 | Lilygo | <https://www.lilygo.cc/products/t-display-s3> |
+| T-DISPLAY-S3-PRO | Lilygo | <https://www.lilygo.cc/products/t-display-s3-pro> |
+| T-DISPLAY-S3-AMOLED | Lilygo | <https://www.lilygo.cc/products/t-display-s3-amoled> |
+| T-DISPLAY-S3-AMOLED-PLUS | Lilygo | <https://www.lilygo.cc/products/t-display-s3-amoled-plus> |
 
 ## SPI Bus
 
@@ -97,15 +92,15 @@ bus must be configured separately, and must be of the correct type for the displ
 display:
   - platform: mipi_spi
     model: T_EMBED
-
 ```
+
 ### Configuration options
 
 All [graphical display configuration](#display-configuration) options are available, plus the following. For integrated display boards
 most of the configuration will be set by default, but can be overridden if needed.
 
-- **model** (**Required**): Chosen from the lists of supported chips and models above, or `CUSTOM`   for custom displays.
-- **bus_mode** (*Optional*): Select the SPI bus mode for the display driver. Options are `single`   (default), `quad`   and `octal`  .
+- **model** (**Required**): Chosen from the lists of supported chips and models above, or `CUSTOM` for custom displays.
+- **bus_mode** (*Optional*): Select the SPI bus mode for the display driver. Options are `single` (default), `quad` and `octal`.
 - **dc_pin** (**Required**, [Pin Schema](#config-pin_schema)): The DC pin. Not required or permitted for quad SPI.
 - **reset_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The RESET pin.
 - **cs_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The CS pin.
@@ -116,52 +111,53 @@ pins wired to GPIOs. When using a board with integrated display, the pins will b
 default, but can be overridden in the config if needed.
 
 {{< /note >}}
+
 - **enable_pin** (*Optional*, [Pin Schema](#config-pin_schema)): An optional pin to enable the display, if required. A list of pins can be provided for displays that require multiple enable pins. A full pin configuration may be provided
   to set the pin mode and inverted property. By default the pin will be driven high to enable the display.
+
 - **brightness** (*Optional*, int): The initial brightness of the display, for AMOLED displays only. This should be a value from 0 to 255, and defaults to 0xD0.
-- **color_order** (*Optional*): Should be one of `bgr`   (default) or `rgb`  . This specifies the order of the color channels in the display panel. The default is `bgr`   for most displays, but some displays may require `rgb`  . It does not affect the color order of the display buffer, which is always RGB.
-- **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected. This is required for the `CUSTOM`   model, and is optional for other models. The dimensions are specified in pixels, and the width and height must be greater than 0. The following keys are available:
+- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`. This specifies the order of the color channels in the display panel. The default is `bgr` for most displays, but some displays may require `rgb`. It does not affect the color order of the display buffer, which is always RGB.
+- **dimensions** (*Optional*): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys. If not provided the dimensions will be determined by the model selected. This is required for the `CUSTOM` model, and is optional for other models. The dimensions are specified in pixels, and the width and height must be greater than 0. The following keys are available:
 
-    - **height** (**Required**, int): Specifies height of display in pixels.
-    - **width** (**Required**, int): Specifies width of display.
-    - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
-    - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
+  - **height** (**Required**, int): Specifies height of display in pixels.
+  - **width** (**Required**, int): Specifies width of display.
+  - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
+  - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
-- **invert_colors** (*Optional*, boolean): Specifies whether the display colors should be inverted. Options are `true`   or `false`  . Defaults to `false`  .
-- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`  , `90°`  , `180°`  , or `270°`  . If the driver chip supports hardware rotation for the given orientation this will be translated to the appropriate hardware command. If hardware rotation is not supported, the display will be rotated in software.
-- **transform** (*Optional*): If `rotation`   is not sufficient, use this to transform the display. If this option is specified, then the `dimensions`   option must also be provided. Options are:
+- **invert_colors** (*Optional*, boolean): Specifies whether the display colors should be inverted. Options are `true` or `false`. Defaults to `false`.
+- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`. If the driver chip supports hardware rotation for the given orientation this will be translated to the appropriate hardware command. If hardware rotation is not supported, the display will be rotated in software.
+- **transform** (*Optional*): If `rotation` is not sufficient, use this to transform the display. If this option is specified, then the `dimensions` option must also be provided. Options are:
 
-   - **swap_xy** (**Required**, boolean): If true, exchange the x and y axes.
-   - **mirror_x** (**Required**, boolean): If true, mirror the x axis.
-   - **mirror_y** (**Required**, boolean): If true, mirror the y axis.
+  - **swap_xy** (**Required**, boolean): If true, exchange the x and y axes.
+  - **mirror_x** (**Required**, boolean): If true, mirror the x axis.
+  - **mirror_y** (**Required**, boolean): If true, mirror the y axis.
 
-- **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are `16`   (default) and `8`  . 8 bit depth will result in only 256 possible colors and should be used only if the microcontroller has limited memory. The driver will convert the 8 bit color to the display chip's required format.
-- **buffer_size** (*Optional*): The percentage of screen size to allocate buffer memory. The default is `100%`   when PSRAM is configured, and otherwise will be calculated to
+- **color_depth** (*Optional*): The color depth of the display buffer, expressed in bits. Options are `16` (default) and `8`. 8 bit depth will result in only 256 possible colors and should be used only if the microcontroller has limited memory. The driver will convert the 8 bit color to the display chip's required format.
+- **buffer_size** (*Optional*): The percentage of screen size to allocate buffer memory. The default is `100%` when PSRAM is configured, and otherwise will be calculated to
   achieve a buffer size less than 20K bytes. See the discussion below about buffer sizes.
 
 ### Advanced options
 
 - **init_sequence** (*Optional*): Allows custom initialisation sequences to be added. See below for more information.
-- **pixel_mode** (*Optional*): Select the interface mode for the display driver. Options are `16bit`   (default) and `18bit`  . Most displays require 16 bit mode, and it is preferred unless the display requires 18 bit mode.
-- **spi_16** (*Optional*): Set to `true`   on boards where single bit SPI is used but drives the display in parallel via a 16 bit shift register.
+- **pixel_mode** (*Optional*): Select the interface mode for the display driver. Options are `16bit` (default) and `18bit`. Most displays require 16 bit mode, and it is preferred unless the display requires 18 bit mode.
+- **spi_16** (*Optional*): Set to `true` on boards where single bit SPI is used but drives the display in parallel via a 16 bit shift register.
 - **data_rate** (*Optional*): The SPI data rate. Defaults to 10MHz but board presets may override this.
-- **spi_mode** (*Optional*): The SPI mode. Options are `MODE0`  , `MODE1`  , `MODE2`  , and `MODE3`  . Defaults to `MODE0`   for single bit SPI and `MODE3`   for octal SPI (parallel bus.)
+- **spi_mode** (*Optional*): The SPI mode. Options are `MODE0`, `MODE1`, `MODE2`, and `MODE3`. Defaults to `MODE0` for single bit SPI and `MODE3` for octal SPI (parallel bus.)
 - **draw_rounding** (*Optional*): The rounding factor for drawing operations. Defaults to 2. Some chips require a higher value to avoid display artifacts. Must be a power of 2.
 - **use_axis_flips** (*Optional*): If true, the driver will use alternate bits in the MADCTL register to implement x and y mirroring. Defaults to false.
-- **byte_order** (*Optional*): The byte order of the display buffer. Options are `big_endian`   (default) and `little_endian`  . This affects the byte order for the buffer when
+- **byte_order** (*Optional*): The byte order of the display buffer. Options are `big_endian` (default) and `little_endian`. This affects the byte order for the buffer when
   using 16 bit color depth. The default is appropriate for the majority of displays.
 
 **Note:** The maximum achievable data rate will depend on the chip type (e.g. ESP32 vs ESP32-S3) the pins used (on ESP32 using the default SPI pins allows higher rates) and the connection type (on-board connections will support higher rates than long cables or DuPont wires.) If in doubt, start with a low speed and test higher rates to find what works. A MISO pin should preferably not be specified, as this will limit the maximum rate in some circumstances, and is not required if the SPI bus is used only for the display.
-
 
 ## Buffer Size
 
 The display driver writes data from a buffer to the display chip. When using {{< docref "/components/lvgl" >}} no buffer is required in the display driver itself, as LVGL will
 allocate and use its own buffer.
 When instead using a lambda function to update the display (and not LVGL), a buffer is required to be allocated by the display driver.
-The size of this buffer is determined by the `buffer_size`   option. The default is `100%`   when PSRAM is configured, and otherwise will be calculated to
-achieve a buffer size less than 20K bytes. For example a display of size 320x240 will have a buffer size of `320 * 240 * 2`   bytes (for RGB565) = `153600`   bytes.
-If the buffer size is set to `50%`  , then the buffer would occupy `76800`   bytes. If 8 bit color depth is used, then each pixel occupies only 1 byte.
+The size of this buffer is determined by the `buffer_size` option. The default is `100%` when PSRAM is configured, and otherwise will be calculated to
+achieve a buffer size less than 20K bytes. For example a display of size 320x240 will have a buffer size of `320 * 240 * 2` bytes (for RGB565) = `153600` bytes.
+If the buffer size is set to `50%`, then the buffer would occupy `76800` bytes. If 8 bit color depth is used, then each pixel occupies only 1 byte.
 
 ### Effect on Drawing Performance
 
@@ -171,10 +167,9 @@ call the drawing lambda multiple times to draw each chunk of the display. For ex
 This has an effect on performance, and should be considered when setting the buffer size, but it is also important that the drawing lambda does not have
 side effects - this should be avoided in any case, but becomes more critical when using a buffer less than 100%.
 
-
 ## Additional inititialisation sequences
 
-The `init_sequence`   option allows additional configuration of the driver chip. Provided commands will be sent to the
+The `init_sequence` option allows additional configuration of the driver chip. Provided commands will be sent to the
 driver chip in addition to, and after the chosen model's pre-defined commands. It requires a list of byte sequences:
 
 ```yaml
@@ -182,20 +177,20 @@ init_sequence:
   - [ 0xD0, 0x07, 0x42, 0x18]
   - delay 10ms
   - [ 0xD1, 0x00, 0x07, 0x10]
-
 ```
-Each entry represents a single-byte command followed by zero or more data bytes. Delays can be inserted with the `delay`   keyword followed by a time in milliseconds. The delay is not precise, but will be at least the specified time.
+
+Each entry represents a single-byte command followed by zero or more data bytes. Delays can be inserted with the `delay` keyword followed by a time in milliseconds. The delay is not precise, but will be at least the specified time.
 If converting from other code, make sure the length byte, if present, is not copied as the length of each command sequence is determined by the number of bytes in the list.
 
 ## CUSTOM model
 
-The `CUSTOM`   model selection is provided for otherwise unsupported displays, and requires both `dimensions:`   and `init_sequence:`   to be specfied. There is no pre-defined init sequence.
+The `CUSTOM` model selection is provided for otherwise unsupported displays, and requires both `dimensions:` and `init_sequence:` to be specfied. There is no pre-defined init sequence.
 
-## Using the `transform`   options
+## Using the `transform` options
 
-In most cases, the `rotation`   option will be sufficient to orient the display correctly. However, some displays may require additional transformations. The `transform`   option allows for these transformations to be applied in any of 8 different
-combinations. It may be necessary to experiment with different combinations to achieve the desired result. When using the `transform`   option, the `rotation`   option should not be set unless the display does not support axis-swapping.
-If the `swap_xy`   option is set, then the `dimensions`   option is required, and the `width`   and `height`   values should be set to reflect the final screen dimensions after rotation.
+In most cases, the `rotation` option will be sufficient to orient the display correctly. However, some displays may require additional transformations. The `transform` option allows for these transformations to be applied in any of 8 different
+combinations. It may be necessary to experiment with different combinations to achieve the desired result. When using the `transform` option, the `rotation` option should not be set unless the display does not support axis-swapping.
+If the `swap_xy` option is set, then the `dimensions` option is required, and the `width` and `height` values should be set to reflect the final screen dimensions after rotation.
 
 ```yaml
 transform:
@@ -205,14 +200,14 @@ transform:
 dimensions:
   height: 480
   width: 320
-
 ```
+
 ## LCD Backlights
 
 Many displays have an integrated backlight, which may need to be turned on for the display to show. This backlight is not controlled
 by the driver, but can be controlled by a separate GPIO pin. Depending on the display, the backlight may be active high or active low, and may
 be able to be dimmed using a {{< docref "/components/light/monochromatic" >}} with a {{< docref "/components/output/ledc" >}}. AMOLED displays do not have a backlight but
-their brightness can be set using the `brightness`   option. This may also be controlled by a lambda API call.
+their brightness can be set using the `brightness` option. This may also be controlled by a lambda API call.
 
 ## Touchscreens
 
@@ -223,4 +218,3 @@ A touchscreen, if present, must be configured separately. See the {{< docref "/c
 - {{< docref "index/" >}}
 - {{< docref "/components/lvgl" >}}
 - {{< apiref "mipi_spi/mipi_spi.h" "mipi_spi/mipi_spi.h" >}}
-

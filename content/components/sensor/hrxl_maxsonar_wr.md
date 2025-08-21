@@ -7,8 +7,6 @@ params:
     image: hrxl_maxsonar_wr.jpg
 ---
 
-
-
 This sensor allows you to use HRXL MaxSonar WR series ultrasonic sensors by MaxBotix
 ([datasheet](https://www.maxbotix.com/documents/HRXL-MaxSonar-WR_Datasheet.pdf))
 or the XL MaxSonar WR series
@@ -20,7 +18,6 @@ This sensor platform works with the **TTL versions** of those sensors and expect
 sensor's TTL pin to be wired to one of the ESP's input pins. Since these sensors read
 multiple times per second, filtering is highly recommended.
 
-
 {{< img src="hrxl_maxsonar_wr-full.jpg" alt="Image" caption="MB7388 HRXL-MaxSonar-WRMLT Ultrasonic Distance Sensor." width="50.0%" class="align-center" >}}
 
 ```yaml
@@ -28,9 +25,9 @@ multiple times per second, filtering is highly recommended.
 sensor:
   - platform: "hrxl_maxsonar_wr"
     name: "Rainwater Tank"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Sensor](#config-sensor).
 
@@ -39,11 +36,9 @@ Advanced options:
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](#uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
 
-
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - [UART Bus](#uart)
 - {{< docref "template/" >}}
 - {{< apiref "hrxl_maxsonar_wr/hrxl_maxsonar_wr.h" "hrxl_maxsonar_wr/hrxl_maxsonar_wr.h" >}}
-

@@ -1,9 +1,20 @@
-# ESPHome-Docs [![Netlify Status](https://api.netlify.com/api/v1/badges/97a2e9ce-cee7-4cc8-8dc7-537c92a23fa7/deploy-status)](https://app.netlify.com/sites/esphome/deploys) [![Discord Chat](https://img.shields.io/discord/429907082951524364.svg)](https://discord.gg/KhAMKrd) [![GitHub release](https://img.shields.io/github/release/esphome/esphome.svg)](https://GitHub.com/esphome/esphome/releases/)
+# ESPHome-Docs
+
+[![Netlify Status][netlify-badge]][netlify-link]
+[![Discord Chat][discord-badge]][discord-link]
+[![GitHub release][github-badge]][github-link]
+
+[netlify-badge]: https://api.netlify.com/api/v1/badges/97a2e9ce-cee7-4cc8-8dc7-537c92a23fa7/deploy-status
+[netlify-link]: https://app.netlify.com/sites/esphome/deploys
+[discord-badge]: https://img.shields.io/discord/429907082951524364.svg
+[discord-link]: https://discord.gg/KhAMKrd
+[github-badge]: https://img.shields.io/github/release/esphome/esphome.svg
+[github-link]: https://github.com/esphome/esphome/releases
 
 <a href="https://esphome.io/">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://esphome.io/_images/logo-docs-on-dark.svg">
-    <img src="https://esphome.io/_images/logo-docs.svg" alt="ESPHome Logo">
+    <source media="(prefers-color-scheme: dark)" srcset="https://esphome.io/images/logo-docs-on-dark.svg">
+    <img src="https://esphome.io/images/logo-docs.svg" alt="ESPHome Logo">
   </picture>
 </a>
 
@@ -34,20 +45,24 @@ Images in the Hugo site referred to in `img` shortcodes are handled using a spec
 
 ### Relative paths
 
-- When using relative paths in the `img` shortcode (e.g., `{{< img src="dht22.jpg" >}}`), Hugo will first look in a local `images/` subdirectory.
-  For example, an image referenced in `content/components/sensor/dht.md` will first be searched for in `content/components/sensor/images/`.
+- When using relative paths in the `img` shortcode (e.g., `{{< img src="dht22.jpg" >}}`),
+  Hugo will first look in a local `images/` subdirectory.
+  For example, an image referenced in `content/components/sensor/dht.md` will first be
+  searched for in `content/components/sensor/images/`.
 
 - If the image is not found in the local directory, Hugo will then look in the global `/static/images/` directory.
 
 ### Absolute paths
 
-When using absolute paths (starting with `/`), Hugo will look directly in the specified location relative to the `/static/` directory.
+When using absolute paths (starting with `/`), Hugo will look directly in the specified location
+relative to the `/static/` directory.
 
 This strategy allows component documentation to have its own images while also supporting shared images across the site.
 
 ## Custom Theme
 
-The site uses a custom theme called `esphome-theme` which is designed to match the look and feel of the original ESPHome documentation. The theme includes:
+The site uses a custom theme called `esphome-theme` which is designed to match the look and feel of the original
+ESPHome documentation. The theme includes:
 
 - Responsive design for mobile and desktop
 - Dark mode support
@@ -61,11 +76,13 @@ Hugo uses Markdown files as input. The Markdown processor in use is Goldmark.
 
 ## Hugo Template System
 
-Hugo uses a templating system to generate HTML from Markdown content. Understanding the following concepts is helpful when working with or modifying the theme:
+Hugo uses a templating system to generate HTML from Markdown content. Understanding the following concepts is helpful
+when working with or modifying the theme:
 
 ### Templates
 
-Templates are HTML files with Go templating syntax that define the structure and layout of pages. Hugo uses different types of templates:
+Templates are HTML files with Go templating syntax that define the structure and layout of pages. Hugo uses different
+types of templates:
 
 - **Base Templates**: Define the overall structure of the site (found in `layouts/_default/baseof.html`)
 - **List Templates**: Used for section pages that list multiple content items
@@ -76,7 +93,8 @@ Templates use blocks (like `{{ block "main" . }}{{ end }}`) that can be overridd
 
 ### Partials
 
-Partials are reusable template components that can be included in other templates. They help maintain DRY (Don't Repeat Yourself) code by extracting common elements:
+Partials are reusable template components that can be included in other templates. They help maintain DRY (Don't Repeat
+Yourself) code by extracting common elements:
 
 ``` text
 {{ partial "header.html" . }}
@@ -105,11 +123,13 @@ Shortcode templates are stored in the `layouts/shortcodes/` directory.
 
 ## Shortcodes
 
-Hugo has a number of [built-in shortcodes](https://gohugo.io/content-management/shortcodes/) and the ESPHome theme also defines
-several custom shortcodes:
+Hugo has a number of [built-in shortcodes](https://gohugo.io/content-management/shortcodes/) and the ESPHome theme
+also defines several custom shortcodes:
 
 ### `anchor`
+
 Creates an HTML anchor point that can be linked to with fragment identifiers.
+
 ``` text
 {{< anchor "my-anchor-id" >}}
 ```
@@ -117,13 +137,17 @@ Creates an HTML anchor point that can be linked to with fragment identifiers.
 NOTE: Headings automatically create anchors, so it is not necessary to insert `anchor` shortcodes for them.
 
 ### `button`
+
 Creates a button with an image that links to a URL.
+
 ``` text
 {{< button href="https://example.com" img="/images/button.png" alt="Example Button" target="_self" >}}
 ```
 
 ### `collapse`
+
 Creates a collapsible section with a title that can be clicked to show/hide content.
+
 ``` text
 {{< collapse "title" true >}}
 This content will be hidden by default and can be expanded by clicking the header.
@@ -133,7 +157,9 @@ the second parameter, if true, will have the content initially opened.
 ```
 
 ### `docref`
+
 Creates a link to another page in the documentation with proper handling of anchors.
+
 ``` text
 {{< docref "/components/sensor/dht" >}}                     <!-- Uses the target page title as link text -->
 {{< docref "/components/sensor/dht" "DHT Sensor Guide" >}}  <!-- Uses custom text for the link -->
@@ -141,13 +167,17 @@ Creates a link to another page in the documentation with proper handling of anch
 ```
 
 ### `img`
+
 Displays an image with optional caption, width, height, and CSS class.
+
 ``` text
 {{< img src="example.jpg" alt="Example image" caption="This is an example" width="500" class="center" >}}
 ```
 
 ### `imgtable`
+
 Creates a component card with an image, title, and optional description that links to another page.
+
 ``` text
   {{< imgtable >}}
   Title 1, path/to/page1, image1.png
@@ -159,7 +189,9 @@ Creates a component card with an image, title, and optional description that lin
 ```
 
 ### `note`
+
 Creates a note admonition box to highlight important information.
+
 ``` text
 {{< note >}}
 This is important information that the reader should pay attention to.
@@ -168,13 +200,17 @@ You can include **Markdown** formatting within the note.
 ```
 
 ### `seo`
+
 Adds SEO metadata tags to the page for better search engine optimization and social media sharing.
+
 ``` text
 {{< seo description="Detailed guide for setting up the DHT sensor with ESPHome" image="dht-sensor.jpg" >}}
 ```
 
 ### `tip`
+
 Creates a tip admonition box to highlight helpful advice or best practices.
+
 ``` text
 {{< tip >}}
 For best results, place the sensor away from heat sources.
@@ -183,7 +219,9 @@ You can include **Markdown** formatting within the tip.
 ```
 
 ### `warning`
+
 Creates a warning admonition box to highlight important cautions or potential issues.
+
 ``` text
 {{< warning >}}
 Incorrect wiring may damage your device. Double-check connections before powering on.
@@ -192,46 +230,60 @@ You can include **Markdown** formatting within the warning.
 ```
 
 ### `apiref`
+
 Creates a link to a C++ API header file.
+
 ``` text
 {{< apiref "Component" "esphome/core/component.h" >}}
 ```
 
 ### `apiclass`
+
 Creates a link specifically to a C++ class in the API documentation.
+
 ``` text
 {{< apiclass "ClimateDevice" "esphome::climate::ClimateDevice" >}}
 {{< apiclass "WiFiComponent" "esphome::wifi::WiFiComponent" >}}
 ```
 
 ### `apistruct`
+
 Creates a link specifically to a C++ struct in the API documentation.
+
 ``` text
 {{< apistruct "SensorStateClass" "esphome::sensor::SensorStateClass" >}}
 {{< apistruct "GPIOOutputPin" "esphome::output::GPIOOutputPin" >}}
 ```
 
 ### `api-key-input`
+
 Creates an input field with a randomly generated API key and a copy button.
+
 ``` text
 {{< api-key-input >}}
 ```
 
 ### `ghuser`
+
 Creates a link to a GitHub user profile.
+
 ``` text
 {{< ghuser name="octocat" >}}                <!-- Links to @octocat -->
 {{< ghuser name="octocat" text="GitHub" >}}  <!-- Links to @octocat but displays "GitHub" -->
 ```
 
 ### `html_file`
+
 Reads a file from the static directory and inserts it as HTML.
+
 ``` text
 {{< html_file file="example.html" class="example-class" >}}
 ```
 
 ### `option`
+
 Creates an option block for documenting command-line options or configuration parameters.
+
 ``` text
 {{< option "--help|-h" >}}
 This is the help option.
@@ -239,14 +291,18 @@ This is the help option.
 ```
 
 ### `pr`
+
 Creates a link to a GitHub pull request.
+
 ``` text
 {{< pr number="123" >}}                <!-- Links to esphome/esphome#123 -->
 {{< pr number="123" repo="esphome-docs" >}}    <!-- Links to esphome/esphome-docs#123 -->
 ```
 
 ### `redirect`
+
 Creates a page that automatically redirects to another URL.
+
 ``` text
 {{< redirect url="/some/path" >}}
 ```
@@ -269,6 +325,7 @@ optional arguments:
 ```
 
 The script performs the following operations:
+
 - Builds an anchor map to maintain internal links
 - Converts RST formatting to Markdown
 - Processes special directives like notes, warnings, and tips
@@ -302,16 +359,19 @@ The built site will be in the `public` directory.
 Contributions to improve the documentation are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a new branch for your changes
-3. Make your changes
-4. Submit a pull request
+1. Create a new branch for your changes
+1. Make your changes
+1. Submit a pull request
 
 ## License
 
-The ESPHome documentation is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+The ESPHome documentation is licensed under the
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][by-ns-sa].
 
-**Documentation:** https://esphome.io/
+**Documentation:** <https://esphome.io/>
 
 For issues, please go to [the issue tracker](https://github.com/esphome/esphome/issues).
 
 For feature requests, please see [feature requests](https://github.com/orgs/esphome/discussions).
+
+[by-ns-sa]: https://creativecommons.org/licenses/by-nc-sa/4.0/

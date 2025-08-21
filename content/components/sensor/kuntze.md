@@ -7,13 +7,10 @@ params:
     image: kuntze.jpg
 ---
 
-
-
-The `kuntze`   component allows you to integrate the Kuntze water measurement
+The `kuntze` component allows you to integrate the Kuntze water measurement
 instrument in ESPHome. It uses [UART](#uart) (ModBUS) for communication.
 
 Once configured you can use sensors as described below for your projects.
-
 
 {{< img src="kuntze.jpg" alt="Image" caption="Kuntze Neon® Multi instrument" class="align-center" >}}
 
@@ -21,14 +18,14 @@ Once configured you can use sensors as described below for your projects.
 
 Kuntze devices have an RS485 (ModBUS RTU) communication port. Please see the
 Kuntze papers for the pinout of the RS485 connector on your unit. ModBUS line
-has to be terminated properly (with a `120Ω`   resistor), and since this is likely
+has to be terminated properly (with a `120Ω` resistor), and since this is likely
 your only unit connected to ESPHome, you should activate bus termination in the
 Network menu (this component doesn't support multiple Kuntze devices on the same
 bus). ModBUS address should remain at factory default value.
 
-The device communicates at `19200`   baud `8E1`  . To connect to ESPHome, an RS485
+The device communicates at `19200` baud `8E1`. To connect to ESPHome, an RS485
 transceiver is needed. Choose a type which does not need a trigger to send and
-receive data,  for example:
+receive data, for example:
 
 {{< img src="rs485.jpg" alt="Image" >}}
 
@@ -37,9 +34,10 @@ to RXD are the default ones but any other pins can be used as well. 3.3V to VCC 
 
 {{< warning >}}
 If you are using the [Logger Component](#logger) make sure you are not using the same pins for it or otherwise disable the UART
-logging with the `baud_rate: 0`   option.
+logging with the `baud_rate: 0` option.
 
 {{< /warning >}}
+
 ## Component
 
 A configured modbus component is optional. It will be automatically created.
@@ -54,8 +52,8 @@ sensor:
       id: ph
     temperature:
       id: temperature
-
 ```
+
 Configuration variables:
 
 - **ph** (*Optional*): Measured pH value.
@@ -75,4 +73,3 @@ All sensors are *Optional* and support all other options from [Sensor](#config-s
 - [Sensor](#config-sensor)
 - [Kuntze manuals](https://www.kuntze.com/en/downloads-2/)
 - [Communication protocol](https://www.kuntze.com/wp-content/uploads/2021/05/2019_Manual_Modbus-RTU_ENG.pdf)
-

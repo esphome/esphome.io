@@ -7,9 +7,7 @@ params:
     image: brightness-medium.svg
 ---
 
-
-
-The `monochromatic`   light platform creates a simple brightness-only light from an
+The `monochromatic` light platform creates a simple brightness-only light from an
 [float output component](#output).
 
 {{< img src="monochromatic-strip.jpg" alt="Image" caption="Example of a brightness-only LED strip that can be used with this component." width="75.0%" class="align-center" >}}
@@ -22,9 +20,9 @@ light:
   - platform: monochromatic
     name: "Kitchen Lights"
     output: output_component1
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for this light.
 - All other options from [Light](#config-light).
@@ -43,4 +41,3 @@ light:
 - {{< docref "/components/output/tlc59208f" >}}
 - {{< docref "/components/output/my9231" >}}
 - {{< apiref "monochromatic/monochromatic_light_output.h" "monochromatic/monochromatic_light_output.h" >}}
-

@@ -7,14 +7,12 @@ params:
     image: growatt.jpg
 ---
 
-
-
-The `Growatt Inverter`   sensor platform allows you to use growatt inverter data reading on modbus with ESPHome.
+The `Growatt Inverter` sensor platform allows you to use growatt inverter data reading on modbus with ESPHome.
 
 {{< img src="growatt.jpg" alt="Image" caption="Growatt Logo" width="50.0%" class="align-center" >}}
 
 The communication with this component is done over a [UART bus](#uart) using [Modbus](#modbus).
-You must therefore have a `uart:`   and `modbus:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` and `modbus:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -81,9 +79,9 @@ sensor:
 
     inverter_module_temp:
       name: "Growatt Inverter Module Temp"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **inverter_status** (*Optional*): Status code of the inverter (0: waiting, 1: normal, 3:fault)
 
@@ -94,8 +92,10 @@ sensor:
 
   - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
     [Sensor](#config-sensor).
+
   - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
     All options from [Sensor](#config-sensor).
+
   - **active_power** (*Optional*): Use the (active) power value of the sensor in watts. All options
     from [Sensor](#config-sensor).
 
@@ -111,8 +111,10 @@ sensor:
 
   - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
     [Sensor](#config-sensor).
+
   - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
     All options from [Sensor](#config-sensor).
+
   - **active_power** (*Optional*): Use the (active) power value of the sensor in watts. All options
     from [Sensor](#config-sensor).
 
@@ -128,18 +130,22 @@ sensor:
 
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
   All options from [Sensor](#config-sensor).
+
 - **energy_production_day** (*Optional*): Use the export active energy value for same day of the
   sensor in kilo watt hours. All options from [Sensor](#config-sensor).
+
 - **total_energy_production** (*Optional*): Use the total exported energy value of the sensor in
   kilo watt hours. All options from [Sensor](#config-sensor).
+
 - **inverter_module_temp** (*Optional*): Use the inverter module temperature value of the sensor in
   degree celsius. All options from [Sensor](#config-sensor).
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `10s`  .
+  sensor. Defaults to `10s`.
+
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
-  the same UART bus. You will need to set the address of each device manually. Defaults to `1`  .
+  the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
 
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-

@@ -6,12 +6,10 @@ params:
     description: Instructions for setting up an SDL keyboard binary sensor.
 ---
 
-
-
-The `sdl`   binary sensor platform creates a binary sensor from keyboard presses on the host platform.
+The `sdl` binary sensor platform creates a binary sensor from keyboard presses on the host platform.
 The sensor will be true when the key is pressed.
 
-## Configuration variables:
+## Configuration variables
 
 - **key** (**Required**): The ID of an [SDL key](https://www.libsdl.org/release/SDL-1.2.15/docs/html/sdlkey.html).
 - All other variables from [Binary Sensor](#config-binary_sensor).
@@ -23,9 +21,9 @@ binary_sensor:
   - platform: sdl
     id: key_id
     key: SDLK_a
-
 ```
+
 ## See Also
+
 - {{< docref "/components/host" "Host Platform" >}}
 - [SDL display](#sdl)
-

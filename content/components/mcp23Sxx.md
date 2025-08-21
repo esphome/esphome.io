@@ -7,8 +7,6 @@ params:
     image: mcp230xx.svg
 ---
 
-
-
 The Microchip MCP23Sxx series of general purpose, parallel I/O expansion for SPI bus applications.
 This series features exactly the same API as the MCP230xx I/O Expander (I²C).
 
@@ -56,24 +54,24 @@ binary_sensor:
       mode:
         input: true
       inverted: false
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this MCP23S08 component.
 - **cs_pin** (**Required**, int): The SPI chip select pin to use
 - **deviceaddress** (*Optional*, int): The address of the chip.
-  Defaults to `0`  .
+  Defaults to `0`.
+
 - **open_drain_interrupt** (*Optional*, boolean): Configure interrupt pins to open-drain mode.
   Useful when the MCP23S08's power supply is greater than 3.3 volts. Note that these pins
   will require pull-up resistors (to 3.3 volts) when this mode is enabled.
 
-### Pin Configuration Variables:
+### Pin Configuration Variables
 
 - **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23S08 component.
-- **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`  , `RISING`  , `FALLING`  .
+- **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - All other options from [Pin Schema](#config-pin_schema)
-
 
 {{< anchor "mcp23s17-label" >}}
 
@@ -121,24 +119,24 @@ binary_sensor:
         input: true
         pullup: true
       inverted: false
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this MCP23S17 component.
 - **cs_pin** (**Required**, int): The SPI chip select pin to use.
 - **deviceaddress** (*Optional*, int): The address of the chip.
-  Defaults to `0`  .
+  Defaults to `0`.
+
 - **open_drain_interrupt** (*Optional*, boolean): Configure interrupt pins to open-drain mode.
   Useful when the MCP23S17's power supply is greater than 3.3 volts. Note that these pins
   will require pull-up resistors (to 3.3 volts) when this mode is enabled.
 
-### Pin Configuration Variables:
+### Pin Configuration Variables
 
 - **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23S17 component.
-- **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`  , `RISING`  , `FALLING`  .
+- **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - All other options from [Pin Schema](#config-pin_schema)
-
 
 ## See Also
 
@@ -147,4 +145,3 @@ binary_sensor:
 - {{< docref "binary_sensor/gpio" >}}
 - {{< apiref "API Reference (MCP23S08)" "mcp23S08/mcp23S08.h" >}}
 - {{< apiref "API Reference (MCP23S17)" "mcp23S17/mcp23S17.h" >}}
-

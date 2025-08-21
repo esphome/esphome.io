@@ -7,9 +7,7 @@ params:
     image: chart-line.svg
 ---
 
-
-
-The `runtime_stats`   component allows you to collect and analyze runtime performance statistics for all components in your ESPHome device. This is a powerful debugging and optimization tool that helps identify components that may be blocking the event loop or consuming excessive processing time.
+The `runtime_stats` component allows you to collect and analyze runtime performance statistics for all components in your ESPHome device. This is a powerful debugging and optimization tool that helps identify components that may be blocking the event loop or consuming excessive processing time.
 
 {{< warning >}}
 This component is intended for **debugging and troubleshooting**. While it can be temporarily enabled in production to diagnose issues, it should not be left enabled long-term because:
@@ -21,15 +19,16 @@ This component is intended for **debugging and troubleshooting**. While it can b
 Enable it when needed to find problems, then disable it once your investigation is complete.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 runtime_stats:
   log_interval: 60s
-
 ```
-## Configuration variables:
 
-- **log_interval** (*Optional*, [Time](#config-time)): How often to log the statistics. Defaults to `60s`  .
+## Configuration variables
+
+- **log_interval** (*Optional*, [Time](#config-time)): How often to log the statistics. Defaults to `60s`.
 
   - Minimum value is `1s`
   - Setting this too low will increase log spam
@@ -37,7 +36,7 @@ runtime_stats:
 ## Understanding the Output
 
 {{< note >}}
-Runtime statistics use `millis()`   for time measurement, which provides millisecond resolution. This means:
+Runtime statistics use `millis()` for time measurement, which provides millisecond resolution. This means:
 
 - Components that execute in less than 1ms will show as 0ms
 - Very fast operations cannot be accurately measured
@@ -73,15 +72,15 @@ Components are sorted by total execution time (descending) to highlight the most
 [09:55:52][I][runtime_stats:084]:   wifi: count=600, avg=0.45ms, max=5ms, total=270ms
 [09:55:52][I][runtime_stats:084]:   api: count=1200, avg=0.01ms, max=1ms, total=12ms
 [09:55:52][I][runtime_stats:084]:   sensor: count=6000, avg=0.00ms, max=1ms, total=20ms
-
 ```
+
 ## Use Cases
 
 **Identifying Blocking Components**
-  Look for components with high `max`   times. These may be blocking the event loop and causing issues with other components.
+  Look for components with high `max` times. These may be blocking the event loop and causing issues with other components.
 
 **Optimization Targets**
-  Components with high `total`   times are good candidates for optimization, especially if they execute frequently.
+  Components with high `total` times are good candidates for optimization, especially if they execute frequently.
 
 **Performance Regression Testing**
   Compare statistics before and after changes to ensure performance hasn't degraded.
@@ -93,13 +92,13 @@ Components are sorted by total execution time (descending) to highlight the most
 
 1. **Start with default interval**: The 60-second default provides a good balance between detail and log volume.
 
-2. **Focus on outliers**: Components with significantly higher execution times than others are usually the best optimization targets.
+1. **Focus on outliers**: Components with significantly higher execution times than others are usually the best optimization targets.
 
-3. **Consider execution frequency**: A component that takes 1ms but runs 1000 times per minute has more impact than one that takes 10ms but runs once per minute.
+1. **Consider execution frequency**: A component that takes 1ms but runs 1000 times per minute has more impact than one that takes 10ms but runs once per minute.
 
-4. **Watch for patterns**: Execution times that increase over time may indicate memory leaks or resource exhaustion.
+1. **Watch for patterns**: Execution times that increase over time may indicate memory leaks or resource exhaustion.
 
-5. **Disable when done**: Always remove or comment out the runtime_stats component when you're finished debugging.
+1. **Disable when done**: Always remove or comment out the runtime_stats component when you're finished debugging.
 
 ## See Also
 
@@ -107,4 +106,3 @@ Components are sorted by total execution time (descending) to highlight the most
 - {{< docref "logger/" >}}
 - [Automation](#automation)
 - {{< apiref "runtime_stats/runtime_stats.h" "runtime_stats/runtime_stats.h" >}}
-

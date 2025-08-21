@@ -7,9 +7,7 @@ params:
     image: ruuvitag.jpg
 ---
 
-
-
-The `ruuvitag`   sensor platform lets you track the output of RuuviTag
+The `ruuvitag` sensor platform lets you track the output of RuuviTag
 Bluetooth Low Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}.
 This component will track the temperature, humidity, acceleration and battery
 voltage of a RuuviTag device with RAWv1 protocol every time the sensor sends
@@ -49,12 +47,13 @@ sensor:
     name: "RuuviTag Movement Counter"
   measurement_sequence_number:
     name: "RuuviTag Measurement Sequence Number"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the RuuviTag
   device.
+
 - **humidity** (*Optional*): The information for the humidity sensor
 
   - All options from [Sensor](#config-sensor).
@@ -114,32 +113,33 @@ sensor:
 
 To set up RuuviTag devices you first need to find their MAC Address so that
 ESPHome can identify them. So first, create a simple configuration without any
-`ruuvitag`   entries but with `ruuvi_ble`   enabled like so:
+`ruuvitag` entries but with `ruuvi_ble` enabled like so:
 
 ```yaml
 esp32_ble_tracker:
 
 ruuvi_ble:
-
 ```
+
 After uploading the ESP32 will immediately try to scan for BLE devices.
 When it detects these sensors, it will automatically parse the BLE message
 print a message like this one:
 
-```
+```log
 Got ruuvi RuuviTag (XX:XX:XX:XX:XX:XX): Humidity: 67.5%, Temperature: 22.97°C,
 Pressure: 977.09hPa, Acceleration X: 0.005G, Acceleration Y: 0.017G, Acceleration Z: 1.066G,
 Battery Voltage: 3.223V
-
 ```
+
 Then just copy the address (`XX:XX:XX:XX:XX:XX`  ) into a new
-`sensor.ruuvitag`   platform entry like in the configuration example at the top.
+`sensor.ruuvitag` platform entry like in the configuration example at the top.
 
 {{< note >}}
 The ESPHome Ruuvi BLE component listens passively to packets the RuuviTag device sends by itself.
 ESPHome therefore has no impact on the battery life of the device.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/esp32_ble_tracker" >}}
@@ -147,4 +147,3 @@ ESPHome therefore has no impact on the battery life of the device.
 - {{< docref "absolute_humidity/" >}}
 - {{< apiref "ruuvitag/ruuvitag.h" "ruuvitag/ruuvitag.h" >}}
 - [Ruuvi](https://ruuvi.com)
-

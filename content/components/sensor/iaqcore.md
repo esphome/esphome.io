@@ -7,8 +7,6 @@ params:
     image: iaqcore.jpg
 ---
 
-
-
 The AMS iAQ-Core sensor allows you to use your
 ([datasheet](https://www.sciosense.com/wp-content/uploads/documents/iaQ-Core-Datasheet.pdf))
 sensors with ESPHome.
@@ -29,15 +27,16 @@ sensor:
         name: "iAQ Core CO2 Sensor"
     tvoc:
         name: "iAQ Core TVOC Sensor"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **i2c_id** (*Optional*, ID): The id of the I²C Bus.
-- **address** (*Optional*, int): Manually specifiy the I²C address of the sensor. Defaults to `0x5A`  .
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
+- **address** (*Optional*, int): Manually specifiy the I²C address of the sensor. Defaults to `0x5A`.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 - **co2** (*Optional*): The configuration for the CO2 sensor. All options from
   [Sensor](#config-sensor).
+
 - **tvoc** (*Optional*): The configuration for the TVOC sensor. All options from
   [Sensor](#config-sensor).
 
@@ -45,4 +44,3 @@ sensor:
 
 - [Sensor Filters](#sensor-filters)
 - {{< docref "/components/sensor" >}}
-

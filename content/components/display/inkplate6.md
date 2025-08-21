@@ -7,9 +7,7 @@ params:
     image: inkplate6.jpg
 ---
 
-
-
-All-in-one e-paper display `Inkplate 5`  , `Inkplate 6`  , `Inkplate 10`   and `Inkplate 6 Plus`  .
+All-in-one e-paper display `Inkplate 5`, `Inkplate 6`, `Inkplate 10` and `Inkplate 6 Plus`.
 
 The Inkplate 5, 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
 recycled from a Kindle e-reader. Its main feature is simplicity.
@@ -56,8 +54,8 @@ display:
   vcom_pin:
     mcp23xxx: mcp23017_hub
     number: 5
-
 ```
+
 {{< warning >}}
 When using the Inkplate epaper module, the GPIO pin numbers above *cannot be changed* as they are
 hardwired within the module/PCB.
@@ -67,12 +65,12 @@ hardwired within the module/PCB.
 Inkplate module cannot perform partial update if 3 bit mode is on.
 It just ignores the function call in that case.
 
-
 {{< /warning >}}
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **model** (*Optional*, enum): Specify the model. Defaults to `inkplate_6`  .
+- **model** (*Optional*, enum): Specify the model. Defaults to `inkplate_6`.
   - `inkplate_6`
   - `inkplate_10`
   - `inkplate_6_plus`
@@ -83,12 +81,13 @@ It just ignores the function call in that case.
 - **full_update_every** (*Optional*, int): When partial updating is enabled, forces a full screen update after chosen number of updates. Defaults to `10`
 - **transform** (*Optional*): Transform the display presentation.
 
-    - **flip_y** (*Optional*, boolean): Flip the screen on the Y axis. Defaults to `false`
-    - **flip_x** (*Optional*, boolean): Flip the screen on the X axis. Defaults to `false`
+  - **flip_y** (*Optional*, boolean): Flip the screen on the Y axis. Defaults to `false`
+  - **flip_x** (*Optional*, boolean): Flip the screen on the X axis. Defaults to `false`
 
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 
 - **ckv_pin** (**Required**, [Pin](#config-pin)): The CKV pin for the Inkplate display.
@@ -101,26 +100,33 @@ It just ignores the function call in that case.
 - **vcom_pin** (**Required**, [Pin](#config-pin)): The VCOM pin for the Inkplate display.
 - **cl_pin** (*Optional*, [Pin](#config-pin)): The CL pin for the Inkplate display.
   Defaults to GPIO0.
+
 - **le_pin** (*Optional*, [Pin](#config-pin)): The LE pin for the Inkplate display.
   Defaults to GPIO2.
 
 - **display_data_0_pin** (*Optional*, [Pin](#config-pin)): The Data 0 pin for the Inkplate display.
   Defaults to GPIO4.
+
 - **display_data_1_pin** (*Optional*, [Pin](#config-pin)): The Data 1 pin for the Inkplate display.
   Defaults to GPIO5.
+
 - **display_data_2_pin** (*Optional*, [Pin](#config-pin)): The Data 2 pin for the Inkplate display.
   Defaults to GPIO18.
+
 - **display_data_3_pin** (*Optional*, [Pin](#config-pin)): The Data 3 pin for the Inkplate display.
   Defaults to GPIO19.
+
 - **display_data_4_pin** (*Optional*, [Pin](#config-pin)): The Data 4 pin for the Inkplate display.
   Defaults to GPIO23.
+
 - **display_data_5_pin** (*Optional*, [Pin](#config-pin)): The Data 5 pin for the Inkplate display.
   Defaults to GPIO25.
+
 - **display_data_6_pin** (*Optional*, [Pin](#config-pin)): The Data 6 pin for the Inkplate display.
   Defaults to GPIO26.
+
 - **display_data_7_pin** (*Optional*, [Pin](#config-pin)): The Data 7 pin for the Inkplate display.
   Defaults to GPIO27.
-
 
 ## Complete Inkplate 6 example
 
@@ -233,7 +239,6 @@ font:
     id: helvetica_48
     size: 48
 
-
 display:
 - platform: inkplate6
   id: inkplate_display
@@ -278,8 +283,8 @@ display:
     } else {
       it.print(700, 100, id(helvetica_48), COLOR_OFF, TextAlign::TOP_RIGHT, "Offline");
     }
-
 ```
+
 ## Inkplate 6 Plus Touchscreen
 
 The Inkplate 6 Plus has a built in touchscreen supported by ESPHome. Note you need to enable pin 12 on the mcp23017 to enable the touchscreen
@@ -305,8 +310,8 @@ touchscreen:
       - logger.log:
           format: "touch x=%d, y=%d"
           args: ['touch.x', 'touch.y']
-
 ```
+
 ## Inkplate 6 Plus Backlight
 
 The Inkplate 6 Plus has a built in backlight supported by ESPHome.
@@ -332,8 +337,8 @@ light:
     id: backlight
     default_transition_length: 0.2s
     name: '${friendly_name} Backlight'
-
 ```
+
 ## Inkplate 6 v2
 
 The Inkplate 6 v2 has a slightly different configuration. The main difference is that it is using pca6416a instead of the mcp23017.
@@ -376,8 +381,8 @@ display:
   vcom_pin:
     pca6416a: pca6416a_hub
     number: 5
-
 ```
+
 ## Inkplate 5
 
 The Inkplate 5 has nearly the same configuration as inkplate 6 v2.
@@ -420,8 +425,8 @@ display:
   vcom_pin:
     pca6416a: pca6416a_hub
     number: 5
-
 ```
+
 ## Inkplate 10
 
 The Inkplate 10 has a configuration similar to 5 and 6, except it has 2 expanders and the battery read MOSFET is not inverted. Also, some versions have an embedded RTC to aid in clock sync.
@@ -510,11 +515,10 @@ display:
     vcom_pin:
       pca6416a: pca6416a_hub
       number: 5
-
 ```
+
 ### See Also
 
 - {{< docref "index/" >}}
 - {{< docref "/components/touchscreen/ektf2232" >}}
 - [Arduino Inkplate 6 library](https://github.com/e-radionicacom/Inkplate-6-Arduino-library) by [E-radionica.com](https://e-radionica.com/)
-

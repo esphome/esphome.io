@@ -7,9 +7,7 @@ params:
     image: servo.svg
 ---
 
-
-
-The `servo`   component allows you to use servo motors with ESPHome. Servos are
+The `servo` component allows you to use servo motors with ESPHome. Servos are
 motor controllers that contain all the electronics necessary for driving the motor and provide
 a simple PWM interface to control the motor.
 
@@ -26,6 +24,7 @@ This component will not show up in the Home Assistant front-end automatically be
 Home Assistant doesn't have support for servos. Please see [Home Assistant Configuration](#servo-ha-config).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 servo:
@@ -39,47 +38,54 @@ output:
     id: pwm_output
     pin: GPIOXX
     frequency: 50 Hz
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The ID of the {{< docref "/components/output/index" "output component" >}}
   to use for this servo.
+
 - **id** (**Required**, [ID](#config-id)): The ID of this servo so that it can be controlled.
 
 Advanced Options:
 
 - **min_level** (*Optional*, percentage): The PWM duty cycle the minimum value (-100%) will map
-  to. Defaults to `3%`  .
+  to. Defaults to `3%`.
+
 - **idle_level** (*Optional*, percentage): The PWM duty cycle the idle value (0%) will map
-  to. This is also the state of the servo at startup. Defaults to `7.5%`  .
+  to. This is also the state of the servo at startup. Defaults to `7.5%`.
+
 - **max_level** (*Optional*, percentage): The PWM duty cycle the maximum value (100%) will map
-  to. Defaults to `12.0%`  .
+  to. Defaults to `12.0%`.
+
 - **restore** (*Optional*, boolean): Whether to restore the state of the servo motor at startup.
   This is useful if you have an absolute servo motor and it goes back to its 0 position at startup.
-  Defaults to `false`  .
-- **auto_detach_time** (*Optional*, [Time](#config-time)): The time after reaching the target value when the servo will be detached`, if set to zero, servo will not be detached. Defaults to `0s`  .
-- **transition_length** (*Optional*, [Time](#config-time)): The time needed for a full movement (-1.0 to 1.0). This will effectively limit the speed of the servo, the larger the value, the slowest the servo will move. Defaults to `0s`  .
+  Defaults to `false`.
+
+- **auto_detach_time** (*Optional*, [Time](#config-time)): The time after reaching the target value when the servo will be detached`, if set to zero, servo will not be detached. Defaults to`0s`.
+- **transition_length** (*Optional*, [Time](#config-time)): The time needed for a full movement (-1.0 to 1.0). This will effectively limit the speed of the servo, the larger the value, the slowest the servo will move. Defaults to `0s`.
   This can slow down the servo to avoid loud noises or just make the movement not jerking.
 
 {{< note >}}
 Some servos support a larger range for the level. For continuous rotation servos
 this can speed them up a bit and for absolute servos this can extend their angle range.
-You can configure the `min_level`   and `max_level`   options to adjust the level range
+You can configure the `min_level` and `max_level` options to adjust the level range
 to match your servo (Experiment with these values).
 
 {{< /note >}}
 {{< anchor "servo-write_action" >}}
 
-## `servo.write`   Action
+## `servo.write` Action
 
 To use your servo motor in [automations](#automation) or templates, you can use this action to set the
 target level of the servo from -100% to 100%.
 
 - -100% (= -1.0) is the minimum value of the servo. For continuous-rotation servos this will
   rotate the servo backward.
+
 - 0% (= 0.0) is the idle level of the servo. For continuous-rotation servos this will
   stop the servo.
+
 - 100% (= 1.0) is the maximum value of the servo. For continuous-rotation servos this will
   rotate the servo forward.
 
@@ -100,8 +106,8 @@ on_...:
         } else {
           return -1.0;
         }
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the servo.
@@ -113,12 +119,12 @@ This action can also be expressed as a [lambda](#config-lambda):
 
 ```cpp
 id(my_servo).write(1.0);
-
 ```
+
 {{< /note >}}
 {{< anchor "servo-detach_action" >}}
 
-## `servo.detach`   Action
+## `servo.detach` Action
 
 This [Action](#config-action) allows you to disable the output on a servo motor -
 this will make the servo motor stop immediately and disable its active control.
@@ -127,21 +133,21 @@ this will make the servo motor stop immediately and disable its active control.
 on_...:
   then:
   - servo.detach: my_servo
-
 ```
+
 {{< note >}}
 This action can also be expressed as a [lambda](#config-lambda):
 
 ```cpp
 id(my_servo).detach();
-
 ```
+
 {{< /note >}}
 {{< anchor "servo-ha-config" >}}
 
 ## Home Assistant Configuration
 
-The easiest way to control your servo from Home Assistant is to add a `number`   to your ESPHome
+The easiest way to control your servo from Home Assistant is to add a `number` to your ESPHome
 configuration. See [Number](#config-number) for more information.
 
 ```yaml
@@ -163,9 +169,8 @@ servo:
   - platform: ...
     # [...] servo config
     id: my_servo
-
 ```
+
 ## See Also
 
 - {{< apiref "servo/servo.h" "servo/servo.h" >}}
-

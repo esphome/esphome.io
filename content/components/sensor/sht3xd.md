@@ -7,16 +7,11 @@ params:
     image: sht3xd.jpg
 ---
 
-
-
-The `sht3xd`   sensor platform Temperature+Humidity sensor allows you to use your Sensirion SHT31-D/SHT3x
+The `sht3xd` sensor platform Temperature+Humidity sensor allows you to use your Sensirion SHT31-D/SHT3x
 ([datasheet](https://cdn-shop.adafruit.com/product-files/2857/Sensirion_Humidity_SHT3x_Datasheet_digital-767294.pdf),
-`Adafruit`_ ) and SHT85 ([datasheet](https://sensirion.com/media/documents/4B40CEF3/640B2346/Sensirion_Humidity_Sensors_SHT85_Datasheet.pdf),
+`Adafruit`_) and SHT85 ([datasheet](https://sensirion.com/media/documents/4B40CEF3/640B2346/Sensirion_Humidity_Sensors_SHT85_Datasheet.pdf),
 `Sensirion`_ ) sensors with Esphome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
-
-
-
 
 {{< img src="temperature-humidity.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -30,26 +25,28 @@ sensor:
       name: "Living Room Humidity"
     address: 0x44
     update_interval: 60s
-
 ```
-## Configuration variables:
 
-- **temperature** (*Optional*): The information for the temperature sensor.
+## Configuration variables
 
-  - All options from [Sensor](#config-sensor).
-
-- **humidity** (*Optional*): The information for the humidity sensor.
+- **temperature** (_Optional_): The information for the temperature sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x44`  . For SHT3x, an alternate address can be `0x45`   while SHT85 supports only address `0x44`
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
-- **heater_enabled** (*Optional*, bool): Turn on/off heater at boot.
+- **humidity** (_Optional_): The information for the humidity sensor.
+
+  - All options from [Sensor](#config-sensor).
+
+- **address** (_Optional_, int): Manually specify the I²C address of the sensor.
+  Defaults to `0x44`. For SHT3x, an alternate address can be `0x45` while SHT85 supports only address `0x44`
+
+- **update_interval** (_Optional_, [Time](#config-time)): The interval to check the
+  sensor. Defaults to `60s`.
+
+- **heater_enabled** (_Optional_, bool): Turn on/off heater at boot.
   This may help provide [more accurate readings in condensing conditions](https://forum.arduino.cc/t/atmospheric-sensors-in-condensing-conditions/412167),
   but can also increase temperature readings and decrease humidity readings as a side effect.
-  Defaults to `false`  .
+  Defaults to `false`.
 
 ## I²C Configuration when using Higher I²C Frequencies
 
@@ -66,8 +63,8 @@ i2c:
   scan: true
   frequency: 800kHz
   timeout: 10ms
-
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
@@ -77,4 +74,3 @@ i2c:
 - {{< docref "hdc1080/" >}}
 - {{< docref "htu21d/" >}}
 - {{< apiref "sht3xd/sht3xd.h" "sht3xd/sht3xd.h" >}}
-

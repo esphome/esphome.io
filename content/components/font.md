@@ -7,20 +7,19 @@ params:
     image: format-font.svg
 ---
 
-
 {{< anchor "display-fonts" >}}
 
-
-ESPHome's graphical rendering engine also has a powerful font drawer which integrates seamlessly into the system. You have the option to use **any** OpenType/TrueType (`.ttf`  , `.otf`  , `.woff`  ) font file at **any** size, as well as fixed-size [PCF](https://en.wikipedia.org/wiki/Portable_Compiled_Format) and [BDF](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format) bitmap fonts.
+ESPHome's graphical rendering engine also has a powerful font drawer which integrates seamlessly into the system. You have the option to use **any** OpenType/TrueType (`.ttf`, `.otf`, `.woff`  ) font file at **any** size, as well as fixed-size [PCF](https://en.wikipedia.org/wiki/Portable_Compiled_Format) and [BDF](https://en.wikipedia.org/wiki/Glyph_Bitmap_Distribution_Format) bitmap fonts.
 
 These fonts can be used in ESPHome's [own rendering engine](#display-engine) or in the {{< docref "/components/lvgl/index" "LVGL Graphics" >}} component.
 
 To use fonts you can either
-- Just grab a `.ttf`  , `.otf`  , `.woff`  , `.pcf`  , or `.bdf`   file from somewhere on the internet and place it, for example, inside a `fonts`   folder next to your configuration file.
-- Use the `gfonts://`   short form to use Google Fonts directly.
+
+- Just grab a `.ttf`, `.otf`, `.woff`, `.pcf`, or `.bdf` file from somewhere on the internet and place it, for example, inside a `fonts` folder next to your configuration file.
+- Use the `gfonts://` short form to use Google Fonts directly.
 - Load a font from a URL directly on build.
 
-Next, create a `font:`   section in your configuration:
+Next, create a `font:` section in your configuration:
 
 ```yaml
 # Various ways to configure fonts
@@ -96,9 +95,9 @@ font:
 
 display:
   # ...
-
 ```
-## Font metrics:
+
+## Font metrics
 
 The Component provides some useful font metrics. Those include:
 
@@ -117,13 +116,13 @@ The Component provides some useful font metrics. Those include:
 - **height** (`get_height()`  ): The lineheight of the font measured from baseline to baseline.
 
 {{< note >}}
-The `capheight`   and `xheight`   values are typically calculated using glyphs with flat tops.
+The `capheight` and `xheight` values are typically calculated using glyphs with flat tops.
 Rounded characters however might overshoot this value slightly to make them visually appear as the same size.
 For special fonts like the Material Design Icons font, which do not contain any letters, these two metrics will be set to 0.
 
 {{< /note >}}
 The following code snipped produces the image below. Note that the lines in the code are ordered as they appear in the image from top to bottom.
-For this font the `descender`   and `height`   are only one pixel apart.
+For this font the `descender` and `height` are only one pixel apart.
 
 ```yaml
 it.print(0, 0, id(my_font), "EspHome");
@@ -141,16 +140,16 @@ it.horizontal_line(0, xheight, it.get_width());
 it.horizontal_line(0, baseline, it.get_width());
 it.horizontal_line(0, descender, it.get_width());
 it.horizontal_line(0, height, it.get_width());
-
 ```
+
 {{< img src="fontmetrics.png" alt="Image" caption="The fontmetric values provided by ESPHome." width="60.0%" class="align-center" >}}
 
-## Configuration variables:
+## Configuration variables
 
 - **file** (**Required**, string): The path (relative to where the .yaml file is) of the font
-  file. You can also use the `gfonts://`   short form to use Google Fonts, or use the below structure:
+  file. You can also use the `gfonts://` short form to use Google Fonts, or use the below structure:
 
-  - **type** (**Required**, string): Can be `local`  , `gfonts`   or `web`  .
+  - **type** (**Required**, string): Can be `local`, `gfonts` or `web`.
 
   **Local Fonts**:
 
@@ -164,15 +163,15 @@ it.horizontal_line(0, height, it.get_width());
   - **family** (**Required**, string): The name of the Google Font family.
   - **italic** (*Optional*, boolean): Whether the font should be italic.
   - **weight** (*Optional*, enum): The weight of the font. Can be either the text name or the integer value:
-      - **thin**: 100
-      - **extra-light**: 200
-      - **light**: 300
-      - **regular**: 400 (**default**)
-      - **medium**: 500
-      - **semi-bold**: 600
-      - **bold**: 700
-      - **extra-bold**: 800
-      - **black**: 900
+    - **thin**: 100
+    - **extra-light**: 200
+    - **light**: 300
+    - **regular**: 400 (**default**)
+    - **medium**: 500
+    - **semi-bold**: 600
+    - **bold**: 700
+    - **extra-bold**: 800
+    - **black**: 900
 
   **Web Fonts**:
 
@@ -180,31 +179,37 @@ it.horizontal_line(0, height, it.get_width());
 
 - **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the font later
   in your display code.
+
 - **size** (*Optional*, int): The desired size of the font. This will be the size (height) of the font in pixels
   when rendered. If you want to use the same font in different sizes, create two font objects.
-  Defaults to `20`   for scalable fonts and the first available size for bitmap fonts. Requesting a size that is not available in a bitmap-only font will result in an error.
-- **bpp** (*Optional*, int): The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be `1`  , `2`  , `4`  , `8`  . Defaults to `1`  .
+  Defaults to `20` for scalable fonts and the first available size for bitmap fonts. Requesting a size that is not available in a bitmap-only font will result in an error.
+
+- **bpp** (*Optional*, int): The bit depth of the rendered font from OpenType/TrueType, for anti-aliasing. Can be `1`, `2`, `4`, `8`. Defaults to `1`.
   If set to 1 and the font has a bitmap version available at the requested size, that will be used. Otherwise the font will be rendered from the vector representation.
+
 - **glyphsets** (*Optional*, list): A list of glyphsets you plan to use. Defaults to
-  `GF_Latin_Kernel`  , which contains the basic characters and necessary punctuation and symbols for
-  the English language. `GF_Latin_Core`   is a more extended set that includes glyphs for the
+  `GF_Latin_Kernel`, which contains the basic characters and necessary punctuation and symbols for
+  the English language. `GF_Latin_Core` is a more extended set that includes glyphs for the
   languages of Europe and the Americas with over 5 million speakers. Other options include
-  `GF_Arabic_Core`  , `GF_Cyrillic_Core`  , `GF_Greek_Core`  , their `Plus`   variants, as well as
-  `GF_Latin_African`  , `GF_Latin_PriAfrican`   and `GF_Latin_Vietnamese`  .
+  `GF_Arabic_Core`, `GF_Cyrillic_Core`, `GF_Greek_Core`, their `Plus` variants, as well as
+  `GF_Latin_African`, `GF_Latin_PriAfrican` and `GF_Latin_Vietnamese`.
   See the [Google Fonts Glyphset documentation](https://github.com/googlefonts/glyphsets/blob/main/GLYPHSETS.md)
   for an extensive list of all possible sets, along with their names and the languages supported by
-  each of those sets.  Note that `GF_Latin_Kernel`   may need to be included for glyphs for basic
+  each of those sets. Note that `GF_Latin_Kernel` may need to be included for glyphs for basic
   characters such as numbers (0-9) and whitespace to be present.
+
 - **glyphs** (*Optional*, list): A list of characters you plan to use, in addition to the characters
   defined by the **glyphsets** option above. Adjust this list if you need some special characters or
   want to reduce the size of the binary if you don't plan to use certain glyphs. Both single
   characters (`a, b, c`  ) or strings of characters (`abc, def`  ) are acceptable options. You can
   also specify glyphs by their codepoint (see below).
+
 - **ignore_missing_glyphs** (*Optional*, boolean): By default, warnings are generated for any glyph
   that is included in the defined **glyphsets** but not present in the configured font. Use this
   setting to suppress those warnings. Please note that the absence of any manually defined glyphs
   (specified via the **glyphs** option) will always be treated as an error and will not be influenced
   by this setting.
+
 - **extras** (*Optional*, enum): A list of font glyph configurations you'd like to include within this font, from other OpenType/TrueType files (eg. icons from other font, but at the same size as the main font):
 
   - **file** (**Required**, string): The path of the font file with the extra glyphs.
@@ -212,23 +217,23 @@ it.horizontal_line(0, height, it.get_width());
 
 {{< note >}}
 OpenType/TrueType font files offer icons at codepoints far from what's reachable on a standard keyboard, for these it's needed
-to specify the unicode codepoint of the glyph as a hex address escaped with `\u`   or `\U`  .
+to specify the unicode codepoint of the glyph as a hex address escaped with `\u` or `\U`.
 
-- Code points up to `0xFFFF`   are encoded like `\uE6E8`  . Lowercase `\u`   and exactly 4 hexadecimal digits.
-- Code points above `0xFFFF`   are encoded like `\U0001F5E9`  . Capital `\U`   and exactly 8 hexadecimal digits.
+- Code points up to `0xFFFF` are encoded like `\uE6E8`. Lowercase `\u` and exactly 4 hexadecimal digits.
+- Code points above `0xFFFF` are encoded like `\U0001F5E9`. Capital `\U` and exactly 8 hexadecimal digits.
 
-The `extras`   section only supports OpenType/TrueType files, `size`   and `bpp`   will be the same as the above level. This will allow printing icons alongside the characters in the same string, like `I \uF004 You \uF001`  .
+The `extras` section only supports OpenType/TrueType files, `size` and `bpp` will be the same as the above level. This will allow printing icons alongside the characters in the same string, like `I \uF004 You \uF001`.
 
 Many font sizes with multiple glyphs at high bit depths will increase the binary size considerably. Make your choices carefully.
 
-
 {{< /note >}}
 {{< note >}}
-To use fonts you will need to have the python `pillow`   package installed, as ESPHome uses that package
+To use fonts you will need to have the python `pillow` package installed, as ESPHome uses that package
 to translate the OpenType/TrueType and bitmap font files into an internal format. If you're running this as a Home Assistant add-on or with the official ESPHome docker image, it should already be installed. Otherwise you need
-to install it using `pip install "pillow==10.4.0"`  .
+to install it using `pip install "pillow==10.4.0"`.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}
@@ -237,4 +242,3 @@ to install it using `pip install "pillow==10.4.0"`  .
 - [MDI cheatsheet](https://pictogrammers.com/library/mdi/)
 - [MDI font repository](https://github.com/Pictogrammers/pictogrammers.github.io/tree/main/%40mdi/font/)
 - [Google Fonts Glyphsets](https://github.com/googlefonts/glyphsets/blob/main/GLYPHSETS.md)
-

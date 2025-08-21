@@ -7,9 +7,7 @@ params:
     image: shtc3.jpg
 ---
 
-
-
-The `shtcx`   sensor platform Temperature+Humidity sensor allows you to use your Sensirion SHTC1
+The `shtcx` sensor platform Temperature+Humidity sensor allows you to use your Sensirion SHTC1
 ([datasheet](https://sensirion.com/media/documents/21BF77EA/63A5A411/Datasheet_SHTC1.pdf),
 [Sensirion STHC1](https://www.sensirion.com/en/environmental-sensors/humidity-sensors/digital-humidity-sensor-for-consumer-electronics-and-iot/)) and
 the newer SHTC3
@@ -17,8 +15,6 @@ the newer SHTC3
 `SparkFun`_ ) sensors with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
-
-
 
 {{< img src="temperature-humidity.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -30,9 +26,9 @@ sensor:
       name: "Temperature"
     humidity:
       name: "Humidity"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
@@ -43,9 +39,10 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x70`  .
+  Defaults to `0x70`.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 ## See Also
 
@@ -57,4 +54,3 @@ sensor:
 - {{< docref "htu21d/" >}}
 - {{< docref "sht3xd/" >}}
 - {{< apiref "shtcx/shtcx.h" "shtcx/shtcx.h" >}}
-

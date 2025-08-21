@@ -7,10 +7,10 @@ params:
     image: logo.svg
 ---
 
+## What is ESPHome?
 
-# What is ESPHome?
-
-ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular WiFi-enabled microcontrollers. With ESPHome, you can:
+ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular
+WiFi-enabled microcontrollers. With ESPHome, you can:
 
 * **Create custom smart home devices** using simple YAML configuration files
 * **Integrate seamlessly with Home Assistant** for a unified smart home experience
@@ -18,7 +18,8 @@ ESPHome is an open-source firmware framework that simplifies the process of crea
 * **Automate your home** with powerful on-device automations
 * **Update your devices wirelessly** "Over The Air" (OTA) updates without physical access
 
-ESPHome takes care of the complex parts of firmware development, allowing you to focus on what matters - building your smart home exactly how you want it.
+ESPHome takes care of the complex parts of firmware development, allowing you to focus on what matters - building your
+smart home exactly how you want it.
 
 {{< feature-grid >}}
 [
@@ -46,7 +47,7 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
 {{< /feature-grid >}}
 {{< anchor "who-uses-esphome" >}}
 
-# Who Uses ESPHome?
+## Who Uses ESPHome?
 
 {{< feature-grid >}}
 [
@@ -68,11 +69,12 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
   {
     "icon": "industry",
     "title": "Manufacturers",
-    "description": "Create <a href=\"/guides/made_for_esphome\">Made for ESPHome</a> certified products with standardized firmware"
+    "description": "Create [Made for ESPHome](/guides/made_for_esphome) certified products with standardized firmware"
   }
 ]
 {{< /feature-grid >}}
-# Which microcontrollers does ESPHome support?
+
+## Which microcontrollers does ESPHome support?
 
 {{< feature-grid >}}
 [
@@ -94,13 +96,13 @@ ESPHome takes care of the complex parts of firmware development, allowing you to
   {
     "icon": "computer",
     "title": "Desktop",
-    "description": "Many ESPHome components can be run on a desktop computer using the <i>host</i> platform!"
+    "description": "Many ESPHome components can be run on a desktop computer using the *host* platform!"
   }
 ]
 {{< /feature-grid >}}
 {{< anchor "getting-started" >}}
 
-# Getting Started
+## Getting Started
 
 Getting started with ESPHome is easy. Choose the method that works best for you:
 
@@ -132,4 +134,3 @@ Getting started with ESPHome is easy. Choose the method that works best for you:
   }
 ]
 {{< /getting-started-grid >}}
-

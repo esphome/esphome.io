@@ -7,9 +7,7 @@ params:
     image: upload.svg
 ---
 
-
-
-The `output`   switch platform allows you to use any output component as a switch.
+The `output` switch platform allows you to use any output component as a switch.
 
 {{< img src="output-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -23,9 +21,9 @@ switch:
   - platform: output
     name: "Generic Output"
     output: 'generic_out'
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The ID of the output component to use.
 - All other options from [Switch](#config-switch).
@@ -34,4 +32,3 @@ switch:
 
 - {{< docref "/components/output" >}}
 - {{< apiref "output/switch/output_switch.h" "output/switch/output_switch.h" >}}
-

@@ -6,8 +6,6 @@ params:
     description: Instructions for setting up a MicroNova board based pellet stove in ESPHome.
 ---
 
-
-
 The MicroNova component allows you to integrate a pellet stove with a MicroNova board in ESPHome.
 It uses [UART](#uart) for communication.
 
@@ -24,6 +22,7 @@ Also, switching your stove on or off can behave different on the various MicroNo
 Use this component at your own risk.
 
 {{< /warning >}}
+
 ## Connecting your stove
 
 Most MicroNova based pellet stoves have a serial output. In most cases this output has 4 pins: GND, 5v, 20V and DATA.
@@ -47,9 +46,9 @@ get 3v3.
 ```yaml
 micronova:
   enable_rx_pin: GPIOXX
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **enable_rx_pin** (**Required**, [Pin](#config-pin)): Output pin to be used to switch the line between RX and TX.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval that the sensors should be checked.
@@ -62,10 +61,11 @@ switch or number accepts these parameters:
 
 - **memory_location** (*Optional*): The memory location where the parameter must be read. For most stoves this is 0x00 for RAM
   or 0x20 for EPROM.
+
 - **memory_address** (*Optional*): The address where the parameter is stored.
 
-
 {{< /note >}}
+
 ## Text Sensors
 
 ```yaml
@@ -73,9 +73,9 @@ text_sensor:
   - platform: micronova
     stove_state:
       name: Stove status
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **stove_state** (*Optional*): The current stove state.
   All options from [Text Sensor](#config-text_sensor).
@@ -102,28 +102,32 @@ sensor:
       memory_location: 0x20
       memory_address: 0x7d
       name: Custom Address sensor
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **room_temperature** (*Optional*): Sensor that reads the stoves ambient room temperature.
   All options from [Sensor](#config-sensor).
+
 - **fumes_temperature** (*Optional*): Fumes temperature.
   All options from [Sensor](#config-sensor).
+
 - **stove_power** (*Optional*): Current stove power.
   All options from [Sensor](#config-sensor).
-- **fan_speed** (*Optional*): Current fan speed. The raw value from the stove is multiplied by 10 + `fan_rpm_offset`  .
+
+- **fan_speed** (*Optional*): Current fan speed. The raw value from the stove is multiplied by 10 + `fan_rpm_offset`.
 
   - **fan_rpm_offset** (*Optional*, integer): Offset the reported RPM value. Must be between 0 and 255. Defaults to 0.
   - All other options from [Sensor](#config-sensor).
 - **water_temperature** (*Optional*): Internal boiler water termperature.
   All options from [Sensor](#config-sensor).
+
 - **water_pressure** (*Optional*): Internal boiler water pressure.
   All options from [Sensor](#config-sensor).
+
 - **memory_address_sensor** (*Optional*): Can be any **memory_location** / **memory_address** you want to track. Usefull
   when you don't know where the parameter is for your stove is.
   All options from [Sensor](#config-sensor).
-
 
 ## Numbers
 
@@ -135,13 +139,13 @@ number:
       step: 0.5
     power_level:
       name: Thermostat temperature
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **thermostat_temperature** (*Optional*): Number that holds the current stove thermostat value.
-   - **step** (*Optional*): Temperature step. This value is used to multiply/devide the raw value when setting/reading the **thermostat_temperature**
-   - All other options from [Number](#config-number).
+  - **step** (*Optional*): Temperature step. This value is used to multiply/devide the raw value when setting/reading the **thermostat_temperature**
+  - All other options from [Number](#config-number).
 - **power_level** (*Optional*): Number that sets/reads the requested stove power.
   All options from [Number](#config-number).
 
@@ -152,6 +156,7 @@ This parameter is a hex value for the **memory_location** where the new thermost
 - **memory_write_location** (*Optional*): The **memory_location** where to write the new thermostat value.
 
 {{< /note >}}
+
 ## Buttons
 
 ```yaml
@@ -162,9 +167,9 @@ button:
       memory_location: 0x20
       memory_address: 0x7d
       memory_data: 0x08
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **custom_button** (*Optional*): Write the hex value **memory_data** to a **memory_location** and **memory_address**
   All options from [Button](#config-button).
@@ -175,6 +180,7 @@ Besides **memory_location** and **memory_address** you must specify a specific *
 - **memory_data** (**Required**): The hex value to be written to the **memory_location** and **memory_address**.
 
 {{< /note >}}
+
 ## Switches
 
 ```yaml
@@ -182,9 +188,9 @@ switch:
   - platform: micronova
     stove:
       name: Stove on/off switch
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **stove** (*Optional*): Turn the stove on or off. This switch will also reflect the current stove state.
   If the **stove_state** is "Off" the switch will be off, in all other states, the switch wil be on.
@@ -199,9 +205,9 @@ turns on or off.
 - **memory_data_off** (*Optional*): The data to write when turning the switch off.
 
 {{< /note >}}
+
 ## See Also
 
 - [ridiculouslab micronova](https://www.ridiculouslab.com/arguments/iot/stufa/micronova_en.php)
 - [philibertc / micronova_controller](https://github.com/philibertc/micronova_controller/)
 - [eni23 / micronova-controller](https://github.com/eni23/micronova-controller)
-

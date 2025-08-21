@@ -7,8 +7,6 @@ params:
     image: ultrasonic.jpg
 ---
 
-
-
 The ultrasonic distance sensor allows you to use simple ultrasonic
 sensors like the HC-SR04
 ([datasheet](https://www.electroschematics.com/wp-content/uploads/2013/07/HC-SR04-datasheet-version-2.pdf),
@@ -34,24 +32,29 @@ sensor:
     trigger_pin: D1
     echo_pin: D2
     name: "Ultrasonic Sensor"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **trigger_pin** (**Required**, [Pin Schema](#config-pin_schema)): The output pin to
   periodically send the trigger pulse to.
+
 - **echo_pin** (**Required**, [Pin Schema](#config-pin_schema)): The input pin on which to
   wait for the echo.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - All other options from [Sensor](#config-sensor).
 
 Advanced options:
 
 - **timeout** (*Optional*, float): The number of meters for the
   timeout. Most sensors can only sense up to 2 meters. Defaults to 2 meters.
+
 - **pulse_time** (*Optional*, [Time](#config-time)): The duration for which the trigger pin will be
-  active. Defaults to `10us`  .
+  active. Defaults to `10us`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
 ## See Also
@@ -59,4 +62,3 @@ Advanced options:
 - [Sensor Filters](#sensor-filters)
 - {{< docref "template/" >}}
 - {{< apiref "ultrasonic/ultrasonic_sensor.h" "ultrasonic/ultrasonic_sensor.h" >}}
-

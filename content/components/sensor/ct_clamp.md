@@ -7,13 +7,11 @@ params:
     image: ct_clamp.jpg
 ---
 
-
-
 The Current Transformer Clamp (`ct_clamp`  ) sensor allows you to hook up a CT Clamp to an analog
 voltage sensor (like the {{< docref "adc" "ADC sensor" >}}) and convert the readings to measured single phase AC current.
 
 First, you need to set up a voltage sensor source ({{< docref "adc" "ADC sensor" >}}, but for example also
-{{< docref "ads1115" "ADS1115" >}}) and pass it to the CT clamp sensor with the `sensor`   option.
+{{< docref "ads1115" "ADS1115" >}}) and pass it to the CT clamp sensor with the `sensor` option.
 
 Please also see [this guide](https://learn.openenergymonitor.org/electricity-monitoring/ct-sensors/introduction)
 as an introduction to the working principle of CT clamp sensors and how to hook them up to your device.
@@ -32,15 +30,17 @@ sensor:
   - platform: adc
     pin: A0
     id: adc_sensor
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor** (**Required**, [ID](#config-id)): The source sensor to measure voltage values from.
 - **sample_duration** (*Optional*, [Time](#config-time)): The time duration to sample the current clamp
-  with. Higher values can increase accuracy. Defaults to `200ms`   which would be 10 whole cycles on a 50Hz system.
+  with. Higher values can increase accuracy. Defaults to `200ms` which would be 10 whole cycles on a 50Hz system.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval
-  to check the sensor. Defaults to `60s`  . The **update_interval** for `ct_clamp`   has to be greater than **sample_duration**.
+  to check the sensor. Defaults to `60s`. The **update_interval** for `ct_clamp` has to be greater than **sample_duration**.
+
 - All other options from [Sensor](#config-sensor).
 
 ## Calibration
@@ -66,8 +66,8 @@ sensor:
           # Known load: 4.0A
           # Value shown in logs: 0.1333A
           - 0.1333 -> 4.0
-
 ```
+
 Recompile and upload, now your CT clamp sensor is calibrated!
 
 ## See Also
@@ -77,4 +77,3 @@ Recompile and upload, now your CT clamp sensor is calibrated!
 - {{< docref "adc/" >}}
 - {{< docref "ads1115/" >}}
 - {{< apiref "sensor/ct_clamp_sensor.h" "sensor/ct_clamp_sensor.h" >}}
-

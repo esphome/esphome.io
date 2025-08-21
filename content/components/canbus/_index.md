@@ -7,8 +7,6 @@ params:
     image: canbus.svg
 ---
 
-
-
 The Controller Area Network (CAN) bus is a serial bus protocol to connect individual systems and sensors
 as an alternative to conventional multi-wire looms. It allows automotive components to communicate on a
 single or dual-wire data bus at speeds up to 1Mbps.
@@ -29,15 +27,15 @@ The CAN bus itself has only two wires named Can High and Can Low or CanH and Can
 CAN bus to work, you need to select the device that has the physical CAN bus implemented.
 You can configure multiple buses.
 
-Any CAN bus node can transmit data at any time; any node can both send and/or receive any `can_id`   value.
-You must determine how to organize the `can_id`   values; for example, you can set up a CAN bus network where
-each node has a `can_id`   it will use to broadcast data about itself. If a given node should (for example) turn
-on a light, it can listen to the CAN bus for messages containing its specific `can_id`   and react accodingly.
+Any CAN bus node can transmit data at any time; any node can both send and/or receive any `can_id` value.
+You must determine how to organize the `can_id` values; for example, you can set up a CAN bus network where
+each node has a `can_id` it will use to broadcast data about itself. If a given node should (for example) turn
+on a light, it can listen to the CAN bus for messages containing its specific `can_id` and react accodingly.
 With this architecture, you can have multiple nodes able to control a light connected to a single, specific node.
 
 ## Base CAN Bus Configuration
 
-Each `canbus`   platform extends the following configuration schema:
+Each `canbus` platform extends the following configuration schema:
 
 ```yaml
 # Example configuration entry
@@ -51,8 +49,8 @@ canbus:
       - lambda: |-
           std::string b(x.begin(), x.end());
           ESP_LOGD("can id 500", "%s", &b[0] );
-
 ```
+
 {{< anchor "config-canbus" >}}
 
 **Configuration variables:**
@@ -66,31 +64,31 @@ canbus:
   - `true`  : Extended 29-bit IDs
 
 - **bit_rate** (*Optional*, enum): One of the supported bit rates. See [this table](#esp32-can-bit-rate) for a
-  list of supported bit rates by the internal CAN (TWAI) controllers of different ESP32 variants. Defaults to `125KBPS`  .
+  list of supported bit rates by the internal CAN (TWAI) controllers of different ESP32 variants. Defaults to `125KBPS`.
 
-    - `1KBPS`   - Support by `esp32_can`   depends on ESP32 variant
-    - `5KBPS`   - Support by `esp32_can`   depends on ESP32 variant
-    - `10KBPS`   - Support by `esp32_can`   depends on ESP32 variant
-    - `12K5BPS`   - Support by `esp32_can`   depends on ESP32 variant
-    - `16KBPS`   - Support by `esp32_can`   depends on ESP32 variant
-    - `20KBPS`   - Support by `esp32_can`   depends on ESP32 variant
-    - `25KBPS`
-    - `31K25BPS`   - Not supported by `esp32_can`
-    - `33KBPS`   - Not supported by `esp32_can`
-    - `40KBPS`   - Not supported by `esp32_can`
-    - `50KBPS`
-    - `80KBPS`   - Not supported by `esp32_can`
-    - `83K3BPS`   - Not supported by `esp32_can`
-    - `95KBPS`   - Not supported by `esp32_can`
-    - `100KBPS`
-    - `125KBPS`   - *Default*
-    - `200KBPS`   - Not supported by `esp32_can`
-    - `250KBPS`
-    - `500KBPS`
-    - `1000KBPS`
+  - `1KBPS` - Support by `esp32_can` depends on ESP32 variant
+  - `5KBPS` - Support by `esp32_can` depends on ESP32 variant
+  - `10KBPS` - Support by `esp32_can` depends on ESP32 variant
+  - `12K5BPS` - Support by `esp32_can` depends on ESP32 variant
+  - `16KBPS` - Support by `esp32_can` depends on ESP32 variant
+  - `20KBPS` - Support by `esp32_can` depends on ESP32 variant
+  - `25KBPS`
+  - `31K25BPS` - Not supported by `esp32_can`
+  - `33KBPS` - Not supported by `esp32_can`
+  - `40KBPS` - Not supported by `esp32_can`
+  - `50KBPS`
+  - `80KBPS` - Not supported by `esp32_can`
+  - `83K3BPS` - Not supported by `esp32_can`
+  - `95KBPS` - Not supported by `esp32_can`
+  - `100KBPS`
+  - `125KBPS` - *Default*
+  - `200KBPS` - Not supported by `esp32_can`
+  - `250KBPS`
+  - `500KBPS`
+  - `1000KBPS`
 
 - **on_frame** (*Optional*, [Automation](#automation)): An automation to perform when a
-  CAN frame is received. See [`on_frame`   Trigger](#canbus-on-frame).
+  CAN frame is received. See [`on_frame` Trigger](#canbus-on-frame).
 
 {{< anchor "platforms-canbus" >}}
 
@@ -100,17 +98,18 @@ canbus:
 
 {{< anchor "canbus-on-frame" >}}
 
-### `on_frame`   Trigger
+### `on_frame` Trigger
 
-This automation will be triggered when a CAN frame is received. The variables `x`   (of type
-`std::vector<uint8_t>`  ) containing the frame data, `can_id`   (of type `uint32_t`  ) containing the actual
-received CAN ID and `remote_transmission_request`   (of type `bool`  ) containing the corresponding field
+This automation will be triggered when a CAN frame is received. The variables `x` (of type
+`std::vector<uint8_t>`  ) containing the frame data, `can_id` (of type `uint32_t`  ) containing the actual
+received CAN ID and `remote_transmission_request` (of type `bool`  ) containing the corresponding field
 from the CAN frame are passed to the automation for use in lambdas.
 
 {{< note >}}
 Messages this node sends to the same ID will not show up as received messages.
 
 {{< /note >}}
+
 ```yaml
 canbus:
   - platform: ...
@@ -142,20 +141,21 @@ canbus:
                 break;
               // to be continued...
             }
-
 ```
+
 **Configuration variables:**
 
 - **can_id** (**Required**, int): The CAN ID which, when received, will trigger this automation.
 - **can_id_mask** (*Optional*, int): The bit mask to apply to the received CAN ID before trying to match it
-  with *can_id*. Defaults to `0x1fffffff`   (all bits of received CAN ID are compared with *can_id*).
-- **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id`   to match on. Defaults to `false`  .
+  with *can_id*. Defaults to `0x1fffffff` (all bits of received CAN ID are compared with *can_id*).
+
+- **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id` to match on. Defaults to `false`.
 - **remote_transmission_request** (*Optional*, boolean): Whether to run for CAN frames with the "remote
   transmission request" bit set or not set. Defaults to not checking (the automation will run for both cases).
 
-### `canbus.send`   Action
+### `canbus.send` Action
 
-The CAN bus can transmit frames by means of the `canbus.send`   action. There are several ways to use it:
+The CAN bus can transmit frames by means of the `canbus.send` action. There are several ways to use it:
 
 ```yaml
 on_...:
@@ -171,22 +171,24 @@ on_...:
 
   # Templated; return type must be std::vector<uint8_t>
   - canbus.send: !lambda return {0x00, 0x20, 0x42};
-
 ```
+
 **Configuration variables:**
 
 - **data** (**Required**, binary data, [templatable](#config-templatable)): Data to transmit, up to eight
   bytes/characters are supported by CAN bus per frame.
+
 - **canbus_id** (*Optional*): Sets the CAN bus ID to use for transmitting the frame. Required if you are have multiple
   CAN bus platforms defined in your configuration.
-- **can_id** (*Optional*, int): Allows overriding the `can_id`   configured for the CAN bus device.
+
+- **can_id** (*Optional*, int): Allows overriding the `can_id` configured for the CAN bus device.
 - **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id`  :
 
   - `false`  : Standard 11-bit IDs *(default)*
   - `true`  : Extended 29-bit IDs
 
 - **remote_transmission_request** (*Optional*, boolean): Set to send CAN bus frame to request data from another node.
-  If a certain data length code needs to be sent, include the necessary (dummy) bytes in `data`  . Defaults to `false`  .
+  If a certain data length code needs to be sent, include the necessary (dummy) bytes in `data`. Defaults to `false`.
 
 ## Extended ID
 
@@ -194,13 +196,13 @@ Standard IDs and Extended IDs can coexist on the same segment.
 
 {{< note >}}
 It is important to know that "standard" and "extended" addresses denote different addresses. For example,
-Standard `0x123`   and Extended `0x123`   are, in fact, different addresses.
+Standard `0x123` and Extended `0x123` are, in fact, different addresses.
 
 {{< /note >}}
 Decimal or hexadecimal notation may be used for IDs:
 
-- Standard IDs use `0x000`   to `0x7ff`   (hexadecimal) or `0`   to `2047`   (decimal)
-- Extended IDs use `0x00000000`   to `0x1fffffff`   (hexadecimal) or `0`   to `536870911`   (decimal)
+- Standard IDs use `0x000` to `0x7ff` (hexadecimal) or `0` to `2047` (decimal)
+- Extended IDs use `0x00000000` to `0x1fffffff` (hexadecimal) or `0` to `536870911` (decimal)
 
 This example illustrates how different ID types may be used in your configuration for both transmitting and receiving.
 
@@ -238,13 +240,13 @@ canbus:
         - lambda: |-
             std::string b(x.begin(), x.end());
             ESP_LOGD("CAN standard ID 0x123", "%s", &b[0]);
-
 ```
+
 ## Binary Sensor Example
 
-Given that we have a button connected to a remote CAN node which will send a message to ID `0x100`   with the payload
-`0x1`   for contact closed and `0x0`   for contact open, this example will look for this message and update the state
-of its `binary_sensor`   accordingly.
+Given that we have a button connected to a remote CAN node which will send a message to ID `0x100` with the payload
+`0x1` for contact closed and `0x0` for contact open, this example will look for this message and update the state
+of its `binary_sensor` accordingly.
 
 ```yaml
 binary_sensor:
@@ -270,8 +272,8 @@ canbus:
                     break;
                 }
               }
-
 ```
+
 ## Cover Example
 
 In this example, three nodes are connected to the CAN bus:
@@ -287,7 +289,7 @@ In this example, three nodes are connected to the CAN bus:
   - 3: Long release
   - 4: Double-click
 
-- Node 3 controls a motor connected to it. It expects a message to ID `0x51A`   where the one-byte payload is:
+- Node 3 controls a motor connected to it. It expects a message to ID `0x51A` where the one-byte payload is:
 
   - 0: Off
   - 1: Open
@@ -348,9 +350,8 @@ cover:
           data: [ 0x00 ]
           canbus_id: my_canbus
           can_id: 0x51A
-
 ```
+
 ## See Also
 
 - {{< apiref "canbus/canbus.h" "canbus/canbus.h" >}}
-

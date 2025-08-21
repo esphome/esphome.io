@@ -7,15 +7,12 @@ params:
     image: improv-social.png
 ---
 
-
-
-The `improv_serial`   component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
+The `improv_serial` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESPHome device by using a serial connection to the device, eg. USB.
 
-The `improv_serial`   component requires the serial `logger`   to be configured.
+The `improv_serial` component requires the serial `logger` to be configured.
 
-The `improv_serial`   component will use the project name and version instead of ESPHomes version whenever it's available.
-
+The `improv_serial` component will use the project name and version instead of ESPHomes version whenever it's available.
 
 ```yaml
 # Example configuration entry
@@ -23,8 +20,8 @@ wifi:
   # ...
 
 improv_serial:
-
 ```
+
 ## Configuration variables
 
 - **next_url** (*Optional*, url): A URL that can be used to forward the user to after setting credentials with improv.
@@ -42,8 +39,8 @@ that can be performed by ESPHome when wrapped in double braces `{{ }}`  :
 # Example next_url
 improv_serial:
   next_url: http://example.com/?device_name={{device_name}}&ip_address={{ip_address}}&esphome_version={{esphome_version}}
-
 ```
+
 ## See Also
 
 - {{< docref "wifi/" >}}
@@ -51,4 +48,3 @@ improv_serial:
 - {{< docref "esp32_improv/" >}}
 - [Improv Wi-Fi](https://www.improv-wifi.com/)
 - {{< apiref "improv_serial/improv_serial_component.h" "improv_serial/improv_serial_component.h" >}}
-

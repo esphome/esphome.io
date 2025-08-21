@@ -7,9 +7,7 @@ params:
     image: description.svg
 ---
 
-
-
-The `template`   text sensor platform allows you to create a text sensor with templated values
+The `template` text sensor platform allows you to create a text sensor with templated values
 using [lambdas](#config-lambda).
 
 ```yaml
@@ -20,28 +18,31 @@ text_sensor:
     lambda: |-
       return {"Hello World"};
     update_interval: 60s
-
 ```
+
 Possible return values for the lambda:
 
-- `return {"STRING LITERAL"};`   the new value for the sensor of type `std::string`  . **Has to be** in
+- `return {"STRING LITERAL"};` the new value for the sensor of type `std::string`. **Has to be** in
    brackets `{}`  !
-- `return {};`   if you don't want to publish a new state (advanced).
 
-## Configuration variables:
+- `return {};` if you don't want to publish a new state (advanced).
+
+## Configuration variables
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the text sensor
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  text sensor. Set to `never`   to disable updates. Defaults to `60s`  .
+  text sensor. Set to `never` to disable updates. Defaults to `60s`.
+
 - All other options from [Text Sensor](#config-text_sensor).
 
 {{< anchor "text_sensor-template-publish_action" >}}
 
-## `text_sensor.template.publish`   Action
+## `text_sensor.template.publish` Action
 
 You can also publish a state to a template text sensor from elsewhere in your YAML file
-with the `text_sensor.template.publish`   action.
+with the `text_sensor.template.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -60,8 +61,8 @@ on_...:
   - text_sensor.template.publish:
       id: template_text
       state: !lambda 'return "Hello World";'
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the template text sensor.
@@ -73,9 +74,10 @@ This action can also be written in lambdas:
 
 ```cpp
 id(template_text).publish_state("Hello World");
-
 ```
+
 {{< /note >}}
+
 ## Useful Template Sensors
 
 Here are some useful text sensors for debugging and tracking project info.
@@ -109,11 +111,10 @@ text_sensor:
     update_interval: 600s
     lambda: |-
       return { ESPHOME_PROJECT_NAME };
-
 ```
+
 ## See Also
 
 - {{< docref "/components/text_sensor" >}}
 - [Automation](#automation)
 - {{< apiref "template/text_sensor/template_text_sensor.h" "template/text_sensor/template_text_sensor.h" >}}
-
