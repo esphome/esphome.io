@@ -591,7 +591,7 @@ def main():
     args = parser.parse_args()
     
     script_dir = Path(__file__).parent
-    content_dir = script_dir / 'content'
+    content_dir = Path(os.getcwd()) / 'content'
     
     if args.file:
         # Process single file
