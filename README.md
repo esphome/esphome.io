@@ -12,18 +12,9 @@
 [github-link]: https://github.com/esphome/esphome/releases
 
 <a href="https://esphome.io/">
-  <style>
-      :root {
-        --logo-text-color: black;
-      }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --logo-text-color: white;
-      }
-    }
-  </style>
   <picture>
-  <img src="https://esphome.io/images/logo-docs.svg" alt="ESPHome Logo">
+    <source media="(prefers-color-scheme: dark)" srcset="https://esphome.io/images/logo-docs-on-dark.svg">
+    <img src="https://esphome.io/images/logo-docs.svg" alt="ESPHome Logo">
   </picture>
 </a>
 
