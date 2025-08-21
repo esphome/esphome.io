@@ -422,7 +422,7 @@ def is_heading(line: str) -> bool:
 
 def is_fenced_code_block_start(line: str) -> bool:
     """Check if a line starts a fenced code block."""
-    return line.strip().startswith("```")
+    return line.strip().startswith("```") and len(line.strip()) > 3
 
 
 def is_fenced_code_block_end(line: str) -> bool:
