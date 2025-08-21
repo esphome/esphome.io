@@ -448,6 +448,17 @@ def is_list_item(line: str) -> bool:
     return False
 
 
+def is_list_item_continuation(line: str, previous_line: str) -> bool:
+    """Check if a line is a continuation of a list item.
+    Continuations lines are part of the list item that came before
+    it if the line indentation is 2 or 3 spaces more than the list item line.
+    This should not strip lines to check for indentation.
+    """
+    line_indent = len(line) - len(line.lstrip())
+    previous_indent = len(previous_line) - len(previous_line.lstrip())
+    return line_indent in {previous_indent + 2, previous_indent + 3}
+
+
 def ensure_blank_lines_around_elements(lines: List[str]) -> List[str]:
     """Ensure headings, fenced code blocks, and lists are surrounded by blank lines."""
     if not lines:
@@ -479,6 +490,7 @@ def ensure_blank_lines_around_elements(lines: List[str]) -> List[str]:
                 and i < len(lines) - 1
                 and not is_list_item(lines[i + 1])
                 and lines[i + 1].strip()
+                and not is_list_item_continuation(lines[i + 1], line)
             )
         )
 
