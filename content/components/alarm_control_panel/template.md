@@ -120,7 +120,6 @@ Although the interface supports all arming modes only `away` , `home` and `night
 
 {{< /note >}}
 
-
 ## Example
 
 ```yaml
