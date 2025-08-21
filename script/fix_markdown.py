@@ -549,11 +549,14 @@ def fix_markdown_file(file_path: Path) -> bool:
         line = fix_punctuation_spacing(line)
 
         # Wrap long lines
-        if len(line) > 120:
-            wrapped = wrap_line(line, 120)
-            fixed_lines.extend(wrapped)
-        else:
-            fixed_lines.append(line)
+        # disabled for now until we figure it out better
+        # if len(line) > 120:
+        #     wrapped = wrap_line(line, 120)
+        #     fixed_lines.extend(wrapped)
+        # else:
+        #     fixed_lines.append(line)
+
+        fixed_lines.append(line)
 
         i += 1
 
