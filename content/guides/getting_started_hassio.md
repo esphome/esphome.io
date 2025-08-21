@@ -38,7 +38,11 @@ device configurations onto your devices.
 
 To install the ESPHome Device Builder in Home Assistant, click the following button:
 
-{{< button href="<https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon>" img="<https://my.home-assistant.io/badges/supervisor_addon.svg>" alt="Open your Home Assistant instance and show the user interface of the ESPHome add-on." >}}
+[![Open your Home Assistant instance and show the dashboard of an add-on.][my-badge]][my-url]
+
+[my-badge]: https://my.home-assistant.io/badges/supervisor_addon.svg
+[my-url]: https://my.home-assistant.io/redirect/supervisor_addon/?addon=5c53de3b_esphome&repository_url=https%3A%2F%2Fgithub.com%2Fesphome%2Fhome-assistant-addon
+
 This should open the ESPHome add-on page; once you're there, just click the INSTALL button:
 
 {{< img src="addon.png" alt="Image" width="75.0%" class="align-center" >}}
@@ -94,7 +98,7 @@ actions you can perform:
   - **Delete**: This will delete the configuration file.
 
 The configuration files for ESPHome are stored in the `<HOME_ASSISTANT_CONFIG>/esphome/` directory. For example, the
-configuration for the "Bedroom Light" node in the picture above can be found in `/config/esphome/bedroom-light.yaml`  .
+configuration for the "Bedroom Light" node in the picture above can be found in `/config/esphome/bedroom-light.yaml`.
 
 {{< note >}}
 Home Assistant add-ons run as individual containers; this can make accessing your configuration files/logs a bit
@@ -112,7 +116,8 @@ See {{< docref "getting_started_command_line/" >}} for more detail.
 ## Adding Features
 
 After stepping through the wizard, you should have a device configuration (YAML) file. In the ESPHome Device Builder,
-click on "EDIT" to open that file and add a {{< docref "/components/switch/gpio" "GPIO switch" >}} to the configuration like this:
+click on "EDIT" to open that file and add a {{< docref "/components/switch/gpio" "GPIO switch" >}} to the configuration
+like this:
 
 ```yaml
 switch:
@@ -131,8 +136,8 @@ arbitrary and should be set as is appropriate for your particular application.
 
 ## Adding A Binary Sensor
 
-Next, let's add a {{< docref "/components/binary_sensor/gpio" "binary sensor which will monitor a GPIO pin" >}} to determine and
-report its state.
+Next, let's add a {{< docref "/components/binary_sensor/gpio" "binary sensor which will monitor a GPIO pin" >}} to
+determine and report its state.
 
 ```yaml
 binary_sensor:
@@ -172,7 +177,9 @@ installed on your device) it can update the device {{< docref "/components/ota/i
 Once your configuration is installed on your device and it's connected to your Wi-Fi, Home Assistant will automatically
 discover it (assuming your network permits this) and offer to configure it:
 
-{{< button href="<https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome>" img="<https://my.home-assistant.io/badges/config_flow_start.svg>" alt="Open your Home Assistant instance and start setting up a new integration." >}}
+{{< button href="<https://my.home-assistant.io/redirect/config_flow_start/?domain=esphome>"
+  img="<https://my.home-assistant.io/badges/config_flow_start.svg>"
+  alt="Open your Home Assistant instance and start setting up a new integration." >}}
 Alternatively, you can manually add the device on the Home Assistant Integrations page. To do so, click on the "Add
 Integration" button (bottom right), search for "ESPHome" and enter the ESPHome device's host name. The host name is
 based on the name you've given to the device; if you named your device "living-room-lamp", its host name will be
@@ -185,9 +192,9 @@ You can repeat this process for each ESPHome device.
 Great! 🎉 You've successfully set up your first ESPHome project and installed your first ESPHome custom firmware to your
 device. You've also learned how to enable some basic components via the configuration file.
 
-Now is a great time to go take a look at the {{< docref "/index" "Components Index" >}}. Hopefully you'll find all the hardware
-components you need there. If you're having any problems or want to request new features, please either create a new
-issue on the [GitHub issue tracker](https://github.com/esphome/esphome/issues) or find us on the
+Now is a great time to go take a look at the {{< docref "/index" "Components Index" >}}. Hopefully you'll find all the
+hardware components you need there. If you're having any problems or want to request new features, please either create
+a new issue on the [GitHub issue tracker](https://github.com/esphome/esphome/issues) or find us on the
 [Discord chat](https://discord.gg/KhAMKrd). Be sure to read the {{< docref "faq" "FAQ" >}}, as well!
 
 ## See Also

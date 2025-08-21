@@ -9,7 +9,8 @@ params:
 
 
 
-Starting with ESPHome 2026.1.0, the default framework for ESP32 will change from Arduino to ESP-IDF. This guide will help you migrate your existing configurations or make an informed choice about which framework to use.
+Starting with ESPHome 2026.1.0, the default framework for ESP32 will change from Arduino to ESP-IDF. This guide will
+help you migrate your existing configurations or make an informed choice about which framework to use.
 
 {{< note >}}
 This change only affects ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 variants.
@@ -20,7 +21,8 @@ as they have limited or no Arduino support.
 
 ## Why the Change?
 
-ESP-IDF (Espressif IoT Development Framework) is the official development framework for ESP32. It offers several advantages:
+ESP-IDF (Espressif IoT Development Framework) is the official development framework for ESP32. It offers several
+advantages:
 
 - **Smaller Binaries**: Up to 40% reduction in binary size
 - **Better Performance**: More optimized for ESP32 hardware
@@ -64,7 +66,8 @@ esp32:
 
 1. **Backup Your Configuration**: Always keep a backup of your working configuration before making changes.
 
-1. **Check Component Compatibility**: When you compile with ESP-IDF, ESPHome will automatically notify you if any components are incompatible and suggest alternatives.
+1. **Check Component Compatibility**: When you compile with ESP-IDF, ESPHome will automatically notify you if any
+   components are incompatible and suggest alternatives.
 
 1. **Update Your Configuration**: Add the framework specification as shown above.
 
@@ -98,7 +101,8 @@ esp32:
 
 ## Common Component Replacements
 
-When migrating to ESP-IDF, you may need to replace some components. ESPHome will automatically suggest alternatives when available:
+When migrating to ESP-IDF, you may need to replace some components. ESPHome will automatically suggest alternatives
+when available:
 
 **Components with ESP-IDF Alternatives:**
 
@@ -182,7 +186,8 @@ If you encounter issues during migration:
 1. Search existing [GitHub issues](https://github.com/esphome/esphome/issues)
 1. Create a new issue if you find a bug
 
-Remember, the migration is optional, and both frameworks will continue to be supported. Choose the option that best fits your needs!
+Remember, the migration is optional, and both frameworks will continue to be supported. Choose the option that
+best fits your needs!
 
 ## See Also
 

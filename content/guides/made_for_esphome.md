@@ -68,10 +68,18 @@ After your project is approved, you may use these logos on your product and/or i
     }
 </style>
 
-{{< img src="made-for-esphome-black-on-white.svg" alt="Image" caption="Made with ESPHome black on white ([svg](/_static/made-for-esphome-black-on-white.svg), [png](/_static/made-for-esphome-black-on-white.png))" width="100%" class="align-center" >}}
+{{< img src="made-for-esphome-black-on-white.svg" alt="Image"
+  caption="Made with ESPHome black on white ([svg](images/made-for-esphome-black-on-white.svg), [png](images/made-for-esphome-black-on-white.png))"
+  width="100%" class="align-center" >}}
 
-{{< img src="made-for-esphome-white-on-black.svg" alt="Image" caption="Made with ESPHome white on black ([svg](/_static/made-for-esphome-white-on-black.svg), [png](/_static/made-for-esphome-white-on-black.png))" width="100%" class="align-center" >}}
+{{< img src="made-for-esphome-white-on-black.svg" alt="Image"
+  caption="Made with ESPHome white on black ([svg](images/made-for-esphome-white-on-black.svg), [png](images/made-for-esphome-white-on-black.png))"
+  width="100%" class="align-center" >}}
 
-{{< img src="made-for-esphome-black-on-transparent.svg" alt="Image" caption="Made with ESPHome black on transparent ([svg](/_static/made-for-esphome-black-on-transparent.svg), [png](/_static/made-for-esphome-black-on-transparent.png))" width="100%" class="align-center" >}}
+{{< img src="made-for-esphome-black-on-transparent.svg" alt="Image"
+  caption="Made with ESPHome black on transparent ([svg](images/made-for-esphome-black-on-transparent.svg), [png](images/made-for-esphome-black-on-transparent.png))"
+  width="100%" class="align-center" >}}
 
-{{< img src="made-for-esphome-white-on-transparent.svg" alt="Image" caption="Made with ESPHome white on transparent ([svg](/_static/made-for-esphome-white-on-transparent.svg), [png](/_static/made-for-esphome-white-on-transparent.png))" width="100%" class="align-center" >}}
+{{< img src="made-for-esphome-white-on-transparent.svg" alt="Image"
+caption="Made with ESPHome white on transparent ([svg](images/made-for-esphome-white-on-transparent.svg), [png](images/made-for-esphome-white-on-transparent.png))"
+width="100%" class="align-center" >}}

@@ -8,7 +8,9 @@ title: "Installing ESPHome Manually"
 
 Download Python from [the official site](https://www.python.org/downloads/).
 
-{{< img src="python-win-installer.png" alt="Python installer window with arrows pointing to \"Add Python to PATH\" and \"Install Now\"" width="75.0%" class="align-center" >}}
+{{< img src="python-win-installer.png"
+  alt="Python installer window with arrows pointing to \"Add Python to PATH\" and \"Install Now\""
+  width="75.0%" class="align-center" >}}
 
 Make sure you check "Add Python to PATH", and go all the way through the
 installer.
@@ -112,7 +114,8 @@ $ source venv/bin/activate  # For bash or compatible shells. If using a differen
 (venv) $ esphome version
 ```
 
-Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above. When activated you will see `(venv)` at the beginning of your prompt.
+Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above.
+When activated you will see `(venv)` at the beginning of your prompt.
 
 ### Cloning the repository
 
@@ -141,7 +144,8 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-You may or may not see `(venv)` at the beginning of your prompt depending on your shell configuration. This indicates that you are in the virtual environment.
+You may or may not see `(venv)` at the beginning of your prompt depending on your shell configuration.
+This indicates that you are in the virtual environment.
 
 You can go ahead and install ESPHome:
 

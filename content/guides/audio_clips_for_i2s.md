@@ -30,7 +30,8 @@ xxd -i startup_again.raw startup.c
   to
   `std::vector<unsigned char> startup_raw = {…[SNIP]…}`  .
 
-Now you can rename the file to startup.h, put it inside the esphome configuration directory and put it in a include in your device config like this:
+Now you can rename the file to startup.h, put it inside the esphome configuration directory and put it in a include
+in your device config like this:
 
 ```yaml
 esphome:

@@ -27,6 +27,8 @@ the post.
 
 ## Blog Posts & Videos
 
+<!-- markdownlint-disable MD013 -->
+
 - [Build a cheap air quality sensor](https://www.pieterbrinkman.com/2021/02/03/build-a-cheap-air-quality-meter-using-esphome-home-assistant-and-a-particulate-matter-sensor/) by [Pieter](http://www.pieterbrinkman.com)
 - [Track your water usage using a proximity sensor](https://www.pieterbrinkman.com/2022/02/02/build-a-cheap-water-usage-sensor-using-esphome-home-assistant-and-a-proximity-sensor/) by [Pieter](http://www.pieterbrinkman.com)
 - [Collecting Temperature Data from ELA Bluetooth Puck with ESPHome](https://blog.weinreich.org/posts/2020/2020-12-14-esphome-ble-ela/) by [lairsdragon](https://www.weinreich.org/)
@@ -139,3 +141,5 @@ the post.
 - [FishFeeder](https://github.com/ColoMAX/fishfeeder) by {{< ghuser name="ColoMAX" >}}
 - [ESPHome IKEA VINDRIKTNING](https://github.com/DzurisHome/ESPHome-IKEA-VINDRIKTNING) by {{< ghuser name="DzurisHome" >}}
 - [ESPHome Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11) by {{< ghuser name="DzurisHome" >}}
+
+<!-- markdownlint-enable MD013 -->

@@ -19,7 +19,8 @@ See {{< docref "installing_esphome/" >}}.
 
 If you're familiar with Docker, you can use that instead!
 Note that on macOS Docker [can not pass USB devices through](https://github.com/moby/hyperkit/issues/149).
-You will not be able to flash ESP devices through USB on Mac, all other features will work. Flashing with web dashboard is still possible.
+You will not be able to flash ESP devices through USB on Mac, all other features will work. Flashing with web
+dashboard is still possible.
 
 Our image supports AMD64, ARM and ARM64 (AARCH64), and can be downloaded with:
 
@@ -99,7 +100,8 @@ the WiFi network, but still it's a first step.
 ## Adding some features
 
 So now you should have a file called `livingroom.yaml` (or similar).
-Go open that file in an editor of your choice and let's add a {{< docref "/components/switch/gpio" "simpleGPIO switch" >}} to our app.
+Go open that file in an editor of your choice and let's add a
+{{< docref "/components/switch/gpio" "simpleGPIO switch" >}} to our app.
 
 ```yaml
 switch:
@@ -160,7 +162,8 @@ No more opening hidden boxes stowed in places hard to reach. Yay!
 ## Adding A Binary Sensor
 
 Next, we're going to add a very simple binary sensor that periodically
-checks if a particular GPIO pin is pulled high or low - the {{< docref "/components/binary_sensor/gpio" "GPIO BinarySensor" >}}.
+checks if a particular GPIO pin is pulled high or low - the
+{{< docref "/components/binary_sensor/gpio" "GPIO BinarySensor" >}}.
 
 ```yaml
 binary_sensor:
@@ -200,7 +203,8 @@ file.
 
 So now is a great time to go take a look at the {{< docref "/index" "Components Index" >}}.
 Hopefully you'll find all sensors/outputs/etc. you'll need in there. If you're having any problems or
-want new features, please either create a new issue on the [GitHub issuetracker](https://github.com/esphome/esphome/issues) or find us on the
+want new features, please either create a new issue on the
+[GitHub issuetracker](https://github.com/esphome/esphome/issues) or find us on the
 [Discord chat](https://discord.gg/KhAMKrd) (also make sure to read the {{< docref "faq" "FAQ" >}}).
 
 {{< anchor "esphome-device-builder-docker" >}}
@@ -208,7 +212,8 @@ want new features, please either create a new issue on the [GitHub issuetracker]
 ## Bonus: ESPHome Device Builder
 
 The ESPHome Device Builder allows you to easily manage your nodes from a nice web interface. It was primarily designed
-as a {{< docref "getting_started_hassio" "Home Assistant add-on" >}}, but can run in docker independently from Home Assistant.
+as a {{< docref "getting_started_hassio" "Home Assistant add-on" >}}, but can run in docker independently from
+Home Assistant.
 
 To start the ESPHome Device Builder, simply start ESPHome with the following command (with `config/` pointing to a
 directory where you want to store your configurations):

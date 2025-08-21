@@ -60,7 +60,8 @@ support within ESPHome, here's what we suggest:
   - roughly 5x the amount of RAM.
 
     - Some components require more RAM than is available on the ESP8266 -- (large) displays and
-      {{< docref "/components/sensor/bme68x_bsec2" "some sensors" >}} are known to regularly provoke issues/crashes on ESP8266s.
+      {{< docref "/components/sensor/bme68x_bsec2" "some sensors" >}} are known to regularly provoke issues/crashes
+      on ESP8266s.
     - Workarounds are often available, but it's not reasonable to assume that a given workaround will work forever,
       especially if you *want* to update your devices regularly but depend on
       {{< docref "/components/sensor/bme68x_bsec2" "vendor-provided/maintained libraries for some functionality" >}}.
@@ -99,7 +100,8 @@ If you prefer the more manual way:
 
    - **Using ESPHome CLI**
 
-     The file is available in the `<CONFIG_DIR>/<NODE_NAME>/.pioenvs/<NODE_NAME>/firmware.bin` directory after the build completes.
+     The file is available in the `<CONFIG_DIR>/<NODE_NAME>/.pioenvs/<NODE_NAME>/firmware.bin` directory after the
+     build completes.
 
    - **Using ESPHome Dashboard**
 
@@ -115,7 +117,8 @@ If you prefer the more manual way:
    - [ESPHome Web](https://web.esphome.io/), our web-based installer. This is the easiest approach but requires a
        browser that supports WebSerial, like Google Chrome or Microsoft Edge.
 
-       1. Connect the board to your computer, make sure it's detected as a [serial port](#esphome-phy-con-drv) and click **Connect**.
+       1. Connect the board to your computer, make sure it's detected as a [serial port](#esphome-phy-con-drv) and
+          click **Connect**.
        1. If prompted, allow your browser the requested permission in the pop-up box that appears.
        1. Select the serial device associated with your board
        1. Click **Install** and browse for/select the binary file you downloaded earlier (as above).
@@ -195,16 +198,20 @@ transfer. Don't worry -- just try again, perhaps with a reduced baud rate for sa
 esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x0 your_node_firmware.bin
 ```
 
-If you *still* can't get it to work, you might want to revisit [I can't get installation over USB to work](#faq-usb_troubleshooting) above.
+If you *still* can't get it to work, you might want to revisit
+[I can't get installation over USB to work](#faq-usb_troubleshooting) above.
 
 ## Tips for using ESPHome
 
-- ESPHome supports (most of) [Home Assistant's YAML configuration directives](https://www.home-assistant.io/docs/configuration/splitting_configuration/) like `!include` and `!secret`  .
-  This allows you to store your secrets (for example, Wi-Fi passwords and API keys) in a file called `secrets.yaml`  ,
+- ESPHome supports (most of) [Home Assistant's YAML configuration directives][ha-docs-split] like `!include`
+  and `!secret`.
+  This allows you to store your secrets (for example, Wi-Fi passwords and API keys) in a file called `secrets.yaml`,
   as long as this file is in the same directory as your ESPHome configuration file.
 
   We've enhanced ESPHome's `!include` directive such that it accepts a list of variables that can be substituted
   within the included file. For example:
+
+[ha-docs-split]: https://www.home-assistant.io/docs/configuration/splitting_configuration/
 
 ```yaml
     binary_sensor:
@@ -264,8 +271,8 @@ That's no good. Here are some steps that resolve some problems:
 - [Enable verbose logs](#logger-log_levels) in your ESPHome device's `logger:` section.
 - **If your device is crashing**: See the {{< docref "/guides/troubleshooting" >}} guide for how to get a backtrace.
 - **Still seeing an error?** Check if there is a known issue in the
-  [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe your
-  problem there. We will take a look at it as soon as we can. Thanks!
+  [ESPHome issue tracker](https://github.com/esphome/esphome/issues). If not, you can create a new issue to describe
+  your problem there. We will take a look at it as soon as we can. Thanks!
 
 {{< anchor "faq-bug_report" >}}
 
@@ -361,12 +368,12 @@ This "pulls in" the contents of your Home Assistant `secrets.yaml` file from the
 
 ## Does ESPHome support [this device/feature]?
 
-If it's not in {{< docref "/index" "the docs" >}}, it's not (officially) supported. However, we are always adding support for new
-features.
+If it's not in {{< docref "/index" "the docs" >}}, it's not (officially) supported. However, we are always adding
+support for new features.
 
-In some cases, community-provided {{< docref "/components/external_components" >}} are available; keep in mind that these are not
-officially supported by ESPHome, so, if you run into problems, you'll need to contact the developer of the external
-component you're using for help.
+In some cases, community-provided {{< docref "/components/external_components" >}} are available; keep in mind that
+these are not officially supported by ESPHome, so, if you run into problems, you'll need to contact the developer of
+the external component you're using for help.
 
 You can also create a feature request in our
 [ESPHome feature request tracker](https://github.com/orgs/esphome/discussions).
@@ -400,9 +407,10 @@ Here are some steps that may help mitigate the issue:
 - The issue seems to happen with "cheap" boards more frequently -- especially the "cheap" NodeMCU boards from eBay
   which sometimes have bad antennas.
 - ESPHome intentionally reboots after a configured duration in specific situations, such as when the
-  {{< docref "/components/wifi" "Wi-Fi connection cannot be made" >}}, {{< docref "/components/api" "API connection is lost" >}} or
-  {{< docref "/components/mqtt" "MQTT connection is lost" >}}. To disable this behavior, you'll need to explicitly set the
-  `reboot_timeout` option to `0s` on the relevant components.
+  {{< docref "/components/wifi" "Wi-Fi connection cannot be made" >}},
+  {{< docref "/components/api" "API connection is lost" >}} or
+  {{< docref "/components/mqtt" "MQTT connection is lost" >}}. To disable this behavior, you'll need to explicitly
+  set the `reboot_timeout` option to `0s` on the relevant components.
 - If you see `Error: Disconnecting <NODE_NAME>` in your logs, ESPHome is actively closing the native API client
   connection. You'll need to establish a serial connection with your device to determine the reason. If you see
   `ack timeout 4` immediately before the disconnect, this might be because of a bug in the AsyncTCP library, for
@@ -492,7 +500,8 @@ services:
       # if needed, add esp device(s) as in command line examples above
       - /dev/ttyUSB0:/dev/ttyUSB0
       - /dev/ttyACM0:/dev/ttyACM0
-    # The host networking driver only works on Linux hosts, but is available as a Beta feature, on Docker Desktop version 4.29 and later.
+    # The host networking driver only works on Linux hosts, but is available as a Beta feature,
+    # on Docker Desktop version 4.29 and later.
     network_mode: host
     restart: always
 ```
@@ -509,9 +518,9 @@ available on Docker Desktop version 4.29 and later.
 
 If you don't want to use the host networking driver, you have to use an alternate method as described below.
 
-Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets and/or VLANs.
-If your router supports Avahi, you can configure mDNS to work across different subnets. For example, in OpenWRT or
-pfSense:
+Note that mDNS might not work if your Home Assistant server and your ESPHome nodes are on different subnets
+and/or VLANs. If your router supports Avahi, you can configure mDNS to work across different subnets.
+For example, in OpenWRT or pfSense:
 
 1. Enable Avahi on both subnets (install Avahi modules on OpenWRT or pfSense).
 1. Enable UDP traffic from your ESPHome device's subnet to 224.0.0.251/32 on port 5353.
@@ -527,8 +536,8 @@ See also <https://github.com/esphome/issues/issues/641#issuecomment-534156628>.
 
 ## Notes on disabling mDNS
 
-Some of ESPHome's functionality relies on {{< docref "/components/mdns" "mDNS" >}}, so, naturally, disabling it will cause these
-features to stop working.
+Some of ESPHome's functionality relies on {{< docref "/components/mdns" "mDNS" >}}, so, naturally, disabling it will
+cause these features to stop working.
 
 Generally speaking, disabling mDNS without setting a [static IP address](#wifi-manual_ip) (or a static DHCP lease)
 is bound to cause problems -- mDNS is used to determine the IP address of each ESPHome node.
@@ -536,9 +545,10 @@ is bound to cause problems -- mDNS is used to determine the IP address of each E
 If you disable mDNS, expect the following repercussions:
 
 - You will not be able to use the node's hostname to ping, find it's IP address or otherwise connect to it.
-- Automatic discovery in Home Assistant when using the {{< docref "/components/api" "native API" >}} relies on mDNS broadcast
-  messages to detect the presence of new ESPHome nodes. If you need to use the native API with mDNS disabled, then you
-  will have to use a static IP address and manually add the ESPHome component with its (static) IP address.
+- Automatic discovery in Home Assistant when using the {{< docref "/components/api" "native API" >}} relies on
+  mDNS broadcast messages to detect the presence of new ESPHome nodes. If you need to use the native API with
+  mDNS disabled, then you will have to use a static IP address and manually add the ESPHome component with its
+  (static) IP address.
 - Because status detection in the [ESPHome Device Builder](#installing-esphome-device-builder) uses mDNS by
   default, nodes with mDNS disabled will always appear as "offline". This does not affect any functionality; however,
   if you want to see the online/offline status of your nodes, you may configure the ESPHome Device Builder to ping each
@@ -595,9 +605,9 @@ If you are absolutely sure that your use of strapping pins is safe and you want 
 
 ## How can I test a pull request?
 
-By leveraging the {{< docref "/components/external_components" >}} feature, it's possible to test most pull requests by simply
-adding a few lines to your YAML! You need the number of the pull request as well as the component(s) that have been
-added or changed by the pull request (they are listed with the "integration:" labels on the GitHub page of the pull
+By leveraging the {{< docref "/components/external_components" >}} feature, it's possible to test most pull requests by
+simply adding a few lines to your YAML! You need the number of the pull request as well as the component(s) that have
+been added or changed by the pull request (they are listed with the "integration:" labels on the GitHub page of the pull
 request). Then, if you add a block of code (similar to that shown below) to your YAML configuration, recompile and
 reinstall/update ESPHome onto your device, the code from the pull request will be used for the component(s) changed by
 the pull request.
@@ -617,9 +627,9 @@ label on GitHub.
 
 ## Why do entities appear as "unavailable" during deep sleep?
 
-The {{< docref "/components/deep_sleep" "Deep Sleep" >}} component needs to be present within your device's configuration when
-the device is first added to Home Assistant. To prevent entities from appearing as "unavailable", you can remove and
-re-add the device in Home Assistant.
+The {{< docref "/components/deep_sleep" "Deep Sleep" >}} component needs to be present within your device's
+configuration when the device is first added to Home Assistant. To prevent entities from appearing as "unavailable",
+you can remove and re-add the device in Home Assistant.
 
 ## See Also
 
