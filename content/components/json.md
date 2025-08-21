@@ -97,14 +97,13 @@ on_...:
 
 You can build JSON in a lambda with a nested array like this:
 
-```
+```yaml
 on_...:
   - http_request.post:
       url: https://esphome.io
       json: |-
         root["key"] = id(my_sensor).state;
         root["greeting"] = "Hello World";
-
 ```
 
 This will send::
@@ -114,9 +113,8 @@ This will send::
 
 A very common error when deserializing is:
 
-```
+```text
 JSON parse error: InvalidInput
-
 ```
 
 The software ESPHome uses does not provide particularly informative messages as to why, but

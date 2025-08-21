@@ -61,10 +61,9 @@ To obtain a tag's UID:
 - Approach the NFC reader with an NFC tag. When the tag is sufficiently close to the reader, you'll see a message in the
   ESPHome device's logs similar to this:
 
-```
-    Read tag type Mifare Classic with UID 1C-E5-E7-A6
-
-```
+  ```log
+  Read tag type Mifare Classic with UID 1C-E5-E7-A6
+  ```
 
 - Either:
 

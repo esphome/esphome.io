@@ -20,12 +20,11 @@ Hooking it all up is quite easy: Just buy a suitable photoresistor (make sure th
 {{< note >}}
 Some energy meters have an exposed [S0 port](https://en.wikipedia.org/wiki/S_interface) (which essentially just is a switch that closes), if that is the case the photodiode can be replaced with the following connection.
 
-```
+```text
 S0 ------------ VCC
 S0 --+-- 10k -- GND
 .    |
 .    +--------- GPIO12
-
 ```
 
 {{< /note >}}

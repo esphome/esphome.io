@@ -306,11 +306,10 @@ Connect RX from BMS to TX in ESP board and TX from BMS to RX in ESP board
 On the ESP32 (untested on ESP8266) if you are having missing data (such as Temperature 1/2), it may be due to UART buffer size.
 Add the following to your configuration to increase the buffer from the default 256 to 512.
 
-```
+```yaml
 uart:
   ...
   rx_buffer_size: 512
-
 ```
 
 ## See Also

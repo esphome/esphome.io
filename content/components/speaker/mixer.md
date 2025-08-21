@@ -56,13 +56,12 @@ speaker:
 
 This action ducks (reduces the volume of) the media stream.
 
-```
+```yaml
 on_...:
   - mixer_speaker.apply_ducking:
       id: media_mixer_source_speaker_id
       decibel_reduction: 20
       duration: 2.0s
-
 ```
 
 Configuration variables:

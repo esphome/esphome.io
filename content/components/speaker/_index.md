@@ -105,7 +105,7 @@ Configuration variables:
 
 This action will set the volume of the speaker.
 
-```
+```yaml
 on_...:
   # Simple
   - speaker.volume_set: 50%
@@ -117,7 +117,6 @@ on_...:
 
   # Simple with lambda
   -  speaker.volume_set: !lambda "return 0.5;"
-
 ```
 
 Configuration variables:

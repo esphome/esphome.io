@@ -128,11 +128,10 @@ After uploading the ESP32 will immediately try to scan for BLE devices.
 When it detects these sensors, it will automatically parse the BLE message
 print a message like this one:
 
-```
+```log
 Got ruuvi RuuviTag (XX:XX:XX:XX:XX:XX): Humidity: 67.5%, Temperature: 22.97°C,
 Pressure: 977.09hPa, Acceleration X: 0.005G, Acceleration Y: 0.017G, Acceleration Z: 1.066G,
 Battery Voltage: 3.223V
-
 ```
 
 Then just copy the address (`XX:XX:XX:XX:XX:XX`  ) into a new

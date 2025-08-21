@@ -75,7 +75,7 @@ This action will resume playing the media player.
 
 This action will start playing the specified media.
 
-```
+```yaml
 on_...:
   # Simple
   - media_player.play_media: 'http://media-url/media.mp3'
@@ -87,7 +87,6 @@ on_...:
 
   # Simple with lambda
   - media_player.play_media: !lambda 'return "http://media-url/media.mp3";'
-
 ```
 
 Configuration variables:
@@ -146,7 +145,7 @@ This action will decrease the volume of the media player.
 
 This action will set the volume of the media player.
 
-```
+```yaml
 on_...:
   # Simple
   - media_player.volume_set: 50%
@@ -158,7 +157,6 @@ on_...:
 
   # Simple with lambda
   - media_player.volume_set: !lambda "return 0.5;"
-
 ```
 
 Configuration variables:

@@ -127,9 +127,8 @@ After uploading, the ESP32 will immediately try to scan for BLE devices. For Mop
 Or alternativly set the configuration flag `show_sensors_without_sync: true` to see all devices.
 For all sensors found the `mopeka_ble` component will print a message like this one:
 
-```
+```log
 [20:43:26][I][mopeka_ble:056]: MOPEKA STD (CC2540) SENSOR FOUND: XX:XX:XX:XX:XX:XX
-
 ```
 
 Then just copy the address (`XX:XX:XX:XX:XX:XX`  ) into a new

@@ -45,7 +45,7 @@ the _CH1_ diode is sensitive only to infrared light.
 
 Excerpt from the datasheet:
 
-```
+```text
 RATIO = CH1/(CH0+CH1)
 IF (RATIO < 0.45)
     ALS_LUX = (1.7743 * CH0 + 1.1059 * CH1) / ALS_GAIN / ALS_INT
@@ -56,7 +56,6 @@ ELSEIF (RATIO < 0.85 && RATIO >= 0.64)
 ELSE
     ALS_LUX = 0
 END
-
 ```
 
 where:
