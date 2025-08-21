@@ -10,7 +10,8 @@ params:
 
 ## What is ESPHome?
 
-ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular WiFi-enabled microcontrollers. With ESPHome, you can:
+ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular
+WiFi-enabled microcontrollers. With ESPHome, you can:
 
 * **Create custom smart home devices** using simple YAML configuration files
 * **Integrate seamlessly with Home Assistant** for a unified smart home experience
@@ -18,7 +19,8 @@ ESPHome is an open-source firmware framework that simplifies the process of crea
 * **Automate your home** with powerful on-device automations
 * **Update your devices wirelessly** "Over The Air" (OTA) updates without physical access
 
-ESPHome takes care of the complex parts of firmware development, allowing you to focus on what matters - building your smart home exactly how you want it.
+ESPHome takes care of the complex parts of firmware development, allowing you to focus on what matters - building your
+smart home exactly how you want it.
 
 {{< feature-grid >}}
 [

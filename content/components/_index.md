@@ -532,7 +532,8 @@ configuration <https://devices.esphome.io/devices/temt6000>`__.
 
 ## Binary Sensor Components
 
-Binary Sensors are organized into categories; if a given sensor fits into more than one category, it will appear multiple times.
+Binary Sensors are organized into categories; if a given sensor fits into more than one category, it will appear
+multiple times.
 
 ### Core
 
@@ -835,8 +836,8 @@ Components specifically for interacting with Home Assistant.
 "Tuya Dimmer","components/light/tuya","tuya.png",""
 {{< /imgtable >}}
 **Looking for WS2811 and similar individually addressable lights?** For the ESP32 and its variants, we recommend the
-{{< docref "light/esp32_rmt_led_strip" >}} or {{< docref "light/spi_led_strip" >}}; for other processors, have a look at the
-{{< docref "light/fastled" "FastLED Light" >}}.
+{{< docref "light/esp32_rmt_led_strip" >}} or {{< docref "light/spi_led_strip" >}}; for other processors, have a look
+at the {{< docref "light/fastled" "FastLED Light" >}}.
 
 ## Lock Components
 
