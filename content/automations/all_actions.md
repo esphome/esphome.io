@@ -3,6 +3,7 @@ description: ""
 title: ""
 ---
 
+<!-- markdownlint-disable MD013 -->
 
 - **ags10:** `new_i2c_address`  , `set_zero_point`
 - **alarm_control_panel:** `arm_away`  , `arm_home`  , `arm_night`  , `chime`  , `disarm`  , `pending`  , `ready`  , `triggered`
@@ -81,3 +82,5 @@ title: ""
 - **voice_assistant:** `start`  , `start_continuous`  , `stop`
 - **wifi:** `disable`  , `enable`
 - **wireguard:** `disable`  , `enable`
+
+<!-- markdownlint-enable MD013 -->

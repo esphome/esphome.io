@@ -215,9 +215,12 @@ on_...:
 
 At least one of `condition`  , `all` or `any` must be provided.
 
-- **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine which branch to take. If this is configured with a list of conditions then they must all be true for the condition to be true.
-- **all** (*Optional*, [Condition](#config-condition)): Takes a list of conditions, all of which must be true (and is therefore equivalent to `condition`  .)
-- **any** (*Optional*, [Condition](#config-condition)): Takes a list of conditions; if at least one is true, the condition will be true.
+- **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine which branch to take.
+  If this is configured with a list of conditions then they must all be true for the condition to be true.
+- **all** (*Optional*, [Condition](#config-condition)): Takes a list of conditions, all of which must be true (and is
+  therefore equivalent to `condition`  .)
+- **any** (*Optional*, [Condition](#config-condition)): Takes a list of conditions; if at least one is true, the
+  condition will be true.
 - **then** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to true.
   Defaults to doing nothing.
 - **else** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to false.
@@ -256,7 +259,8 @@ on_...:
 
 #### Configuration variables
 
-- **count** (**Required**, int): The number of times the action should be repeated.  The counter is available to lambdas using the reserved word "iteration".
+- **count** (**Required**, int): The number of times the action should be repeated.  The counter is available to
+  lambdas using the reserved word "iteration".
 - **then** (**Required**, [Action](#config-action)): The action to repeat.
 
 {{< anchor "wait_until_action" >}}
