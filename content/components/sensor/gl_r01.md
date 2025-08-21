@@ -24,7 +24,6 @@ The [I²C](#i2c) is required to be set up in your configuration for this sensor 
 sensor:
   - platform: gl_r01_i2c
     name: "ToF"
-
 ```
 
 ## Configuration variables

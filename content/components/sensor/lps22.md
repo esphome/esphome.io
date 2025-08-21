@@ -22,7 +22,6 @@ sensor:
       name: "LPS22 Temperature"
     pressure:
       name: "LPS22 Pressure"
-
 ```
 
 ## Configuration variables

@@ -23,7 +23,6 @@ sensor:
   - platform: pulse_counter
     pin: GPIOXX
     name: "Pulse Counter"
-
 ```
 
 ## Configuration variables
@@ -70,7 +69,6 @@ sensor:
     name: 'Power Meter House'
     filters:
       - multiply: 0.06  # (60s/1000 pulses per kWh)
-
 ```
 
 ## Counting total pulses
@@ -94,7 +92,6 @@ sensor:
       name: 'Energy Meter House'
       filters:
         - multiply: 0.001  # (1/1000 pulses per kWh)
-
 ```
 
 ## (Re)Setting the total pulse count
@@ -114,7 +111,6 @@ api:
         - pulse_counter.set_total_pulses:
             id: pulse_counter_id
             value: !lambda 'return new_pulse_total;'
-
 ```
 
 {{< note >}}
@@ -141,7 +137,6 @@ sensor:
         input: true
         pullup: true
     name: "Pulse Counter"
-
 ```
 
 If you wire it between a GPIO pin and +3.3V, set the pin to input, pulldown:
@@ -156,7 +151,6 @@ sensor:
         input: true
         pulldown: true
     name: "Pulse Counter"
-
 ```
 
 The safest way is to use GPIO + GND, as this avoids the possibility of short

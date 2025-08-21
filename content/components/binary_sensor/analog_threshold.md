@@ -34,7 +34,6 @@ binary_sensor:
     name: "Garage Door Opening"
     sensor_id: motor_current_sensor
     threshold: 0.5
-
 ```
 
 ## Configuration variables

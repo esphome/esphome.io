@@ -24,7 +24,6 @@ sensor:
     name: "Data from topic"
     id: mysensor
     topic: the/topic
-
 ```
 
 ## Configuration variables

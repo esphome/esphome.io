@@ -30,7 +30,6 @@ accurate signal timing.
 remote_transmitter:
   pin: GPIOXX
   carrier_duty_percent: 50%
-
 ```
 
 ## Configuration variables
@@ -83,7 +82,6 @@ remote_transmitter:
   on_complete:
     then:
       - switch.turn_off: tx_enable
-
 ```
 
 {{< anchor "remote_transmitter-transmit_action" >}}
@@ -100,7 +98,6 @@ on_...:
       repeat:
         times: 5
         wait_time: 10ms
-
 ```
 
 ### Configuration variables
@@ -135,7 +132,6 @@ on_...:
       three_byte_address: false # address length of your system
       message_type: 0x0d # unlock door, on some systems 0x0e is used instead
       data: [0xab, 0xcd, 0xef]  # message data, see receiver dump
-
 ```
 
 #### Configuration variables
@@ -178,7 +174,6 @@ on_...:
   - remote_transmitter.transmit_aeha:
       address: 0x1FEF
       data: [0x1F, 0x3E, 0x06, 0x5F]
-
 ```
 
 #### Configuration variables
@@ -203,7 +198,6 @@ on_...:
   - remote_transmitter.transmit_beo4:
       source: '0x01'
       command: '0x0d'
-
 ```
 
 #### Configuration variables
@@ -223,7 +217,6 @@ on_...:
   - remote_transmitter.transmit_byronsx:
       address: '0x4f'
       command: '0x2'
-
 ```
 
 #### Configuration variables
@@ -250,7 +243,6 @@ on_...:
       device: 0x25
       address: 0x00
       command: 0x02
-
 ```
 
 #### Configuration variables
@@ -279,7 +271,6 @@ on_...:
       device: 0x25
       address: 0x00
       command: 0x02
-
 ```
 
 #### Configuration variables
@@ -301,7 +292,6 @@ on_...:
   - remote_transmitter.transmit_coolix:
       first: 0xB23FE4
       second: 0xB23FE4
-
 ```
 
 #### Configuration variables
@@ -323,7 +313,6 @@ on_...:
   - remote_transmitter.transmit_dish:
       address: 1
       command: 16
-
 ```
 
 #### Configuration variables
@@ -348,7 +337,6 @@ on_...:
       channel: 142
       button: 12
       check: 3
-
 ```
 
 #### Configuration variables
@@ -372,7 +360,6 @@ on_...:
       address: '0x6180'
       channel: '0x12'
       command: '0x02'
-
 ```
 
 #### Configuration variables
@@ -392,7 +379,6 @@ This [action](#config-action) sends a command to a Go-Box via the IR transmitter
 on_...:
   - remote_transmitter.transmit_gobox:
       code: 0xfa05
-
 ```
 
 #### Configuration variables
@@ -424,7 +410,6 @@ This [action](#config-action) sends a JVC infrared remote code to a remote trans
 on_...:
   - remote_transmitter.transmit_jvc:
       data: 0x1234
-
 ```
 
 #### Configuration variables
@@ -447,7 +432,6 @@ on_...:
       repeat:
         times: 3
         wait_time: 15ms
-
 ```
 
 #### Configuration variables
@@ -470,7 +454,6 @@ automatically.
 on_...:
   - remote_transmitter.transmit_haier:
       code: [0xA6, 0xDA, 0x00, 0x00, 0x40, 0x40, 0x00, 0x80, 0x00, 0x00, 0x00, 0x00, 0x05]
-
 ```
 
 #### Configuration variables
@@ -489,7 +472,6 @@ on_...:
   - remote_transmitter.transmit_lg:
       data: 0x20DF10EF # power on/off
       nbits: 32
-
 ```
 
 #### Configuration variables
@@ -509,7 +491,6 @@ on_...:
   - remote_transmitter.transmit_magiquest:
       wand_id: 0x01234567
       magnitude: 0x080C
-
 ```
 
 #### Configuration variables
@@ -536,7 +517,6 @@ on_...:
       code: !lambda |-
         // Send a FollowMe code with the current temperature.
         return {0xA4, 0x82, 0x48, 0x7F, (uint8_t)(id(temp_sensor).state + 1)};
-
 ```
 
 #### Configuration variables
@@ -565,7 +545,6 @@ on_...:
       address: 0x1234
       command: 0x78AB
       command_repeats: 1
-
 ```
 
 #### Configuration variables
@@ -588,7 +567,6 @@ on_...:
       group: 0
       channel: 15
       level: 0
-
 ```
 
 #### Configuration variables
@@ -612,7 +590,6 @@ on_...:
   - remote_transmitter.transmit_panasonic:
       address: 0x1FEF
       command: 0x1F3E065F
-
 ```
 
 #### Configuration variables
@@ -634,7 +611,6 @@ on_...:
       rc_code_2: 0xA506
       repeat:
         times: 2
-
 ```
 
 #### Configuration variables
@@ -661,7 +637,6 @@ This [action](#config-action) sends a raw code to a remote transmitter specified
 on_...:
   - remote_transmitter.transmit_pronto:
       data: "0000 006D 0010 0000 0008 0020 0008 0046 000A 0020 0008 0020 0008 001E 000A 001E 000A 0046 000A 001E 0008 0020 0008 0020 0008 0046 000A 0046 000A 0046 000A 001E 000A 001E 0008 06C3"
-
 ```
 
 #### Configuration variables
@@ -686,7 +661,6 @@ on_...:
              -1020, 511, -511, 1018, -1022, 1020, -1019, 1021, -1019, 1020,
              -511, 510, -1019, 1023, -1019, 1019, -510, 512, -508, 510, -511,
              512, -1019, 510, -509]
-
 ```
 
 #### Configuration variables
@@ -709,7 +683,6 @@ on_...:
   - remote_transmitter.transmit_rc5:
       address: 0x1F
       command: 0x3F
-
 ```
 
 #### Configuration variables
@@ -729,7 +702,6 @@ on_...:
   - remote_transmitter.transmit_rc6:
       address: 0x1F
       command: 0x3F
-
 ```
 
 #### Configuration variables
@@ -750,7 +722,6 @@ on_...:
   - remote_transmitter.transmit_rc_switch_raw:
       code: '001010011001111101011011'
       protocol: 1
-
 ```
 
 #### Configuration variables
@@ -774,7 +745,6 @@ on_...:
       device: '10110'
       state: off
       protocol: 1
-
 ```
 
 #### Configuration variables
@@ -800,7 +770,6 @@ on_...:
       channel: '1011'
       state: off
       protocol: 1
-
 ```
 
 #### Configuration variables
@@ -827,7 +796,6 @@ on_...:
       device: 1
       state: off
       protocol: 1
-
 ```
 
 #### Configuration variables
@@ -854,7 +822,6 @@ on_...:
       device: 1
       state: off
       protocol: 1
-
 ```
 
 #### Configuration variables
@@ -879,7 +846,6 @@ on_...:
       repeat:
         times: 3
         wait_time: 17ms
-
 ```
 
 #### Configuration variables
@@ -909,7 +875,6 @@ on_...:
   - remote_transmitter.transmit_samsung:
       data: 0xB946F50A09F6
       nbits: 48
-
 ```
 
 #### Configuration variables
@@ -930,7 +895,6 @@ on_...:
   - remote_transmitter.transmit_samsung36:
       address: 0x0400
       command: 0x000E00FF
-
 ```
 
 #### Configuration variables
@@ -950,7 +914,6 @@ on_...:
   - remote_transmitter.transmit_sony:
       data: 0x123
       nbits: 12
-
 ```
 
 #### Configuration variables
@@ -975,7 +938,6 @@ on_...:
   - remote_transmitter.transmit_toshiba_ac:
       rc_code_1: 0xB24DBF4040BF
       rc_code_2: 0xD5660001003C
-
 ```
 
 #### Configuration variables
@@ -996,7 +958,6 @@ automatically.
 on_...:
   - remote_transmitter.transmit_mirage:
       code: [0x56, 0x77, 0x00, 0x00, 0x22, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-
 ```
 
 #### Configuration variables
@@ -1017,7 +978,6 @@ on_...:
       rc_code_1: 0x0 # Water heater off
       rc_code_2: 0x0 # Seat heater off
       # Repeats 3 times at a 36ms interval by default
-
 ```
 
 #### Configuration variables
@@ -1041,7 +1001,6 @@ This [action](#config-action) sets the output value of the pin.
 on_...:
   - remote_transmitter.digital_write:
       value: true
-
 ```
 
 #### Configuration variables
@@ -1082,7 +1041,6 @@ See the full API Reference for more info.
     esphome::remote_base::PioneerProtocol().encode(call.get_data(), data);
     call.set_send_times(2);
     call.perform();
-
 ```
 
 ## See Also

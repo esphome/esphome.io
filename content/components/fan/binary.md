@@ -19,7 +19,6 @@ fan:
   - platform: binary
     output: fan_output
     name: "Living Room Fan"
-
 ```
 
 ## Configuration variables

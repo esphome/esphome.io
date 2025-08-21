@@ -29,7 +29,6 @@ sensor:
     humidity:
       name: Relative Humidity
       id: relative_humidity
-
 ```
 
 ## Configuration variables

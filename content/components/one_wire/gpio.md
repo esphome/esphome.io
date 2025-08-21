@@ -16,7 +16,6 @@ The `gpio` platform uses the CPU to generate the bus signals on an on-board GPIO
 one_wire:
   - platform: gpio
     pin: GPIOXX
-
 ```
 
 ## Configuration variables

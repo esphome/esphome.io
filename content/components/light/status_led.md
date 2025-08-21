@@ -26,7 +26,6 @@ light:
   - platform: status_led
     name: "Switch state"
     pin: GPIOXX
-
 ```
 
 {{< note >}}
@@ -51,7 +50,6 @@ If your Status LED is in an active-LOW mode (such as with the D1 Mini ESP8266 bo
 pin:
   number: GPIOXX
   inverted: true
-
 ```
 
 {{< /note >}}

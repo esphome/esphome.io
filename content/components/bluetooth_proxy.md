@@ -70,7 +70,6 @@ esp32_ble_tracker:
   scan_parameters:
     interval: 1100ms
     window: 1100ms
-
 ```
 
 {{< note >}}
@@ -125,7 +124,6 @@ esp32_ble_tracker:
 bluetooth_proxy:
   active: true
   connection_slots: 3
-
 ```
 
 ## See Also

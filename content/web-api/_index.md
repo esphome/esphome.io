@@ -92,7 +92,6 @@ a GET request to `/sensor/outside_temperature` could yield this payload:
   "state": "19.8 °C",
   "value": 19.76666
 }
-
 ```
 
 - **id**: The id of the sensor. Prefixed by `sensor-`  .
@@ -111,7 +110,6 @@ result in following payload:
   "state": "ON",
   "value": true
 }
-
 ```
 
 - **id**: The id of the binary sensor. Prefixed by `binary_sensor-`  .
@@ -145,7 +143,6 @@ the state of a light, send a GET request to `/light/<id>`  , for example `light/
   "effect": "None",
   "white_value": 255
 }
-
 ```
 
 - **id**: The id of the light. Prefixed by `light-`  .
@@ -199,7 +196,6 @@ GET request to `/fan/<id>`  .
   "speed_level": 2,
   "oscillation": false
 }
-
 ```
 
 - **id**: The id of the fan. Prefixed by `fan-`  .
@@ -229,7 +225,6 @@ stopped midway. An example GET request for `/cover/front_window_blinds` might re
   "current_operation": "IDLE",
   "tilt": 0.5
 }
-
 ```
 
 - **id**: The ID of the cover, prefixed with `cover-`  .
@@ -262,7 +257,6 @@ a GET request to `/select/house_mode` could yield this payload:
   "state": "party",
   "value": "party"
 }
-
 ```
 
 The detail parameter can be used to include available options in the response:
@@ -279,7 +273,6 @@ For example GET `/select/house_mode?detail=all` could yield this payload:
   "value": "party",
   "option": ["party","sleep","relax","home","away"]
 }
-
 ```
 
 POST requests on the other hand allow setting the select, the available
@@ -304,7 +297,6 @@ a GET request to `/number/desired_delay` could yield this payload:
   "state": "20.0000",
   "value": 20
 }
-
 ```
 
 POST requests on the other hand allow setting the number, the available
@@ -326,7 +318,6 @@ which may yield:
   "state": "ARMED_AWAY",
   "value": 2
 }
-
 ```
 
 - **id**: The ID of the alarm control panel, prefixed with `alarm-control-panel-`  .

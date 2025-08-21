@@ -16,7 +16,6 @@ audio via the microcontroller from a range of sources via {{< docref "/component
 # Example configuration entry
 audio_dac:
   - platform: ...
-
 ```
 
 ## Platforms

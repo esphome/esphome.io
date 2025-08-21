@@ -21,7 +21,6 @@ light:
     pio: 0
     rgb_order: GRB
     chipset: WS2812B
-
 ```
 
 ## Configuration variables

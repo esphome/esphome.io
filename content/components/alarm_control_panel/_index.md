@@ -17,7 +17,6 @@ params:
 alarm_control_panel:
   - platform: ...
     name: Alarm Panel
-
 ```
 
 Configuration variables:
@@ -71,7 +70,6 @@ alarm_control_panel:
   on_state:
     then:
       - logger.log: "Alarm Panel State Changed!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_pending_trigger" >}}
@@ -86,7 +84,6 @@ alarm_control_panel:
   on_pending:
     then:
       - logger.log: "Alarm Pending!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_arming_trigger" >}}
@@ -101,7 +98,6 @@ alarm_control_panel:
   on_arming:
     then:
       - logger.log: "Alarm Arming!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_armed_home_trigger" >}}
@@ -116,7 +112,6 @@ alarm_control_panel:
   on_armed_home:
     then:
       - logger.log: "Alarm armed_home!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_armed_night_trigger" >}}
@@ -131,7 +126,6 @@ alarm_control_panel:
   on_armed_night:
     then:
       - logger.log: "Alarm armed_night!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_armed_away_trigger" >}}
@@ -146,7 +140,6 @@ alarm_control_panel:
   on_armed_away:
     then:
       - logger.log: "Alarm armed_away!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_triggered_trigger" >}}
@@ -161,7 +154,6 @@ alarm_control_panel:
   on_triggered:
     then:
       - logger.log: "Alarm Triggered!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_cleared_trigger" >}}
@@ -176,7 +168,6 @@ alarm_control_panel:
   on_cleared:
     then:
       - logger.log: "Alarm Cleared!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_disarmed_trigger" >}}
@@ -191,7 +182,6 @@ alarm_control_panel:
   on_disarmed:
     then:
       - logger.log: "Alarm Disarmed!"
-
 ```
 
 {{< anchor "alarm_control_panel_on_ready_trigger" >}}
@@ -208,7 +198,6 @@ alarm_control_panel:
     then:
       - lambda: !lambda |-
           ESP_LOGI("AlarmPanel", "Sensor ready change to: %s", ((id(acp1).get_all_sensors_ready()) ? (const char *) "True" : (const char *) "False"));
-
 ```
 
 {{< anchor "alarm_control_panel_on_chime_trigger" >}}
@@ -224,7 +213,6 @@ alarm_control_panel:
   on_chime:
     then:
       - logger.log: "Alarm Chime!"
-
 ```
 
 {{< anchor "alarm_control_panel_arm_away_action" >}}
@@ -239,7 +227,6 @@ on_...:
     - alarm_control_panel.arm_away:
         id: acp1
         code: "1234"
-
 ```
 
 {{< anchor "alarm_control_panel_arm_home_action" >}}
@@ -254,7 +241,6 @@ on_...:
     - alarm_control_panel.arm_home:
         id: acp1
         code: "1234"
-
 ```
 
 {{< anchor "alarm_control_panel_arm_night_action" >}}
@@ -269,7 +255,6 @@ on_...:
     - alarm_control_panel.arm_night:
         id: acp1
         code: "1234"
-
 ```
 
 {{< anchor "alarm_control_panel_disarm_action" >}}
@@ -284,7 +269,6 @@ on_...:
     - alarm_control_panel.disarm:
         id: acp1
         code: "1234"
-
 ```
 
 {{< anchor "alarm_control_panel_pending_action" >}}
@@ -297,7 +281,6 @@ This action puts the alarm in pending state (the state before triggered after *p
 on_...:
   then:
     - alarm_control_panel.pending: acp1
-
 ```
 
 {{< anchor "alarm_control_panel_triggered_action" >}}
@@ -310,7 +293,6 @@ This action puts the alarm in triggered state.
 on_...:
   then:
     - alarm_control_panel.triggered: acp1
-
 ```
 
 {{< anchor "alarm_control_panel_is_armed_condition" >}}
@@ -324,7 +306,6 @@ on_...:
   if:
     condition:
       alarm_control_panel.is_armed: acp1
-
 ```
 
 {{< anchor "alarm_control_panel_lambda_calls" >}}
@@ -345,7 +326,6 @@ id(acp1).arm_home();
 id(acp1).arm_night();
 id(acp1).disarm(std::string("1234"));
 bool all_sensors_ready = id(acp1).get_all_sensors_ready();
-
 ```
 
 ## Platforms

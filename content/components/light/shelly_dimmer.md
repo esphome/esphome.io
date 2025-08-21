@@ -42,7 +42,6 @@ light:
       firmware:
         version: "51.6"
         update: true
-
 ```
 
 ## Configuration variables
@@ -57,7 +56,6 @@ uart:
     tx_pin: 1
     rx_pin: 3
     baud_rate: 115200
-
 ```
 
 {{< /note >}}
@@ -86,7 +84,6 @@ When flashing Shelly Dimmer with esphome for the first time, automatic flashing 
 firmware:
   version: "51.6" #<-- set version here
   update: true
-
 ```
 
 There is no action required by the user to flash the STM32. There is no way to revert to stock firmware on the STM32 at the time of writing.

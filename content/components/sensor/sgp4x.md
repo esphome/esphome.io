@@ -33,7 +33,6 @@ sensor:
       name: "VOC Index"
     nox:
       name: "NOx Index"
-
 ```
 
 ## Configuration variables
@@ -88,7 +87,6 @@ sensor:
   compensation:
     humidity_source: dht1_hum
     temperature_source: dht1_temp
-
 ```
 
 ## See Also

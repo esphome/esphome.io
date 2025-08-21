@@ -47,7 +47,6 @@ display:
     address: 0x27
     lambda: |-
       it.print("Hello World!");
-
 ```
 
 ### Configuration variables
@@ -89,7 +88,6 @@ display:
     rs_pin: GPIOXX
     lambda: |-
       it.print("Hello World!");
-
 ```
 
 ### Configuration variables
@@ -155,7 +153,6 @@ display:
 time:
 - platform: homeassistant
   id: my_time
-
 ```
 
 Please see [Formatted Text](#display-printf) for a quick introduction into the `printf` formatting rules and
@@ -197,7 +194,6 @@ display:
           - 0b10001
     lambda: |-
       it.print("Hello, world \x08 \x07!");
-
 ```
 
 Try this [custom character generator](https://omerk.github.io/lcdchargen/) to design your own sybmols.
@@ -245,7 +241,6 @@ binary_sensor:
       then:
         - lambda: |-
             id(mydisplay).no_backlight();
-
 ```
 
 ## See Also

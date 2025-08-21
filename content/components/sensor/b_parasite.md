@@ -34,7 +34,6 @@ sensor:
       name: 'b-parasite Battery Voltage'
     illuminance:
       name: 'b-parasite Illuminance'
-
 ```
 
 ## Configuration variables

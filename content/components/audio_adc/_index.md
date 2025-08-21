@@ -16,7 +16,6 @@ capture/recording of audio via the microcontroller from a range of sources.
 # Example configuration entry
 audio_adc:
   - platform: ...
-
 ```
 
 ## Platforms

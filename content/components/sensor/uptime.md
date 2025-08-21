@@ -18,7 +18,6 @@ sensor:
   - platform: uptime
     type: seconds
     name: Uptime Sensor
-
 ```
 
 ## Configuration variables

@@ -34,7 +34,6 @@ microphone:
     id: adc_mic
     adc_type: internal
     adc_pin: GPIOXX
-
 ```
 
 ## Configuration variables
@@ -85,7 +84,6 @@ microphone:
     adc_type: external
     i2s_din_pin: GPIOXX
     pdm: true
-
 ```
 
 ### RaspiAudio Muse Luxe
@@ -96,7 +94,6 @@ microphone:
     i2s_din_pin: GPIOXX
     adc_type: external
     pdm: false
-
 ```
 
 ## See also

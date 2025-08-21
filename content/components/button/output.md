@@ -26,7 +26,6 @@ button:
     name: "Generic Output"
     output: output1
     duration: 500ms
-
 ```
 
 ## Configuration variables

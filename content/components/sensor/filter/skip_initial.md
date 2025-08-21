@@ -15,5 +15,4 @@ readings have been skipped, this filter does nothing.
   # ...
   filters:
     - skip_initial: 3
-
 ```

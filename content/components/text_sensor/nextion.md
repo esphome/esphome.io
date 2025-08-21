@@ -30,7 +30,6 @@ text_sensor:
   id: text0
   update_interval: 4s
   component_name: text0
-
 ```
 
 ## Configuration variables
@@ -84,7 +83,6 @@ on_...:
       # These are optional. Defaults to true.
       publish_state: true
       send_to_nextion: true
-
 ```
 
 Configuration variables:
@@ -159,7 +157,6 @@ printh 00
 prints text0.txt,0
 printh 00
 printh FF FF FF
-
 ```
 
 ### Explanation

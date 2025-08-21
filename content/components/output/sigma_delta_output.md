@@ -47,7 +47,6 @@ output:
   - platform: gpio
     pin: GPIOXX
     id: heater_relay
-
 ```
 
 Configuration variables:

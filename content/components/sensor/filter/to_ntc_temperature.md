@@ -33,7 +33,6 @@ Then enter these values in the calibration parameter:
           - 10.0kOhm -> 25°C
           - 27.219kOhm -> 0°C
           - 14.674kOhm -> 15°C
-
 ```
 
 The filter determines coefficients for the `Steinhart-Hart`_ equation from the specified
@@ -52,5 +51,4 @@ pairs of values which can also be specified directly as an alternative.
           a: 1.439114856904070E-03
           b: 2.693066430764570E-04
           c: 1.653440958554570E-07
-
 ```

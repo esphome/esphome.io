@@ -54,7 +54,6 @@ sensor:
         name: "Propane c test distance"
     battery_level:
         name: "Propane c test battery level"
-
 ```
 
 ## Configuration variables
@@ -120,7 +119,6 @@ and the `mopeka_ble` component like so:
 esp32_ble_tracker:
 
 mopeka_ble:
-
 ```
 
 After uploading, the ESP32 will immediately try to scan for BLE devices. For Mopeka Standard devices you must press and hold the green sync button for it to be identified.

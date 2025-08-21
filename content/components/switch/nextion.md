@@ -32,7 +32,6 @@ switch:
     id: darkmode
     name: "Is Darkmode Set"
     variable_name: darkmode
-
 ```
 
 ## Configuration variables
@@ -88,7 +87,6 @@ on_...:
       # These are optional. Defaults to true.
       publish_state: true
       send_to_nextion: true
-
 ```
 
 Configuration options:
@@ -165,7 +163,6 @@ prints "r0",0
 printh 00
 prints r0.val,0
 printh FF FF FF
-
 ```
 
 ### Explanation

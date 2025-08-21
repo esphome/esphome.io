@@ -21,7 +21,6 @@ text:
     min_length: 0
     max_length: 100
     mode: text
-
 ```
 
 ## Configuration variables

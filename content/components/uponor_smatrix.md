@@ -29,7 +29,6 @@ Start with a basic configuration that just contains the UART and Uponor hub comp
 
 ```yaml
 uponor_smatrix:
-
 ```
 
 When you upload this configuration to your ESPHome device and connect it to the Uponor Smatrix bus, it will print a list of detected addresses to the log output.
@@ -43,7 +42,6 @@ When you upload this configuration to your ESPHome device and connect it to the 
 [00:00:00][C][uponor_smatrix:033]:     0xDE72
 [00:00:00][C][uponor_smatrix:033]:     0xDE4A
 [00:00:00][C][uponor_smatrix:033]:     0xDE13
-
 ```
 
 With that you can then add `climate` or `sensor` components for the detected devices. Optionally, you can also statically add the detected system address to your `uponor_smatrix` configuration.
@@ -69,7 +67,6 @@ uponor_smatrix:
   address: 0x110B
   uart_id: my_uart
   time_id: my_time
-
 ```
 
 ### Configuration variables
@@ -93,7 +90,6 @@ climate:
   - platform: uponor_smatrix
     address: 0xDE13
     name: Thermostat Living Room
-
 ```
 
 ### Configuration variables
@@ -116,7 +112,6 @@ sensor:
       name: Floor Temperature Living Room
     target_temperature:
       name: Thermostat Target Temperature Living Room
-
 ```
 
 ### Configuration variables

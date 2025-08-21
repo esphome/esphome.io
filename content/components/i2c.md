@@ -25,7 +25,6 @@ i2c:
   scl: GPIOXX
   scan: true
   id: bus_a
-
 ```
 
 ## Configuration variables
@@ -64,7 +63,6 @@ sensor:
     i2c_id: bus_b
     address: 0x76
 # ...
-
 ```
 
 {{< /note >}}

@@ -27,7 +27,6 @@ sensor:
       name: Temperature
     ec:
       name: EC
-
 ```
 
 ## Configuration variables
@@ -65,7 +64,6 @@ on_...:
       id: ufire_ec_board
       solution: 0.146
       temperature: !lambda "return id(temperature_liquit).state;"
-
 ```
 
 Configuration options:
@@ -91,7 +89,6 @@ sensor:
 on_...:
   - sensor.ufire_ec_board.reset:
       id: ufire_ec_board
-
 ```
 
 Configuration options:

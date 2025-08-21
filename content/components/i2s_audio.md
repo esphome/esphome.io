@@ -18,7 +18,6 @@ This component only works on ESP32 based chips.
 i2s_audio:
   i2s_lrclk_pin: GPIOXX
   i2s_bclk_pin: GPIOXX
-
 ```
 
 ## Configuration variables

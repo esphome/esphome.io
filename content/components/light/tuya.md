@@ -28,7 +28,6 @@ Here is an example output for a Tuya dimmer:
 [21:50:28][C][tuya:024]: Tuya:
 [21:50:28][C][tuya:031]:   Datapoint 3: int value (value: 139)
 [21:50:28][C][tuya:029]:   Datapoint 1: switch (value: OFF)
-
 ```
 
 On this dimmer, the toggle switch is datapoint 1 and the dimmer value is datapoint 3.
@@ -42,7 +41,6 @@ light:
     dimmer_datapoint: 3
     min_value_datapoint: 2
     switch_datapoint: 1
-
 ```
 
 ## Configuration variables

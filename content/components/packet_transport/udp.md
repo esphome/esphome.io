@@ -31,7 +31,6 @@ sensor:
       temperature:
         name: "Temperature"
         id: dht_temp
-
 ```
 
 ## See Also

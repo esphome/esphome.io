@@ -23,7 +23,6 @@ esp32_camera_web_server:
     mode: stream
   - port: 8081
     mode: snapshot
-
 ```
 
 ## Configuration variables

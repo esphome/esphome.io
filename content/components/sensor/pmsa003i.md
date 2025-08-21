@@ -40,7 +40,6 @@ sensor:
       name: "PMC >5µm"
     pmc_10_0:
       name: "PMC >10µm"
-
 ```
 
 ## Configuration variables

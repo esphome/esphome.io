@@ -41,7 +41,6 @@ sensor:
   - platform: adc
     id: source_sensor
     pin: A0
-
 ```
 
 ## Note
@@ -55,7 +54,6 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
     pin: A0
     filters:
       - multiply: 3.3
-
 ```
 
 ## Configuration variables

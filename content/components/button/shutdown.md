@@ -21,7 +21,6 @@ pressing the reset button or restarting the power supply.
 button:
   - platform: shutdown
     name: "Living Room Shutdown"
-
 ```
 
 ## Configuration variables

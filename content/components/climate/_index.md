@@ -41,7 +41,6 @@ climate:
       temperature_step:
         target_temperature: 0.5
         current_temperature: 0.1
-
 ```
 
 Configuration variables:
@@ -144,7 +143,6 @@ This is an [Action](#config-action) for setting parameters for climate devices.
     id: my_climate
     mode: HEAT_COOL
     target_temperature: 25°C
-
 ```
 
 Configuration variables:
@@ -218,7 +216,6 @@ advanced stuff.
     id(my_climate).preset
     // Custom Preset, type: string
     id(my_climate).custom_preset
-
 ```
 
 - `.make_call`  : Control the climate device
@@ -228,7 +225,6 @@ advanced stuff.
     call.set_mode("OFF");
     // etc. see API reference
     call.perform();
-
 ```
 
 {{< anchor "climate-on_state_trigger" >}}
@@ -248,7 +244,6 @@ climate:
       - lambda: |-
           if (x.mode != CLIMATE_MODE_OFF)
             id(some_binary_sensor).publish_state(true);
-
 ```
 
 {{< anchor "climate-on_control_trigger" >}}
@@ -273,7 +268,6 @@ climate:
               id(turnoff_script).stop();
               x.set_target_temperature(25.0f);
           }
-
 ```
 
 ## See Also

@@ -49,7 +49,6 @@ lvgl:
               id: light_switch
               on_click:
                 light.toggle: local_light
-
 ```
 
 {{< anchor "lvgl-cookbook-binent" >}}
@@ -93,7 +92,6 @@ lvgl:
                     action: light.toggle
                     data:
                       entity_id: light.remote_light
-
 ```
 
 {{< anchor "lvgl-cookbook-bright" >}}
@@ -137,7 +135,6 @@ lvgl:
                     data:
                       entity_id: light.your_dimmer
                       brightness: !lambda return int(x);
-
 ```
 
 Note that Home Assistant expects an integer at the `brightness` parameter of the `light.turn_on` action call, and since ESPHome uses floats, `x` needs to be converted.
@@ -186,7 +183,6 @@ lvgl:
                     data:
                       entity_id: media_player.your_room
                       volume_level: !lambda return (x / 100);
-
 ```
 
 The `adv_hittest` option ensures that accidental touches to the screen won't cause sudden volume changes (more details in the [slider doc](#lvgl-widget-slider)).
@@ -287,7 +283,6 @@ lvgl:
                     y: 8
                     x: 90
                     text: "+10"
-
 ```
 
 {{< tip >}}
@@ -368,7 +363,6 @@ lvgl:
                     text: "Outdoor"
                     align: CENTER
                     y: 65
-
 ```
 
 And here's the same sensor configuration, but instead with a semicircle gauge with a gradient background drawn by a multitude of ticks:
@@ -440,7 +434,6 @@ lvgl:
                     text: "Outdoor"
                     align: CENTER
                     y: -6
-
 ```
 
 {{< tip >}}
@@ -515,7 +508,6 @@ lvgl:
                     widgets:
                       - label:
                           text: "+"
-
 ```
 
 {{< anchor "lvgl-cookbook-cover" >}}
@@ -639,7 +631,6 @@ lvgl:
                       action: cover.close
                       data:
                         entity_id: cover.myroom
-
 ```
 
 {{< anchor "lvgl-cookbook-theme" >}}
@@ -743,7 +734,6 @@ lvgl:
       text_color: 0xFFFFFF
       width: 100%
       height: 30
-
 ```
 
 Note that style definitions can contain common properties too, like positioning and sizing.
@@ -790,7 +780,6 @@ lvgl:
                 on_press:
                   then:
                     lvgl.page.next:
-
 ```
 
 For this example to appear correctly, use the theme and style options from [above](#lvgl-cookbook-theme) and LVGL's own library [fonts](#lvgl-fonts).
@@ -833,7 +822,6 @@ lvgl:
           y: 7
           text_align: right
           text_color: 0xFFFFFF
-
 ```
 
 Of note:
@@ -879,7 +867,6 @@ lvgl:
                   text_align: CENTER
                   text_color: 0xFFFFFF
         ...
-
 ```
 
 For this example to work, use the theme and style options from [above](#lvgl-cookbook-theme).
@@ -1005,7 +992,6 @@ lvgl:
                           id: cov_down_west
                           align: CENTER
                           text: "\U000F0045"
-
 ```
 
 This saved you from a considerable amount of manual calculation of widget positioning which would otherwise be required to place them manually with `x` and `y`  ! You only need to determine a common width and height for your widgets to distribute them on the page as you prefer. ([MDI icons in text](#lvgl-cookbook-icontext) below shows how to use custom icons.)
@@ -1155,7 +1141,6 @@ lvgl:
                           id: cov_down_west
                           align: CENTER
                           text: "\U000F0045"
-
 ```
 
 The big advantage here is that whenever you need to add, for example, an extra column of buttons for a new cover, you just simply append it to the `grid_columns` variable, and add the corresponding widgets as above. With `STRETCH` their sizes and positions will automatically be calculated to fill in the cells, while the parent's `pad_all`  , `pad_row` and `pad_column` can help with spacing between them. See [Weather forecast panel](#lvgl-cookbook-weather) further down this page for another example relying on **Grid**.
@@ -1214,7 +1199,6 @@ lvgl:
                   arc_width: 8
           on_press:
             - lvgl.widget.hide: boot_screen
-
 ```
 
 {{< anchor "lvgl-cookbook-icontext" >}}
@@ -1252,7 +1236,6 @@ lvgl:
               align: CENTER
               text_align: CENTER
               text_font: roboto_icons_42
-
 ```
 
 {{< tip >}}
@@ -1289,7 +1272,6 @@ lvgl:
         indicator:
           checked:
             text_font: fontawesome_checkmark
-
 ```
 
 You could of course simply apply one of the built-in `montserrat_` packs, but that would not be beneficial on the binary size - it would uselessly include the entire set of glyphs in the flash.
@@ -1362,7 +1344,6 @@ lvgl:
                     action: light.toggle
                     data:
                       entity_id: light.remote_light
-
 ```
 
 {{< anchor "lvgl-cookbook-iconbatt" >}}
@@ -1444,7 +1425,6 @@ lvgl:
               x: -10
               text_font: battery_icons_20
               text: "\U000F0091" # start with mdi-battery-unknown
-
 ```
 
 {{< anchor "lvgl-cookbook-animbatt" >}}
@@ -1515,7 +1495,6 @@ lvgl:
                 batt_full
                 ]
               duration: 2200ms
-
 ```
 
 {{< tip >}}
@@ -1533,7 +1512,6 @@ binary_sensor:
       then:
         - lvgl.widget.show: lbl_battery_status
         - lvgl.widget.hide: ani_battery_charging
-
 ```
 
 Use `x`  , `y`  , `align` widget properties for precise positioning.
@@ -1661,7 +1639,6 @@ script:
           text: !lambda |-
             static const char * const day_names[] = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
             return day_names[id(time_comp).now().day_of_week - 1];
-
 ```
 
 {{< anchor "lvgl-cookbook-keypad" >}}
@@ -1796,7 +1773,6 @@ key_collector:
             - lvgl.led.update:
                 id: lvgl_led
                 color: 0xFF0000
-
 ```
 
 Of note:
@@ -1961,7 +1937,6 @@ text:
     name: wd_out_now
     widget: lbl_weather_outdnoor_now
     mode: text
-
 ```
 
 If you look carefully at the `grid_columns` variable, you'll notice that there are two thinner columns at left and right (`FR(10)`  ). Reason is to add some space to the labels from the edges. And that's why we had to use `grid_cell_column_span` for the widgets in the first row, to take up the space of multiple columns.
@@ -2095,7 +2070,6 @@ These labels will appear in Home Assistant as [editable text components](https:/
           - text.your_esphome_node_wd_out_now
       data:
         value: "{{states('sensor.outdoor_temperature') | round(1)}} °C"
-
 ```
 
 The automations will be triggered to update the labels every time the corresponding entities change, and when the ESPHome comes alive - the reason you also need the {{< docref "/components/binary_sensor/status" >}}. Note that you'll need to adjust the entity IDs corresponding to your ESPHome node depedning on how you [configured it to use its name](#esphome-configuration_variables).
@@ -2143,7 +2117,6 @@ number:
     max_value: 180
     step: 5
     mode: box
-
 ```
 
 {{< anchor "lvgl-cookbook-antiburn" >}}
@@ -2206,7 +2179,6 @@ touchscreen:
             then:
               - lvgl.resume:
               - lvgl.widget.redraw:
-
 ```
 
 You can combine it with the previous example to turn off the backlight, so the users don't actually notice this.

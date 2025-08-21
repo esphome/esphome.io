@@ -18,7 +18,6 @@ window size will make the filter slow to react to input changes.
         window_size: 7
         send_every: 4
         send_first_at: 3
-
 ```
 
 Configuration variables:

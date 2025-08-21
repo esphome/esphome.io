@@ -53,7 +53,6 @@ stepper:
     sleep_pin: GPIOXX
     acceleration: inf
     deceleration: inf
-
 ```
 
 Configuration variables:
@@ -79,7 +78,6 @@ stepper:
     dir_pin:
       number: GPIOXX
       inverted: true
-
 ```
 
 {{< /note >}}
@@ -94,7 +92,6 @@ stepper:
     sleep_pin:
       number: GPIOXX
       inverted: true
-
 ```
 
 {{< /note >}}
@@ -117,7 +114,6 @@ stepper:
     # Optional:
     acceleration: inf
     deceleration: inf
-
 ```
 
 Configuration variables:
@@ -160,7 +156,6 @@ on_...:
         } else {
           return -1000;
         }
-
 ```
 
 Configuration options:
@@ -182,7 +177,6 @@ on_...:
     - stepper.set_target:
         id: my_stepper
         target: 150
-
 ```
 
 {{< /warning >}}
@@ -218,7 +212,6 @@ on_...:
         } else {
           return -1000;
         }
-
 ```
 
 Configuration variables:
@@ -237,7 +230,6 @@ on_...:
   - stepper.set_speed:
       id: my_stepper
       speed: 250 steps/s
-
 ```
 
 Configuration variables:
@@ -257,7 +249,6 @@ on_...:
   - stepper.set_acceleration:
       id: my_stepper
       acceleration: 250 steps/s^2
-
 ```
 
 Configuration variables:
@@ -277,7 +268,6 @@ on_...:
   - stepper.set_deceleration:
       id: my_stepper
       deceleration: 250 steps/s^2
-
 ```
 
 Configuration variables:
@@ -310,7 +300,6 @@ stepper:
   - platform: ...
     # [...] stepper config
     id: my_stepper
-
 ```
 
 {{< anchor "stepper-lambda_calls" >}}
@@ -326,7 +315,6 @@ advanced stuff (see the full API Reference for more info).
         // Argument is integer (signed int)
         // Set the (absolute) target position to 250 steps
         id(my_stepper).set_target(250);
-
 ```
 
 - `report_position`  : Report the current position as an integer.
@@ -334,21 +322,18 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
         // Report the (absolute) current position as 250 steps
         id(my_stepper).report_position(250);
-
 ```
 
 - `current_position`  : Get the current position of the stepper as an integer.
 
 ```cpp
         int pos = id(my_stepper).current_position;
-
 ```
 
 - `target_position`  : Get the set target position of the stepper  as an integer.
 
 ```cpp
         int pos = id(my_stepper).target_position;
-
 ```
 
 ## See Also

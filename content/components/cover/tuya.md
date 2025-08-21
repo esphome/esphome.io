@@ -19,7 +19,6 @@ Here is an example output for a Tuya M515EGWT (motor for chain roller blinds):
 [21:50:28][C][tuya:024]: Tuya:
 [21:50:28][C][tuya:031]:   Datapoint 2: int value (value: 53)
 [21:50:28][C][tuya:029]:   Datapoint 5: switch (value: OFF)
-
 ```
 
 On this cover motor, the position control is datapoint 2.
@@ -31,7 +30,6 @@ cover:
   - platform: "tuya"
     name: "motor1"
     position_datapoint: 2
-
 ```
 
 ## Configuration variables

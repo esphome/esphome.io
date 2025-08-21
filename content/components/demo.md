@@ -17,7 +17,6 @@ different components (sensors, lights, ...)
 ```yaml
 # Example configuration entry
 demo:
-
 ```
 
 ## Configuration variables

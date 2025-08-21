@@ -27,7 +27,6 @@ select:
   - platform: lvgl
     widget: dropdown_id
     name: LVGL Dropdown
-
 ```
 
 {{< note >}}

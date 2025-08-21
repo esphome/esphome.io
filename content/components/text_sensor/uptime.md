@@ -23,7 +23,6 @@ text_sensor:
     format:
       separator: " "
       days: "D"
-
 ```
 
 ## Configuration variables

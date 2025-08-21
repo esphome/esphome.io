@@ -28,7 +28,6 @@ sensor:
       name: "Xiaomi HHCCJCY10 Soil Conductivity"
     battery_level:
       name: "Xiaomi HHCCJCY10 Battery Level"
-
 ```
 
 ## Configuration variables

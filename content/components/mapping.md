@@ -24,7 +24,6 @@ text_sensor:
      lvgl.image.update:
        id: weather_image
        src: !lambda return id(weather_icon)[x];
-
 ```
 
 ## Configuration variables
@@ -86,7 +85,6 @@ display:
     lambda: |-
       auto color = color_map[random_uint32() % 3];
       it.printf(100, 100, id(roboto20), color, id(string_map)[random_uint32() % 3].c_str(), Color(0));
-
 ```
 
 ## See Also

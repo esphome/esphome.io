@@ -80,7 +80,6 @@ text_sensor:
         default: return std::string("Unknown");
       }
       return x;
-
 ```
 
 ## See Also

@@ -42,7 +42,6 @@ ble_client:
   - mac_address: XX:XX:XX:XX:XX:XX
     id: itag_black
     auto_connect: true
-
 ```
 
 ## Configuration variables
@@ -80,7 +79,6 @@ ble_client:
       then:
         - lambda: |-
             ESP_LOGD("ble_client_lambda", "Connected to BLE device");
-
 ```
 
 {{< anchor "ble_client-on_disconnect" >}}
@@ -97,7 +95,6 @@ ble_client:
       then:
         - lambda: |-
             ESP_LOGD("ble_client_lambda", "Disconnected from BLE device");
-
 ```
 
 {{< anchor "ble_client-on_passkey_request" >}}
@@ -115,7 +112,6 @@ ble_client:
         - ble_client.passkey_reply:
             id: ble_itag
             passkey: 123456
-
 ```
 
 {{< anchor "ble_client-on_passkey_notification" >}}
@@ -133,7 +129,6 @@ ble_client:
         - logger.log:
             format: "Enter this passkey on your BLE device: %06d"
             args: [ passkey ]
-
 ```
 
 {{< anchor "ble_client-on_numeric_comparison_request" >}}
@@ -154,7 +149,6 @@ ble_client:
         - ble_client.numeric_comparison_reply:
             id: ble_itag
             accept: True
-
 ```
 
 {{< anchor "ble_client-connect_action" >}}
@@ -193,7 +187,6 @@ interval:
               return {(uint8_t)t, (uint8_t)(t >> 8), (uint8_t)(t >> 16), (uint8_t)(t >> 24), 0};
       - ble_client.disconnect: ble_clock
       - esp32_ble_tracker.start_scan:
-
 ```
 
 Any actions after the `connect` action will proceed only after the connect succeeds. If the connect
@@ -241,7 +234,6 @@ switch:
           # A lambda returning an std::vector<uint8_t>.
           value: !lambda |-
               return {0x13, 0x37};
-
 ```
 
 ### Configuration variables
@@ -265,7 +257,6 @@ on_...:
     - ble_client.passkey_reply:
         id: my_ble_client
         passkey: 123456
-
 ```
 
 ### Configuration variables
@@ -287,7 +278,6 @@ on_...:
     - ble_client.numeric_comparison_reply:
         id: my_ble_client
         accept: True
-
 ```
 
 ### Configuration variables
@@ -313,7 +303,6 @@ ble_client:
       then:
         - ble_client.remove_bond:
             id: my_ble_client
-
 ```
 
 ### Configuration variables
@@ -425,7 +414,6 @@ display them in the log:
 [18:24:57][I][ble_client:143]: Service UUID: 0x1802
 [18:24:57][I][ble_client:144]:   start_handle: 0x27  end_handle: 0x29
 [18:24:57][I][ble_client:305]:  characteristic 0x2A06, handle 0x29, properties 0x4
-
 ```
 
 The discovered services can then be used to enable and configure other
@@ -451,7 +439,6 @@ ble_client:
         - ble_client.passkey_reply:
             id: pvvx_ble_display
             passkey: 123456
-
 ```
 
 Secure connection with a dynamically generated passkey:
@@ -502,7 +489,6 @@ ble_client:
     on_connect:
       then:
         - logger.log: "Connected"
-
 ```
 
 ## See Also

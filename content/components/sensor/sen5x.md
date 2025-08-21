@@ -59,7 +59,6 @@ sensor:
     store_baseline: true
     address: 0x69
     update_interval: 10s
-
 ```
 
 ## Configuration variables
@@ -181,7 +180,6 @@ This [action](#config-action) manually starts fan-cleaning.
 on_...:
   then:
     - sen5x.start_fan_autoclean: sen54
-
 ```
 
 ## See Also

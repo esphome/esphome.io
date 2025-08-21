@@ -132,7 +132,6 @@ time:
           # Switch off 10 minutes later
           - delay: 10min
           - switch.turn_off: esp_fishpond_pump
-
 ```
 
 ### 2. Programming
@@ -157,7 +156,6 @@ Both options USB and OTA are done by running the command:
 
 ```bash
 esphome <some-yaml-file> run
-
 ```
 
 ### 3. Prepping and installing

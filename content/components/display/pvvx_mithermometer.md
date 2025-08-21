@@ -41,7 +41,6 @@ display:
     it.print_percent(true);
     it.print_happy(true);
     it.print_bracket(true);
-
 ```
 
 ## Configuration variables
@@ -89,7 +88,6 @@ display:
       // Print round brackets around the simley
       it.print_bracket(true);
       // The final result is "(Δ△Δ)"
-
 ```
 
 Valid values for the big number (`it.print_bignum()`  ) are from -99.5 to 1999.5. Smaller values are displayed as `Lo`  , larger ones as `Hi`  . It will be printed to the screen. If not defined, a 0 will be displayed.
@@ -177,7 +175,6 @@ display:
     } else {
       it.print_happy();
     }
-
 ```
 
 ### Only synchronize the time once a day
@@ -213,7 +210,6 @@ display:
   update_interval: 24h
   validity_period: 0s
   time_id: homeassistant_time
-
 ```
 
 ## See Also

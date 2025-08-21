@@ -16,7 +16,6 @@ The `logger` Select platform allows you to create a Select that can be used to c
 select:
   - platform: logger
     name: "Logger select"
-
 ```
 
 {{< note >}}

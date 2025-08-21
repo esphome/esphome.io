@@ -58,7 +58,6 @@ sensor:
       name: "Xiaomi MiJia Humidity"
     battery_level:
       name: "Xiaomi MiJia Battery Level"
-
 ```
 
 {{< note >}}
@@ -148,7 +147,6 @@ esp32_ble_tracker:
             for (auto data : x.get_manufacturer_datas()) {
                 ESP_LOGD("ble_adv", "    - %s: (length %i)", data.uuid.to_string().c_str(), data.data.size());
             }
-
 ```
 
 #### Configuration variables
@@ -178,7 +176,6 @@ esp32_ble_tracker:
             if (x[0] != 0x7b || x[1] != 0x61) return;
             int value = x[2] + (x[3] << 8);
             id(ble_sensor).publish_state(value);
-
 ```
 
 #### Configuration variables
@@ -206,7 +203,6 @@ esp32_ble_tracker:
       service_uuid: 181A
       then:
         - lambda: 'id(ble_sensor).publish_state(x[0]);'
-
 ```
 
 #### Configuration variables
@@ -227,7 +223,6 @@ esp32_ble_tracker:
     - then:
         - lambda: |-
              ESP_LOGD("ble_auto", "The scan has ended!");
-
 ```
 
 #### Configuration variables
@@ -247,7 +242,6 @@ esp32_ble_tracker:
 
 on_...:
   - esp32_ble_tracker.start_scan:
-
 ```
 
 #### Configuration variables
@@ -261,12 +255,10 @@ This action can also be written in [lambdas](#config-lambda):
 ```yaml
 esp32_ble_tracker:
   id: ble_tracker_id
-
 ```
 
 ```cpp
 id(ble_tracker_id).start_scan()
-
 ```
 
 ### `esp32_ble_tracker.stop_scan` Action
@@ -278,7 +270,6 @@ esp32_ble_tracker:
 
 on_...:
   - esp32_ble_tracker.stop_scan:
-
 ```
 
 ## Use on single-core chips
@@ -301,7 +292,6 @@ api:
        continuous: true
   on_client_disconnected:
     - esp32_ble_tracker.stop_scan:
-
 ```
 
 ## See Also

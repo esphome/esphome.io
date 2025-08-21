@@ -20,7 +20,6 @@ This component requires {{< docref "/components/safe_mode" >}} to be configured.
 switch:
   - platform: safe_mode
     name: "Living Room Restart (Safe Mode)"
-
 ```
 
 ## Configuration variables

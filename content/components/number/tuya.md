@@ -33,7 +33,6 @@ valid data points to the log after start-up.
 [21:37:14][C][tuya:045]:   Datapoint 115: enum (value: 4)
 [21:37:14][C][tuya:045]:   Datapoint 116: enum (value: 2)
 [21:37:14][C][tuya:055]:   Product: '{"p":"ymf4oruxqx0xlogp","v":"1.0.3","m":0}'
-
 ```
 
 The example output above from a Tuya Siren with temperature and humidity sensors. The
@@ -51,7 +50,6 @@ Based on this, you can create a number as follows:
   min_value: 0
   max_value: 2
   step: 1
-
 ```
 
 The value for `multiply` is used as the scaling factor for the Number. All numbers in Tuya are integers, so a scaling factor is sometimes needed to convert the Tuya reported value into floating point.
@@ -65,7 +63,6 @@ For instance, assume we have a pH sensor that reads from 0.00 to 15.00 with a sc
   min_value: 0.00
   max_value: 15.00
   multiply: 100
-
 ```
 
 ## Hidden datapoints
@@ -87,7 +84,6 @@ Therefore there is also an option to store them on the ESPHome side and they wil
     datapoint_type: int
     initial_value: 85
     restore_value: yes
-
 ```
 
 ## Configuration variables

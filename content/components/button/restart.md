@@ -17,7 +17,6 @@ through Home Assistant.
 button:
   - platform: restart
     name: "Living Room Restart"
-
 ```
 
 ## Configuration variables

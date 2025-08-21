@@ -39,7 +39,6 @@ When your ESPHome device crashes, you can obtain a decoded stack trace to help i
 ```bash
       esphome compile your-device.yaml
       esphome upload your-device.yaml
-
 ```
 
 {{< note >}}
@@ -53,7 +52,6 @@ While you can use OTA for the upload, you'll need a USB connection anyway to cap
 
 ```bash
       esphome logs your-device.yaml
-
 ```
 
 1. **Wait for crash**: When the device crashes, ESPHome will automatically detect and decode the stack trace. You'll see output similar to this:
@@ -75,7 +73,6 @@ While you can use OTA for the upload, you'll need a USB connection anyway to cap
        (inlined by) touch_pad_filter_cb at /Users/bdraco/.platformio/packages/framework-espidf/components/driver/touch_sensor/esp32/touch_sensor.c:98
       WARNING Decoded 0x4014b23e: timer_process_alarm at /Users/bdraco/.platformio/packages/framework-espidf/components/esp_timer/src/esp_timer.c:456
        (inlined by) timer_task at /Users/bdraco/.platformio/packages/framework-espidf/components/esp_timer/src/esp_timer.c:482
-
 ```
 
 The decoded stack trace shows:

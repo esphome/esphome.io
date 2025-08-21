@@ -36,7 +36,6 @@ The inverter will report new measurements approximately every 1.3 seconds.
 # Example configuration entry
 sun_gtil2:
   uart_id: control_to_display
-
 ```
 
 ### Configuration variables
@@ -74,7 +73,6 @@ sensor:
     limiter_power:
       id: gtil_limiter_power
       internal: True
-
 ```
 
 ### Configuration variables
@@ -111,7 +109,6 @@ text_sensor:
     serial_number:
       id: gtil_serial_number
       internal: True
-
 ```
 
 ### Configuration variables

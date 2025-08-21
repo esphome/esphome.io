@@ -81,7 +81,6 @@ sensor:
 
     inverter_module_temp:
       name: "Growatt Inverter Module Temp"
-
 ```
 
 ## Configuration variables

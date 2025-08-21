@@ -20,7 +20,6 @@ image:
     type: binary
     id: my_image
     resize: 100x100
-
 ```
 
 ```yaml
@@ -30,7 +29,6 @@ image:
     type: grayscale
     transparency: alpha_channel
     resize: 80x80
-
 ```
 
 ```yaml
@@ -41,7 +39,6 @@ image:
   images:
     - file: https://esphome.io/_images/logo.png
       id: esphome_logo
-
 ```
 
 ## Configuration variables
@@ -106,7 +103,6 @@ image:
     - file: "image2.png"
       id: image2
       resize: 200x200  # overrides the default resize
-
 ```
 
 ## Grouping images by type
@@ -132,7 +128,6 @@ image:
       id: image4
     - file: "image5.png"
       id: image5
-
 ```
 
 In addition, the default transparency type can be set within a type group by using the transparency type as a key.
@@ -147,7 +142,6 @@ image:
       id: image2
     opaque:
     - file: "image2.png"
-
 ```
 
 ## Displaying Images
@@ -163,7 +157,6 @@ display:
     lambda: |-
       // Draw the image my_image at position [x=0,y=0]
       it.image(0, 0, id(my_image));
-
 ```
 
 By default, ESPHome will *align* the image at the top left. That means if you enter the coordinates
@@ -183,7 +176,6 @@ display:
 
       // Aligned on right edge
       it.image(it.get_width(), 0, id(my_image), ImageAlign::TOP_RIGHT);
-
 ```
 
 For binary images the `image` method accepts two additional color parameters which can
@@ -200,7 +192,6 @@ display:
 
       // Aligned on right edge
       it.image(it.get_width(), 0, id(my_image), ImageAlign::TOP_RIGHT, id(red), id(blue));
-
 ```
 
 You can also use this to invert images in two color displays, use `COLOR_OFF` then `COLOR_ON`

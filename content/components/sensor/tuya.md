@@ -21,7 +21,6 @@ and requires {{< docref "/components/tuya" >}} to be configured.
 [13:46:01][C][tuya:034]:   Datapoint 5: int value (value: 0)
 [13:46:01][C][tuya:036]:   Datapoint 7: enum (value: 1)
 [13:46:01][C][tuya:046]:   Product: '{"p":"ynjanlglr4qa6dxf","v":"1.0.0","m":0}'
-
 ```
 
 On this controller, the datapoint 5 represents the countdown timer in minutes
@@ -35,7 +34,6 @@ sensor:
   - platform: "tuya"
     name: "MySensor"
     sensor_datapoint: 5
-
 ```
 
 ## Configuration variables

@@ -22,7 +22,6 @@ sun:
 # At least one time source is required
 time:
   - platform: homeassistant
-
 ```
 
 ### Configuration variables
@@ -50,7 +49,6 @@ sun:
   on_sunset:
     - then:
         - logger.log: Good evening!
-
 ```
 
 - **on_sunrise** (*Optional*, [Automation](#automation)): An automation to perform at sunrise
@@ -76,7 +74,6 @@ sensor:
   - platform: sun
     name: Sun Azimuth
     type: azimuth
-
 ```
 
 {{< img src="sun-sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
@@ -100,7 +97,6 @@ text_sensor:
   - platform: sun
     name: Sun Next Sunset
     type: sunset
-
 ```
 
 {{< img src="sun-text_sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
@@ -129,7 +125,6 @@ on_...:
         - sun.is_above_horizon:
       then:
         - logger.log: Sun is above horizon!
-
 ```
 
 ## See Also

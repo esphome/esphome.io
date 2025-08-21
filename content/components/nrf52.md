@@ -20,7 +20,6 @@ Support for all aspects of ESPHome on the NRF52 is still in development.
 # Example configuration entry
 nrf52:
     board: adafruit_feather_nrf52840
-
 ```
 
 ## Configuration variables
@@ -45,7 +44,6 @@ Flashing this bootloader requires an SWD connection, for which a programmer is n
 # Example configuration entry
 nrf52:
     board: adafruit_feather_nrf52840
-
 ```
 
 ## Flashing with Adafruit nRF52 Bootloader
@@ -66,7 +64,6 @@ This bootloader supports updates over USB CDC.
 # Example configuration entry
 nrf52:
     board: adafruit_itsybitsy_nrf52840
-
 ```
 
 ## GPIO Pin Numbering

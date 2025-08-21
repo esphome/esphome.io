@@ -25,7 +25,6 @@ sensor:
       name: "Workshop Temperature"
     humidity:
       name: "Workshop Humidity"
-
 ```
 
 ## Configuration variables
@@ -95,7 +94,6 @@ on_...:
         # https://gml.noaa.gov/ccgg/trends/global.html
         value: 426
         id: my_scd41
-
 ```
 
 value can also be a template, for example to define a Home Assistant calibration action:
@@ -110,7 +108,6 @@ api:
       - scd4x.perform_forced_calibration:
           value: !lambda 'return co2_ppm;'
           id: my_scd41
-
 ```
 
 {{< anchor "factory_reset_action" >}}
@@ -123,7 +120,6 @@ This [action](#config-action) triggers a factory reset of the sensor. Calibratio
 on_...:
   then:
     - scd4x.factory_reset: my_scd41
-
 ```
 
 ## Pressure compensation
@@ -147,7 +143,6 @@ sensor:
     temperature_offset: 0
     co2:
       name: "CO2 level"
-
 ```
 
 ### Example with a remote sensor
@@ -170,7 +165,6 @@ sensor:
     temperature_offset: 0
     co2:
       name: "CO2 level"
-
 ```
 
 ## See Also

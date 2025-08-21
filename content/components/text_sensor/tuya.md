@@ -20,7 +20,6 @@ text_sensor:
   - platform: "tuya"
     name: "MyTextSensor"
     sensor_datapoint: 18
-
 ```
 
 ## Configuration variables

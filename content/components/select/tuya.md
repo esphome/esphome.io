@@ -30,7 +30,6 @@ and requires {{< docref "/components/tuya" >}} to be configured.
 [08:51:09][C][tuya:057]:   GPIO Configuration: status: pin 14, reset: pin 0 (not supported)
 [08:51:09][C][tuya:061]:   Status Pin: GPIO14
 [08:51:09][C][tuya:063]:   Product: '{"p":"gogb05wrtredz3bs","v":"1.0.0","m":0}'
-
 ```
 
 On this controller, the datapoint 36 represents the temperature sensor selection
@@ -49,7 +48,6 @@ select:
       0: Internal
       1: Floor
       2: Both
-
 ```
 
 ## Configuration variables

@@ -37,7 +37,6 @@ filters:
   - sliding_window_moving_average:
       window_size: 15
       send_every: 15
-
 ```
 
 Configuration variables:
@@ -117,7 +116,6 @@ sensor:
     humidity:
       filters:
         # ...
-
 ```
 
 {{< /note >}}
@@ -173,7 +171,6 @@ filters:
     - throttle: 1s
     - delta: 5.0
   - lambda: return x * (9.0/5.0) + 32.0;
-
 ```
 
 ### `calibrate_linear`
@@ -293,7 +290,6 @@ Fahrenheit.
 filters:
   - lambda: return x * (9.0/5.0) + 32.0;
 unit_of_measurement: "°F"
-
 ```
 
 {{< anchor "sensor-automations" >}}
@@ -320,7 +316,6 @@ sensor:
         - light.turn_on:
             id: light_1
             red: !lambda "return x/255;"
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -354,7 +349,6 @@ sensor:
       - above: 10.0
         then:
           - switch.turn_on: relay_3
-
 ```
 
 Configuration variables:
@@ -380,7 +374,6 @@ sensor:
         - light.turn_on:
             id: light_1
             red: !lambda "return x/255;"
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -404,7 +397,6 @@ on_...:
         above: 50.0
     then:
     - script.execute: my_script
-
 ```
 
 Configuration variables:
@@ -425,7 +417,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // Within lambda, push a value of 42.0
     id(my_sensor).publish_state(42.0);
-
 ```
 
 - `.state`  : Retrieve the current value of the sensor that has passed through all sensor filters.
@@ -434,7 +425,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my sensor: %f", id(my_sensor).state);
-
 ```
 
 - `raw_state`  : Retrieve the current value of the sensor that has not passed through any filters.
@@ -443,7 +433,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Raw Value of my sensor: %f", id(my_sensor).raw_state);
-
 ```
 
 ## See Also

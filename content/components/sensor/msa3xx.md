@@ -34,7 +34,6 @@ msa3xx:
   range: 4G
   resolution: 12
   update_interval: 10s
-
 ```
 
 ### Configuration variables
@@ -79,7 +78,6 @@ binary_sensor:
       name: Active           # to use filters and other options
       filters:
         - delayed_off: 5000ms # example of prolongation of movement detection signal
-
 ```
 
 ### Configuration variables
@@ -100,7 +98,6 @@ sensor:
     acceleration_x: Accel X
     acceleration_y: Accel Y
     acceleration_z: Accel Z
-
 ```
 
 ### Configuration variables
@@ -119,7 +116,6 @@ text_sensor:
   - platform: msa3xx
     orientation_xy: Orientation XY
     orientation_z: Orientation Z
-
 ```
 
 ### Configuration variables
@@ -141,7 +137,6 @@ msa3xx:
   on_tap:
     - then:
         - logger.log: "Tapped"
-
 ```
 
 ### `on_double_tap` trigger
@@ -155,7 +150,6 @@ msa3xx:
   on_double_tap:
     - then:
         - logger.log: "Double tapped"
-
 ```
 
 ### `on_active` trigger
@@ -169,7 +163,6 @@ msa3xx:
   on_active:
     - then:
         - logger.log: "Activity detected"
-
 ```
 
 ### `on_orientation` trigger
@@ -183,7 +176,6 @@ msa3xx:
   on_orientation:
     - then:
         - logger.log: "Orientation change detected"
-
 ```
 
 ### Using both MSA301 and MSA311 at the same time
@@ -209,7 +201,6 @@ binary_sensor:
   - platform: msa3xx
     msa3xx_id: my_msa301_sensor
     tap: Single tap
-
 ```
 
 ## See Also

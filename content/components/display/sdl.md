@@ -30,7 +30,6 @@ display:
     dimensions:
       width: 450
       height: 600
-
 ```
 
 ### Configuration variables
@@ -65,14 +64,12 @@ The easiest way to install SDL2 on MacOS is using `homebrew`  :
 
 ```sh
 brew install sdl2 libsodium
-
 ```
 
 It may also be necessary to run the command:
 
 ```sh
 brew link sdl2 libsodium
-
 ```
 
 To ensure that the files are symlinked correctly.
@@ -87,7 +84,6 @@ tools installed, and you must be using a desktop system with a graphic display.
 
 ```sh
 apt install libsdl2-dev libsodium-dev build-essential git
-
 ```
 
 You can check installation with the command `sdl2-config --libs --cflags`  .

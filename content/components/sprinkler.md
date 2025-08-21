@@ -68,7 +68,6 @@ sprinkler:
         enable_switch: "Enable Back Lawn"
         run_duration: 900s
         valve_switch_id: lawn_sprinkler_valve_sw1
-
 ```
 
 Please see the [Controller Examples](#sprinkler-controller-examples) section below for extensive, detailed configuration
@@ -281,7 +280,6 @@ are enabled when this action is called, the controller will automatically enable
 on_...:
   then:
     - sprinkler.start_full_cycle: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_start_from_queue" >}}
@@ -303,7 +301,6 @@ on_...:
   then:
     - sprinkler.start_from_queue:
         id: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_start_single_valve" >}}
@@ -323,7 +320,6 @@ on_...:
         id: sprinkler_ctrlr
         valve_number: 0
         run_duration: 600s  # optional
-
 ```
 
 {{< anchor "sprinkler-controller-action_shutdown" >}}
@@ -336,7 +332,6 @@ Initiates a shutdown of all valves/the system, respecting any configured pump or
 on_...:
   then:
     - sprinkler.shutdown: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_next_valve" >}}
@@ -352,7 +347,6 @@ will cause this action to skip valves that are not enabled via their valve enabl
 on_...:
   then:
     - sprinkler.next_valve: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_previous_valve" >}}
@@ -368,7 +362,6 @@ cause this action to skip valves that are not enabled via their valve enable swi
 on_...:
   then:
     - sprinkler.previous_valve: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_pause" >}}
@@ -382,7 +375,6 @@ the cycle may be resumed later on.
 on_...:
   then:
     - sprinkler.pause: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_resume" >}}
@@ -396,7 +388,6 @@ will do nothing.
 on_...:
   then:
     - sprinkler.resume: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_resume_or_start_full_cycle" >}}
@@ -410,7 +401,6 @@ cycle (equivalent to `sprinkler.start_full_cycle`  ).
 on_...:
   then:
     - sprinkler.resume_or_start_full_cycle: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_queue_valve" >}}
@@ -432,7 +422,6 @@ on_...:
         id: sprinkler_ctrlr
         valve_number: 2
         run_duration: 900s
-
 ```
 
 {{< anchor "sprinkler-controller-action_clear_queued_valves" >}}
@@ -447,7 +436,6 @@ on_...:
   then:
     - sprinkler.clear_queued_valves:
         id: sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-action_set_multiplier" >}}
@@ -469,7 +457,6 @@ on_...:
     - sprinkler.set_multiplier:
         id: sprinkler_ctrlr
         multiplier: 1.5
-
 ```
 
 {{< anchor "sprinkler-controller-action_set_repeat" >}}
@@ -486,7 +473,6 @@ on_...:
     - sprinkler.set_repeat:
         id: sprinkler_ctrlr
         repeat: 2  # would run three cycles
-
 ```
 
 {{< anchor "sprinkler-controller-action_set_divider" >}}
@@ -510,7 +496,6 @@ on_...:
     - sprinkler.set_divider:
         id: sprinkler_ctrlr
         divider: 2
-
 ```
 
 {{< anchor "sprinkler-controller-action_set_valve_run_duration" >}}
@@ -527,7 +512,6 @@ on_...:
         id: sprinkler_ctrlr
         valve_number: 0
         run_duration: 600s
-
 ```
 
 {{< note >}}
@@ -561,7 +545,6 @@ sprinkler:
     pump_start_pump_delay: 3s
     pump_stop_valve_delay: 3s
     ...
-
 ```
 
 This will cause any given pump to start (in this example) three seconds *after* any associated distribution
@@ -582,7 +565,6 @@ sprinkler:
     pump_start_valve_delay: 3s
     pump_stop_pump_delay: 3s
     ...
-
 ```
 
 In this example, the upstream valve would open three seconds prior to any given associated distribution
@@ -657,7 +639,6 @@ switch:
   - platform: gpio
     id: garden_sprinkler_valve
     pin: GPIOXX
-
 ```
 
 ### Single Controller, Three Valves, No Pump
@@ -709,7 +690,6 @@ switch:
   - platform: gpio
     id: lawn_sprinkler_valve_sw2
     pin: GPIOXX
-
 ```
 
 ### Single Controller, Three Valves, Single Pump
@@ -765,7 +745,6 @@ switch:
   - platform: gpio
     id: lawn_sprinkler_valve_sw2
     pin: GPIOXX
-
 ```
 
 ### Single Controller, Three Latching Valves, Single Latching Pump
@@ -851,7 +830,6 @@ switch:
   - platform: gpio
     id: lawn_sprinkler_valve_sw2_on
     pin: GPIOXX
-
 ```
 
 ### Dual Controller, Five Valves, Two Pumps
@@ -942,7 +920,6 @@ switch:
   - platform: gpio
     id: garden_sprinkler_valve_sw1
     pin: GPIOXX
-
 ```
 
 {{< note >}}
@@ -965,7 +942,6 @@ sprinkler:
     multiplier_number: "Lawn Sprinkler Multiplier"
     repeat_number: "Lawn Sprinkler Repeat"
     ...
-
 ```
 
 An added benefit of using {{< docref "/components/number/index" "number" >}} components is that modified valve run durations,
@@ -1001,7 +977,6 @@ sprinkler:
       set_action:
         - lambda: "some_function();"
     ...
-
 ```
 
 {{< anchor "sprinkler-controller-sprinkler_controller_extending_switches" >}}
@@ -1022,7 +997,6 @@ sprinkler:
       on_turn_on:
         light.turn_on: my_light
     ...
-
 ```
 
 This arrangement is possible for any other switch within the sprinkler controller's configuration block, with
@@ -1044,7 +1018,6 @@ switch:
       - switch.turn_on: sprinkler_ctrlr_main_switch_id
       - light.turn_on: sprinkler_indicator_light
     ...
-
 ```
 
 While the above example simply illustrates creating a secondary "main" switch, this approach could be extended
@@ -1120,7 +1093,6 @@ api:
     - action: shutdown
       then:
         - sprinkler.shutdown: lawn_sprinkler_ctrlr
-
 ```
 
 {{< anchor "sprinkler-controller-sprinkler_controller_understanding_state" >}}
@@ -1179,7 +1151,6 @@ We'll approach this from the angle of *"how do I..."*
             // the controller is NOT running
             it.print(0, 0, "Idle");
           }
-
 ```
 
 - **...determine if the sprinkler controller is paused and, if so, which valve is paused?**
@@ -1222,7 +1193,6 @@ We'll approach this from the angle of *"how do I..."*
             // queue is NOT enabled
             it.print(0, 10, "Queue disabled");
           }
-
 ```
 
 - **...determine the sprinkler controller's multiplier/repeat values?**
@@ -1252,7 +1222,6 @@ We'll approach this from the angle of *"how do I..."*
             // the controller is repeating, print the repeat target value
             it.printf(0, 10, "Repeat %u times", id(lawn_sprinkler_ctrlr).repeat().value());
           }
-
 ```
 
 - **...determine how much time is left/required?**
@@ -1284,7 +1253,6 @@ We'll approach this from the angle of *"how do I..."*
             // the controller is NOT running
             it.print(0, 0, "Idle");
           }
-
 ```
 
 ## See Also

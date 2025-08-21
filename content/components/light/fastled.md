@@ -16,7 +16,6 @@ FastLED does **not** work as expected with Arduino 3 or newer for ESP8266. For n
 esp8266:
   framework:
     version: 2.7.4
-
 ```
 
 See these related issues:
@@ -52,7 +51,6 @@ light:
     num_leds: 60
     rgb_order: BRG
     name: "FastLED WS2811 Light"
-
 ```
 
 ### Configuration variables
@@ -125,7 +123,6 @@ light:
     num_leds: 60
     rgb_order: BRG
     name: "FastLED SPI Light"
-
 ```
 
 ### Configuration variables

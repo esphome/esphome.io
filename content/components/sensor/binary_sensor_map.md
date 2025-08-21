@@ -49,7 +49,6 @@ binary_sensor:
     sensor_id: bayesian_prob
     threshold: 0.6
   # ...
-
 ```
 
 - `GROUP` Each channel has its own `value`  . The sensor publishes the average value of all active
@@ -82,7 +81,6 @@ binary_sensor:
     channel: 0
     id: touchkey0
   # ...
-
 ```
 
 - `SUM` Each channel has its own `value`  . The sensor publishes the sum of all the active
@@ -122,7 +120,6 @@ binary_sensor:
     pin: GPIOXX
     id: bit3
   # ...
-
 ```
 
 ## Configuration variables

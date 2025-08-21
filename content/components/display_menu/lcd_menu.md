@@ -88,7 +88,6 @@ binary_sensor:
       - delayed_off: 30ms
     on_press:
       - display_menu.enter:
-
 ```
 
 Configuration variables:

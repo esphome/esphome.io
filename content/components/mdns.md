@@ -21,7 +21,6 @@ It is recommended to leave mDNS enabled.
 # Example configuration entry
 mdns:
   disabled: false
-
 ```
 
 {{< anchor "mdns-configuration_variables" >}}
@@ -39,7 +38,6 @@ mdns:
       port: 8080
       txt:
         txt_key_1: txt_value_1
-
 ```
 
 {{< anchor "mdns-custom_services" >}}

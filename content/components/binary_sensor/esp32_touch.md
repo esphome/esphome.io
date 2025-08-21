@@ -27,7 +27,6 @@ The `esp32_touch` component creates a global hub enabling (capacitive) touch det
 # Example configuration entry
 esp32_touch:
   setup_mode: false
-
 ```
 
 ### Configuration variables
@@ -132,7 +131,6 @@ binary_sensor:
     name: "ESP32 Touch Pad"
     pin: GPIOXX
     threshold: 1000
-
 ```
 
 ### Configuration variables
@@ -168,7 +166,6 @@ sensor:
     lambda: |-
         return id(esp32_touch_pad).get_value();
     update_interval: 3s
-
 ```
 
 One example of use is a wide area pressure sensor that integrates a number of smaller sensors in an area. Make two strips
@@ -213,7 +210,6 @@ binary_sensor:
     name: "ESP32 Touch Pad GPIO27"
     pin: GPIO27
     threshold: 1000
-
 ```
 
 Upload the program/configuration and watch the device's logs; you'll see values being logged by the hub component.
@@ -258,7 +254,6 @@ binary_sensor:
     name: "Touch Sensor"
     pin: GPIO1
     threshold: 1000  # Adjust based on your hardware
-
 ```
 
 {{< /note >}}

@@ -21,7 +21,6 @@ You can use the ESP32 software or hardware (recommended) serial to use the MR60F
 ```yaml
 # Example configuration entry
 seeed_mr60fda2:
-
 ```
 
 ### Configuration variables
@@ -41,7 +40,6 @@ binary_sensor:
       name: "Person Information"
     fall_detected:
       name: "Falling Detected"
-
 ```
 
 ### Configuration variables
@@ -62,7 +60,6 @@ button:
       name: "Get Radar Parameters"
     factory_reset:
       name: "Reset"
-
 ```
 
 ### Configuration variables
@@ -85,7 +82,6 @@ select:
       name: "Set Height Threshold"
     sensitivity:
       name: "Set Sensitivity"
-
 ```
 
 ### Configuration variables

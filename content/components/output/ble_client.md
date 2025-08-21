@@ -35,7 +35,6 @@ output:
     service_uuid: "10110000-5354-4F52-5A26-4249434B454C"
     characteristic_uuid: "10110013-5354-4f52-5a26-4249434b454c"
     require_response: false
-
 ```
 
 ## Configuration variables

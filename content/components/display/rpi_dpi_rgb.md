@@ -61,7 +61,6 @@ display:
         - XX        #b3
         - XX        #b4
         - XX        #b5
-
 ```
 
 ### Configuration variables
@@ -155,7 +154,6 @@ display:
         - 48        #g5
         - 47        #g6
         - 21        #g7
-
 ```
 
 ### Makerfabs 4.3" 800x480 display
@@ -195,7 +193,6 @@ display:
         - 46        #b3
         - 9         #b4
         - 1         #b5
-
 ```
 
 ## See Also

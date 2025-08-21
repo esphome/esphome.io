@@ -33,7 +33,6 @@ sensor:
         name: "Differential Pressure"
         filters:
             - offset: 40.5
-
 ```
 
 ## Configuration variables

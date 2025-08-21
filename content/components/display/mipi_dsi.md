@@ -55,7 +55,6 @@ specified, or a custom init sequence can be provided.
 display:
     - platform: mipi_dsi
       model: WAVESHARE-P4-NANO-10.1
-
 ```
 
 ### Configuration options
@@ -114,7 +113,6 @@ init_sequence:
   - [ 0xD0, 0x07, 0x42, 0x18]
   - delay 10ms
   - [ 0xD1, 0x00, 0x07, 0x10]
-
 ```
 
 Each entry represents a single-byte command followed by zero or more data bytes. Delays can be inserted with the `delay` keyword followed by a time in milliseconds. The delay is not precise, but will be at least the specified time.
@@ -138,7 +136,6 @@ transform:
 dimensions:
   height: 480
   width: 320
-
 ```
 
 ## LCD Backlights

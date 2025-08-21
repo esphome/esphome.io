@@ -25,7 +25,6 @@ sensor:
     name: Temperature
   internal_temperature:
     name: Internal temperature
-
 ```
 
 ## Configuration variables

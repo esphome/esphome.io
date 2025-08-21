@@ -26,7 +26,6 @@ sensor:
   - platform: lvgl
     widget: slider_id
     name: LVGL Slider
-
 ```
 
 {{< note >}}

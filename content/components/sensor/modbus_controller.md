@@ -93,7 +93,6 @@ The example below will send 2 modbus commands (device address 1 assumed):
   address: 0x9001
   unit_of_measurement: "AH"
   value_type: U_WORD
-
 ```
 
 The `modbus` sensor platform allows you use a lambda that gets called before data is published
@@ -120,7 +119,6 @@ sensor:
           i++;
         }
         return x ;
-
 ```
 
 ## See Also

@@ -22,7 +22,6 @@ The best solution is to minimize the broadcasting as much as possible and use it
 ```yaml
 # Example configuration entry
 espnow:
-
 ```
 
 ## Configuration variables
@@ -61,7 +60,6 @@ espnow:
           - format_mac_address_pretty(info.src_addr).c_str()
           - format_hex_pretty(data, size).c_str()
           - info.rx_ctrl->rssi
-
 ```
 
 {{< anchor "espnow-on_receive" >}}
@@ -110,7 +108,6 @@ on_...:
   - espnow.send:
       address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
       data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
-
 ```
 
 #### Configuration variables
@@ -142,7 +139,6 @@ on_...:
       data: !lambda "return {0x00, 0x00, 0x34, 0x5d};"
   - espnow.broadcast:
       data: [0x00, 0x00, 0x34, 0x5d]
-
 ```
 
 #### Configuration variables
@@ -161,7 +157,6 @@ on_...:
       address: 11:22:33:44:55:66
   - espnow.peer.add:
       address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
-
 ```
 
 #### Configuration variables
@@ -180,7 +175,6 @@ on_...:
       address: 11:22:33:44:55:66
   - espnow.peer.delete:
       address: !lambda "return {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};"
-
 ```
 
 #### Configuration variables
@@ -198,7 +192,6 @@ on_...:
   - espnow.set_channel:
       channel: 1
   - espnow.set_channel: 1
-
 ```
 
 #### Configuration variables

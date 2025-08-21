@@ -93,7 +93,6 @@ microphone:
       - logger.log:
           format: "Received %d bytes"
           args: ['x.size()']
-
 ```
 
 Configuration variables:

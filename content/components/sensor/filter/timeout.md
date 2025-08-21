@@ -24,5 +24,4 @@ filters:
   - timeout:
       timeout: 10s
       value: last  # sent value will be the last value received by the filter
-
 ```

@@ -34,7 +34,6 @@ There is a buffer to buffer up to 10 commands.
 # Example configuration entry
 pipsolar:
   - id: inverter0
-
 ```
 
 ### Configuration variables
@@ -61,7 +60,6 @@ sensor:
     ac_output_active_power:
       id: inverter0_ac_output_active_power
       name: inverter0_ac_output_active_power
-
 ```
 
 ### Configuration variables
@@ -127,7 +125,6 @@ binary_sensor:
     configuration_status:
       id: inverter0_configuration_status
       name: inverter0_configuration_status
-
 ```
 
 ### Configuration variables
@@ -206,7 +203,6 @@ text_sensor:
       id: inverter0_last_qpigs
       name: inverter0_last_qpigs
     last_qpiri:
-
 ```
 
 ### Configuration variables
@@ -245,7 +241,6 @@ switch:
       name: inverter0_pv_ok_condition_for_parallel
     pv_power_balance:
       name: inverter0_pv_power_balance
-
 ```
 
 ### Configuration variables
@@ -271,7 +266,6 @@ output:
     pipsolar_id: inverter0
     battery_recharge_voltage:
       id: inverter0_battery_recharge_voltage_out
-
 ```
 
 ### Configuration variables
@@ -319,7 +313,6 @@ on_...:
   - output.pipsolar.set_level:
       id: my_pipsolar_output
       value: 48.0
-
 ```
 
 Configuration options:

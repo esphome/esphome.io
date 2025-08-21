@@ -31,7 +31,6 @@ ethernet:
     static_ip: 10.0.0.42
     gateway: 10.0.0.1
     subnet: 255.255.255.0
-
 ```
 
 ```yaml
@@ -44,7 +43,6 @@ ethernet:
   cs_pin: GPIOXX
   interrupt_pin: GPIOXX
   reset_pin: GPIOXX
-
 ```
 
 ## Configuration variables
@@ -166,7 +164,6 @@ ethernet:
     mode: CLK_OUT
   phy_addr: 0
   power_pin: GPIO12
-
 ```
 
 {{< note >}}
@@ -184,7 +181,6 @@ ethernet:
     pin: GPIO0
     mode: CLK_EXT_IN
   phy_addr: 0
-
 ```
 
 **Olimex ESP32-GATEWAY** and **LILYGO TTGO T-Internet-POE ESP32-WROOM LAN8270A**:
@@ -198,7 +194,6 @@ ethernet:
     pin: GPIO17
     mode: CLK_OUT
   phy_addr: 0
-
 ```
 
 **LILYGO TTGO T-Internet ESP32-WROVER-E LAN8270**:
@@ -213,7 +208,6 @@ ethernet:
     mode: CLK_OUT
   phy_addr: 0
   power_pin: GPIO04
-
 ```
 
 **Wireless Tag WT32-ETH01** and **SMLIGHT SLZB-06 PoE Zigbee**:
@@ -228,7 +222,6 @@ ethernet:
     mode: CLK_EXT_IN
   phy_addr: 1
   power_pin: GPIO16
-
 ```
 
 **M5Stack PoESP32** and **ESP32-Ethernet-Kit**:
@@ -243,7 +236,6 @@ ethernet:
     mode: CLK_EXT_IN
   phy_addr: 1
   power_pin: GPIO5
-
 ```
 
 **AiThinker ESP32-G Gateway**:
@@ -258,7 +250,6 @@ ethernet:
     mode: CLK_OUT
   phy_addr: 1
   power_pin: GPIO5
-
 ```
 
 **wESP32**:
@@ -287,7 +278,6 @@ ethernet:
     - address: 0x10
       value: 0x1FFA
       page_id: 0x07
-
 ```
 
 {{< note >}}
@@ -302,7 +292,6 @@ ethernet:
   mdc_pin: GPIO23
   mdio_pin: GPIO18
   phy_addr: 1
-
 ```
 
 {{< note >}}
@@ -322,7 +311,6 @@ ethernet:
     pin: GPIO17
     mode: CLK_OUT
   phy_addr: 1
-
 ```
 
 **LILYGO T-ETH-Lite ESP32**:
@@ -337,7 +325,6 @@ ethernet:
     mode: CLK_EXT_IN
   phy_addr: 0
   power_pin: GPIO12
-
 ```
 
 **QEMU qemu-system-xtensa**:
@@ -345,7 +332,6 @@ ethernet:
 ```yaml
 ethernet:
   type: OPENETH
-
 ```
 
 **Waveshare ESP32-S3-ETH PoE**:
@@ -359,7 +345,6 @@ ethernet:
   cs_pin: GPIO14
   interrupt_pin: GPIO10
   reset_pin: GPIO9
-
 ```
 
 **ETH01-Evo**:
@@ -374,7 +359,6 @@ ethernet:
   interrupt_pin: GPIO08
   reset_pin: GPIO06
   clock_speed: 8MHz
-
 ```
 
 {{< note >}}

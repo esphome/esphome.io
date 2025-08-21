@@ -20,7 +20,6 @@ light:
   - platform: binary
     name: "Desk Lamp"
     output: light_output
-
 ```
 
 ## Configuration variables

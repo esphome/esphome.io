@@ -34,7 +34,6 @@ rtttl:
   output: rtttl_out
   id: my_rtttl
   gain: 60%
-
 ```
 
 ## Overview Using the I2S speaker
@@ -52,7 +51,6 @@ rtttl:
   speaker: my_speaker
   id: my_rtttl
   gain: 0.8
-
 ```
 
 ## Configuration variables
@@ -75,7 +73,6 @@ Plays an rtttl tone.
 on_...:
   then:
     - rtttl.play: 'siren:d=8,o=5,b=100:d,e,d,e,d,e,d,e'
-
 ```
 
 Configuration options:
@@ -94,7 +91,6 @@ Stops playback.
 on_...:
   then:
     - rtttl.stop
-
 ```
 
 ## All actions
@@ -113,7 +109,6 @@ on_...:
       rtttl.is_playing
     then:
       logger.log: 'Playback is active!'
-
 ```
 
 ## Common beeps
@@ -137,7 +132,6 @@ E.g. for calling `rtttl.play` select the service `esphome.test_esp8266_rtttl_pla
 
 ```yaml
 song_str: 'scale_up:d=32,o=5,b=100:c,c#,d#,e,f#,g#,a#,b'
-
 ```
 
 ### Sample code
@@ -171,7 +165,6 @@ api:
       then:
         - rtttl.play:
             rtttl: !lambda 'return song_str;'
-
 ```
 
 ## See Also

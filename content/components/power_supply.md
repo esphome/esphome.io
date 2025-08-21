@@ -23,7 +23,6 @@ after the last output has been disabled.
 power_supply:
   - id: 'power_supply1'
     pin: GPIOXX
-
 ```
 
 ## Configuration variables
@@ -62,7 +61,6 @@ power_supply:
     pin:
       number: 13
       inverted: true
-
 ```
 
 Then simply connect the green control wire from the ATX power supply to

@@ -32,7 +32,6 @@ sensor:
       b_constant: 3950
       reference_temperature: 25°C
       reference_resistance: 10kOhm
-
 ```
 
 If you don't have access to the datasheet or want to calculate these values yourself,
@@ -50,7 +49,6 @@ sensor:
       - 10.0kOhm -> 25°C
       - 27.219kOhm -> 0°C
       - 14.674kOhm -> 15°C
-
 ```
 
 ```yaml
@@ -74,7 +72,6 @@ sensor:
   - platform: adc
     id: source_sensor
     pin: A0
-
 ```
 
 ## Configuration variables
@@ -119,7 +116,6 @@ interval:
       - switch.turn_on: ntc_vcc
       - component.update: source_sensor
       - switch.turn_off: ntc_vcc
-
 ```
 
 ## See Also

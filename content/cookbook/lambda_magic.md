@@ -51,7 +51,6 @@ interval:
         if (id(page) > 3) {
           id(page) = 1;
         }
-
 ```
 
 {{< anchor "lambda_magic_udp_sender" >}}
@@ -97,7 +96,6 @@ button:
         msg: "Hello World!"
         host: "192.168.1.10"
         port: 5000
-
 ```
 
 Tested on both `arduino` and `esp-idf` platforms.
@@ -175,7 +173,6 @@ cover:
       - lambda: id(rf_code_queue).push_back("AAB0ZXXXX..the.opening.code..XXXXXXXXXX");
       - script.execute: rf_transmitter_queue
     open_duration: 27s
-
 ```
 
 {{< anchor "lambda_magic_1button_coover" >}}
@@ -250,7 +247,6 @@ cover:
   stop_action:
     - switch.turn_off: open_cover
     - switch.turn_off: close_cover
-
 ```
 
 ## Update numeric values from text input
@@ -284,7 +280,6 @@ sensor:
   - platform: template
     id: num_from_text
     name: "Number from text"
-
 ```
 
 ## See Also

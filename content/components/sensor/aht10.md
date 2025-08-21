@@ -33,7 +33,6 @@ sensor:
     humidity:
       name: "Living Room Humidity"
     update_interval: 60s
-
 ```
 
 ## Configuration variables

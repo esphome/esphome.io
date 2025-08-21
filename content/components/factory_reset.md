@@ -42,7 +42,6 @@ connected with a serial cable. The required number of power cycles and the maxim
 factory_reset:
   resets_required: 5
   max_delay: 10s
-
 ```
 
 ### Configuration variables
@@ -68,7 +67,6 @@ factory_reset:
     - logger.log:
         format: "Fast power cycle count now %u, target %u"
         args: [x, target]
-
 ```
 
 ### See Also

@@ -51,7 +51,6 @@ api:
         - switch.turn_on: relay
 
 # any additional configuration...
-
 ```
 
 ```yaml
@@ -59,7 +58,6 @@ api:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
 ```
 
 ```yaml
@@ -75,7 +73,6 @@ logger:
 api:
   encryption:
     key: !secret api_encryption_key
-
 ```
 
 {{< anchor "config-git_packages" >}}
@@ -118,7 +115,6 @@ packages:
       - file2.yml
     ref: main  # optional
     refresh: 1d  # optional
-
 ```
 
 ## Configuration variables
@@ -164,7 +160,6 @@ packages:
     file: garage-door.yaml
     vars:
       door_name: Right
-
 ```
 
 ```yaml
@@ -173,7 +168,6 @@ switch:
   - name: ${door_name} Garage Door Switch
     platform: gpio
     # ...
-
 ```
 
 {{< anchor "config-packages_extend" >}}
@@ -193,7 +187,6 @@ sensor:
   - platform: uptime
     id: uptime_sensor
     update_interval: 1min
-
 ```
 
 ```yaml
@@ -203,7 +196,6 @@ packages: !include common.yaml
 sensor:
   - id: !extend uptime_sensor
     update_interval: 10s
-
 ```
 
 {{< anchor "config-packages_remove" >}}
@@ -220,7 +212,6 @@ packages: !include common.yaml  # see above
 
 sensor:
   - id: !remove uptime_sensor
-
 ```
 
 To remove captive portal for a specific device:
@@ -229,7 +220,6 @@ To remove captive portal for a specific device:
 packages: !include common.yaml  # see above
 
 captive_portal: !remove
-
 ```
 
 To remove only an attribute for a specific device:
@@ -241,7 +231,6 @@ packages:
 sensor:
   - id: !extend uptime_sensor
     update_interval: !remove
-
 ```
 
 ## See Also

@@ -24,7 +24,6 @@ light:
     red: output_component1
     green: output_component2
     blue: output_component3
-
 ```
 
 ## Color Correction
@@ -48,7 +47,6 @@ output:
     id: output_component1
     max_power: 80%
   # Repeat for green and blue output
-
 ```
 
 {{< note >}}

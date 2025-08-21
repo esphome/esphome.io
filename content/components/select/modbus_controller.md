@@ -73,7 +73,6 @@ lambda: |-
   if (x > 3) {
     return std::string("Three");
   }
-
 ```
 
 ## Parameters passed into `write_lambda`
@@ -112,7 +111,6 @@ write_lambda: |-
 
   // ignore update
   return {};
-
 ```
 
 ## Example
@@ -129,7 +127,6 @@ select:
       "One": 1
       "Two": 2
       "Three": 3
-
 ```
 
 ## See Also

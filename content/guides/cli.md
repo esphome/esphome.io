@@ -316,7 +316,6 @@ The syntax is as follows:
 
 ```shell
 aioesphomeapi-logs <IPv4 pr IPv6 address>
-
 ```
 
 Some working examples include:
@@ -325,7 +324,6 @@ Some working examples include:
 aioesphomeapi-logs 192.168.x.y
 aioesphomeapi-logs fe80::cdef:0123:4567:89ab
 aioesphomeapi-logs 2001:0db8:3333:4444:5555:6666:7777:8888
-
 ```
 
 Press `CTRL+C` to exit the logging view.
@@ -334,7 +332,6 @@ If you have configured encryption for API, provide the key from the yaml as foll
 
 ```shell
 aioesphomeapi-logs 192.168.x.y --noise-psk <your-api-key-from-yaml>
-
 ```
 
 If you do not know/wish to know the IP address of an ESPHome device,
@@ -344,7 +341,6 @@ The syntax is as follows:
 
 ```shell
 aioesphomeapi-discover
-
 ```
 
 The response lists info about currently available ESPHome devices:

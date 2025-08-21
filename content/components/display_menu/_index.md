@@ -74,7 +74,6 @@ binary_sensor:
       - delayed_off: 10ms
     on_press:
       - display_menu.enter:
-
 ```
 
 Configuration variables:
@@ -143,7 +142,6 @@ items:
   - id: my_label
     type: label
     text: 'My Label'
-
 ```
 
 The menu item of the type `label` just displays a text. There is no configuration and
@@ -166,7 +164,6 @@ items:
         text: 'Label'
       - type: back
         text: 'Back'
-
 ```
 
 The menu item of the type `menu` defines a list of child menu items. When the item
@@ -190,7 +187,6 @@ Automations:
 items:
   - type: back
     text: 'Back'
-
 ```
 
 The menu item of the type `back` closes the current menu level and goes up in
@@ -224,7 +220,6 @@ select:
       - 'Red'
       - 'Green'
       - 'Blue'
-
 ```
 
 The menu item of the type `select` allows cycling through a set of values defined by the
@@ -281,7 +276,6 @@ number:
     on_value:
       then:
         lambda: 'ESP_LOGI("number", "value: %f", x);'
-
 ```
 
 The menu item of the type `number` allows editing a floating point number.
@@ -347,7 +341,6 @@ switch:
   - platform: template
     id: my_switch
     optimistic: true
-
 ```
 
 The menu item of the type `switch` allows toggling the associated `switch` component.
@@ -384,7 +377,6 @@ items:
     on_value:
       then:
         - display_menu.hide:
-
 ```
 
 The menu item of the type `command` allows triggering commands. There is no
@@ -411,7 +403,6 @@ lcd_menu:
       on_prev:
         then:
           lambda: 'some_state--;'
-
 ```
 
 The menu item of the type `custom` delegates navigating the values to the automations
@@ -463,7 +454,6 @@ lcd_menu:
       on_enter:
         then:
           lambda: 'ESP_LOGI("display_menu", "enter: %s", it->get_text().c_str());'
-
 ```
 
 {{< anchor "display_menu-on_leave" >}}
@@ -486,7 +476,6 @@ lcd_menu:
       on_leave:
         then:
           lambda: 'ESP_LOGI("display_menu", "leave: %s", it->get_text().c_str());'
-
 ```
 
 {{< anchor "display_menu-on_value" >}}
@@ -506,7 +495,6 @@ lcd_menu:
       on_value:
         then:
           lambda: 'ESP_LOGI("display_menu", "select value: %s, %s", it->get_text().c_str(), it->get_value_text().c_str());'
-
 ```
 
 {{< anchor "display_menu-on_next" >}}
@@ -525,7 +513,6 @@ lcd_menu:
       on_next:
         then:
           lambda: 'some_state++;'
-
 ```
 
 {{< anchor "display_menu-on_prev" >}}
@@ -544,7 +531,6 @@ lcd_menu:
       on_prev:
         then:
           lambda: 'some_state--;'
-
 ```
 
 {{< anchor "display_menu-up_action" >}}
@@ -561,7 +547,6 @@ sensor:
     ...
     on_anticlockwise:
       - display_menu.up:
-
 ```
 
 Configuration variables:
@@ -582,7 +567,6 @@ sensor:
     ...
     on_clockwise:
       - display_menu.down:
-
 ```
 
 Configuration variables:
@@ -606,7 +590,6 @@ binary_sensor:
     ...
     on_press:
       - display_menu.left:
-
 ```
 
 Configuration variables:
@@ -629,7 +612,6 @@ binary_sensor:
     ...
     on_press:
       - display_menu.right:
-
 ```
 
 Configuration variables:
@@ -654,7 +636,6 @@ binary_sensor:
       - delayed_off: 10ms
     on_press:
       - display_menu.enter:
-
 ```
 
 Configuration variables:
@@ -679,7 +660,6 @@ on_press:
         - display_menu.enter:
       else:
         - display_menu.show:
-
 ```
 
 Configuration variables:
@@ -702,7 +682,6 @@ lcd_menu:
       on_value:
         then:
           - display_menu.hide:
-
 ```
 
 Configuration variables:
@@ -724,7 +703,6 @@ lcd_menu:
       on_value:
         then:
           - display_menu.show_main:
-
 ```
 
 Configuration variables:
@@ -744,7 +722,6 @@ on_press:
       condition:
         display_menu.is_active:
       ...
-
 ```
 
 ## See Also

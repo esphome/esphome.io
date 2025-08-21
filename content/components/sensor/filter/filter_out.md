@@ -13,7 +13,6 @@ headless: true
   # ...
   filters:
     - filter_out: 85.0
-
 ```
 
 A list of values may be supplied, and values are templatable:
@@ -26,5 +25,4 @@ A list of values may be supplied, and values are templatable:
     - filter_out:
         - 85.0
         - !lambda return id(some_sensor).state;
-
 ```

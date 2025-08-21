@@ -43,7 +43,6 @@ sensor:
       name: "Inkbird IBS-TH1 Humidity"
     battery_level:
       name: "Inkbird IBS-TH1 Battery Level"
-
 ```
 
 ## Configuration variables
@@ -73,7 +72,6 @@ like so:
 
 ```yaml
 esp32_ble_tracker:
-
 ```
 
 After uploading the ESP32 will immediately try to scan for BLE devices such as the Inkbird IBS-TH1/TH2.

@@ -22,7 +22,6 @@ The `m5stack_8angle` component communicates through an [I²C](#i2c) bus and uses
 # Example configuration entry
 m5stack_8angle:
     id: m5stack_8angle_base
-
 ```
 
 ### Configuration variables
@@ -46,7 +45,6 @@ sensor:
     m5stack_8angle_id: m5stack_8angle_base
     channel: 2
     name: "Knob 2"
-
 ```
 
 ### Configuration variables
@@ -65,7 +63,6 @@ binary_sensor:
   - platform: m5stack_8angle
     m5stack_8angle_id: m5stack_8angle_base
     name: "Switch"
-
 ```
 
 ### Configuration variables
@@ -85,7 +82,6 @@ light:
     name: "Lights"
     effects:
         - addressable_rainbow:
-
 ```
 
 ### Configuration variables
@@ -125,7 +121,6 @@ light:
                     else
                         hsv.hue = 0;
                     it[8] = hsv;
-
 ```
 
 ## See Also

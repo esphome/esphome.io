@@ -31,7 +31,6 @@ sensor:
       name: "Humidity"
     heater:
       name: "Heater"
-
 ```
 
 ## Configuration variables

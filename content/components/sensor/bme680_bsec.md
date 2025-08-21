@@ -86,7 +86,6 @@ text_sensor:
       else {
         return {"error"};
       }
-
 ```
 
 Configuration variables:
@@ -282,7 +281,6 @@ text_sensor:
     iaq_accuracy:
       # IAQ accuracy as a text value of Stabilizing, Uncertain, Calibrating, Calibrated
       name: "BME680 IAQ Accuracy"
-
 ```
 
 ## Multiple sensors
@@ -351,7 +349,6 @@ text_sensor:
     bme680_bsec_id: bme680_external
     iaq_accuracy:
       name: "OUT_IAQaccuracy"
-
 ```
 
 ## Index for Air Quality (IAQ) Measurement

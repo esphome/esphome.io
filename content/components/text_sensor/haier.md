@@ -22,7 +22,6 @@ text_sensor:
       name: Haier cleaning status
     protocol_version:
       name: Haier protocol version
-
 ```
 
 ## Configuration variables

@@ -47,7 +47,6 @@ sml:
         } else {
           id(mqttclient).publish("gridmeter/sensor/sml/error", format_hex(bytes));
         }
-
 ```
 
 ### Configuration variables
@@ -71,7 +70,6 @@ sensor:
     state_class: total_increasing
     filters:
       - multiply: 0.0001
-
 ```
 
 ### Configuration variables
@@ -92,7 +90,6 @@ text_sensor:
     server_id: "0123456789abcdef"
     obis_code: "129-129:199.130.3"
     format: text
-
 ```
 
 ### Configuration variables
@@ -154,7 +151,6 @@ text_sensor:
     name: "Total energy text"
     obis_code: "1-0:1.8.0"
     format: uint
-
 ```
 
 The `format` parameter is optional. If ommited, the SML component will try to guess the correct datatype
@@ -174,7 +170,6 @@ template:
           {% else %}
             {{ ((states('sensor.total_energy_text') | float) * 0.0001) | round(2) }}
           {% endif %}
-
 ```
 
 Usually the template sensor's value would turn to 0 if the ESP device is unavailable.
@@ -201,7 +196,6 @@ sensor:
     filters:
       - throttle: 0.5s
       - multiply: 0.0001
-
 ```
 
 These meters can also measure the instantaneous power usage.
@@ -216,7 +210,6 @@ sensor:
     accuracy_decimals: 0
     device_class: power
     state_class: measurement
-
 ```
 
 ## See Also

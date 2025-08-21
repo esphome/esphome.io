@@ -68,7 +68,6 @@ climate:
       name: Power
     humidity_setpoint:          # Optional. Indoor humidity sensor (only for devices that support this feature).
       name: Humidity
-
 ```
 
 ## Configuration variables
@@ -113,7 +112,6 @@ This action turn on power. The mode and preset will be restored to the last stat
 on_...:
   then:
     - midea_ac.power_on:
-
 ```
 
 {{< anchor "midea_ac-power_off_action" >}}
@@ -126,7 +124,6 @@ This action turn off power.
 on_...:
   then:
     - midea_ac.power_off:
-
 ```
 
 {{< anchor "midea_ac-power_toggle_action" >}}
@@ -139,7 +136,6 @@ This action toggle the power state. Identical to pressing the power button on th
 on_...:
   then:
     - midea_ac.power_toggle:
-
 ```
 
 {{< anchor "midea_ac-follow_me_action" >}}
@@ -156,7 +152,6 @@ on_...:
         temperature: !lambda "return x;"
         use_fahrenheit: false
         beeper: false
-
 ```
 
 Configuration variables:
@@ -183,7 +178,6 @@ This action toggle ac screen. Works via UART if supported or {{< docref "../remo
 on_...:
   then:
     - midea_ac.display_toggle:
-
 ```
 
 {{< anchor "midea_ac-swing_step_action" >}}
@@ -196,7 +190,6 @@ This action adjust the louver by one step. {{< docref "../remote_transmitter" >}
 on_...:
   then:
     - midea_ac.swing_step:
-
 ```
 
 {{< anchor "midea_ac-beeper_on_action" >}}
@@ -209,7 +202,6 @@ This action turn on beeper feedback.
 on_...:
   then:
     - midea_ac.beeper_on:
-
 ```
 
 {{< anchor "midea_ac-beeper_off_action" >}}
@@ -222,7 +214,6 @@ This action turn off beeper feedback.
 on_...:
   then:
     - midea_ac.beeper_off:
-
 ```
 
 ## Additional control options using IR commands
@@ -263,7 +254,6 @@ button:
     icon: mdi:tailwind
     on_press:
       midea_ac.swing_step:
-
 ```
 
 ## Example of Beeper Control Using a Switch
@@ -278,7 +268,6 @@ switch:
       midea_ac.beeper_on:
     turn_off_action:
       midea_ac.beeper_off:
-
 ```
 
 ## Acknowledgments

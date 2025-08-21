@@ -17,7 +17,6 @@ out an average on a specific interval (thus increasing resolution).
     - sliding_window_moving_average:
         window_size: 15
         send_every: 15
-
 ```
 
 Configuration variables:

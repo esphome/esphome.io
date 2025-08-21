@@ -37,7 +37,6 @@ binary_sensor:
     id: darkmode
     name: "Is Darkmode Set"
     variable_name: darkmode
-
 ```
 
 ## Configuration variables
@@ -73,7 +72,6 @@ Example:
   on_value:
     lambda: |-
       id(nextion1).update_components_by_page_prefix("page"+x+".");
-
 ```
 
 See [How things Update](#nextion_binary_sensor_how_things_update) for additional information
@@ -114,7 +112,6 @@ on_...:
       # These are optional. Defaults to true.
       publish_state: true
       send_to_nextion: true
-
 ```
 
 ### Configuration variables
@@ -193,7 +190,6 @@ prints "r0",0
 printh 00
 prints r0.val,0
 printh FF FF FF
-
 ```
 
 ### Explanation

@@ -38,7 +38,6 @@ graphical_display_menu:
   mode: rotary
   items:
     ...
-
 ```
 
 Configuration variables:
@@ -102,7 +101,6 @@ display:
         // This will render the menu to the right half of the screen leaving the left half for other drawing purposes
         // Arguments: it.menu(x, y, menu, width, height);
         it.menu(half_display_width, 0, id(my_menu), half_display_width, display_height);
-
 ```
 
 ### Emulating Pop Up Mode
@@ -134,7 +132,6 @@ display:
       } else {
         it.print(0, 0, id(font), "Menu is hidden, other drawing would go here here");
       }
-
 ```
 
 ## Controlling Menu Item Rendering
@@ -161,7 +158,6 @@ graphical_display_menu:
       label.append("~");
     }
     return label;
-
 ```
 
 {{< note >}}
@@ -228,7 +224,6 @@ binary_sensor:
         - display_menu.enter: my_graphical_display_menu
       else:
         - display_menu.show:  my_graphical_display_menu
-
 ```
 
 ## See Also

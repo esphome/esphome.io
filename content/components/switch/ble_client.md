@@ -34,7 +34,6 @@ switch:
   - platform: ble_client
     ble_client_id: itag_black
     name: "Enable iTag"
-
 ```
 
 ## Configuration variables

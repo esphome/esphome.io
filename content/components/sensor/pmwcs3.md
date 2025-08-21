@@ -29,7 +29,6 @@ sensor:
       name: "pmwcs3 temperature"
     vwc:
       name: "pmwcs3 vwc"
-
 ```
 
 ## Configuration variables
@@ -65,7 +64,6 @@ sensor:
 on_...:
   - sensor.pmwcs3_id.air_calibration:
       id: pmwcs3_id
-
 ```
 
 Configuration option:
@@ -90,7 +88,6 @@ sensor:
 on_...:
   - sensor.pmwcs3_id.water_calibration:
       id: pmwcs3_id
-
 ```
 
 Configuration option:
@@ -115,7 +112,6 @@ on_...:
   - sensor.pmwcs3_id.new_i2c_address:
       id: pmwcs3_id
       address: 0x65
-
 ```
 
 Configuration options:

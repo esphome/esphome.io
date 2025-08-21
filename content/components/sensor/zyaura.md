@@ -32,7 +32,6 @@ sensor:
       name: "ZyAura Temperature"
     humidity:
       name: "ZyAura Humidity"
-
 ```
 
 ## Configuration variables

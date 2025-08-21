@@ -37,7 +37,6 @@ sensor:
       name: "Carbon Monoxide"
     tvoc:
       name: "Volatile Organic Compounds"
-
 ```
 
 ## Configuration variables

@@ -24,7 +24,6 @@ the device. Specifically, it will:
 # Example configuration entry
 status_led:
   pin: GPIOXX
-
 ```
 
 {{< note >}}
@@ -47,7 +46,6 @@ status_led:
   pin:
     number: GPIOXX
     inverted: true
-
 ```
 
 {{< /note >}}

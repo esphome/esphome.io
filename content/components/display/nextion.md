@@ -25,7 +25,6 @@ editing the `program.s` source file in the Nextion Editor. For example:
 ```c
 baud=115200   // Sets the baud rate to 115200; for other supported rates, see https://nextion.tech/instruction-set/
 bkcmd=0       // Tells the Nextion to not send responses on commands. This is the current default but can be set just in case
-
 ```
 
 This permits faster communication with the Nextion display and it is highly recommended when using
@@ -50,7 +49,6 @@ display:
     lambda: |-
       it.set_component_value("gauge", 50);
       it.set_component_text("textview", "Hello World!");
-
 ```
 
 ## Configuration variables
@@ -124,7 +122,6 @@ display:
 
       // set the text of a component with formatting
       it.set_component_text_printf("textview", "The uptime is: %.1f", id(uptime_sensor).state);
-
 ```
 
 {{< note >}}
@@ -151,7 +148,6 @@ The list below calls out a few commonly-used methods:
 
 ```c
     id(nextion1).update_all_components();
-
 ```
 
 {{< anchor "update_components_by_prefix" >}}
@@ -162,7 +158,6 @@ The list below calls out a few commonly-used methods:
 
 ```c
     id(nextion1).update_components_by_prefix("page0.");
-
 ```
 
 {{< anchor "set_nextion_sensor_state" >}}
@@ -195,7 +190,6 @@ api:
       then:
         - lambda: |-
             id(nextion1).set_nextion_text_state(name,state);
-
 ```
 
 {{< /note >}}
@@ -247,7 +241,6 @@ display:
               // Show WiFi Access Point QR code for captive portal, see https://qifi.org/
               id(disp).goto_page("wifi_qr_page");
             }
-
 ```
 
 {{< anchor "nextion-on_sleep" >}}
@@ -292,7 +285,6 @@ Given the page ID, the appropriate components can be updated. Two strategies are
                 id(disp).set_component_text_printf("qr_wifi", "WIFI:T:nopass;S:%s;P:;;", wifi::global_wifi_component->get_ap().get_ssid().c_str());
                 break;
             }
-
 ```
 
 {{< anchor "nextion-on_touch" >}}
@@ -317,7 +309,6 @@ on_touch:
         ESP_LOGD("nextion.on_touch", "Page ID: %i", page_id);
         ESP_LOGD("nextion.on_touch", "Component ID: %i", component_id);
         ESP_LOGD("nextion.on_touch", "Event type: %s", touch_event ? "Press" : "Release");
-
 ```
 
 {{< anchor "nextion-on_buffer_overflow" >}}
@@ -336,7 +327,6 @@ on_buffer_overflow:
   then:
     - lambda: |-
         ESP_LOGW("nextion.on_buffer_overflow", "Nextion reported a buffer overflow event!");
-
 ```
 
 ### Actions
@@ -351,7 +341,6 @@ You can use this [action](#actions-action) to set the brightness of the Nextion'
 on_...:
   then:
     - display.nextion.set_brightness: 50%
-
 ```
 
 Or, if you happen to have multiple Nextion displays connected, you may need to use the long form:
@@ -362,7 +351,6 @@ on_...:
     - display.nextion.set_brightness:
         id: nextion1
         brightness: 50%
-
 ```
 
 {{< anchor "nextion_upload_tft_file" >}}
@@ -397,7 +385,6 @@ button:
     on_press:
       then:
         - lambda: 'id(nextion1)->upload_tft();'
-
 ```
 
 ### Home Assistant
@@ -435,7 +422,6 @@ the example below illustrates:
       name: "current_page"
       variable_name: dp
       update_interval: 1s
-
 ```
 
 Note that the first one requires a custom protocol to be included in the Nextion display's HMI code/configuration. See

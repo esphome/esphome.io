@@ -26,7 +26,6 @@ sensor:
     pin: GPIOXX
     name: "Living Room Brightness"
     update_interval: 60s
-
 ```
 
 ## Configuration variables
@@ -59,7 +58,6 @@ sensor:
     # ...
     filters:
       - multiply: 3.3
-
 ```
 
 {{< /note >}}
@@ -121,7 +119,6 @@ filters:
   - multiply: 0.00053724 # 2.2/4095, for attenuation 6db
   - multiply: 0.00095238 # 3.9/4095, for attenuation 12db
   # your existing filters would go here
-
 ```
 
 Note we don't recommend this method as it will change between chips, and newer ESP32 modules have different ranges (i.e. 0-8191); it is better to use the new calibrated voltages and update any existing filters accordingly.
@@ -138,7 +135,6 @@ sensor:
   - platform: adc
     pin: VCC
     name: "VCC Voltage"
-
 ```
 
 ### On ESP8266
@@ -183,7 +179,6 @@ sensor:
     unit_of_measurement: "°C"
     filters:
       - lambda: return 27 - (x - 0.706f) / 0.001721f;
-
 ```
 
 ## Multiple ADC Sensors
@@ -205,7 +200,6 @@ on GPIO34.
   samples: 10
   filters:
     - multiply: 2.0  # The voltage divider requires us to multiply by 2
-
 ```
 
 This works on SKU:DFR0654. For more information see: [manufacturer's website](https://wiki.dfrobot.com/FireBeetle_Board_ESP32_E_SKU_DFR0654).

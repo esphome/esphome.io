@@ -54,14 +54,12 @@ Example 1: Relatively complex JSON
  ],
  "spouse": "Sarah"
 }
-
 ```
 
 Example 2: Simple JSON:
 
 ```json
 {"key": 42.0, "greeting": "Hello World"}
-
 ```
 
 ## Parsing JSON
@@ -90,7 +88,6 @@ on_...:
                   return false;
                 }
             });
-
 ```
 
 ## Building JSON

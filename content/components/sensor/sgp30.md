@@ -23,7 +23,6 @@ sensor:
       name: "eCO2"
     tvoc:
       name: "TVOC"
-
 ```
 
 ## Configuration variables
@@ -100,7 +99,6 @@ sensor:
     baseline:
       eco2_baseline: 0x86C5
       tvoc_baseline: 0x8B38
-
 ```
 
 The next time you upload the code, the SGP30 will be continue its operation with this baseline and you will get consistent values.

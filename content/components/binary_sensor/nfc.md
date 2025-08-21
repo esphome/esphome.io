@@ -33,7 +33,6 @@ binary_sensor:
   - platform: nfc
     uid: 74-10-37-94
     name: "MFC Tag"
-
 ```
 
 ## Configuration variables

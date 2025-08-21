@@ -27,7 +27,6 @@ sensor:
   - platform: ags10
     tvoc:
       name: TVOC
-
 ```
 
 ## Configuration variables
@@ -64,7 +63,6 @@ on_...:
   - ags10.set_zero_point:
       id: ags10_1_id
       mode: CURRENT_VALUE
-
 ```
 
 Configuration option:
@@ -98,7 +96,6 @@ on_...:
   - ags10.new_i2c_address:
       id: ags10_1_id
       address: 0x1E
-
 ```
 
 Configuration options:

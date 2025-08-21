@@ -60,7 +60,6 @@ sensor:
   - platform: sim800l
     rssi:
       name: "Sim800L RSSI"
-
 ```
 
 ### Configuration variables
@@ -76,7 +75,6 @@ binary_sensor:
   - platform: sim800l
     registered:
       name: "Sim800L Registered"
-
 ```
 
 ### Configuration variables
@@ -101,7 +99,6 @@ on_sms_received:
   - lambda: |-
       id(sms_sender).publish_state(sender);
       id(sms_message).publish_state(message);
-
 ```
 
 {{< anchor "sim800l-on_incoming_call" >}}
@@ -125,7 +122,6 @@ on_incoming_call:
       event: esphome.incoming_call_event
       data:
         payload: !lambda 'return id(caller_id_text_sensor).state;'
-
 ```
 
 ### `on_ussd_received` Trigger
@@ -135,7 +131,6 @@ has been received.
 
 ```yaml
 on_ussd_received:
-
 ```
 
 ## Actions
@@ -160,7 +155,6 @@ on_...:
           else return "15551234568";
         message: !lambda |-
           return id(reed_switch).state ? "Door is now OPEN" : "Hey door just CLOSED";
-
 ```
 
 #### Configuration variables
@@ -181,7 +175,6 @@ on_...:
   then:
     - sim800l.dial:
         recipient: '+15551234567'
-
 ```
 
 #### Configuration variables
@@ -197,7 +190,6 @@ Answers an incoming call.
 on_...:
   then:
     - sim800l.connect
-
 ```
 
 ### `sim800l.disconnect` Action
@@ -208,7 +200,6 @@ Disconnects a call, either dialed in or received.
 on_...:
   then:
     - sim800l.disconnect
-
 ```
 
 ### `sim800l.send_ussd` Action
@@ -219,7 +210,6 @@ Sends a ussd code to the network.
 on_...:
   then:
     - sim800l.send_ussd
-
 ```
 
 ## Getting started with Home Assistant
@@ -293,7 +283,6 @@ sim800l:
   on_ussd_received:
     - lambda: |-
         id(ussd_message).publish_state(ussd);
-
 ```
 
 Now your latest received SMS and sender number will be displayed by the text sensors.
@@ -311,7 +300,6 @@ automation:
   - action: esphome.livingroom_dial
     data:
       recipient: "+15551234567"
-
 ```
 
 Relay management commands received from an authorized sender:
@@ -327,7 +315,6 @@ switch:
   - platform: gpio
     id: relay_1
     pin: GPIOXX
-
 ```
 
 ## See Also

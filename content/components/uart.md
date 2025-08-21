@@ -54,7 +54,6 @@ uart:
   tx_pin: GPIOXX
   rx_pin: GPIOXX
   baud_rate: 9600
-
 ```
 
 ## Configuration variables
@@ -117,7 +116,6 @@ on_...:
   - uart.write:
       id: my_second_uart
       data: 'other data'
-
 ```
 
 {{< anchor "uart-debugging" >}}
@@ -143,7 +141,6 @@ uart:
 uart:
   baud_rate: 9600
   debug:
-
 ```
 
 ### Configuration variables
@@ -212,7 +209,6 @@ Below are the methods to read current settings and modify them dynamically:
     id(my_uart).get_parity();
     // Baud rate
     id(my_uart).get_baud_rate();
-
 ```
 
 - **Modifying Settings at Runtime:** You can change certain UART parameters during runtime.
@@ -247,7 +243,6 @@ Below are the methods to read current settings and modify them dynamically:
                 id(my_uart).set_baud_rate(new_baud_rate);
                 id(my_uart).load_settings();
               }
-
 ```
 
   Available methods for runtime changes:
@@ -266,7 +261,6 @@ Below are the methods to read current settings and modify them dynamically:
     id(my_uart).set_parity(UARTParityOptions parity);
     // Baud rate
     id(my_uart).set_baud_rate(uint32_t baud_rate);
-
 ```
 
 This flexibility allows for dynamic adaptation to different communication requirements, enhancing the versatility of your ESPHome setup.
@@ -282,7 +276,6 @@ smt100 etc.
 uart:
   baud_rate: 9600
   port: "/dev/ttyUSB0"
-
 ```
 
 ## See Also

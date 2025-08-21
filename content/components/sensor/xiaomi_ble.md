@@ -40,7 +40,6 @@ sensor:
       name: "Xiaomi HHCCJCY01 Soil Conductivity"
     battery_level:
       name: "Xiaomi HHCCJCY01 Battery Level"
-
 ```
 
 {{< note >}}
@@ -69,7 +68,6 @@ sensor:
       name: "GCLS02 Soil Conductivity"
     illuminance:
       name: "GCLS02 Illuminance"
-
 ```
 
 ### HHCCPOT002
@@ -88,7 +86,6 @@ sensor:
       name: "HHCCPOT002 Moisture"
     conductivity:
       name: "HHCCPOT002 Soil Conductivity"
-
 ```
 
 ### LYWSDCGQ
@@ -109,7 +106,6 @@ sensor:
       name: "LYWSDCGQ Humidity"
     battery_level:
       name: "LYWSDCGQ Battery Level"
-
 ```
 
 ### LYWSD02
@@ -132,7 +128,6 @@ sensor:
       name: "LYWSD02 Humidity"
     battery_level:
       name: "LYWSD02 Battery Level"
-
 ```
 
 ### LYWSD02MMC
@@ -152,7 +147,6 @@ sensor:
       name: "LYWSD02MMC Humidity"
     battery_level:
       name: "LYWSD02MMC Battery Level"
-
 ```
 
 ### CGG1
@@ -182,7 +176,6 @@ sensor:
       name: "CGG1 (New) Temperature"
     humidity:
       name: "CGG1 (New) Humidity"
-
 ```
 
 ### LYWSD03MMC
@@ -214,7 +207,6 @@ sensor:
       name: "LYWSD03MMC Humidity"
     battery_level:
       name: "LYWSD03MMC Battery Level"
-
 ```
 
 Configuration example for PVVX MiThermometer firmware set to "Custom" advertisement:
@@ -233,7 +225,6 @@ sensor:
       name: "PVVX Battery-Voltage"
     signal_strength:
       name: "PVVX Signal"
-
 ```
 
 Configuration example for ATC MiThermometer firmware set to "Custom" advertisement:
@@ -252,7 +243,6 @@ sensor:
       name: "ATC Battery-Voltage"
     signal_strength:
       name: "ATC Signal"
-
 ```
 
 ### XMWSDJ04MMC
@@ -274,7 +264,6 @@ sensor:
       name: "XMWSDJ04MMC Humidity"
     battery_level:
       name: "XMWSDJ04MMC Battery Level"
-
 ```
 
 ### MHO-C303
@@ -297,7 +286,6 @@ sensor:
       name: "MHO-C303 Climate Humidity"
     battery_level:
       name: "MHO-C303 Climate Battery Level"
-
 ```
 
 ### MHO-C401
@@ -329,7 +317,6 @@ sensor:
       name: "MHOC401 Humidity"
     battery_level:
       name: "MHOC401 Battery Level"
-
 ```
 
 Configuration example for PVVX MiThermometer firmware set to "Custom" advertisement:
@@ -346,7 +333,6 @@ sensor:
       name: "PVVX Battery-Level"
     battery_voltage:
       name: "PVVX Battery-Voltage"
-
 ```
 
 ### CGD1
@@ -368,7 +354,6 @@ sensor:
       name: "CGD1 Humidity"
     battery_level:
       name: "CGD1 Battery Level"
-
 ```
 
 ### CGDK2
@@ -391,7 +376,6 @@ sensor:
       name: "CGDK2 Humidity"
     battery_level:
       name: "CGDK2 Battery Level"
-
 ```
 
 ### JQJCY01YM
@@ -414,7 +398,6 @@ sensor:
       name: "JQJCY01YM Formaldehyde"
     battery_level:
       name: "JQJCY01YM Battery Level"
-
 ```
 
 ### WX08ZM
@@ -435,7 +418,6 @@ binary_sensor:
       name: "WX08ZM Mosquito Tablet"
     battery_level:
       name: "WX08ZM Battery Level"
-
 ```
 
 ### MUE4094RT
@@ -454,7 +436,6 @@ binary_sensor:
     name: "MUE4094RT Night Light"
     mac_address: XX:XX:XX:XX:XX:XX
     timeout: "5s"
-
 ```
 
 ### MJYD02YL-A
@@ -481,7 +462,6 @@ binary_sensor:
       name: "MJYD02YL-A Battery Level"
     illuminance:
       name: "MJYD02YL-A Illuminance"
-
 ```
 
 ### CGPR1
@@ -504,7 +484,6 @@ binary_sensor:
       name: "CGPR1 Battery Level"
     illuminance:
       name: "CGPR1 Illuminance"
-
 ```
 
 ### RTCGQ02LM - Mi Motion Sensor 2
@@ -537,7 +516,6 @@ sensor:
     id: motion_one
     battery_level:
       name: "Mi Motion Sensor Battery Level"
-
 ```
 
 ## Setting Up Devices
@@ -568,7 +546,6 @@ To find the MAC Address so that ESPHome can identify the device, you can create 
 esp32_ble_tracker:
 
 xiaomi_ble:
-
 ```
 
 After uploading, the ESP32 will immediately try to scan for BLE devices. When it detects a new sensor, it will automatically parse the BLE message print a message like this one:

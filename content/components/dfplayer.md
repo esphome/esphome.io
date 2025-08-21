@@ -29,7 +29,6 @@ will be required.
 ```yaml
 # Example configuration entry
 dfplayer:
-
 ```
 
 ## Configuration variables
@@ -51,7 +50,6 @@ on_...:
       dfplayer.is_playing
     then:
       logger.log: 'Playback is active!'
-
 ```
 
 ## `dfplayer.play_next` Action
@@ -62,7 +60,6 @@ Starts playback of next track or skips to the next track.
 on_...:
   then:
     - dfplayer.play_next:
-
 ```
 
 ## `dfplayer.play_previous` Action
@@ -73,7 +70,6 @@ Plays the previously played track.
 on_...:
   then:
     - dfplayer.play_previous:
-
 ```
 
 ## `dfplayer.play` Action
@@ -88,7 +84,6 @@ on_...:
         loop: false
     # Shorthand
     - dfplayer.play: 23
-
 ```
 
 Configuration options:
@@ -113,7 +108,6 @@ If you want, you can add additional text after the number in the filename, for e
   /0002.mp3
   /0003_thisistheway.mp3
   ..
-
 ```
 
 ```yaml
@@ -123,7 +117,6 @@ on_...:
         file: 1
     # Shorthand
     - dfplayer.play_mp3: 1
-
 ```
 
 Configuration options:
@@ -149,7 +142,6 @@ from 1 to 10 and file number from 1 to 1000.
   /002.mp3
   /003.mp3
   ..
-
 ```
 
 ```yaml
@@ -158,7 +150,6 @@ on_...:
     - dfplayer.play_folder:
         folder: 2
         file: 1
-
 ```
 
 Configuration options:
@@ -177,7 +168,6 @@ Changes the device in use. Valid values are `TF_CARD` and `USB`  .
 on_...:
   then:
     - dfplayer.set_device: TF_CARD
-
 ```
 
 ## `dfplayer.set_volume` Action
@@ -191,7 +181,6 @@ on_...:
         volume: 20
     # Shorthand
     - dfplayer.set_volume: 20
-
 ```
 
 Configuration options:
@@ -207,7 +196,6 @@ Turn volume up.
 on_...:
   then:
     - dfplayer.volume_up
-
 ```
 
 ## `dfplayer.volume_down` Action
@@ -218,7 +206,6 @@ Turn volume down.
 on_...:
   then:
     - dfplayer.volume_down
-
 ```
 
 ## `dfplayer.set_eq` Action
@@ -232,7 +219,6 @@ on_...:
         eq_preset: ROCK
     # Shorthand
     - dfplayer.set_eq: ROCK
-
 ```
 
 Configuration options:
@@ -249,7 +235,6 @@ send for playback to be enabled again.
 on_...:
   then:
     - dfplayer.sleep
-
 ```
 
 ## `dfplayer.reset` Action
@@ -260,7 +245,6 @@ Module reset.
 on_...:
   then:
     - dfplayer.reset
-
 ```
 
 ## `dfplayer.start` Action
@@ -271,7 +255,6 @@ Starts playing a track or resumes paused playback.
 on_...:
   then:
     - dfplayer.start
-
 ```
 
 ## `dfplayer.pause` Action
@@ -282,7 +265,6 @@ Pauses playback, playback can be resumed from the same position with `dfplayer.s
 on_...:
   then:
     - dfplayer.pause
-
 ```
 
 ## `dfplayer.stop` Action
@@ -293,7 +275,6 @@ Stops playback.
 on_...:
   then:
     - dfplayer.stop
-
 ```
 
 ## `dfplayer.random` Action
@@ -304,7 +285,6 @@ Randomly plays all tracks.
 on_...:
   then:
     - dfplayer.random
-
 ```
 
 ## All actions
@@ -319,7 +299,6 @@ service data enter
 
 ```json
 { "file": 23 }
-
 ```
 
 ### Sample code
@@ -423,7 +402,6 @@ api:
   - action: dfplayer_volume_down
     then:
       - dfplayer.volume_down
-
 ```
 
 ## See Also

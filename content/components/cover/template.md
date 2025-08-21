@@ -33,7 +33,6 @@ cover:
     stop_action:
       - switch.turn_on: stop_cover_switch
     optimistic: true
-
 ```
 
 Possible return values for the optional lambda:
@@ -98,7 +97,6 @@ on_...:
   - cover.template.publish:
       id: template_cov
       state: !lambda 'return COVER_OPEN;'
-
 ```
 
 Configuration options:
@@ -120,7 +118,6 @@ This action can also be written in lambdas:
 id(template_cov).position = COVER_OPEN;
 id(template_cov).tilt = 0.5;
 id(template_cov).publish_state();
-
 ```
 
 {{< /note >}}

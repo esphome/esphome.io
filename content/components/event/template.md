@@ -19,7 +19,6 @@ event:
     event_types:
       - "custom_event_1"
       - "custom_event_2"
-
 ```
 
 ## Configuration variables

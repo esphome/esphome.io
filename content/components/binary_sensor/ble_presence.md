@@ -44,7 +44,6 @@ binary_sensor:
   - platform: ble_presence
     ibeacon_uuid: '68586f1e-89c2-11eb-8dcd-0242ac130003'
     name: "ESP32 BLE Tracker Test Service iBeacon"
-
 ```
 
 {{< note >}}
@@ -95,7 +94,6 @@ esp32_ble_tracker:
 
 logger:
   level: VERY_VERBOSE
-
 ```
 
 Using the configuration above, first, you should see a `Starting scan...` debug message at

@@ -40,7 +40,6 @@ output:
     id: pwm_output
     pin: GPIOXX
     frequency: 50 Hz
-
 ```
 
 ## Configuration variables
@@ -102,7 +101,6 @@ on_...:
         } else {
           return -1.0;
         }
-
 ```
 
 Configuration options:
@@ -116,7 +114,6 @@ This action can also be expressed as a [lambda](#config-lambda):
 
 ```cpp
 id(my_servo).write(1.0);
-
 ```
 
 {{< /note >}}
@@ -131,7 +128,6 @@ this will make the servo motor stop immediately and disable its active control.
 on_...:
   then:
   - servo.detach: my_servo
-
 ```
 
 {{< note >}}
@@ -139,7 +135,6 @@ This action can also be expressed as a [lambda](#config-lambda):
 
 ```cpp
 id(my_servo).detach();
-
 ```
 
 {{< /note >}}
@@ -169,7 +164,6 @@ servo:
   - platform: ...
     # [...] servo config
     id: my_servo
-
 ```
 
 ## See Also

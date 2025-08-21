@@ -23,7 +23,6 @@ switch:
     off_pin: GPIOXX
     pulse_length: 50ms
     wait_time: 50ms
-
 ```
 
 ## Configuration variables

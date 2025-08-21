@@ -25,7 +25,6 @@ you can always override it.
 binary_sensor:
   - platform: ...
     device_class: motion
-
 ```
 
 Configuration variables:
@@ -95,7 +94,6 @@ After the state is invalidated, it will be reported to Home Assistant as `unknow
 ```yaml
 on_...:
   binary_sensor.invalidate_state: my_binary_sensor_id
-
 ```
 
 The state may also be invalidated by an API call in a lambda - see the API reference linked below.
@@ -135,7 +133,6 @@ binary_sensor:
           } else {
             return {};
           }
-
 ```
 
 ### `invert`
@@ -174,7 +171,6 @@ binary_sensor:
     # ...
     filters:
       - delayed_on_off: 1s
-
 ```
 
 (**Required**, time, [templatable](#config-templatable)): ON and OFF delay.
@@ -191,7 +187,6 @@ binary_sensor:
       - delayed_on_off:
           time_on: 10s
           time_off: 20s
-
 ```
 
 Configuration variables:
@@ -264,7 +259,6 @@ binary_sensor:
     on_press:
       then:
         - switch.turn_on: relay_1
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -283,7 +277,6 @@ binary_sensor:
     on_release:
       then:
         - switch.turn_off: relay_1
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -304,7 +297,6 @@ binary_sensor:
     on_state:
       then:
         - switch.turn_off: relay_1
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -329,7 +321,6 @@ binary_sensor:
       - logger.log:
           format: "New state is %s"
           args: ['x.has_value() ? ONOFF(x) : "Unknown"']
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -351,7 +342,6 @@ binary_sensor:
       max_length: 350ms
       then:
         - switch.turn_off: relay_1
-
 ```
 
 Configuration variables:
@@ -377,7 +367,6 @@ binary_sensor:
       max_length: 1000ms
       then:
         - switch.turn_on: relay_1
-
 ```
 
 {{< /note >}}
@@ -398,7 +387,6 @@ binary_sensor:
       max_length: 350ms
       then:
         - switch.turn_off: relay_1
-
 ```
 
 Configuration variables:
@@ -425,7 +413,6 @@ binary_sensor:
         - OFF for at least 0.2s
       then:
         - logger.log: "Double-Clicked"
-
 ```
 
 Configuration variables:
@@ -471,7 +458,6 @@ on_multi_click:
     - OFF for at least 0.5s
   then:
     - logger.log: "Single Short Clicked"
-
 ```
 
 {{< anchor "binary_sensor-is_on_condition" >}}
@@ -488,7 +474,6 @@ on_...:
     condition:
       # Same syntax for is_off
       binary_sensor.is_on: my_binary_sensor
-
 ```
 
 {{< anchor "binary_sensor-lambda_calls" >}}
@@ -507,7 +492,6 @@ advanced stuff.
 
     // Within lambda, publish an ON state.
     id(my_binary_sensor).publish_state(true);
-
 ```
 
 - `.state`  : Retrieve the current state of the binary sensor.
@@ -519,7 +503,6 @@ advanced stuff.
     } else {
       // Binary sensor is OFF, do something else here
     }
-
 ```
 
 ## See Also

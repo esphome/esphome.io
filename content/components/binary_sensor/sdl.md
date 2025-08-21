@@ -23,7 +23,6 @@ binary_sensor:
   - platform: sdl
     id: key_id
     key: SDLK_a
-
 ```
 
 ## See Also

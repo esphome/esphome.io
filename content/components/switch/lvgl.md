@@ -26,7 +26,6 @@ switch:
   - platform: lvgl
     widget: checkbox_id
     name: LVGL switch
-
 ```
 
 ## See Also

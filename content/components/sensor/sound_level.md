@@ -29,7 +29,6 @@ sensor:
       name: "Peak Loudness"
     rms:
       name: "Average Loudness"
-
 ```
 
 ## Configuration variables

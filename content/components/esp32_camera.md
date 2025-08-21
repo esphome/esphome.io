@@ -29,7 +29,6 @@ esp32_camera:
   reset_pin: GPIOXX
   resolution: 640x480
   jpeg_quality: 10
-
 ```
 
 ## Configuration variables
@@ -210,7 +209,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **M5Stack Camera**:
@@ -246,7 +244,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **M5Stack Timer Camera X/F**:
@@ -271,7 +268,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **M5Stack M5CameraF New**:
@@ -292,7 +288,6 @@ esp32_camera:
   href_pin: GPIO26
   pixel_clock_pin: GPIO21
   reset_pin: GPIO15
-
 ```
 
 **Wrover Kit Boards**:
@@ -316,7 +311,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **TTGO T-Camera V05**:
@@ -341,7 +335,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **TTGO T-Camera V162**:
@@ -368,7 +361,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **TTGO T-Camera V17**:
@@ -395,7 +387,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **TTGO T-Journal**:
@@ -419,7 +410,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **TTGO-Camera Plus**:
@@ -445,7 +435,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **TTGO-Camera Mini**:
@@ -469,7 +458,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **ESP-EYE**:
@@ -493,7 +481,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **ESP32S3_EYE** on [Freenove ESP32-S3-DevKitC-1](https://github.com/Freenove/Freenove_ESP32_S3_WROOM_Board):
@@ -518,7 +505,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **Seeed Studio XIAO ESP32S3 Sense**:
@@ -542,7 +528,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 **Waveshare ESP32-S3 ETH + OV2640 camera**:
@@ -566,7 +551,6 @@ esp32_camera:
   # Image settings
   name: My Camera
   # ...
-
 ```
 
 ## See Also

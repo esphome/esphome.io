@@ -12,7 +12,6 @@ You first need to set up the {{< docref "/components/gps" "GPS" >}} component.
 time:
   - platform: gps
     id: gps_time
-
 ```
 
 ## Configuration variables

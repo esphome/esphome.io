@@ -29,7 +29,6 @@ name: Livingroom Volume
 
 # Optional variables:
 icon: "mdi:volume-high"
-
 ```
 
 Configuration variables:
@@ -97,7 +96,6 @@ number:
         - light.turn_on:
             id: light_1
             red: !lambda "return x/255;"
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -124,7 +122,6 @@ number:
       below: 10
       then:
         - switch.turn_on: relay_1
-
 ```
 
 Configuration variables:
@@ -152,7 +149,6 @@ on_...:
         above: 50.0
     then:
       - script.execute: my_script
-
 ```
 
 Configuration variables:
@@ -170,7 +166,6 @@ This is an [Action](#config-action) for setting a number state.
 - number.set:
     id: my_number
     value: 42
-
 ```
 
 Configuration variables:
@@ -193,7 +188,6 @@ step size (default: 1).
 
 # Shorthand
 - number.increment: my_number
-
 ```
 
 Configuration variables:
@@ -218,7 +212,6 @@ step size (default: 1).
 
 # Shorthand
 - number.decrement: my_number
-
 ```
 
 Configuration variables:
@@ -242,7 +235,6 @@ a number component that has a minimum value defined for it.
 
 # Shorthand
 - number.to_min: my_number
-
 ```
 
 Configuration variables:
@@ -262,7 +254,6 @@ a number component that has a maximum value defined for it.
 
 # Shorthand
 - number.to_max: my_number
-
 ```
 
 Configuration variables:
@@ -289,7 +280,6 @@ using a generic templatable action call.
     id: my_number
     operation: !lambda "return NUMBER_OP_INCREMENT;"
     cycle: !lambda "return true;"
-
 ```
 
 Configuration variables:
@@ -320,7 +310,6 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_number).make_call();
     call.set_value(42);
     call.perform();
-
 ```
 
   Check the API reference for information on the methods that are available for
@@ -333,7 +322,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my number: %f", id(my_number).state);
-
 ```
 
 ## See Also

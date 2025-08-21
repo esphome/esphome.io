@@ -22,7 +22,6 @@ esphome:
 
 esp32:
     board: nodemcu-32s
-
 ```
 
 {{< anchor "esphome-configuration_variables" >}}
@@ -102,7 +101,6 @@ esphome:
     - priority: 600
       then:
         - switch.turn_off: switch_1
-
 ```
 
 ### Configuration variables
@@ -140,7 +138,6 @@ esphome:
     - priority: 700
       then:
         - switch.turn_off: switch_1
-
 ```
 
 ### Configuration variables
@@ -165,7 +162,6 @@ esphome:
   on_loop:
     then:
       # do something
-
 ```
 
 {{< anchor "esphome-platformio_options" >}}
@@ -185,7 +181,6 @@ esphome:
   platformio_options:
     upload_speed: 115200
     board_build.f_flash: 80000000L
-
 ```
 
 {{< anchor "esphome-includes" >}}
@@ -206,7 +201,6 @@ esphome:
   includes:
     - my_switch.h
     - <mylib.h>
-
 ```
 
 This option behaves differently depending on what the included file is pointing at:
@@ -241,7 +235,6 @@ esphome:
 
     # use the git version of a library used by a component
     - Improv=https://github.com/improv-wifi/sdk-cpp.git#v1.0.0
-
 ```
 
 The most common usage of this option is to include third-party libraries that are available in the [PlatformIO registry](https://platformio.org/lib). They can be added by listing their name under this option. It is also possible to use
@@ -266,7 +259,6 @@ state of a light or the accumulated energy used by an appliance.
 # Example configuration entry
 preferences:
   flash_write_interval: 1min
-
 ```
 
 ### Configuration variables
@@ -309,7 +301,6 @@ esphome:
 wifi:
   # ...
   use_address: test8266.local
-
 ```
 
 Now upload the updated config to the device. As a second step, you now need to remove the
@@ -326,7 +317,6 @@ wifi:
   # ...
   # Remove or comment out use_address
   # use_address: test8266.local
-
 ```
 
 The same procedure can be done for changing the static IP of a device.
@@ -361,7 +351,6 @@ esphome:
   project:
     name: "jesse.leds_party"
     version: "1.0.0"
-
 ```
 
 {{< anchor "esphome-min_version" >}}
@@ -384,7 +373,6 @@ Areas help organize your devices in Home Assistant by location. ESPHome supports
 esphome:
   name: my-device
   area: "Living Room"
-
 ```
 
 **Structured Format:**
@@ -395,7 +383,6 @@ esphome:
   area:
     id: living_room
     name: "Living Room"
-
 ```
 
 The simple string format is convenient for basic use cases where you just want to assign the ESP device to a room.
@@ -463,7 +450,6 @@ binary_sensor:
     device_id: kitchen_motion_device
     rc_switch_raw:
       code: '110011001100'
-
 ```
 
 ### Example: Multi-Zone Controller
@@ -495,7 +481,6 @@ sensor:
     humidity:
       name: "Humidity"
       device_id: living_room_device
-
 ```
 
 ## See Also

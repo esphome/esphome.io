@@ -32,7 +32,6 @@ gps:
 # GPS as time source
 time:
   - platform: gps
-
 ```
 
 The component is split up in platforms, by defining the GPS module

@@ -41,7 +41,6 @@ light:
   - platform: monochromatic
     output: dimmer1
     name: Dimmable Light
-
 ```
 
 ## Configuration variables

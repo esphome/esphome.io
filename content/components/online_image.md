@@ -36,7 +36,6 @@ online_image:
   - url: "https://example.com/example.png"
     format: png
     id: my_online_image
-
 ```
 
 ## Configuration variables
@@ -96,7 +95,6 @@ online_image:
         } else {
           ESP_LOGD("online_image", "Cache miss: fresh download");
         }
-
 ```
 
 A good example for that is to update the display component after the download succeeded.
@@ -121,7 +119,6 @@ on_...:
       id: my_online_image
       url: "https://www.example.com/new_image.png"
   - component.update: my_online_image
-
 ```
 
 ### `online_image.release` Action
@@ -135,7 +132,6 @@ Release the memory currently used by an image. Can be used if different display 
 ```yaml
 on_...:
   - online_image.release: my_online_image
-
 ```
 
 ## Examples
@@ -147,7 +143,6 @@ online_image:
     id: my_online_image
     on_download_finished:
       component.update: my_display
-
 ```
 
 And then later in code:
@@ -160,7 +155,6 @@ display:
     lambda: |-
       // Draw the image my_online_image at position [x=0,y=0]
       it.image(0, 0, id(my_online_image));
-
 ```
 
 For monochrome displays the `image` method accepts two additional color parameters which can
@@ -177,7 +171,6 @@ display:
       // Draw the image my_image at position [x=0,y=0]
       // with front color "OFF" and back color "ON"
       it.image(0, 0, id(my_online_image), COLOR_OFF, COLOR_ON);
-
 ```
 
 By default `online_image` is configured to not automatically update/download the image; in order to do the initial download, you can either:
@@ -191,7 +184,6 @@ By default `online_image` is configured to not automatically update/download the
 wifi:
   on_connect:
     - component.update: my_online_image
-
 ```
 
 ## See Also

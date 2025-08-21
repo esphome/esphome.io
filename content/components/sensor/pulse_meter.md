@@ -25,7 +25,6 @@ sensor:
   - platform: pulse_meter
     pin: GPIOXX
     name: "Pulse Meter"
-
 ```
 
 ## Configuration variables
@@ -64,7 +63,6 @@ sensor:
     pin: GPIOXX
     filters:
       - multiply: 6 # (60s / impulse constant) * (1000W / 1kW)
-
 ```
 
 ## Counting total pulses
@@ -79,7 +77,6 @@ sensor:
   # ...
     total:
       name: "Total Pulses"
-
 ```
 
 ## (Re)Setting the total pulse count
@@ -98,7 +95,6 @@ api:
         - pulse_meter.set_total_pulses:
             id: sensor_pulse_meter
             value: !lambda 'return new_total;'
-
 ```
 
 {{< note >}}

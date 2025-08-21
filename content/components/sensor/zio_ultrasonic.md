@@ -26,7 +26,6 @@ sensor:
   - platform: zio_ultrasonic
     name: "Distance"
     update_interval: 60s
-
 ```
 
 ## Configuration variables

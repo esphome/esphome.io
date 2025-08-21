@@ -30,7 +30,6 @@ sensor:
     # Sensor for last turn-on time (optional)
     last_time:
       name: My Climate Last Turn-On Time
-
 ```
 
 ## Configuration variables
@@ -62,7 +61,6 @@ This action starts/resume time tracking. In lambdas, you may use the `start()` m
 on_...:
   then:
     - sensor.duty_time.start: my_climate_work_time
-
 ```
 
 {{< anchor "sensor-duty_time-stop_action" >}}
@@ -75,7 +73,6 @@ This action suspends time tracking. Causes the sensor to be updated, including t
 on_...:
   then:
     - sensor.duty_time.stop: my_climate_work_time
-
 ```
 
 {{< anchor "sensor-duty_time-reset_action" >}}
@@ -88,7 +85,6 @@ This action resets the duty time counter. Causes a sensor update. Does not affec
 on_...:
   then:
     - sensor.duty_time.reset: my_climate_work_time
-
 ```
 
 {{< anchor "sensor-duty_time-is_running_action" >}}
@@ -105,7 +101,6 @@ on_...:
     condition:
       # Same syntax for 'is_not_running'
       sensor.duty_time.is_running: my_climate_work_time
-
 ```
 
 ## See Also

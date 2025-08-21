@@ -21,7 +21,6 @@ button:
   - platform: uart
     name: "UART Bytes Output"
     data: [0xDE, 0xAD, 0xBE, 0xEF]
-
 ```
 
 ## Configuration variables

@@ -23,7 +23,6 @@ sensor:
       name: "Temperature"
     humidity:
       name: "Relative Humidity"
-
 ```
 
 ## Configuration variables

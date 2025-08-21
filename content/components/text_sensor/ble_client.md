@@ -28,7 +28,6 @@ text_sensor:
     name: "Sensor Location"
     service_uuid: '180d'
     characteristic_uuid: '2a38'
-
 ```
 
 ## Configuration variables

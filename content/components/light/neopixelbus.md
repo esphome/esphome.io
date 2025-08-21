@@ -33,7 +33,6 @@ light:
     pin: GPIOXX
     num_leds: 60
     name: "NeoPixel Light"
-
 ```
 
 ## Configuration variables
@@ -113,7 +112,6 @@ light:
       type: esp8266_uart
       bus: 0
       async: false
-
 ```
 
 Use the `type` configuration variable to select the method used. The additional configuration

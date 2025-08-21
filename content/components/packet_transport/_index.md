@@ -57,7 +57,6 @@ binary_sensor:
     provider: device1-name
     type: status
     name: Device 1 connection status
-
 ```
 
 ## Configuration variables
@@ -216,7 +215,6 @@ binary_sensor:
       switch.turn_on: relay2
     on_release:
       switch.turn_off: relay2
-
 ```
 
 The following example shows a device using encryption to read a sensor and two binary sensors from two different
@@ -248,7 +246,6 @@ sensor:
   - platform: packet_transport
     provider: st7735s
     id: wifi_signal_sensor
-
 ```
 
 In the example below we differentiate channels we establish over UDP, by providing multiple configuration keys.
@@ -284,7 +281,6 @@ binary_sensor:
     transport_id: transport_input
     provider: device-1
     remote_id: relay1_sensor
-
 ```
 
 ## See Also

@@ -25,7 +25,6 @@ usb_host:
     - id: device_0
       vid: 0x1725
       pid: 0x1234
-
 ```
 
 ## Configuration variables

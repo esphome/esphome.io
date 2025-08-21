@@ -25,7 +25,6 @@ light:
     name: "Hbridge Lights"
     pin_a: pina
     pin_b: pinb
-
 ```
 
 Internally, H-bridge lights are implemented as cold/warm white lights. This means that the brightness of the two colors

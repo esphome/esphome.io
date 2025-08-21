@@ -30,7 +30,6 @@ binary_sensor:
       name: Haier Indoor Fan Status
     outdoor_fan_status:
       name: Haier Outdoor Fan Status
-
 ```
 
 ## Configuration variables

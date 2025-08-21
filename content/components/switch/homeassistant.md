@@ -25,7 +25,6 @@ switch:
   - platform: homeassistant
     id: my_cool_switch_from_ha
     entity_id: switch.my_cool_switch
-
 ```
 
 ## Configuration variables

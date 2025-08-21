@@ -84,7 +84,6 @@ climate:
           level: INFO
           format: "New status message received, size=%d, subcmd=%02X%02X"
           args: [ 'data_size', 'data[0]', 'data[1]' ]
-
 ```
 
 ## Configuration variables
@@ -125,7 +124,6 @@ climate:
             level: WARN
             format: "Alarm activated. Code: %d. Message: \"%s\""
             args: [ 'code', 'message' ]
-
 ```
 
 {{< anchor "haier-on_alarm_end" >}}
@@ -143,7 +141,6 @@ climate:
             level: INFO
             format: "Alarm deactivated. Code: %d. Message: \"%s\""
             args: [ 'code', 'message' ]
-
 ```
 
 {{< anchor "haier-on_status_message" >}}
@@ -162,7 +159,6 @@ climate:
             level: INFO
             format: "New status message received, size=%d, subcmd=%02X%02X"
             args: [ 'data_size', 'data[0]', 'data[1]' ]
-
 ```
 
 ### `climate.haier.power_on` Action
@@ -173,7 +169,6 @@ This action turns AC power on.
 on_...:
   then:
     climate.haier.power_on: device_id
-
 ```
 
 ### `climate.haier.power_off` Action
@@ -184,7 +179,6 @@ This action turns AC power off
 on_...:
   then:
     climate.haier.power_off: device_id
-
 ```
 
 ### `climate.haier.power_toggle` Action
@@ -195,7 +189,6 @@ This action toggles AC power
 on_...:
   then:
     climate.haier.power_toggle: device_id
-
 ```
 
 ### `climate.haier.display_on` Action
@@ -206,7 +199,6 @@ This action turns the AC display on.
 on_...:
   then:
     climate.haier.display_on: device_id
-
 ```
 
 ### `climate.haier.display_off` Action
@@ -217,7 +209,6 @@ This action turns the AC display off.
 on_...:
   then:
     climate.haier.display_off: device_id
-
 ```
 
 ### `climate.haier.health_on` Action
@@ -228,7 +219,6 @@ Turn on health mode ([UV light sterilization](https://www.haierhvac.eu/en/node/1
 on_...:
   then:
     climate.haier.health_on: device_id
-
 ```
 
 ### `climate.haier.health_off` Action
@@ -239,7 +229,6 @@ Turn off health mode.
 on_...:
   then:
     climate.haier.health_off: device_id
-
 ```
 
 ### `climate.haier.beeper_on` Action
@@ -250,7 +239,6 @@ on_...:
 on_...:
   then:
     climate.haier.beeper_on: device_id
-
 ```
 
 ### `climate.haier.beeper_off` Action
@@ -261,7 +249,6 @@ on_...:
 on_...:
   then:
     climate.haier.beeper_off: device_id
-
 ```
 
 ### `climate.haier.set_vertical_airflow` Action
@@ -274,7 +261,6 @@ on_...:
     - climate.haier.set_vertical_airflow:
       id: device_id
       vertical_airflow: Up
-
 ```
 
 ### `climate.haier.set_horizontal_airflow` Action
@@ -287,7 +273,6 @@ on_...:
     - climate.haier.set_horizontal_airflow:
       id: device_id
       vertical_airflow: Right
-
 ```
 
 ### `climate.haier.start_self_cleaning` Action
@@ -298,7 +283,6 @@ on_...:
 on_...:
   then:
     - climate.haier.start_self_cleaning: device_id
-
 ```
 
 ### `climate.haier.start_steri_cleaning` Action
@@ -309,7 +293,6 @@ on_...:
 on_...:
   then:
     - climate.haier.start_steri_cleaning: device_id
-
 ```
 
 ## See Also

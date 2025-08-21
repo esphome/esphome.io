@@ -31,7 +31,6 @@ sensor:
     temperature_offset: 1.5 °C
     address: 0x61
     update_interval: 5s
-
 ```
 
 ## Configuration variables
@@ -94,7 +93,6 @@ number:
     id: co2_cal
     icon: "mdi:molecule-co2"
     entity_category: "config"
-
 ```
 
 ## See Also

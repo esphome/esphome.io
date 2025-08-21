@@ -38,7 +38,6 @@ text_sensor:
       name: ESP Latest Scan Results
     dns_address:
       name: ESP DNS Address
-
 ```
 
 ## Configuration variables

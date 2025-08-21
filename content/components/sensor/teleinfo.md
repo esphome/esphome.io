@@ -43,7 +43,6 @@ simply press -/+ buttons on the counter and look for `Standard mode` or
 # Example configuration entry
 teleinfo:
   id: myteleinfo
-
 ```
 
 ## Configuration variables
@@ -84,7 +83,6 @@ sensor:
     unit_of_measurement: "VA"
     icon: mdi:flash
     teleinfo_id: myteleinfo
-
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
@@ -99,7 +97,6 @@ text_sensor:
     tag_name: "OPTARIF"
     name: "optarif"
     teleinfo_id: myteleinfo
-
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.

@@ -45,7 +45,6 @@ See {{< docref "logger/" >}} for more details
 logger:
     level: <level>
     baud_rate: 0
-
 ```
 
 {{< /note >}}
@@ -155,7 +154,6 @@ text_sensor:
   register_count: 3
   raw_encode: HEXBYTES
   response_size: 6
-
 ```
 
 The configuration example above creates a `modbus_controller` hub talking to a Modbus device at address `1` with a baudrate of `115200` bps, implementing a sensor, a switch and a text sensor.
@@ -206,7 +204,6 @@ sensor:
     unit_of_measurement: V
     filters:
       - multiply: 0.1
-
 ```
 
 Check out the various Modbus components available at the bottom of the document in the [.. _modbus_controller-automations:](#modbusseealso) section. They can be directly defined *(inline)* under the `modbus_controller` hub or as standalone components. Technically there is no difference between the *inline* and the standard definitions approach.
@@ -266,7 +263,6 @@ binary_sensor:
   register_type: read
   address: 15
   bitmask: 0x8000
-
 ```
 
 {{< anchor "modbus_custom_command" >}}
@@ -336,7 +332,6 @@ sensors:
       return raw_to_float.float_value;
     unit_of_measurement: kVArh
     accuracy_decimals: 1
-
 ```
 
 {{< anchor "modbus_register_count" >}}
@@ -376,7 +371,6 @@ An example is an SDM meter, with interesting data in register addresses 0, 2, 4 
   register_type: "read"
   value_type: FP32
   accuracy_decimals: 1
-
 ```
 
 The configuration above will generate *one* modbus command *read multiple registers from 0 to 6*.
@@ -398,7 +392,6 @@ Of course, you can delete the sensors your don't care about, but then you'd have
   address: 6
   register_type: "read"
   value_type: FP32
-
 ```
 
 Because the option `register_count: 6` is used for the first sensor, *one* command *read multiple registers from 0 to 6* will be used but the values in between will be ignored.
@@ -492,7 +485,6 @@ sensors:
   register_type: read
   value_type: U_WORD
   accuracy_decimals: 0
-
 ```
 
 To minimize the required transactions all registers with the same base address are read in one request.
@@ -675,7 +667,6 @@ sensor:
     accuracy_decimals: 1
     filters:
       - multiply: 0.01
-
 ```
 
 {{< /note >}}
@@ -699,7 +690,6 @@ modbus_controller:
     on_command_sent:
       then:
         - number.increment: modbus_commands
-
 ```
 
 {{< anchor "modbus_controller-on_online" >}}
@@ -716,7 +706,6 @@ modbus_controller:
     on_online:
       then:
         - logger.log: "Controller back online!"
-
 ```
 
 {{< anchor "modbus_controller-on_offline" >}}
@@ -733,7 +722,6 @@ modbus_controller:
     on_offline:
       then:
         - logger.log: "Controller goes offline!"
-
 ```
 
 ## See Also

@@ -33,7 +33,6 @@ output:
     ud_pin: GPIOXX
     initial_value: 1.0
     step_delay: 1us
-
 ```
 
 ## Configuration variables

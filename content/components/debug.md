@@ -46,7 +46,6 @@ sensor:
 # Logger must be configured
 logger:
   level: debug
-
 ```
 
 ## Text Sensor

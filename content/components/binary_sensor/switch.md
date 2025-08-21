@@ -23,7 +23,6 @@ switch:
   - platform: gpio
     id: relay1
     pin: GPIOXX
-
 ```
 
 ## Configuration variables

@@ -19,7 +19,6 @@ button:
     name: "Template Button"
     on_press:
       - logger.log: Button Pressed
-
 ```
 
 ## Configuration variables

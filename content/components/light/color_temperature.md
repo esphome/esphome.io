@@ -22,7 +22,6 @@ light:
     brightness: output_component2
     cold_white_color_temperature: 6536 K
     warm_white_color_temperature: 2000 K
-
 ```
 
 ## Configuration variables

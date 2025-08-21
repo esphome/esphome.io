@@ -32,7 +32,6 @@ text_sensor:
       name: ESP DNS Address
     mac_address:
       name: ESP MAC Address
-
 ```
 
 ## Configuration variables

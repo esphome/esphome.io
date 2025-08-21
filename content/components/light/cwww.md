@@ -23,7 +23,6 @@ light:
     cold_white_color_temperature: 6536 K
     warm_white_color_temperature: 2000 K
     constant_brightness: true
-
 ```
 
 {{< anchor "cwww_mixing" >}}

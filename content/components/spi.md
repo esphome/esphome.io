@@ -67,7 +67,6 @@ spi:
       - GPIOXX
       - GPIOXX
       - GPIOXX
-
 ```
 
 ## Configuration variables
@@ -141,7 +140,6 @@ spi_device:
        id(spidev).enable();
        id(spidev).write_byte(0x4F);
        id(spidev).disable();
-
 ```
 
 ### Configuration variables

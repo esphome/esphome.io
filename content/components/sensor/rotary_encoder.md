@@ -31,7 +31,6 @@ sensor:
     name: "Rotary Encoder"
     pin_a: D1
     pin_b: D2
-
 ```
 
 To modify additional parameters of pins like active state or pull-ups, you may add extra options.
@@ -44,7 +43,6 @@ pin_a:
   mode:
     input: true
     pullup: true
-
 ```
 
 ## Configuration variables
@@ -107,7 +105,6 @@ on_...:
   - sensor.rotary_encoder.set_value:
       id: my_rotary_encoder
       value: !lambda 'return -1;'
-
 ```
 
 Configuration options:
@@ -129,7 +126,6 @@ on_clockwise:
   - logger.log: "Turned Clockwise"
 on_anticlockwise:
   - logger.log: "Turned Anticlockwise"
-
 ```
 
 ## See Also

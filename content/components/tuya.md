@@ -19,7 +19,6 @@ Put the `tuya` component in the config and it will list the possible devices for
 ```yaml
 # Register the Tuya MCU connection
 tuya:
-
 ```
 
 Here is an example output for a Tuya fan controller:
@@ -32,7 +31,6 @@ Here is an example output for a Tuya fan controller:
 [12:39:45][C][tuya:034]:   Datapoint 7: int value (value: 0)
 [12:39:45][C][tuya:032]:   Datapoint 9: switch (value: OFF)
 [12:39:45][C][tuya:046]:   Product: '{"p":"hqq73kftvzh8c92u","v":"1.0.0","m":0}'
-
 ```
 
 Here is another example output for a Tuya ME-81H thermostat:
@@ -55,7 +53,6 @@ Here is another example output for a Tuya ME-81H thermostat:
 [08:51:09][C][tuya:057]:   GPIO Configuration: status: pin 14, reset: pin 0 (not supported)
 [08:51:09][C][tuya:061]:   Status Pin: GPIO14
 [08:51:09][C][tuya:063]:   Product: '{"p":"gogb05wrtredz3bs","v":"1.0.0","m":0}'
-
 ```
 
 ## Configuration variables
@@ -122,7 +119,6 @@ tuya:
             } else {
               ESP_LOGD("main", "on_datapoint_update %hhu", x.type);
             }
-
 ```
 
 Configuration variables:

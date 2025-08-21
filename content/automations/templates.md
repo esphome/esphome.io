@@ -28,7 +28,6 @@ cover:
       } else {
         return COVER_CLOSED;
       }
-
 ```
 
 What's happening here? First, we define a binary sensor (notably with `id: top_end_stop`  ) and then a
@@ -73,7 +72,6 @@ lambda: |-
   static int num_executions = 0;
   ESP_LOGD("main", "I am at execution number %d", num_executions);
   num_executions += 1;
-
 ```
 
 {{< /tip >}}
@@ -96,7 +94,6 @@ on_press:
           // The sensor outputs values from 0 to 100. The blue
           // part of the light color will be determined by the sensor value.
           return id(some_sensor).state / 100.0;
-
 ```
 
 When you see the label "templatable" in the documentation for a given action, it can be templated as in this example,

@@ -30,7 +30,6 @@ configure wifi - network will automatically be available using the host computer
 # Example configuration entry
 host:
   mac_address: "06:35:69:ab:f6:79"
-
 ```
 
 ## Configuration variables

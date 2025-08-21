@@ -104,7 +104,6 @@ sensor:
       then:
         - .... # do something - light up the screen for example
     ps_counts: "Proximity counts"
-
 ```
 
 ## Configuration variables

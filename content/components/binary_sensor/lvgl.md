@@ -26,7 +26,6 @@ binary_sensor:
   - platform: lvgl
     widget: btn_id
     name: LVGL push button
-
 ```
 
 ## See Also

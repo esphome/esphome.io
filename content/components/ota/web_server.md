@@ -36,7 +36,6 @@ web_server:
 
 ota:
   - platform: web_server
-
 ```
 
 ## Configuration variables
@@ -60,7 +59,6 @@ This has been moved to a separate platform for consistency with other OTA method
 web_server:
   port: 80
   ota: true  # or ota: false to disable
-
 ```
 
 **New configuration:**
@@ -71,7 +69,6 @@ web_server:
 
 ota:
   - platform: web_server  # Add this to enable web OTA
-
 ```
 
 If you previously had `ota: false` in your web_server configuration, simply remove that line and don't add the
@@ -88,7 +85,6 @@ web_server:
 
 ota:
   - platform: web_server
-
 ```
 
 Secure setup with authentication:
@@ -103,7 +99,6 @@ web_server:
 
 ota:
   - platform: web_server
-
 ```
 
 ## Using the Web Interface

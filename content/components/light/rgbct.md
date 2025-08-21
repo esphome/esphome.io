@@ -24,7 +24,6 @@ light:
     white_brightness: output_component5
     cold_white_color_temperature: 153 mireds
     warm_white_color_temperature: 500 mireds
-
 ```
 
 ## Configuration variables

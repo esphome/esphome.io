@@ -29,7 +29,6 @@ name: Livingroom Text
 
 # Optional variables:
 icon: "mdi:cursor-text"
-
 ```
 
 Configuration variables:
@@ -87,7 +86,6 @@ text:
         - logger.log:
             format: "%s"
             args: ["x.c_str()"]
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -102,7 +100,6 @@ This is an [Action](#config-action) for setting a text state.
 - text.set:
     id: my_text
     value: "Hello World"
-
 ```
 
 Configuration variables:
@@ -125,7 +122,6 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_text).make_call();
     call.set_value("Hello World");
     call.perform();
-
 ```
 
 - `.state`  : Retrieve the current value of the text.
@@ -133,7 +129,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my text: %s", id(my_text).state.c_str());
-
 ```
 
 ## See Also

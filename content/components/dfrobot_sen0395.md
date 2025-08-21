@@ -41,7 +41,6 @@ switch:
   # Switch to turn on/off detection
   - platform: dfrobot_sen0395
     name: Mmwave Active
-
 ```
 
 {{< anchor "dfrobot_sen0395-component" >}}
@@ -62,7 +61,6 @@ dfrobot_sen0395:
   - id: mmWave_2
     uart_id: uart_2
   ...
-
 ```
 
 ### Configuration variables
@@ -95,7 +93,6 @@ binary_sensor:
     pin:
       number: GPIOXX
       mode: INPUT_PULLDOWN
-
 ```
 
 {{< anchor "dfrobot_sen0395-via_uart" >}}
@@ -113,7 +110,6 @@ to create individual binary sensors for each presence sensor.
 binary_sensor:
   - platform: dfrobot_sen0395
     name: Presence Detected via UART
-
 ```
 
 ### Configuration variables
@@ -134,7 +130,6 @@ switch:
     dfrobot_sen0395_id: mmWave
     type: sensor_active
     name: mmWave Active
-
 ```
 
 ### Configuration variables
@@ -185,7 +180,6 @@ on_...:
         delay_after_detect: 0s
         delay_after_disappear: 0s
       sensitivity: 7
-
 ```
 
 #### Configuration variables
@@ -206,7 +200,6 @@ on_...:
     detection_segments:
       - [0cm, 3m]
       - [5.1m, 6.6m]
-
 ```
 
   In the above example, if a person was present in the range between 0cm and 3m (distance from the sensor) or
@@ -219,7 +212,6 @@ on_...:
           return 0;
       - !lambda |-
           return return id(mwave_max_distance).state;
-
 ```
 
   Section values can be defined using lambdas, so you can set the distances depending on other entities. Distances
@@ -244,7 +236,6 @@ Restart the sensor.
 ```yaml
 on_...:
   dfrobot_sen0395.reset:
-
 ```
 
 #### Configuration variables

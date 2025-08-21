@@ -40,7 +40,6 @@ sensor:
 time:
   - platform: homeassistant
     id: homeassistant_time
-
 ```
 
 ## Configuration variables
@@ -70,7 +69,6 @@ sensor:
         # Multiplication factor from W to kW is 0.001
         - multiply: 0.001
       unit_of_measurement: kW
-
 ```
 
 ## Lifetime instead of Daily
@@ -87,7 +85,6 @@ sensor:
     restore: true
     state_class: total_increasing
     device_class: energy
-
 ```
 
 ## See Also

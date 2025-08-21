@@ -30,7 +30,6 @@ esp32_hosted:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
 ```
 
 {{< anchor "esp32_hosted-configuration_variables" >}}

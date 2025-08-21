@@ -28,7 +28,6 @@ sensor:
           - output.turn_on: led
           - delay: 500ms
           - output.turn_off: led
-
 ```
 
 ## See Also

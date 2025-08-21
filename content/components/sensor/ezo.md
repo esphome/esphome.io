@@ -34,7 +34,6 @@ sensor:
     accuracy_decimals: 2
     unit_of_measurement: "°C"
     update_interval: 10s
-
 ```
 
 ## Configuration variables
@@ -69,112 +68,96 @@ with the information retrieved from the sensor. For more information on the comm
 
 ```cpp
     id(ph_ezo).set_i2c(100);
-
 ```
 
 - `get_device_information()`  : Sensor retrieves calibration and triggers `on_device_information:` once done
 
 ```cpp
     id(ph_ezo).get_device_information();
-
 ```
 
 - `set_sleep()`  :  Put the device to sleep
 
 ```cpp
     id(ph_ezo).set_sleep();
-
 ```
 
 - `get_state()`  : Performs a read on the current sensor.
 
 ```cpp
     id(ph_ezo).get_state();
-
 ```
 
 - `get_slope()`  : Sensor retrieves slope and triggers `on_slope:` once done
 
 ```cpp
     id(ph_ezo).get_slope();
-
 ```
 
 - `get_t()`  : Sensor retrieves temperature compensation value (in Celcius) and triggers `on_t:` once done
 
 ```cpp
     id(ph_ezo).get_t();
-
 ```
 
 - `set_t(float value)`  : Send the given temperature (in Celcius) to the sensor.
 
 ```cpp
     id(ph_ezo).set_t("27.00");
-
 ```
 
 - `set_tempcomp_value(float temp)`  : Send the given temperature (in Celcius) to the sensor (this is an alias of `set_t()` for backwards compatibility)
 
 ```cpp
     id(ph_ezo).set_tempcomp_value(id(rtd_ezo).state);
-
 ```
 
 - `get_calibration()`  : Sensor retrieves calibration and triggers `on_calibration:` once done
 
 ```cpp
     id(ph_ezo).get_calibration();
-
 ```
 
 - `set_calibration_generic(float value)`  : Sets the calibration with no point.
 
 ```cpp
     id(ph_ezo).set_calibration_generic(750.0);
-
 ```
 
 - `set_calibration_point_low(float value)`  : Sets the low calibration point.
 
 ```cpp
     id(ph_ezo).set_calibration_point_low(4.00);
-
 ```
 
 - `set_calibration_point_mid(float value)`  : Sets the medium calibration point.
 
 ```cpp
     id(ph_ezo).set_calibration_point_mid(7.00);
-
 ```
 
 - `set_calibration_point_high(float value)`  : Sets the high calibration point.
 
 ```cpp
     id(ph_ezo).set_calibration_point_high(10.00);
-
 ```
 
 - `clear_calibration()`  : Clears all calibration points.
 
 ```cpp
     id(ph_ezo).clear_calibration();
-
 ```
 
 - `get_led_state()`  : Sensor LED state and triggers `on_led:` once done
 
 ```cpp
     id(ph_ezo).get_led_state();
-
 ```
 
 - `set_led_state(bool on)`  : Sensor LED on or off
 
 ```cpp
     id(ph_ezo).set_led_state(true);
-
 ```
 
 - `send_custom(const std::string &payload, uint16_t delay_ms = 300, bool response_expected = false)`  : Runs a custom command. This sends exactly what is in `payload`  . Optionally you can set a `delay` and if a response is expected that should be parsed. Defaults to `false` for custom commands.  Triggers `on_custom:` if there's a response.
@@ -182,7 +165,6 @@ with the information retrieved from the sensor. For more information on the comm
 ```cpp
     // Run a custom command to turn on the LED
     id(ph_ezo).send_custom("L,1");
-
 ```
 
 ## See Also

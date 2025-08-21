@@ -55,7 +55,6 @@ sensor:
       ((17.67*id(bme280_temperature).state)/(243.5+id(bme280_temperature).state))));
     unit_of_measurement: °C
     icon: 'mdi:thermometer-alert'
-
 ```
 
 ## Altitude and absolute humidity
@@ -104,7 +103,6 @@ sensor:
         (id(bme280_temperature).state + (0.0065 * STANDARD_ALTITUDE) + 273.15)), 5.257); // in hPa
     update_interval: 15s
     unit_of_measurement: 'hPa'
-
 ```
 
 {{< note >}}

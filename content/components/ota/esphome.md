@@ -26,7 +26,6 @@ expected. This is automatically enabled by this component, but it may be disable
 ota:
   - platform: esphome
     password: !secret ota_password
-
 ```
 
 ## Configuration variables
@@ -67,7 +66,6 @@ ota:
   - platform: esphome
     id: my_ota
     password: "Old password"
-
 ```
 
 The "id: my_ota" in the OTA block is important. This is referenced in the lambda.

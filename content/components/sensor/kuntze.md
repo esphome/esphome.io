@@ -54,7 +54,6 @@ sensor:
       id: ph
     temperature:
       id: temperature
-
 ```
 
 Configuration variables:

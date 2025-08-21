@@ -15,7 +15,6 @@ This component contains platform-specific options for the ESP32 platform.
 # Example configuration entry
 esp32:
   variant: esp32s3
-
 ```
 
 ## Configuration variables
@@ -57,7 +56,6 @@ esp32:
   board: ...
   framework:
     type: arduino
-
 ```
 
 ### Configuration variables
@@ -90,7 +88,6 @@ esp32:
   board: ...
   framework:
     type: esp-idf
-
 ```
 
 ### Configuration variables
@@ -185,7 +182,6 @@ esp32:
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
-
 ```
 
 {{< anchor "esp32-idf_components" >}}
@@ -227,7 +223,6 @@ binary_sensor:
   - platform: gpio
     name: "Pin GPIO23"
     pin: GPIO23
-
 ```
 
 ## See Also

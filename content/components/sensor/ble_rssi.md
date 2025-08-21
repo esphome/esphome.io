@@ -43,7 +43,6 @@ sensor:
   - platform: ble_rssi
     ibeacon_uuid: '68586f1e-89c2-11eb-8dcd-0242ac130003'
     name: "BLE Test Service iBeacon RSSI value"
-
 ```
 
 {{< note >}}

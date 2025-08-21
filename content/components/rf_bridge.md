@@ -37,7 +37,6 @@ rf_bridge:
           low: !lambda 'return format_hex(data.low);'
           high: !lambda 'return format_hex(data.high);'
           code: !lambda 'return format_hex(data.code);'
-
 ```
 
 ## Configuration variables
@@ -65,7 +64,6 @@ on_code_received:
         low: !lambda 'return format_hex(data.low);'
         high: !lambda 'return format_hex(data.high);'
         code: !lambda 'return format_hex(data.code);'
-
 ```
 
 {{< anchor "rf_bridge-send_code_action" >}}
@@ -82,7 +80,6 @@ on_...:
         low: 0x800
         high: 0x1000
         code: 0xABC123
-
 ```
 
 Configuration options:
@@ -98,7 +95,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).send_code(0x700, 0x800, 0x1000, 0xABC123);
-
 ```
 
 {{< /note >}}
@@ -113,7 +109,6 @@ on_...:
   then:
     - rf_bridge.beep:
         duration: 100
-
 ```
 
 Configuration options:
@@ -126,7 +121,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).beep(100);
-
 ```
 
 {{< /note >}}
@@ -141,7 +135,6 @@ A new code with timings will be returned to [`on_code_received` Trigger](#rf_bri
 on_...:
   then:
     - rf_bridge.learn
-
 ```
 
 Configuration options:
@@ -153,7 +146,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).learn();
-
 ```
 
 {{< /note >}}
@@ -173,7 +165,6 @@ on_...:
         raw: 'AAA5070008001000ABC12355'
     - rf_bridge.send_raw:  # in Portisch firmware
         raw: 'AAB04C0408137702440111139B38192A192A1A1A19292A192A1A19292929292A1A1A1A1A192A19292A1A192A192A1A1A1A1A1A1A1A192A1A1A1A1A1A1A1A1A1A1A1A192A1929292A192A1A1929292955'
-
 ```
 
 Configuration options:
@@ -186,7 +177,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).send_raw("AAA5070008001000ABC12355");
-
 ```
 
 {{< /note >}}
@@ -215,7 +205,6 @@ on_advanced_code_received:
         length: !lambda 'return format_hex(data.length);'
         protocol: !lambda 'return format_hex(data.protocol);'
         code: !lambda 'return data.code;'
-
 ```
 
 {{< anchor "rf_bridge-send_advanced_code_action" >}}
@@ -231,7 +220,6 @@ on_...:
         length: 0x04
         protocol: 0x01
         code: "ABC123"
-
 ```
 
 Configuration options:
@@ -246,7 +234,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).send_advanced_code(0x04, 0x01, "ABC123");
-
 ```
 
 {{< /note >}}
@@ -261,7 +248,6 @@ The decoded codes with length and protocol will be returned to [`on_advanced_cod
 on_...:
   then:
     - rf_bridge.start_advanced_sniffing
-
 ```
 
 Configuration options:
@@ -273,7 +259,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).start_advanced_sniffing();
-
 ```
 
 {{< /note >}}
@@ -287,7 +272,6 @@ Tell the RF Bridge to stop listening for the advanced/extra protocols defined in
 on_...:
   then:
     - rf_bridge.stop_advanced_sniffing
-
 ```
 
 Configuration options:
@@ -299,7 +283,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).stop_advanced_sniffing();
-
 ```
 
 {{< /note >}}
@@ -325,7 +308,6 @@ You should re-call the action to reset and start sniffing again. This issue is f
 on_...:
   then:
     - rf_bridge.start_bucket_sniffing
-
 ```
 
 Configuration options:
@@ -337,7 +319,6 @@ This action can also be written in [lambdas](#config-lambda):
 
 ```cpp
 id(rf_bridge).start_bucket_sniffing();
-
 ```
 
 {{< /note >}}
@@ -350,7 +331,6 @@ For *Portisch* or *Mightymos* firmware
 ```yaml
 - rf_bridge.send_raw:
     raw: 'AAFE55'
-
 ```
 
 ## Getting started with Home Assistant
@@ -422,7 +402,6 @@ rf_bridge:
             length: !lambda 'return format_hex(data.length);'
             protocol: !lambda 'return format_hex(data.protocol);'
             code: !lambda 'return data.code;'
-
 ```
 
 Now your latest received code will be in an event.
@@ -439,7 +418,6 @@ automation:
       low: 0x800
       high: 0x1000
       code: 0xABC123
-
 ```
 
 Additional example configurations in ESPHome
@@ -516,7 +494,6 @@ cover:
 
     has_built_in_endstop: true
     assumed_state: false
-
 ```
 
 ## See Also

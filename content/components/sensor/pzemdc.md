@@ -44,7 +44,6 @@ sensor:
     energy:
       name: "PZEM-003 Energy"
     update_interval: 60s
-
 ```
 
 ## Configuration variables
@@ -72,7 +71,6 @@ This action resets the total energy value of the pzemdc device with the given ID
 on_...:
   then:
     - pzemdc.reset_energy: pzemdc_1
-
 ```
 
 ## See Also

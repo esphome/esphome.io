@@ -39,7 +39,6 @@ button:
     icon: "mdi:emoticon-outline"
     on_press:
       - logger.log: "Button pressed"
-
 ```
 
 Configuration variables:
@@ -91,7 +90,6 @@ button:
     on_press:
       then:
         - logger.log: Button Pressed
-
 ```
 
 Configuration variables: see [Automation](#automation).
@@ -104,7 +102,6 @@ This is an [Action](#config-action) for pressing a button in an Automation.
 
 ```yaml
 - button.press: my_button
-
 ```
 
 Configuration variables:
@@ -129,7 +126,6 @@ From [lambdas](#config-lambda), you can press a button.
 ```cpp
     // Within lambda, press the button.
     id(my_button).press();
-
 ```
 
 ## See Also

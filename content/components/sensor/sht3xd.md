@@ -27,7 +27,6 @@ sensor:
       name: "Living Room Humidity"
     address: 0x44
     update_interval: 60s
-
 ```
 
 ## Configuration variables
@@ -64,7 +63,6 @@ i2c:
   scan: true
   frequency: 800kHz
   timeout: 10ms
-
 ```
 
 ## See Also

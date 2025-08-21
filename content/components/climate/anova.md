@@ -48,7 +48,6 @@ climate:
     name: "My Anova stick"
     ble_client_id: my_anova
     unit_of_measurement: c
-
 ```
 
 ## Configuration variables

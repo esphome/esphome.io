@@ -42,7 +42,6 @@ external_components:
       url: file:///Users/user/path_to_repo
       ref: my_awesome_branch
     components: [my_awesome_component]
-
 ```
 
 ## Configuration variables
@@ -85,7 +84,6 @@ external_components:
 # shorthand
 external_components:
   - source: my_components
-
 ```
 
 Notice that relative paths are supported, so you can enter `my_components` as the source path and then
@@ -111,7 +109,6 @@ Given the above example of `my_components`  , the folder structure must look lik
         ├── component2.cpp
         ├── component2.h
         └── switch.py
-
 ```
 
 {{< anchor "external-components_git" >}}
@@ -142,7 +139,6 @@ components
     └── switch.py
 example_component1.yaml        <- not required but recommended
 README.md
-
 ```
 
 or, this structure is also supported, which makes handy to share components from a **forked** ESPHome
@@ -163,7 +159,6 @@ esphome
 │   │   └── switch.py
 │  ...
 ...
-
 ```
 
 HTTP git repositories in general are supported with this configuration:
@@ -178,7 +173,6 @@ external_components:
     type: git
     url: file:///Users/user/path_to_repo
     ref: branch_or_tag
-
 ```
 
 The source field accepts a short hand **github://** resource:
@@ -187,7 +181,6 @@ The source field accepts a short hand **github://** resource:
 external_components:
   # shorthand
   source: github://<user or org>/<repository name>[@<branch or tag>]
-
 ```
 
 The source field also accepts a short hand **github://** pull request from the ESPHome repository:
@@ -196,7 +189,6 @@ The source field also accepts a short hand **github://** pull request from the E
 external_components:
   # shorthand
   source: github://pr#<number>
-
 ```
 
 Under the hood, during validation, ESPHome will clone the git repository into the hidden `.esphome`

@@ -30,7 +30,6 @@ output:
     inverted: false
     min_power: 0.01
     max_power: 0.75
-
 ```
 
 Configuration variables:
@@ -66,7 +65,6 @@ This action turns the output with the given ID on when executed.
 on_...:
   then:
     - output.turn_on: light_1
-
 ```
 
 {{< note >}}
@@ -74,7 +72,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 
 ```cpp
 id(light_1).turn_on();
-
 ```
 
 {{< /note >}}
@@ -88,7 +85,6 @@ This action turns the output with the given ID off when executed.
 on_...:
   then:
     - output.turn_off: light_1
-
 ```
 
 {{< note >}}
@@ -96,7 +92,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 
 ```cpp
 id(light_1).turn_off();
-
 ```
 
 {{< /note >}}
@@ -119,7 +114,6 @@ on_...:
     - output.set_level:
         id: light_1
         level: 50%
-
 ```
 
 {{< note >}}
@@ -128,7 +122,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 ```cpp
 // range is 0.0 (off) to 1.0 (on)
 id(light_1).set_level(0.5);
-
 ```
 
 {{< /note >}}
@@ -152,7 +145,6 @@ on_...:
     - output.set_min_power:
         id: light_1
         min_power: 20%
-
 ```
 
 {{< note >}}
@@ -161,7 +153,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 ```cpp
 // range is 0.0 (off) to 1.0 (on)
 id(light_1).set_min_power(0.2);
-
 ```
 
 {{< /note >}}
@@ -185,7 +176,6 @@ on_...:
     - output.set_max_power:
         id: light_1
         max_power: 80%
-
 ```
 
 {{< note >}}
@@ -194,7 +184,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 ```cpp
 // range is 0.0 (off) to 1.0 (on)
 id(light_1).set_max_power(0.8);
-
 ```
 
 {{< /note >}}

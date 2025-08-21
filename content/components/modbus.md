@@ -33,7 +33,6 @@ uart:
   ...
 
 modbus:
-
 ```
 
 ## Configuration variables

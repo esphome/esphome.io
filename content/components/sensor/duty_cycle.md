@@ -23,7 +23,6 @@ sensor:
   - platform: duty_cycle
     pin: D0
     name: Duty Cycle Sensor
-
 ```
 
 ## Configuration variables

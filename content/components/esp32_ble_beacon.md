@@ -27,7 +27,6 @@ audio components are most likely to cause issues.
 esp32_ble_beacon:
   type: iBeacon
   uuid: 'c29ce823-e67a-4e71-bff2-abaa32e77a98'
-
 ```
 
 ## Configuration variables

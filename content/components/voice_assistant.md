@@ -26,16 +26,9 @@ If you experience crashes, see the {{< docref "/guides/troubleshooting" >}} guid
 
 {{< /warning >}}
 
-## Configuration variables
-
 ```yaml
-microphone:
-  - platform: ...
-    id: mic_id
-
 voice_assistant:
   microphone: mic_id
-
 ```
 
 - **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The {{< docref "/components/microphone/index" "microphone" >}} settings to use for input.
@@ -171,7 +164,6 @@ binary_sensor:
           silence_detection: false
     on_release:
       - voice_assistant.stop:
-
 ```
 
 ## Click to Converse
@@ -194,7 +186,6 @@ binary_sensor:
             - voice_assistant.stop:
           else:
             - voice_assistant.start_continuous:
-
 ```
 
 ## See Also

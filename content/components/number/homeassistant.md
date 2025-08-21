@@ -25,7 +25,6 @@ number:
   - platform: homeassistant
     id: my_ha_number
     entity_id: number.my_number
-
 ```
 
 ## Configuration variables

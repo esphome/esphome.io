@@ -70,7 +70,6 @@ output:
     register_type: holding
     value_type: U_WORD
     multiply: 1000
-
 ```
 
 **The same with lambda:**
@@ -86,7 +85,6 @@ output:
       uint16_t value = x ;
       payload.push_back(value);
       return x * 1000 ;
-
 ```
 
 ## See Also

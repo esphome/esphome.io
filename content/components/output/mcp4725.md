@@ -32,7 +32,6 @@ on_...:
     - output.set_level:
         id: dac_output
         level: 100%
-
 ```
 
 ## Configuration variables

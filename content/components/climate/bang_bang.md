@@ -65,7 +65,6 @@ climate:
       - switch.turn_on: heater
     idle_action:
       - switch.turn_off: heater
-
 ```
 
 ## Configuration variables

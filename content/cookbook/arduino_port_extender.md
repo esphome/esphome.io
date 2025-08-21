@@ -37,7 +37,6 @@ esphome:
   # ...
   includes:
       - arduino_port_expander.h
-
 ```
 
 Setup your [I²C Bus](#i2c) and assign it an `id`  :
@@ -45,7 +44,6 @@ Setup your [I²C Bus](#i2c) and assign it an `id`  :
 ```yaml
 i2c:
   id: i2c_component
-
 ```
 
 By default ESP8266 uses `SDA` pin `GPIO4` which you need to connect to Arduino's `A4` and the `SCL`
@@ -60,7 +58,6 @@ custom_component:
     lambda: |-
       auto ape_component = new ArduinoPortExpander(i2c_component, 0x08);
       return {ape_component};
-
 ```
 
 By default the I²C address is `0x08` but you can change it on the Arduino sketch so you can have more devices
@@ -98,7 +95,6 @@ binary_sensor:
         name: Binary sensor pin 3
         on_press:
           ...
-
 ```
 
 The listed `binary_sensors` supports all options from [Binary Sensor](#config-binary_sensor) like
@@ -117,7 +113,6 @@ do so, pass an additional true value to the hub constructor:
 
 ```cpp
 auto ape_component = new ArduinoPortExpander(i2c_component, 0x08, true);
-
 ```
 
 To setup sensors, create a custom platform as below, list in braces all the sensors you want,
@@ -140,7 +135,6 @@ sensor:
         id: analog_a2
         filters:
           - throttle: 2s
-
 ```
 
 The listed `sensors` supports all options from [Sensor](#config-sensor) like
@@ -181,7 +175,6 @@ light:
   - platform: binary
     name: Switch pin 4
     output: output_pin_4
-
 ```
 
 ## Full Example
@@ -322,7 +315,6 @@ sensor:
         id: analog_a2
         filters:
           - throttle: 2s
-
 ```
 
 ## See Also

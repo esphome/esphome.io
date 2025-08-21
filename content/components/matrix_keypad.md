@@ -35,7 +35,6 @@ matrix_keypad:
   has_diodes: false
   on_key:
     - lambda: ESP_LOGI("KEY", "key %d pressed", x);
-
 ```
 
 ### Configuration variables
@@ -67,7 +66,6 @@ binary_sensor:
   - platform: matrix_keypad
     id: keyA
     key: A
-
 ```
 
 ### Configuration variables

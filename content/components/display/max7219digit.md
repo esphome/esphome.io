@@ -36,7 +36,6 @@ display:
     intensity: 15
     lambda: |-
       it.print(0, 0, id(digit_font), "HELLO!");
-
 ```
 
 ## Configuration variables
@@ -134,7 +133,6 @@ time:
 image:
   - file: "smile.png"
     id: my_image
-
 ```
 
 This is roughly the code used to display the MAX7219 pictured in the image.
@@ -153,7 +151,6 @@ They can also be changed in the Lambda by adding the following command:
 
 ```cpp
 it.scroll(<on/off>, <mode>, <speed>, <delay>, <dwell>);
-
 ```
 
 - **on/off** -> switch scrolling on or off, use true or false
@@ -173,7 +170,6 @@ display:
       it.scroll(true, max7219digit::CONTINUOUS);
       // OR
       it.scroll(true);
-
 ```
 
 - The screen does not scroll if the text fits within the screen.
@@ -189,7 +185,6 @@ display:
       it.invert_on_off(true);
       // Print Hello at position 0 (left)
       it.print(0,0, id(digit_font), "Hello!");
-
 ```
 
 The function `it.invert_on_off(true);` will invert the display. So background pixels are on and texts pixels are
@@ -207,7 +202,6 @@ display:
       // Print Hello at position 0 (left)
       it.print(0,0, id(digit_font), "Hello!");
       it.line(0, 0, 31, 7, COLOR_OFF);
-
 ```
 
 This code will only affect the line drawn on the screen. The line will wipe the pixels from top left to right bottom.
@@ -223,7 +217,6 @@ display:
     # ...
     lambda: |-
       it.intensity(10);
-
 ```
 
 ### Screen ON/OFF
@@ -236,7 +229,6 @@ display:
     # ...
     lambda: |-
       it.turn_on_off(true);
-
 ```
 
 For a quick display some additional commands are embedded in the code with a related 8 pixel font. Three methods

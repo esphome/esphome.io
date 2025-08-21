@@ -32,7 +32,6 @@ speaker:
     source_speakers:
       - id: announcement_mixer_input_speaker_id
       - id: media_mixer_input_speaker_id
-
 ```
 
 ## Configuration variables

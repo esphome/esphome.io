@@ -20,7 +20,6 @@ media_player:
     dac_type: external
     i2s_dout_pin: GPIOXX
     mode: mono
-
 ```
 
 ## Configuration variables

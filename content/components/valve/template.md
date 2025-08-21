@@ -32,7 +32,6 @@ valve:
     stop_action:
       - switch.turn_on: stop_valve_switch
     optimistic: true
-
 ```
 
 Possible return values for the optional lambda:
@@ -91,7 +90,6 @@ on_...:
   - valve.template.publish:
       id: my_template_valve
       state: !lambda 'return VALVE_OPEN;'
-
 ```
 
 Configuration options:
@@ -111,7 +109,6 @@ This action can also be written in lambdas:
 ```cpp
 id(my_template_valve).position = VALVE_OPEN;
 id(my_template_valve).publish_state();
-
 ```
 
 {{< /note >}}

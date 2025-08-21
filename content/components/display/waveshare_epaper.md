@@ -63,7 +63,6 @@ display:
     full_update_every: 30
     lambda: |-
       it.print(0, 0, id(font1), "Hello World!");
-
 ```
 
 For the 7-color display, colors can be defined like this in the lambda function:
@@ -80,7 +79,6 @@ lambda: |-
 
   it.print(0, 0, id(font1), BLUE, "Hello World in blue!");
   it.print(100, 100, id(font1), RED, "Hello World in red!");
-
 ```
 
 ## Configuration variables

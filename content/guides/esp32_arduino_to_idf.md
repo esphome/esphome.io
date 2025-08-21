@@ -47,7 +47,6 @@ esp32:
   board: esp32dev  # Your board type
   framework:
     type: esp-idf
-
 ```
 
 ### Option 2: Stay with Arduino
@@ -59,7 +58,6 @@ esp32:
   board: esp32dev  # Your board type
   framework:
     type: arduino
-
 ```
 
 ## Migration Steps

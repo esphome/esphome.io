@@ -72,7 +72,6 @@ grounds are not supposed to be connected to each other as can be seen in the cir
 # Example configuration entry
 vbus:
   uart_id: resol
-
 ```
 
 {{< warning >}}
@@ -121,7 +120,6 @@ sensor:
       name: Device Time
     version:
       name: Device firmware version
-
 ```
 
 Configuration variables:
@@ -174,7 +172,6 @@ binary_sensor:
       name: Option Recooling
     hqm:
       name: Option Heat Quantity Measurement
-
 ```
 
 Configuration variables:
@@ -208,7 +205,6 @@ sensor:
       - id: temp1
         name: Temp 1
         lambda: return ((x[1] << 8) + x[0]) / 10.0;
-
 ```
 
 Configuration variables:
@@ -273,7 +269,6 @@ binary_sensor:
         id: bin_hqm
         icon: mdi:counter
         lambda: return x[15] & 0x20; // Option Heat Quantity Measurement enabled
-
 ```
 
 ## See Also

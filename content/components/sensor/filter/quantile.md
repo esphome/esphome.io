@@ -19,7 +19,6 @@ window size will make the filter slow to react to input changes.
         send_every: 4
         send_first_at: 3
         quantile: .9
-
 ```
 
 Configuration variables:

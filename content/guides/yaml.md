@@ -35,7 +35,6 @@ Example:
 foo:
     bar: 3 # this is another comment
     text: "# can be included in a string"
-
 ```
 
 {{< anchor "yaml-scalars" >}}
@@ -63,7 +62,6 @@ esp8266:
 
 web_server:
   port: 80 # integer value
-
 ```
 
 {{< anchor "yaml-sequences" >}}
@@ -95,7 +93,6 @@ sensors:
   - platform: gpio
     name: "Temperature 2"
     pin: GPIO33
-
 ```
 
 Sequences in YAML format can be quite confusing at times - consider the following examples:
@@ -106,7 +103,6 @@ Sequences in YAML format can be quite confusing at times - consider the followin
 
 - label:
     text: "Temperature 1"
-
 ```
 
 It may seem odd that in the first case there is no additional indentation, while in the second case there is. The difference is that in the first case the sequence item is itself a mapping, with keys `platform` and `name`  , while in the second case the sequence item is a key `label` with a value of a mapping with key `text` and value `"Temperature 1"`  . Rewriting these in JSON format can make it clearer:
@@ -121,7 +117,6 @@ It may seem odd that in the first case there is no additional indentation, while
       "text": "Temperature 1"
     }
   }
-
 ```
 
 A useful rule of thumb is that wherever there is a sequence item that ends with a colon its value must be a mapping, not a scalar, so it will require further indentation for the subsequent lines, This example is wrong and will throw two errors:
@@ -129,7 +124,6 @@ A useful rule of thumb is that wherever there is a sequence item that ends with 
 ```yaml
 - label: # Will throw an error "expected a dictionary"
   text: "Temperature 1"  # Wrong! Should be indented. Will throw error "text is an invalid option for ..."
-
 ```
 
 {{< anchor "yaml-mappings" >}}
@@ -149,7 +143,6 @@ sensor:
   unit_of_measurement: "°C"
   accuracy_decimals: 1
   state_class: measurement
-
 ```
 
 In the example above "sensor" is a key in a mapping, and its value is another mapping. The second mapping has keys `platform`  , `pin`  , `name`  , `device_class`  , `unit_of_measurement`  , `accuracy_decimals` and `state_class`  .
@@ -162,7 +155,6 @@ widgets:
     text: Temperature 1
 - label:
     text: Temperature 2
-
 ```
 
 Note that the sequence marker `-` is *not* indented below the mapping key `widgets`  . This technically incorrect, but will be interpreted correctly by the YAML parser. It is recommended that you stick to the correct format, but if you see this used in a YAML file, understand that it does work - and it can be useful to limit indentation depth with complex configurations.
@@ -188,7 +180,6 @@ sensor:
   - <<: *common_adc
     pin: GPIO33
     name: "Temperature 2"
-
 ```
 
 In this example, both sensors share the metadata from `common_adc`  , but the second sensor overrides the `pin` and `name` values.
@@ -214,7 +205,6 @@ sensor:  # The name of this sensor will be "Sensor Name"
   - platform: template
     name: "Sensor
            Name"
-
 ```
 
 #### Block Strings
@@ -249,7 +239,6 @@ multiline_string: |-
   broken across multiple lines. Internal newlines
   will be kept, and trailing newlines will be removed.
 some_other_key: # This is not part of the string
-
 ```
 
 {{< anchor "yaml-extensions" >}}
@@ -275,14 +264,12 @@ Example:
 wifi:
   ssid: "MyWiFi"
   password: !secret wifi_password
-
 ```
 
 And in your `secrets.yaml`
 
 ```yaml
 wifi_password: my_super_secret_password
-
 ```
 
 The secrets file must consist only of a flat mapping of keys to scalar values.
@@ -317,7 +304,6 @@ binary_sensor:
       file: on-multi-click.yaml
       vars:
         id: 2
-
 ```
 
 ### Packages
@@ -347,7 +333,6 @@ number:
     <<: *AnchorNumber # Include the anchor previously defined
     id: "SwitchMainDelay"
     name: "Main Switch Delay"
-
 ```
 
 The hidden key name is not important, and indeed can be just a single dot, but using a more descriptive name is recommended.

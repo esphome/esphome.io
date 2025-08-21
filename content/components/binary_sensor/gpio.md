@@ -47,7 +47,6 @@ binary_sensor:
       allow_other_uses: true  # Pin is shared with other components
     name: "Pump Status"
     # Interrupts will be automatically disabled for compatibility
-
 ```
 
 ## Configuration variables
@@ -119,7 +118,6 @@ binary_sensor:
         input: true
         pullup: true
     name: ...
-
 ```
 
 ## Inverting Values
@@ -135,7 +133,6 @@ binary_sensor:
       number: D2
       inverted: true
     name: ...
-
 ```
 
 ## Debouncing Values
@@ -151,7 +148,6 @@ binary_sensor:
     name: ...
     filters:
       - delayed_on: 10ms
-
 ```
 
 Above example will only make the signal go high if the button has stayed high for more than 10ms.
@@ -166,7 +162,6 @@ binary_sensor:
     name: ...
     filters:
       - delayed_off: 10ms
-
 ```
 
 ## See Also

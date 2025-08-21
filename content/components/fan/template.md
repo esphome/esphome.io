@@ -22,7 +22,6 @@ fan:
       - do something
     on_speed_set:
       - do something
-
 ```
 
 ## Configuration variables

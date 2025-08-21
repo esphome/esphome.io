@@ -19,7 +19,6 @@ was compiled against as a text sensor.
 text_sensor:
   - platform: version
     name: "ESPHome Version"
-
 ```
 
 ## Configuration variables
@@ -35,7 +34,6 @@ text_sensor:
   - platform: version
     name: "ESPHome Version"
     hide_timestamp: true
-
 ```
 
 This will, for example, change the output of the sensor from:

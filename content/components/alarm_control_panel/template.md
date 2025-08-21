@@ -23,7 +23,6 @@ alarm_control_panel:
       - input: zone_1
       - input: zone_2
         bypass_armed_home: true
-
 ```
 
 ## Configuration variables
@@ -221,7 +220,6 @@ switch:
     name: Siren
     icon: mdi:alarm-bell
     pin: GPIOXX
-
 ```
 
 ## See Also

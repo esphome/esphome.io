@@ -45,7 +45,6 @@ light:
     # You may want (but don't need) this
     internal: true
     # Other settings
-
 ```
 
 ## Joining multiple LED lights into one
@@ -88,7 +87,6 @@ light:
     # You may want (but don't need) this
     internal: true
     # Other settings
-
 ```
 
 ## Configuration variables

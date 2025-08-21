@@ -51,7 +51,6 @@ canbus:
       - lambda: |-
           std::string b(x.begin(), x.end());
           ESP_LOGD("can id 500", "%s", &b[0] );
-
 ```
 
 {{< anchor "config-canbus" >}}
@@ -144,7 +143,6 @@ canbus:
                 break;
               // to be continued...
             }
-
 ```
 
 **Configuration variables:**
@@ -174,7 +172,6 @@ on_...:
 
   # Templated; return type must be std::vector<uint8_t>
   - canbus.send: !lambda return {0x00, 0x20, 0x42};
-
 ```
 
 **Configuration variables:**
@@ -242,7 +239,6 @@ canbus:
         - lambda: |-
             std::string b(x.begin(), x.end());
             ESP_LOGD("CAN standard ID 0x123", "%s", &b[0]);
-
 ```
 
 ## Binary Sensor Example
@@ -275,7 +271,6 @@ canbus:
                     break;
                 }
               }
-
 ```
 
 ## Cover Example
@@ -354,7 +349,6 @@ cover:
           data: [ 0x00 ]
           canbus_id: my_canbus
           can_id: 0x51A
-
 ```
 
 ## See Also

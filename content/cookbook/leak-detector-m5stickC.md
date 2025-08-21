@@ -246,7 +246,6 @@ display:
         it.print(42, 32, id(font1), id(color_dry), TextAlign::TOP_CENTER, "R");
         it.print(42, 85, id(font1), id(color_dry), TextAlign::TOP_CENTER, "Y");
       }
-
 ```
 
 ## HomeAssistant configuration
@@ -278,7 +277,6 @@ notify:
           data:
             # Pushover-provided sound effect (https://pushover.net/api#sounds)
             sound: alien
-
 ```
 
 Enjoy your locally-controlled leak detector with push notification!

@@ -39,7 +39,6 @@ ble_client:
 bedjet:
   - id: bedjet_1
     ble_client_id: bedjet_ble_id1
-
 ```
 
 ### Configuration variables
@@ -67,7 +66,6 @@ From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
           then:
           - lambda: |-
               id(bedjet_1).upgrade_firmware();
-
 ```
 
 - `.send_local_time`  : If `time_id` is set, attempt to sync the clock now.
@@ -80,7 +78,6 @@ From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
           then:
           - lambda: |-
               id(my_bedjet_fan).send_local_time();
-
 ```
 
 - `.set_clock`  : Set the BedJet clock to a specified time; works with or without a `time_id`.
@@ -93,7 +90,6 @@ From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
           then:
           - lambda: |-
               id(my_bedjet_fan).set_clock(22, 10);
-
 ```
 
 ## `bedjet` Climate
@@ -107,7 +103,6 @@ climate:
     id: my_bedjet_climate_entity
     name: "My BedJet"
     bedjet_id: bedjet_1
-
 ```
 
 ### Configuration variables
@@ -143,7 +138,6 @@ fan:
     id: my_bedjet_fan_entity
     name: "My BedJet Fan"
     bedjet_id: bedjet_1
-
 ```
 
 ### Configuration variables
@@ -163,7 +157,6 @@ sensor:
       name: "My BedJet Outlet Temperature"
     ambient_temperature:
       name: "My BedJet Ambient Temperature"
-
 ```
 
 ### Configuration variables
@@ -207,7 +200,6 @@ ota:
       - logger.log: "Disconnecting clients for OTA update..."
       - switch.turn_off: bedjet_1_monitor
       - switch.turn_off: bedjet_2_monitor
-
 ```
 
 {{< /note >}}

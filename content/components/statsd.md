@@ -23,7 +23,6 @@ statsd:
 sensor:
   platform: ...
   id: some_sensor
-
 ```
 
 This example will generate a metric named `test1.sensor` with the value of the `some_sensor` sensor.

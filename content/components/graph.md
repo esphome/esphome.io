@@ -48,7 +48,6 @@ graph:
         line_type: DOTTED
         line_thickness: 2
         color: my_green
-
 ```
 
 ## Configuration variables
@@ -111,7 +110,6 @@ color:
     red: 100%
     green: 100%
     blue: 0%
-
 ```
 
 {{< note >}}

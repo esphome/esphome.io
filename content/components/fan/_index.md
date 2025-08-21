@@ -24,7 +24,6 @@ oscillation and direction output.
 fan:
   - platform: ...
     name: ...
-
 ```
 
 Configuration variables:
@@ -108,7 +107,6 @@ Toggles the ON/OFF state of the fan with the given ID when executed.
 on_...:
   then:
     - fan.toggle: fan_1
-
 ```
 
 {{< anchor "fan-turn_off_action" >}}
@@ -121,7 +119,6 @@ Turns the fan with the given ID off when executed.
 on_...:
   then:
     - fan.turn_off: fan_1
-
 ```
 
 {{< anchor "fan-turn_on_action" >}}
@@ -137,7 +134,6 @@ on_...:
         id: fan_1
     # Shorthand:
     - fan.turn_on: fan_1
-
 ```
 
 Configuration options:
@@ -164,7 +160,6 @@ on_...:
         off_speed_cycle: true
     # Shorthand:
     - fan.cycle_speed: fan_1
-
 ```
 
 Configuration options:
@@ -188,7 +183,6 @@ on_...:
       # same goes for is_off
     then:
     - script.execute: my_script
-
 ```
 
 {{< anchor "fan-on_state_trigger" >}}
@@ -206,7 +200,6 @@ fan:
     - logger.log:
         format: "Fan State changed!  Fan Speed is %d!"
         args: [ x->speed ]
-
 ```
 
 {{< anchor "fan-on_turn_on_off_trigger" >}}
@@ -224,7 +217,6 @@ fan:
     - logger.log: "Fan Turned On!"
     on_turn_off:
     - logger.log: "Fan Turned Off!"
-
 ```
 
 {{< anchor "fan-on_direction_set_trigger" >}}
@@ -242,7 +234,6 @@ fan:
     - logger.log:
         format: "Fan Direction was changed to %s!"
         args: [ x == 0 ? "FORWARD" : "REVERSE" ]
-
 ```
 
 {{< anchor "fan-on_oscillating_set_trigger" >}}
@@ -260,7 +251,6 @@ fan:
     - logger.log:
         format: "Fan Oscillating State was changed to %s!"
         args: [ ONOFF(x) ]
-
 ```
 
 {{< anchor "fan-on_speed_set_trigger" >}}
@@ -278,7 +268,6 @@ fan:
     - logger.log:
         format: "Fan Speed was changed to %d!"
         args: [ x ]
-
 ```
 
 {{< anchor "fan-on_preset_set_trigger" >}}
@@ -296,7 +285,6 @@ fan:
       - logger.log:
           format: "Fan preset mode was changed to %s!"
           args: [ x.c_str() ]
-
 ```
 
 ## Lambda calls
@@ -313,7 +301,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       // Fan is OFF, do something else here
     }
-
 ```
 
 - `speed`  : Retrieve the current speed of the fan.
@@ -325,7 +312,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       // Fan speed is not 2, do something else here
     }
-
 ```
 
 - `oscillating`  : Retrieve the current oscillating state of the fan.
@@ -337,7 +323,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       // Fan is not oscillating, do something else here
     }
-
 ```
 
 - `direction`  : Retrieve the current direction of the fan.
@@ -349,7 +334,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       // Fan direction is reverse, do something else here
     }
-
 ```
 
 - `preset_mode`  : Retrieve the current preset mode of the fan.
@@ -361,7 +345,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       // Fan preset mode is not "auto", do something else here
     }
-
 ```
 
 - `turn_off()`  /`turn_on()`  /`toggle()`  : Manually turn the fan ON/OFF from code.
@@ -388,7 +371,6 @@ advanced stuff (see the full API Reference for more info).
     // Toggle the fan on/off
     auto call = id(my_fan).toggle();
     call.perform();
-
 ```
 
 ## Full Fan Index

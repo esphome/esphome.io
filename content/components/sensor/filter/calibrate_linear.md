@@ -30,7 +30,6 @@ the value the sensor shows.
           # Map 0.0 (from sensor) to 1.0 (true value)
           - 0.0 -> 1.0
           - 10.0 -> 12.1
-
 ```
 
 The arguments are a list of data points, each in the form `MEASURED -> TRUTH`  . Depending on

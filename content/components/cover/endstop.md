@@ -43,7 +43,6 @@ cover:
     stop_action:
       - switch.turn_off: open_cover_switch
       - switch.turn_off: close_cover_switch
-
 ```
 
 ## Configuration variables

@@ -25,7 +25,6 @@ Our image supports AMD64, ARM and ARM64 (AARCH64), and can be downloaded with:
 
 ```bash
 docker pull ghcr.io/esphome/esphome
-
 ```
 
 If you want to use `docker-compose` instead, here's a sample file:
@@ -45,7 +44,6 @@ services:
     environment:
       - USERNAME=test
       - PASSWORD=ChangeMe
-
 ```
 
 {{< note >}}
@@ -92,7 +90,6 @@ file called `livingroom.yaml`  :
 esphome wizard livingroom.yaml
 # On Docker:
 docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome wizard livingroom.yaml
-
 ```
 
 At the end of this step, you will have your first YAML configuration
@@ -109,7 +106,6 @@ switch:
   - platform: gpio
     name: "Living Room Dehumidifier"
     pin: GPIO5
-
 ```
 
 The configuration format should hopefully immediately seem similar to
@@ -131,7 +127,6 @@ the device via USB and type the following command (replacing
 
 ```bash
 esphome run livingroom.yaml
-
 ```
 
 You should see ESPHome validating the configuration and telling you
@@ -145,7 +140,6 @@ to your docker command to map a local USB device. Docker on Mac will not be able
 
 ```bash
 docker run --rm --privileged -v "${PWD}":/config --device=/dev/ttyUSB0 -it ghcr.io/esphome/esphome run livingroom.yaml
-
 ```
 
 {{< note >}}
@@ -178,7 +172,6 @@ binary_sensor:
       mode:
         input: true
         pullup: true
-
 ```
 
 This is an advanced feature of ESPHome. Almost all pins can
@@ -194,7 +187,6 @@ for docker you need to supply an additional parameter:
 esphome run livingroom.yaml
 # On docker
 docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome run livingroom.yaml
-
 ```
 
 {{< img src="gpio-ui.png" alt="Image" >}}
@@ -234,7 +226,6 @@ docker run --rm --net=host -v "${PWD}":/config -it ghcr.io/esphome/esphome
 # On Docker with MacOS, the host networking option doesn't work as expected. An
 # alternative is to use the following command if you are a MacOS user.
 docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/config -it ghcr.io/esphome/esphome
-
 ```
 
 After that, you will be able to access the ESPHome Device Builder at `localhost:6052`  .

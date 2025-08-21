@@ -23,7 +23,6 @@ All light configuration schemas inherit these options.
 ```yaml
 light:
   - platform: ...
-
 ```
 
 ### Configuration variables
@@ -150,7 +149,6 @@ on_...:
         id: light_1
     # Shorthand:
     - light.toggle: light_1
-
 ```
 
 **Configuration variables:**
@@ -166,7 +164,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(light_1).toggle();
 // perform action:
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -193,7 +190,6 @@ on_...:
           return id(some_sensor).state / 100.0;
     # Shorthand
     - light.turn_on: light_1
-
 ```
 
 **Configuration variables:**
@@ -222,14 +218,12 @@ call.set_warm_white(0.75);
 call.set_effect("The Effect");
 // perform action:
 call.perform();
-
 ```
 
 Shorter example using auto call , call.set_brightness and call.perform.
 
 ```cpp
 id(light_1).turn_on().set_brightness(1.0).perform();
-
 ```
 
 {{< /note >}}
@@ -250,7 +244,6 @@ result in color at 40% brightness and white at 60% brightness:
     brightness: 80%
     color_brightness: 50%
     white: 75%
-
 ```
 
 {{< /note >}}
@@ -267,7 +260,6 @@ on_...:
         id: light_1
     # Shorthand
     - light.turn_off: light_1
-
 ```
 
 **Configuration variables:**
@@ -285,7 +277,6 @@ auto call = id(light_1).turn_off();
 call.set_transition_length(1000); // in ms
 // perform action:
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -302,7 +293,6 @@ on_...:
     - light.control:
         id: light_1
         state: on
-
 ```
 
 **Configuration variables:**
@@ -324,7 +314,6 @@ on_...:
     - light.dim_relative:
         id: light_1
         relative_brightness: 5%
-
 ```
 
 **Configuration variables:**
@@ -363,7 +352,6 @@ binary_sensor:
                 brightness_limits:
                     max_brightness: 90%
             - delay: 0.1s
-
 ```
 
 {{< /note >}}
@@ -383,7 +371,6 @@ on_...:
       red: 100%
       green: 0%
       blue: 0%
-
 ```
 
 **Configuration variables:**
@@ -416,7 +403,6 @@ on_...:
     condition:
       # Same syntax for is_off
       light.is_on: my_light
-
 ```
 
 {{< anchor "light-on_turn_on_off_trigger" >}}
@@ -434,7 +420,6 @@ light:
     - logger.log: "Light Turned On!"
     on_turn_off:
     - logger.log: "Light Turned Off!"
-
 ```
 
 {{< anchor "light-on_state_trigger" >}}
@@ -452,7 +437,6 @@ light:
     # ...
     on_state:
     - logger.log: "Light State Changed!"
-
 ```
 
 {{< anchor "light-effects" >}}
@@ -481,7 +465,6 @@ light:
           name: "My Fast Random Effect"
           transition_length: 4s
           update_interval: 5s
-
 ```
 
 {{< note >}}
@@ -519,7 +502,6 @@ light:
             on_length: 1s
             off_length: 500ms
           update_interval: 1.5s
-
 ```
 
 **Configuration variables:**
@@ -550,7 +532,6 @@ light:
           name: Random Effect With Custom Values
           transition_length: 5s
           update_interval: 7s
-
 ```
 
 **Configuration variables:**
@@ -587,7 +568,6 @@ light:
               green: 100%
               blue: 0%
               duration: 500ms
-
 ```
 
 **Configuration variables:**
@@ -626,7 +606,6 @@ light:
           name: Flicker Effect With Custom Values
           alpha: 95%
           intensity: 1.5%
-
 ```
 
 **Configuration variables:**
@@ -672,7 +651,6 @@ light:
             state += 1;
             if (state == 4)
               state = 0;
-
 ```
 
 **Configuration variables:**
@@ -698,7 +676,6 @@ light:
           name: Rainbow Effect With Custom Values
           speed: 10
           width: 50
-
 ```
 
 **Configuration variables:**
@@ -732,7 +709,6 @@ light:
               num_leds: 1
           add_led_interval: 100ms
           reverse: false
-
 ```
 
 **Configuration variables:**
@@ -770,7 +746,6 @@ light:
           name: Scan Effect With Custom Values
           move_interval: 100ms
           scan_width: 1
-
 ```
 
 **Configuration variables:**
@@ -795,7 +770,6 @@ light:
           name: Twinkle Effect With Custom Values
           twinkle_probability: 5%
           progress_interval: 4ms
-
 ```
 
 **Configuration variables:**
@@ -820,7 +794,6 @@ light:
           name: Random Twinkle Effect With Custom Values
           twinkle_probability: 5%
           progress_interval: 32ms
-
 ```
 
 **Configuration variables:**
@@ -848,7 +821,6 @@ light:
           spark_probability: 10%
           use_random_color: false
           fade_out_rate: 120
-
 ```
 
 **Configuration variables:**
@@ -879,7 +851,6 @@ light:
           name: Flicker Effect With Custom Values
           update_interval: 16ms
           intensity: 5%
-
 ```
 
 **Configuration variables:**
@@ -930,7 +901,6 @@ light:
           // Bonus: use .range() and .all() to set many LEDs without having to write a loop.
           it.range(0, 50) = Color::BLACK;
           it.all().fade_to_black(10);
-
 ```
 
 ```yaml
@@ -957,7 +927,6 @@ light:
             // optionally do a return so nothing happens until the next update_interval
             return;
           }
-
 ```
 
 Examples of this API can be found
@@ -992,7 +961,6 @@ light:
               red: 100%
               green: 0%
               blue: 0%
-
 ```
 
 **Configuration variables:**
@@ -1020,7 +988,6 @@ light:
       - e131:
           universe: 1
           channels: RGB
-
 ```
 
 **Configuration variables:**
@@ -1077,7 +1044,6 @@ light:
     effects:
       - adalight:
           # uart_id: additional_uart
-
 ```
 
 **Configuration variables:**
@@ -1104,7 +1070,6 @@ light:
           # port: 21324
           # blank_on_start: True
           # sync_group_mask: 0
-
 ```
 
 **Configuration variables:**

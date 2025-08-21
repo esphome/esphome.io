@@ -27,7 +27,6 @@ multiple times per second, filtering is highly recommended.
 sensor:
   - platform: "hrxl_maxsonar_wr"
     name: "Rainwater Tank"
-
 ```
 
 ## Configuration variables

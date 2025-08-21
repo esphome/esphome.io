@@ -66,7 +66,6 @@ wireguard:
 
   # Optional keepalive (disabled by default)
   peer_persistent_keepalive: 25s
-
 ```
 
 It is recommended to use *secrets* at least for private and pre-shared keys:
@@ -75,7 +74,6 @@ It is recommended to use *secrets* at least for private and pre-shared keys:
 wireguard:
   private_key: !secret wg_privkey
   peer_preshared_key: !secret wg_shrdkey
-
 ```
 
 ## Configuration variables
@@ -197,7 +195,6 @@ binary_sensor:
   - platform: wireguard
     status:
       name: 'WireGuard Status'
-
 ```
 
 All options from [Binary Sensor](#config-binary_sensor) can be added to the
@@ -213,7 +210,6 @@ binary_sensor:
   - platform: wireguard
     enabled:
       name: 'WireGuard Enabled'
-
 ```
 
 All options from [Binary Sensor](#config-binary_sensor) can be added to the
@@ -229,7 +225,6 @@ sensor:
   - platform: wireguard
     latest_handshake:
       name: 'WireGuard Latest Handshake'
-
 ```
 
 All options from [Sensor](#config-sensor) can be added to the
@@ -245,7 +240,6 @@ text_sensor:
   - platform: wireguard
     address:
       name: 'WireGuard Address'
-
 ```
 
 All options from [Text Sensor](#config-text_sensor) can be added to the
@@ -265,7 +259,6 @@ This action drops down the active VPN link (if any) and disables the component.
 on_...:
   then:
     - wireguard.disable:
-
 ```
 
 The lambda equivalent is `id(wireguard_id).disable()`  .
@@ -284,7 +277,6 @@ This action enables the component and starts the connection to the remote peer.
 on_...:
   then:
     - wireguard.enable:
-
 ```
 
 The lambda equivalent is `id(wireguard_id).enable()`  .
@@ -307,7 +299,6 @@ on_...:
         - ...
       else:
         - ...
-
 ```
 
 The lambda equivalent is `id(wireguard_id).is_enabled()`  .
@@ -324,7 +315,6 @@ on_...:
         - ...
       else:
         - ...
-
 ```
 
 The lambda equivalent is `id(wireguard_id).is_peer_up()`  .

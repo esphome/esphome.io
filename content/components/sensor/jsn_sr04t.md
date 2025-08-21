@@ -49,7 +49,6 @@ sensor:
   - platform: "jsn_sr04t"
     name: "Distance"
     update_interval: 1s
-
 ```
 
 ## Configuration variables

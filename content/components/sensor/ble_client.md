@@ -46,7 +46,6 @@ sensor:
     type: rssi
     ble_client_id: itag_black
     name: "iTag RSSI"
-
 ```
 
 ## Configuration variables
@@ -98,7 +97,6 @@ sensor:
     device_class: "temperature"
     lambda: |-
       return *((float*)(&x[0]));
-
 ```
 
 ## BLE Sensor Automation

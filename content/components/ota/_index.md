@@ -27,7 +27,6 @@ Available platforms:
 # Example configuration entry
 ota:
   - platform: ...
-
 ```
 
 ## Platforms
@@ -70,7 +69,6 @@ ota:
     on_begin:
       then:
         - logger.log: "OTA start"
-
 ```
 
 {{< anchor "ota-on_progress" >}}
@@ -88,7 +86,6 @@ ota:
         - logger.log:
             format: "OTA progress %0.1f%%"
             args: ["x"]
-
 ```
 
 {{< anchor "ota-on_end" >}}
@@ -108,7 +105,6 @@ ota:
     on_end:
       then:
         - logger.log: "OTA end"
-
 ```
 
 {{< anchor "ota-on_error" >}}
@@ -128,7 +124,6 @@ ota:
         - logger.log:
             format: "OTA update error %d"
             args: ["x"]
-
 ```
 
 {{< anchor "ota-on_state_change" >}}
@@ -153,7 +148,6 @@ ota:
               lambda: return state == ota::OTA_STARTED;
             then:
               - logger.log: "OTA start"
-
 ```
 
 ## Safe Mode

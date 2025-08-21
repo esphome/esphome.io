@@ -68,7 +68,6 @@ climate:
       - name: Home
         default_target_temperature_low: 20 °C
         default_target_temperature_high: 22 °C
-
 ```
 
 ```yaml
@@ -88,7 +87,6 @@ climate:
     preset:
       - name: Home
         default_target_temperature_low: 20 °C
-
 ```
 
 ```yaml
@@ -108,7 +106,6 @@ climate:
     preset:
       - name: Home
         default_target_temperature_high: 22 °C
-
 ```
 
 ## Controller Behavior and Hysteresis
@@ -353,7 +350,6 @@ climate:
         default_target_temperature_high: 23
         fan_mode: HIGH
         mode: HEAT_COOL
-
 ```
 
 - **preset_change**: (*Optional*, [Action](#config-action)): The action to call when the preset is changed. This
@@ -372,7 +368,6 @@ climate:
         swing_mode: OFF
     preset_change:
       - logger.log: Preset has been changed!
-
 ```
 
 ### Default Preset
@@ -435,7 +430,6 @@ climate:
         default_target_temperature_high: 23
         fan_mode: HIGH
         mode: HEAT_COOL
-
 ```
 
 ### Additional Actions/Behavior

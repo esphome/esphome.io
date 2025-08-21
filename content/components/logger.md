@@ -24,7 +24,6 @@ The "severity" of a log message represents the importance of the message, i.e. h
 # Example configuration entry
 logger:
   level: DEBUG
-
 ```
 
 ## Configuration variables
@@ -164,7 +163,6 @@ logger:
   logs:
     mqtt.component: DEBUG
     mqtt.client: ERROR
-
 ```
 
 The `level` option controls which log statements are included in the
@@ -178,7 +176,6 @@ logger:
   initial_level: ERROR
   logs:
     wifi: VERBOSE
-
 ```
 
 Here, `VERBOSE` logs are compiled, but not shown (because of `initial_level: ERROR`)
@@ -201,7 +198,6 @@ on_...:
     - logger.log:
         format: "The temperature sensor reports value %.1f and humidity %.1f"
         args: [ 'id(temperature_sensor).state', 'id(humidity_sensor).state' ]
-
 ```
 
 Configuration options:
@@ -229,7 +225,6 @@ on_...:
     - logger.set_level:
         level: DEBUG
         tag: mqtt.client
-
 ```
 
 ## Logger Automation
@@ -252,7 +247,6 @@ logger:
           topic: some/topic
           payload: !lambda |-
             return "Triggered on_message with level " + to_string(level) + ", tag " + tag + " and message " + message;
-
 ```
 
 {{< note >}}

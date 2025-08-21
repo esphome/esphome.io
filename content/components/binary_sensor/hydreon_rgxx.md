@@ -28,7 +28,6 @@ binary_sensor:
     hydreon_rgxx_id: "hydreon_1"
     too_cold:
       name: "too cold"
-
 ```
 
 ## Configuration variables

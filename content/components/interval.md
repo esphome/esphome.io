@@ -13,7 +13,6 @@ interval:
   - interval: 1min
     then:
       - switch.toggle: relay_1
-
 ```
 
 If a startup delay is configured, the first execution of the actions will not occur before at least that time after boot.

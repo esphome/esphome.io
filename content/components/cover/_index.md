@@ -25,7 +25,6 @@ All cover config schemas inherit from this schema - you can set these keys for c
 cover:
   - platform: ...
     device_class: garage
-
 ```
 
 Configuration variables:
@@ -79,7 +78,6 @@ This [action](#config-action) opens the cover with the given ID when executed.
 on_...:
   then:
     - cover.open: cover_1
-
 ```
 
 {{< note >}}
@@ -89,7 +87,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(cover_1).make_call();
 call.set_command_open();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -103,7 +100,6 @@ This [action](#config-action) closes the cover with the given ID when executed.
 on_...:
   then:
     - cover.close: cover_1
-
 ```
 
 {{< note >}}
@@ -113,7 +109,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(cover_1).make_call();
 call.set_command_close();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -127,7 +122,6 @@ This [action](#config-action) stops the cover with the given ID when executed.
 on_...:
   then:
     - cover.stop: cover_1
-
 ```
 
 {{< note >}}
@@ -137,7 +131,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(cover_1).make_call();
 call.set_command_stop();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -153,7 +146,6 @@ by a single push button.
 on_...:
   then:
     - cover.toggle: cover_1
-
 ```
 
 {{< note >}}
@@ -163,7 +155,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(cover_1).make_call();
 call.set_command_toggle();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -181,7 +172,6 @@ on_...:
         id: cover_1
         position: 50%
         tilt: 50%
-
 ```
 
 Configuration variables:
@@ -204,7 +194,6 @@ auto call = id(cover_1).make_call();
 // set attributes
 call.set_position(0.5);
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -225,7 +214,6 @@ fields are read-only, if you want to act on the cover, use the `make_call()` met
         } else {
           // Cover is in-between open and closed
         }
-
 ```
 
 - `tilt`  : Retrieve the current tilt position of the cover, as a value between `0.0` and `1.0`  .
@@ -240,7 +228,6 @@ fields are read-only, if you want to act on the cover, use the `make_call()` met
         } else if (id(my_cover).current_operation == CoverOperation::COVER_OPERATION_CLOSING) {
           // Cover is currently closing
         }
-
 ```
 
 {{< anchor "cover-on_open_trigger" >}}
@@ -255,7 +242,6 @@ cover:
     # ...
     on_open:
       - logger.log: "Cover is Open!"
-
 ```
 
 {{< anchor "cover-on_closed_trigger" >}}
@@ -270,7 +256,6 @@ cover:
     # ...
     on_closed:
       - logger.log: "Cover is Closed!"
-
 ```
 
 ## See Also

@@ -30,7 +30,6 @@ lock:
       - switch.turn_off: switch1
     open_action:
       - button.press: button1
-
 ```
 
 Possible return values for the optional lambda:
@@ -87,7 +86,6 @@ on_...:
   - lock.template.publish:
       id: template_lock1
       state: !lambda 'return LOCK_STATE_LOCKED;'
-
 ```
 
 Configuration options:
@@ -102,7 +100,6 @@ lock should become:
 
 ```cpp
 id(template_lock1).publish_state(lock::LOCK_STATE_LOCKED);
-
 ```
 
 {{< /note >}}

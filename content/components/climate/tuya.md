@@ -24,7 +24,6 @@ Tuya climate requires a {{< docref "/components/tuya" >}} to be configured.
 [11:45:14][C][tuya:062]:   Datapoint 102: enum (value: 0)
 [11:45:14][C][tuya:062]:   Datapoint 103: enum (value: 1)
 [11:45:14][C][tuya:074]:   Product: 'N8bUqOZ8HBQjU0K02.0.1'
-
 ```
 
 On this controller (BAC-002-ELW), the data points are:
@@ -64,7 +63,6 @@ climate:
       eco:
         datapoint: 5
         temperature: 28
-
 ```
 
 ## Configuration variables

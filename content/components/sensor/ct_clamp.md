@@ -32,7 +32,6 @@ sensor:
   - platform: adc
     pin: A0
     id: adc_sensor
-
 ```
 
 ## Configuration variables
@@ -67,7 +66,6 @@ sensor:
           # Known load: 4.0A
           # Value shown in logs: 0.1333A
           - 0.1333 -> 4.0
-
 ```
 
 Recompile and upload, now your CT clamp sensor is calibrated!

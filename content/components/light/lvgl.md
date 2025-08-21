@@ -26,7 +26,6 @@ light:
   - platform: lvgl
     widget: led_id
     name: LVGL light
-
 ```
 
 {{< note >}}

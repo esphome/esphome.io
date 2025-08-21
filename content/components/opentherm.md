@@ -43,7 +43,6 @@ ESPHome runs on. As such, your bridge's `in` pin becomes the hub's `out` pin and
 opentherm:
   in_pin: GPIOXX
   out_pin: GPIOXX
-
 ```
 
 ### Configuration variables
@@ -95,7 +94,6 @@ your configuration:
 logger:
   logs:
     component: ERROR
-
 ```
 
 ## Usage as a thermostat
@@ -120,7 +118,6 @@ There are three ways to set a numerical value:
       - platform: homeassistant
         id: setpoint_sensor
         entity_id: sensor.boiler_setpoint
-
 ```
 
   This can be useful if you have an external thermostat-like device that provides the setpoint as a sensor.
@@ -132,7 +129,6 @@ There are three ways to set a numerical value:
       - platform: opentherm
         t_set:
           name: Boiler Setpoint
-
 ```
 
   This is useful if you want full control over your boiler and want to manually set all values.
@@ -144,7 +140,6 @@ There are three ways to set a numerical value:
       - platform: opentherm
       t_set:
         id: setpoint
-
 ```
 
   This is especially useful in combination with the PID Climate component:
@@ -154,7 +149,6 @@ There are three ways to set a numerical value:
       - platform: pid
         heat_output: setpoint
         # ...
-
 ```
 
 For the output and number variants, there are four more properties you can configure beyond those included in the
@@ -240,7 +234,6 @@ If you do not wish to have switches, the same values can be permanently set in t
 opentherm:
   ch_enable: true
   dhw_enable: true
-
 ```
 
 This is useful when you'd never want to toggle it after the initial configuration.
@@ -368,7 +361,6 @@ opentherm:
                 if (x.id == 162) { // We substitute the original id back, so that esphome is not confused.
                 x.id = 56;
                 }
-
 ```
 
 You can check the {{< apistruct "OpenthermData" "opentherm::OpenthermData" >}} for the list of all available fields.
@@ -390,7 +382,6 @@ number:
   - platform: opentherm
     t_set:
       name: "Boiler Control setpoint"
-
 ```
 
 {{< anchor "thermostat-pid-basic" >}}
@@ -471,7 +462,6 @@ climate:
     control_parameters:
       kp: 0.4
       ki: 0.004
-
 ```
 
 ## See Also

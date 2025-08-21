@@ -20,7 +20,6 @@ text_sensor:
     lambda: |-
       return {"Hello World"};
     update_interval: 60s
-
 ```
 
 Possible return values for the lambda:
@@ -61,7 +60,6 @@ on_...:
   - text_sensor.template.publish:
       id: template_text
       state: !lambda 'return "Hello World";'
-
 ```
 
 Configuration options:
@@ -75,7 +73,6 @@ This action can also be written in lambdas:
 
 ```cpp
 id(template_text).publish_state("Hello World");
-
 ```
 
 {{< /note >}}
@@ -113,7 +110,6 @@ text_sensor:
     update_interval: 600s
     lambda: |-
       return { ESPHOME_PROJECT_NAME };
-
 ```
 
 ## See Also

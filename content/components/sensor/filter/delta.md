@@ -16,7 +16,6 @@ only values greater than or equal to 12 or less than or equal to 8 would be pass
 ```yaml
 filters:
   - delta: 2.0
-
 ```
 
 If a percentage is specified a percentage of the last value will be used as the required difference.
@@ -28,5 +27,4 @@ equal to 80 would be passed through.
 ```yaml
 filters:
   - delta: 20%
-
 ```

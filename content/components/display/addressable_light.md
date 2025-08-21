@@ -35,7 +35,6 @@ display:
           it.rectangle(1, 1, 6, 6, green);
           it.rectangle(2, 2, 4, 4, blue);
           it.rectangle(3, 3, 2, 2, red);
-
 ```
 
 ## Configuration variables
@@ -105,7 +104,6 @@ display:
       return (x * 8) + (7 - y);
     rotation: 0°
     update_interval: 16ms
-
 ```
 
 It's possible to use two 8x32 LED matrices in a 16x32 configuration (one above the other) by using the following definition:
@@ -125,7 +123,6 @@ display:
       return (x * 8) + iMatrixOffset + (7 - (y % 8));
     rotation: 0°
     update_interval: 16ms
-
 ```
 
 ## See Also

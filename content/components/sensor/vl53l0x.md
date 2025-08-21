@@ -44,7 +44,6 @@ sensor:
     address: 0x29
     update_interval: 60s
     long_range: true
-
 ```
 
 ## Configuration variables
@@ -91,7 +90,6 @@ sensor:
     timeout: 200us
     update_interval: 500ms
     unit_of_measurement: "m"
-
 ```
 
 ## See Also

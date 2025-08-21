@@ -25,7 +25,6 @@ sensor:
   - platform: senseair
     co2:
       name: "SenseAir CO2 Value"
-
 ```
 
 ## Configuration variables
@@ -60,7 +59,6 @@ fresh ambient air, preferably near a window that has already been opened for a s
 on_...:
   then:
     - senseair.background_calibration: my_senseair_id
-
 ```
 
 {{< anchor "senseair-background_calibration_result_action" >}}
@@ -76,7 +74,6 @@ Wait at least one sensor lamp cycle after having triggered the background calibr
 on_...:
   then:
     - senseair.background_calibration_result: my_senseair_id
-
 ```
 
 {{< anchor "senseair-abc_get_period_action" >}}
@@ -90,7 +87,6 @@ The value will be printed in ESPHome logs.
 on_...:
   then:
     - senseair.abc_get_period: my_senseair_id
-
 ```
 
 {{< anchor "senseair-abc_enable_action" >}}
@@ -104,7 +100,6 @@ ABC will be activated with the default interval of 180 hours.
 on_...:
   then:
     - senseair.abc_enable: my_senseair_id
-
 ```
 
 {{< anchor "senseair-abc_disable_action" >}}
@@ -117,7 +112,6 @@ This [action](#config-action) disables Automatic Baseline Calibration on the sen
 on_...:
   then:
     - senseair.abc_disable: my_senseair_id
-
 ```
 
 ## See Also

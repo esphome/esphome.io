@@ -34,7 +34,6 @@ sensor:
     trigger_pin: D1
     echo_pin: D2
     name: "Ultrasonic Sensor"
-
 ```
 
 ## Configuration variables

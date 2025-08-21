@@ -26,7 +26,6 @@ sensor:
       name: "Raw Pressure"
     temperature:
       name: Temperature
-
 ```
 
 ## Configuration variables
@@ -63,7 +62,6 @@ filters:
   - calibrate_linear:
     - 1638 -> 0.5
     - 14746 -> 4.5
-
 ```
 
 ### Calibrated
@@ -80,7 +78,6 @@ filters:
   - calibrate_linear:
     - 1500 -> 5.0
     - 14500 -> 90.0
-
 ```
 
 ## Notes

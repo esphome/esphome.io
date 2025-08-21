@@ -37,7 +37,6 @@ sensor:
       - source: temperature_sensor_2
         error: !lambda |-
           return 0.5 + std::abs(x - 25) * 0.023
-
 ```
 
 - `LINEAR` combination: This type sums all source sensors after multiplying each by
@@ -54,7 +53,6 @@ sensor:
         coeffecient: 1.0
       - source: circuit_1_power
         coeffecient: -1.0
-
 ```
 
 - `MAXIMUM`  , `MEAN`  , `MEDIAN`  , `MINIMUM`  , `MOST_RECENTLY_UPDATED`  ,
@@ -71,7 +69,6 @@ sensor:
       - source: temperature_sensor_1
       - source: temperature_sensor_2
       - source: temperature_sensor_3
-
 ```
 
 ## Configuration variables

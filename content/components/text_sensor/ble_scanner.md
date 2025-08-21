@@ -35,7 +35,6 @@ esp32_ble_tracker:
 text_sensor:
   - platform: ble_scanner
     name: "BLE Devices Scanner"
-
 ```
 
 Example json log:
@@ -47,7 +46,6 @@ Example json log:
     "rssi":"-80",
     "name":"MI Band 2"
 }
-
 ```
 
 ## Configuration variables

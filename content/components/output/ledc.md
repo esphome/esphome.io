@@ -52,7 +52,6 @@ light:
   - platform: monochromatic
     output: gpio_19
     name: "Kitchen Light"
-
 ```
 
 ### Example Usage For a Piezo Buzzer
@@ -86,7 +85,6 @@ on_press:
     - output.set_level:
         id: buzzer
         level: "50%"
-
 ```
 
 ## Recommended frequencies
@@ -121,7 +119,6 @@ on_...:
   - output.ledc.set_frequency:
       id: ledc_output
       frequency: 100Hz
-
 ```
 
 Configuration variables:

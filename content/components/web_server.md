@@ -26,7 +26,6 @@ use `<node_name>.local/` (note the trailing forward slash) via mDNS.
 # Example configuration entry
 web_server:
   port: 80
-
 ```
 
 ## Configuration variables
@@ -83,7 +82,6 @@ To enable OTA updates through the web interface, use the new `web_server` OTA pl
 # Enable OTA updates via web interface
 ota:
   - platform: web_server
-
 ```
 
 To explicitly disable OTA updates for the web server while keeping them enabled for captive portal
@@ -96,7 +94,6 @@ web_server:
   ota: false
 
 captive_portal:  # This component automatically enables OTA
-
 ```
 
 See {{< docref "/components/ota/web_server" >}} for more information.
@@ -114,7 +111,6 @@ web_server:
   auth:
     username: !secret web_server_username
     password: !secret web_server_password
-
 ```
 
 Use version 1 user interface:
@@ -124,7 +120,6 @@ Use version 1 user interface:
 web_server:
   port: 80
   version: 1
-
 ```
 
 No internet/intranet required on the clients (all assets are inlined, compressed and served from flash):
@@ -133,7 +128,6 @@ No internet/intranet required on the clients (all assets are inlined, compressed
 # Example configuration entry
 web_server:
   local: true
-
 ```
 
 Disabling OTA updates for web server while using captive portal (common security setup):
@@ -147,7 +141,6 @@ web_server:
 # Captive portal automatically enables web server OTA platform
 # OTA will only be accessible when captive portal is active
 captive_portal:
-
 ```
 
 ## Advanced usage
@@ -165,7 +158,6 @@ web_server:
   css_url: ""
   js_include: "../../../esphome-docs/_static/webserver-v1.min.js"
   js_url: ""
-
 ```
 
 Example `web_server` version 2 configuration with JS included from a local file.
@@ -178,7 +170,6 @@ web_server:
   js_include: "./v2/www.js"
   js_url: ""
   version: 2
-
 ```
 
 Copy <https://oi.esphome.io/v2/www.js> to a V2 folder in your yaml folder.
@@ -208,7 +199,6 @@ sensor:
     name: "My Sensor 2"
     web_server:
       sorting_weight: -1
-
 ```
 
 {{< anchor "config-webserver-grouping" >}}
@@ -243,7 +233,6 @@ number:
   ...
     web_server:
       sorting_group_id: sorting_group_number_settings
-
 ```
 
 ### Number in slider mode

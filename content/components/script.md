@@ -14,7 +14,6 @@ script:
       - switch.turn_on: my_switch
       - delay: 1s
       - switch.turn_off: my_switch
-
 ```
 
 ## Configuration variables
@@ -66,7 +65,6 @@ script:
       # The param delay_ms is accessible using a lambda
       - delay: !lambda return delay_ms;
       - light.turn_off: status_light
-
 ```
 
 {{< anchor "script-execute_action" >}}
@@ -91,7 +89,6 @@ on_...:
 
     # Calling a parameterised script inside a lambda
     - lambda: id(blink_light)->execute(1000);
-
 ```
 
 {{< anchor "script-stop_action" >}}
@@ -115,14 +112,12 @@ script:
 on_...:
   then:
     - script.stop: my_script
-
 ```
 
 ...or as lambda:
 
 ```yaml
 lambda: 'id(my_script).stop();'
-
 ```
 
 {{< anchor "script-wait_action" >}}
@@ -148,7 +143,6 @@ on_...:
   then:
     - script.execute: my_script
     - script.wait: my_script
-
 ```
 
 This can't be used in a lambda as it would block all functioning of the device. The script wouldn't even get to run.
@@ -168,7 +162,6 @@ on_...:
       - script.is_running: my_script
     then:
       - logger.log: Script is running!
-
 ```
 
 ...or as lambda:
@@ -178,7 +171,6 @@ lambda: |-
     if (id(my_script).is_running()) {
         ESP_LOGI("main", "Script is running!");
     }
-
 ```
 
 ## See Also

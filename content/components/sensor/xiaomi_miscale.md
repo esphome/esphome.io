@@ -29,7 +29,6 @@ sensor:
       name: "Xiaomi Mi Scale Weight"
     impedance:
       name: "Xiaomi Mi Scale Impedance"
-
 ```
 
 ## Configuration variables
@@ -101,7 +100,6 @@ sensor:
     unit_of_measurement: 'Ω'
     icon: mdi:omega
     accuracy_decimals: 0
-
 ```
 
 ## See Also

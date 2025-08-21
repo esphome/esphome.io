@@ -50,7 +50,6 @@ climate:
     deadband_parameters:
       threshold_high: 0.5°C       # deadband within +/-0.5°C of target_temperature
       threshold_low: -0.5°C
-
 ```
 
 ## Configuration variables
@@ -155,7 +154,6 @@ default_target_temperature: 21°C
 deadband_parameters:
   threshold_high: 0.5°C
   threshold_low: -1.0°C
-
 ```
 
 In this example the deadband is between `20.0°C - 21.5°C`  . The PID controller will limit any output
@@ -190,7 +188,6 @@ deadband_parameters:
   ki_multiplier: 0.05  # integral accumulates at only 5% of normal ki
   kd_multiplier: 0.0   # derviative is turned off inside deadband
   deadband_output_averaging_samples: 15   # average the output over 15 samples within the deadband
-
 ```
 
 {{< img src="deadband2.png" alt="Image" >}}
@@ -342,7 +339,6 @@ on_...:
       noiseband: 0.25
       positive_output: 25%
       negative_output: -25%
-
 ```
 
 Configuration variables:
@@ -373,7 +369,6 @@ on_...:
       kp: 0.0
       ki: 0.0
       kd: 0.0
-
 ```
 
 Configuration variables:
@@ -394,7 +389,6 @@ conditions to avoid the control loop to overshoot (or undershoot) a target.
 on_...:
   # Basic
   - climate.pid.reset_integral_term: pid_climate
-
 ```
 
 Configuration variables:
@@ -411,7 +405,6 @@ sensor:
   - platform: pid
     name: "PID Climate Result"
     type: RESULT
-
 ```
 
 Configuration variables:

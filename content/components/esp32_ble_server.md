@@ -33,7 +33,6 @@ esp32_ble_server:
   on_disconnect:
     - lambda: |-
         ESP_LOGD("BLE", "Disconnection from %d", id);
-
 ```
 
 ## Configuration variables
@@ -65,7 +64,6 @@ esp32_ble_server:
           read: true
           value:
             value: "Hello, World!"
-
 ```
 
 ### Configuration variables
@@ -98,7 +96,6 @@ esp32_ble_server:
         descriptors:
           - uuid: cad48e28-7fbe-41cf-bae9-d77a6c211423
             value: "Hello, World Descriptor!"
-
 ```
 
 ### Configuration variables
@@ -132,7 +129,6 @@ esp32_ble_server:
             - uuid: 2901
               value:
                 value: "Hello, World Descriptor!"
-
 ```
 
 ### Configuration variables
@@ -180,7 +176,6 @@ esp32_ble_server:
           # Lambda value using ByteBuffer
           value:
             data: !lambda 'return bytebuffer::ByteBuffer::wrap(0.182).get_data();'
-
 ```
 
 ### Configuration variables
@@ -207,7 +202,6 @@ esp32_ble_server:
           then:
             - lambda: |-
                 ESP_LOGD("BLE", "Descriptor received: %s from %d", std::string(x.begin(), x.end()).c_str(), id);
-
 ```
 
 ## `ble_server.characteristic.set_value` Action
@@ -220,7 +214,6 @@ on_...:
     - ble_server.characteristic.set_value:
         id: test_write_characteristic
         value: [0, 1, 2]
-
 ```
 
 ### Configuration variables
@@ -237,7 +230,6 @@ on_...:
   then:
     - ble_server.characteristic.notify:
         id: test_notify_characteristic
-
 ```
 
 ### Configuration variables
@@ -256,7 +248,6 @@ on_...:
     - ble_server.descriptor.set_value:
         id: test_write_descriptor
         value: [0, 1, 2]
-
 ```
 
 ### Configuration variables

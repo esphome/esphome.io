@@ -33,7 +33,6 @@ you can remove and re-add the device in Home Assistant.
 deep_sleep:
   run_duration: 10s
   sleep_duration: 10min
-
 ```
 
 {{< note >}}
@@ -101,7 +100,6 @@ sensor:
     name: "Wakeup Cause"
     accuracy_decimals: 0
     lambda: return esp_sleep_get_wakeup_cause();
-
 ```
 
 The following integers are the wakeup causes:
@@ -147,7 +145,6 @@ on_...:
         id: deep_sleep_1
         until: "16:00:00"
         time_id: sntp_id
-
 ```
 
 Configuration options:
@@ -167,7 +164,6 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
 on_...:
   then:
     - deep_sleep.prevent: deep_sleep_1
-
 ```
 
 {{< note >}}
@@ -199,7 +195,6 @@ mqtt:
       payload: 'ON'
       then:
         - deep_sleep.enter: deep_sleep_1
-
 ```
 
 {{< /note >}}
@@ -213,7 +208,6 @@ This action allows the given deep sleep component to enter deep sleep, after pre
 on_...:
   then:
     - deep_sleep.allow: deep_sleep_1
-
 ```
 
 ## See Also

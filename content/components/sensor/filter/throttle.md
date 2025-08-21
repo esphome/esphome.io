@@ -17,5 +17,4 @@ filters:
   - debounce: 0.1s
   - delta: 5.0
   - lambda: return x * (9.0/5.0) + 32.0;
-
 ```

@@ -31,7 +31,6 @@ esp32:
   board: esp32-c6-devkitm-1
   framework:
     type: esp-idf
-
 ```
 
 {{< anchor "config-openthread" >}}
@@ -55,7 +54,6 @@ openthread:
   pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
   mesh_local_prefix: fd53:145f:ed22:ad81::/64
   force_dataset: true
-
 ```
 
 ### Configuration variables
@@ -77,7 +75,6 @@ It is also possible to supply the entire dataset TLVs from the Thread informatio
 # Example OpenThread TLV value from the Thread information in Home Assistant
 openthread:
   tlv: 0e080000000000010000000300001035060004001fffe00208e227ac6a7f24052f0708fdb753eb517cb4d3051062b2442a928d9ea3b947a1618fc4085a030f4f70656e5468726561642d393837330102987304105330d857354330133c05e1fd7ae81a910c0402a0f7f8
-
 ```
 
 ### Configuration variables

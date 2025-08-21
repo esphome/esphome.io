@@ -16,7 +16,6 @@ Use this component to generate a QR-code containing a string on the device, whic
 qr_code:
   - id: homepage_qr
     value: esphome.io
-
 ```
 
 ## Configuration variables
@@ -48,5 +47,4 @@ display:
           auto x = (it.get_width() / 2) - (size / 2);
           auto y = (it.get_height() / 2) - (size / 2);
           it.qr_code(x, y, id(homepage_qr), Color(255,255,255), 2);
-
 ```

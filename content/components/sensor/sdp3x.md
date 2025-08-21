@@ -23,7 +23,6 @@ To use the sensor, set up an [I²C Bus](#i2c) and connect the sensor to the spec
 - platform: sdp3x
   name: "HVAC Filter Pressure drop"
   id: filter_pressure
-
 ```
 
 ## Configuration variables

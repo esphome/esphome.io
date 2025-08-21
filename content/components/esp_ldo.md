@@ -16,7 +16,6 @@ component allows those regulators to be configured and enabled.
 esp_ldo:
   - channel: 3
     voltage: 2.5V
-
 ```
 
 ## Configuration variables
@@ -35,7 +34,6 @@ on_...:
     - esp_ldo.voltage.adjust:
         id: ldo_id
         voltage: !lambda return 2.5;
-
 ```
 
 ### Configuration variables

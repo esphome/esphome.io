@@ -24,7 +24,6 @@ binary_sensor:
   - platform: gpio
     pin: GPIOXX
     name: "Living Room Dehumidifier Toggle Button"
-
 ```
 
 With this file you can already perform some basic tasks. You can control the ON/OFF state of the dehumidifier in your
@@ -53,7 +52,6 @@ binary_sensor:
     on_press:
       then:
         - switch.toggle: dehumidifier1
-
 ```
 
 Let's step through what's happening here:
@@ -63,7 +61,6 @@ switch:
    - platform: gpio
      # ...
      id: dehumidifier1
-
 ```
 
 First, we have to give the dehumidifier `switch` an [ID](#config-id) so that we can refer to it inside of our
@@ -78,7 +75,6 @@ binary_sensor:
   - platform: gpio
     # ...
     on_press:
-
 ```
 
 We now attach a special attribute `on_press` to the binary sensor (which represents the button). This part is called
@@ -92,7 +88,6 @@ happens when you begin pressing the button. There are also other triggers like `
 on_press:
   then:
     - switch.toggle: dehumidifier1
-
 ```
 
 {{< anchor "actions-action" >}}
@@ -111,7 +106,6 @@ on_press:
     - switch.toggle: dehumidifier1
     - delay: 2s
     - switch.toggle: dehumidifier1
-
 ```
 
 With this automation, a press of the push button would cause the dehumidifier to turn on/off for 2 seconds, and then
@@ -130,7 +124,6 @@ on_press:
   then:
     - switch.toggle: dehumidifier1
     - light.toggle: dehumidifier_indicator_light
-
 ```
 
 As a final example, let's make our dehumidifier "smart". Let's make it turn on automatically when
@@ -150,7 +143,6 @@ sensor:
             - switch.turn_off: dehumidifier1
     temperature:
       name: "Living Room Temperature"
-
 ```
 
 That's a lot of indentation. 😉
@@ -185,7 +177,6 @@ on_...:
     - switch.turn_off: relay_1
     # Templated, waits for 1s (1000ms) only if a reed switch is active
     - delay: !lambda "if (id(reed_switch).state) return 1000; else return 0;"
-
 ```
 
 {{< note >}}
@@ -218,7 +209,6 @@ on_...:
         else:
           - logger.log: "The sensor value is above 30!"
     - light.turn_off: my_light
-
 ```
 
 #### Configuration variables
@@ -244,7 +234,6 @@ on_...:
   then:
     - lambda: |-
         id(some_binary_sensor).publish_state(false);
-
 ```
 
 {{< anchor "repeat_action" >}}
@@ -263,7 +252,6 @@ on_...:
         - delay: 1s
         - light.turn_off: some_light
         - delay: 10s
-
 ```
 
 #### Configuration variables
@@ -285,7 +273,6 @@ on_...:
   - wait_until:
       binary_sensor.is_on: some_binary_sensor
   - logger.log: "Binary sensor is ready"
-
 ```
 
 If you want to use a timeout, the term "condition" is required:
@@ -299,7 +286,6 @@ on_...:
         binary_sensor.is_on: some_binary_sensor
       timeout: 8s
   - logger.log: "Binary sensor might be ready"
-
 ```
 
 #### Configuration variables
@@ -324,7 +310,6 @@ on_...:
       - logger.log: "Still executing"
       - light.toggle: some_light
       - delay: 5s
-
 ```
 
 #### Configuration variables
@@ -348,7 +333,6 @@ on_...:
 
     # The same as:
     - lambda: 'id(my_component).update();'
-
 ```
 
 {{< anchor "component-suspend_action" >}}
@@ -372,7 +356,6 @@ on_...:
 
     # The same as:
     - lambda: 'id(my_component).stop_poller();'
-
 ```
 
 {{< anchor "component-resume_action" >}}
@@ -405,7 +388,6 @@ on_...:
     - component.resume:
         id: my_component
         update_interval: 15s
-
 ```
 
 {{< anchor "common_conditions" >}}
@@ -442,7 +424,6 @@ on_...:
           - not:
               binary_sensor.is_off: some_binary_sensor
           - binary_sensor.is_on: some_other_sensor
-
 ```
 
 {{< anchor "for_condition" >}}
@@ -461,7 +442,6 @@ on_...:
           api.connected:
     then:
       - logger.log: API has stayed connected for at least 5 minutes!
-
 ```
 
 #### Configuration variables
@@ -486,7 +466,6 @@ on_...:
           lambda: |-
             return id(some_sensor).state < 30;
         # ...
-
 ```
 
 {{< anchor "config-action" >}}
@@ -543,7 +522,6 @@ script:
 ...
   on_...:           # can be called from different wall switches
     - script.execute: hallway_light_script
-
 ```
 
 Sometimes you'll also need a timer which does not perform any action; in this case, you can use a single `delay`

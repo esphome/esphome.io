@@ -84,7 +84,6 @@ light:
           to: 3
     effects:
       - strobe:
-
 ```
 
 {{< warning >}}
@@ -139,7 +138,6 @@ automation:
           {% set map = {'on': 'green', 'off': 'red'} %}
           {% set state = states('binary_sensor.bad_status') %}
           {{ map[state] if state in map else 'white' }}
-
 ```
 
 {{< img src="infostrip-lights-ui.png" alt="Image" caption="Each pixel is used as a light entity." width="50.0%" class="align-center" >}}

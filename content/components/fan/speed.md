@@ -20,7 +20,6 @@ fan:
   - platform: speed
     output: my_output_1
     name: "Living Room Fan"
-
 ```
 
 ## Configuration variables

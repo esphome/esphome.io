@@ -34,7 +34,6 @@ usb_uart:
       - id: uch_1
         baud_rate: 9600
         buffer_size: 1024
-
 ```
 
 ## Configuration variables

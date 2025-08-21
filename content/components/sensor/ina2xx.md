@@ -50,7 +50,6 @@ sensor:
     current: "INA228 Current"
     bus_voltage: "INA228 Bus Voltage"
     charge: "INA228 Charge"
-
 ```
 
 ### Configuration variables
@@ -97,7 +96,6 @@ sensor:
     temperature_coefficient: 50
     current: "INA239 Current"
     power: "INA239 Power"
-
 ```
 
 ### Configuration variables
@@ -154,7 +152,6 @@ The component exposes one function to reset INA228/INA229 energy and charge accu
 ```cpp
     // Within lambda, reset counters.
     id(my_charge_sensor).reset_energy_counters();
-
 ```
 
 To simplify the use of this function, you can use the following example to add a button to reset the counters.
@@ -165,7 +162,6 @@ To simplify the use of this function, you can use the following example to add a
         name: "Reset counters"
         on_press:
           - lambda: "id(my_change_sensor).reset_energy_counters();"
-
 ```
 
 ## See Also

@@ -46,7 +46,6 @@ fingerprint_grow:
     ...
   on_enrollment_failed:
     ...
-
 ```
 
 ### Configuration variables
@@ -122,7 +121,6 @@ fingerprint_grow:
       number: GPIOXX
       inverted: true
   idle_period_to_sleep: 5s
-
 ```
 
 {{< anchor "fingerprint_grow-set_new_password" >}}
@@ -139,7 +137,6 @@ You can set a new password for your fingerprint reader using the `new_password:`
 fingerprint_grow:
   password: 0x275FE3D2      # Existing password, can be omitted if it's the default of 0x00
   new_password: 0x72AB96CD  # New password
-
 ```
 
 The `new_password:` configuration option is meant to be compiled, flashed to the ESP device and run once, after which it's removed and the new password is defined in the `password:` configuration option to be compiled and flashed again.
@@ -147,7 +144,6 @@ The `new_password:` configuration option is meant to be compiled, flashed to the
 ```yaml
 fingerprint_grow:
   password: 0x72AB96CD      # Update the existing password with the new one
-
 ```
 
 ## Triggers
@@ -165,7 +161,6 @@ on_finger_scan_start:
       color: GREEN
       speed: 0
       count: 0
-
 ```
 
 {{< anchor "fingerprint_grow-on_finger_scan_invalid" >}}
@@ -179,7 +174,6 @@ on_finger_scan_invalid:
   - text_sensor.template.publish:
       id: fingerprint_state
       state: "Invalid finger"
-
 ```
 
 {{< anchor "fingerprint_grow-on_finger_scan_matched" >}}
@@ -209,7 +203,6 @@ on_finger_scan_matched:
               default:
                 return "person_unknown";
             }
-
 ```
 
 {{< anchor "fingerprint_grow-on_finger_scan_unmatched" >}}
@@ -223,7 +216,6 @@ on_finger_scan_unmatched:
   - text_sensor.template.publish:
       id: fingerprint_state
       state: "Unauthorized finger"
-
 ```
 
 {{< anchor "fingerprint_grow-on_finger_scan_misplaced" >}}
@@ -238,7 +230,6 @@ on_finger_scan_misplaced:
   - text_sensor.template.publish:
       id: fingerprint_state
       state: "Misplaced finger"
-
 ```
 
 {{< anchor "fingerprint_grow-on_enrollment_scan" >}}
@@ -253,7 +244,6 @@ on_enrollment_scan:
   - text_sensor.template.publish:
       id: fingerprint_state
       state: !lambda 'return "Enrolling into slot " + to_string(finger_id) + ", scanned " + to_string(scan_num) + " time(s)";'
-
 ```
 
 {{< anchor "fingerprint_grow-on_enrollment_done" >}}
@@ -268,7 +258,6 @@ on_enrollment_done:
   - text_sensor.template.publish:
       id: fingerprint_state
       state: !lambda 'return "Enrolled into slot " + to_string(finger_id);'
-
 ```
 
 {{< anchor "fingerprint_grow-on_enrollment_failed" >}}
@@ -290,7 +279,6 @@ on_enrollment_failed:
       state: !lambda 'return "Retrying enrollment into slot " + to_string(finger_id) + " in 3 seconds...";'
   - delay: 3s
   - fingerprint_grow.enroll: !lambda 'return finger_id;'
-
 ```
 
 ## Actions
@@ -311,7 +299,6 @@ on_...:
     - text_sensor.template.publish:
         id: fingerprint_state
         state: "Place a finger on the reader"
-
 ```
 
 #### Configuration variables
@@ -327,7 +314,6 @@ Cancels the current fingerprint enrollment process. Triggers the `on_enrollment_
 on_...:
   then:
     - fingerprint_grow.cancel_enroll:
-
 ```
 
 ### `fingerprint_grow.delete` Action
@@ -341,7 +327,6 @@ on_...:
         finger_id: 0
     # Shorthand
     - fingerprint_grow.delete: 0
-
 ```
 
 #### Configuration variables
@@ -356,7 +341,6 @@ Removes all enrolled fingerprints.
 on_...:
   then:
     - fingerprint_grow.delete_all:
-
 ```
 
 ### `fingerprint_grow.led_control` Action
@@ -370,7 +354,6 @@ on_...:
         state: ON
     # Shorthand
     - fingerprint_grow.led_control: ON
-
 ```
 
 #### Configuration variables
@@ -448,7 +431,6 @@ on...:
         speed: 0
         color: PURPLE
         count: 0
-
 ```
 
 #### Configuration variables
@@ -465,7 +447,6 @@ E.g. for calling `fingerprint_grow.enroll` select the action `esphome.test_node_
 
 ```json
 { "finger_id": 0, "num_scans": 2 }
-
 ```
 
 ### Sample code
@@ -532,7 +513,6 @@ api:
   - action: delete_all
     then:
       - fingerprint_grow.delete_all:
-
 ```
 
 ## See Also

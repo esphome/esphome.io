@@ -99,7 +99,6 @@ number:
       uint16_t b_capacity = x ;
       payload.push_back(b_capacity);
       return x * 1.0 ;
-
 ```
 
 ## See Also

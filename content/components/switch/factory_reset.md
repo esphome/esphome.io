@@ -31,7 +31,6 @@ You'll need to be in close proximity to your device to configure it again using 
 switch:
   - platform: factory_reset
     name: Restart with Factory Default Settings
-
 ```
 
 ## Configuration variables

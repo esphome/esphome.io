@@ -63,7 +63,6 @@ sensor:
       name: "SelecEM2M Maximum Demand Reactive Power"
     maximum_demand_apparent_power:
       name: "SelecEM2M Maximum Demand Apparent Power"
-
 ```
 
 ## Configuration variables

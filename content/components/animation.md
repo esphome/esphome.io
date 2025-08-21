@@ -15,7 +15,6 @@ animation:
     id: my_animation
     resize: 100x100
     type: RGB565
-
 ```
 
 The animation can be rendered just like the image component with the `image()` function of the display component.
@@ -32,7 +31,6 @@ display:
       id(my_animation).next_frame();
       // Draw the animation my_animation at position [x=0,y=0]
       it.image(0, 0, id(my_animation), COLOR_ON, COLOR_OFF);
-
 ```
 
 Additionally, you can use the `animation.next_frame`  , `animation.prev_frame` or `animation.set_frame` actions.
@@ -45,7 +43,6 @@ interval:
   - interval: 5s
       then:
         animation.next_frame: my_animation
-
 ```
 
 {{< /note >}}

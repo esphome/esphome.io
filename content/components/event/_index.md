@@ -44,7 +44,6 @@ event:
     on_event:
       then:
         - logger.log: "Event triggered"
-
 ```
 
 Configuration variables:
@@ -105,7 +104,6 @@ event:
       then:
         - lambda: |-
             ESP_LOGD("main", "Event %s triggered.", event_type.c_str());
-
 ```
 
 Configuration variables: see [Automation](#automation).
@@ -118,7 +116,6 @@ This action allows for the triggering of an event from within an automation.
 - event.trigger:
     id: my_event
     event_type: "custom_event"
-
 ```
 
 Configuration variables:
@@ -137,7 +134,6 @@ From [lambdas](#config-lambda), you can trigger an event.
 ```cpp
     // Within lambda, trigger the event.
     id(my_event).trigger("custom_event");
-
 ```
 
 ## See Also

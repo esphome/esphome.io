@@ -23,7 +23,6 @@ update:
   - platform: http_request
     name: Firmware Update
     source: http://example.com/manifest.json
-
 ```
 
 {{< anchor "update_http_request-configuration_variables" >}}
@@ -58,7 +57,6 @@ the `ota` block that is structured as follows:
     }
   ]
 }
-
 ```
 
 While `release_url` and `summary` are optional, all other fields shown here are required.

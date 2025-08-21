@@ -11,7 +11,6 @@ time:
   - platform: host
     id: sntp_time
     timezone: Europe/Sofia
-
 ```
 
 ## Configuration variables

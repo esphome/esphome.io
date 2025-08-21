@@ -23,7 +23,6 @@ binary_sensor:
   - platform: copy
     source_id: source_binary_sensor
     name: "Copy of source_binary_sensor"
-
 ```
 
 ### Configuration variables
@@ -39,7 +38,6 @@ button:
   - platform: copy
     source_id: source_button
     name: "Copy of source_button"
-
 ```
 
 ### Configuration variables
@@ -55,7 +53,6 @@ cover:
   - platform: copy
     source_id: source_cover
     name: "Copy of source_cover"
-
 ```
 
 ### Configuration variables
@@ -71,7 +68,6 @@ fan:
   - platform: copy
     source_id: source_fan
     name: "Copy of source_fan"
-
 ```
 
 ### Configuration variables
@@ -87,7 +83,6 @@ lock:
   - platform: copy
     source_id: source_lock
     name: "Copy of source_lock"
-
 ```
 
 ### Configuration variables
@@ -103,7 +98,6 @@ number:
   - platform: copy
     source_id: source_number
     name: "Copy of source_number"
-
 ```
 
 ### Configuration variables
@@ -119,7 +113,6 @@ select:
   - platform: copy
     source_id: source_select
     name: "Copy of source_select"
-
 ```
 
 ### Configuration variables
@@ -137,7 +130,6 @@ sensor:
   - platform: copy
     source_id: source_sensor
     name: "Copy of source_sensor"
-
 ```
 
 ### Configuration variables
@@ -153,7 +145,6 @@ switch:
   - platform: copy
     source_id: source_switch
     name: "Copy of source_switch"
-
 ```
 
 ### Configuration variables
@@ -169,7 +160,6 @@ text_sensor:
   - platform: copy
     source_id: source_text_sensor
     name: "Copy of source_text_sensor"
-
 ```
 
 ### Configuration variables
@@ -185,7 +175,6 @@ text:
   - platform: copy
     source_id: source_text
     name: "Copy of source_text"
-
 ```
 
 ### Configuration variables

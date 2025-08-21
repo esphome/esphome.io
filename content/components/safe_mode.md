@@ -22,7 +22,6 @@ for `num_attempts` times (see below).
 ```yaml
 # Example configuration entry
 safe_mode:
-
 ```
 
 {{< anchor "safe_mode-configuration_variables" >}}

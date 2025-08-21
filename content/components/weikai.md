@@ -88,7 +88,6 @@ wk2168_spi:
       - id: spi_uart_3
         channel: 3
         baud_rate: 19200
-
 ```
 
 ### Configuration variables
@@ -162,7 +161,6 @@ wk2168_i2c:
       - id: i2c_uart_3
         channel: 3
         baud_rate: 19200
-
 ```
 
 ### Configuration variables
@@ -224,7 +222,6 @@ switch:
       mode:
         output: true
       inverted: true
-
 ```
 
 ### Pin configuration variables
@@ -253,7 +250,6 @@ wk2168_spi:
     spi_id: spi_bus_id
     cs_pin: 5
     data_rate: 4MHz
-
 ```
 
 - With an I²C bus this needs to be done on the `i2c` declaration and therefore this frequency will
@@ -266,7 +262,6 @@ i2c:
   scan: true
   id: bus_i2c
   frequency: 800kHz
-
 ```
 
 ### Maximum Baud rate

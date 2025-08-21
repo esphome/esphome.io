@@ -63,7 +63,6 @@ switch:
     address: 2
     name: "enable load test mode"
     bitmask: 1
-
 ```
 
 ```yaml
@@ -84,7 +83,6 @@ switch:
       payload.push_back(0xFF); // ON = 0xFF00 OFF=0000
       payload.push_back(0x00);
       return true;
-
 ```
 
 Since offset is not zero the read command is part of a range and will be parsed when the range is updated.
@@ -104,7 +102,6 @@ switch:
   bitmask: 1
   entity_category: config
   icon: "mdi:toggle-switch"
-
 ```
 
 ## See Also

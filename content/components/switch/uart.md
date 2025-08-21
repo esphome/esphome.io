@@ -30,7 +30,6 @@ switch:
     data:
       turn_on: "TurnOn\r\n"
       turn_off: "TurnOff\r\n"
-
 ```
 
 ## Configuration variables

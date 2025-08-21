@@ -28,7 +28,6 @@ switch:
       - switch.turn_on: switch2
     turn_off_action:
       - switch.turn_on: switch1
-
 ```
 
 Possible return values for the optional lambda:
@@ -77,7 +76,6 @@ on_...:
   - switch.template.publish:
       id: template_swi
       state: !lambda 'return true;'
-
 ```
 
 Configuration options:
@@ -92,7 +90,6 @@ the switch is currently on or off:
 
 ```cpp
 id(template_swi).publish_state(false);
-
 ```
 
 {{< /note >}}

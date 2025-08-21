@@ -40,7 +40,6 @@ bme68x_bsec2_i2c:
   operating_age: 28d
   sample_rate: LP
   supply_voltage: 3.3V
-
 ```
 
 ### Configuration variables
@@ -86,7 +85,6 @@ sensor:
       name: "BME68x CO2 Equivalent"
     breath_voc_equivalent:
       name: "BME68x Breath VOC Equivalent"
-
 ```
 
 ### Configuration variables
@@ -145,7 +143,6 @@ text_sensor:
   - platform: bme68x_bsec2
     iaq_accuracy:
       name: "BME68x IAQ Accuracy"
-
 ```
 
 ### Configuration variables
@@ -204,7 +201,6 @@ text_sensor:
       else {
         return {"error"};
       }
-
 ```
 
 The selected b-VOC gasses are as follows:

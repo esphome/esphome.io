@@ -25,7 +25,6 @@ text:
   - platform: lvgl
     widget: textarea_id
     name: "Textarea 1 text"
-
 ```
 
 {{< note >}}

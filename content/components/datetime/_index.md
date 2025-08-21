@@ -28,7 +28,6 @@ name: Date to check
 
 # Optional variables:
 icon: "mdi:calendar-alert"
-
 ```
 
 Configuration variables:
@@ -89,7 +88,6 @@ datetime:
             } else {
               ESP_LOGD("main", "Updated hour is earlier than 12");
             }
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -123,7 +121,6 @@ The `date` provided can be in one of 3 formats:
     date: !lambda |-
       // Return an ESPTime struct
       return {.day_of_month = 4, .month = 12, .year = 2023};
-
 ```
 
 Configuration variables:
@@ -146,7 +143,6 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_datetime_date).make_call();
     call.set_date("2024-02-25");
     call.perform();
-
 ```
 
   Check the API reference for information on the methods that are available for
@@ -160,7 +156,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my datetime: %04d-%02d-%02d", id(my_date).year, id(my_date).month, id(my_date).day);
-
 ```
 
 ## Time Automation
@@ -192,7 +187,6 @@ The `time` provided can be in one of 3 formats:
     time: !lambda |-
       // Return an ESPTime struct
       return {.second = 56, .minute = 34, .hour = 12};
-
 ```
 
 Configuration variables:
@@ -215,7 +209,6 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_datetime_time).make_call();
     call.set_time("12:34:56");
     call.perform();
-
 ```
 
   Check the API reference for information on the methods that are available for
@@ -229,7 +222,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my datetime: %0d:%02d:%02d", id(my_datetime_time).hour, id(my_datetime_time).minute, id(my_datetime_time).second);
-
 ```
 
 ## DateTime Automation
@@ -264,7 +256,6 @@ The `datetime` provided can be in one of 3 formats:
     datetime: !lambda |-
       // Return an ESPTime struct
       return {.second = 56, .minute = 34, .hour = 12, .day_of_month = 31, .month = 12, .year = 2024};
-
 ```
 
 Configuration variables:
@@ -286,7 +277,6 @@ For more complex use cases, several methods are available for use on datetimes f
     auto call = id(my_datetime).make_call();
     call.set_datetime("2024-12-31 12:34:56");
     call.perform();
-
 ```
 
   Check the API reference for information on the methods that are available for
@@ -305,7 +295,6 @@ For more complex use cases, several methods are available for use on datetimes f
     ESP_LOGI("main", "Value of my datetime: %04d-%02d-%02d %0d:%02d:%02d",
              id(my_datetime).year, id(my_datetime).month, id(my_datetime).day,
              id(my_datetime).hour, id(my_datetime).minute, id(my_datetime).second);
-
 ```
 
 ## See Also

@@ -24,7 +24,6 @@ sensor:
         return 0.0;
       }
     update_interval: 60s
-
 ```
 
 Possible return values for the lambda:
@@ -65,7 +64,6 @@ on_...:
   - sensor.template.publish:
       id: template_sens
       state: !lambda 'return 42.0;'
-
 ```
 
 Configuration options:
@@ -79,7 +77,6 @@ This action can also be written in lambdas:
 
 ```cpp
 id(template_sens).publish_state(42.0);
-
 ```
 
 {{< /note >}}
@@ -112,7 +109,6 @@ sensor:
       int free = bluetooth_proxy::global_bluetooth_proxy->get_bluetooth_connections_free();
       ESP_LOGD("bluetooth_proxy_sensor", "Current connections free => %d", free);
       return free;
-
 ```
 
 ## See Also

@@ -21,7 +21,6 @@ the `calibrate_linear` filter, but also allows for higher-order functions like q
         - 0.0 -> 0.0
         - 10.0 -> 12.1
         - 13.0 -> 14.0
-
 ```
 
 The arguments are a list of data points, each in the form `MEASURED -> TRUTH`  . Additionally, you need

@@ -27,7 +27,6 @@ sensor:
       transfer_function: "A"
     temperature:
       name: "Honeywell2 temperature"
-
 ```
 
 ## Configuration variables

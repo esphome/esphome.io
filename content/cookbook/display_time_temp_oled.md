@@ -39,7 +39,6 @@ Get the time from Home Assistant to sync the onboard real-time clock.
 time:
   - platform: homeassistant
     id: esptime
-
 ```
 
 ### Getting Temperature
@@ -68,7 +67,6 @@ text_sensor:
     entity_id: REPLACEME
     attribute: temperature_unit
     internal: true
-
 ```
 
 ### Define the Fonts
@@ -91,7 +89,6 @@ font:
   - file: 'arial.ttf'
     id: large
     size: 14
-
 ```
 
 - (Optional) You can also use Google fonts with the `gfonts://` scheme instead of including font files.
@@ -108,7 +105,6 @@ font:
   - file: "gfonts://Silkscreen"
     id: medium
     size: 15
-
 ```
 
 ### Display Definition
@@ -148,7 +144,6 @@ display:
       if (id(outside_temperature).has_state()) {
         it.printf(127, 60, id(medium), TextAlign::BASELINE_RIGHT , "%.1f%s", id(outside_temperature).state, id(outside_temperature_unit).state.c_str());
       }
-
 ```
 
 ## Rendering
@@ -176,7 +171,6 @@ display:
     lambda: |-
       // Print "Alarm State: <state>" in top center
       it.printf(64, 0, id(small), TextAlign::TOP_CENTER, "Alarm State: %s", id(alarm_state).state.c_str());
-
 ```
 
 ## See Also

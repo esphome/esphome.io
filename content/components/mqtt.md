@@ -26,7 +26,6 @@ mqtt:
   broker: 10.0.0.2
   username: livingroom
   password: !secret mqtt_password
-
 ```
 
 {{< note >}}
@@ -138,7 +137,6 @@ some_option:
   payload: online
   qos: 0
   retain: true
-
 ```
 
 Configuration options:
@@ -183,7 +181,6 @@ Example Payload:
   "network": "wifi",
   "api_encryption": "Noise_NNpsk0_25519_ChaChaPoly_SHA256"
 }
-
 ```
 
 JSON keys:
@@ -229,7 +226,6 @@ mqtt:
   password: !secret mqtt_password
   discovery: False # disable entity discovery
   discover_ip: True # enable device discovery
-
 ```
 
 {{< anchor "mqtt-using_with_home_assistant_entities" >}}
@@ -245,7 +241,6 @@ discovery in your Home Assistant configuration with the following:
 # Example Home Assistant configuration.yaml entry
 mqtt:
   broker: ...
-
 ```
 
 And that should already be it 🎉 All devices defined through ESPHome should show up automatically
@@ -263,14 +258,12 @@ retained messages for you:
 
 ```bash
 esphome clean-mqtt configuration.yaml
-
 ```
 
 With Docker:
 
 ```bash
 docker run --rm -v "${PWD}":/config -it ghcr.io/esphome/esphome clean-mqtt configuration.yaml
-
 ```
 
 This will remove all retained messages with the topic
@@ -331,7 +324,6 @@ mqtt:
   will_message:
     topic: myavailability/topic
     payload: offline
-
 ```
 
 - **birth_message** (*Optional*, [MQTTMessage](#mqtt-message))
@@ -359,7 +351,6 @@ then run the `mqtt-fingerprint` script of ESPHome to get the certificate:
 esphome mqtt-fingerprint livingroom.yaml
 > SHA1 Fingerprint: a502ff13999f8b398ef1834f1123650b3236fc07
 > Copy above string into mqtt.ssl_fingerprints section of livingroom.yaml
-
 ```
 
 ```yaml
@@ -367,7 +358,6 @@ mqtt:
   # ...
   ssl_fingerprints:
     - a502ff13999f8b398ef1834f1123650b3236fc07
-
 ```
 
 {{< anchor "mqtt-tls-idf" >}}
@@ -393,7 +383,6 @@ If a secure connection is necessary for your device, you really want to set:
 
 ```yaml
 skip_cert_cn_check: false
-
 ```
 
 {{< /warning >}}
@@ -432,7 +421,6 @@ mqtt:
     LdUdRudafMu5T5Xma182OC0/u/xRlEm+tvKGGmfFcN0piqVl8OrSPBgIlb+1IKJE
     m/XriWr/Cq4h/JfB7NTsezVslgkBaoU=
     -----END CERTIFICATE-----
-
 ```
 
 {{< anchor "config-mqtt-component" >}}
@@ -454,7 +442,6 @@ availability:
 state_topic: livingroom/custom_state_topic
 command_topic: livingroom/custom_command_topic
 command_retain: false
-
 ```
 
 ### Configuration variables
@@ -510,7 +497,6 @@ mqtt:
     - switch.turn_on: switch1
   on_disconnect:
     - switch.turn_off: switch1
-
 ```
 
 {{< anchor "mqtt-on_message" >}}
@@ -529,7 +515,6 @@ mqtt:
     qos: 0
     then:
       - switch.turn_on: some_switch
-
 ```
 
 #### Configuration variables
@@ -555,7 +540,6 @@ mqtt:
      - topic: some/other/topic
        then:
          - # ...
-
 ```
 
 {{< /note >}}
@@ -567,14 +551,12 @@ This action can also be used in [lambdas](#config-lambda):
 mqtt:
   # Give the MQTT component an ID
   id: mqtt_client
-
 ```
 
 ```cpp
 id(mqtt_client).subscribe("the/topic", [=](const std::string &topic, const std::string &payload) {
     // do something with payload
 });
-
 ```
 
 {{< /note >}}
@@ -616,7 +598,6 @@ mqtt:
             if (x.containsKey("effect"))
               effect = x["effect"];
             return effect;
-
 ```
 
 ### Configuration variables
@@ -639,14 +620,12 @@ This action can also be used in [lambdas](#config-lambda):
 mqtt:
   # Give the MQTT component an ID
   id: mqtt_client
-
 ```
 
 ```cpp
 id(mqtt_client).subscribe_json("the/topic", [=](const std::string &topic, JsonObject root) {
     // do something with JSON-decoded value root
 });
-
 ```
 
 {{< /note >}}
@@ -673,7 +652,6 @@ on_...:
           else return "topic2";
         payload: !lambda |-
           return id(reed_switch).state ? "YES" : "NO";
-
 ```
 
 #### Configuration variables
@@ -694,12 +672,10 @@ This action can also be written in [lambdas](#config-lambda):
 mqtt:
   # Give the MQTT component an ID
   id: mqtt_client
-
 ```
 
 ```cpp
 id(mqtt_client).publish("the/topic", "The Payload");
-
 ```
 
 {{< /note >}}
@@ -726,7 +702,6 @@ on_...:
 
         # Will produce:
         # {"key": 42.0, "greeting": "Hello World"}
-
 ```
 
 ### Configuration variables
@@ -746,14 +721,12 @@ This action can also be written in [lambdas](#config-lambda):
 mqtt:
   # Give the MQTT component an ID
   id: mqtt_client
-
 ```
 
 ```cpp
 id(mqtt_client).publish_json("the/topic", [=](JsonObject root) {
   root["something"] = id(my_sensor).state;
 });
-
 ```
 
 {{< /note >}}
@@ -766,7 +739,6 @@ This action turns off the MQTT component on demand.
 on_...:
   then:
     - mqtt.disable:
-
 ```
 
 {{< note >}}
@@ -782,7 +754,6 @@ This action turns on the MQTT component on demand.
 on_...:
   then:
     - mqtt.enable:
-
 ```
 
 {{< note >}}
@@ -809,7 +780,6 @@ on_...:
   then:
     - lambda: !lambda id(mqtt_id).set_broker_address(id(broker_address));
     - mqtt.enable:
-
 ```
 
 ## Conditions
@@ -828,7 +798,6 @@ on_...:
       mqtt.connected:
     then:
       - logger.log: MQTT is connected!
-
 ```
 
 {{< note >}}
@@ -838,14 +807,12 @@ This action can also be written in [lambdas](#config-lambda):
 mqtt:
   # Give the MQTT component an ID
   id: mqtt_client
-
 ```
 
 ```cpp
 if (id(mqtt_client)->is_connected()) {
   // do something if MQTT is connected
 }
-
 ```
 
 {{< /note >}}

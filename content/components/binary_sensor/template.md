@@ -28,7 +28,6 @@ binary_sensor:
         // Garage Door is closed.
         return false;
       }
-
 ```
 
 Possible return values of the lambda:
@@ -48,7 +47,6 @@ binary_sensor:
       sensor.in_range:
         id: engine_rpm
         above: 300.0
-
 ```
 
 ## Configuration variables
@@ -82,7 +80,6 @@ on_...:
   - binary_sensor.template.publish:
       id: template_bin
       state: !lambda 'return id(some_sensor).state > 30;'
-
 ```
 
 Configuration options:
@@ -96,7 +93,6 @@ This action can also be written in lambdas:
 
 ```cpp
 id(template_bin).publish_state(true);
-
 ```
 
 {{< /note >}}

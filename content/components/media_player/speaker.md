@@ -36,7 +36,6 @@ media_player:
   - platform: speaker
     announcement_pipeline:
       speaker: announcment_spk_id
-
 ```
 
 ## Configuration variables
@@ -143,7 +142,6 @@ switch:
                 - wait_until:
                     not:
                       media_player.is_announcing:
-
 ```
 
 ## Automations
@@ -163,7 +161,6 @@ on_...:
   - media_player.speaker.play_on_device_media_file:
       media_file: wake_word_trigger_sound
       announcement: true
-
 ```
 
 Configuration variables:

@@ -19,7 +19,6 @@ light:
     num_leds: 30
     chipset: ws2812
     name: "My Light"
-
 ```
 
 ## Configuration variables

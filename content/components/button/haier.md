@@ -20,7 +20,6 @@ button:
       name: Haier start self cleaning
     steri_cleaning:
       name: Haier start 56°C steri-cleaning
-
 ```
 
 ## Configuration variables

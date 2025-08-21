@@ -25,7 +25,6 @@ You can use the ESP32 software or hardware serial to use this MR24HPC1, its defa
 ```yaml
 # Example configuration entry
 seeed_mr24hpc1:
-
 ```
 
 ### Configuration variables
@@ -43,7 +42,6 @@ binary_sensor:
   - platform: seeed_mr24hpc1
     has_target:
       name: "Presence Information"
-
 ```
 
 ### Configuration variables
@@ -72,7 +70,6 @@ sensor:
       name: "Motion Speed"
     custom_mode_num:
       name: "Current Custom Mode"
-
 ```
 
 {{< anchor "seeed_mr24hpc1-spatial_static" >}}
@@ -122,7 +119,6 @@ switch:
   - platform: seeed_mr24hpc1
     underlying_open_function:
       name: Underlying Open Function Info Output Switch
-
 ```
 
 ### Configuration variables
@@ -154,7 +150,6 @@ number:
       name: "Motion To Rest Time"
     custom_unman_time:
       name: "Time For Entering No Person State (Custom Mode)"
-
 ```
 
 {{< anchor "seeed_mr24hpc1-custom_mode" >}}
@@ -216,7 +211,6 @@ button:
       name: "Module Restart"
     custom_set_end:
       name: "End Of Custom Mode Settings"
-
 ```
 
 ### Configuration variables
@@ -249,7 +243,6 @@ text_sensor:
       name: "Motion Information"
     custom_mode_end:
       name: "Custom Mode Status"
-
 ```
 
 ### Configuration variables
@@ -287,7 +280,6 @@ select:
       name: "Existence Boundary"
     motion_boundary:
       name: "Motion Boundary"
-
 ```
 
 ### Configuration variables
@@ -404,7 +396,6 @@ For a more intuitive view of the sensor data, you can use the customised card be
         - entity: number.{$DEVICE}_time_for_entering_no_person_state_custom_mode
           name: Time For Entering No Person State (Custom Mode)
       title: Custom Settings
-
 ```
 
 Then replace all instances of `{$DEVICE}` with your device name

@@ -24,7 +24,6 @@ web_server:
 
 # Activates prometheus /metrics endpoint
 prometheus:
-
 ```
 
 ## Configuration variables
@@ -42,7 +41,6 @@ scrape_configs:
   - job_name: esphome
     static_configs:
       - targets: [<ip or node_name.local>]
-
 ```
 
 {{< /note >}}
@@ -95,7 +93,6 @@ prometheus:
     my_voltage_sensor:
       id: angry_pixies
       name: "Angry Pixies"
-
 ```
 
 ## See Also

@@ -22,7 +22,6 @@ sensor:
     address: 0x1234567812345628
     name: temperature
     update_interval: 120s
-
 ```
 
 ## Configuration variables

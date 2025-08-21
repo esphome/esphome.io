@@ -52,7 +52,6 @@ sensor:
     wave_channel_id: 1
     wave_max_value: 100
     update_interval: 1s
-
 ```
 
 ## Configuration variables
@@ -123,7 +122,6 @@ on_...:
       # These are optional. Defaults to true.
       publish_state: true
       send_to_nextion: true
-
 ```
 
 Configuration variables:
@@ -198,7 +196,6 @@ prints "temperature",0
 printh 00
 prints temperature.val,0
 printh FF FF FF
-
 ```
 
 ### Explanation

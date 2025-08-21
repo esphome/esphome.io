@@ -56,7 +56,6 @@ binary_sensor:
       mode:
         input: true
       inverted: false
-
 ```
 
 ### Configuration variables
@@ -121,7 +120,6 @@ binary_sensor:
         input: true
         pullup: true
       inverted: false
-
 ```
 
 ### Configuration variables

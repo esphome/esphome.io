@@ -25,7 +25,6 @@ The component is split into two parts:
 remote_receiver:
   pin: GPIOXX
   dump: all
-
 ```
 
 Multiple remote receivers can be configured as a list of dict definitions within `remote_receiver`  .
@@ -245,7 +244,6 @@ remote_receiver:
             - lambda: 'return (x.data == 0xE0E0E01F0);' # VOL+ older type
         then:
           - ...
-
 ```
 
 {{< anchor "remote-receiver-binary-sensor" >}}
@@ -276,7 +274,6 @@ binary_sensor:
     panasonic:
       address: 0x4004
       command: 0x100BCBD
-
 ```
 
 ```yaml
@@ -294,7 +291,6 @@ binary_sensor:
     nec:
       address: 0x1234
       command: 0x5678
-
 ```
 
 ### Configuration variables
@@ -560,7 +556,6 @@ remote_receiver:
       input: true
       pullup: true
   dump: all
-
 ```
 
 {{< /note >}}
@@ -577,7 +572,6 @@ remote_receiver:
 remote_transmitter:
   pin: 5
   carrier_duty_percent: 100%
-
 ```
 
 There's also a software ["hack"](https://github.com/mightymos/RF-Bridge-OB38S003) that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
@@ -598,7 +592,6 @@ remote_receiver:
 remote_transmitter:
   pin: 1
   carrier_duty_percent: 100%
-
 ```
 
 {{< /note >}}

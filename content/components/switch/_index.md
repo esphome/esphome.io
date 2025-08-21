@@ -21,7 +21,6 @@ switch:
   - platform: ...
     name: "Switch Name"
     icon: "mdi:restart"
-
 ```
 
 Configuration variables:
@@ -86,7 +85,6 @@ This action toggles a switch with the given ID when executed.
 on_...:
   then:
     - switch.toggle: relay_1
-
 ```
 
 {{< anchor "switch-turn_on_action" >}}
@@ -99,7 +97,6 @@ This action turns a switch with the given ID on when executed.
 on_...:
   then:
     - switch.turn_on: relay_1
-
 ```
 
 {{< anchor "switch-turn_off_action" >}}
@@ -112,7 +109,6 @@ This action turns a switch with the given ID off when executed.
 on_...:
   then:
     - switch.turn_off: relay_1
-
 ```
 
 {{< anchor "switch-control_action" >}}
@@ -134,7 +130,6 @@ on_...:
         id: relay_1
         state: !lambda |-
           return id(some_sensor).state > 50.0;
-
 ```
 
 Configuration variables:
@@ -157,7 +152,6 @@ on_...:
     condition:
       # Same syntax for is_off
       switch.is_on: my_switch
-
 ```
 
 {{< anchor "switch-lambda_calls" >}}
@@ -174,7 +168,6 @@ advanced stuff (see the full API Reference for more info).
     // Within lambda, make the switch report a specific state
     id(my_switch).publish_state(false);
     id(my_switch).publish_state(true);
-
 ```
 
 {{< note >}}
@@ -198,7 +191,6 @@ not change the GPIO pin level. To do that, you need to call `turn_on()`  ,
     } else {
       // Switch is OFF, do something else here
     }
-
 ```
 
 - `turn_off()`  /`turn_on()`  : Manually turn the switch ON/OFF from code.
@@ -210,7 +202,6 @@ not change the GPIO pin level. To do that, you need to call `turn_on()`  ,
     id(my_switch).turn_on();
     // Toggle the switch
     id(my_switch).toggle();
-
 ```
 
 {{< anchor "switch-on_turn_on_off_trigger" >}}
@@ -229,7 +220,6 @@ switch:
     - logger.log: "Switch Turned On!"
     on_turn_off:
     - logger.log: "Switch Turned Off!"
-
 ```
 
 {{< anchor "switch-on_state_trigger" >}}
@@ -254,7 +244,6 @@ switch:
             - logger.log: "Switch is now ON!"
           else:
             - logger.log: "Switch is now OFF!"
-
 ```
 
 The variable `x` is a boolean that represents the new state:

@@ -119,7 +119,6 @@ switch:
   - platform: gpio
     name: "Living Room Dehumidifier"
     pin: GPIO5
-
 ```
 
 In Home Assistant, the example code above will look like this:
@@ -145,7 +144,6 @@ binary_sensor:
       mode:
         input: true
         pullup: true
-
 ```
 
 In Home Assistant, the example code above will look like this:

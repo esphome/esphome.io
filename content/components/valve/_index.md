@@ -28,7 +28,6 @@ All valve config schemas inherit from this schema - you can set these keys for v
 valve:
   - platform: ...
     device_class: water
-
 ```
 
 Configuration variables:
@@ -72,7 +71,6 @@ This [action](#config-action) opens the valve with the given ID when executed.
 on_...:
   then:
     - valve.open: valve_1
-
 ```
 
 {{< note >}}
@@ -82,7 +80,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(valve_1).make_call();
 call.set_command_open();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -96,7 +93,6 @@ This [action](#config-action) closes the valve with the given ID when executed.
 on_...:
   then:
     - valve.close: valve_1
-
 ```
 
 {{< note >}}
@@ -106,7 +102,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(valve_1).make_call();
 call.set_command_close();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -120,7 +115,6 @@ This [action](#config-action) stops the valve with the given ID when executed.
 on_...:
   then:
     - valve.stop: valve_1
-
 ```
 
 {{< note >}}
@@ -130,7 +124,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(valve_1).make_call();
 call.set_command_stop();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -145,7 +138,6 @@ close/stop/open/stop... This allows the valve to be controlled by a single push 
 on_...:
   then:
     - valve.toggle: valve_1
-
 ```
 
 {{< note >}}
@@ -155,7 +147,6 @@ This action can also be expressed in [lambdas](#config-lambda):
 auto call = id(valve_1).make_call();
 call.set_command_toggle();
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -172,7 +163,6 @@ on_...:
     - valve.control:
         id: valve_1
         position: 50%
-
 ```
 
 Configuration variables:
@@ -193,7 +183,6 @@ auto call = id(valve_1).make_call();
 // set attributes
 call.set_position(0.5);
 call.perform();
-
 ```
 
 {{< /note >}}
@@ -214,7 +203,6 @@ read-only, if you want to act on the valve, use the `make_call()` method as show
         } else {
           // Valve is in-between open and closed
         }
-
 ```
 
 - `current_operation`  : The operation the valve is currently performing:
@@ -227,7 +215,6 @@ read-only, if you want to act on the valve, use the `make_call()` method as show
         } else if (id(my_valve).current_operation == ValveOperation::VALVE_OPERATION_CLOSING) {
           // Valve is currently closing
         }
-
 ```
 
 {{< anchor "valve-on_open_trigger" >}}
@@ -242,7 +229,6 @@ valve:
     # ...
     on_open:
       - logger.log: "Valve is Open!"
-
 ```
 
 {{< anchor "valve-on_closed_trigger" >}}
@@ -257,7 +243,6 @@ valve:
     # ...
     on_closed:
       - logger.log: "Valve is Closed!"
-
 ```
 
 ## See Also

@@ -23,7 +23,6 @@ Using an inexpensive RF transmitter and receiver you can control your devices vi
 lightwaverf:
   read_pin: GPIOXX
   write_pin: GPIOXX
-
 ```
 
 Note: To gather the RAW codes from the remote, setup the `read_pin` and observe in the logs the printing of the codes.
@@ -46,7 +45,6 @@ on_...:
         code:  [0x04, 0x00, 0x00, 0x00, 0x0f, 0x03, 0x0d, 0x09, 0x08, 0x08]
         name: "Sofa"
         repeat: 1
-
 ```
 
 ### Configuration variables

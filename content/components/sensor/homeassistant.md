@@ -25,7 +25,6 @@ sensor:
   - platform: homeassistant
     name: "Temperature Sensor From Home Assistant"
     entity_id: sensor.temperature_sensor
-
 ```
 
 Entity state attributes can also be imported:
@@ -37,7 +36,6 @@ sensor:
     id: current_temperature
     entity_id: climate.living_room
     attribute: current_temperature
-
 ```
 
 {{< note >}}

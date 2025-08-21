@@ -23,7 +23,6 @@ sensor:
       name: "Living Room Temperature"
     humidity:
       name: "Living Room Humidity"
-
 ```
 
 ## Configuration variables

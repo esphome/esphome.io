@@ -30,7 +30,6 @@ wifi:
 
 esp32_improv:
   authorizer: binary_sensor_id
-
 ```
 
 ## Configuration variables
@@ -73,7 +72,6 @@ esp32_improv:
   on_start:
     then:
       - logger.log: "Improv awaiting authorization/authorized"
-
 ```
 
 {{< anchor "improv-on_provisioned" >}}
@@ -87,7 +85,6 @@ esp32_improv:
   on_provisioned:
     then:
       - logger.log: "Improv provisioned"
-
 ```
 
 {{< anchor "improv-on_provisioning" >}}
@@ -101,7 +98,6 @@ esp32_improv:
   on_provisioning:
     then:
       - logger.log: "Improv provisioning"
-
 ```
 
 {{< anchor "improv-on_stop" >}}
@@ -115,7 +111,6 @@ esp32_improv:
   on_stop:
     then:
       - logger.log: "Improv stopped"
-
 ```
 
 {{< anchor "improv-on_state" >}}
@@ -152,7 +147,6 @@ esp32_improv:
             lambda: return state == improv::STATE_AUTHORIZED;
           then:
             - logger.log: "Improv state is STATE_AUTHORIZED"
-
 ```
 
 ## Status Indicator

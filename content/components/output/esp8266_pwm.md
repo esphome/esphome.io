@@ -27,7 +27,6 @@ light:
   - platform: monochromatic
     output: pwm_output
     name: "Kitchen Light"
-
 ```
 
 ## Configuration variables
@@ -58,7 +57,6 @@ on_...:
   - output.esp8266_pwm.set_frequency:
       id: pwm_output
       frequency: 100Hz
-
 ```
 
 Configuration variables:

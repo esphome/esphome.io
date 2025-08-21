@@ -29,7 +29,6 @@ output:
     pin: GPIOXX
     id: my_slow_pwm
     period: 15s
-
 ```
 
 ## Configuration variables
@@ -66,7 +65,6 @@ output:
           out1->turn_on();
     turn_off_action:
       - output.turn_off: output1
-
 ```
 
 {{< note >}}

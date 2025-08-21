@@ -20,7 +20,6 @@ text_sensor:
     name: "Data from topic"
     id: mysensor
     topic: the/topic
-
 ```
 
 ## Configuration variables
@@ -48,7 +47,6 @@ display:
     # ...
     lambda: |-
       it.printf(0, 0, id(font), "The data is: %s", id(mysensor).state.c_str());
-
 ```
 
 ## See Also

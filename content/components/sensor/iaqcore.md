@@ -29,7 +29,6 @@ sensor:
         name: "iAQ Core CO2 Sensor"
     tvoc:
         name: "iAQ Core TVOC Sensor"
-
 ```
 
 ## Configuration variables

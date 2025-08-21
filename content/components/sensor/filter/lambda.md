@@ -11,7 +11,6 @@ the result of the lambda is used as the output (use `return`  ).
 ```yaml
 filters:
   - lambda: return x * (9.0/5.0) + 32.0;
-
 ```
 
 Make sure to add `.0` to all values in the lambda, otherwise divisions of integers will
@@ -24,5 +23,4 @@ filters:
   - lambda: |-
       if (x < 10) return {};
       return x-10;
-
 ```

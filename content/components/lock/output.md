@@ -23,7 +23,6 @@ lock:
   - platform: output
     name: "Generic Output"
     output: 'generic_out'
-
 ```
 
 ## Configuration variables

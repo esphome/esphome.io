@@ -69,7 +69,6 @@ esp32_improv:
 # Sets up the improv via serial client for Wi-Fi provisioning
 improv_serial:
   next_url: https://example.com/project-template/manual?ip={{ip_address}}&name={{device_name}}&version={{esphome_version}}
-
 ```
 
 ## Relevant Documentation

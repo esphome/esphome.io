@@ -19,7 +19,6 @@ through Home Assistant.
 switch:
   - platform: restart
     name: "Living Room Restart"
-
 ```
 
 ## Configuration variables

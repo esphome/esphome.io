@@ -23,7 +23,6 @@ The BMS communicates via [UART](#uart).
 # Example configuration entry
 daly_bms:
   update_interval: 20s
-
 ```
 
 ### Configuration variables
@@ -76,7 +75,6 @@ sensor:
       name: "Cell 3 Voltage"
     cell_4_voltage:
       name: "Cell 4 Voltage"
-
 ```
 
 ### Configuration variables
@@ -138,7 +136,6 @@ text_sensor:
   - platform: daly_bms
     status:
       name: "BMS Status"
-
 ```
 
 ### Configuration variables
@@ -157,7 +154,6 @@ binary_sensor:
       name: "Charging MOS"
     discharging_mos_enabled:
       name: "Discharging MOS"
-
 ```
 
 ### Configuration variables
@@ -185,7 +181,6 @@ binary_sensor:
       name: "Daly Discharging MOS"
       id: bin_daly_dischg_mos # binary MOS sensor must have ID to use with switch
       internal: True # but you can make it internal to avoid duplication
-
 ```
 
 Then you can add switches
@@ -229,7 +224,6 @@ switch:
           data: [0xA5, 0x40, 0xD9, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC6]
       - logger.log:
           format: "Send cmd to Daly: Set discharge MOS off"
-
 ```
 
 Also you can add select to change battery level
@@ -292,7 +286,6 @@ select:
                                           data: [0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E]
                                       - logger.log:
                                           format: "Send cmd to Daly: Set SOC to 0%"
-
 ```
 
 ## UART Connection

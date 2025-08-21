@@ -15,5 +15,4 @@ filters:
   - or:
     - throttle: 1s
     - delta: 5.0
-
 ```

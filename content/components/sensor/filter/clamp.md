@@ -22,5 +22,4 @@ Configuration variables:
         min_value: 10
         max_value: 75
         ignore_out_of_range: true
-
 ```

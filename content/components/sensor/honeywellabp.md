@@ -28,7 +28,6 @@ sensor:
     temperature:
       name: Honeywell temperature
     cs_pin: GPIOXX
-
 ```
 
 ## Configuration variables

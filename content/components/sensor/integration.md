@@ -27,7 +27,6 @@ sensor:
   - platform: pulse_counter
     # ...
     id: my_flow_meter
-
 ```
 
 ## Configuration variables
@@ -53,7 +52,6 @@ a time-based automation.
 ```yaml
 on_...:
   - sensor.integration.reset:  my_integration_sensor
-
 ```
 
 ## See Also

@@ -61,7 +61,6 @@ some_config_option:
 some_config_option:
   # alias on the NodeMCU ESP8266:
   pin: D0
-
 ```
 
 {{< anchor "config-pin_schema" >}}
@@ -82,7 +81,6 @@ some_config_option:
     mode:
       input: true
       pullup: true
-
 ```
 
 Configuration variables:
@@ -161,7 +159,6 @@ some_config_option:
   update_interval: never  # never update
   update_interval: 0ms  # update in every loop() iteration
   update_interval: always # same as 0ms
-
 ```
 
 ## See Also

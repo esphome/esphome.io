@@ -42,7 +42,6 @@ cover:
   - platform: tormatic
     device_class: garage
     name: Novoferm 423
-
 ```
 
 ## Setup

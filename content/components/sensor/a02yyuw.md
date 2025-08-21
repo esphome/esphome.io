@@ -25,7 +25,6 @@ To use the sensor, first set up an [UART Bus](#uart) with a baud rate of 9600 an
 sensor:
   - platform: "a02yyuw"
     name: "Distance"
-
 ```
 
 ## Configuration variables

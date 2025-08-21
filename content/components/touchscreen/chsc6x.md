@@ -25,7 +25,6 @@ touchscreen:
   id: my_touchscreen
   display: my_display
   interrupt_pin: GPIO44
-
 ```
 
 ### Configuration variables
@@ -60,7 +59,6 @@ touchscreen:
   id: my_touchscreen
   display: my_display
   interrupt_pin: GPIO44
-
 ```
 
 ## See Also

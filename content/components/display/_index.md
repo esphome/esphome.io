@@ -82,7 +82,6 @@ display:
 
       // For example, draw a line from [x=0,y=0] to [x=50,y=50]
       it.line(0, 0, 50, 50);
-
 ```
 
 {{< note >}}
@@ -142,7 +141,6 @@ display:
       // and the outline of flat-topped octagon around it!
       it.regular_polygon(170, 45, 40, EDGES_OCTAGON, VARIATION_FLAT_TOP);
       // Need to rotate the polygon, or retrieve the coordinates of its vertices? Check the API!
-
 ```
 
 All the above methods can optionally also be called with an argument at the end which specifies in which
@@ -160,7 +158,6 @@ display:
 
       // Turn a single pixel off at [50,60]
       it.draw_pixel_at(50, 60, COLOR_OFF);
-
 ```
 
 For color displays (e.g. TFT displays), you can use the Color class.
@@ -182,7 +179,6 @@ display:
       it.filled_circle(60, 32, 15, green);
       it.filled_circle(80, 32, 15, blue);
       it.filled_circle(100, 32, 15, white);
-
 ```
 
 Additionally, you have access to two helper methods which will fetch the width and height of the display:
@@ -197,7 +193,6 @@ display:
 
       // Turn off bottom half of the screen
       it.filled_rectangle(0, it.get_height()/2, it.get_width(), it.get_height()/2, COLOR_OFF);
-
 ```
 
 You can view the full API documentation for the rendering engine in the "API Reference" in the See Also section.
@@ -217,7 +212,6 @@ display:
     lambda: |-
       // Print the string "Hello World!" at [0,10]
       it.print(0, 10, id(my_font), "Hello World!");
-
 ```
 
 By default, ESPHome will *align* the text at the top left. That means if you enter the coordinates
@@ -237,7 +231,6 @@ display:
 
       // Aligned on right edge
       it.print(it.get_width(), 0, id(my_font), TextAlign::TOP_RIGHT, "Right aligned");
-
 ```
 
 As with basic shapes, you can also specify a color for the text:
@@ -249,7 +242,6 @@ display:
     lambda: |-
       // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], <text>);
       it.print(0, 0, id(my_font), COLOR_ON, "Left aligned");
-
 ```
 
 In case of fonts rendered at higher bit depths, the background color has to be specified after the text in order for antialiasing to work:
@@ -261,7 +253,6 @@ display:
     lambda: |-
       // Syntax is always: it.print(<x>, <y>, <font>, [color=COLOR_ON], [align], <text>, [color=COLOR_OFF]);
       it.print(0, 0, id(my_font_with_icons), COLOR_ON, TextAlign::CENTER, "Just\U000f05d4here. Already\U000F02D1this.", COLOR_OFF);
-
 ```
 
 {{< img src="display_rendering_text.png" alt="Image" class="align-center" >}}
@@ -290,7 +281,6 @@ display:
     lambda: |-
       it.printf(0, 0, id(my_font), "The sensor value is: %.1f", id(my_sensor).state);
       // If the sensor has the value 30.02, the result will be: "The sensor value is: 30.0"
-
 ```
 
 As you can see, when you call `printf` most of the string is printed as-is, but when this weird percent sign with some
@@ -329,7 +319,6 @@ display:
     lambda: |-
       // %% - literal % sign
       it.printf(0, 0, id(my_font), "Temperature: %.1f°C, Humidity: %.1f%%", id(temperature).state, id(humidity).state);
-
 ```
 
 To display a text string from a `text_sensor`  , append `.c_str()` to the end of your variable.
@@ -340,7 +329,6 @@ display:
     # ...
     lambda: |-
       it.printf(0, 0, id(my_font), "Text to follow: %s", id(template_text).state.c_str());
-
 ```
 
 When using anti-aliased fonts you will probably need to specify the color to draw the characters, and the background
@@ -352,7 +340,6 @@ display:
     # ...
     lambda: |-
         it.printf(10, 100, id(roboto), Color(0x123456), COLOR_OFF, display::TextAlign::BASELINE, "%f", id(heap_free).state);
-
 ```
 
 The last printf tip for use in displays I will discuss here is how to display binary sensor values. You
@@ -377,7 +364,6 @@ display:
       }
       // Shorthand:
       it.printf(0, 0, id(my_font), "State: %s", id(my_binary_sensor).state ? "ON" : "OFF");
-
 ```
 
 {{< note >}}
@@ -424,7 +410,6 @@ display:
       it.start_clipping(40,0,140,20);
       it.printf(0, 0, id(my_font), id(my_red), "State: %s", id(my_binary_sensor).state ? "ON" : "OFF");
       it.end_clipping();
-
 ```
 
 After you started clipping you can manipulate the region with `extend_clipping(left, top, right, bottom);`
@@ -441,7 +426,6 @@ class Rect {
     int16_t x2();  ///< Right coordinate
     int16_t y2();  ///< bottom coordinate
   };
-
 ```
 
 With `is_clipping();` tells you if clipping is activated.
@@ -460,7 +444,6 @@ color:
     green: 20%
     blue: 25%
     white: 0%
-
 ```
 
 Alternatively, you can use `<color>_int` to specify the color as an int value:
@@ -472,7 +455,6 @@ color:
     green_int: 51
     blue_int: 64
     white_int: 0
-
 ```
 
 Or, if you are more comforatble with hex values, you can use `hex`  :
@@ -481,7 +463,6 @@ Or, if you are more comforatble with hex values, you can use `hex`  :
 color:
   - id: my_light_red
     hex: FF3340
-
 ```
 
 Configuration variables:
@@ -518,7 +499,6 @@ display:
       - id: page2
         lambda: |-
           it.print(0, 10, id(my_font), "This is page 2!");
-
 ```
 
 You can then switch between these with three different actions:
@@ -536,7 +516,6 @@ interval:
     then:
       - display.page.show_next: my_display
       - component.update: my_display
-
 ```
 
 **display.page.show**: Show a specific page
@@ -552,7 +531,6 @@ on_...:
       } else {
         return id(page2);
       }
-
 ```
 
 {{< note >}}
@@ -566,7 +544,6 @@ interval:
     then:
       - display.page.show_next: my_display
       - component.update: my_display
-
 ```
 
 {{< /note >}}
@@ -589,7 +566,6 @@ on_...:
           page_id: page2
       then:
         ...
-
 ```
 
 {{< anchor "display-on_page_change-trigger" >}}
@@ -606,7 +582,6 @@ display:
         then:
           lambda: |-
             ESP_LOGD("display", "Page changed from 1 to 2");
-
 ```
 
 - **from** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.

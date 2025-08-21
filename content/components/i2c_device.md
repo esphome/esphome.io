@@ -24,7 +24,6 @@ i2c_device:
        if (auto b = id(i2cdev).read_byte(0x01)) {
          // TODO
        }
-
 ```
 
 ## Configuration variables

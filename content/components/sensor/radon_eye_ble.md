@@ -24,7 +24,6 @@ logger:
 
 esp32_ble_tracker:
 radon_eye_ble:
-
 ```
 
 The device will then listen for nearby devices, and display a message like this one:
@@ -32,7 +31,6 @@ The device will then listen for nearby devices, and display a message like this 
 ```text
 [D][radon_eye_ble:017]:
 Found Radon Eye RD200 device Name: FR:R20:SN1234      (MAC: XX:XX:XX:XX:XX:XX)
-
 ```
 
 Once the device is found, remove the `radon_eye_ble` device tracker from your configuration and
@@ -70,7 +68,6 @@ sensor:
       name: "Radon"
     radon_long_term:
       name: "Radon Long Term"
-
 ```
 
 Here is an example to use pCi/L (to match the value on the device display):
@@ -98,5 +95,4 @@ sensor:
       accuracy_decimals: 2
       filters:
         - lambda: return x / 37;
-
 ```

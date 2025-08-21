@@ -40,7 +40,6 @@ datetime:
     optimistic: yes
     initial_value: "2024-12-31 12:34:56"
     restore_value: true
-
 ```
 
 ## Configuration variables
@@ -71,7 +70,6 @@ datetime:
           year: 2023
           month: 12
           day: 4
-
 ```
 
 - For `type: time`  :
@@ -84,7 +82,6 @@ datetime:
           hour: 12
           minute: 34
           second: 56
-
 ```
 
 - For `type: datetime`  :
@@ -100,7 +97,6 @@ datetime:
           hour: 12
           minute: 34
           second: 56
-
 ```
 
 - All other options from [Datetime](#config-datetime).

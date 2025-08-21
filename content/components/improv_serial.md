@@ -22,7 +22,6 @@ wifi:
   # ...
 
 improv_serial:
-
 ```
 
 ## Configuration variables
@@ -42,7 +41,6 @@ that can be performed by ESPHome when wrapped in double braces `{{ }}`  :
 # Example next_url
 improv_serial:
   next_url: http://example.com/?device_name={{device_name}}&ip_address={{ip_address}}&esphome_version={{esphome_version}}
-
 ```
 
 ## See Also

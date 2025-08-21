@@ -30,7 +30,6 @@ speaker:
   - platform: resampler
     output_speaker: output_speaker_id
     sample_rate: 48000
-
 ```
 
 ## Configuration variables

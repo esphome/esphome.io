@@ -41,7 +41,6 @@ light:
     output: dac_output
     gamma_correct: 1.4
     id: mono_light
-
 ```
 
 ## Configuration variables

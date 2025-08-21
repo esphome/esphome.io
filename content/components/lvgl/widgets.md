@@ -82,7 +82,6 @@ To apply styles to the states, you need to specify them one level above, for exa
       checked: true # here you activate the state to be used at boot
     checked:
       bg_color: 0x00FF00 # here you apply styles to be used when in the respective state
-
 ```
 
 The state itself can be can be changed by interacting with the widget, or through [actions](#lvgl-automation-actions) with `lvgl.widget.update`  .
@@ -153,7 +152,6 @@ The possible parts are:
       width: 4
       height: 10%
       bg_color: 0x000000
-
 ```
 
 ## Widget-specific properties
@@ -209,7 +207,6 @@ on_...:
       text:
         time_format: "%c"
         time: !lambda return id(sntp_id).utcnow();
-
 ```
 
 {{< anchor "lvgl-widget-animimg" >}}
@@ -265,7 +262,6 @@ on_...:
         id: anim_id
         repeat_count: 100
         duration: 300ms
-
 ```
 
 See [Battery charging animation](#lvgl-cookbook-animbatt) in the Cookbook for a more detailed example.
@@ -345,7 +341,6 @@ on_...:
       - logger.log:
           format: "Arc value is: %.0f"
           args: [ 'x' ]
-
 ```
 
 {{< note >}}
@@ -411,7 +406,6 @@ on_...:
     - lvgl.bar.update:
         id: bar_id
         value: 55
-
 ```
 
 The `bar` can be also integrated as {{< docref "/components/number/lvgl" "Number" >}} or {{< docref "/components/sensor/lvgl" "Sensor" >}} component.
@@ -447,7 +441,6 @@ A notable state is `checked` (boolean) which can have different styles applied.
     width: 50
     height: 30
     id: btn_id
-
 ```
 
 To have a button with a text label on it, add a child [`label`](#lvgl-widget-label) widget to it:
@@ -474,7 +467,6 @@ To have a button with a text label on it, add a child [`label`](#lvgl-widget-lab
         - logger.log:
             format: "Button checked state: %d"
             args: [ x ]
-
 ```
 
 The `button` can be also integrated as a {{< docref "/components/binary_sensor/lvgl" "Binary Sensor" >}} or as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
@@ -605,7 +597,6 @@ on_...:
       logger.log:
         format: "Matrix button clicked: %d, is button_2 = %u"
         args: ["x", "id(button_2) == x"]
-
 ```
 
 {{< tip >}}
@@ -748,7 +739,6 @@ Where a list of points is required, this can be provided in the form of a list o
             text: "Hello World"
             max_width: 100
             color: red
-
 ```
 
 {{< anchor "lvgl-widget-checkbox" >}}
@@ -804,7 +794,6 @@ on_...:
         - logger.log:
             format: "Checkbox state: %d"
             args: [ x ]
-
 ```
 
 {{< note >}}
@@ -889,7 +878,6 @@ on_...:
       - logger.log:
           format: "Dropdown closed. Selected index is: %d"
           args: [ x ]
-
 ```
 
 The `dropdown` can be also integrated as {{< docref "/components/select/lvgl" "Select" >}} component.
@@ -945,7 +933,6 @@ on_...:
     - lvgl.image.update:
         id: img_id
         src: cat_image_bowtie
-
 ```
 
 {{< note >}}
@@ -1013,7 +1000,6 @@ on_focus:
     on_cancel:
       then:
         - logger.log: Keyboard cancelled
-
 ```
 
 {{< tip >}}
@@ -1092,7 +1078,6 @@ on_...:
         text:
           format: "%.0fdBm"
           args: [ 'id(wifi_signal_db).get_state()' ]
-
 ```
 
 The `label` can be also integrated as {{< docref "/components/text/lvgl" "Text" >}} or {{< docref "/components/text_sensor/lvgl" "Text Sensor" >}} component.
@@ -1137,7 +1122,6 @@ on_...:
     - lvgl.led.update:
         id: led_id
         color: 0x00FF00
-
 ```
 
 The `led` can be also integrated as {{< docref "/components/light/lvgl" "Light" >}} component.
@@ -1191,7 +1175,6 @@ The points list may be defined with constants in the form `x, y` or as a list of
     line_width: 8
     line_color: 0x0000FF
     line_rounded: true
-
 ```
 
 {{< anchor "lvgl-widget-meter" >}}
@@ -1307,7 +1290,6 @@ on_...:
     - lvgl.indicator.update:
         id: temperature_needle
         value: 3
-
 ```
 
 See [Semicircle gauge](#lvgl-cookbook-gauge), [Thermometer](#lvgl-cookbook-thermometer) and [An analog clock](#lvgl-cookbook-clock) in the Cookbook for examples which demonstrate how to effectively use this widget.
@@ -1360,7 +1342,6 @@ lvgl:
           on_click:
             then:
               - lvgl.widget.hide: message_box
-
 ```
 
 {{< tip >}}
@@ -1396,7 +1377,6 @@ You can use it as a parent container for other widgets. By default, it catches t
     height: 300
     widgets:
       - ...
-
 ```
 
 {{< anchor "lvgl-widget-qrcode" >}}
@@ -1441,7 +1421,6 @@ on_...:
     - lvgl.qrcode.update:
         id: lv_qr
         text: home-assistant.io
-
 ```
 
 {{< anchor "lvgl-widget-roller" >}}
@@ -1504,7 +1483,6 @@ on_...:
       - logger.log:
           format: "Selected index is: %d, text is: %s"
           args: [x, text.c_str()]
-
 ```
 
 The `roller` can be also integrated as {{< docref "/components/select/lvgl" "Select" >}} component.
@@ -1573,7 +1551,6 @@ on_...:
       - logger.log:
           format: "Slider value is: %.0f"
           args: [ 'x' ]
-
 ```
 
 {{< note >}}
@@ -1656,7 +1633,6 @@ on_...:
         - logger.log:
             format: "Spinbox value is %f"
             args: [ x ]
-
 ```
 
 The `spinbox` can be also integrated as a {{< docref "/components/number/lvgl" "Number" >}} or {{< docref "/components/sensor/lvgl" "Sensor" >}} component.
@@ -1710,7 +1686,6 @@ on_...:
     - lvgl.spinner.update:
         id: spinner_id
         arc_color: 0x31de70
-
 ```
 
 {{< anchor "lvgl-widget-switch" >}}
@@ -1750,7 +1725,6 @@ The switch looks like a little slider and can be used to turn something on and o
         - logger.log:
             format: "Switch state: %d"
             args: [ x ]
-
 ```
 
 The `switch` can be also integrated as a {{< docref "/components/switch/lvgl" "Switch" >}} component.
@@ -1831,7 +1805,6 @@ on_...:
               lambda: return tab == id(tabview_tab_1);
             then:
               - logger.log: "Dog tab is now showing"
-
 ```
 
 {{< anchor "lvgl-widget-textarea" >}}
@@ -1896,7 +1869,6 @@ on_...:
         - logger.log:
             format: "Textarea ready: %s"
             args: [ text.c_str() ]
-
 ```
 
 The `textarea` can be also integrated as {{< docref "/components/text/lvgl" "Text" >}} or {{< docref "/components/text_sensor/lvgl" "Text Sensor" >}} component.
@@ -1966,7 +1938,6 @@ on_...:
             lambda: return tile == id(cat_tile);
           then:
             - logger.log: "Cat tile is now showing"
-
 ```
 
 {{< anchor "lvgl-automations" >}}
@@ -2003,7 +1974,6 @@ on_...:
     - lvgl.widget.update:
         id: my_label_id
         hidden: true
-
 ```
 
 Check out in the Cookbook [Remote light button](#lvgl-cookbook-binent) for an example which demonstrates how to use a template to update the state.
@@ -2026,7 +1996,6 @@ on_...:
         -id: my_label_id
     - lvgl.widget.hide:
         - id: [my_button_1, my_button_2]
-
 ```
 
 #### `lvgl.widget.disable`  , `lvgl.widget.enable`
@@ -2047,7 +2016,6 @@ These [actions](#actions-action) are shorthands for toggling the `disabled` stat
       - lvgl.widget.enable:
           - id: my_button_1
           - id: my_button_2
-
 ```
 
 {{< anchor "lvgl-automation-triggers" >}}
@@ -2105,7 +2073,6 @@ when the page becomes active or inactive respectively.
             id: display_backlight
             transition_length: 0ms
             brightness: !lambda return x / 100;
-
 ```
 
 ### `on_boot`

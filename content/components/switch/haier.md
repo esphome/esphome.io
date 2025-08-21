@@ -23,7 +23,6 @@ switch:
       name: Haier display
     quiet_mode:
       name: Haier quiet mode
-
 ```
 
 ## Configuration variables

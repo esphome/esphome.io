@@ -26,7 +26,6 @@ light:
   - platform: monochromatic
     output: pwm_output
     name: "Kitchen Light"
-
 ```
 
 ## Configuration variables
@@ -49,7 +48,6 @@ on_...:
   - output.libretiny_pwm.set_frequency:
       id: pwm_output
       frequency: 100Hz
-
 ```
 
 Configuration variables:

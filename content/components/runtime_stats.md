@@ -26,7 +26,6 @@ Enable it when needed to find problems, then disable it once your investigation 
 # Example configuration entry
 runtime_stats:
   log_interval: 60s
-
 ```
 
 ## Configuration variables
@@ -75,7 +74,6 @@ Components are sorted by total execution time (descending) to highlight the most
 [09:55:52][I][runtime_stats:084]:   wifi: count=600, avg=0.45ms, max=5ms, total=270ms
 [09:55:52][I][runtime_stats:084]:   api: count=1200, avg=0.01ms, max=1ms, total=12ms
 [09:55:52][I][runtime_stats:084]:   sensor: count=6000, avg=0.00ms, max=1ms, total=20ms
-
 ```
 
 ## Use Cases

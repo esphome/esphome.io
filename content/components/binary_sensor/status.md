@@ -19,7 +19,6 @@ for Home Assistant.
 binary_sensor:
   - platform: status
     name: "Living Room Status"
-
 ```
 
 ## Configuration variables

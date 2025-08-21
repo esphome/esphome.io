@@ -18,7 +18,6 @@ button:
   - platform: wake_on_lan
     name: "Start the Server"
     target_mac_address: XX:XX:XX:XX:XX:XX
-
 ```
 
 ## Configuration variables

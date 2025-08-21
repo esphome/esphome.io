@@ -29,7 +29,6 @@ id: my_select
 
 # Optional variables:
 icon: "mdi:emoticon-outline"
-
 ```
 
 Configuration variables:
@@ -87,7 +86,6 @@ select:
         - logger.log:
             format: "Chosen option: %s (index %d)"
             args: ["x.c_str()", "i"]
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -102,7 +100,6 @@ This is an [Action](#config-action) for setting the active option using an optio
 - select.set:
     id: my_select
     option: "Happy"
-
 ```
 
 Configuration variables:
@@ -124,7 +121,6 @@ This is an [Action](#config-action) for setting the active option using its inde
 - select.set_index:
     id: my_select
     index: 3
-
 ```
 
 Configuration variables:
@@ -149,7 +145,6 @@ This is an [Action](#config-action) for selecting the next option in a select co
 
 # Shorthand
 - select.next: my_select
-
 ```
 
 Configuration variables:
@@ -172,7 +167,6 @@ a select component.
 
 # Shorthand
 - select.previous: my_select
-
 ```
 
 Configuration variables:
@@ -194,7 +188,6 @@ a select component.
 
 # Shorthand
 - select.first: my_select
-
 ```
 
 Configuration variables:
@@ -214,7 +207,6 @@ a select component.
 
 # Shorthand
 - select.last: my_select
-
 ```
 
 Configuration variables:
@@ -241,7 +233,6 @@ templatable action call.
     id: my_select
     operation: !lambda "return SELECT_OP_NEXT;"
     cycle: !lambda "return true;"
-
 ```
 
 Configuration variables:
@@ -271,7 +262,6 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_select).make_call();
     call.set_option("Happy");
     call.perform();
-
 ```
 
   Check the API reference for information on the methods that are available for
@@ -285,7 +275,6 @@ advanced stuff (see the full API Reference for more info).
     // For example, create a custom log message when an option is selected:
     auto state = id(my_select).state.c_str();
     ESP_LOGI("main", "Option of my select: %s", state);
-
 ```
 
 ```yaml
@@ -293,7 +282,6 @@ advanced stuff (see the full API Reference for more info).
     - if:
         condition:
           - lambda: 'return id(my_select).state == "my_option_value";'
-
 ```
 
 - `.size()`  : Retrieve the number of options in the select.
@@ -301,7 +289,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     auto size = id(my_select).size();
     ESP_LOGI("main", "Select has %d options", size);
-
 ```
 
 - `.index_of(<option value>)`  : Retrieve the index offset for an option value.
@@ -313,7 +300,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       ESP_LOGE("main", "There is no option 'Happy'");
     }
-
 ```
 
 - `.active_index()`  : Retrieve the index of the currently active option.
@@ -325,7 +311,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       ESP_LOGI("main", "No option is active");
     }
-
 ```
 
 - `.at(<index offset>)`  : Retrieve the option value at a given index offset.
@@ -339,7 +324,6 @@ advanced stuff (see the full API Reference for more info).
     } else {
       ESP_LOGE("main", "Index %d does not exist", index);
     }
-
 ```
 
 - `.has_option(<option value>)`  : Check if the select contains the given option value.
@@ -349,7 +333,6 @@ advanced stuff (see the full API Reference for more info).
     if (id(my_select).has_option(option)) {
       ESP_LOGI("main", "Select has option '%s'", option);
     }
-
 ```
 
 - `.has_index(<index offset>)`  : Check if the select contains an option value for the given index offset.
@@ -359,7 +342,6 @@ advanced stuff (see the full API Reference for more info).
     if (id(my_select).has_index(index)) {
       ESP_LOGI("main", "Select has index offset %d", index);
     }
-
 ```
 
 ## Example
@@ -381,7 +363,6 @@ select:
       - logger.log:
           format: "Chosen option: %s"
           args: ["x.c_str()"]
-
 ```
 
 ## See Also

@@ -21,7 +21,6 @@ in Home Assistant, this component still requires you to register the node under 
 time:
   - platform: homeassistant
     id: homeassistant_time
-
 ```
 
 ## Configuration variables

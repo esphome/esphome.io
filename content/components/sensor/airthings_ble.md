@@ -24,7 +24,6 @@ logger:
 
 esp32_ble_tracker:
 airthings_ble:
-
 ```
 
 The device will then listen for nearby devices, and display a message like this one:
@@ -32,7 +31,6 @@ The device will then listen for nearby devices, and display a message like this 
 ```text
 [D][airthings_ble:019]:
 Found AirThings device Serial: 123456789 (MAC: XX:XX:XX:XX:XX:XX)
-
 ```
 
 Once the device is found, remove the `airthings_ble` device tracker from your configuration and take note of the device MAC address, and use it when configuring a sensor below.
@@ -78,7 +76,6 @@ ble_client:
     id: airthings01
 
 esp32_ble_tracker:
-
 ```
 
 ### Airthings Wave Mini Sensor
@@ -111,7 +108,6 @@ ble_client:
     id: airthingsmini
 
 esp32_ble_tracker:
-
 ```
 
 {{< note >}}
@@ -177,7 +173,6 @@ ble_client:
     id: airthings01
 
 esp32_ble_tracker:
-
 ```
 
 ### Battery Level Reporting
@@ -208,7 +203,6 @@ sensor:
       - calibrate_linear:
         - 2.7 -> 0
         - 4.5 -> 100
-
 ```
 
 ```yaml
@@ -228,7 +222,6 @@ sensor:
       - calibrate_linear:
         - 2.2 -> 0
         - 3.1 -> 100
-
 ```
 
 ## See Also

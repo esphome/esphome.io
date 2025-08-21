@@ -25,7 +25,6 @@ fan:
     pin_b: motor_reverse_pin
     # enable_pin: motor_enable
     decay_mode: slow   # slow decay mode (coasting) or fast decay (braking).
-
 ```
 
 ## Configuration variables
@@ -54,7 +53,6 @@ Set all h-bridge pins high, shorting the fan/motor's windings and forcing the mo
 on_...:
   then:
     - fan.hbridge.brake: my_fan
-
 ```
 
 ## See Also

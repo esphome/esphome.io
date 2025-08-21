@@ -36,7 +36,6 @@ touchscreen:
     on_release:
       then:
         ...
-
 ```
 
 ### Configuration variables
@@ -116,7 +115,6 @@ touchscreen:
               touch.x_raw,
               touch.y_raw
               );
-
 ```
 
 Get a stylus or a similar object, run the project and touch the corners of the screen at
@@ -137,7 +135,6 @@ the edge pixels. Repeat several times and note minimum and maximum x and y raw v
 [21:08:11][I][cal:071]: x=16, y=299, x_raw=281, y_raw=3839
 [21:08:12][I][cal:071]: x=19, y=302, x_raw=328, y_raw=3866
 [21:08:13][I][cal:071]: x=20, y=296, x_raw=358, y_raw=3799
-
 ```
 
 That means that the minimum raw x is 281, maximum 3848, minimum y 347 and maximum 3878.
@@ -162,7 +159,6 @@ touchscreen:
     mirror_x: false
     mirror_y: false
     swap_xy: false
-
 ```
 
 Compile, run and click on the edges again. The x and y should now match the coordinates
@@ -173,7 +169,6 @@ of the display.
 [21:32:37][I][cal:071]: x=237, y=4, x_raw=313, y_raw=385
 [21:32:43][I][cal:071]: x=239, y=318, x_raw=284, y_raw=3845
 [21:33:05][I][cal:071]: x=2, y=313, x_raw=3821, y_raw=3793
-
 ```
 
 Note that the touch screen is not extremely precise and there might be nonlinearities
@@ -187,7 +182,6 @@ display:
       auto touch = id(my_touchscreen)->get_touch();
       if (touch) // or touch.has_value()
         it.filled_circle(touch.value().x, touch.value().y, 10, RED);
-
 ```
 
 To be exact, the component does the following
@@ -229,7 +223,6 @@ on_update:
                  ESP_LOGI("Touch points:", "id=%d x=%d, y=%d", touch.id, touch.x, touch.y);
               }
           }
-
 ```
 
 Be aware that you need to check the state flag every time to see if the touch is still valid.
@@ -264,7 +257,6 @@ binary_sensor:
     y_max: 100
     page_id: home_page_id
     use_raw: true
-
 ```
 
 ### Configuration variables

@@ -19,7 +19,6 @@ The `sdl` display component must be configured to use this.
 # Example configuration entry
 touchscreen:
   platform: sdl
-
 ```
 
 ### Configuration variables

@@ -21,7 +21,6 @@ switch:
   - platform: gpio
     pin: GPIOXX
     name: "Living Room Dehumidifier"
-
 ```
 
 ## Configuration variables
@@ -47,7 +46,6 @@ switch:
     pin:
       number: GPIOXX
       inverted: true
-
 ```
 
 ## Momentary Switch
@@ -70,7 +68,6 @@ switch:
     on_turn_on:
     - delay: 500ms
     - switch.turn_off: relay
-
 ```
 
 {{< img src="gate-remote-ui.png" alt="Image" class="align-center" >}}
@@ -99,7 +96,6 @@ switch:
     name: "Relay #2"
     id: relay2
     interlock: [relay1]
-
 ```
 
 Or with some YAML anchors you can further simplify the config:
@@ -115,7 +111,6 @@ switch:
     # etc
     id: relay2
     interlock: *interlock_group
-
 ```
 
 {{< warning >}}

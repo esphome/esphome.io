@@ -60,7 +60,6 @@ remote_transmitter:
 climate:
   - platform: REPLACEME
     name: "Living Room AC"
-
 ```
 
 ## Configuration Variables
@@ -95,7 +94,6 @@ climate:
     sensor: room_temperature
     header_high: 3265us # AC Units from LG in Brazil, for example use these timings
     header_low: 9856us
-
 ```
 
 {{< anchor "daikin_brc" >}}
@@ -113,7 +111,6 @@ climate:
     name: "AC"
     sensor: room_temperature
     use_fahrenheit: true
-
 ```
 
 {{< anchor "delonghi_ir" >}}
@@ -149,7 +146,6 @@ climate:
     name: "AC"
     sensor: room_temperature
     model: yan
-
 ```
 
 {{< anchor "midea_ir" >}}
@@ -167,7 +163,6 @@ climate:
     name: "AC"
     sensor: room_temperature
     use_fahrenheit: true
-
 ```
 
 {{< note >}}
@@ -220,7 +215,6 @@ climate:
     supports_fan_only: "true"
     horizontal_default: "left"
     vertical_default: "down"
-
 ```
 
 {{< anchor "toshiba" >}}
@@ -275,7 +269,6 @@ climate:
     sensor: room_temperature
     use_fahrenheit: true
     supports_heat: true
-
 ```
 
 {{< anchor "zhlt01" >}}
@@ -316,7 +309,6 @@ climate:
   - platform: REPLACEME
     name: "Living Room AC"
     receiver_id: rcvr
-
 ```
 
 {{< anchor "heatpumpir" >}}

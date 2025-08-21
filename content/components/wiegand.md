@@ -36,7 +36,6 @@ wiegand:
       - lambda: ESP_LOGI("TAG", "received tag %s", x.c_str());
     on_raw:
       - lambda: ESP_LOGI("RAW", "received raw %d bits, value %llx", bits, value);
-
 ```
 
 Configuration variables:

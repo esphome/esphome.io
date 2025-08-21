@@ -46,7 +46,6 @@ display:
     cs_pin: GPIOXX
     reset_pin: GPIOXX
     enable_pin: GPIOXX
-
 ```
 
 ### Configuration variables
@@ -131,7 +130,6 @@ display:
 psram:
   mode: octal
   speed: 80MHz
-
 ```
 
 ### Lilygo T-Display S3 AMOLED
@@ -172,7 +170,6 @@ display:
     cs_pin: 6
     reset_pin: 17
     enable_pin: 38
-
 ```
 
 ### JC4832W535 3.5" LCD Board
@@ -217,7 +214,6 @@ touchscreen:
   transform:
     swap_xy: true
     mirror_y: true
-
 ```
 
 ## See Also

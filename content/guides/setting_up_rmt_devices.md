@@ -26,7 +26,6 @@ remote_receiver instance:
 remote_receiver:
   pin: GPIOXX
   dump: all
-
 ```
 
 Compile and upload the code. While viewing the log output from the ESP,
@@ -43,7 +42,6 @@ You should see log output like below:
 [D][remote.raw] Received Raw: 4088, -1542, 1019, -510, 513, -1019, 510, -509, 511, -510, 1020,
 [D][remote.raw]   -1020, 1022, -1019, 510, -509, 511, -510, 511, -509, 511, -510,
 [D][remote.raw]   1020, -1019, 510, -511, 1020, -510, 512, -508, 510, -1020, 1022
-
 ```
 
 If the codec is already implemented in ESPHome, you will see the decoded value directly -
@@ -58,7 +56,6 @@ remote_transmitter:
   pin: GPIOXX
   # Infrared remotes use a 50% carrier signal
   carrier_duty_percent: 50%
-
 ```
 
 This will allow us to send any data we want via the IR LED. To replicate the codes we decoded
@@ -83,7 +80,6 @@ button:
           code: [4088, -1542, 1019, -510, 513, -1019, 510, -509, 511, -510, 1020,
                  -1020, 1022, -1019, 510, -509, 511, -510, 511, -509, 511, -510,
                  1020, -1019, 510, -511, 1020, -510, 512, -508, 510, -1020, 1022]
-
 ```
 
 Recompile again, when you power up the device the next time you will see a new button
@@ -109,7 +105,6 @@ remote_receiver:
   filter: 250us
   idle: 4ms
   buffer_size: 2kb # only for ESP8266
-
 ```
 
 Compile and upload the code. While viewing the log output from the ESP,
@@ -126,7 +121,6 @@ You should see log output like below:
 [D][remote.raw] Received Raw: 4088, -1542, 1019, -510, 513, -1019, 510, -509, 511, -510, 1020,
 [D][remote.raw]   -1020, 1022, -1019, 510, -509, 511, -510, 511, -509, 511, -510,
 [D][remote.raw]   1020, -1019, 510, -511, 1020, -510, 512, -508, 510, -1020, 1022
-
 ```
 
 {{< note >}}
@@ -139,7 +133,6 @@ remote_receiver:
   dump:
     - rc_switch
   ...
-
 ```
 
 {{< /note >}}
@@ -155,7 +148,6 @@ remote_transmitter:
   pin: GPIOXX
   # RF uses a 100% carrier signal
   carrier_duty_percent: 100%
-
 ```
 
 This will allow us to send any data we want via the RF transmitter. To replicate the codes we decoded
@@ -184,7 +176,6 @@ button:
           code: [4088, -1542, 1019, -510, 513, -1019, 510, -509, 511, -510, 1020,
                  -1020, 1022, -1019, 510, -509, 511, -510, 511, -509, 511, -510,
                  1020, -1019, 510, -511, 1020, -510, 512, -508, 510, -1020, 1022]
-
 ```
 
 Recompile again, when you power up the device the next time you will see a new button

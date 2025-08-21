@@ -30,7 +30,6 @@ esp32_ble:
   connection_timeout: 20s  # Default, matches client timeout
   # advertising: true  # Only needed for advanced use cases
   max_notifications: 12  # Default, increase if needed
-
 ```
 
 ## Configuration variables
@@ -94,7 +93,6 @@ This action turns off the BLE interface on demand.
 on_...:
   then:
     - ble.disable:
-
 ```
 
 {{< note >}}
@@ -110,7 +108,6 @@ This action turns on the BLE interface on demand.
 on_...:
   then:
     - ble.enable:
-
 ```
 
 {{< note >}}
@@ -131,7 +128,6 @@ on_...:
         - ble.disable:
       else:
         - ble.enable:
-
 ```
 
 The lambda equivalent for this is `id(ble_id).is_active()`  .

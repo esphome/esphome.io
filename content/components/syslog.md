@@ -21,7 +21,6 @@ time:
   platform: sntp
 
 syslog:
-
 ```
 
 ## Configuration Options

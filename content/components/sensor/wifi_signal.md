@@ -23,7 +23,6 @@ sensor:
   - platform: wifi_signal
     name: "WiFi Signal Sensor"
     update_interval: 60s
-
 ```
 
 To additionally display signal strength in percentage use the [Copy Sensor](#copy-sensor) (it's not possible to add the same sensor twice, because it has a static `uniqueid` reported to Home Assistant):
@@ -45,7 +44,6 @@ sensor:
     unit_of_measurement: "Signal %"
     entity_category: "diagnostic"
     device_class: ""
-
 ```
 
 ## Configuration variables

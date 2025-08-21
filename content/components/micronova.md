@@ -48,7 +48,6 @@ get 3v3.
 ```yaml
 micronova:
   enable_rx_pin: GPIOXX
-
 ```
 
 ### Configuration variables
@@ -75,7 +74,6 @@ text_sensor:
   - platform: micronova
     stove_state:
       name: Stove status
-
 ```
 
 ### Configuration variables
@@ -105,7 +103,6 @@ sensor:
       memory_location: 0x20
       memory_address: 0x7d
       name: Custom Address sensor
-
 ```
 
 ### Configuration variables
@@ -138,7 +135,6 @@ number:
       step: 0.5
     power_level:
       name: Thermostat temperature
-
 ```
 
 ### Configuration variables
@@ -167,7 +163,6 @@ button:
       memory_location: 0x20
       memory_address: 0x7d
       memory_data: 0x08
-
 ```
 
 ### Configuration variables
@@ -189,7 +184,6 @@ switch:
   - platform: micronova
     stove:
       name: Stove on/off switch
-
 ```
 
 ### Configuration variables

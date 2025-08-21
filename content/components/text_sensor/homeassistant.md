@@ -25,7 +25,6 @@ text_sensor:
   - platform: homeassistant
     id: weather_fom_ha
     entity_id: sensor.weather_forecast
-
 ```
 
 Entity state attributes can also be imported:
@@ -37,7 +36,6 @@ text_sensor:
     id: effect
     entity_id: light.led_strip
     attribute: effect
-
 ```
 
 ## Configuration variables

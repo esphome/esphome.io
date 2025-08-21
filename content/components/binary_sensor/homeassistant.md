@@ -25,7 +25,6 @@ binary_sensor:
   - platform: homeassistant
     name: "Input Boolean From Home Assistant"
     entity_id: input_boolean.state_home
-
 ```
 
 With Home Assistant 2021.6 or newer, entity state attributes can also be imported.
@@ -37,7 +36,6 @@ binary_sensor:
     id: muted
     entity_id: media_player.mega_speakers
     attribute: is_volume_muted
-
 ```
 
 ## Configuration variables

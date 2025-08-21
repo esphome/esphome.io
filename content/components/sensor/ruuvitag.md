@@ -49,7 +49,6 @@ sensor:
     name: "RuuviTag Movement Counter"
   measurement_sequence_number:
     name: "RuuviTag Measurement Sequence Number"
-
 ```
 
 ## Configuration variables
@@ -121,7 +120,6 @@ ESPHome can identify them. So first, create a simple configuration without any
 esp32_ble_tracker:
 
 ruuvi_ble:
-
 ```
 
 After uploading the ESP32 will immediately try to scan for BLE devices.

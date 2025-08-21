@@ -19,7 +19,6 @@ output:
   - platform: gpio
     pin: GPIOXX
     id: gpio_d1
-
 ```
 
 ## Configuration variables

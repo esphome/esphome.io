@@ -32,7 +32,6 @@ sensor:
       name: "Particulate Matter <2.5µm Concentration"
     pm_10_0:
       name: "Particulate Matter <10.0µm Concentration"
-
 ```
 
 ## Configuration variables

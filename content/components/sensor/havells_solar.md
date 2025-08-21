@@ -91,7 +91,6 @@ sensor:
       name: "HAVELLS DCI Of S"
     dci_of_t:
       name: "HAVELLS DCI Of T"
-
 ```
 
 ## Configuration variables

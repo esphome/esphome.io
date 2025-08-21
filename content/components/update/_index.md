@@ -17,7 +17,6 @@ install it on its own.
 # Example configuration entry
 update:
   - platform: ...
-
 ```
 
 {{< anchor "config-update" >}}

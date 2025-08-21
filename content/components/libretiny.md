@@ -33,7 +33,6 @@ rtl87xx:
 # Example configuration entry for LN882x
 ln882x:
   board: generic-ln882hki
-
 ```
 
 ## Configuration variables
@@ -164,7 +163,6 @@ uart:
   tx_pin: TX1
   baud_rate: 9600
 tuya:
-
 ```
 
 {{< anchor "advanced-options" >}}
@@ -189,7 +187,6 @@ bk72xx:
     options:
       LT_LOG_HEAP: 1
       LT_AUTO_DOWNLOAD_REBOOT: 1
-
 ```
 
 - **loglevel** (*Optional*, string): Logging level for LibreTiny core. Controls the output of logging messages

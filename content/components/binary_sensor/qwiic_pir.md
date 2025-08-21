@@ -25,7 +25,6 @@ To use the sensor, first set up an [I²C Bus](#i2c) and connect the sensor to th
 binary_sensor:
   - platform: qwiic_pir
     name: "Qwiic PIR Motion Sensor"
-
 ```
 
 ## Configuration variables

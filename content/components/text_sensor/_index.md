@@ -23,7 +23,6 @@ name: Livingroom Temperature
 
 # Optional variables:
 icon: "mdi:water-percent"
-
 ```
 
 Configuration variables:
@@ -87,7 +86,6 @@ filters:
     - "suf -> foo"
     - "pre -> bar"
   - lambda: return {"Hello World"};
-
 ```
 
 ### `to_upper`
@@ -100,7 +98,6 @@ Converts all characters within a string to uppercase (only the English alphabet 
   # ...
   filters:
     - to_upper:
-
 ```
 
 ### `to_lower`
@@ -113,7 +110,6 @@ Converts all characters within a string to lowercase (only the English alphabet 
   # ...
   filters:
     - to_lower:
-
 ```
 
 ### `append`
@@ -126,7 +122,6 @@ Adds a string to the end of the current string.
   # ...
   filters:
     - append: "_suffix"
-
 ```
 
 ### `prepend`
@@ -139,7 +134,6 @@ Adds a string to the start of the current string.
   # ...
   filters:
     - prepend: "prefix_"
-
 ```
 
 ### `substitute`
@@ -154,7 +148,6 @@ Search the current value of the text sensor for a string, and replace it with an
     - substitute:
       - "suf -> foo"
       - "pre -> bar"
-
 ```
 
 The arguments are a list of substitutions, each in the form `TO_FIND -> REPLACEMENT`  .
@@ -172,7 +165,6 @@ Does not change the value of the text sensor if the current value wasn't found.
     - map:
       - high -> On
       - low -> Off
-
 ```
 
 The arguments are a list of substitutions, each in the form `LOOKUP -> REPLACEMENT`  .
@@ -190,7 +182,6 @@ filters:
       } else {
         return x + "foo";
       }
-
 ```
 
 ## Text Sensor Automation
@@ -213,7 +204,6 @@ text_sensor:
       then:
         - lambda: |-
             ESP_LOGD("main", "The current version is %s", x.c_str());
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -233,7 +223,6 @@ text_sensor:
       then:
         - lambda: |-
             ESP_LOGD("main", "The current version is %s", x.c_str());
-
 ```
 
 Configuration variables: See [Automation](#automation).
@@ -253,7 +242,6 @@ on_...:
         text_sensor.state:
           id: my_text_sensor
           state: 'Hello World'
-
 ```
 
 Configuration variables:
@@ -269,7 +257,6 @@ This condition can also be expressed in [lambdas](#config-lambda):
 if (id(my_text_sensor).state == "Hello World") {
   // do something
 }
-
 ```
 
 {{< /note >}}
@@ -285,7 +272,6 @@ advanced stuff (see the full API Reference for more info).
 ```cpp
     // Within lambda, push a value of "Hello World"
     id(my_sensor).publish_state("Hello World");
-
 ```
 
 - `.state`  : Retrieve the current value of the sensor as an `std::string` object.
@@ -294,7 +280,6 @@ advanced stuff (see the full API Reference for more info).
     // For example, create a custom log message when a value is received:
     std::string val = id(my_sensor).state;
     ESP_LOGI("main", "Value of my sensor: %s", val.c_str());
-
 ```
 
 ## See Also

@@ -40,7 +40,6 @@ sensor:
       name: Haier Outdoor Out Air Temperature
     power:
       name: Haier Power
-
 ```
 
 ## Configuration variables

@@ -45,7 +45,6 @@ sensor:
         command: 0x003C
       - name: Custom Heat Power
         command: 0x0050
-
 ```
 
 Configuration variables:

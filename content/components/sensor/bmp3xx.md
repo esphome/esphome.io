@@ -30,7 +30,6 @@ sensor:
       name: "Outside Pressure"
     address: 0x77
     update_interval: 60s
-
 ```
 
 ### Configuration variables
@@ -69,7 +68,6 @@ sensor:
       name: "Outside Pressure"
     cs_pin: 13
     update_interval: 60s
-
 ```
 
 ### Configuration variables

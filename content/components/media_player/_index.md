@@ -24,7 +24,6 @@ ESPHome media players require Home Assistant 2022.6 or newer.
 media_player:
   - platform: ...
     name: "Media Player Name"
-
 ```
 
 Configuration variables:
@@ -176,7 +175,6 @@ media_player:
     # ...
     on_state:
       - logger.log: "State updated!"
-
 ```
 
 {{< anchor "media_player-on_play_trigger" >}}
@@ -191,7 +189,6 @@ media_player:
     # ...
     on_play:
       - logger.log: "Playback started!"
-
 ```
 
 {{< anchor "media_player-on_pause_trigger" >}}
@@ -206,7 +203,6 @@ media_player:
     # ...
     on_pause:
       - logger.log: "Playback paused!"
-
 ```
 
 {{< anchor "media_player-on_idle_trigger" >}}
@@ -221,7 +217,6 @@ media_player:
     # ...
     on_idle:
       - logger.log: "Playback finished!"
-
 ```
 
 {{< anchor "media_player-on_announcement_trigger" >}}
@@ -236,7 +231,6 @@ media_player:
     # ...
     on_announcement:
       - logger.log: "Announcing!"
-
 ```
 
 {{< anchor "media_player-on_turn_off_trigger" >}}
@@ -251,7 +245,6 @@ media_player:
     # ...
     on_turn_off:
       - logger.log: "Media Player is Turned Off"
-
 ```
 
 {{< anchor "media_player-on_turn_on_trigger" >}}
@@ -266,7 +259,6 @@ media_player:
     # ...
     on_turn_on:
       - logger.log: "Media Player is Turned On"
-
 ```
 
 {{< anchor "media_player-is_idle_condition" >}}
@@ -281,7 +273,6 @@ on_...:
   if:
     condition:
       media_player.is_idle:
-
 ```
 
 {{< anchor "media_player-is_playing_condition" >}}
@@ -296,7 +287,6 @@ on_...:
   if:
     condition:
       media_player.is_playing:
-
 ```
 
 {{< anchor "media_player-is_paused_condition" >}}
@@ -311,7 +301,6 @@ on_...:
   if:
     condition:
       media_player.is_paused:
-
 ```
 
 {{< anchor "media_player-is_announcing_condition" >}}
@@ -326,7 +315,6 @@ on_...:
   if:
     condition:
       media_player.is_announcing:
-
 ```
 
 {{< anchor "media_player-is_off_condition" >}}
@@ -341,7 +329,6 @@ on_...:
   if:
     condition:
       media_player.is_off:
-
 ```
 
 {{< anchor "media_player-is_on_condition" >}}
@@ -356,7 +343,6 @@ on_...:
   if:
     condition:
       media_player.is_on:
-
 ```
 
 ## Play media in order
@@ -371,7 +357,6 @@ on_...:
     - wait_until:
         media_player.is_idle:
     - media_player.play_media: 'http://media-url/two.mp3'
-
 ```
 
 ## See Also

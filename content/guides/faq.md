@@ -148,7 +148,6 @@ This erases your microcontroller's flash memory -- nothing (settings, data, etc.
 
 ```bash
 esptool --port /dev/ttyUSB0 erase_flash
-
 ```
 
 ### Write flash
@@ -157,7 +156,6 @@ This will install ("flash") your binary (ESPHome) onto your microcontroller.
 
 ```bash
 esptool --port /dev/ttyUSB0 write_flash 0x0 your_node_firmware.bin
-
 ```
 
 {{< anchor "faq-usb_troubleshooting" >}}
@@ -195,7 +193,6 @@ transfer. Don't worry -- just try again, perhaps with a reduced baud rate for sa
 
 ```bash
 esptool.py --port /dev/ttyUSB0 --baud 115200 write_flash 0x0 your_node_firmware.bin
-
 ```
 
 If you *still* can't get it to work, you might want to revisit [I can't get installation over USB to work](#faq-usb_troubleshooting) above.
@@ -223,7 +220,6 @@ If you *still* can't get it to work, you might want to revisit [I can't get inst
           file: on-multi-click.yaml
           vars:
             id: 2
-
 ```
 
   `on-multi-click.yaml`  :
@@ -239,7 +235,6 @@ If you *still* can't get it to work, you might want to revisit [I can't get inst
         - mqtt.publish:
             topic: ${device_name}/button${id}/status
             payload: double
-
 ```
 
 - You can use {{< docref "/components/substitutions" >}} to build on the examples above and reduce repetition in your
@@ -249,14 +244,12 @@ If you *still* can't get it to work, you might want to revisit [I can't get inst
 
 ```bash
     esphome config livingroom.yaml
-
 ```
 
 - To view the logs from your ESPHome node without uploading, run:
 
 ```bash
     esphome logs livingroom.yaml
-
 ```
 
 - You can always find the source ESPHome generates in the `<NODE_NAME>/src/` directory.
@@ -307,7 +300,6 @@ If you're running the Docker container independently of Home Assistant, run:
 pip3 install -U esphome
 # From docker:
 docker pull ghcr.io/esphome/esphome:stable
-
 ```
 
 {{< anchor "faq-beta" >}}
@@ -327,7 +319,6 @@ stable channel. You can help test ESPHome (and use new features) by installing t
 
     # For docker-based installs
     docker run [...] -it ghcr.io/esphome/esphome:beta run livingroom.yaml
-
 ```
 
 The beta documentation is available at [beta.esphome.io](https://beta.esphome.io).
@@ -346,7 +337,6 @@ That aside, if you want to install the `dev` version of ESPHome:
 
 ```bash
     pip3 install https://github.com/esphome/esphome/archive/dev.zip
-
 ```
 
 - From docker, use the [ghcr.io/esphome/esphome:dev](https://github.com/esphome/esphome/pkgs/container/esphome/)
@@ -354,7 +344,6 @@ That aside, if you want to install the `dev` version of ESPHome:
 
 ```bash
     docker run [...] -it ghcr.io/esphome/esphome:dev livingroom.yaml compile
-
 ```
 
 The dev documentation is available at [next.esphome.io](https://next.esphome.io/).
@@ -366,7 +355,6 @@ the following contents:
 
 ```yaml
 <<: !include ../secrets.yaml
-
 ```
 
 This "pulls in" the contents of your Home Assistant `secrets.yaml` file from the parent directory.
@@ -444,7 +432,6 @@ wiping the NVS partition with the following commands:
 ```bash
 dd if=/dev/zero of=nvs_zero bs=1 count=20480
 esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash 0x009000 nvs_zero
-
 ```
 
 Change `/dev/ttyUSB0` above to your serial port. If you have changed the partition layout, you'll need to adjust the
@@ -461,7 +448,6 @@ docker pull ghcr.io/esphome/esphome
 docker pull ghcr.io/esphome/esphome:beta
 # Dev version
 docker pull ghcr.io/esphome/esphome:dev
-
 ```
 
 ESPHome Command Reference:
@@ -488,7 +474,6 @@ docker run --rm -p 6052:6052 -e ESPHOME_DASHBOARD_USE_PING=true -v "${PWD}":/con
 
 # Setup a bash alias:
 alias esphome='docker run --rm -v "${PWD}":/config --net=host -it ghcr.io/esphome/esphome'
-
 ```
 
 Docker Compose example:
@@ -510,7 +495,6 @@ services:
     # The host networking driver only works on Linux hosts, but is available as a Beta feature, on Docker Desktop version 4.29 and later.
     network_mode: host
     restart: always
-
 ```
 
 {{< anchor "docker-reference-notes" >}}
@@ -625,7 +609,6 @@ external_components:
     components:
       # list all components modified by this pull request here
       - ccs811
-
 ```
 
 Note that this only works for pull requests that only change files within components. If any files outside

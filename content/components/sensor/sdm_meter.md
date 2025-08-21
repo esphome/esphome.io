@@ -59,7 +59,6 @@ sensor:
     export_reactive_energy:
       name: "SDM230M Export Reactive Energy"
     update_interval: 60s
-
 ```
 
 ## Configuration variables

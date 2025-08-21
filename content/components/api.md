@@ -33,7 +33,6 @@ Documentation will only refer to **Actions**.
 ```yaml
 # Example configuration entry
 api:
-
 ```
 
 ```yaml
@@ -44,7 +43,6 @@ api:
   encryption:
     key: "YOUR_ENCRYPTION_KEY_HERE"
   reboot_timeout: 30min
-
 ```
 
 ## Configuration variables
@@ -133,7 +131,6 @@ on_...:
       event: esphome.button_pressed
       data:
         message: Button was pressed
-
 ```
 
 #### Configuration variables
@@ -174,7 +171,6 @@ on_...:
       variables:
         my_variable: |-
           return id(my_sensor).state;
-
 ```
 
 #### Configuration variables
@@ -204,7 +200,6 @@ script:
         - '{{ red }}'
         - '{{ green }}'
         - '{{ blue }}'
-
 ```
 
 Then, in ESPHome:
@@ -219,7 +214,6 @@ on_...:
         red: '255'
         green: '199'
         blue: '71'
-
 ```
 
 {{< anchor "api-homeassistant_tag_scanned_action" >}}
@@ -239,7 +233,6 @@ straight from ESPHome [Automations](#automation).
 on_...:
   # Simple
   - homeassistant.tag_scanned: some-tag
-
 ```
 
 #### Configuration variables
@@ -265,7 +258,6 @@ api:
     - logger.log:
         format: "Client %s connected to API with IP %s"
         args: ["client_info.c_str()", "client_address.c_str()"]
-
 ```
 
 {{< anchor "api-on_client_disconnected_trigger" >}}
@@ -283,7 +275,6 @@ api:
   # ...
   on_client_disconnected:
     - logger.log: "API client disconnected!"
-
 ```
 
 {{< anchor "api-connected_condition" >}}
@@ -301,7 +292,6 @@ on_...:
       api.connected:
     then:
       - logger.log: API is connected!
-
 ```
 
 The lambda equivalent for this is `id(api_id).is_connected()`  .
@@ -323,7 +313,6 @@ api:
         - switch.turn_on: relay
         - delay: 3h
         - switch.turn_off: relay
-
 ```
 
 For example with the configuration seen above, after uploading you will see an action
@@ -345,7 +334,6 @@ api:
             id: my_light
             brightness: !lambda 'return my_brightness;'
             effect: !lambda 'return my_effect;'
-
 ```
 
 Using the `variables` key you can tell ESPHome which variables to expect from Home Assistant.
@@ -357,7 +345,6 @@ action: esphome.livingroom_start_effect
 data_template:
   my_brightness: "{{ states.brightness.state }}"
   my_effect: "Rainbow"
-
 ```
 
 Then each variable you define in the `variables` section is accessible in the automation

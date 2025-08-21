@@ -20,7 +20,6 @@ with lock/unlock actions.
 lock:
   - platform: ...
     name: "Lock Name"
-
 ```
 
 Configuration variables:
@@ -62,7 +61,6 @@ This action locks a lock with the given ID on when executed.
 on_...:
   then:
     - lock.lock: deadbolt_1
-
 ```
 
 {{< anchor "lock-unlock_action" >}}
@@ -75,7 +73,6 @@ This action unlocks a lock with the given ID off when executed.
 on_...:
   then:
     - lock.unlock: deadbolt_1
-
 ```
 
 {{< anchor "lock-open_action" >}}
@@ -88,7 +85,6 @@ This action opens (e.g. unlatch) a lock with the given ID off when executed.
 on_...:
   then:
     - lock.open: doorlock_1
-
 ```
 
 {{< anchor "lock-is_locked_condition" >}}
@@ -105,7 +101,6 @@ on_...:
     condition:
       # Same syntax for is_unlocked
       lock.is_locked: my_lock
-
 ```
 
 {{< anchor "lock-lambda_calls" >}}
@@ -122,7 +117,6 @@ advanced stuff (see the full API Reference for more info).
     // Within lambda, make the lock report a specific state
     id(my_lock).publish_state(LOCK_STATE_LOCKED);
     id(my_lock).publish_state(LOCK_STATE_UNLOCKED);
-
 ```
 
 - `state`  : Retrieve the current state of the lock.
@@ -132,7 +126,6 @@ advanced stuff (see the full API Reference for more info).
     if (id(my_lock).state == LOCK_STATE_LOCKED) {
       // Lock is LOCKED, do something here
     }
-
 ```
 
 - `unlock()`  /`lock()`  /`open()`  : Manually lock/unlock/open a  lock from code.
@@ -143,7 +136,6 @@ advanced stuff (see the full API Reference for more info).
     id(my_lock).unlock();
     id(my_lock).lock();
     id(my_lock).open();
-
 ```
 
 {{< anchor "lock-on_lock_unlock_trigger" >}}
@@ -161,7 +153,6 @@ lock:
     - logger.log: "Door Locked!"
     on_unlock:
     - logger.log: "Door Unlocked!"
-
 ```
 
 ## See Also

@@ -24,7 +24,6 @@ values, including 53.3°C which equates to a raw value of 128. Invalid measureme
 sensor:
   - platform: internal_temperature
     name: "Internal Temperature"
-
 ```
 
 ## Configuration variables

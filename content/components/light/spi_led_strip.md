@@ -29,7 +29,6 @@ light:
     id: rgb_led
     name: "RGB LED Strip"
     data_rate: 1MHz
-
 ```
 
 ## Color Correction

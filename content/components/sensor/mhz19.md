@@ -28,7 +28,6 @@ sensor:
       name: MH-Z19 CO2 Value
     temperature:
       name: MH-Z19 Temperature
-
 ```
 
 ## Configuration variables
@@ -71,7 +70,6 @@ for over 20 minutes and you execute this function.
 on_...:
   then:
     - mhz19.calibrate_zero: my_mhz19_id
-
 ```
 
 You can provide an [action](#api-device-actions) to perform from Home Assistant
@@ -82,7 +80,6 @@ api:
     - action: mhz19_calibrate_zero
       then:
         - mhz19.calibrate_zero: my_mhz19_id
-
 ```
 
 {{< anchor "mhz19-abc_enable_action" >}}
@@ -95,7 +92,6 @@ This [action](#config-action) enables automatic baseline calibration on the sens
 on_...:
   then:
     - mhz19.abc_enable: my_mhz19_id
-
 ```
 
 {{< anchor "mhz19-abc_disable_action" >}}
@@ -108,7 +104,6 @@ This [action](#config-action) disables automatic baseline calibration on the sen
 on_...:
   then:
     - mhz19.abc_disable: my_mhz19_id
-
 ```
 
 You can provide switch and control ABC from Home Assistant
@@ -122,7 +117,6 @@ switch:
       mhz19.abc_enable: my_mhz19_id
     on_turn_off:
       mhz19.abc_disable: my_mhz19_id
-
 ```
 
 ## See Also

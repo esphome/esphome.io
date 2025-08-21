@@ -18,7 +18,6 @@ text_sensor:
   - platform: libretiny
     version:
       name: LibreTiny Version
-
 ```
 
 ## Configuration variables

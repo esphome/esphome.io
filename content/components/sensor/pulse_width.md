@@ -25,7 +25,6 @@ sensor:
   - platform: pulse_width
     pin: D0
     name: Pulse Width Sensor
-
 ```
 
 ## Configuration variables

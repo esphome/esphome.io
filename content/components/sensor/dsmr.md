@@ -39,7 +39,6 @@ text_sensor:
       name: "DSMR Identification"
     p1_version:
       name: "DSMR Version"
-
 ```
 
 Configuration variables:
@@ -300,7 +299,6 @@ text_sensor:
       name: "dsmr_p1_version"
     gas_delivered_text:
       name: "gas delivered raw"
-
 ```
 
 {{< anchor "sensor-dsmr-request_pin" >}}
@@ -358,7 +356,6 @@ uart:
 
 dsmr:
   max_telegram_length: 1700
-
 ```
 
 It's best when a hardware UART is used for reading the P1 data. Whether or not hardware UART is used can
@@ -374,7 +371,6 @@ be checked in the config dump that you get when connecting to the API logger. Ex
 [02:38:37][C][uart.arduino_esp8266:104]:   Stop bits: 1
 [02:38:37][C][uart.arduino_esp8266:106]:   Using hardware serial interface.
                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 ```
 
 When using an ESP8266, then GPIO13 (e.g. pin D7 on a D1 Mini) can be used for hardware RX. However, to
@@ -389,7 +385,6 @@ logger:
 uart:
   pin: GPIO13
   baud_rate: 115200
-
 ```
 
 ## Bridging support / raw telegram logging
@@ -425,7 +420,6 @@ text_sensor:
           - lambda: |-
               ESP_LOGV("dsrm", "telegram: %s", x.c_str());
               p1_bridge_uart->write_str(x.c_str());
-
 ```
 
 ## See Also

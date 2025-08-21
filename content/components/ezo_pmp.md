@@ -28,7 +28,6 @@ ezo_pmp:
   id: ezo_pmp
   address: 103  # Default Address for the EZO-PMP.
   update_interval: 60s
-
 ```
 
 ### Configuration variables
@@ -56,7 +55,6 @@ sensor:
     current_volume_dosed:
       id: current_volume_dosed
       name: Current Volume Dosed
-
 ```
 
 #### Configuration variables
@@ -77,7 +75,6 @@ sensor:
     total_volume_dosed:
       id: total_volume_dosed
       name: Total Volume Dosed
-
 ```
 
 #### Configuration variables
@@ -97,7 +94,6 @@ sensor:
     absolute_total_volume_dosed:
       id: absolute_total_volume_dosed
       name: Absolute Total Volume Dosed
-
 ```
 
 #### Configuration variables
@@ -118,7 +114,6 @@ sensor:
     last_volume_requested:
       id: last_volume_requested
       name: Last Volume Requested
-
 ```
 
 #### Configuration variables
@@ -140,7 +135,6 @@ sensor:
     max_flow_rate:
       id: max_flow_rate
       name: Max Flow Rate
-
 ```
 
 #### Configuration variables
@@ -160,7 +154,6 @@ sensor:
     pump_voltage:
       id: pump_voltage
       name: Pump Voltage
-
 ```
 
 #### Configuration variables
@@ -181,7 +174,6 @@ binary_sensor:
     pump_state:
       id: pump_state
       name: Pump State
-
 ```
 
 #### Configuration variables
@@ -200,7 +192,6 @@ binary_sensor:
     is_paused:
       id: is_paused
       name: Is Paused
-
 ```
 
 #### Configuration variables
@@ -221,7 +212,6 @@ text_sensor:
     dosing_mode:
       id: dosing_mode
       name: Dosing Mode
-
 ```
 
 #### Configuration variables
@@ -240,7 +230,6 @@ text_sensor:
     calibration_status:
       id: calibration_status
       name: Calibration Status
-
 ```
 
 #### Configuration variables
@@ -262,7 +251,6 @@ on_...:
   then:
   - ezo_pmp.find:
       id: ezo_pmp
-
 ```
 
 #### Configuration variables
@@ -288,7 +276,6 @@ on_...:
       id: ezo_pmp
       volume: !lambda |-
         return id(some_volume_sensor).state;
-
 ```
 
 #### Configuration variables
@@ -319,7 +306,6 @@ on_...:
         return id(some_volume_sensor).state;
       duration: !lambda |-
         return id(some_duration_sensor).state;
-
 ```
 
 #### Configuration variables
@@ -351,7 +337,6 @@ on_...:
         return id(some_volume_sensor).state;
       duration: !lambda |-
         return id(some_duration_sensor).state;
-
 ```
 
 #### Configuration variables
@@ -372,7 +357,6 @@ on_...:
   then:
   - ezo_pmp.pause_dosing:
       id: ezo_pmp
-
 ```
 
 #### Configuration variables
@@ -390,7 +374,6 @@ on_...:
   then:
   - ezo_pmp.stop_dosing:
       id: ezo_pmp
-
 ```
 
 #### Configuration variables
@@ -409,7 +392,6 @@ on_...:
   then:
   - ezo_pmp.clear_total_volume_dosed:
       id: ezo_pmp
-
 ```
 
 #### Configuration variables
@@ -436,7 +418,6 @@ on_...:
       id: ezo_pmp
       volume: !lambda |-
         return id(some_volume_sensor).state;
-
 ```
 
 #### Configuration variables
@@ -456,7 +437,6 @@ on_...:
   then:
   - ezo_pmp.clear_calibration:
       id: ezo_pmp
-
 ```
 
 #### Configuration variables
@@ -474,7 +454,6 @@ on_...:
   then:
   - ezo_pmp.find:
       id: ezo_pmp
-
 ```
 
 #### Configuration variables
@@ -494,7 +473,6 @@ on_...:
   - ezo_pmp.change_i2c_address:
       id: ezo_pmp
       address: 100
-
 ```
 
 #### Configuration variables
@@ -542,7 +520,6 @@ button:
                   return id(volume).state;
           duration: !lambda |-
                   return id(duration).state;
-
 ```
 
 {{< anchor "ezo_pmp-lambda_calls" >}}

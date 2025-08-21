@@ -21,7 +21,6 @@ You can use the ESP32 software or hardware serial to use this MR60BHA2, its defa
 ```yaml
 # Example configuration entry
 seeed_mr60bha2:
-
 ```
 
 ### Configuration variables
@@ -39,7 +38,6 @@ binary_sensor:
   - platform: seeed_mr60bha2
     has_target:
       name: "Person Information"
-
 ```
 
 ### Configuration variables
@@ -62,7 +60,6 @@ sensor:
       name: "Distance to detection object"
     num_targets:
       name: "Target number"
-
 ```
 
 ### Configuration variables

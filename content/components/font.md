@@ -96,7 +96,6 @@ font:
 
 display:
   # ...
-
 ```
 
 ## Font metrics
@@ -142,7 +141,6 @@ it.horizontal_line(0, xheight, it.get_width());
 it.horizontal_line(0, baseline, it.get_width());
 it.horizontal_line(0, descender, it.get_width());
 it.horizontal_line(0, height, it.get_width());
-
 ```
 
 {{< img src="fontmetrics.png" alt="Image" caption="The fontmetric values provided by ESPHome." width="60.0%" class="align-center" >}}

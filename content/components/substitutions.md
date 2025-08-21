@@ -23,7 +23,6 @@ sensor:
       name: BME280 Temperature
       filters:
         - offset: ${bme280_temperature_offset}
-
 ```
 
 In the top-level `substitutions` section, you can put as many key-value pairs as you want. Before
@@ -41,7 +40,6 @@ substitutions:
     enabled: true
   color: "yellow"
   unused_pins: [12, 23, 27]
-
 ```
 
 Two substitution passes are performed allowing compound replacements:
@@ -54,7 +52,6 @@ substitutions:
 
 something:
   test: ${bar_${foo}_value}
-
 ```
 
 The above is supported for backward compatibility. It is recommended that
@@ -69,7 +66,6 @@ substitutions:
 
 something:
   test: ${bar[foo]}
-
 ```
 
 {{< anchor "jinja-expressions" >}}
@@ -118,7 +114,6 @@ binary_sensor:
   - platform: gpio
     name: Binary sensor on pin ${sensor_pin.number}
     pin: ${sensor_pin}
-
 ```
 
 Note that in other projects Jinja uses the `{{ ... }}` syntax for expression delimiters.
@@ -143,7 +138,6 @@ lvgl:
         x: $x
         y: $y
         text: Distance is ${math.sqrt(x*x+y*y)}.
-
 ```
 
 To see what mathematical functions ara available,
@@ -177,7 +171,6 @@ binary_sensor:
       file: on-multi-click.yaml
       vars:
         id: 2
-
 ```
 
 `on-multi-click.yaml`  :
@@ -193,7 +186,6 @@ binary_sensor:
     - mqtt.publish:
         topic: ${device_name}/button${id}/status
         payload: double
-
 ```
 
 {{< anchor "command-line-substitutions" >}}
@@ -210,14 +202,12 @@ substitutions:
 
 esphome:
   name: $name
-
 ```
 
 ...and the following command:
 
 ```bash
 esphome -s name my_device01 config example.yaml
-
 ```
 
 You will get something like the following output:
@@ -229,7 +219,6 @@ substitutions:
 esphome:
   name: my_device01
   # ...
-
 ```
 
 Command line substitutions take precedence over those in your configuration file. This can be used to create generic
@@ -256,7 +245,6 @@ sensor:
     name: Temperature
   humidity:
     name: Humidity
-
 ```
 
 ```yaml
@@ -265,7 +253,6 @@ substitutions:
   devicename: nodemcu1
 
 <<: !include common.yaml
-
 ```
 
 {{< tip >}}

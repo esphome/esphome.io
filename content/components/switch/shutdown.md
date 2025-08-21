@@ -21,7 +21,6 @@ pressing the reset button or restarting the power supply.
 switch:
   - platform: shutdown
     name: "Living Room Shutdown"
-
 ```
 
 ## Configuration variables

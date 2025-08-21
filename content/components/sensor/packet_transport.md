@@ -22,7 +22,6 @@ sensor:
 
  packet_transport:
    - platform: ...
-
 ```
 
 ## Configuration variables

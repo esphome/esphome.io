@@ -43,7 +43,6 @@ binary_sensor:
       name: Lens Status
     em_sat:
       name: Emitter Saturation
-
 ```
 
 ```yaml
@@ -60,7 +59,6 @@ sensor:
       name: Rain Total"
     r_int:
       name: Rain Intensity
-
 ```
 
 ## Configuration variables

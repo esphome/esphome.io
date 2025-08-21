@@ -20,7 +20,6 @@ light:
     green: output_component2
     blue: output_component3
     white: output_component4
-
 ```
 
 ## Color Correction
@@ -44,7 +43,6 @@ output:
   - platform: ...
     id: output_component1
     max_power: 80%
-
 ```
 
 {{< note >}}

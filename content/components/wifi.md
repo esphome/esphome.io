@@ -28,7 +28,6 @@ wifi:
     static_ip: 192.168.0.123
     gateway: 192.168.0.1
     subnet: 255.255.255.0
-
 ```
 
 ```yaml
@@ -36,7 +35,6 @@ wifi:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
 ```
 
 {{< anchor "wifi-configuration_variables" >}}
@@ -112,7 +110,6 @@ wifi:
   ap:
     ssid: "Livingroom Fallback Hotspot"
     password: "W1PBGyrokfLz"
-
 ```
 
 You can also create a simple `ap` config which will set up the access point to have the
@@ -127,7 +124,6 @@ wifi:
 wifi:
   ap:
     password: "W1PBGyrokfLz"
-
 ```
 
 ## User Entered Credentials
@@ -157,7 +153,6 @@ wifi:
     gateway: 10.0.0.1
     # The subnet of the network. 255.255.255.0 works for most home networks.
     subnet: 255.255.255.0
-
 ```
 
 After putting a manual IP in your configuration, the ESP will no longer need to negotiate
@@ -188,7 +183,6 @@ power saving mode.
 wifi:
   # ...
   power_save_mode: none
-
 ```
 
 {{< anchor "wifi-networks" >}}
@@ -211,7 +205,6 @@ wifi:
     password: VerySafePassword
   # Other options
   # ...
-
 ```
 
 Configuration variables:
@@ -263,7 +256,6 @@ wifi:
       certificate_authority: ca_cert.pem
       certificate: cert.pem
       key: key.pem
-
 ```
 
 Configuration variables:
@@ -306,7 +298,6 @@ This action turns off the WiFi interface on demand.
 on_...:
   then:
     - wifi.disable:
-
 ```
 
 {{< note >}}
@@ -323,7 +314,6 @@ This action turns on the WiFi interface on demand.
 on_...:
   then:
     - wifi.enable:
-
 ```
 
 {{< note >}}
@@ -348,7 +338,6 @@ on_...:
           - logger.log: "Connected to WiFi!"
         on_error:
           - logger.log: "Failed to connect to WiFi!"
-
 ```
 
 Configuration variables:
@@ -373,7 +362,6 @@ on_...:
       wifi.connected:
     then:
       - logger.log: WiFi is connected!
-
 ```
 
 The lambda equivalent for this is `id(wifi_id).is_connected()`  .
@@ -392,7 +380,6 @@ on_...:
         - wifi.disable:
       else:
         - wifi.enable:
-
 ```
 
 The lambda equivalent for this is `!id(wifi_id).is_disabled()`  .

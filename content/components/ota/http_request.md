@@ -23,7 +23,6 @@ To use this platform, the {{< docref "http_request/" >}} component must be prese
 # Example configuration entry
 ota:
   - platform: http_request
-
 ```
 
 ## Configuration variables
@@ -44,7 +43,6 @@ on_...:
         md5_url: http://example.com/firmware.md5
         url: https://example.com/firmware.ota.bin
     - logger.log: "This message should be not displayed because the device reboots"
-
 ```
 
 ### Configuration variables
@@ -84,21 +82,18 @@ on_...:
 
 ```shell
         md5 -q firmware.ota.bin > firmware.md5
-
 ```
 
 - On most Linux distributions:
 
 ```shell
         md5sum firmware.ota.bin > firmware.md5
-
 ```
 
 - On Windows/PowerShell:
 
 ```shell
         (Get-FileHash -Path firmware.ota.bin -Algorithm md5).Hash.ToLower() | Out-File -FilePath firmware.md5 -Encoding ASCII
-
 ```
 
   This will generate the MD5 hash of the `firmware.ota.bin` file and write the resulting hash value to the

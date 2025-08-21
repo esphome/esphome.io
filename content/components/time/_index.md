@@ -52,7 +52,6 @@ lambda: |-
     if (id(my_time).now().is_valid()) {
       //do something here
     }
-
 ```
 
 {{< anchor "time-on_time" >}}
@@ -93,7 +92,6 @@ time:
       - cron: '00 /5 * * * *'
         then:
           - switch.toggle: my_switch
-
 ```
 
 Configuration variables:
@@ -187,7 +185,6 @@ time:
       - minutes: /5
         then:
           - switch.toggle: my_switch
-
 ```
 
 {{< /warning >}}
@@ -213,7 +210,6 @@ to an external hardware real time clock chip.
         on_time_sync:
           then:
             - logger.log: "Synchronized system clock"
-
 ```
 
 {{< note >}}
@@ -232,7 +228,6 @@ in [lambdas](#config-lambda), just call the `.now()` method like so:
 
 ```cpp
 auto time = id(sntp_time).now();
-
 ```
 
 Alternatively, you can use `.utcnow()` to get the current UTC time.
@@ -269,7 +264,6 @@ allows for a lot of flexibility.
 ```cpp
 // For example, in a display object
 it.strftime(0, 0, id(font), "%Y-%m-%d %H:%M", id(time).now());
-
 ```
 
 The strftime will parse the format string (here `"%Y-%m-%d %H:%M"`  ) and match anything beginning with

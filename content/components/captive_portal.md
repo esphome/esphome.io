@@ -35,7 +35,6 @@ wifi:
     password: !secret wifi_ap_password
 
 captive_portal:
-
 ```
 
 No configuration variables.

@@ -28,7 +28,6 @@ speaker:
   - platform: i2s_audio
     dac_type: external
     i2s_dout_pin: GPIOXX
-
 ```
 
 ## Configuration variables

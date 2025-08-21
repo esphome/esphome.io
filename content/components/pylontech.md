@@ -50,7 +50,6 @@ If you have multiple batteries you need to connect to the master battery's conso
 ```yaml
 # Example configuration entry
 pylontech:
-
 ```
 
 ### Configuration variables
@@ -75,7 +74,6 @@ sensor:
       name: "Battery1 Current"
     coulomb:
       name: "Battery1 State of Charge"
-
 ```
 
 ### Configuration variables
@@ -104,7 +102,6 @@ text_sensor:
     base_state:
       id: bat1_base_state
       name: "Battery1 Base State"
-
 ```
 
 ### Configuration variables
@@ -159,7 +156,6 @@ sensor:
     state_class: total_increasing
     device_class: energy
     unit_of_measurement: "Wh"
-
 ```
 
 ## See Also

@@ -27,7 +27,6 @@ sensor:
       name: Temperature
     ph:
       name: pH
-
 ```
 
 ## Configuration variables
@@ -62,7 +61,6 @@ on_...:
       id: ufire_ise_board
       solution: 7.0
       temperature: !lambda "return id(temperature_liquid).state;"
-
 ```
 
 Configuration options:
@@ -90,7 +88,6 @@ on_...:
       id: ufire_ise_board
       solution: 4.0
       temperature: !lambda "return id(temperature_liquid).state;"
-
 ```
 
 Configuration options:
@@ -115,7 +112,6 @@ sensor:
 on_...:
   - sensor.ufire_ise_board.reset:
       id: ufire_ise_board
-
 ```
 
 Configuration options:

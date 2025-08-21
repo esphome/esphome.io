@@ -24,7 +24,6 @@ sensor:
     name: "Living Room Temperature"
     address: 0x4A
     update_interval: 60s
-
 ```
 
 ## Configuration variables

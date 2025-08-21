@@ -14,7 +14,6 @@ The `http_request` component lets you make HTTP/HTTPS requests. To do so, you ne
 ```yaml
 # Example configuration entry
 http_request:
-
 ```
 
 {{< anchor "http_request-configuration_variables" >}}
@@ -105,7 +104,6 @@ on_...:
                 - response->duration_ms
   # Short form
   - http_request.get: https://esphome.io
-
 ```
 
 #### Configuration variables
@@ -136,7 +134,6 @@ on_...:
         key: value
   # Short form
   - http_request.post: https://esphome.io
-
 ```
 
 #### Configuration variables
@@ -160,7 +157,6 @@ on_...:
       request_headers:
         Content-Type: application/json
       body: "Some data"
-
 ```
 
 #### Configuration variables
@@ -208,7 +204,6 @@ on_...
         on_error:
           then:
             - logger.log: "Request failed!"
-
 ```
 
 {{< anchor "http_request-on_error" >}}
@@ -236,7 +231,6 @@ on_...:
           return ((std::string) "Value-" + id(my_sensor).state).c_str();
       body: !lambda |-
         return id(my_sensor).state;
-
 ```
 
 ### POST Body in JSON format (syntax 1)
@@ -255,7 +249,6 @@ on_...:
 
     # Will send:
     # {"key": "42.0", "greeting": "Hello World"}
-
 ```
 
 ### POST Body in JSON format (syntax 2)
@@ -276,7 +269,6 @@ on_...:
 
     # Will send:
     # {"key": 42.0, "greeting": "Hello World"}
-
 ```
 
 ### GET values from a JSON body response
@@ -317,7 +309,6 @@ on_...:
                 - logger.log:
                     format: "Error: Response status: %d, message %s"
                     args: [ 'response->status_code', 'body.c_str()' ]
-
 ```
 
 ## See Also

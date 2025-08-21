@@ -63,7 +63,6 @@ sensor:
     power_factor:
       name: "PZEM-004T V3 Power Factor"
     update_interval: 60s
-
 ```
 
 ## Configuration variables
@@ -96,7 +95,6 @@ This action resets the total energy value of the pzemac device with the given ID
 on_...:
   then:
     - pzemac.reset_energy: pzemac_1
-
 ```
 
 ## Changing the address of a PZEM-004T
@@ -150,7 +148,6 @@ modbus_controller:
     command_throttle: 0ms
     setup_priority: -10
     update_interval: 30s
-
 ```
 
 ## See Also

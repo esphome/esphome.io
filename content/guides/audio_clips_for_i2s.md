@@ -16,14 +16,12 @@ It is possible to create sound clips to include in your build to use with I²S s
 
 ```shell
 sox startup.wav --bits 8 --encoding signed-integer --endian little startup_again.raw
-
 ```
 
 - Now convert it into a hexadecimal string using [xxd](https://github.com/ckormanyos/xxd) into a C++ file.
 
 ```shell
 xxd -i startup_again.raw startup.c
-
 ```
 
 - The resulting file needs a modification in the start line:
@@ -38,7 +36,6 @@ Now you can rename the file to startup.h, put it inside the esphome configuratio
 esphome:
   includes:
     - startup.h
-
 ```
 
 Now you can define using the audio clip using the following:
@@ -47,7 +44,6 @@ Now you can define using the audio clip using the following:
 - speaker.play:
     id: speaker
     data: !lambda return startup_raw;
-
 ```
 
 Enjoy!

@@ -19,7 +19,6 @@ binary_sensor:
   - platform: "tuya"
     name: "MyBinarySensor"
     sensor_datapoint: 1
-
 ```
 
 ## Configuration variables

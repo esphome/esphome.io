@@ -19,7 +19,6 @@ PSRAM is only available on the ESP32.
 psram:
   mode: octal
   speed: 80MHz
-
 ```
 
 ## Configuration variables

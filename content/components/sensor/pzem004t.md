@@ -49,7 +49,6 @@ sensor:
     energy:
       name: "PZEM-004T Energy"
     update_interval: 60s
-
 ```
 
 ## Configuration variables

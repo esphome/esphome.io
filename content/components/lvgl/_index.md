@@ -37,7 +37,6 @@ display:
     # ...
     auto_clear_enabled: false
     update_interval: never
-
 ```
 
 To make LVGL your own you will need to add widgets to the display. For example, to show a label with the text "Hello World!" in the center of the screen:
@@ -48,7 +47,6 @@ lvgl:
     - label:
         align: CENTER
         text: 'Hello World!'
-
 ```
 
 Now read on to learn more about the configuration options and how to customize your LVGL display.
@@ -173,7 +171,6 @@ lvgl:
         - label:
             align: CENTER
             text: 'Hello World!'
-
 ```
 
 See [Page navigation footer](#lvgl-cookbook-navigator) in the Cookbook for an example which demonstrates how to implement a page navigation bar at the bottom of the screen.
@@ -212,7 +209,6 @@ lvgl:
       widgets:
         - label:
             text: 'Hello World #2!'
-
 ```
 
 {{< anchor "lvgl-color" >}}
@@ -237,7 +233,6 @@ on_...:
       id: my_label
       text: 'Hello Mars!'
       color: !lambda return id(mapping_color_map)[x];
-
 ```
 
 {{< anchor "lvgl-opacity" >}}
@@ -429,7 +424,6 @@ lvgl:
         border_color: 0xFFFF00
       focused:
         border_color: 0x00FF00
-
 ```
 
 Naturally, you can override these at the individual configuration level of each widget. This can be done in batches, using the `style_definitions` configuration variable of the main component.
@@ -445,7 +439,6 @@ lvgl:
       bg_opa: cover
       radius: 4
       pad_all: 2
-
 ```
 
 And then you apply these selected styles to two labels, and only change very specific style `y` locally:
@@ -460,7 +453,6 @@ widgets:
       id: date_label
       styles: date_style
       y: +20
-
 ```
 
 Additionally, you can change the styles based on the [state](#lvgl-widgetproperty-state) property of the widgets or their parts. If you want to set a property for all states (e.g. red background color) just set it for the default state at the root of the widget. If the widget can't find a property for its current state it will fall back to this.
@@ -479,7 +471,6 @@ In the example below, you have an `arc` with some styles set here. Note how you 
         arc_color: 0xFFFF00
       focused:
         arc_color: 0x808080
-
 ```
 
 So the precedence happens like this: state based styles override the locally specified styles, which override the style definitions, which override the theme, which overrides the top level styles. The value precedence of states is quite intuitive and it's something the user would expect naturally. For example, if a widget is focused the user will still want to see if it's pressed, therefore the pressed state has a higher precedence. (If the focused state had a higher precedence it would override the *pressed* color, defeating its purpose.)
@@ -510,7 +501,6 @@ on_...:
       id: my_style
       bg_color: 0xFF0000
       border_color: 0x00FF00
-
 ```
 
 {{< anchor "lvgl-layouts" >}}
@@ -588,7 +578,6 @@ It can arrange items into rows or columns (tracks), handle wrapping, adjust spac
     widgets:
       - animimg:
           flex_grow: 1
-
 ```
 
 #### Grid
@@ -666,7 +655,6 @@ Values for use with `grid_column_align`  , `grid_row_align`  , `grid_cell_x_alig
           text: "This will be placed in row 1, column 1"
       - label:
           text: "This will be placed in row 2, column 1, since 2/0 is occupied"
-
 ```
 
 {{< tip >}}
@@ -709,7 +697,6 @@ A gradient is a sequence of colors which can be applied to an object using the `
           position: 212
         - color: 0xFF0000
           position: 255
-
 ```
 
 ## Widgets
@@ -737,7 +724,6 @@ on_...:
   then:
     - lvgl.widget.redraw:
         lvgl_id: lvgl1  # optional when only one LVGL instance is configured
-
 ```
 
 {{< anchor "lvgl-refresh-action" >}}
@@ -760,7 +746,6 @@ widgets:
 on_...:
   then:
     - lvgl.widget.refresh: label1 # will update the label text using the lambda.
-
 ```
 
 {{< anchor "lvgl-pause-action" >}}
@@ -777,7 +762,6 @@ on_...:
   then:
     - lvgl.pause:
         show_snow: true
-
 ```
 
 {{< anchor "lvgl-resume-action" >}}
@@ -792,7 +776,6 @@ This [action](#actions-action) resumes the activity of LVGL, including rendering
 on_...:
   then:
     - lvgl.resume:
-
 ```
 
 ### `lvgl.update`
@@ -807,7 +790,6 @@ on_...:
         disp_bg_color: 0x0000FF
     - lvgl.update:
         disp_bg_image: cat_image
-
 ```
 
 {{< anchor "lvgl-page-next-previous-action" >}}
@@ -831,7 +813,6 @@ on_...:
     - lvgl.page.previous:
         animation: OUT_RIGHT
         time: 300ms
-
 ```
 
 {{< anchor "lvgl-page-show-action" >}}
@@ -853,7 +834,6 @@ on_...:
 on_...:
   then:
     - lvgl.page.show: secret_page  # shorthand version
-
 ```
 
 {{< anchor "lvgl-widget-focus-action" >}}
@@ -901,7 +881,6 @@ on_...:
 on_...:
   then:
     - lvgl.widget.focus: previous
-
 ```
 
 {{< anchor "lvgl-conditions" >}}
@@ -929,7 +908,6 @@ on_...:
           - light.turn_off:
               id: display_backlight
               transition_length: 3s
-
 ```
 
 {{< anchor "lvgl-is-paused-condition" >}}
@@ -948,7 +926,6 @@ on_...:
         condition: lvgl.is_paused
         then:
           - lvgl.resume:
-
 ```
 
 ### `lvgl.page.is_showing`
@@ -966,7 +943,6 @@ on_...:
           lvgl.page.is_showing: main_page
         then:
           - logger.log: "Main page is showing"
-
 ```
 
 ## Triggers
@@ -994,7 +970,6 @@ lvgl:
       then:
         - light.turn_off: display_backlight
         - lvgl.pause:
-
 ```
 
 See [Turn off screen when idle](#lvgl-cookbook-idlescreen) for an example which demonstrates how to implement screen saving with idle settings.

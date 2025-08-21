@@ -18,7 +18,6 @@ In conjunction with the [Packet Transport Component](#packet-transport) it can b
 udp:
     listen_address: 239.0.60.53
     addresses: ["255.255.255.255", "208.87.135.110"]
-
 ```
 
 ## Configuration variables
@@ -55,7 +54,6 @@ udp:
         - logger.log:
             format: "Received %s"
             args: [format_hex_pretty(data).c_str()]
-
 ```
 
 ## Examples
@@ -114,7 +112,6 @@ binary_sensor:
     on_press:
       - lambda: |-
           ESP_LOGI("main", "d command to binary_sensor_unlock");
-
 ```
 
 ## See Also

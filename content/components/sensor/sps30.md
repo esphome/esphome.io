@@ -52,7 +52,6 @@ sensor:
       id: "pm_size"
     address: 0x69
     update_interval: 10s
-
 ```
 
 ## Configuration variables
@@ -129,7 +128,6 @@ This [action](#config-action) manually starts fan-cleaning.
 on_...:
   then:
     - sps30.start_fan_autoclean: my_sps30
-
 ```
 
 To be able to trigger the fan cleaning feature from Home Assistant, add a button as shown below, and trigger it with a (periodic) automation.
@@ -146,7 +144,6 @@ sensor:
   - platform: sps30
     id: "my_sps30"
     ...
-
 ```
 
 Sensirion recommends cleaning at least once per week.

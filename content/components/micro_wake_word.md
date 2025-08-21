@@ -24,7 +24,6 @@ micro_wake_word:
 micro_wake_word:
   models:
     - model: github://esphome/micro-wake-word-models/models/v2/okay_nabu.json
-
 ```
 
 ## Configuration variables
@@ -82,7 +81,6 @@ Stops the wake word detection.
 on_...:
   then:
     - micro_wake_word.enable_model: model_id
-
 ```
 
 Enables the specified model so it can be detected when the component is running.
@@ -93,7 +91,6 @@ Enables the specified model so it can be detected when the component is running.
 on_...:
   then:
     - micro_wake_word.disable_model: model_id
-
 ```
 
 Disables the specified model so it won't be detected when the component is running.
@@ -127,7 +124,6 @@ wake_word:
     then:
       - voice_assistant.start:
           wake_word: !lambda return wake_word;
-
 ```
 
 ## Model JSON
@@ -148,7 +144,6 @@ wake_word:
     "minimum_esphome_version": "2024.7"
   }
 }
-
 ```
 
 The model JSON file contains the following fields that are all **required** unless otherwise specified:

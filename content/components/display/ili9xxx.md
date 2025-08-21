@@ -73,7 +73,6 @@ display:
     reset_pin: GPIOXX
     invert_colors: false
     show_test_card: true
-
 ```
 
 ### Configuration variables
@@ -150,7 +149,6 @@ driver chip in addition to, and after the chosen model's pre-defined commands. I
 init_sequence:
   - [ 0xD0, 0x07, 0x42, 0x18]
   - [ 0xD1, 0x00, 0x07, 0x10]
-
 ```
 
 Each entry represents a single-byte command followed by zero or more data bytes.
@@ -171,7 +169,6 @@ transform:
 dimensions:
   height: 480
   width: 320
-
 ```
 
 To utilize the color capabilities of this display module, you'll likely want to add a `color:` section to your
@@ -192,7 +189,6 @@ display:
     ...
     lambda: |-
       it.rectangle(0,  0, it.get_width(), it.get_height(), id(my_red));
-
 ```
 
 To bring in color images:
@@ -210,7 +206,6 @@ display:
     ...
     lambda: |-
       it.image(0, 0, id(my_image));
-
 ```
 
 To configure a dimmable backlight:
@@ -229,7 +224,6 @@ light:
     name: "Display Backlight"
     id: back_light
     restore_mode: ALWAYS_ON
-
 ```
 
 To configure an image adaptive color palette to show greater than 8 bit color depth with a RAM limited screen buffer:
@@ -254,7 +248,6 @@ display:
       - "display_design.png"
     lambda: |-
       it.image(0, 0, id(myimage));
-
 ```
 
 Using the `transform` options to hardware rotate the display on a Lilygo T-Embed. This has an st7789v but only uses 170 pixels of the 240 width.
@@ -279,7 +272,6 @@ display:
     cs_pin: GPIOXX
     dc_pin: GPIO13
     reset_pin: GPIO9
-
 ```
 
 For Lilygo TTGO Boards if you move from the st7789v to this you need the following settings to make it work.
@@ -296,7 +288,6 @@ display:
       offset_width: 52
     # Required or the colors are all inverted, and Black screen is White
     invert_colors: true
-
 ```
 
 ## See Also

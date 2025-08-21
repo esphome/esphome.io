@@ -43,7 +43,6 @@ cover:
       - switch.turn_off: open_switch
     optimistic: true
     assumed_state: true
-
 ```
 
 ## See Also

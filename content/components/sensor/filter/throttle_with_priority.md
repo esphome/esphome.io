@@ -18,5 +18,4 @@ filters:
       value:
         - nan
         - 0
-
 ```

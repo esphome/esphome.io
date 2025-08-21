@@ -19,7 +19,6 @@ speaker platforms.
 ```yaml
 speaker:
   - platform: ...
-
 ```
 
 Configuration variables:
@@ -51,7 +50,6 @@ on_...:
   - speaker.play:
       id: my_speaker
       data: [...]
-
 ```
 
 Configuration variables:

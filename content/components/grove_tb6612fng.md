@@ -19,7 +19,6 @@ At the current stage of implementation only DC motor is implemented.
 grove_tb6612fng:
   - address: 0x14
     id: test_motor
-
 ```
 
 ## Configuration variables
@@ -42,7 +41,6 @@ on_...:
         speed: 255
         direction: BACKWARD
         id: test_motor
-
 ```
 
 .. grove_tb6612fng.stop:
@@ -56,7 +54,6 @@ on_...:
   then:
     - grove_tb6612fng.stop:
         channel: 1
-
 ```
 
 .. grove_tb6612fng.break:
@@ -71,7 +68,6 @@ on_...:
     - grove_tb6612fng.break:
         channel: 1
         id: test_motor
-
 ```
 
 .. grove_tb6612fng.standby:
@@ -85,7 +81,6 @@ on_...:
   then:
     - grove_tb6612fng.standby
         id: test_motor
-
 ```
 
 .. grove_tb6612fng.no_standby:
@@ -99,7 +94,6 @@ on_...:
   then:
     - grove_tb6612fng.no_standby
         id: test_motor
-
 ```
 
 .. grove_tb6612fng.change_address:
@@ -114,7 +108,6 @@ on_...:
     - grove_tb6612fng.change_address:
         address: 0x15
         id: test_motor
-
 ```
 
 ### See Also

@@ -24,7 +24,6 @@ exposure_notifications:
           ESP_LOGD("main", "Got notification:");
           ESP_LOGD("main", "  RPI: %s", format_hex_pretty(x.rolling_proximity_identifier).c_str());
           ESP_LOGD("main", "  RSSI: %d", x.rssi);
-
 ```
 
 ## Configuration variables
@@ -75,7 +74,6 @@ exposure_notifications:
       # Stop existing timer so that turn_off doesn't get called
       - script.stop: start_led
       - script.execute: start_led
-
 ```
 
 ## See Also

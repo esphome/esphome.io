@@ -56,7 +56,6 @@ display:
   vcom_pin:
     mcp23xxx: mcp23017_hub
     number: 5
-
 ```
 
 {{< warning >}}
@@ -278,7 +277,6 @@ display:
     } else {
       it.print(700, 100, id(helvetica_48), COLOR_OFF, TextAlign::TOP_RIGHT, "Offline");
     }
-
 ```
 
 ## Inkplate 6 Plus Touchscreen
@@ -306,7 +304,6 @@ touchscreen:
       - logger.log:
           format: "touch x=%d, y=%d"
           args: ['touch.x', 'touch.y']
-
 ```
 
 ## Inkplate 6 Plus Backlight
@@ -334,7 +331,6 @@ light:
     id: backlight
     default_transition_length: 0.2s
     name: '${friendly_name} Backlight'
-
 ```
 
 ## Inkplate 6 v2
@@ -379,7 +375,6 @@ display:
   vcom_pin:
     pca6416a: pca6416a_hub
     number: 5
-
 ```
 
 ## Inkplate 5
@@ -424,7 +419,6 @@ display:
   vcom_pin:
     pca6416a: pca6416a_hub
     number: 5
-
 ```
 
 ## Inkplate 10
@@ -515,7 +509,6 @@ display:
     vcom_pin:
       pca6416a: pca6416a_hub
       number: 5
-
 ```
 
 ### See Also
