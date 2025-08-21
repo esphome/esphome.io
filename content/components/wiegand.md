@@ -22,8 +22,6 @@ devices.
 
 {{< /note >}}
 
-## Component
-
 ```yaml
 # Example configuration entry
 wiegand:
@@ -38,7 +36,7 @@ wiegand:
       - lambda: ESP_LOGI("RAW", "received raw %d bits, value %llx", bits, value);
 ```
 
-Configuration variables:
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this device for use in lambdas.
 - **d0** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D0` output
@@ -46,7 +44,7 @@ Configuration variables:
 - **d1** (**Required**, [Pin Schema](#config-pin_schema)): The pin where the `D1` output
   of the Wiegand's interface connects.
 
-## Automations
+### Triggers
 
 - **on_key** (*Optional*, [Automation](#automation)): An automation to perform
   when a key has been pressed on the pad. The key is in a variable called `x`  .

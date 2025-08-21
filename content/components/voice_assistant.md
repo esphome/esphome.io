@@ -31,6 +31,8 @@ voice_assistant:
   microphone: mic_id
 ```
 
+## Configuration variables
+
 - **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The {{< docref "/components/microphone/index" "microphone" >}} settings to use for input.
 - **micro_wake_word** (*Optional*, [ID](#config-id)): The {{< docref "/components/micro_wake_word" "micro_wake_word" >}} component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 - **speaker** (*Optional*, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to use to output the response.
@@ -102,7 +104,7 @@ voice_assistant:
 
 {{< anchor "voice_assistant-actions" >}}
 
-## Voice Assistant Actions
+## Actions
 
 The following actions are available for use in automations:
 
@@ -110,7 +112,7 @@ The following actions are available for use in automations:
 
 Listens for one voice command then stops.
 
-Configuration variables:
+#### Configuration variables
 
 - **silence_detection** (*Optional*, boolean): Enable silence detection. Defaults to `true`  .
 - **wake_word** (*Optional*, string): The wake word that was used to trigger the voice assistant
@@ -128,7 +130,7 @@ Call `voice_assistant.stop` to stop the cycle.
 
 Stop listening for voice commands.
 
-## Voice Assistant Conditions
+## Conditions
 
 The following conditions are available for use in automations:
 

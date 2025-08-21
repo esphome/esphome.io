@@ -79,7 +79,8 @@ If you are using the {{< docref "logger/" >}} make sure you are not using the sa
 logging with the `baud_rate: 0` option.
 
 {{< /warning >}}
-Configuration variables:
+
+### Configuration variables
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub used to connect to the device.
 
@@ -122,7 +123,7 @@ sensor:
       name: Device firmware version
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **model** (**Required**): Specify the model of the connected controller. Choose one of the config values listed in the table of supported models above.
 
@@ -174,7 +175,7 @@ binary_sensor:
       name: Option Heat Quantity Measurement
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **model** (**Required**): Specify the model of the connected controller. Choose one of the config values listed in the table of supported models above.
 
@@ -207,7 +208,7 @@ sensor:
         lambda: return ((x[1] << 8) + x[0]) / 10.0;
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **dest** (**Required**): The `DFA` value corresponding to your device (see below).
 - **source** (**Required**): The address corresponding to `your device model` (see below).
@@ -219,7 +220,7 @@ Configuration variables:
 
 ## `custom` VBus binary sensors
 
-Configuration variables:
+### Configuration variables
 
 - **dest** (**Required**): The `DFA` value corresponding to your device (see below).
 - **source** (**Required**): The address corresponding to `your device model` (see below).

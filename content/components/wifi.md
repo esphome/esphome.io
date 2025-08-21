@@ -207,7 +207,7 @@ wifi:
   # ...
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **ssid** (*Optional*, string): The SSID or WiFi network name.
 - **password** (*Optional*, string): The password to use for authentication. Leave empty for no password.
@@ -258,7 +258,7 @@ wifi:
       key: key.pem
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **identity** (*Optional*, string): The outer identity to pass to the EAP authentication server.
   This is required for EAP-TLS.
@@ -285,12 +285,13 @@ wifi:
     - switch.turn_on: switch1
   on_disconnect:
     - switch.turn_off: switch1
-
 ```
+
+## Actions
 
 {{< anchor "wifi-on_disable" >}}
 
-## `wifi.disable` Action
+### `wifi.disable` Action
 
 This action turns off the WiFi interface on demand.
 
@@ -306,7 +307,7 @@ Be aware that if you disable WiFi, the API timeout will need to be disabled othe
 {{< /note >}}
 {{< anchor "wifi-on_enable" >}}
 
-## `wifi.enable` Action
+### `wifi.enable` Action
 
 This action turns on the WiFi interface on demand.
 
@@ -322,7 +323,7 @@ The configuration option `enable_on_boot` can be set to `false` if you do not wa
 {{< /note >}}
 {{< anchor "wifi-configure" >}}
 
-## `wifi.configure` Action
+### `wifi.configure` Action
 
 This action connects to an SSID and password, optionally saving it in persistent memory so that the next time the WiFi interface is enabled, it will connect to the stored access point.
 
@@ -340,7 +341,7 @@ on_...:
           - logger.log: "Failed to connect to WiFi!"
 ```
 
-Configuration variables:
+#### Configuration variables
 
 - **ssid** (**Required**, string, [templatable](#config-templatable)): The name of the WiFi access point.
 - **password** (**Required**, string, [templatable](#config-templatable)): The password of the WiFi access point. Leave empty for no password.
@@ -349,9 +350,11 @@ Configuration variables:
 - **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
 - **on_error** (*Optional*, [Automation](#automation)): An action to be performed when the connection fails.
 
+## Conditions
+
 {{< anchor "wifi-connected_condition" >}}
 
-## `wifi.connected` Condition
+### `wifi.connected` Condition
 
 This [Condition](#config-condition) checks if the WiFi client is currently connected to a station.
 
@@ -368,7 +371,7 @@ The lambda equivalent for this is `id(wifi_id).is_connected()`  .
 
 {{< anchor "wifi-enabled_condition" >}}
 
-## `wifi.enabled` Condition
+### `wifi.enabled` Condition
 
 This [Condition](#config-condition) checks if WiFi is currently enabled or not.
 

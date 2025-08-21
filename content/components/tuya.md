@@ -121,7 +121,7 @@ tuya:
             }
 ```
 
-Configuration variables:
+### Configuration variables
 
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
 - **datapoint_type** (**Required**, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*, *bitmask* or *any*.
