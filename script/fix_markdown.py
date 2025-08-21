@@ -458,6 +458,10 @@ def ensure_blank_lines_around_elements(lines: List[str]) -> List[str]:
 
     while i < len(lines):
         line = lines[i]
+        if is_in_code_block(lines, i):
+            result.append(line)
+            i += 1
+            continue
 
         # Check if current line needs blank line before
         needs_blank_before = (
