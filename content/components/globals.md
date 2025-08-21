@@ -35,7 +35,7 @@ globals:
 
 ```
 
-## Configuration variables:
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): Give the global variable an ID so that you can refer
   to it later in [lambdas](#config-lambda).

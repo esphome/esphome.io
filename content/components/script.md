@@ -17,7 +17,7 @@ script:
 
 ```
 
-## Configuration variables:
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The [ID](#config-id) of the script. Use this to interact with the script
   using the script actions.
