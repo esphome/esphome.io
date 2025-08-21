@@ -14,7 +14,8 @@ ESPHome create a binary for you and then upload that in the Tasmota web interfac
 
 ## Incompatible versions
 
-WARNING! Migrating via OTA on ESP32, from Tasmota v12 (with boot partition) and up is currently not possible! Trying it could soft-brick your device!
+WARNING! Migrating via OTA on ESP32, from Tasmota v12 (with boot partition) and up is currently not possible! Trying
+it could soft-brick your device!
 
 ## Getting the Binary
 
@@ -44,7 +45,8 @@ From your configuration files folder, run
 esphome compile <MY_DEVICE>.yaml
 ```
 
-replacing `<MY_DEVICE>.yaml` with your configuration file and navigate to the `<MY_DEVICE>/.pioenvs/<MY_DEVICE>/` folder.
+replacing `<MY_DEVICE>.yaml` with your configuration file and navigate to the
+`<MY_DEVICE>/.pioenvs/<MY_DEVICE>/` folder.
 
 There you will find a `firmware.bin` file. This is the binary that you will upload.
 
@@ -81,9 +83,11 @@ upgrade process to fail.
 Tasmota 8.2 introduced upgrading using gzipped binaries which are smaller in size and
 make the upgrade process easier.
 
-- If you are using Tasmota 8.2 or later (recommended) you probably will want to compress the firmware generated from ESPHome with `gzip` before uploading it.
+- If you are using Tasmota 8.2 or later (recommended) you probably will want to compress the firmware generated from
+  ESPHome with `gzip` before uploading it.
 
-- If you are using any version older than 8.2: first upload `tasmota-minimal.bin` from Tasmota repository. Then upload the firmware generated from ESPHome.
+- If you are using any version older than 8.2: first upload `tasmota-minimal.bin` from Tasmota repository. Then
+  upload the firmware generated from ESPHome.
 - Alternatively, first upgrade Tasmota to the latest version. Then use the first (gzip, recommended) method.
 
     If you are using Tasmota 7.2+ it may be necessary to run the command `SetOption78 1` in the

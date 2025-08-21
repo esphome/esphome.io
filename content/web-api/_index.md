@@ -229,7 +229,8 @@ stopped midway. An example GET request for `/cover/front_window_blinds` might re
 
 - **id**: The ID of the cover, prefixed with `cover-`  .
 - **state**: `OPEN` or `CLOSED`  . Any position other than 0.0 is considered open.
-- **value**: Current cover position as a float number. If the cover component does not support cover position reporting, then this will either be 1.0 when open or 0.0 when closed.
+- **value**: Current cover position as a float number. If the cover component does not support cover position reporting,
+  then this will either be 1.0 when open or 0.0 when closed.
 - **current_operation**: `OPENING`  , `CLOSING` or `IDLE`  .
 - **tilt**: (only if supported by this cover component) tilt angle from 0.0 to 1.0.
 - **position**: (only if supported by this cover component) Current cover position as a float number.

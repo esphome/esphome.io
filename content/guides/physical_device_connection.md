@@ -74,7 +74,9 @@ When using an external `3.3V` supply, ensure the ground (`GND`  ) of both are co
 this ensures a common ground. A PC power supply can be a good source for `3.3V` DC power.
 
 {{< note >}}
-Some adapters can be switched between `3.3V` and `5V` for the data pins, but still provide 5V on the power pin which will irreparably destroy your device. You **MUST** make sure the data (`RX` and `TX`  ) and `VCC` pins are set for `3.3V`  .
+Some adapters can be switched between `3.3V` and `5V` for the data pins, but still provide 5V on the power pin which
+will irreparably destroy your device. You **MUST** make sure the data (`RX` and `TX`  ) and `VCC` pins are
+set for `3.3V`  .
 
 {{< /note >}}
 ESP needs to be put into programming mode or flash mode before the firmware can be uploaded. This is
@@ -87,15 +89,19 @@ To put the ESP into programming mode:
 * Disconnect the USB connection of your board or serial programmer from the computer (to power off your ESP)
 * Bridge `GPIO0` and `GND` (by pressing the on-board button or connection with a wire)
 * Connect the board or serial programmer to your computer (ensuring ESP powers up)
-* After a few seconds disconnect `GPIO0` from `GND` (release button or remove the wire connection). On devices that do not provide the `GPIO0` connected button, it may be easier to leave the wired bridge in place throughout the entire flashing process (erase & upload). Doing so will not create any problems. After the firmware is uploaded successfully, remove the bridge. This allows the device to boot normally.
+* After a few seconds disconnect `GPIO0` from `GND` (release button or remove the wire connection). On devices that
+  do not provide the `GPIO0` connected button, it may be easier to leave the wired bridge in place throughout the
+  entire flashing process (erase & upload). Doing so will not create any problems. After the firmware is uploaded
+  successfully, remove the bridge. This allows the device to boot normally.
 
-You may need to power-cycle the ESP between erasing and uploading the firmware, this can be done by disconnecting and reconnecting, of course with `GPIO0` and `GND` still connected to each other.
+You may need to power-cycle the ESP between erasing and uploading the firmware, this can be done by disconnecting and
+reconnecting, of course with `GPIO0` and `GND` still connected to each other.
 
 `RX` and `TX` can be sometimes swapped. If programming your board doesn't work the
 first time, try flipping the wires connected to those pins before trying again.
 
-{{< warning >}}
 {{< img src="/images/high-voltage-warning.svg" alt="High voltage warning symbol"  height="50" >}}
+{{< warning >}}
 
 **Do not connect your device to mains electricity while following this
 guide.** If your device is open and plugged directly into the wall, you'll
@@ -112,7 +118,8 @@ is wrong or are uncomfortable with continuing, stop immediately.
 
 ### USB Port on Device
 
-{{< img src="nodemcu_esp8266.jpg" alt="Image" caption="A device with a USB port and a serial adapter built-in" width="75.0%" class="align-center" >}}
+{{< img src="nodemcu_esp8266.jpg" alt="Image"
+  caption="A device with a USB port and a serial adapter built-in" width="75.0%" class="align-center" >}}
 
 Development boards often come with a USB port built in. This USB port is
 connected to a serial adapter, so you don't need a separate serial adapter. You
@@ -126,7 +133,8 @@ by either soldering or using a breadboard, but you do not need anything else to
 
 ### Pre-soldered Programming Header
 
-{{< img src="programming-header-populated.jpg" alt="Image" caption="A device that comes with programming headers pre-installed" width="75.0%" class="align-center" >}}
+{{< img src="programming-header-populated.jpg" alt="Image"
+  caption="A device that comes with programming headers pre-installed" width="75.0%" class="align-center" >}}
 
 In this situation, you'll need just [jumper wires](#jumper-wires) and a
 [USB to serial adapter](#usb-serial-adapter). You don't need to solder
@@ -134,7 +142,8 @@ anything, that's already been done by the factory.
 
 ### Unpopulated Programming Header
 
-{{< img src="programming-header-unpopulated.jpg" alt="Image" caption="A device that has a spot for programming headers on the circuit board" width="75.0%" class="align-center" >}}
+{{< img src="programming-header-unpopulated.jpg" alt="Image"
+  caption="A device that has a spot for programming headers on the circuit board" width="75.0%" class="align-center" >}}
 
 You can probably get away with [jumper wires](#jumper-wires) and a
 [USB to serial adapter](#usb-serial-adapter). You can place the male end
@@ -147,7 +156,8 @@ multimeter in continuity mode to figure it out (advanced topic).
 
 ### Solder-filled Programming Header
 
-{{< img src="programming-header-filled.jpg" alt="Image" caption="A set of programming headers that are filled with solder" width="75.0%" class="align-center" >}}
+{{< img src="programming-header-filled.jpg" alt="Image"
+  caption="A set of programming headers that are filled with solder" width="75.0%" class="align-center" >}}
 
 You'll need a USB to serial adapter, [jumper wires](#jumper-wires), a
 [soldering iron](#soldering-iron), and probably [solder](#solder) and
@@ -163,7 +173,8 @@ multimeter in continuity mode to figure it out (advanced topic).
 
 ### Module Only
 
-{{< img src="module-only-programming.jpg" alt="From <https://tasmota.github.io/docs/devices/SM-SO301/>" caption="An ESP8266 module with programming wires soldered on" width="75.0%" class="align-center" >}}
+{{< img src="module-only-programming.jpg" alt="From <https://tasmota.github.io/docs/devices/SM-SO301/>"
+  caption="An ESP8266 module with programming wires soldered on" width="75.0%" class="align-center" >}}
 
 If the device has a module but no programming headers, things get a bit tricky.
 You'll need a [USB to serial adapter](#usb-serial-adapter), :ref:`jumper
@@ -173,11 +184,13 @@ wires <jumper-wires>`, [wire strippers](#wire-strippers), :ref:`wire snips
 
 Cut the jumper wires, strip a bit off the end, and then solder them onto the
 module. You can find the correct places to solder the wires by looking up the
-module model number on the internet. You can find [one list of commonly usedmodules here](https://tasmota.github.io/docs/Pinouts/).
+module model number on the internet. You can find
+[one list of commonly usedmodules here](https://tasmota.github.io/docs/Pinouts/).
 
 ### Bare Chip
 
-{{< img src="programming-bare-chip.jpg" alt="From <https://tasmota.github.io/docs/devices/Teckin-SP23/>" caption="A bare ESP8266 IC with no programming header" width="75.0%" class="align-center" >}}
+{{< img src="programming-bare-chip.jpg" alt="From <https://tasmota.github.io/docs/devices/Teckin-SP23/>"
+  caption="A bare ESP8266 IC with no programming header" width="75.0%" class="align-center" >}}
 
 This is an advanced topic and won't be covered in detail, but you have three options:
 

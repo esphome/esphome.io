@@ -1,4 +1,15 @@
-# ESPHome-Docs [![Netlify Status](https://api.netlify.com/api/v1/badges/97a2e9ce-cee7-4cc8-8dc7-537c92a23fa7/deploy-status)](https://app.netlify.com/sites/esphome/deploys) [![Discord Chat](https://img.shields.io/discord/429907082951524364.svg)](https://discord.gg/KhAMKrd) [![GitHub release](https://img.shields.io/github/release/esphome/esphome.svg)](https://GitHub.com/esphome/esphome/releases/)
+# ESPHome-Docs
+
+[![Netlify Status][netlify-badge]][netlify-link]
+[![Discord Chat][discord-badge]][discord-link]
+[![GitHub release][github-badge]][github-link]
+
+[netlify-badge]: https://api.netlify.com/api/v1/badges/97a2e9ce-cee7-4cc8-8dc7-537c92a23fa7/deploy-status
+[netlify-link]: https://app.netlify.com/sites/esphome/deploys
+[discord-badge]: https://img.shields.io/discord/429907082951524364.svg
+[discord-link]: https://discord.gg/KhAMKrd
+[github-badge]: https://img.shields.io/github/release/esphome/esphome.svg
+[github-link]: https://github.com/esphome/esphome/releases
 
 <a href="https://esphome.io/">
   <picture>
@@ -34,20 +45,24 @@ Images in the Hugo site referred to in `img` shortcodes are handled using a spec
 
 ### Relative paths
 
-- When using relative paths in the `img` shortcode (e.g., `{{< img src="dht22.jpg" >}}`), Hugo will first look in a local `images/` subdirectory.
-  For example, an image referenced in `content/components/sensor/dht.md` will first be searched for in `content/components/sensor/images/`.
+- When using relative paths in the `img` shortcode (e.g., `{{< img src="dht22.jpg" >}}`),
+  Hugo will first look in a local `images/` subdirectory.
+  For example, an image referenced in `content/components/sensor/dht.md` will first be
+  searched for in `content/components/sensor/images/`.
 
 - If the image is not found in the local directory, Hugo will then look in the global `/static/images/` directory.
 
 ### Absolute paths
 
-When using absolute paths (starting with `/`), Hugo will look directly in the specified location relative to the `/static/` directory.
+When using absolute paths (starting with `/`), Hugo will look directly in the specified location
+relative to the `/static/` directory.
 
 This strategy allows component documentation to have its own images while also supporting shared images across the site.
 
 ## Custom Theme
 
-The site uses a custom theme called `esphome-theme` which is designed to match the look and feel of the original ESPHome documentation. The theme includes:
+The site uses a custom theme called `esphome-theme` which is designed to match the look and feel of the original
+ESPHome documentation. The theme includes:
 
 - Responsive design for mobile and desktop
 - Dark mode support
@@ -61,11 +76,13 @@ Hugo uses Markdown files as input. The Markdown processor in use is Goldmark.
 
 ## Hugo Template System
 
-Hugo uses a templating system to generate HTML from Markdown content. Understanding the following concepts is helpful when working with or modifying the theme:
+Hugo uses a templating system to generate HTML from Markdown content. Understanding the following concepts is helpful
+when working with or modifying the theme:
 
 ### Templates
 
-Templates are HTML files with Go templating syntax that define the structure and layout of pages. Hugo uses different types of templates:
+Templates are HTML files with Go templating syntax that define the structure and layout of pages. Hugo uses different
+types of templates:
 
 - **Base Templates**: Define the overall structure of the site (found in `layouts/_default/baseof.html`)
 - **List Templates**: Used for section pages that list multiple content items
@@ -76,7 +93,8 @@ Templates use blocks (like `{{ block "main" . }}{{ end }}`) that can be overridd
 
 ### Partials
 
-Partials are reusable template components that can be included in other templates. They help maintain DRY (Don't Repeat Yourself) code by extracting common elements:
+Partials are reusable template components that can be included in other templates. They help maintain DRY (Don't Repeat
+Yourself) code by extracting common elements:
 
 ``` text
 {{ partial "header.html" . }}
@@ -105,8 +123,8 @@ Shortcode templates are stored in the `layouts/shortcodes/` directory.
 
 ## Shortcodes
 
-Hugo has a number of [built-in shortcodes](https://gohugo.io/content-management/shortcodes/) and the ESPHome theme also defines
-several custom shortcodes:
+Hugo has a number of [built-in shortcodes](https://gohugo.io/content-management/shortcodes/) and the ESPHome theme
+also defines several custom shortcodes:
 
 ### `anchor`
 
@@ -347,10 +365,13 @@ Contributions to improve the documentation are welcome! Please follow these step
 
 ## License
 
-The ESPHome documentation is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+The ESPHome documentation is licensed under the
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][by-ns-sa].
 
 **Documentation:** <https://esphome.io/>
 
 For issues, please go to [the issue tracker](https://github.com/esphome/esphome/issues).
 
 For feature requests, please see [feature requests](https://github.com/orgs/esphome/discussions).
+
+[by-ns-sa]: https://creativecommons.org/licenses/by-nc-sa/4.0/
