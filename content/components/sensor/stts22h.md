@@ -12,8 +12,6 @@ The [I²C bus](#i2c) is required to be set up in your configuration for this sen
 
 {{< img src="stts22h.png" alt="Image" caption="SparkFun Temperature Sensor & SparkFun Micro Temperature Sensor" class="align-center" >}}
 
-
-
 ```yaml
 # Example configuration entry
 sensor:
