@@ -56,6 +56,40 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
+## Sensor halting
+
+A possible solution is to use a GPIO port as power supply and restart the sensor on error.
+```yaml
+switch:
+  - platform: gpio
+    pin: GPIO12
+    id: pwrsensor
+    name: "Power for sensor"
+    restore_mode: ALWAYS_ON
+
+sensor:
+  - platform: dht
+    pin: GPIO14
+    temperature:
+      name: "Temperature"
+      id: current_temperature
+      on_value: 
+        then:
+          - if:
+              condition:
+                - lambda: "return isnan(x);"
+              then:
+                - switch.turn_off: pwrsensor
+                - delay: 5s
+                - switch.turn_on: pwrsensor
+    humidity:
+      name: "Humidity"
+      id: current_humidity
+    update_interval: 30s
+    model: AM2302
+```
+
+
 {{< note >}}
 The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
 originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
