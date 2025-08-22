@@ -10,13 +10,9 @@ params:
 The `stts22h` sensor platform allows you to use a STTS22H temperature sensor ([datasheet](https://www.st.com/resource/en/datasheet/stts22h.pdf)) with ESPHome.  
 The [I²C bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
-{{< img src="stts22h.png" alt="Image" caption="SparkFun Temperature Sensor - STTS22H (Qwiic)" class="align-center" >}}
+{{< img src="stts22h.png" alt="Image" caption="SparkFun Temperature Sensor & SparkFun Micro Temperature Sensor" class="align-center" >}}
 
-{{< img src="stts22h.png" alt="Image" caption="SparkFun Micro Temperature Sensor - STTS22H (Qwiic)" class="align-center" >}}
 
-{{< note >}}
-Not all features of the sensor are supported yet.
-{{< /note >}}
 
 ```yaml
 # Example configuration entry
@@ -41,3 +37,4 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
+- [STTS22H Product Overview - STMicroelectronics](https://www.st.com/en/mems-and-sensors/stts22h.html)
