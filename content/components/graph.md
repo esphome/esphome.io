@@ -165,6 +165,7 @@ color:
 
 {{< note >}}
 Here are some things to note:
+
 - Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
 - Axis labels are currently not possible without manually placing them.
 - The grid and border color is set with `it.graph()`, while the traces are defined separately.
