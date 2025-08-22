@@ -79,7 +79,7 @@ Advanced options:
 
 - **trigger_on_initial_state** (*Optional*, boolean): If true, any applicable triggers will be fired when the binary sensor
   state changes from `unknown` to a valid state. This applies to the first valid state set, and any valid state set after
-  a `binary_sensor.invalidate_state` action has been excuted. The default is `false`.
+  a `binary_sensor.invalidate_state` action has been executed. The default is `false`.
   **publish_initial_state** (*Optional*, boolean): A deprecated equivalent to `trigger_on_initial_state`.
 
 - **entity_category** (*Optional*, string): The category of the entity.
@@ -88,7 +88,7 @@ Advanced options:
   Set to `""` to remove the default entity category.
 
 - If MQTT enabled, all other options from [MQTT Component](#config-mqtt-component).
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component. See [Webserver Version 3](#config-webserver-version-3-options).
 
 {{< anchor "binary_sensor-filters" >}}
 
@@ -453,14 +453,7 @@ on_multi_click:
     - logger.log: "Single Short Clicked"
 ```
 
-{{< anchor "binary_sensor-is_on_condition" >}}
-{{< anchor "binary_sensor-is_off_condition" >}}
-
-
-
-
-
-## Referencing Binary Sensor
+## Referencing Binary Sensors
 
 {{< anchor "binary_sensor-invalidate_state-action" >}}
 
@@ -475,6 +468,9 @@ on_...:
 ```
 
 The state may also be invalidated by an API call in a lambda - see the API reference linked below.
+
+{{< anchor "binary_sensor-is_on_condition" >}}
+{{< anchor "binary_sensor-is_off_condition" >}}
 
 ### `binary_sensor.is_on` / `binary_sensor.is_off` Condition
 
