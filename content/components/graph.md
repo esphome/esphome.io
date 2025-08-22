@@ -170,4 +170,5 @@ Here are some things to note:
 - The grid and border color is set with `it.graph()`, while the traces are defined separately.
 - Legends are drawn separately using `it.graph_legend()` and can be positioned independently of the graph.
 - Legend dimensions are automatically calculated if not specified, based on font sizes and trace count.
+
 {{< /note >}}
