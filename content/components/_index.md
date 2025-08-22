@@ -525,8 +525,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Xiaomi Miscale","components/sensor/xiaomi_miscale","xiaomi_miscale1&2.jpg",""
 {{< /imgtable >}}
 Looking for a sensor that outputs its values as an analog voltage? Have a look at the
-{{< docref "/components/sensor/adc" "ADC Sensor" >}} together with a formula like in the `TEMT6000
-configuration <https://devices.esphome.io/devices/temt6000>`__.
+{{< docref "/components/sensor/adc" "ADC Sensor" >}} together with a formula like in the
+[TEMT6000 configuration](https://devices.esphome.io/devices/temt6000).
 
 ## Binary Sensor Components
 
