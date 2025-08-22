@@ -7,9 +7,7 @@ params:
     image: tuya.png
 ---
 
-
-
-The `tuya`   select platform creates a select from a tuya serial component
+The `tuya` select platform creates a select from a tuya serial component
 and requires {{< docref "/components/tuya" >}} to be configured.
 
 ```text
@@ -30,8 +28,8 @@ and requires {{< docref "/components/tuya" >}} to be configured.
 [08:51:09][C][tuya:057]:   GPIO Configuration: status: pin 14, reset: pin 0 (not supported)
 [08:51:09][C][tuya:061]:   Status Pin: GPIO14
 [08:51:09][C][tuya:063]:   Product: '{"p":"gogb05wrtredz3bs","v":"1.0.0","m":0}'
-
 ```
+
 On this controller, the datapoint 36 represents the temperature sensor selection
 setting which is what we are interested in controlling using this platform.
 
@@ -48,24 +46,26 @@ select:
       0: Internal
       1: Floor
       2: Both
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **enum_datapoint** (**Required**, int): The enum datapoint id number for the select.
   At least one of *enum_datapoint* or *int_datapoint* is required.
+
 - **int_datapoint** (**Required**, int): The int datapoint id number for the select.
   At least one of *enum_datapoint* or *int_datapoint* is required.
+
 - **options** (**Required**, Map[int, str]): Provide a mapping from values (int) of
   this Select to options (str) of the *enum_datapoint* and vice versa. All options and
   all values have to be unique.
+
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the Select will immediately update the reported state.
-- All other options from [Select](#config-select).
 
+- All other options from [Select](#config-select).
 
 ## See Also
 
 - {{< docref "/components/select" >}}
 - {{< apiref "tuya/select/tuya_select.h" "tuya/select/tuya_select.h" >}}
-

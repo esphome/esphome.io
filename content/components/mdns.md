@@ -7,9 +7,7 @@ params:
     image: radio-tower.svg
 ---
 
-
-
-The `mdns`   component makes the node announce itself on the local network using the multicast DNS (mDNS) protocol.
+The `mdns` component makes the node announce itself on the local network using the multicast DNS (mDNS) protocol.
 
 Both Home Assistant and the ESPHome dashboard use mDNS to identify the IP address of all ESPHome nodes on the network.
 If mDNS is disabled, they will no longer be able to automatically find your devices. It may be necessary to use a static
@@ -21,12 +19,11 @@ It is recommended to leave mDNS enabled.
 # Example configuration entry
 mdns:
   disabled: false
-
 ```
+
 {{< anchor "mdns-configuration_variables" >}}
 
-
-## Services:
+## Services
 
 Additional mdns services can be added as exposed by the esphome node.
 
@@ -39,17 +36,16 @@ mdns:
       port: 8080
       txt:
         txt_key_1: txt_value_1
-
 ```
+
 {{< anchor "mdns-custom_services" >}}
 
-
-## Configuration variables:
+## Configuration variables
 
 - **disabled** (*Optional*, boolean): Set to true to disable mDNS usage. Defaults to false.
 - **services** (*Optional*, list): List of additional services to expose.
 
   - **service** (**Required**, string): Name of extra service.
-  - **protocol** (**Required**, string): Protocol of service (_udp or _tcp).
+  - **protocol** (**Required**, string): Protocol of service (_udp or_tcp).
   - **port** (*Optional*, [templatable](#config-templatable), int): Port number of extra service.
   - **txt** (*Optional*, mapping): Additional text records to add to service. Values are [templatable](#config-templatable).

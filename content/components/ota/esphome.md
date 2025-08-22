@@ -7,8 +7,6 @@ params:
     image: system-update.svg
 ---
 
-
-
 {{< anchor "config-ota_esphome" >}}
 
 ESPHome's Over-The-Air (OTA) platform allows you to remotely install modified/updated firmware binaries onto your
@@ -26,34 +24,36 @@ expected. This is automatically enabled by this component, but it may be disable
 ota:
   - platform: esphome
     password: !secret ota_password
-
 ```
-## Configuration variables:
 
--  **password** (*Optional*, string): The password to use for updates.
--  **port** (*Optional*, int): The port to use for OTA updates. Defaults:
+## Configuration variables
 
-   - `3232`   for the ESP32
-   - `8266`   for the ESP8266
-   - `2040`   for the RP2040
-   - `8892`   for Beken chips
--  **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
--  **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
-   ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`  .
--  All [automations](#automation) supported by {{< docref "/components/ota" >}}.
+- **password** (*Optional*, string): The password to use for updates.
+- **port** (*Optional*, int): The port to use for OTA updates. Defaults:
+
+  - `3232` for the ESP32
+  - `8266` for the ESP8266
+  - `2040` for the RP2040
+  - `8892` for Beken chips
+- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **version** (*Optional*, int): Version of OTA protocol to use. Version 2 is more stable. To downgrade to legacy
+   ESPHome, the device should be updated with OTA version 1 first. Defaults to `2`.
+
+- All [automations](#automation) supported by {{< docref "/components/ota" >}}.
 
 {{< note >}}
 After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
-update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`  , the ESP module/board
+update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
 must be power-cycled.
 
 {{< /note >}}
+
 ## Updating the Password
 
 ### Changing an Existing Password
 
-Since the configured password is used for both compiling and uploading, the regular `esphome run <file>`   command
-won't work. This issue can be worked around by executing the operations separately with an `on_boot`   trigger:
+Since the configured password is used for both compiling and uploading, the regular `esphome run <file>` command
+won't work. This issue can be worked around by executing the operations separately with an `on_boot` trigger:
 
 ```yaml
 esphome:
@@ -65,24 +65,24 @@ ota:
   - platform: esphome
     id: my_ota
     password: "Old password"
-
 ```
+
 The "id: my_ota" in the OTA block is important. This is referenced in the lambda.
-After this trick has been used to change the password, the `on_boot`   trigger may be removed and the old password
-replaced with the new password in the `ota:`   section.
+After this trick has been used to change the password, the `on_boot` trigger may be removed and the old password
+replaced with the new password in the `ota:` section.
 
 ### Adding a Password
 
-If OTA is already enabled without a password, simply add a `password:`   line to the existing `ota:`   config block.
+If OTA is already enabled without a password, simply add a `password:` line to the existing `ota:` config block.
 
 ### Removing a Password
 
--  If you know your password but want to remove it, enter an empty string: `id(my_ota).set_auth_password("");`   instead of changing.
--  If you no longer know your password and the web server has been activated:
+- If you know your password but want to remove it, enter an empty string: `id(my_ota).set_auth_password("");` instead of changing.
+- If you no longer know your password and the web server has been activated:
 
-   - Remove the OTA password from the configuration
-   - Build a new image locally.
-   - Execute the OTA update directly via the ESP web server.
+  - Remove the OTA password from the configuration
+  - Build a new image locally.
+  - Execute the OTA update directly via the ESP web server.
 
 ## See Also
 
@@ -90,4 +90,3 @@ If OTA is already enabled without a password, simply add a `password:`   line to
 - {{< docref "/components/ota" >}}
 - {{< docref "/components/ota/http_request" >}}
 - {{< docref "/components/safe_mode" >}}
-

@@ -7,9 +7,7 @@ params:
     image: home-assistant.svg
 ---
 
-
-
-The `homeassistant`   sensor platform allows you to create sensors that import
+The `homeassistant` sensor platform allows you to create sensors that import
 states from your Home Assistant instance using the {{< docref "/components/api" "native API" >}}.
 
 {{< note >}}
@@ -18,14 +16,15 @@ in Home Assistant, this component still requires you to register the node under 
 [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 sensor:
   - platform: homeassistant
     name: "Temperature Sensor From Home Assistant"
     entity_id: sensor.temperature_sensor
-
 ```
+
 Entity state attributes can also be imported:
 
 ```yaml
@@ -35,33 +34,32 @@ sensor:
     id: current_temperature
     entity_id: climate.living_room
     attribute: current_temperature
-
 ```
+
 {{< note >}}
 This component is only for numeral states. If you want to import arbitrary text states
 from Home Assistant, use the {{< docref "/components/text_sensor/homeassistant" "Home Assistant Text Sensor" >}}.
 
-
 {{< /note >}}
-## Configuration variables:
+
+## Configuration variables
 
 - **entity_id** (**Required**, string): The entity ID to import from Home Assistant.
 - **attribute** (*Optional*, string): The name of the state attribute to import from the
   specified entity. The entity state is used when this option is omitted.
+
 - All other options from [Sensor](#config-sensor).
 
-
 {{< note >}}
-The sensors implemented by this component are by default `internal`  , to avoid exporting them back to
+The sensors implemented by this component are by default `internal`, to avoid exporting them back to
 Home Assistant. Should you still want to do that (eg. because you use ESPHome's very efficient filters
-on them) you need to specifically configure `internal: false`  . Also, `state_class`  , `unit_of_measurement`
+on them) you need to specifically configure `internal: false`. Also, `state_class`, `unit_of_measurement`
 are not inherited from the imported sensor so you need to set them manually.
 
-
 {{< /note >}}
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - [Automation](#automation)
 - {{< apiref "homeassistant/sensor/homeassistant_sensor.h" "homeassistant/sensor/homeassistant_sensor.h" >}}
-

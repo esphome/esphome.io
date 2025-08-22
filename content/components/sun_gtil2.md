@@ -6,10 +6,8 @@ params:
     description: Instructions for reading data from a SUN-1000G2 grid tie inverter using ESPHome
 ---
 
-
-
-The `sun_gtil2`   component allows you to get voltage, power and temperature readings from your `SUN-1000G2`
-or `SUN-2000G2`   grid tie inverter. This is done by reading the UART data transmitted from the inverter's
+The `sun_gtil2` component allows you to get voltage, power and temperature readings from your `SUN-1000G2`
+or `SUN-2000G2` grid tie inverter. This is done by reading the UART data transmitted from the inverter's
 controller board to the display board.
 
 {{< note >}}
@@ -25,10 +23,8 @@ inverter via the (more limited) external RS232 interface you should use the
 {{< img src="sun_gtil2_schematic.png" alt="Image" caption="Simplified connection diagram" width="75.0%" class="align-center" >}}
 
 As the data is read from the inverter using UART, you need to have an [UART bus](#uart) in your
-configuration with the `rx_pin`   connected to the TX pin of the inverter's controller board. Additionally, you
-need to set the `baud_rate`   to 9600.
-
-
+configuration with the `rx_pin` connected to the TX pin of the inverter's controller board. Additionally, you
+need to set the `baud_rate` to 9600.
 
 The inverter will report new measurements approximately every 1.3 seconds.
 
@@ -38,9 +34,9 @@ The inverter will report new measurements approximately every 1.3 seconds.
 # Example configuration entry
 sun_gtil2:
   uart_id: control_to_display
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this component.
 - **uart_id** (*Optional*): The UART Bus ID for receiving messages sent from the inverter's controller to the display.
@@ -75,9 +71,9 @@ sensor:
     limiter_power:
       id: gtil_limiter_power
       internal: True
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **sun_gtil2_id** (*Optional*): Manually specify the ID of the sun_gtil2 instance if there are multiple.
 
@@ -111,9 +107,9 @@ text_sensor:
     serial_number:
       id: gtil_serial_number
       internal: True
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **sun_gtil2_id** (*Optional*): Manually specify the ID of the sun_gtil2 instance if there are multiple.
 
@@ -126,4 +122,3 @@ text_sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-

@@ -7,16 +7,14 @@ params:
     image: havellsgti5000d_s.jpg
 ---
 
-
-
-The `Havells Inverter`   sensor platform allows you to use Havells inverter data reading on modbus
+The `Havells Inverter` sensor platform allows you to use Havells inverter data reading on modbus
 ([website](https://www.havells.com/en/consumer/solar/solar-on-grid-inverter-and-solutions/solar-on-grid-inverter.html))
 with ESPHome.
 
 {{< img src="havellsgti5000d.jpg" alt="Image" caption="Havells On Grid Solar Inverter." width="50.0%" class="align-center" >}}
 
 The communication with this component is done via a [UART](#uart) using [Modbus](#modbus).
-You must therefore have a `uart:`   and `modbus:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` and `modbus:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -91,14 +89,15 @@ sensor:
       name: "HAVELLS DCI Of S"
     dci_of_t:
       name: "HAVELLS DCI Of T"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **phase_a** (*Optional*): The group of exposed sensors for Phase A/1.
 
   - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
     [Sensor](#config-sensor).
+
   - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
     All options from [Sensor](#config-sensor).
 
@@ -114,12 +113,16 @@ sensor:
 
   - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
     [Sensor](#config-sensor).
+
   - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
     All options from [Sensor](#config-sensor).
+
   - **active_power** (*Optional*): Use the (active) power value of the sensor in watts. All options
     from [Sensor](#config-sensor).
+
   - **voltage_sampled_by_secondary_cpu** (*Optional*): Use the photo voltiac's voltage sampled by
     slave CPU value of the sensor in volts. All options from [Sensor](#config-sensor).
+
   - **insulation_of_p_to_ground** (*Optional*): Use the insulation of photo voltiac's +ve terminal to
     ground value of the sensor in kilo ohms. All options from [Sensor](#config-sensor).
 
@@ -129,40 +132,55 @@ sensor:
 
 - **active_power** (*Optional*): Use the (active) power value of the sensor in watts. All options
   from [Sensor](#config-sensor).
+
 - **reactive_power** (*Optional*): Use the reactive power value of the sensor in VAR. All
   options from [Sensor](#config-sensor).
+
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
   All options from [Sensor](#config-sensor).
+
 - **energy_production_day** (*Optional*): Use the export active energy value for same day of the
   sensor in kilo watt hours. All options from [Sensor](#config-sensor).
+
 - **total_energy_production** (*Optional*): Use the total exported energy value of the sensor in
   kilo watt hours. All options from [Sensor](#config-sensor).
+
 - **total_generation_time** (*Optional*): Use the total generation time value of the sensor in
   hours. All options from [Sensor](#config-sensor).
+
 - **today_generation_time** (*Optional*): Use the day generation time value for same day of the
   sensor in minutes. All options from [Sensor](#config-sensor).
+
 - **inverter_module_temp** (*Optional*): Use the inverter module temperature value of the sensor in
   degree celsius. All options from [Sensor](#config-sensor).
+
 - **inverter_inner_temp** (*Optional*): Use the inverter inner temperature value of the sensor in
   degree celsius. All options from [Sensor](#config-sensor).
+
 - **inverter_bus_voltage** (*Optional*): Use the inverter bus voltage value of the sensor in volts.
   All options from [Sensor](#config-sensor).
-- **insulation_of_pv_n_to_ground** (*Optional*): Use the insulation  of  photo  voltiacs's
+
+- **insulation_of_pv_n_to_ground** (*Optional*): Use the insulation of photo voltiacs's
   -ve terminal to ground value of the sensor in kilo ohms. All options from [Sensor](#config-sensor).
+
 - **gfci_value** (*Optional*): Use the GFCI value of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **dci_of_r** (*Optional*): Use the DCI of R value of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **dci_of_s** (*Optional*): Use the DCI of S value of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **dci_of_t** (*Optional*): Use the DCI of T value of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
-  the same UART bus. You will need to set the address of each device manually. Defaults to `1`  .
+  the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
 
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-

@@ -7,9 +7,9 @@ params:
     image: weather-sunny.svg
 ---
 
+The `sun` component allows you to track the sun's position in the sky. Calculations are done every 60 seconds.
 
-
-The `sun`   component allows you to track the sun's position in the sky. Calculations are done every 60 seconds.
+## Component/Hub
 
 ```yaml
 # Example configuration entry
@@ -20,16 +20,15 @@ sun:
 # At least one time source is required
 time:
   - platform: homeassistant
-
 ```
-## Configuration variables:
+
+### Configuration variables
 
 - **latitude** (**Required**, float): The latitude for performing the calculation.
 - **longitude** (**Required**, float): The longitude for performing the calculation.
-
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
-Automation:
+## Triggers
 
 ```yaml
 # Example configuration entry
@@ -48,8 +47,8 @@ sun:
   on_sunset:
     - then:
         - logger.log: Good evening!
-
 ```
+
 - **on_sunrise** (*Optional*, [Automation](#automation)): An automation to perform at sunrise
   when the sun crosses a specified angle.
 
@@ -60,7 +59,7 @@ sun:
 
   - **elevation** (*Optional*, float): The elevation to cross. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
 
-## `sun`   Sensor
+## Sensor
 
 Additionally, the sun component exposes its values over a sensor platform.
 
@@ -73,17 +72,18 @@ sensor:
   - platform: sun
     name: Sun Azimuth
     type: azimuth
-
 ```
+
 {{< img src="sun-sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
-Configuration variables:
+### Configuration variables
 
-- **type** (**Required**, string): The type of value to track. One of `elevation`   and
-  `azimuth`  .
+- **type** (**Required**, string): The type of value to track. One of `elevation` and
+  `azimuth`.
+
 - All other options from [Sensor](#config-sensor).
 
-## `sun`   Text Sensor
+## Text Sensor
 
 Other properties like the next sunset time can be read out with the sun text_sensor platform.
 
@@ -96,25 +96,28 @@ text_sensor:
   - platform: sun
     name: Sun Next Sunset
     type: sunset
-
 ```
+
 {{< img src="sun-text_sensor-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
-Configuration variables:
+### Configuration variables
 
-- **type** (**Required**, string): The type of value to track. One of `sunrise`   and
-  `sunset`  .
+- **type** (**Required**, string): The type of value to track. One of `sunrise` and
+  `sunset`.
+
 - **elevation** (*Optional*, float): The elevation to calculate the next sunrise/sunset event
   for. Defaults to -0.833° (the horizon, slightly less than 0° to compensate for atmospheric refraction).
+
 - **format** (*Optional*, string): The format to format the time value with, see [strftime](#strftime)
-  for more information. Defaults to `%X`  .
+  for more information. Defaults to `%X`.
+
 - All other options from [Text Sensor](#config-text_sensor).
 
 {{< anchor "sun-is_above_below_horizon-condition" >}}
 
-## `sun.is_above_horizon`   / `sun.is_below_horizon`   Conditions
+## `sun.is_above_horizon` / `sun.is_below_horizon` Conditions
 
-The `sun.is_above_horizon`   and `sun.is_below_horizon`   [conditions](#config-condition)
+The `sun.is_above_horizon` and `sun.is_below_horizon` [conditions](#config-condition)
 allow you to check if the sun is currently above or below the horizon.
 
 ```yaml
@@ -124,9 +127,8 @@ on_...:
         - sun.is_above_horizon:
       then:
         - logger.log: Sun is above horizon!
-
 ```
+
 ## See Also
 
 - {{< apiref "sun/sun.h" "sun/sun.h" >}}
-

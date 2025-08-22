@@ -7,12 +7,10 @@ params:
     image: wk2168.jpg
 ---
 
-
-
 **WeiKai Microelectronics** provides a family of UART & GPIO expansion chips
 that interfaces to a micro-controller through SPI or I²C bus.
 
-The ESPHome `WeiKai`   component supports the following WeiKai chips:
+The ESPHome `WeiKai` component supports the following WeiKai chips:
 
 - [WK2168-IQPG](https://jlcpcb.com/partdetail/WEIKAI-WK2168IQPG/C401041)
 - [WK2132-ISSG](https://jlcpcb.com/partdetail/WeiKai-WK2132ISSG/C401039)
@@ -32,14 +30,13 @@ The features provided by the different WeiKai chips are described in the followi
 
 ### WeiKai chip's features
 
-| Chip |  Bus |  UART |  GPIO |
-| :---: | :---: | :---: | :---: |
-| WK2132-ISSG |  S/I |  2 |   |
-| WK2212-IQNG |  S/I |  2 |  8 |
-| WK2124-ISSG |  S |  4 |   |
-| WK2204-IQNG |  S/I |  4 |   |
-| WK2168-IQPG |  S/I |  4 |  8 |
-
+|    Chip     |  Bus  | UART  | GPIO  |
+| :---------: | :---: | :---: | :---: |
+| WK2132-ISSG |  S/I  |   2   |       |
+| WK2212-IQNG |  S/I  |   2   |   8   |
+| WK2124-ISSG | S | 4 | |
+| WK2204-IQNG | S/I | 4 | |
+| WK2168-IQPG | S/I | 4 | 8 |
 
 As you can see most of the components can interface either through an I²C bus or a SPI bus,
 they provide either 2 or 4 serial channels, and some provide 8 input/output pins.
@@ -59,7 +56,7 @@ this I/O expander might not work.
 
 ## Connecting via an SPI bus
 
-The `wk2132_spi`  , `wk2212_spi`  , `wk2204_spi`  , `wk2168_spi`   components allows
+The `wk2132_spi`, `wk2212_spi`, `wk2204_spi`, `wk2168_spi` components allows
 you to connect the WeiKai chip with ESPHome via a [SPI](#spi) bus.
 
 You can connect several of these modules to a single SPI controller circuit effectively expanding
@@ -68,8 +65,8 @@ with a individual CS.
 
 Here is an example of configuration entry for a wk2168_spi component. For the other components
 in the list just replace the name of the component and make sure you do not use more channels that the chip
-can support (an error message will be generated otherwise). Note that for the `WK2124-ISSG`   chip
-you need to use `wk2204_spi`   as the two chips are similar.
+can support (an error message will be generated otherwise). Note that for the `WK2124-ISSG` chip
+you need to use `wk2204_spi` as the two chips are similar.
 
 ```yaml
 wk2168_spi:
@@ -89,34 +86,40 @@ wk2168_spi:
       - id: spi_uart_3
         channel: 3
         baud_rate: 19200
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this WeiKai component.
 - **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
   to use multiple SPI buses.
+
 - **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin on the ESP that the chip select line
   of the chip is connected to.
-- **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`  , `40MHz`  , `20MHz`  , `10MHz`  ,
-  `5MHz`  , `4MHz`  , `2MHz`  , `1MHz`   (default), `200kHz`  , `75kHz`   or `1kHz`  . A numeric value in Hz can
+
+- **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`,
+  `5MHz`, `4MHz`, `2MHz`, `1MHz` (default), `200kHz`, `75kHz` or `1kHz`. A numeric value in Hz can
   alternatively be specified.
+
 - **crystal** (*Optional*): The frequency in Hz of the crystal connected to the chip.
   The default value is 14745600 Hz.
+
 - **uart** (**Required**): The UART channels.
 
   - **id** (**Required**, [ID](#config-id)): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.
-    Options: `0`   to `1`   or `0`   to `3`   depending on the model.
+    Options: `0` to `1` or `0` to `3` depending on the model.
+
   - **baud_rate** (**Required**): The baud rate of the UART channel.
-  - **parity** (*Optional*): The parity used on the UART channel. Options: `NONE`  , `EVEN`  ,
-    `ODD`  . Defaults to `NONE`  .
-  - **stop_bits** (*Optional*): The number of stop bits to send. Options: `1`  , `2`  .
-    Defaults to `1`  .
+  - **parity** (*Optional*): The parity used on the UART channel. Options: `NONE`, `EVEN`,
+    `ODD`. Defaults to `NONE`.
+
+  - **stop_bits** (*Optional*): The number of stop bits to send. Options: `1`, `2`.
+    Defaults to `1`.
 
 ## Connecting via an I²C bus
 
-The `wk2132_i2c`   `wk2212_i2c`   `wk2204_i2c`   `wk2168_i2c`   components allows you
+The `wk2132_i2c` `wk2212_i2c` `wk2204_i2c` `wk2168_i2c` components allows you
 to connect the WeiKai chip with ESPHome via an [I²C](#i2c) bus.
 Up to four WeiKai chips can be connected to an I²C controller board, effectively expanding the
 available hardware serial ports. The base addresses of these boards are defined by the
@@ -124,13 +127,12 @@ positions of two switches, A0 and A1, on the board.
 
 ### WeiKai address selection
 
-| I²C address |  A1 |  A0 |
-| :---: | :---: | :---: |
-| 0x10 - 0x17 |  0 |  0 |
-| 0x30 - 0x37 |  0 |  1 |
-| 0x50 - 0x57 |  1 |  0 |
-| 0x70 - 0x77 |  1 |  1 |
-
+| I²C address |  A1   |  A0   |
+| :---------: | :---: | :---: |
+| 0x10 - 0x17 |   0   |   0   |
+| 0x30 - 0x37 |   0   |   1   |
+| 0x50 - 0x57 | 1 | 0 |
+| 0x70 - 0x77 | 1 | 1 |
 
 {{< important >}}
 Note that the address is given as a **range** a not a number as you usually find on other I²C component.
@@ -141,7 +143,7 @@ Indeed due to a peculiar way of addressing the different internal registers each
 This is important to know if you want to connect other devices on the same I²C bus.
 
 {{< /important >}}
-Here is an example of configuration entry for a `wk2168_i2c`   component. For the other components
+Here is an example of configuration entry for a `wk2168_i2c` component. For the other components
 just replace the name of the component and do not use more channels that the chip can
 support (an error message will be generated in this case).
 
@@ -163,29 +165,32 @@ wk2168_i2c:
       - id: i2c_uart_3
         channel: 3
         baud_rate: 19200
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this WeiKai component.
-- **address** (*Optional*): The I²C address of this component. Defaults to `0x10`  .
+- **address** (*Optional*): The I²C address of this component. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The I²C Bus ID. Defaults to the default i²c bus.
 - **crystal** (*Optional*): The frequency in Hz of the crystal connected to the chip.
   The default value is 14745600 Hz.
+
 - **uart** (**Required**): The UART channels.
 
   - **id** (**Required**, [ID](#config-id)): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.
-    Options: `0`   to `1`   or `0`   to `3`   depending on the model.
+    Options: `0` to `1` or `0` to `3` depending on the model.
+
   - **baud_rate** (**Required**): The baud rate of the UART channel.
-  - **parity** (*Optional*): The parity used on the UART channel. Options: `NONE`  , `EVEN`  ,
-    `ODD`  . Defaults to `NONE`  .
-  - **stop_bits** (*Optional*): The number of stop bits to send. Options: `1`  , `2`  .
-    Defaults to `1`  .
+  - **parity** (*Optional*): The parity used on the UART channel. Options: `NONE`, `EVEN`,
+    `ODD`. Defaults to `NONE`.
+
+  - **stop_bits** (*Optional*): The number of stop bits to send. Options: `1`, `2`.
+    Defaults to `1`.
 
 ## Using the GPIO pins
 
-For the `WK2212`  , and `WK2168`   it is possible to use the chip I/O pins as any of the other GPIO pins.
+For the `WK2212`, and `WK2168` it is possible to use the chip I/O pins as any of the other GPIO pins.
 For example for a wk2168_spi chip:
 
 ```yaml
@@ -224,17 +229,18 @@ switch:
       mode:
         output: true
       inverted: true
-
 ```
-### Pin configuration variables:
 
-- **wkxxxx_xxx** (**Required**, [ID](#config-id)): The id of the `wkxxxx_xxx`   component for the pin. For
+### Pin configuration variables
+
+- **wkxxxx_xxx** (**Required**, [ID](#config-id)): The id of the `wkxxxx_xxx` component for the pin. For
   example `wk2212_i2c: wk2168_bridge_spi`
-- **number** (**Required**): The pin number (`0`   to `7`  )
-- **inverted** (*Optional*): If all read and written values should be treated as inverted. Defaults to `false`  .
-- **mode** (*Optional*): A pin mode to set for the pin at. One of `INPUT`   or `OUTPUT`  . Default to `INPUT`
 
-## Performance considerations:
+- **number** (**Required**): The pin number (`0` to `7`  )
+- **inverted** (*Optional*): If all read and written values should be treated as inverted. Defaults to `false`.
+- **mode** (*Optional*): A pin mode to set for the pin at. One of `INPUT` or `OUTPUT`. Default to `INPUT`
+
+## Performance considerations
 
 ### Bus speed
 
@@ -244,7 +250,7 @@ registers or transferring bytes from the internal FIFOs to the processor may tak
 
 To improve this situation, it is strongly recommended to increase the default bus frequency.
 
-- With a SPI bus this can be done on the WeiKai component by specifying `data_rate`  . For example:
+- With a SPI bus this can be done on the WeiKai component by specifying `data_rate`. For example:
 
 ```yaml
 wk2168_spi:
@@ -252,9 +258,9 @@ wk2168_spi:
     spi_id: spi_bus_id
     cs_pin: 5
     data_rate: 4MHz
-
 ```
-- With an I²C bus this needs to be done on the `i2c`   declaration and therefore this frequency will
+
+- With an I²C bus this needs to be done on the `i2c` declaration and therefore this frequency will
   apply to all components connected to this bus.
 
 ```yaml
@@ -264,8 +270,8 @@ i2c:
   scan: true
   id: bus_i2c
   frequency: 800kHz
-
 ```
+
 ### Maximum Baud rate
 
 The maximum baud_rate is proportional to the crystal frequency. The following table
@@ -273,16 +279,15 @@ gives the maximum baud_rate at usual system clock:
 
 ### maximum baud rate
 
-| Clock |  Max Bd |
-| :---: | :---: |
-| 14,745,600 Hz |  921,600 Bd |
-| 11,059,200 Hz |  691,200 Bd |
-| 7,372,800 Hz |  460,800 Bd |
-| 3,686,400 Hz |  230,400 Bd |
-| 1,843,200 Hz |  115,200 Bd |
+|     Clock     |   Max Bd   |
+| :-----------: | :--------: |
+| 14,745,600 Hz | 921,600 Bd |
+| 11,059,200 Hz | 691,200 Bd |
+| 7,372,800 Hz | 460,800 Bd |
+| 3,686,400 Hz | 230,400 Bd |
+| 1,843,200 Hz | 115,200 Bd |
 
-
-If you try to use a baud  rate superior to the maximum baud_rate an error will be displayed in the
+If you try to use a baud rate superior to the maximum baud_rate an error will be displayed in the
 log file and the baud rate will automatically be decreased.
 
 ## See Also
@@ -292,4 +297,3 @@ log file and the baud rate will automatically be decreased.
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
 - {{< apiref "weika/weika.h" "weika/weika.h" >}}
-

@@ -7,8 +7,6 @@ params:
     image: language-cpp.svg
 ---
 
-
-
 Here are a couple recipes for various interesting things you can do with [Lambdas](#config-lambda) in ESPHome.
 These don't require external components and demonstrate how powerful [Lambdas](#config-lambda) can be.
 
@@ -51,8 +49,8 @@ interval:
         if (id(page) > 3) {
           id(page) = 1;
         }
-
 ```
+
 {{< anchor "lambda_magic_udp_sender" >}}
 
 ## Send UDP commands
@@ -96,8 +94,8 @@ button:
         msg: "Hello World!"
         host: "192.168.1.10"
         port: 5000
-
 ```
+
 Tested on both `arduino` and `esp-idf` platforms.
 
 {{< anchor "lambda_magic_rf_queues" >}}
@@ -173,8 +171,8 @@ cover:
       - lambda: id(rf_code_queue).push_back("AAB0ZXXXX..the.opening.code..XXXXXXXXXX");
       - script.execute: rf_transmitter_queue
     open_duration: 27s
-
 ```
+
 {{< anchor "lambda_magic_1button_coover" >}}
 
 ## One Button Cover Control
@@ -191,6 +189,7 @@ feature is implemented using asynchronous automations. So every time an open/clo
 delayed relay off command is added and old ones are not removed.
 
 {{< /note >}}
+
 ```yaml
 esp8266:
   board: esp01_1m
@@ -246,18 +245,19 @@ cover:
   stop_action:
     - switch.turn_off: open_cover
     - switch.turn_off: close_cover
-
 ```
+
 ## Update numeric values from text input
 
-Sometimes it may be more confortable to use a {{< docref "/components/text/template" >}} to change some numeric values from the user interface.
+Sometimes it may be more confortable to use a {{< docref "/components/text/template" >}} to change some numeric values
+from the user interface.
 ESPHome has some nice [helper functions](https://github.com/esphome/esphome/blob/dev/esphome/core/helpers.h) among which
 theres's one to convert text to numbers.
 
-In the example below we have a text input and a template sensor which can be updated from the text input field. What the lambda
-does, is to parse and convert the text string to a number - which only succeedes if the entered string contains characters
-represesenting a float number (such as digits, `-`   and `.`  ). If the entered string contains any other characters, the lambda
-will return `NaN`  , which corresponds to `unknown`   sensor state.
+In the example below we have a text input and a template sensor which can be updated from the text input field. What
+the lambda does, is to parse and convert the text string to a number - which only succeedes if the entered string
+contains characters represesenting a float number (such as digits, `-` and `.`  ). If the entered string contains
+any other characters, the lambda will return `NaN`, which corresponds to `unknown` sensor state.
 
 ```yaml
 text:
@@ -279,11 +279,9 @@ sensor:
   - platform: template
     id: num_from_text
     name: "Number from text"
-
 ```
+
 ## See Also
 
 - [Templates](#config-lambda)
 - [Automation](#automation)
-
-

@@ -7,9 +7,7 @@ params:
     image: description.svg
 ---
 
-
-
-The `template`   button platform allows you to create simple buttons out of just actions. Once defined,
+The `template` button platform allows you to create simple buttons out of just actions. Once defined,
 it will automatically appear in Home Assistant as a button and can be controlled through the frontend.
 
 ```yaml
@@ -19,9 +17,9 @@ button:
     name: "Template Button"
     on_press:
       - logger.log: Button Pressed
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Button](#config-button).
 
@@ -29,4 +27,3 @@ button:
 
 - {{< docref "/automations" >}}
 - {{< docref "/components/button" >}}
-

@@ -7,9 +7,7 @@ params:
     image: upload.svg
 ---
 
-
-
-The `tuya`   number platform allows you to create a number that controls
+The `tuya` number platform allows you to create a number that controls
 a tuya serial component. This platform requires {{< docref "/components/tuya" >}} to be configured.
 
 When {{< docref "/components/tuya" >}} has been properly configured, it will output a list of
@@ -33,10 +31,10 @@ valid data points to the log after start-up.
 [21:37:14][C][tuya:045]:   Datapoint 115: enum (value: 4)
 [21:37:14][C][tuya:045]:   Datapoint 116: enum (value: 2)
 [21:37:14][C][tuya:055]:   Product: '{"p":"ymf4oruxqx0xlogp","v":"1.0.3","m":0}'
-
 ```
+
 The example output above from a Tuya Siren with temperature and humidity sensors. The
-`tuya`   number platform can be used to control all of the integer and enum datapoints.
+`tuya` number platform can be used to control all of the integer and enum datapoints.
 
 On this device, datapoint 116 represents the volume control, with valid values being
 0=High, 1=Medium, 2=Low.
@@ -50,11 +48,11 @@ Based on this, you can create a number as follows:
   min_value: 0
   max_value: 2
   step: 1
-
 ```
-The value for `multiply`   is used as the scaling factor for the Number. All numbers in Tuya are integers, so a scaling factor is sometimes needed to convert the Tuya reported value into floating point.
 
-For instance, assume we have a pH sensor that reads from 0.00 to 15.00 with a scaling of 0.01. By setting `multiply`   to 100, on the Tuya side (not visible to the user) the number will be reported as an integer from 0 to 1500. The following configuration could be used:
+The value for `multiply` is used as the scaling factor for the Number. All numbers in Tuya are integers, so a scaling factor is sometimes needed to convert the Tuya reported value into floating point.
+
+For instance, assume we have a pH sensor that reads from 0.00 to 15.00 with a scaling of 0.01. By setting `multiply` to 100, on the Tuya side (not visible to the user) the number will be reported as an integer from 0 to 1500. The following configuration could be used:
 
 ```yaml
 - platform: "tuya"
@@ -63,15 +61,16 @@ For instance, assume we have a pH sensor that reads from 0.00 to 15.00 with a sc
   min_value: 0.00
   max_value: 15.00
   multiply: 100
-
 ```
-## Hidden datapoints:
+
+## Hidden datapoints
+
 The above configurations will work fine as long as Tuya device publishes the datapoint value (along with its type) at initialization.
-However this is not always the case. To be able to use such "hidden" datapoints as Number, you need to specify additional `datapoint_hidden`   configuration block.
+However this is not always the case. To be able to use such "hidden" datapoints as Number, you need to specify additional `datapoint_hidden` configuration block.
 This block allows to specify the missing datapoint type and, optionally, the value that should be written to the datapoint at initialization.
 
 TuyaMCU restores the state of all its datapoints after reboot, but with the hidden datapoints there is no way to know what their values are.
-Therefore there is also an option to store them on the ESPHome side and they will be set at initialization. To use this feature, set the `restore_value`   yaml key to True.
+Therefore there is also an option to store them on the ESPHome side and they will be set at initialization. To use this feature, set the `restore_value` yaml key to True.
 
 ```yaml
 - platform: "tuya"
@@ -83,9 +82,9 @@ Therefore there is also an option to store them on the ESPHome side and they wil
     datapoint_type: int
     initial_value: 85
     restore_value: yes
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **number_datapoint** (**Required**, int): The datapoint id number of the number.
 - **min_value** (**Required**, float): The minimum value this number can be.
@@ -95,8 +94,8 @@ Therefore there is also an option to store them on the ESPHome side and they wil
 - **datapoint_hidden** (*Optional*): Specify information required for hidden datapoints.
 
   - **datapoint_type** (**Required**, string): The datapoint type, one of *int*, *uint*, *enum*.
-  - **initial_value** (*Optional*, float): The value to be written at initialization. Must be between `min_value`   and `max_value`  .
-  - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash. Defaults to `false`  .
+  - **initial_value** (*Optional*, float): The value to be written at initialization. Must be between `min_value` and `max_value`.
+  - **restore_value** (*Optional*, boolean): Saves and loads the state to RTC/Flash. Defaults to `false`.
 
 - All other options from [Number](#config-number).
 
@@ -104,4 +103,3 @@ Therefore there is also an option to store them on the ESPHome side and they wil
 
 - {{< docref "/components/number" >}}
 - {{< apiref "tuya/number/tuya_number.h" "tuya/number/tuya_number.h" >}}
-

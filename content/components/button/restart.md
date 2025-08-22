@@ -7,9 +7,7 @@ params:
     image: restart.svg
 ---
 
-
-
-The `restart`   button platform allows you to restart your node remotely
+The `restart` button platform allows you to restart your node remotely
 through Home Assistant.
 
 ```yaml
@@ -17,9 +15,9 @@ through Home Assistant.
 button:
   - platform: restart
     name: "Living Room Restart"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Button](#config-button).
 
@@ -31,4 +29,3 @@ button:
 - {{< docref "/components/switch/restart" >}}
 - {{< docref "template/" >}}
 - {{< apiref "restart/button/restart_button.h" "restart/button/restart_button.h" >}}
-

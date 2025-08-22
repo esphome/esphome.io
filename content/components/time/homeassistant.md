@@ -3,10 +3,8 @@ description: "Home Assistant Time Source"
 title: "Home Assistant Time Source"
 ---
 
-
-
 The preferred way to get time in ESPHome is using Home Assistant.
-With the `homeassistant`   time platform, the {{< docref "/components/api" "native API" >}} connection
+With the `homeassistant` time platform, the {{< docref "/components/api" "native API" >}} connection
 to Home Assistant will be used to periodically synchronize the current time.
 
 {{< note >}}
@@ -15,18 +13,16 @@ in Home Assistant, this component still requires you to register the node under 
 [Connecting your device to Home Assistant](#connecting-your-device-to-home-assistant).
 
 {{< /note >}}
+
 ```yaml
 # Example configuration entry
 time:
   - platform: homeassistant
     id: homeassistant_time
-
 ```
+
 ## Configuration variables
 
 - All options from [Base Time Configuration](#base_time_config).
 
-
 ## See Also
-
-

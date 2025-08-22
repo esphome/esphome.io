@@ -7,10 +7,8 @@ params:
     image: folder-open.svg
 ---
 
-
-
 ESPHome has support for components to create a text entity. A text entity is
-like a `text_sensor`   that can read a value from a device, but is useful when that value
+like a `text_sensor` that can read a value from a device, but is useful when that value
 can be set by the user/frontend.
 
 {{< note >}}
@@ -29,8 +27,8 @@ name: Livingroom Text
 
 # Optional variables:
 icon: "mdi:cursor-text"
-
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -38,27 +36,32 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the text to use that name, you can set `name: None`  .
+you want the text to use that name, you can set `name: None`.
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the text in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Set to `""`   to remove the default entity category.
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
+  for a list of available options. Set to `""` to remove the default entity category.
+
 - **mode** (**Required**, string): Defines how the text should be displayed in the frontend.
-  One of `text`   or `password`  .
+  One of `text` or `password`.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 Automations:
 
 - **on_value** (*Optional*, [Automation](#automation)): An automation to perform
-  when a new value is published. See [`on_value`  ](#text-on_value).
+  when a new value is published. See [`on_value`](#text-on_value).
 
 MQTT Options:
 
@@ -67,14 +70,14 @@ MQTT Options:
 ## Text Automation
 
 You can access the most recent state of the text in [lambdas](#config-lambda) using
-`id(text_id).state`  .
+`id(text_id).state`.
 
 {{< anchor "text-on_value" >}}
 
 ### `on_value`
 
 This automation will be triggered when a new value is published. In [Lambdas](#config-lambda)
-you can get the value from the trigger with `x`  .
+you can get the value from the trigger with `x`.
 
 ```yaml
 text:
@@ -85,13 +88,13 @@ text:
         - logger.log:
             format: "%s"
             args: ["x.c_str()"]
-
 ```
+
 Configuration variables: See [Automation](#automation).
 
 {{< anchor "text-set_action" >}}
 
-### `text.set`   Action
+### `text.set` Action
 
 This is an [Action](#config-action) for setting a text state.
 
@@ -99,8 +102,8 @@ This is an [Action](#config-action) for setting a text state.
 - text.set:
     id: my_text
     value: "Hello World"
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the text to set.
@@ -121,17 +124,16 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_text).make_call();
     call.set_value("Hello World");
     call.perform();
-
 ```
+
 - `.state`  : Retrieve the current value of the text.
 
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my text: %s", id(my_text).state.c_str());
-
 ```
+
 ## See Also
 
 - {{< apiref "Text" "text/text.h" >}}
 - {{< apiref "TextCall" "text/text_call.h" >}}
-

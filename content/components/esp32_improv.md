@@ -7,12 +7,10 @@ params:
     image: improv-social.png
 ---
 
-
-
-The `esp32_improv`   component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
+The `esp32_improv` component in ESPHome implements the open [Improv standard](https://www.improv-wifi.com/)
 for configuring Wi-Fi on an ESP32 device by using Bluetooth Low Energy (BLE) to receive the credentials.
 
-The `esp32_improv`   component will automatically set up the {{< docref "esp32_ble" "BLE Server" >}}.
+The `esp32_improv` component will automatically set up the {{< docref "esp32_ble" "BLE Server" >}}.
 
 {{< warning >}}
 The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
@@ -22,6 +20,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 wifi:
@@ -29,28 +28,35 @@ wifi:
 
 esp32_improv:
   authorizer: binary_sensor_id
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **authorizer** (**Required**, [ID](#config-id)): A {{< docref "binary_sensor/index" "binary sensor" >}} to authorize with.
-  Also accepts `none`   to skip authorization.
+  Also accepts `none` to skip authorization.
+
 - **authorized_duration** (*Optional*, [Time](#config-time)): The amount of time until authorization times out and needs
-  to be re-authorized. Defaults to `1min`  .
+  to be re-authorized. Defaults to `1min`.
+
 - **status_indicator** (*Optional*, [ID](#config-id)): An {{< docref "output/index" "output" >}} to display feedback to the user.
-- **identify_duration** (*Optional*, [Time](#config-time)): The amount of time to identify for. Defaults to `10s`  .
+- **identify_duration** (*Optional*, [Time](#config-time)): The amount of time to identify for. Defaults to `10s`.
 - **wifi_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before starting the Improv service
-  after Wi-Fi is no longer connected. Defaults to `1min`  .
+  after Wi-Fi is no longer connected. Defaults to `1min`.
+
 - **on_start** (*Optional*, [Automation](#automation)): An action to be performed when Improv is waiting for
-  authorization and/or upon authorization. See [`on_start`  ](#improv-on_start).
+  authorization and/or upon authorization. See [`on_start`](#improv-on_start).
+
 - **on_provisioned** (*Optional*, [Automation](#automation)): An action to be performed when provisioning has
-  completed. See [`on_provisioned`  ](#improv-on_provisioned).
+  completed. See [`on_provisioned`](#improv-on_provisioned).
+
 - **on_provisioning** (*Optional*, [Automation](#automation)): An action to be performed when the device begins the
-  provisioning process. See [`on_provisioning`  ](#improv-on_provisioning).
+  provisioning process. See [`on_provisioning`](#improv-on_provisioning).
+
 - **on_stop** (*Optional*, [Automation](#automation)): An action to be performed when Improv has stopped.
-  See [`on_stop`  ](#improv-on_stop).
+  See [`on_stop`](#improv-on_stop).
+
 - **on_state** (*Optional*, [Automation](#automation)): An action to be performed when an Improv state change
-  happens. See [`on_state`  ](#improv-on_state).
+  happens. See [`on_state`](#improv-on_state).
 
 {{< anchor "improv-automations" >}}
 
@@ -64,15 +70,15 @@ the Improv provisioning process.
 ### `on_start`
 
 This automation will be triggered when the device is waiting for authorization (usually by pressing a button on the
-device, if configured -- see `authorizer`   above) and/or upon authorization.
+device, if configured -- see `authorizer` above) and/or upon authorization.
 
 ```yaml
 esp32_improv:
   on_start:
     then:
       - logger.log: "Improv awaiting authorization/authorized"
-
 ```
+
 {{< anchor "improv-on_provisioned" >}}
 
 ### `on_provisioned`
@@ -84,8 +90,8 @@ esp32_improv:
   on_provisioned:
     then:
       - logger.log: "Improv provisioned"
-
 ```
+
 {{< anchor "improv-on_provisioning" >}}
 
 ### `on_provisioning`
@@ -97,8 +103,8 @@ esp32_improv:
   on_provisioning:
     then:
       - logger.log: "Improv provisioning"
-
 ```
+
 {{< anchor "improv-on_stop" >}}
 
 ### `on_stop`
@@ -110,8 +116,8 @@ esp32_improv:
   on_stop:
     then:
       - logger.log: "Improv stopped"
-
 ```
+
 {{< anchor "improv-on_state" >}}
 
 ### `on_state`
@@ -120,22 +126,22 @@ This automation will be triggered on every state change.
 
 Two variables are available for use in [lambdas](#config-lambda) within this automation. They are:
 
-- `state`  , an `enum`   named `improv::State`  , having one of the following values:
+- `state`, an `enum` named `improv::State`, having one of the following values:
 
-  -  `improv::STATE_STOPPED`
-  -  `improv::STATE_AWAITING_AUTHORIZATION`
-  -  `improv::STATE_AUTHORIZED`
-  -  `improv::STATE_PROVISIONING`
-  -  `improv::STATE_PROVISIONED`
+  - `improv::STATE_STOPPED`
+  - `improv::STATE_AWAITING_AUTHORIZATION`
+  - `improv::STATE_AUTHORIZED`
+  - `improv::STATE_PROVISIONING`
+  - `improv::STATE_PROVISIONED`
 
-- `error`  , an `enum`   named `improv::Error`  , having one of the following values:
+- `error`, an `enum` named `improv::Error`, having one of the following values:
 
-  -  `improv::ERROR_NONE`
-  -  `improv::ERROR_INVALID_RPC`
-  -  `improv::ERROR_UNKNOWN_RPC`
-  -  `improv::ERROR_UNABLE_TO_CONNECT`
-  -  `improv::ERROR_NOT_AUTHORIZED`
-  -  `improv::ERROR_UNKNOWN`
+  - `improv::ERROR_NONE`
+  - `improv::ERROR_INVALID_RPC`
+  - `improv::ERROR_UNKNOWN_RPC`
+  - `improv::ERROR_UNABLE_TO_CONNECT`
+  - `improv::ERROR_NOT_AUTHORIZED`
+  - `improv::ERROR_UNKNOWN`
 
 ```yaml
 esp32_improv:
@@ -146,11 +152,11 @@ esp32_improv:
             lambda: return state == improv::STATE_AUTHORIZED;
           then:
             - logger.log: "Improv state is STATE_AUTHORIZED"
-
 ```
+
 ## Status Indicator
 
-The `status_indicator`   has the following patterns:
+The `status_indicator` has the following patterns:
 
 - solid: The improv service is active and waiting to be authorized.
 - blinking once per second: The improv service is awaiting credentials.
@@ -165,4 +171,3 @@ The `status_indicator`   has the following patterns:
 - {{< docref "captive_portal/" >}}
 - [Improv Wi-Fi](https://www.improv-wifi.com/)
 - {{< apiref "esp32_improv/esp32_improv_component.h" "esp32_improv/esp32_improv_component.h" >}}
-

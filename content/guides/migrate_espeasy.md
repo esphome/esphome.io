@@ -7,8 +7,6 @@ params:
     image: espeasy.svg
 ---
 
-
-
 Migrating from previous ESPEasy setups is very easy. You just need to have
 ESPHome create a binary for you and then upload that in the ESPEasy web interface.
 
@@ -17,14 +15,14 @@ ESPHome create a binary for you and then upload that in the ESPEasy web interfac
 First follow the guides for the [different supported devices](#devices) and create a configuration
 file. Then, generate and download the binary:
 
-- **Using the Home Assistant add-on/dashboard**: Just click the `COMPILE`   button,
-  wait for the compilation to end and press the `DOWNLOAD BINARY`   button.
+- **Using the Home Assistant add-on/dashboard**: Just click the `COMPILE` button,
+  wait for the compilation to end and press the `DOWNLOAD BINARY` button.
 
 {{< img src="download_binary.png" alt="Image" >}}
 
-- **Using the command line**: run `esphome compile livingroom.yaml`   (replacing
-  `livingroom.yaml`   with your configuration file of course) and navigate to the
-  `<NODE_NAME>/.pioenvs/<NODE_NAME>/`   folder. There you will find a `firmware.bin`   file,
+- **Using the command line**: run `esphome compile livingroom.yaml` (replacing
+  `livingroom.yaml` with your configuration file of course) and navigate to the
+  `<NODE_NAME>/.pioenvs/<NODE_NAME>/` folder. There you will find a `firmware.bin` file,
   this is the binary you will upload.
 
 ## Uploading Binary
@@ -50,4 +48,3 @@ Happy Hacking!
 - {{< docref "/components/esp32" >}}
 - {{< docref "migrate_espurna/" >}}
 - {{< docref "migrate_sonoff_tasmota/" >}}
-

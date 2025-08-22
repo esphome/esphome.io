@@ -7,11 +7,9 @@ params:
     image: he60r.jpg
 ---
 
-
-
 {{< img src="he60r.jpg" alt="Image" class="align-right" >}}
 
-The `he60r`   cover platform allows you to control a HomEntry HE60R
+The `he60r` cover platform allows you to control a HomEntry HE60R
 garage door opener. These units were made by Chamberlain and sold through Bunnings. It is *likely* that this
 component will also work with other older Chamberlain garage door openers. It is not currently compatible with
 newer Chamberlain units that use the Security+ 2.0 protocol.
@@ -35,9 +33,9 @@ cover:
   platform: he60r
   id: garage_door
   name: Garage Door
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **open_duration** (*Optional*, [Time](#config-time)): The time required for the door to fully open from the closed position. Default 15s.
 - **close_duration** (*Optional*, [Time](#config-time)): The time required for the door to fully close from the open position. Default 15s.
@@ -54,7 +52,6 @@ be a switching type, a linear regulator would draw too much current and run hot.
 the ESP32 via USB from 5V. This circuit also includes a manual control button connected to a GPIO.
 
 Any microcontroller board supported by ESPHome should be suitable for this application.
-
 
 {{< img src="he60r-sch.jpg" alt="Image" >}}
 
@@ -94,11 +91,10 @@ binary_sensor:
     on_press:
       then:
         - cover.toggle: garage_door
-
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
 - [Automation](#automation)
 - [GPIO Binary Sensor](#gpio-binary-sensor)
-

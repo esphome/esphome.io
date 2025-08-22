@@ -7,9 +7,7 @@ params:
     image: bluetooth.svg
 ---
 
-
-
-The `ble_rssi`   sensor platform lets you track the RSSI value or signal strength of a
+The `ble_rssi` sensor platform lets you track the RSSI value or signal strength of a
 BLE device. See [the binary sensor setup](#esp32_ble_tracker-setting_up_devices) for
 instructions for setting up this platform.
 
@@ -21,6 +19,7 @@ configuration. Memory-intensive components such as {{< docref "/components/voice
 audio components are most likely to cause issues.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 esp32_ble_tracker:
@@ -42,32 +41,39 @@ sensor:
   - platform: ble_rssi
     ibeacon_uuid: '68586f1e-89c2-11eb-8dcd-0242ac130003'
     name: "BLE Test Service iBeacon RSSI value"
-
 ```
+
 {{< note >}}
 Service UUID can be 16 bit long, as in the example, but it can also be 32 bit long
 like `1122aaff`, or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`.
 
 {{< /note >}}
-## Configuration variables:
+
+## Configuration variables
 
 - **mac_address** (*Optional*, MAC Address): The MAC address to track for this
-  sensor. Note that exactly one of `mac_address`  , `irk`  , `service_uuid`   or `ibeacon_uuid`
+  sensor. Note that exactly one of `mac_address`, `irk`, `service_uuid` or `ibeacon_uuid`
   must be present.
+
 - **irk** (*Optional*, 16 byte hex string): The Identity Resolving Key (IRK) to track for this
-  sensor. Note that exactly one of `mac_address`  , `irk`  , `service_uuid`   or `ibeacon_uuid`
+  sensor. Note that exactly one of `mac_address`, `irk`, `service_uuid` or `ibeacon_uuid`
   must be present.
+
 - **service_uuid** (*Optional*, 16 bit, 32 bit, or 128 bit BLE Service UUID): The BLE
   Service UUID which can be tracked if the device randomizes the MAC address. Note that exactly one of
-  `mac_address`  , `irk`  , `service_uuid`   or `ibeacon_uuid`   must be present.
+  `mac_address`, `irk`, `service_uuid` or `ibeacon_uuid` must be present.
+
 - **ibeacon_uuid** (*Optional*, string): The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
-  to identify the beacon that needs to be tracked. Note that exactly one of `mac_address`  ,
-  `irk`  , `service_uuid`   or `ibeacon_uuid`   must be present.
+  to identify the beacon that needs to be tracked. Note that exactly one of `mac_address`,
+  `irk`, `service_uuid` or `ibeacon_uuid` must be present.
+
 - **ibeacon_major** (*Optional*, int): The iBeacon major identifier of the beacon that needs
   to be tracked. Usually used to group beacons, for example for grouping all beacons in the
   same building.
+
 - **ibeacon_minor** (*Optional*, int): The iBeacon minor identifier of the beacon that needs
   to be tracked. Usually used to identify beacons within an iBeacon group.
+
 - All other options from [Sensor](#config-sensor).
 
 ## See Also
@@ -75,4 +81,3 @@ like `1122aaff`, or 128 bit long like `11223344-5566-7788-99aa-bbccddeeff00`.
 - {{< docref "/components/esp32_ble_tracker" >}}
 - {{< docref "/components/sensor" >}}
 - {{< apiref "ble_rssi/ble_rssi_sensor.h" "ble_rssi/ble_rssi_sensor.h" >}}
-

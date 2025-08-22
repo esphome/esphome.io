@@ -7,8 +7,6 @@ params:
     image: system-update.svg
 ---
 
-
-
 {{< anchor "config-ota_web_server" >}}
 
 The Web Server OTA platform allows you to upload new firmware binaries to your ESPHome devices directly through the
@@ -25,6 +23,7 @@ device to upload new firmware. It is **strongly recommended** to enable authenti
 using this feature.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 web_server:
@@ -35,9 +34,9 @@ web_server:
 
 ota:
   - platform: web_server
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - All [automations](#automation) supported by {{< docref "/components/ota" >}}.
@@ -46,9 +45,10 @@ ota:
 This platform requires the {{< docref "/components/web_server" >}} component to be configured in your device.
 
 {{< /note >}}
+
 ## Migration from Legacy Configuration
 
-Prior to ESPHome 2025.7.0, OTA functionality was built into the `web_server`   component using the `ota`   option.
+Prior to ESPHome 2025.7.0, OTA functionality was built into the `web_server` component using the `ota` option.
 This has been moved to a separate platform for consistency with other OTA methods.
 
 **Old configuration:**
@@ -57,8 +57,8 @@ This has been moved to a separate platform for consistency with other OTA method
 web_server:
   port: 80
   ota: true  # or ota: false to disable
-
 ```
+
 **New configuration:**
 
 ```yaml
@@ -67,9 +67,9 @@ web_server:
 
 ota:
   - platform: web_server  # Add this to enable web OTA
-
 ```
-If you previously had `ota: false`   in your web_server configuration, simply remove that line and don't add the
+
+If you previously had `ota: false` in your web_server configuration, simply remove that line and don't add the
 web_server OTA platform.
 
 ## Example Configurations
@@ -83,8 +83,8 @@ web_server:
 
 ota:
   - platform: web_server
-
 ```
+
 Secure setup with authentication:
 
 ```yaml
@@ -97,23 +97,25 @@ web_server:
 
 ota:
   - platform: web_server
-
 ```
+
 ## Using the Web Interface
 
-1. Navigate to your device's web interface at `http://<device-ip>/`   or `http://<device-name>.local/`
-2. If authentication is enabled, enter your username and password
-3. Scroll down to the "OTA Update" section
-4. Click "Choose File" and select your firmware file (`firmware.bin`  )
-5. Click "Update" to start the upload
-6. Wait for the upload to complete - the device will automatically reboot with the new firmware
+1. Navigate to your device's web interface at `http://<device-ip>/` or `http://<device-name>.local/`
+1. If authentication is enabled, enter your username and password
+1. Scroll down to the "OTA Update" section
+1. Click "Choose File" and select your firmware file (`firmware.bin`  )
+1. Click "Update" to start the upload
+1. Wait for the upload to complete - the device will automatically reboot with the new firmware
 
 {{< warning >}}
-- Always use `firmware.bin`   or `firmware.ota.bin`   files for OTA updates, not `firmware.factory.bin`   files
+
+- Always use `firmware.bin` or `firmware.ota.bin` files for OTA updates, not `firmware.factory.bin` files
 - The web interface may become unresponsive during the update process - this is normal
 - Do not power off the device during an update
 
 {{< /warning >}}
+
 ## See Also
 
 - {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
@@ -121,4 +123,3 @@ ota:
 - {{< docref "/components/ota/esphome" >}}
 - {{< docref "/components/web_server" >}}
 - {{< docref "/components/safe_mode" >}}
-

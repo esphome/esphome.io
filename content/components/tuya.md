@@ -7,20 +7,18 @@ params:
     image: tuya.png
 ---
 
-
-
-The `tuya`   component creates a serial connection to the Tuya MCU for platforms to use.
+The `tuya` component creates a serial connection to the Tuya MCU for platforms to use.
 
 {{< img src="tuya.png" alt="Image" width="40%" class="align-center" >}}
 
-The `tuya`   serial component requires a [UART bus](#uart) to be configured.
-Put the `tuya`   component in the config and it will list the possible devices for you in the config log.
+The `tuya` serial component requires a [UART bus](#uart) to be configured.
+Put the `tuya` component in the config and it will list the possible devices for you in the config log.
 
 ```yaml
 # Register the Tuya MCU connection
 tuya:
-
 ```
+
 Here is an example output for a Tuya fan controller:
 
 ```text
@@ -31,8 +29,8 @@ Here is an example output for a Tuya fan controller:
 [12:39:45][C][tuya:034]:   Datapoint 7: int value (value: 0)
 [12:39:45][C][tuya:032]:   Datapoint 9: switch (value: OFF)
 [12:39:45][C][tuya:046]:   Product: '{"p":"hqq73kftvzh8c92u","v":"1.0.0","m":0}'
-
 ```
+
 Here is another example output for a Tuya ME-81H thermostat:
 
 ```text
@@ -53,22 +51,22 @@ Here is another example output for a Tuya ME-81H thermostat:
 [08:51:09][C][tuya:057]:   GPIO Configuration: status: pin 14, reset: pin 0 (not supported)
 [08:51:09][C][tuya:061]:   Status Pin: GPIO14
 [08:51:09][C][tuya:063]:   Product: '{"p":"gogb05wrtredz3bs","v":"1.0.0","m":0}'
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **time_id** (*Optional*, [ID](#config-id)): Some Tuya devices support obtaining local time from ESPHome.
   Specify the ID of the {{< docref "time/" >}} which will be used.
 
 - **status_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Some Tuya devices support WiFi status reporting ONLY through gpio pin.
   Specify the pin reported in the config dump or leave empty otherwise.
-  More about this [here](https://developer.tuya.com/en/docs/iot/tuya-cloud-universal-serial-port-access-protocol?id=K9hhi0xxtn9cb#title-6-Query%20working%20mode).
+  More about this on the [Tuya Developer Documentation](https://developer.tuya.com/en/docs/iot/tuya-cloud-universal-serial-port-access-protocol?id=K9hhi0xxtn9cb#title-6-Query%20working%20mode).
 
-- **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for.  Useful for certain broken/erratic hardware and debugging.
+- **ignore_mcu_update_on_datapoints** (*Optional*, list): A list of datapoints to ignore MCU updates for. Useful for certain broken/erratic hardware and debugging.
 
 Automations:
 
-- **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`  ](#tuya-on_datapoint_update).
+- **on_datapoint_update** (*Optional*): An automation to perform when a Tuya datapoint update is received. See [`on_datapoint_update`](#tuya-on_datapoint_update).
 
 ## Tuya Automation
 
@@ -77,17 +75,17 @@ Automations:
 ### `on_datapoint_update`
 
 This automation will be triggered when a a Tuya datapoint update is received.
-A variable `x`   is passed to the automation for use in lambdas.
-The type of `x`   variable is depending on `datapoint_type`   configuration variable:
+A variable `x` is passed to the automation for use in lambdas.
+The type of `x` variable is depending on `datapoint_type` configuration variable:
 
-- *raw*: `x`   is `std::vector<uint8_t>`
-- *string*: `x`   is `std::string`
-- *bool*: `x`   is `bool`
-- *int*: `x`   is `int`
-- *uint*: `x`   is `uint32_t`
-- *enum*: `x`   is `uint8_t`
-- *bitmask*: `x`   is `uint32_t`
-- *any*: `x`   is {{< apistruct "tuya::TuyaDatapoint" "tuya::TuyaDatapoint" >}}
+- *raw*: `x` is `std::vector<uint8_t>`
+- *string*: `x` is `std::string`
+- *bool*: `x` is `bool`
+- *int*: `x` is `int`
+- *uint*: `x` is `uint32_t`
+- *enum*: `x` is `uint8_t`
+- *bitmask*: `x` is `uint32_t`
+- *any*: `x` is {{< apistruct "tuya::TuyaDatapoint" "tuya::TuyaDatapoint" >}}
 
 ```yaml
 tuya:
@@ -119,14 +117,13 @@ tuya:
             } else {
               ESP_LOGD("main", "on_datapoint_update %hhu", x.type);
             }
-
 ```
-Configuration variables:
+
+### Configuration variables
 
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
 - **datapoint_type** (**Required**, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*, *bitmask* or *any*.
 - See [Automation](#automation).
-
 
 ## See Also
 
@@ -139,4 +136,3 @@ Configuration variables:
 - {{< docref "/components/text_sensor/tuya" >}}
 - {{< docref "/components/number/tuya" >}}
 - {{< apiref "tuya/tuya.h" "tuya/tuya.h" >}}
-

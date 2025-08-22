@@ -7,11 +7,9 @@ params:
     image: mcp47a1.svg
 ---
 
-
-
-The `mcp47a1`   output component allows to use [6bit external DAC](https://www.microchip.com/en-us/product/MCP47A1)
+The `mcp47a1` output component allows to use [6bit external DAC](https://www.microchip.com/en-us/product/MCP47A1)
 in order to have analog output(s) on any board by using I²C. Devices default address is `0x2E`
-and configurable alternative is `0x3E`  .
+and configurable alternative is `0x3E`.
 
 ```yaml
 # Example configuration entry
@@ -32,13 +30,14 @@ on_...:
     - output.set_level:
         id: dac_output
         level: 100%
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
 - **address** (*Optional*, int): Manually specify the I²C address of
-  the DAC. Defaults to `0x2E`  .
+  the DAC. Defaults to `0x2E`.
+
 - All other options from [Output](#config-output).
 
 ## See Also
@@ -46,4 +45,3 @@ on_...:
 - {{< docref "/components/output/mcp4725" >}}
 - {{< docref "/components/output/esp32_dac" >}}
 - {{< docref "/components/output/esp8266_pwm" >}}
-

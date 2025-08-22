@@ -7,9 +7,7 @@ params:
     image: restart.svg
 ---
 
-
-
-The `restart`   switch platform allows you to restart your node remotely
+The `restart` switch platform allows you to restart your node remotely
 through Home Assistant.
 
 {{< img src="restart-ui.png" alt="Image" width="80.0%" class="align-center" >}}
@@ -19,9 +17,9 @@ through Home Assistant.
 switch:
   - platform: restart
     name: "Living Room Restart"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Switch](#config-switch).
 
@@ -33,4 +31,3 @@ switch:
 - {{< docref "/components/button/restart" >}}
 - {{< docref "template/" >}}
 - {{< apiref "restart/switch/restart_switch.h" "restart/switch/restart_switch.h" >}}
-

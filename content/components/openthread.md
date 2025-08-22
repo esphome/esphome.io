@@ -7,20 +7,19 @@ params:
     image: openthread.png
 ---
 
-
-
 [Thread](https://www.threadgroup.org) is a low-power mesh networking standard for IoT devices. The low-power aspect is important for battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications that don’t send a lot of data, like switches or motion sensors.
 
-Thread uses the same RF technology as Zigbee (IEEE 802.15.4) but provides IP connectivity similar to Wi-Fi. Unlike Zigbee, Thread by itself does not allow controlling devices: It is just a communication protocol. To control the Thread devices, a higher-level protocol is required: Matter or Apple HomeKit or {{< docref "/components/api" "ESPHome API" >}} .
+Thread uses the same RF technology as Zigbee (IEEE 802.15.4) but provides IP connectivity similar to Wi-Fi. Unlike Zigbee, Thread by itself does not allow controlling devices: It is just a communication protocol. To control the Thread devices, a higher-level protocol is required: Matter or Apple HomeKit or {{< docref "/components/api" "ESPHome API" >}}.
 
 The purpose of this component is to allow ESPHome nodes to communicate over a Thread network. It permits the state of sensors and binary sensors to be send to Home Assistant via 6LoWPAN packets. This OpenThread component relies on [OpenThread](https://openthread.io) which is an open-source implementation of Thread.
 
 {{< note >}}
 You will need a [Thread border router](https://www.home-assistant.io/integrations/thread#about-thread-border-routers) to connect your node to a Thread network.
 
-
 {{< /note >}}
+
 ## Usage
+
 This component requires an ESP32 (ESP32-C6 or ESP32-H2 because they have Thread radio chip) and the use of
 ESP-IDF.
 
@@ -30,12 +29,11 @@ esp32:
   board: esp32-c6-devkitm-1
   framework:
     type: esp-idf
-
 ```
+
 {{< anchor "config-openthread" >}}
 
-
-## Configuration examples
+## Full Configuration
 
 This example show how to configure Thread Dataset for a node.
 
@@ -54,11 +52,11 @@ openthread:
   pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
   mesh_local_prefix: fd53:145f:ed22:ad81::/64
   force_dataset: true
-
 ```
-Configuration variables:
 
-- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD`   or `MTD`  . Defaults to `FTD`  .
+### Configuration variables
+
+- **device_type** (*Optional*, enum): OpenThread Device Type, either `FTD` or `MTD`. Defaults to `FTD`.
 - **channel** (int): Channel number from 11 to 26
 - **network_name** (string): A human-readable Network Name
 - **network_key** (string): OpenThread network key
@@ -67,8 +65,7 @@ Configuration variables:
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
 - **mesh_local_prefix** (ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
 
-
-## Configuration examples with dataset TLV
+## Dataset TLV Configuration
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
 
@@ -76,16 +73,15 @@ It is also possible to supply the entire dataset TLVs from the Thread informatio
 # Example OpenThread TLV value from the Thread information in Home Assistant
 openthread:
   tlv: 0e080000000000010000000300001035060004001fffe00208e227ac6a7f24052f0708fdb753eb517cb4d3051062b2442a928d9ea3b947a1618fc4085a030f4f70656e5468726561642d393837330102987304105330d857354330133c05e1fd7ae81a910c0402a0f7f8
-
 ```
-Configuration variables:
+
+### Configuration variables
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
 
-
 ## OpenThread Device Type
-See https://openthread.io/guides/thread-primer/node-roles-and-types
+
+See <https://openthread.io/guides/thread-primer/node-roles-and-types>
 
 - **FTD** - Full Thread Device, sets CONFIG_OPENTHREAD_FTD, observed behavior is that this enables a REED (Router Eligible End Device) and can be promoted to a Router.
-- **MTD** - Minimal Thread Device, sets CONFIG_OPENTHREAD_MTD, cannot be promoted to Router.  Switching back from MTD to FTD will not result in a REED unless Non Volatile Storage (NVS) is cleared.
-
+- **MTD** - Minimal Thread Device, sets CONFIG_OPENTHREAD_MTD, cannot be promoted to Router. Switching back from MTD to FTD will not result in a REED unless Non Volatile Storage (NVS) is cleared.

@@ -7,10 +7,8 @@ params:
     image: pulses.png
 ---
 
-
-
 The {{< docref "/components/sensor/pulse_meter" >}} can be used as a very fast pulse catcher. This can be useful
-if you would like to detect an incoming pulse on a GPIO pin shorter than the typical `16ms`   loop interval.
+if you would like to detect an incoming pulse on a GPIO pin shorter than the typical `16ms` loop interval.
 
 ```yaml
 sensor:
@@ -28,10 +26,9 @@ sensor:
           - output.turn_on: led
           - delay: 500ms
           - output.turn_off: led
-
 ```
+
 ## See Also
 
 - {{< docref "/automations" >}}
 - {{< docref "/components/sensor/pulse_meter" >}}
-

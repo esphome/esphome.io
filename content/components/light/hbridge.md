@@ -7,9 +7,7 @@ params:
     image: brightness-medium.svg
 ---
 
-
-
-The `hbridge`   light platform creates a dual color brightness controlled light from two
+The `hbridge` light platform creates a dual color brightness controlled light from two
 [float output component](#output).
 
 {{< img src="hbridge-ui.png" alt="Image" width="40.0%" class="align-center" >}}
@@ -25,15 +23,14 @@ light:
     name: "Hbridge Lights"
     pin_a: pina
     pin_b: pinb
-
 ```
+
 Internally, H-bridge lights are implemented as cold/warm white lights. This means that the brightness of the two colors
 is mapped to the cold white and warm white values, even if the colors aren't actually white in reality. To individually
-control the colors in the [light control actions](#light-turn_on_action), you need to use the `cold_white`   and
-`warm_white`   options.
+control the colors in the [light control actions](#light-turn_on_action), you need to use the `cold_white` and
+`warm_white` options.
 
-
-## Configuration variables:
+## Configuration variables
 
 - **pin_a** (**Required**, [ID](#config-id)): The id of the first float [Output Component](#output) to use for this light.
 - **pin_b** (**Required**, [ID](#config-id)): The id of the second float [Output Component](#output) to use for this light.
@@ -43,9 +40,9 @@ control the colors in the [light control actions](#light-turn_on_action), you ne
 As we are switching the H-bridge in software, the light may glitch every so often when other tasks run on the MCU.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/light" >}}
 - {{< docref "/components/output/esp8266_pwm" >}}
 - {{< apiref "hbridge/light/hbridge_light.h" "hbridge/light/hbridge_light.h" >}}
-

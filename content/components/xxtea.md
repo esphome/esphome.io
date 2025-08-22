@@ -6,8 +6,6 @@ params:
     description: Lightweight encryption algorithm for ESPHome
 ---
 
-
-
 This component cannot be used directly in YAML, but can be used in lambdas to encrypt and decrypt data.
 
 The encryption used is [XXTEA](https://en.wikipedia.org/wiki/XXTEA) which is fast and compact. XXTEA is known
@@ -21,4 +19,3 @@ See the API docs for more information on how to use this component.
 
 - {{< docref "index/" >}}
 - {{< apiref "xxtea/xxtea.h" "xxtea/xxtea.h" >}}
-

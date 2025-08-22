@@ -7,11 +7,10 @@ params:
     image: waveshare_touch-s3.jpg
 ---
 
-
-
 {{< anchor "rpi_dpi_rgb" >}}
 
 ## Models
+
 This display driver supports displays with 16 bit parallel interfaces, often referred to as "RPI_DPI_RGB" type.
 These have a parallel interface but no SPI interface and require no configuration of the driver chip.
 
@@ -21,6 +20,7 @@ This driver has been tested with the following displays:
 - Makerfabs 4.3" display (Sunton)
 
 ## Usage
+
 This component requires an ESP32 (usually an ESP32-S3 because of the number of GPIO pins required) and the use of
 ESP-IDF. PSRAM is a requirement due to the size of the display buffer.
 
@@ -59,15 +59,15 @@ display:
         - XX        #b3
         - XX        #b4
         - XX        #b5
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **data_pins** (**Required**): A list of pins used for the databus. Specified in 3 groups:
 
-    - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pin numbers for the red databits, listed from least to most significant bit.
-    - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pin numbers for the green databits, listed from least to most significant bit.
-    - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pin numbers for the blue databits, listed from least to most significant bit.
+  - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pin numbers for the red databits, listed from least to most significant bit.
+  - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pin numbers for the green databits, listed from least to most significant bit.
+  - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pin numbers for the blue databits, listed from least to most significant bit.
 
 - **de_pin** (**Required**, [Pin Schema](#config-pin_schema)): The DE pin
 - **pclk_pin** (**Required**, [Pin Schema](#config-pin_schema)): The PCLK pin.
@@ -81,33 +81,32 @@ display:
 - **vsync_pulse_width** (*Optional*, int): The vertical sync pulse width.
 - **vsync_front_porch** (*Optional*, int): The vertical front porch length.
 - **vsync_back_porch** (*Optional*, int): The vertical back porch length.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`  .
-- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`   if a lambda or pages are configured, false otherwise.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
+- **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true` if a lambda or pages are configured, false otherwise.
   or to keep the existing display content (must overwrite explicitly, e.g., only on data change).
+
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **color_order** (*Optional*): Should be one of `bgr`   (default) or `rgb`  .
+- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`.
 - **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys.
 
-    - **height** (**Required**, int): Specifies height of display in pixels.
-    - **width** (**Required**, int): Specifies width of display.
-    - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
-    - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
+  - **height** (**Required**, int): Specifies height of display in pixels.
+  - **width** (**Required**, int): Specifies width of display.
+  - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
+  - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
 - **pclk_frequency** (*Optional*): Set the pixel clock speed. Default is 16MHz.
 - **pclk_inverted** (*Optional*, bool): If the pclk is active negative (default is True)
 - **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the displays have this option set automatically to true and can't be changed.
-- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`  , `90°`  , `180°`  , or `270°`  .
+- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 
-
-The horizontal and vertical `pulse_width`  , `front_porch`   and `back_porch`   values are optional, but may require
+The horizontal and vertical `pulse_width`, `front_porch` and `back_porch` values are optional, but may require
 changing for a specific display. Refer to the manufacturer's sample code for suitable values. These specify timing
 requirements for the display.
 
 ## Example configurations
-
 
 ### Waveshare ESP32-S3 Touch 4.3
 
@@ -154,8 +153,8 @@ display:
         - 48        #g5
         - 47        #g6
         - 21        #g7
-
 ```
+
 ### Makerfabs 4.3" 800x480 display
 
 ```yaml
@@ -193,10 +192,9 @@ display:
         - 46        #b3
         - 9         #b4
         - 1         #b5
-
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
 - {{< apiref "rpi_dpi_rgb/rpi_dpi_rgb.h" "rpi_dpi_rgb/rpi_dpi_rgb.h" >}}
-

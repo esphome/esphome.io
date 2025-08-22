@@ -7,9 +7,7 @@ params:
     image: description.svg
 ---
 
-
-
-The `template`   lock platform allows you to create simple locks out of just actions and
+The `template` lock platform allows you to create simple locks out of just actions and
 an optional value lambda. Once defined, it will automatically appear in Home Assistant
 as a lock and can be controlled through the frontend.
 
@@ -30,43 +28,49 @@ lock:
       - switch.turn_off: switch1
     open_action:
       - button.press: button1
-
 ```
+
 Possible return values for the optional lambda:
 
-- `return LOCK_STATE_LOCKED;`   if the lock should be reported as LOCKED.
-- `return LOCK_STATE_UNLOCKED;`   if the lock should be reported as UNLOCKED.
-- `return LOCK_STATE_JAMMED;`   if the lock should be reported as JAMMED.
-- `return LOCK_STATE_LOCKING;`   if the lock should be reported as LOCKING.
-- `return LOCK_STATE_UNLOCKING;`   if the lock should be reported as UNLOCKING.
-- `return {};`   if the last state should be repeated.
+- `return LOCK_STATE_LOCKED;` if the lock should be reported as LOCKED.
+- `return LOCK_STATE_UNLOCKED;` if the lock should be reported as UNLOCKED.
+- `return LOCK_STATE_JAMMED;` if the lock should be reported as JAMMED.
+- `return LOCK_STATE_LOCKING;` if the lock should be reported as LOCKING.
+- `return LOCK_STATE_UNLOCKING;` if the lock should be reported as UNLOCKING.
+- `return {};` if the last state should be repeated.
 
 {{< note >}}
-Only `LOCK_STATE_LOCKED`   and `LOCK_STATE_UNLOCKED`   are supported by the MQTT component in Home Assistant
+Only `LOCK_STATE_LOCKED` and `LOCK_STATE_UNLOCKED` are supported by the MQTT component in Home Assistant
 
 {{< /note >}}
-## Configuration variables:
+
+## Configuration variables
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the lock.
+
 - **lock_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the lock to be locked.
+
 - **unlock_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the lock to be unlocked.
+
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
   any command sent to the template lock will immediately update the reported state.
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **assumed_state** (*Optional*, boolean): Whether the true state of the lock is not known.
   This will make the Home Assistant frontend show buttons for both LOCK and UNLOCK actions, instead
-  of hiding one of them when the lock is LOCKED/UNLOCKED. Defaults to `false`  .
+  of hiding one of them when the lock is LOCKED/UNLOCKED. Defaults to `false`.
+
 - All other options from [Lock](#config-lock).
 
 {{< anchor "lock-template-publish_action" >}}
 
-## `lock.template.publish`   Action
+## `lock.template.publish` Action
 
 You can also publish a state to a template lock from elsewhere in your YAML file
-with the `lock.template.publish`   action.
+with the `lock.template.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -85,8 +89,8 @@ on_...:
   - lock.template.publish:
       id: template_lock1
       state: !lambda 'return LOCK_STATE_LOCKED;'
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the template lock.
@@ -99,13 +103,13 @@ lock should become:
 
 ```cpp
 id(template_lock1).publish_state(lock::LOCK_STATE_LOCKED);
-
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/automations" >}}
 - {{< docref "/components/lock" >}}
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "template/lock/template_lock.h" "template/lock/template_lock.h" >}}
-

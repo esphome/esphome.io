@@ -6,8 +6,6 @@ params:
     description: Information for creating and sharing devices using ESPHome firmware.
 ---
 
-
-
 We have added configuration options to ESPHome to make it easier
 to create, configure, install and distribute devices running ESPHome.
 
@@ -69,30 +67,33 @@ esp32_improv:
 # Sets up the improv via serial client for Wi-Fi provisioning
 improv_serial:
   next_url: https://example.com/project-template/manual?ip={{ip_address}}&name={{device_name}}&version={{esphome_version}}
-
 ```
+
 ## Relevant Documentation
 
-- `name_add_mac_suffix`   - [Adding the MAC address as a suffix to the device name](#esphome-mac_suffix)
-- `project`   - [Project information](#esphome-creators_project)
-- `esp32_improv`   - {{< docref "/components/esp32_improv" >}}
-- `captive_portal`   - {{< docref "/components/captive_portal" >}}
-- `wifi`   -> `ap`   allows you to flash a device that will not contain any
-  credentials and they must be set by the user via either the `ap`   + `captive_portal`   or
-  the `esp32_improv`   / `improv_serial`   components.
-- `dashboard_import`
-{{< note >}}
-The [Project information](#esphome-creators_project) above is required for adoption to work in the Dashboard.
+- `name_add_mac_suffix` - [Adding the MAC address as a suffix to the device name](#esphome-mac_suffix)
+- `project` - [Project information](#esphome-creators_project)
+- `esp32_improv` - {{< docref "/components/esp32_improv" >}}
+- `captive_portal` - {{< docref "/components/captive_portal" >}}
+- `wifi` -> `ap` allows you to flash a device that will not contain any
+  credentials and they must be set by the user via either the `ap` + `captive_portal` or
+  the `esp32_improv` / `improv_serial` components.
 
-{{< /note >}}
-    - `package_import_url`   - This should point to the public repository containing
-      the configuration for the device so that the user's ESPHome dashboard can autodetect this device and
-      create a minimal YAML using [Remote/Git Packages](#config-git_packages).
-    - `import_full_config`   - This signals if ESPHome should download the entire YAML file as the user's config
-      YAML instead of referencing the package. Set this to `true`   if you are creating a tutorial to let users
-      easily tweak the whole configuration or be able to uncomment follow-up tutorial steps.
-- `improv_serial`   - {{< docref "/components/improv_serial" >}}
+- `dashboard_import`
+
+  {{< note >}}
+  The [Project information](#esphome-creators_project) above is required for adoption to work in the Dashboard.
+
+  {{< /note >}}
+
+  - `package_import_url` - This should point to the public repository containing
+    the configuration for the device so that the user's ESPHome dashboard can autodetect this device and
+    create a minimal YAML using [Remote/Git Packages](#config-git_packages).
+
+  - `import_full_config` - This signals if ESPHome should download the entire YAML file as the user's config
+    YAML instead of referencing the package. Set this to `true` if you are creating a tutorial to let users
+    easily tweak the whole configuration or be able to uncomment follow-up tutorial steps.
+
+- `improv_serial` - {{< docref "/components/improv_serial" >}}
 
 ## See Also
-
-

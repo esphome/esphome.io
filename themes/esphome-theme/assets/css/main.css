@@ -912,63 +912,12 @@ main {
   margin-bottom: 3em;
 }
 
-.collapse-container {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 1em;
+summary::marker {
+    font-size: 1.5em;
 }
-
-.collapse-header {
-  padding: 0.75em 1em;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.collapse-container h4.shown {
-  margin: 0;
-  display: block;
-}
-
-.collapse-container.active h4.shown {
-  margin: 0;
-  display: none;
-}
-
-.collapse-container.active h4.collapsed {
-  margin: 0;
-  display: block;
-}
-
-.collapse-container h4.collapsed {
-  margin: 0;
-  display: none;
-}
-
-.collapse-content {
-  max-height: 0;
-  height: auto;
-  overflow: hidden;
-  transition: max-height,padding 0.6s ease;
-  padding-left: 1em;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.collapse-container.active .collapse-content {
-  max-height: 1000px;
-  padding-top: 1em;
-  padding-bottom: 1em;
-}
-
-.collapse-container.active .collapse-icon {
-  transform: rotate(45deg);
-}
-
-.collapse-icon {
-  font-size: 1.5em;
-  transition: transform 0.3s;
+summary h4.shown {
+  margin-left: 1em;
+  display: inline;
 }
 
 .admonition {
@@ -1404,6 +1353,32 @@ figcaption {
     left: 0;
     z-index: 1;
   }
+}
+
+details {
+    interpolate-size: allow-keywords;
+}
+details::details-content {
+    block-size: 0;
+    transition: content-visibility, block-size;
+    transition-duration: 0.5s;
+    transition-behavior: allow-discrete;
+    overflow: hidden;
+}
+details[open]::details-content {
+    block-size: auto;
+}
+details {
+    background-color: var(--sidebar-background);
+    padding: 1em;
+}
+
+@media (prefers-reduced-motion) {
+    /* styles to apply if a user's device settings are set to reduced motion */
+
+    details::details-content {
+        transition-duration: 0.8s; /* slower speed */
+    }
 }
 
 .code-block {

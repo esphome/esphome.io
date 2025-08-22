@@ -7,8 +7,6 @@ params:
     image: pwm.png
 ---
 
-
-
 The ESP8266 Software PWM platform allows you to use a software PWM on
 the pins GPIO0-GPIO16 on your ESP8266. Note that this is a software PWM,
 so there can be some flickering during periods of high WiFi activity. Hardware PWMs
@@ -27,14 +25,15 @@ light:
   - platform: monochromatic
     output: pwm_output
     name: "Kitchen Light"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to use PWM on.
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
 - **frequency** (*Optional*, frequency): The frequency to run the PWM with. Lower frequencies
-  have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`  .
+  have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`.
+
 - All other options from [Output](#config-output).
 
 {{< note >}}
@@ -47,7 +46,7 @@ should fix it.
 {{< /note >}}
 {{< anchor "output-esp8266_pwm-set_frequency_action" >}}
 
-## `output.esp8266_pwm.set_frequency`   Action
+## `output.esp8266_pwm.set_frequency` Action
 
 This [Action](#config-action) allows you to manually change the frequency of an ESP8266 PWM
 channel at runtime. Use cases include controlling a passive buzzer (for pitch control).
@@ -57,8 +56,8 @@ on_...:
   - output.esp8266_pwm.set_frequency:
       id: pwm_output
       frequency: 100Hz
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the PWM output to change.
@@ -73,4 +72,3 @@ Configuration variables:
 - {{< docref "/components/fan/speed" >}}
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "esp8266_pwm/esp8266_pwm.h" "esp8266_pwm/esp8266_pwm.h" >}}
-

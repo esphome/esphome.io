@@ -7,9 +7,7 @@ params:
     image: electric-switch.svg
 ---
 
-
-
-The `endstop`   cover platform allows you to create covers with position control that have
+The `endstop` cover platform allows you to create covers with position control that have
 endstops at both ends of the cover to detect the fully-open and fully-closed states.
 When any of these endstops are reached, the cover is stopped (via `stop_action`  )
 and the corresponding state is sent out.
@@ -43,28 +41,34 @@ cover:
     stop_action:
       - switch.turn_off: open_cover_switch
       - switch.turn_off: close_cover_switch
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **open_action** (**Required**, [Action](#config-action)): The action that should
   be performed when the remote requests the cover to be opened.
+
 - **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to open up from the fully-closed state.
+
 - **open_endstop** (**Required**, [ID](#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the open position is reached.
 
 - **close_action** (**Required**, [Action](#config-action)): The action that should
   be performed when the remote requests the cover to be closed.
+
 - **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to close from the fully-open state.
+
 - **close_endstop** (**Required**, [ID](#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the closed position is reached.
 
 - **stop_action** (**Required**, [Action](#config-action)): The action that should
   be performed when the remote requests the cover to stop or an endstop is reached.
+
 - **max_duration** (*Optional*, [Time](#config-time)): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional endstops.
+
 - All other options from [Cover](#config-cover).
 
 ## See Also
@@ -72,4 +76,3 @@ cover:
 - {{< docref "index/" >}}
 - [Automation](#automation)
 - {{< apiref "endstop/endstop_cover.h" "endstop/endstop_cover.h" >}}
-

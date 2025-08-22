@@ -7,11 +7,9 @@ params:
     image: sprinkler-variant.svg
 ---
 
-
-
 {{< img src="sprinkler.png" alt="Image" class="align-center" >}}
 
-The `sprinkler`   controller component aims to behave like a sprinkler/irrigation valve controller,
+The `sprinkler` controller component aims to behave like a sprinkler/irrigation valve controller,
 much like those made by companies such as Rain Bird or Hunter. It does so by automating control of a
 number of [switch](#config-switch) components, each of which would typically be used to control
 an individual electric valve via a relay or other switching device. It provides a number of features
@@ -19,6 +17,7 @@ you'd expect of a sprinkler controller, including:
 
 - Virtually any number of zones (sections of the sprinkler system) per controller instance, limited only by
   available memory and/or GPIO (including I/O expanders!) pin availability on the ESP
+
 - The ability to run:
 
   - One or more full cycles (iterations through all zones) of the system
@@ -68,144 +67,173 @@ sprinkler:
         enable_switch: "Enable Back Lawn"
         run_duration: 900s
         valve_switch_id: lawn_sprinkler_valve_sw1
-
 ```
+
 Please see the [Controller Examples](#sprinkler-controller-examples) section below for extensive, detailed configuration
 examples that are ready for you to copy and paste!
 
-## Configuration variables:
+## Configuration variables
 
 - **main_switch** (*Optional*, *string*): Required with more than one valve. The name for the sprinkler
   controller's main switch as it will appear in the front end. This switch, when turned on, calls the
-  `sprinkler.resume_or_start_full_cycle`   action; when turned off, it calls the `sprinkler.shutdown`
+  `sprinkler.resume_or_start_full_cycle` action; when turned off, it calls the `sprinkler.shutdown`
   action (see below). It will appear to be "on" when any valve on the controller is active. This switch
   will not appear in the front end if the controller is configured with only one valve.
+
 - **auto_advance_switch** (*Optional*, *string*): Required with more than one valve. The name for the
   sprinkler controller's "auto-advance" switch as it will appear in the front end. When this switch is
-  turned on while a valve is active, when the valve's `run_duration`   is reached, the sprinkler
+  turned on while a valve is active, when the valve's `run_duration` is reached, the sprinkler
   controller will automatically advance to the next enabled valve as a part of a "full cycle" of the
   system. When turned off, the sprinkler controller will shut down after the active valve's
-  `run_duration`   is reached (unless there are valves in the queue -- see
+  `run_duration` is reached (unless there are valves in the queue -- see
   [The Sprinkler Controller Queue](#sprinkler-controller-sprinkler_controller_queue) section below for more detail). This switch will
   not appear in the front end if the controller is configured with only one valve.
+
 - **manual_selection_delay** (*Optional*, [Time](#config-time)): The amount of time the controller should
-  wait to activate a valve after the `next_valve`   and `previous_valve`   actions are called. Useful
+  wait to activate a valve after the `next_valve` and `previous_valve` actions are called. Useful
   if the control interface consists of only forward/reverse buttons as the button(s) may be pressed
   multiple times to make the selection.
+
 - **queue_enable_switch** (*Optional*, *string*): The name for the sprinkler controller's queue enable
   switch as it will appear in the front end. When this switch is turned on or not provided, the controller
   will select the next valve/zone to run based on the contents of the queue; the queue takes precedence over
   valves that would otherwise run as a part of a full cycle of the system (when auto-advance is on/enabled).
   See [The Sprinkler Controller Queue](#sprinkler-controller-sprinkler_controller_queue) section below for more detail.
+
 - **reverse_switch** (*Optional*, *string*): The name for the sprinkler controller's reverse switch
   as it will appear in the front end. When this switch is turned on, the controller will iterate through
   the valves in reverse order (last-to-first as they appear in the controller's configuration). When
   this switch is turned off or not provided, the controller will iterate through the valves first-to-last.
   This switch will not appear in the front end if the controller is configured with only one valve.
+
 - **standby_switch** (*Optional*, *string*): The name for the sprinkler controller's standby switch
   as it will appear in the front end. When this switch is turned on, the controller *will not start any valves.*
   **This can result in confusing/unexpected behavior if there is no visual indication of this condition!**
+
 - **valve_open_delay** (*Optional*, [Time](#config-time)): The *minimum* delay in seconds that should be
   inserted between (distribution) valve switching -- in other words, the amount of time that must elapse
   between one valve switching off and the next one switching on. Useful for systems with valves which depend
-  on sufficient water pressure to close. May not be used with `valve_overlap`  .
+  on sufficient water pressure to close. May not be used with `valve_overlap`.
+
 - **valve_overlap** (*Optional*, [Time](#config-time)): The amount of time in seconds that the current valve
   and the next valve should run simultaneously as the next valve/zone starts up. This may help prevent pipes
-  from banging as valves close. May not be used with `valve_open_delay`  .
-- **pump_switch_off_during_valve_open_delay** (*Optional*, boolean): If set to `true`  , the pump will be
-  switched off during the `valve_open_delay`   interval; otherwise, it remains on. This may only be
-  specified when `valve_open_delay`   is configured (see above). Defaults to `false`  .
+  from banging as valves close. May not be used with `valve_open_delay`.
+
+- **pump_switch_off_during_valve_open_delay** (*Optional*, boolean): If set to `true`, the pump will be
+  switched off during the `valve_open_delay` interval; otherwise, it remains on. This may only be
+  specified when `valve_open_delay` is configured (see above). Defaults to `false`.
+
 - **pump_start_pump_delay** (*Optional*, [Time](#config-time)): The delay in seconds from when a distribution
   valve is opened to when the associated pump is activated. Useful to ensure pressure does not build
-  up from running the pump when no distribution valves are open. May not be used with `pump_start_valve_delay`  .
+  up from running the pump when no distribution valves are open. May not be used with `pump_start_valve_delay`.
+
 - **pump_start_valve_delay** (*Optional*, [Time](#config-time)): The delay in seconds from when a pump
   is started to when the associated distribution valve is opened. Useful for systems where distribution
-  valves require sufficient pressure to fully/quickly close. May not be used with `pump_start_pump_delay`  .
+  valves require sufficient pressure to fully/quickly close. May not be used with `pump_start_pump_delay`.
+
 - **pump_stop_pump_delay** (*Optional*, [Time](#config-time)): The delay in seconds from when a distribution
   valve is closed to when the respective pump is deactivated. Useful for systems where distribution valves
-  require sufficient pressure to fully/quickly close. May not be used with `pump_stop_valve_delay`  .
+  require sufficient pressure to fully/quickly close. May not be used with `pump_stop_valve_delay`.
+
 - **pump_stop_valve_delay** (*Optional*, [Time](#config-time)): The delay in seconds from when a pump is
   deactivated to when the respective distribution valve is closed. Useful to ensure pressure does not build
   up from running the pump when no distribution valves are open or to allow the main line out to distribution
-  valves to drain. May not be used with `pump_stop_pump_delay`  .
+  valves to drain. May not be used with `pump_stop_pump_delay`.
+
 - **pump_pulse_duration** (*Optional*, [Time](#config-time)): The *minimum* length of the pulse generated to
   operate a pump in milliseconds. *Required* when one or more latching pumps is configured. Note that the *exact*
-  length of the pulse is determined by the frequency of the main application loop (as are other `delay`   timers
+  length of the pulse is determined by the frequency of the main application loop (as are other `delay` timers
   used in ESPHome). Typically this is expected to provide a resolution of approximately 16 milliseconds, however
   this may vary somewhat depending on your exact configuration. Regardless, it should provide
   more-than-sufficient precision to operate any such valve.
+
 - **valve_pulse_duration** (*Optional*, [Time](#config-time)): The *minimum* length of the pulse generated to
   operate a valve in milliseconds. *Required* when one or more latching valves is configured. Note that the *exact*
-  length of the pulse is determined by the frequency of the main application loop (as are other `delay`   timers
+  length of the pulse is determined by the frequency of the main application loop (as are other `delay` timers
   used in ESPHome). Typically this is expected to provide a resolution of approximately 16 milliseconds, however
   this may vary somewhat depending on your exact configuration. Regardless, it should provide more-than-sufficient
   precision to operate any such valve.
+
 - **multiplier_number** (*Optional*, *string*): The name of the {{< docref "/components/number/index" "number" >}} component that
   should be presented to the front end (Home Assistant) to enable control of the sprinkler controller's `multiplier`
   value. See [Using the Sprinkler Controller's Numbers](#sprinkler-controller-sprinkler_controller_numbers) below for more detail.
+
 - **repeat_number** (*Optional*, *string*): The name of the {{< docref "/components/number/index" "number" >}} component that
   should be presented to the front end (Home Assistant) to enable control of the sprinkler controller's `repeat`
-  value. May not be used with `repeat`  . See [Using the Sprinkler Controller's Numbers](#sprinkler-controller-sprinkler_controller_numbers) below for more
+  value. May not be used with `repeat`. See [Using the Sprinkler Controller's Numbers](#sprinkler-controller-sprinkler_controller_numbers) below for more
   detail.
+
 - **repeat** (*Optional*, int): The number of times a full cycle should be repeated. Defaults to 0. May not be used
-  with `repeat_number`  .
-- **next_prev_ignore_disabled** (*Optional*, boolean): Set to `true`   to cause
-  [`sprinkler.next_valve`   action](#sprinkler-controller-action_next_valve) and [`sprinkler.previous_valve`   action](#sprinkler-controller-action_previous_valve) to skip
-  over valves that are not enabled. Defaults to `false`  .
+  with `repeat_number`.
+
+- **next_prev_ignore_disabled** (*Optional*, boolean): Set to `true` to cause
+  [`sprinkler.next_valve` action](#sprinkler-controller-action_next_valve) and [`sprinkler.previous_valve` action](#sprinkler-controller-action_previous_valve) to skip
+  over valves that are not enabled. Defaults to `false`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. While optional,
   this is necessary to identify the controller instance (particularly in cases where more than one is
-  defined) when calling controller actions (see below) such as `start_full_cycle`   or `shutdown`  .
+  defined) when calling controller actions (see below) such as `start_full_cycle` or `shutdown`.
+
 - **valves** (**Required**, *list*): A list of valves the controller should use. Each valve consists of:
 
   - **enable_switch** (*Optional*, *string*): The name for the switch component to be used to enable
     this valve to be run as a part of a full cycle of the system. When this switch is turned off, the valve
     will be excluded from a full cycle of the system. When this switch is turned on or not provided, the
     controller will include the valve in a full cycle of the system.
+
   - **valve_switch** (**Required**, *string*): The name for the switch component to be used to control
     the valve for this part of the sprinkler system (often referred to as a "zone"). When this switch is
     turned on, the controller's "auto-advance" feature is disabled and it will activate the associated
-    valve for its `run_duration`   multiplied by the controller's multiplier value. When this switch is
-    turned off, the `sprinkler.shutdown`   action is called (see below).
+    valve for its `run_duration` multiplied by the controller's multiplier value. When this switch is
+    turned off, the `sprinkler.shutdown` action is called (see below).
+
   - **pump_switch_id** (*Optional*, [Switch](#config-switch)): This is the [switch](#config-switch)
     component to be used to control the valve's pump or upstream electric valve. Typically this would be a
     {{< docref "switch/gpio" "GPIO switch" >}} wired to control a relay or other switching device which in turn would
     activate the respective pump/valve. *It is not recommended to expose this switch to the front end; please
     see* [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control) *below for more detail.*
     May not be specified with *pump_off_switch_id* or *pump_on_switch_id*.
+
   - **pump_off_switch_id** (*Optional*, [Switch](#config-switch)): This is the [switch](#config-switch)
     component to be used to *turn off* the valve's pump or upstream electric *latching* valve. Typically this
     would be a {{< docref "switch/gpio" "GPIO switch" >}} wired to control a relay or other switching device which in turn
     would *switch off* the respective pump/valve. *It is not recommended to expose this switch to the front end; please
     see* [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control) *below for more detail.*
     May not be specified with *pump_switch_id*.
+
   - **pump_on_switch_id** (*Optional*, [Switch](#config-switch)): This is the [switch](#config-switch)
     component to be used to *turn on* the valve's pump or upstream electric *latching* valve. Typically this
     would be a {{< docref "switch/gpio" "GPIO switch" >}} wired to control a relay or other switching device which in turn
     would *switch on* the respective pump/valve. *It is not recommended to expose this switch to the front end; please
     see* [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control) *below for more detail.*
     May not be specified with *pump_switch_id*.
+
   - **run_duration_number** (*Optional*, *string*): The name of the {{< docref "/components/number/index" "number" >}} component
-    that should be presented to the front end (Home Assistant) to enable control of the valve's `run_duration`   value.
-    May not be used with `run_duration`  . See [Using the Sprinkler Controller's Numbers](#sprinkler-controller-sprinkler_controller_numbers) below for more
-    detail. **Pro tip:** Want times in minutes? Add `unit_of_measurement: min`   to the number configuration. See
+    that should be presented to the front end (Home Assistant) to enable control of the valve's `run_duration` value.
+    May not be used with `run_duration`. See [Using the Sprinkler Controller's Numbers](#sprinkler-controller-sprinkler_controller_numbers) below for more
+    detail. **Pro tip:** Want times in minutes? Add `unit_of_measurement: min` to the number configuration. See
     [Using the Sprinkler Controller's Numbers](#sprinkler-controller-sprinkler_controller_numbers) for more detail.
-  - **run_duration** (*Optional*, [Time](#config-time)): Required when `run_duration_number`   is not provided. The
+
+  - **run_duration** (*Optional*, [Time](#config-time)): Required when `run_duration_number` is not provided. The
     duration in seconds this valve should remain on/open after it is activated. When a given valve is activated, the
     controller's multiplier value is multiplied by this value to determine the actual run duration for the valve, thus
     allowing the run duration for all valves/zones to be proportionally increased or decreased as desired. May not be
-    used with `run_duration_number`  .
+    used with `run_duration_number`.
+
   - **valve_switch_id** (**Required**, [Switch](#config-switch)): This is the [switch](#config-switch)
     component to be used to control the valve that operates the given section or zone of the sprinkler
     system. Typically this would be a {{< docref "switch/gpio" "GPIO switch" >}} wired to control a relay
     or other switching device which in turn would activate the respective valve. *It is not recommended
     to expose this switch to the front end; please see* [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control)
     *below for more detail.* May not be specified with *valve_off_switch_id* or *valve_on_switch_id*.
+
   - **valve_off_switch_id** (**Required**, [Switch](#config-switch)): This is the [switch](#config-switch)
     component to be used to *turn off* the *latching* valve that operates the given section or zone of the
     sprinkler system. Typically this would be a {{< docref "switch/gpio" "GPIO switch" >}} wired to control a relay
     or other switching device which in turn would *switch off* the respective valve. *It is not recommended
     to expose this switch to the front end; please see* [An Important Note about GPIO Switches and Control](#sprinkler-controller-an_important_note_about_gpio_switches_and_control)
     *below for more detail.* May not be specified with *valve_switch_id*.
+
   - **valve_on_switch_id** (**Required**, [Switch](#config-switch)): This is the [switch](#config-switch)
     component to be used to *turn on* the *latching* valve that operates the given section or zone of the
     sprinkler system. Typically this would be a {{< docref "switch/gpio" "GPIO switch" >}} wired to control a relay
@@ -217,8 +245,8 @@ examples that are ready for you to copy and paste!
 
 ## An Important Note about GPIO Switches and Control
 
-The savvy and/or seasoned ESPHome user will quickly realize that `pump_switch_id`  , `pump_off_switch_id`  ,
-`pump_on_switch_id`  , `valve_switch_id`  , `valve_off_switch_id`   and `valve_on_switch_id`   (as described above)
+The savvy and/or seasoned ESPHome user will quickly realize that `pump_switch_id`, `pump_off_switch_id`,
+`pump_on_switch_id`, `valve_switch_id`, `valve_off_switch_id` and `valve_on_switch_id` (as described above)
 are really just pointers to other (GPIO) switches elsewhere in the ESPHome yaml configuration.
 
 It might seem reasonable to assume that these {{< docref "switch/gpio" "GPIO switches" >}} may be used to switch the various
@@ -254,11 +282,12 @@ In summary, to ensure that your sprinkler controller consistently operates as ex
 - Only use the switches provided by the sprinkler controller component to switch any given sprinkler zone on or off.
 - Do not use the {{< docref "switch/gpio" "GPIO switches" >}} you have in your configuration to control sprinkler zones/valves
   outside of initial testing of your device configuration.
+
 - To help prevent accidents, it's probably best if the {{< docref "switch/gpio" "GPIO switches" >}} for each sprinkler zone are
   **not** exposed to the front end. This can be accomplished in two ways:
 
-  - Do not provide a `name:`   parameter to your {{< docref "switch/gpio" "GPIO switches" >}}, or
-  - Add `internal: true`   to each of your {{< docref "switch/gpio" "GPIO switch" >}} configurations
+  - Do not provide a `name:` parameter to your {{< docref "switch/gpio" "GPIO switches" >}}, or
+  - Add `internal: true` to each of your {{< docref "switch/gpio" "GPIO switch" >}} configurations
 
 These simple configuration tweaks will help prevent any number of errors (human, automation, or otherwise) and may help
 to avert disaster!
@@ -269,27 +298,27 @@ to avert disaster!
 
 {{< anchor "sprinkler-controller-action_start_full_cycle" >}}
 
-### `sprinkler.start_full_cycle`   action
+### `sprinkler.start_full_cycle` action
 
 Starts a full cycle of the system. This enables the controller's "auto-advance" feature and disables
 the queue. The controller will iterate through all enabled valves/zones. They will each run for their
-configured `run_duration`   multiplied by the controller's multiplier value. *Note that if NO valves
+configured `run_duration` multiplied by the controller's multiplier value. *Note that if NO valves
 are enabled when this action is called, the controller will automatically enable all valves.*
 
 ```yaml
 on_...:
   then:
     - sprinkler.start_full_cycle: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_start_from_queue" >}}
 
-### `sprinkler.start_from_queue`   action
+### `sprinkler.start_from_queue` action
 
 Starts the controller running valves from its queue. If no valves are in the queue, this action does
 nothing; otherwise, this disables the controller's "auto-advance" feature so that only queued
 valves/zones will run. Queued valves will remain on for either the amount of time specified in the
-queue request or for their configured `run_duration`   multiplied by the controller's multiplier value
+queue request or for their configured `run_duration` multiplied by the controller's multiplier value
 (if the queue request run duration is not specified or is zero). *Note that queued valves ignore whether
 the valve is enabled; that is, queued valves will always run once the controller is started, unless, of
 course, the queue is (manually) cleared prior to the queue reaching them. Also note that, at present,
@@ -301,15 +330,15 @@ on_...:
   then:
     - sprinkler.start_from_queue:
         id: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_start_single_valve" >}}
 
-### `sprinkler.start_single_valve`   action
+### `sprinkler.start_single_valve` action
 
 Starts a single valve. This disables the controller's "auto-advance" and queue features so that only this valve/zone
-will run. The valve will remain on for the specified duration or (if `run_duration`   is not specified or is zero) for
-its configured `run_duration`   multiplied by the controller's multiplier value. *Note that this action ignores whether
+will run. The valve will remain on for the specified duration or (if `run_duration` is not specified or is zero) for
+its configured `run_duration` multiplied by the controller's multiplier value. *Note that this action ignores whether
 the valve is enabled; that is, when called, the specified valve will always run.* Valves are numbered in the order they
 appear in the sprinkler controller's configuration starting at zero (0).
 
@@ -320,11 +349,11 @@ on_...:
         id: sprinkler_ctrlr
         valve_number: 0
         run_duration: 600s  # optional
-
 ```
+
 {{< anchor "sprinkler-controller-action_shutdown" >}}
 
-### `sprinkler.shutdown`   action
+### `sprinkler.shutdown` action
 
 Initiates a shutdown of all valves/the system, respecting any configured pump or valve stop delays.
 
@@ -332,41 +361,41 @@ Initiates a shutdown of all valves/the system, respecting any configured pump or
 on_...:
   then:
     - sprinkler.shutdown: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_next_valve" >}}
 
-### `sprinkler.next_valve`   action
+### `sprinkler.next_valve` action
 
-Advances to the next valve (numerically). If `manual_selection_delay`   is configured, the controller
+Advances to the next valve (numerically). If `manual_selection_delay` is configured, the controller
 will wait before activating the selected valve. If no valve is active, the first valve (as they appear
-in the controller's configuration) will be started. Setting `next_prev_ignore_disabled`   to `true`
+in the controller's configuration) will be started. Setting `next_prev_ignore_disabled` to `true`
 will cause this action to skip valves that are not enabled via their valve enable switch (see above).
 
 ```yaml
 on_...:
   then:
     - sprinkler.next_valve: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_previous_valve" >}}
 
-### `sprinkler.previous_valve`   action
+### `sprinkler.previous_valve` action
 
-Advances to the previous valve (numerically). If `manual_selection_delay`   is configured, the controller
+Advances to the previous valve (numerically). If `manual_selection_delay` is configured, the controller
 will wait before activating the selected valve. If no valve is active, the last valve (as they appear in
-the controller's configuration) will be started. Setting `next_prev_ignore_disabled`   to `true`   will
+the controller's configuration) will be started. Setting `next_prev_ignore_disabled` to `true` will
 cause this action to skip valves that are not enabled via their valve enable switch (see above).
 
 ```yaml
 on_...:
   then:
     - sprinkler.previous_valve: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_pause" >}}
 
-### `sprinkler.pause`   action
+### `sprinkler.pause` action
 
 Immediately turns off all valves, saving the active valve and the amount of time remaining so that
 the cycle may be resumed later on.
@@ -375,41 +404,41 @@ the cycle may be resumed later on.
 on_...:
   then:
     - sprinkler.pause: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_resume" >}}
 
-### `sprinkler.resume`   action
+### `sprinkler.resume` action
 
-Resumes a cycle placed on hold with `sprinkler.pause`  . If there is no paused cycle, this action
+Resumes a cycle placed on hold with `sprinkler.pause`. If there is no paused cycle, this action
 will do nothing.
 
 ```yaml
 on_...:
   then:
     - sprinkler.resume: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_resume_or_start_full_cycle" >}}
 
-### `sprinkler.resume_or_start_full_cycle`   action
+### `sprinkler.resume_or_start_full_cycle` action
 
-Resumes a cycle placed on hold with `sprinkler.pause`  , but if no cycle was paused, starts a full
+Resumes a cycle placed on hold with `sprinkler.pause`, but if no cycle was paused, starts a full
 cycle (equivalent to `sprinkler.start_full_cycle`  ).
 
 ```yaml
 on_...:
   then:
     - sprinkler.resume_or_start_full_cycle: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_queue_valve" >}}
 
-### `sprinkler.queue_valve`   action
+### `sprinkler.queue_valve` action
 
 Adds the specified valve into the controller's queue. When the queue is enabled, valves in the queue
 take precedence over valves scheduled as a part of a full cycle of the system (when auto-advance is
-enabled). If `run_duration`   is not specified or is zero, the sprinkler controller will use the
+enabled). If `run_duration` is not specified or is zero, the sprinkler controller will use the
 valve's configured run duration. Valves are numbered in the order they appear in the sprinkler
 controller's configuration starting at zero (0). *Note that, at present, the queue has a hard-coded
 limit of 100 entries to limit memory use.* Please see [The Sprinkler Controller Queue](#sprinkler-controller-sprinkler_controller_queue)
@@ -422,11 +451,11 @@ on_...:
         id: sprinkler_ctrlr
         valve_number: 2
         run_duration: 900s
-
 ```
+
 {{< anchor "sprinkler-controller-action_clear_queued_valves" >}}
 
-### `sprinkler.clear_queued_valves`   action
+### `sprinkler.clear_queued_valves` action
 
 Removes all queued valves from the controller's queue. Please see [The Sprinkler Controller Queue](#sprinkler-controller-sprinkler_controller_queue)
 section below for more detail and examples.
@@ -436,11 +465,11 @@ on_...:
   then:
     - sprinkler.clear_queued_valves:
         id: sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-action_set_multiplier" >}}
 
-### `sprinkler.set_multiplier`   action
+### `sprinkler.set_multiplier` action
 
 Sets the multiplier value used to proportionally increase or decrease the run duration for all valves/zones.
 For seasonal changes, it's easier to use the multiplier to adjust the watering time instead of adjusting the
@@ -457,14 +486,14 @@ on_...:
     - sprinkler.set_multiplier:
         id: sprinkler_ctrlr
         multiplier: 1.5
-
 ```
+
 {{< anchor "sprinkler-controller-action_set_repeat" >}}
 
-### `sprinkler.set_repeat`   action
+### `sprinkler.set_repeat` action
 
 Specifies the number of times full cycles should be repeated. **Note that the total number of cycles
-the controller will run is equal to the repeat value plus one.** For example, with a `repeat`   value
+the controller will run is equal to the repeat value plus one.** For example, with a `repeat` value
 of 1, the initial cycle will run, then the repeat cycle will run, resulting in a total of two cycles.
 
 ```yaml
@@ -473,16 +502,16 @@ on_...:
     - sprinkler.set_repeat:
         id: sprinkler_ctrlr
         repeat: 2  # would run three cycles
-
 ```
+
 {{< anchor "sprinkler-controller-action_set_divider" >}}
 
-### `sprinkler.set_divider`   action
+### `sprinkler.set_divider` action
 
 The divider value sets both the multiplier and repeat values as follows:
 
 - The multiplier value is set to the value of 1 / `divider`
-- The repeat value is set to `divider`   - 1
+- The repeat value is set to `divider` - 1
 
 As an example, given a divider value of 4, the multiplier would be set to 0.25 and the repeat value
 would be set to 3.
@@ -496,11 +525,11 @@ on_...:
     - sprinkler.set_divider:
         id: sprinkler_ctrlr
         divider: 2
-
 ```
+
 {{< anchor "sprinkler-controller-action_set_valve_run_duration" >}}
 
-### `sprinkler.set_valve_run_duration`   action
+### `sprinkler.set_valve_run_duration` action
 
 Sets the run duration for the specified valve. When the valve is activated, this value is multiplied
 by the multiplier value (see above) to determine the valve's actual run duration.
@@ -512,16 +541,18 @@ on_...:
         id: sprinkler_ctrlr
         valve_number: 0
         run_duration: 600s
-
 ```
+
 {{< note >}}
-- The `start_single_valve`   action ignores whether a valve is enabled via its enable switch.
-- The `next_valve`   and `previous_valve`   actions may not appear to respond immediately if either
-  `manual_selection_delay`   or any of the various delay mechanisms described in the
+
+- The `start_single_valve` action ignores whether a valve is enabled via its enable switch.
+- The `next_valve` and `previous_valve` actions may not appear to respond immediately if either
+  `manual_selection_delay` or any of the various delay mechanisms described in the
   [Pump and Distribution Valve Coordination](#sprinkler-controller-pump_and_distribution_valve_coordination) section below are configured.
   If you are using any of these configuration options, be sure to allow the delay intervals to elapse
   before assuming something isn't working!
-- If a valve is active when its `run_duration`   or the multiplier value is changed, the active
+
+- If a valve is active when its `run_duration` or the multiplier value is changed, the active
   valve's run duration will remain unaffected until the next time it is started.
 
 {{< /note >}}
@@ -544,13 +575,13 @@ sprinkler:
     pump_start_pump_delay: 3s
     pump_stop_valve_delay: 3s
     ...
-
 ```
+
 This will cause any given pump to start (in this example) three seconds *after* any associated distribution
 valve is opened. In addition, it will wait three seconds to close the *last* distribution valve *after*
 the pump is stopped. This would allow the pump to spin down, pressure to drop and lines to drain prior
 to switching off the (last) associated distribution valve. (In these configurations, it might also be
-desirable to enable `valve_overlap`  , as well -- more on this below.)
+desirable to enable `valve_overlap`, as well -- more on this below.)
 
 Some types of electric valves require sufficient water pressure to (fully/quickly) close. These types of
 valves, when coupled with electric valves upstream of distribution valves (often known in the industry as
@@ -564,21 +595,22 @@ sprinkler:
     pump_start_valve_delay: 3s
     pump_stop_pump_delay: 3s
     ...
-
 ```
+
 In this example, the upstream valve would open three seconds prior to any given associated distribution
 valve, allowing the water pressure to force any attached distribution valves closed. After the delay, the
 required distribution valve is opened and the cycle starts. When the cycle is complete, the (last) distribution
 valve would be switched off three seconds prior to the upstream valve. (In these configurations, it might also
-be desirable to enable `valve_open_delay`  , as well.)
+be desirable to enable `valve_open_delay`, as well.)
 
 {{< note >}}
-Using `pump_stop_valve_delay`   or `pump_stop_pump_delay`   with `valve_open_delay`   and
-`pump_switch_off_during_valve_open_delay`   may increase the off-time inserted between the operation
+Using `pump_stop_valve_delay` or `pump_stop_pump_delay` with `valve_open_delay` and
+`pump_switch_off_during_valve_open_delay` may increase the off-time inserted between the operation
 of each zone, as the controller must wait for a given zone (pump *and* valve) to fully shut down before
 it can be started again.
 
 {{< /note >}}
+
 ### Banging Pipes or Valves That Don't Consistently Close
 
 A common complaint people have with sprinkler systems is that of banging pipes. In other, less common situations,
@@ -589,7 +621,7 @@ address either of these complaints/concerns:
 - `valve_open_delay`
 - `pump_switch_off_during_valve_open_delay`
 
-The first option, `valve_overlap`  , causes the current valve and the next valve (as the controller is iterating
+The first option, `valve_overlap`, causes the current valve and the next valve (as the controller is iterating
 through valves) to run simultaneously for the duration specified. The idea here is that this causes a reduction
 in water pressure as the next zone starts up, therefore minimizing banging pipes (aka the "water hammer" effect)
 when the valve that is finishing up finally closes.
@@ -598,8 +630,8 @@ The second and third options may be used to ensure sufficient water pressure is 
 This may be useful for pressure-sensitive valves that don't quickly and/or fully close when water pressure is low.
 
 For systems with pumps, it may be desirable to switch off the pump before switching to the next distribution
-valve/zone. In these situations, `pump_switch_off_during_valve_open_delay`   may prove useful in conjunction
-with `valve_open_delay`  .
+valve/zone. In these situations, `pump_switch_off_during_valve_open_delay` may prove useful in conjunction
+with `valve_open_delay`.
 
 In any case, the examples in the next section illustrate how/where to add these options into your configuration.
 
@@ -611,7 +643,7 @@ In any case, the examples in the next section illustrate how/where to add these 
 
 This first example illustrates a complete, single-valve system with no pump/upstream valve(s). It
 could be useful for controlling a single valve independent of any other sprinkler controllers. A pump
-could easily be added by adding the `pump_switch_id`   parameter and a [switch](#config-switch).
+could easily be added by adding the `pump_switch_id` parameter and a [switch](#config-switch).
 
 ```yaml
 esphome:
@@ -637,8 +669,8 @@ switch:
   - platform: gpio
     id: garden_sprinkler_valve
     pin: GPIOXX
-
 ```
+
 ### Single Controller, Three Valves, No Pump
 
 This example illustrates a complete, simple three-valve system with no pump/upstream valve(s):
@@ -688,8 +720,8 @@ switch:
   - platform: gpio
     id: lawn_sprinkler_valve_sw2
     pin: GPIOXX
-
 ```
+
 ### Single Controller, Three Valves, Single Pump
 
 This example illustrates a complete three-valve system with a single pump/upstream valve:
@@ -743,8 +775,8 @@ switch:
   - platform: gpio
     id: lawn_sprinkler_valve_sw2
     pin: GPIOXX
-
 ```
+
 ### Single Controller, Three Latching Valves, Single Latching Pump
 
 This example is similar to the previous example, however it illustrates how a "latching" or "pulsed"
@@ -828,8 +860,8 @@ switch:
   - platform: gpio
     id: lawn_sprinkler_valve_sw2_on
     pin: GPIOXX
-
 ```
+
 ### Dual Controller, Five Valves, Two Pumps
 
 This example illustrates a complete and more complex dual-controller system with a total of five
@@ -918,8 +950,8 @@ switch:
   - platform: gpio
     id: garden_sprinkler_valve_sw1
     pin: GPIOXX
-
 ```
+
 {{< note >}}
 In this final complete configuration example, pump control is split among the two sprinkler
 controller instances. This will behave as expected; multiple instances of the controller will
@@ -940,8 +972,8 @@ sprinkler:
     multiplier_number: "Lawn Sprinkler Multiplier"
     repeat_number: "Lawn Sprinkler Repeat"
     ...
-
 ```
+
 An added benefit of using {{< docref "/components/number/index" "number" >}} components is that modified valve run durations,
 multiplier and repeat values can persist across resets/reboots of the ESP device. If this is your desired behavior, you
 should configure the {{< docref "/components/number/index" "number" >}} components within your sprinkler controller configuration.
@@ -951,13 +983,13 @@ ESPHome's {{< docref "/components/number" >}}, supporting all of its [configurat
 addition to a subset of the {{< docref "/components/number/template" "Template Number Component's" >}} configuration variables,
 including:
 
-- `initial_value`   (Defaults to 900 for valves, 1 for multiplier, 0 for repeat)
-- `max_value`   (Defaults to 86400 for valves, 10 for multiplier and repeat)
-- `min_value`   (Defaults to 1 for valves, 0 for multiplier and repeat)
-- `step`   (Defaults to 1 for valves and repeat, 0.1 for multiplier)
-- `restore_value`   (Defaults to `true`  ; set to `false`   to always restore `initial_value`   at boot)
+- `initial_value` (Defaults to 900 for valves, 1 for multiplier, 0 for repeat)
+- `max_value` (Defaults to 86400 for valves, 10 for multiplier and repeat)
+- `min_value` (Defaults to 1 for valves, 0 for multiplier and repeat)
+- `step` (Defaults to 1 for valves and repeat, 0.1 for multiplier)
+- `restore_value` (Defaults to `true`  ; set to `false` to always restore `initial_value` at boot)
 - `set_action`
-- `unit_of_measurement`   (For run durations only; defaults to `s`   for seconds or specify `min`   for minutes)
+- `unit_of_measurement` (For run durations only; defaults to `s` for seconds or specify `min` for minutes)
 
 Here's a brief example:
 
@@ -975,8 +1007,8 @@ sprinkler:
       set_action:
         - lambda: "some_function();"
     ...
-
 ```
+
 {{< anchor "sprinkler-controller-sprinkler_controller_extending_switches" >}}
 
 ### Extending the Sprinkler Controller's Switches
@@ -995,11 +1027,11 @@ sprinkler:
       on_turn_on:
         light.turn_on: my_light
     ...
-
 ```
+
 This arrangement is possible for any other switch within the sprinkler controller's configuration block, with
-the exception of `pump_off_switch_id`  , `pump_on_switch_id`  , `pump_switch_id`  , `valve_off_switch_id`  ,
-`valve_on_switch_id`   and `valve_switch_id`   (because these are the IDs of other switch components already
+the exception of `pump_off_switch_id`, `pump_on_switch_id`, `pump_switch_id`, `valve_off_switch_id`,
+`valve_on_switch_id` and `valve_switch_id` (because these are the IDs of other switch components already
 defined elsewhere in your configuration). In addition, specifying each switch ID enables the ability to refer
 to any of the sprinkler controller's switches from elsewhere in your configuration. Here's another brief example:
 
@@ -1016,13 +1048,13 @@ switch:
       - switch.turn_on: sprinkler_ctrlr_main_switch_id
       - light.turn_on: sprinkler_indicator_light
     ...
-
 ```
+
 While the above example simply illustrates creating a secondary "main" switch, this approach could be extended
 to take advantage of other devices such as a moisture [sensor](#config-sensor) -- when the moisture level
-is too low (look for `on_value`   or `on_value_range`  ), the sprinkler controller (or a specific valve) could
-be activated by calling one of the controller's start-up actions, such as `sprinkler.start_full_cycle`  ,
-`sprinkler.start_from_queue`  , `sprinkler.start_single_valve`  , or `sprinkler.resume_or_start_full_cycle`  .
+is too low (look for `on_value` or `on_value_range`  ), the sprinkler controller (or a specific valve) could
+be activated by calling one of the controller's start-up actions, such as `sprinkler.start_full_cycle`,
+`sprinkler.start_from_queue`, `sprinkler.start_single_valve`, or `sprinkler.resume_or_start_full_cycle`.
 
 {{< anchor "sprinkler-controller-sprinkler_controller_queue" >}}
 
@@ -1044,7 +1076,7 @@ zones and gardens and when a given sensor falls below some defined threshold, th
 the sprinkler controller's queue.
 
 Then, each morning at some specific hour, Home Assistant (or even the ESP device itself!) calls the sprinkler
-controller's `sprinkler.start_from_queue`   action, causing the controller to iterate only through queued zones.
+controller's `sprinkler.start_from_queue` action, causing the controller to iterate only through queued zones.
 Because the run duration may be specified as a part of the queue request, this could be extended to compute a
 specific run duration for each zone depending on the specific moisture level of the soil on any given day. The
 possibilities are endless and are only limited by your creativity!
@@ -1091,8 +1123,8 @@ api:
     - action: shutdown
       then:
         - sprinkler.shutdown: lawn_sprinkler_ctrlr
-
 ```
+
 {{< anchor "sprinkler-controller-sprinkler_controller_understanding_state" >}}
 
 ## Understanding the Sprinkler Controller's State
@@ -1102,18 +1134,19 @@ to use the sprinkler controller's {{< apiref "API" "sprinkler/sprinkler.h" >}} t
 the goal of indicating this on some form of {{< docref "/components/display/index" "display" >}} hardware. Note that this
 discussion largely revolves around C++ code (as is used in ESPHome lambdas).
 
-Many of the methods used to determine the sprinkler controller's state return a type of value known as an `optional`  .
-If you are curious, a general reference for the `optional`   type may be found
-[here](https://en.cppreference.com/w/cpp/utility/optional), but what is important for now is:
+Many of the methods used to determine the sprinkler controller's state return a type of value known as an `optional`.
+If you are curious, a general reference for the `optional` type may be found
+on [cppreference.com](https://en.cppreference.com/w/cpp/utility/optional), but what is important for now is:
 
-- The `optional`   type *may* or *may not* contain a value
+- The `optional` type *may* or *may not* contain a value
 
-  - The method `has_value()`   is used to determine if a value is present. For example:
+  - The method `has_value()` is used to determine if a value is present. For example:
     `id(lawn_sprinkler_ctrlr).active_valve().has_value()`
-  - The method `value()`   is used to determine the value, *if* it is determined that a value is present. For example:
+
+  - The method `value()` is used to determine the value, *if* it is determined that a value is present. For example:
     `auto running_valve = id(lawn_sprinkler_ctrlr).active_valve().value()`
 
-- The `optional`   type can contain a value of any C++ type (`bool`  , `int`  , `float`  , etc.) (In C++ terms, it is a
+- The `optional` type can contain a value of any C++ type (`bool`, `int`, `float`, etc.) (In C++ terms, it is a
   template.)
 
 The examples that follow illustrate use of the the sprinkler controller's methods within a
@@ -1126,12 +1159,12 @@ We'll approach this from the angle of *"how do I..."*
 
 {{< anchor "sprinkler-controller-sprinkler_controller_understanding_state_how_do_i" >}}
 
-### How Do I...
+### How Do I
 
 - **...determine if the sprinkler controller is running?**
 
-  Use the method `optional<size_t> active_valve()`   to check if there is an active valve. If the `optional`   returned
-  `has_value()`  , the sprinkler controller is running and you may use the `value()`   method to check which specific
+  Use the method `optional<size_t> active_valve()` to check if there is an active valve. If the `optional` returned
+  `has_value()`, the sprinkler controller is running and you may use the `value()` method to check which specific
   valve is active.
 
   *Example:*
@@ -1149,12 +1182,12 @@ We'll approach this from the angle of *"how do I..."*
             // the controller is NOT running
             it.print(0, 0, "Idle");
           }
-
 ```
+
 - **...determine if the sprinkler controller is paused and, if so, which valve is paused?**
 
-  Use the method `optional<size_t> paused_valve()`   to check if there is a paused valve. If the `optional`   returned
-  `has_value()`  , the sprinkler controller is paused and you may use the `value()`   method to check which specific
+  Use the method `optional<size_t> paused_valve()` to check if there is a paused valve. If the `optional` returned
+  `has_value()`, the sprinkler controller is paused and you may use the `value()` method to check which specific
   valve is paused. In general, this follows the same pattern as the
   [active_valve() example above](#sprinkler-controller-sprinkler_controller_understanding_state_how_do_i).
 
@@ -1168,7 +1201,7 @@ We'll approach this from the angle of *"how do I..."*
   - `bool reverse()`
   - `bool standby()`
 
-  Each will return `true`   if the respective "mode" is enabled.
+  Each will return `true` if the respective "mode" is enabled.
 
   *Examples:*
 
@@ -1191,8 +1224,8 @@ We'll approach this from the angle of *"how do I..."*
             // queue is NOT enabled
             it.print(0, 10, "Queue disabled");
           }
-
 ```
+
 - **...determine the sprinkler controller's multiplier/repeat values?**
 
   Methods of interest in this case are:
@@ -1201,11 +1234,11 @@ We'll approach this from the angle of *"how do I..."*
   - `optional<uint32_t> repeat()`
   - `optional<uint32_t> repeat_count()`
 
-  Note again that each of the `repeat`   methods returns an `optional`   type; if the `optional`   returned
-  `has_value()`  , repeating is enabled and you can get the repeat target (`repeat()`  ) or current repeat
-  count (`repeat_count()`  ) with `optional`  's `value()`   method.
+  Note again that each of the `repeat` methods returns an `optional` type; if the `optional` returned
+  `has_value()`, repeating is enabled and you can get the repeat target (`repeat()`  ) or current repeat
+  count (`repeat_count()`  ) with `optional`  's `value()` method.
 
-  The `multiplier()`   method returns a `float`   type and, as such, it always has a value.
+  The `multiplier()` method returns a `float` type and, as such, it always has a value.
 
   *Examples:*
 
@@ -1220,8 +1253,8 @@ We'll approach this from the angle of *"how do I..."*
             // the controller is repeating, print the repeat target value
             it.printf(0, 10, "Repeat %u times", id(lawn_sprinkler_ctrlr).repeat().value());
           }
-
 ```
+
 - **...determine how much time is left/required?**
 
   Several methods are available for this purpose:
@@ -1233,8 +1266,8 @@ We'll approach this from the angle of *"how do I..."*
   - `optional<uint32_t> time_remaining_active_valve()`
   - `optional<uint32_t> time_remaining_current_operation()`
 
-  Note that, as with several of the earlier examples, the `time_remaining_...`   methods each return an `optional`
-  type. If the `optional`   returned `has_value()`  , a valve is active/running; if it does not `has_value()`  , no
+  Note that, as with several of the earlier examples, the `time_remaining_...` methods each return an `optional`
+  type. If the `optional` returned `has_value()`, a valve is active/running; if it does not `has_value()`, no
   valve is active, meaning the controller is idle.
 
   *Example:*
@@ -1251,10 +1284,9 @@ We'll approach this from the angle of *"how do I..."*
             // the controller is NOT running
             it.print(0, 0, "Idle");
           }
-
 ```
+
 ## See Also
 
 - {{< apiref "sprinkler/sprinkler.h" "sprinkler/sprinkler.h" >}}
 - {{< apiref "switch/switch.h" "switch/switch.h" >}}
-

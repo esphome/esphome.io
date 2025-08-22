@@ -7,9 +7,7 @@ params:
     image: power_settings.svg
 ---
 
-
-
-The `shutdown`   button platform allows you to shutdown your node remotely
+The `shutdown` button platform allows you to shutdown your node remotely
 through Home Assistant. It does this by putting the node into deep sleep mode with no
 wakeup source selected. After enabling, the only way to startup the ESP again is by
 pressing the reset button or restarting the power supply.
@@ -21,9 +19,9 @@ pressing the reset button or restarting the power supply.
 button:
   - platform: shutdown
     name: "Living Room Shutdown"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Button](#config-button).
 
@@ -35,4 +33,3 @@ button:
 - {{< docref "/components/switch/shutdown" >}}
 - {{< docref "template/" >}}
 - {{< apiref "shutdown/shutdown_button.h" "shutdown/shutdown_button.h" >}}
-

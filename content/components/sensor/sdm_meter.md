@@ -7,9 +7,7 @@ params:
     image: sdm220m.jpg
 ---
 
-
-
-The `sdm_meter`   sensor platform allows you to use Eastron SDM modbus energy monitors
+The `sdm_meter` sensor platform allows you to use Eastron SDM modbus energy monitors
 ([website](http://www.eastrongroup.com/product_detail.php?id=170&menu1=&menu2=))
 with ESPHome.
 
@@ -17,7 +15,7 @@ with ESPHome.
 
 The communication with this component is done via a [UART](#uart) using the [Modbus protocol](#modbus)
 over RS485 wiring. You will need an RS485 to UART converter for communication.
-You must therefore have a `uart:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600bps.
 ! For the SDM230M, SDM120M Energy Monitor the default factory baud rate is 2400bps. You either need to change the code to 2400bps for these models or change the settings on your Energy Meter For more information search for your model: ([eastron's website](https://www.eastroneurope.com/products/category/din-rail-mounted-metering)).
 
@@ -59,24 +57,30 @@ sensor:
     export_reactive_energy:
       name: "SDM230M Export Reactive Energy"
     update_interval: 60s
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **phase_a** (*Optional*): The group of exposed sensors for Phase A/1.
 
   - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
     [Sensor](#config-sensor).
+
   - **voltage** (*Optional*): Use the voltage value of the sensor in volts (V).
     All options from [Sensor](#config-sensor).
+
   - **active_power** (*Optional*): Use the (active) power value of the sensor in watts (W). All options
     from [Sensor](#config-sensor).
+
   - **power_factor** (*Optional*): Use the power factor value of the sensor.
     All options from [Sensor](#config-sensor).
+
   - **apparent_power** (*Optional*): Use the apparent power value of the sensor in volt amps (VA). All
     options from [Sensor](#config-sensor).
+
   - **reactive_power** (*Optional*): Use the reactive power value of the sensor in volt amps reactive (VAR). All
     options from [Sensor](#config-sensor).
+
   - **phase_angle** (*Optional*): Use the phase angle value of the sensor in degrees (°). All options
     from [Sensor](#config-sensor).
 
@@ -90,24 +94,29 @@ sensor:
 
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
   All options from [Sensor](#config-sensor).
+
 - **total_power** (*Optional*): Use the total power value of the sensor in watts (W).
   All options from [Sensor](#config-sensor).
+
 - **import_active_energy** (*Optional*): Use the import active energy value of the sensor in kilowatt
   hours (kWh). All options from [Sensor](#config-sensor).
+
 - **export_active_energy** (*Optional*): Use the export active energy value of the sensor in kilowatt
   hours (kWh). All options from [Sensor](#config-sensor).
+
 - **import_reactive_energy** (*Optional*): Use the import reactive energy value of the sensor in
   kilovolt amps reactive hours (kVArh). All options from [Sensor](#config-sensor).
+
 - **export_reactive_energy** (*Optional*): Use the export reactive energy value of the sensor in
   kilovolt amps reactive hours (kVArh). All options from [Sensor](#config-sensor).
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
-  the same UART bus. You will need to set the address of each device manually. Defaults to `1`  .
+  the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
 
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "sdm220m/sdm220m.h" "sdm220m/sdm220m.h" >}}
-
-

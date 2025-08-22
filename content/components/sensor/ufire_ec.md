@@ -7,9 +7,7 @@ params:
     image: ufire_ec.png
 ---
 
-
-
-The `ufire_ec`   sensor platform allows you to use your uFire Isolated EC sensor
+The `ufire_ec` sensor platform allows you to use your uFire Isolated EC sensor
 with ESPHome. The [I²C Bus](#i2c) is required to be set up in your
 configuration for this sensor to work. It requires also to have a temperature
 sensor in the liquid tank; this can be on the same board or an external sensor
@@ -27,26 +25,29 @@ sensor:
       name: Temperature
     ec:
       name: EC
-
 ```
-## Configuration variables:
 
-- **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to `0x3C`  .
+## Configuration variables
+
+- **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to `0x3C`.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
 - **temperature_sensor** (*Optional*, [ID](#config-id)): Set the ID of the temperature
   sensor. Only needed if the onboard temperature sensor is not used.
+
 - **ec** (*Optional*, [Sensor](#config-sensor)): Set the EC sensor configuration. All options from [Sensor](#config-sensor).
 - **temperature** (*Optional*, [Sensor](#config-sensor)): Set the onboard temperature sensor configuration. All options from [Sensor](#config-sensor).
 - **temperature_compensation** (*Optional*, float): Set the temperature compensation for the EC
-  sensor. Defaults to `21.0`  .
+  sensor. Defaults to `21.0`.
+
 - **temperature_coefficient** (*Optional*, float): Set the temperature coefficient for the EC
-  sensor. Defaults to `0.019`  .
+  sensor. Defaults to `0.019`.
 
 {{< anchor "sensor-ufire_ec-calibrate_probe_action" >}}
 
-## `ufire_ec.calibrate_probe`   Action
+## `ufire_ec.calibrate_probe` Action
 
 The EC probe have to be calibrated. For this you need know the EC reference value and temperature
 of the calibration solution.
@@ -64,8 +65,8 @@ on_...:
       id: ufire_ec_board
       solution: 0.146
       temperature: !lambda "return id(temperature_liquit).state;"
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire EC sensor.
@@ -74,7 +75,7 @@ Configuration options:
 
 {{< anchor "sensor-ufire_ec-reset_action" >}}
 
-## `ufire_ec.reset`   Action
+## `ufire_ec.reset` Action
 
 Reset the current calibration on the sensor.
 
@@ -89,8 +90,8 @@ sensor:
 on_...:
   - sensor.ufire_ec_board.reset:
       id: ufire_ec_board
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the ufire EC sensor.
@@ -99,4 +100,3 @@ Configuration options:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "ufire_ec/ufire_ec.h" "ufire_ec/ufire_ec.h" >}}
-

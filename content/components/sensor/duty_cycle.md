@@ -7,8 +7,6 @@ params:
     image: percent.svg
 ---
 
-
-
 The duty cycle sensor allows you to measure for what percentage of time a signal
 on a GPIO pin is HIGH or LOW.
 
@@ -23,13 +21,14 @@ sensor:
   - platform: duty_cycle
     pin: D0
     name: Duty Cycle Sensor
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to observe for the duty
   cycle.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](#config-sensor).
@@ -38,4 +37,3 @@ sensor:
 
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "duty_cycle/duty_cycle_sensor.h" "duty_cycle/duty_cycle_sensor.h" >}}
-

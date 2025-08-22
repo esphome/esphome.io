@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 ESPHome has support for components to create a datetime entity. A datetime entity
 currently represents a date that can be set by the user/frontend.
 
@@ -28,8 +26,8 @@ name: Date to check
 
 # Optional variables:
 icon: "mdi:calendar-alert"
-
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -37,22 +35,27 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the datetime to use that name, you can set `name: None`  .
+you want the datetime to use that name, you can set `name: None`.
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the datetime in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
-  Defaults to `false`  .
+  Defaults to `false`.
+
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
   for a list of available options.
-  Set to `""`   to remove the default entity category.
+  Set to `""` to remove the default entity category.
+
 - **time_id** (*Optional*, [ID](#config-id)): The ID of the time entity. Automatically set
-  to the ID of a time component if only a single one is defined. Required if `on_time`   is used.
+  to the ID of a time component if only a single one is defined. Required if `on_time` is used.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 MQTT Options:
@@ -62,18 +65,18 @@ MQTT Options:
 Time and DateTime Options:
 
 - **on_time** (*Optional*, [Automation](#automation)): Automation to run when the current datetime or time matches the current state.
-  Only valid on `time`   or `datetime`   types.  Use of `on_time`   causes `time_id`   to be required, `time_id`   will be automatically assigned if a time source exists in the config, and will cause an invalid configuration if there is no {{< docref "/components/time" >}} configured.
+  Only valid on `time` or `datetime` types. Use of `on_time` causes `time_id` to be required, `time_id` will be automatically assigned if a time source exists in the config, and will cause an invalid configuration if there is no {{< docref "/components/time" >}} configured.
 
 ## Automation
 
-You can access the most recent state as a `ESPTime`   object by `id(datetime_id).state_as_esptime()`
+You can access the most recent state as a `ESPTime` object by `id(datetime_id).state_as_esptime()`
 
 {{< anchor "datetime-on_value" >}}
 
 ### `on_value`
 
 This automation will be triggered when a new value is published. In [Lambdas](#config-lambda)
-you can get the value as a ESPTime object from the trigger with `x`  .
+you can get the value as a ESPTime object from the trigger with `x`.
 
 ```yaml
 datetime:
@@ -87,18 +90,18 @@ datetime:
             } else {
               ESP_LOGD("main", "Updated hour is earlier than 12");
             }
-
 ```
+
 Configuration variables: See [Automation](#automation).
 
 ## Date Automation
 
 {{< anchor "datetime-date_set_action" >}}
 
-### `datetime.date.set`   Action
+### `datetime.date.set` Action
 
 This is an [Action](#config-action) for setting a datetime date state.
-The `date`   provided can be in one of 3 formats:
+The `date` provided can be in one of 3 formats:
 
 ```yaml
 # String date
@@ -120,15 +123,13 @@ The `date`   provided can be in one of 3 formats:
     date: !lambda |-
       // Return an ESPTime struct
       return {.day_of_month = 4, .month = 12, .year = 2023};
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the datetime to set.
 - **date** (**Required**, string, date parts, [templatable](#config-templatable)):
   The value to set the datetime to.
-
-
 
 {{< anchor "datetime-lambda_calls" >}}
 
@@ -144,29 +145,29 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_datetime_date).make_call();
     call.set_date("2024-02-25");
     call.perform();
-
 ```
-  Check the API reference for information on the methods that are available for
-  the `DateCall`   object.
 
-- `.year`  : Retrieve the current year of the `date`  . It will be `0`   if no value has been set.
-- `.month`  : Retrieve the current month of the `date`  . It will be `0`   if no value has been set.
-- `.day`  : Retrieve the current day of the `date`  . It will be `0`   if no value has been set.
+  Check the API reference for information on the methods that are available for
+  the `DateCall` object.
+
+- `.year`  : Retrieve the current year of the `date`. It will be `0` if no value has been set.
+- `.month`  : Retrieve the current month of the `date`. It will be `0` if no value has been set.
+- `.day`  : Retrieve the current day of the `date`. It will be `0` if no value has been set.
 - `.state_as_esptime()`  : Retrieve the current value of the datetime as a {{< apistruct "ESPTime" "ESPTime" >}} object.
 
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my datetime: %04d-%02d-%02d", id(my_date).year, id(my_date).month, id(my_date).day);
-
 ```
+
 ## Time Automation
 
 {{< anchor "datetime-time_set_action" >}}
 
-### `datetime.time.set`   Action
+### `datetime.time.set` Action
 
 This is an [Action](#config-action) for setting a datetime time state.
-The `time`   provided can be in one of 3 formats:
+The `time` provided can be in one of 3 formats:
 
 ```yaml
 # String time
@@ -188,14 +189,13 @@ The `time`   provided can be in one of 3 formats:
     time: !lambda |-
       // Return an ESPTime struct
       return {.second = 56, .minute = 34, .hour = 12};
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the datetime to set.
 - **time** (**Required**, string, time parts, [templatable](#config-templatable)):
   The value to set the datetime to.
-
 
 {{< anchor "datetime-time-lambda_calls" >}}
 
@@ -211,29 +211,29 @@ advanced stuff (see the full API Reference for more info).
     auto call = id(my_datetime_time).make_call();
     call.set_time("12:34:56");
     call.perform();
-
 ```
-  Check the API reference for information on the methods that are available for
-  the `TimeCall`   object.
 
-- `.hour`  : Retrieve the current hour of the `time`  . It will be `0`   if no value has been set.
-- `.minute`  : Retrieve the current minute of the `time`  . It will be `0`   if no value has been set.
-- `.second`  : Retrieve the current second of the `time`  . It will be `0`   if no value has been set.
+  Check the API reference for information on the methods that are available for
+  the `TimeCall` object.
+
+- `.hour`  : Retrieve the current hour of the `time`. It will be `0` if no value has been set.
+- `.minute`  : Retrieve the current minute of the `time`. It will be `0` if no value has been set.
+- `.second`  : Retrieve the current second of the `time`. It will be `0` if no value has been set.
 - `.state_as_esptime()`  : Retrieve the current value of the datetime as a {{< apistruct "ESPTime" "ESPTime" >}} object.
 
 ```cpp
     // For example, create a custom log message when a value is received:
     ESP_LOGI("main", "Value of my datetime: %0d:%02d:%02d", id(my_datetime_time).hour, id(my_datetime_time).minute, id(my_datetime_time).second);
-
 ```
+
 ## DateTime Automation
 
 {{< anchor "datetime-datetime_set_action" >}}
 
-### `datetime.datetime.set`   Action
+### `datetime.datetime.set` Action
 
 This is an [Action](#config-action) for setting a datetime datetime state.
-The `datetime`   provided can be in one of 3 formats:
+The `datetime` provided can be in one of 3 formats:
 
 ```yaml
 # String datetime
@@ -258,14 +258,13 @@ The `datetime`   provided can be in one of 3 formats:
     datetime: !lambda |-
       // Return an ESPTime struct
       return {.second = 56, .minute = 34, .hour = 12, .day_of_month = 31, .month = 12, .year = 2024};
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the datetime to set.
 - **datetime** (**Required**, string, datetime parts, [templatable](#config-templatable)):
   The value to set the datetime to.
-
 
 {{< anchor "datetime-datetime-lambda_calls" >}}
 
@@ -280,17 +279,17 @@ For more complex use cases, several methods are available for use on datetimes f
     auto call = id(my_datetime).make_call();
     call.set_datetime("2024-12-31 12:34:56");
     call.perform();
-
 ```
-  Check the API reference for information on the methods that are available for
-  the `DateTimeCall`   object.
 
-- `.year`  : Retrieve the current year of the `datetime`  . It will be `0`   if no value has been set.
-- `.month`  : Retrieve the current month of the `datetime`  . It will be `0`   if no value has been set.
-- `.day`  : Retrieve the current day of the `datetime`  . It will be `0`   if no value has been set.
-- `.hour`  : Retrieve the current hour of the `datetime`  . It will be `0`   if no value has been set.
-- `.minute`  : Retrieve the current minute of the `datetime`  . It will be `0`   if no value has been set.
-- `.second`  : Retrieve the current second of the `datetime`  . It will be `0`   if no value has been set.
+  Check the API reference for information on the methods that are available for
+  the `DateTimeCall` object.
+
+- `.year`  : Retrieve the current year of the `datetime`. It will be `0` if no value has been set.
+- `.month`  : Retrieve the current month of the `datetime`. It will be `0` if no value has been set.
+- `.day`  : Retrieve the current day of the `datetime`. It will be `0` if no value has been set.
+- `.hour`  : Retrieve the current hour of the `datetime`. It will be `0` if no value has been set.
+- `.minute`  : Retrieve the current minute of the `datetime`. It will be `0` if no value has been set.
+- `.second`  : Retrieve the current second of the `datetime`. It will be `0` if no value has been set.
 - `.state_as_esptime()`  : Retrieve the current value of the datetime as a {{< apistruct "ESPTime" "ESPTime" >}} object.
 
 ```cpp
@@ -298,8 +297,8 @@ For more complex use cases, several methods are available for use on datetimes f
     ESP_LOGI("main", "Value of my datetime: %04d-%02d-%02d %0d:%02d:%02d",
              id(my_datetime).year, id(my_datetime).month, id(my_datetime).day,
              id(my_datetime).hour, id(my_datetime).minute, id(my_datetime).second);
-
 ```
+
 ## See Also
 
 - {{< apiref "DateTimeBase" "datetime/datetime_base.h" >}}
@@ -309,4 +308,3 @@ For more complex use cases, several methods are available for use on datetimes f
 - {{< apiref "TimeCall" "datetime/time_entity.h" >}}
 - {{< apiref "DateTimeEntity" "datetime/datetime_entity.h" >}}
 - {{< apiref "DateTimeCall" "datetime/datetime_entity.h" >}}
-

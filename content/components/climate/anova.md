@@ -7,9 +7,7 @@ params:
     image: anova.png
 ---
 
-
-
-The `anova`   climate platform creates a climate device which can be used
+The `anova` climate platform creates a climate device which can be used
 to control a BLE Anova sous-vide stick. Whilst not strictly a climate
 device, the concept of keeping something to a set temperature applies
 equally here.
@@ -37,6 +35,7 @@ need to do conversion again within the frontend if you use Fahrenheit.
 The Anova Nano is not currently supported as it uses a different BLE protocol.
 
 {{< /warning >}}
+
 ```yaml
 ble_client:
   - mac_address: XX:XX:XX:XX:XX:XX
@@ -47,9 +46,9 @@ climate:
     name: "My Anova stick"
     ble_client_id: my_anova
     unit_of_measurement: c
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **ble_client_id** (**Required**, [ID](#config-id)): The ID of the BLE Client.
 - **unit_of_measurement** (**Required**, string): Units to use on the device display. 'c' or 'f'.
@@ -60,4 +59,3 @@ climate:
 - {{< docref "/components/ble_client" >}}
 - {{< docref "/components/climate" >}}
 - {{< apiref "anova/anova.h" "anova/anova.h" >}}
-

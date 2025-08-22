@@ -7,8 +7,6 @@ params:
     image: pzem-ac.jpg
 ---
 
-
-
 {{< note >}}
 This page is incomplete and could use some work. If you want to contribute, please see our
 [developer site](https://developers.esphome.io). This page is missing:
@@ -16,7 +14,7 @@ This page is incomplete and could use some work. If you want to contribute, plea
 - Images/screenshots/example configs of this device being used in action.
 
 {{< /note >}}
-The `pzemac`   sensor platform allows you to use PZEM-004T V3 energy monitors
+The `pzemac` sensor platform allows you to use PZEM-004T V3 energy monitors
 ([website](https://innovatorsguru.com/pzem-004t-v3/),
 [datasheet](https://innovatorsguru.com/wp-content/uploads/2019/06/PZEM-004T-V3.0-Datasheet-User-Manual.pdf))
 with ESPHome.
@@ -27,7 +25,6 @@ for more information.
 {{< warning >}}
 Please note that metering chip inside of PZEM module is powered from AC side and it has to be on during startup of ESPHome device, othervise measure results won't be visible.
 
-
 {{< /warning >}}
 {{< img src="pzem-ac.png" alt="Image" caption="PZEM-004T Version 3." width="80.0%" class="align-center" >}}
 
@@ -37,7 +34,7 @@ For using the older V1 variant of this sensor please see {{< docref "pzem004t" "
 
 {{< /warning >}}
 The communication with this component is done via a [UART](#uart) using [Modbus](#modbus).
-You must therefore have a `uart:`   entry in your configuration with both the TX and RX pins set
+You must therefore have a `uart:` entry in your configuration with both the TX and RX pins set
 to some pins on your board and the baud rate set to 9600.
 
 ```yaml
@@ -64,31 +61,39 @@ sensor:
     power_factor:
       name: "PZEM-004T V3 Power Factor"
     update_interval: 60s
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
   [Sensor](#config-sensor).
+
 - **energy** (*Optional*): Use the (active) energy value of the sensor in watt*hours. All options from
   [Sensor](#config-sensor).
+
 - **power** (*Optional*): Use the (active) power value of the sensor in watts. All options from
   [Sensor](#config-sensor).
+
 - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
   All options from [Sensor](#config-sensor).
+
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
   All options from [Sensor](#config-sensor).
+
 - **power_factor** (*Optional*): Use the power factor value of the sensor.
   All options from [Sensor](#config-sensor).
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
+
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
-  the same UART bus. You will need to set the address of each device manually. Defaults to `1`  .
+  the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
+
 - **modbus_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the Modbus hub.
 
 {{< anchor "pzemac-reset_energy_action" >}}
 
-### `pzemac.reset_energy`   Action
+### `pzemac.reset_energy` Action
 
 This action resets the total energy value of the pzemac device with the given ID when executed.
 
@@ -96,17 +101,18 @@ This action resets the total energy value of the pzemac device with the given ID
 on_...:
   then:
     - pzemac.reset_energy: pzemac_1
-
 ```
-## Changing the address of a PZEM-004T:
+
+## Changing the address of a PZEM-004T
 
 You can use the following configuration to change the address of a sensor.
-You must set the `address`   of the `modbus_controller`   to the current address, and `new_address`   of the `on_boot`   lambda to the new one.
+You must set the `address` of the `modbus_controller` to the current address, and `new_address` of the `on_boot` lambda to the new one.
 
 {{< warning >}}
 This should be used only once! After changing the address, this code should be removed from the ESP before using the actual sensor code.
 
 {{< /warning >}}
+
 ```yaml
 esphome:
   ...
@@ -148,12 +154,11 @@ modbus_controller:
     command_throttle: 0ms
     setup_priority: -10
     update_interval: 30s
-
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< docref "pzem004t/" >}}
 - {{< docref "pzemdc/" >}}
 - {{< apiref "pzemac/pzemac.h" "pzemac/pzemac.h" >}}
-

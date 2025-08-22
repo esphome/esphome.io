@@ -6,15 +6,13 @@ params:
     description: Instructions for setting up AirThings bluetooth-based sensors in ESPHome.
 ---
 
-
-
-The `airthings_wave_plus`   and `airthings_wave_mini`   sensor platforms lets you track the output of AirThings Bluetooth Low Energy devices.
+The `airthings_wave_plus` and `airthings_wave_mini` sensor platforms lets you track the output of AirThings Bluetooth Low Energy devices.
 
 This component will track radon, airborne chemicals, CO2, temperature and humidity and others depending on the device sensors.
 
 ## Device Discovery
 
-AirThings devices can be found using the `airthings_ble`   ble scanner.
+AirThings devices can be found using the `airthings_ble` ble scanner.
 
 To find out your device's MAC address, add the following to your ESPHome configuration:
 
@@ -24,16 +22,16 @@ logger:
 
 esp32_ble_tracker:
 airthings_ble:
-
 ```
+
 The device will then listen for nearby devices, and display a message like this one:
 
 ```text
 [D][airthings_ble:019]:
 Found AirThings device Serial: 123456789 (MAC: XX:XX:XX:XX:XX:XX)
-
 ```
-Once the device is found, remove the `airthings_ble`   device tracker from your configuration and take note of the device MAC address, and use it when configuring a sensor below.
+
+Once the device is found, remove the `airthings_ble` device tracker from your configuration and take note of the device MAC address, and use it when configuring a sensor below.
 
 ## Supported Devices
 
@@ -43,8 +41,7 @@ AirThings Wave Plus tracks radon (24h and long term), airborne chemicals, CO2, t
 
 {{< img src="airthings_wave_plus.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
-### Configuration example:
-
+### Configuration example
 
 ```yaml
 sensor:
@@ -77,8 +74,8 @@ ble_client:
     id: airthings01
 
 esp32_ble_tracker:
-
 ```
+
 ### Airthings Wave Mini Sensor
 
 AirThings Wave Mini tracks airborne chemicals, temperature, pressure and humidity.
@@ -109,8 +106,8 @@ ble_client:
     id: airthingsmini
 
 esp32_ble_tracker:
-
 ```
+
 {{< note >}}
 The sensor uses active polling of devices every 5 minutes as per the device reported internal refresh timeout.
 
@@ -119,13 +116,14 @@ The sensor uses active polling of devices every 5 minutes as per the device repo
 Battery-voltage reporting defaults to once every 24 hours in order
 to reduce BLE traffic (obtaining the battery voltage requires quite
 a few BLE commands/responses); if you wish to have it reported
-more frequently configure the `battery_update_interval`  . The main
-sensor `update_interval`   controls the overall polling frequency
+more frequently configure the `battery_update_interval`. The main
+sensor `update_interval` controls the overall polling frequency
 so setting the interval for the battery voltage to a lower value
 will result in the battery voltage being reported once per polling
 interval.
 
 {{< /note >}}
+
 ### Airthings Wave Radon (Gen 2) Sensor
 
 AirThings Wave Radon (Gen 2) tracks radon (24h and long term), temperature, atmospheric pressure and humidity.
@@ -136,15 +134,14 @@ The Wave Gen2 device does NOT support CO2 or TVOC sensors - only radon, temperat
 {{< /note >}}
 {{< img src="airthings_wave_radon.jpg" alt="Image" width="60.0%" class="align-center" >}}
 
-## Configuration variables:
+## Configuration variables
 
-- **device_type** (*Optional*): Specifies the type of AirThings Wave device. Defaults to `WAVE_PLUS`  .
+- **device_type** (*Optional*): Specifies the type of AirThings Wave device. Defaults to `WAVE_PLUS`.
 
   - `WAVE_PLUS`  : For AirThings Wave Plus devices (supports all sensors including CO2 and TVOC)
   - `WAVE_GEN2`  : For AirThings Wave Radon Gen 2 devices (does not support CO2 or TVOC sensors)
 
-### Configuration example:
-
+### Configuration example
 
 ```yaml
 sensor:
@@ -174,8 +171,8 @@ ble_client:
     id: airthings01
 
 esp32_ble_tracker:
-
 ```
+
 ### Battery Level Reporting
 
 If you wish to have the 'percentage of battery life remaining'
@@ -204,8 +201,8 @@ sensor:
       - calibrate_linear:
         - 2.7 -> 0
         - 4.5 -> 100
-
 ```
+
 ```yaml
 sensor:
   - platform: airthings_wave_plus
@@ -223,9 +220,8 @@ sensor:
       - calibrate_linear:
         - 2.2 -> 0
         - 3.1 -> 100
-
 ```
+
 ## See Also
 
 - {{< docref "/components/esp32_ble_tracker" >}}
-

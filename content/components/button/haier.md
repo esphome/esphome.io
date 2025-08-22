@@ -7,8 +7,6 @@ params:
     image: haier.svg
 ---
 
-
-
 Additional buttons for Haier AC cleaning. **These buttons are supported only by the hOn protocol**.
 
 ```yaml
@@ -20,17 +18,17 @@ button:
       name: Haier start self cleaning
     steri_cleaning:
       name: Haier start 56°C steri-cleaning
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **haier_id** (**Required**, [ID](#config-id)): The id of Haier climate component
 - **self_cleaning** (*Optional*): A button that starts Haier climate self cleaning.
   All options from [Button](#config-button).
+
 - **steri_cleaning** (*Optional*): A button that starts Haier climate 56°C Steri-Clean.
   All options from [Button](#config-button).
 
 ## See Also
 
 - {{< docref "/components/climate/haier" "Haier Climate" >}}
-

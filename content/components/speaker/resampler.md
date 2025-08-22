@@ -7,9 +7,7 @@ params:
     image: waveform.svg
 ---
 
-
-
-The `resampler`   speaker platform allows you to convert the sample rate of an audio stream and output it to another {{< docref "/components/speaker/index" "speaker component" >}}.
+The `resampler` speaker platform allows you to convert the sample rate of an audio stream and output it to another {{< docref "/components/speaker/index" "speaker component" >}}.
 
 If the audio stream doesn't require resampling, it is automatically sent directly to the output speaker.
 
@@ -23,23 +21,24 @@ configuration. In particular, Bluetooth/BLE components are known to cause issues
 combination with Voice Assistant and/or other audio components.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 speaker:
   - platform: resampler
     output_speaker: output_speaker_id
     sample_rate: 48000
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output_speaker** (**Required**, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the resampled audio.
-- **buffer_duration** (*Optional*, [Time](#config-time)): The duration of the internal ring buffer. Larger values may reduce stuttering but use more memory. Defaults to `500ms`  .
+- **buffer_duration** (*Optional*, [Time](#config-time)): The duration of the internal ring buffer. Larger values may reduce stuttering but use more memory. Defaults to `500ms`.
 - **bits_per_sample** (*Optional*, positive integer): The audio sample bit depth after resampling. Defaults to the output speaker's bits per sample.
-- **sample_rate** (*Optional*, positive integer): Sample rate to convert to. Must be between `8000`   and `48000`  . Defaults to the output speaker's sample rate.
-- **filters** (*Optional*, positive integer): The number of windowed sinc interpolation filters to use. Must be between `2`   and `1024`  . Defaults to `16`  .
-- **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must between `16`   and `128`   and divisible by 4. Defaults to `16`  .
-- **task_stack_in_psram** (*Optional*, boolean): Only with `esp-idf`  . Run the audio tasks in external memory. Defaults to `false`  .
+- **sample_rate** (*Optional*, positive integer): Sample rate to convert to. Must be between `8000` and `48000`. Defaults to the output speaker's sample rate.
+- **filters** (*Optional*, positive integer): The number of windowed sinc interpolation filters to use. Must be between `2` and `1024`. Defaults to `16`.
+- **taps** (*Optional*, positive integer): The number of taps per windowed sinc interpolation filter. Must between `16` and `128` and divisible by 4. Defaults to `16`.
+- **task_stack_in_psram** (*Optional*, boolean): Only with `esp-idf`. Run the audio tasks in external memory. Defaults to `false`.
 - All other options from [Speaker Component](#config-speaker).
 
 ## Improving quality
@@ -50,4 +49,3 @@ Resampling is processor intensive and should be avoided as much as possible. The
 
 - [ART Audio Resampler (GitHub)](https://github.com/dbry/audio-resampler)
 - {{< docref "index/" >}}
-

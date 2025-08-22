@@ -7,8 +7,6 @@ params:
     image: dht.jpg
 ---
 
-
-
 The DHT Temperature+Humidity sensor allows you to use your
 
 - DHT11 ([datasheet](https://akizukidenshi.com/download/ds/aosong/DHT11.pdf), [Adafruit](https://www.adafruit.com/product/386)),
@@ -24,7 +22,7 @@ sensors with ESPHome.
 
 The DHT22 and DHT11 require external pull up resistors on the data line. To do this, solder
 a resistor with *about* 4.7kΩ (anything in the range from 1kΩ to 10kΩ probably works fine, but
-if you're having issues try the 4.7kΩ recommended by the manufacturer) between `DATA`   and `3.3V`  .
+if you're having issues try the 4.7kΩ recommended by the manufacturer) between `DATA` and `3.3V`.
 
 {{< img src="temperature-humidity.png" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -38,9 +36,9 @@ sensor:
     humidity:
       name: "Living Room Humidity"
     update_interval: 60s
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin where the DHT bus is connected.
 - **temperature** (**Required**): The information for the temperature sensor.
@@ -51,26 +49,27 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-
 - **model** (*Optional*, int): Manually specify the DHT model, can be
-  one of `AUTO_DETECT`  , `DHT11`  , `DHT22`  , `DHT22_TYPE2`  , `AM2302`  , `RHT03`  , `SI7021`  , `AM2120`
-  and helps with some connection issues. Defaults to `AUTO_DETECT`  .  Auto detection doesn't work for the SI7021 chip.
+  one of `AUTO_DETECT`, `DHT11`, `DHT22`, `DHT22_TYPE2`, `AM2302`, `RHT03`, `SI7021`, `AM2120`
+  and helps with some connection issues. Defaults to `AUTO_DETECT`. Auto detection doesn't work for the SI7021 chip.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 {{< note >}}
-The default `accuracy_decimals`   value of the *humidity* levels is `0`  , as the DHT11 for which this was
+The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
 originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
-to configure them with `accuracy_decimals: 1`  .
+to configure them with `accuracy_decimals: 1`.
 
 If you're seeing lots of invalid temperature/humidity warnings in the logs, try manually setting the
-DHT model with the `model:`   configuration variable. Other problems could be wrong pull-up resistor values
+DHT model with the `model:` configuration variable. Other problems could be wrong pull-up resistor values
 on the DATA pin or too long cables.
 
 If you're using a DHT module with an external pull-up resistor and seeing invalid temperature/humidity warnings in the logs,
-set `pullup: false`   under your `pin`   configuration.
+set `pullup: false` under your `pin` configuration.
 
 {{< /note >}}
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
@@ -81,4 +80,3 @@ set `pullup: false`   under your `pin`   configuration.
 - {{< docref "sht3xd/" >}}
 - {{< apiref "dht/dht.h" "dht/dht.h" >}}
 - [Arduino DHTLib](https://playground.arduino.cc/Main/DHTLib)
-

@@ -7,9 +7,7 @@ params:
     image: omega.svg
 ---
 
-
-
-The `resistance`   platform is a helper sensor that allows you to convert readings
+The `resistance` platform is a helper sensor that allows you to convert readings
 from a voltage sensor (such as the {{< docref "adc" "ADC Sensor" >}}) into resistance readings
 in Ω (ohm).
 
@@ -19,8 +17,10 @@ This consists of three parts:
 
 - A voltage reference, usually this is connected to 3.3V (VCC). For example in the image
    below it is 5V (though on ESPs you should not use that voltage)
+
 - A reference resistor with constant resistance. For example below it is R₁ with a value
    of 5.6kOhm.
+
 - The variable resistor we wish the read the resistance of. Here R₂.
 
 There are two kinds of configurations for this circuit: Either the variable resistor
@@ -41,10 +41,11 @@ sensor:
   - platform: adc
     id: source_sensor
     pin: A0
-
 ```
-## Note:
-Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accurate result because they have built-in voltage divider on ADC pin (https://arduino.stackexchange.com/a/71952)
+
+## Note
+
+Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accurate result because they have built-in voltage divider on ADC pin (<https://arduino.stackexchange.com/a/71952>)
 
 ```yaml
 # Example source sensor:
@@ -53,17 +54,19 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
     pin: A0
     filters:
       - multiply: 3.3
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor** (**Required**, [ID](#config-id)): The sensor to read the voltage values from
   to convert to resistance readings.
-- **configuration** (**Required**, string): The type of circuit, one of `DOWNSTREAM`   or
-  `UPSTREAM`  .
+
+- **configuration** (**Required**, string): The type of circuit, one of `DOWNSTREAM` or
+  `UPSTREAM`.
+
 - **resistor** (**Required**, float): The value of the resistor with a constant value.
 
-- **reference_voltage** (*Optional*, float): The reference voltage. Defaults to `3.3V`  .
+- **reference_voltage** (*Optional*, float): The reference voltage. Defaults to `3.3V`.
 - All other options from [Sensor](#config-sensor).
 
 ## See Also
@@ -72,4 +75,3 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
 - {{< docref "ntc/" >}}
 - [Sensor Filters](#sensor-filters)
 - {{< apiref "resistance/resistance_sensor.h" "resistance/resistance_sensor.h" >}}
-
