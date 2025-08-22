@@ -59,6 +59,7 @@ sensor:
 ## Sensor halting
 
 A possible solution is to use a GPIO port as power supply and restart the sensor on error.
+
 ```yaml
 switch:
   - platform: gpio
@@ -73,7 +74,7 @@ sensor:
     temperature:
       name: "Temperature"
       id: current_temperature
-      on_value: 
+      on_value:
         then:
           - if:
               condition:
@@ -88,7 +89,6 @@ sensor:
     update_interval: 30s
     model: AM2302
 ```
-
 
 {{< note >}}
 The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
