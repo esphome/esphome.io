@@ -35,8 +35,8 @@ Example:
 ```yaml
 # this is a comment
 foo:
-    bar: 3 # this is another comment
-    text: "# can be included in a string"
+  bar: 3 # this is another comment
+  text: "# can be included in a string"
 ```
 
 {{< anchor "yaml-scalars" >}}
