@@ -90,22 +90,6 @@ Advanced options:
 - If MQTT enabled, all other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
-## Actions
-
-{{< anchor "binary_sensor-invalidate_state-action" >}}
-
-### `binary_sensor.invalidate_state` Action
-
-This action will invalidate the current state of the sensor. It is most useful with the Template binary sensor.
-After the state is invalidated, it will be reported to Home Assistant as `unknown`. Example:
-
-```yaml
-on_...:
-  binary_sensor.invalidate_state: my_binary_sensor_id
-```
-
-The state may also be invalidated by an API call in a lambda - see the API reference linked below.
-
 {{< anchor "binary_sensor-filters" >}}
 
 ## Binary Sensor Filters
@@ -471,6 +455,26 @@ on_multi_click:
 
 {{< anchor "binary_sensor-is_on_condition" >}}
 {{< anchor "binary_sensor-is_off_condition" >}}
+
+
+
+
+
+## Referencing Binary Sensor
+
+{{< anchor "binary_sensor-invalidate_state-action" >}}
+
+### `binary_sensor.invalidate_state` Action
+
+This action will invalidate the current state of the sensor. It is most useful with the Template binary sensor.
+After the state is invalidated, it will be reported to Home Assistant as `unknown`. Example:
+
+```yaml
+on_...:
+  binary_sensor.invalidate_state: my_binary_sensor_id
+```
+
+The state may also be invalidated by an API call in a lambda - see the API reference linked below.
 
 ### `binary_sensor.is_on` / `binary_sensor.is_off` Condition
 
