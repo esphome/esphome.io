@@ -65,6 +65,7 @@ graph:
 - **max_value** (*Optional*): Specifies the maximum Y-axis value.
 - **min_value** (*Optional*): Specifies the minimum Y-axis value.
 - **traces** (*Optional*): Use this to specify more than a single trace.
+- **legend** (*Optional*): Configures a legend for the graph traces. See [Legend Options](#legend-options).
 
 Trace specific fields:
 
@@ -73,6 +74,54 @@ Trace specific fields:
 - **line_type** (*Optional*): Specifies the plot line-type. Can be one of the following: `SOLID`, `DOTTED`, `DASHED`. Defaults to `SOLID`.
 - **continuous** (*Optional*): connects the individual points to make a continuous line. Defaults to `false`.
 - **color** (*Optional*): Sets the color of the sensor trace.
+
+## Legend Options
+
+The legend displays trace names, current values, units, and line style samples. Only one legend per graph is supported.
+
+- **name_font** (**Required**, [Font](#display-fonts)): Font used for trace names.
+- **value_font** (*Optional*, [Font](#display-fonts)): Font used for current values. If not specified, values are not displayed.
+- **width** (*Optional*, int): Legend width in pixels. If not specified, width is automatically calculated.
+- **height** (*Optional*, int): Legend height in pixels. If not specified, height is automatically calculated.
+- **border** (*Optional*, boolean): Draw a border around the legend. Defaults to `true`.
+- **show_lines** (*Optional*, boolean): Display line style samples. Defaults to `true`.
+- **show_values** (*Optional*): Position of current values. Can be `NONE`, `AUTO`, `BESIDE`, `BELOW`. Defaults to `AUTO`.
+- **show_units** (*Optional*, boolean): Include units with values. Defaults to `true`.
+- **direction** (*Optional*): Layout direction. Can be `AUTO`, `HORIZONTAL`, `VERTICAL`. Defaults to `AUTO`.
+
+Example with legend:
+
+```yaml
+graph:
+  - id: temperature_graph_with_legend
+    duration: 1h
+    width: 151
+    height: 51
+    traces:
+      - sensor: indoor_temp
+        name: "Indoor"
+        line_type: SOLID
+        color: my_red
+      - sensor: outdoor_temp  
+        name: "Outdoor"
+        line_type: DASHED
+        color: my_blue
+    legend:
+        name_font: legend_font
+        value_font: value_font
+        show_values: BELOW
+        border: true
+        show_lines: true
+        show_units: true
+
+font:
+  - file: "arial.ttf"
+    id: legend_font
+    size: 10
+  - file: "arial.ttf" 
+    id: value_font
+    size: 8
+```
 
 And then later in code:
 
@@ -83,15 +132,17 @@ display:
     pages:
       - id: page1
         lambda: |-
-    pages:
-      - id: page1
-        lambda: |-
           // Draw the graph at position [x=10,y=20]
           it.graph(10, 20, id(single_temperature_graph));
       - id: page2
         lambda: |-
           // Draw the graph at position [x=10,y=20]
           it.graph(10, 20, id(multi_temperature_graph), my_yellow);
+      - id: page3
+        lambda: |-
+          // Draw graph and legend
+          it.graph(10, 20, id(temperature_graph_with_legend));
+          it.graph_legend(170, 20, id(temperature_graph_with_legend), my_yellow);
 
 color:
   - id: my_red
@@ -117,6 +168,8 @@ Here are some things to note:
 
 - Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
 - Axis labels are currently not possible without manually placing them.
-- The grid and border color is set with it.graph(), while the traces are defined separately.
+- The grid and border color is set with `it.graph()`, while the traces are defined separately.
+- Legends are drawn separately using `it.graph_legend()` and can be positioned independently of the graph.
+- Legend dimensions are automatically calculated if not specified, based on font sizes and trace count.
 
 {{< /note >}}
