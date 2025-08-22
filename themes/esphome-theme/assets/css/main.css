@@ -26,7 +26,7 @@
   --dropdown-bg: #fff;
   --dropdown-text: #333;
   --footer-bg: #111;
-  --footer-text: #333;
+  --footer-text: #e1e1e1;
   --border-color: #e0e0e0;
   --link-accent: #007070;
   --component-card-bg: #fff;
@@ -239,7 +239,7 @@ img.align-right, figure.align-right, .figure.align-right, object.align-right {
 }
 
 .sidebar-content.scroll-trap {
-  top: var(--nav-height);
+  top: calc(var(--nav-height) + 1em);
   max-height: calc(100vh - var(--nav-height) - 2em);
   position: sticky;
   overflow-y: auto;
@@ -777,9 +777,13 @@ img.align-right, figure.align-right, .figure.align-right, object.align-right {
   }
 }
 
-.getting-started-heading, .footer-heading {
+.footer-heading {
   font-size: 1.5em;
-  color: white;
+  color: var(--footer-text);
+}
+.getting-started-heading {
+  font-size: 1.5em;
+  color: var(--getting-started-text);
 }
 
 .page-container {
@@ -794,7 +798,10 @@ main {
   max-width: var(--max-page-width);
   width: 100%;
   margin: 0 auto;
-  padding: 2em;
+  padding-bottom: 2em;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-top: 0;
   margin-top: var(--nav-height); /* Add space for the fixed header */
   flex: 1;
 }
@@ -805,10 +812,9 @@ main {
 }
 
 .sidebar {
-  background: var(--sidebar-background);
   width: 300px;
   flex-shrink: 0;
-  background: var(--sidebar-background);
+  background-color: var(--sidebar-background);
   color: var(--text-color);
   border-color: var(--border-color);
 }
@@ -1233,6 +1239,12 @@ figcaption {
     display: none;
   }
 }
+
+@media (max-width: 700px) {
+    .desktop-only {
+        display: none;
+    }
+}
 /* Responsive */
 /* @media (max-width: var(--mobile-width-stop)) {  // sadly does not work */
 @media (max-width: 1000px) {
@@ -1240,7 +1252,7 @@ figcaption {
     display: none;
   }
   .sidebar-mobile {
-    margin-top: calc(var(--nav-height) + 32px); /* Add space for the fixed header */
+    margin-top: var(--nav-height); /* Add space for the fixed header */
   }
   .sticky-nav {
     padding: 0.5em 1em;
@@ -1434,21 +1446,8 @@ details {
 .build-info {
   position: absolute;
   text-align: left;
-  bottom: 0.5rem;
-  left: 0.5rem;
-}
-
-.print-button {
-  background-color: rgba(255, 255, 255, 0.1);
-  position: absolute;
   top: 0.5rem;
   left: 0.5rem;
-  width: 3rem;
-  padding: 0.5rem;
-}
-
-.print-button:hover {
-  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .build-info-button {
@@ -1482,6 +1481,7 @@ details {
 
 .build-info-content {
   background-color: var(--background-color);
+  color: var(--text-color);
   margin: 15% auto;
   padding: 20px;
   border: 1px solid var(--border-color);
