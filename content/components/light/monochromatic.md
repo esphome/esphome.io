@@ -31,6 +31,7 @@ light:
 
 {{< img src="monochromatic-detail.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
+
 - {{< docref "/components/output" >}}
 - {{< docref "/components/light" >}}
 - {{< docref "/components/light/binary" >}}
