@@ -46,12 +46,16 @@ md_docs = {}
 json_docs = {}
 
 
+def unquote(s: str) -> str:
+    return re.sub(r"""^(['"])(.*)\1$""", r"\2", s)
+
+
 def md_parse_frontmatter(md_file, lines):
     if lines[0] == "---":
         index = 1
         while lines[index] != "---":
             if lines[index].startswith("title: "):
-                md_docs[md_file]["title"] = lines[index][len("title:  ") : -1]
+                md_docs[md_file]["title"] = unquote(lines[index][len("title:")].strip())
             index += 1
         return index + 1
     return 0
@@ -59,10 +63,9 @@ def md_parse_frontmatter(md_file, lines):
 
 def open_file_lines(file):
     if os.path.exists(file):
-        file_f = open(file, "r", encoding="utf-8-sig")
-        all_text = file_f.read()
-        lines = all_text.split("\n")
-        return lines
+        with open(file, "r", encoding="utf-8-sig") as file_f:
+            lines = file_f.read().split("\n")
+            return lines
     else:
         print(f"Error: File {file} not found")
 
@@ -102,13 +105,13 @@ def mrkdwn_lines(md_file):
 
 
 def fill_anchors(md_files):
-    ANCHOR_START = '{{< anchor "'
-    ANCHOR_END = " >}}"
+    REGEX_ANCHOR = r"^{{<\sanchor\s\"([^\"]*)\"\s>}}"
     for md_file in md_files:
         lines = mrkdwn_lines(md_file)
         for line in lines:
-            if line.startswith(ANCHOR_START):
-                anchor = line[len(ANCHOR_START) : -len(ANCHOR_END) - 1]
+            search = re.search(REGEX_ANCHOR, line, re.IGNORECASE)
+            if search:
+                anchor = search.group(1)
                 anchors[anchor] = md_file
 
 
@@ -217,10 +220,9 @@ def json_get(name):
 
     json_file_name = os.path.join(args.schema_dir, name + ".json")
     if os.path.exists(json_file_name):
-        f = open(json_file_name, "r", encoding="utf-8-sig")
-        str = f.read()
-        json_docs[name] = json_doc = json.loads(str)
-        return json_doc
+        with open(json_file_name, "r", encoding="utf-8-sig") as f:
+            json_docs[name] = json_doc = json.loads(f.read())
+            return json_doc
     else:
         print(f"Error: File {json_file_name} not found")
     return
@@ -239,7 +241,9 @@ def process_component(md_file, lines, index, name):
     if name not in core["components"]:
         return index, False
     index, docs = md_get_paragraph(lines, index)
-    core["components"][name][JSON_DOCS] = convert_links_and_shortcodes(md_file, docs)
+    core["components"][name][JSON_DOCS] = convert_links_and_shortcodes(
+        md_file, index, docs
+    )
     stats.core_docs += 1
     return index, True
 
@@ -249,7 +253,7 @@ def process_platform_component(md_file, lines, index, platform, name):
     index, docs = md_get_paragraph(lines, index)
     if name in platform_json[platform]["components"]:
         platform_json[platform]["components"][name][JSON_DOCS] = (
-            convert_links_and_shortcodes(md_file, docs)
+            convert_links_and_shortcodes(md_file, index, docs)
         )
         stats.platform_docs += 1
         return index, True
@@ -338,7 +342,7 @@ def get_md_file_ref(md_file, ref):
         return ref_md_default
 
 
-def convert_links_and_shortcodes(md_file, docs):
+def convert_links_and_shortcodes(md_file, index, docs):
     if docs is None:
         return None
 
@@ -408,10 +412,10 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
                 f"{md_file}:{index} {prop_name} Templatable {config_templatable} in ESPHome does not match {templatable} in docs"
             )
 
-        converted_doc = convert_links_and_shortcodes(md_file, doc)
+        converted_doc = convert_links_and_shortcodes(md_file, index, doc)
 
         if len(type_parts) > 1 and type_parts[1] != TYPE_TEMPLATABLE:
-            prop_type = convert_links_and_shortcodes(md_file, type_parts[1])
+            prop_type = convert_links_and_shortcodes(md_file, index, type_parts[1])
             matched_config[JSON_DOCS] = f"**{prop_type}**: {converted_doc}"
         else:
             matched_config[JSON_DOCS] = converted_doc
@@ -565,7 +569,7 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                 if enum_value in values:
                     values[enum_value] = values.get(enum_value) or {}
                     values[enum_value][JSON_DOCS] = convert_links_and_shortcodes(
-                        md_file, enum_desc
+                        md_file, index, enum_desc
                     )
                     stats.enum_docs += 1
             else:
@@ -577,7 +581,7 @@ def process_config(md_file, lines, index, config_var, indent=0, parent_schema=No
                     if enum_value in values:
                         values[enum_value] = values.get(enum_value) or {}
                         values[enum_value][JSON_DOCS] = convert_links_and_shortcodes(
-                            md_file, enum_desc
+                            md_file, index, enum_desc
                         )
                         stats.enum_docs += 1
                 else:
@@ -714,7 +718,7 @@ if __name__ == "__main__":
                 # fill core platform docs, from _index files in platforms folders
                 index, docs = md_get_paragraph(lines, index)
                 core["platforms"][content_folder][JSON_DOCS] = (
-                    convert_links_and_shortcodes(md_file, docs)
+                    convert_links_and_shortcodes(md_file, index, docs)
                 )
                 stats.core_platform_docs += 1
                 is_platform = True
@@ -819,7 +823,7 @@ if __name__ == "__main__":
                 if title_config_vars is not None:
                     index, docs = md_get_paragraph(lines, index)
                     title_config_vars[JSON_DOCS] = convert_links_and_shortcodes(
-                        md_file, docs
+                        md_file, index, docs
                     )
                     if config_type == "action":
                         stats.action_docs += 1
