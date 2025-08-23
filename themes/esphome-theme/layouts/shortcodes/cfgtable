@@ -1,0 +1,53 @@
+{{/* 
+  CFGTABLE SHORTCODE
+  Creates a grid of configuration variables based on the current variable structuur. 
+  
+  Usage with block content (preferred):
+  {{< cfgtable >}}
+  - **Variable** (*[*][Required|Optional|Deprecate]*[*][, [*[*]]Deprecated[*[*][ ][, Typevariabel]): multi line Descrption
+  {{< /cfgtable >}}
+  
+  Legacy usage with positional parameters:
+  {{< cfgtable "Title" "/path/to/page" "image.png" "css-class" >}}
+  
+  Notes:
+
+    */}}
+
+<div class="component-grid">
+  {{ $regex := `^(?<indent> *-)\s\*\*(?<v>\w+)\*\*\s\(\**(o|r|d)\w+\**\s*(?:,\s*\**(Deprecated)\**\s*)?(?:,\s*(.+))?\):((?s).*?(?=^(?1)|\Z))`gmi }}
+  {{ $data := findRESubmatch $regex .Inner }}
+  {{ $firstItem = "" }}  
+    {{ range $data }}
+        {{ $title := trim (index . 0) " "  }}
+        {{ $link := trim (index . 1) " " | strings.TrimSuffix "index" }}
+        {{ $image := trim (index . 2) " " }}
+        {{ $class := "" }}
+        {{ $caption := "" }}
+        {{ range $i, $param := . | after 3 }}
+            {{ if eq $param "dark-invert" }}
+                {{ $class = $param }}
+            {{ else if $caption }}
+                {{ $caption = printf "%s %s" $class $param }}
+            {{ else }}
+                {{ $caption = $param }}
+            {{ end }}
+        {{ end }}
+
+
+        <div class="component-card">
+          <a href="{{ $link | relURL }}">
+            <div class="component-icon">
+                {{ partial "image.html" (dict "src" $image "page" $.Page "alt" "" "classes" $class) }}
+            </div>
+              <!-- Allow words to break on non-alphabetic characters -->
+              {{ $broke_title := replaceRE `([^[:alpha:]])` `${1}&#x200B;` $title | safeHTML }}
+              <div class="component-name">{{ $broke_title }}</div>
+              {{ if $caption }}
+                  {{ $broke_caption := replaceRE `([^[:alpha:]])` `${1}&#x200B;` $caption | safeHTML }}
+                <div class="component-caption">{{ $broke_caption }}</div>
+              {{ end }}
+          </a>
+        </div>
+    {{ end }}
+</div>
