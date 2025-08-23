@@ -48,14 +48,13 @@ specified, or a custom init sequence can be provided.
 | WAVESHARE-P4-NANO-10.1 | Waveshare | <https://www.waveshare.com/esp32-p4-nano.htm?sku=29031> |
 | WAVESHARE-P4-86-PANEL | Waveshare | <https://www.waveshare.com/esp32-p4-wifi6-touch-lcd-4b.htm?sku=31570> |
 
-
 ## Configuration
 
 ```yaml
 # Example minimal configuration entry
 display:
-    - platform: mipi_dsi
-      model: WAVESHARE-P4-NANO-10.1
+  - platform: mipi_dsi
+    model: JC4880P443C
 ```
 
 ### Configuration options
