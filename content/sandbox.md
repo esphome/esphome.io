@@ -73,10 +73,10 @@ params:
       <td>An automation to perform when the node starts. See <em>on_boot</em></td>
     </tr>
     <tr>
-      <th scope="row">on_shutdow</th>
+      <th scope="row">on_shutdown</th>
       <td><em>Opt.</em></td>
       <td colspan="2">Automation</td>
-      <td>An automation to perform right before the node shuts down. See <em>on_shutdow</em></td>
+      <td>An automation to perform right before the node shuts down. See <em>on_shutdown</em></td>
     </tr>
     <tr>
       <th scope="row">on_loop</th>
