@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import re
+import unicodedata
 import string
 from pathlib import Path
 from pprint import pprint
@@ -26,6 +27,59 @@ JSON_CV_TYPE_SCHEMA = "schema"
 JSON_ACTION = "action"
 
 args = None
+
+
+def is_configuration_variables_title_alike(title):
+    REGEX_CONFIGURATION_VARIABLES_TITLE = r"^#*\s?Configuration (variables|options):?$"
+
+    return re.search(REGEX_CONFIGURATION_VARIABLES_TITLE, title, re.IGNORECASE)
+
+
+def hugo_slugify(text: str) -> str:
+    # Normalize Unicode to ASCII (e.g., é → e)
+    text = unicodedata.normalize("NFKD", text)
+    text = text.encode("ascii", "ignore").decode("ascii")
+    # Lowercase
+    text = text.lower()
+    # Replace non-alphanumeric sequences with hyphen
+    text = re.sub(r"[^a-z0-9]+", "-", text)
+    # Trim hyphens from ends
+    text = text.strip("-")
+    return text
+
+
+class SeeAlso:
+    title: str = None
+    file: Path = None
+    doc_slug_title: str = None
+
+    def reset_doc(self, md_file: Path):
+        if "title" in md_docs[md_file]:
+            self.doc_slug_title = None
+            self.file = md_file
+            self.title = md_docs[md_file]["title"]
+        else:
+            assert "filter" == md_file.parent.stem
+            # doc title should be valid and file should not change
+
+    def set_title_slug(self, title):
+        # TODO: if setting same title, the slug actually gets appended -1, -2 etc.
+        self.doc_slug_title = f"#{hugo_slugify(title)}"
+
+    def set_title(self, title):
+        self.set_title_slug(title)
+
+    def md(self):
+        url_path = "/" + "/".join(list(self.file.parts[1:-1]))
+        if self.file.stem != "_index":
+            url_path += f"/{self.file.stem}"
+        if self.doc_slug_title:
+            url_path += self.doc_slug_title
+
+        return f"*See also: [{self.title}]({args.deploy_url}{url_path})*"
+
+
+see_also = SeeAlso()
 
 
 class Stats:
@@ -55,7 +109,9 @@ def md_parse_frontmatter(md_file, lines):
         index = 1
         while lines[index] != "---":
             if lines[index].startswith("title: "):
-                md_docs[md_file]["title"] = unquote(lines[index][len("title:")].strip())
+                md_docs[md_file]["title"] = unquote(
+                    lines[index][len("title:") :].strip()
+                )
             index += 1
         return index + 1
     return 0
@@ -150,17 +206,21 @@ def md_get_paragraph(lines, index):
     return index, paragraph.strip()
 
 
-REGEX_CONFIGURATION_VARIABLES_TITLE = r"^#*\s?Configuration (variables|options):?$"
-
-
 def md_get_next_title(lines, index):
     while True:
         if index >= len(lines):
             return index, None
         line = lines[index]
-        if re.search(REGEX_CONFIGURATION_VARIABLES_TITLE, line, re.IGNORECASE):
+        if is_configuration_variables_title_alike(line):
+            if line.startswith("#"):
+                see_also.set_title_slug(line)
+            elif args.debug_level > 3:
+                print(
+                    f"{md_file}:{index + 1} {DOC_CONFIGURATION_VARIABLES} title is not # marked. Cannot generate slug link"
+                )
             return index + 1, DOC_CONFIGURATION_VARIABLES
         if is_title(line):
+            see_also.set_title(line)
             return index + 1, line.replace("#", "").strip()
         index += 1
 
@@ -235,25 +295,30 @@ def json_save():
             f.write(json.dumps(content, indent=2))
 
 
+def make_doc_with_see_also(md_file, index, docs):
+    docs = convert_links_and_shortcodes(md_file, index, docs)
+    return f"{docs}\n\n{see_also.md()}"
+
+
 def process_component(md_file, lines, index, name):
+    # This adds the doc to the esphome.json file / "components"
     esphome_json = json_get("esphome")
     core = esphome_json["core"]
     if name not in core["components"]:
         return index, False
     index, docs = md_get_paragraph(lines, index)
-    core["components"][name][JSON_DOCS] = convert_links_and_shortcodes(
-        md_file, index, docs
-    )
+    core["components"][name][JSON_DOCS] = make_doc_with_see_also(md_file, index, docs)
     stats.core_docs += 1
     return index, True
 
 
 def process_platform_component(md_file, lines, index, platform, name):
+    # This adds the doc to the platform file / "components", e.g. sensor.json
     platform_json = json_get(platform)
     index, docs = md_get_paragraph(lines, index)
     if name in platform_json[platform]["components"]:
-        platform_json[platform]["components"][name][JSON_DOCS] = (
-            convert_links_and_shortcodes(md_file, index, docs)
+        platform_json[platform]["components"][name][JSON_DOCS] = make_doc_with_see_also(
+            md_file, index, docs
         )
         stats.platform_docs += 1
         return index, True
@@ -412,7 +477,7 @@ def set_schema_doc(md_file, index, schema, prop_name, prop_types, doc):
                 f"{md_file}:{index} {prop_name} Templatable {config_templatable} in ESPHome does not match {templatable} in docs"
             )
 
-        converted_doc = convert_links_and_shortcodes(md_file, index, doc)
+        converted_doc = make_doc_with_see_also(md_file, index, doc)
 
         if len(type_parts) > 1 and type_parts[1] != TYPE_TEMPLATABLE:
             prop_type = convert_links_and_shortcodes(md_file, index, type_parts[1])
@@ -690,6 +755,7 @@ if __name__ == "__main__":
     for md_file in md_files:
         lines = mrkdwn_lines(md_file)
         index = md_parse_frontmatter(md_file, lines)
+        see_also.reset_doc(md_file)
         file_name = md_file.stem
         content_folder = md_file.parent.name
         is_platform = False
@@ -700,10 +766,6 @@ if __name__ == "__main__":
         # some components have .md files on folders, e.g. http_request
         # so for the root component (in core) we need to use the one in root, and ignore the one in subfolder,
         # that one will be used in e.g. sensors.json (platform)
-
-        if file_name == "one_wire":  # TODO move one_wire into folder
-            content_folder = "one_wire"
-            file_name = "_index"
 
         if file_name == "_index" and content_folder == "components":
             continue  # nothing here
