@@ -11,14 +11,18 @@
   {{< cfgtable "Title" "/path/to/page" "image.png" "css-class" >}}
   
   Notes:
-
-    */}}
+*/}}
 
 <div class="component-grid">
-  {{ $regex := `^(?<indent> *-)\s\*\*(?<v>\w+)\*\*\s\(\**(o|r|d)\w+\**\s*(?:,\s*\**(Deprecated)\**\s*)?(?:,\s*(.+))?\):((?s).*?(?=^(?1)|\Z))`gmi }}
+  {{/*             0         1              2                        3                          4         5 */}}  
+  {{ $regex := `^( *-)\s\*+(\w+)\*+\s\(\**(o|r|d)\w+\**\s*(?:,\s*\**(Deprecated)\**\s*)?(?:,\s*(.+))?\):((?s).*?(?=^(?1)|\Z))`gmi }}
   {{ $data := findRESubmatch $regex .Inner }}
-  {{ $firstItem = "" }}  
+{{/*
+  {{ $lastItem = slice ( "" "" "" "" ) }}  
+  {{ $varb = slice }}
+  {{ $triggers = slice }} 
     {{ range $data }}
+        {{ $dept :=  div (len (index . 0)) 3 }}
         {{ $title := trim (index . 0) " "  }}
         {{ $link := trim (index . 1) " " | strings.TrimSuffix "index" }}
         {{ $image := trim (index . 2) " " }}
@@ -51,3 +55,4 @@
         </div>
     {{ end }}
 </div>
+*/}}
