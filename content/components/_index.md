@@ -12,6 +12,15 @@ params:
 This is the top-level ESPHome documentation index. Browse the tables below, use the sidebar menu, or the search
 function to find the information you're looking for.
 
+### Help improve this documentation
+
+If you find any errors in this site, corrections are welcome. You can submit a *Pull Request* (PR) in the
+[GitHub repo](https://github.com/esphome/esphome-docs) with corrections. If you don't know how to create a PR you
+can just use the "Edit this page on GitHub" link on the page in question which will take you to the source file
+for that page.
+
+Alternatively, post in the *Documentation* channel in the [Discord](https://discord.gg/KhAMKrd) server.
+
 ## ESPHome Configuration
 
 ESPHome is configured in YAML files - use these links for basic and advanced
@@ -220,37 +229,37 @@ Sensors are organized into categories; if a given sensor fits into more than one
 ### Air Quality
 
 {{< imgtable >}}
-"AGS10","components/sensor/ags10","ags10.jpg","Volatile Organic Compound Sensor","",""
-"AirThings BLE","components/sensor/airthings_ble","airthings_logo.png","Radon","CO2","Volatile organics"
-"CCS811","components/sensor/ccs811","ccs811.jpg","CO2 & Volatile organics","",""
-"CM1106","components/sensor/cm1106","cm1106.png","CO2","",""
-"EE895","components/sensor/ee895","EE895.png","CO2 & Temperature & Pressure","",""
-"ENS160","components/sensor/ens160","ens160.jpg","CO2 & Air Quality","",""
+"AGS10","components/sensor/ags10","ags10.jpg","Volatile organics","",""
+"AirThings BLE","components/sensor/airthings_ble","airthings_logo.png","Radon","CO₂","Volatile organics"
+"CCS811","components/sensor/ccs811","ccs811.jpg","eCO₂ & Volatile organics","",""
+"CM1106","components/sensor/cm1106","cm1106.png","CO₂","",""
+"EE895","components/sensor/ee895","EE895.png","CO₂ & Temperature & Pressure","",""
+"ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality","",""
 "GCJA5","components/sensor/gcja5","gcja5.svg","Particulate","",""
 "GP2Y1010AU0F","components/sensor/gp2y1010au0f","gp2y1010au0f.png","Particulate","",""
-"Grove Multichannel Gas V2","components/sensor/grove_gas_mc_v2","grove-gas-mc-v2.png","NO2 & CO & Ethanol & Volatile organics","",""
+"Grove Multichannel Gas V2","components/sensor/grove_gas_mc_v2","grove-gas-mc-v2.png","NO₂ & CO & Ethanol & Volatile organics","",""
 "HM3301","components/sensor/hm3301","hm3301.jpg","Particulate","",""
-"iAQ-Core","components/sensor/iaqcore","iaqcore.jpg","CO2 & Volatile organics","",""
-"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO2 & Temperature","",""
-"MiCS-4514","components/sensor/mics_4514","mics_4514.jpg","Gas concentration","",""
+"iAQ-Core","components/sensor/iaqcore","iaqcore.jpg","eCO₂ & Volatile organics","",""
+"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature","",""
+"MiCS-4514","components/sensor/mics_4514","mics_4514.jpg","NO₂ & CO & H₂ & Ethanol & Methane & Ammonia","",""
 "PM1006 Sensor","components/sensor/pm1006","pm1006.jpg","Particulate","",""
 "PM2005 Sensor","components/sensor/pm2005","pm2005.png","Particulate","",""
 "PMSA003I","components/sensor/pmsa003i","pmsa003i.jpg","Particulate","",""
 "PMSX003","components/sensor/pmsx003","pmsx003.svg","Particulate","",""
 "RadonEye BLE","components/sensor/radon_eye_ble","radon_eye_logo.png","Radon","",""
-"SCD30","components/sensor/scd30","scd30.jpg","CO2 & Temperature & Humidity","",""
-"SCD4X","components/sensor/scd4x","scd4x.jpg","CO2 & Temperature & Humidity","",""
+"SCD30","components/sensor/scd30","scd30.jpg","CO₂ & Temperature & Humidity","",""
+"SCD4X","components/sensor/scd4x","scd4x.jpg","CO₂ & Temperature & Humidity","",""
 "SDS011 Sensor","components/sensor/sds011","sds011.jpg","Particulate","",""
 "SEN0321","components/sensor/sen0321","sen0321.jpg","Ozone","",""
-"SEN5x","components/sensor/sen5x","sen54.jpg","Temperature & Humidity & Volatile organics & NOx","",""
-"SenseAir","components/sensor/senseair","senseair_s8.jpg","CO2","",""
+"SEN5x","components/sensor/sen5x","sen54.jpg","Particulate & Volatile organics & NOx & Temperature & Humidity","",""
+"SenseAir","components/sensor/senseair","senseair_s8.jpg","CO₂","",""
 "SFA30","components/sensor/sfa30","sfa30.jpg","Formaldehyde","",""
-"SGP30","components/sensor/sgp30","sgp30.jpg","CO2 & Volatile organics","",""
+"SGP30","components/sensor/sgp30","sgp30.jpg","eCO₂ & Volatile organics","",""
 "SGP4x","components/sensor/sgp4x","sgp40.jpg","Volatile organics & NOx","",""
-"SM300D2","components/sensor/sm300d2","sm300d2.jpg","Air quality","",""
+"SM300D2","components/sensor/sm300d2","sm300d2.jpg","Particulate & Volatile organics & eCO₂ & equivalent Formaldehyde & Temperature & Humidity","",""
 "SPS30","components/sensor/sps30","sps30.jpg","Particulate","",""
-"T6613/15","components/sensor/t6615","t6615.jpg","CO2","",""
-"ZyAura","components/sensor/zyaura","zgm053.jpg","CO2 & Temperature & Humidity","",""
+"T6613/15","components/sensor/t6615","t6615.jpg","CO₂","",""
+"ZyAura","components/sensor/zyaura","zgm053.jpg","CO₂ & Temperature & Humidity","",""
 {{< /imgtable >}}
 
 ### Analogue
@@ -319,12 +328,12 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "CS5460A","components/sensor/cs5460a","cs5460a.png","Voltage & Current & Power"
 "CSE7761","components/sensor/cse7761","cse7761.svg","Voltage & Current & Power"
 "CSE7766","components/sensor/cse7766","cse7766.svg","Voltage & Current & Power"
-"CT Clamp","components/sensor/ct_clamp","ct_clamp.jpg","Alternating Current (AC)"
+"CT Clamp","components/sensor/ct_clamp","ct_clamp.jpg","AC Current"
 "Daly BMS","components/sensor/daly_bms","daly_bms.jpg","Voltage & Current & Power"
 "DSMR","components/sensor/dsmr","dsmr.svg","Electrical counter"
 "HLW8012","components/sensor/hlw8012","hlw8012.svg","Voltage & Current & Power"
-"INA219","components/sensor/ina219","ina219.jpg","Direct Current (DC)"
-"INA226","components/sensor/ina226","ina226.jpg","Direct Current (DC) & Power"
+"INA219","components/sensor/ina219","ina219.jpg","DC Current"
+"INA226","components/sensor/ina226","ina226.jpg","DC Current & Power"
 "INA228","components/sensor/ina2xx","ina228.jpg","DC Voltage & Current & Power & Charge"
 "INA229","components/sensor/ina2xx","ina2xx.jpg","DC Voltage & Current & Power & Charge"
 "INA237","components/sensor/ina2xx","ina2xx.jpg","DC Voltage & Current & Power"
@@ -365,7 +374,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "DHT12","components/sensor/dht12","dht12.jpg","Temperature & Humidity",""
 "DPS310","components/sensor/dps310","dps310.jpg","Temperature & Pressure",""
 "EMC2101","components/emc2101","emc2101.jpg","Temperature",""
-"ENS160","components/sensor/ens160","ens160.jpg","CO2 & Air Quality",""
+"ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality",""
 "ENS210","components/sensor/ens210","ens210.jpg","Temperature & Humidity",""
 "HDC1080","components/sensor/hdc1080","hdc1080.jpg","Temperature & Humidity",""
 "HHCCJCY10 (MiFlora Pink)","components/sensor/xiaomi_hhccjcy10","xiaomi_hhccjcy10.jpg","Soil moisture & Temperature & Light",""
@@ -381,7 +390,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Internal Temperature","components/sensor/internal_temperature","thermometer.svg","Temperature","dark-invert"
 "LPS22","components/sensor/lps22","lps22.webp","Temperature & Barometric Pressure",""
 "MCP9808","components/sensor/mcp9808","mcp9808.jpg","Temperature",""
-"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO2 & Temperature",""
+"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature",""
 "MLX90614","components/sensor/mlx90614","mlx90614.jpg","Temperature",""
 "MPL3115A2","components/sensor/mpl3115a2","mpl3115a2.jpg","Temperature & Pressure",""
 "MS5611","components/sensor/ms5611","ms5611.jpg","Pressure",""
@@ -392,8 +401,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "QMP6988","components/sensor/qmp6988","qmp6988_env3.png","Temperature & Pressure",""
 "RadonEye BLE","components/sensor/radon_eye_ble","radon_eye_logo.png","Radon",""
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer",""
-"SCD30","components/sensor/scd30","scd30.jpg","CO2 & Temperature & Humidity",""
-"SCD4X","components/sensor/scd4x","scd4x.jpg","CO2 & Temperature & Humidity",""
+"SCD30","components/sensor/scd30","scd30.jpg","CO₂ & Temperature & Humidity",""
+"SCD4X","components/sensor/scd4x","scd4x.jpg","CO₂ & Temperature & Humidity",""
 "SDP3x / SDP800 Series","components/sensor/sdp3x","sdp31.jpg","Pressure",""
 "SFA30","components/sensor/sfa30","sfa30.jpg","Formaldehyde",""
 "SHT3X-D","components/sensor/sht3xd","sht3xd.jpg","Temperature & Humidity",""
@@ -471,10 +480,10 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Havells Solar","components/sensor/havells_solar","havellsgti5000d_s.jpg","Solar rooftop"
 "Integration","components/sensor/integration","sigma.svg","dark-invert"
 "Kuntze pool sensor","components/sensor/kuntze","kuntze.jpg",""
-"LC709203F","components/sensor/lc709203f","lc709203f.jpg","Battery Monitor"
+"LC709203F","components/sensor/lc709203f","lc709203f.jpg","Battery level & Thermistor"
 "LVGL widget","components/sensor/lvgl","lvgl_c_num.png",""
 "M5Stack Unit 8 Angle","components/sensor/m5stack_8angle","m5stack_8angle.png",""
-"MAX17043","components/sensor/max17043","max17043.jpg","Battery"
+"MAX17043","components/sensor/max17043","max17043.jpg","Battery level"
 "MicroNova pellet stove","components/micronova","micronova.svg",""
 "Modbus Sensor","components/sensor/modbus_controller","modbus.png",""
 "Nextion","components/sensor/nextion","nextion.jpg","Sensors from display"
