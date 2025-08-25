@@ -91,7 +91,7 @@ smart home exactly how you want it.
   {
     "icon": "bolt",
     "title": "Others",
-    "description": "Nordic Semiconductor nrf52xx/nrf52xxx, Realtek RTL87xx, and Beken BK72xx chips are supported."
+    "description": "Nordic Semiconductor nRF52, Realtek RTL87xx, and Beken BK72xx chips are supported."
   },
   {
     "icon": "computer",
