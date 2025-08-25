@@ -15,8 +15,9 @@
 
 <div class="component-grid">
   {{/*             0         1              2                        3                          4         5 */}}  
-  {{ $regex := `^( *-)\s\*+(\w+)\*+\s\(\**(o|r|d)\w+\**\s*(?:,\s*\**(Deprecated)\**\s*)?(?:,\s*(.+))?\):((?s).*?(?=^(?1)|\Z))`gmi }}
+  {{ $regex := `(?mi)^( *-)\s\*+(\w+)\*+\s\(\**(o|r|d)\w+\**\s*(?:,\s*\**(Deprecated)\**\s*)?(?:,\s*(.+))?\):((?s).*?(?=^(?1)|\Z))` }}
   {{ $data := findRESubmatch $regex .Inner }}
+  {{ $data }}
 {{/*
   {{ $lastItem = slice ( "" "" "" "" ) }}  
   {{ $varb = slice }}
