@@ -22,6 +22,7 @@ submit a feature request (see FAQ).
 | Daikin | `daikin`                           | yes |
 | [Daikin ARC](#daikin_arc) | `daikin_arc`                       | yes |
 | [Daikin BRC](#daikin_brc) | `daikin_brc`                       | yes |
+| [Daikin WRC](#daikin_wrc) | `daikin_wrc`                       | yes |
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
 | Fujitsu General | `fujitsu_general`                  | yes |
@@ -96,6 +97,12 @@ climate:
     header_low: 9856us
 ```
 
+{{< anchor "daikin_arc" >}}
+
+### `daikin_arc`
+
+The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
+
 {{< anchor "daikin_brc" >}}
 
 ### `daikin_brc`
@@ -113,17 +120,32 @@ climate:
     use_fahrenheit: true
 ```
 
+{{< anchor "daikin_wrc" >}}
+
+### `daikin_wrc`
+
+The Daikin WRC remotes used by some wall mounted air conditioners of Daikin
+
+- **state_sensor_id** (*Optional*, [ID](#config-id)): Binary sensor ID that provides the on/off state of the air conditioner
+
+{{< note >}}
+
+This protocol doesn't have clear on and off commands, so to reliably determine the device's state, you must use a reed switch or a Hall effect sensor with a small magnet attached to the AC blade
+
+{{< /note >}}
+
+```yaml
+# Example configuration entry
+climate:
+  - platform: daikin_wrc
+    name: "AC"
+```
+
 {{< anchor "delonghi_ir" >}}
 
 ### `delonghi`
 
 The `delonghi` climate currently supports the protocol used by some Delonghi portable units, known working with Delonghi PAC WE 120HP.
-
-{{< anchor "daikin_arc" >}}
-
-### `daikin_arc`
-
-The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
 
 {{< anchor "gree_ir" >}}
 
