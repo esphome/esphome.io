@@ -25,10 +25,10 @@ udp:
 - **port** (*Optional*, int): The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specified via a map instead of a single port number.:
   - **listen_port** (**Required**, int): The port to listen on for received packets.
   - **broadcast_port** (**Required**, int): The port to send packets to.
-- **addresses** (*Optional*, list of IPv4 addresses): One or more IP addresses to broadcast data to. Defaults to `255.255.255.255`
+- **addresses** (*Optional*, list of IP addresses): One or more IP addresses to send data to. Could be unicast or multicast, both IPv4 and IPv6 is supported. Defaults to ``255.255.255.255``
   which is the local network broadcast address.
 
-- **listen_address** (*Optional*, IPv4 address): Changes to multicast, adding an address to listen to. Defaults to no multicast address, just
+- **listen_address** (*Optional*, IP address): Changes to multicast, adding an address (IPv4 or IPV6) to listen to. Defaults to no multicast address, just
   local network broadcast address `255.255.255.255`. **NOTE**: Adding a multicast address stops it from listening on the broadcast address.
 
 ## Reliability
