@@ -82,9 +82,6 @@ MQTT Options:
 
 ## Number Automation
 
-You can access the most recent state of the number in [lambdas](#config-lambda) using
-`id(number_id).state`.
-
 {{< anchor "number-on_value" >}}
 
 ### `on_value`
@@ -134,6 +131,13 @@ Configuration variables:
 - **above** (*Optional*, float): The minimum for the trigger.
 - **below** (*Optional*, float): The maximum for the trigger.
 - See [Automation](#automation).
+
+{{< anchor "Number-referencing" >}}
+
+## Referencing Numbers 
+
+When calling these automations from other components you can access the most recent state of the number in [lambdas](#config-lambda) using
+`id(number_id).state`.
 
 {{< anchor "number-in_range_condition" >}}
 
