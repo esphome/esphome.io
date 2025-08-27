@@ -130,8 +130,9 @@ The variable `x` is a boolean that represents the new state:
 
 {{< anchor "switch-referencing" >}}
 
-## Referencing Switchess
+## Referencing Switches
 
+Use the switch’s id to reference it from actions, conditions, and lambdas. See [ID](#config-id).
 {{< anchor "switch-toggle_action" >}}
 
 ### `switch.toggle` Action
