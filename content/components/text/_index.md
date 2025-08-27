@@ -69,9 +69,6 @@ MQTT Options:
 
 ## Text Automation
 
-You can access the most recent state of the text in [lambdas](#config-lambda) using
-`id(text_id).state`.
-
 {{< anchor "text-on_value" >}}
 
 ### `on_value`
@@ -91,6 +88,13 @@ text:
 ```
 
 Configuration variables: See [Automation](#automation).
+
+{{< anchor "text-referencing" >}}
+
+## Referencing Texts
+
+You can access the most recent state of the text in [lambdas](#config-lambda) using
+`id(text_id).state`.
 
 {{< anchor "text-set_action" >}}
 
