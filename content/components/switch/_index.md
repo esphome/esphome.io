@@ -81,6 +81,57 @@ you want the switch to use that name, you can set `name: None`.
 - If MQTT enabled, All other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
+{{< anchor "switch-on_turn_on_off_trigger" >}}
+
+### `switch.on_turn_on` / `switch.on_turn_off` Trigger
+
+This trigger is activated each time the switch is turned on. It becomes active
+right after the switch component has acknowledged the state (e.g. after it switched
+ON/OFF itself).
+
+```yaml
+switch:
+  - platform: gpio  # or any other platform
+    # ...
+    on_turn_on:
+    - logger.log: "Switch Turned On!"
+    on_turn_off:
+    - logger.log: "Switch Turned Off!"
+```
+
+{{< anchor "switch-on_state_trigger" >}}
+
+### `switch.on_state` Trigger
+
+This trigger is activated each time the switch changes state (either ON or OFF).
+It provides the new state as a boolean variable `x` that can be used in the automation.
+
+```yaml
+switch:
+  - platform: gpio  # or any other platform
+    # ...
+    on_state:
+      - light.control:
+          id: my_light
+          state: !lambda return x;
+      - if:
+          condition:
+            lambda: 'return x;'
+          then:
+            - logger.log: "Switch is now ON!"
+          else:
+            - logger.log: "Switch is now OFF!"
+```
+
+The variable `x` is a boolean that represents the new state:
+
+- `true` when the switch turns ON
+- `false` when the switch turns OFF
+
+{{< anchor "switch-referencing" >}}
+
+## Referencing Switchess
+
 {{< anchor "switch-toggle_action" >}}
 
 ### `switch.toggle` Action
@@ -209,53 +260,6 @@ not change the GPIO pin level. To do that, you need to call `turn_on()`,
     // Toggle the switch
     id(my_switch).toggle();
 ```
-
-{{< anchor "switch-on_turn_on_off_trigger" >}}
-
-### `switch.on_turn_on` / `switch.on_turn_off` Trigger
-
-This trigger is activated each time the switch is turned on. It becomes active
-right after the switch component has acknowledged the state (e.g. after it switched
-ON/OFF itself).
-
-```yaml
-switch:
-  - platform: gpio  # or any other platform
-    # ...
-    on_turn_on:
-    - logger.log: "Switch Turned On!"
-    on_turn_off:
-    - logger.log: "Switch Turned Off!"
-```
-
-{{< anchor "switch-on_state_trigger" >}}
-
-### `switch.on_state` Trigger
-
-This trigger is activated each time the switch changes state (either ON or OFF).
-It provides the new state as a boolean variable `x` that can be used in the automation.
-
-```yaml
-switch:
-  - platform: gpio  # or any other platform
-    # ...
-    on_state:
-      - light.control:
-          id: my_light
-          state: !lambda return x;
-      - if:
-          condition:
-            lambda: 'return x;'
-          then:
-            - logger.log: "Switch is now ON!"
-          else:
-            - logger.log: "Switch is now OFF!"
-```
-
-The variable `x` is a boolean that represents the new state:
-
-- `true` when the switch turns ON
-- `false` when the switch turns OFF
 
 ## See Also
 
