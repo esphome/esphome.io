@@ -304,10 +304,7 @@ unit_of_measurement: "°F"
 
 {{< anchor "sensor-automations" >}}
 
-## Sensor Automation
-
-You can access the most recent state of the sensor in [lambdas](#config-lambda) using
-`id(sensor_id).state` and the most recent raw state using `id(sensor_id).raw_state`.
+## Sensor Automations
 
 {{< anchor "sensor-on_value" >}}
 
@@ -387,6 +384,12 @@ sensor:
 ```
 
 Configuration variables: See [Automation](#automation).
+
+{{< anchor "sensor-referencing" >}}
+
+## Referencing Sensors
+
+When calling these automations from other components you can access the most recent state of the sensor in lambdas using id(sensor_id).state.
 
 {{< anchor "sensor-in_range_condition" >}}
 
