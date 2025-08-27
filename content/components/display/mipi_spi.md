@@ -65,6 +65,7 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | S3BOX | Espressif | <https://www.espressif.com/en/products/devkits/esp32-s3-box> |
 | S3BOXLITE | Espressif | <https://www.espressif.com/en/products/devkits/esp32-s3-box-lite> |
 | WAVESHARE-4-TFT | Waveshare | <https://www.waveshare.com/4inch-tft-touch-shield.htm> |
+| WAVESHARE-P4-TOUCH-3.4C | Waveshare | <https://www.waveshare.com/ESP32-P4-WIFI6-Touch-LCD-3.4C.htm> |
 | PICO-RESTOUCH-LCD-3.5 | Waveshare | <https://www.waveshare.com/pico-restouch-lcd-3.5.htm> |
 | WAVESHARE-ESP32-S3-TOUCH-AMOLED-1.75 | Waveshare | <https://www.waveshare.com/esp32-s3-touch-amoled-1.75.htm> |
 | WT32-SC01-PLUS | Wireless-Tag | <https://www.wireless-tag.com/portfolio/wt32-sc01-plus/> |
