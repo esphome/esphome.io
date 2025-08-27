@@ -10,7 +10,7 @@ params:
 {{< anchor "i2s_audio" >}}
 
 The `i2s_audio` component allows for sending and receiving audio via I²S.
-This component only works on ESP32 based chips.
+This component only works on ESP32 based chips. It is not currently compatible with ESP32C6.
 
 ```yaml
 # Example configuration entry
