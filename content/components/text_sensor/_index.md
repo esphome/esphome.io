@@ -189,9 +189,6 @@ filters:
 
 ## Text Sensor Automation
 
-You can access the most recent state of the sensor in [lambdas](#config-lambda) using
-`id(sensor_id).state`.
-
 {{< anchor "text_sensor-on_value" >}}
 
 ### `on_value`
@@ -229,6 +226,10 @@ text_sensor:
 ```
 
 Configuration variables: See [Automation](#automation).
+
+{{< anchor "text_sensor-referencing" >}}
+
+## Referencing Text Sensors
 
 {{< anchor "text_sensor-state_condition" >}}
 
