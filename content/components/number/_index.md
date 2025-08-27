@@ -132,12 +132,12 @@ Configuration variables:
 - **below** (*Optional*, float): The maximum for the trigger.
 - See [Automation](#automation).
 
-{{< anchor "Number-referencing" >}}
+{{< anchor "number-referencing" >}}
 
-## Referencing Numbers 
+## Referencing Numbers
 
-When calling these automations from other components you can access the most recent state of the number in [lambdas](#config-lambda) using
-`id(number_id).state`.
+In [lambdas](#config-lambda) from other components, you can read the current value with `id(number_id).state`.  
+See [lambda calls](#number-lambda_calls) for details.
 
 {{< anchor "number-in_range_condition" >}}
 
