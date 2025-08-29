@@ -78,6 +78,7 @@ It just ignores the function call in that case.
 
 - **greyscale** (*Optional*, boolean): Makes the screen display 3 bit colors. Defaults to `false`
 - **partial_updating** (*Optional*, boolean): Makes the screen update partially, which is faster, but leaves burnin. Defaults to `false`
+- **custom_waveform** (*Optional*, int): Sets a custom predefined waveform for the display. Accepts values from 1 to 4. Useful if the greyscale of the image seems washed. **Inkplate10 ONLY**. Defaults to `0`
 - **full_update_every** (*Optional*, int): When partial updating is enabled, forces a full screen update after chosen number of updates. Defaults to `10`
 - **transform** (*Optional*): Transform the display presentation.
 
