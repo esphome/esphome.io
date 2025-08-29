@@ -7,7 +7,7 @@ params:
     image: brightness-medium.svg
 ---
 
-The `monochromatic` light platform creates a simple brightness-only light from an
+The `monochromatic` light platform creates a simple brightness-only light from a
 [float output component](#output).
 
 {{< img src="monochromatic-strip.jpg" alt="Image" caption="Example of a brightness-only LED strip that can be used with this component." width="75.0%" class="align-center" >}}

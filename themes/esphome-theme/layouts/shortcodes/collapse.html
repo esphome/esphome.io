@@ -1,30 +1,29 @@
 {{/*
   COLLAPSE SHORTCODE
-  Creates a collapsible section with a title that can be clicked to show/hide content.
+  Creates a collapsible section
   
   Usage: 
-  {{< collapse "Optional Configuration" >}}
+  {{< collapse  >}}
   This content will be hidden by default and can be expanded by clicking the header.
   You can include any Markdown content here, including lists, code blocks, etc.
   {{< /collapse >}}
   
   Parameters:
-  1. title (required) - The title text to display in the header
+  1. open (optional): If set to false, the content will be hidden initially
   
   Content:
   The content between the opening and closing shortcode tags will be hidden by default
   and can be toggled by clicking on the header.
 */}}
-{{ $title := .Get 0 }}
-{{ $is_open := .Get 1 }}
-<div class="collapse-container {{ if $is_open }}active{{ end }}">
-  <div class="collapse-header" onclick="this.parentElement.classList.toggle('active')">
-    <h4 class="shown">{{ $title }}</h4>
-    <h4 class="collapsed">Collapse</h4>
-    <span class="collapse-icon">+</span>
-  </div>
-  <div class="collapse-content">
-    {{ .Inner | markdownify }}
-  </div>
-</div>
+{{ $is_open := .Get 0 }}
+{{ if eq $is_open "False" }}
+    {{ $is_open = false }}
+{{ end }}
+<details {{ if $is_open }}open{{ end }}>
+    <summary>
+    </summary>
+    <div>
+        {{ .Inner | markdownify }}
+    </div>
+</details>
 

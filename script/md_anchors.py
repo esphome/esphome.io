@@ -104,10 +104,17 @@ def main():
     # Sorting logic for pages
     sort_order = ["components", "cookbook", "changelog"]
     def page_sort_key(entry):
+        """
+        Sort entries so that page filenames are the highest priority
+        :param entry:
+        :return:
+        """
         page = entry["page"]
         if page in sort_order:
-            return -sort_order.index(page)  # descending order
-        return -(len(sort_order) + 1)  # others at the end
+            index =  -sort_order.index(page)  # descending order
+        else:
+            index = -(len(sort_order) + 1)  # others at the end
+        return (1 if entry["type"] == "heading" else 0, index)
 
     # Sort entries within each anchor group
     sorted_collated = {}
