@@ -918,7 +918,6 @@ This [action](#actions-action) sets the group for a keypad. This is useful for o
             group: keypad_group
 ```
 
-
 {{< anchor "lvgl-conditions" >}}
 
 ## Conditions
