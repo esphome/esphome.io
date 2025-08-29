@@ -8,7 +8,8 @@ SEN5X and SEN6X Series Environmental sensor
 
 The ``sen5x`` sensor platform allows you to use your Sensirion `SEN5X Series`_ or `SEN6X Series`_ Environmental sensors with ESPHome.
 
-This component only supports I²C communication thus the :ref:`I²C Bus <i2c>` is required.
+This component only supports I²C communication thus the :ref:`I²C Bus <i2c>` is required. The SEN5X sensor must be configured for I²C communication. 
+The SEN6X sensor only supports I²C communication so no configuration is required.
 
 .. _SEN5X Series: https://sensirion.com/products/catalog/SEK-SEN5x
 
@@ -167,7 +168,7 @@ Configuration variables:
 
 - **auto_cleaning_interval** (*Optional*, integer): The periodic fan-cleaning interval in seconds. Only available with SEN5X series.
 
-- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for quicker startups. Only available with SEN54, SEN55, SEN65, SEN66 and SEN68.
+- **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for quicker startups. Only available with SEN54, SEN55, SEN65, SEN66 and SEN68. Defaults to ``true``.
 
 - **temperature_compensation** (*Optional*): These parameters allow to compensate temperature effects of the design-in at customer side by applying a custom temperature offset to the ambient temperature. Only available with SEN54 and SEN55.
 
