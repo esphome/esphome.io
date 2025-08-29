@@ -122,7 +122,7 @@ The SEN6X sensor only supports I²C communication so no configuration is require
 
 Configuration variables:
 ------------------------
-- **model** (*Required*, enum): The model of the connected sensor. It will be validated at runtime. Must be one of the following: SEN50, SEN54, SEN55, SEN60, SEN63C, SEN65, SEN66 or SEN68.
+- **model** (***Required***, enum): The model of the connected sensor. It will be validated at runtime. Must be one of the following: SEN50, SEN54, SEN55, SEN60, SEN63C, SEN65, SEN66 or SEN68.
 
 - **pm_1_0** (*Optional*): The mass of fine particles up to 1μm. Readings in µg/m³. Available with all models. All options from :ref:`Sensor <config-sensor>`.
 
@@ -139,8 +139,8 @@ Configuration variables:
 - **co2** (*Optional*): Carbon dioxide (CO₂). Only available with SEN63C or SEN66. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
   - **auto_self_calibration** (*Optional*, boolean): True enables automatic CO₂ self calibration. False disables automatic CO₂ calibration. Default is ``true``.
-  - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be compensated for deviations due to current altitude. Note: Set ``altitude_compensation`` or ``ambient_pressure_compensation_source`` but not both.
-  - **ambient_pressure_compensation_source** (*Optional*, :ref:`config-id`): Sets an external pressure sensor ID (must report in hPA). This will compensate the CO₂ sensor for deviations due to current pressure. More accurate that altitude compensation this correction is applied before each update of the state of the CO₂ sensor.  Note: Set ``altitude_compensation`` or ``ambient_pressure_compensation_source`` but not both.
+  - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be compensated for deviations due to current altitude. Note: Set ```altitude_compensation``` or ```ambient_pressure_compensation_source``` but not both.
+  - **ambient_pressure_compensation_source** (*Optional*, :ref:`config-id`): Set a pressure sensor ID (must report pressure in hPA). This will compensate the CO₂ sensor for deviations due to current pressure. More accurate that altitude compensation this correction is applied before each update of the state of the CO₂ sensor.  Note: Set ```altitude_compensation``` or ```ambient_pressure_compensation_source``` but not both.
 
 - **voc** (*Optional*): VOC Index. Only available with SEN54, SEN55, SEN65, SEN66 or SEN68. The sensor will be ignored on unsupported models. All options from :ref:`Sensor <config-sensor>`.
 
