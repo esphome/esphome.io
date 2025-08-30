@@ -210,6 +210,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [batchmanfr (@batchmanfr)](https://github.com/batchmanfr)
 - [bazuchan (@bazuchan)](https://github.com/bazuchan)
 - [Viktr (@BbIKTOP)](https://github.com/BbIKTOP)
+- [Jonathan Rascher (@bcat)](https://github.com/bcat)
 - [bdm310 (@bdm310)](https://github.com/bdm310)
 - [J. Nick Koston (@bdraco)](https://github.com/bdraco)
 - [Maxim Ocheretianko (@bearpawmaxim)](https://github.com/bearpawmaxim)
@@ -569,7 +570,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Dan Maloney (@dpsm64)](https://github.com/dpsm64)
 - [dr-oblivium (@dr-oblivium)](https://github.com/dr-oblivium)
 - [DrBlokmeister (@DrBlokmeister)](https://github.com/DrBlokmeister)
-- [Jean Louis-Guerin (@DrCoolzic)](https://github.com/DrCoolzic)
+- [Jean  Louis-Guerin (@DrCoolzic)](https://github.com/DrCoolzic)
 - [Drew Perttula (@drewp)](https://github.com/drewp)
 - [drmodding (@drmodding)](https://github.com/drmodding)
 - [drmpf (@drmpf)](https://github.com/drmpf)
@@ -1153,6 +1154,7 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Steffen Weinreich (@lairsdragon)](https://github.com/lairsdragon)
 - [Lakshantha Dissanayake (@lakshanthad)](https://github.com/lakshanthad)
 - [Luca Adrian L (@lal12)](https://github.com/lal12)
+- [lamauny (@lamauny)](https://github.com/lamauny)
 - [Landon Rohatensky (@landonr)](https://github.com/landonr)
 - [Fredrik Lindqvist (@Landrash)](https://github.com/Landrash)
 - [lanik (@lanik)](https://github.com/lanik)
@@ -2214,4 +2216,4 @@ ESPHome was originally founded by [Otto Winter (@OttoWinter)](https://github.com
 - [Christian Zufferey (@zuzu59)](https://github.com/zuzu59)
 - [Zynth-dev (@Zynth-dev)](https://github.com/Zynth-dev)
 
-*This page was last updated August 25, 2025.*
+*This page was last updated August 29, 2025.*
