@@ -14,7 +14,7 @@ Environmental sensors with ESPHome.
 
 This component only supports I²C communication thus the [I²C Bus](#i2c) is required.
 
-# SEN5X Series
+## SEN5X Series
 
 {{< img src="sen54.jpg" alt="Image" width="50.0%" class="align-center" >}}
 
@@ -41,7 +41,7 @@ sensor:
       name: NOx
 ```
 
-# SEN6X Series
+## SEN6X Series
 
 {{< img src="sen66.jpg" alt="Image" width="50.0%" class="align-center" >}}
 
