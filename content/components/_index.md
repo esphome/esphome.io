@@ -1001,6 +1001,7 @@ at the {{< docref "light/fastled" "FastLED Light" >}}.
 
 {{< imgtable >}}
 "Touchscreen Core","components/touchscreen/index","folder-open.svg","dark-invert"
+"AXS5106","components/touchscreen/axs5106","esp32-c6-touch-lcd-1.47.jpg",""
 "AXS15231","components/touchscreen/axs15231","axs15231.svg",""
 "CST226","components/touchscreen/cst226","t4-s3.jpg",""
 "CST816","components/touchscreen/cst816","cst816.jpg",""
