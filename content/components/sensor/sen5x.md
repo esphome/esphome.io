@@ -114,7 +114,7 @@ sensor:
   compensated for deviations due to current altitude.
   - **ambient_pressure_compensation_source** (*Optional*, [ID](#config-id)): Sets an external pressure sensor ID
   (must report in hPA). This will compensate the CO₂ sensor for deviations due to current pressure. More accurate
-  that altitude compensation this correction is applied before each update of the state of the CO₂ sensor.
+  than altitude compensation this correction is applied before each update of the state of the CO₂ sensor.
 
   - All options from [Sensor](#config-sensor).
 
