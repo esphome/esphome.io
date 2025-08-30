@@ -7,7 +7,7 @@ params:
     image: sen54.jpg
 ---
 
-The `sen5x` sensor platform allows you to use Sensirion 
+The `sen5x` sensor platform allows you to use Sensirion
 [SEN5X Series](https://sensirion.com/products/catalog/SEK-SEN5x) and
 [SEN6X Series](https://sensirion.com/sen6x-air-quality-sensor-platform)
 Environmental sensors with ESPHome.
@@ -40,6 +40,7 @@ sensor:
     nox:
       name: NOx
 ```
+
 # SEN6X Series
 
 {{< img src="sen66.jpg" alt="Image" width="50.0%" class="align-center" >}}
@@ -68,6 +69,7 @@ sensor:
     co2:
       name: CO₂
 ```
+
 ## Configuration variables
 
 - **model** (*Required*, enum): The model of the connected sensor. Must be one of the following:
@@ -106,7 +108,7 @@ sensor:
 - **co2** (*Optional*): The information for the Carbon dioxide (CO₂) sensor. Readings in ppm. Only available with
   SEN63C or SEN66.
 
-  - **auto_self_calibration** (*Optional*, boolean): True enables automatic CO₂ self calibration. 
+  - **auto_self_calibration** (*Optional*, boolean): True enables automatic CO₂ self calibration.
   False disables automatic CO₂ calibration. Default is ``true``.
   - **altitude_compensation** (*Optional*, integer): When set to altitude (in meters), the CO₂ sensor will be
   compensated for deviations due to current altitude.
@@ -121,10 +123,10 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-- **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54 or SEN55.
+- **voc** (*Optional*): The information for the VOC Index sensor. Only available with SEN54, SEN55, SEN65, SEN66 or SEN68.
 
   - **algorithm_tuning** (*Optional*): The VOC algorithm can be customized by tuning 6 different parameters.
-    For more details see 
+    For more details see
     [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf).
 
     - **index_offset** (*Optional*): VOC index representing typical (average) conditions.
@@ -146,10 +148,10 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-- **nox** (*Optional*): The information for the NOx Index sensor. Only available with SEN55.
+- **nox** (*Optional*): The information for the NOx Index sensor. Only available with SEN55, SEN65, SEN66 or SEN68..
 
   - **algorithm_tuning** (*Optional*): The NOx algorithm can be customized by tuning 5 different parameters.
-    For more details see 
+    For more details see
     [Engineering Guidelines for SEN5x](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf).
 
     - **index_offset** (*Optional*): NOx index representing typical (average) conditions.
@@ -172,7 +174,7 @@ sensor:
   - All options from [Sensor](#config-sensor).
 
 - **auto_cleaning_interval** (*Optional*): The periodic fan-cleaning interval in seconds.
-Only available with SEN5X series.
+Only available with sen50, SEN54 OR SEN55.
 
 - **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline VOC and NOx information for
   quicker startups. Defaults to `true`.
@@ -210,8 +212,8 @@ connector:
 
 {{< img src="jst6pin.png" alt="Image" width="50.0%" class="align-center" >}}
 
-The SEN5X series operates at 5V and must have pin no.5 shorted to GND. This forces the sensor into I²C mode. 
-I²C is the only mode supported by this component. 
+The SEN5X series operates at 5V and must have pin no.5 shorted to GND. This forces the sensor into I²C mode.
+I²C is the only mode supported by this component.
 
 The SEN5X series operates at 3.3V and only supports I²C mode.
 
@@ -219,7 +221,7 @@ For better stability, the SDA and SCL lines require suitable pull-up resistors.
 
 ## Automatic Cleaning
 
-The SEN5X sensors have an automatic fan-cleaning which will accelerate the built-in fan to maximum speed for 
+The SEN5X sensors have an automatic fan-cleaning which will accelerate the built-in fan to maximum speed for
 10 seconds in order to blow out the dust accumulated inside the fan. The default automatic-cleaning interval
 is 168 hours (1 week) of uninterrupted use. Switching off the sensor resets this time counter. When the module
 is in Measurement-Mode an automatic fan-cleaning procedure will be triggered periodically following a defined
@@ -235,11 +237,7 @@ dust inside the fan.
   every week if the sensor is switched off and on periodically (e.g., once per day).
 - The cleaning procedure can also be started manually with the `start_autoclean_fan` Action.
 
-The SEN5X sensord have an automatic fan-cleaning which will accelerate the built-in fan to maximum speed for 10
-seconds in order to blow out the dust accumulated inside the fan. The default automatic-cleaning interval is
-168 hours (1 week) of uninterrupted use. Switching off the sensor resets this time counter.
-
-The SEN6X sensors supports fan cleaning but not the automatic fan cleaning interval. You have to trigger 
+SEN6X sensors supports fan cleaning but not the automatic fan cleaning interval. You have to trigger
 `sen5x.start_fan_autoclean` action below occasionally.
 
 ### `start_fan_autoclean` Action
@@ -255,7 +253,7 @@ on_...:
 ## Humidity Sensor Heater
 
 The SEN6X humidity sensor can develop an offset in the humidity reading when exposed to high levels of humidity
-for extended periods of time. It supports a heater similar to the one in the SHT4X. The difference is no 
+for extended periods of time. It supports a heater similar to the one in the SHT4X. The difference is no
 automatic mode. Instead you have to trigger `sen5x.activate_heater` action occasionally.
 
 ### `activate_heater` Action
@@ -281,7 +279,6 @@ If you know your minimums are not going to be 400 ppm then you can disable auto-
 take the sensor outside for 5 minutes and then force a manual CO₂ calibration.
 
 ### `perform_forced_co2_calibration` Action
------------------------------------------------
 
 This [action](#config-action) forces a manual calibration on the CO₂ sensor.
 
@@ -311,12 +308,11 @@ button:
           id: sen66_sensor
 ```
 
-The CO₂ sensor also supports pressure compensation. You can either add `ambient_pressure_compensation_source` 
-to your configuration and the CO₂ will retrieve an updated pressure just before a CO₂ update. Or you can 
+The CO₂ sensor also supports pressure compensation. You can either add `ambient_pressure_compensation_source`
+to your configuration and the CO₂ will retrieve an updated pressure just before a CO₂ update. Or you can
 occasionally call the `sen5x.set_ambient_pressure_compensation` action.
 
 ### `set_ambient_pressure_compensation` Action
---------------------------------------------------
 
 This [action](#config-action) updates the current pressure used in CO₂ pressure compensation. Must be in hPa or mbar.
 
@@ -337,17 +333,17 @@ This [action](#config-action) updates the current pressure used in CO₂ pressur
 ```
 
 Altitude based compensation is also available when you set the `altitude_compensation` configuration variable
-to your correct elevation in meters. Note: 
+to your correct elevation in meters. Note:
 
 > [!NOTE]
 > `altitude_compensation` and `ambient_pressure_compensation_source`are mutually exclusive. If you plan on using
-the `sen5x.set_ambient_pressure_compensation` action do not set either `altitude_compensation` or 
+the `sen5x.set_ambient_pressure_compensation` action do not set either `altitude_compensation` or
 `ambient_pressure_compensation_source` in your configuration.
 
 ## NOx and VOC Algorithm Tuning
 
 Both the NOx and VOC sensor support algorithm tuning. These variables are set with the `algorithm_tuning`
-configuration under the `voc` and `nox` sensors. For more details see 
+configuration under the `voc` and `nox` sensors. For more details see
 [Engineering Guidelines for SEN5X](https://sensirion.com/media/documents/25AB572C/62B463AA/Sensirion_Engineering_Guidelines_SEN5x.pdf)
 
 ## Temperature Compensation
@@ -355,22 +351,23 @@ configuration under the `voc` and `nox` sensors. For more details see
 The SEN54 and SEN55 contain and internal temperature compensation mechanism. The compensated ambient temperature is
 calculated as follows:
 
-    T_Ambient_Compensated = T_Ambient + (slope*T_Ambient) + offset
+``` c++
+T_Ambient_Compensated = T_Ambient + (slope*T_Ambient) + offset
+```
 
 Where slope and offset are the values set with `temperature_compensation` configuration variables, smoothed with the
 specified time constant, also a `temperature_compensation` configuration variable. The time constant is how fast the
 slope and offset are applied. After the specified value in seconds, 63% of the new slope and offset are applied.
 
-The STAR (Sensirion Temperature Acceleration Routine) engine set with `acceleration_mode` configuration variable 
+The STAR (Sensirion Temperature Acceleration Routine) engine set with `acceleration_mode` configuration variable
 changes the responsiveness of both the temperature and humidity sensors.
 
-More details about the tuning of these parameters are included in the application note 
-[Temperature Acceleration and Compensation Instructions for SEN5x](https://sensirion.com/media/documents/9B9DE2A7/61E957EB/Sensirion_Temperature_Acceleration_and_Compensation_Instructions_SEN.pdf)
+More details about the tuning of these parameters are included in the application note
+[Temperature Acceleration and Compensation Instructions for SEN5x](https://sensirion.com/media/documents/9B9DE2A7/61E957EB/Sensirion_Temperature_Acceleration_and_Compensation_Instructions_SEN.pdf).
 
-
-The SEN63C, SEN65, SEN66 and SEN68 also support temperature compensation but Sensirion has not yet released the promised 
-`Temperature Acceleration and Compensation Instructions for SEN6x` document. While temperature compensation is similar 
-to the SEN5X it not the same. So the current ESPHome component does not yet support Temperature Compensation for SEN6X sensors
+The SEN63C, SEN65, SEN66 and SEN68 also support temperature compensation but Sensirion has not yet released the promised
+`Temperature Acceleration and Compensation Instructions for SEN6x` document. While temperature compensation is similar
+to the SEN5X it is not the same. So the current ESPHome component does not yet support Temperature Compensation for SEN6X sensors
 
 ## See Also
 
