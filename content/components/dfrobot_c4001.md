@@ -15,8 +15,7 @@ making it less susceptible to factors such as temperature changes, variations in
 environmental noise. Whether a person is sitting, sleeping, or in motion, the sensor can quickly
 detect their presence.
 
-{{< img src="dfrobot_sen0609-full.jpg" alt="Image" caption="DFRobot C4001 (SEN0609) mmWave Radar"
-width="75%" class="align-center" >}}
+{{< img src="dfrobot_sen0609_full.jpg" alt="Image" caption="DFRobot C4001 (SEN0609) mmWave Radar" width="75%" class="align-center" >}}
 
 There are two variants:
 
@@ -30,13 +29,13 @@ There are two variants:
 > variants the same. It is your responsibility to make sure your configuration sets these values
 > appropriately.
 
-The sensor can operate in one of two modes, `Presence` and `Speed and Distance`. In `Presence` mode
-the sensor provides a singular occupancy output. The presence output once presence is detected will
-stay on for a period that can be configured. In `Speed and Distance` mode the occupancy binary
-sensor indicates if a target is being tracked or not. Each time the sensor indicates presence it
-also outputs target distance, target speed and target energy. In `Speed and Distance` mode all of
-these parameter update frequently. There are only two settings for this mode,
-`micro_motion_enable switch` and `threshold_factor number`.
+The sensor can operate in one of two modes, `PRESENCE` and `SPEED_AND_DISTANCE`. In `PRESENCE` mode
+the sensor provides a singular occupancy output. Once presence is detected presence will stay on as
+long as presence is detected. Once presence is no longer detected presence will turn off only after
+a hold time has elapsed. In `SPEED_AND_DISTANCE` mode the occupancy binary sensor indicates if a
+target is being tracked or not. Each time the sensor indicates presence it also outputs target
+distance, speed and energy. In `SPEED_AND_DISTANCE` mode all of these parameters update frequently.
+There are only two settings for this mode, `micro_motion_enable switch` and `threshold_factor number`.
 
 ```yaml
     # Sample configuration entry for SEN0609
@@ -104,15 +103,15 @@ Multiple instances of this component may be defined if multiple {{< docref "/com
 components are available:
 
 ```yaml
-dfrobot_c4001:
-  id: mmwave_1
-  uart_id: uart_1
-  mode: PRESENCE
-  model: SEN0609
-  id: mmwave_2
-  uart_id: uart_2
-  mode: PRESENCE
-  model: SEN0610
+dfrobot_c4001: 
+  - id: mmwave_1
+    uart_id: uart_1
+    mode: PRESENCE
+    model: SEN0609
+  - id: mmwave_2
+    uart_id: uart_2
+    mode: PRESENCE
+    model: SEN0610
 ```
 
 ### Configuration variables
@@ -123,15 +122,17 @@ dfrobot_c4001:
 + **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the
   {{< docref "/components/uart" >}} if you want to use multiple DFRobot C4001 sensors.
 
-+ **mode** (*Required*, enumeration): This sets the operation mode of the sensor. Options are
-  `PRESENCE` and `SPEED_AND_DISTANCE`.
++ **mode** (*Required*, enum): This sets the operation mode of the sensor. Options are `PRESENCE`
+  and `SPEED_AND_DISTANCE`.
 
-+ **model** (*Required*, enumeration): This sets the model of the connected sensor. Options are
-  `SEN0609` and `SEN0610`.
++ **model** (*Required*, enum): This sets the model of the connected sensor. Options are `SEN0609`
+  and `SEN0610`.
 
 {{< anchor "dfrobot_c4001-binary_sensor" >}}
 
 ## Binary Sensor
+
+[Binary Sensor Components](#config-sensor) provide read only binary state information such `on`/`off` or `true`/`false`.
 
 ``` yaml
 binary_sensor:
@@ -162,6 +163,8 @@ binary_sensor:
 {{< anchor "dfrobot_c4001-number" >}}
 
 ## Number
+
+[Number components](#config-number) provide read only numeric information such `distance`.
 
 ``` yaml
 number:
@@ -256,7 +259,7 @@ number:
   + All Options from [Number](#config-number).
 
 When `trigger_range` (only in `PRESENCE` mode) is defined you must define `min_range` and `max_range`.
-`min_range` and `max_range` must always be defined together.
+Both `min_range` and `max_range` must always be defined together.
 
 The component will enforce the following relationships:
 
@@ -268,6 +271,8 @@ The component will enforce the following relationships:
 {{< anchor "dfrobot_c4001-sensor" >}}
 
 ## Sensor
+
+[Sensor components](#config-sensor) provide read only numeric information such `distance`.
 
 ``` yaml
 sensor:
@@ -314,8 +319,10 @@ sensor:
 switch:
   - platform: dfrobot_c4001
     dfrobot_c4001_id: mmwave_sensor
-    led_enable:
-      name: Enable LED
+    out_led_enable:
+      name: Enable OUT LED
+    run_led_enable:
+      name: Enable RUN LED
     micro_motion_enable:
       name: Micro Motion Enable
 ```
@@ -325,21 +332,30 @@ switch:
 + **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
   Required when multiple instances of the `dfrobot_c4001` component are defined.
 
-+ **led_enable** (*Optional*): The green LED will flash when the sensor is running. You can turn if
-  off with this switch. The blue LED is also controlled on the SEN0610 but seems to say on with the
-  SEN0609. The `config_save` button must be clicked to save the sensor configuration to flash and
++ **out_led_enable** (*Optional*): The `OUT` LED turns on when presence is detected. You can
+  disable this feature with this switch. Warning: when the `OUT` LED is disabled on the SEN0609 the
+  `OUT` signal is also disabled. Presence detection with a GPIO will no longer work. The `occupancy`
+  binary_sensor still works because its state is read from the UART interface. The `config_save`
+  button must be clicked to save the sensor configuration to flash and make operational.
+
+  + All Options from [Switch](config-switch).
+
++ **run_led_enable** (*Optional*): The `RUN` LED will flash while the sensor is running. You can turn if
+  off with this switch. The `config_save` button must be clicked to save the sensor configuration to flash and
   make operational.
 
   + All Options from [Switch](config-switch).
   
 + **micro_motion_enable** (*Optional*): Turns on/off micro motion mode. Available only in
   `SPEED_AND_DISTANCE` mode.
-  
+
   + All Options from [Switch](config-switch).
 
 {{< anchor "dfrobot_c4001-text_sensors" >}}
 
-## Text Sensors
+## Text Sensor
+
+[Text Sensor components](#config-sensor) provide read only text based information.
 
 ``` yaml
 text_sensor:
