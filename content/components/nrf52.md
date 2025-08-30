@@ -80,7 +80,7 @@ a reset via a GPIO pin to put the device into DFU mode.
 ESPHome uses this component internally when uploading firmware via:
 
 ```bash
-    esphome upload d.yaml
+esphome upload d.yaml
 ```
 
 ### Example Configuration
