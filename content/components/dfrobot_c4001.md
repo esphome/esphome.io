@@ -82,8 +82,12 @@ There are only two settings for this mode, `micro_motion_enable switch` and `thr
     switch:
       - platform: dfrobot_c4001
         dfrobot_c4001_id: mmwave_sensor
-        led_enable:
-          name: Enable LED
+        out_led_enable:
+          name: Enable OUT LED
+        run_led_enable:
+          name: Enable RUN LED
+        micro_motion_enable:
+          name: Micro Motion Enable
 ```
 
 The C4001 sensor maintains settings in flash. When powered on these settings are loaded from flash and
