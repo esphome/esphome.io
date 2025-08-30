@@ -460,7 +460,8 @@ switch:
   - platform: opentherm
     ch_enable:
       name: "Boiler Central Heating enabled"
-      #restore_mode: RESTORE_DEFAULT_ON # no longer supported
+      #restore_mode: RESTORE_DEFAULT_ON
+      #restore_mode no longer supported
       id: boiler_central_heating
 
 climate:
@@ -476,6 +477,7 @@ climate:
 
 ## Add default state on boot in esphome section instead of RESTORE_DEFAULT_ON or OFF
 The OpenTherm switches don't support the standard switch modes like restore_default_on and restore_default_off.
+
 ```yaml
 esphome:
   name: thermostat-pid-complete
