@@ -22,7 +22,7 @@ It is primarily intended for smallar images due to limited processing power and 
 
 ```yaml
 # Example configuration entry
-camera-encoder:
+camera_encoder:
 ```
 
 ## Configuration variables
