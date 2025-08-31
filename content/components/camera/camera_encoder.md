@@ -29,7 +29,7 @@ camera-encoder:
 
 - **type** (*Optional*): ``esp32_camera``
 
-## esp32_camera Options:
+## esp32_camera Options
 
 - **quality** (*Optional*, int): Sets JPEG compression quality.
   Valid values range from ``1`` (lowest quality, highest compression) to ``100`` (best quality, least compression). Defaults: ``80``.
