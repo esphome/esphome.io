@@ -71,7 +71,7 @@ There are two ways to reference GPIO pins:
 1. By pin name, e.g., `P0.15` or `P1.11`.
 1. By pin number, e.g., `15` or `43`.
 
-## DFU Component
+## DFU (Device Firmware Update)
 
 The ``dfu`` component enables automatic entry into **DFU (Device Firmware Update)** mode by monitoring
 the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
@@ -91,8 +91,6 @@ nrf52:
     reset_pin:
       number: 14
       inverted: true
-      mode:
-        output: true
 ```
 
 ### Configuration variables
