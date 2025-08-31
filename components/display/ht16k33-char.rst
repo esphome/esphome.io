@@ -414,6 +414,46 @@ A list of supported characters is given for each device. If you place a non-supp
 
 .. _ht16k33-char_new_devices:
 
+Adding or Modifying Characters
+------------------------------
+Characters can be added or modified from the standard font table. To do this, provide a ``add_characters`` section of the YAML. This config option should be provided a dictionary of character codes to add. The dictionary key names should be a single character and the key values should consist of a 16-bit number indicating which segments should be lit for that character. The definitions of the segments is given below.
+
++----------------------------------------------------+----------------------------------------------------+
+| .. image:: images/ht16k33-char-7-seg-def.jpg       | .. image:: images/ht16k33-char-14-seg-def.jpg      |
++----------------------------------------------------+----------------------------------------------------+
+| 7 Segment Definitions                              | 14 Segment Definitions                             |
++----------------------------------------------------+----------------------------------------------------+
+
+Each segment maps to a single bit in the character code as shown below. Note that bit 0 is the LSB of the code.
+
++-----------------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| Bit Number      | 0  | 1  | 2  | 3  | 4  | 5  | 6  | 7  | 8  | 9  | 9  | 10 | 11 | 12 | 13 | 15 |
++=================+====+====+====+====+====+====+====+====+====+====+====+====+====+====+====+====+
+| 7-Segment Name  | A  | B  | C  | D  | E  | F  | G  | -- | -- | -- | -- | -- | -- | -- | -- | -- |
++-----------------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+| 14-Segment Name | A  | B  | C  | D  | E  | F  | G1 | G2 | H  | J  | K  | L  | M  | N  | -- | -- |
++-----------------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
+
+If the character to add is already in the character map, its code will be overwritten by the provided code. Note that the bit number that corresponds to the semgments is the same regardless of the display type used. Internally the display may have a different mapping, but the python preprocessor rearranges the bits as needed.
+
+**Example:**
+
+In the below example, the ``E`` character is replaced with the code for ``R``.
+
+``add_characters: { "E": 0b0010000011110011 }``
+
+Removing Characters
+-------------------
+
+To remove a character from the map, include a ``remove_characters`` section in the YAML with a python list of characters to remove. These characters will be treated as invalid characters and will display as blank digits.
+
+**Example:**
+
+In the below example the characters ``E`` and ``F`` are removed.
+
+``remove_characters: ["E", "F"]``
+
+
 Adding New Devices
 ------------------------
 
