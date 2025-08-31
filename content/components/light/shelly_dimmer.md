@@ -103,9 +103,9 @@ spectrum.
 An attempt was made to replicate this process in Shelly Dimmer component for ESPHome. In order to be able to calibrate
 your dimmer, you need to take several steps:
 
-1. Optionally remove `min_brightness` and `max_brightness` from your Shelly `light` section. Calibration process will respect these values if they are set, but they are not needed unless you intentionally wish to limit your brightness levels.
-2. Add `output_id` to your `light` configuration. This id will be used to access calibration functions from lambdas.
-3. Add a template button that calls `start_calibration` function to begin calibration process.
+- Optionally remove `min_brightness` and `max_brightness` from your Shelly `light` section. Calibration process will respect these values if they are set, but they are not needed unless you intentionally wish to limit your brightness levels.
+- Add `output_id` to your `light` configuration. This id will be used to access calibration functions from lambdas.
+- Add a template button that calls `start_calibration` function to begin calibration process.
 
 ```yaml
 light:
@@ -125,7 +125,7 @@ button:
             id(shelly)->start_calibration();
 ```
 
-4. You can also create another button to clear calibration data and revert your dimmer to its original behavior:
+- You can also create another button to clear calibration data and revert your dimmer to its original behavior:
 
 ```yaml
 button:
@@ -139,15 +139,15 @@ button:
             id(shelly)->clear_calibration();
 ```
 
-5. Set logger level to `DEBUG` if you want to observe the calibration process in detail.
+- Set logger level to `DEBUG` if you want to observe the calibration process in detail.
 
 Upload firmware as usual and press the "Calibrate" button that appears in Home Assistant. The following will happen:
 
-1. Light will be turned on and set to full brightness.
-2. Nothing will happen for a warmup period of 20 seconds.
-3. Every 3 seconds brightness will decrease by 5%. Power drawn by the light bulb will be measured each second, producing a single measurement averaged over 3 steps. Calibration process takes 60 seconds in total.
-4. Calibration results will be saved to device memory and brightness level will be brought back to 100%.
-5. Calibration is complete! You can change brightness value and observe whether it became more linear.
+- Light will be turned on and set to full brightness.
+- Nothing will happen for a warmup period of 20 seconds.
+- Every 3 seconds brightness will decrease by 5%. Power drawn by the light bulb will be measured each second, producing a single measurement averaged over 3 steps. Calibration process takes 60 seconds in total.
+- Calibration results will be saved to device memory and brightness level will be brought back to 100%.
+- Calibration is complete! You can change brightness value and observe whether it became more linear.
 
 ## See Also
 
