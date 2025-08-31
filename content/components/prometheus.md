@@ -98,7 +98,7 @@ prometheus:
 
 ## Example Metrics
 
-Here's an example of _some_ of the many prometheus metrics available:
+Here's an example of *some* of the many prometheus metrics available:
 
 ```text
 #TYPE esphome_sensor_value gauge
