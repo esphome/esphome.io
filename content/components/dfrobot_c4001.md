@@ -136,7 +136,8 @@ dfrobot_c4001:
 
 ## Binary Sensor
 
-[Binary Sensor Components](#config-sensor) provide read only binary state information such `on`/`off` or `true`/`false`.
+[Binary Sensor Components](#config-sensor) provide read only binary state information such `on`/`off`
+or `true`/`false`.
 
 ``` yaml
 binary_sensor:
@@ -163,6 +164,47 @@ binary_sensor:
   mode this indicates a target is being tracked.
   
   + All Options from [Binary Sensor](#config-binary_sensor).
+
+{{< anchor "dfrobot_c4001-button" >}}
+
+## Button
+
+[BVutton Components](#config-sensor) provide a execute operation.
+
+``` yaml
+button:
+  - platform: dfrobot_c4001
+    dfrobot_c4001_id: mmwave_sensor
+    restart:
+      name: C4001 Restart
+    config_save:
+      name: Config Save
+    factory_reset:
+      name: Factory Reset
+```
+
+### Configuration variables
+
++ **dfrobot_c4001_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave hub component.
+  Required when multiple instances of the `dfrobot_c4001` component are defined.
+
++ **restart** (*Optional*): When this button is clicked, the C4001 module will be restarted with the
+  settings in flash applied. Please note that any unsaved changes will be discarded.
+  
+  + All Options from [Button](#config-button).
+
++ **config_save** (*Optional*): Clicking this button sends the new settings to the C4001 module, saves
+  them to flash, and restarts the module with the updated configuration.
+  
+  + All Options from [Button](#config-button).
+
++ **factory_reset** (*Optional*): This button will restore the C4001 module to its factory settings.
+  
+  + All Options from [Button](#config-button).
+
+> [!WARNING]
+> Each change to the configuration of the mmWave radar triggers a write to its internal flash.
+> Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
 
 {{< anchor "dfrobot_c4001-number" >}}
 
@@ -354,6 +396,9 @@ switch:
   `SPEED_AND_DISTANCE` mode.
 
   + All Options from [Switch](config-switch).
+
+> [!NOTE]
+> If you are having trouble controlling the `RUN` or `OUT` LEDs. Be sure to perform a a factory reset
 
 {{< anchor "dfrobot_c4001-text_sensors" >}}
 
