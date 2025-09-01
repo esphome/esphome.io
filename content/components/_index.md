@@ -174,7 +174,7 @@ Create update entities simplifying management of OTA updates.
 ## I/O Expanders/Multiplexers
 
 {{< imgtable >}}
-"AW9523", "components/aw9523","aw9523.jpg"
+"AW9523","components/aw9523","aw9523.jpg"
 "CH422G","components/ch422g","ch422g.svg"
 "MAX6956 - I²C Bus","components/max6956","max6956.jpg"
 "MCP230XX - I²C Bus","components/mcp230xx","mcp230xx.svg"
