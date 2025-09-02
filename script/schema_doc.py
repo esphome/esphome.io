@@ -238,6 +238,8 @@ def md_get_next_config(lines, index):
         # skip code blocks inside properties (and complain??)
         if line.startswith("```"):
             in_code_block = not in_code_block
+            index += 1
+            continue
         if in_code_block:
             index += 1
             continue
@@ -505,6 +507,7 @@ def is_title(title):
 
 def is_break_title(title):
     if is_title(title):
+        print(f"Test break title {title}")
         name = title.split(" ")[-1].lower()
         if get_platform_from_title(name):
             return True
@@ -806,7 +809,7 @@ if __name__ == "__main__":
             component_name = None
 
             title = oddities_titles(content_folder, file_name, title)
-
+            print(f"Title: {title}")
             if title == "Component/Hub":
                 # Some files like pn523, rc522, as3935 are in a platform folder even
                 # though they are full components and their platform components are
