@@ -512,6 +512,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "MPU6886","components/sensor/mpu6886","mpu6886.jpg","Accelerometer & Gyroscope"
 "MSA301","components/sensor/msa3xx","msa301.jpg","Accelerometer"
 "MSA311","components/sensor/msa3xx","msa311.jpg","Accelerometer"
+"QMI8658","components/sensor/qmi8658","qmi8658.svg","Accelerometer & Gyroscope"
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer"
 "Seeed Studio MR24HPC1 mmWave","components/seeed_mr24hpc1","seeed-mr24hpc1.jpg","Motion & Presence"
 {{< /imgtable >}}
