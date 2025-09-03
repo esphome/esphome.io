@@ -229,6 +229,8 @@ This option behaves differently depending on what the included file is pointing 
    AND compiled into the binary. This way implementation of classes and functions in header files can
    be provided.
 
+- Directive `!rel` can be used to handle include files relative to the current yaml file.
+
 {{< anchor "esphome-libraries" >}}
 
 ## `libraries`
