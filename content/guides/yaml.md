@@ -330,6 +330,27 @@ binary_sensor:
         id: 2
 ```
 
+### !rel
+
+- Prefix a relative path with the absolute path to current yaml file.
+- This should be usefull for `includes` (.h, .cpp files) which are placed in (external) package.
+- Useful for `external_components` too.
+- Can be used anywhere in esphome project yaml files.
+
+```yaml
+# Using !rel in cpp includes
+esphome:
+  includes:
+    - utils.h # relative to project yaml file
+    - !rel includes/colors.h # relative to current loaded yaml file
+
+# Using !rel for extrernal components placed in the local filesystem
+external_components:
+  - source:
+    path: !rel esphome_components
+    type: local
+```
+
 ### Packages
 
 The `packages:` feature allows you to define reusable and potentially partial configurations that can be included in
