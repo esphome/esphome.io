@@ -34,6 +34,11 @@ external_components:
       type: local
       path: my_components
 
+# use all components from a local folder relative to current yaml file
+  - source:
+      type: local
+      path: !rel my_components
+
   # use a component from a local git repository
   - source:
       type: git
@@ -82,11 +87,15 @@ external_components:
 # shorthand
 external_components:
   - source: my_components
+
+# shorthand (relative to yaml file)
+external_components:
+  - source: !rel my_embedded_components
 ```
 
 Notice that relative paths are supported, so you can enter `my_components` as the source path and then
 ESPHome will load components from a `my_components` folder in the same folder where your YAML configuration
-is.
+is. You can also use `!rel` YAML directive if you need import components relative to your yaml file.
 
 ### Example of local components
 
