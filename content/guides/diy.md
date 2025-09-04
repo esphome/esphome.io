@@ -139,5 +139,6 @@ the post.
 - [FishFeeder](https://github.com/ColoMAX/fishfeeder) by {{< ghuser name="ColoMAX" >}}
 - [ESPHome IKEA VINDRIKTNING](https://github.com/DzurisHome/ESPHome-IKEA-VINDRIKTNING) by {{< ghuser name="DzurisHome" >}}
 - [ESPHome Refoss P11](https://github.com/DzurisHome/ESPHome-Refoss-P11) by {{< ghuser name="DzurisHome" >}}
+- [M5Stack Atom Echo sound level meter](https://gist.github.com/hollie/ebc752a90fd1b494013095bc0933510d) by {{< ghuser name="Hollie" >}}
 
 <!-- markdownlint-enable MD013 -->
