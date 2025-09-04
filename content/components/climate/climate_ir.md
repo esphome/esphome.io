@@ -24,6 +24,7 @@ submit a feature request (see FAQ).
 | [Daikin BRC](#daikin_brc) | `daikin_brc`                       | yes |
 | [Delonghi](#delonghi_ir) | `delonghi`                         | yes |
 | Emmeti | `emmeti`                           | yes |
+| Friedrich                                 | `friedrich`                        | yes               |
 | Fujitsu General | `fujitsu_general`                  | yes |
 | [GREE](#gree_ir) | `gree`                             | |
 | Hitachi | `hitachi_ac344`, `hitachi_ac424` | yes |
@@ -126,6 +127,16 @@ The `delonghi` climate currently supports the protocol used by some Delonghi por
 The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` protocols of [Arduino-HeatpumpIR](#heatpumpir)) are used by the japanese model of Daikin.
 
 {{< anchor "gree_ir" >}}
+
+### `friedrich`
+
+The `friedrich`` climate currently supports the MW12Y3H protocol.
+
+- **model** (*Optional*, string): There is 1 valid model.  Future proofing for other models
+  - ``MW12Y3H``: See https://homeappliance.manualsonline.com/manuals/mfg/friedrich/mw12y3h.html, uses Deg F
+
+- **use_fahrenheit** (*Optional*, boolean): Future proofing for other models. Defaults to ``true``.
+
 
 ### `gree`
 
@@ -357,15 +368,16 @@ for more information.
 - {{< docref "/components/remote_receiver" >}}
 - {{< docref "/components/remote_transmitter" >}}
 - {{< docref "/components/sensor" >}}
-- {{< apiref "ballu.h" "ballu/ballu.h" >}},
-  {{< apiref "climate_ir_lg.h" "climate_ir_lg/climate_ir_lg.h" >}}
-  {{< apiref "coolix.h" "coolix/coolix.h" >}},
-  {{< apiref "daikin.h" "daikin/daikin.h" >}}
-  {{< apiref "fujitsu_general.h" "fujitsu_general/fujitsu_general.h" >}},
-  {{< apiref "gree.h" "gree/gree.h" >}},
-  {{< apiref "hitachi_ac344.h" "hitachi_ac344/hitachi_ac344.h" >}},
-  {{< apiref "midea_ir.h" "midea_ir/midea_ir.h" >}},
-  {{< apiref "mitsubishi.h" "mitsubishi/mitsubishi.h" >}},
-  {{< apiref "tcl112.h" "tcl112/tcl112.h" >}},
-  {{< apiref "yashima.h" "yashima/yashima.h" >}}
-  {{< apiref "whirlpool.h" "whirlpool/whirlpool.h" >}}
+- {{< apiref "ballu.h" "ballu/ballu.h" >}}
+- {{< apiref "climate_ir_lg.h" "climate_ir_lg/climate_ir_lg.h" >}}
+- {{< apiref "coolix.h" "coolix/coolix.h" >}}
+- {{< apiref "daikin.h" "daikin/daikin.h" >}}
+- {{< apiref "friedrich.h" "fujitsu_general/friedrich.h" >}}
+- {{< apiref "fujitsu_general.h" "fujitsu_general/fujitsu_general.h" >}}
+- {{< apiref "gree.h" "gree/gree.h" >}}
+- {{< apiref "hitachi_ac344.h" "hitachi_ac344/hitachi_ac344.h" >}}
+- {{< apiref "midea_ir.h" "midea_ir/midea_ir.h" >}}
+- {{< apiref "mitsubishi.h" "mitsubishi/mitsubishi.h" >}}
+- {{< apiref "tcl112.h" "tcl112/tcl112.h" >}}
+- {{< apiref "yashima.h" "yashima/yashima.h" >}}
+- {{< apiref "whirlpool.h" "whirlpool/whirlpool.h" >}}
