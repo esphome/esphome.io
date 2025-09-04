@@ -27,7 +27,7 @@ The Waveshare IO CH32V003 is an [I²C Bus](#i2c) slave device. Its default addre
 
 ```yaml
 waveshare_io_ch32v003:
-  - id: io_hub
+  - id: wave_hub
     address: 0x24
     i2c_id: bus_a
 ```
@@ -50,7 +50,7 @@ binary_sensor:
     name: "IO Pin 0 Input"
     id: io_pin_0
     pin:
-      waveshare_io_ch32v003: io_hub
+      waveshare_io_ch32v003: wave_hub
       number: 0
       mode:
         input: true
@@ -68,7 +68,7 @@ switch:
     name: "IO Pin 1 Output"
     id: io_pin_1
     pin:
-      waveshare_io_ch32v003: io_hub
+      waveshare_io_ch32v003: wave_hub
       number: 1
       mode:
         output: true
@@ -87,14 +87,14 @@ i2c:
   scl: GPIO9
 
 waveshare_io_ch32v003:
-  - id: io_hub
+  - id: wave_hub
     address: 0x24
     i2c_id: bus_a
 
 output:
   - platform: waveshare_io_ch32v003
     id: pwm_output
-    waveshare_io_ch32v003_id: io_hub
+    waveshare_io_ch32v003_id: wave_hub
     safe_pwm_levels:
       min_value: 5%      # Minimum 5% duty cycle
       max_value: 90%     # Maximum 90% duty cycle
