@@ -367,5 +367,7 @@ for more information.
 - {{< apiref "midea_ir.h" "midea_ir/midea_ir.h" >}}
 - {{< apiref "mitsubishi.h" "mitsubishi/mitsubishi.h" >}}
 - {{< apiref "tcl112.h" "tcl112/tcl112.h" >}}
-- {{< apiref "yashima.h" "yashima/yashima.h" >}}
+- {{< apiref "toshiba.h" "toshiba/toshiba.h" >}}
 - {{< apiref "whirlpool.h" "whirlpool/whirlpool.h" >}}
+- {{< apiref "whynter.h" "whynter/whynter.h" >}}
+- {{< apiref "yashima.h" "yashima/yashima.h" >}}
