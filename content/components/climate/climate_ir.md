@@ -137,7 +137,6 @@ The `friedrich`` climate currently supports the MW12Y3H protocol.
 
 - **use_fahrenheit** (*Optional*, boolean): Future proofing for other models. Defaults to ``true``.
 
-
 ### `gree`
 
 - **model** (**Required**, string): GREE has a few different protocols depending on model. One of these will work for you.
