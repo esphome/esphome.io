@@ -133,7 +133,7 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
 The `friedrich`` climate currently supports the MW12Y3H protocol.
 
 - **model** (*Optional*, string): There is 1 valid model.  Future proofing for other models
-  - ``MW12Y3H``: See https://homeappliance.manualsonline.com/manuals/mfg/friedrich/mw12y3h.html, uses Deg F
+  - ``MW12Y3H``: uses Deg F
 
 - **use_fahrenheit** (*Optional*, boolean): Future proofing for other models. Defaults to ``true``.
 
@@ -379,5 +379,7 @@ for more information.
 - {{< apiref "midea_ir.h" "midea_ir/midea_ir.h" >}}
 - {{< apiref "mitsubishi.h" "mitsubishi/mitsubishi.h" >}}
 - {{< apiref "tcl112.h" "tcl112/tcl112.h" >}}
-- {{< apiref "yashima.h" "yashima/yashima.h" >}}
+- {{< apiref "toshiba.h" "toshiba/toshiba.h" >}}
 - {{< apiref "whirlpool.h" "whirlpool/whirlpool.h" >}}
+- {{< apiref "whynter.h" "whynter/whynter.h" >}}
+- {{< apiref "yashima.h" "yashima/yashima.h" >}}
