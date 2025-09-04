@@ -48,12 +48,11 @@ Waveshare IO CH32V003 pins can be used as binary sensors for reading digital inp
 binary_sensor:
   - platform: gpio
     name: "IO Pin 0 Input"
-    id: io_pin_0
+    id: wave_pin_0
     pin:
       waveshare_io_ch32v003: wave_hub
       number: 0
-      mode:
-        input: true
+      mode: INPUT
       inverted: false
 ```
 
@@ -66,12 +65,11 @@ Waveshare IO CH32V003 pins can be used as digital output switches.
 switch:
   - platform: gpio
     name: "IO Pin 1 Output"
-    id: io_pin_1
+    id: wave_pin_1
     pin:
       waveshare_io_ch32v003: wave_hub
       number: 1
-      mode:
-        output: true
+      mode: OUTPUT
       inverted: false
 ```
 
@@ -93,17 +91,17 @@ waveshare_io_ch32v003:
 
 output:
   - platform: waveshare_io_ch32v003
-    id: pwm_output
     waveshare_io_ch32v003_id: wave_hub
+    id: wave_pwm
     safe_pwm_levels:
       min_value: 5%      # Minimum 5% duty cycle
       max_value: 90%     # Maximum 90% duty cycle
 
 light:
   - platform: monochromatic
-    name: "PWM Light"
     id: pwm_light
-    output: pwm_output
+    name: "PWM Light"
+    output: wave_pwm
     default_transition_length: 0.5s
 ```
 
@@ -112,8 +110,8 @@ light:
 The PWM output includes configurable safety limits to protect hardware:
 
 - **safe_pwm_levels**: Configure minimum and maximum duty cycle limits
-  - **min_value** (*Optional*, percentage): Minimum PWM duty cycle (0% to 100%). Defaults to `0%`.
-  - **max_value** (*Optional*, percentage): Maximum PWM duty cycle (0% to 100%). Defaults to `97%`.
+  - **min_value** (*Optional*, integer): Minimum PWM duty cycle (0 to 255). Defaults to `0`.
+  - **max_value** (*Optional*, integer): Maximum PWM duty cycle (0 to 255). Defaults to `247`.
 
 These limits ensure that PWM values are clamped to safe ranges, preventing potential hardware damage from extreme duty cycles.
 
@@ -125,11 +123,9 @@ Read the built-in 10-bit ADC value from the Waveshare IO CH32V003's dedicated an
 # Example configuration
 sensor:
   - platform: waveshare_io_ch32v003
-    name: "ADC Reading"
-    id: adc_sensor
     waveshare_io_ch32v003_id: wave_hub
-    unit_of_measurement: "V"
-    accuracy_decimals: 3
+    id: wave_adc
+    name: "ADC Reading"
     update_interval: 1s
 
 ```
@@ -167,8 +163,7 @@ binary_sensor:
     pin:
       waveshare_io_ch32v003: wave_hub
       number: 0
-      mode:
-        input: true
+      mode: INPUT
       inverted: true
 
 # Switch on pin 1
@@ -178,31 +173,28 @@ switch:
     pin:
       waveshare_io_ch32v003: wave_hub
       number: 1
-      mode:
-        output: true
+      mode: OUTPUT
 
 # PWM output with safety limits
 output:
   - platform: waveshare_io_ch32v003
-    id: pwm_out
     waveshare_io_ch32v003_id: wave_hub
+    id: wave_pwm_out
     safe_pwm_levels:
-      min_value: 10%
-      max_value: 85%
+      min_value: 0
+      max_value: 247
 
 # Light using PWM output
 light:
   - platform: monochromatic
     name: "PWM Light"
-    output: pwm_out
+    output: wave_pwm_out
 
 # ADC sensor
 sensor:
   - platform: waveshare_io_ch32v003
-    name: "ADC Voltage"
     waveshare_io_ch32v003_id: wave_hub
-    unit_of_measurement: "V"
-    accuracy_decimals: 3
+    name: "ADC Voltage"
     update_interval: 2s
 
 ```
