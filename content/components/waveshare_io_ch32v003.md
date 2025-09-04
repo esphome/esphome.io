@@ -14,11 +14,13 @@ The Waveshare IO CH32V003 module provides:
 - **1 dedicated PWM output**: Single PWM channel with configurable duty cycle and safety limits
 - **1 ADC input**: 10-bit analog-to-digital converter for reading analog values
 
-This module is Waveshare replacement for older CH422 expander and is used in their 2025+ boards.
-
 Once configured, you can use any of the 8 GPIO pins for digital I/O operations. Within ESPHome they emulate real internal GPIO pins and can therefore be used with many of ESPHome's components such as GPIO binary sensors and GPIO switches. The PWM output and ADC input are accessed through their dedicated components.
 
 Any GPIO option accepting a [Pin Schema](#config-pin_schema) can be used with the 8 digital pins.
+
+{{< note >}}
+This I/O Expander chip is Waveshare replacement for older CH422 I/O expander and is used in several Waveshare display boards 2024+.
+ {{< /note >}}
 
 ## Component/Hub
 
