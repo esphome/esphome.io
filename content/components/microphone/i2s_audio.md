@@ -83,8 +83,7 @@ microphone:
     adc_type: external
     i2s_din_pin: GPIO23
     pdm: True
-    sample_rate: 16000
-    correct_dc_offset: true
+    correct_dc_offset: true # This needs to be set otherwise the reported level is too high and saturated
 ```
 
 A full example file to use the M5Stack Atom Echo microphone including the `i2s_audio` pin configuration is available [here](https://gist.github.com/hollie/ebc752a90fd1b494013095bc0933510d).
