@@ -158,6 +158,12 @@ esp32:
   the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
   other issues.
 
+- **main_loop_stack_size** (*Optional*, int): Can be set to changed to adjust the default ESPHome main loop task stack size in
+  the ESP-IDF framework. Not valid for the Arduino framework. Increased values allow to create deeper function invocation stacks
+  at the cost of reduced available heap memory. This value can be increased to complex code invocation stack sequences.
+  Adjust this value only if you see error like `A stack overflow in task app_main has been detected`. 
+  **Valid only on original ESP32 with** `esp-idf` **framework.**
+
 **LWIP Optimization Options (ESP-IDF only):**
 
 The following options are available under the `advanced` section when using the ESP-IDF framework to optimize
