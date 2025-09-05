@@ -75,6 +75,21 @@ switch:
       inverted: false
 ```
 
+## Sensor Example
+
+Read the built-in 10-bit ADC value from the Waveshare IO CH32V003's dedicated analog input. Value returned in 0...1 range. Use **reference_voltage** to get voltage readings. For example, for the 3.3V bus and 3:1 voltage divider, reference voltage is 3.3V x 3 = 9.9V.
+
+```yaml
+# Example configuration
+sensor:
+  - platform: waveshare_io_ch32v003
+    waveshare_io_ch32v003_id: wave_hub
+    id: wave_adc
+    name: "Battery level"
+    reference_voltage: 9.9
+```
+
+
 ## PWM Output Example
 
 The Waveshare IO CH32V003 has a single dedicated PWM output with hardware safety limits to protect connected circuits.
@@ -88,7 +103,7 @@ i2c:
 
 waveshare_io_ch32v003:
   - id: wave_hub
-    address: 0x24
+    address: 0x24  # default address is 0x24
     i2c_id: bus_a
 
 output:
@@ -96,8 +111,8 @@ output:
     waveshare_io_ch32v003_id: wave_hub
     id: wave_pwm
     safe_pwm_levels:
-      min_value: 5%      # Minimum 5% duty cycle
-      max_value: 90%     # Maximum 90% duty cycle
+      min_value: 0
+      max_value: 247 # Example: safe level for ESP32S3-Touch-LCD-7B board
 
 light:
   - platform: monochromatic
@@ -117,20 +132,6 @@ The PWM output includes configurable safety limits to protect hardware:
 
 These limits ensure that PWM values are clamped to safe ranges, preventing potential hardware damage from extreme duty cycles.
 
-## Sensor Example
-
-Read the built-in 10-bit ADC value from the Waveshare IO CH32V003's dedicated analog input.
-
-```yaml
-# Example configuration
-sensor:
-  - platform: waveshare_io_ch32v003
-    waveshare_io_ch32v003_id: wave_hub
-    id: wave_adc
-    name: "ADC Reading"
-    update_interval: 1s
-
-```
 
 ## Complete Example
 
@@ -197,40 +198,9 @@ sensor:
   - platform: waveshare_io_ch32v003
     waveshare_io_ch32v003_id: wave_hub
     name: "ADC Voltage"
-    update_interval: 2s
+    reference_voltage: 9.9
 
 ```
-
-## Pin Configuration
-
-The Waveshare IO CH32V003 provides distinct I/O capabilities:
-
-### GPIO Pins (0-7)
-- **8 digital I/O pins** numbered 0-7
-- Each pin can be individually configured as:
-  - **Digital Input**: Read HIGH/LOW states
-  - **Digital Output**: Set HIGH/LOW states
-
-### Dedicated PWM Output
-- **Single PWM channel**: One dedicated PWM output (not associated with GPIO pins)
-- Configurable duty cycle with safety limits
-- Suitable for LED dimming, motor control, etc.
-
-### Dedicated ADC Input
-- **Single 10-bit ADC**: One dedicated analog input (not associated with GPIO pins)
-- 0-1023 digital values
-- Suitable for reading sensors, potentiometers, etc.
-
-### Hardware Limitations
-
-- **GPIO**: 8 independent digital I/O pins (0-7)
-- **PWM**: Single dedicated PWM output channel
-- **ADC**: Single dedicated analog input channel
-- **Current**: Each I/O pin has limited current capability suitable for LEDs and small loads
-
-## Hardware Integration
-
-This component is specifically designed for the Waveshare I/O expansion modules that use the CH32V003 microcontroller. These modules are commonly integrated into Waveshare development boards like the ESP32-S3-Touch-LCD series.
 
 ## See Also
 
