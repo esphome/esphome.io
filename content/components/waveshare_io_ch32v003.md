@@ -10,6 +10,7 @@ params:
 The Waveshare IO CH32V003 component allows you to use the Waveshare I/O expansion modules based on the CH32V003 microcontroller in ESPHome. It uses [I²C Bus](#i2c) for communication.
 
 The Waveshare IO CH32V003 module provides:
+
 - **8 GPIO pins** (0-7): Can be individually configured as digital inputs or digital outputs
 - **1 dedicated PWM output**: Single PWM channel with configurable duty cycle and safety limits
 - **1 ADC input**: 10-bit analog-to-digital converter for reading analog values
@@ -23,7 +24,6 @@ This I/O Expander chip is Waveshare replacement for older CH422 I/O expander and
  {{< /note >}}
 
 ## Component/Hub
-
 
 The Waveshare IO CH32V003 is an [I²C Bus](#i2c) slave device. Its default address is `0x24`.
 
@@ -89,7 +89,6 @@ sensor:
     reference_voltage: 9.9
 ```
 
-
 ## PWM Output Example
 
 The Waveshare IO CH32V003 has a single dedicated PWM output with hardware safety limits to protect connected circuits.
@@ -131,7 +130,6 @@ The PWM output includes configurable safety limits to protect hardware:
   - **max_value** (*Optional*, integer): Maximum PWM duty cycle (0 to 255). Defaults to `247`.
 
 These limits ensure that PWM values are clamped to safe ranges, preventing potential hardware damage from extreme duty cycles.
-
 
 ## Complete Example
 
