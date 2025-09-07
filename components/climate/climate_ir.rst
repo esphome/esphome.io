@@ -190,8 +190,26 @@ The ``hitachi_168bit`` platform supports certain Hitachi AC units that use a 168
     # Example configuration entry
     climate:
       - platform: hitachi_168bit
-        name: "Hitachi AC"
+        name: "TEST HITACHI"
         model: HCRA31NEWH
+        receiver_id: receiver
+    
+    remote_transmitter:
+      pin: GPIO4
+      carrier_duty_percent: 50%
+
+    remote_receiver:
+      id: receiver
+      pin:
+          number: GPIO3            
+          inverted: true          
+          mode:
+            input: true
+            pullup: true
+      dump: raw
+      filter: 10us
+      idle: 12ms 
+      buffer_size: 64kb
 
 .. _midea_ir:
 
