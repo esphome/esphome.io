@@ -256,7 +256,6 @@ sensor:
   obis_code: "1-0:2.8.0"
 ```
 
-
 ## See Also
 
 - {{< apiref "sml/sml.h" "sml/sml.h" >}}
