@@ -212,6 +212,47 @@ sensor:
     state_class: measurement
 ```
 
+## Reading multiple meters
+
+If you are reading data from more meters than your controller has UARTs available (e.g. more than two for an ESP32), you can use multiplexing to switch between reading data from different meters.
+
+In order to do this, after each SML update, the used UART can be set to listen to a different pin.
+An example on how to do this is this:
+
+```yaml
+uart:
+- baud_rate: 9600
+  data_bits: 8
+  rx_pin:
+    number: GPIO17 # Set to the first of the GPIO pins in multiplex_pins
+    id: uart_multiplex_rx_pin
+  stop_bits: 1
+  rx_buffer_size: 512
+  id: uart_multiplexed
+sml:
+- id: sml_multiplexed
+  uart_id: uart_multiplexed
+  on_data:
+    - lambda: |-
+        std::vector<gpio_num_t> multiplex_pins = {::GPIO_NUM_17,::GPIO_NUM_19};
+        static size_t current_index = 0;
+        current_index = (current_index + 1) % multiplex_pins.size();
+        gpio_num_t new_rx_pin = multiplex_pins[current_index];
+        id(uart_multiplex_rx_pin).set_pin(new_rx_pin);
+        id(uart_multiplexed).load_settings(true);
+sensor:
+- platform: sml
+  name: "Solar Roof"
+  sml_id: sml_multiplexed
+  server_id: "12345ab" # IMPORTANT! Set the correct server id
+  obis_code: "1-0:2.8.0"
+- platform: sml
+  name: "Solar Carport"
+  sml_id: sml_multiplexed
+  server_id: "67890cd" # IMPORTANT! Set the correct server id
+  obis_code: "1-0:2.8.0"
+```
+
 ## See Also
 
 - {{< apiref "sml/sml.h" "sml/sml.h" >}}
