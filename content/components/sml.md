@@ -222,14 +222,14 @@ An example on how to do this is this:
 .. code-block:: yaml
 
     uart:
-      - baud_rate: 9600
-        data_bits: 8
-        rx_pin:
-         number: GPIO17 # Set to the first of the GPIO pins in multiplex_pins
-         id: uart_multiplex_rx_pin
-        stop_bits: 1
-        rx_buffer_size: 512
-        id: uart_multiplexed
+    - baud_rate: 9600
+      data_bits: 8
+      rx_pin:
+        number: GPIO17 # Set to the first of the GPIO pins in multiplex_pins
+        id: uart_multiplex_rx_pin
+      stop_bits: 1
+      rx_buffer_size: 512
+      id: uart_multiplexed
 
     sml:
     - id: sml_multiplexed
