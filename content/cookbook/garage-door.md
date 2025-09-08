@@ -7,8 +7,6 @@ params:
     image: window-open.svg
 ---
 
-
-
 The following is a possible configuration file for garage doors that are controlled by two relays:
 One for opening and another one for closing the garage door. When either one of them is turned on
 for a short period of time, the close/open action begins.
@@ -43,11 +41,10 @@ cover:
       - switch.turn_off: open_switch
     optimistic: true
     assumed_state: true
-
 ```
+
 ## See Also
 
 - {{< docref "/automations" >}}
 - {{< docref "/components/switch/gpio" >}}
 - {{< docref "/components/cover/template" >}}
-

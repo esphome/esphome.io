@@ -7,9 +7,8 @@ params:
     image: ehmtx.jpg
 ---
 
-
-
-Based on a cheap 8x32 RGB matrix you can build flexible status displays for all kind of informations. It is expandable with sensors etc.
+Based on a cheap 8x32 RGB matrix you can build flexible status displays for all kind of informations. It is expandable
+with sensors etc.
 
 {{< img src="ehmtx.jpg" alt="Image" width="40%" class="align-center" >}}
 
@@ -17,9 +16,11 @@ Based on a cheap 8x32 RGB matrix you can build flexible status displays for all 
 
 Based a on a 8x32 RGB flexible matrix it displays a clock, the date and up to 16 other screens provided by home assistant.
 Each screen (value/text) can be associated with a 8x8 bit RGB icon or gif animation (see installation).
-The values/text can be updated or deleted from the display queue. Each screen has a lifetime, if not refreshed in its lifetime it will disapear.
+The values/text can be updated or deleted from the display queue. Each screen has a lifetime, if not refreshed in its
+lifetime it will disapear.
 
 ## ESPHome Configuration
+
 Documentation:
 
 - [Source for the component on github](https://github.com/lubeda/EsphoMaTrix)
@@ -31,6 +32,6 @@ Documentation:
 
 Sample video:
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ZyaFj7ArIdY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-## See Also
-
+<!-- markdownlint-disable-next-line MD033 -->
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/ZyaFj7ArIdY" frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

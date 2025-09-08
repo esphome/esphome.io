@@ -7,8 +7,6 @@ params:
     image: server-network.svg
 ---
 
-
-
 The Status Binary Sensor exposes the node state (if it's connected to via MQTT/native API)
 for Home Assistant.
 
@@ -19,9 +17,9 @@ for Home Assistant.
 binary_sensor:
   - platform: status
     name: "Living Room Status"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - All options from [Binary Sensor](#config-binary_sensor). (Inverted mode is not supported)
 
@@ -30,4 +28,3 @@ binary_sensor:
 - {{< docref "/components/binary_sensor" >}}
 - {{< docref "/components/mqtt" >}}
 - {{< apiref "status/status_binary_sensor.h" "status/status_binary_sensor.h" >}}
-

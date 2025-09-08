@@ -7,8 +7,6 @@ params:
     image: gpio.svg
 ---
 
-
-
 The GPIO output component is quite simple: It exposes a single GPIO pin
 as an output component. Note that output components are **not** switches and
 will not show up in Home Assistant. See {{< docref "/components/switch/gpio" >}}.
@@ -19,9 +17,9 @@ output:
   - platform: gpio
     pin: GPIOXX
     id: gpio_d1
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to turn on and off.
 - **id** (**Required**, [ID](#config-id)): The id to use for this output component.
@@ -33,6 +31,7 @@ components that can be attached to for example lights. To have a GPIO pin in the
 see the {{< docref "/components/switch/gpio" >}}.
 
 {{< /warning >}}
+
 ## See Also
 
 - {{< docref "/components/switch/gpio" >}}
@@ -43,4 +42,3 @@ see the {{< docref "/components/switch/gpio" >}}.
 - {{< docref "/components/fan/binary" >}}
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "gpio/output/gpio_binary_output.h" "gpio/output/gpio_binary_output.h" >}}
-

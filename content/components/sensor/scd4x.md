@@ -7,9 +7,7 @@ params:
     image: scd4x.jpg
 ---
 
-
-
-The `scd4x`   sensor platform  allows you to use your Sensirion SCD4X CO₂
+The `scd4x` sensor platform allows you to use your Sensirion SCD4X CO₂
 ([datasheet](https://sensirion.com/media/documents/48C4B7FB/67FE0194/CD_DS_SCD4x_Datasheet_D1.pdf)) sensors with ESPHome.
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -25,9 +23,9 @@ sensor:
       name: "Workshop Temperature"
     humidity:
       name: "Workshop Humidity"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **co2** (*Optional*): The information for the CO₂ sensor.
 
@@ -37,19 +35,18 @@ sensor:
 
   - All options from [Sensor](#config-sensor).
 
-
 - **humidity** (*Optional*): The information for the Humidity sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **temperature_offset** (*Optional*, float):  The temperature offset can depend
+- **temperature_offset** (*Optional*, float): The temperature offset can depend
   on various factors such as the SCD4x measurement mode, self-heating of close
   components, the ambient temperature and air flow. This variable allows the
   compensation of those effects by setting a temperature offset. Defaults to
-  `4°C`  .
+  `4°C`.
 
 - **automatic_self_calibration** (*Optional*, boolean): Whether to enable
-  automatic self calibration (ASC). Defaults to `true`  .
+  automatic self calibration (ASC). Defaults to `true`.
 
 - **ambient_pressure_compensation** (*Optional*, int): Enable compensation
   of measured CO₂ values based on given ambient pressure in mBar.
@@ -59,31 +56,30 @@ sensor:
   *altitude_compensation* is ignored if *ambient_pressure_compensation*
   is set.
 
-
 - **measurement_mode** (*Optional*): Set measurement mode for scd4x.
 
   - `periodic`  : The sensor takes a new measurement every 5 seconds. This is the default mode.
-  - `low_power_periodic`  : The sensor takes a new measurement every 30 seconds. Make sure `update_interval`   is at least 30 seconds.
+  - `low_power_periodic`  : The sensor takes a new measurement every 30 seconds. Make sure `update_interval` is at least 30 seconds.
   - `single_shot`  : A measurement is started in every update interval. A measurement takes 5 seconds. This mode is only available on scd41 and useful if low power consumption is required.
     The automatic self-calibration is optimized for single shot measurements performed every 5 minutes.
     To reduce noise levels, you can can perform several single shot measurements in a row and average the output values using a [Sensor Filters](#sensor-filters).
-  - `single_shot_rht_only`  : A measurement is started in every update interval. A measurement takes 50 ms. Only humidity and temperature is measured. CO2 is reported as 0 ppm. This mode is only available on scd41 and useful if low power consumption is required.
 
+  - `single_shot_rht_only`  : A measurement is started in every update interval. A measurement takes 50 ms. Only humidity and temperature is measured. CO2 is reported as 0 ppm. This mode is only available on scd41 and useful if low power consumption is required.
 
 - **ambient_pressure_compensation_source** (*Optional*, [ID](#config-id)): Set an external pressure sensor ID used for ambient pressure compensation.
   The pressure sensor must report pressure in hPa. the correction is applied before updating the state of the co2 sensor.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x62`  .
+  Defaults to `0x62`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
-## Actions:
+## Actions
 
 {{< anchor "perform_forced_calibration_action" >}}
 
-## `perform_forced_calibration`   Action
+## `perform_forced_calibration` Action
 
 This [action](#config-action) manually calibrates the sensor to the provided value in ppm.
 Operate the SCD4x in the operation mode later used in normal sensor operation (periodic measurement, low power periodic measurement or single shot) for > 3 minutes in an environment with homogenous and constant CO2 concentration before performing a forced recalibration.
@@ -97,8 +93,8 @@ on_...:
         # https://gml.noaa.gov/ccgg/trends/global.html
         value: 426
         id: my_scd41
-
 ```
+
 value can also be a template, for example to define a Home Assistant calibration action:
 
 ```yaml
@@ -111,11 +107,11 @@ api:
       - scd4x.perform_forced_calibration:
           value: !lambda 'return co2_ppm;'
           id: my_scd41
-
 ```
+
 {{< anchor "factory_reset_action" >}}
 
-## `factory_reset`   Action
+## `factory_reset` Action
 
 This [action](#config-action) triggers a factory reset of the sensor. Calibration settings are restored from factory settings.
 
@@ -123,8 +119,8 @@ This [action](#config-action) triggers a factory reset of the sensor. Calibratio
 on_...:
   then:
     - scd4x.factory_reset: my_scd41
-
 ```
+
 ## Pressure compensation
 
 A static ambient pressure value can be set with `ambient_pressure_compensation` or `altitude_compensation`. It can also be changed dynamically with [lambdas](#config-lambda) using `set_ambient_pressure_compensation(<mBar>)`, or by pointing `ambient_pressure_compensation_source` to a local pressure sensor.
@@ -146,8 +142,8 @@ sensor:
     temperature_offset: 0
     co2:
       name: "CO2 level"
-
 ```
+
 ### Example with a remote sensor
 
 This example creates a service `set_ambient_pressure` that can be called from Home Assistant:
@@ -168,12 +164,11 @@ sensor:
     temperature_offset: 0
     co2:
       name: "CO2 level"
-
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - {{< docref "absolute_humidity/" >}}
 - {{< docref "scd30/" >}}
 - {{< apiref "scd4x/scd4x.h" "scd4x/scd4x.h" >}}
-

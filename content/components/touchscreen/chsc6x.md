@@ -7,13 +7,10 @@ params:
     image: chsc6x.png
 ---
 
-
-
-The `chsc6x`   touchscreen platform allows using the touch screen controllers based on the chsc6x chip with ESPHome.
+The `chsc6x` touchscreen platform allows using the touch screen controllers based on the chsc6x chip with ESPHome.
 The [I²C](#i2c) is required to be set up in your configuration for this touchscreen to work.
 
 This controller is used in the Seeed Studio Round Display for XIAO with ILI9xxx display
-
 
 {{< img src="chsc6x.png" alt="Image" caption="chsc6x touchscreen on Seeed Studio Round Display" width="50.0%" class="align-center" >}}
 
@@ -26,15 +23,14 @@ touchscreen:
   id: my_touchscreen
   display: my_display
   interrupt_pin: GPIO44
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The touch detection pin.
 
 - All other options from [Touchscreen](#config-touchscreen).
-
 
 ### Sample config for the ESP32S3
 
@@ -61,9 +57,8 @@ touchscreen:
   id: my_touchscreen
   display: my_display
   interrupt_pin: GPIO44
-
 ```
+
 ## See Also
 
 - {{< apiref "chsc6x/chsc6x_touchscreen.h" "chsc6x/chsc6x_touchscreen.h" >}}
-

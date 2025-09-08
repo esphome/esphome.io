@@ -7,9 +7,7 @@ params:
     image: fan.svg
 ---
 
-
-
-The `tuya`   fan platform creates a variable speed fan from a
+The `tuya` fan platform creates a variable speed fan from a
 tuya component.
 
 {{< img src="tuyafan.jpg" alt="Image" caption="A Tuya based fan controller wall plate." width="40%" class="align-center" >}}
@@ -26,8 +24,8 @@ Here is an example output for a Tuya fan controller:
 [12:39:45][C][tuya:034]:   Datapoint 7: int value (value: 0)
 [12:39:45][C][tuya:032]:   Datapoint 9: switch (value: OFF)
 [12:39:45][C][tuya:046]:   Product: '{"p":"hqq73kftvzh8c92u","v":"1.0.0","m":0}'
-
 ```
+
 On this controller, the data points are:
 
 - 1 represents the fan on/off state.
@@ -44,17 +42,19 @@ fan:
     name: "MyFan"
     switch_datapoint: 1
     speed_datapoint: 3
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **speed_datapoint** (**Required**, int): The datapoint id number of the fan speed.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the fan switch.
 - **oscillation_datapoint** (*Optional*, int): The datapoint id number of the oscillation
   switch. Probably not supported on any Tuya controllers currently, but it's there if need be.
+
 - **direction_datapoint** (*Optional*, int): The datapoint id number of the direction
   switch. Supported by some ceiling fans.
-- **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`  .
+
+- **speed_count** (*Optional*, int): Set the number of supported discrete speed levels. Defaults to `3`.
 - All other options from [Fan](#config-fan).
 
 {{< note >}}
@@ -62,9 +62,9 @@ The MCU on the Tuya dimmer handles the LEDs and they dont seem to be controllabl
 over the serial bus.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/tuya" >}}
 - {{< docref "/components/fan" >}}
 - {{< apiref "tuya/fan/tuya_fan.h" "tuya/fan/tuya_fan.h" >}}
-

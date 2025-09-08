@@ -7,8 +7,6 @@ params:
     image: pulse.svg
 ---
 
-
-
 The pulse counter sensor allows you to count the number of pulses and the frequency of a signal
 on any pin.
 
@@ -23,8 +21,8 @@ sensor:
   - platform: pulse_counter
     pin: GPIOXX
     name: "Pulse Counter"
-
 ```
+
 ## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin to count pulses on.
@@ -32,18 +30,20 @@ sensor:
   on a detected rising edge/falling edge.
 
   - **rising_edge** (*Optional*): What to do when a rising edge is
-    detected. One of `DISABLE`  , `INCREMENT`   and `DECREMENT`  .
-    Defaults to `INCREMENT`  .
-  - **falling_edge** (*Optional*): What to do when a falling edge is
-    detected. One of `DISABLE`  , `INCREMENT`   and `DECREMENT`  .
-    Defaults to `DISABLE`  .
+    detected. One of `DISABLE`, `INCREMENT` and `DECREMENT`.
+    Defaults to `INCREMENT`.
 
-- **use_pcnt** (*Optional*, boolean): Use hardware `PCNT`   pulse counter. Only supported on ESP32. Defaults to `true`  .
+  - **falling_edge** (*Optional*): What to do when a falling edge is
+    detected. One of `DISABLE`, `INCREMENT` and `DECREMENT`.
+    Defaults to `DISABLE`.
+
+- **use_pcnt** (*Optional*, boolean): Use hardware `PCNT` pulse counter. Only supported on ESP32. Defaults to `true`.
 - **internal_filter** (*Optional*, [Time](#config-time)): If a pulse shorter than this
-  time is detected, it's discarded and no pulse is counted. Defaults to `13us`  . On the ESP32, when using the hardware pulse counter
-  this value can not be higher than `13us`  , for the ESP8266 or with `use_pcnt: false`   you can use larger intervals too.
-  If you enable this, set up the `count_mode`   to increase on the falling edge, not leading edge. For S0 pulse meters that are used to meter power consumption 50-100 ms is a reasonable value.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`  .
+  time is detected, it's discarded and no pulse is counted. Defaults to `13us`. On the ESP32, when using the hardware pulse counter
+  this value can not be higher than `13us`, for the ESP8266 or with `use_pcnt: false` you can use larger intervals too.
+  If you enable this, set up the `count_mode` to increase on the falling edge, not leading edge. For S0 pulse meters that are used to meter power consumption 50-100 ms is a reasonable value.
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 - **total** (*Optional*): Report the total number of pulses.
 - All other options from [Sensor](#config-sensor).
 
@@ -52,6 +52,7 @@ See {{< docref "/components/sensor/integration" "integration sensor" >}} for sum
 values over time.
 
 {{< /note >}}
+
 ## Converting units
 
 The sensor defaults to measuring its values using a unit of measurement
@@ -68,8 +69,8 @@ sensor:
     name: 'Power Meter House'
     filters:
       - multiply: 0.06  # (60s/1000 pulses per kWh)
-
 ```
+
 ## Counting total pulses
 
 When the total sensor is configured, the pulse_counter also reports the total
@@ -91,12 +92,12 @@ sensor:
       name: 'Energy Meter House'
       filters:
         - multiply: 0.001  # (1/1000 pulses per kWh)
-
 ```
+
 ## (Re)Setting the total pulse count
 
 Using this action, you are able to reset/set the total pulse count. This can be useful
-if you would like the `total`   sensor to match what you see on your meter you are
+if you would like the `total` sensor to match what you see on your meter you are
 trying to match.
 
 ```yaml
@@ -110,13 +111,14 @@ api:
         - pulse_counter.set_total_pulses:
             id: pulse_counter_id
             value: !lambda 'return new_pulse_total;'
-
 ```
+
 {{< note >}}
 This value is the raw count of pulses, and not the value you see after the filters
 are applied.
 
 {{< /note >}}
+
 ## Wiring
 
 If you want to count pulses from a simple reed switch, the simplest way is to make
@@ -135,8 +137,8 @@ sensor:
         input: true
         pullup: true
     name: "Pulse Counter"
-
 ```
+
 If you wire it between a GPIO pin and +3.3V, set the pin to input, pulldown:
 
 ```yaml
@@ -149,8 +151,8 @@ sensor:
         input: true
         pulldown: true
     name: "Pulse Counter"
-
 ```
+
 The safest way is to use GPIO + GND, as this avoids the possibility of short
 circuiting the wire by mistake.
 
@@ -161,4 +163,3 @@ circuiting the wire by mistake.
 - {{< docref "rotary_encoder/" >}}
 - [esp-idf Pulse Counter API](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/peripherals/pcnt.html).
 - {{< apiref "pulse_counter/pulse_counter_sensor.h" "pulse_counter/pulse_counter_sensor.h" >}}
-

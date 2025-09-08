@@ -7,9 +7,7 @@ params:
     image: i2c.svg
 ---
 
-
 {{< anchor "i2c" >}}
-
 
 This component sets up the I²C bus for your ESP32 or ESP8266. In order for these components
 to work correctly, you need to define the I²C bus in your configuration. Please note the ESP
@@ -26,22 +24,27 @@ i2c:
   scl: GPIOXX
   scan: true
   id: bus_a
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sda** (*Optional*, [Pin](#config-pin)): The pin for the data line of the I²C bus.
   Defaults to the default of your board (usually GPIO21 for ESP32 and GPIO4 for ESP8266).
+
 - **scl** (*Optional*, [Pin](#config-pin)): The pin for the clock line of the I²C bus.
   Defaults to the default of your board (usually GPIO22 for ESP32 and
   GPIO5 for ESP8266).
+
 - **scan** (*Optional*, boolean): If ESPHome should do a search of the I²C address space on startup.
-  Defaults to `true`  .
+  Defaults to `true`.
+
 - **frequency** (*Optional*, float): Set the frequency the I²C bus should operate on.
-  Defaults to `50kHz`  . Values are `10kHz`  , `50kHz`  , `100kHz`  , `200kHz`  , ... `800kHz`
+  Defaults to `50kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`
+
 - **timeout** (*Optional*, [Time](#config-time)): Set the I²C bus timeout.
-  Defaults to the framework defaults (`100us`   on `esp32`   with `esp-idf`  , `50ms`   on `esp32`   with `Arduino`  ,
-  `1s`   on `esp8266`   and `1s`   on `rp2040`  ). Maximum on `esp-idf`   is 13ms.
+  Defaults to the framework defaults (`100us` on `esp32` with `esp-idf`, `50ms` on `esp32` with `Arduino`,
+  `1s` on `esp8266` and `1s` on `rp2040`  ). Maximum on `esp-idf` is 13ms.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this I²C bus if you need multiple I²C buses.
 
 {{< note >}}
@@ -64,8 +67,8 @@ sensor:
     i2c_id: bus_b
     address: 0x76
 # ...
-
 ```
+
 {{< /note >}}
 For I²C multiplexing see {{< docref "/components/tca9548a" >}}.
 
@@ -74,4 +77,3 @@ For I²C multiplexing see {{< docref "/components/tca9548a" >}}.
 - {{< docref "/components/tca9548a" >}}
 - {{< docref "/components/i2c_device" >}}
 - {{< apiref "i2c/i2c.h" "i2c/i2c.h" >}}
-

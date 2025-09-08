@@ -7,9 +7,7 @@ params:
     image: lightbulb.svg
 ---
 
-
-
-The `binary`   light platform creates a simple ON/OFF-only light from a
+The `binary` light platform creates a simple ON/OFF-only light from a
 [binary output component](#output).
 
 {{< img src="binary-ui.png" alt="Image" width="40.0%" class="align-center" >}}
@@ -20,9 +18,9 @@ light:
   - platform: binary
     name: "Desk Lamp"
     output: light_output
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The id of the binary [Output Component](#output) to use for this light.
 - All other options from [Light](#config-light).
@@ -34,4 +32,3 @@ light:
 - {{< docref "/components/output/gpio" >}}
 - {{< docref "/components/power_supply" >}}
 - {{< apiref "binary/light/binary_light_output.h" "binary/light/binary_light_output.h" >}}
-

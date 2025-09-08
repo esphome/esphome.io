@@ -7,9 +7,7 @@ params:
     image: exposure_notifications.png
 ---
 
-
-
-The `exposure_notifications`   component uses the {{< docref "/components/esp32_ble_tracker" >}} to discover
+The `exposure_notifications` component uses the {{< docref "/components/esp32_ble_tracker" >}} to discover
 nearby COVID-19 exposure notification bluetooth messages sent by phones running the
 [Google/Apple Exposure Notification service](https://www.google.com/covid19/exposurenotifications/).
 
@@ -24,14 +22,14 @@ exposure_notifications:
           ESP_LOGD("main", "Got notification:");
           ESP_LOGD("main", "  RPI: %s", format_hex_pretty(x.rolling_proximity_identifier).c_str());
           ESP_LOGD("main", "  RSSI: %d", x.rssi);
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **on_exposure_notification** (*Optional*, [Automation](#automation)): An automation
   to run when an exposure notification bluetooth message is received.
 
-  A variable `x`   of type {{< apistruct "exposure_notifications::ExposureNotification" "exposure_notifications::ExposureNotification" >}} is passed to the automation.
+  A variable `x` of type {{< apistruct "exposure_notifications::ExposureNotification" "exposure_notifications::ExposureNotification" >}} is passed to the automation.
 
 An exposure notification payload contains:
 
@@ -74,10 +72,9 @@ exposure_notifications:
       # Stop existing timer so that turn_off doesn't get called
       - script.stop: start_led
       - script.execute: start_led
-
 ```
+
 ## See Also
 
 - {{< docref "esp32_ble_tracker/" >}}
 - {{< apiref "exposure_notifications/exposure_notifications.h" "exposure_notifications/exposure_notifications.h" >}}
-

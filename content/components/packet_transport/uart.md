@@ -7,9 +7,7 @@ params:
     image: uart.svg
 ---
 
-
 {{< anchor "uart-packet-transport" >}}
-
 
 The [Packet Transport Component](#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel.
 The UART implementation of the platform uses a serial port as a communication medium. See the [Packet Transport Component](#packet-transport) and [UART Bus](#uart) for more information.
@@ -35,8 +33,8 @@ sensor:
       temperature:
         name: "Temperature"
         id: dht_temp
-
 ```
+
 ## See Also
 
 - [Packet Transport Component](#packet-transport)
@@ -45,4 +43,3 @@ sensor:
 - {{< docref "/components/sensor/packet_transport" >}}
 - [Automation](#automation)
 - {{< apiref "packet_transport/packet_transport.h" "packet_transport/packet_transport.h" >}}
-

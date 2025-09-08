@@ -7,9 +7,7 @@ params:
     image: description.svg
 ---
 
-
-
-The `template`   sensor platform allows you to create a sensor with templated values
+The `template` sensor platform allows you to create a sensor with templated values
 using [lambdas](#config-lambda).
 
 ```yaml
@@ -24,28 +22,30 @@ sensor:
         return 0.0;
       }
     update_interval: 60s
-
 ```
+
 Possible return values for the lambda:
 
-- `return <FLOATING_POINT_NUMBER>;`   the new value for the sensor.
-- `return NAN;`   if the state should be considered invalid to indicate an error (advanced).
-- `return {};`   if you don't want to publish a new state (advanced).
+- `return <FLOATING_POINT_NUMBER>;` the new value for the sensor.
+- `return NAN;` if the state should be considered invalid to indicate an error (advanced).
+- `return {};` if you don't want to publish a new state (advanced).
 
-## Configuration variables:
+## Configuration variables
 
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the sensor
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Set to `never`   to disable updates. Defaults to `60s`  .
+  sensor. Set to `never` to disable updates. Defaults to `60s`.
+
 - All other options from [Sensor](#config-sensor).
 
 {{< anchor "sensor-template-publish_action" >}}
 
-## `sensor.template.publish`   Action
+## `sensor.template.publish` Action
 
 You can also publish a state to a template sensor from elsewhere in your YAML file
-with the `sensor.template.publish`   action.
+with the `sensor.template.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -64,8 +64,8 @@ on_...:
   - sensor.template.publish:
       id: template_sens
       state: !lambda 'return 42.0;'
-
 ```
+
 Configuration options:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the template sensor.
@@ -77,9 +77,10 @@ This action can also be written in lambdas:
 
 ```cpp
 id(template_sens).publish_state(42.0);
-
 ```
+
 {{< /note >}}
+
 ## Useful Template Sensors
 
 Here are some useful sensors for debugging and tracking Bluetooth proxies.
@@ -108,11 +109,10 @@ sensor:
       int free = bluetooth_proxy::global_bluetooth_proxy->get_bluetooth_connections_free();
       ESP_LOGD("bluetooth_proxy_sensor", "Current connections free => %d", free);
       return free;
-
 ```
+
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
 - [Automation](#automation)
 - {{< apiref "template/sensor/template_sensor.h" "template/sensor/template_sensor.h" >}}
-

@@ -7,9 +7,7 @@ params:
     image: tormatic.png
 ---
 
-
-
-The `tormatic`   cover platform allows you to control Tormatic and Novoferm
+The `tormatic` cover platform allows you to control Tormatic and Novoferm
 garage door drives manufactured in 2016 onwards. The following models should
 be supported:
 
@@ -32,7 +30,7 @@ detection, so it's assumed that the protocol is the same across all models.
 {{< /note >}}
 As the communication with the garage door drive is done using UART, you need to
 have an [UART bus](#uart) in your configuration with the `rx_pin`
-connected unit's USB D- line and the `tx_pin`   connected to the USB's D+ line.
+connected unit's USB D- line and the `tx_pin` connected to the USB's D+ line.
 The baud rate should be set to 9600. See `Setup`_ for more detailed
 instructions.
 
@@ -42,8 +40,8 @@ cover:
   - platform: tormatic
     device_class: garage
     name: Novoferm 423
-
 ```
+
 ## Setup
 
 The garage door drive ('unit') contains a female USB Type B port that does
@@ -68,18 +66,20 @@ since it needs to fit in a tight space in the unit. Only a single header pin
 needs to be soldered the PCB to supply 3.3V to the logic level shifter, but it
 can be bent 90 degrees to sit parallel to the PCB, keeping a low profile.
 
-## Configuration variables:
+## Configuration variables
 
-- **name** (**Required**, string): The name of the cover.
-- **open_duration** (*Optional*, [Time](#config-time)): The amount of time the
+* **name** (**Required**, string): The name of the cover.
+* **open_duration** (*Optional*, [Time](#config-time)): The amount of time the
   gate is expected to need to go from a fully closed to opened state. Defaults
-  to `15s`  . Used to interpolate the position value published to Home Assistant
+  to `15s`. Used to interpolate the position value published to Home Assistant
   during gate movements, and for stopping the gate at a specific requested
   position. This value is automatically recalibrated after an uninterrupted
   closed -> opened movement.
-- **close_duration** (*Optional*, [Time](#config-time)): The opposite of
-  `open_duration`  . Defaults to `22s`  .
-- All other options from [Cover](#config-cover).
+
+* **close_duration** (*Optional*, [Time](#config-time)): The opposite of
+  `open_duration`. Defaults to `22s`.
+
+* All other options from [Cover](#config-cover).
 
 ## Known Issues
 
@@ -89,13 +89,13 @@ can be bent 90 degrees to sit parallel to the PCB, keeping a low profile.
    client-side authoritative, but this would mean we can no longer detect gate
    movements initiated by the physical button or an RF remote. An annoying but
    acceptable defect.
+
 * The position updates during gate movements are time-based approximations and
    don't account for acceleration and grace movements near the start and end of
    the action. The unit itself doesn't provide accurate position information.
 
 ## See Also
 
-- {{< docref "index/" >}}
-- [Automation](#automation)
-- {{< apiref "tormatic/tormatic_cover.h" "tormatic/tormatic_cover.h" >}}
-
+* {{< docref "index/" >}}
+* [Automation](#automation)
+* {{< apiref "tormatic/tormatic_cover.h" "tormatic/tormatic_cover.h" >}}

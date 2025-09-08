@@ -7,11 +7,9 @@ params:
     image: nextion.jpg
 ---
 
-
 {{< anchor "nextion_sensor" >}}
 
-
-The `nextion`   sensor platform supports integers or floats (Xfloat). It can be a component, a variable or a waveform in the Nextion display.
+The `nextion` sensor platform supports integers or floats (Xfloat). It can be a component, a variable or a waveform in the Nextion display.
 It is best to set the component's vscope to global in the Nextion Editor. This way the component will be available
 if the page is shown or not.
 
@@ -53,55 +51,56 @@ sensor:
     wave_channel_id: 1
     wave_max_value: 100
     update_interval: 1s
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **nextion_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the Nextion display.
 - **component_name** (*Optional*, string): Manually specify the name of the Nextion component.
 - **variable_name** (*Optional*, string): Manually specify the name of the Nextion variable.
-- **update_interval** (*Optional*, [Time](#config-time)):  The duration to update the sensor
-- **precision** (*Optional*, int):  This is for Nextion float components. This sets
-  the precision that the component is set to. This typically is the `vvs1`   setting of the component.
-- **background_color** (*Optional*, [Color](#config-color)):  The background color
-- **foreground_color** (*Optional*, [Color](#config-color)):  The foreground color
-- **visible** (*Optional*, boolean):  Visible or not
+- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor
+- **precision** (*Optional*, int): This is for Nextion float components. This sets
+  the precision that the component is set to. This typically is the `vvs1` setting of the component.
+
+- **background_color** (*Optional*, [Color](#config-color)): The background color
+- **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
+- **visible** (*Optional*, boolean): Visible or not
 
 ### Waveform Settings
+
 - **wave_channel_id** (*Optional*, int): The waveform ID in a range of 0-3
-- **wave_max_value** (*Optional*, int): The max value. Set `dis`   to the height of the component in the Nextion editor
+- **wave_max_value** (*Optional*, int): The max value. Set `dis` to the height of the component in the Nextion editor
   and this to the max value that will be sent. This will set up the proper scaling.
+
 - **waveform_send_last_value** (*Optional*, int): This will send the last value set during an update interval. Setting to true will give a timeseries style graph
 - **wave_max_length** (*Optional*, int): How many data points to store. Typically this is the width of the component in the Nextion
-- **update_interval** (*Optional*, [Time](#config-time)):  The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
+- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
 
 - All other options from [Sensor](#config-sensor).
 
 **Only one** *component_name* **or** *variable_name* **can be set**
 
 {{< note >}}
-`background_color`   , `foreground_color`   and `visible`   do not retain their state on page change. [Sensor Settings](#nextion_sensor_settings).
+`background_color`, `foreground_color` and `visible` do not retain their state on page change. [Sensor Settings](#nextion_sensor_settings).
 A [Nextion Sensor](#nextion_sensor) with a custom protocol sending the current page can be used to execute the API call [Update Components By Prefix](#update_components_by_prefix) to update all the components for that page
-
 
 {{< /note >}}
 See [How things Update](#nextion_sensor_how_things_update) for additional information
 
 ### Globals
+
 The Nextion does not retain data on Nextion page changes. Additionally if a page is changed and the **component_name** does not exist on that page then
-nothing will be updated. To get around this the Nextion components can be changed to have a vscope of `global`  . If this is set then the **component_name**
+nothing will be updated. To get around this the Nextion components can be changed to have a vscope of `global`. If this is set then the **component_name**
 should be prefixed with the page name (page0/page1 or whatever you have changed it to).
 
-*Example*
-
-`component_name: page0.humidity`
+*Example:* `component_name: page0.humidity`
 
 {{< anchor "sensor-nextion-publish_action" >}}
 
-## `sensor.nextion.publish`   Action
+## `sensor.nextion.publish` Action
 
 You can also publish a state to a Nextion sensor from elsewhere in your YAML file
-with the `sensor.nextion.publish`   action.
+with the `sensor.nextion.publish` action.
 
 ```yaml
 # Example configuration entry
@@ -124,14 +123,15 @@ on_...:
       # These are optional. Defaults to true.
       publish_state: true
       send_to_nextion: true
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the Nextion sensor.
 - **state** (**Required**, string, [templatable](#config-templatable)): The float state to publish.
 - **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
   Default is true.
+
 - **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
   display which will update component. Default is true.
 
@@ -158,12 +158,12 @@ some more advanced functions (see the full {{< apiref "nextion/sensor/nextion_se
 
 - `set_background_color(Color color)`  : Sets the background color to **Color**
 - `set_foreground_color(Color color)`  : Sets the background color to **Color**
-- `set_visible(bool visible)`   : Sets visible or not. If set to false, no updates will be sent to the component
-
+- `set_visible(bool visible)` : Sets visible or not. If set to false, no updates will be sent to the component
 
 {{< anchor "nextion_sensor_how_things_update" >}}
 
 ## How things Update
+
 A Nextion component with an integer value (.val) or Nextion variable will be automatically polled if **update_interval** is set.
 To have the Nextion send the data you can use the [Nextion Custom Sensor Protocol](#nextion_custom_sensor_protocol) for this. Add the [Nextion Custom Sensor Protocol](#nextion_custom_sensor_protocol) to the
 component or function you want to trigger the send. Typically this is in *Touch Press Event* but some components, like a slider, should have it
@@ -176,7 +176,8 @@ since this will be sending the real value to esphome.
 
 {{< /note >}}
 Using the above yaml example:
-- "Current Humidity" will poll the Nextion for the `humidity.val`   value and set the sensor accordingly.
+
+- "Current Humidity" will poll the Nextion for the `humidity.val` value and set the sensor accordingly.
 - "Current Temperature" will NOT poll the Nextion. Either the Nextion will need to use the [Nextion Custom Sensor Protocol](#nextion_custom_sensor_protocol) or use a lambda:
 
 - [Lambda Calls](#nextion_sensor_lambda_calls).
@@ -184,11 +185,11 @@ Using the above yaml example:
 {{< note >}}
 No updates will be sent to the Nextion if it is sleeping. Once it wakes, the components will be updated. If a component is invisible, `visible(false)`, then it won't update until it is set to be visible.
 
-
 {{< /note >}}
 {{< anchor "nextion_custom_sensor_protocol" >}}
 
 ## Nextion Custom Sensor Protocol
+
 All lines are required
 
 ```c
@@ -197,20 +198,18 @@ prints "temperature",0
 printh 00
 prints temperature.val,0
 printh FF FF FF
-
 ```
-*Explanation*
 
-- `printh 91`   Tells the library this is a sensor (int) data
-- `prints "temperature",0`   Sends the name that matches **component_name** or **variable_name**
-- `printh 00`   Sends a NULL
-- `prints temperature.val,0`   The actual value to send. For a variable use the Nextion variable name `temperature`   with out `.val`
-- `printh FF FF FF`   Nextion command ack
+### Explanation
 
+- `printh 91` Tells the library this is a sensor (int) data
+- `prints "temperature",0` Sends the name that matches **component_name** or **variable_name**
+- `printh 00` Sends a NULL
+- `prints temperature.val,0` The actual value to send. For a variable use the Nextion variable name `temperature` with out `.val`
+- `printh FF FF FF` Nextion command ack
 
 ## See Also
 
 - {{< docref "/components/display/nextion" >}}
 - {{< docref "index/" >}}
 - {{< apiref "nextion/sensor/nextion_sensor.h" "nextion/sensor/nextion_sensor.h" >}}
-

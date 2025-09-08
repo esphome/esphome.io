@@ -7,17 +7,15 @@ params:
     image: ac_dimmer.svg
 ---
 
-
-
 {{< warning >}}
 This component has not been fully tested yet, if you are testing this component
 please share your experience with the dimmer hardware and light model and
-configuration here https://github.com/esphome/feature-requests/issues/278
+configuration here <https://github.com/esphome/feature-requests/issues/278>
 
 Thanks!
 
 {{< /warning >}}
-The `ac_dimmer`   component allows you to connect a dimmable light or other load
+The `ac_dimmer` component allows you to connect a dimmable light or other load
 which supports phase control dimming to your ESPHome project.
 
 There are several already made boards which are compatible with this component, such as the
@@ -41,17 +39,19 @@ light:
   - platform: monochromatic
     output: dimmer1
     name: Dimmable Light
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **gate_pin** (**Required**, [Pin](#config-pin)): The pin used to control the Triac or
   Mosfet.
+
 - **zero_cross_pin** (**Required**, [Pin](#config-pin)): The pin used to sense the AC
   Zero cross event, you can have several dimmers controlled with the same zero cross
-  detector, in such case duplicate the `zero_cross_pin`   config on each output. When
-  doing so, `allow_other_uses`   pin schema option **must** be set to `true`   to
+  detector, in such case duplicate the `zero_cross_pin` config on each output. When
+  doing so, `allow_other_uses` pin schema option **must** be set to `true` to
   avoid configuration errors due to pin reuse.
+
 - **method** (*Optional*): Set the method for dimming, can be:
 
   - `leading pulse`  : (default) a short pulse to trigger a triac.
@@ -61,14 +61,15 @@ light:
 
 - **init_with_half_cycle** (*Optional*, boolean): Will send the first full half AC cycle
   Try to use this for dimmable LED lights, it might help turning on at low brightness
-  levels. On Halogen lamps it might show at initial flicker. Defaults to `false`  .
+  levels. On Halogen lamps it might show at initial flicker. Defaults to `false`.
+
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - All other options from [Output](#config-output).
 
 Dimming lights with phase control can be tricky, the minimum level your light turns on
 might be different from other lights, also the perceived light level might not correlate
 to the percentage output set to the light, to try to minimize these behaviors you can
-tweak the values `min_power`   from this output component and also `gamma_correct`   from
+tweak the values `min_power` from this output component and also `gamma_correct` from
 the monochromatic light.
 
 ## See Also
@@ -76,4 +77,3 @@ the monochromatic light.
 - {{< docref "/components/output" >}}
 - {{< docref "/components/light/monochromatic" >}}
 - {{< apiref "ac_dimmer/ac_dimmer.h" "ac_dimmer/ac_dimmer.h" >}}
-

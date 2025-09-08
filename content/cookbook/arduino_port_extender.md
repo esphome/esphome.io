@@ -7,14 +7,12 @@ params:
     image: arduino_logo.svg
 ---
 
-
-
 With this sketch you can control pins of a remote Arduino board through ESPHome. The Arduino acts as a port
 expander, allowing you to use more pins than a standard ESP8266/ESP32 has.
 
 {{< img src="arduino_pro_mini.jpg" alt="Image" width="75.0%" class="align-center" >}}
 
-The Arduino is connected to the ESP via I²C. Most Arduinos use the `A4`   and `A5`   pins for the I²C bus
+The Arduino is connected to the ESP via I²C. Most Arduinos use the `A4` and `A5` pins for the I²C bus
 so those pins are not available to read from ESPHome.
 It is recommended to use a 3.3V I/O level Arduino, however using 5V Arduinos seems to work too. In the latter
 case you should power your 5V Arduino with 3.3V otherwise you will need a level converter for the
@@ -26,8 +24,8 @@ Currently it is supported:
 - reading analog inputs
 - writing digital outputs
 
-The Arduino sketch can be retrieved from [here](https://gist.github.com/glmnet/49ca3d6a9742fc3649f4fbdeaa4cdf5d#file-arduino_port_expander_sketch-ino)
-you can rename it to `.ino`   and use the Arduino IDE to program it.
+The Arduino sketch can be retrieved from [this gist](https://gist.github.com/glmnet/49ca3d6a9742fc3649f4fbdeaa4cdf5d#file-arduino_port_expander_sketch-ino)
+you can rename it to `.ino` and use the Arduino IDE to program it.
 
 You need to download [arduino_port_expander.h](https://gist.github.com/glmnet/49ca3d6a9742fc3649f4fbdeaa4cdf5d#file-arduino_port_expander-h)
 and include the arduino_port_expander.h in the ESPHome configuration.
@@ -37,19 +35,19 @@ esphome:
   # ...
   includes:
       - arduino_port_expander.h
-
 ```
+
 Setup your [I²C Bus](#i2c) and assign it an `id`  :
 
 ```yaml
 i2c:
   id: i2c_component
-
 ```
-By default ESP8266 uses `SDA`   pin `GPIO4`   which you need to connect to Arduino's `A4`   and the `SCL`
-is `GPIO5`   which goes to Arduino's `A5`  .
 
-Then create a `custom_component`  , this will be the main component we will be referencing later when creating
+By default ESP8266 uses `SDA` pin `GPIO4` which you need to connect to Arduino's `A4` and the `SCL`
+is `GPIO5` which goes to Arduino's `A5`.
+
+Then create a `custom_component`, this will be the main component we will be referencing later when creating
 individual IOs.
 
 ```yaml
@@ -58,9 +56,9 @@ custom_component:
     lambda: |-
       auto ape_component = new ArduinoPortExpander(i2c_component, 0x08);
       return {ape_component};
-
 ```
-By default the I²C address is `0x08`   but you can change it on the Arduino sketch so you can have more devices
+
+By default the I²C address is `0x08` but you can change it on the Arduino sketch so you can have more devices
 on the same bus.
 
 Now it is time to add the ports.
@@ -68,7 +66,7 @@ Now it is time to add the ports.
 ## Binary_Sensor
 
 When adding binary sensors the pins are configured as INPUT_PULLUP, you can use any PIN from 0 to 13 or
-`A0`   to `A3`   (`A4`   and `A5`   are used for I²C and `A6`   and `A7`   do not support internal pull up)
+`A0` to `A3` (`A4` and `A5` are used for I²C and `A6` and `A7` do not support internal pull up)
 
 {{< note >}}
 Arduino PIN 13 usually has a LED connected to it and using it as digital input with the built in internal
@@ -95,15 +93,15 @@ binary_sensor:
         name: Binary sensor pin 3
         on_press:
           ...
-
 ```
-The listed `binary_sensors`   supports all options from [Binary Sensor](#config-binary_sensor) like
+
+The listed `binary_sensors` supports all options from [Binary Sensor](#config-binary_sensor) like
 automations and filters.
 
 ## Sensor
 
-Sensors allows for reading the analog value of an analog pin, those are from `A0`   to `A7`   except for
-`A4`   and `A5`  . The value returned goes from 0 to 1023 (the value returned by the Arduino `analogRead`
+Sensors allows for reading the analog value of an analog pin, those are from `A0` to `A7` except for
+`A4` and `A5`. The value returned goes from 0 to 1023 (the value returned by the Arduino `analogRead`
 function).
 
 Arduino analog inputs measures voltage. By default the sketch is configured to use the Arduino internal VREF
@@ -113,10 +111,10 @@ do so, pass an additional true value to the hub constructor:
 
 ```cpp
 auto ape_component = new ArduinoPortExpander(i2c_component, 0x08, true);
-
 ```
+
 To setup sensors, create a custom platform as below, list in braces all the sensors you want,
-in the example below two sensors are declared on pin `A1`   and `A2`
+in the example below two sensors are declared on pin `A1` and `A2`
 
 Then declare the ESPHome reference of the sensor in the same order as declared in the lambda:
 
@@ -135,22 +133,23 @@ sensor:
         id: analog_a2
         filters:
           - throttle: 2s
-
 ```
-The listed `sensors`   supports all options from [Sensor](#config-sensor) like
+
+The listed `sensors` supports all options from [Sensor](#config-sensor) like
 automations and filters.
 
 {{< note >}}
-Sensors are polled by default every loop cycle so it is recommended to use the `throttle`   filter
+Sensors are polled by default every loop cycle so it is recommended to use the `throttle` filter
 to not flood the network.
 
 {{< /note >}}
+
 ## Output
 
 Arduinos binary outputs are supported in pins from 0 to 13.
 
 To setup outputs, create a custom platform as below, list in braces all the outputs you want,
-in the example below two outputs are declared on pin `3`   and `4`
+in the example below two outputs are declared on pin `3` and `4`
 
 ```yaml
 output:
@@ -174,14 +173,13 @@ light:
   - platform: binary
     name: Switch pin 4
     output: output_pin_4
-
 ```
+
 ## Full Example
 
 Let's connect a 4 channel relay board and 2 push buttons to toggle the relays, a PIR sensor, a window and a door
 a LM35 temperature sensor and a voltage sensor. Seems a bit too much for an ESP8266? You'll still have some
 spares I/Os.
-
 
 ```yaml
 esphome:
@@ -265,7 +263,6 @@ switch:
     id: tank_pump
     output: relay_4
 
-
 # define binary sensors, use the Arduino PIN number for digital pins and
 # for analog use 14 for A0, 15 for A1 and so on...
 binary_sensor:
@@ -315,8 +312,6 @@ sensor:
         id: analog_a2
         filters:
           - throttle: 2s
-
 ```
+
 ## See Also
-
-

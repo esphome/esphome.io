@@ -7,14 +7,21 @@ params:
     image: logo-docs.svg
 ---
 
-
-
-{{< html_file file="images/logo-docs.svg"  >}}
+{{< html_file file="images/logo-docs.svg" >}}
 
 This is the top-level ESPHome documentation index. Browse the tables below, use the sidebar menu, or the search
 function to find the information you're looking for.
 
-# ESPHome Configuration
+### Help improve this documentation
+
+If you find any errors in this site, corrections are welcome. You can submit a *Pull Request* (PR) in the
+[GitHub repo](https://github.com/esphome/esphome-docs) with corrections. If you don't know how to create a PR you
+can just use the "Edit this page on GitHub" link on the page in question which will take you to the source file
+for that page.
+
+Alternatively, post in the *Documentation* channel in the [Discord](https://discord.gg/KhAMKrd) server.
+
+## ESPHome Configuration
 
 ESPHome is configured in YAML files - use these links for basic and advanced
 information about ESPHome configuration files.
@@ -27,7 +34,7 @@ information about ESPHome configuration files.
 {{< /imgtable >}}
 {{< anchor "devices" >}}
 
-# Supported Microcontrollers
+## Supported Microcontrollers
 
 {{< imgtable >}}
 "ESP32","components/esp32","esp32.svg",""
@@ -39,7 +46,8 @@ information about ESPHome configuration files.
 "Host","components/host","host.svg","dark-invert"
 "NRF52","components/nrf52","nrf52.svg",""
 {{< /imgtable >}}
-# Microcontroller Peripherals
+
+## Microcontroller Peripherals
 
 Peripherals which directly support the operation of the microcontroller's processor(s).
 
@@ -48,9 +56,10 @@ Peripherals which directly support the operation of the microcontroller's proces
 "Deep Sleep","components/deep_sleep","hotel.svg","dark-invert"
 "ESP32-P4 LDO regulator","components/esp_ldo","ldo.svg","dark-invert"
 {{< /imgtable >}}
-# ESPHome Automations
 
-*"When this happens, I want it to do that..."*
+## ESPHome Automations
+
+> *"When this happens, I want it to do that..."*
 
 Automations are how we customize ESPHome devices to respond/behave exactly how you want them to.
 
@@ -59,7 +68,8 @@ Automations are how we customize ESPHome devices to respond/behave exactly how y
 "Actions, Triggers, Conditions","automations/actions","description.svg","dark-invert"
 "Templates","automations/templates","description.svg","dark-invert"
 {{< /imgtable >}}
-# ESPHome Components
+
+## ESPHome Components
 
 ESPHome-specific components or components supporting ESPHome device provisioning post-installation.
 
@@ -79,7 +89,8 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "Script","components/script","description.svg","dark-invert"
 "Factory Reset","components/factory_reset","restart-alert.svg","dark-invert"
 {{< /imgtable >}}
-# Network Hardware
+
+## Network Hardware
 
 {{< imgtable >}}
 "WiFi","components/wifi","network-wifi.svg","dark-invert"
@@ -87,7 +98,8 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "ESP32 Hosted","components/esp32_hosted","network-wifi.svg","dark-invert"
 "OpenThread","components/openthread","openthread.png",""
 {{< /imgtable >}}
-# Network Protocols
+
+## Network Protocols
 
 {{< imgtable >}}
 "Network Core","components/network","server-network.svg","dark-invert"
@@ -101,7 +113,8 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "UDP","components/udp","udp.svg",""
 "Packet Transport","components/packet_transport/index","packet_transport.svg","dark-invert"
 {{< /imgtable >}}
-# Bluetooth/BLE
+
+## Bluetooth/BLE
 
 {{< imgtable >}}
 "ESP32 BLE Beacon","components/esp32_ble_beacon","bluetooth.svg","dark-invert"
@@ -111,7 +124,8 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
 "Improv via BLE","components/esp32_improv","improv.svg","dark-invert"
 {{< /imgtable >}}
-# Management and Monitoring
+
+## Management and Monitoring
 
 {{< imgtable >}}
 "Debug","components/debug","bug-report.svg","dark-invert"
@@ -123,7 +137,8 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "Web Server","components/web_server","http.svg",""
 "ESP32 Camera Web Server","components/esp32_camera_web_server","camera.svg","dark-invert"
 {{< /imgtable >}}
-# Update Installation
+
+## Update Installation
 
 Install updates over-the-air (OTA).
 
@@ -132,7 +147,8 @@ Install updates over-the-air (OTA).
 "OTA Updates","components/ota/esphome","system-update.svg","dark-invert"
 "OTA Updates via HTTP Request","components/ota/http_request","system-update.svg","dark-invert"
 {{< /imgtable >}}
-# Update Management
+
+## Update Management
 
 Create update entities simplifying management of OTA updates.
 
@@ -140,7 +156,8 @@ Create update entities simplifying management of OTA updates.
 "Update Core","components/update/index","system-update.svg","dark-invert"
 "Managed Updates","components/update/http_request","system-update.svg","dark-invert"
 {{< /imgtable >}}
-# Hardware Peripheral Interfaces/Busses
+
+## Hardware Peripheral Interfaces/Busses
 
 {{< imgtable >}}
 "1-Wire","components/one_wire/index","one-wire.svg",""
@@ -153,7 +170,8 @@ Create update entities simplifying management of OTA updates.
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
 {{< /imgtable >}}
-# I/O Expanders/Multiplexers
+
+## I/O Expanders/Multiplexers
 
 {{< imgtable >}}
 "CH422G","components/ch422g","ch422g.svg"
@@ -172,7 +190,8 @@ Create update entities simplifying management of OTA updates.
 "WeiKai SPI/I²C UART/IO Expander","components/weikai","wk2168.jpg"
 "XL9535","components/xl9535","xl9535.svg"
 {{< /imgtable >}}
-# 1-Wire Bus
+
+## 1-Wire Bus
 
 Platforms which specifically support or extend the {{< docref "/components/one_wire" >}}, allowing communication with
 1-Wire-based devices.
@@ -181,7 +200,8 @@ Platforms which specifically support or extend the {{< docref "/components/one_w
 "DS2484","components/one_wire/ds2484","ds2484.svg"
 "GPIO","components/one_wire/gpio","gpio.svg"
 {{< /imgtable >}}
-# CAN Bus
+
+## CAN Bus
 
 Platforms which specifically support or extend the {{< docref "/components/canbus" >}}, allowing communication with
 CAN-based devices.
@@ -190,11 +210,12 @@ CAN-based devices.
 "ESP32 CAN","components/canbus/esp32_can","esp32.svg"
 "MCP2515","components/canbus/mcp2515","mcp2515.svg"
 {{< /imgtable >}}
-# Sensor Components
+
+## Sensor Components
 
 Sensors are organized into categories; if a given sensor fits into more than one category, it will appear multiple times.
 
-## Core
+### Core
 
 {{< imgtable >}}
 "Sensor Core","components/sensor/index","folder-open.svg","dark-invert"
@@ -204,42 +225,44 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Uptime Sensor","components/sensor/uptime","timer.svg","dark-invert"
 "WiFi Signal Strength","components/sensor/wifi_signal","network-wifi.svg","dark-invert"
 {{< /imgtable >}}
-## Air Quality
+
+### Air Quality
 
 {{< imgtable >}}
-"AGS10","components/sensor/ags10","ags10.jpg","Volatile Organic Compound Sensor","",""
-"AirThings BLE","components/sensor/airthings_ble","airthings_logo.png","Radon","CO2","Volatile organics"
-"CCS811","components/sensor/ccs811","ccs811.jpg","CO2 & Volatile organics","",""
-"CM1106","components/sensor/cm1106","cm1106.png","CO2","",""
-"EE895","components/sensor/ee895","EE895.png","CO2 & Temperature & Pressure","",""
-"ENS160","components/sensor/ens160","ens160.jpg","CO2 & Air Quality","",""
+"AGS10","components/sensor/ags10","ags10.jpg","Volatile organics","",""
+"AirThings BLE","components/sensor/airthings_ble","airthings_logo.png","Radon","CO₂","Volatile organics"
+"CCS811","components/sensor/ccs811","ccs811.jpg","eCO₂ & Volatile organics","",""
+"CM1106","components/sensor/cm1106","cm1106.png","CO₂","",""
+"EE895","components/sensor/ee895","EE895.png","CO₂ & Temperature & Pressure","",""
+"ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality","",""
 "GCJA5","components/sensor/gcja5","gcja5.svg","Particulate","",""
 "GP2Y1010AU0F","components/sensor/gp2y1010au0f","gp2y1010au0f.png","Particulate","",""
-"Grove Multichannel Gas V2","components/sensor/grove_gas_mc_v2","grove-gas-mc-v2.png","NO2 & CO & Ethanol & Volatile organics","",""
+"Grove Multichannel Gas V2","components/sensor/grove_gas_mc_v2","grove-gas-mc-v2.png","NO₂ & CO & Ethanol & Volatile organics","",""
 "HM3301","components/sensor/hm3301","hm3301.jpg","Particulate","",""
-"iAQ-Core","components/sensor/iaqcore","iaqcore.jpg","CO2 & Volatile organics","",""
-"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO2 & Temperature","",""
-"MiCS-4514","components/sensor/mics_4514","mics_4514.jpg","Gas concentration","",""
+"iAQ-Core","components/sensor/iaqcore","iaqcore.jpg","eCO₂ & Volatile organics","",""
+"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature","",""
+"MiCS-4514","components/sensor/mics_4514","mics_4514.jpg","NO₂ & CO & H₂ & Ethanol & Methane & Ammonia","",""
 "PM1006 Sensor","components/sensor/pm1006","pm1006.jpg","Particulate","",""
 "PM2005 Sensor","components/sensor/pm2005","pm2005.png","Particulate","",""
 "PMSA003I","components/sensor/pmsa003i","pmsa003i.jpg","Particulate","",""
 "PMSX003","components/sensor/pmsx003","pmsx003.svg","Particulate","",""
 "RadonEye BLE","components/sensor/radon_eye_ble","radon_eye_logo.png","Radon","",""
-"SCD30","components/sensor/scd30","scd30.jpg","CO2 & Temperature & Humidity","",""
-"SCD4X","components/sensor/scd4x","scd4x.jpg","CO2 & Temperature & Humidity","",""
+"SCD30","components/sensor/scd30","scd30.jpg","CO₂ & Temperature & Humidity","",""
+"SCD4X","components/sensor/scd4x","scd4x.jpg","CO₂ & Temperature & Humidity","",""
 "SDS011 Sensor","components/sensor/sds011","sds011.jpg","Particulate","",""
 "SEN0321","components/sensor/sen0321","sen0321.jpg","Ozone","",""
-"SEN5x","components/sensor/sen5x","sen54.jpg","Temperature & Humidity & Volatile organics & NOx","",""
-"SenseAir","components/sensor/senseair","senseair_s8.jpg","CO2","",""
+"SEN5x","components/sensor/sen5x","sen54.jpg","Particulate & Volatile organics & NOx & Temperature & Humidity","",""
+"SenseAir","components/sensor/senseair","senseair_s8.jpg","CO₂","",""
 "SFA30","components/sensor/sfa30","sfa30.jpg","Formaldehyde","",""
-"SGP30","components/sensor/sgp30","sgp30.jpg","CO2 & Volatile organics","",""
+"SGP30","components/sensor/sgp30","sgp30.jpg","eCO₂ & Volatile organics","",""
 "SGP4x","components/sensor/sgp4x","sgp40.jpg","Volatile organics & NOx","",""
-"SM300D2","components/sensor/sm300d2","sm300d2.jpg","Air quality","",""
+"SM300D2","components/sensor/sm300d2","sm300d2.jpg","Particulate & Volatile organics & eCO₂ & equivalent Formaldehyde & Temperature & Humidity","",""
 "SPS30","components/sensor/sps30","sps30.jpg","Particulate","",""
-"T6613/15","components/sensor/t6615","t6615.jpg","CO2","",""
-"ZyAura","components/sensor/zyaura","zgm053.jpg","CO2 & Temperature & Humidity","",""
+"T6613/15","components/sensor/t6615","t6615.jpg","CO₂","",""
+"ZyAura","components/sensor/zyaura","zgm053.jpg","CO₂ & Temperature & Humidity","",""
 {{< /imgtable >}}
-## Analogue
+
+### Analogue
 
 {{< imgtable >}}
 "ADC","components/sensor/adc","flash.svg","ESP internal","dark-invert"
@@ -252,7 +275,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "NAU7802","components/sensor/nau7802","nau7802.jpg","ADC",""
 "Resistance","components/sensor/resistance","omega.svg","dark-invert",""
 {{< /imgtable >}}
-## Bluetooth Low Energy (BLE)
+
+### Bluetooth Low Energy (BLE)
 
 {{< imgtable >}}
 "Alpha3","components/sensor/alpha3","alpha3.jpg",""
@@ -266,7 +290,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer"
 "Xiaomi BLE","components/sensor/xiaomi_ble","xiaomi_mijia_logo.jpg","Various"
 {{< /imgtable >}}
-## Digital Signals
+
+### Digital Signals
 
 {{< imgtable >}}
 "Duty Cycle","components/sensor/duty_cycle","percent.svg","dark-invert"
@@ -274,7 +299,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Pulse Meter","components/sensor/pulse_meter","pulse.svg","dark-invert"
 "Pulse Width","components/sensor/pulse_width","pulse.svg","dark-invert"
 {{< /imgtable >}}
-## Distance
+
+### Distance
 
 {{< imgtable >}}
 "A01NYUB","components/sensor/a01nyub","a01nyub.jpg","Acoustic distance"
@@ -287,7 +313,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "VL53L0x","components/sensor/vl53l0x","vl53l0x.jpg","IR optical distance"
 "Zio Ultrasonic Sensor","components/sensor/zio_ultrasonic","zio_ultrasonic.jpg","Acoustic distance"
 {{< /imgtable >}}
-## Electricity
+
+### Electricity
 
 {{< imgtable >}}
 "ADE7880","components/sensor/ade7880","ade7880.svg","Voltage & Current & Power"
@@ -301,12 +328,12 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "CS5460A","components/sensor/cs5460a","cs5460a.png","Voltage & Current & Power"
 "CSE7761","components/sensor/cse7761","cse7761.svg","Voltage & Current & Power"
 "CSE7766","components/sensor/cse7766","cse7766.svg","Voltage & Current & Power"
-"CT Clamp","components/sensor/ct_clamp","ct_clamp.jpg","Alternating Current (AC)"
+"CT Clamp","components/sensor/ct_clamp","ct_clamp.jpg","AC Current"
 "Daly BMS","components/sensor/daly_bms","daly_bms.jpg","Voltage & Current & Power"
 "DSMR","components/sensor/dsmr","dsmr.svg","Electrical counter"
 "HLW8012","components/sensor/hlw8012","hlw8012.svg","Voltage & Current & Power"
-"INA219","components/sensor/ina219","ina219.jpg","Direct Current (DC)"
-"INA226","components/sensor/ina226","ina226.jpg","Direct Current (DC) & Power"
+"INA219","components/sensor/ina219","ina219.jpg","DC Current"
+"INA226","components/sensor/ina226","ina226.jpg","DC Current & Power"
 "INA228","components/sensor/ina2xx","ina228.jpg","DC Voltage & Current & Power & Charge"
 "INA229","components/sensor/ina2xx","ina2xx.jpg","DC Voltage & Current & Power & Charge"
 "INA237","components/sensor/ina2xx","ina2xx.jpg","DC Voltage & Current & Power"
@@ -324,7 +351,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Teleinfo","components/sensor/teleinfo","teleinfo.jpg","Electrical counter"
 "Total Daily Energy","components/sensor/total_daily_energy","sigma.svg","dark-invert"
 {{< /imgtable >}}
-## Environmental
+
+### Environmental
 
 {{< imgtable >}}
 "Absolute Humidity","components/sensor/absolute_humidity","water-drop.svg","dark-invert",""
@@ -346,7 +374,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "DHT12","components/sensor/dht12","dht12.jpg","Temperature & Humidity",""
 "DPS310","components/sensor/dps310","dps310.jpg","Temperature & Pressure",""
 "EMC2101","components/emc2101","emc2101.jpg","Temperature",""
-"ENS160","components/sensor/ens160","ens160.jpg","CO2 & Air Quality",""
+"ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality",""
 "ENS210","components/sensor/ens210","ens210.jpg","Temperature & Humidity",""
 "HDC1080","components/sensor/hdc1080","hdc1080.jpg","Temperature & Humidity",""
 "HHCCJCY10 (MiFlora Pink)","components/sensor/xiaomi_hhccjcy10","xiaomi_hhccjcy10.jpg","Soil moisture & Temperature & Light",""
@@ -362,7 +390,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Internal Temperature","components/sensor/internal_temperature","thermometer.svg","Temperature","dark-invert"
 "LPS22","components/sensor/lps22","lps22.webp","Temperature & Barometric Pressure",""
 "MCP9808","components/sensor/mcp9808","mcp9808.jpg","Temperature",""
-"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO2 & Temperature",""
+"MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature",""
 "MLX90614","components/sensor/mlx90614","mlx90614.jpg","Temperature",""
 "MPL3115A2","components/sensor/mpl3115a2","mpl3115a2.jpg","Temperature & Pressure",""
 "MS5611","components/sensor/ms5611","ms5611.jpg","Pressure",""
@@ -373,8 +401,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "QMP6988","components/sensor/qmp6988","qmp6988_env3.png","Temperature & Pressure",""
 "RadonEye BLE","components/sensor/radon_eye_ble","radon_eye_logo.png","Radon",""
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer",""
-"SCD30","components/sensor/scd30","scd30.jpg","CO2 & Temperature & Humidity",""
-"SCD4X","components/sensor/scd4x","scd4x.jpg","CO2 & Temperature & Humidity",""
+"SCD30","components/sensor/scd30","scd30.jpg","CO₂ & Temperature & Humidity",""
+"SCD4X","components/sensor/scd4x","scd4x.jpg","CO₂ & Temperature & Humidity",""
 "SDP3x / SDP800 Series","components/sensor/sdp3x","sdp31.jpg","Pressure",""
 "SFA30","components/sensor/sfa30","sfa30.jpg","Formaldehyde",""
 "SHT3X-D","components/sensor/sht3xd","sht3xd.jpg","Temperature & Humidity",""
@@ -390,13 +418,15 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "TMP117","components/sensor/tmp117","tmp117.jpg","Temperature",""
 "XGZP68xx Series","components/sensor/xgzp68xx","6897d.jpg","Differential Pressure",""
 {{< /imgtable >}}
-## Health/Safety
+
+### Health/Safety
 
 {{< imgtable >}}
 "Seeed Studio MR60BHA2 mmWave","components/seeed_mr60bha2","seeed_mr60bha2.jpg","Breathing & heartbeat detection"
 "Seeed Studio MR60FDA2 mmWave","components/seeed_mr60fda2","seeed_mr60fda2.jpg","Presence & Fall detection"
 {{< /imgtable >}}
-## Light
+
+### Light
 
 {{< imgtable >}}
 "AM43","components/sensor/am43","am43.jpg","Lux"
@@ -423,7 +453,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "VEML6030","components/sensor/veml7700","veml6030.jpg","Lux"
 "VEML7700","components/sensor/veml7700","veml7700.jpg","Lux"
 {{< /imgtable >}}
-## Magnetic
+
+### Magnetic
 
 {{< imgtable >}}
 "AS5600","components/sensor/as5600","as5600.jpg","12-Bit Magnetic Position Sensor"
@@ -433,7 +464,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "MMC5983","components/sensor/mmc5983","mmc5983.jpg","3-Axis magnetometer"
 "QMC5883L","components/sensor/qmc5883l","qmc5883l.jpg","3-Axis magnetometer"
 {{< /imgtable >}}
-## Miscellaneous
+
+### Miscellaneous
 
 {{< imgtable >}}
 "AS3935","components/sensor/as3935","as3935.jpg","Storm lightning"
@@ -448,10 +480,10 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Havells Solar","components/sensor/havells_solar","havellsgti5000d_s.jpg","Solar rooftop"
 "Integration","components/sensor/integration","sigma.svg","dark-invert"
 "Kuntze pool sensor","components/sensor/kuntze","kuntze.jpg",""
-"LC709203F","components/sensor/lc709203f","lc709203f.jpg","Battery Monitor"
+"LC709203F","components/sensor/lc709203f","lc709203f.jpg","Battery level & Thermistor"
 "LVGL widget","components/sensor/lvgl","lvgl_c_num.png",""
 "M5Stack Unit 8 Angle","components/sensor/m5stack_8angle","m5stack_8angle.png",""
-"MAX17043","components/sensor/max17043","max17043.jpg","Battery"
+"MAX17043","components/sensor/max17043","max17043.jpg","Battery level"
 "MicroNova pellet stove","components/micronova","micronova.svg",""
 "Modbus Sensor","components/sensor/modbus_controller","modbus.png",""
 "Nextion","components/sensor/nextion","nextion.jpg","Sensors from display"
@@ -466,7 +498,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "uFire ISE sensor","components/sensor/ufire_ise","ufire_ise.png","pH & Temperature"
 "WireGuard","components/wireguard","wireguard_custom_logo.svg","dark-invert"
 {{< /imgtable >}}
-## Motion
+
+### Motion
 
 {{< imgtable >}}
 "APDS9960","components/sensor/apds9960","apds9960.jpg","Colour & Gesture"
@@ -482,7 +515,8 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer"
 "Seeed Studio MR24HPC1 mmWave","components/seeed_mr24hpc1","seeed-mr24hpc1.jpg","Motion & Presence"
 {{< /imgtable >}}
-## Thermocouple
+
+### Thermocouple
 
 {{< imgtable >}}
 "KMeterISO","components/sensor/kmeteriso","kmeteriso.jpg","K-Type",""
@@ -492,22 +526,23 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "MAX6675","components/sensor/max6675","max6675.jpg","K-Type",""
 "MCP9600","components/sensor/mcp9600","mcp9600.jpg","All types",""
 {{< /imgtable >}}
-## Weight
+
+### Weight
 
 {{< imgtable >}}
 "HX711","components/sensor/hx711","hx711.jpg","Load cell amplifier"
 "Xiaomi Miscale","components/sensor/xiaomi_miscale","xiaomi_miscale1&2.jpg",""
 {{< /imgtable >}}
 Looking for a sensor that outputs its values as an analog voltage? Have a look at the
-{{< docref "/components/sensor/adc" "ADC Sensor" >}} together with a formula like in the `TEMT6000
-configuration <https://devices.esphome.io/devices/temt6000>`__.
+{{< docref "/components/sensor/adc" "ADC Sensor" >}} together with a formula like in the
+[TEMT6000 configuration](https://devices.esphome.io/devices/temt6000).
 
+## Binary Sensor Components
 
-# Binary Sensor Components
+Binary Sensors are organized into categories; if a given sensor fits into more than one category, it will appear
+multiple times.
 
-Binary Sensors are organized into categories; if a given sensor fits into more than one category, it will appear multiple times.
-
-## Core
+### Core
 
 {{< imgtable >}}
 "Binary Sensor Core","components/binary_sensor/index","folder-open.svg","dark-invert"
@@ -518,22 +553,25 @@ Binary Sensors are organized into categories; if a given sensor fits into more t
 "Switch","components/binary_sensor/switch","electric-switch.svg","dark-invert"
 "Host SDL2","components/binary_sensor/sdl","sdl.png",""
 {{< /imgtable >}}
-## Capacitive Touch
+
+### Capacitive Touch
 
 {{< imgtable >}}
 "CAP1188 Capacitive Touch Sensor","components/binary_sensor/cap1188","cap1188.jpg",""
 "ESP32 Touch Pad","components/binary_sensor/esp32_touch","touch.svg","dark-invert"
-"MPR121  Capacitive Touch Sensor","components/binary_sensor/mpr121","mpr121.jpg",""
+"MPR121 Capacitive Touch Sensor","components/binary_sensor/mpr121","mpr121.jpg",""
 "TTP229","components/binary_sensor/ttp229","ttp229.jpg",""
 {{< /imgtable >}}
-## Mechanical
+
+### Mechanical
 
 {{< imgtable >}}
 "Matrix Keypad","components/matrix_keypad","matrix_keypad.jpg"
 "TM1637","components/display/tm1637","tm1637.jpg"
 "TM1638","components/display/tm1638","tm1638.jpg"
 {{< /imgtable >}}
-## NFC/RFID
+
+### NFC/RFID
 
 Often known as "tag" or "card" readers within the community.
 
@@ -546,7 +584,8 @@ Often known as "tag" or "card" readers within the community.
 "RDM6300","components/binary_sensor/rdm6300","rdm6300.jpg",""
 "Wiegand Reader","components/wiegand","wiegand.jpg",""
 {{< /imgtable >}}
-## Touchscreen
+
+### Touchscreen
 
 {{< imgtable >}}
 "Touchscreen Core","components/touchscreen/index","touch.svg","dark-invert"
@@ -556,7 +595,8 @@ Often known as "tag" or "card" readers within the community.
 "TT21100","components/touchscreen/tt21100","esp32-s3-korvo-2-lcd.png",""
 "LVGL widget","components/binary_sensor/lvgl","lvgl_c_bns.png",""
 {{< /imgtable >}}
-## Presence Detection
+
+### Presence Detection
 
 {{< imgtable >}}
 "AT581X","components/at581x","at581x.png"
@@ -567,7 +607,8 @@ Often known as "tag" or "card" readers within the community.
 "LD2450","components/sensor/ld2450","ld2450.png"
 "Seeed Studio MR24HPC1 mmWave","components/seeed_mr24hpc1","seeed-mr24hpc1.jpg"
 {{< /imgtable >}}
-## Miscellaneous
+
+### Miscellaneous
 
 {{< imgtable >}}
 "Analog Threshold","components/binary_sensor/analog_threshold","analog_threshold.svg","dark-invert"
@@ -581,20 +622,23 @@ Often known as "tag" or "card" readers within the community.
 "Tuya Binary Sensor","components/binary_sensor/tuya","tuya.png",""
 "WireGuard","components/wireguard","wireguard_custom_logo.svg","dark-invert"
 {{< /imgtable >}}
-# Alarm Control Panel Components
+
+## Alarm Control Panel Components
 
 {{< imgtable >}}
 "Alarm Control Panel Core","components/alarm_control_panel/index","alarm-panel.svg","dark-invert"
 "Template Alarm Control Panel","components/alarm_control_panel/template","description.svg","dark-invert"
 {{< /imgtable >}}
-# Audio ADC Components
+
+## Audio ADC Components
 
 {{< imgtable >}}
 "Audio ADC Core","components/audio_adc/index","audio_adc.svg"
 "ES7210","components/audio_adc/es7210","es7210.svg"
 "ES7243E","components/audio_adc/es7243e","es7243e.svg"
 {{< /imgtable >}}
-# Audio DAC Components
+
+## Audio DAC Components
 
 {{< imgtable >}}
 "Audio DAC Core","components/audio_dac/index","audio_dac.svg"
@@ -603,7 +647,8 @@ Often known as "tag" or "card" readers within the community.
 "ES8311","components/audio_dac/es8311","es8311.svg"
 "ES8388","components/audio_dac/es8388","es8388.svg"
 {{< /imgtable >}}
-# Button Components
+
+## Button Components
 
 {{< imgtable >}}
 "Button Core","components/button/index","folder-open.svg","dark-invert"
@@ -616,7 +661,8 @@ Often known as "tag" or "card" readers within the community.
 "UART Button","components/button/uart","uart.svg",""
 "Wake-on-LAN","components/button/wake_on_lan","power_settings.svg","dark-invert"
 {{< /imgtable >}}
-# Climate Components
+
+## Climate Components
 
 {{< imgtable >}}
 "Climate Core","components/climate/index","folder-open.svg","dark-invert"
@@ -631,7 +677,8 @@ Often known as "tag" or "card" readers within the community.
 "Tuya Climate","components/climate/tuya","tuya.png",""
 "Uponor Smatrix Base Pulse Underfloor Heating","components/uponor_smatrix","uponor.svg",""
 {{< /imgtable >}}
-# Cover Components
+
+## Cover Components
 
 {{< imgtable >}}
 "Cover Core","components/cover/index","folder-open.svg","dark-invert"
@@ -645,13 +692,15 @@ Often known as "tag" or "card" readers within the community.
 "Tormatic/Novoferm Cover","components/cover/tormatic","tormatic.png",""
 "Tuya Cover","components/cover/tuya","tuya.png",""
 {{< /imgtable >}}
-# Datetime Components
+
+## Datetime Components
 
 {{< imgtable >}}
 "Datetime Core","components/datetime/index","clock-outline.svg","dark-invert"
 "Template Datetime","components/datetime/template","description.svg","dark-invert"
 {{< /imgtable >}}
-# Display Components
+
+## Display Components
 
 {{< imgtable >}}
 "Display Core","components/display/index","folder-open.svg","dark-invert"
@@ -668,7 +717,7 @@ Often known as "tag" or "card" readers within the community.
 {{< /imgtable >}}
 {{< anchor "display-hw" >}}
 
-# Display Hardware Platforms
+## Display Hardware Platforms
 
 {{< imgtable >}}
 "Addressable Light","components/display/addressable_light","addressable_light.jpg"
@@ -710,7 +759,8 @@ Often known as "tag" or "card" readers within the community.
 "Waveshare E-Paper","components/display/waveshare_epaper","waveshare_epaper.jpg"
 "Host SDL2 display","components/display/sdl","sdl.png"
 {{< /imgtable >}}
-# Electromechanical
+
+## Electromechanical
 
 {{< imgtable >}}
 "Atlas Scientific Peristaltic Pump","components/ezo_pmp","ezo-pmp.jpg",""
@@ -720,7 +770,8 @@ Often known as "tag" or "card" readers within the community.
 "Servo","components/servo","servo.svg",""
 "Stepper","components/stepper/index","stepper.svg",""
 {{< /imgtable >}}
-# Energy/Solar Management
+
+## Energy/Solar Management
 
 {{< imgtable >}}
 "Growatt Solar","components/sensor/growatt_solar","growatt.jpg",""
@@ -731,13 +782,15 @@ Often known as "tag" or "card" readers within the community.
 "SML","components/sml","sml.svg",""
 "SUN-GTIL2 inverter","components/sun_gtil2","sun_1000g2.png",""
 {{< /imgtable >}}
-# Event Components
+
+## Event Components
 
 {{< imgtable >}}
 "Event Core","components/event/index","folder-open.svg","dark-invert"
 "Template Event","components/event/template","description.svg","dark-invert"
 {{< /imgtable >}}
-# Fan Components
+
+## Fan Components
 
 {{< imgtable >}}
 "Fan Core","components/fan/index","folder-open.svg","dark-invert"
@@ -747,7 +800,8 @@ Often known as "tag" or "card" readers within the community.
 "Speed Fan","components/fan/speed","fan.svg","dark-invert"
 "Tuya Fan","components/fan/tuya","tuya.png",""
 {{< /imgtable >}}
-# Home Assistant Components
+
+## Home Assistant Components
 
 Components specifically for interacting with Home Assistant.
 
@@ -761,7 +815,8 @@ Components specifically for interacting with Home Assistant.
 "Text Sensor","components/text_sensor/homeassistant","home-assistant.svg","dark-invert"
 "Voice Assistant","components/voice_assistant","voice-assistant.svg","dark-invert"
 {{< /imgtable >}}
-# Light Components
+
+## Light Components
 
 {{< imgtable >}}
 "Light Core","components/light/index","folder-open.svg","dark-invert"
@@ -789,17 +844,18 @@ Components specifically for interacting with Home Assistant.
 "Tuya Dimmer","components/light/tuya","tuya.png",""
 {{< /imgtable >}}
 **Looking for WS2811 and similar individually addressable lights?** For the ESP32 and its variants, we recommend the
-{{< docref "light/esp32_rmt_led_strip" >}} or {{< docref "light/spi_led_strip" >}}; for other processors, have a look at the
-{{< docref "light/fastled" "FastLED Light" >}}.
+{{< docref "light/esp32_rmt_led_strip" >}} or {{< docref "light/spi_led_strip" >}}; for other processors, have a look
+at the {{< docref "light/fastled" "FastLED Light" >}}.
 
-# Lock Components
+## Lock Components
 
 {{< imgtable >}}
 "Lock Core","components/lock/index","folder-open.svg","dark-invert"
 "Template Lock","components/lock/template","description.svg","dark-invert"
 "Generic Output Lock","components/lock/output","upload.svg","dark-invert"
 {{< /imgtable >}}
-# Media Player Components
+
+## Media Player Components
 
 {{< imgtable >}}
 "Media Player Core","components/media_player/index","folder-open.svg","dark-invert"
@@ -807,13 +863,15 @@ Components specifically for interacting with Home Assistant.
 "I2S Audio","components/media_player/i2s_audio","i2s_audio.svg",""
 "Speaker","components/media_player/speaker","speaker.svg","dark-invert"
 {{< /imgtable >}}
-# Microphone Components
+
+## Microphone Components
 
 {{< imgtable >}}
 "Microphone Core","components/microphone/index","microphone.svg","dark-invert"
 "I2S Microphone","components/microphone/i2s_audio","i2s_audio.svg",""
 {{< /imgtable >}}
-# Number Components
+
+## Number Components
 
 {{< imgtable >}}
 "Number Core","components/number/index","folder-open.svg","dark-invert"
@@ -823,7 +881,8 @@ Components specifically for interacting with Home Assistant.
 "Modbus Number","components/number/modbus_controller","modbus.png",""
 "Tuya Number","components/number/tuya","tuya.png",""
 {{< /imgtable >}}
-# Output Components
+
+## Output Components
 
 {{< imgtable >}}
 "Output Core","components/output/index","folder-open.svg","dark-invert"
@@ -858,7 +917,8 @@ Components specifically for interacting with Home Assistant.
 "TLC5971","components/output/tlc5971","tlc5971.jpg",""
 "X9C Potentiometer","components/output/x9c","x9c.jpg",""
 {{< /imgtable >}}
-# Select Components
+
+## Select Components
 
 {{< imgtable >}}
 "Select Core","components/select/index","folder-open.svg","dark-invert"
@@ -867,7 +927,8 @@ Components specifically for interacting with Home Assistant.
 "Modbus Select","components/select/modbus_controller","modbus.png",""
 "Tuya Select","components/select/tuya","tuya.png",""
 {{< /imgtable >}}
-# Speaker Components
+
+## Speaker Components
 
 {{< imgtable >}}
 "Speaker Core","components/speaker/index","speaker.svg","dark-invert"
@@ -875,7 +936,8 @@ Components specifically for interacting with Home Assistant.
 "Mixer Speaker","components/speaker/mixer","mixer.svg",""
 "Resampler Speaker","components/speaker/resampler","waveform.svg","dark-invert"
 {{< /imgtable >}}
-# Switch Components
+
+## Switch Components
 
 {{< imgtable >}}
 "Switch Core","components/switch/index","folder-open.svg","dark-invert"
@@ -895,14 +957,16 @@ Components specifically for interacting with Home Assistant.
 "UART Switch","components/switch/uart","uart.svg",""
 "Home Assistant","components/switch/homeassistant","home-assistant.svg","dark-invert"
 {{< /imgtable >}}
-# Text Components
+
+## Text Components
 
 {{< imgtable >}}
 "Text Core","components/text/index","folder-open.svg","dark-invert"
 "Template Text","components/text/template","description.svg","dark-invert"
 "LVGL textarea Text","components/text/lvgl","lvgl_c_txt.png",""
 {{< /imgtable >}}
-# Text Sensor Components
+
+## Text Sensor Components
 
 {{< imgtable >}}
 "Text Sensor Core","components/text_sensor/index","folder-open.svg","dark-invert"
@@ -921,7 +985,8 @@ Components specifically for interacting with Home Assistant.
 "WireGuard","components/wireguard","wireguard_custom_logo.svg","dark-invert"
 "WL-134 Pet Tag Sensor","components/text_sensor/wl_134","fingerprint.svg","dark-invert"
 {{< /imgtable >}}
-# Time Components
+
+## Time Components
 
 {{< imgtable >}}
 "Time Core","components/time/index","clock-outline.svg","dark-invert"
@@ -932,7 +997,8 @@ Components specifically for interacting with Home Assistant.
 "PCF8563 RTC","components/time/pcf8563","clock-outline.svg","dark-invert"
 "SNTP","components/time/sntp","clock-outline.svg","dark-invert"
 {{< /imgtable >}}
-# Touchscreen Components
+
+## Touchscreen Components
 
 {{< imgtable >}}
 "Touchscreen Core","components/touchscreen/index","folder-open.svg","dark-invert"
@@ -947,13 +1013,15 @@ Components specifically for interacting with Home Assistant.
 "TT21100","components/touchscreen/tt21100","esp32-s3-korvo-2-lcd.png",""
 "XPT2046","components/touchscreen/xpt2046","xpt2046.jpg",""
 {{< /imgtable >}}
-# Valve Components
+
+## Valve Components
 
 {{< imgtable >}}
 "Valve Core","components/valve/index","folder-open.svg","dark-invert"
 "Template Valve","components/valve/template","description.svg","dark-invert"
 {{< /imgtable >}}
-# Wireless Communication
+
+## Wireless Communication
 
 Used for creating infrared (IR) or radio frequency (RF) remote control transmitters and/or receivers, or to connect
 ESPHome to cellular networks. **Does not encompass Wi-Fi.**
@@ -967,9 +1035,11 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "SX126x","components/sx126x","sx126x.png",""
 "SX127x","components/sx127x","sx127x.png",""
 {{< /imgtable >}}
-# Miscellaneous Components
+
+## Miscellaneous Components
 
 {{< imgtable >}}
+"Camera Encoder","components/camera/camera_encoder","camera.svg","dark-invert"
 "ESP32 Camera","components/esp32_camera","camera.svg","dark-invert"
 "Exposure Notifications","components/exposure_notifications","exposure_notifications.png",""
 "GPS","components/gps","crosshairs-gps.svg","dark-invert"
@@ -981,7 +1051,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Tuya MCU","components/tuya","tuya.png",""
 {{< /imgtable >}}
 
-# Cookbook
+## Cookbook
 
 {{< imgtable >}}
 "Lambda Magic - Tips and Tricks","cookbook/lambda_magic","head-lightbulb-outline.svg","dark-invert"
@@ -996,7 +1066,8 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "EHMTX a matrix status/text display","cookbook/ehmtx","ehmtx.jpg",""
 "Pulse Catcher","cookbook/pulse-catcher","pulses.png",""
 {{< /imgtable >}}
-# Contributing
+
+## Contributing
 
 ESPHome depends on and welcomes contributions from our community. If you'd like to contribute, please see our
 [developer site](https://developers.esphome.io).

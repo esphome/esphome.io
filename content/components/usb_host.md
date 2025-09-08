@@ -7,14 +7,11 @@ params:
     image: usb.svg
 ---
 
-
-
-
 The USB Host interface on the ESP32-S3 and ESP32-S2 is used to connect to USB peripheral devices. Multiple
 devices may be configured, but only one can be connected at any time. By default the device must be directly
-connected to the ESP32, but this can be changed by setting the `enable_hubs`   option to `true`  .
+connected to the ESP32, but this can be changed by setting the `enable_hubs` option to `true`.
 
-This component is used by the `usb_uart`   component to allow the ESP32 to connect to USB-serial devices. It is also
+This component is used by the `usb_uart` component to allow the ESP32 to connect to USB-serial devices. It is also
 possible to configure devices directly in this component, but this has no application other than for debug purposes.
 
 ```yaml
@@ -25,21 +22,21 @@ usb_host:
     - id: device_0
       vid: 0x1725
       pid: 0x1234
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): The id to use for this component.
-- **enable_hubs** (*Optional*, boolean): Whether to include support for hubs. Defaults to `false`  .
+- **enable_hubs** (*Optional*, boolean): Whether to include support for hubs. Defaults to `false`.
 - **devices** (*Optional*, list): A list of devices to configure.
 
-## Device configuration options:
+## Device configuration options
 
 - **id** (*Optional*, [ID](#config-id)): An id to assign to the device.
 - **vid** (**Required**, int): The vendor ID of the device. Use 0 as a wildcard.
 - **pid** (**Required**, int): The product ID of the device. Use 0 as a wildcard.
 
-Setting both `vid`   and `pid`   to 0 will match any device.
+Setting both `vid` and `pid` to 0 will match any device.
 
 If a device is configured and a device is connected that matches the configuration, the device will be
 connected to the ESP32 and log entries will appear at the DEBUG level. If the log level is set to VERBOSE,
@@ -49,9 +46,7 @@ it is disconnected or the ESP32 is reset.
 If a device is plugged in that does not match any configured device, the device will be disconnected and
 a log entry will appear at the DEBUG level.
 
-
 ### See Also
 
 - {{< docref "/components/usb_uart" >}}
 - {{< apiref "usb_host/usb_host.h" "usb_host/usb_host.h" >}}
-

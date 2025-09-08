@@ -7,13 +7,11 @@ params:
     image: speaker.svg
 ---
 
-
-
-The `speaker`   media player platform allows you to play on-device and online audio media via {{< docref "/components/speaker/index" "speaker components" >}}.
+The `speaker` media player platform allows you to play on-device and online audio media via {{< docref "/components/speaker/index" "speaker components" >}}.
 
 This platform greatly benefits from having external PSRAM. See the [performance section](#media_player-speaker-performance) for details.
 
-It natively supports decoding `FLAC`  , `MP3`  , and `WAV`   audio files. Home Assistant (since version 2024.10) can proxy any media it sends and transcode it to a specified format and sample rate to minimize the device's computational load.
+It natively supports decoding `FLAC`, `MP3`, and `WAV` audio files. Home Assistant (since version 2024.10) can proxy any media it sends and transcode it to a specified format and sample rate to minimize the device's computational load.
 
 It supports two different audio pipelines: announcement and media. Each audio pipeline must output to a unique speaker. Use a {{< docref "/components/speaker/mixer" "mixer speaker" >}} component to create two different speakers that output to a single audio speaker.
 
@@ -29,34 +27,35 @@ configuration. In particular, Bluetooth/BLE components are known to cause issues
 combination with Voice Assistant and/or other audio components.
 
 {{< /warning >}}
+
 ```yaml
 # Example minimal configuration entry
 media_player:
   - platform: speaker
     announcement_pipeline:
       speaker: announcment_spk_id
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
 
   - **speaker** (**Required**, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the audio.
-  - **format** (*Optional*, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of `FLAC`  , `MP3`  , `WAV`  , or `NONE`  . `NONE`   disables transcoding in Home Assistant. Defaults to `FLAC`  .
-  - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker`   component. Defaults to the speaker's sample rate.
-  - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1`   or `2`  . Defaults to the speaker's number of channels.
+  - **format** (*Optional*, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant. Defaults to `FLAC`.
+  - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate.
+  - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
 
-- **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`  .
-- **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000`   and `4000000`  . Defaults to `1000000`  .
-- **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to `true`  .
-- **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`  .
-- **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up`   and `media_player.volume_down`   actions will increase or decrease volume by. Defaults to `5%`  .
-- **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to `50%`  .
-- **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`  .
-- **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`  .
+- **media_pipeline** (*Optional*, Pipeline Schema): Configuration settings for the media pipeline. Same options as the `announcement_pipeline`.
+- **buffer_size** (*Optional*, positive integer): The buffer size in bytes for each pipeline. Must be between `4000` and `4000000`. Defaults to `1000000`.
+- **codec_support_enabled** (*Optional*, boolean): Enables the MP3 and FLAC decoders and optimizes the WiFi configuration for streaming high quality audio. Defaults to `true`.
+- **task_stack_in_psram** (*Optional*, boolean): Run the audio tasks in external memory. Defaults to `false`.
+- **volume_increment** (*Optional*, percentage): Increment amount that the `media_player.volume_up` and `media_player.volume_down` actions will increase or decrease volume by. Defaults to `5%`.
+- **volume_initial** (*Optional*, percentage): The default volume that mediaplayer uses for first boot where a volume has not been previously saved. Defaults to `50%`.
+- **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
+- **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`.
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
-    - **id** (**Required**, [ID](#config-id)): Unique ID for the file.
-    - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
+  - **id** (**Required**, [ID](#config-id)): Unique ID for the file.
+  - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
 - **on_mute** (*Optional*, [Automation](#automation)): An automation to perform when muted.
 - **on_unmute** (*Optional*, [Automation](#automation)): An automation to perform when unmuted.
 - **on_volume** (*Optional*, [Automation](#automation)): An automation to perform when the volume is changed.
@@ -66,7 +65,7 @@ media_player:
 
 ## Example Configuration
 
-This example outputs audio to an  {{< docref "/components/speaker/i2s_audio" "I²S Audio Speaker" >}} configured with a 48000 Hz sample rate. It uses a `mixer`   speaker component to handle combining the two different pipelines, and it uses `resampler`   speaker components to ensure the source speakers uses the same sample rate.
+This example outputs audio to an {{< docref "/components/speaker/i2s_audio" "I²S Audio Speaker" >}} configured with a 48000 Hz sample rate. It uses a `mixer` speaker component to handle combining the two different pipelines, and it uses `resampler` speaker components to ensure the source speakers uses the same sample rate.
 
 It adds a switch for playing an on-device file for an alarm notification. Any playing media is ducked while the alarm is activated. After the alarm is turned off, the media ducking will gradually stop.
 
@@ -141,13 +140,13 @@ switch:
                 - wait_until:
                     not:
                       media_player.is_announcing:
-
 ```
+
 ## Automations
 
 {{< anchor "media_player-speaker-play_on_device_media_file" >}}
 
-### `media_player.speaker.play_on_device_media_file`   Action
+### `media_player.speaker.play_on_device_media_file` Action
 
 This action will play a on-device media file.
 
@@ -160,37 +159,37 @@ on_...:
   - media_player.speaker.play_on_device_media_file:
       media_file: wake_word_trigger_sound
       announcement: true
-
 ```
+
 Configuration variables:
 
 - **media_file** (**Required**, [ID](#config-id)): The ID of the media file.
-- **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to `false`  .
-- **enqueue** (*Optional*, boolean): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`  .
+- **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to `false`.
+- **enqueue** (*Optional*, boolean): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`.
 
 {{< anchor "media_player-speaker-performance" >}}
 
 ## Performance
 
-Decoding audio files is CPU and memory intensive. PSRAM external memory is strongly recommended. To use the component on a memory constrained device, define only the announcement pipeline, decrease the buffer size, set `codec_support_enabled`   to false, and set the pipeline transcode setting format to `WAV`   with a low sample rate and only 1 channel.
+Decoding audio files is CPU and memory intensive. PSRAM external memory is strongly recommended. To use the component on a memory constrained device, define only the announcement pipeline, decrease the buffer size, set `codec_support_enabled` to false, and set the pipeline transcode setting format to `WAV` with a low sample rate and only 1 channel.
 
 In general, decoding FLAC has the lowest CPU usage, but requires a strong WiFi connection. Decoding MP3 requires less data to be sent over WiFi but is more CPU intensive to decode. Decoding WAV is only recommended at low sample rates if streamed over a network connection.
 
 Increasing the buffer size may reduce stuttering, but do not set it to the entire size of the external memory. Each pipeline allocates the configured amount, and this setting also does not take into account other smaller buffers allocated throughout the audio stack.
 
-Only set `task_stack_in_psram`   to true if you have many components configured and your logs show that memory allocation failed. It is slower, especially if your PSRAM doesn't support `octal`   mode.
+Only set `task_stack_in_psram` to true if you have many components configured and your logs show that memory allocation failed. It is slower, especially if your PSRAM doesn't support `octal` mode.
 
 {{< anchor "media_player-speaker-troubleshooting" >}}
 
 ## Troubleshooting
 
-While you are troubleshooting, simplify your setup as much as possible . Only configure the `announcement_pipeline`   and do not use `resampler`   or `mixer`   speakers.
+While you are troubleshooting, simplify your setup as much as possible. Only configure the `announcement_pipeline` and do not use `resampler` or `mixer` speakers.
 
 If you can't hear anything, check whether your hardware requires a GPIO pin to be high or low to enable the speaker. Verify you have the correct speaker channel configured: try setting your speaker configuration to stereo if you are unsure which channels are available.
 
-If the audio quality is poor, check your output speaker configuration. Experiment with the bits per sample, channels, and sample rate settings. In general, higher sample rates improve audio quality: try using `44100`   Hz or `48000`   Hz instead of `16000`   Hz.
+If the audio quality is poor, check your output speaker configuration. Experiment with the bits per sample, channels, and sample rate settings. In general, higher sample rates improve audio quality: try using `44100` Hz or `48000` Hz instead of `16000` Hz.
 
-If there is a noticeable delay before a pause command takes effect, reduce the buffer duration in the output speaker. Be sure to adjust both the hardware speaker component settings and the `mixer`   speaker component settings, if used.
+If there is a noticeable delay before a pause command takes effect, reduce the buffer duration in the output speaker. Be sure to adjust both the hardware speaker component settings and the `mixer` speaker component settings, if used.
 
 ## See also
 
@@ -198,4 +197,3 @@ If there is a noticeable delay before a pause command takes effect, reduce the b
 - {{< docref "/components/speaker/mixer" >}}
 - {{< docref "/components/speaker/resampler" >}}
 - {{< docref "index/" >}}
-

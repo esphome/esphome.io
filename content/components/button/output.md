@@ -7,9 +7,7 @@ params:
     image: upload.svg
 ---
 
-
-
-The `output`   button platform allows you to use any output component as a button. This can for example be used to
+The `output` button platform allows you to use any output component as a button. This can for example be used to
 momentarily set a GPIO pin using a button.
 
 {{< img src="generic-ui.png" alt="Image" width="80.0%" class="align-center" >}}
@@ -26,9 +24,9 @@ button:
     name: "Generic Output"
     output: output1
     duration: 500ms
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **output** (**Required**, [ID](#config-id)): The ID of the output component to use.
 - **duration** (**Required**, [Time](#config-time)): How long the output should be set when the button is pressed.
@@ -40,8 +38,8 @@ pressed. To invert this behaviour and have the pin pulled low when the button is
 in the [Pin Schema](#config-pin_schema).
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/output" >}}
 - {{< apiref "output/button/output_button.h" "output/button/output_button.h" >}}
-

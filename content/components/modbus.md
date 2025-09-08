@@ -6,19 +6,17 @@ params:
     description: Instructions for setting up Modbus in ESPHome.
 ---
 
-
 {{< anchor "modbus" >}}
-
 
 The Modbus protocol is used by many consumer and industrial devices for communication.
 This component allows components in ESPHome to communicate to those devices via RTU protocol. You can access the coils, inputs, holding, read registers from your devices as sensors, switches, selects, numbers or various other ESPHome components and present them to your favorite Home Automation system. You can even write them as binary or float ouptputs from ESPHome.
 
 The various sub-components implement some of the Modbus functions below (depending on their required functionality):
 
-| Function Code | Description |
-|---|---|
-| 1 | Read Coil Status |
-| 2 | Read Discrete input Status |
+| Function Code | Description                |
+| ------------- | -------------------------- |
+| 1             | Read Coil Status           |
+| 2             | Read Discrete input Status |
 | 3 | Read Holding Registers |
 | 4 | Read Input Registers |
 | 5 | Write Single Coil |
@@ -34,9 +32,9 @@ uart:
   ...
 
 modbus:
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
@@ -51,11 +49,12 @@ modbus:
   Set this value to the maximum time required for the slowest device on the bus to begin responding (time to first byte).
   If a device starts responding within this time, the next command will be queued and sent after the response is finished, no matter how long the response.
 
-- **disable_crc** (*Optional*, boolean): Ignores a bad CRC if set to `true`  . Defaults to `false`
+- **disable_crc** (*Optional*, boolean): Ignores a bad CRC if set to `true`. Defaults to `false`
 
-- **role** (*Optional*, string): The role of this component, `client`   or `server`  . Defaults to `client`  .
+- **role** (*Optional*, string): The role of this component, `client` or `server`. Defaults to `client`.
 
 ## See Also
+
 - {{< docref "/components/modbus_controller" >}}
 - {{< docref "/components/sensor/modbus_controller" >}}
 - {{< docref "/components/binary_sensor/modbus_controller" >}}
@@ -67,4 +66,3 @@ modbus:
 - [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)
 - [UART Bus](#uart)
 - {{< apiref "modbus/modbus.h" "modbus/modbus.h" >}}
-

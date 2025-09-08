@@ -3,8 +3,6 @@ description: "Sigma-Delta Output"
 title: "Sigma-Delta Output"
 ---
 
-
-
 This component uses [sigma-delta modulation](https://en.wikipedia.org/wiki/Delta-sigma_modulation)
 to output a floating-point value on a binary output. Unlike with {{< docref "/components/output/slow_pwm" >}},
 it is possible to update the output value with each update cycle, not just at the end of a longer period.
@@ -19,12 +17,12 @@ restricting the update rate.
 A *sigma-delta* output is updated during each cycle, thus a higher precision can be achieved, without
 being constrained by a calculation timeframe (=period).
 
-So instead of having to define a `period`   where the width of the pulse determines the output level, here you
-choose an `update_interval`   which acts like a clock signal from where the pulse density determines the output level.
+So instead of having to define a `period` where the width of the pulse determines the output level, here you
+choose an `update_interval` which acts like a clock signal from where the pulse density determines the output level.
 
-This component can be used as a drop-in replacement for {{< docref "/components/output/slow_pwm" >}} by changing the `platform`   to
-`sigma_delta_output`   and changing `period`   to `update_interval`   (you usually want to set the *sigma-delta*'s
-`update_interval`   as a fraction of *Slow PWM*'s `period`   for similar results)
+This component can be used as a drop-in replacement for {{< docref "/components/output/slow_pwm" >}} by changing the `platform` to
+`sigma_delta_output` and changing `period` to `update_interval` (you usually want to set the *sigma-delta*'s
+`update_interval` as a fraction of *Slow PWM*'s `period` for similar results)
 
 ```yaml
 # Example configuration entry
@@ -47,30 +45,31 @@ output:
   - platform: gpio
     pin: GPIOXX
     id: heater_relay
-
 ```
+
 Configuration variables:
 
 - **update_interval** (**Required**, [Time](#config-time)): The cycle interval at which the output is recalculated.
 - **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to pulse.
-- **state_change_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is switched. If a lambda is used the boolean `state`   parameter holds the new status.
+- **state_change_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is switched. If a lambda is used the boolean `state` parameter holds the new status.
 - **turn_on_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned on. Can be used to control for example a switch or output component.
-- **turn_off_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned off. `turn_on_action`   and `turn_off_action`   must be configured together.
+- **turn_off_action** (*Optional*, [Automation](#automation)): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_action` must be configured together.
 - All options from [Output](#config-output).
 
 {{< note >}}
-- If `pin`   is defined, the GPIO pin state is writen before any action is executed.
-- `state_change_action`   and `turn_on_action`  /`turn_off_action`   can be used togther. `state_change_action`   is called before `turn_on_action`  /`turn_off_action`  . It's recommended to use either `state_change_action`   or `turn_on_action`  /`turn_off_action`   to change the state of an output. Using both automations together is only recommended for monitoring.
 
+- If `pin` is defined, the GPIO pin state is writen before any action is executed.
+- `state_change_action` and `turn_on_action`  /`turn_off_action` can be used togther. `state_change_action` is called before `turn_on_action`  /`turn_off_action`. It's recommended to use either `state_change_action` or `turn_on_action`  /`turn_off_action` to change the state of an output. Using both automations together is only recommended for monitoring.
 
 {{< /note >}}
 {{< note >}}
 If the output must not be active for more than some fixed time before it has
 to be off for a while to e.g. cool down, {{< docref "/components/output/slow_pwm" >}}
-should be used with a `max_power`   setting to better control the duty
+should be used with a `max_power` setting to better control the duty
 cycle.
 
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/output" >}}
@@ -82,4 +81,3 @@ cycle.
 - {{< docref "/components/power_supply" >}}
 - [Sigma-Delta](https://en.wikipedia.org/wiki/Delta-sigma_modulation)
 - {{< apiref "sigma_delta_output/sigma_delta_output.h" "sigma_delta_output/sigma_delta_output.h" >}}
-

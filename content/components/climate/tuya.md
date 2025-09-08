@@ -7,9 +7,7 @@ params:
     image: air-conditioner.svg
 ---
 
-
-
-The `tuya`   climate platform creates a climate device from a tuya component.
+The `tuya` climate platform creates a climate device from a tuya component.
 
 Tuya climate requires a {{< docref "/components/tuya" >}} to be configured.
 
@@ -24,8 +22,8 @@ Tuya climate requires a {{< docref "/components/tuya" >}} to be configured.
 [11:45:14][C][tuya:062]:   Datapoint 102: enum (value: 0)
 [11:45:14][C][tuya:062]:   Datapoint 103: enum (value: 1)
 [11:45:14][C][tuya:074]:   Product: 'N8bUqOZ8HBQjU0K02.0.1'
-
 ```
+
 On this controller (BAC-002-ELW), the data points are:
 
 - 1 represents the climate on/off state.
@@ -63,48 +61,48 @@ climate:
       eco:
         datapoint: 5
         temperature: 28
-
 ```
-## Configuration variables:
 
-- **supports_heat** (*Optional*, boolean): Specifies if the device has a heating mode. Defaults to `true`  .
-- **supports_cool** (*Optional*, boolean): Specifies if the device has a cooling mode. Defaults to `false`  .
+## Configuration variables
+
+- **supports_heat** (*Optional*, boolean): Specifies if the device has a heating mode. Defaults to `true`.
+- **supports_cool** (*Optional*, boolean): Specifies if the device has a cooling mode. Defaults to `false`.
 - **switch_datapoint** (**Required**, int): The datapoint id number of the climate switch (device on/off).
 - **active_state** (*Optional*): Configuration for the Active State detection (or HVAC mode setting and reporting).
 
-    - **datapoint** (**Required**, int): The datapoint id number of the active state - [see below](#active_state_detection).
-    - **heating_value** (*Optional*, int): The active state datapoint value when in heating mode. Defaults to `1`   - [see below](#active_state_detection).
-    - **cooling_value** (*Optional*, int): The active state datapoint value when in cooling mode - [see below](#active_state_detection).
-    - **drying_value** (*Optional*, int): The active state datapoint value when in drying mode.
-    - **fanonly_value** (*Optional*, int): The active state datapoint value when in fan-only mode.
+  - **datapoint** (**Required**, int): The datapoint id number of the active state - [see below](#active_state_detection).
+  - **heating_value** (*Optional*, int): The active state datapoint value when in heating mode. Defaults to `1` - [see below](#active_state_detection).
+  - **cooling_value** (*Optional*, int): The active state datapoint value when in cooling mode - [see below](#active_state_detection).
+  - **drying_value** (*Optional*, int): The active state datapoint value when in drying mode.
+  - **fanonly_value** (*Optional*, int): The active state datapoint value when in fan-only mode.
 - **preset** (*Optional*): Configuration for presets.
 
-    - **eco** (*Optional*): Configuration for Eco preset.
+  - **eco** (*Optional*): Configuration for Eco preset.
 
-        - **datapoint** (**Required**, int): The datapoint id number of the Eco action.
-        - **temperature** (*Optional*, int): Temperature setpoint for Eco preset.
-    - **sleep** (*Optional*): Configuration for Sleep preset
+    - **datapoint** (**Required**, int): The datapoint id number of the Eco action.
+    - **temperature** (*Optional*, int): Temperature setpoint for Eco preset.
+  - **sleep** (*Optional*): Configuration for Sleep preset
 
-        - **datapoint** (**Required**, int): The Datapoint id number of the Sleep Action
+    - **datapoint** (**Required**, int): The Datapoint id number of the Sleep Action
 - **swing_mode** (*Optional*): Configuration for the swing (oscillation) modes.
 
-    - **vertical_datapoint** (*Optional*, int): The datapoint id number of the vertical swing action.
-    - **horizontal_datapoint** (*Optional*, int): The datapoint id number of the horizontal swing action.
+  - **vertical_datapoint** (*Optional*, int): The datapoint id number of the vertical swing action.
+  - **horizontal_datapoint** (*Optional*, int): The datapoint id number of the horizontal swing action.
 - **fan_mode** (*Optional*): Configuration for fan modes/fan speeds.
 
-    - **datapoint** (**Required**, int): The datapoint id number of the Fan value state.
-    - **auto_value** (*Optional*, int): The datapoint value the device reports when the fan is on `auto`   speed.
-    - **low_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `low`   speed.
-    - **medium_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `medium`   speed.
-    - **middle_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `middle`   speed. (May set to device's `high`   value if you have a `Turbo`   option).
-    - **high_value** (*Optional*, int):  The datapoint value the device reports when the fan is on `high`   speed. (Sometimes called `Turbo`  ).
+  - **datapoint** (**Required**, int): The datapoint id number of the Fan value state.
+  - **auto_value** (*Optional*, int): The datapoint value the device reports when the fan is on `auto` speed.
+  - **low_value** (*Optional*, int): The datapoint value the device reports when the fan is on `low` speed.
+  - **medium_value** (*Optional*, int): The datapoint value the device reports when the fan is on `medium` speed.
+  - **middle_value** (*Optional*, int): The datapoint value the device reports when the fan is on `middle` speed. (May set to device's `high` value if you have a `Turbo` option).
+  - **high_value** (*Optional*, int): The datapoint value the device reports when the fan is on `high` speed. (Sometimes called `Turbo`  ).
 - **heating_state_pin** (*Optional*, [Pin](#config-pin)): The input pin indicating that the device is heating - [see below](#active_state_detection). Only used if **active_state_datapoint** is not configured.
 - **cooling_state_pin** (*Optional*, [Pin](#config-pin)): The input pin indicating that the device is cooling - [see below](#active_state_detection). Only used if **active_state_datapoint** is not configured.
 - **target_temperature_datapoint** (**Required**, int): The datapoint id number of the target temperature.
 - **current_temperature_datapoint** (**Required**, int): The datapoint id number of the current temperature.
 - **temperature_multiplier** (*Optional*, float): A multiplier to modify the incoming and outgoing temperature values - [see below](#temperature-multiplier).
 
-- **reports_fahrenheit** (*Optional*, boolean): Set to `true`   if the device reports temperatures in Fahrenheit. ESPHome expects all climate temperatures to be in Celcius, otherwise unexpected conversions will take place when it is published to Home Assistant. Defaults to `false`  .
+- **reports_fahrenheit** (*Optional*, boolean): Set to `true` if the device reports temperatures in Fahrenheit. ESPHome expects all climate temperatures to be in Celcius, otherwise unexpected conversions will take place when it is published to Home Assistant. Defaults to `false`.
 
 If the device has different multipliers for current and target temperatures, **temperature_multiplier** can be replaced with both of:
 
@@ -123,8 +121,8 @@ If your device uses a data point for HVAC mode, but not for reporting the active
 
 If none of the above variables are set, the active state is inferred from the difference between the current and target temperatures:
 
-- If **supports_heat** is `True`   and the current temperature is more than 1 °C below the target temperature, the device is expected to be heating.
-- If **supports_cool** is `True`   and the current temperature is more than 1 °C above the target temperature, the device is expected to be cooling.
+- If **supports_heat** is `True` and the current temperature is more than 1 °C below the target temperature, the device is expected to be heating.
+- If **supports_cool** is `True` and the current temperature is more than 1 °C above the target temperature, the device is expected to be cooling.
 
 {{< anchor "temperature-multiplier" >}}
 
@@ -138,4 +136,3 @@ integers for data reporting and to get a .5 temperature you need to divide by 2 
 - {{< docref "/components/tuya" >}}
 - {{< docref "/components/climate" >}}
 - {{< apiref "tuya/climate/tuya_climate.h" "tuya/climate/tuya_climate.h" >}}
-

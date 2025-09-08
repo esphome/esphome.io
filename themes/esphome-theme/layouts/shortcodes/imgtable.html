@@ -35,9 +35,9 @@
         {{ range $i, $param := . | after 3 }}
             {{ if eq $param "dark-invert" }}
                 {{ $class = $param }}
-            {{ else if $caption }}
-                {{ $caption = printf "%s %s" $class $param }}
-            {{ else }}
+            {{ else if and (ne $caption "") (ne $param "") }}
+                {{ $caption = printf "%s & %s" $caption $param }}
+            {{ else if ne $param "" }}
                 {{ $caption = $param }}
             {{ end }}
         {{ end }}

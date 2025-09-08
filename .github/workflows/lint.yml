@@ -33,6 +33,10 @@ jobs:
     - name: Register problem matchers
       run: |
         echo "::add-matcher::.github/workflows/matchers/ci-custom.json"
-
+    - name: markdownlint-cli
+      uses: nosborn/github-action-markdown-cli@v3.5.0
+      with:
+        config_file: ".markdownlintrc"
+        files: .
     - name: Lint
       run: python lint.py

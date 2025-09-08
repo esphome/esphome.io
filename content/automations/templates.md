@@ -7,9 +7,7 @@ params:
     image: auto-fix.svg
 ---
 
-
 {{< anchor "config-lambda" >}}
-
 
 *Templates* (also known as *lambdas*) allow you to do almost *anything* in ESPHome. For example, if you want to only
 perform a certain automation if a certain complex formula evaluates to true, you can do that with templates. Let's look
@@ -29,43 +27,43 @@ cover:
       } else {
         return COVER_CLOSED;
       }
-
 ```
+
 What's happening here? First, we define a binary sensor (notably with `id: top_end_stop`  ) and then a
-{{< docref "/components/cover/template" "template cover" >}}. (If you're new to Home Assistant, a 'cover' is something like a
-window blind, a roller shutter, or a garage door.) The *state* of the template cover is controlled by a template, or
-"lambda". In lambdas, you're just writing C++ code and therefore the name lambda is used instead of Home Assistant's
+{{< docref "/components/cover/template" "template cover" >}}. (If you're new to Home Assistant, a 'cover' is something
+like a window blind, a roller shutter, or a garage door.) The *state* of the template cover is controlled by a template,
+or "lambda". In lambdas, you're just writing C++ code and therefore the name lambda is used instead of Home Assistant's
 "template" lingo to avoid confusion. Regardless, don't let lambdas scare you just because you saw "C++" -- writing
 lambdas is not that hard! Here's a bit of a primer:
 
-First, you might have already wondered what the `lambda: !lambda |-`   part is supposed to mean. `!lambda`   tells
+First, you might have already wondered what the `lambda: !lambda |-` part is supposed to mean. `!lambda` tells
 ESPHome that the following block is supposed to be interpreted as a lambda, or C++ code. Note that here, the
-`lambda:`   key would actually implicitly make the following block a lambda, so in this context, you could also have
-written `lambda: |-`  .
+`lambda:` key would actually implicitly make the following block a lambda, so in this context, you could also have
+written `lambda: |-`.
 
-Next, there's the weird `|-`   character combination. This tells the YAML parser to treat the following **indented**
+Next, there's the weird `|-` character combination. This tells the YAML parser to treat the following **indented**
 block as plaintext. Without it, the YAML parser would attempt to read the following block as if it were made up of YAML
-keys like `cover:`   for example. (You may also have seen variations of this like `>-`   or just `|`   or `>`  . There
+keys like `cover:` for example. (You may also have seen variations of this like `>-` or just `|` or `>`. There
 is a slight difference in how these different styles deal with whitespace, but for our purposes we can ignore that).
 
-With `if (...) { ... } else { ... }`   we create a *condition*. What this effectively says that if the thing inside the
-first parentheses evaluates to `true`   then execute the first block (in this case `return COVER_OPEN;`  , or else
-evaluate the second block. `return ...;`   makes the code block give back a value to the template. In this case, we're
-either *returning* `COVER_OPEN`   or `COVER_CLOSED`   to indicate that the cover is closed or open.
+With `if (...) { ... } else { ... }` we create a *condition*. What this effectively says that if the thing inside the
+first parentheses evaluates to `true` then execute the first block (in this case `return COVER_OPEN;`, or else
+evaluate the second block. `return ...;` makes the code block give back a value to the template. In this case, we're
+either *returning* `COVER_OPEN` or `COVER_CLOSED` to indicate that the cover is closed or open.
 
-Finally, `id(...)`   is a helper function that makes ESPHome fetch an object with the supplied ID (which you defined
+Finally, `id(...)` is a helper function that makes ESPHome fetch an object with the supplied ID (which you defined
 somewhere else, like `top_end_stop`  ) and lets you call any of ESPHome's many APIs directly. For example, here we're
-retrieving the current state of the end stop using `.state`   and using it to construct our cover state.
+retrieving the current state of the end stop using `.state` and using it to construct our cover state.
 
 {{< note >}}
 ESPHome does not check the validity of lambda expressions you enter and will blindly copy them into the generated
 C++ code. If compilation fails or something else is not working as expected with lambdas, it's always best to look
-at the generated C++ source file under `<NODE_NAME>/src/main.cpp`  .
+at the generated C++ source file under `<NODE_NAME>/src/main.cpp`.
 
 {{< /note >}}
 {{< tip >}}
 To store local variables inside lambdas that retain their value across executions, you can create `static`
-variables as shown in the example below. Here, the variable `num_executions`   is incremented by one each time the
+variables as shown in the example below. Here, the variable `num_executions` is incremented by one each time the
 lambda is executed and the current value is logged.
 
 ```yaml
@@ -73,8 +71,8 @@ lambda: |-
   static int num_executions = 0;
   ESP_LOGD("main", "I am at execution number %d", num_executions);
   num_executions += 1;
-
 ```
+
 {{< /tip >}}
 {{< anchor "config-templatable" >}}
 
@@ -95,8 +93,8 @@ on_press:
           // The sensor outputs values from 0 to 100. The blue
           // part of the light color will be determined by the sensor value.
           return id(some_sensor).state / 100.0;
-
 ```
+
 When you see the label "templatable" in the documentation for a given action, it can be templated as in this example,
 using the lambda syntax as described/shown above.
 
@@ -115,4 +113,3 @@ using the lambda syntax as described/shown above.
 
 - {{< docref "index/" >}}
 - {{< docref "actions/" >}}
-

@@ -7,8 +7,6 @@ params:
     image: folder-open.svg
 ---
 
-
-
 {{< note >}}
 To attach a physical button to ESPHome, see
 {{< docref "/components/binary_sensor/gpio" "GPIO Binary Sensor" >}}.
@@ -39,8 +37,8 @@ button:
     icon: "mdi:emoticon-outline"
     on_press:
       - logger.log: "Button pressed"
-
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
@@ -48,27 +46,32 @@ Configuration variables:
 
 {{< note >}}
 If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the button to use that name, you can set `name: None`  .
+you want the button to use that name, you can set `name: None`.
 
 {{< /note >}}
+
 - **icon** (*Optional*, icon): Manually set the icon to use for the button in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
-  not be exposed to the frontend (like Home Assistant). Only specifying an `id`   without
-  a `name`   will implicitly set this to true.
+  not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
+  a `name` will implicitly set this to true.
+
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI).
+
 - **entity_category** (*Optional*, string): The category of the entity.
-  See https://developers.home-assistant.io/docs/core/entity/#generic-properties
-  for a list of available options. Set to `""`   to remove the default entity category.
+  See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
+  for a list of available options. Set to `""` to remove the default entity category.
+
 - **device_class** (*Optional*, string): The device class for the button.
-  See https://www.home-assistant.io/integrations/button/#device-class
+  See <https://www.home-assistant.io/integrations/button/#device-class>
   for a list of available options.
+
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 Automations:
 
 - **on_press** (*Optional*, [Automation](#automation)): An automation to perform
-  when the button is pressed. See [`on_press`  ](#button-on_press).
+  when the button is pressed. See [`on_press`](#button-on_press).
 
 MQTT options:
 
@@ -89,20 +92,20 @@ button:
     on_press:
       then:
         - logger.log: Button Pressed
-
 ```
+
 Configuration variables: see [Automation](#automation).
 
 {{< anchor "button-press_action" >}}
 
-### `button.press`   Action
+### `button.press` Action
 
 This is an [Action](#config-action) for pressing a button in an Automation.
 
 ```yaml
 - button.press: my_button
-
 ```
+
 Configuration variables:
 
 - **id** (**Required**, [ID](#config-id)): The ID of the button to set.
@@ -125,9 +128,8 @@ From [lambdas](#config-lambda), you can press a button.
 ```cpp
     // Within lambda, press the button.
     id(my_button).press();
-
 ```
+
 ## See Also
 
 - {{< apiref "button/button.h" "button/button.h" >}}
-

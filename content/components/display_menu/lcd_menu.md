@@ -7,13 +7,11 @@ params:
     image: lcd_menu.png
 ---
 
-
 {{< anchor "lcd_menu" >}}
-
 
 The component provides an infrastructure for setting up a hierarchical menu
 on character based LCD displays. This offers the user an interactive method to display
-labels, control entities like `switch`  , `select`  , `number`    available locally on the
+labels, control entities like `switch`, `select`, `number`  available locally on the
 ESPHome node, without the requirement of a network connection.
 
 {{< img src="lcd_menu.png" alt="Image" width="60.0%" class="align-center" >}}
@@ -27,9 +25,9 @@ with a button or a five-button joystick controller.
 The component needs to be connected to an instance of a character based LCD display, which
 like [lcd_pcf8574 Component](#lcd-pcf8574) or [lcd_gpio Component](#lcd-gpio). For the best results the GPIO connection is
 recommended; the I²C one running at the speed according to the datasheet (usually `100`
-kHz) or even ESPHome default (`50`   kHz) will create perceptible delays especially when
-changing a numeric value using the rotary encoder. Most `PCF8574`   adapters used with
-these displays will happily run at `200`   or even `400`   kHz though so if you are comfortable
+kHz) or even ESPHome default (`50` kHz) will create perceptible delays especially when
+changing a numeric value using the rotary encoder. Most `PCF8574` adapters used with
+these displays will happily run at `200` or even `400` kHz though so if you are comfortable
 accepting risks from running your hardware out of spec, you might want to try that
 in your [I²C Bus](#i2c) configuration.
 
@@ -89,22 +87,25 @@ binary_sensor:
       - delayed_off: 30ms
     on_press:
       - display_menu.enter:
-
 ```
+
 Configuration variables:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **display_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the LCD display.
 - **mark_back** (*Optional*, 0-255): Code of the character used to mark menu items going back
   one level. As the character set lacks a good looking back arrow, using a user defined character
-  is advisable (use `8`   to reference one at  position `0`   to avoid problems with zeros
-  in a string). Defaults to `0x5e`   (`^`  ).
+  is advisable (use `8` to reference one at position `0` to avoid problems with zeros
+  in a string). Defaults to `0x5e` (`^`  ).
+
 - **mark_selected** (*Optional*, 0-255): Code of the character used to mark menu item selected.
-  Defaults to `0x3e`   (`>`  ).
+  Defaults to `0x3e` (`>`  ).
+
 - **mark_editing** (*Optional*, 0-255): Code of the character used to mark menu item editing mode.
-  Defaults to `0x2a`   (`*`  ).
+  Defaults to `0x2a` (`*`  ).
+
 - **mark_submenu** (*Optional*, 0-255): Code of the character used to mark menu item leading to a
-  submenu. Defaults to `0x7e`   (a right arrow).
+  submenu. Defaults to `0x7e` (a right arrow).
 
 The rest of the configuration is described in the [Display Menu](#display_menu) component.
 The menu inherits the dimensions of the connected LCD display and uses the entire area.
@@ -118,4 +119,3 @@ The menu inherits the dimensions of the connected LCD display and uses the entir
 - {{< docref "/components/sensor/rotary_encoder" >}}
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "lcd_menu/lcd_menu.h" "lcd_menu/lcd_menu.h" >}}
-

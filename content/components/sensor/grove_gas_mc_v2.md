@@ -7,9 +7,7 @@ params:
     image: grove-gas-mc-v2.png
 ---
 
-
-
-The `grove_gas_mc_v2`   sensor platform allows you to use your [Grove Multichannel GasSensor V2](https://wiki.seeedstudio.com/Grove-Multichannel-Gas-Sensor-V2)
+The `grove_gas_mc_v2` sensor platform allows you to use your [Grove Multichannel GasSensor V2](https://wiki.seeedstudio.com/Grove-Multichannel-Gas-Sensor-V2)
 with ESPHome. It exposes 4 different gas sensors for qualitatively measuring
 Nitrogen Dioxide (NO2), Carbon Monoxide (CO), Ethanol (C2H5OH), and Volatile Organic
 Compounds (VOCs).
@@ -24,7 +22,7 @@ for any of the gases, [Sensor Filters](#sensor-filters) could be used to calibra
 {{< img src="grove-gas-mc-v2.png" alt="Image" caption="Grove Multichannel Gas Sensor V2" width="50.0%" class="align-center" >}}
 
 The communication with this sensor is done via [I²C Bus](#i2c), so you need to have
-an `i2c:`   section in your config for this integration to work.
+an `i2c:` section in your config for this integration to work.
 
 ```yaml
 sensor:
@@ -37,21 +35,24 @@ sensor:
       name: "Carbon Monoxide"
     tvoc:
       name: "Volatile Organic Compounds"
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **nitrogen_dioxide** (**Required**): The Nitrogen Dioxide sensor data.
   All options from [Sensor](#config-sensor).
+
 - **ethanol** (**Required**): The Ethanol (C2H5OH) sensor data.
   All options from [Sensor](#config-sensor).
+
 - **carbon_monoxide** (**Required**): The Carbon Monoxide sensor data.
   All options from [Sensor](#config-sensor).
+
 - **tvoc** (**Required**): The Total Volatile Organic Compounds (TVOC) sensor data.
   All options from [Sensor](#config-sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`  .
+  sensor. Defaults to `60s`.
 
 Advanced:
 
@@ -75,4 +76,3 @@ than 6 months.
 - [Sensor Filters](#sensor-filters)
 - [Grove Multichannel V2 Library](https://github.com/Seeed-Studio/Seeed_Arduino_MultiGas)
 - {{< apiref "grove_gas_mc_v2/grove_gas_mc_v2.h" "grove_gas_mc_v2/grove_gas_mc_v2.h" >}}
-

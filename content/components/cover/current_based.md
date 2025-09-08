@@ -7,9 +7,7 @@ params:
     image: window-open.svg
 ---
 
-
-
-The `current_based`   cover platform allows you to create covers with position control by using current
+The `current_based` cover platform allows you to create covers with position control by using current
 sensors to detect the fully-open and fully-closed states. This is pretty useful when using motors with
 integrated mechanical endstops. During cover operation, the component monitors the current consumption
 to detect when the motor has stopped.
@@ -31,6 +29,7 @@ Verify your setup to ensure the current consumption will increase enough to be d
 any physical damage. Use it at your own risk.
 
 {{< /warning >}}
+
 ```yaml
 # Example configuration entry
 cover:
@@ -57,42 +56,55 @@ cover:
 
     obstacle_rollback: 30%
     start_sensing_delay: 0.8s
-
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **open_sensor** (**Required**, [ID](#config-id)): The open current sensor.
 - **open_action** (**Required**, [Action](#config-action)): The action that should
   be performed when the remote requests the cover to be opened.
+
 - **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to open up from the fully-closed state.
+
 - **open_moving_current_threshold** (**Required**, float): The amount of current in Amps the motor
   should drain to consider the cover is opening.
+
 - **open_obstacle_current_threshold** (**Required**, float): The amount of current in Amps the motor
   should drain to consider the cover is blocked during opening.
+
 - **close_sensor** (**Required**, [ID](#config-id)): The close current sensor.
 - **close_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when the remote requests the cover to be closed.
+
 - **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to close from the fully-open state.
+
 - **close_moving_current_threshold** (**Required**, float): The amount of current in Amps the motor
   should drain to consider the cover is closing.
+
 - **close_obstacle_current_threshold** (**Required**, float): The amount of current in Amps the motor
   should drain to consider the cover is blocked during closing.
+
 - **stop_action** (**Required**, [Action](#config-action)): The action that should
   be performed to stop the cover.
+
 - **max_duration** (*Optional*, [Time](#config-time)): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional motor integrated endstops.
+
 - **start_sensing_delay** (*Optional*, [Time](#config-time)): The amount of time the current sensing will be
   disabled when the movement starts. Motors can take some time before reaching their average consumption.
   Low values can cause an immediate stop because of the first current reading happening in the current-rising period.
-  Defaults to `500ms`  .
+  Defaults to `500ms`.
+
 - **obstacle_rollback** (*Optional*, percentage): The percentage of rollback the cover will perform in case of
-  obstacle detection. Defaults to `10%`  .
-- **malfunction_detection** (*Optional*, boolean): Enable to detect malfunction detection (Tipically welded realys). Defaults to `True`  .
+  obstacle detection. Defaults to `10%`.
+
+- **malfunction_detection** (*Optional*, boolean): Enable to detect malfunction detection (Tipically welded realys). Defaults to `True`.
 - **malfunction_action** (*Optional*, [Action](#config-action)): The action that should
   be performed when relay malfunction is detected. Malfunction may require device servicing. You can use this action
   to notify other systems about this situation
+
 - All other options from [Cover](#config-cover).
 
 ## Use with Shelly 2.5
@@ -108,7 +120,7 @@ It is strongly recommended to monitor the device temperature using the NTC tempe
 This safety feature is also present in the original firmware.
 
 {{< warning >}}
-The ADE7953 IRQ line is connected to the GPIO16. The `irq_pin`   parameter for the {{< docref "/components/sensor/ade7953" "ADE7953" >}} MUST be
+The ADE7953 IRQ line is connected to the GPIO16. The `irq_pin` parameter for the {{< docref "/components/sensor/ade7953" "ADE7953" >}} MUST be
 set to GPIO16 to prevent device overheat (>70ºC idling).
 
 {{< /warning >}}
@@ -235,14 +247,12 @@ cover:
       then:
         - logger.log: "Malfunction detected. Relay welded."
 
-
-
 status_led:
   pin:
     number: GPIO0
     inverted: yes
-
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
@@ -250,4 +260,3 @@ status_led:
 - {{< docref "/components/sensor/ade7953" >}}
 - [Automation](#automation)
 - {{< apiref "current_based/current_based_cover.h" "current_based/current_based_cover.h" >}}
-

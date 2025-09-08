@@ -7,9 +7,7 @@ params:
     image: bedjet.png
 ---
 
-
-
-The `bedjet`   component allows you to communicate with a BedJet V3 Climate Comfort
+The `bedjet` component allows you to communicate with a BedJet V3 Climate Comfort
 Sleep System.
 
 This component supports the following functionality:
@@ -39,16 +37,17 @@ ble_client:
 bedjet:
   - id: bedjet_1
     ble_client_id: bedjet_ble_id1
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **ble_client_id** (**Required**, [ID](#config-id)): The ID of the BLE Client.
 - **time_id** (*Optional*, [ID](#config-id)): The ID of a {{< docref "/components/time" >}} which
   can be used to set the time on the BedJet device.
+
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to dispatch status
-  changes to child components. Defaults to `5s`  . Each child component can decide whether to
+  changes to child components. Defaults to `5s`. Each child component can decide whether to
   publish its own updated state on this interval, or use another (longer) update interval to
   throttle its own updates.
 
@@ -66,8 +65,8 @@ From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
           then:
           - lambda: |-
               id(bedjet_1).upgrade_firmware();
-
 ```
+
 - `.send_local_time`  : If `time_id` is set, attempt to sync the clock now.
 
 ```yaml
@@ -78,8 +77,8 @@ From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
           then:
           - lambda: |-
               id(my_bedjet_fan).send_local_time();
-
 ```
+
 - `.set_clock`  : Set the BedJet clock to a specified time; works with or without a `time_id`.
 
 ```yaml
@@ -90,11 +89,11 @@ From [lambdas](#config-lambda), you can call methods to do some advanced stuff.
           then:
           - lambda: |-
               id(my_bedjet_fan).set_clock(22, 10);
-
 ```
-## `bedjet`   Climate
 
-The `climate`   platform exposes the BedJet's climate-related functionality, including
+## `bedjet` Climate
+
+The `climate` platform exposes the BedJet's climate-related functionality, including
 setting the mode and target temperature.
 
 ```yaml
@@ -103,34 +102,38 @@ climate:
     id: my_bedjet_climate_entity
     name: "My BedJet"
     bedjet_id: bedjet_1
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **bedjet_id** (**Required**, [ID](#config-id)): The ID of the Bedjet component.
 - **heat_mode** (*Optional*, string): The primary heating mode to use for `HVACMode.HEAT`  :
 
-    - `heat`   (Default) - Setting `hvac_mode=heat`   uses the BedJet "HEAT" mode.
-    - `extended`   - Setting `hvac_mode=heat`   uses BedJet "EXT HEAT" mode.
+  - `heat` (Default) - Setting `hvac_mode=heat` uses the BedJet "HEAT" mode.
+  - `extended` - Setting `hvac_mode=heat` uses BedJet "EXT HEAT" mode.
 
     Whichever is not selected will be made available as a custom preset.
 
 - **temperature_source** (*Optional*, string): The temperature that should be used as the
   climate entity's current temperature:
 
-    - `ambient`   (Default) - The temperature of the room the BedJet is in will be
+  - `ambient` (Default) - The temperature of the room the BedJet is in will be
+
       reported as the climate entity's current temperature.
-    - `outlet`   - The temperature of the air being discharged by the BedJet will be
+
+  - `outlet` - The temperature of the air being discharged by the BedJet will be
+
       reported as the climate entity's current temperature.
+
 - All other options from [Climate](#config-climate).
 
-## `bedjet`   Fan
+## `bedjet` Fan
 
-The `fan`   platform exposes the BedJet's fan-related functionality, including
+The `fan` platform exposes the BedJet's fan-related functionality, including
 on/off and speed control.
 
 When the BedJet is already on, turning the Fan component off will set the BedJet unit's mode to
-`OFF`  . If it was not already on, it will be turned on to mode `FAN_ONLY`  .
+`OFF`. If it was not already on, it will be turned on to mode `FAN_ONLY`.
 
 ```yaml
 fan:
@@ -138,16 +141,16 @@ fan:
     id: my_bedjet_fan_entity
     name: "My BedJet Fan"
     bedjet_id: bedjet_1
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **bedjet_id** (**Required**, [ID](#config-id)): The ID of the Bedjet component.
 - Other options from [Fan](#config-fan).
 
-## `bedjet`   Sensor
+## `bedjet` Sensor
 
-The `sensor`   platform exposes the BedJet's various temperature readings as sensors.
+The `sensor` platform exposes the BedJet's various temperature readings as sensors.
 
 ```yaml
 sensor:
@@ -157,9 +160,9 @@ sensor:
       name: "My BedJet Outlet Temperature"
     ambient_temperature:
       name: "My BedJet Ambient Temperature"
-
 ```
-### Configuration variables:
+
+### Configuration variables
 
 - **outlet_temperature** (*Optional*): If specified, the temperature of the air being
   discharged from the BedJet will be reported as a sensor.
@@ -169,7 +172,7 @@ sensor:
   BedJet is in will be reported as a sensor.
   All options from [Sensor](#config-sensor).
 
-## Known issues:
+## Known issues
 
 {{< warning >}}
 BedJet V2 and other devices are not currently supported. Only BedJet V3 is supported.
@@ -200,12 +203,12 @@ ota:
       - logger.log: "Disconnecting clients for OTA update..."
       - switch.turn_off: bedjet_1_monitor
       - switch.turn_off: bedjet_2_monitor
-
 ```
+
 {{< /note >}}
+
 ## See Also
 
 - {{< docref "/components/ble_client" >}}
 - {{< docref "/components/climate" >}}
 - {{< apiref "bedjet/bedjet.h" "bedjet/bedjet.h" >}}
-

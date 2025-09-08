@@ -7,14 +7,12 @@ params:
     image: system-update.svg
 ---
 
-
-
 {{< anchor "config-ota" >}}
 
 ESPHome supports remotely updating a device "over-the-air" (OTA). Each update mechanism is a *platform* of the base
-`ota`   component and will have its own configuration variables.
+`ota` component and will have its own configuration variables.
 
-In release 2024.6.0, the `ota`   component transitioned from a standalone component to a *platform* component. This
+In release 2024.6.0, the `ota` component transitioned from a standalone component to a *platform* component. This
 change was made to facilitate the use of multiple update mechanisms, enabling greater flexibility.
 
 Available platforms:
@@ -27,22 +25,26 @@ Available platforms:
 # Example configuration entry
 ota:
   - platform: ...
-
 ```
+
 ## Platforms
 
-## Configuration variables:
+## Configuration variables
 
--  **on_begin** (*Optional*, [Automation](#automation)): An action to be performed when an OTA update is started.
-   See [`on_begin`  ](#ota-on_begin).
--  **on_progress** (*Optional*, [Automation](#automation)): An action to be performed (approximately each second)
-   while an OTA update is in progress. See [`on_progress`  ](#ota-on_progress).
--  **on_end** (*Optional*, [Automation](#automation)): An action to be performed after a successful OTA update.
-   See [`on_end`  ](#ota-on_end).
--  **on_error** (*Optional*, [Automation](#automation)): An action to be performed after a failed OTA update.
-   See [`on_error`  ](#ota-on_error).
--  **on_state_change** (*Optional*, [Automation](#automation)): An action to be performed when an OTA update state
-   change happens. See [`on_state_change`  ](#ota-on_state_change).
+- **on_begin** (*Optional*, [Automation](#automation)): An action to be performed when an OTA update is started.
+   See [`on_begin`](#ota-on_begin).
+
+- **on_progress** (*Optional*, [Automation](#automation)): An action to be performed (approximately each second)
+   while an OTA update is in progress. See [`on_progress`](#ota-on_progress).
+
+- **on_end** (*Optional*, [Automation](#automation)): An action to be performed after a successful OTA update.
+   See [`on_end`](#ota-on_end).
+
+- **on_error** (*Optional*, [Automation](#automation)): An action to be performed after a failed OTA update.
+   See [`on_error`](#ota-on_error).
+
+- **on_state_change** (*Optional*, [Automation](#automation)): An action to be performed when an OTA update state
+   change happens. See [`on_state_change`](#ota-on_state_change).
 
 {{< anchor "ota-automations" >}}
 
@@ -52,9 +54,10 @@ The OTA component provides various [automations](#automation) that can be used t
 update process. When using these automation triggers, note that:
 
 - OTA updates block the main application loop while in progress. You won't be able to represent state changes using
-  components that update their output only from within their `loop()`   method. Explained differently: if you try to
+  components that update their output only from within their `loop()` method. Explained differently: if you try to
   display the OTA progress using component X, but the update only appears after the OTA update finished, then component
   X cannot be used for providing OTA update feedback.
+
 - Your automation action(s) must not consume any significant amount of time; if they do, OTA updates may fail.
 
 {{< anchor "ota-on_begin" >}}
@@ -69,14 +72,14 @@ ota:
     on_begin:
       then:
         - logger.log: "OTA start"
-
 ```
+
 {{< anchor "ota-on_progress" >}}
 
 ### `on_progress`
 
 Using this automation, it is possible to report on the OTA update progress. It will be triggered repeatedly during the
-OTA update. You can get the actual progress percentage (a value between 0 and 100) from the trigger with variable `x`  .
+OTA update. You can get the actual progress percentage (a value between 0 and 100) from the trigger with variable `x`.
 
 ```yaml
 ota:
@@ -86,8 +89,8 @@ ota:
         - logger.log:
             format: "OTA progress %0.1f%%"
             args: ["x"]
-
 ```
+
 {{< anchor "ota-on_end" >}}
 
 ### `on_end`
@@ -105,15 +108,15 @@ ota:
     on_end:
       then:
         - logger.log: "OTA end"
-
 ```
+
 {{< anchor "ota-on_error" >}}
 
 ### `on_error`
 
-This automation will be triggered when an OTA update has failed. You can get the internal error code with variable `x`  .
+This automation will be triggered when an OTA update has failed. You can get the internal error code with variable `x`.
 
-Just like for [`on_end`  ](#ota-on_end), you can safely use an automation that takes some time to complete as the OTA update
+Just like for [`on_end`](#ota-on_end), you can safely use an automation that takes some time to complete as the OTA update
 process has already finished.
 
 ```yaml
@@ -124,19 +127,19 @@ ota:
         - logger.log:
             format: "OTA update error %d"
             args: ["x"]
-
 ```
+
 {{< anchor "ota-on_state_change" >}}
 
 ### `on_state_change`
 
-This automation will be triggered on every state change. You can get the actual state with variable `state`  , which
-will contain one of values for the `OTAState`   enum. These values are:
+This automation will be triggered on every state change. You can get the actual state with variable `state`, which
+will contain one of values for the `OTAState` enum. These values are:
 
--  `ota::OTA_STARTED`
--  `ota::OTA_IN_PROGRESS`   *(will be called repeatedly during the update)*
--  `ota::OTA_COMPLETED`
--  `ota::OTA_ERROR`
+- `ota::OTA_STARTED`
+- `ota::OTA_IN_PROGRESS` *(will be called repeatedly during the update)*
+- `ota::OTA_COMPLETED`
+- `ota::OTA_ERROR`
 
 ```yaml
 ota:
@@ -148,16 +151,15 @@ ota:
               lambda: return state == ota::OTA_STARTED;
             then:
               - logger.log: "OTA start"
-
 ```
+
 ## Safe Mode
 
 In addition to OTA updates, ESPHome also supports a "safe mode" to help with recovery if/when updates don't work as
-expected. This is automatically enabled by the `ota`   component, but it may be disabled if desired. See
+expected. This is automatically enabled by the `ota` component, but it may be disabled if desired. See
 {{< docref "/components/safe_mode" >}} for details.
 
 ## See Also
 
 - {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
 - {{< docref "/components/safe_mode" >}}
-

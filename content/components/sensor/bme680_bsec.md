@@ -7,11 +7,9 @@ params:
     image: bme680.jpg
 ---
 
-
-
 ## Component/Hub
 
-The `bme680_bsec`   sensor platform allows you to use your BME680
+The `bme680_bsec` sensor platform allows you to use your BME680
 ([datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf),
 `Adafruit`_, `Pimoroni`_) temperature, pressure and humidity and gas sensors with ESPHome via the Bosch Sensortec Environmental Cluster (BSEC)
 software library. The use of Bosch's proprietary algorithms provide an Index for Air Quality (IAQ) measurement derived from the
@@ -19,6 +17,7 @@ gas resistance sensor's response to specific Volatile Organic Compounds (VOC). T
 for CO₂ and Breath Volatile Organic Compounds (b-VOC) using a correlation between VOC and CO₂ in a human's exhaled breath.
 
 {{< note >}}
+
 - The BSEC library is only available for use after accepting its software license agreement. By enabling this component,
   you are explicitly agreeing to the terms of the `BSEC license agreement`_. You must not distribute any compiled firmware
   binaries that include this component.
@@ -85,69 +84,69 @@ text_sensor:
       else {
         return {"error"};
       }
-
 ```
+
 Configuration variables:
 
-- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x76`  . Another address can be `0x77`  .
+- **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`. Another address can be `0x77`.
 
-- **temperature_offset** (*Optional*, float): Temperature offset if device is in enclosure and reads too high. This value is subtracted
-  from the reading (e.g. if the sensor reads 5°C higher than expected, set this to `5`  ) and also corrects the relative humidity readings. Defaults to `0`  .
+- **temperature_offset** (_Optional_, float): Temperature offset if device is in enclosure and reads too high. This value is subtracted
+  from the reading (e.g. if the sensor reads 5°C higher than expected, set this to `5`  ) and also corrects the relative humidity readings. Defaults to `0`.
 
-- **iaq_mode** (*Optional*, string): IAQ calculation mode. Default is `static`   for static applications (e.g. fixed indoor devices).
-  Can be `mobile`   for mobile applications (e.g. carry-on devices).
+- **iaq_mode** (_Optional_, string): IAQ calculation mode. Default is `static` for static applications (e.g. fixed indoor devices).
+  Can be `mobile` for mobile applications (e.g. carry-on devices).
 
-- **supply_voltage** (*Optional*, string): Supply voltage of the sensor. Default is `3.3V`  .
-  Can be set to `1.8V`   if your sensor is 1.8V-powered (e.g. the Pimoroni PIM357 BME680 Breakout module).
+- **supply_voltage** (_Optional_, string): Supply voltage of the sensor. Default is `3.3V`.
+  Can be set to `1.8V` if your sensor is 1.8V-powered (e.g. the Pimoroni PIM357 BME680 Breakout module).
 
-- **sample_rate** (*Optional*, string): Sample rate. Default is `lp`   for low power consumption, sampling every 3 seconds.
-  Can be `ulp`   for ultra-low power, sampling every 5 minutes.
+- **sample_rate** (_Optional_, string): Sample rate. Default is `lp` for low power consumption, sampling every 3 seconds.
+  Can be `ulp` for ultra-low power, sampling every 5 minutes.
   This controls the sampling rate for gas-dependent sensors and will govern the interval at which the sensor heater is operated.
   By default, this rate will also be used for temperature, pressure, and humidity sensors but these can be overridden on a per-sensor level if required.
 
-- **state_save_interval** (*Optional*, [Time](#config-time)): The minimum interval at which to save calibrated BSEC algorithm state to
-  flash so that calibration doesn't have to start from zero on device restart. Defaults to `6h`  .
+- **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save calibrated BSEC algorithm state to
+  flash so that calibration doesn't have to start from zero on device restart. Defaults to `6h`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor section to refer to the correct BME680 if you have more than one device. This will also be used to refer to the calibrated BSEC algorithm state saved to flash.
+- **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor section to refer to the correct BME680 if you have more than one device. This will also be used to refer to the calibrated BSEC algorithm state saved to flash.
 
 ## Sensor
 
 Configuration variables:
 
-- **bme680_bsec_id** (*Optional*, [ID](#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
+- **bme680_bsec_id** (_Optional_, [ID](#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
 
-- **temperature** (*Optional*): The information for the temperature sensor.
+- **temperature** (_Optional_): The information for the temperature sensor.
 
-  - **sample_rate** (*Optional*, string): Optional sample rate override for this sensor. Can be `lp`   for low power consumption, sampling every 3 seconds or `ulp`   for ultra-low power, sampling every 5 minutes.
+  - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `lp` for low power consumption, sampling every 3 seconds or `ulp` for ultra-low power, sampling every 5 minutes.
   - All other options from [Sensor](#config-sensor).
 
-- **pressure** (*Optional*): The information for the pressure sensor.
+- **pressure** (_Optional_): The information for the pressure sensor.
 
-  - **sample_rate** (*Optional*, string): Optional sample rate override for this sensor. Can be `lp`   for low power consumption, sampling every 3 seconds or `ulp`   for ultra-low power, sampling every 5 minutes.
+  - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `lp` for low power consumption, sampling every 3 seconds or `ulp` for ultra-low power, sampling every 5 minutes.
   - All other options from [Sensor](#config-sensor).
 
-- **humidity** (*Optional*): The information for the humidity sensor.
+- **humidity** (_Optional_): The information for the humidity sensor.
 
-  - **sample_rate** (*Optional*, string): Optional sample rate override for this sensor. Can be `lp`   for low power consumption, sampling every 3 seconds or `ulp`   for ultra-low power, sampling every 5 minutes.
+  - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `lp` for low power consumption, sampling every 3 seconds or `ulp` for ultra-low power, sampling every 5 minutes.
   - All other options from [Sensor](#config-sensor).
 
-- **gas_resistance** (*Optional*): The information for the gas sensor.
+- **gas_resistance** (_Optional_): The information for the gas sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **iaq** (*Optional*): The information for the IAQ sensor.
+- **iaq** (_Optional_): The information for the IAQ sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **iaq_accuracy** (*Optional*): The information for the numeric IAQ accuracy sensor.
+- **iaq_accuracy** (_Optional_): The information for the numeric IAQ accuracy sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **co2_equivalent** (*Optional*): The information for the CO₂ equivalent sensor.
+- **co2_equivalent** (_Optional_): The information for the CO₂ equivalent sensor.
 
   - All options from [Sensor](#config-sensor).
 
-- **breath_voc_equivalent** (*Optional*): The information for the Breath VOC equivalent humidity sensor.
+- **breath_voc_equivalent** (_Optional_): The information for the Breath VOC equivalent humidity sensor.
 
   - All options from [Sensor](#config-sensor).
 
@@ -157,9 +156,9 @@ Accuracy can be reported in text format.
 
 Configuration variables:
 
-- **bme680_bsec_id** (*Optional*, [ID](#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
+- **bme680_bsec_id** (_Optional_, [ID](#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
 
-- **iaq_accuracy** (*Optional*): The information for the IAQ accuracy sensor. Shows: Stabilizing,
+- **iaq_accuracy** (_Optional_): The information for the IAQ accuracy sensor. Shows: Stabilizing,
   Uncertain, Calibrating, Calibrated.
 
   - All options from [TextSensor](#config-text_sensor).
@@ -280,12 +279,11 @@ text_sensor:
     iaq_accuracy:
       # IAQ accuracy as a text value of Stabilizing, Uncertain, Calibrating, Calibrated
       name: "BME680 IAQ Accuracy"
-
 ```
+
 ## Multiple sensors
 
-The following configuration shows how to set up multiple BME680 devices. They can be configured to use the same I²C bus or to use different busses, but remember that the BME680 can only be set to operate on I²C address `0x76`   or `0x77`  . There is no limit on the number of BME680 devices that can be connected.
-
+The following configuration shows how to set up multiple BME680 devices. They can be configured to use the same I²C bus or to use different busses, but remember that the BME680 can only be set to operate on I²C address `0x76` or `0x77`. There is no limit on the number of BME680 devices that can be connected.
 
 ```yaml
 # I2C bus for the BME680 devices
@@ -349,19 +347,19 @@ text_sensor:
     bme680_bsec_id: bme680_external
     iaq_accuracy:
       name: "OUT_IAQaccuracy"
-
 ```
+
 ## Index for Air Quality (IAQ) Measurement
 
 The measurements are expressed with an index scale ranging from 0 to 500. The index itself is deduced
 from tests using ethanol gas, as well as important VOC in the exhaled breath of healthy humans.
-The VOC values themselves are derived from several publications on breath analysis studies.  The BSEC
+The VOC values themselves are derived from several publications on breath analysis studies. The BSEC
 software library defines the levels as follows:
 
-| IAQ Index | Air Quality |
-|---|---|
-| 0 - 50 | Excellent |
-| 51 - 100 | Good |
+| IAQ Index | Air Quality         |
+| --------- | ------------------- |
+| 0 - 50    | Excellent           |
+| 51 - 100  | Good                |
 | 101 - 150 | Lightly polluted |
 | 151 - 200 | Moderately polluted |
 | 201 - 250 | Heavily polluted |
@@ -370,20 +368,13 @@ software library defines the levels as follows:
 
 The selected b-VOC gasses are as follows:
 
-| Compound | Molar fraction |
-|---|---|
-| `Ethane`_ | 5 ppm |
-| `Isoprene`_ | 10 ppm |
+| Compound           | Molar fraction |
+| ------------------ | -------------- |
+| `Ethane`_          | 5 ppm          |
+| `Isoprene`_        | 10 ppm         |
 | `Ethanol`_ | 10 ppm |
 | `Acetone`_ | 50 ppm |
 | `Carbon Monoxide`_ | 15 ppm |
-
-
-
-
-
-
-
 
 {{< anchor "bsec-calibration" >}}
 
@@ -396,10 +387,11 @@ level and a value of 200 to a “typical polluted” level. The IAQ Accuracy sen
 - `Stabilizing`  : The device has just started, and the sensor is stabilizing (this typically lasts 5 minutes)
 - `Uncertain`  : The background history of BSEC is uncertain. This typically means the gas sensor data was too
   stable for BSEC to clearly define its reference.
+
 - `Calibrating`  : BSEC found new calibration data and is currently calibrating.
 - `Calibrated`  : BSEC calibrated successfully.
 
-Every `state_save_interval`  , or as soon thereafter as full calibration is reached, the current algorithm state is saved to flash
+Every `state_save_interval`, or as soon thereafter as full calibration is reached, the current algorithm state is saved to flash
 so that the process does not have to start from zero on device restart.
 
 ## See Also
@@ -412,4 +404,3 @@ so that the process does not have to start from zero on device restart.
 - [BME680 VOC classification](https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-VOC-classification/td-p/26154)
 - [BSEC Arduino Library](https://github.com/BoschSensortec/BSEC-Arduino-library) by [Bosch Sensortec](https://www.bosch-sensortec.com/)
 - [Bosch Sensortec Community](https://community.bosch-sensortec.com/)
-
