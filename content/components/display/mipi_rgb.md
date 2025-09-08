@@ -8,7 +8,8 @@ params:
 ---
 
 ## Types of Display
-This display driver supports displays with 16 bit parallel interfaces, often referred to as "RGB". 
+
+This display driver supports displays with 16 bit parallel interfaces, often referred to as "RGB".
 Two classes of display fall under this category, the first are those that only have the RGB interface and require
 no special configuration of the driver chip. The second are those that have both the RGB interface and an SPI interface
 which is used to configure the driver chip.
@@ -25,7 +26,7 @@ specified, or a custom init sequence can be provided.
 ### Driver chips
 
 | Driver Chip | Typical Dimensions |
-|-------------|--------------------|
+| ----------- | ------------------ |
 | ST7701S     | 480x480            |
 | RPI         | varies             |
 
@@ -36,18 +37,19 @@ The `RPI` driver chip represents displays without an SPI interface, so no init s
 These boards have completely pre-filled configurations for the display driver, so the only required configuration
 option is `model`.
 
-| Board              | Driver Chip | Manufacturer | Product link                                                   |
-|--------------------|-------------|--------------|----------------------------------------------------------------|
-| GUITION-4848S040   | ST7701s | Guition | <https://devices.esphome.io/devices/Guition-ESP32-S3-4848S040>        |
-| T-PANEL-S3  | ST7701s | Lilygo | <https://lilygo.cc/products/t-panel-s3>                                |
-| T-RGB-2.1   | ST7701s | Lilygo | <https://lilygo.cc/products/t-rgb>                                     |
-| T-RGB-2.8   | ST7701s | Lilygo | <https://lilygo.cc/products/t-rgb>                                     |
-| SEEED-INDICATOR-D1  | ST7701s | Seeed Studio | <https://www.seeedstudio.com/SenseCAP-Indicator-D1L-p-5646.html> |
-| ESP32-S3-TOUCH-LCD-4.3 | RPI | Waveshare | <https://www.waveshare.com/esp32-s3-touch-lcd-4.3.htm>              |
-| ESP32-S3-TOUCH-LCD-7-800X480 | RPI | Waveshare | <https://www.waveshare.com/esp32-s3-touch-lcd-7.htm>          |
-| WAVESHARE-4-480x480 | RPI | Waveshare | <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>          |
+| Board                        | Driver Chip | Manufacturer | Product link                                                     |
+| ---------------------------- | ----------- | ------------ | ---------------------------------------------------------------- |
+| GUITION-4848S040             | ST7701s     | Guition      | <https://devices.esphome.io/devices/Guition-ESP32-S3-4848S040>   |
+| T-PANEL-S3                   | ST7701s     | Lilygo       | <https://lilygo.cc/products/t-panel-s3>                          |
+| T-RGB-2.1                    | ST7701s     | Lilygo       | <https://lilygo.cc/products/t-rgb>                               |
+| T-RGB-2.8                    | ST7701s     | Lilygo       | <https://lilygo.cc/products/t-rgb>                               |
+| SEEED-INDICATOR-D1           | ST7701s     | Seeed Studio | <https://www.seeedstudio.com/SenseCAP-Indicator-D1L-p-5646.html> |
+| ESP32-S3-TOUCH-LCD-4.3       | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.3.htm>           |
+| ESP32-S3-TOUCH-LCD-7-800X480 | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-7.htm>             |
+| WAVESHARE-4-480x480          | RPI         | Waveshare    | <https://www.waveshare.com/esp32-s3-touch-lcd-4.htm>             |
 
 ## Usage
+
 This component requires an ESP32 (usually an ESP32-S3 because of the number of GPIO pins required) and the use of
 ESP-IDF. PSRAM is a requirement due to the size of the display buffer.
 
@@ -59,37 +61,46 @@ display:
   - platform: mipi_rgb
     model: WAVESHARE-4-480x480
     id: my_display
-    
 ```
 
-## Configuration variables:
+## Configuration variables
 
-- **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the displays have this option set automatically to true and can't be changed.
-- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`  , `90°`  , `180°`  , or `270°`  . This option cannot be used with `transform`  .
-- **transform** (*Optional*): Transform the display presentation using hardware. All defaults are `false`  . This option cannot be used with `rotation`  .
+- **invert_colors** (*Optional*): With this boolean option you can invert the display colors. **Note** some of the
+  displays have this option set automatically to true and can't be changed.
+- **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`.
+  This option cannot be used with `transform`.
+- **transform** (*Optional*): Transform the display presentation using hardware. All defaults are `false`.
+  This option cannot be used with `rotation`.
+
   - **mirror_x** (*Optional*, boolean): If true, mirror the x-axis.
   - **mirror_y** (*Optional*, boolean): If true, mirror the y-axis.
-    **Note:** To rotate the display in hardware by 180 degrees set both `mirror_x` and `mirror_y`  to `true`.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`  .
+    **Note:** To rotate the display in hardware by 180 degrees set both `mirror_x` and `mirror_y` to `true`.
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
 - **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`
   if a lambda or pages are configured, false otherwise.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **color_order** (*Optional*): Should be one of `bgr`   (default) or `rgb`  .
-- **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`  ) or with separate config keys.
+- **color_order** (*Optional*): Should be one of `bgr` (default) or `rgb`.
+- **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`)
+  or with separate config keys.
 
   - **height** (**Required**, int): Specifies height of display in pixels.
   - **width** (**Required**, int): Specifies width of display.
-  - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an LCD is smaller than the maximum supported by the driver chip. Default is 0
+  - **offset_width** (*Optional*, int): Specify an offset for the x-direction of the display, typically used when an
+    LCD is smaller than the maximum supported by the driver chip. Default is 0
   - **offset_height** (*Optional*, int): Specify an offset for the y-direction of the display. Default is 0.
 
 - **data_pins** (**Required**): A list of pins used for the databus. Specified in 3 groups.
 
-    - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the red databits, listed from least to most significant bit.
-    - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pins for the green databits, listed from least to most significant bit.
-    - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the blue databits, listed from least to most significant bit.
+  - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the red databits, listed from least
+    to most significant bit.
+  - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pins for the green databits, listed from
+    least to most significant bit.
+  - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the blue databits, listed from
+    least to most significant bit.
 
 - **de_pin** (**Required**, [Pin Schema](#config-pin_schema)): The DE pin.
 - **pclk_pin** (**Required**, [Pin Schema](#config-pin_schema)): The PCLK pin.
@@ -105,23 +116,24 @@ display:
 - **pclk_frequency** (*Optional*): Set the pixel clock speed. Default is 8MHz.
 - **pclk_inverted** (*Optional*, bool): If the pclk is active negative (default is True)
 
-
-The horizontal and vertical `pulse_width`  , `front_porch`   and `back_porch`   values are optional, but will
-likely require 
-changing from the default values for a specific display. Refer to the manufacturer's sample code for suitable values. These specify timing
-requirements for the display.
+The horizontal and vertical `pulse_width` , `front_porch` and `back_porch` values are optional, but will
+likely require changing from the default values for a specific display. Refer to the manufacturer's sample code
+for suitable values. These specify timing requirements for the display.
 
 ## Additional Configuration for non-RPI displays
 
 Displays needing a custom init sequence require an SPI bus to be configured, plus these options:
 
 - **dc_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The DC pin.
-- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of `80MHz`  , `40MHz`  ,
-    `20MHz`  , `10MHz`  , `5MHz`  , `2MHz`  , `1MHz`   (default), `200kHz`  , `75kHz`   or `1kHz`  .
-- **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is `MODE0`   but some displays require `MODE3`  .
-- **spi_id** (*Optional*, [ID](#config-id)): The ID of the SPI interface to use - may be omitted if only one SPI bus is configured.
-- **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. Predefined boards have a default init sequence, which can be overridden.
-  A custom board can specify the init sequence using this variable. RPI displays should provide an empty sequence in which case the SPI bus is not required.
+- **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of `80MHz` , `40MHz` ,
+    `20MHz` , `10MHz` , `5MHz` , `2MHz` , `1MHz` (default), `200kHz` , `75kHz` or `1kHz` .
+- **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is `MODE0` but some displays
+  require `MODE3` .
+- **spi_id** (*Optional*, [ID](#config-id)): The ID of the SPI interface to use - may be omitted if only one SPI bus
+  is configured.
+- **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. Predefined boards
+  have a default init sequence, which can be overridden. A custom board can specify the init sequence using this
+  variable. RPI displays should provide an empty sequence in which case the SPI bus is not required.
 
 The `init_sequence` requires a list of elements, one of which may be a single integer selecting a canned init
 sequence (the default and currently the only sequence is 1), the remainder must be byte arrays providing additional
@@ -187,10 +199,9 @@ display:
     lambda: |-
       it.fill(COLOR_BLACK);
       it.print(0, 0, id(my_font), id(my_red), TextAlign::TOP_LEFT, "Hello World!");
-
 ```
+
 ## See Also
 
 - {{< docref "index/" >}}
 - {{< apiref "mipi_rgb/mipi_rgb.h" "mipi_rgb/mipi_rgb.h" >}}
-
