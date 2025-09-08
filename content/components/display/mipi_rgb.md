@@ -31,7 +31,8 @@ specified, or a custom init sequence can be provided.
 | RPI         | varies             |
 | CUSTOM      | varies             |
 
-The `RPI` driver chip represents displays without an SPI interface, so no init sequence is required. The `CUSTOM` model has no predefined config options so requires a full yaml configuration.
+The `RPI` driver chip represents displays without an SPI interface, so no init sequence is required. The `CUSTOM`
+model has no predefined config options so requires a full yaml configuration.
 
 ### Supported integrated display boards
 
@@ -127,7 +128,6 @@ Displays needing a custom init sequence require an SPI bus to be configured, plu
   Predefined boards
   have a default init sequence, which can be overridden. A custom board can specify the init sequence using this
   variable (RPI displays should provide an empty sequence in which case the SPI bus is not required.)
-
 
 - **pixel_mode** (*Optional*, string): Set the pixel mode of the RGB bus interface - one of
   `16bit` (default) or `18bit`.
