@@ -149,7 +149,7 @@ These will be collected and sent to the display via SPI during initialisation. T
 in hardware (i.e. it may use `interface: software`) and it will be released after initialisation, before the RGB
 driver is configured. This caters for boards that use the SPI bus pins as RGB pins.
 
-If copying init sequences from other code, not that the array length should not be included as
+If copying init sequences from other code, note that the array length should not be included as
 it will be inferred from the number of bytes provided. The SLPOUT, PIXFMT, INVON, INVOFF and DISPLAY_ON
 commands will be automatically appended based on config options and should not be included in
 the init sequence in yaml.
