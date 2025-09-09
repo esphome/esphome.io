@@ -722,6 +722,7 @@ Often known as "tag" or "card" readers within the community.
 {{< imgtable >}}
 "Addressable Light","components/display/addressable_light","addressable_light.jpg"
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
+"MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
 "ILI9xxx","components/display/ili9xxx","ili9341.jpg"
 "ILI9341","components/display/ili9xxx","ili9341.svg"
@@ -1038,6 +1039,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 ## Miscellaneous Components
 
 {{< imgtable >}}
+"Camera Encoder","components/camera/camera_encoder","camera.svg","dark-invert"
 "ESP32 Camera","components/esp32_camera","camera.svg","dark-invert"
 "Exposure Notifications","components/exposure_notifications","exposure_notifications.png",""
 "GPS","components/gps","crosshairs-gps.svg","dark-invert"
