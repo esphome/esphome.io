@@ -36,6 +36,7 @@ Support for esp-idf is still experimental. Please report issues you have with MQ
 - **broker** (**Required**, string): The host of your MQTT broker.
 - **enable_on_boot** (*Optional*, boolean): If enabled, MQTT will be enabled on boot. Defaults to `true`.
 - **port** (*Optional*, int): The port to connect to. Defaults to 1883.
+- **transport** (*Optional*, string): Only on `esp32`, with `esp-idf`. Set to `ws` to support Websockets, `tcp` to use raw TCP communication. Defaults to `tcp`.
 - **username** (*Optional*, string): The username to use for
   authentication. Empty (the default) means no authentication.
 
