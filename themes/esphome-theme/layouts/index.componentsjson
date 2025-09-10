@@ -1,0 +1,43 @@
+{{- $components := dict -}}
+{{- $baseURL := .Site.BaseURL -}}
+{{- if eq $baseURL "" -}}
+  {{- $baseURL = "https://esphome.io" -}}
+{{- end -}}
+
+{{- range .Site.Pages -}}
+  {{- if and (in .RelPermalink "/components/") (ne .Kind "section") (ne .File.BaseFileName "_index") -}}
+    {{- $relPath := strings.TrimPrefix "/components/" .RelPermalink -}}
+    {{- $relPath = strings.TrimSuffix "/" $relPath -}}
+
+    {{- $key := "" -}}
+    {{- $path := "" -}}
+    {{- $image := "" -}}
+
+    {{- if .Parent -}}
+      {{- if ne .Parent.File.BaseFileName "_index" -}}
+        {{- $key = printf "%s_%s" .Parent.File.BaseFileName .File.BaseFileName -}}
+        {{- $path = printf "components/%s" .Parent.File.BaseFileName -}}
+      {{- else -}}
+        {{- $key = .File.BaseFileName -}}
+        {{- $path = printf "components/%s" .File.BaseFileName -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $key = .File.BaseFileName -}}
+      {{- $path = printf "components/%s" .File.BaseFileName -}}
+    {{- end -}}
+
+    {{- with .Params.seo.image -}}
+      {{- $image = printf "%simages/%s" $baseURL . -}}
+    {{- end -}}
+
+    {{- $component := dict
+         "title" .Title
+         "url" .Permalink
+         "path" $path
+         "image" $image -}}
+
+    {{- $components = merge $components (dict $key $component) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- $components | jsonify (dict "indent" "  ") -}}
