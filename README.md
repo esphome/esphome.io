@@ -188,45 +188,12 @@ Creates a component card with an image, title, and optional description that lin
   
 ```
 
-### `note`
-
-Creates a note admonition box to highlight important information.
-
-``` text
-{{< note >}}
-This is important information that the reader should pay attention to.
-You can include **Markdown** formatting within the note.
-{{< /note >}}
-```
-
 ### `seo`
 
 Adds SEO metadata tags to the page for better search engine optimization and social media sharing.
 
 ``` text
 {{< seo description="Detailed guide for setting up the DHT sensor with ESPHome" image="dht-sensor.jpg" >}}
-```
-
-### `tip`
-
-Creates a tip admonition box to highlight helpful advice or best practices.
-
-``` text
-{{< tip >}}
-For best results, place the sensor away from heat sources.
-You can include **Markdown** formatting within the tip.
-{{< /tip >}}
-```
-
-### `warning`
-
-Creates a warning admonition box to highlight important cautions or potential issues.
-
-``` text
-{{< warning >}}
-Incorrect wiring may damage your device. Double-check connections before powering on.
-You can include **Markdown** formatting within the warning.
-{{< /warning >}}
 ```
 
 ### `apiref`
@@ -305,6 +272,78 @@ Creates a page that automatically redirects to another URL.
 
 ``` text
 {{< redirect url="/some/path" >}}
+```
+
+## Markdown features
+
+### `note`
+
+Creates a note blockquote/alert box to highlight important information.
+
+> [!NOTE]
+> This is important information that the reader should pay attention to.
+> You can include **Markdown** formatting within the block.
+
+```markdown
+> [!NOTE]
+> This is important information that the reader should pay attention to.
+> You can include **Markdown** formatting within the block.
+```
+
+### `important`
+
+Creates an important blockquote/alert box to highlight helpful information.
+
+> [!IMPORTANT]
+> This is helpful information that the reader should be aware of.
+> You can include **Markdown** formatting within the block.
+
+```markdown
+> [!IMPORTANT]
+> This is helpful information that the reader should be aware of.
+> You can include **Markdown** formatting within the block.
+```
+
+### `tip`
+
+Creates a tip blockquote/alert box to highlight helpful advice or best practices.
+
+> [!TIP]
+> For best results, place the sensor away from heat sources.
+> You can include **Markdown** formatting within the block.
+
+```markdown
+> [!TIP]
+> For best results, place the sensor away from heat sources.
+> You can include **Markdown** formatting within the block.
+```
+
+### `warning`
+
+Creates a warning blockquote/alert box to highlight important warnings or potential issues.
+
+> [!WARNING]
+> Incorrect wiring may damage your device. Double-check connections before powering on.
+> You can include **Markdown** formatting within the block.
+
+```markdown
+> [!WARNING]
+> Incorrect wiring may damage your device. Double-check connections before powering on.
+> You can include **Markdown** formatting within the block.
+```
+
+### `caution`
+
+Creates a caution blockquote/alert box to highlight important cautions or potential issues.
+
+> [!CAUTION]
+> Incorrect wiring may damage your device. Double-check connections before powering on.
+> You can include **Markdown** formatting within the block.
+
+```markdown
+> [!CAUTION]
+> Incorrect wiring may damage your device. Double-check connections before powering on.
+> You can include **Markdown** formatting within the block.
 ```
 
 ## Conversion Scripts
