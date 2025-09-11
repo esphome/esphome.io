@@ -5,23 +5,31 @@
 {{- end -}}
 
 {{- range .Site.Pages -}}
-  {{- if and (in .RelPermalink "/components/") (ne .Kind "section") (ne .File.BaseFileName "_index") -}}
+  {{- if (in .RelPermalink "/components/") -}}
     {{- $relPath := strings.TrimPrefix "/components/" .RelPermalink -}}
     {{- $relPath = strings.TrimSuffix "/" $relPath -}}
 
-    {{- $key := "" -}}
-    {{- $path := "" -}}
-    {{- $image := "" -}}
+    {{- if ne $relPath "" -}}
+      {{- $key := "" -}}
+      {{- $path := "" -}}
+      {{- $image := "" -}}
 
-    {{- if .Parent -}}
-      {{- if ne .Parent.File.BaseFileName "_index" -}}
-        {{- $key = printf "%s_%s" .Parent.File.BaseFileName .File.BaseFileName -}}
-        {{- $path = printf "components/%s" .Parent.File.BaseFileName -}}
-      {{- else -}}
-        {{- $key = .File.BaseFileName -}}
-        {{- $path = printf "components/%s" .File.BaseFileName -}}
+    {{- $pathParts := split $relPath "/" -}}
+    {{- if eq .File.BaseFileName "_index" -}}
+      {{- /* This is an _index page for a component category */ -}}
+      {{- if gt (len $pathParts) 0 -}}
+        {{- $parentDir := index $pathParts 0 -}}
+        {{- $key = $parentDir -}}
+        {{- $path = printf "components/%s" $parentDir -}}
       {{- end -}}
+    {{- else if gt (len $pathParts) 1 -}}
+      {{- /* This is a component page in a subfolder */ -}}
+      {{- $parentDir := index $pathParts 0 -}}
+      {{- $fileName := .File.BaseFileName -}}
+      {{- $key = printf "%s_%s" $parentDir $fileName -}}
+      {{- $path = printf "components/%s" $fileName -}}
     {{- else -}}
+      {{- /* This is a root-level component */ -}}
       {{- $key = .File.BaseFileName -}}
       {{- $path = printf "components/%s" .File.BaseFileName -}}
     {{- end -}}
@@ -37,6 +45,7 @@
          "image" $image -}}
 
     {{- $components = merge $components (dict $key $component) -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
