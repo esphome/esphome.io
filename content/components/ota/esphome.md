@@ -84,6 +84,11 @@ If OTA is already enabled without a password, simply add a `password:` line to t
   - Build a new image locally.
   - Execute the OTA update directly via the ESP web server.
 
+## OTA file
+For an ESPHome OTA update, you generally need to use a firmware file with a `.bin` or `.ota.bin` extension, not `.factory.bin` files.
+
+These files are created during build, typically by running `esphome run project` in your terminal (where "project" is the name of your project and is in yaml). After a build, , the `.ota.bin` file is found in the build environment directory: `.esphome/build/project/.pioenvs/project/firmware.ota.bin` 
+
 ## See Also
 
 - {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
