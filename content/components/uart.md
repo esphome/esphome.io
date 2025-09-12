@@ -73,7 +73,7 @@ uart:
   integration that needs to read big payloads from UART. Defaults to `256`.
 
 - **rx_full_threshold** (*Optional*, int): ESP32 only. After this many bytes have been received, the data becomes available for processing.
-  Defaults calculate to be approximately 10ms during compilation (about 8 bytes at 9600 baud, 114 bytes at 115200 baud).
+  Defaults calculate during compilation to be approximately 10ms (about 8 bytes at 9600 baud, 114 bytes at 115200 baud).
   
 - **rx_timeout** (*Optional*, int): ESP32 only. After this amount time of no data been received (in bytes-time), the data becomes available for processing. Defaults to ``2``.
 - **data_bits** (*Optional*, int): The number of data bits used on the UART bus. Options: 5 to 8. Defaults to 8.
