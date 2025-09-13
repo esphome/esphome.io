@@ -29,6 +29,8 @@ web_server:
 ## Configuration variables
 
 - **port** (*Optional*, int): The port the web server should open its socket on.
+- **gui** (*Optional*, boolean): Whether to enable the web interface. Defaults to `true`.
+- **events** (*Optional*, boolean): Whether to enable the Events REST endpoint. Defaults to `true`. Cannot be disabled if gui is enabled.
 - **css_url** (*Optional*, url): The URL that should be used for the CSS stylesheet. Defaults
   to <https://esphome.io/_static/webserver-v1.min.css> (updates will go to `v2`, `v3`, etc). Can be set to empty string.
 
