@@ -65,6 +65,12 @@ uart:
 - **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 
+- **de_pin** (*Optional*, [Pin](#config-pin)): The Driver Enable pin. When configured, this pin will be set to high
+  while writing data, and low otherwise. This is useful for half-duplex devices that must be triggered before they can
+  write, such as the common MAX485 RS-485 chip. If the device also has an RE (Receiver Enable) pin, it can likely be
+  tied together with DE so that it will automatically listen for data any time it's not writing. Only supported on
+  ESP-IDF.
+
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
   integration that needs to read big payloads from UART. Defaults to `256`.
