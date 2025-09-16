@@ -87,6 +87,7 @@ If OTA is already enabled without a password, simply add a `password:` line to t
 ## OTA file
 
 Use the OTA-format binary: `firmware.ota.bin` (do not use `firmware.factory.bin`). From the ESPHome dashboard, download in "OTA format". From the CLI, after building (for example, `esphome run <project>.yaml`), find the file at `.esphome/build/project/.pioenvs/project/firmware.ota.bin`, where "project" is your device name.
+
 ## See Also
 
 - {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
