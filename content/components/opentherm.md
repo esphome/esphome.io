@@ -477,9 +477,9 @@ climate:
 
 - {{< apiref "API Reference: OpenthermHub" "opentherm/hub.h" >}}
 - {{< apiref "API Reference: OpenthermInput" "opentherm/input.h" >}}
-- {{< apiref "API Reference: OpenthermNumber" "opentherm/number/number.h" >}}
-- {{< apiref "API Reference: OpenthermOutput" "opentherm/output/output.h" >}}
-- {{< apiref "API Reference: OpenthermSwitch" "opentherm/switch/switch.h" >}}
+- {{< apiref "API Reference: OpenthermNumber" "opentherm/number/opentherm_number.h" >}}
+- {{< apiref "API Reference: OpenthermOutput" "opentherm/output/opentherm_output.h" >}}
+- {{< apiref "API Reference: OpenthermSwitch" "opentherm/switch/opentherm_switch.h" >}}
 - [OpenTherm thermostat with ESPHome and Home Assistant](https://olegtarasov.me/opentherm-thermostat-esphome/) —
   real-world use case for this component.
 

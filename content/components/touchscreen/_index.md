@@ -215,7 +215,7 @@ This trigger provides two arguments named `touch` of type *touchpoint* and `touc
 
 This new automation will be triggered when the touchscreen detects an extra touch or that a touch has moved around on the screen.
 
-This trigger provides one argument named `touches` of type {{< apiref "touchscreen::TouchPoints_t" "touchscreen::TouchPoints_t" >}} which has a list of
+This trigger provides one argument named `touches` of type {{< apiref "touchscreen::TouchPoints_t" "touchscreen::TouchPoint" >}} which has a list of
  [`TouchPoint` Argument Type](#touchscreen-touchpoint).
 
 This trigger may be useful to detect gestures such as swiping across the display.

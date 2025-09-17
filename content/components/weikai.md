@@ -296,4 +296,4 @@ log file and the baud rate will automatically be decreased.
 - [SPI Bus](#spi)
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
-- {{< apiref "weika/weika.h" "weika/weika.h" >}}
+- {{< apiref "weikai/weikai.h" "weikai/weikai.h" >}}

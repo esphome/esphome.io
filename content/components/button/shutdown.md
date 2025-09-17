@@ -32,4 +32,4 @@ button:
 - {{< docref "factory_reset/" >}}
 - {{< docref "/components/switch/shutdown" >}}
 - {{< docref "template/" >}}
-- {{< apiref "shutdown/shutdown_button.h" "shutdown/shutdown_button.h" >}}
+- {{< apiref "shutdown/button/shutdown_button.h" "shutdown/button/shutdown_button.h" >}}

@@ -214,4 +214,4 @@ automatically add any peer that data is sent to.
 
 ## See Also
 
-- {{< apiref "espnow/espnow.h" "espnow/espnow.h" >}}
+- {{< apiref "espnow/espnow_component.h" "espnow/espnow_component.h" >}}

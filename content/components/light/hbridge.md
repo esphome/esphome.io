@@ -45,4 +45,4 @@ As we are switching the H-bridge in software, the light may glitch every so ofte
 
 - {{< docref "/components/light" >}}
 - {{< docref "/components/output/esp8266_pwm" >}}
-- {{< apiref "hbridge/light/hbridge_light.h" "hbridge/light/hbridge_light.h" >}}
+- {{< apiref "hbridge/light/hbridge_light_output.h" "hbridge/light/hbridge_light_output.h" >}}

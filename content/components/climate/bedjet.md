@@ -211,4 +211,4 @@ ota:
 
 - {{< docref "/components/ble_client" >}}
 - {{< docref "/components/climate" >}}
-- {{< apiref "bedjet/bedjet.h" "bedjet/bedjet.h" >}}
+- {{< apiref "bedjet/bedjet_hub.h" "bedjet/bedjet_hub.h" >}}

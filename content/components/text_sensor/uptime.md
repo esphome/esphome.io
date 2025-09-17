@@ -42,4 +42,4 @@ The resolution of the reported uptime will be determined by the update interval.
 
 - {{< docref "/components/sensor/uptime" >}}
 - [Text Sensor Filters](#text_sensor-filters)
-- {{< apiref "uptime/uptime_text_sensor.h" "uptime/uptime_text_sensor.h" >}}
+- {{< apiref "uptime/text_sensor/uptime_text_sensor.h" "uptime/text_sensor/uptime_text_sensor.h" >}}

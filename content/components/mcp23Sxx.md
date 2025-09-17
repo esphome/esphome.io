@@ -143,5 +143,5 @@ binary_sensor:
 - [SPI Bus](#spi)
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
-- {{< apiref "API Reference (MCP23S08)" "mcp23S08/mcp23S08.h" >}}
-- {{< apiref "API Reference (MCP23S17)" "mcp23S17/mcp23S17.h" >}}
+- {{< apiref "API Reference (MCP23S08)" "mcp23s08/mcp23s08.h" >}}
+- {{< apiref "API Reference (MCP23S17)" "mcp23s17/mcp23s17.h" >}}

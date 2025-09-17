@@ -109,7 +109,7 @@ on_...:
 
 ## See Also
 
-- {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
+- {{< apiref "http_request/ota/ota_http_request.h" "http_request/ota/ota_http_request.h" >}}
 - {{< docref "/components/ota" >}}
 - {{< docref "/components/ota/esphome" >}}
 - {{< docref "/components/safe_mode" >}}

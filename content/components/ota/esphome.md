@@ -86,7 +86,7 @@ If OTA is already enabled without a password, simply add a `password:` line to t
 
 ## See Also
 
-- {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
+- {{< apiref "esphome/ota/ota_esphome.h" "esphome/ota/ota_esphome.h" >}}
 - {{< docref "/components/ota" >}}
 - {{< docref "/components/ota/http_request" >}}
 - {{< docref "/components/safe_mode" >}}

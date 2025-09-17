@@ -55,4 +55,5 @@ light:
 
 - {{< docref "/components/light" >}}
 - {{< docref "/components/power_supply" >}}
-- {{< apiref "beken_spi_led_strip/beken_spi_led_strip.h" "beken_spi_led_strip/beken_spi_led_strip.h" >}}
+"beken_spi_led_strip/led_strip.h"
+- {{< apiref "beken_spi_led_strip/led_strip.h" "beken_spi_led_strip/led_strip.h" >}}

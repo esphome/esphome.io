@@ -107,7 +107,7 @@ This action can also be written in lambdas. See [Lambda Calls](#nextion_switch_l
 ### Lambda Calls
 
 From [lambdas](#config-lambda), you can call several methods to access
-some more advanced functions (see the full {{< apiref "nextion/nextion_switch.h" "nextion/nextion_switch.h" >}} for more info).
+some more advanced functions (see the full {{< apiref "nextion/switch/nextion_switch.h" "nextion/switch/nextion_switch.h" >}} for more info).
 
 {{< anchor "nextion_switch_set_state" >}}
 

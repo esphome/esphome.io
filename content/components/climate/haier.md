@@ -302,4 +302,4 @@ on_...:
 - {{< docref "/components/button/haier" "Haier Climate Buttons" >}}
 - {{< docref "/components/switch/haier" "Haier Climate Switches" >}}
 - {{< docref "/components/climate" >}}
-- {{< apiref "haier/climate/haier_base.h" "haier/climate/haier_base.h" >}}
+- {{< apiref "haier/haier_base.h" "haier/haier_base.h" >}}

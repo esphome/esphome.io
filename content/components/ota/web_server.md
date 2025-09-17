@@ -118,7 +118,7 @@ ota:
 
 ## See Also
 
-- {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
+- {{< apiref "web_server/ota/ota_web_server.h" "web_server/ota/ota_web_server.h" >}}
 - {{< docref "/components/ota" >}}
 - {{< docref "/components/ota/esphome" >}}
 - {{< docref "/components/web_server" >}}

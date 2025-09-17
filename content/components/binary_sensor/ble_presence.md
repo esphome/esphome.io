@@ -136,5 +136,5 @@ Alternatively you can:
 - {{< docref "/components/esp32_ble_tracker" >}}
 - {{< docref "/components/esp32_ble_beacon" >}}
 - {{< docref "/components/binary_sensor" >}}
-- {{< apiref "ble_presence/ble_presence.h" "ble_presence/ble_presence.h" >}}
+- {{< apiref "ble_presence/ble_presence_device.h" "ble_presence/ble_presence_device.h" >}}
 - [ESP32 BLE for Arduino](https://github.com/nkolban/ESP32_BLE_Arduino) by [Neil Kolban](https://github.com/nkolban).

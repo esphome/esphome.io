@@ -119,4 +119,4 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- {{< apiref "sdm220m/sdm220m.h" "sdm220m/sdm220m.h" >}}
+- {{< apiref "sdm_meter/sdm_meter.h" "sdm_meter/sdm_meter.h" >}}

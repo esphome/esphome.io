@@ -128,4 +128,4 @@ Some common ones:
 - {{< docref "/components/ble_client" >}}
 - {{< docref "/components/text_sensor/ble_client" >}}
 - [Sensor Filters](#sensor-filters)
-- {{< apiref "ble_sensor/ble_sensor.h" "ble_sensor/ble_sensor.h" >}}
+- {{< apiref "ble_client/sensor/ble_sensor.h" "ble_client/sensor/ble_sensor.h" >}}

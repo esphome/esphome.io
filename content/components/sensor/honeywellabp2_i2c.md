@@ -52,4 +52,4 @@ datasheet indicates that the sensor does not measure temperature.
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- {{< apiref "honeywellabp/honeywellabp2.h" "honeywellabp/honeywellabp2.h" >}}
+- {{< apiref "honeywellabp2_i2c/honeywellabp2.h" "honeywellabp2_i2c/honeywellabp2.h" >}}

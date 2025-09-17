@@ -28,4 +28,4 @@ touchscreen:
 ## See Also
 
 - [SDL display](#sdl)
-- {{< apiref "sdl/sdl_touchscreen.h" "sdl/sdl_touchscreen.h" >}}
+- {{< apiref "sdl/touchscreen/sdl_touchscreen.h" "sdl/touchscreen/sdl_touchscreen.h" >}}

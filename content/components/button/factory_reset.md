@@ -43,4 +43,4 @@ button:
 - {{< docref "safe_mode/" >}}
 - {{< docref "/components/switch/factory_reset" >}}
 - {{< docref "template/" >}}
-- {{< apiref "factory_reset/factory_reset_button.h" "factory_reset/factory_reset_button.h" >}}
+- {{< apiref "factory_reset/button/factory_reset_button.h" "factory_reset/button/factory_reset_button.h" >}}

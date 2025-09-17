@@ -647,4 +647,4 @@ remote_transmitter:
 - [Setting up RF Devices](#remote-setting-up-rf)
 - {{< docref "/components/rf_bridge" >}}
 - [RCSwitch](https://github.com/sui77/rc-switch) by [Suat Özgür](https://github.com/sui77)
-- {{< apiref "remote/remote_receiver.h" "remote/remote_receiver.h" >}}
+- {{< apiref "remote_receiver/remote_receiver.h" "remote_receiver/remote_receiver.h" >}}

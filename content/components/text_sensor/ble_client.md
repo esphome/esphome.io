@@ -61,4 +61,4 @@ A variable `x` of type `std::string` is passed to the automation for use in lamb
 - {{< docref "/components/ble_client" >}}
 - {{< docref "/components/sensor/ble_client" >}}
 - [Sensor Filters](#sensor-filters)
-- {{< apiref "ble_text_sensor/ble_text_sensor.h" "ble_text_sensor/ble_text_sensor.h" >}}
+- {{< apiref "ble_client/text_sensor/ble_text_sensor.h" "ble_client/text_sensor/ble_text_sensor.h" >}}

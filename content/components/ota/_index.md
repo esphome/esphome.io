@@ -161,5 +161,5 @@ expected. This is automatically enabled by the `ota` component, but it may be di
 
 ## See Also
 
-- {{< apiref "ota/ota_component.h" "ota/ota_component.h" >}}
+- {{< apiref "ota/ota_backend.h" "ota/ota_backend.h" >}}
 - {{< docref "/components/safe_mode" >}}

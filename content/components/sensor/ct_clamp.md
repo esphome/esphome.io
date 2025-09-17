@@ -76,4 +76,4 @@ Recompile and upload, now your CT clamp sensor is calibrated!
 - [CT Clamp Guide](https://learn.openenergymonitor.org/electricity-monitoring/ct-sensors/introduction)
 - {{< docref "adc/" >}}
 - {{< docref "ads1115/" >}}
-- {{< apiref "sensor/ct_clamp_sensor.h" "sensor/ct_clamp_sensor.h" >}}
+- {{< apiref "ct_clamp/ct_clamp_sensor.h" "ct_clamp/ct_clamp_sensor.h" >}}

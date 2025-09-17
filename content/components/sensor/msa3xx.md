@@ -208,4 +208,4 @@ binary_sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- {{< apiref "msa3xxx/msa3xxx.h" "msa3xxx/msa3xxx.h" >}}
+- {{< apiref "msa3xx/msa3xx.h" "msa3xx/msa3xx.h" >}}
