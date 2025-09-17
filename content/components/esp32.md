@@ -67,7 +67,7 @@ esp32:
 ### ESP-IDF Framework
 
 ESP-IDF is Espressif's native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6,
-ESP32-H2, and ESP32-P4 variants, as these do not support the Arduino framework. It is recommended for
+ESP32-H2, and ESP32-P4 variants, as these are not supported by the Arduino framework. It is recommended for
 all ESP32 chips when possible. See the {{< docref "/guides/esp32_arduino_to_idf" "migration guide" >}} for help transitioning from Arduino.
 
 ```yaml
