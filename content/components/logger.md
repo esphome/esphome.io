@@ -104,6 +104,7 @@ hardware interfaces for logging. Many newer boards based on ESP32 variants (such
 are using the ESP's on-board USB hardware peripheral while boards based on older processors (such as
 the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for communication.
 
+|          | Interface |
 | -------- | --------- |
 | ESP8266  | `UART0`   |
 | ESP32    | `UART0`   |
