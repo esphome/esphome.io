@@ -10,7 +10,7 @@ params:
 The `zwave_proxy` component allows proxying of Z-Wave data frames between a
 [Z-Wave Modem SoC](https://www.silabs.com/wireless/z-wave/800-series-modem-soc) and
 [Z-Wave JS](https://github.com/zwave-js) via ESPHome's {{< docref "/components/api" >}} over
-{{< docref "/components/wifi" >}} or {{< docref "/components/ethernet" >}}. This allows for more flexibility when
+the {{< docref "/components/wifi" >}} or {{< docref "/components/ethernet" >}}. This allows for more flexibility when
 placing your Z-Wave hardware within your home.
 
 As the Z-Wave modem SoC communicates via a serial connection, you need to have a [UART](#uart) defined in your ESPHome
