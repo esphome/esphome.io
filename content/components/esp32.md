@@ -72,7 +72,7 @@ esp32:
 
 ### Configuration variables
 
-- **type** (*Optional*, string): The frameword type, either `esp-idf` or `arduino`. Defaults to `arduino`
+- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `arduino`
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
