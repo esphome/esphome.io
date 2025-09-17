@@ -43,12 +43,11 @@ suitable for that variant. Both may be specified (for backwards compatibility) b
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
   partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`.
 
-- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Arduino framework](#esp32-arduino_framework)
-  and [ESP-IDF framework](#esp32-espidf_framework).
+- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
 
-{{< anchor "esp32-arduino_framework" >}}
+{{< anchor "esp32-framework" >}}
 
-## Arduino framework
+## Framework
 
 This is the default framework for ESP32 chips at the moment.
 
@@ -59,30 +58,6 @@ esp32:
   framework:
     type: arduino
 ```
-
-### Configuration variables
-
-- **version** (*Optional*, string): The base framework version number to use, from
-  [ESP32 arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
-  Additional values are:
-
-  - `dev`  : Use the latest commit from <https://github.com/espressif/arduino-esp32>, note this may break at any time
-  - `latest`  : Use the latest *release* from <https://github.com/espressif/arduino-esp32/releases>, even if it hasn't
-    been recommended yet.
-
-  - `recommended`  : Use the recommended framework version.
-
-- **source** (*Optional*, string): The PlatformIO package or repository to use for framework. This can be used to use a
-  custom or patched version of the framework.
-
-- **platform_version** (*Optional*, string): The version of the
-  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases) package to use.
-
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
-
-{{< anchor "esp32-espidf_framework" >}}
-
-## ESP-IDF framework
 
 This is an alternative base framework for ESP32 chips; it is recommended for variants of the ESP32 like ESP32S2,
 ESP32S3, ESP32P4 and single-core ESP32 chips.
@@ -97,14 +72,15 @@ esp32:
 
 ### Configuration variables
 
+- **type** (*Optional*, string): The frameword type, either `esp-idf` or `arduino`. Defaults to `arduino`
+
 - **version** (*Optional*, string): The base framework version number to use, from
-  [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases). Defaults to `recommended`.
+  [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
+  [ESP32 arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
   Additional values are:
 
-  - `dev`  : Use the latest commit from <https://github.com/espressif/esp-idf>, note this may break at any time
-  - `latest`  : Use the latest *release* from <https://github.com/espressif/esp-idf/releases>, even if it hasn't been
-    recommended yet.
-
+  - `dev`  : Use the latest commit, note this may break at any time
+  - `latest`  : Use the latest *release*, even if it hasn't been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
 - **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to
@@ -154,9 +130,8 @@ esp32:
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
 
-- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features in
-  the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
-  other issues.
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
+  experimental features may cause instability or other issues.
 
 **LWIP Optimization Options (ESP-IDF only):**
 
