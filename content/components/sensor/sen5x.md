@@ -249,8 +249,8 @@ on_...:
     - sen5x.start_fan_autoclean: my_sen55
 ```
 
-You can emulate the SEN5X automatic fan cleaning interval on the SEN6X sensors by using the `interval` component to 
-perform this action periodically. For example, to clean the fan every 7 days while the device is on, as 
+You can emulate the SEN5X automatic fan cleaning interval on the SEN6X sensors by using the `interval` component to
+perform this action periodically. For example, to clean the fan every 7 days while the device is on, as
 recommended by the manufacturer, the following configuration can be added:
 
 ``` yaml
@@ -271,7 +271,6 @@ automatic mode. Instead you have to trigger `sen5x.activate_heater` action occas
 This [action](#config-action) manually starts the heater. First all measurements are stopped, then the heater is
 turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the measurements. This is to
 ensure the heating effects are gone before temperature measurements resume.
-
 
 ``` yaml
 on_...:
