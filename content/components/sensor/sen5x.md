@@ -22,7 +22,7 @@ This component only supports I²C communication thus the [I²C Bus](#i2c) is req
 # Example SEN55 configuration entry
 sensor:
   - platform: sen5x
-    id: SEN55
+    id: my_sen55
     pm_1_0:
       name: PM <1µm Weight concentration
     pm_2_5:
@@ -49,7 +49,7 @@ sensor:
 # Example SEN66 configuration entry
 sensor:
   - platform: sen5x
-    id: sen66
+    id: my_sen66
     pm_1_0:
       name: PM <1µm Weight concentration
     pm_2_5:
@@ -237,8 +237,7 @@ dust inside the fan.
   every week if the sensor is switched off and on periodically (e.g., once per day).
 - The cleaning procedure can also be started manually with the `start_autoclean_fan` Action.
 
-SEN6X sensors supports fan cleaning but not the automatic fan cleaning interval. You have to trigger
-`sen5x.start_fan_autoclean` action below occasionally.
+SEN6X sensors supports fan cleaning but not the automatic fan cleaning interval.
 
 ### `start_fan_autoclean` Action
 
@@ -247,7 +246,18 @@ This [action](#config-action) manually starts a fan-cleaning cycle.
 ``` yaml
 on_...:
   then:
-    - sen5x.start_fan_autoclean: SEN54
+    - sen5x.start_fan_autoclean: my_sen55
+```
+
+You can emulate the SEN5X automatic fan cleaning interval on the SEN6X sensors by using the `interval` component to 
+perform this action periodically. For example, to clean the fan every 7 days while the device is on, as 
+recommended by the manufacturer, the following configuration can be added:
+
+``` yaml
+interval:
+  - interval: 7d
+    then:
+      - sen5x.start_fan_autoclean: my_sen66
 ```
 
 ## Humidity Sensor Heater
@@ -261,6 +271,7 @@ automatic mode. Instead you have to trigger `sen5x.activate_heater` action occas
 This [action](#config-action) manually starts the heater. First all measurements are stopped, then the heater is
 turned on at 200mW for 1s, finally there is a 20 second delay to before reenabling the measurements. This is to
 ensure the heating effects are gone before temperature measurements resume.
+
 
 ``` yaml
 on_...:
@@ -317,19 +328,19 @@ occasionally call the `sen5x.set_ambient_pressure_compensation` action.
 This [action](#config-action) updates the current pressure used in CO₂ pressure compensation. Must be in hPa or mbar.
 
 ``` yaml
-    sensor:
-      - platform: copy
-        id: pressure_to_sen6x
-        source_id: pressure
-        unit_of_measurement: hPa
-        filters:
-          - lambda: |-
-              // convert Pa to hPa (or mBar)
-              return x / 100.0;
-        on_value:
-          then:
-            - lambda: !lambda |-
-                id(sen66_sensor)->set_ambient_pressure_compensation(x);
+sensor:
+  - platform: copy
+    id: pressure_to_sen6x
+    source_id: pressure
+    unit_of_measurement: hPa
+    filters:
+      - lambda: |-
+          // convert Pa to hPa (or mBar)
+          return x / 100.0;
+    on_value:
+      then:
+        - lambda: !lambda |-
+            id(sen66_sensor)->set_ambient_pressure_compensation(x);
 ```
 
 Altitude based compensation is also available when you set the `altitude_compensation` configuration variable
