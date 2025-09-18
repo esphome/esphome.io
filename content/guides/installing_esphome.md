@@ -183,6 +183,14 @@ your `PATH` using `export PATH=$PATH:$HOME/.local/bin`.
 To set this permanently, you can run ``echo 'export
 PATH=$PATH:$HOME/.local/bin' >> $HOME/.bashrc``, then log out and back in.
 
+If you get an error like "ERROR Could not write file" when compiling an
+ESPHome configuration file from a path that is mounted from an SMB share,
+you can specify a local path that is used to write temporary files to using
+`export ESPHOME_DATA_DIR=~/tmp`.
+
+To set this permanently, you can run ``echo 'export
+ESPHOME_DATA_DIR=~/tmp' >> $HOME/.bashrc``, then log out and back in.
+
 ## See Also
 
 - {{< docref "/index" "ESPHome index" >}}
