@@ -57,6 +57,7 @@ target to keep in mind.
 In addition to low latency, reliability is also critical to an optimal experience.
 
 **A wired Ethernet connection will provide the best reliability for the Z-Wave proxy.** Ethernet offers:
+
 - More stable and predictable latency
 - No connection drops or lag due to RF interference
 - Immunity to environmental conditions
