@@ -1,0 +1,46 @@
+---
+description: "Instructions for setting up the iAQ-Core sensor."
+title: "AMS iAQ-Core Indoor Air Quality Sensor"
+params:
+  seo:
+    description: Instructions for setting up the iAQ-Core sensor.
+    image: iaqcore.jpg
+---
+
+The AMS iAQ-Core sensor allows you to use your
+([datasheet](https://www.sciosense.com/wp-content/uploads/documents/iaQ-Core-Datasheet.pdf))
+sensors with ESPHome.
+
+{{< img src="iaqcore.jpg" alt="Image" caption="AMS iAQ-Core Indoor Air Quality Sensor." width="30.0%" class="align-center" >}}
+
+The iAQ-Core sensor module is used to measure VOC levels and provide CO2 equivalent and TVOC equivalent predictions. The data is available via I²C bus.
+
+To use the sensor, first set up an [I²C Bus](#i2c) and connect the sensor to the specified pins.
+
+```yaml
+# Example configuration entry
+sensor:
+  - platform: iaqcore
+    address: 0x5A
+    update_interval: 60s
+    co2:
+        name: "iAQ Core CO2 Sensor"
+    tvoc:
+        name: "iAQ Core TVOC Sensor"
+```
+
+## Configuration variables
+
+- **i2c_id** (*Optional*, ID): The id of the I²C Bus.
+- **address** (*Optional*, int): Manually specifiy the I²C address of the sensor. Defaults to `0x5A`.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **co2** (*Optional*): The configuration for the CO2 sensor. All options from
+  [Sensor](#config-sensor).
+
+- **tvoc** (*Optional*): The configuration for the TVOC sensor. All options from
+  [Sensor](#config-sensor).
+
+## See Also
+
+- [Sensor Filters](#sensor-filters)
+- {{< docref "/components/sensor" >}}
