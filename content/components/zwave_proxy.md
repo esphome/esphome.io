@@ -40,7 +40,7 @@ zwave_proxy:
 
 Low latency is key to achieving an optimal experience with Z-Wave (or any) wireless devices.
 
-It's important to understand that using the `zwave_proxy` _will_ increase latency between your Z-Wave devices and
+It's important to understand that using the `zwave_proxy` *will* increase latency between your Z-Wave devices and
 Z-Wave JS -- this is simply the consequence of passing messages from one medium to another.
 
 Under near-ideal conditions:
@@ -56,7 +56,7 @@ target to keep in mind.
 
 In addition to low latency, reliability is also critical to an optimal experience.
 
-- While most convenient, Wi-Fi is subject to interference from other, nearby RF devices and environmental conditions. 
+- While most convenient, Wi-Fi is subject to interference from other, nearby RF devices and environmental conditions.
   These factors can (and do) periodically cause (momentary) instability of the signal. In many cases, Wi-Fi devices
   recover automatically, but this comes at the expense of degraded performance (latency) and, in more extreme cases,
   brief loss of connectivity. This is not desirable for applications such as the Z-Wave proxy and it's important to
@@ -72,10 +72,10 @@ If you choose to use Wi-Fi to bridge your Z-Wave modem to Z-Wave JS:
 - Do not attempt to place your Z-Wave proxy in or near the edge of the coverage area your Wi-Fi router/access point
   provides.
 - If you find that your Z-Wave devices are not operating reliably, you might try:
-    - moving your Z-Wave proxy closer to your Wi-Fi router/access point.
-    - changing the Wi-Fi channel your Wi-Fi router/access point is using.
-    - getting a better Wi-Fi router/access point. In particular, many ISP-provided Wi-Fi routers are designed to be
-      cost-effective and are not optimized for performance.
+  - moving your Z-Wave proxy closer to your Wi-Fi router/access point.
+  - changing the Wi-Fi channel your Wi-Fi router/access point is using.
+  - getting a better Wi-Fi router/access point. In particular, many ISP-provided Wi-Fi routers are designed to be
+    cost-effective and are not optimized for performance.
 
 ## See Also
 
