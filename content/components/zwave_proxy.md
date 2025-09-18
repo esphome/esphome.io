@@ -56,15 +56,14 @@ target to keep in mind.
 
 In addition to low latency, reliability is also critical to an optimal experience.
 
-- While most convenient, Wi-Fi is subject to interference from other, nearby RF devices and environmental conditions.
-  These factors can (and do) periodically cause (momentary) instability of the signal. In many cases, Wi-Fi devices
-  recover automatically, but this comes at the expense of degraded performance (latency) and, in more extreme cases,
-  brief loss of connectivity. This is not desirable for applications such as the Z-Wave proxy and it's important to
-  keep in mind as you determine how you'll connect it.
-- A wired Ethernet connection will, in all cases, prove more reliable than a Wi-Fi connection for the Z-Wave proxy
-  application. It's much more stable and predictable in terms of latency and the connection will not arbitrarily drop
-  (unless, of course, you unplug the cable). For this reason, we highly recommend using a wired connection to achieve
-  the best experience.
+**A wired Ethernet connection will provide the best reliability for the Z-Wave proxy.** Ethernet offers:
+- More stable and predictable latency
+- No connection drops from RF interference
+- Consistent performance regardless of environmental conditions
+
+### Wi-Fi considerations
+
+Wi-Fi is subject to interference from other RF devices and environmental conditions. These factors can periodically cause momentary signal instability. While Wi-Fi devices typically recover automatically, this comes at the expense of temporarily degraded performance (latency) and, in more extreme cases, brief loss of connectivity.
 
 If you choose to use Wi-Fi to bridge your Z-Wave modem to Z-Wave JS:
 
