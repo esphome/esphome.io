@@ -18,7 +18,7 @@ The sensor communicates with the microcontroller via {{< docref "/components/uar
 
 {{< img src="wts01-full.png" alt="Image" caption="WTS01 Temperature Sensor" width="80.0%" class="align-center" >}}
 
-**Basic configuration**
+## Basic configuration
 
 ```yaml
 # You need to have a UART bus setup in your configuration
@@ -32,7 +32,8 @@ sensor:
     name: "WTS01 Temperature"
 
 ```
-**More advanced configurations**
+
+## More advanced configurations
 
 ```yaml
 # Throttle updates to the sensor
@@ -43,6 +44,7 @@ sensor:
       - throttle: 60s
 
 ```
+
 ```yaml
 # Convert the temperature to Fahrenheit
 sensor:
@@ -54,7 +56,8 @@ sensor:
     unit_of_measurement: "°F"
 
 ```
-## Configuration variables:
+
+## Configuration variables
 
 - **sensor** (*Required*): The sensor configuration.
 
@@ -67,6 +70,7 @@ The WTS01 sensor is used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR3
 This sensor provides temperature readings with 0.1°C resolution.
 
 {{< /note >}}
+
 ## See Also
 
 - [Sensor Filters](/components/sensor/#sensor-filters)
