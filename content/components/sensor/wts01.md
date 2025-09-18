@@ -49,6 +49,7 @@ sensor:
   - platform: wts01
     name: "WTS01 Temperature"
     filters:
+    # Converts Celsius to Fahrenheit using the formula: F = C * (9/5) + 32 
     - lambda: return x * (9.0/5.0) + 32.0;
     unit_of_measurement: "°F"
 
@@ -59,7 +60,7 @@ sensor:
 
   - **platform** (*Required*, string): Must be `wts01`  .
   - **name** (*Required*, string): The name of the temperature sensor.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor/#base-sensor-configuration).
 
 {{< note >}}
 The WTS01 sensor is used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices and connects to the main device using a RJ9 4C4P connector.
@@ -68,7 +69,6 @@ This sensor provides temperature readings with 0.1°C resolution.
 {{< /note >}}
 ## See Also
 
-- [sensor-filters](#sensor-filters)
+- [Sensor Filters](/components/sensor/#sensor-filters)
 - {{< docref "/components/uart" >}}
 - {{< apiref "wts01/wts01.h" "wts01/wts01.h" >}}
-
