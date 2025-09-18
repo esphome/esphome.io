@@ -65,6 +65,7 @@ In addition to low latency, reliability is also critical to an optimal experienc
 ### Wi-Fi considerations
 
 Wi-Fi is impacted by:
+
 - Interference from other RF devices
 - Environmental conditions, such as:
   - People/pets moving around a room
