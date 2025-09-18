@@ -66,7 +66,7 @@ uart:
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 
 - **flow_control_pin** (*Optional*, [Pin](#config-pin)): ESP32 only. The pin used to for hardware RS485 flow control.
-  When using this setting, half-duplex mode is enabled. Use the full pin schema and set `inverted: true` to invert logic levels.
+  Use of this setting enables half-duplex mode. Use the full pin schema and set `inverted: true` to invert logic levels.
 
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.
 - **rx_buffer_size** (*Optional*, int): The size of the buffer used for receiving UART messages. Increase if you use an
