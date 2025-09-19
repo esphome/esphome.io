@@ -16,14 +16,14 @@ For this component to work you need to have set up a UART bus in your configurat
 
 The sensor communicates with the microcontroller via {{< docref "/components/uart" "UART" >}}.
 
-{{< img src="wts01-full.png" alt="Image" caption="WTS01 Temperature Sensor" width="80.0%" class="align-center" >}}
+{{< img src="wts01-full.png" alt="Image" width="80.0%" class="align-center" >}}
 
 ## Basic configuration
 
 ```yaml
 # You need to have a UART bus setup in your configuration
 uart:
-  rx_pin: GPIO17
+  rx_pin: GPIOXX
   baud_rate: 9600
 
 # Then you can add the WTS01 sensor
@@ -33,37 +33,9 @@ sensor:
 
 ```
 
-## More advanced configurations
-
-```yaml
-# Throttle updates to the sensor
-sensor:
-  - platform: wts01
-    name: "WTS01 Temperature"
-    filters:
-      - throttle: 60s
-
-```
-
-```yaml
-# Convert the temperature to Fahrenheit
-sensor:
-  - platform: wts01
-    name: "WTS01 Temperature"
-    filters:
-    # Converts Celsius to Fahrenheit using the formula: F = C * (9/5) + 32 
-    - lambda: return x * (9.0/5.0) + 32.0;
-    unit_of_measurement: "°F"
-
-```
-
 ## Configuration variables
 
-- **sensor** (*Required*): The sensor configuration.
-
-  - **platform** (*Required*, string): Must be `wts01`  .
-  - **name** (*Required*, string): The name of the temperature sensor.
-  - All other options from [Sensor](/components/sensor/#base-sensor-configuration).
+- All options from [Sensor](#config-sensor).
 
 {{< note >}}
 The WTS01 sensor is used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices and connects to the main device using a RJ9 4C4P connector.
