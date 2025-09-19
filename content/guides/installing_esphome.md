@@ -117,6 +117,14 @@ $ source venv/bin/activate  # For bash or compatible shells. If using a differen
 Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above.
 When activated you will see `(venv)` at the beginning of your prompt.
 
+When a new version of ESPHome is released, you can update it using the following commands:
+```shell
+$ python3 -m venv venv      # The last argument is the folder in which to install the virtual environment
+$ source venv/bin/activate  # For bash or compatible shells. If using a different shell, use activate.csh or activate.fish
+(venv) $ pip install -U esphome  # Updates ESPHome in the virtual environment
+(venv) $ esphome version
+```
+
 ### Cloning the repository
 
 For development purposes, we recommend cloning the repository. See our
@@ -190,6 +198,15 @@ you can specify a local path that is used to write temporary files to using
 
 To set this permanently, you can run ``echo 'export
 ESPHOME_DATA_DIR=~/.esphome' >> $HOME/.bashrc``, then log out and back in.
+
+When a new version of ESPHome is released, you can update it using the
+following commands:
+```shell
+$ python3 -m venv venv      # The last argument is the folder in which to install the virtual environment
+$ source venv/bin/activate  # For bash or compatible shells. If using a different shell, use activate.csh or activate.fish
+(venv) $ pip install -U esphome  # Updates ESPHome in the virtual environment
+(venv) $ esphome version
+```
 
 ## See Also
 
