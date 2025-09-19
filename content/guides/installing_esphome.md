@@ -118,6 +118,7 @@ Any time you want to use ESPHome, you will need to have activated the virtual en
 When activated you will see `(venv)` at the beginning of your prompt.
 
 When a new version of ESPHome is released, you can update it using the following commands:
+
 ```shell
 $ python3 -m venv venv      # The last argument is the folder in which to install the virtual environment
 $ source venv/bin/activate  # For bash or compatible shells. If using a different shell, use activate.csh or activate.fish
@@ -201,6 +202,7 @@ ESPHOME_DATA_DIR=~/.esphome' >> $HOME/.bashrc``, then log out and back in.
 
 When a new version of ESPHome is released, you can update it using the
 following commands:
+
 ```shell
 $ python3 -m venv venv      # The last argument is the folder in which to install the virtual environment
 $ source venv/bin/activate  # For bash or compatible shells. If using a different shell, use activate.csh or activate.fish
