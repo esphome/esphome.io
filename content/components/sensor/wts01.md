@@ -9,7 +9,7 @@ params:
 
 
 
-The `wts01`   platform allows you to use WTS01 temperature sensors with ESPHome.
+The `wts01` platform allows you to use WTS01 temperature sensors with ESPHome.
 This is the sensor used in Sonoff TH Origin (THR316, THR320) and TH Elite (THR316D, THR320D) devices.
 
 For this component to work you need to have set up a UART bus in your configuration - only the RX pin should be necessary.
