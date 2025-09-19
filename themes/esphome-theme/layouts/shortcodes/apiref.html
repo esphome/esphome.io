@@ -36,5 +36,9 @@
 {{- end }}
 {{ $processedPath := index $data $path }}
 
+{{- if not (isset $data $path) -}}
+{{- warnf "Could not find API reference for '%s' in %s" $path $.Page.File.Path -}}
+{{- end -}}
+
 {{- $baseUrl := .Site.Params.api_docs_url -}}
 <a href="{{ $baseUrl }}/{{ $processedPath }}">{{ $text }}</a>
