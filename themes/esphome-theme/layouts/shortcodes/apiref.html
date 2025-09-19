@@ -21,19 +21,20 @@
     :apiref:`DisplayName <path/to/api/element>`
     :apiref:`esphome::sensor::Sensor` (uses path as display name)
 */ -}}
+{{- $branch := getenv "BRANCH" | default site.Params.branch | default "current" -}}
+{{- if eq $branch "new" -}}
+    {{- $branch = "current" -}}
+{{- end -}}
+{{- if not (in (slice "current" "beta" "next") $branch) -}}
+    {{- $branch = "next" -}}
+{{- end -}}
+{{- $data := index site.Data.apirefs $branch -}}
 {{- $text := .Get 0 -}}
 {{- $path := .Get 1 -}}
 {{- if eq $text $path -}}
     {{- $text = "API Reference" }}
 {{- end }}
-{{- $lastPathElement := index (last 1 (split $path "/")) 0 -}}
-{{- $processedPath := replace (replace (replace $lastPathElement "_" "__") "." "_8") ":" "_1" -}}
-{{ $match := findRE `([A-Z])` $processedPath }}
-{{ range $match }}
-{{ $original := . }}
-{{ $lower := lower . | printf "_%s" }}
-{{ $processedPath = replace $processedPath $original $lower }}
-{{ end }}
+{{ $processedPath := index $data $path }}
 
 {{- $baseUrl := .Site.Params.api_docs_url -}}
 <a href="{{ $baseUrl }}/{{ $processedPath }}">{{ $text }}</a>
