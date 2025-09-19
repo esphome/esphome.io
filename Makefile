@@ -34,6 +34,10 @@ repo-data: directories
 	curl -s -S https://data.esphome.io/release/automations.json | script/collate_automations.sh > data/automations/current.json
 	curl -s -S https://data.esphome.io/beta/automations.json | script/collate_automations.sh > data/automations/beta.json
 	curl -s -S https://data.esphome.io/dev/automations.json | script/collate_automations.sh > data/automations/next.json
+	mkdir -p data/apirefs
+	curl -s -S https://api-docs.esphome.io/tags.xml | script/format_api_tags.py > data/apirefs/current.json
+	curl -s -S https://api-docs-beta.esphome.io/tags.xml | script/format_api_tags.py > data/apirefs/beta.json
+	curl -s -S https://api-docs-dev.esphome.io/tags.xml | script/format_api_tags.py > data/apirefs/next.json
 
 live-html:	anchors
 	$(PAGEFIND)
@@ -42,6 +46,7 @@ live-html:	anchors
 clean:
 	rm -rf public/*
 	rm -rf pagefind/*
+	rm -rf data/apiref/
 	rm -rf data/automations/
 	rm -rf data/repo.yaml
 	rm -rf resources/_gen
