@@ -7,8 +7,6 @@ params:
     image: mk2pvrouter.jpg
 ---
 
-
-
 ## Component/Hub
 
 The `mk2pvrouter`   component allows you to retrieve data from a
@@ -35,21 +33,21 @@ mk2pvrouter:
   update_interval: 5s
 
 ```
-## Configuration variables:
 
+## Configuration variables:
 
 In `mk2pvrouter`   platform:
 
-- **id** (*Optional*, [config-id](#config-id)): Manually specify the ID used for code generation or multiple hubs.
-- **uart_id** (*Optional*, [config-id](#config-id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
-- **update_interval** (*Optional*, [config-time](#config-time)): The interval to check the
-  sensor. Defaults to `5s`  .
+- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation or multiple hubs.
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+  sensor. Defaults to `5s`.
 
 ## MQTT Integration
 
 {{< warning >}}
 If you enable `mqtt`   forwarding and you do *not* use the {{< docref "/components/api" >}}, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must
-remove the `api:`   configuration or set `reboot_timeout: 0s`  , otherwise the ESP will
+remove the `api:`   configuration or set `reboot_timeout: 0s`, otherwise the ESP will
 reboot every 15 minutes because no client connected to the native API.
 
 {{< /warning >}}
@@ -73,6 +71,7 @@ mqtt:
 mk2pvrouter:
 
 ```
+
 With this configuration, data will be published to topics such as:
 
 - `mk2pvrouter/V1`   for voltage on phase 1
@@ -99,6 +98,7 @@ sensor:
     icon: mdi:lightning-bolt
 
 ```
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
 
 {{< note >}}
@@ -106,8 +106,8 @@ The available tags are defined in the Mk2PVRouter diverter's program and depend 
 Please refer to your diverter's documentation or configuration to determine the tags available for your setup.
 
 {{< /note >}}
-- All other options from [Sensor](#config-sensor).
 
+- All other options from [Sensor](#config-sensor).
 
 ## Binary Sensor
 
@@ -118,9 +118,9 @@ binary_sensor:
     name: "Relay 1"
 
 ```
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
 - All other options from [Sensor](#config-sensor).
-
 
 ## Text Sensor
 
@@ -131,9 +131,9 @@ text_sensor:
     name: "Power at grid as string"
 
 ```
+
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Telemetry.
 - All other options from [Text Sensor](#config-text_sensor).
-
 
 ## See Also
 
@@ -141,4 +141,3 @@ text_sensor:
 - [Mk2PVRouter FW single phase](https://github.com/FredM67/PVRouter-1-phase)
 - [Mk2PVRouter FW three phase](https://github.com/FredM67/PVRouter-3-phase)
 - {{< apiref "mk2pvrouter/mk2pvrouter.h" "mk2pvrouter/mk2pvrouter.h" >}}
-
