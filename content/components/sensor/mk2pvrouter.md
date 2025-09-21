@@ -3,13 +3,13 @@ description: "Instructions for setting up Mk2PVRouter Telemetry"
 title: "Telemetry from Mk2PVRouter diverter."
 params:
   seo:
-    description: Instructions for setting up Mk2PVRouter Telemetry
-    image: mk2pvrouter.jpg
+  description: Instructions for setting up Mk2PVRouter Telemetry
+  image: mk2pvrouter.jpg
 ---
 
 ## Component/Hub
 
-The `mk2pvrouter`   component allows you to retrieve data from a
+The `mk2pvrouter` component allows you to retrieve data from a
 Mk2PVRouter diverter using Telemetry. It works with any Mk2PVRouter
 diverter, as long as this feature has been activated on the router itself.
 
@@ -34,9 +34,9 @@ mk2pvrouter:
 
 ```
 
-## Configuration variables:
+## Configuration variables
 
-In `mk2pvrouter`   platform:
+In `mk2pvrouter` platform:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation or multiple hubs.
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART Component if you want to use multiple UART buses.
@@ -46,12 +46,12 @@ In `mk2pvrouter`   platform:
 ## MQTT Integration
 
 {{< warning >}}
-If you enable `mqtt`   forwarding and you do *not* use the {{< docref "/components/api" >}}, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must
-remove the `api:`   configuration or set `reboot_timeout: 0s`, otherwise the ESP will
+If you enable `mqtt` forwarding and you do *not* use the {{< docref "/components/api" >}}, ie the module is exclusively used for forwarding data via MQTT and it's *not* connected to any Home Assistant instance, you must
+remove the `api:` configuration or set `reboot_timeout: 0s`, otherwise the ESP will
 reboot every 15 minutes because no client connected to the native API.
 
 {{< /warning >}}
-If you configure the `mqtt`   option, you will need to define the {{< docref "/components/mqtt" >}} component in your configuration.
+If you configure the `mqtt` option, you will need to define the {{< docref "/components/mqtt" >}} component in your configuration.
 This is required for the component to publish data to the MQTT broker.
 
 The component will publish all sensor data to topics following this structure:
@@ -62,11 +62,11 @@ Example:
 ```yaml
 mqtt:
   broker: 192.168.1.10
-  port: 1883           # Optional
-  username: mqtt_user  # Optional
-  password: mqtt_pass  # Optional
-  id: mqtt_client      # Optional
-  topic_prefix: "mk2pvrouter"
+  port: 1883                  # Optional
+  username: mqtt_user         # Optional
+  password: mqtt_pass         # Optional
+  id: mqtt_client             # Optional
+  topic_prefix: "mk2pvrouter" # Optional
 
 mk2pvrouter:
 
@@ -74,28 +74,28 @@ mk2pvrouter:
 
 With this configuration, data will be published to topics such as:
 
-- `mk2pvrouter/V1`   for voltage on phase 1
-- `mk2pvrouter/P1`   for power on CT1
+- `mk2pvrouter/V1` for voltage on phase 1
+- `mk2pvrouter/P1` for power on CT1
 
 ## Sensors
 
 ```yaml
 sensor:
   - platform: mk2pvrouter
-    tag_name: "P"
-    name: "Power at grid"
-    unit_of_measurement: "Wh"
-    icon: mdi:flash
+  tag_name: "P"
+  name: "Power at grid"
+  unit_of_measurement: "Wh"
+  icon: mdi:flash
   - platform: mk2pvrouter
-    tag_name: "D"
-    name: "Diverted power"
-    unit_of_measurement: "Wh"
-    icon: mdi:flash
+  tag_name: "D"
+  name: "Diverted power"
+  unit_of_measurement: "Wh"
+  icon: mdi:flash
   - platform: mk2pvrouter
-    tag_name: "E"
-    name: "Diverted energy"
-    unit_of_measurement: "Wh"
-    icon: mdi:lightning-bolt
+  tag_name: "E"
+  name: "Diverted energy"
+  unit_of_measurement: "Wh"
+  icon: mdi:lightning-bolt
 
 ```
 
@@ -114,8 +114,8 @@ Please refer to your diverter's documentation or configuration to determine the 
 ```yaml
 binary_sensor:
   - platform: mk2pvrouter
-    tag_name: "R1"
-    name: "Relay 1"
+  tag_name: "R1"
+  name: "Relay 1"
 
 ```
 
@@ -127,8 +127,8 @@ binary_sensor:
 ```yaml
 text_sensor:
   - platform: teleinfo
-    tag_name: "P"
-    name: "Power at grid as string"
+  tag_name: "P"
+  name: "Power at grid as string"
 
 ```
 
