@@ -131,8 +131,8 @@ file_types = (
     ".yml",
     "",
 )
-docs_types = [".rst"]
-image_types = [".avif", ".jpg", ".ico", ".png", ".svg", ".gif"]
+docs_types = [".md"]
+image_types = [".webp", ".jpg", ".ico", ".png", ".svg", ".gif"]
 
 LINT_FILE_CHECKS = []
 LINT_CONTENT_CHECKS = []
