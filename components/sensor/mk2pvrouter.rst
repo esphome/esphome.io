@@ -49,9 +49,6 @@ In ``mk2pvrouter`` platform:
 - **uart_id** (*Optional*, :ref:`config-id`): Manually specify the ID of the UART Component if you want to use multiple UART buses.
 - **update_interval** (*Optional*, :ref:`config-time`): The interval to check the
   sensor. Defaults to ``5s``.
-- **mqtt** (*Optional*): For forwarding data to an MQTT broker, including emoncms via MQTT.
-
-  - **topic_prefix** (**Required**, string): The MQTT topic prefix to use for publishing data.
 
 MQTT Integration
 ----------------
@@ -78,10 +75,9 @@ Example:
       username: mqtt_user  # Optional
       password: mqtt_pass  # Optional
       id: mqtt_client      # Optional
+      topic_prefix: "mk2pvrouter"
     
     mk2pvrouter:
-      mqtt:
-        topic_prefix: "mk2pvrouter"
 
 With this configuration, data will be published to topics such as:
 
