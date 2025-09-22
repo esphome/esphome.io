@@ -625,7 +625,7 @@ See [light state](#light-state_config) for more information on the various color
 
 ### Flicker Effect
 
-This effect applies random variations to the brightness and all color channels which "hover" around the active color of the light. The default values simulate a gentle candle flicker, but with different settings it can produce gentle color shifts or chaotic sparkly noise.
+This effect applies random variations to the brightness and all color channels which "hover" around the active color of the light. The default values simulate a gentle candle flicker, but with different settings it can produce subtle color shifts or chaotic sparkly noise.
 
 ```yaml
 light:
