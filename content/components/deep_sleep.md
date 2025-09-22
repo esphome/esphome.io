@@ -68,8 +68,8 @@ Advanced features:
   wake up on multiple pins. This cannot be used together with wakeup pin.
 
   - **pins** (**Required**, list of pin numbers): The pins to wake up on.
-  - **mode** (**Required**): The mode to use for the wakeup source. Must be one of `ALL_LOW` (wake up when
-    all pins go LOW) or `ANY_HIGH` (wake up when any pin goes HIGH).
+  - **mode** (**Required**): The mode to use for the wakeup source. Must be one of `ANY_LOW` (wake up when any
+    pin goes LOW), `ALL_LOW` (wake up when all pins go LOW) or `ANY_HIGH` (wake up when any pin goes HIGH).
 
 {{< note >}}
 Only one deep sleep component may be configured.
