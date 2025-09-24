@@ -68,9 +68,9 @@ Advanced features:
 
   - **pins** (**Required**, list of pin numbers): The pins to wake up on.
   - **mode** (**Required**): The mode to use for the wakeup source. Must be one of:
-    - `ANY_LOW` (ESP32‑S2/S3/C6/H2 only) — wake up when any selected pin is LOW
-    - `ALL_LOW` (ESP32 only) — wake up when all selected pins are LOW
-    - `ANY_HIGH` — wake up when any selected pin is HIGH
+    - `ANY_LOW`: wake up when any selected pin is LOW (ESP32‑S2/S3/C6/H2 only)
+    - `ALL_LOW`: wake up when all selected pins are LOW (ESP32 only)
+    - `ANY_HIGH`: wake up when any selected pin is HIGH
 
 {{< note >}}
 Only one deep sleep component may be configured.
