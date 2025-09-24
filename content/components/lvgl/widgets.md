@@ -43,8 +43,8 @@ Similarly to CSS, LVGL also supports `min_width`, `max_width`, `min_height` and 
   - `"ACTIVE"`  : Show scroll bars while a widget is being scrolled.
   - `"AUTO"`  : Show scroll bars when the content is large enough to be scrolled (default).
 
-- **align** (*Optional*, enum): Alignment of the of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
-- **align_to** (*Optional*, list): Alignment of the of the widget relative to another widget on the same level:
+- **align** (*Optional*, enum): Alignment of the widget relative to the parent. A child widget is clipped to its parent boundaries. One of the values *not* starting with `OUT_` (see picture below).
+- **align_to** (*Optional*, list): Alignment of the widget relative to another widget on the same level:
   - **id** (**Required**): The ID of a widget *to* which you want to align.
   - **align** (**Required**, string): Desired alignment (one of the values starting with `OUT_`  ).
   - **x** (*Optional*, int16 or percentage): Horizontal offset position. Default `0`.
@@ -119,6 +119,7 @@ In addition to visual styling, each widget supports some boolean **flags** to in
 LVGL only supports **integers** for numeric `value`. Visualizer widgets can't display floats directly, but they allow scaling by 10s. Some examples in the {{< docref "/cookbook/lvgl" "Cookbook" >}} cover how to do that.
 
 {{< /note >}}
+
 {{< anchor "lvgl-widget-parts" >}}
 
 ## Widget parts
@@ -1575,13 +1576,15 @@ The spinbox contains a numeric value (as text) which can be increased or decreas
 - **range_from** (*Optional*, float): The minimum value allowed to set the spinbox to. Defaults to `0`.
 - **range_to** (*Optional*, float): The maximum value allowed to set the spinbox to. Defaults to `100`.
 - **rollover** (*Optional*, boolean): While increasing or decreasing the value, if either the minimum or maximum value is reached with this option enabled, the value will change to the other limit. If disabled, the value will remain at the minimum or maximum value. Defaults to `false`.
-- **step** (*Optional*, float): The granularity with which the value can be set. Defaults to `1.0`.
+- **selected_digit** (*Optional*, int): The ordinal number of the digit to be initially focused. Defaults to `0` which
+  represents the least significant digit. This digit will
+  be incremented or decremented by one when `increment` or `decrement` actions are called.
 - **value** (*Optional*, float): Actual value to be shown by the spinbox at start. Defaults to `0`.
 
 {{< note >}}
 The sign character will only be shown if the set range contains negatives.
-
 {{< /note >}}
+
 **Actions:**
 
 - `lvgl.spinbox.update` [action](#actions-action) updates the widget styles and properties from the specific options above, just like the [lvgl.widget.update](#lvgl-automation-actions) action is used for the common styles, states or flags.
