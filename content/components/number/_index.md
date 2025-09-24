@@ -54,6 +54,9 @@ you want the number to use that name, you can set `name: None`.
   for a list of available options.
   Set to `""` to remove the default entity category.
 
+- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
+  in [`esphome.devices`][#esphome-devices]. If omitted, the entity remains attached to the main device.
+
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
   of measurement for the number.
 

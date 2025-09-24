@@ -51,7 +51,11 @@ you want the text to use that name, you can set `name: None`.
 
 - **entity_category** (*Optional*, string): The category of the entity.
   See <https://developers.home-assistant.io/docs/core/entity/#generic-properties>
-  for a list of available options. Set to `""` to remove the default entity category.
+  for a list of available options.
+  Set to `""` to remove the default entity category.
+
+- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
+  in [`esphome.devices`][#esphome-devices]. If omitted, the entity remains attached to the main device.
 
 - **mode** (**Required**, string): Defines how the text should be displayed in the frontend.
   One of `text` or `password`.

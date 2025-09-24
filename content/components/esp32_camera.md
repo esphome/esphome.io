@@ -46,6 +46,9 @@ esp32_camera:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
+- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
+  in [`esphome.devices`][#esphome-devices]. If omitted, the entity remains attached to the main device.
+
 Connection Options:
 
 - **data_pins** (**Required**, list of pins): The data lanes of the camera, this must be a list
