@@ -113,6 +113,7 @@ lambda: |-
   - `5.83in`
   - `5.83inv2`
   - `gdey0583t81` - GoodDisplay GDEY0583T81 5.83" B/W
+  - `gdey075t7` - GoodDisplay GDEY075T7 7.5" B/W
   - `7.30in-f` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
   - `7.50in`
   - `7.50in-bV2` - also supports v3, B/W rendering only
@@ -129,7 +130,7 @@ lambda: |-
   - `13.3in-k` - 13.3in, with the K model, 960x680, B/W rendering only
 
 {{< warning >}}
-The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
+The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f`, the `Waveshare 7.50in V2` and the `gdey075t7` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
 
 {{< /warning >}}
 
