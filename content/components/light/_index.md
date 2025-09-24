@@ -94,7 +94,7 @@ to use that name, you can set `name: None`.
   Set to `""` to remove the default entity category.
 
 - **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
-  in [`esphome.devices`][#esphome-devices]. If omitted, the entity remains attached to the main device.
+  in [`esphome.devices`](#esphome-devices). If omitted, the entity remains attached to the main device.
 
 - If MQTT enabled, all other options from [MQTT Component](#config-mqtt-component).
 - If Webserver enabled and [version 3](#config-webserver-version-3-options) is selected, all other options from

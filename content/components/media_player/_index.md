@@ -52,7 +52,7 @@ you want the media player to use that name, you can set `name: None`.
   Set to `""` to remove the default entity category.
 
 - **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
-  in [`esphome.devices`][#esphome-devices]. If omitted, the entity remains attached to the main device.
+  in [`esphome.devices`](#esphome-devices). If omitted, the entity remains attached to the main device.
 
 {{< anchor "media_player-actions" >}}
 
