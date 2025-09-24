@@ -62,6 +62,7 @@ Example 2: Simple JSON:
 
 > [!NOTE]
 > To use the json component, you need to include it in your config. Be sure to put `json:` at the root level, along with other components like `esphome:`.
+
 ## Parsing JSON
 
 This example assumes that the server returns a response as a JSON object similar to this:
