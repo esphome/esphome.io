@@ -331,6 +331,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "CT Clamp","components/sensor/ct_clamp","ct_clamp.jpg","AC Current"
 "Daly BMS","components/sensor/daly_bms","daly_bms.jpg","Voltage & Current & Power"
 "DSMR","components/sensor/dsmr","dsmr.svg","Electrical counter"
+"DLMS_METER","components/sensor/dlms_meter","dlms_meter.jpg","Electrical counter"
 "HLW8012","components/sensor/hlw8012","hlw8012.svg","Voltage & Current & Power"
 "INA219","components/sensor/ina219","ina219.jpg","DC Current"
 "INA226","components/sensor/ina226","ina226.jpg","DC Current & Power"
