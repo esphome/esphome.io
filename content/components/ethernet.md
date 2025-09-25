@@ -59,7 +59,7 @@ ethernet:
   - `W5500` (SPI)
   - `OPENETH` (QEMU, ESP-IDF only)
   - `DM9051` (SPI, ESP-IDF only)
-  - `LAN8670` (RMII, ESP-IDF only)
+  - `LAN8670` (RMII)
 
 ### RMII configuration variables
 
