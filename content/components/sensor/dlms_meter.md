@@ -63,7 +63,7 @@ text_sensor:
       name: "Timestamp"
 ```
 
-{{< collapse >}} 
+{{< collapse >}}
 
 ### Example (Netz Noe / EVN)
 
@@ -162,4 +162,3 @@ All text sensor entries are *optional* and support standard [Text Sensor](#confi
 ## See Also
 
 - {{< apiref "dlms_meter/dlms_meter.h" "dlms_meter/dlms_meter.h" >}}
-
