@@ -85,6 +85,7 @@ climate:
 - **bit_high** (*Optional*, [Time](#config-time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
 - **bit_one_low** (*Optional*, [Time](#config-time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
 - **bit_zero_low** (*Optional*, [Time](#config-time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
+- **alternative_mode** (*Optional*, boolean): enables an alternative control mode for newer units, allowing temperature regulation in `Heat/Cool` mode and vertical airflow adjustment (6 fixed positions +  up/down swing). Defaults to `false`
 
 ```yaml
 # Example configuration entry
@@ -94,6 +95,7 @@ climate:
     sensor: room_temperature
     header_high: 3265us # AC Units from LG in Brazil, for example use these timings
     header_low: 9856us
+    alternative_mode: false
 ```
 
 {{< anchor "daikin_brc" >}}
