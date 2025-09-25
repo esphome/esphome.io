@@ -40,7 +40,7 @@ you want the light to use that name, you can set `name: None`.
 - **entity_category** (*Optional*, string): The category of the update entity. See
   <https://developers.home-assistant.io/docs/core/entity/#generic-properties> for a list of available options.
 
-- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
+- **device_id** (*Optional*, string): Identifier of the sub-device this entity belongs to. Must match the id of an entry
   in [`esphome.devices`](#esphome-devices). If omitted, the entity remains attached to the main device.
 
 - **icon** (*Optional*, icon): The icon to use for the update entity in the frontend.

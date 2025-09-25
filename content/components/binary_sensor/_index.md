@@ -86,7 +86,7 @@ Advanced options:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- **device_id** (*Optional*, string): Identifier of the sub‑device this entity belongs to. Must match the id of an entry
+- **device_id** (*Optional*, string): Identifier of the sub-device this entity belongs to. Must match the id of an entry
   in [`esphome.devices`](#esphome-devices). If omitted, the entity remains attached to the main device.
 
 - If MQTT enabled, all other options from [MQTT Component](#config-mqtt-component).
