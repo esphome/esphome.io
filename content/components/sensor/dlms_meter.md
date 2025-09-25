@@ -63,7 +63,8 @@ text_sensor:
       name: "Timestamp"
 ```
 
-{{< collapse >}}
+{{< collapse >}} 
+
 ### Example (Netz Noe / EVN)
 
 ```yaml
@@ -108,6 +109,7 @@ text_sensor:
     meternumber:                 # EVN specific
       name: "Meter Number"
 ```
+
 {{< /collapse >}}
 
 ## Component Configuration
