@@ -1096,7 +1096,7 @@ light:
 
 ### WLED Effect
 
-This effect enables controlling addressable lights using the `UDP Realtime Control`* protocol used by WLED*, allowing
+This effect enables controlling addressable lights using the `UDP Realtime Control` *protocol used by WLED*, allowing
 creation of realtime ambient lighting effects.
 
 [Prismatik](https://github.com/psieg/Lightpack) and/or [LedFx](https://github.com/LedFx/LedFx) can be used to control addressable lights over the network on ESPHome. Use the connection type
