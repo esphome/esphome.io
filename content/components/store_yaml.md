@@ -12,7 +12,7 @@ kilobytes.
 
 The YAML file is compressed before storing it as a part of the compiled firmware. Specifically, `__init__.py` uses a
 dictionary-based compression to compress `CORE.config` into a global `const` byte array (`ESPHOME_YAML`) which can
-later be logged with an action. 
+later be logged with an action.
 
 ```yaml
 # Example configuration entry

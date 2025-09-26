@@ -1048,6 +1048,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Modbus Controller","components/modbus_controller","modbus.png",""
 "Sprinkler","components/sprinkler","sprinkler-variant.svg","dark-invert"
 "Status LED","components/status_led","led-on.svg","dark-invert"
+"Store YAML","components/store_yaml","description.svg","dark-invert"
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
 "Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
