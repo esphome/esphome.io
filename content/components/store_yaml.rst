@@ -4,9 +4,9 @@ Store YAML component
 .. seo::
     :description: Stores the configuration file in the firmware.
 
-This component can be used to store the flattened yaml in the firmware, to be retrieved in case the original was lost. The needed size in the firmware is typically a few kilobytes. The user can decide if it's worth it.
+This component allows storing the flattened YAML in microcontroller's flash memory so that it may be retrieved in the event that the original was lost. The amount of space required to store the YAML file will vary but is typically a few kilobytes.
 
-They way it works: `__init__.py` compresses `CORE.config` with a basic dictionary based compression into a global const byte array (`ESPHOME_YAML`) and can be logged with an action. 
+The YAML file is compressed before storing it as a part of the compiled firmware. Specifically, `__init__.py` uses a dictionary-based compression to compress `CORE.config` into a global `const` byte array (`ESPHOME_YAML`) which can later be logged with an action. 
 
 Example configuration entry
 ---------------------------
