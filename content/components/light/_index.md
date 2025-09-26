@@ -1099,7 +1099,7 @@ light:
 This effect enables controlling addressable lights using the `UDP Realtime Control`*protocol used by WLED*, allowing
 creation of realtime ambient lighting effects.
 
-Prismatik_and/or LedFx_ can be used to control addressable lights over the network on ESPHome. Use the connection type
+Prismatik and/or LedFx can be used to control addressable lights over the network on ESPHome. Use the connection type
 `udp` on the default port and add the data prefix `0201`.
 
 ```yaml
