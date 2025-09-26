@@ -34,6 +34,7 @@ store_yaml:
 
 {{< warning >}}
 `show_in_dump_config` may trigger a watchdog reboot and safe mode when the configuration is too large to be sent quickly.
+{{< /warning >}}
 
 ## `store_yaml.log` action
 
