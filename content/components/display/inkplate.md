@@ -75,6 +75,9 @@ It just ignores the function call in that case.
   - `inkplate_10`
   - `inkplate_6_plus`
   - `inkplate_6_v2`
+  - `inkplate_5`
+  - `inkplate_5_v2`
+  - `inkplate_6_color`
 
 - **greyscale** (*Optional*, boolean): Makes the screen display 3 bit colors. Defaults to `false`
 - **partial_updating** (*Optional*, boolean): Makes the screen update partially, which is faster, but leaves burnin. Defaults to `false`
@@ -202,6 +205,8 @@ sensor:
       - multiply: 2
 
 i2c:
+  sda: 21
+  scl: 22
 
 mcp23017:
   - id: mcp23017_hub
@@ -285,6 +290,65 @@ display:
       it.print(700, 100, id(helvetica_48), COLOR_OFF, TextAlign::TOP_RIGHT, "Offline");
     }
 ```
+
+## Inkplate 6 COLOR
+
+The Inkplate 6 COLOR is a 7-color ACeP (Advanced Color ePaper) display with 600x448 resolution.
+It supports black, white, red, green, blue, yellow, and orange colors and uses SPI communication
+instead of the parallel GPIO interface used by other Inkplate models.
+
+{{< img src="inkplate6color.jpg" alt="Image" caption="Inkplate 6 COLOR" width="75.0%" class="align-center" >}}
+
+```yaml
+display:
+  - platform: inkplate
+    id: inkplate_display
+    model: inkplate_6_color
+    partial_updating: false
+    update_interval: 60s
+
+    epaper_clk_pin: 18    # SPI clock
+    epaper_din_pin: 23    # SPI MOSI (data)
+    epaper_cs_pin: 27     # Chip select
+    epaper_rst_pin: 19    # Reset
+    epaper_dc_pin: 33     # Data/Command
+    epaper_busy_pin: 32   # Busy status
+
+    lambda: |-
+      // Fill background with white
+      it.fill(Color::WHITE);
+
+      // Draw colorful rectangles using built-in color constants
+      it.filled_rectangle(50, 50, 100, 80, Color::RED);
+      it.print(60, 70, id(font_medium), Color::WHITE, "RED");
+
+      it.filled_rectangle(200, 50, 100, 80, Color::GREEN);
+      it.print(210, 70, id(font_medium), Color::WHITE, "GREEN");
+
+      it.filled_rectangle(350, 50, 100, 80, Color::BLUE);
+      it.print(360, 70, id(font_medium), Color::WHITE, "BLUE");
+
+      it.filled_rectangle(50, 180, 100, 80, Color::YELLOW);
+      it.print(60, 200, id(font_medium), Color::BLACK, "YELLOW");
+
+      it.filled_rectangle(200, 180, 100, 80, Color::ORANGE);
+      it.print(210, 200, id(font_medium), Color::BLACK, "ORANGE");
+
+      // Title
+      it.print(150, 320, id(font_large), Color::BLACK, "Inkplate COLOR Test");
+```
+
+### Built-in Color Constants
+
+ESPHome provides built-in color constants for easier color usage in display lambdas:
+
+- `Color::BLACK` - Pure black (0, 0, 0)
+- `Color::WHITE` - Pure white (255, 255, 255)
+- `Color::RED` - Pure red (255, 0, 0)
+- `Color::GREEN` - Pure green (0, 255, 0)
+- `Color::BLUE` - Pure blue (0, 0, 255)
+- `Color::YELLOW` - Yellow (255, 255, 0)
+- `Color::ORANGE` - Orange (255, 166, 0)
 
 ## Inkplate 6 Plus Touchscreen
 
