@@ -188,10 +188,11 @@ You can adjust the `repeat:` settings accordingly.
 
 {{< /note >}}
 
-
 ## Rolling Codes
 
-Some devices are using rolling codes, i.e. instead of **one unique** code, the buttons generate **n different** codes in a random manner. Good-natured receivers have a simple logic: the current code must differ from the previous one. In such a case, the n codes can be recorded by pressing each button several times and stored in a vector. The *brennenstuhl* remote for example uses four rolling codes for each button.The YAML below shows the transmitter for three buttons:
+{{< anchor "remote-setting-up-rolling-codes" >}}
+
+Some devices are using rolling codes, i.e. instead of **one unique** code, the buttons generate **n different** codes in a random manner. Good-natured receivers have a simple logic: the current code must differ from the previous one. In such a case, the n codes can be recorded by pressing each button several times and stored in a vector. The brennenstuhl remote for example uses four rolling codes for each button.The YAML below shows the transmitter for three buttons:
 
 ```yaml
 
