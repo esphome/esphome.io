@@ -434,7 +434,7 @@ Each segment maps to a single bit in the character code as shown below. Note tha
 | 14-Segment Name | A  | B  | C  | D  | E  | F  | G1 | G2 | H  | J  | K  | L  | M  | N  | -- | -- |
 +-----------------+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+----+
 
-If the character to add is already in the character map, its code will be overwritten by the provided code. Note that the bit number that corresponds to the semgments is the same regardless of the display type used. Internally the display may have a different mapping, but the python preprocessor rearranges the bits as needed.
+If the character to add is already in the character map, its code will be overwritten by the provided code. Note that the bit number that corresponds to the segments is the same regardless of the display type used. Internally the display may have a different mapping, but the python preprocessor rearranges the bits as needed.
 
 **Example:**
 
