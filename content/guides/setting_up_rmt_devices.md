@@ -255,7 +255,7 @@ button:
     - lambda: id(bs_transmitter)->execute(20);
 
 
-``` 
+```
 
 ## See Also
 
