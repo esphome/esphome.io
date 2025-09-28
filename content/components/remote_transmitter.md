@@ -410,7 +410,6 @@ The **dyson** devices use rolling codes, i.e. each remote button generates 4 dif
 
 {{< /note >}}
 
-
 {{< anchor "remote_transmitter-transmit_gobox" >}}
 
 ### `remote_transmitter.transmit_gobox` **Action**
