@@ -1,0 +1,60 @@
+{{/*
+  CHANGELOGS SHORTCODE
+  Creates a collapsible list of all changelog entries
+  
+  Usage: 
+  {{< changelogs >}}
+  
+  This shortcode automatically generates a list of all changelogs in the content/changelog directory,
+  sorted in reverse chronological order, wrapped in a collapsible details element.
+*/}}
+
+{{ $changelogs := slice }}
+{{ range .Site.Pages }}
+  {{ if and (in .RelPermalink "/changelog/") (not (in .RelPermalink "/guides/")) }}
+    {{ $relPath := strings.TrimPrefix "/changelog/" .RelPermalink }}
+    {{ $relPath = strings.TrimSuffix "/" $relPath }}
+    {{ if and (ne $relPath "") (ne .File.BaseFileName "_index") (not (in $relPath "/")) }}
+      {{ $sortKey := "" }}
+      {{ if hasPrefix $relPath "v" }}
+        {{/* Handle v1.x.0 format - convert to 0001.xx.0 for sorting with padded minor version */}}
+        {{ $versionNum := substr $relPath 1 }}
+        {{ $parts := split $versionNum "." }}
+        {{ if eq (len $parts) 3 }}
+          {{ $major := index $parts 0 }}
+          {{ $minor := index $parts 1 | int }}
+          {{ $patch := index $parts 2 }}
+          {{ $sortKey = printf "0001.%03d.%s" $minor $patch }}
+        {{ else }}
+          {{/* Fallback for versions that don't have 3 parts */}}
+          {{ $sortKey = printf "0001.%s" $versionNum }}
+        {{ end }}
+      {{ else }}
+        {{/* Handle YYYY.MM.0 format - pad month with leading zero for proper sorting */}}
+        {{ $parts := split $relPath "." }}
+        {{ if eq (len $parts) 3 }}
+          {{ $year := index $parts 0 }}
+          {{ $month := index $parts 1 }}
+          {{ $patch := index $parts 2 }}
+          {{ $sortKey = printf "%s.%02s.%s" $year $month $patch }}
+        {{ else }}
+          {{ $sortKey = $relPath }}
+        {{ end }}
+      {{ end }}
+      {{ $changelog := dict "version" $relPath "url" .Permalink "title" .Title "sortKey" $sortKey }}
+      {{ $changelogs = $changelogs | append $changelog }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ $sorted := sort $changelogs ".sortKey" "desc" }}
+
+<details>
+<summary></summary>
+<ul>
+    {{ range $sorted }}
+    <li><a href="{{ .url }}">{{ .title }}</a></li>
+    {{ end }}
+</ul>
+
+</details>
