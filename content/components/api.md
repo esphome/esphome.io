@@ -49,15 +49,15 @@ api:
 
 - **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`.
 - **listen_backlog** (*Optional*, int): The maximum number of pending connections in the listen queue. Must be between 1 and 10.
-  Defaults to `1` for ESP8266, `4` for other platforms. Lower values use less memory but may reject connections during bursts.
+  Defaults to `1` for ESP8266/RP2040, `4` for ESP32 and other platforms. Lower values use less memory but may reject connections during bursts.
 - **max_connections** (*Optional*, int): The maximum number of simultaneous API connections allowed. Must be between 1 and 20.
-  Defaults to `4` for ESP8266, `8` for other platforms. Each connection uses approximately 500-1000 bytes of RAM.
+  Defaults to `4` for ESP8266/RP2040, `8` for ESP32 and other platforms. Each connection uses approximately 500-1000 bytes of RAM.
 
   {{< note >}}
-  Each API connection consumes approximately 500-1000 bytes of RAM. ESP8266 devices typically have much less
-  free RAM available (often under 20KB with sensors configured), so be careful not to set this value too high
-  or it may cause out-of-memory crashes. The defaults are set to balance memory usage with allowing multiple
-  simultaneous connections.
+  Each API connection consumes approximately 500-1000 bytes of RAM. ESP8266 and RP2040 devices have limited
+  RAM available (ESP8266 often has under 20KB free with sensors configured, RP2040 uses LWIP raw sockets with
+  similar constraints), so be careful not to set this value too high or it may cause out-of-memory crashes.
+  The defaults are set to balance memory usage with allowing multiple simultaneous connections.
   {{< /note >}}
 
 - **encryption** (*Optional*): If present, encryption will be enabled for the API. Using encryption helps to secure the
