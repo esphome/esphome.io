@@ -169,7 +169,7 @@ to be used later.
   Beware that Dish remotes use a different carrier frequency (57.6kHz) that many receiver hardware don't decode.
 
 - **on_dooya** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Dyson cool AM07 code has been decoded. A variable `x` of type {{< apistruct "remote_base::DysonData" "remote_base::DysonData" >}}
+  Dooya RF remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::DooyaData" "remote_base::DooyaData" >}}
   is passed to the automation for use in lambdas.
 
 - **on_drayton** (*Optional*, [Automation](#automation)): An automation to perform when a
@@ -177,7 +177,7 @@ to be used later.
   is passed to the automation for use in lambdas.
 
 - **on_dyson** (*Optional*, [Automation](#automation)): An automation to perform when a
-  Drayton Digistat RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::DraytonData" "remote_base::DraytonData" >}}
+  Dyson cool AM07 code has been decoded. A variable `x` of type {{< apistruct "remote_base::DysonData" "remote_base::DysonData" >}}
   is passed to the automation for use in lambdas.
 
 - **on_gobox** (*Optional*, [Automation](#automation)): An automation to perform when a
