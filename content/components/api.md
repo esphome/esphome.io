@@ -38,6 +38,8 @@ api:
 api:
   port: 6053
   batch_delay: 50ms  # Reduce latency for real-time applications
+  listen_backlog: 2  # Allow 2 pending connections in queue
+  max_connections: 6  # Allow up to 6 simultaneous connections
   encryption:
     key: "YOUR_ENCRYPTION_KEY_HERE"
   reboot_timeout: 30min
@@ -46,6 +48,18 @@ api:
 ## Configuration variables
 
 - **port** (*Optional*, int): The port to run the API server on. Defaults to `6053`.
+- **listen_backlog** (*Optional*, int): The maximum number of pending connections in the listen queue. Must be between 1 and 10.
+  Defaults to `1` for ESP8266, `4` for other platforms. Lower values use less memory but may reject connections during bursts.
+- **max_connections** (*Optional*, int): The maximum number of simultaneous API connections allowed. Must be between 1 and 20.
+  Defaults to `4` for ESP8266, `8` for other platforms. Each connection uses approximately 500-1000 bytes of RAM.
+
+  {{< note >}}
+  Each API connection consumes approximately 500-1000 bytes of RAM. ESP8266 devices typically have much less
+  free RAM available (often under 20KB with sensors configured), so be careful not to set this value too high
+  or it may cause out-of-memory crashes. The defaults are set to balance memory usage with allowing multiple
+  simultaneous connections.
+  {{< /note >}}
+
 - **encryption** (*Optional*): If present, encryption will be enabled for the API. Using encryption helps to secure the
   communication between the device running ESPHome and the connected client(s).
 
