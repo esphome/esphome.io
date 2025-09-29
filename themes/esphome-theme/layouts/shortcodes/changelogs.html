@@ -53,7 +53,11 @@
 <summary></summary>
 <ul>
     {{ range $sorted }}
+    {{ if eq .url $.Page.Permalink }}
+    <li>{{ .title }} <em>(current page)</em></li>
+    {{ else }}
     <li><a href="{{ .url }}">{{ .title }}</a></li>
+    {{ end }}
     {{ end }}
 </ul>
 
