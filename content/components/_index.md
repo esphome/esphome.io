@@ -131,6 +131,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "Debug","components/debug","bug-report.svg","dark-invert"
 "Logger","components/logger","file-document-box.svg","dark-invert"
 "Syslog","components/syslog","file-document-box.svg","dark-invert"
+"Loki","components/loki","file-document-box.svg","dark-invert"
 "Prometheus","components/prometheus","prometheus.svg",""
 "StatsD","components/statsd","connection.svg","dark-invert"
 "Safe Mode","components/safe_mode","restart-alert.svg","dark-invert"
