@@ -97,8 +97,6 @@ microphone:
 
 ### ICS-43434
 
-[Adafruit I2S MEMS Mic Breakout](https://www.adafruit.com/product/6049)
-
 ```yaml
 microphone:
   - platform: i2s_audio
