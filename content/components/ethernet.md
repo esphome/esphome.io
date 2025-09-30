@@ -140,7 +140,6 @@ If you are using a framework that does not support SPI-based ethernet modules wi
   Defaults to `.local`.
 
 - **mac_address** (*Optional*, MAC Address): Set the MAC address of the ethernet interface.
-  This prevents possible variation of the MAC between flash/reboot.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
