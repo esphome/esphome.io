@@ -83,6 +83,7 @@ Version: 2025.8.0
 ```
 
 > [!NOTE]
+>
 > - If you encounter any issues with Homebrew installation, please check the
 >   [ESPHome Homebrew Formula](https://formulae.brew.sh/formula/esphome) page
 >   for additional information.

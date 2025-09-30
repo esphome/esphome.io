@@ -29,6 +29,7 @@ for properly understanding the functionality of your flasher devboard.
 You need to make the following electrical connections:
 
 > [!NOTE]
+>
 > - Most ESP32 S and C series devboards do *not* have a separate USB-UART chip - they have it built into the ESP. See
 >   below for instructions regarding ESP32-S series.
 >
@@ -48,6 +49,7 @@ Pulling down `EN` by connecting it to `GND` on the flasher board prevents
 the ESP chip on flasher module from booting and polluting the serial lines.
 
 > [!NOTE]
+>
 > - If the board has not previously had ESPHome loaded, you may need to pull the `IO0` pin low (i.e. connected to `GND`)
 >   to force the board into flash mode.
 >   This must be done before power is applied.

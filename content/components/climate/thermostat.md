@@ -545,6 +545,7 @@ the range of allowed temperature values in the thermostat component. See {{< doc
   before calling the idle [action](#config-action). Defaults to 0.5 °C.
 
 > [!NOTE]
+>
 > - While this platform uses the term temperature everywhere, it can also be used to regulate other values.
 >   For example, controlling humidity is also possible with this platform.
 >

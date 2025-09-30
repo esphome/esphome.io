@@ -15,7 +15,7 @@ if the page is shown or not.
 
 > [!NOTE]
 > The Nextion can receive an integer but it can only send 3 bytes for a negative integer. The range if using the [Nextion Custom Sensor Protocol](#nextion_custom_sensor_protocol) is:
->     -16777215 to 4294967295
+> -16777215 to 4294967295
 
 See {{< docref "/components/display/nextion" >}} for setting up the display
 

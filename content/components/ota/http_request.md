@@ -63,6 +63,7 @@ on_...:
   authentication.
 
 > [!NOTE]
+>
 > - You can obtain the `firmware.ota.bin` file from either:
 >
 >   - **ESPHome dashboard** (HA add-on): download in *"OTA format"* (formerly "legacy format")
@@ -97,12 +98,12 @@ on_...:
 >         (Get-FileHash -Path firmware.ota.bin -Algorithm md5).Hash.ToLower() | Out-File -FilePath firmware.md5 -Encoding ASCII
 > ```
 >
->   This will generate the MD5 hash of the `firmware.ota.bin` file and write the resulting hash value to the
->   `firmware.md5` file. The `md5_url` configuration variable should point to this file on the web server.
->   It is used by the OTA updating mechanism to ensure the integrity of the (new) firmware as it is installed.
+> This will generate the MD5 hash of the `firmware.ota.bin` file and write the resulting hash value to the
+> `firmware.md5` file. The `md5_url` configuration variable should point to this file on the web server.
+> It is used by the OTA updating mechanism to ensure the integrity of the (new) firmware as it is installed.
 >
->   **If, for any reason, the MD5sum provided does not match the MD5sum computed as the firmware is installed, the
->   device will continue to use the original firmware and the new firmware is discarded.**
+> **If, for any reason, the MD5sum provided does not match the MD5sum computed as the firmware is installed, the
+> device will continue to use the original firmware and the new firmware is discarded.**
 
 ## See Also
 

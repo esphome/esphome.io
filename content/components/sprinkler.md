@@ -543,6 +543,7 @@ on_...:
 ```
 
 > [!NOTE]
+>
 > - The `start_single_valve` action ignores whether a valve is enabled via its enable switch.
 > - The `next_valve` and `previous_valve` actions may not appear to respond immediately if either
 >   `manual_selection_delay` or any of the various delay mechanisms described in the
