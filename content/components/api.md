@@ -58,7 +58,6 @@ api:
   > RAM available (ESP8266 typically has around 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to set this value too high or it may cause out-of-memory crashes.
   > The defaults are set to balance memory usage with allowing multiple simultaneous connections.
 
-
 - **encryption** (*Optional*): If present, encryption will be enabled for the API. Using encryption helps to secure the
   communication between the device running ESPHome and the connected client(s).
 
