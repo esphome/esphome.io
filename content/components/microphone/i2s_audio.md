@@ -111,7 +111,6 @@ microphone:
     use_apll: true
 ```
 
-
 ## See also
 
 - {{< docref "index/" >}}
