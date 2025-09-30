@@ -95,6 +95,23 @@ microphone:
     pdm: false
 ```
 
+### ICS-43434
+
+[Adafruit I2S MEMS Mic Breakout](https://www.adafruit.com/product/6049)
+
+```yaml
+microphone:
+  - platform: i2s_audio
+    i2s_din_pin: GPIOXX
+    adc_type: external
+    pdm: false
+    sample_rate: 48000
+    bits_per_sample: 32bit
+    channel: left
+    use_apll: true
+```
+
+
 ## See also
 
 - {{< docref "index/" >}}
