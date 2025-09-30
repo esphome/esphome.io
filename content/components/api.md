@@ -53,11 +53,11 @@ api:
 - **max_connections** (*Optional*, int): The maximum number of simultaneous API connections allowed. Must be between 1 and 20.
   Defaults to `4` for ESP8266/RP2040, `8` for ESP32 and other platforms. Each connection uses approximately 500-1000 bytes of RAM.
 
-  {{< note >}}
-  Each API connection consumes approximately 500-1000 bytes of RAM. ESP8266 and RP2040 devices have limited
-  RAM available (ESP8266 typically has around 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to set this value too high or it may cause out-of-memory crashes.
-  The defaults are set to balance memory usage with allowing multiple simultaneous connections.
-  {{< /note >}}
+  > [!NOTE]
+  > Each API connection consumes approximately 500-1000 bytes of RAM. ESP8266 and RP2040 devices have limited
+  > RAM available (ESP8266 typically has around 40KB of free RAM after boot, but this can drop to under 20KB once sensors and other components are configured; RP2040 uses LWIP raw sockets with similar constraints), so be careful not to set this value too high or it may cause out-of-memory crashes.
+  > The defaults are set to balance memory usage with allowing multiple simultaneous connections.
+
 
 - **encryption** (*Optional*): If present, encryption will be enabled for the API. Using encryption helps to secure the
   communication between the device running ESPHome and the connected client(s).
