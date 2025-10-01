@@ -163,6 +163,7 @@ Create update entities simplifying management of OTA updates.
 {{< imgtable >}}
 "1-Wire","components/one_wire/index","one-wire.svg",""
 "CAN Bus","components/canbus/index","canbus.svg",""
+"HDMI-CEC Bus","components/hdmi_cec","hdmi-cec.png",""
 "I²C Bus","components/i2c","i2c.svg",""
 "I²S Audio","components/i2s_audio","i2s_audio.svg",""
 "OpenTherm","components/opentherm","opentherm.png",""
