@@ -74,7 +74,8 @@ Simple Jinja expressions and filters can be used inside `${ ... }` syntax.
 
 All substitution variables become accessible within Jinja expressions by their name.
 
-If the substitution variable is a key-value dictionary, you can access members with a dot notation: `${ device.name }`, or indexed `${ device["name"] }`
+If the substitution variable is a key-value dictionary, you can access members with a dot notation: `${ device.name }`,
+or indexed `${ device["name"] }`
 
 Lists can be indexed: `${ unused_pins[2] }`
 
@@ -253,13 +254,11 @@ substitutions:
 <<: !include common.yaml
 ```
 
-{{< tip >}}
-To hide these base files from the dashboard, you can
-
-- Place them in a subdirectory (dashboard only shows files in top-level directory)
-- Prepend a dot to the filename, like `.base.yaml`
-
-{{< /tip >}}
+> [!TIP]
+> To hide these base files from the dashboard, you can
+>
+> - Place them in a subdirectory (dashboard only shows files in top-level directory)
+> - Prepend a dot to the filename, like `.base.yaml`
 
 ## See Also
 
