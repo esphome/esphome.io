@@ -105,6 +105,10 @@ api:
 Before using any of the actions below, you'll need to tell Home Assistant to allow your device to
 perform actions.
 
+> [!NOTE]
+> Starting with ESPHome 2025.10.0, you can configure actions to receive and process responses from 
+> Home Assistant using `response_template` and `on_response`. See [Action Response Handling](#action-response-handling) for details.
+
 Open the ESPHome integration page on your Home Assistant instance:
 
 [![Open your Home Assistant instance and show the ESPHome integration.](https://my.home-assistant.io/badges/integration.svg)](https://my.home-assistant.io/redirect/integration/?domain=esphome)
@@ -192,6 +196,14 @@ on_...:
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
   Values are [lambdas](#config-lambda) and will be evaluated before sending the request.
 
+- **response_template** (*Optional*, [templatable](#config-templatable), string): Optional Jinja template to process 
+  the action response data. This template is evaluated on the Home Assistant side with Home Assistant's templating engine.
+  Only used when `on_response` is configured.
+
+- **on_response** (*Optional*, [Automation](#automation)): Optional automation to execute when a response is received 
+  from the Home Assistant action call. The response data is available as a `response` variable of type `ActionResponse`. 
+  See [Action Response Handling](#action-response-handling).
+
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
 
@@ -224,6 +236,49 @@ on_...:
         green: '199'
         blue: '71'
 ```
+
+#### Action Response Handling
+
+> [!NOTE]
+> Action response handling is available in ESPHome 2025.10.0 and later.
+
+You can configure actions to receive and process responses from Home Assistant. This enables bidirectional 
+communication where ESPHome can not only call Home Assistant actions but also handle their responses.
+
+```yaml
+# Example with response handling
+on_...:
+  - homeassistant.action:
+      action: weather.get_forecasts
+      data:
+        entity_id: weather.forecast_home
+        type: hourly
+      response_template: "{{ response['weather.forecast_home']['forecast'][0]['temperature'] }}"
+      on_response:
+        - if:
+            condition:
+              lambda: 'return response->is_success();'
+            then:
+              - logger.log:
+                  format: "Temperature next hour: %.1f"
+                  args: 
+                    - response->get_json()["response"].as<float>()
+```
+
+##### Configuration variables
+
+- **response_template** (*Optional*): A Jinja template processed by Home Assistant to extract and format 
+  data from the action response. The template has access to the `response` object containing the action's 
+  return data.
+
+- **on_response** (*Optional*): An automation that executes when a response is received. The `response` 
+  variable is available with the following properties:
+
+  - `response->is_success()` - Returns `true` if the action succeeded
+  - `response->get_error_message()` - Returns error message if action failed
+  - `response->get_data()` - Returns response data as a string
+  - `response->get_json()` - Returns response data parsed as a [`JSONObject`](https://arduinojson.org/v7/api/jsonobject/).
+    The raw or processed (from `response_template`) response will always be in the `response` key of the JSON object.
 
 {{< anchor "api-homeassistant_tag_scanned_action" >}}
 
