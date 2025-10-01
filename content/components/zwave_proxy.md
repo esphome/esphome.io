@@ -21,7 +21,7 @@ required in your configuration.
 
 > [!NOTE]
 > Number of connections
-> 
+>
 > While ESPHome supports multiple API connections/clients, only a single client may subscribe to and receive proxied
 > Z-Wave data frames at any given time.
 
