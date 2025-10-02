@@ -7,15 +7,18 @@ params:
     image: folder-open.svg
 ---
 
-The `display` component houses ESPHome's powerful rendering and display
-engine. Fundamentally, there are these types of displays:
+The `display` component houses ESPHome's graphical rendering and display
+engine. It caters for a wide range of different display types, from simple character displays to
+graphical displays with fully addressable pixels.
 
 - Character displays like {{< docref "max7219" "7-Segment displays" >}} or
   {{< docref "lcd_display" "LCD displays" >}}.
 
 - Serial displays like {{< docref "nextion/" >}} that have their own processors for graphics rendering.
-- Graphical displays with fully addressable pixels, like {{< docref "waveshare_epaper" "E-Paper" >}},
-  {{< docref "ssd1306" "OLED" >}} or {{< docref "ili9xxx" "TFT" >}} displays.
+- Graphical displays with fully addressable pixels, such as
+  {{< docref "mipi_spi" "SPI interfaced LCDs" >}},
+  {{< docref "waveshare_epaper" "E-Paper" >}},
+  and {{< docref "ssd1306" "OLED" >}}.
 
 For graphical displays, which offer the greatest flexibility, there are two options for displaying content:
 
@@ -58,11 +61,10 @@ In this section we will be discussing how to use ESPHome's display rendering eng
 and some basic commands. Please note that this only applies to displays that can control each pixel
 individually.
 
-{{< note >}}
-Display hardware is complex and sometimes doesn't behave as expected. If you're having trouble with your display,
-please see [Troubleshooting](#troubleshooting) below.
+> [!NOTE]
+> Display hardware is complex and sometimes doesn't behave as expected. If you're having trouble with your display,
+> please see [Troubleshooting](#troubleshooting) below.
 
-{{< /note >}}
 So, first a few basics: When setting up a display platform in ESPHome there will be a configuration
 option called `lambda:` which will be called every time ESPHome wants to re-render the display.
 In each cycle, the display is automatically cleared before the lambda is executed. You can disable
@@ -83,11 +85,10 @@ display:
       it.line(0, 0, 50, 50);
 ```
 
-{{< note >}}
-Lambdas are essentially just a lightly modified version of C++. So don't forget to end each line
-with a semicolon (`;`  ). Otherwise you will be greeted by a long error message at the compilation stage.
+> [!NOTE]
+> Lambdas are essentially just a lightly modified version of C++. So don't forget to end each line
+> with a semicolon (`;`  ). Otherwise you will be greeted by a long error message at the compilation stage.
 
-{{< /note >}}
 If you compile and upload the configuration above, you should see a black (or white, depending on the display)
 line which starts at the top left and goes a few pixels down at a 45° angle. (If it's in another corner, use the
 `rotation:` option to rotate the display to your liking)
@@ -366,11 +367,10 @@ display:
       it.printf(0, 0, id(my_font), "State: %s", id(my_binary_sensor).state ? "ON" : "OFF");
 ```
 
-{{< note >}}
-For displaying external data on the display, for example data from your Home Assistant instance,
-you can use the {{< docref "/components/text_sensor/mqtt_subscribe" >}} (see the example there for more information).
+> [!NOTE]
+> For displaying external data on the display, for example data from your Home Assistant instance,
+> you can use the {{< docref "/components/text_sensor/mqtt_subscribe" >}} (see the example there for more information).
 
-{{< /note >}}
 {{< anchor "display-strftime" >}}
 
 ### Displaying Time
@@ -533,20 +533,19 @@ on_...:
       }
 ```
 
-{{< note >}}
-To trigger a redraw right after the page show use a [component.update](#component-update_action)
-action:
+> [!NOTE]
+> To trigger a redraw right after the page show use a [component.update](#component-update_action)
+> action:
+>
+> ```yaml
+> # For example cycle through pages on a timer
+> interval:
+>   - interval: 5s
+>     then:
+>       - display.page.show_next: my_display
+>       - component.update: my_display
+> ```
 
-```yaml
-# For example cycle through pages on a timer
-interval:
-  - interval: 5s
-    then:
-      - display.page.show_next: my_display
-      - component.update: my_display
-```
-
-{{< /note >}}
 {{< anchor "display-is_displaying_page-condition" >}}
 
 **display.is_displaying_page**: This condition returns true while the specified page is being shown.
@@ -587,7 +586,7 @@ display:
 - **from** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.
 - **to** (*Optional*, [ID](#config-id)): A page id. If set the automation is only triggered if changing to this page. Defaults to all pages.
 
-Additionally the old page will be given as the variable `from` and the new one as the variable `to`.
+Additionally, the old page will be given as the variable `from` and the new one as the variable `to`.
 
 ### Troubleshooting
 
@@ -607,19 +606,19 @@ To help the graphics display team determine the best way to help you, **a pictur
 Should you [create an issue](https://github.com/esphome/esphome/issues) in GitHub regarding your display, please
 be sure to **include a link to where you purchased the display** so that we can validate the configuration you've used.
 
-{{< note >}}
-If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
+> [!NOTE]
+> If you set `update_interval: never` in your config you will not see the test card because the `display:` component will not update the display with the test card. If you want to see a test card, set `update_interval:` to something other than `never`.
 
-{{< /note >}}
-{{< note >}}
-For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
-
-{{< /note >}}
+> [!NOTE]
+> For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
 
 ### See Also
 
 - {{< apiref "display/display_buffer.h" "display/display_buffer.h" >}}
-- {{< docref "/components/lvgl/index" "LVGL" >}}
+- {{< docref "/components/lvgl/index" >}}
+- {{< docref "/components/display/mipi_spi" >}}
+- {{< docref "/components/display/mipi_rgb" >}}
+- {{< docref "/components/display/mipi_dsi" >}}
 - [Fonts](#display-fonts)
 - [Graph Component](#display-graphs)
 - [QR Code Component](#display-qrcode)
