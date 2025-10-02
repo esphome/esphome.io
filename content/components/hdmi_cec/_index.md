@@ -13,18 +13,18 @@ of HDMI-connected Audio/Video devices.
 The HDMI-CEC (High-Definition Multimedia Interface - Consumer Electronics Control) is a single-wire bus
 which is part of the standard HDMI cable, and is present as pin in any HDMI connector.
 This bus is passed through all hdmi devices, and directly wired between all connectors in devices
-like televisions, A/V-receivers, and HMDI switches. This bus is bidirectional and multi-master,
+like televisions, A/V-receivers, and HDMI switches. This bus is bidirectional and multi-master,
 using 3.3V signals with a rather low bitrate.
 Connecting one ESPHome microcontroller to single HDMI port on a TV,
 allows to receive messages from and send messages to any device in the hdmi-connected cluster. Typical messages relate to
-power-on and standby status, input selections, and audio volume control. 
+power-on and standby status, input selections, and audio volume control.
 
 This software implementation on an ESPHome microcontroller allows to simply connect one GPIO pin to the CEC bus wire, HDMI pin 13.
 However, see the remarks for a more robust (extensive) connection further below.
 
 ## Features
 
-- The CEC protocol is implemented upto HMDI version 1.4. No external (third-party) CEC library is used.
+- The CEC protocol is implemented upto HDMI version 1.4. No external (third-party) CEC library is used.
 - Actions to be taken on incoming messages can be specified in the yaml configuration by `on_message` triggers.
   In these triggers, messages can be matched on source, destination, opcode, and further arguments.
 - Sending CEC messages can be specified in the yaml configuration with `hdmi_cec.send` actions.
@@ -38,7 +38,6 @@ On the to-do list is still "Automatic Physical Address Discovery" through E-DDC:
 to automatically detect the CEC "source" address of this component.
 For now, this must be entered as part of the configuration.
 
-
 ## Basic installation
 
 Wire your ESPhome device to an HDMI connector (e.g. with an HDMI breakout board as can be found on Amazon) as follows:
@@ -51,7 +50,7 @@ Wire your ESPhome device to an HDMI connector (e.g. with an HDMI breakout board 
 The CEC bus uses 3.3V logic, so it can be directly connected to a GPIO of ESP32/ESP8266 devices.
 The GPIO pin mode will be set automatically by the software, to use a "weak pull-up" mode.
 The selected pin should support this mode, but that is generally available.
-Note, for extra robustness, the remarks below for the `Extended installation`_.
+Note, for extra robustness, the remarks below in [Extended installation](#extended-installation).
 
 ## Basic configuration
 
@@ -140,7 +139,7 @@ However, some TVs might not respond properly as they might have an incomplete im
 When the device with this *hdmi_cec* and this example *yaml* is integrated in *Home Assistant*,
 and the buttons are pressed while capturing a debug output, the log would show something like this:
 
-```
+```text
   [17:14:50][D][api.connection:1579]: Home Assistant 2025.6.1 (192.168.178.194) connected
   [17:15:16][D][button:010]: 'TV Volume Up' Pressed.
   [17:15:16][D][hdmi_cec:381]: Sending: E0:44:41 => SpecificUse to TV: <User Control Pressed>[Volume Up]
@@ -173,7 +172,7 @@ and the buttons are pressed while capturing a debug output, the log would show s
 ## Example: Create service for Home Assistant
 
 ```yaml
-api
+api:
   ...
   services:
     - service: hdmi_cec_send
@@ -231,8 +230,9 @@ However, in the basic configuration, *sending* messages is done by software that
 with software delays in between to set pulse durations.
 Unfortunately, due to the low bitrate of cec, sending a message keeps hold of the CPU for a long period.
 This conflicts with the esphome operating system, which wants the components to return control more frequently.
-As result, in the basic configuration, you will see in an output debug log many warnings like::
-```
+As result, in the basic configuration, you will see in an output debug log many warnings like:
+
+```text
   [W][hdmi_cec:239]: Component hdmi_cec took a long time for an operation (224 ms).
 ```
 
@@ -341,5 +341,4 @@ This *hdmi_cec* component has been tested on various platforms. Feedback on othe
 
 This current version is a continuation on Palakis' code: adding buffering on send, and uart support.
 The decoding of cec messages into text is newly developed and also backported into his repository.
-
 
