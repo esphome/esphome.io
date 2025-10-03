@@ -195,8 +195,8 @@ api:
 The basic configuration can be extended with further enhancements:
 
 1. Disconnect from the cec line on power-down
-2. Use a UART for sending messages
-3. Connect the HDMI 'Hot Plug Detect' pin
+1. Use a UART for sending messages
+1. Connect the HDMI 'Hot Plug Detect' pin
 
 The figure below shows a schematics with the first two enhancements, adding a relay (for 1.) and a diode (for 2.):
 
@@ -341,4 +341,3 @@ This *hdmi_cec* component has been tested on various platforms. Feedback on othe
 
 This current version is a continuation on Palakis' code: adding buffering on send, and uart support.
 The decoding of cec messages into text is newly developed and also backported into his repository.
-
