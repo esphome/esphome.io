@@ -139,8 +139,70 @@ lvgl:
         text: Distance is ${math.sqrt(x*x+y*y)}.
 ```
 
-To see what mathematical functions ara available,
+To see what mathematical functions are available,
 refer to [Python math library](https://docs.python.org/3/library/math.html) documentation.
+
+### Macros
+
+You can create reusable macros by declaring them with the `jinja` component:
+
+```yaml
+jinja:
+  macros:
+    scale:
+      parameters:
+        x: 0  # default value of 0
+        factor: 1.5  # default value of 1.5
+      return: (x*factor) | round | int
+```
+
+These macros can then be invoked from within an expression:
+
+```yaml
+lvgl:
+  widgets:
+    - label:
+      width: ${scale(200)} # 300
+      height: ${scale(30, 2)} # 60
+```
+
+Macros can also capture substitution values:
+
+```yaml
+substitutions:
+  display_scale: 1.5
+
+jinja:
+  macros:
+    scale:
+      parameters:
+        x: 0
+        factor: null
+      return: (x * (display_scale if factor is none else factor)) | round | int
+```
+
+Instead of an immediate return expression, macros can define a full Jinja body that may contain Jinja statements:
+
+```yaml
+jinja:
+  macros:
+    get_glyphs:
+      parameters:
+        start: 0
+        end: 0
+      body: |
+        # set ns = namespace(glyphs=[])
+        # for code in range(start, end + 1)
+        #   set ns.glyphs = ns.glyphs + ["%c" | format(code)]
+        # endfor
+        ${ ns.glyphs }
+
+fonts:
+  - file: "fonts/myfont.ttf"
+    glyphs: ${ get_glyphs(0x3041, 0x304F) } # ぁ,あ,ぃ,い,ぅ ...
+```
+
+To understand what statements can be used in a macro body, refer to the [List of Control Structures](https://jinja.palletsprojects.com/en/stable/templates/#list-of-control-structures) and how they are used as [Line Statements](https://jinja.palletsprojects.com/en/stable/templates/#line-statements) in the Jinja documentation.
 
 ### Built-in functions
 
