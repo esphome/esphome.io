@@ -76,6 +76,9 @@ hdmi_cec:
   # By default, monitor mode is disabled, so the component can send messages and acknowledge incoming messages.
   # Enabling monitor mode lets the component act as a passive listener, disabling active manipulation of the CEC bus.
   monitor_mode: false # Optional. Defaults to false
+  # By default, received and sent cec messages are decoded to text in the debug log output.
+  # For resource-constrained applications, this decoding can be disabled:
+  decode_messages: true # Optional. Defaults to true
   # List of triggers to handle specific commands. Each trigger has the following optional filter parameters:
   # - "source": match messages coming from the specified address
   # - "destination": match messages meant for the specified address
