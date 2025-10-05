@@ -181,6 +181,38 @@ jinja:
       return: (x * (display_scale if factor is none else factor)) | round | int
 ```
 
+You can also define variables only visible to the macro:
+
+```yaml
+jinja:
+  macros:
+    say_hello:
+      parameters:
+        name: ""
+      vars:
+        salutation: "Hello, "
+      return: salutation + name
+```
+
+Note that you can combine the above with `!include` to load one or more `vars` from an external file:
+
+```yaml
+jinja:
+  macros:
+    generate_wifi_password:
+      vars:
+        initial_seed: !include seed.yaml
+      body: !literal |-
+        # set chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        # set ns = namespace(s='', seed=initial_seed)
+        # for i in range(15)
+        #   set ns.seed = (ns.seed * 1103515245 + initial_seed) % 2147483648
+        #   set idx = ns.seed % (chars|length)
+        #   set ns.s = ns.s + chars[idx]
+        # endfor
+        ${ ns.s }
+```
+
 Instead of an immediate return expression, macros can define a full Jinja body that may contain Jinja statements:
 
 ```yaml
@@ -211,8 +243,10 @@ In addition to the Jinja expressions, ESPHome supports a number of built-in func
 - `ord` Returns the Unicode code point for a given character. Example: `ord("A") == 65`
 - `chr` Returns the character for a given Unicode code point. Example: `chr(65) == "A"`
 - `len` Returns the length of the string. Example: `len("Hello") == 5`
+- `merge(a, b)` Merges two objects. Example `merge({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}`
+- `eval(expression, vars)` Evaluates a Jinja expression. Useful for templating. Example: `eval("The answer is ${answer}", {"answer": 42}) == "The answer is 42`
 
-{{< anchor "substitute-include-variables" >}}
+{{< anchor "disabling-jinja-and-substitutions" >}}
 
 ## Disabling Jinja and substitutions
 
@@ -228,6 +262,51 @@ lvgl:
 ```
 
 In the above example, the value of the `text` property will be, literally, `This is a ${value}`.
+
+{{< anchor "jinja-templating" >}}
+
+## Templating
+
+You can leverage Jinja macros to programatically generate similar components out of a template:
+
+```yaml
+# switch_template.yaml
+
+template: !literal 
+  platform: gpio
+  id: switch${id}
+  pin: ${pin}
+  name: GPIO Switch on pin ${pin}
+```
+
+```yaml
+substitutions:
+  pins: [12, 15, 21, 22]
+
+packages:
+  - switch: ${generate_switches(pins)}
+
+switch:
+  - platform: restart
+    name: "Living Room Restart"
+
+jinja:
+  macros:
+    generate_switches:
+      parameters:
+        pins: []
+      vars:
+        my_switch: !include switch_template.yaml
+      body: !literal |-
+        # set ns = namespace(switches=[], id=0)
+        # for pin in pins
+        #   set ns.id = ns.id + 1
+        #   set ns.switches = ns.switches + [ eval(my_switch.template, {"pin" : pin, "id": ns.id}) ]
+        # endfor
+        ${ ns.switches }
+```
+
+{{< anchor "substitute-include-variables" >}}
 
 ## Substitute !include variables
 
