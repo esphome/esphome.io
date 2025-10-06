@@ -10,12 +10,13 @@ params:
 Starting with ESPHome 2026.1.0, the default framework for ESP32 will change from Arduino to ESP-IDF. This guide will
 help you migrate your existing configurations or make an informed choice about which framework to use.
 
-{{< note >}}
-This change only affects ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 variants.
-Newer variants (ESP32-C6, ESP32-H2, ESP32-P4, etc.) already default to ESP-IDF
-as they have limited or no Arduino support.
+Note: The Arduino framework is integrated as an ESP-IDF component, providing Arduino API compatibility
+within the ESP-IDF build system.
 
-{{< /note >}}
+> [!NOTE]
+> This change only affects ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 variants.
+> Newer variants (ESP32-C6, ESP32-H2, ESP32-P4, etc.) already default to ESP-IDF
+> as they have limited or no Arduino support.
 
 ## Why the Change?
 
@@ -32,7 +33,6 @@ advantages:
 
 While ESP-IDF offers many benefits, there are some trade-offs to consider:
 
-- **Compile Times**: Initial compilation takes approximately 25% longer
 - **Component Compatibility**: Some components may need to be replaced with ESP-IDF compatible alternatives
 - **Library Differences**: Arduino-specific libraries won't be available
 
@@ -108,8 +108,8 @@ when available:
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | {{< docref "/components/sensor/bme680_bsec" "bme680_bsec" >}}  | {{< docref "/components/sensor/bme68x_bsec2" "bme68x_bsec2" >}}              |
 | {{< docref "/components/light/fastled" "fastled_clockless" >}} | {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
-| {{< docref "/components/light/fastled" "fastled_spi" >}} | {{< docref "/components/light/spi_led_strip" "spi_led_strip" >}} |
-| {{< docref "/components/light/neopixelbus" "neopixelbus" >}} | {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
+| {{< docref "/components/light/fastled" "fastled_spi" >}}       | {{< docref "/components/light/spi_led_strip" "spi_led_strip" >}}             |
+| {{< docref "/components/light/neopixelbus" "neopixelbus" >}}   | {{< docref "/components/light/esp32_rmt_led_strip" "esp32_rmt_led_strip" >}} |
 
 **Arduino-Only Components:**
 
@@ -123,11 +123,9 @@ The following components currently require Arduino framework and don't have ESP-
 
 If you need these components, you should continue using the Arduino framework.
 
-{{< note >}}
-Component compatibility is constantly improving. Check the component documentation
-or try compiling with ESP-IDF to see if alternatives have become available.
-
-{{< /note >}}
+> [!NOTE]
+> Component compatibility is constantly improving. Check the component documentation
+> or try compiling with ESP-IDF to see if alternatives have become available.
 
 ## Troubleshooting
 
