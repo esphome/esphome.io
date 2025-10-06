@@ -27,16 +27,15 @@ The SPI bus usually consists of 4 wires:
 - **MISO** (also SDI - Serial Data In): Is used to receive data. All devices on the bus share this line.
 
 In some cases one of **MOSI** or **MISO** does not exist as the receiving device only accepts data or sends data.
-It is also possible to configure a quad SPI interface using 4 output data lines, and an octal interface using 8 data output lines. This is required only for
-use with certain components.
+It is also possible to configure a quad SPI interface using 4 output data lines, and an octal interface using 8 data
+output lines. This is required only for use with certain components.
 
-{{< note >}}
+> [!NOTE]
+>
+> - Software mode supports only single-bit SPI.
+> - Quad mode SPI is available only on on ESP32 devices (all variants).
+> - Octal mode is available only on ESP32-S3, -S2 and -P4 variants.
 
-- Software mode supports only single-bit SPI.
-- Quad mode SPI is available only on on ESP32 devices (all variants).
-- Octal mode is available only on ESP32-S3, -S2 and -P4 variants.
-
-{{< /note >}}
 To set up SPI devices in ESPHome, you first need to place a top-level SPI component which defines the pins to
 use for the functions described above. The **CS** pins are individually managed by the other components that
 reference the `spi` component.
@@ -171,8 +170,8 @@ of the specific peripheral chip.
 | ---- | ------------------- | ----------- | ------------------------------ | --------------- |
 | 0    | low                 | leading     | /CS activation and falling CLK | rising CLK      |
 | 1    | low                 | trailing    | rising CLK                     | falling CLK     |
-| 2 | high | leading | /CS activation and rising CLK | falling CLK |
-| 3 | high | trailing | falling CLK | rising CLK |
+| 2    | high                | leading     | /CS activation and rising CLK  | falling CLK     |
+| 3    | high                | trailing    | falling CLK                    | rising CLK      |
 
 ## ESP-IDF limit on bus devices
 
