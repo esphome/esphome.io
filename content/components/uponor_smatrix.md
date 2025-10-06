@@ -52,12 +52,11 @@ climate:
     name: Thermostat Living Room
 ```
 
-> [!NOTE]
+> [!IMPORTANT]
 > Previous versions of the component used a 16 bit system address in addition to 16 bit device addresses.
 > This has now been combined into 32 bit device addresses.
 > Please update your configuration by prepending the old system address to your device addresses.
 > **Example:** The system address 0x110B and device address 0xDE13 should now become 0x110BDE13.
-
 
 ## Component/Hub
 
