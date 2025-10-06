@@ -14,5 +14,5 @@ Configuration variables:
 
 - **period** (Required, time):
 The interval at which the last known value is republished.
-- **optimistic** (*Optional*, boolean): 
+- **optimistic** (*Optional*, boolean):
 When enabled, every new incoming value is published immediately as it arrives, regardless of the configured time interval.
