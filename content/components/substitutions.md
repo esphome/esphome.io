@@ -156,15 +156,49 @@ jinja:
       return: (x*factor) | round | int
 ```
 
-These macros can then be invoked from within an expression:
+These macros can then be invoked from within an expression, like a function:
 
 ```yaml
 lvgl:
   widgets:
     - label:
-      width: ${scale(200)} # 300
-      height: ${scale(30, 2)} # 60
+      width: ${ scale(200) } # 300
+      height: ${ scale(30, 2) } # 60
 ```
+
+Under the `macros` key, you define a new macro by its name. The following can be used to configure the macro:
+
+* `parameters`: key-value list of parameters where the key is the parameter name and the value is the default value for that parameter. Specify the `null` keyword for parameters without a default value.
+* `vars`: key-value list of variables only visible to the macro. Can be used to store constants or import key-value pairs from an external file. See examples below.
+* `return`: one-line Jinja expression that will be evaluated. Cannot be used if `body` is present.
+* `body`: macro body that accepts Jinja block statements. Cannot be used if `return` is present
+
+#### Macro `return` and macro `body`
+
+Instead of an immediate return expression, macros can define a full Jinja body that may contain Jinja statements:
+
+```yaml
+jinja:
+  macros:
+    get_glyphs:
+      parameters:
+        start: 0
+        end: 0
+      body: |
+        # set ns = namespace(glyphs=[])
+        # for code in range(start, end + 1)
+        #   set ns.glyphs = ns.glyphs + ["%c" | format(code)]
+        # endfor
+        ${ ns.glyphs }
+
+fonts:
+  - file: "fonts/myfont.ttf"
+    glyphs: ${ get_glyphs(0x3041, 0x304F) } # ぁ,あ,ぃ,い,ぅ ...
+```
+
+To understand what statements can be used in a macro body, refer to the [List of Control Structures](https://jinja.palletsprojects.com/en/stable/templates/#list-of-control-structures) and how they are used as [Line Statements](https://jinja.palletsprojects.com/en/stable/templates/#line-statements) in the Jinja documentation.
+
+#### Using substitutions and variables within a macro
 
 Macros can also capture substitution values:
 
@@ -197,54 +231,40 @@ jinja:
 Note that you can combine the above with `!include` to load one or more `vars` from an external file:
 
 ```yaml
+# seed.yaml
+initial_value: 2314332322
+multiplier: 1103515245
+modulus: 2147483648
+```
+
+```yaml
 jinja:
   macros:
     generate_wifi_password:
       vars:
-        initial_seed: !include seed.yaml
+        seed: !include seed.yaml
+        chars: abcdefghijklmnopqrstuvwxyz0123456789
+      parameters:
+        password_length: 15
       body: !literal |-
-        # set chars = 'abcdefghijklmnopqrstuvwxyz0123456789'
-        # set ns = namespace(s='', seed=initial_seed)
-        # for i in range(15)
-        #   set ns.seed = (ns.seed * 1103515245 + initial_seed) % 2147483648
-        #   set idx = ns.seed % (chars|length)
+        # set ns = namespace(s='', seed=seed.initial_value)
+        # for i in range(password_length)
+        #   set ns.seed = (ns.seed * seed.multiplier + seed.initial_value) % seed.modulus
+        #   set idx = ns.seed % (chars | length)
         #   set ns.s = ns.s + chars[idx]
         # endfor
         ${ ns.s }
 ```
 
-Instead of an immediate return expression, macros can define a full Jinja body that may contain Jinja statements:
-
-```yaml
-jinja:
-  macros:
-    get_glyphs:
-      parameters:
-        start: 0
-        end: 0
-      body: |
-        # set ns = namespace(glyphs=[])
-        # for code in range(start, end + 1)
-        #   set ns.glyphs = ns.glyphs + ["%c" | format(code)]
-        # endfor
-        ${ ns.glyphs }
-
-fonts:
-  - file: "fonts/myfont.ttf"
-    glyphs: ${ get_glyphs(0x3041, 0x304F) } # ぁ,あ,ぃ,い,ぅ ...
-```
-
-To understand what statements can be used in a macro body, refer to the [List of Control Structures](https://jinja.palletsprojects.com/en/stable/templates/#list-of-control-structures) and how they are used as [Line Statements](https://jinja.palletsprojects.com/en/stable/templates/#line-statements) in the Jinja documentation.
-
 ### Built-in functions
 
 In addition to the Jinja expressions, ESPHome supports a number of built-in functions that can be used in substitutions.
 
-- `ord` Returns the Unicode code point for a given character. Example: `ord("A") == 65`
-- `chr` Returns the character for a given Unicode code point. Example: `chr(65) == "A"`
-- `len` Returns the length of the string. Example: `len("Hello") == 5`
-- `merge(a, b)` Merges two objects. Example `merge({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}`
-- `eval(expression, vars)` Evaluates a Jinja expression. Useful for templating. Example: `eval("The answer is ${answer}", {"answer": 42}) == "The answer is 42`
+* `ord` Returns the Unicode code point for a given character. Example: `ord("A") == 65`
+* `chr` Returns the character for a given Unicode code point. Example: `chr(65) == "A"`
+* `len` Returns the length of the string. Example: `len("Hello") == 5`
+* `merge(a, b)` Merges two objects. Example `merge({"a": 1}, {"b": 2}) == {"a": 1, "b": 2}`
+* `eval(expression, vars)` Evaluates a Jinja expression. Useful for templating. Example: `eval("The answer is ${answer}", {"answer": 42}) == "The answer is 42`
 
 {{< anchor "disabling-jinja-and-substitutions" >}}
 
@@ -278,6 +298,8 @@ template: !literal
   pin: ${pin}
   name: GPIO Switch on pin ${pin}
 ```
+
+Note the use of `!literal` in the template definition, so the expressions defined in it are not automatically substituted.
 
 ```yaml
 substitutions:
@@ -413,11 +435,11 @@ substitutions:
 > [!TIP]
 > To hide these base files from the dashboard, you can
 >
-> - Place them in a subdirectory (dashboard only shows files in top-level directory)
-> - Prepend a dot to the filename, like `.base.yaml`
+> * Place them in a subdirectory (dashboard only shows files in top-level directory)
+> * Prepend a dot to the filename, like `.base.yaml`
 
 ## See Also
 
-- {{< docref "/index" "ESPHome index" >}}
-- {{< docref "/guides/getting_started_command_line" >}}
-- {{< docref "/guides/faq" >}}
+* {{< docref "/index" "ESPHome index" >}}
+* {{< docref "/guides/getting_started_command_line" >}}
+* {{< docref "/guides/faq" >}}
