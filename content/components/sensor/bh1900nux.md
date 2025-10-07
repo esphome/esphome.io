@@ -7,18 +7,7 @@ params:
     image: bh1900nux-evk-001.png
 ---
 
-
-
 {{< anchor "bh1900nux" >}}
-
-The `bh1750` sensor platform allows you to use your BH1750
-([datasheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf))
-ambient light sensor with ESPHome. The [I²C bus](#i2c) is required to be set up in
-your configuration for this sensor to work.
-
-{{< img src="bh1750-full.jpg" alt="Image" caption="BH1750 Ambient Light Sensor." width="50.0%" class="align-center" >}}
-
-{{< img src="bh1750-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
 The `bh1900nux` sensor platform allows you to use a BH1900NUX
 ([datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf))
@@ -39,8 +28,7 @@ sensor:
 
 .. _BH1900NUX:
 
-BH1900NUX Temperature Sensor
-============================
+# BH1900NUX Temperature Sensor
 
 .. seo::
     :description: Instructions for setting up Rohm Semiconductors BH1900NUX Temperature Sensor in ESPHome.
