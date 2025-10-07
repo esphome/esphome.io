@@ -1,21 +1,18 @@
 ---
-description: "Instructions for setting up Rohm Semiconductors BH1900NUX Temperature Sensor in ESPHome."
+description: "Instructions for setting up the Rohm Semiconductor BH1900NUX temperature sensor in ESPHome."
 title: "BH1900NUX Temperature Sensor"
 params:
   seo:
-    description: Instructions for setting up Rohm Semiconductors BH1900NUX Temperature Sensor in ESPHome
+    description: Instructions for setting up the Rohm Semiconductor BH1900NUX temperature sensor in ESPHome
     image: bh1900nux-evk-001.png
 ---
-
 {{< anchor "bh1900nux" >}}
-
-The `bh1900nux` sensor platform allows you to use a BH1900NUX
+The `bh1900nux` sensor platform allows you to use the **BH1900NUX**
 ([datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf))
-temperatur sensor with ESPHome.  
-The [I²C bus](#i2c) is required to be set up in
-your configuration for this sensor to work.
+**temperature sensor** from Rohm Semiconductor with ESPHome.
+The [I²C bus](#i2c) must be set up in your configuration for this sensor to work.
 
-{{< img src="bh1900nux-evk-001.png" alt="BH1900NUX-EVK-001" class="align-center" >}}
+{{< img src="bh1900nux-evk-001.png" alt="BH1900NUX-EVK-001 Evaluation Board" class="align-center" >}}
 
 ```yaml
 # Example configuration entry
@@ -27,39 +24,38 @@ sensor:
 ```
 
 # BH1900NUX Temperature Sensor
-The `bh1900nux` sensor platform allows you to use a [BH1900NUX](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf)
-temperatur sensor with ESPHome.  
-The [I²C bus](#i2c) is required to be set up in
-your configuration for this sensor to work.
+The `bh1900nux` sensor platform enables the use of the **BH1900NUX**
+([datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf))
+**temperature sensor** from Rohm Semiconductor in ESPHome.
+The [I²C bus](#i2c) must be configured in your setup for this sensor to function.
 
-
-## Configuration variables
-- **address** (*Optional*, int): Manually specify the I²C address of the sensor.
-  Defaults to `0x48`. 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
-  sensor. Defaults to `60s`.
-- All other options from [Sensor](#config-sensor).
+## Configuration Variables
+| Variable            | Type (Default)               | Description                                  |
+|---------------------|------------------------------|----------------------------------------------|
+| **address**         | *Optional*, `int` (`0x48`)   | Manually specify the I²C address of the sensor. |
+| **update_interval** | *Optional*, [Time](#config-time) (`60s`) | Interval for sensor updates.                |
+| *Inherits*          | [Sensor](#config-sensor)     | All standard sensor configurations apply.   |
 
 > [!NOTE]
-> The `ALERT` pin is not supported yet.  
-> The `TLOW register` and `THIGH register` for the `Thermostat Mode` are not supported yet.  
-> The `Configuration register` is not supported yet.  
+> The following features are **not yet supported**:
+> - `ALERT` pin functionality
+> - `TLOW`/`THIGH` registers (Thermostat Mode)
+> - `Configuration register` settings
 
+## Configurable I²C Addresses
+The BH1900NUX provides **3 address pins (A0, A1, A2)** to set the I²C address by connecting them to **VCC (1)** or **GND (0)**.
+This allows **8 possible addresses**:
 
-### Configurable Addresses
-The BH1900NUX has 3 address pins (A0, A1, A2) that can be used to set the I²C address of the sensor.  
-The address can be changed by connecting the A0, A1, and A2 pins to VCC or GND. 
-
-In total there are 8 possible addresses:
-
-- 0x48 (A0=0, A1=0, A2=0) 
-- 0x49 (A0=0, A1=0, A2=1) 
-- 0x4A (A0=0, A1=1, A2=0)
-- 0x4B (A0=0, A1=1, A2=1) 
-- 0x4C (A0=1, A1=0, A2=0) 
-- 0x4D (A0=1, A1=0, A2=1) 
-- 0x4E (A0=1, A1=1, A2=0) 
-- 0x4F (A0=1, A1=1, A2=1) 
+| Address | A0 | A1 | A2 |
+|---------|----|----|----|
+| `0x48`  | 0  | 0  | 0  |
+| `0x49`  | 0  | 0  | 1  |
+| `0x4A`  | 0  | 1  | 0  |
+| `0x4B`  | 0  | 1  | 1  |
+| `0x4C`  | 1  | 0  | 0  |
+| `0x4D`  | 1  | 0  | 1  |
+| `0x4E`  | 1  | 1  | 0  |
+| `0x4F`  | 1  | 1  | 1  |
 
 ## See Also
 - [Sensor Filters](#sensor-filters)
