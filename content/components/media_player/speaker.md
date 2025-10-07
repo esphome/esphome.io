@@ -17,16 +17,14 @@ It supports two different audio pipelines: announcement and media. Each audio pi
 
 On-device files built directly into the firmware are played without a network connection. Encode on-device files with the configured sample rate, 1 or 2 channels, and 16 bits per sample.
 
-This platform only works on ESP32 based chips using the [ESP-IDF framework](#esp32-espidf_framework).
+This platform only works on ESP32-based chips using the [ESP-IDF framework](#esp32-framework).
 
-{{< warning >}}
-Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
-combination with Voice Assistant and/or other audio components.
-
-{{< /warning >}}
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+> combination with Voice Assistant and/or other audio components.
 
 ```yaml
 # Example minimal configuration entry
