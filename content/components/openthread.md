@@ -9,12 +9,12 @@ params:
 
 [Thread](https://www.threadgroup.org) is a low-power mesh networking standard for IoT devices. The low-power aspect is important for battery-powered smart home devices. However, it’s also low-bandwidth, making it ideal for applications that don’t send a lot of data, like switches or motion sensors.
 
-Thread uses the same RF technology as Zigbee (IEEE 802.15.4) but provides IP connectivity similar to Wi-Fi. Unlike Zigbee, Thread by itself does not allow controlling devices: It is just a communication protocol. To control the Thread devices, a higher-level protocol is required: Matter or Apple HomeKit or {{< docref "/components/api" "ESPHome API" >}}.
+Thread uses the same RF technology as Zigbee (IEEE 802.15.4), but provides IPv6 connectivity similar to Wi-Fi. Unlike Zigbee, Thread by itself does not allow controlling devices: It is just a communication protocol. To control the Thread devices, a higher-level protocol is required: Matter or Apple HomeKit or {{< docref "/components/api" "ESPHome API" >}}.
 
-The purpose of this component is to allow ESPHome nodes to communicate over a Thread network. It permits the state of sensors and binary sensors to be send to Home Assistant via 6LoWPAN packets. This OpenThread component relies on [OpenThread](https://openthread.io) which is an open-source implementation of Thread.
+This component allows ESPHome nodes to communicate with Home Assistant over a Thread network. It permits sending sensor state to Home Assistant and receiving {{< docref "/components/ota/index" "Over-the-Air Updates (OTA)" >}}. This OpenThread component relies on [OpenThread](https://openthread.io) which is an open-source implementation of Thread.
 
 > [!NOTE]
-> You will need a [Thread border router](https://www.home-assistant.io/integrations/thread#about-thread-border-routers) to connect your node to a Thread network.
+> You will need a [Thread border router](https://www.home-assistant.io/integrations/thread#about-thread-border-routers) to connect your node to a Thread network. The border router adapts IPv6 packets on your Home Assistant network to 6LoWPAN packets on your Thread network, allowing communication across both networks.
 
 ## Usage
 
@@ -62,6 +62,8 @@ openthread:
 - **extpanid** (string): 8-byte Extended Personal Area Network ID (XPAN ID)
 - **pskc** (string): PSKc is used to authenticate an external Thread Commissioner to a Thread network
 - **mesh_local_prefix** (ipv6network): Used to build Mesh-Local IPv6 addresses (ML-EIDs), which are unique to each Thread device within the network partition
+- **use_address** (*Optional*, string): Manually override what address to use to connect
+  to the ESP. Defaults to auto-generated value.
 
 ## Dataset TLV Configuration
 
