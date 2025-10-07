@@ -1,0 +1,2444 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Display Component - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up the display component.">
+            <meta name="twitter:description" content="Instructions for setting up the display component.">
+            <meta property="og:description" content="Instructions for setting up the display component.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/folder-open.svg">
+                <meta name="twitter:image" content="http://localhost:1313/images/folder-open.svg">
+            
+        
+    
+    <meta property="og:title" content="Display Component">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/display/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Display Component">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    
+        <div class="sidebar sidebar-fixed" id="sidebar">
+            
+
+<div class="sidebar-content scroll-trap">
+    <h3>Display Component</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#display-rendering-engine">Display Rendering Engine</a></li><li><a class="toc-secondary" href="#basic-shapes">Basic Shapes</a></li><li><a class="toc-secondary" href="#drawing-static-text">Drawing Static Text</a></li><li><a class="toc-secondary" href="#formatted-text">Formatted Text</a></li><li><a class="toc-secondary" href="#displaying-time">Displaying Time</a></li><li><a class="toc-secondary" href="#screen-clipping">Screen Clipping</a></li><li><a class="toc-secondary" href="#color">Color</a></li><li><a class="toc-secondary" href="#display-pages">Display Pages</a></li><li><a class="toc-secondary" href="#troubleshooting">Troubleshooting</a></li><li><a class="toc-secondary" href="#using-the-color-test-card">Using the Color Test Card</a></li><li><a class="toc-secondary" href="#see-also">See Also</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#display-rendering-engine">Display Rendering Engine</a></li><li><a class="toc-secondary" href="#basic-shapes">Basic Shapes</a></li><li><a class="toc-secondary" href="#drawing-static-text">Drawing Static Text</a></li><li><a class="toc-secondary" href="#formatted-text">Formatted Text</a></li><li><a class="toc-secondary" href="#displaying-time">Displaying Time</a></li><li><a class="toc-secondary" href="#screen-clipping">Screen Clipping</a></li><li><a class="toc-secondary" href="#color">Color</a></li><li><a class="toc-secondary" href="#display-pages">Display Pages</a></li><li><a class="toc-secondary" href="#troubleshooting">Troubleshooting</a></li><li><a class="toc-secondary" href="#using-the-color-test-card">Using the Color Test Card</a></li><li><a class="toc-secondary" href="#see-also">See Also</a></li>
+</ul>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+            <h3>In this section</h3>
+            <ul class="section-list">
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/addressable_light/">Addressable Light</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/lcd_display/">Character-Based LCD Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ili9xxx/">ILI9xxx TFT LCD Series</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/inkplate6/">Inkplate 5, 6, 10 and 6 Plus</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/max7219/">MAX7219 7-Segment Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/max7219digit/">MAX7219 Digit Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/mipi_dsi/">MIPI DSI Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/mipi_spi/">MIPI SPI Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/nextion/">Nextion TFT LCD Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/pcd8544/">PCD 8544 Display (Nokia 5110/3310)</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/pvvx_mithermometer/">PVVX MiThermometer Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/qspi_dbi/">Quad SPI Displays</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/rpi_dpi_rgb/">RPI_DPI_RGB Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/sdl/">SDL2 Display on host platform</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1306/">SSD1306 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1322/">SSD1322 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1325/">SSD1325/7 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1327/">SSD1327 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1331/">SSD1331 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1351/">SSD1351 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7567/">ST7567 LCD Graphic Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7701s/">ST7701S Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7735/">ST7735 Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7789v/">ST7789V TFT LCD</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7920/">ST7920 LCD Graphic Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/tm1621/">TM1621 LCD Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/tm1637/">TM1637 7-Segment Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/tm1638/">TM1638 7 Segment Display Keypad &amp; LED Module</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/waveshare_epaper/">Waveshare E-Paper Display</a>
+                    </li>
+                    
+                
+            </ul>
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/display/_index.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+        </div>
+        <div class="content">
+            
+                <h1>Display Component</h1>
+                <p>The <code>display</code> component houses ESPHome&rsquo;s powerful rendering and display
+engine. Fundamentally, there are these types of displays:</p>
+<ul>
+<li>
+<p>Character displays like <a href="/components/display/max7219/">7-Segment displays</a> or
+<a href="/components/display/lcd_display/">LCD displays</a>.</p>
+</li>
+<li>
+<p>Serial displays like <a href="/components/display/nextion/">Nextion TFT LCD Display</a> that have their own processors for graphics rendering.</p>
+</li>
+<li>
+<p>Graphical displays with fully addressable pixels, like <a href="/components/display/waveshare_epaper/">E-Paper</a>,
+<a href="/components/display/ssd1306/">OLED</a> or <a href="/components/display/ili9xxx/">TFT</a> displays.</p>
+</li>
+</ul>
+<p>For graphical displays, which offer the greatest flexibility, there are two options for displaying content:</p>
+<ul>
+<li>ESPHome&rsquo;s <a href="/components/display#display-engine">own rendering engine</a></li>
+<li><a href="/components/lvgl/">LVGL</a> - Light and Versatile Graphics Library</li>
+</ul>
+
+<a class="anchor" id="display-configuration" role="none"></a>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<p>All display components inherit these configuration variables.</p>
+<ul>
+<li><strong>id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID used for code generation. Required if there are multiple displays.</li>
+<li><strong>update_interval</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The interval to re-draw the screen. Defaults to <code>1s</code>.</li>
+<li><strong>lambda</strong> (<em>Optional</em>, <a href="/automations/templates#config-lambda">lambda</a>): The lambda to use for rendering the content on the display.
+See <a href="/components/display#display-engine">Display Rendering Engine</a> for more information.</li>
+</ul>
+<p>All <em>graphical</em> displays also inherit these configuration variables.</p>
+<ul>
+<li><strong>auto_clear_enabled</strong> (<em>Optional</em>, boolean): If the display should be cleared before each update. Defaults to <code>true</code> if a lambda or pages are configured, false otherwise.</li>
+<li><strong>show_test_card</strong> (<em>Optional</em>, boolean): If the display should show a test card. Defaults to <code>false</code>. If set, any code in the <code>lambda</code> config option will be ignored.</li>
+<li><strong>rotation</strong> (<em>Optional</em>, integer): The rotation of the display in degrees, one of 0, 90, 180 or 270. Defaults to <code>0</code>.</li>
+<li><strong>pages</strong> (<em>Optional</em>, list): Pages configuration - see below.</li>
+</ul>
+
+<a class="anchor" id="display-engine" role="none"></a>
+
+<h3  id="display-rendering-engine">
+    Display Rendering Engine
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="display-rendering-engine" title="Copy link" src="/images/link.svg">
+</h3>
+<p>ESPHome&rsquo;s own powerful rendering engine can handle many common tasks such as drawing basic shapes,
+printing text with fonts of your choice, or even rendering images.</p>
+<p>To achieve all this flexibility displays tie in directly into ESPHome&rsquo;s <a href="/automations/templates#config-lambda">lambda system</a>.
+So when you want to write some text or sensor values to the screen you will be writing in C++ code
+using an API that is designed to</p>
+<ul>
+<li>be simple and to be used without programming experience</li>
+<li>but also be flexible enough to work with more complex tasks like displaying an analog clock.</li>
+</ul>
+<p>In this section we will be discussing how to use ESPHome&rsquo;s display rendering engine from ESPHome
+and some basic commands. Please note that this only applies to displays that can control each pixel
+individually.</p>
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Display hardware is complex and sometimes doesn&rsquo;t behave as expected. If you&rsquo;re having trouble with your display,
+please see <a href="/guides/esp32_arduino_to_idf#troubleshooting">Troubleshooting</a> below.
+</div>
+
+So, first a few basics: When setting up a display platform in ESPHome there will be a configuration
+option called <code>lambda:</code> which will be called every time ESPHome wants to re-render the display.
+In each cycle, the display is automatically cleared before the lambda is executed. You can disable
+this behavior by setting <code>auto_clear_enabled: false</code>.
+In the lambda, you can write code like in any <a href="/automations/templates#config-lambda">lambda</a> in ESPHome. Display
+lambdas are additionally passed a variable called <code>it</code> which represents the rendering engine object.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/display_rendering_line.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 57px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/display_rendering_line.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACxCAIAAADiYgDWAAAGmklEQVR4nOzdz6raTh8G8PyZWAPWQFNooEWhoItaumm3LqtX0rvpurfTbmsRl&#43;qyx4VuhBOOEjARX86bH4PHY6rGmJnvzPO5gCL0mXkmzvcYZllWvV7vdrvfvn3rdrv1et2yLAPAMB6TUavVKpXKZrNZr9dRFCVJstvtRH8wEM/&#43;&#43;vVrs9kMgsB13TQclUqlWq1i/wD7&#43;/fvHz58cF13Op2ORqP7&#43;/vXr1&#43;/evWKMWaapuiPByLZP378ePPmzXq9Ho1Gk8nEsqxGo&#43;H7vm3blmWZ/yf6Q4IYrF6vO44TBEGr1TIMw/O82WxmGEYQBM1m0/d9xpjoDwlimLvdLkmS5XL59&#43;/fxWIxm82m02kYhq1Wq9frdTod13Wxf&#43;jpcVewbdv3/Vqt9u7dO8MwBoPBZDIxDOPTp09v375NksRxnEqlYts2IqKVx3CYpskYSx9PDvolSRLXdX3fR8VoyNz/SuOgX8bj8WKxYIx1Op1&#43;v//x48e0YoR&#43;YCjPk52A90vaJj9//vzz50&#43;ahi9fvsRxXK1WEQ59PAkH75e0TdKvOtITaxRFq9WKMfbixQscPjRx5AxhmqbjOL7vdzqdtGuCIJjP58PhEM&#43;3WjGPXqPww8dyuYyiaD6fP3&#43;&#43;xffryju&#43;AaSHj5cvX8ZxvFqthsPh/vNt&#43;sSLflHe8XCkhw/btqvVKmMM35/q6Xit7Dv5/Sn6RVWn1/0/vj9Fv6jtdDj&#43;8f0p&#43;kVtp2uFQ7/o5oLljn7RzQXhQL/o5oJa4dAvmsizytEvmsgTDvSLJvLUCof5QrVdtbgxX6i2q8KB&#43;UK1XVUrHOYLlVTMgsZ8oZKKCQfmC5VU5FEA84WKKebMwWG&#43;UCUFr2PMF6qk4HBgvlAlBdfKPtzPUXfD5Yv7OepuGA7cz1F3w1rh0C9ElbFq0S9ElREO9AtRZdQKh36hpdTFin6hpdRwoF9oKbVWOMwXkiBmjWK&#43;kAQx4cB8IQliaoXDfKHMBK9LzBfKTHA4MF8oMykaHfOFchJ85uAwXyghWZYj5gslJEs4MF8oIVlqZR/u5yQh4yrE/ZwkZAwH7uckIWOtcOgXsaRefOgXsaQOB/pFLKlrhUO/CEFjzaFfhKARDvSLEDRqhUO/lInYUkO/lIlYONAvZSJWK9xBv0wmkzAM2&#43;12r9fDcGFRqK6wg/nCX79&#43;jcfjOI4/f/6cDhem24zoj0kb1XA8ny9Mt5Moih4eHgzDwB83XI9qOFL784WO43ieN5/PB4MB/rihEFTPHNzzwwf/4wY8316J/Ko6eLj9/fv3eDxOawXPt1ciH46Dh9t2ux3HcZIkeL69Hvla4TC/Xjh1FhPm1wunTjgwv144dWplH&#43;7nCqHmGsL9XCHUDAfu5wqhZq1w6JdrKL500C/XUDwc6JdrKF4rHPolB11WDPolB13CgX7JQZda4TBfeD7tFgrmC8&#43;nXTgwX3g&#43;7cKRwnzhObQ7c3CYLzxJ38WB&#43;cKT9A0H5gtP0rdWOMwXZtF0TezDfGEWhAPzhZlQK0/gfm6fXkvhJNzP7UM4nsD93D7UynHoF&#43;wcmdAvCEcm9Atq5TSd&#43;0Xl4BdC535BOE7QuV9QK&#43;fS8P37Cub9RjR8/z7CcS4N37&#43;PWrmYPu/fVyTjZdLn/fsIx8X0ef8&#43;wpGTDu/fx5kjP&#43;XnC2lHWyzl5wsRjvyUny9ErRRDyfs5komWkJL3cwhHMZS8n0OtFEylfqEUZBJU6heEo2Aq9Qtq5VYU6BcC&#43;SVKgX5BOG5FgX5Brdwc3X6RN7bKoNsvCMfN0e0X1Ep5yP0&#43;rnRpVRi538dFOMpD7vdxEY6yEfp9XJw5BKDy&#43;7hSJFQ3VH4fF&#43;EQgMrv46JWRJJ8fh07h0iSz68jHCJJPr&#43;OWpGFhPdz2DlkIeH9HMIhCwnv51Ar0pGnX7BzSEeefkE4pCNPv6BW5CW8X7BzyEt4vyAc8hLeL6gVAkTNF2LnIEDUfCHCQYCo&#43;UKEg4zy5wtx5qCk5PlC7ByUlDxfiHBQUvJ8IWqFpHLmC7FzkFTOfCHCQVI584WoFfJudz&#43;HnYO8293PIRzk3e5&#43;DrWijqx&#43;6ff7/P2VF/2D2DnU8bxfptMpYywMw&#43;12m&#43;MfRDjU8bxfGGPv37/3PM&#43;27Tz/IGpFPWm/3N3dhWHoeV6j0cCZA/6z2&#43;222&#43;1ms9lut7Zt577NRziUxf9nc39JijOHsq6/mBX/20IgLYQDMiEckAnhgEwIB2RCOCATwgGZEA7IhHBAJoQDMiEckAnhgEz/CwAA//&#43;whGHCZO76VQAAAABJRU5ErkJggg=="
+                     data-src="/components/display/images/display_rendering_line.png"
+                     data-srcset="/components/display/images/display_rendering_line.png 57w, /components/display/images/display_rendering_line_hu_7a5561870c1e72d8.png 11w, /components/display/images/display_rendering_line_hu_3b6bbd193e890b20.png 19w, /components/display/images/display_rendering_line_hu_dd435ab2a6abff33.png 28w, /components/display/images/display_rendering_line_hu_3bdac7669716cce1.png 38w, /components/display/images/display_rendering_line_hu_ad9e9f5733d496ec.png 57w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Write your display rendering code here
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // For example, draw a line from [x=0,y=0] to [x=50,y=50]
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.line(0, 0, 50, 50);</span></span></span></code></pre></div></div>
+</div>
+
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Lambdas are essentially just a lightly modified version of C++. So don&rsquo;t forget to end each line
+with a semicolon (<code>;</code>  ). Otherwise you will be greeted by a long error message at the compilation stage.
+</div>
+
+If you compile and upload the configuration above, you should see a black (or white, depending on the display)
+line which starts at the top left and goes a few pixels down at a 45° angle. (If it&rsquo;s in another corner, use the
+<code>rotation:</code> option to rotate the display to your liking)</p>
+<p>This already highlights one of the things you must learn before diving into writing your own custom display code:
+The <strong>top left</strong> is always the origin of the pixel coordinate system. Also, all points in this coordinate system
+are a pair of integers like <code>50, 50</code> which represent the shift to the right and shift downwards. So, in other words,
+x always represents the horizontal axis (width) and y the vertical axis (height). And the convention in
+the rendering engine is always first specify the <code>x</code> coordinate and then the <code>y</code> coordinate.</p>
+<h3  id="basic-shapes">
+    Basic Shapes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="basic-shapes" title="Copy link" src="/images/link.svg">
+</h3>
+<p>Now that you know a bit more about ESPHome&rsquo;s coordinate system, let&rsquo;s draw some basic shapes like lines, rectangles, circles or even polygons:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/display_rendering_shapes.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 212px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/display_rendering_shapes.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABLCAAAAAD8YvIiAAAPIUlEQVR4nNR6aZPbVnb23bAQBEgCJLvZm1ptyS5Lsj0znlfWjD1vxt/ye/IP8rOc2DVJqmxZlmw5FVuWZVlWutnNtQmA4IL93hQBLgAJtnqbquR8UKlB4OK5B&#43;c8Z7vknx58UMthhCD4vyPkL7BF87wo8CQBm1112b&#43;vCuCR4QJIqbRR4tH0Ggu9kLErvBdiHs8eZ4xBdB1Ik&#43;t7ju15esOv7akijlcP&#43;k3dZpjgyy3JKFR3i2T6h28HOfGaUROSz9FA4rr6uFItipGN0OHhi7qjaDKBl1A38wb0bUWZ/uF0G3Cv&#43;gbQ660x&#43;/0EQsQ4Lq/WG3pnY7MkIAiQvG0ZLiWqwi8&#43;8/kx93xQkmKY1G18/&#43;tWqXymrUXWmA0ZZ7&#43;fRNvhMMdJHbPf36lMmKRwW93vWiGHlQ0FQ4gvoHDmGxCXb5dwZCd28/G/nX7knuXXjPr9jkWzboGosFHkMnhtanpIqMjV7ungxMsLYo7kxcpIb7a7Hg8J5ESRO6/Cme876MZuWYAAsMA6evq377lbNj3rAdvq1PVMVUOseUEht/puMruBw2JxQ3fGNsMFTSaSqBTLI8D6ADCkFPP8udTNfOPU3aiofOQa1vOvHv7QLXSG4foHPKNn043yOvOgeqBJK4RA5v9DCIsF2/OMdrO6VRKxWC0FvhuwwGyf5NWqzHP4TSTAXP14XNlSuAizffTV5z/pATd01poH83rHo9JGnmQrhAX2wCKrBkIS/0dwwiQ51jo2KxtFkRBAKQWhxBqNTksuVAri2bCZqx&#43;ZWiXGzNzm04c/9XxAw0yDBfGHOTZKtUWEWBYqgU4XaTxcDxpETEJ4pdE1uhtbKgfRZDUiFHXDaIladbKT9dGOefqRWdpVYz27J9/87QfdZ5AFXrCGPajdG5X2VjAtBPNKv&#43;Oy8tId&#43;J/Tt0GIhLwshKYZ8oQxACcXZK0o51FfH3oYs5ABmAWc&#43;UbdKN3QhAiz03j02TdNlwFISgc3lKw4xahnWtLOMqI0HARt0xP4tIUsg57cR3KFQg54oW&#43;7DE1QY14qVVSRWiMWjEdOSCd7WcE86PQLe1PMo6NH//qoERszUg&#43;q3Cow5o/NAazED6wHzXP&#43;mHEkhToyj2Wbw5JQqBquAYCoTgwZQkTEfHHz1KYmAGHIFTVlKVoyzzh1KjPecOpffvFdM8YcWq1&#43;Bn1MeMPlCoWM7aRQ82XUc09BMfk9yJqIxMTS2A&#43;G3VY5Du4TfYsl1wlYYDRHcm1LSbFJijeY23jyxZPWNKawICvgRbyhaoXcmxgJ8pqg91tUTaAmAIT6ySDjbhrSMAzM3iy4A4SIqFAQynzPOtbzEZtM1R354Jw3nMajz79rLeIgy8Ac8cammhXvllFzCnA6Nk3YEQHMO3kyzGV5SjAWbt0YmH1zu6JwE9&#43;DGDMAOLmmN9vNCZvIPEcAjCAkeKPx9WePmgnM4Sp9vJE3kqhxvjzSGVh47ETTg6FyQ8zwFOfIEg7C7qkxGuwUMYqqGwgARwS5oFlD02zLpQ0FI0RHvZE6hRDxxswHIwn7LauQsgJGvYGrbp4P80TXKqUmRCqH5qAZyN14T84APQSvSD5Xqja7XTjmOClH4ocgwVzJG3a6eqfoqhzhqeWWN6Y&#43;OK4//jyFmXnN53/YSNVFvj0YcJqagZmFIUYrZg55DaBRBxWmUShiDyzKSsYCQCQQEiLkNWvCGoI6D4mQi9lkBKgJwgBw&#43;crUvYPO48&#43;eNFKBe5k&#43;zuAN6hoDqZhbCbxQSHFIHBHhKu9GV6N/uKJkO77fb7W1WZkAYjZRJ8mJb&#43;hgtzyFwEL952etdC66RB&#43;TIDTM5A0WjNs/HJUO9su55WQkzSFkVb/L8CFGnEzDnHty2omC&#43;/QGhKLkJJQlUCnOzA0gEK4wXIo&#43;qN0byhm8wZjbff3jN6&#43;k27&#43;/c6uybDozDom8MQ2aTTIkiNCS3ieswcpI7JgDh5amLhlVDxM64Qtgnm9DrNS0Yy&#43;NOkUfoZvpgywMnPbTr5691tGrX/7w6Qcaj9O7ijjEALDE4xRoFniuEwDE8zy38n0gX85Xu/qoZXOcmFvoCQKCEx8Hq&#43;/c6dTTyWiSPsKxYZHysg&#43;ywBl2Gy&#43;/ftoah8Du94PBzXJJ4XFa1yoFw4anSTgBmnlGZ4wwoCHLb6y6dlQmWIZrAoYmZcLCJJN3IuWOYYcpT0zSBwu6h9z2sg9S9/Tw8NeXh0ddlwLgW795hwd7B7f25FTRMono7dN&#43;uIMWoJnbO2xy2yU0bp/C4X5ZAMuCEBbkse&#43;b0zIhKwJDfvMBDR42/aSmE/QR6I1tOe2DLHSa3z182egOnYBFf1u/tn8q33zwl4OkaiJvZL1GYZMnC8x63ShWNwvQycl9A8EytwoJcViioTQvE7IoR9y&#43;32/2B4m6MMqoZ0p1bCSkrJV5/fr3//5t2wlmDsxCxzMbJ4Ogf5DmEUgk7Dh0btPMn2QPO6pIAC9VzBMTITVLkRPPS5YJq7ChUHvvectLGciiDmCUpumVua0fv/t2QpPJB8LQ97&#43;3Xv7&#43;zlvVZOoKIaSUzUEHxpGh7pUnIQcjjif1YU/MAB03HEo5pbTMJAtB0sEnhtP0zwrkCwm6j794Wu97KzTpdQb1F&#43;/99UFt9YtPQVOnqytx5T/Zj6CBljNeteopbJzjlBmTzIN7Ys3qH63uwFxkTCuBPInt&#43;OGXdScrefVDW&#43;&#43;SHW31wRlo15G2FuQJ&#43;ZJt&#43;vz06Yx3xWWClw7u800JW&#43;//cjRaKG9NHRD/Zh53xtmNEUqHrbqZ8eAMtAerZSHBYphM41gUGbKWZBLn06XgPhUk7t37r/bCPrLrgOlv69aPYGU/OLNpCqXs3mZgHOpZq0IkbW5ILA7u0zJhsWrp9rt1N5nqre&#43;MvaEXnvUzmS&#43;6mhFGP3iH//JsnPULt/PnPyskCu6LMmG2I/Hmxz27Od9sVh1wBZmChhDQbMMK9WcPB1nbFW5vf0Cj4N6JywSSyFlI9UO9NbRm3/Ys&#43;rg8aIDY2OEzuxPBeGBlmYc3msTcKLhHZYLN87m5S0Kh9v5r6zcr9qKz6OMKoBHPuoKwsGoWBmBWtAKWaZGMxfY2Ce55zQp1BkRtziRIuvVp4L2y4yfPoo8rgM6J3aZYmUUf5pl98IaOxEJQVCa4o26rNZ8mAFL53ei4405VHZxBEZcHLVZHxjGMIiJgzNPro03p3ItEZUJo8ycdvbNRU6NFIF9&#43;597L/qz5SEN6fZ44s2miUmCycJJ70MA1T/paOeeefxmIMeGEfLFjWuM9NVI25GvvbB9NIwx1hmfOAy4HelLwgt4oyvKM075X3lW5C4BeBPdT3a7WilEOI&#43;&#43;//XpK1uHwdKhdclq2HjSAgsZoc&#43;yrUT69s6fxF14rYpJyvTUOw5KIABT3PzbCkwg1dYfO9dnHogiAQgXLY2oCKu1FlcslPidCmOMVm43zQuSL90M27YHQ8IzBy&#43;VBT1xHWVsjnleQUFZcD0epFxS3H7AwrmLo2uTjEpIsbCEXdRhXq/GLyGQRGo8QABR34iqGUXfgrFH1G161bo6YuGNSmFzV8iCeexwUaveenTgeCwena2ZcEPMErZnKQEQyp58rzZrrPT&#43;ApJv3j/p6yNx1My5c2q0FTrAKGyJMhNpeKYNzVkBfs5DK3ZfH4zGjYXZ2CvndT/yfW13LX7IeSOSyWr39yW5GmzIGnZldZKccFxQo7Pzu0PDCtRk1qX6kvXr17EV3nAr0iNNu33trd2&#43;/mqHW6FLoDDPMgg2da0hysPp&#43;56Q/nGXUEGMaJgkbClvFW&#43;13n/z0OurUTC8SqXr3wYf7qiykaIyFFGMIormgfQSym&#43;o2uAxbpwSJ2&#43;&#43;/aNXpNKPGsuyN8slcDHKFfGXz4NlXT1vjmMwhEisHd&#43;9/sKcsdSmZN3BlOerlYUUe/DYzd5bwxdCWFXzlmIDzb31ieqetKKOG3OZ4ZOYVnGpmICKoW5r27L97XkAB4pS9D&#43;7fPaiIS5CpbzTD3U0OEgD5HTAbFLHADwBaTKOVHS64KmhAqv9vPPzebkcZNVFZ19NBPp33Qk7hc9v3vn3RNcZY0m58&#43;OBuVVqKbyy0re64vKuSSNOaHIcrFth6Y8RyxYoSmxLEa6fWFxAobP3Roq/imAh5DZ/2nZW&#43;KRK3ijs3Xxy&#43;6ki13bfeu6Vxy2&#43;mtm7RjehBEo1Q4quu&#43;fr5j62weHD7xn417idc2aQjQLn9f6AB8SMHhFwBtDojujxdhpwilm51X7dL2xW1LK&#43;kEcy3LKIqOW7WVI&#43;7sF7zyZfPjvo0V9l&#43;&#43;&#43;P72xmueVnBys27v/TafQVFlV2R2gZA2nJlhHhV2dofSQpP8EqvjXlGl6rleEi&#43;6Jo6jUefPWnZARjoR6&#43;N8E/Xijq/s9951YprW8SrFIx6Obwc6yDGfC7EWZkP83r18caszU6SmB&#43;dTKiShp4bAvjx1jnHfOcQSKoHz61Z9gH5Mmy7A55fHddCkhWiJ7xRN9VybjFHjHfS/uazr6cNfMack2/EolS&#43;tlIDYGX/3WDeS4e8SvUBiA30zRLzhjqdCCd6eYOf/&#43;PxYujA3OZ/7t8oXN8BVCjc/P/u1rxpC7lCYHX6KxySLQneSIEOzV&#43;fJ8d/1Gn8enqwrtd7CSGVnJ9gXpTTSDeDQ7IkyRtJ0Iw65sBPT/v6axqwlxPIFZNnTiGWOORmccgq5iRvJEGDleNRa3PJS6NeHk0ijWVyyJKkeSOWv3c&#43;vV7O4JCELPFGLPMG5HI3H13ksOal5DwcQj2rk&#43;SNWKYDfSTK6Z46FORrDC7Z8mYOYb51Gmys3DDVNFZqmpCs4kixVojNCC6b4/SNMPOg24VkxiHrTqswz&#43;wERS2//ClmDcj87q1XzgI1Eqq7pTjTI5KSOUMQ8sJVU8CYQ/QwyDy3B0A4aI43NGWlIJ9NAoSohTUteCAUanfeUaOViHYPrBlf7OevGn0iDmE9a832qRuWy/n1p3pJ5X4IHrfcgDGIkVD76NM7Styx3f/H&#43;9mDovyWdnXugbzGwuM1PREs7y77YAo0FLf/BHPPu32Xkbys3v3rg83Y0HBZye6HQ8StjD0vg1qoYHkt6M1MJ11k&#43;cxpP//luDWkYqmy&#43;fadzTl5XPTE/kWFBf7a4/XZPUWYPNY1MEzLYZwky6pyfXnpm&#43;WiaknWU4yGQRjZNF4tHf43yf8EAAD//5gSngfv88T8AAAAAElFTkSuQmCC"
+                     data-src="/components/display/images/display_rendering_shapes.png"
+                     data-srcset="/components/display/images/display_rendering_shapes.png 212w, /components/display/images/display_rendering_shapes_hu_14ce3d65de855a0e.png 42w, /components/display/images/display_rendering_shapes_hu_3eed858d8768b220.png 70w, /components/display/images/display_rendering_shapes_hu_6433be3d771503cf.png 106w, /components/display/images/display_rendering_shapes_hu_f5b56ecce7a1a736.png 141w, /components/display/images/display_rendering_shapes_hu_4720336b2cfe5cb3.png 212w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Draw a line from [0,0] to [100,50]
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.line(0, 0, 100, 50);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Draw the outline of a rectangle with the top left at [5,20], a width of 30 and a height of 42
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.rectangle(5, 20, 30, 42);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Draw the same rectangle a few pixels apart, but this time filled
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_rectangle(40, 40, 30, 42);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Circles! Let&#39;s draw one with the center at [20,40] and a radius of 10
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.circle(20, 40, 10);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // ... and the same thing filled again
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(20, 75, 10);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Ring and half-ring. First draw the circle with a hole in it
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // at [75,75] with inner raduis of 20 and outer of 30
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_ring(75, 75, 30, 20);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // and a &#34;gauge&#34;: half-ring that is partially filled.
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Same position and size but 80% filled left to right
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_gauge(75, 75, 30, 20, 80);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Triangles... Let&#39;s draw the outline of a triangle from the [x,y] coordinates of its three points
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // [25,5], [100,5], [80,25]
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.triangle(25, 5, 100, 5, 80, 25);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // and a filled triangle !
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_triangle(115, 5, 95, 25, 125, 70);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Regular Polygons? Let&#39;s draw a filled, pointy-topped hexagon inscribed in a circle
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // centered on [170,45] with a radius of 20
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_regular_polygon(170, 45, 20, EDGES_HEXAGON);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // and the outline of flat-topped octagon around it!
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.regular_polygon(170, 45, 40, EDGES_OCTAGON, VARIATION_FLAT_TOP);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Need to rotate the polygon, or retrieve the coordinates of its vertices? Check the API!</span></span></span></code></pre></div></div>
+</div>
+
+<p>All the above methods can optionally also be called with an argument at the end which specifies in which
+color to draw. For monochrome displays, only <code>COLOR_ON</code> (the default if color is not given) and <code>COLOR_OFF</code> are supported.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Turn the whole display on
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.fill(COLOR_ON);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Turn the whole display off
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.fill(COLOR_OFF);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Turn a single pixel off at [50,60]
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.draw_pixel_at(50, 60, COLOR_OFF);</span></span></span></code></pre></div></div>
+</div>
+
+<p>For color displays (e.g. TFT displays), you can use the Color class.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/display_rendering_colors.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 121px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/display_rendering_colors.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABfBAMAAACzYPBAAAAAD1BMVEX///8AAAD/AAAA/wAAAP//Ek66AAACN0lEQVR4nOzWX9KbIBQFcFEXwFEXINoFYMkCSOP&#43;19QxmsgleoEvSacPnDfab35z5vLHFDk5OTk5OTk5/0VEIYWzLIu&#43;dJZVoStnWRe2jpclILHL/TD0/S5rY7TeZTvP1kbKEvc8evfDkqetzZKnbeclcbYQAtjxsiyHLf0KV2aNXuF6jsYlnpHy0fmesi&#43;qh2uMqXRRb&#43;482zlMC8C1HXmpbdzoYnYTsgWhsU/jHk1oYykdsKmMhsj9SFtfklp7MqWpbKg8Bw63ZGVKXy5J86ClMSSUTpu0ovRvSt&#43;SSkuu9EBlk1Q6sInsqAObyJ68wKgDpVnaK&#43;3NI7G14kadePQkOxB2F0MD&#43;d5V9J4mfxfZAxIozY&#43;abf3eqNm7mDbqz7UWkN9ovXwE4U365QXhW58VloA/jQ&#43;1XvqG6R89IfKY/sQ2nrVmb&#43;Mt6jbimOa/BFGfL3FGJz2qaTT7qPrfr8PaX2wt42i/dczBPm39/j7itHXKRI5On/hha/8nztk8jmn/h9mYNhHB0fxGhp6R7S09od&#43;66&#43;Bo/9a0KbemG1matlYjsSdQu6J0y7emtgJt3XWu3MnelW8qQLsjaRq0Tu0WcO0OsHKXpbqGaMdeVtNOYwKurgxcXjtzdLMeE6XU/a&#43;nDW/XUXZb8W6tMa7HpK5&#43;IYKGWtNsyxbTksf/Xtd026rR0krbOjJHAw0adzm1mNA&#43;lx2ucBZ/JjUpxNIpaV7&#43;5WP0azKd6UxnOtOZzvQ/o/8GAAD///&#43;yT6w4tfAhAAAAAElFTkSuQmCC"
+                     data-src="/components/display/images/display_rendering_colors.png"
+                     data-srcset="/components/display/images/display_rendering_colors.png 121w, /components/display/images/display_rendering_colors_hu_7511c89a20412d4a.png 24w, /components/display/images/display_rendering_colors_hu_e5f72dd46fa079cc.png 40w, /components/display/images/display_rendering_colors_hu_5b976a71cdb3534a.png 60w, /components/display/images/display_rendering_colors_hu_34e0ccea6eb8fb2b.png 80w, /components/display/images/display_rendering_colors_hu_c91fe5ebd28f020c.png 121w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      auto black = Color(0, 0, 0);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      auto red = Color(255, 0, 0);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      auto green = Color(0, 255, 0);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      auto blue = Color(0, 0, 255);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      auto white = Color(255, 255, 255);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(20, 32, 15, black);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(40, 32, 15, red);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(60, 32, 15, green);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(80, 32, 15, blue);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(100, 32, 15, white);</span></span></span></code></pre></div></div>
+</div>
+
+<p>Additionally, you have access to two helper methods which will fetch the width and height of the display:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Draw a circle in the middle of the display
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_circle(it.get_width() / 2, it.get_height() / 2, 20);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Turn off bottom half of the screen
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.filled_rectangle(0, it.get_height()/2, it.get_width(), it.get_height()/2, COLOR_OFF);</span></span></span></code></pre></div></div>
+</div>
+
+<p>You can view the full API documentation for the rendering engine in the &ldquo;API Reference&rdquo; in the See Also section.</p>
+
+<a class="anchor" id="display-static_text" role="none"></a>
+
+<h3  id="drawing-static-text">
+    Drawing Static Text
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="drawing-static-text" title="Copy link" src="/images/link.svg">
+</h3>
+<p>To be able to display text, you need to prepare some fonts. ESPHome&rsquo;s <a href="/components/font#display-fonts">font renderer</a> allows you to use OpenType/TrueType/Bitmap fonts for your texts. This is very flexiblle because you can prepare various sets of fonts at different sizes with a different number of glyphs which is extremely convenient when we&rsquo;re talking about flash space.</p>
+<p>In your display code, you can render static text by referencing the font and just entering your string enclosed in double quotes:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Print the string &#34;Hello World!&#34; at [0,10]
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.print(0, 10, id(my_font), &#34;Hello World!&#34;);</span></span></span></code></pre></div></div>
+</div>
+
+<p>By default, ESPHome will <em>align</em> the text at the top left. That means if you enter the coordinates
+<code>[0,10]</code> for your text, the top left of the text will be at <code>[0,10]</code>. If you want to draw some
+text at the right side of the display, it is however sometimes useful to choose a different <strong>text alignment</strong>.
+When you enter <code>[0,10]</code> you&rsquo;re really telling ESPHome that it should position the <strong>anchor point</strong> of the text
+at <code>[0,10]</code>. When using a different alignment, like <code>TOP_RIGHT</code>, the text will be positioned left of the anchor
+pointed, so that, as the name implies, the anchor point is a the <em>top right</em> corner of the text.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Aligned on left by default
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.print(0, 0, id(my_font), &#34;Left aligned&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Aligned on right edge
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.print(it.get_width(), 0, id(my_font), TextAlign::TOP_RIGHT, &#34;Right aligned&#34;);</span></span></span></code></pre></div></div>
+</div>
+
+<p>As with basic shapes, you can also specify a color for the text:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Syntax is always: it.print(&lt;x&gt;, &lt;y&gt;, &lt;font&gt;, [color=COLOR_ON], [align=TextAlign::TOP_LEFT], &lt;text&gt;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.print(0, 0, id(my_font), COLOR_ON, &#34;Left aligned&#34;);</span></span></span></code></pre></div></div>
+</div>
+
+<p>In case of fonts rendered at higher bit depths, the background color has to be specified after the text in order for antialiasing to work:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Syntax is always: it.print(&lt;x&gt;, &lt;y&gt;, &lt;font&gt;, [color=COLOR_ON], [align], &lt;text&gt;, [color=COLOR_OFF]);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.print(0, 0, id(my_font_with_icons), COLOR_ON, TextAlign::CENTER, &#34;Just\U000f05d4here. Already\U000F02D1this.&#34;, COLOR_OFF);</span></span></span></code></pre></div></div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/display_rendering_text.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 297px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/display_rendering_text.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAATCAAAAAAcv3i4AAAItklEQVR4nIRW&#43;W8bR5auu&#43;9mky2ekqzDduw4sbFZBAmwu8Bm/vH5bYABBsk4hxPHim6JN/sgm33WMWhSihVnjKlfiux&#43;x9evvnrvIwoAAJSCEHxsqex65B24ePNbSIQ/bvrASQEIa3OI0cdspFQI3QWTZRykWtOs4hX2muYmh1Ic4NpgG&#43;z9IluPijD8YUgFEFQSQFVOf2yaxsa7WmaGS/8zalWVkBLIV0vqGR9BLYtl5Vhka5&#43;Pf3m7cA7a2dWYHrw48ohSUGURbzgYKlEKRtEfQatiHrlt/Y&#43;xZb5GFhUp1xmPToxBh0EA5Ppq3D12P/y&#43;P2PmwUR1WjS/PnU&#43;ZR85Rbk8XR4&#43;2taUB6//&#43;n1kDHay4YLsj755bpUFJfO32SeHBlTFPG95H4CW&#43;fX5nklritTnoDanUU6v6EEzv4ravapc8OunFqoLcvsb75mwtrwjgAJ3G3yATaXn34lXnzWK0ZudgY8emqj7XVary5nVY6h&#43;Voy&#43;/ftZji8Nvi7QVHXaajH3msG7ldtjQFVJYrgKyPscm0qX4dBICWRM5EAnPC&#43;RTpKLbw2iJWcn/c/0NI2HyzaBQPF1GEXY0Cms8gLqGigKgDSmilxpBvkdNY9O/8n1gSXSgORZLgHTQJFDTSeAZwXQDKLKPA3DKEmUTmUhyuBqlHCQISUVBLfXU356sfskiaIgECZDumJQFjmnBkP3nFa8LJdB0fHToRpY8U1Ie3706w9mqymCX89mzYsgHgV7G1aJbPKz4e23UXg9x90emYy52W&#43;Vo6nY2ffvya7K2XXEx3FPSSGK2TwlfkeMZrC931DBzRx09r1qehPF0zwdw1YrH1V2UXGpgBC1u6jyePnTachUsbxUbn&#43;AioKLbHybuvvdmsXknoThVfSCLl5L4fz2S8SOnhWjiTFJDU2eD43VpLi9bPsGA0qu1gvhfvGKnvwwhf1P3Xc/lLsvy&#43;nbseyUzLsju0wnoSmzVaXqC3P1Omw8zcN3MzAoj6qTN1M14MfJ6zdrERjZKByo8LV6Th0DSXVHWdOFi9sR2Ter8N2EHv&#43;3c7Okxvz1SdZMtfZ70EBl09mgWI14f/79rEGTtdFqmr5lHf6XHa4Lxif/WPe7fU/JEhF&#43;a3fIeWyWl9XuzYW&#43;p4a/TAwYXXbtuwYmVlO&#43;B/Aqrf/y5TjfgTenoQVmp0yNUiMbXzuL35Y2lwKBGOjTcwe0DrvBegMaEmfvoEe6y50WAJKY2U1fBmE/uT7LLRAlLQJr0Oqu1hWXsuJFvsCHO8y39y&#43;tvabxtPEqCGbjWXJ&#43;6x59&#43;UIgq/Mi&#43;WkZyJm9t/r5Eq7p3vPmyZV&#43;RG6iJWd3oeKAHZDFcmXV9xSYg5fm26H3WF1Pmi2PqOk0WMz548cJyDSHBWiR9BrOi5M5LyQAENuHr54O7Fl&#43;OFhS79nTyThpVFyUSdY40m2trgMR6g71dkHiNJKCtFqaa9m2pvnuo2KdxPOby0k6W&#43;QYWYPj8Iqn2cxqpEWZSrPXx6vAWdFMVuqe0nEMNCIXIa2fIKu/W65DksBMrX19vVom6zTXDp6GN1PmWMN4Df2G9&#43;zrSEwLCbFz/PVXB65ybcfKiD04orHgSkFqm2XutazNRVzlRJfbvlUXHep&#43;fp2cZ4YP0WZcIUaMZj9/PJ3GbM&#43;sANF0jVQiX2UUWb5XYcZklYqxhRomAgpuKB0kKoAhGBpiUwdNq6o0HOvE1uObEHIlhSSGkVKMTWsdgN2ObQy&#43;4uT1qEDu4//5y2cexgghVLvqGqmrCvXewXCcSs8BCpDrsbEnSkAwBrziQgnks/XsQmdSSSmLZFXKeo4Km7RQg1T110EIEbPdIwcwlSAIETG8gzb1OqiEGEElkpg5jjLmV261PT6IiOkftohOzs/MoxZkGMmy5EJB3QEzp9sziP0Ya/jbmX78f9&#43;8alMFtiPg9&#43;6vKtA24umJ6yiAyPRHkmkRskwDLaezhKbDqdnIx3GhVL7O1cX5UmzliVQsN9D2RCB1mk7bEyinsP7jOH6fGGS1JC0Tg2qZD570ZOu76STbMgZqrm37XUzydKnrCkJCs6G9igrAXEtqPZ/WtMAKnblf/v/nbQYlhDJLudoihgCK1XXQ8KMoXMaFQQx5lbK46Tc7o9s0XHRUeiOaOWeUoWi0z9I45Pd81xqVRihGiEpDc4O3pvJsxCix&#43;p34NNI6MD3TXmhIFkvRe9KT&#43;PYqgoRiTDHW&#43;v7qZKa1LR1McRk5zFXvAj7SEHZ63U7bRABi6wBYF43Pn/m1YMCanE4UphhhShAhWK2vNLakZDWct8ne83KuGo/6znF0esubu10cXtzgXs/j3SLJ3EdWJu9B40Zb&#43;Lu&#43;bveqlhPFV8ixjY7a0a3D&#43;M1o1rRklSmugBKw2W&#43;Zsn0sbfpox6Xdpm4cx29vJr7b3Z9cz4jTajT23t4yd6fBjJ29TnMzlbB16LzUdjZ6DFKvGS&#43;9ftFgdtt1fM31BpMh1x51aJHlpP3SGvKdJ222r7yEWe09anZjunvUIF90G67tdOT7zoJIeew3GvpL2TUgm6rWo6Z/0HT0zit7XLUOWhamTQKRvtf0bYy8T3cIyaw2bzqW1gfeRO0cdjx2WxpOu4ehl&#43;h2YxcVldW5U2DY0rqQbns9670KW15L9G1INcMpfQfDduoeDZDo2lCU60QZto54mlSEaTrKkxxbNhHrlDj6BwJNlhWlsgAMl0mqDItyQTWkymQtdEeXFdRqJVkIxhAQZQGhxExxzJAsklTVJulaMMo0mK9LohG8&#43;vE78dUXzbtRWreJ&#43;7a5LqgmgUZFhZCQjPB0xZljgJITqJSUACIEVK1VtvpLAVRL6Xr7UE&#43;q&#43;m5stODGDW7lubrT8wqCB5pdbSccUO9N0MMsEILy4m9ng//9xPyzeN2&#43;34jOe/EptjkAJABifN&#43;X7lmw3f6tat42j81rDMB9YX6P8d7m4f7A5I9ZFBC4/2Qj1f&#43;UCD/ICB94QgD&#43;FQAA//9H6Lpc6roIvwAAAABJRU5ErkJggg=="
+                     data-src="/components/display/images/display_rendering_text.png"
+                     data-srcset="/components/display/images/display_rendering_text.png 297w, /components/display/images/display_rendering_text_hu_3ebe7403d044e316.png 59w, /components/display/images/display_rendering_text_hu_acfd4012c397bfd8.png 99w, /components/display/images/display_rendering_text_hu_45e03dd4bc7dd565.png 148w, /components/display/images/display_rendering_text_hu_1dcc6d33d7856d90.png 198w, /components/display/images/display_rendering_text_hu_c625af8063808ba5.png 297w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+
+<a class="anchor" id="display-printf" role="none"></a>
+
+<h3  id="formatted-text">
+    Formatted Text
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="formatted-text" title="Copy link" src="/images/link.svg">
+</h3>
+<p>Static text by itself is not too impressive. What we really want is to display <em>dynamic</em> content like sensor values
+on the display!. That&rsquo;s where <code>printf</code> comes in. <code>printf</code> is a formatting engine from the C era and ESPHome
+chose to use because &hellip; well, I&rsquo;m too lazy to create a fully-fledged format engine where the existing stuff
+is way better documented :)</p>
+<p><code>printf</code> can do way more stuff than you will probably ever need, but it&rsquo;s also quite simple for the basic stuff.
+For example, a printf call can look like this:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.printf(0, 0, id(my_font), &#34;The sensor value is: %.1f&#34;, id(my_sensor).state);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // If the sensor has the value 30.02, the result will be: &#34;The sensor value is: 30.0&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<p>As you can see, when you call <code>printf</code> most of the string is printed as-is, but when this weird percent sign with some
+stuff after it is encountered, it is magically replaced by the argument after the format (here <code>id(my_sensor).state</code>  ).</p>
+<p>Every time you type a percent sign <code>%</code> in a printf format string, it will treat the following letters as a format tag
+until a so-called &ldquo;specifier&rdquo; is encountered (in this case <code>f</code>  ). You can read more about it
+at <a href="https://www.tutorialspoint.com/c_standard_library/c_function_printf.htm">https://www.tutorialspoint.com/c_standard_library/c_function_printf.htm<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>,
+but for ESPHome there are really just a few things you need to know.</p>
+<p>Let&rsquo;s break <code>%.1f</code> down:</p>
+<ul>
+<li><code>%</code> - initiate the format string</li>
+<li><code>.1</code> - round the decimal number to <code>1</code> digits after the decimal point.</li>
+<li><code>f</code> - the specifier which tells printf the data type of the argument. Here it is a f(loat).</li>
+</ul>
+<p>For example, if you would like to print a sensor value with two digits of accuracy, you would write <code>%.2f</code> and with
+zero digits of accuracy (without a decimal) <code>%.0f</code>.</p>
+<p>Another interesting format string is <code>%7.2f</code>, which would become the right-justified string
+<code>&quot;  20.51&quot;</code> for a value of 20.506.</p>
+<ul>
+<li>
+<p><code>%</code> - initiate the format</p>
+</li>
+<li>
+<p><code>7</code> - means that the number will be right-justified and be padded on the left by spaces if
+the result would be shorter than 7 characters long.</p>
+</li>
+<li>
+<p><code>.2</code> - round the decimal number to <code>2</code> digits after the decimal point.</p>
+</li>
+<li>
+<p><code>f</code> - specifier: f(loat).</p>
+</li>
+</ul>
+<p>You can even have as many formatted items as you want in a single printf call. Just make sure the put the
+arguments after the format string in the right order.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // %% - literal % sign
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.printf(0, 0, id(my_font), &#34;Temperature: %.1f°C, Humidity: %.1f%%&#34;, id(temperature).state, id(humidity).state);</span></span></span></code></pre></div></div>
+</div>
+
+<p>To display a text string from a <code>text_sensor</code>, append <code>.c_str()</code> to the end of your variable.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.printf(0, 0, id(my_font), &#34;Text to follow: %s&#34;, id(template_text).state.c_str());</span></span></span></code></pre></div></div>
+</div>
+
+<p>When using anti-aliased fonts you will probably need to specify the color to draw the characters, and the background
+color to mix in for anti-aliasing. This requires the full version of <code>printf</code>, e.g.:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">        it.printf(10, 100, id(roboto), Color(0x123456), COLOR_OFF, display::TextAlign::BASELINE, &#34;%f&#34;, id(heap_free).state);</span></span></span></code></pre></div></div>
+</div>
+
+<p>The last printf tip for use in displays I will discuss here is how to display binary sensor values. You
+<em>could</em> of course just check the state with an <code>if</code> statement as the first few lines in the example below, but if
+you want to be efficient you can use an <em>inline if</em> too. With the <code>%s</code> print specifier you can tell it to
+use any string you pass it, like <code>&quot;ON&quot;</code> or <code>&quot;OFF&quot;</code>.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_binary_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if (id(my_binary_sensor).state) {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        it.print(0, 0, id(my_font), &#34;state: ON&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      } else {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        it.print(0, 0, id(my_font), &#34;state: OFF&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Shorthand:
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.printf(0, 0, id(my_font), &#34;State: %s&#34;, id(my_binary_sensor).state ? &#34;ON&#34; : &#34;OFF&#34;);</span></span></span></code></pre></div></div>
+</div>
+
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  For displaying external data on the display, for example data from your Home Assistant instance,
+you can use the <a href="/components/text_sensor/mqtt_subscribe/">MQTT Subscribe Text Sensor</a> (see the example there for more information).
+</div>
+
+
+<a class="anchor" id="display-strftime" role="none"></a>
+</p>
+<h3  id="displaying-time">
+    Displaying Time
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="displaying-time" title="Copy link" src="/images/link.svg">
+</h3>
+<p>You can display current time using a time component. Please see the example on the <a href="/components/time#strftime">time documentation</a>.</p>
+
+<a class="anchor" id="clipping" role="none"></a>
+
+<h3  id="screen-clipping">
+    Screen Clipping
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="screen-clipping" title="Copy link" src="/images/link.svg">
+</h3>
+<p>Screen clipping can be useful when you just want to show a part of an image or make sure that what you draw on the screen does not go outside a specific region on the screen.</p>
+<p>With <code>start_clipping(left, top, right, bottom);</code> start you the clipping process and when you are done drawing in that region
+you can stop the clipping process with <code>end_clipping();</code>. You can nest as many <code>start_clipping();</code> as you want as long
+you end them as many times as well.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_binary_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">color</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">my_red</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">red</span><span class="p">:</span><span class="w"> </span><span class="m">100</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if (id(my_binary_sensor).state) {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        it.print(0, 0, id(my_font), &#34;state: ON&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      } else {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        it.print(0, 0, id(my_font), &#34;state: OFF&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      // Shorthand:
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.start_clipping(40,0,140,20);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.printf(0, 0, id(my_font), id(my_red), &#34;State: %s&#34;, id(my_binary_sensor).state ? &#34;ON&#34; : &#34;OFF&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="sd">      it.end_clipping();</span></span></span></code></pre></div></div>
+</div>
+
+<p>After you started clipping you can manipulate the region with <code>extend_clipping(left, top, right, bottom);</code>
+and <code>shrink_clipping(left, top, right, bottom);</code> within previous set clipping region.</p>
+<p>With <code>get_clipping();</code> you get a <code>Rect</code> object back with the latest set clipping region.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Rect</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int16_t</span> <span class="n">x</span><span class="p">;</span>  <span class="c1">///&lt; X/Left coordinate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int16_t</span> <span class="n">y</span><span class="p">;</span>  <span class="c1">///&lt; Y/Top coordinate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int16_t</span> <span class="n">w</span><span class="p">;</span>  <span class="c1">///&lt; Width
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int16_t</span> <span class="n">h</span><span class="p">;</span>  <span class="c1">///&lt; Height
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int16_t</span> <span class="nf">x2</span><span class="p">();</span>  <span class="c1">///&lt; Right coordinate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kt">int16_t</span> <span class="nf">y2</span><span class="p">();</span>  <span class="c1">///&lt; bottom coordinate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">};</span></span></span></code></pre></div></div>
+</div>
+
+<p>With <code>is_clipping();</code> tells you if clipping is activated.</p>
+
+<a class="anchor" id="config-color" role="none"></a>
+
+<h3  id="color">
+    Color
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="color" title="Copy link" src="/images/link.svg">
+</h3>
+<p>When using RGB-capable displays in ESPHome you may wish to use custom colors.
+A <code>color</code> component exists for just this purpose:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">color</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_light_red</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">red</span><span class="p">:</span><span class="w"> </span><span class="m">100</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">green</span><span class="p">:</span><span class="w"> </span><span class="m">20</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">blue</span><span class="p">:</span><span class="w"> </span><span class="m">25</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">white</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="l">%</span></span></span></code></pre></div></div>
+</div>
+
+<p>Alternatively, you can use <code>&lt;color&gt;_int</code> to specify the color as an int value:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">color</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_light_red</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">red_int</span><span class="p">:</span><span class="w"> </span><span class="m">255</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">green_int</span><span class="p">:</span><span class="w"> </span><span class="m">51</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">blue_int</span><span class="p">:</span><span class="w"> </span><span class="m">64</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">white_int</span><span class="p">:</span><span class="w"> </span><span class="m">0</span></span></span></code></pre></div></div>
+</div>
+
+<p>Or, if you are more comforatble with hex values, you can use <code>hex</code>  :</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">color</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_light_red</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">hex</span><span class="p">:</span><span class="w"> </span><span class="l">FF3340</span></span></span></code></pre></div></div>
+</div>
+
+<p>Configuration variables:</p>
+<ul>
+<li><strong>red</strong> (<em>Optional</em>, percentage): The percentage of the red component. Defaults to <code>100%</code>.</li>
+<li><strong>red_int</strong> (<em>Optional</em>, integer): The brightness of the red component on a scale of <code>0</code> to <code>255</code>. Defaults to <code>255</code>.</li>
+<li><strong>green</strong> (<em>Optional</em>, percentage): The percentage of the green component. Defaults to <code>100%</code>.</li>
+<li><strong>green_int</strong> (<em>Optional</em>, integer): The brightness of the green component on a scale of <code>0</code> to <code>255</code>. Defaults to <code>255</code>.</li>
+<li><strong>blue</strong> (<em>Optional</em>, percentage): The percentage of the blue component. Defaults to <code>100%</code>.</li>
+<li><strong>blue_int</strong> (<em>Optional</em>, integer): The brightness of the blue component on a scale of <code>0</code> to <code>255</code>. Defaults to <code>255</code>.</li>
+<li><strong>white</strong> (<em>Optional</em>, percentage): The percentage of the white component. Defaults to <code>100%</code>.</li>
+<li><strong>white_int</strong> (<em>Optional</em>, integer): The brightness of the white component on a scale of <code>0</code> to <code>255</code>. Defaults to <code>255</code>.</li>
+<li><strong>hex</strong> (<em>Optional</em>, string): The color in hexadecimal representation. Defaults to <code>FFFFFF</code>.</li>
+</ul>
+<p>RGB displays use red, green, and blue, while grayscale displays may use white.</p>
+
+<a class="anchor" id="display-pages" role="none"></a>
+
+<h3  id="display-pages">
+    Display Pages
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="display-pages" title="Copy link" src="/images/link.svg">
+</h3>
+<p>Certain display types also allow you to show &ldquo;pages&rdquo;. With pages you can create drawing lambdas
+that you can switch between. For example with pages you can set up 3 screens, each with
+different content, and switch between them on a timer.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pages</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">page1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          it.print(0, 10, id(my_font), &#34;This is page 1!&#34;);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">page2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          it.print(0, 10, id(my_font), &#34;This is page 2!&#34;);</span></span></span></code></pre></div></div>
+</div>
+
+<p>You can then switch between these with three different actions:</p>
+<p><strong>show_next</strong> / <strong>show_previous</strong>: Shows the next or previous page, wraps around at the end.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">on_...</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">display.page.show_next</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">display.page.show_previous</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># For example cycle through pages on a timer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">interval</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l">5s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">display.page.show_next</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">component.update</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span></span></span></code></pre></div></div>
+</div>
+
+<p><strong>display.page.show</strong>: Show a specific page</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">on_...</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">display.page.show</span><span class="p">:</span><span class="w"> </span><span class="l">page1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Templated</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">display.page.show</span><span class="p">:</span><span class="w"> </span>!<span class="l">lambda |-</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="l">if (id(my_binary_sensor).state) {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="l">return id(page1);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>}<span class="w"> </span><span class="l">else {</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="l">return id(page2);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>}</span></span></code></pre></div></div>
+</div>
+
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>To trigger a redraw right after the page show use a <a href="/automations/actions#component-update_action">component.update</a>
+action:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># For example cycle through pages on a timer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">interval</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l">5s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">display.page.show_next</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">component.update</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span></span></span></code></pre></div></div>
+</div>
+</div>
+
+
+<a class="anchor" id="display-is_displaying_page-condition" role="none"></a>
+</p>
+<p><strong>display.is_displaying_page</strong>: This condition returns true while the specified page is being shown.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># In some trigger:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">on_...</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">display.is_displaying_page</span><span class="p">:</span><span class="w"> </span><span class="l">page1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">display.is_displaying_page</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">my_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">page_id</span><span class="p">:</span><span class="w"> </span><span class="l">page2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="l">...</span></span></span></code></pre></div></div>
+</div>
+
+
+<a class="anchor" id="display-on_page_change-trigger" role="none"></a>
+
+<p><strong>on_page_change</strong>: This automation will be triggered when the page that is shown changes.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">on_page_change</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">from</span><span class="p">:</span><span class="w"> </span><span class="l">page1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">to</span><span class="p">:</span><span class="w"> </span><span class="l">page2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">            ESP_LOGD(&#34;display&#34;, &#34;Page changed from 1 to 2&#34;);</span></span></span></code></pre></div></div>
+</div>
+
+<ul>
+<li><strong>from</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): A page id. If set the automation is only triggered if changing from this page. Defaults to all pages.</li>
+<li><strong>to</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): A page id. If set the automation is only triggered if changing to this page. Defaults to all pages.</li>
+</ul>
+<p>Additionally the old page will be given as the variable <code>from</code> and the new one as the variable <code>to</code>.</p>
+<h3  id="troubleshooting">
+    Troubleshooting
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="troubleshooting" title="Copy link" src="/images/link.svg">
+</h3>
+<h3  id="using-the-color-test-card">
+    Using the Color Test Card
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="using-the-color-test-card" title="Copy link" src="/images/link.svg">
+</h3>
+<p>If you&rsquo;re experiencing issues with your color display, the <code>show_test_card: true</code> option can help you to identify what might be wrong.</p>
+<ul>
+<li>It will show bars for Red, Green and Blue, graduating to black and white.</li>
+<li>Together with that it will show the letters &ldquo;<strong>R</strong>&rdquo;, &ldquo;<strong>G</strong>&rdquo; and &ldquo;<strong>B</strong>&rdquo; to validate the display geometry.</li>
+<li>There will be a rectangle around the corners of the display with a marker at the 0,0 corner which should be at the top left of the screen.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/test_card.jpg" width="50.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 303px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/test_card.jpg"
+                     fetchpriority="high"
+                      style="width:50.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAO4AtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APMrK7sYtEPmAeeQcZrnXvfnJ8tcfSpJuLaIZ7VSbHAroqYi7O3EV5tQh2Jvt3/TNfyo&#43;3f9M1qnRWftDm9pMufbv&#43;ma0fbv&#43;ma1Too9oHtJlz7d/wBM1o&#43;3f9M1qnRR7QPaTLn27/pmtH27/pmtU6KPaB7SZc&#43;3f9M1o&#43;3f9M1qnRR7QPaTLn27/pmtH27/AKZrVOij2ge0mXPt3/TNaPt3/TNap0Ue0D2ky59u/wCma0fbv&#43;ma1Too9oHtJlz7d/0zWj7d/wBM1qnRR7QPaTLn27/pmtKL7Jx5a1SpR1FHtB&#43;0mW5Dl80ypJfvD6CmVobPcmuP&#43;PeL/drPPU1oXH/HvD/u1nnqazqGFQbRRRWZmFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94UDL0v3h9BTKfL94fQUyug6mTXH/HvD/u1nnqa0Lj/j3h/3azz1NRUMKg2iiisjMKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigApV&#43;8KSlX7woAvS/eH0FMp8v3h9BTK6DrZNcf8e8P&#43;7WeeprQuP8Aj3h/3azz1NRUMKg2ijFGKyMwooxRigAooxRigAoowaMUAFFFFABRRg&#43;lLg&#43;lACUUUUAFFFFABRRiigApV&#43;8KSlX7woAvS/eH0FMp8v3h9BTK6DrZNcf8e8P&#43;7Wf/ABfjWhcf8e8P&#43;7WefvVnUMKhJxk1YtLY3U6xL1NVe9amjD/iYR1hUdoXLw1L2tWFN9S5/wAIxN/z0Wj/AIRib/notdUKWvI&#43;vVD9DXC&#43;Dscp/wAIxN/z0Wj/AIRib/notdVxRR9eqB/qtgzlR4ZmaeKMOu6Q4FbY&#43;Gt/jmVKv2//ACFLP/roK9HHQVz4vM69JK3U/J&#43;McVPKsZ7DD7HlX/CtL/8A56pR/wAK0v8A/nrHXqufao2lCtiuD&#43;2sSz5H/WLGHl3/AArbUB0ljxVLWPBd1pVoLiR02&#43;1euiQFq5zxwd2isPcV34DM8RWxMKVTZnXhM8xNWvCnM8l/s4nncKP7NP8AeFa6wnaOKXyT6V&#43;0R4bwbSZ9R7Ux/wCzj/fFH9nH&#43;&#43;Kvzjy3xUe6q/1awYvalKSxKRs&#43;4cVnnrW5N/qH&#43;lYh618lneCpYOvyUzam7jaVfvCkpV&#43;8K8Q0L0v3h9BTKfL94fQUyug62TXH/HvD/u1nn7xrQuP&#43;PeH/AHazz941nUMKg7tWno//ACEI/rWZ2rV0Mb9TiHvXPV&#43;Bm&#43;D/AN5pna9qKtC2OKPsteP7I/YFUVii5xSeZTLj93MyVDmsrGHti5af8hSz/wCugr0odB9K80syP7Ws/wDfFeljtXnZntA/CfEj/kar/CIaqXD/AD1bNZt3JiWvLpq7PzikrsQy/NWJ4vkzpgHuK0DL81ZPiZ/MsFH&#43;0K9nLqf&#43;10z2cBT/ANpgc4sOVHFL5PtWkkPyLx2pfJ9q/oaFX3UfZHKaguyfFVM1oayNl3j2rLzWyqgSS/6p/wDdrFPWteX/AFbfSsg9a&#43;D4k/3k6aWw2lX7wpKVfvCvnDUvS/eH0FMp8v3h9BTK6DrZNcf8e8P&#43;7WefvfjWhcf8e8P&#43;7WefvfjWdQwqDj1NbPhoZ1u3H&#43;1WN3NbnhXnX7f/AHqwqfAaYX&#43;NA9U&#43;y8ZxTTAB2rWKYjLY6DNcxceK7CC5MMkb7wcYxXB7M/QqmOp0l&#43;8Zi6ou2&#43;fFU99N1LVIp9QYqGQN2YUxXDDg1k6Vtx0sXTqfwy7YHOsWfP8AGK9VA6V5Lph/4ntn/vivXwOB9K87H4f2iR&#43;LeINS&#43;YRItvNYGqnFz1rT1TWLTSYw0zZY9AOtcXqXiO3nvQVR0Df3hXPSwNRHymCwdWp&#43;8saPm/NVDXZN1rGP9sU9Zg2CDkGquqSbkiH&#43;2K7cBTtiqZ6&#43;FpWxEC6kXyDjtS&#43;X7VpRw5iXjtWLe&#43;IbHT52hnjfcOnFfs08VCnFc59TY5fxCNmofhWLmtLXdQiu77zIwwUjjcKygc1pSxVOp8AiRv8AVv8ASsk9TWk33H&#43;lZh618pnr/wBpNqWwlKv3hSUq/eFeGaF6X7w&#43;gplPl&#43;8PoKZXQdbJrj/j3h/3azz941oXH/HvD/u1nn7xqKhhUF71veEBnxHaj/arB710XgoZ8TWv&#43;9XPPYqj/ER7ksOQARXlXjEC28XxNHEGKkfKO9extEwjJUc44rzrUPCmtal4kjvpYlEaOOnpXLS3PpMx/eU0cJrk73mrZaLyG/u1PDlIhzVjxhbMniCUL2NUI3PlgGiqLB/u6k&#43;c2NF/eeIbMf7Yr2lrYiM&#43;uK8V8Oc&#43;J7Af9NRX0D5II5HauWp0PzrjOl7XGpnjVsh1Xxu9tesXRGIVTTvGCWEGorDIVXYO1dT4l8GTzXY1PRz5d0DkgcZrzvxdZapcaiovY0SULzg9a1Vp21MaVOnUnCanbQ0bWWMwr5ZynaorqTdLAP8ApoP51SsCYYFjfqoqV5M3VuP&#43;mg/nWGFp/wC0oVKlbEnoccOYl47V558QofJu7VgvJH516nDETCnH8IrhfFfh3Wta1BWjiXyo/u1&#43;hYv95SUEe9TOA1qRpDDmIx/ux&#43;NUYjha2fEsF5BeR292gV0QDisYDFZ4VVFU5wZIfuP9Kzj1rQP3W&#43;lZ56152bu&#43;IHTG0q/eFJSr94V5ZoXpfvD6CmU&#43;X7w&#43;gpldB1smuP8Aj3h/3azz941oXH/HvD/u1nn7xqKhhUFPWuk8DDPiqy/365s9a6fwFz4tsf8AfrKoOl/ER9IiH5RxQYuOlX1i&#43;UcdqDFweK5T6H2p86&#43;Nf3fie6H&#43;1XO7&#43;a6Px5x4svB71y2/mosCqnQeFTu8V2H/AF1FfSIi4FfNng458Xaf/wBdRX1CseQPpWVWnc&#43;L4gXtMQU/J9q8Y&#43;IJ8vxG49hXuoirwj4nHy/FDj/ZFZezPIpUrHKrLzUkMnmahaD/AKaD&#43;dUBLzViwkzq1mP&#43;mq/zrajT/eo66NP94e6Qw/uE4/hFSeT7VfghzBHx/CKk8n2r7VVdD1jwD4mDZ4lx/sCuLzXcfFUbPFBH&#43;wK4PPNNVREw6P8ASqB61eU/K30qieteRjneoaIKVfvCkpV&#43;8K4Rl6X7w&#43;gplPl&#43;8PoKZXQdbJrj/j3h/wB2s89TWhcf8e8P&#43;7WeepqKhhUG11Xw&#43;58Y6f8A9dK5Wuu&#43;HP8AyOun/wDXSsiFufVaxfKOO1Bi4PFXli&#43;UfSlMXBrM9JVT5V&#43;IfHjS9H&#43;1XJ5rq/iXx44vvrXGbjSD2p1Pgc58ZaeP&#43;mor6wWP5R9K&#43;TvAPPjXTf8ArqK&#43;u1i&#43;UfSs6tM8fHL2lQreVXzr8VT5fi&#43;UZ7CvpTyq&#43;ZvjFmPxnL/uil7I4lSOMMvFWtGk3a5Yj/pqv86x/N6VpeHZM&#43;IrAf8ATZf51VKnqa06VmfU1vF/o8fH8IqTyfar9vDm2j4/hFS&#43;T7V7SqnSfMvxeGzxZj/YFee16P8AGcbPGR/3BXmven7ULEqHh/pVbvVhOjfSq/euKq/fNBKVfvCkpV&#43;8KxAvS/eH0FMp8v3h9BTK6DrZNcf8e8P&#43;7WeeprQuP&#43;PeH/drPPU1FQwqDe9db8O2VPG2nsxAUSDJNcl3qaCeS3lEsTlHHQisjM&#43;31v7DaP8AS4un98Upv7DB/wBLi/77FfF39van/wA/03/fZo/t/U/&#43;f6b/AL7NRY09odP8Sf3vjm/aI70LcEGuN8uT&#43;6aSa7muJTJLKzOepJpnnSf3zRYPaHV&#43;AAYfGmnyS/KglGSTX10uqaftH&#43;lxdP7wr4ciuZoZA8cjBh3Bq7/b&#43;pf8/s3/AH2aGjM&#43;1/7U0/8A5&#43;4v&#43;&#43;hXzJ8ZJRceNZWhdXTYOVNcH/b&#43;pf8AP7N/32aqTXs9zL5ksru3qxosA/ZL6GtTw2pXxLp7NwBMuSfrWJ58n940q3EqMGVyCOhBp2A&#43;3Le&#43;08W0ebuLO0fxipPt&#43;n/8/cX/AH2K&#43;LRr2pgYF7N/32aP7f1P/n9m/wC&#43;zVfvAO9&#43;NBS48Ylrdw6bByprzYwS/wB00s17c3MnmTSu7erGo/Ok/vGn&#43;8AeiMm7cD0qsetSGUnqajpAFKv3hSUq/eFAF6X7w&#43;gplPl&#43;8PoKZXQdbJrj/j3h/wB2s89TWhcf8e8P&#43;7WeepqKhhUG0UUVkZhRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFKv3hSUq/eFAF6X7w&#43;gplPl&#43;8PoKZXQdbJrj/j3h/3azz1NaFx/x7w/7tZ56moqGFQbRRRWRmFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94UAXpfvD6CmU&#43;X7w&#43;gpldB1smuP&#43;PeH/drPPU1oXH/AB7xf7tZ56moqGFQbRRRWRmFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUq/eFJSr94UAXpfvD6CmU&#43;X7w&#43;gpldB1smn/494v8AdrPbrV7z0aNVZM4qIvBn/VH86zMKhWxRireYf&#43;eZ/OjMP/PM/nSuHIVMUYq3mH/nmfzozD/zzP50XD2ZUxRireYf&#43;eZ/OjMP/PM/nRcPZlTFGKt5h/55n86Mw/8APM/nRcPZlTFGKt5h/wCeZ/OjMP8AzzP50XD2ZUxRireYf&#43;eZ/OjMP/PM/nRcPZlTFGKt5h/55n86Mw/88z&#43;dFw9mVMUYq3mH/nmfzozD/wA8z&#43;dFw9mVMUYq3mH/AJ5n86Mw/wDPM/nRcPZlTFAHIq3mH/nmfzpQ0IP&#43;rP50XD2Ykv3h9BTKdJJucnFM3Vma2P/Z"
+                     data-src="/components/display/images/test_card.jpg"
+                     data-srcset="/components/display/images/test_card.jpg 303w, /components/display/images/test_card_hu_2bc6ce0c0a66f628.jpg 60w, /components/display/images/test_card_hu_b0c82bd5f0ae1bc.jpg 101w, /components/display/images/test_card_hu_a91bf3e580d9cd9f.jpg 151w, /components/display/images/test_card_hu_88703ad80eea13ba.jpg 202w, /components/display/images/test_card_hu_4e15cf7f9897585f.jpg 303w"
+                     width="50.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<p>When all points above are shown correctly then the display is working as expected.
+To help the graphics display team determine the best way to help you, <strong>a picture of the result of this option is very helpful.</strong></p>
+<p>Should you <a href="https://github.com/esphome/esphome/issues">create an issue<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> in GitHub regarding your display, please
+be sure to <strong>include a link to where you purchased the display</strong> so that we can validate the configuration you&rsquo;ve used.</p>
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  If you set <code>update_interval: never</code> in your config you will not see the test card because the <code>display:</code> component will not update the display with the test card. If you want to see a test card, set <code>update_interval:</code> to something other than <code>never</code>.
+</div>
+
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  For displays in 8 bit mode you will see distinct color blocks rather than a smooth gradient.
+</div>
+</p>
+<h3  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<a href="https://api-docs.esphome.io/display__buffer_8h">API Reference</a>
+</li>
+<li><a href="/components/lvgl/">LVGL</a></li>
+<li><a href="/components/font#display-fonts">Fonts</a></li>
+<li><a href="/components/graph#display-graphs">Graph Component</a></li>
+<li><a href="/components/qr_code#display-qrcode">QR Code Component</a></li>
+<li><a href="/components/image#display-image">Image Component</a></li>
+<li><a href="/components/animation#display-animation">Animation Component</a></li>
+<li><a href="/components/online_image#online_image">Online Image</a></li>
+</ul>
+
+            
+        </div>
+        <div class="overlay" id="overlay"></div>
+        <div class="sidebar sidebar-mobile">
+            
+
+<div class="sidebar-content scroll-trap">
+    <h3>Display Component</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#display-rendering-engine">Display Rendering Engine</a></li><li><a class="toc-secondary" href="#basic-shapes">Basic Shapes</a></li><li><a class="toc-secondary" href="#drawing-static-text">Drawing Static Text</a></li><li><a class="toc-secondary" href="#formatted-text">Formatted Text</a></li><li><a class="toc-secondary" href="#displaying-time">Displaying Time</a></li><li><a class="toc-secondary" href="#screen-clipping">Screen Clipping</a></li><li><a class="toc-secondary" href="#color">Color</a></li><li><a class="toc-secondary" href="#display-pages">Display Pages</a></li><li><a class="toc-secondary" href="#troubleshooting">Troubleshooting</a></li><li><a class="toc-secondary" href="#using-the-color-test-card">Using the Color Test Card</a></li><li><a class="toc-secondary" href="#see-also">See Also</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#display-rendering-engine">Display Rendering Engine</a></li><li><a class="toc-secondary" href="#basic-shapes">Basic Shapes</a></li><li><a class="toc-secondary" href="#drawing-static-text">Drawing Static Text</a></li><li><a class="toc-secondary" href="#formatted-text">Formatted Text</a></li><li><a class="toc-secondary" href="#displaying-time">Displaying Time</a></li><li><a class="toc-secondary" href="#screen-clipping">Screen Clipping</a></li><li><a class="toc-secondary" href="#color">Color</a></li><li><a class="toc-secondary" href="#display-pages">Display Pages</a></li><li><a class="toc-secondary" href="#troubleshooting">Troubleshooting</a></li><li><a class="toc-secondary" href="#using-the-color-test-card">Using the Color Test Card</a></li><li><a class="toc-secondary" href="#see-also">See Also</a></li>
+</ul>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+            <h3>In this section</h3>
+            <ul class="section-list">
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/addressable_light/">Addressable Light</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/lcd_display/">Character-Based LCD Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ili9xxx/">ILI9xxx TFT LCD Series</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/inkplate6/">Inkplate 5, 6, 10 and 6 Plus</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/max7219/">MAX7219 7-Segment Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/max7219digit/">MAX7219 Digit Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/mipi_dsi/">MIPI DSI Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/mipi_spi/">MIPI SPI Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/nextion/">Nextion TFT LCD Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/pcd8544/">PCD 8544 Display (Nokia 5110/3310)</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/pvvx_mithermometer/">PVVX MiThermometer Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/qspi_dbi/">Quad SPI Displays</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/rpi_dpi_rgb/">RPI_DPI_RGB Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/sdl/">SDL2 Display on host platform</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1306/">SSD1306 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1322/">SSD1322 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1325/">SSD1325/7 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1327/">SSD1327 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1331/">SSD1331 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/ssd1351/">SSD1351 OLED Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7567/">ST7567 LCD Graphic Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7701s/">ST7701S Display Driver</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7735/">ST7735 Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7789v/">ST7789V TFT LCD</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/st7920/">ST7920 LCD Graphic Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/tm1621/">TM1621 LCD Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/tm1637/">TM1637 7-Segment Display</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/tm1638/">TM1638 7 Segment Display Keypad &amp; LED Module</a>
+                    </li>
+                    
+                
+                    
+                    <li class="section-item">
+                        <a href="/components/display/waveshare_epaper/">Waveshare E-Paper Display</a>
+                    </li>
+                    
+                
+            </ul>
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/display/_index.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+        </div>
+    
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

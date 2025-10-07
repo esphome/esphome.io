@@ -1,0 +1,1746 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>ESPHome 2023.4.0 - 19th April 2023 - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Changelog for ESPHome 2023.4.0.">
+            <meta name="twitter:description" content="Changelog for ESPHome 2023.4.0.">
+            <meta property="og:description" content="Changelog for ESPHome 2023.4.0.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/_static/changelog-2023.4.0.png">
+                <meta name="twitter:image" content="http://localhost:1313/_static/changelog-2023.4.0.png">
+            
+        
+    
+    <meta property="og:title" content="ESPHome 2023.4.0 - 19th April 2023">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/changelog/2023.4.0/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ESPHome 2023.4.0 - 19th April 2023">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>ESPHome 2023.4.0 - 19th April 2023</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#breaking-changes">Breaking Changes</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#is-media-player">I²S Media Player</a></li><li><a class="toc-secondary" href="#default-restore-mode-for-switches-fans-and-lights">Default restore mode for Switches, Fans and Lights</a></li><li><a class="toc-secondary" href="#number-step">Number <code>step</code></a></li><li><a class="toc-secondary" href="#uart-ids">UART ids</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#breaking-changes-1">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#keith-joins-nabu-casa">Keith joins Nabu Casa</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202341---april-24">Release 2023.4.1 - April 24</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202342---april-27">Release 2023.4.2 - April 27</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202343---may-2">Release 2023.4.3 - May 2</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202344---may-4">Release 2023.4.4 - May 4</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#voice-assistant">Voice Assistant</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#voice-assistant">Voice Assistant</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#keith-joins-nabu-casa">Keith joins Nabu Casa</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202341---april-24">Release 2023.4.1 - April 24</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202342---april-27">Release 2023.4.2 - April 27</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202343---may-2">Release 2023.4.3 - May 2</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202344---may-4">Release 2023.4.4 - May 4</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#breaking-changes">Breaking Changes</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#is-media-player">I²S Media Player</a></li><li><a class="toc-secondary" href="#default-restore-mode-for-switches-fans-and-lights">Default restore mode for Switches, Fans and Lights</a></li><li><a class="toc-secondary" href="#number-step">Number <code>step</code></a></li><li><a class="toc-secondary" href="#uart-ids">UART ids</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#breaking-changes-1">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/changelog/2023.4.0.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>ESPHome 2023.4.0 - 19th April 2023</h1>
+        
+
+        
+
+<div class="component-grid">
+  
+  
+    
+        
+        
+        
+        
+        
+        
+            
+                
+            
+        
+
+
+        <div class="component-card">
+          <a href="/components/voice_assistant">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="dark-invert">
+        
+            <img class="w-100 h-100 dark-invert" src="/images/voice-assistant.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">Voice &#x200B;Assistant</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+            
+                
+            
+        
+
+
+        <div class="component-card">
+          <a href="/components/microphone/">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="dark-invert">
+        
+            <img class="w-100 h-100 dark-invert" src="/images/microphone.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">Microphone &#x200B;Core</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+            
+                
+            
+        
+
+
+        <div class="component-card">
+          <a href="/components/microphone/i2s_audio">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="">
+        
+            <img class="w-100 h-100 " src="/images/i2s_audio.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">I2&#x200B;S &#x200B;Microphone</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+            
+                
+            
+        
+
+
+        <div class="component-card">
+          <a href="/components/sensor/mmc5603">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/mmc5603.jpg"  alt=""/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 300px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/mmc5603.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAIIAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AObzSxxeY&#43;wL8zVGsZaUBeT6V1Hhbw/Pqt4R92NPvt/SgDIj0ifbuL4X0FStpcMYy8wX6iu51jxX4a8JAWphWedB8yqMn8ah0jxb4Z8WE2rWyxSt91HXGaz9owOI&#43;xWYf/j9Sl&#43;xWef&#43;P2KtXXfAMkmoAaWdyOeQT90&#43;lV4vhvrMV5brLEDEzAOQc4FaAQS6LEsKXElwqxt91u1Q/YrP/n9ir0vxnoEC&#43;C1trSHdJABgIOc14hPa3Vs&#43;yaF0&#43;ooA6P7Fb7/&#43;P2L86PsVv8/&#43;lxfnUfhXwyPEUdyrT&#43;XJEMqSeta1x4Hgt9csNPNyW85cuwNAGR9jizj7XF&#43;dS/Yosf8AH3F&#43;daer&#43;ABpumzXJutzCUKm09qp6lpek2Mlpp4MouX273J45oAg&#43;yQ5/wCPmP8AOkNou/8A4&#43;Y/zrU8S&#43;G7LTbRPscM7HAzNuyvNVtb8JnTdFgnh82Wd1DM4PyrQBUS0h5/0mOj7BDs/wCPqP8AOs6fQdRsYEu7lWEDY&#43;YHrmug1HwzZDwydUt2niZQMhz1zQBn/YE/5&#43;o/zo/s2P8A5&#43;Ivzrl/Mf8Avn86XzZP77fnQB1g02P/AJ&#43;E/OlXTN33ZUP0rI8OaPea/qSW8UjhM/O3pXp7t4X8GWix30iPOOueSfwoA8/l0y4tsvs69Peqp8wdeK9S0vxJ4R8SH7PEY1lbgBhgmub8WeF309zcWmWt/T0NAHI8/wB6j/gVRbyOMcijefSgC1pJzrEOVyM16p4eh&#43;x&#43;GrqaL/XPvYV5PpJ/4msO3pmvQfB&#43;tJJHPZSsP3bn5T/dNZ1APL7qylur2ee4yzsxLMaSKya3u4ZbZijowO4V6hqfg95rhprAK8MnOM9KhsvCC2zi41DZHCnJGetL2hobkt89rp8U&#43;MytbiQn3FbulavLqvh&#43;K8cNE/TpnNcRretwW0TGRQElxFEP9jua3n8SjTvD8R02wknRUyDt4rWmZnSQjZK7Bh5GN0m/rmvPPH/ibQpLV7W2t45rn7u8DpXS6H4vsdf06RHdIrnyzujPFeF6uf8AiZ3GOf3hoA19IvLu2025S2glDTdHQdMVaj8VNHe2M8sbloEKMT3NaXh/xZY6XoENo6IZXZg5YdBVmyuvD1xo0UcgRrprjnjnGaAOfbxXcSWt1C6u/mSBkyfu4qbWNZ0nVYLeXyphertV8dK7PVj4d0jUFMsMPzxcADisKS78NR6XK8Kxmbzgy564zQBHqPiiyg0RtOtYp2dtpbzT0p134ztZtENvHBIJZFCvuPHHpVoal4cubq9kujE26IeWQO&#43;Kemo&#43;FT4d&#43;zOkfn7fvbeaAMfUvElvqmjQaYltKFhwQw5z60ap4k05fDbaVYrOzPgkyHpW8upeGrP7KbURZMJVifXHessTeHDo8LsIzcGfLnuBn&#43;VAHn5BBwetA61peIby3utWkNrGkcIO1SlZ9vaS3L7IEZ2oA9b&#43;GFvFDo004Qea5JB&#43;leea/DJqGtXc10S5ZyAD2ru/AN0bGxezuFZJVO7HqO9Sav4QkuL1ruzXzIZPmAHaswPLI9Pe1uIprbKSI4KsK92VmvtKsUuORPD831FcxZeC7iWZHuUMUCnLFq3r3UI7Z43jcLbxgRRg/wAR70Gh5bqcYt9TuYk&#43;6shxVXe1T6wd2r3RHeQ1S5960My7pMn/ABNIfrXTaR4anmSXVre78t1k&#43;72PNcvpAB1aEHpur2fRxo9tpa2zrwx3MKAKF/ew6fNZb5pFlnwhMZwM/StKXw3LdJ55lkkY/dWU8flWZ4jsNP1E2r2zlXhfeO9VLrX7q0kWGbVvK7KNtAHMeN/B2s2sL6lLMjxJ2XgKK6TR/ElpH4RjhZskQ7c7eM4qtqNzJrVvPZXGqlo9mSMYzXPfYIYNHMUF2uzbnBHNAGdpvhHWr6Q3lm4RJGOGBqyfhvq7XO1iCSeWrc8E&#43;I4bGyt7a8lCIGJ3E11reMdHEh/0&#43;LGf71Z1KhrTPLr74e6xaLLKY0ZIhubmubht5XYmFZSVOcoOhr2nVvF1g9tcJBMku&#43;E4OaofDu7tZtDmMlvF5gcnletaGR5Dc3FxPL&#43;/aRnXjLnpVfPvW14puRP4hu3igEaGTGAKyoo8HeRnH8PrQBGAaliilmlEceWJq6DFj70Q/CtHw99nOuWg3If3g7UAYklpcwNiRGUg4wRUvkvHiPyHZ2GQMV6z4g06C80xoYjGLkS7wuOcVH9lVdZ0&#43;7PkmCOLa7Y/ioA8l8hpd2IWXb146V6X4B0yzVEN0BlumantbO3tbfVvtLwh7hi0Yx1FYusao&#43;k3NqIGRUaJeKyqAdT4r&#43;zaXKbiyZd6LnisrSfHdsNpuJJLZz128qfwpksdprNjEr3&#43;ySUcgCqVv4R0aef7P/aytJ6AUUqZobOqeNdPlhY/bJpsdIwMA1xU/iK71fWbbK7IkYbIx0rvtJ8E6DbCT7ZL5/8Ad7VeuvD3hpbYyQQCOaIZXBrUzPLbws17OW6lzUPNS3pH26bB43moM&#43;9ABozbtUgG7ktXfWdzK0WGPQ155o3/ACF7f/er0eziHlZoAt28ju/zU6TSrS8l824jDOOmRSRBR/FVpJeKAMiW0jnuGjgAUA4LVi63odxpVm15DqETrEOY&#43;4roL9EnjVVdoAW&#43;Z&#43;lc94hstKTTJ2j1GRphjcpbrQBzmi6BeeKbmVIZQmxS2Ca5&#43;7sXs7uS3kbJjYqTmvQfDdlD4fuUvJLpik0GQB70iLocnmm4thNNIxYtnFAGBP4ZvtM8PQat5ymGUcLnmuu&#43;HuqWlto8z3T7W3dxS3FxaXWh22lQsdwfhWGQorBl0vWbMyW1pZNNbK5O5Vzmj2ftAMrXpUudcuJYyPL3ZUCsqSTBwB16mpbqWV7swlRE27DAjBFadxoipMkX2qJnIHANAGGoLMAOSa2/Dun3Y121zA6qsgLHHSsxVRLwRbWDhsZr0291mK00KJ7NoTdW4Xzs/wAVAFTxDqVtY3Es63D&#43;aH2FNtUG160WSGw&#43;0N5brvZtvINctq&#43;uz6mHZ1Vd778AVUSR3lEz9QvagDrP7WtNTWdmuSjwAooC/eFW9X8KzatBaXq3KLiNV2dTXCLcvDLIIRuWTrXomlCzvdMguJ9SaOULjy1PpQBsWNtBHaQI8KmSJQpbGKkOlWkLG4hgCzH&#43;Ko9KlhigKq5mDP8AePNa/l5&#43;lAFWPdjmi7T/AEOQ5/hq1gdKguE/dsvtQB5Hduftk3X75qHealv2QahOM/xmq&#43;9PWgC3oo/4mtv/AL1el2X&#43;p2H1rzTR5Amr23&#43;8K9Ps/wB4CfegC5HEB6UvT&#43;GpRGmKik&#43;TpQBlXNyk7&#43;TeII41b5c9GrnfFl3o7abIkNssU64AcfxVq61e3FiElECzkt8qmuW1zxXa6xo0lvLZxx3QOAyrQBOblZLa1QNvKwjKrzVL&#43;14njeVITsi4Zh2rP8KDZqEkkz5TyyDk1c0&#43;2gTRdVR2BkkYlOf6UAT2Gpj7XbXDZWN2wrEcV6R4Yvpbi0vB5hIWU7cd68p1JYx4csbeM/vE5auu8I&#43;IbPQdAjW5Zy8pPSs6gHKav582s3kn2YH94cnFUJriUX8TvE6FcHp6V1ej6vG/iu7WSNZLeYklWFUNXlu9R1CS4W2ZLYHYhVOBWgFfw&#43;o1XxDDFc7Y4nflsV1HxK0m10MW72WP3g&#43;dPX3q/wCGtIstNa1l1Aq13N80MZ4wPU1r&#43;JzYatdx6dqCrDduv7lwcigDyjRbOz1LzhfyGLYuU2itOLUtGgtvIbTw235fNz1qWxs7myvdRtT5JMS4JcYrnZdxdo/lzu7dOtAF7XLLT7a1hawlbdJkvn&#43;lbnhoaFHo8X2oO87Z3ZPArnfEXni1sg7R7QuAE7Vt6J4i03TdDjhk09Jpj1ZhQB2GkXFqkOyyizCz9fSt7Dolc7pEjy2qSRWnkI/zbT/Ot3L&#43;WMvQAfcqvPL8hz71Y38c1S1H/j3Yj0oA8lv3H9oXHH/LQ1X3j0p96f8ATZv941BketAF7R4/&#43;JxASeM16ANdsNPUpcTKprgNFjL6rCrfdzWNqkc0upzRqXYlyAKAPWP&#43;E50SMfPcCsm98aR3F1/od7DHFj&#43;MZrk9N&#43;Guu6nGJPIMaH&#43;&#43;cVJffDHW7AbzCJP9w5oA2p9auNQlQ&#43;fDKqt8qp1NVbvwNqCWBv8Ay2CtlqzNBiXTNQH2ldrA4wexr1S78WRzaIbVljAKYLZ4rmqe0NKZm&#43;CtMtJNChhuLWPzpHIZ8fNW1P4X0tNRX9zgpjAHf615iviyXTr8NZjiI8A9DVmT4nam83mG3jzWlT2g6fsz1LVNG0i20q5ElrGT5ZK/LyK8Me7COBtyiMcA12Ok&#43;KdQ8V6i9pNIIQ64UKOtYN94Z1C3uLgRwNJHG5BcDitTIyhdSLerPF8rbs49a9PsPiFpdpoUMU1ghuEYApjj6155eaLeaSqG8iMZkXcrHtWZJLk7eo9aAPXNSWDVte07WWYjTimWK/wn0rJ1KyfVPGtvPZTtNAjBt2OEUVi&#43;DdX1MXiadbsskT/8s5ORXRaje6pcW17BALWzWDh5Ixgn2oA5LxlqKza/d/Znwp&#43;Usv8AFijw3d6aSRqcKKoQ4YDJzWNf2ctrOombJdd2fXNUxvThHoAk1Cfzrx1Vy0SudnHaqpkKyKcnANSoPnOetRtHyaAO&#43;l8dfZRaRQTxCMQhW3DocVJpXjyN7hxqF1D5f8O0V5pLamU46k9K1dP8C6xqShre0cqe7cCgD1ceL9FlTi7XFPXXNMvYnSG4Ej4&#43;6K8uuvAev6chaS1baO681D4eS5i1mOEFgxbBBoAk1FP&#43;JhNzj5jVXZ71b1OMjUZwTzuNVPLoA3tCH/E2gz0zXY&#43;DPC9tLfXer30Y8qNyU3fzrjtDkA1aLNeu6Ykdx4Nlhh&#43;&#43;6N0rOoBwviP4o30V3LaaNEixRtjeRnNTeF/iVd3d3FZazEv7xsLKOMVyL6U0M8iNGVO45zT4dJlnuoliU7yw6Cl7MDsvG&#43;hRTRvqFpEEkjP7zHRgehrzqZJHQjzGz6Zr2PWyIdGnjlI&#43;S0Ab/e7V4yu&#43;UnmnTAXTNMu9UmMUEeSOrHtV&#43;98K39nCZQEmRPvGM52/Wug8HwpLp2pWKOI7uRf3beoq/ouhT6PFeT3cjLC0ZDK5&#43;8aPaGhyvhK5ey1cPHaNcSY&#43;UA4wa6&#43;a&#43;1mCwuhsidpZPMdUbJUfSsbwSbca3dxlwjujLEx9a19F8NXena9JeXMjCEZMhdvlNL2gHNeJfEd14mmt4RblXjARVA61WPhHUxBvKIH6&#43;XuG78q1NGuLFfHLM4HkmRgh7A9q2H8Kak/iRr/zn8vzN2/dxto9oBxmi3f9j63FPPG&#43;UONo4Oa7m5d9WgvC1kYhcANGC4DMR7Vg6rLYP43jeNR5CuoY&#43;p71q6x4Z1G81xLyGZ/KJBjKNwoo9oBzniSeB4re3&#43;zyRXsSBH3dKrWfhe/uoBMEWMH7u9sbq0vF8kK&#43;JLddwcoqrKR/Ea3PEujXOqPZy2TyeSI12rH2NP2gHC3GmT6dKy3cZSQ9M9KoSe1dz45RIdP02F3D3caYkrhx1rQzO7&#43;HfhOLVZjqN4oMEJ4Ru5rY8SfExdJvHsdGskYRfKzkcfhWn4HCjwmyRN&#43;8eNsfWvN57BkvJvOTL7jnNZgdj4d&#43;Kn9oXyWmrWqp5nyiQdBWvqvhOA6zFqtoiptbLqvcHvXmSaW0l3F5cZDbhjFe1wGWKaGFzuUWv7z644oNDxrUIkfUbk8f6w1W&#43;zx&#43;1T6kR/aVxj/noaq5960MyKSR43M0LFW7V2fw/wDFfkl9PvZdjFsxluhPpXGfWq09uysJYnIYcjFAHuOpaTo99OJp3MEzDnAypqK1ttL01y1oDc3IHBI&#43;UV5BbeLdfslCpOZFXoHGabc&#43;NPENyjLnardQgxWfsw9odZ4z1xFhezim3zynM5B4HsK4eKXy&#43;tZr3d67FmjJJ6k0n2i8/wCeJrQD0fwron9sxSTwXBimjIPBx8vc1uXHh6bU1toTqEsgkLD5jxxXlen67qunFzagozrtb6Vop4y11IIUQbRCDg/WgDX13w9NoOoJHE2XADZB71BPq2rTW/kyTuU9CTXP3uv6tqE/nXIdmVcbqo/2hfn/AJZt&#43;dAHoXhTwtDq32ia4Z0aPBXZ3NdNaeG9VudMlB1GVYkYjYT2FeZ6H4v1jQ1cW0e7f97eM1ZHxA8RKrquQGJJx70AdVqvg2C00P7XFPIbsDcc9MVzcOpa1DD5K3rhfTNV7vx7rd3pgsZIhsxgtjmsD&#43;0L0nO18/WgDo9OsDfavEl5OcyNgseor0O102Sxv57MXk0dskYKsfevHrTWL20uY5xEWdG3fNzXSj4j619sad7WNtybNpHGKANa78LXeojVLp5zIbU5BPcVxBBViD1FaS&#43;OtbVJ0RNiykmQY65rn2url2LGHqc0AepeAPEKQxHTpMK&#43;d0bN0&#43;ldbfaFpWoz&#43;e8otp36qehrwFL&#43;7jcMkTKR0IrpLLx7rNsqrJGs4XoJBnFAHrdtpekaXMsm/wC0zj7qqOK53xV4tbT0e3gkU3sx&#43;fachF9K4q78b65qLbI0jtV9UGKy0ikZ3kmYySHqTWfswJ2d5WLtgsxyeaTB9vzqUAYHFGB6VoBG/WkH3mpX60g&#43;&#43;1AA4HpQQPl4oeg9FoArEcvVhAPLXiq56vVlP9UtAERAyeKXA2UHqaP4KABx&#43;5poA44FOf8A1NIO1AEuBjpUWBzUvaoz3oAQgfLxQgG88Cg/w0J980AGBluB0pMDHSnd2&#43;lJ2oAMDY3A6UkYGOlO/gb6UkfSgBcDPQUjgeeOB0pe9I/&#43;vH0oAkAHzcdqmt/uVEP4vpUtv/q6AFoo70UAf//Z"
+                     data-src="/images/mmc5603.jpg"
+                     data-srcset="/images/mmc5603.jpg 300w, /images/mmc5603_hu_b3fc6fec28aba1d8.jpg 60w, /images/mmc5603_hu_faf40f5ab399e88a.jpg 100w, /images/mmc5603_hu_fc7ca78e7b016d7d.jpg 150w, /images/mmc5603_hu_ae0f6db4ae41d85.jpg 200w, /images/mmc5603_hu_cfedf0a75dcce935.jpg 300w"
+                     
+                     
+                     alt=""/>
+                
+            
+        </figure>
+
+
+            </div>
+              
+              
+              <div class="component-name">MMC5&#x200B;6&#x200B;0&#x200B;3&#x200B;</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+            
+                
+            
+        
+
+
+        <div class="component-card">
+          <a href="/components/ethernet">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="dark-invert">
+        
+            <img class="w-100 h-100 dark-invert" src="/images/ethernet.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">KSZ8&#x200B;0&#x200B;8&#x200B;1&#x200B; &#x200B;Ethernet</div>
+              
+          </a>
+        </div>
+    
+</div>
+
+<h2  id="voice-assistant">
+    Voice Assistant
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="voice-assistant" title="Copy link" src="/images/link.svg">
+</h2>
+<p>This year is the Year of the Voice for Home Assistant, and ESPHome is charging ahead with this in mind.
+We&rsquo;ve added a new <a href="/components/voice_assistant/">Voice Assistant</a> component that allows you to use ESPHome devices
+as an input for <a href="https://www.home-assistant.io/voice_control/">assist<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> in Home Assistant <strong>2023.5 or later</strong>.</p>
+<p>With this also comes preliminary <a href="/components/microphone/">microphone</a> support, which has been
+built in a way that multiple components, like <code>voice_assistant</code> can request start / stop of the microphone and get
+the data. We hope this leads to more interesting use cases for the microphone in the future.</p>
+<p>Home Assistant is hosting a live stream all about the Year of the Voice - Chapter 2.</p>
+<!-- markdownlint-disable-next-line MD033 -->
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Tk-pnm7FY7c"
+        title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+</iframe>
+<h2  id="keith-joins-nabu-casa">
+    Keith joins Nabu Casa
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="keith-joins-nabu-casa" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Nabu Casa is pleased to announce that long time contributor Keith Burzinski (<a href="https://github.com/kbx81" target="_blank" rel="noopener noreferrer">@kbx81</a>
+) is joining the
+team as a full time developer to help out on ESPHome. Keith created the <a href="/components/sprinkler/">Sprinkler Controller</a>,
+<a href="/components/climate/thermostat/">Thermostat Climate Controller</a>, a bunch of the <code>ssd</code> display components and a few other components
+as well as fixing many bug along the way. I expect his house climate and garden area are kept well in line.</p>
+<p>Looking forward to working with you Keith.</p>
+<!-- markdownlint-disable MD013 -->
+<h2  id="release-202341---april-24">
+    Release 2023.4.1 - April 24
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-202341---april-24" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>fix flip_x <a href="https://github.com/esphome/esphome/pull/4727" target="_blank" rel="noopener noreferrer">esphome#4727</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>Use proper schema for delta filter <a href="https://github.com/esphome/esphome/pull/4723" target="_blank" rel="noopener noreferrer">esphome#4723</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+</ul>
+<h2  id="release-202342---april-27">
+    Release 2023.4.2 - April 27
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-202342---april-27" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>I2c scan recovery reset fix <a href="https://github.com/esphome/esphome/pull/4724" target="_blank" rel="noopener noreferrer">esphome#4724</a>
+ by <a href="https://github.com/gcopeland" target="_blank" rel="noopener noreferrer">@gcopeland</a>
+</li>
+<li>Debug component doesn&rsquo;t work on RP2040 <a href="https://github.com/esphome/esphome/pull/4728" target="_blank" rel="noopener noreferrer">esphome#4728</a>
+ by <a href="https://github.com/HeMan" target="_blank" rel="noopener noreferrer">@HeMan</a>
+</li>
+<li>Only request VA port from first client that is subscribed <a href="https://github.com/esphome/esphome/pull/4747" target="_blank" rel="noopener noreferrer">esphome#4747</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Don&rsquo;t allow fingerprint_grow enroll cancellation when no enrollment started <a href="https://github.com/esphome/esphome/pull/4745" target="_blank" rel="noopener noreferrer">esphome#4745</a>
+ by <a href="https://github.com/itpeters" target="_blank" rel="noopener noreferrer">@itpeters</a>
+</li>
+</ul>
+<h2  id="release-202343---may-2">
+    Release 2023.4.3 - May 2
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-202343---may-2" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>Fix sprinkler switch restore_mode <a href="https://github.com/esphome/esphome/pull/4756" target="_blank" rel="noopener noreferrer">esphome#4756</a>
+ by <a href="https://github.com/kbx81" target="_blank" rel="noopener noreferrer">@kbx81</a>
+</li>
+<li>Fix i2s media player on devices with no internal DAC <a href="https://github.com/esphome/esphome/pull/4768" target="_blank" rel="noopener noreferrer">esphome#4768</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+</ul>
+<h2  id="release-202344---may-4">
+    Release 2023.4.4 - May 4
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-202344---may-4" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>Fixes for Arduino 2.7.4 (for FastLED) <a href="https://github.com/esphome/esphome/pull/4777" target="_blank" rel="noopener noreferrer">esphome#4777</a>
+ by <a href="https://github.com/timn" target="_blank" rel="noopener noreferrer">@timn</a>
+</li>
+</ul>
+<h2  id="breaking-changes">
+    Breaking Changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="breaking-changes" title="Copy link" src="/images/link.svg">
+</h2>
+<h3  id="is-media-player">
+    I²S Media Player
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="is-media-player" title="Copy link" src="/images/link.svg">
+</h3>
+<p>With the introduction of the <a href="/components/microphone/i2s_audio/">I²S Audio Microphone</a>, the media player platform has some
+required breaking changes to the YAML configuration. This involves moving the <code>i2s_lrclk_pin</code> and
+<code>i2s_bclk_pin</code> to a new <a href="/components/i2s_audio/">I²S Audio Component</a> component.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Before</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">media_player</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">i2s_audio</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ESPHome I2S Media Player</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dac_type</span><span class="p">:</span><span class="w"> </span><span class="l">external</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">i2s_lrclk_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO33</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">i2s_bclk_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO19</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">i2s_dout_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO22</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l">mono</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># After</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">i2s_audio</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">i2s_lrclk_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO33</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">i2s_bclk_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO19</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">media_player</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">i2s_audio</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">ESPHome I2S Media Player</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dac_type</span><span class="p">:</span><span class="w"> </span><span class="l">external</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">i2s_dout_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO22</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l">mono</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="default-restore-mode-for-switches-fans-and-lights">
+    Default restore mode for Switches, Fans and Lights
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="default-restore-mode-for-switches-fans-and-lights" title="Copy link" src="/images/link.svg">
+</h3>
+<p>The default <code>restore_mode</code> for switches, fans and lights has been changed
+from <code>RESTORE_DEFAULT_OFF</code> to <code>ALWAYS_OFF</code> with the intention that restoring values
+from flash should be manually specified by a user if desired in their YAML configuration.</p>
+<h3  id="number-step">
+    Number <code>step</code>
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="number-step" title="Copy link" src="/images/link.svg">
+</h3>
+<p>The <code>number</code> components have always internally set a <code>step</code> required in config,
+but allowed it to be not specified at all. This caused issues on the Home Assistant side
+of things. This is only a breaking change for external components that have a <code>number</code> platform.</p>
+<h3  id="uart-ids">
+    UART ids
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="uart-ids" title="Copy link" src="/images/link.svg">
+</h3>
+<p>Due to <code>uart0</code> / <code>uart1</code> / <code>uart2</code> being defined in some of the platform code ESPHome uses,
+ESPHome will now disallow these ids from being used in the config. You can simply change them to
+<code>uart_0</code> to continue using.</p>
+<h2  id="full-list-of-changes">
+    Full list of changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="full-list-of-changes" title="Copy link" src="/images/link.svg">
+</h2>
+<h3  id="new-components">
+    New Components
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="new-components" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Added in mmc5603 code <a href="https://github.com/esphome/esphome/pull/4175" target="_blank" rel="noopener noreferrer">esphome#4175</a>
+ by <a href="https://github.com/benhoff" target="_blank" rel="noopener noreferrer">@benhoff</a>
+ (new-integration)</li>
+<li>Add push to talk voice assistant <a href="https://github.com/esphome/esphome/pull/4648" target="_blank" rel="noopener noreferrer">esphome#4648</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (new-integration)</li>
+</ul>
+<h3  id="breaking-changes-1">
+    Breaking Changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="breaking-changes-1" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Disallow uart0/1/2 as ids in config <a href="https://github.com/esphome/esphome/pull/4446" target="_blank" rel="noopener noreferrer">esphome#4446</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (breaking-change)</li>
+<li>Require step to be set when calling register_number <a href="https://github.com/esphome/esphome/pull/4622" target="_blank" rel="noopener noreferrer">esphome#4622</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (breaking-change)</li>
+<li>Fix restore <a href="https://github.com/esphome/esphome/pull/4655" target="_blank" rel="noopener noreferrer">esphome#4655</a>
+ by <a href="https://github.com/spacemanspiff2007" target="_blank" rel="noopener noreferrer">@spacemanspiff2007</a>
+ (breaking-change)</li>
+</ul>
+<h3  id="beta-changes">
+    Beta Changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="beta-changes" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>debug component, allow without debug logging <a href="https://github.com/esphome/esphome/pull/4685" target="_blank" rel="noopener noreferrer">esphome#4685</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fixed dns2 for ethernet <a href="https://github.com/esphome/esphome/pull/4698" target="_blank" rel="noopener noreferrer">esphome#4698</a>
+ by <a href="https://github.com/HeMan" target="_blank" rel="noopener noreferrer">@HeMan</a>
+</li>
+<li>Add timeout to i2c write error logs <a href="https://github.com/esphome/esphome/pull/4697" target="_blank" rel="noopener noreferrer">esphome#4697</a>
+ by <a href="https://github.com/Szewcson" target="_blank" rel="noopener noreferrer">@Szewcson</a>
+</li>
+<li>Add event triggers to voice_assistant <a href="https://github.com/esphome/esphome/pull/4699" target="_blank" rel="noopener noreferrer">esphome#4699</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Call on_error if no api client connected that handles voice <a href="https://github.com/esphome/esphome/pull/4709" target="_blank" rel="noopener noreferrer">esphome#4709</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Add ethernet powerdown (fixes esphome/issues#4420) <a href="https://github.com/esphome/esphome/pull/4706" target="_blank" rel="noopener noreferrer">esphome#4706</a>
+ by <a href="https://github.com/tracestep" target="_blank" rel="noopener noreferrer">@tracestep</a>
+</li>
+<li>Bump arduino platform version to 5.3.0 <a href="https://github.com/esphome/esphome/pull/4713" target="_blank" rel="noopener noreferrer">esphome#4713</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+</ul>
+<h3  id="all-changes">
+    All changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="all-changes" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Mark unique_id() virtual method as deprecated <a href="https://github.com/esphome/esphome/pull/4538" target="_blank" rel="noopener noreferrer">esphome#4538</a>
+ by <a href="https://github.com/oxan" target="_blank" rel="noopener noreferrer">@oxan</a>
+</li>
+<li>Drop deprecated entity property base methods <a href="https://github.com/esphome/esphome/pull/4539" target="_blank" rel="noopener noreferrer">esphome#4539</a>
+ by <a href="https://github.com/oxan" target="_blank" rel="noopener noreferrer">@oxan</a>
+</li>
+<li>Format test files <a href="https://github.com/esphome/esphome/pull/4541" target="_blank" rel="noopener noreferrer">esphome#4541</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>EntityBase: Icon string can stay in flash. <a href="https://github.com/esphome/esphome/pull/4566" target="_blank" rel="noopener noreferrer">esphome#4566</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Update the delta filter to be able to take a percentage change <a href="https://github.com/esphome/esphome/pull/4391" target="_blank" rel="noopener noreferrer">esphome#4391</a>
+ by <a href="https://github.com/TrentHouliston" target="_blank" rel="noopener noreferrer">@TrentHouliston</a>
+</li>
+<li>Added missing PM_1_0 and PM_10_0 for PMS5003T and PMS5003ST <a href="https://github.com/esphome/esphome/pull/4560" target="_blank" rel="noopener noreferrer">esphome#4560</a>
+ by <a href="https://github.com/genestealer" target="_blank" rel="noopener noreferrer">@genestealer</a>
+</li>
+<li>Add an option to force SPI into software mode <a href="https://github.com/esphome/esphome/pull/4556" target="_blank" rel="noopener noreferrer">esphome#4556</a>
+ by <a href="https://github.com/wupeka" target="_blank" rel="noopener noreferrer">@wupeka</a>
+</li>
+<li>allow using a binary output for the status led <a href="https://github.com/esphome/esphome/pull/4532" target="_blank" rel="noopener noreferrer">esphome#4532</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>Add option flip_x <a href="https://github.com/esphome/esphome/pull/4555" target="_blank" rel="noopener noreferrer">esphome#4555</a>
+ by <a href="https://github.com/rafal83" target="_blank" rel="noopener noreferrer">@rafal83</a>
+</li>
+<li>Bump aioesphomeapi from 13.5.0 to 13.5.1 <a href="https://github.com/esphome/esphome/pull/4572" target="_blank" rel="noopener noreferrer">esphome#4572</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Verbose output of define. <a href="https://github.com/esphome/esphome/pull/4576" target="_blank" rel="noopener noreferrer">esphome#4576</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Add support for ESP32 CAM 3MP and 5MP resolutions and arbitrary camera clock. <a href="https://github.com/esphome/esphome/pull/4580" target="_blank" rel="noopener noreferrer">esphome#4580</a>
+ by <a href="https://github.com/peterhalicky" target="_blank" rel="noopener noreferrer">@peterhalicky</a>
+</li>
+<li>Add a simple &lsquo;skip_initial&rsquo; filter <a href="https://github.com/esphome/esphome/pull/4582" target="_blank" rel="noopener noreferrer">esphome#4582</a>
+ by <a href="https://github.com/sybrenstuvel" target="_blank" rel="noopener noreferrer">@sybrenstuvel</a>
+</li>
+<li>Fix outdated filter string in platformio_api <a href="https://github.com/esphome/esphome/pull/4587" target="_blank" rel="noopener noreferrer">esphome#4587</a>
+ by <a href="https://github.com/LordMike" target="_blank" rel="noopener noreferrer">@LordMike</a>
+</li>
+<li>Split test3.yaml <a href="https://github.com/esphome/esphome/pull/4591" target="_blank" rel="noopener noreferrer">esphome#4591</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Disallow uart0/1/2 as ids in config <a href="https://github.com/esphome/esphome/pull/4446" target="_blank" rel="noopener noreferrer">esphome#4446</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (breaking-change)</li>
+<li>Upgrade clang-format to v13 <a href="https://github.com/esphome/esphome/pull/4535" target="_blank" rel="noopener noreferrer">esphome#4535</a>
+ by <a href="https://github.com/oxan" target="_blank" rel="noopener noreferrer">@oxan</a>
+</li>
+<li>B/W support for GooDisplay GDEY029T94 (as used on Adafruit MagTag) <a href="https://github.com/esphome/esphome/pull/4222" target="_blank" rel="noopener noreferrer">esphome#4222</a>
+ by <a href="https://github.com/AaronJackson" target="_blank" rel="noopener noreferrer">@AaronJackson</a>
+</li>
+<li>Fix negative sqrt root in ct_clamp_sensor.cpp <a href="https://github.com/esphome/esphome/pull/4236" target="_blank" rel="noopener noreferrer">esphome#4236</a>
+ by <a href="https://github.com/jerome992" target="_blank" rel="noopener noreferrer">@jerome992</a>
+</li>
+<li>Wrap ipv6 code a bit more <a href="https://github.com/esphome/esphome/pull/4574" target="_blank" rel="noopener noreferrer">esphome#4574</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Remove EntityBase from sprinkler <a href="https://github.com/esphome/esphome/pull/4606" target="_blank" rel="noopener noreferrer">esphome#4606</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fix wrong port multiplexer name in dump GPIO function of sx1509 <a href="https://github.com/esphome/esphome/pull/4592" target="_blank" rel="noopener noreferrer">esphome#4592</a>
+ by <a href="https://github.com/skaldo" target="_blank" rel="noopener noreferrer">@skaldo</a>
+</li>
+<li>Bump zeroconf from 0.47.3 to 0.47.4 <a href="https://github.com/esphome/esphome/pull/4597" target="_blank" rel="noopener noreferrer">esphome#4597</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Bump pytest-asyncio from 0.20.3 to 0.21.0 <a href="https://github.com/esphome/esphome/pull/4599" target="_blank" rel="noopener noreferrer">esphome#4599</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Limit range on filter time period for remote_receiver <a href="https://github.com/esphome/esphome/pull/4604" target="_blank" rel="noopener noreferrer">esphome#4604</a>
+ by <a href="https://github.com/RoboMagus" target="_blank" rel="noopener noreferrer">@RoboMagus</a>
+</li>
+<li>add select_schema to select component <a href="https://github.com/esphome/esphome/pull/4545" target="_blank" rel="noopener noreferrer">esphome#4545</a>
+ by <a href="https://github.com/regevbr" target="_blank" rel="noopener noreferrer">@regevbr</a>
+</li>
+<li>Add ability to clear the gatt cache <a href="https://github.com/esphome/esphome/pull/4621" target="_blank" rel="noopener noreferrer">esphome#4621</a>
+ by <a href="https://github.com/bdraco" target="_blank" rel="noopener noreferrer">@bdraco</a>
+</li>
+<li>Bump actions/stale from 7 to 8 <a href="https://github.com/esphome/esphome/pull/4615" target="_blank" rel="noopener noreferrer">esphome#4615</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Require step to be set when calling register_number <a href="https://github.com/esphome/esphome/pull/4622" target="_blank" rel="noopener noreferrer">esphome#4622</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (breaking-change)</li>
+<li>Lower range of CONF_FREQUENCY <a href="https://github.com/esphome/esphome/pull/4619" target="_blank" rel="noopener noreferrer">esphome#4619</a>
+ by <a href="https://github.com/berendhaan" target="_blank" rel="noopener noreferrer">@berendhaan</a>
+</li>
+<li>Allow entity names to be set to None <a href="https://github.com/esphome/esphome/pull/4607" target="_blank" rel="noopener noreferrer">esphome#4607</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fix platform restriction for bme680_bsec <a href="https://github.com/esphome/esphome/pull/4616" target="_blank" rel="noopener noreferrer">esphome#4616</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fix EzoCommandType enum <a href="https://github.com/esphome/esphome/pull/4593" target="_blank" rel="noopener noreferrer">esphome#4593</a>
+ by <a href="https://github.com/alfredopironti" target="_blank" rel="noopener noreferrer">@alfredopironti</a>
+</li>
+<li><code>EntityBase</code> Name can stay in flash. <a href="https://github.com/esphome/esphome/pull/4594" target="_blank" rel="noopener noreferrer">esphome#4594</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>feat: Add support to unsubscribe from BLE advertisements <a href="https://github.com/esphome/esphome/pull/4620" target="_blank" rel="noopener noreferrer">esphome#4620</a>
+ by <a href="https://github.com/richardhopton" target="_blank" rel="noopener noreferrer">@richardhopton</a>
+</li>
+<li>EntityBase: Move ObjectId to Flash <a href="https://github.com/esphome/esphome/pull/4569" target="_blank" rel="noopener noreferrer">esphome#4569</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Add workflow to sync device classes with HA dev <a href="https://github.com/esphome/esphome/pull/4629" target="_blank" rel="noopener noreferrer">esphome#4629</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Synchronise Device Classes from Home Assistant <a href="https://github.com/esphome/esphome/pull/4633" target="_blank" rel="noopener noreferrer">esphome#4633</a>
+ by <a href="https://github.com/github-actions[bot]" target="_blank" rel="noopener noreferrer">@github-actions[bot]</a>
+</li>
+<li>Remove AUTO_LOAD from as3935 <a href="https://github.com/esphome/esphome/pull/4630" target="_blank" rel="noopener noreferrer">esphome#4630</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Add ifdef to new bt proxy unsubscribe <a href="https://github.com/esphome/esphome/pull/4634" target="_blank" rel="noopener noreferrer">esphome#4634</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>add bluetooth mac address in dump_config() <a href="https://github.com/esphome/esphome/pull/4628" target="_blank" rel="noopener noreferrer">esphome#4628</a>
+ by <a href="https://github.com/felixlungu" target="_blank" rel="noopener noreferrer">@felixlungu</a>
+</li>
+<li>Binary map bugfixes <a href="https://github.com/esphome/esphome/pull/4636" target="_blank" rel="noopener noreferrer">esphome#4636</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+</li>
+<li>entity_base avoid padding bytes. <a href="https://github.com/esphome/esphome/pull/4637" target="_blank" rel="noopener noreferrer">esphome#4637</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Avoid sensor padding. <a href="https://github.com/esphome/esphome/pull/4638" target="_blank" rel="noopener noreferrer">esphome#4638</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Support advanced UART customization <a href="https://github.com/esphome/esphome/pull/4465" target="_blank" rel="noopener noreferrer">esphome#4465</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Log calibration results at level INFO <a href="https://github.com/esphome/esphome/pull/4240" target="_blank" rel="noopener noreferrer">esphome#4240</a>
+ by <a href="https://github.com/Duckle29" target="_blank" rel="noopener noreferrer">@Duckle29</a>
+</li>
+<li>Number step not optional <a href="https://github.com/esphome/esphome/pull/4649" target="_blank" rel="noopener noreferrer">esphome#4649</a>
+ by <a href="https://github.com/RoboMagus" target="_blank" rel="noopener noreferrer">@RoboMagus</a>
+</li>
+<li>VSCode / devcontainer updates <a href="https://github.com/esphome/esphome/pull/4647" target="_blank" rel="noopener noreferrer">esphome#4647</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Retry PN532_COMMAND_VERSION_DATA on setup() (fixes esphome/issues#3823) <a href="https://github.com/esphome/esphome/pull/4651" target="_blank" rel="noopener noreferrer">esphome#4651</a>
+ by <a href="https://github.com/tracestep" target="_blank" rel="noopener noreferrer">@tracestep</a>
+</li>
+<li>Bump pylint from 2.16.4 to 2.17.2 <a href="https://github.com/esphome/esphome/pull/4650" target="_blank" rel="noopener noreferrer">esphome#4650</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Bump black from 23.1.0 to 23.3.0 <a href="https://github.com/esphome/esphome/pull/4635" target="_blank" rel="noopener noreferrer">esphome#4635</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Added in mmc5603 code <a href="https://github.com/esphome/esphome/pull/4175" target="_blank" rel="noopener noreferrer">esphome#4175</a>
+ by <a href="https://github.com/benhoff" target="_blank" rel="noopener noreferrer">@benhoff</a>
+ (new-integration)</li>
+<li>fix compilation with latest esp-idf <a href="https://github.com/esphome/esphome/pull/4671" target="_blank" rel="noopener noreferrer">esphome#4671</a>
+ by <a href="https://github.com/Mic92" target="_blank" rel="noopener noreferrer">@Mic92</a>
+</li>
+<li>Bump zeroconf from 0.47.4 to 0.56.0 <a href="https://github.com/esphome/esphome/pull/4674" target="_blank" rel="noopener noreferrer">esphome#4674</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Bump pytest from 7.2.2 to 7.3.0 <a href="https://github.com/esphome/esphome/pull/4673" target="_blank" rel="noopener noreferrer">esphome#4673</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Add push to talk voice assistant <a href="https://github.com/esphome/esphome/pull/4648" target="_blank" rel="noopener noreferrer">esphome#4648</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (new-integration)</li>
+<li>Fix ESP32 SPI hardware assignment in Arduino fw <a href="https://github.com/esphome/esphome/pull/4669" target="_blank" rel="noopener noreferrer">esphome#4669</a>
+ by <a href="https://github.com/kbx81" target="_blank" rel="noopener noreferrer">@kbx81</a>
+</li>
+<li>Fix some NFC/PN532 crashes <a href="https://github.com/esphome/esphome/pull/4678" target="_blank" rel="noopener noreferrer">esphome#4678</a>
+ by <a href="https://github.com/kbx81" target="_blank" rel="noopener noreferrer">@kbx81</a>
+</li>
+<li>Add support for SSD1306 72x40 displays <a href="https://github.com/esphome/esphome/pull/4659" target="_blank" rel="noopener noreferrer">esphome#4659</a>
+ by <a href="https://github.com/johnsto" target="_blank" rel="noopener noreferrer">@johnsto</a>
+</li>
+<li>Fix pin schema for i2s microphone <a href="https://github.com/esphome/esphome/pull/4680" target="_blank" rel="noopener noreferrer">esphome#4680</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fix BedJet setup priority [fixes esphome/issues#3807] <a href="https://github.com/esphome/esphome/pull/4677" target="_blank" rel="noopener noreferrer">esphome#4677</a>
+ by <a href="https://github.com/jhansche" target="_blank" rel="noopener noreferrer">@jhansche</a>
+</li>
+<li>Add always trigger stop <a href="https://github.com/esphome/esphome/pull/4249" target="_blank" rel="noopener noreferrer">esphome#4249</a>
+ by <a href="https://github.com/X-Ryl669" target="_blank" rel="noopener noreferrer">@X-Ryl669</a>
+</li>
+<li>Fix graph limits for negative values and other corner cases <a href="https://github.com/esphome/esphome/pull/4253" target="_blank" rel="noopener noreferrer">esphome#4253</a>
+ by <a href="https://github.com/unhold" target="_blank" rel="noopener noreferrer">@unhold</a>
+</li>
+<li>Fix cut-off on 2.13&quot; waveshare/ttgo epaper displays <a href="https://github.com/esphome/esphome/pull/4255" target="_blank" rel="noopener noreferrer">esphome#4255</a>
+ by <a href="https://github.com/unhold" target="_blank" rel="noopener noreferrer">@unhold</a>
+</li>
+<li>[Ethernet] Add PHY KSZ8081 support <a href="https://github.com/esphome/esphome/pull/4668" target="_blank" rel="noopener noreferrer">esphome#4668</a>
+ by <a href="https://github.com/Fabian-Schmidt" target="_blank" rel="noopener noreferrer">@Fabian-Schmidt</a>
+</li>
+<li>Fix restore <a href="https://github.com/esphome/esphome/pull/4655" target="_blank" rel="noopener noreferrer">esphome#4655</a>
+ by <a href="https://github.com/spacemanspiff2007" target="_blank" rel="noopener noreferrer">@spacemanspiff2007</a>
+ (breaking-change)</li>
+<li>debug component, allow without debug logging <a href="https://github.com/esphome/esphome/pull/4685" target="_blank" rel="noopener noreferrer">esphome#4685</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fixed dns2 for ethernet <a href="https://github.com/esphome/esphome/pull/4698" target="_blank" rel="noopener noreferrer">esphome#4698</a>
+ by <a href="https://github.com/HeMan" target="_blank" rel="noopener noreferrer">@HeMan</a>
+</li>
+<li>Add timeout to i2c write error logs <a href="https://github.com/esphome/esphome/pull/4697" target="_blank" rel="noopener noreferrer">esphome#4697</a>
+ by <a href="https://github.com/Szewcson" target="_blank" rel="noopener noreferrer">@Szewcson</a>
+</li>
+<li>Add event triggers to voice_assistant <a href="https://github.com/esphome/esphome/pull/4699" target="_blank" rel="noopener noreferrer">esphome#4699</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Call on_error if no api client connected that handles voice <a href="https://github.com/esphome/esphome/pull/4709" target="_blank" rel="noopener noreferrer">esphome#4709</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Add ethernet powerdown (fixes esphome/issues#4420) <a href="https://github.com/esphome/esphome/pull/4706" target="_blank" rel="noopener noreferrer">esphome#4706</a>
+ by <a href="https://github.com/tracestep" target="_blank" rel="noopener noreferrer">@tracestep</a>
+</li>
+<li>Bump arduino platform version to 5.3.0 <a href="https://github.com/esphome/esphome/pull/4713" target="_blank" rel="noopener noreferrer">esphome#4713</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+</ul>
+<!-- markdownlint-enable MD013 -->
+<h2  id="past-changelogs">
+    Past Changelogs
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="past-changelogs" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/changelog/2023.3.0/">ESPHome 2023.3.0 - 15th March 2023</a></li>
+<li><a href="/changelog/2023.2.0/">ESPHome 2023.2.0 - 15th February 2023</a></li>
+<li><a href="/changelog/2022.12.0/">ESPHome 2022.12.0 - 14th December 2022</a></li>
+<li><a href="/changelog/2022.11.0/">ESPHome 2022.11.0 - 16th November 2022</a></li>
+<li><a href="/changelog/2022.10.0/">ESPHome 2022.10.0 - 19th October 2022</a></li>
+<li><a href="/changelog/2022.9.0/">ESPHome 2022.9.0 - 21st September 2022</a></li>
+<li><a href="/changelog/2022.8.0/">ESPHome 2022.8.0 - 17th August 2022</a></li>
+<li><a href="/changelog/2022.6.0/">ESPHome 2022.6.0 - 15th June 2022</a></li>
+<li><a href="/changelog/2022.5.0/">ESPHome 2022.5.0 - 18th May 2022</a></li>
+<li><a href="/changelog/2022.4.0/">ESPHome 2022.4.0 - 20th April 2022</a></li>
+<li><a href="/changelog/2022.3.0/">ESPHome 2022.3.0 - 16th March 2022</a></li>
+<li><a href="/changelog/2022.2.0/">ESPHome 2022.2.0 - 16th February 2022</a></li>
+<li><a href="/changelog/2022.1.0/">ESPHome 2022.1.0 - 19th January 2022</a></li>
+<li><a href="/changelog/2021.12.0/">ESPHome 2021.12.0 - 11th December 2021</a></li>
+<li><a href="/changelog/2021.11.0/">ESPHome 2021.11.0 - 17th November 2021</a></li>
+<li><a href="/changelog/2021.10.0/">ESPHome 2021.10.0 - 20th October 2021</a></li>
+<li><a href="/changelog/2021.9.0/">ESPHome 2021.9.0 - 15th September 2021</a></li>
+<li><a href="/changelog/2021.8.0/">ESPHome 2021.8.0 - 18th August 2021</a></li>
+<li><a href="/changelog/v1.20.0/">Changelog - Version 1.20.0 - 21st July 2021</a></li>
+<li><a href="/changelog/v1.19.0/">Changelog - Version 1.19.0 - 16th June 2021</a></li>
+<li><a href="/changelog/v1.18.0/">Changelog - Version 1.18.0 - 19th May 2021</a></li>
+<li><a href="/changelog/v1.17.0/">Changelog - Version 1.17.0 - 4th May 2021</a></li>
+<li><a href="/changelog/v1.16.0/">Changelog - Version 1.16.0 - February 3, 2021</a></li>
+<li><a href="/changelog/v1.15.0/">Changelog - Version 1.15.0 - September 13, 2020</a></li>
+<li><a href="/changelog/v1.14.0/">Changelog - Version 1.14.0 - November 1</a></li>
+<li><a href="/changelog/v1.13.0/">Changelog - Version 1.13.0 - May 30th 2019</a></li>
+<li><a href="/changelog/v1.12.0/">Changelog - Version 1.12.0</a></li>
+<li><a href="/changelog/v1.11.0/">Changelog - Version 1.11.0</a></li>
+<li><a href="/changelog/v1.10.0/">Changelog - Version 1.10.0</a></li>
+<li><a href="/changelog/v1.9.0/">Changelog - Version 1.9.0</a></li>
+<li><a href="/changelog/v1.8.0/">Version 1.8.0</a></li>
+<li><a href="/changelog/v1.7.0/">Version 1.7.0</a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>ESPHome 2023.4.0 - 19th April 2023</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#breaking-changes">Breaking Changes</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#is-media-player">I²S Media Player</a></li><li><a class="toc-secondary" href="#default-restore-mode-for-switches-fans-and-lights">Default restore mode for Switches, Fans and Lights</a></li><li><a class="toc-secondary" href="#number-step">Number <code>step</code></a></li><li><a class="toc-secondary" href="#uart-ids">UART ids</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#breaking-changes-1">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#keith-joins-nabu-casa">Keith joins Nabu Casa</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202341---april-24">Release 2023.4.1 - April 24</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202342---april-27">Release 2023.4.2 - April 27</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202343---may-2">Release 2023.4.3 - May 2</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-202344---may-4">Release 2023.4.4 - May 4</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#voice-assistant">Voice Assistant</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#voice-assistant">Voice Assistant</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#keith-joins-nabu-casa">Keith joins Nabu Casa</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202341---april-24">Release 2023.4.1 - April 24</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202342---april-27">Release 2023.4.2 - April 27</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202343---may-2">Release 2023.4.3 - May 2</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-202344---may-4">Release 2023.4.4 - May 4</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#breaking-changes">Breaking Changes</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#is-media-player">I²S Media Player</a></li><li><a class="toc-secondary" href="#default-restore-mode-for-switches-fans-and-lights">Default restore mode for Switches, Fans and Lights</a></li><li><a class="toc-secondary" href="#number-step">Number <code>step</code></a></li><li><a class="toc-secondary" href="#uart-ids">UART ids</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#breaking-changes-1">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/changelog/2023.4.0.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

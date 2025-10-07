@@ -1,0 +1,1213 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Addressable Light - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up displays using addressable lights and LED matrix">
+            <meta name="twitter:description" content="Instructions for setting up displays using addressable lights and LED matrix">
+            <meta property="og:description" content="Instructions for setting up displays using addressable lights and LED matrix">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/addressable_light.jpg">
+                <meta name="twitter:image" content="http://localhost:1313/images/addressable_light.jpg">
+            
+        
+    
+    <meta property="og:title" content="Addressable Light">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/display/addressable_light/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Addressable Light">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Addressable Light</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#pixel_mapper">pixel_mapper</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#default">Default</a></li><li><a class="toc-secondary" href="#btf-lighting-8x32-ws2812b-flexible-led-matrix">BTF-Lighting 8x32 WS2812B Flexible LED Matrix</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#pixel_mapper">pixel_mapper</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#default">Default</a></li><li><a class="toc-secondary" href="#btf-lighting-8x32-ws2812b-flexible-led-matrix">BTF-Lighting 8x32 WS2812B Flexible LED Matrix</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/display/addressable_light.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Addressable Light</h1>
+        
+
+        <p>The <code>addressable_light</code> display platform allows to display text and graphics on an addressable
+light that has been arranged in a display matrix.</p>
+<p>The display requires that an 
+
+
+
+
+
+
+
+
+<a href="https://api-docs.esphome.io/classesphome_1_1light_1_1_addressable_light">AddressableLight</a>
+ component, such as
+<a href="/components/light/fastled/">FastLED Light</a> or <a href="/components/light/neopixelbus/">NeoPixelBus Light</a>, be defined.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/addressable_light.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>WS2812B Addressable Light Display</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 250px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/addressable_light.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIALYAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APB6KKkxxQAwCpBSxQvK&#43;1KuDT5sfcak2kdVLC1auqKWDRVs2c4/gao/skmfuGi6H9UqkFFTfZJf&#43;ebUeRKP&#43;WZouZ&#43;wrdiGip/Im/55mk8iX&#43;6aLoXsK3YhoqbyG9DS&#43;W390/lRdGfsH2IKKm2H&#43;6fyoKN/dP5U7hyvsQ1F3qfY3900mxv7p/Ki4cr7ENFTbT6UbT6UC5X2IaKl2n0oKn0oCzIqKUgjqKSgQUUUUAGKlFFFBoaGkjN1XVxxAjpXKaScXS11kcnFeZjr&#43;0PveGbfV9SKWIelV4IxvbgVYuJRVe3lzKazpt&#43;zPTqql7UuCBcdBVK4jAboKvebxVG4ky340U2zXGxo&#43;z2LEVuDH90VFNbgfwircEg8uormTii7LqUaPstipBbhz90VLJbKP4R&#43;VOtJMGpLiSjU56dCj7LYoLbAyfdFSSWa/wB0U&#43;KX99U88gxxWl2ZU6FH2exRW2UyY2j8qlkso/7gp0Un70VYlk4o1CnQo&#43;z2M/7JF5n3BTnsY/7lSxyfvKsPICKd2ZU8JRM1bGPzPuVLJp8I/hqaNvnp8ktT7WoOnhML7PY5zVoo45F2VmDrWnqvM9UK9Cl/DPg8ySWJnYiooPWitDgJaKKO9BoW7HP2hMV0vlylBiuatP8Aj4j&#43;tdlEP3QrhxR9hwzT9pTmZ0sM2Kn0zS7i&#43;lYRsF21bcArWv4Qx/acoOOgrlVQy4wq1ctwX1jDkQ8KXmM&#43;YKqT&#43;HbpAfmFeoFRjoKxdRjxnHrWn8M/IqXGmbVXZ1Dj4fC15IoKSilk8MXkf35BXf2EaeSD3xUd9GMUw/10zf2ns/aHA2/hu6kLbZBUkvhW6xzIK7HS4xl&#43;nWrt4oEXArH2lQKnGebe09n7Q84j8OT&#43;fs3CrMnhW5xnzBXUWY8y&#43;wRWvdRqI&#43;MdKftQqcX5rBpe0PNf&#43;Eel89U31ak8M3Gz/W/pXTW8aSaivpW1PDH5Vae1HU4vzKm0vaHmq&#43;HJTPs839KtSeFZUH&#43;tP5V0sYRNQX0zWtdCMx5GOlZ&#43;1CpxXmULfvDyu9sZLKVU3VX8t93NdDrgD6ivTGKypgB0rXc/YOGnUxOWwxFVnMal/wAfFZ5rQ1L/AI&#43;DWea9OlsfL4//AHmoRHrRSnrSUHIS0UUUATwHE8Z967CCcCNR7Vx8f31&#43;tdXBb&#43;ZEpz2rlxR9fwxUqe/7MllmzV/wxP5WpuSe1ZctuRWj4bgWbVNjDtXLTM&#43;NFUnls/aHfR6mCnUVmaheDax31pDSI/L4FZOq6eEtZOO1RSpNux&#43;C4ZUfaWL9lq9utug81fzpl3q0Dg/vk/76rgLayllDYduD61VvbaaPu3519tR4RVVL94eusrpOp8Z3en6vCkj/AL1fvetXrnWrYx/65PzrzDTreSSRvmP51ZvLSSMcsfzrb/Uymnb2htUyuj7Xc7CLWreO63CZfzq1c&#43;I7Ux/64V5rbwNJcbMmrtzZtHHyTXR/qfhlpzmlTLMP7TU6oeIbWO7V0lHSrNz4tttv&#43;trz&#43;ztjJc7c1o3lkqR9KHwhhk7c46mX4b2iudNZa0l1d5hy/Fast5K0f&#43;rauf8AAltHJdy57Cu5u7aMRcCvjc4wFPBYn2dM8vHKlSxHs7HnGsSyG&#43;&#43;72rMd5M1t61GBqf4VlzACuHqfuHDNP/hIpnMagT9oaqgq1ff8fD1Vr06R83iv41QKKKK1OQKKKKyAmT7y/Wuxs2/0dOe1ccvUV09pKfJT5e1cuKPq&#43;GKns6ky/Kat&#43;GTjW0&#43;hrIkd8/dq7o0kkepKyLziuWlTOjjGp7TLaiPVo2BjrI1ZgbeX6GoYbi9MfyxmqOoS3X2eXKjpV0PiR/PVHDNVdzm7GYIH57mq2oTB6yBLcea&#43;3PWo55Z/46/Z8JS91H10cL&#43;8uXdOnEU7c96s6jdCQcGsqztzKd&#43;41Zlsj3Zq8vFZ5gsNV9nUPpaPDOJxK&#43;sUypb3PlXW&#43;rl3f&#43;bHUMVgsklWZLFUH3a5KnFWCv8AAdv&#43;qmJqfvDNtroxT7quz6kZExVb7EZLnYlTXGmtEmRXu4DHUsbT9oeBjsNTw2I9nU3Njwhem3uJPmrsrjVA8fU1y/gmwSeWTeOa7C80&#43;OOPgV&#43;Z8S/8jGZ8pmdSl9ascLqk5l1BmrOmc4NamoRAX7VQnAGa8Rbn7fw9T/4SIHJ3X/Hw9Q1Ndf8AHw9Q1662Pkq/8VhRRRQYhR3oo71mBMvUV1emx/6Mhrkx1FdVpkn&#43;jIM1zYr&#43;GfVcNNfWC9Iny5qbQo86qlV5JRjrT9Jm8vVozmuSkelxZapltSx6jbxBIqy9TiTyn&#43;hqaLUB5fzGs3Ub&#43;Mxtg9quL95H84UqVT2xxMSRiWTjuapajGO1RvelZ5cA/eqpc3ckrYr9mwafsoM&#43;zpUqnOjQ0nA3VfmcVkafI4DYGasmRznK1&#43;aZzTvjqh&#43;w5PifZ4GECW3mAmxVm4mTHFZEYk8w9amaNz3ryjrp4mp7Ow37R5F0slS3WpiRcVRkjklm8uo5rSSI5NfqPD1On9SgfmGeQp1MazsPBN2I5JXNdZeX4kj6iuK8F2RuJJOtdZdaesa8k1&#43;fcRf8jKofDZlTp/WjjdQlzqD4rPuJODWjcRD7dLVK5jAVvpXjrc/csnp1KeUUzlJ/9cahqaf/AFx&#43;tQ1662Pi627CiiigxCjvRRWZoSiuk0xN8C4rmxXQaO5ENZYr&#43;GfQ8Pf7yaMtv&#43;7PNSaREp1OFHpzyDyqbpsgj1OAn&#43;9XBSPa4lpx&#43;o1eT&#43;Q9KttMiMYJFVdRsIkjbag6Vo2tyhiHNVdRm&#43;RvpUx9nzI/m2lUq&#43;2POFsY3upsgfeqtqNlHGOMUT3/AJWoTDP8VUr2&#43;Mpxmv2fL1U9jTPs6VOr7RFrSo0G6r0kSHmsexuVj3fNVp79RX59nGErVcdU9kj9fyjMMLSwMKdXccnEtWHKbOOtZBvyXwFqQ3UmzJWsFk2Oqf8ALsbzzA07rnJEkEd3k1JqFzHIoxWbukuJsJRLFIhw9fo2UYV0cNCnU3PzvNHTxONdSmdj4JufK809K6W&#43;u1kHUVy3hCxeeBiGPWt&#43;70xo1O4mvzTiH/kZVD4zHKn9b1ORupf9Nlx61n3Mhw30rQkt8XUn1qpeJ8jfSvMW5&#43;65ZTqf2XD0OXf7zfWoamf7zfWoa9NHw8viYUUUUEhRRRWYEgPFbmlOTFgCufro9Bx5bZrLFfwj3ci/30vEPjocUW4kF/DjA&#43;ar&#43;BsqsuBfQn/bFcFKofUZ9hv9hqHoVpZ3LwgmQYx2qG/spAhzIelbVlLH9mUZ7VT1KUbTioiveR/NDq1Pbnl8tgr30u/&#43;9Va6ski521pXNyE1CX/eqneXPmV&#43;0Ze37GmfX06lS6KNlCjz4q5eWyRjis&#43;GQx3G4CrU8sko4Rj&#43;FdzcPaXujoqRqe0WpFZiMz81fvEi8rgiqcGn3k0n7qFs/SrbaFqb9Y2/GuKpmGFpVPfqCqez9prUKOnlY7jJNXL&#43;SKQcYqza&#43;FbyabbuC1ek8GXEfLy/pXFU4hy2nU/iHPUxWHVT&#43;IaPgm5FvaPn1rev76OQEVj6Fo3lBk3nrV&#43;809Iwck1&#43;Y5piqeKx1SrTPDxPsqmK50cdcTf6TPz/ABVRvJv9Ff6VcuIFEsvPes28XFq1YLc/esK6kMsp/wCA5tj8xpKU9TSV6iPhnuFFRd6KBEtFFFZgHet7RDjdzWDWvop3SsM1lW/hHsZP/vtM3JLnnFQrKftMR/2hU5tlzmmpCBdJ9RXBTPrc2p1fqtQ7y1uJTEuyNm4pl290Qcx/rW5pkUX2VOmcCkvoo8Gs&#43;p/NksUlWehwSeGpNRuXmMm35qvP4RhhTLsWNdFpOxXce9Xr1o/L7V6azzHJez9odNTM8R7TkRymk6BZPcMHiHFdBLo1lBF8sCflVKzlEV0xrRurxWi&#43;8B&#43;Nc9XGVqnUzxFavVqFOxghjvcBRjFad3DH5fGBXOjUYoLv5pFHFFz4htQpHm7q5byfU2WX4urUTgmaGnyRx3zg46VdvbiMx1w3/CQiO4do03cUkmv3Uo&#43;4AKv2R61PhTMsTU9pCmdRp80ccknPenX88bqee1cNHqN40rbG20XFxeSD55jR7NI9ujwHjZtVWRXMv&#43;lSY6bqoX8uYHqykZJJPJqrer&#43;4etaX8Q/TvY1KOA9mznD1pDQ3U1Ea9M&#43;Ee4UUUUCJaKizUtZgFaminE9ZZ6Vo6R/r/wAKyq/wj1Mr/wB5pnTmXiq&#43;798pz3qQW77M5qrLGQeteZTPu8wjUq0eU9FtNXhtrZd8irx61Wu/Etoc/vN30rjbdWljw7E02WIR9qD83p&#43;HNNt1alQ34PEyRl9iFuaiuvEtzJ9yIVh2ijzDmrU7KowBWmh72G4Gy72ftKgg1W8mlb59mfSid7oj5p3b8aqRnZJUks3HWmenhshyylT/AIY2Pe8nJJ&#43;tSSQ8ZqpHcgP1ol1BP79aWZ6FOeDpU&#43;hLbHbMRippnOOKxv7UQPxTZNXz/DR7Kocn9rYWnT9nzmtbyYPNE82f4qwJNRk7VWkuJZP4zWv1U4pcQ01T9nTOhW8jiX5nFUb2/SSFlSsYs3cmkz71qsNZ3PLrZ5Uq0/ZgTUVFFdJ4YUUUVmAUo60lFAEvatHSD/pOPasoVoadKkU&#43;96zq/wAOx3YGr7LEU2dhHJ&#43;7xVK561nSavGPuZqjNq0khwK4KeGqH2mJz3DezsdJbSqE5NNnuIc/eFcv9unx9/iq5uHkP3jWqwp5lTib937PkOh&#43;3xxu3zVFJrCVhFieppAa6fqtM82pnuI2pmlLq0hPyLUD308n8VVM0ZrT2KOGpjsTU/5eE3nSf36iLE96SitbHDzPuFFFFAgoozUWaAJc1FRRQAUUUVmAUUUUAFFFFABS5NJRQBKKKB0ooNAooooMwqKpe1Rd6ACiiitADvUvaou9SdqAI&#43;9FHeigAooorMAooooAKKKKACiiigD/2Q=="
+                     data-src="/images/addressable_light.jpg"
+                     data-srcset="/images/addressable_light.jpg 250w, /images/addressable_light_hu_df3196768f5c869f.jpg 50w, /images/addressable_light_hu_576912a85a251aa9.jpg 83w, /images/addressable_light_hu_496cb9dcd751526e.jpg 125w, /images/addressable_light_hu_26e1a272fc80edd4.jpg 166w, /images/addressable_light_hu_4731fec5b2d6e57d.jpg 250w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>WS2812B Addressable Light Display</em>
+                </figcaption>
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">addressable_light</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">led_matrix_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">addressable_light_id</span><span class="p">:</span><span class="w"> </span><span class="l">led_matrix_light</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="m">180</span><span class="l">°</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="l">16ms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          // Draw a bulls-eye pattern
+</span></span></span><span class="line"><span class="cl"><span class="sd">          Color red = Color(0xFF0000);
+</span></span></span><span class="line"><span class="cl"><span class="sd">          Color green = Color(0x00FF00);
+</span></span></span><span class="line"><span class="cl"><span class="sd">          Color blue = Color(0x0000FF);
+</span></span></span><span class="line"><span class="cl"><span class="sd">          it.rectangle(0, 0, 8, 8, red);
+</span></span></span><span class="line"><span class="cl"><span class="sd">          it.rectangle(1, 1, 6, 6, green);
+</span></span></span><span class="line"><span class="cl"><span class="sd">          it.rectangle(2, 2, 4, 4, blue);
+</span></span></span><span class="line"><span class="cl"><span class="sd">          it.rectangle(3, 3, 2, 2, red);</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>
+<p><strong>addressable_light_id</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The id of the addressable light component to use
+as a display.</p>
+</li>
+<li>
+<p><strong>width</strong> (<strong>Required</strong>, int): The width of the LED matrix in pixels.</p>
+</li>
+<li>
+<p><strong>height</strong> (<strong>Required</strong>, int): The height of the LED matrix in pixels.</p>
+</li>
+<li>
+<p><strong>rotation</strong> (<em>Optional</em>): Set the rotation of the display. Everything you draw in <code>lambda:</code> will be rotated
+by this option. One of <code>0°</code> (default), <code>90°</code>, <code>180°</code>, <code>270°</code>.</p>
+</li>
+<li>
+<p><strong>update_interval</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The interval to call the lambda to update the display.
+Defaults to <code>16ms</code>.</p>
+</li>
+<li>
+<p><strong>pixel_mapper</strong> (<em>Optional</em>, <a href="/automations/templates#config-lambda">lambda</a>): A lambda that returns the integer address of the LED
+given the supplied the <code>x</code> and <code>y</code> pixel coordinate. By default, a left-to-right direct pixel mapper is used.</p>
+</li>
+<li>
+<p><strong>lambda</strong> (<em>Optional</em>, <a href="/automations/templates#config-lambda">lambda</a>): The lambda to use for rendering the content on the display.
+<code>it</code> will be an instance of 
+
+
+
+
+
+
+
+
+<a href="https://api-docs.esphome.io/classesphome_1_1display_1_1_display_buffer">DisplayBuffer</a>
+.
+See <a href="/components/display#display-engine">Display Rendering Engine</a> for more information.</p>
+</li>
+<li>
+<p><strong>id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID used for code generation.</p>
+</li>
+</ul>
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>When enabled (the default, but also via <code>it.set_enabled(true)</code>  ), any effect currently running on the
+addressable light will be disabled. When disabled (<code>it.set_enabled(false)</code>  ), the last configured effect will
+be restored.</p>
+<p>While the display is enabled, it is still possible to control the parent addressable light component in some
+limited capacity. Changing the brightness will still work, but changing the color will have no affect. It is not
+adivsable to enable any effects (ex: rainbow, color wipe, etc) while the display is enabled, as this will cause a
+great deal of flickering while the effect competes with the display for rendering.</p>
+
+</div>
+
+<h2  id="pixel_mapper">
+    pixel_mapper
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="pixel_mapper" title="Copy link" src="/images/link.svg">
+</h2>
+<p>An addressable LED matrix is just an addressable LED strip laid out in a matrix &ndash; the path often snaking
+down-up-down, left-right-left, or whichever way the manufacturer has chosen. Like an addressable LED strip,
+each pixel on a matrix is addressed as an offset from the first pixel (0). The job of the pixel mapper is
+to translate a logical x-y pixel coordinate to the address of the expected physical LED.</p>
+<p>Determining the correct algorithm for the pixel mapper for your matrix will hopefully only require some graph paper and a little bit of math.</p>
+<h3  id="default">
+    Default
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="default" title="Copy link" src="/images/link.svg">
+</h3>
+<p>The default pixel mapper assumes that the led matrix is addressed starting with the top left LED, moving to the right, and
+then starting with the left-most row of the next row.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/addressable_light_pixel_map_default.png" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Default pixel_mapper as used with a 4x4 led matrix</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 361px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/addressable_light_pixel_map_default.png"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC1CAIAAAB580LAAAAnsklEQVR4nOy9B3MbR7b33WFyQiTAJFGBsq29e71369b7/T&#43;B661y7daVvbJl0ZaYkSZ3fAo41piiRYqEMEPKwvGuS4ZI/Gemz3Q4ffp3DK01WtsN7M8PCmN8R9fSkBl3fQErMPXOMMZaa7IwjLFSCloU/lNrDZ8QQqCxMcbwV5e&#43;TUqptaaUwk9Wn1z0D4wxpRRUlFKVr5B39sHrhO8hhMDvNvJ4lrfP3jmUUmVZxnFcFAU0uW3brutSSoUQZVlSSi3LwhgLIfI8l1LC33LOKaWe51mWBa0OrVUUxWQyYYy12&#43;0wDDHGSZJMJpOyLIUQ8GMYY9u24W&#43;zLANpcAjP84IgcByHUlr5E3wzY2wymRRFES3MMIx77h9/BedI0/SXX345OTmRC4uiyPd9SqlSijFmmqZhGFJK8CHGWKvVchynKArf9x8&#43;fOj7PmNMKWVZlmEY5&#43;fnP/zwQ5ZlX3/9tW3bhJDRaPTy5cuTk5M4jsH5LMsKw7Df7wshzs7OZrMZxtg0Ta11u93eWVgQBJxz8Bvbtg3DmEwmP/7443Q6ffr0qeM4hnHfH/59v76Pmta6KIqTk5Mff/wROgbHceCVdV0X2psxVhRFWZbgPd7CpJTD4TAIgizLTk9Py7LsdDphGB4eHv7www95nne73a2tLdu2hRDgH8fHx&#43;B8nU7Hdd2jo6M0Tc/Pz7Mso5Tatq219jzv/Pxcaz0cDqfT6enpqda61&#43;u1Wq3j4&#43;MffvghjuNWq/XgwQPXddc9R&#43;2mtZZScs7Lhc1mszRNMcZBEEAXAj1/WZae5zmOU5YljCnQtWRZ9vLlyyRJdnZ2hsPheDyO4zjP8/F4PJlMOp2OvTDOOWOMc&#43;44DkIoy7IkScqyBI&#43;EMYUQorVOkmQ2mzmO8&#43;bNm59&#43;&#43;kkptbe3t7OzMx6Pp9NpvjDO&#43;f1fCnz2zgH9eavV2t3d5ZwnSQLNRin1fd&#43;yLM55nudCCIxxq9Xq9/umaUJzhmFY/RlmEoZhBEGwsbExm83Ksjw9PYUZTL/f39zctG1bShmGYafTAUc0TROGHtu2YfyCbsm2bfy&#43;wfUMBoMkSeBv7/rJfdz&#43;Cs7hed7Ozk6r1dJa53leFEWWZTCsEEJmsxmlFAb&#43;J0&#43;ebG9vW5YFqwbf99vtNiHEcRzGWBRFYRgyxnzfn0wm0LVIKYMg2N3dhfEL5hzQ/ZRlmaapEAI8A3wLZridTicIAtu2u92u1rq1sG6367pumqaDweD&#43;jynzZ3v/O7frTWsthCiKApYSUkqlFOdcKQU&#43;MR6PX716NRqNoih68uTJxsYGzAThB1zXNQyjWuKCQxRFked5WZZKqVarBVPLPM&#43;rHyOEKKWEEDCTNQyjGlZM0ySEWAuD8Q4hRBcG38w5B/e6/6vZz945wD8uBiEu/RlmD0VReJ7XbrcvvbKX4hwQDoFGBYPB4uLXws/Dny9GOKpvqOziRVbfDPGVP//APbS/gnNcYxD4gu6EEAKhhRu2ysWGrP9K76P9xZ2jMmjmu76Kz8w&#43;EOX9S9raM5awL8U51raErZ1jbVdao85xaWPzmg8b0K1b7oN3&#43;nnpNhEEu7hkqBb9MAmQUkJ8wjCMla/7r9GtIhDV/v6qFIUQEA6BqCjEWi6tmD64oX8PdZtwDtg4HY/HWZbBlker1YIw5Ww2G4/HCCHYmoK99bp1EUJlWSZJorWOosjzPHiUn2haa8bYdDqdTCZSSsuyIICGMS6KYjqdZlnmum632/V9f4X&#43;cb0uJAmArud5t9JtyDniOH758uXr168ppXt7e9vb27Ztl2V5eHh4cHBACHn27Nn&#43;/j70H7Xquq6LEIrj&#43;OjoCCH05MkT2Bz5dKeERjo8PHzx4kWSJJ1O5/Hjx91uF2Mcx/Hbt2/H43EURd988w1s&#43;q/oLq/UJYTEcfzmzZvRaNTpdL7&#43;&#43;muI2978m5twDnju0E6QegP7olmWnZ&#43;fj0Yj27ajKNrc3AzDcIXO8UFdrTXEy09PTwkhw&#43;EQwqCrkmOMvXnz5ujoaHd317Kss7Mz2DGGN7soit3dXdjZWVUfeY2ulHI6nZ6dnWVZtrm5ORgMbqXb0MYbvJpwubPZbDqdjsdjxhiMiIZhCCHgkdWtmyRJEAT9fh9mG6tVrL4T9mJOTk7SNGWMQapHWZZRFNWxpXKVLowjjLHlkgQampBKKQ3DGAwGsD/OOYdtbkIIZN/AHubKJ6R/1oW902rUX6EozH8RQlEUwb4r/CdCSCwMkghXNYp9VBfeCq21aZqQvXBb0YZ6DtM0Nzc3HcepsvHgc855HMeWZe3u7q52TLlKF2Psum4QBNBptVqtFb7KGGOYVRRFgTGGrVdIKZpMJkKI4XBYx2b9B3XBabIsg8zIbrd726zVJvZWqk1weHtgXxv8AHo8jHEYhrBqWO1q5YO6oAJrP5gbrmTtAOtJaAx4dw3DgNkM5zxNU86567qtVgsSTVZxi9fpQs8Btw/p0NBp3fybG9p4q/L3L25qX/wcGmzlr9RVulXIqI4evnqklWJ1eAJSRuqIc3xQt/ocDmHcVvdL2ZVd2xK23ltZ25W2do61XWlr51jblbZ2jrVdaWvnWNuVtnaOtV1pDURILy6Vm0zkXOt&#43;qtXoHFprhaTW8kJwhhBMCSa1PrU70tVKa6XFXLxSRZTguk8u1ahbl3NorYRiOZ/lYiYVR0hjRCzquWbLNjxCDFxPO92RrpZKljLL2YSpHC3aiRLTNkLXiAxqL/yyDqtX9wPOcfFc1/UfXnnJSAvFk/L8LHsVl4dSF3jh0BZttZzdjrvrmi1aQzvdla7SqhTpOP9tlP9SiinCi0bClm8OO&#43;7D0BlY1CF4xXuKDej&#43;4RxVxmXlB9UuwG0zPfXvF/1mlP&#43;HqREliCAlFc&#43;5WYqpUqLnP6qjne5IVyslUzY&#43;S3&#43;asVeYcINgrUWuZM5PhSo00tG8ndxV&#43;0ftun84h1IK&#43;EaMMcAaRVFk27ZS6raZnkrLgsez4i2XI8vUBqFC54pPmeBMpFpLhFDX2/OsiGITr67LvRNdrZHUIueThL2VeuYZLsGKyViqtBRjqdhiqqgje2AZ0E6rSh&#43;pXfcP54BcKeDXEEI2Nja2trY8z4P8xNtkemqtNZNFwcdSxzZ2JGIZP8nLM8ElQbFSYjGNEm31ILA6JnVW0k76jnQX75XkMmNyikimNS5VlrJjxhIlDC6KeYempVC85QwdI6RkZf5Rt&#43;4fzgGbvHmeHxwcQAsDJynP82UyPTWa9&#43;dioud9jEjYYVIeK6FN1FJKqnkrslJkKPwqsgcGNZd&#43;XrDzDvvySiukdTO6FyCC81aQSjCRSjxCOGUyjss3JU&#43;IcmzBlNZc8VLkUvGe99AxQ/IJ64gmdf9wDkppEASdTsf3fcg8ODw8BFjWLTM98WIO6JokLBnPxRnFohAzJmKhGNdMaSq1yQTS0gjMDd/sUGJWl33bFAJIdkqSBBPsOBZWpoH9unUh4TtJEs65ZVvU0FiZSJmZmHHJlWKlSEo5RTpVCCtmcomFwBaOArNvGz5612Pd9mbr1r00W3iv57Btu9/v7&#43;3tAfWGc14xC26V6Ukwdcyw7TwYZ9uj8lTpGdIcaUsjJlDJVKFZKTXnCClJtcYXWaK3fV6MsePj459//rksy8Fw0N0IPbxp461xnbpSyjiODw4Ojo6OPM/b3BpYoRsYD5PybcIPkC60JhgbEgmmcy0Kg3PKpbQJ0qSa&#43;19MRLonutUqBJr4PecwTbPb7e7v70Pm7XA43N/fh8z6W2V6zv3M8Hv&#43;o5zNuMwn5b&#43;kmiBkU0wVJlLbRLiGaBPaRczSEimq4KQCwNdu1U5lWb5&#43;/fq77747Pj5&#43;8ODBP//3f3b2&#43;gPvH0Llk/LfNelCyv&#43;LFy&#43;&#43;//57Qsi3//j2799&#43;042&#43;EjI/zlghDxCiBIUaS4VsqSzCQ0x6hAVa0LkfIlkUBSSI38o/6tMFvwG6GlD2Lsc5KKVRFMFiBKia8EpdzPS8SX4sRtigZuj0tlr/pbVCMz0p/i1UQpCPtUNVz8N7gfHE4FEWs9TOEMLgf7PZ7LYZ9GVZni3s9PTU87w8LRwahf7fCMFohmrSVUpNJpPz8/PT01NK6XQyVQJ33F3Lmo9Tx6nOxButFdGm1oGNd0Jj39PbPCNJnJnUppTmeT6ZTMApb36z9elKOfcbSPyG/OTLzoExrlK0L3qAUiqKoltles7dy7Bb3gCj/8YYYUQm5c9KISIjBz3oO89b9q7mRlmw8XgMib6&#43;7wNN9lbOwRa2v7&#43;/vb29t7f36NGjdqtjOebiLurShXNQcDzJ9/3nz58PB8MoaPvanzslRsfJ/1&#43;ICVYuVRst86sN9ysLRYLr2XSGEQ6CwDCMVqvled5te46adDnn4/G4Ot4CaaeXI6Qw6lz6sDqYeyubT0sNO/IGCH9LsGknfcZyIlqWGLho4BihYZuAj0UIwfHOMAxvqyKECIKg1&#43;shhDqdTrvddhxnkUs7wLXpKqWAaPvs2TPP87rdbhAEi77W3sCPEcIG8WbFWy0syvseGtq45TmBtBRjbDabAV&#43;w3W7fdvujPl3GGAwuF5OQ692VBf9ouQOKjdAeMl5iafGclLks8tL3Dc/zgPwHEVhIqL&#43;VhGmacHQYTitVUV0L167rui48TTjAjjHWCLt2tIGf2EaQlRMtieJWmSrOVIkZUCiBoQ6rvyVeufp04dzGxedQ&#43;5Y9xsSc9x9914qUVkjhIi8nkylwhqMogvPglmUtdzqhgsv&#43;iepXr&#43;7FR1z9LkaYEOpaoUnttrc1nwEKFdvJeDQuigKwuNCxwcRuiY3TOnSvGk8bOkhNiUktU6P5P6ZhEzK/PcBDA4TaWNhyu8xX/dad6GKEKaEEO8iYP3KtNGzljMdjzjkgb4GTv/TplcZ0GzoOCfeDF//A0U3ox&#43;DMO7A&#43;68h7uFPd&#43;f810Y7jwJmioijMd7baw1Q16d4B3hrWyUEQAL&#43;l6tj/krrQPLZtt9ttOD5en2esXPdu2OfV5LFhCuyd6FY1neDcbAOesSrdOwPj3xUZ&#43;K50V34&#43;tgHdRp3jroqcXazu1lgjAR2kOibeWIdR6V5M11rOmnMO2P2fzWZQZa0OWssHDXg3QEDwPA8KvDUgCtunaZoSQqrKYs3oxnEMxaMgGLq0fzTkHMCQGI/Hv/32G7BEdnZ2YBnZgHRRFMfHx0mSbG5uwjy0blFAg5yenh4fH1NKHzx4ABSQul8GpVSe55Xu3t6eZVlLhPjAmnMOKKMEJfiUUu12uyZA1p&#43;lpZTAnIyiqOJV1CoKPWVZllmWIYRuu8H2KQblZuI45px3Oh2oTLXcVzU3S7rIi4U/N6MLKxSI/zSjCFZNdCCg0vyEFNLCP&#43;U5N/e8KKUQnoOyWVUVtLp1q/BGWZaNFVeDYRTIlo7jrIosdRNd2DAihEBxzM9gQlqV6ev1etDdBUEA8YYG1CmlUCA4CIKqHHUDoo7jBEHgeV7VadWtW9WZ63Q68MCrMlNLfFtzzgGZBMB7hE4ewI8NqGutoUww1IK8bXLecoqmafb7fUihgJgsbIvXrUsphbwFIGoCy/CjvwhVUS8ltTQ3rMCWoOu6Qoh0YU0Go5qvyQUTYRhfZrNZkiSN6UKWKMw5bni/kOxTFMXFN6fpORostCAjbV096f5YlSYI697LCcZ1G7y7UI4V0nPufzH3L8cuJhhXcaCmew4YFFut1mAwWGHlgLWtxC5F3O9myx7maGvnuG925aGmO7H1tOM&#43;25oJtrYrrTnnqGqAX4yjr&#43;0&#43;W0POAaGYOI6hYNF0Ol3i5OPaGraG5hxAhjk4OHjx4sX5&#43;fnOzk4QBM2kVqxtaWukUtMCMcM5Pzo6&#43;v77709PT4UQz549W3cb99zqdQ6tldJKIyW1NEziuouDipTAdlR93Ualu/gvTDDBmNTEL/xDdBFJmv9vgQTFiIBuraK16tbnHFppxWVRipTJXCkpiO5ttv7&#43;7fPZ9OHz59/0er16Iujv62plEMs2fJu6C1RLXU2ltZJalCIrRSoUI5iY1LUN36Q2wbQ&#43;v6xVt65iPEqLgiez8iQuT0oRaySJNhWzsgki0t0a7m70N1ZbYvgqXYPYntkN7aG/4IDVgXzUWnNVpmw0K44yPpKqXLCNgsDaCO2BY4Z18C0b0H2v57gEuKlyHqsK6Tfc1dRaMVFMi6PT9IdcnBlUE4yEFAqZVnvQtntR6BkGXXmv8UHdksuUvcn5uOs9qQf5iJSWOZueJT9Nyl8QKgxKtFIp10l5VIonPe&#43;ha7Xr4Z/Wq/seahLK5VVZ7a7rwh4dJDUppRzHuUnGm9Kq4Mkk/y1mvxJSEupiJKWcFLJkaGZq6ivfUhYmK26nD&#43;oKOSkYK/hEaYERCp3hapGxGmmpRMpG4/xVLt96tkuJxVXK5CyTJ0LlCOkexivnnzag&#43;x5qEqpbJ0kCEJ/BYACHS5MkOTs7Qwhtbm5CHezrv1RpWYgkKU&#43;kmlmmpXVZyHHOzxgvkY4RWkAgMArRhmV4dGVoTn2t7gzo4Brp0F6prp6PZaWIC3GucYYwLVVW8LOCT6WgUpbAA&#43;16e67ZMlY476lf971hpYKvIYR2dnaAA0YIyfP8&#43;PjYMAzHcWCr/drBRS&#43;Y3JzJlKupoWyuZMzepOWp5MpAi/zvBYeayccdd8c1o098j98NhfOxrzHdavyFxYKQJZOxJjETgqk4Kd&#43;WLMHSsShTSkklhWJd71Fg90zySXmsTer&#43;4RyQ92uaZpIkWuskSabTaZqmnueFYVgUBaX0ZuAsjBCh2MSaZCxm6pRglbKTlJ9IKU1dwCqz5KzkBUWWSRzTcKp&#43;bwn6ohACMg4x0RjRZnSBowen6OR8JYmE4KU&#43;V5pwmaX8tOBTohwhhVSYK8UEUwoZxDYsE79zyiVWA7XqXrkrC/nKvV4PyuG3Wq3pdAp5hbZtQzLwDVOZCSaOEfjm8CxzZ&#43;yQ4FLIQmoldD5/eaUjlcuYbehe6eVAllXvkttu&#43;7yEEFDLHyHUakfUJg7paVGvLpwdOj8/h5cniDyiXRP3ZuxVKUZI83nbaCF0rLWphS&#43;ko/hpaEyFx7Wll0ZN1qoLq40r8zksy&#43;r1ek&#43;fPkUIBUEQRRGUT26323ACoioBf70Bh7TnPYmL48NkVsgDpCVBDsFIIcyVnI/&#43;0sYkJNJBGi&#43;OPIk0TZdDTb558&#43;b//u//six7uPfw6f4jt73Ztr4us2khf61JF5CPL1&#43;&#43;fP36dRAEX339bHO32zb3C34&#43;Yf9WKkOIUuQJzAVCeO6exCI&#43;8XysDa2RVJ&#43;EmqxJF0C0FQPoMofUMIxutwsHpEzTBFAfpRTw&#43;FpryKX&#43;OGoSY9Nw2t72jvynUvwolbn4FWlMsK0RQTqism/JbVJ2eIa5Jyg24GQp9FW3dY6joyNAto9GI891v27vb4X/g5A6SlVNuoB8fPPmzb/&#43;9S9KyaIm/v/X23xCqNYzNSn/LfUEI5/ORV2sIlNumnJTFS7LpTAFnIFbGjVZhy7smdu2DU1/2TlgZPE8D34Cil3D8yKEVH&#43;46chCiGsF/fARlJc6SnEuDufLFOnZaKdv/y0ke0R4ySyzjGm7Pe/N4KjxEj1HmqYbGxtKqUVRh3bkd2yvbyxi8zXpSikNw&#43;j1ehsbG5TSTqcTBq1O0HeVN39xZnpcvJC6wNImqhMY&#43;z3/G0v1RIGmkyklBjzk5VCTNenC6AwZvleiJlcFKcAIE0o9K&#43;qHjxehf3WUfM94TmTXQ0/b5pNusC2YzrJsPB5jjNvtNiAfl8Bbg&#43;8yxobD4e7ubitqLwAtVKO6dGGEFUJ0Oh3XdR88eLC5uel5rqNcjJHSSiocl2&#43;0tE2xHRlPe/4jmwZZmidJCuvnIAgcx1liFlyTLpxtGY/HVY9Q78bbO/8I&#43;&#43;EjoZhSRl7GhuhaYgNzFynq&#43;zYhJE3T6XRqmma73V5it8UwjOFwCJMhz/PgMA9CyMU16sLc/PHjx7u7u7Zte54HXTGhNEKDLfU3qeQ56WtqmXzDVn3NDdOxwtAAKAOk0N5wAteY7p8fQs0cUoQJMVw7GoT7Fg0YL4l0WY7ytARwheu6cAYOlkVLwAIIIb7vu657qdujdeoCo7LdblebDBWZzjLslreJEe24e1oSzaw84WXBKMl83w/DEMZ7GMWW4GrWoXtnqMn50EXMwO3Ypj8f5zQu8nJMx/HC/swDXeL7AY7WsO5V4y8h1DE9I9iO3A2ksRAqtmMgR0PcGdYCSzMzmtRtikNKDUqMdzzQ3zEmq&#43;KB3jddQqiJiWlY73igc&#43;dbIYe0Md2mDlJf&#43;KdRHuhd6a45pMvZmkO65pBeZ2sO6Wehu&#43;aQNmQNY5&#43;q5KzPgOwDVlVyhIturJHuhH9aFXFumENawTmqQjlL6zaKYJBSZllWFAWEYppBdED5yOl0qpTyfR&#43;q1zSAMASkH4RVIGLdDIe00tVaR1EUhuHSz7lR58jz/PDwcDQadbvd7e1t3/cbcA7gn7569UpKub29Xcfa9c&#43;mlIrj&#43;Ndffz09PXVd99GjR7ZtN9B5wDbCZDI5OjqSUu7s7FQh4yWsOdazEGIymRws7Pz8nDHWwKEm6NthK3I0GsHeUgPHdCHn8u3bt0dHRxCJagytCUMJDC6f6I7NzZIABTaZTOI4Loritlvzn2KwkIP0NsigrlUOPJIxVpYl/BsKNzdwv7BCoZRClB0YeZ/BnANySVqtFmQVNbl8NU3T8zwhRGMBFci5DMMQGFfLVQr7lAuwLCuKok8BnzfqHFVF4yRJ4DhkA6s7aCdIZgPXBP5p3bpQoReGfGinZgBocL9V4cjPBlILtfIty&#43;KcQ78H&#43;UR1S4Pu9va2EMJxHJgF160LLbS1tdVutwkhkEHXGBzX933btqHa46coNjqsAIoUcnNuCE9dlbTneRDnAG58A6JAxoWVESEEapQ2ZuAWN7/TO4bUwvMqyzKOY8hFa1J6bdfb3UNqYYF3eHhYlmWTlZrW9lG7R5Dai8z2td0HW0Nq1/YRW0Nq13alrSG1a7uprSG1a7vS1s6xtittTTBe25W2Jhiv7UpbE4zXdqWtCcZru9LWBOPVia4Jxje2NcF4TTC&#43;wtYE4y&#43;FYFx9fsNDMmuC8V&#43;fYAwpbggh&#43;Bxj7LoukAU/dtFrgvGXQTCWUo5Go&#43;PjY4TQ1tbWcDgE8sk1X7omGH8RBGPTNOF8zuHhIYQ1AQPykateE4y/BIJxkiSwvT6dTjHGkEb2sTnsmmD8BRCMJ5MJYwxKJiRJ4nkecGE&#43;6oBrgvEXQTAOw1AIkWUZEGpvGPBeE4y/CIJxURRSyrIs8zw3TbPf7wNM6Pp7WBOMvwiCMfgXdETgPTckjq0Jxn99gvGl53Xz6e6aYPzXJxh/yqJrTTBeE4yvszXBeE0w/sj9rAnGa4LxlbYmGK8JxtfZmmC8JhjfyNYE4zXB&#43;Dr70gjGACZpnmD8ibp3cJC6apjGoL53onsxYADSzbhFdacXdZf7qkYRDJxz4OrBKepmRhOIjxVFAaidBnigEIrmnENYWQgBdAPIk6pVGnSllBAY1FrDVOO&#43;Q2ohmejo6Igx1m63&#43;/1&#43;A5Ba2NCfzWYnJyec81ar1YAuMJNHoxFjzDCMsiw5577v9/v9WnF1kMs3Go2yLIOCnkqpTqezNAqlIeeARjo/P//xxx/zPAfMXrX7V6tVcNw8z3u9HrzB9dEfYEMqy7Kjo6M0TU3ThM1LwGrXeo4L2DgnJyfj8TgMQ8450DXBI5d4H5rrOYQQSZKcnZ2laer7PvTzDejCcAbBcozx9vY2ZG/U1HlczIoo3xnMB2GjvFZp0IUd1yoEvPRzbq7ngEs0TbPqMC5OneqzquwIQIUamOjAGtL3/TiOYeZRRTZrlYaAr&#43;/73sLgwPrnxCEdDoeMMcgLqVykVmloqlarZZrmcDisRv1adQ3DCMOwKukthIiiqErMrk8aMhA6nQ6E&#43;6pdpOVEm3MOy7I2Njags4XtU5jG1y0tpfQ878GDB9BCtm1DXf5aRbXWcN5TCNFut4UQzdyyUgq8AaLAtm07jnOTVBXIB72codHYaWYY&#43;wHBAEu7xo7YSymBEdvMsAJWpabCv0G6gQn4xWnNzeMckOzDOd/a2trc3ITVb9MR0jzPT05OpJSO46z5C/fHqjRB27bvgENaLWillK7rdjodCOuu7Z5YlWB8NxzS6nRMp9MZDodr1OS9so8cTWjmCiilpmmuOaT30NYc0rXd1JrbF60qW0Fxqz8vnNZ236y5CGmWZcfHx69fvz47OyvL0vf9T9kwXFsD1ihN8Oeff/7uu&#43;9OT0/39/cXB5Ba6wXLfbYGhhX9O8iM4LIsjxeW53n9Ew594X9N2l3prv4Cauw55vMMJLWWiz8oy6b9QW93d8fz3L29PTiUW4d/XNSFTzAmBFOCyYooMR&#43;WXQD9BCBifldFlODGag6t/gLqcg6tlVAs57NczKTiC5yLDPv0v//5nOXy8eOn7Xa7jgjpn3UxIhb1XLNlGx6pB9wGd1fKLGcTpnK0aB5KTNsIXSMyqE1qB07WcgEf2Fup2HAf/fDKK0VaSJaUZ2fZq7g8lLpYBPoxki4Vbd8Y9NvbUbD6Sk0f1F0A9lotZ7fj7q4czAWmtCx4Ms5/G&#43;W/lGKK8KJtsOWbw477MHQGq6WQNXYBfzQPrDarHbyLwTLYuKqqHX/URbRWpUjH&#43;ZtR/h&#43;mRpQggpRUXGnDMjdD1yeWQFjpub&#43;ssp2u0s25WYqpUqLnP6rBP7RSMmXjs/SnGXuFCTcI1lrkSub8VKhCI10TxbDuC3iPJpgkCdB8IMwOG9zV5wihbrcLCYnX&#43;8fCkeNZ8ZbLkWVqg1Chc6WmTHIuU0IQnLvycETxKsGxH9blUyY4E6nWcn4L3p5nrVJXayS1yPkkYW&#43;lnnmGS7BiMpYqLcVYKgZzw8geWAY0z4r7rfou4D2a4Gw2AwoKIWRjY2Nra8v3faXU2dnZwcGBUurZs2eWZcEp0&#43;uuVmsmi4KPpY5t7EjEMn6Sl2eCS4JipeRi9iTa6kGwAMeupJ30x3VFHbqL90pymTE5RSTTGpcqS9kxY4kSBhfFAi4lheItZ&#43;gYISWr94&#43;aLuA9sg/GOM/zg4ODKqMfEgI452dnZ3met9vt7e3tG1Ua12jen4uJnruRSNhhUh4roU3UUkqqeSuyUmQo/CqyBwY1l35ekGv4O2RmgflqRrcia2G8YEwrwUQq8QjhlMk4Lt&#43;UPCHKsQVTWnPFS5FLxXveQ8cMySrWLw1cwB/OAWl8kGGmlCKEvH37djQawRHCoijg9McNKivjxRzQNUlYMp6LM4pFIWZMxEIxrpnSVGqTCaSlEZgbvtlZUMl//&#43;XbxtQh1TtJEkyw41hYmQb269aFNydJEs65ZVvU0FiZSJmZmHHJlWKlSEo5RTpVCCtmcomFwBaOArNvGz5612MtvYGwqgu43t7rOWzb7vf7e3t7Wmvf9&#43;GMJYw4gC&#43;&#43;FTCu7TwYZ9uj8lTpGdIcaUsjJlDJVKFZKTXnCClJtcbVe7AETbBip5ZlORgOuhuhhzdtvDWuUxfO4BwcHBwdHXmet7k1sEI3MB4m5duEHyBdaE0wNiQSTOdaFAbnlEtpE6RJNfdfgia4qgu4ob3nHKZpdrvd/f19hJBt28PhME1TKP4exzGl9IZjytzPDL/nP8rZjMt8Uv5LqglCNsVUYSK1TYRriDahXcQsLZGic4ksy5ajCb5&#43;/fq77747Pj5&#43;8ODBP//3f3b2&#43;gPvH0Llk/LfNekC1e/Fixfff/89IeTbf3z792&#43;/6UZfCZkfZyyXBxgRgkKNhUK2VBbhISY9wgIt6NwP0ZI0wZVcwHzsxTdK&#43;n8v0kApjaIIihlAhip4N2OsYoC4rvtxmiDCBjVDp7fV&#43;i&#43;t1QJk9m&#43;hYqw9gmxD933yyDceUx5lMUvtDCEM/jebzZagCZ4t7PT01PO8PC0cGoX&#43;3&#43;YOPEM16QLV7/z8/PT0lBAynUyVwB1317JMjPVRqjPxG9IKaxPrwMY7obnvqW2ekWSWmtQ2DGM5muAqLiCzDOeGI8B7zgE54rBSvegBC6Rh61aHLxa0SbvlDRD6b5g1jov/zKcyou3gR/3gb217V5Y4z/LRaAR50oBSuW3PAWkAT58&#43;3d7e3tvbe/ToUbvVsWzTMH4/f1CHLlD9dnZ2hBBBEDx//nw4GEZB29cewVgjdZjgQoyQdAw5bDlfD4PnpgpZISeTKcYE3sAlaIKruIAJNN9N/ONyjBIiXZc&#43;hNjXbW9gPi0F/9B/l1pqbeZlQlHPUw9dveE7bWyTZGEY4263C&#43;iq26oIIXzf7/V6EIZpt9twIobQ4XzlUo&#43;uUgowhM&#43;ePfM8r9frwWlHpa0&#43;eiQ0l0qPstdKWZbecuWOSzqeHxbGfCipKIadTue2N7uqC4CX/KPHUWsGxmFiGnbkDbbV3ynyijIhMkCFp4VR5sz3/SAI0jQty7IoCmDj3XaXCJJCWq0WDIVVVNfEteu6rgtnDirqN9bYtaON8InWODB3tTAIC1VpFTm3DOF5HgQLsizzff8T8&#43;8/5QKAjm1Z1vXO0cS5FaVkyYu8jIXkSBtlxqeTKWPcdd0gCODt9zwPArJLnOy4sPuKG9O9&#43;Nwu6mqtheQ5S0qWIk0kx/EsTeKYEBqGoW3bsAZstVownN32Zpu8gCaSfQihtuWahqUXqR3M5pQYo9GoKArDMFqtVhiGn5IVdtVv1ap71a9gPJ&#43;M&#43;07LswKNsJLKMhyCyWw2g0P3URQZhrHca9DwBTSUCUYwIZSAuxPye186m82Auuq67g3rMXwWuvN5G6aIkPmrTX8PPWOMgRwNR8lrPf22qgtoOPt83gowFYKVEZyyqskz7lr3d34sUAzhkDAcy2jmXOSnX0BzZ2UvmVIKEtCbPL96V7pVHf8qEaLhtOrlLuDOnOOaieRfUveubvZTLqBRYBzs8VYgl4bpenelW512b94d4X6r7K3b0jWbO5rAGAPQDGzWwD7fR5faK9EVQlRlN6pSdvXpVjRBGLxgzQzMjMYAihXOENQrnOGtiM1NOAeAzEajUZIkUFlyNpthjPv9fqfTqaMu9SXdOI4dx4Eyl4SQwWAAZ/xr0q1ogsCJU0qlaWpZVrfbhTBUHaIfvADgCgF&#43;rdVqdbvdW3lnQ87BGDs7Ozs5OYHiJufn5zA5Wi46uYRuFEWEEECDEEIg2FyTKLTN8fFxURTtdrsoivF43Ol0mgEoXrwAqLECGwUVXejmX9VUnGMxzFeEnbIsPyWb4Va60K&#43;CTwgh0oVBn18Tmr5C1OV5LoQYj8fT6VQptbW11cAtX7wAxhjkJHDObdvu9XoX8RsftSYOUgNxHHKFMMbZwmB3oFa4D&#43;gCWg/ixLDKv8SeXrlVNEHLsqqE/mZehosXABW7HMcBOhmwcm91443VW6G&#43;77fbbSCDARGxvtnGJd1OpwMYUMAaRVFU6wFu2AIMw1BKSSnt9XpJkgRBcKPc29VdQBAEVXliyAG9Ldq7oTgHVMvN8xwQzEVRQEJDEAQ1VTy5pAuZH1mWEULa7XYYhvXpwmIhz3PAWyOEYK/rJhuhq70AIM0XRcE5d10XMkhufgHNBcGqVE3oY29&#43;RGoluvAHmAVDVY262fhwmxcZoE0GRqsLqP5NCLlteaj/FwAA///IdTZ/OiKulQAAAABJRU5ErkJggg=="
+                     data-src="/components/display/images/addressable_light_pixel_map_default.png"
+                     data-srcset="/components/display/images/addressable_light_pixel_map_default.png 361w, /components/display/images/addressable_light_pixel_map_default_hu_757b243829b20a36.png 72w, /components/display/images/addressable_light_pixel_map_default_hu_ccab412fdfa71f24.png 120w, /components/display/images/addressable_light_pixel_map_default_hu_de5e1c3f9cdc79ea.png 180w, /components/display/images/addressable_light_pixel_map_default_hu_484c4a95b3db5abf.png 240w, /components/display/images/addressable_light_pixel_map_default_hu_5eb1f6bddb16fd24.png 361w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Default pixel_mapper as used with a 4x4 led matrix</em>
+                </figcaption>
+            
+        </figure>
+
+
+<h3  id="btf-lighting-8x32-ws2812b-flexible-led-matrix">
+    BTF-Lighting 8x32 WS2812B Flexible LED Matrix
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="btf-lighting-8x32-ws2812b-flexible-led-matrix" title="Copy link" src="/images/link.svg">
+</h3>
+<p>The following image illustrates the path the addressable strip takes through the common the BTF-Lighting 8x32 matrix.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/display/images/addressable_light_pixel_map_8x32.png" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>LED layout for BTF-Lighting 8x32 WS2812B Flexible LED Matrix</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 621px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/display/images/addressable_light_pixel_map_8x32.png"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAADPCAIAAADTSmxnAABZOElEQVR4nOz9B3ccR7ImDKcv2x4NgABBI&#43;rO3N399vv/f&#43;XdvaMRKcLbNmXSv6crwGQTBNHVRnckvZNnzhyKBIORVVmZkRHPEw/z3qO/0HDOaa2VUhhjSikh5PufwRiHX8Cv4SH4ZthmLP&#43;pc857jzFmjBFC4E8JIfDDzjn4txhjYCTYhL8IP0yb8aw/f9jB/tUO7HJ476WU9/f3k8nEe885p5TCS4I3HV4kvHvGmBACIaS1ds4hhIwxshnWWkppFEUYY9UMhFCn04njuKoqYwz8RSml1poQkqZpHMewVsK6AbOEkCiK0jSFvw7/&#43;p9i/KUWh3Ouruvr6&#43;uzszOlFHy1rhkYY0KIcw6&#43;YIQQpTTP806nY619eHhQSsGuoJQqikIplSRJt9slhBRFMZ/Ptdbj8bjf708mk7Is4zhmjEkpq6qilA6Hw06nUzUDdiDnnJTSORdFUZIkg8HgzZs34/GYEBK2rj/4&#43;EstjrCZO&#43;eUUlJKY0x4E7ClU0phCxFCcM6jKFJK3d/fl2XJOYc/gr8YRRHsAXBOSSnLskySBBaE1loIATsNpVRrDVtFWZaw8YCp4BJjTCkFv/NnGX&#43;pxYExjuMYvk7Y8MOeEWII2B6stVEUwT5vjInjuK5r2FGcc/Bq0zTNsswY0&#43;/367q21sJOMxqN6rqG1eacg/XX7XazLIPFAT8MOwREG4SQJEmyLPsTnSmLJ/YXC0jhXIBvF7Z3jHH4RYg84HwJQUmIOSBW8N7TLwMMwp/yZkBgAastRJ2sGWHfWv7nYOtijEVRJIT4E8Wkf7XFEbbx8GtrrZQSQhC4boS7yfJFA94ZhLTWWiEExriua2OM954QEq4q8J9CCLiehBUJtxghRBRFjLGwLML4E0UbMP5SxwqMcB&#43;BM0JKeXd3d319Xdc1fPqwDuAOwhhL07Tb7XLO4a/M53Mp5WAwoJReXV3d399774UQSZKEGJNz3u/3O50OBDHOuel0WpYlQqjX6&#43;3v7wsh/lwnyLPjL7g4lof3Xil1d3f3z3/&#43;8/r6Gq6gURRZa&#43;u6ds7FcTwajQ4ODiCAEEJMp1O4rKZpenV19csvv5Rlmed5mqYQfsIleW9vbzQaee&#43;jKIrj&#43;K4ZGOOjo6Ner5dl2b966jsYf/HFAZs5pBmEEHVdw2lS17WUEq6jsJcs56wgCsEYJ0kSRVFd1yG6hPRGCF390jDGhB/7V096N&#43;MvvjhgZYzHY875wcFBWZawCCBv0e12e71enudZlkE0QAgpy7KqqiRJOp0OXDHKsoQII6weSmkcx2maQiwCtyQ4ZUajURzHf4318RcMSJ8MuG1qrU0zQogKZwpsHnDbhNsH/DAhBKIQSGCEaw7YhAtqiDohZw/GhRCQBv1zxZ7Pjr/&#43;4ghFkyc1FLh0LN82n/ww/P7y8wm/hp9/4W/9BVbG/1cWx7/HZuOvcDT&#43;e/xO49&#43;L479vhKPnzzL&#43;4reVP8iAKxJUYULwu1v7T2KgnYxNFkeAw8AkIYYnzVjLPyhxQWAImYbw6/ZGlhE3IV3xAtLnR0bAmeUcBvx6J5dS51xZlrPZjBDS7XbjON74RT473/CfLR1enm94iQGXFF7B2osD5vnw8GCtzbKMEAIlym63m6Zp&#43;5wxpKKn02ld13ClBHeTZrR8JZAAnc1mRVEwxpIkgdQn5xzeQcsnZa2dz&#43;fT6RSKsVBVoZRC2Xb79QGZlYuLC8i5bVx&#43;g5v2rBmAMPLeQ74f/rPX60H2ZaU/RVE8PDx478NL1FpD/ibPc/Bw7cVhrZ1MJv/4xz/KshwMBgihyWQSx/GHDx&#43;iKGq/OLz3dV2fnZ1dX19nWdbr9WAhQ2Gi/eKo6/r8/Pz09JRz3uv1jDHz&#43;bzb7b59&#43;7a9Ha317e3tx48fvfe9Xg9jDHCek5OTUIvZZsCXqrUOe9LGdpRS19fXHz9&#43;RAj1&#43;33v/d3dHSzrg4ODn3/&#43;GWAoLxsxxtzf3//jH/9QSg2HQ8YYrLA0TQeDQQBErr04ILU8n8/v7&#43;8hz1gUxXg8hrJnQFC2GZDGBjuz2QxqYHDQtPfHOVdV1e3trXPu4eEBjnZCCKSk2k9KKTWfz&#43;u6nk6nsF33er0AJ9tyAJ5jNBpB4X6b4AAe2sPDA7iKMZ43A3LBkNxb&#43;RbCjgubLuAQ4CyGpB/Meu3FARWH0WgESUCtdZqmIWe81rQZY91udzweQ50zoG/W&#43;lLByOHhoZQSzk5CSK/XW&#43;sdwJ48Go2KooAnSyntdrtbvsgn9uH5bHNOgWOdTmd/f78sS8i2wXOjlI7HYziRV/oM/uzt7QEyAYKVKIp6vV6n0wk77tpJMFi5ECuEaBTsto8Vlj9WAF3CVgZwy7WOFQBfFUWhtQ5bV5Zla71aY0xVVbPZDIzA44PTd1cxR1VVZVkSQrIs2ybmsNaWZTmfzwHzHOp/sDm1jLQgMptOp1LKkNWF7zP8/9P0cPupPtn8170dLE91&#43;TDa4MqzDL4KlzpwZt3bSjACYzlu33Jore/v7y8vL6H&#43;1&#43;12N0Z7fO9quMeu5fCzL/FJPWGTq&#43;yuHhnsFtsbCYDyZdrINkZ2PmCHA5jIWsHQ9&#43;N7VzdLcrR5iX&#43;1JNgfs&#43;IFh1Sv1wOmzG6d/P2mvE3hDf7ilp79cYyAnd/lQUNSp6oqyKPsaH3sxNuXjGyycyxOPW89ahDYiBBMMV77lFkYQc57u2sjeN1H5pvgx3kHTwo8wbteJXDGh0TwNhlSjx69xc0hs4G3HkKXxXODKZOFne&#43;MsK//5HNH1/dzcN4qW9V6ol2JEeI0i1mX04QsXm1bF7132slaT5QtPHKcJDHvCpoSTFcaCTy2xSv1Stq5snOPLCNxzBojhLV/WB5561Rt5tJMndcUi4h1IpZTzFcu1oALWYkst9YWRQEBaYARtR9fp4y881rZQtpZ420Us4549HaNKTtnpJnXZmq9JJgJmsesw0j0ZMospMwg4RMIYUDTALDTkpdOWzmXV/fVPytzg5BP2LAXv&#43;1EhxHL2rxaGM7bWj/clr/M9YVzKmK9fvy2Gx9FNCeYLQMzn31Sxpi6ro1VlhSFO6vslfNK0E4vPunGxzHrUsJbrg/vrTTzh&#43;rjVJ5pN2c4ysWrXnySiuHiYSH85B70xBPgyEBI8UJqEhgPs9mMcz4cDn90lAce5ff/HFw&#43;tZEWVzW6KsyFcQUjSTc67sUnCe8zIlpuvd47aYqH&#43;vOk/qTclGKW8cNe/CYTe18&#43;8sfBQqb95uYGEqgYY&#43;B/7u3tdbvd5QuFR17ZciYvpvLXauFfyXBH6qlzppe8jljerI/V7jlvavMwlR/n&#43;jdt5xTFUj9Yp/vxiaC5NR74as&#43;&#43;Eiju3NxcF9WM5nOfnXl&#43;73FFEK/1jbFykLxLRL/l&#43;nCLJzWdytOZ/FXZe&#43;tMIc&#43;0LYf&#43;50zsEc&#43;U0sBJ&#43;d4Ta&#43;10Or29vSWEHB4e7u/v/6iihjEWQnQ6HaitPPszcLFfZmQt/1FDsLh9mN7TpKS9Oy9ujH/wHlXqyljZT99nYsi/&#43;/Sff/re1mY6qX6bqH8oe&#43;u8mZOxsqXz/9GJDgWNgxEWHvfFxcVkMgH&#43;52w2y/OcMQYMvjCZZl1bZYpK35TmtNb33jGpCuswQRFNBaer640evn5b1&#43;a&#43;VOfS3FjrazW1ixOQ9aJjbygwTp8tQ1hrZ7PZxcXlZHYTD8tofEnTW4unzppS3hvjkWcEi0R08OqV6hFyxkllHipzVesLqadzfKmMcpbgnEekU9eyLMtn75/GmLu7u7OzM8h79vv9H6XdgLQNt8ckSX70iCBuDQm9pdfpq6q6urq&#43;ujkX3bpDJjS/0f5a27LAt9JoYz3pMBoN6erF4b&#43;cpJNSXdb2XJkZRRfKKO8owzGLx3R5cYTsJOdcKQXw6yiKvn83i58knJPEO1TJWalvncNGC&#43;r2c/omFXvN5rZ688CLIEogR6UuC3VnrFGaYjtOyHFKxxHN0zSFg/nZnYMxZq3p9FKazVUkC3tV2wdta4kRNqMIH2W8OeboyjAII0QojrAXSteFvJNmgn3ldM7dq5wfR0kH3veT/BgMqBRCdrLf7798BwH2ZUg0PfszUB8By08WhxDCWiNiRuLSx6iwZ6W&#43;V3ZOvLY6Y3ac81cJ7xHMVn2cGDdTZjix1lVyKs0D8pXVGfevuvxNygfBCAOfsiw7Pj4eDodwnAOno9frPUFRY0Q4TTrRYYe/ndWXyBXeOmcSiyJVeZ0YS93ivb/oH16Exyzhw270blafl36KXO1t6lBsamISlwiacvGj7K33vtPp9Ho9Y7XD5b1KL&#43;a1KufeEutT62JdERUbzQ3BlJBVVQZMY9brRm9m9UXp77wz3ibOpbYWuvY&#43;8g1lKf5RzJHn&#43;Wg0CjHHC1tCWZZ3d3cQwz2bcIPfj&#43;MYqDHfxxydTufIHDlcT3X3Yl7U6sFb71y6&#43;B8VuvImMixefUnGmCa824/fFPKilLe1Vd5F3iW2FrKyKjKUOHCPBXI68DLADyhsfl&#43;CX&#43;wcVOTR/n7&#43;v4zTyKa1UzE6SvCx11FVSsEUVHFWvRKW8P44&#43;5ux0jtRuin3&#43;xl&#43;Q0xWlzpiCqAhPzqbIf/fRN1dIRnC1jk6czfUDjPyltluXZma15TQHx3wSzMiEcuH2XvrDPKUFL95H&#43;fkpxiPjcRVLRkTP6raA/k2SZKVt5VQOuacZ1mWpukPnMHPcqLgH&#43;KCL451byLFPTbOIeLOMep06YcY7WuJyqqmlK9MohCMBUv76RvjpLEW2a7TIsfvI7RvalyWFaOPOxx7tjKyjLL/zjSNWNbP3iBEI7xXlCUxnZiMGIqMttC1YmV9BGPMadSJD7xHDHVmdIJ1GpHRYq8zFqrGP1phYBn&#43;1BOS4z2P/idF6YTeehVFeBTRjrdIKQUrfuU2RgnPxBB3/k5xnJDXVlLuBxHpeYuVVCY2P7p5tqcgwLNeZuquNR6n3JzX3tMsGu77v2MvUnLhpBBoFNOed1&#43;9XXmyEMIS0dvLfkaeJeSVqhF3w4QOsKdaaWMep8yeePD9r78fi1108bW9SfhAZlLVTsvFacI5az/zxc&#43;zpJsccpoNk1rVVkuPERYias8IWhihUTfe5yTtx6WSVtfOO7xMgW9hZLE&#43;UjGgHZ6LQ90YMcYzyh6X4NaQDkJInucHBweU0rVq1896y4jI4hElohsda&#43;l07Z1F0AOiZSW1&#43;SRYGvX38c&#43;5ONDSqtpZgxhly5/T5ulzqA5aZ5XSVVnBcoua0WLxLhnxrumJY&#43;qqNsbAeQx055arpNlsF74YbaqqBu48rI/vUzU/NAIT8tYYK2sFhGl44hAHbInQUUpVVQXRyfbp82bKFpBN4C3clmG0fW4BS2qclAqY5cDkgxBq88IbxoRSTAglhDLKdDMA5NG&#43;wrnYbhcRLKWEMcqgH9ft7S1jbG9vL8/zNnaaHDIlC1MLZ&#43;I4hkQZdGlqEwPBx4QJxZ4QzihZrKq6rieTCbRjGAwG7Vf89wPgjA8PD3B8b2Pq0VuMCaINnpgxyuFqCUjEly9E3xiBy9rCIb94iYxVVfXw8DCfzweDwXg83qoqu/jQvvTBga57gMuF8L7NCDDoEOVMJpP/83/&#43;D5zNLdFloUUk1Cw455A1gi8VLoftpuOWgd1KqdPT09vb27dv36Zp2nIH&#43;pHloiiur68552shqF92NeSRwWHoXRZaAbQ0EhKykPA9PT09Pz9//fp1lmWbLw6AhM1mM4Chw&#43;I1xrQH0ML3XRTFdDqFZjrQnw96arUHk8JdAACtcLpDB461nIHbJoCjOOdpmsJGCBf7LUEYux0wXwDjBXoBnMLQ66ylkbIsJ5NJQOIhhOq6LooCGiFZa7daHPP5/LffflNKHR0dQSeTF2oizw5IMn769Kmu6yzLDg4OkiQ5OTmBhGObjxX2jOl0enp6Op1OGWPHx8f7&#43;/vrOgOJ148fPz48PHQ6nZOTkyRJXr16BZmMLaMEyCSNx2PYVrfcNmC&#43;Hz9&#43;vL29raoKIRTHMTSTWdzwW893Op3&#43;&#43;uuvNzc38AkxxqBHzevXr6EUsPniCAUwqINs9mFBdA1pWVgrnU7n4OAgyzIAzbZ3BsCkQDmB72mtAdMBpCd8fEmSjMfjLMuAx7HN4gj5ddjztzEV9v&#43;iKAA7Ds8tz/O1Zg1PDFqswuEC94nhcBj&#43;f/PFEeD2WmuIHNedc8BSv3r1qigKIUSg07QPucFIlmWw2CF/yhiDut1a04EWUNAiLM9zAOwbY57t/rbWCGsXkujb4DnAkziO4f3B4QucnbWIdABbHwwGoSs34Pih8rohbyUM2CpfvXoFXVA2A2ACA4BzDjxSKPuF1uPtPUnT9PDwEKrh0MwPeHhrTSfP89evX0NnsOXNf/t&#43;G3AEA55jG8YbDPiiTk5OIHYOmGq4MLc30u1237x5Y4wJaTpKKdwq4Ge2ucou7gXQ6whjvMFOHiIp&#43;Jhg/cI&#43;udbLAE9CJnszZ4In4UltNqNnx64YbzBCsiScyyHAbL9fBiPL8QAEIsBX2BZgHJo6bg&#43;nDqHlxkaWcQWbGXkCyN5hg54dMt6Cwe/LHTDW2nGfrZmE39kN&#43;nwnD3FXDZP&#43;gAD0XTHefjSebUC1jREYu/EypKGUUtAq&#43;l&#43;YFQh7eEBw/RFSFKGp3O/RG/93mvLOeCtAb7&#43;&#43;vlZKQT5xY47Q9tFfVVU3NzeTyQQi8HUBvTt0Bga0eLi6uoJbAPRc395sGJCev729nU6nzrkkSbZni21OTfDIee8ejwJEvH9MIl1eXkopR6PRSoUAqPp4gNhjghFB67&#43;GZ41Arvrq6urh4QFu/y9fHZeNNGuBNpPacecdYLW/DDBuZepbbwmiMOW6rm9ubgAysre3t&#43;q23CCZkUULTxpc3uLpIfztWL95i29qeGZu3SKmZTQRNKOYU0ogQ5Bl2crCkvfeOKlsoV2FvKckEjTjNA5wujYfFmAhpQEjjhIhaMZIjDECTI1z7gXQUDDinFa2VLb03hDM&#43;MKThDZPpr0zL482AOM2Y9lb5w3FXLCMkwTua3mea62TJFmVIvLWWb0wUjivMaacpoKmFHPIkwbAw9eLUPjCltVrnoRO3nvt6rm8nslTaScIeUG7nego43sEiWJezmYzIQR0QHgh7LLOlPpuUv9W6VuPDCdZHh3lYp&#43;TtAH7mDa4mMbI/cPCyI1HmpM0E4cdcShoppSZTqZKqU4zXthjG5LEdCLPSn1lXUUwS9i4Gx3FvE8wM9porTcG6Xz9V3bEsv/qrbo0vqJYZOKwG72KaMdaNJ/Nq6qC5PLLU5ammNZnhb4wrsCYJmzUiY5TPiCIN3IB&#43;lH7YbkGo7WGDBIUWtM0ffKOPXLKlDN5/lD/Q7ob62qC0krfj9K/daLDLE8hJl/FuG&#43;oCYv3&#43;s9Sn1tfYi9KdWvT/&#43;zGrzhNY9qmGLswUunbu/L/VubCoxp5mvHXJpW9&#43;HXEO8PR0Du/EjzQ8Fam0/pToT9rN7VORw1Of5C8T8WAMb6r/m7wWLa8kQVv5/qTdlPv3FweaVv345OY9bq9LtQcVnX2cbWePtSfZupX6yfWaUFG0hTD5EMmRk3GiMOUWQiXPn/&#43;PJvNAhQlSZKDg4MnX0zDGzS1nhbqvDKfpX1wlpZyYq3DnnWTQy7ihqP34pnySI4qS3U1Ux&#43;VvbPWl/LeNh1p&#43;slxxLIGGLzSiFWmKNXlXH8y7sFaM6c3enEd8MP0Xcy7hK1eYR457apK3xbqtDbXUk8p7ktdW&#43;vG&#43;d/yaEjJ5pX6ML5wbW4e09IbRutPvL1SpuT4UupKGz3OPmTRkNCVZ5Zv6IZ1qW7n8lS5S2XmBHVqVTrrSYdnYsToF07CcoLBGDOdTqHJC6Rjn4RODayGUSyMMYW8qxZbMVaKEDtIyGHCB5xEuNWGuYj7nPOVmpT60lgticeuL/BeykeCpW2Ycw1QSCDPpC4qfa1tzbHxJud&#43;lLJxxLIWniyWIEEMeVKr&#43;Uxd1mZC/MzoiLphxg4T3iN0B2E/BIyTyQQ62W0akAZvca2KmbpSZkZQqZXAtpfScdzK28XHSzEniGtTz9VNQ02YaCWY38v5UcJ64Xtgy7WJLMsgOQ8aFN&#43;nazAinCW5OMj48bQ&#43;s/bBWmQw14jKyunYONaKmkAJi/mgw0&#43;m&#43;LSw985iaxdGNEc6to47gleUpoDfkPFRP/6plFeVu7fWYE&#43;1Z4pilVgjLMGsBTWBxazXEa&#43;n1enMXbtFWMqsE4ZQVVsTm4aJs4O8HMB82sMWX/Z2Un2e2StrJELCuchUTCWupbcNG6Pbi0/m9encXVlbIM&#43;dE6amdWV1ZBh1QD5ioc0XpbTf7wfwCEStTxdHgxrvxofa/v&#43;0Ud4K5U3sXyfoyMuornTEdRyvrqYSTFM&#43;3Mv/U1vpHK3kXPiDFJ9gncvKSK5ApHflk0rEYJz93VhpLSLultphit4w05OlrbmEL2A1NYF3h&#43;kHY7WzGLvfkE1y8lPk901N6koyKrZH9UHd&#43;PDw8GXG28oRvNWmNsZhd05dr0t&#43;jhtWQUtvycJIPkzfalNpq73LkI0z/EG4fVPhStSMLt7812MlYPuWhQF&#43;QE1oTGfvECIRHVVVRXQ/JnsMxxDbQ8iy8pVwFveSI&#43;8Rw/m8nGCdx3jMUGK0VUqtyW/43xSlE3bjVRKjsaAd94WasLLujxFmROTxHkb/g&#43;I4Y2&#43;MJMLvRWTgLZZSxbHZ5lsPow3jbeV49Dba853/gZDI6IVXUYTGMe2v4&#43;0iNkjFYNz5O0YsocdGYuHGMRkiT9UXasLXPMc6ITSmhMa8u5f/lPI9KevFgVL7Bu3aFhoPm4dgySA9jmheJyUYwZhCqNzOk8dF1k2B31DIyuraI4/XSk4A2D&#43;P9xiNutGxrI2qnDWI0jWYFi&#43;PNoy3NbylIo/3KYn78RtVO1U5t6a3DRtD5NEjv0FKoyvfUBM4fE4btpoE45TQiOecJjayUsiCFcbYdZMBsD4YFWlkVaTKojTGLsfCbdYrwUTQhCUiFX0VqaIolVQBBhCEylfMZ/HCeIr7EctNZEpR11UNee72Rl4YLRlvLQewdWg8TEVPR7rkNeC6od7bsjkMTDnD/ZjlJrZ1JKuygiRY6DOzcSjeZFzpYpWQRnwT6m2Afl6LlUQQFowuLkGEQd3u4eEBaiItUdpfqAmP/9ORhgY6gEtoj9NfzGdxA2KEMMGF1ho476A1vE214pFd2Ixd9doDagKJGKUsgIqBx9oySMJNWM&#43;ooMQHagiwEzqdTr/f3&#43;qe1pRUHIipUkqBng8gv/aNREPjRFhVgDfmnL9//76lnSdGACwIzkALmrV6xcOXRymFxtmTyeTVq1ftYYvPDoCZHR4ebs94e0LFgPorLFwQQ23Zo/EJKQScNMacn59fXV29evVqKwxpQKgaY&#43;CSBjtHe54IYHrn8zk0wID7HoDuhRCgA91mh4QTfT6fgxG4hAN&#43;YC3SCqSJASQH8Ezolg&#43;XuG2An/DBdDodmONOys7T6RSaMcG2BNjPALJsY6Qsy/v7e2DLQQwEyZjZbNbr9bTW2y4O6Fy&#43;t7cHTdrXpSZore/u7k5PTwF8e3R0JIQ4PDwEccY2HyussOl0CgVhQsh4PN6AJwHCwb/88svNzQ1CaDweAyg1tIjcng45m82CCvo21kCb4Ndff51MJkBgTNP01atXnU6nPZIGjPzyyy&#43;3t7ewOICtI4Q4ODgAlsNW5yh0NdmSmgD9mqfTKcCMu93u/v5&#43;mqYtuZBhPGnku64nyw3/EUJQJBoOhxBwbIMI2S3AOFATZrMZqGXDjX0tQYFgZDqd3t3dheOYUgrLAroUbRVzMMYAYLzxOQqB56tXr&#43;DrhHIuJEvWoiZAm3eIsSF43IAnIYQAkRDYfrIsg8M7FMw2mGAYECUEJf2NB3gCpW9YapDOhlkDlHwtI3AwCSEAcQE5OniAW&#43;0c8Doh4Njg4g7vFRYESDoIIQBLt9bLgPxj4INsdqgDVP/du3dHR0eQx0ySBIoJ268MiAl2xXiDh/bu3TvogAXnFFB1Wi6OYOSnn36CCyasM0op0FHhZ7baOSDOgpexDTUhEH&#43;DttRaI1ATwu9sRk0AiEIAtcBBs66dHxkPYhfb918Iri4v3PDoWhr/fr7wEiFOgJ/ZtuQIH8E2W2X4jLaBxT75uDdeqcvO7Ja3AjLYIbG2JbnySXeo5UfX8jGGRG1w5vvs2S4b4wdtus06OO&#43;KmhBavYYY7V/oDAy4FW/cwbjNCFNeF93&#43;tY/P70RNgPnD5Xs2m&#43;1K/WqzEYL56XRaVdUON4BtXAJJDVDV2PnDCVOeTCY/6pq6wdhs54CdywPCA45nSDacn59XVdVSjasx4oKR8Ptrfa8ezDx2iccIPaLPLy4uHh4ehBBtGih4MNMYQd9Cz3eyeexWUmPZW5iy966qqsvLS7iH93q99lP&#43;QiH4Zv/4CvZZ1zPnrHHSOoWaeiYjAnYgwDu1&#43;zi88844ZQDCTgQlgiCKlvSC2jjjvLVOGyc98hRzRgTBNDRTgCZXK1&#43;wX3jSGPGOELZwBjP05RntCkAKt5XtGW/Perv4yJo8G7TGbmPEemOcdM5gTJvnz&#43;EThVjkG2pC6MceYpMflKy8c6Y2s1LdKDtHCEes0wD7MsbZcDiEDkkrpU2d98qWhbqpzcR7J2iW8lHMOxjRAI1vkRt12laFum2MGE7ThA9j1sWYpml6dHTU7/eHw&#43;HLB/wXQOV9Ze6tU4yImPUTPuA0Rhi1d2bl2ImkxpK3d423ccIHCe9TLAKWbzgcvrxtNLwQVemHUt8ZV1HMI9ZLxVDQBGMkhACZvcfFEdqnQAePcC8FsPGTqFjbeiYvJ/Uvyj14bxju9OJ3vfhE0M5oNITE0aqcGADH7&#43;&#43;rXypz5ZwkOO1Fb/vJ25j1OGftEszeelOqu9vyvypz5ZGiKM6j1/34bcKHaZaenJwYY&#43;I4fjnt4RBAsT8W&#43;ty6wnucsINB8r4THXKaCMG3z3YHSY1lxttmdpa8PTOuwIhl/KifvMvEOIrFq1ev9vb2VnZz9AiEIn6b6d&#43;snyGPI7rXt&#43;&#43;78REnKdAPAML&#43;FX1&#43;fn5eFAVseoAFOjg4GAwGy6/ZeadsNZdXM/VJuittZt5Flb43Tg&#43;T97EAwU7ycpzvF3aM1JOZ/K00p9pOncWVurNOD9KfUj5s5rZiMwcjlbmf1P&#43;s7Jl1hXNoLi&#43;1qUfZz5kYZ1kKp&#43;nLy9R7q&#43;xsrs4L/VHZO2Uqgfe0LZ23vfhYUNDY3kF6dBeMt&#43;Dt2Xzh7a0xakbPlSlH2d&#43;60WEcJ9C/ZdW27Wozm8rTmfrF&#43;Dtta4b60sydt/3kZHEIfGlW87hzNIoNdzc3N6FY1ev18jwHHcNvSdzO2LpUt4X&#43;VJs7Z3GtCmcZQynLkohnpI3qR7Oz1XoybwgBixBBzZ2jGEU8jxnttXkZzc1ZN0bOlb3VVhbk3hiEvGCdhEVDSlrQ5hqyhTKzQl5W5qzWE4oulTHOMYZTlkTtpVteGDtjvIG3elbIi0qfSjNn&#43;EZpYy2mvbgXR5Su9BYarhpl5oW6qsypslPiM2U0coKTnCUxo4&#43;qTWy5DQtgPaC9XFDx/PYeQRiJIpojx6WSlZ5Z562&#43;E/6ux&#43;fdSAvmVz7JhpNJGUkIipU2lZppqwxJuL/t0GkvUhFzZFUyHjdAMk4zQXrWoEoX2pYacWpvUzzpizppAWGHiJORhKLUGFfKuTRTvNiSbiJ/OxBFHllK&#43;Pa0WZDUgG96CzzHF29x1nhbSDujiCBzG/n7vihy0cZb3ADJUkG63lKpqtrMkDfe3MX&#43;bhAtjLAvYhNfVROOjo6GwyF0/QGdaZAIeWJYsLQbH/Xlf1TyvvbSOUfQEKuuqamSJuKWrDoRGhQZS/loEP9cylupKutLYofE9K2MdO0sty2oRJhilovxKP17rSdSV8ZNsB9g3HcykrXTkWnDRyKYJrw/iH8q5W2t5tpj5FLqh1h3dI11YtgXCYEtRwBobXNVAW/78ftCXldyZhwjqMfQCOuOae1tY6Q7SN6X6qZWM&#43;U88jFFQ6Q7qkIq0g02jH5Fn0MYsqyaAJeup6oJCDPC82h8kP8v5zz2ea1U7I8zcoJ0XFcq4oq2YhXQRPT28r9ZZ5GPynrK3X5O3lKby9pIoWjTd3wFcBxwztnP1hnv2LS8oXbQpT8J31eVrUXN6Oo9nGASsWyQvVtslijm6KMzIifvU3xoFamqmrPVOPiVY1cAY/B2mL2DKU/QGbZ5h/6UkgOjcEtvcYO67aevrdPOIeIHzvAOeZ&#43;iQysXUxY8Ik&#43;oCS1VE6ChfS89xojGDTUB6Uz4LiORs4/p8zasAkZEJxqjDuIkn5dTpGLmewzHzQXcAIbl5ScFggdpNNxH/8lwNuN3TgnmeoKmGBHARLXB6RPCUtHD&#43;QdK4oy91hJR2&#43;U4x54YbQJO/2VnXh67Axg3gge8t5d/IFjk7NopxlyP42wtb8niu&#43;qMsncYs5QdaYmY6XHcIZjbxWN7zJRspJqAqWBpLz2KeV&#43;lStVW1qYRPFgDaIkbaGsnHnOaDeIajCyuVc0e1sbCV1ZBNOIk6ceVklZWxlkPld62njxKTHQpYZkY68aI1pYv9h2&#43;maL7935uI6nxxNtG46HfsAqOwFujLec/1IV51gwlNBbdPfI&#43;F/taGVU5rS2jjwncx2TMFqoJj1oFWhkoYQC6eq0X86VG5rR5VE2AQJhz3oaS9GjkC8TYaFPXElQTQomr9XfvHUjYWVtLKWsZui/CjLZ5qQHtBqiR7SEdYcrWWLkYj5iMtYQivk7ZWSV1XdcBkbq9agImqIk&#43;F8&#43;NgPgoiC63Z5E3c1icQpxhnGDQHry/v&#43;ecj8fjlk2Mofs/Wdy5CMYEMArgDNA82zkDCXNCKY4jzCiTUt7f31dVNRwOR6PRNocL3AdDf4od1GuaahJZBOWkUboRUDQAKEZrKRLQ8l7YAZoiZDRms9lgMNjf398KYAxNymDPAA2Kuq5DP9CWRkCLA8455xw0IAegZejAt9JIo9jy2KgOspBQJQYqQHtPoOEavM66ri8uLu7v7621oJW5TX5ih5IasA6WG/PBFw/fJ0A0WhoBolBIbpVlCdSEo6Ojbre71eKAhaaU6vV6aZrCcmmP2QH/JpPJ/f09zCrLMgBfwZpoD6Sez&#43;cgAIAQGgwGgMNeq69eUL0oisJ7Dz3NQovgLVsAhv4csH9sSV0BV&#43;/u7qDiEVC00HF2rfleXV1Bjzk4zWERh963Wy2OsiwvLy&#43;h53DQNFwriNFaTyaTT58&#43;FUURRdHx8TFoFaRp2pIQANvGfD4/PT2FgvW7d&#43;9CY972zkDz3k&#43;fPoGKwP7&#43;/snJCQgCDQaD7evs4Qa7/ZkCvfk&#43;ffp0e3sLH1UURQcHB&#43;Px&#43;ElH4peNgPTC1dUV3A2hqxh0A9jb29tWNQEEVpYFXdY1EpKwQFmD5Arc99p/XgG1BRY26IIKaxq22SDGEzWqoUopOFPWndry2KHGW3AVGCHA2VwXe7tsJDw0KBrDxga6AFsFpKC9kDdjM9UExli/33/9&#43;nVZlvBrAKBD3NCemgDSC51Ox3sP6J72OOxw1YQ&#43;/yAk0O/3u90ubL/flxHWHYDE7na72zPeAr8NXIV3jDEGEYUNjPT7fQjYQxe4ENJuK6lxcHDgnHu5d&#43;ALA94rvEtYK0qpdakJME/G2HA4DOTYdV8AQPUb4WcLGzVonu2EmrDMeNv&#43;wgL3YSHE8k7ZqHTbtVQTgPkC6YMAWobiGvzMtqoJsOg2piYEVkHoeLnWFx&#43;MwHYdTpONVRPgzA6H1LpGfjSA8XZxcQGT3TJr8oTPEY74sizbL47l&#43;Ya0p2nGbngrgYC7MRsA7UjwYBn5uA01Yfk/tyQQPDG1Q0mNZ10Nv15rx31i5Mnv7JKasP3YIRvgDzV2LqnxZHwLuNmZasJuFkegisC&#43;1L4vz&#43;8xvvfkX&#43;gMjN9bUiPcPuDyuCvqw852DoBJ3t3dgZLo9pXMjQdk5x4eHnaimrCrATlcQsjv8eWEDOxsNvPeb6mCG8Y2vJVGNQHhZd7K2dlZWZb9fn8lAB09qi/4x5ZL&#43;GvL4vV4K1/JL4&#43;UE8j9nZ&#43;fPzw8xHE8Ho9XvgyoY335x3fPW1mW1Dg8PNxysX7vLZBCrq6u7u7uCCGDwWDl4fXFSMNbWeINLVP9NuOtGG1r7SRGmNOIkRg3PNOAWm5jxnmrrdROIu8bIxHBm/BWjJPaSu8dJZzTuCFx&#43;NBrvE2&#43;pCG/KG1rtzDCGInol1avu&#43;KtLAOMN&#43;5lsuytsnUzZcZpTDAPPccgCbvSZyC/aFdbpxu0ZcyICLyVcLN9XByQoAwLZ7kRyjdGkbdO13o6V9fSTBFCMe9lYi&#43;iHc7Z3t4e9Or4Hl/43QybBvvqqtL3HrmIdjIxilmPoMeif5tdsYHCl3N5Xep777WgWSpGCe8TwvM8h&#43;T33t7eSt6KsXWhbwt1a51kJEr4EEgcqMm7tHTm5QEJQ2gCsx3A&#43;FtvaZzxUcIHjMRA1el2u5Dsf9mIdrJUd4W&#43;0bakmCd8kIk9QTPgraTpI2/lsaoEbfOstYBth0vX96oJzruG8vDpQf6i7J1zmpFOL3rXT97FrOcM0tpQSlehfrxxalpf3JT/T2UurZMUJ93ozSB5n/Ih9sx9UTt48SF64/S0PrsuFkacVxRHuTjuJz9lYo960VR6HXSIeFHcQxfq5rb8x1yfGTdHHiVsf5B86MavBM28Q9a67Wsiu5LUWPL21Lg59jQVrwbxT3l0wElstAMk2Iope1PKu9vyl5n&#43;ZNwUeR/RvX7yoRe/jmjuLArQHBZSNKenp6DWAX0BKaVAkvkWPui0qQt1M5e/1fZC2SlyolT3xplR&#43;iHlAy7SBlj1oqTD4l&#43;00kzn6rTQn7SdOIvLxadgRunPmdjjXLTirThT64dp/bG0p9bNF7OQl9oqn/6tEx9E8aN&#43;w8srzCOn7LxQ54X&#43;JO2tMqXAQ2VK6&#43;ygIXEIyrfnrexIUuOrt3P9SZobbWUkzxpvTS8&#43;EiJr0z7aeydtMZPnM/Wr8jfGVBR3a714gMP0XcTyp7wVrTWgbO7u7mCZQ8s2KDQ8&#43;cesM5WazPVpbW6txZWUyMUcdwXNIypa8Vaas1Pp&#43;Vxe1PrSWFOp0jtBUcZpxmjbEmhDq6yK&#43;lraK2NlQabWMOJTQXO22PNaAY4aWmVdLI6nz7VpeCvaI5cI0uU0QYRuz1vZkaQG&#43;koClVel/izNjOHbRQxjBSMZpwmhrbxtStmyVLel&#43;SzNhKBUaU9QFtE&#43;pwkj9GtAGpSrodkgYGSePWsJJpzGCRswlGvta1Vbhzyez9G84rWOjKAerZo1UE4EyTjpOUOlVtpKZ&#43;aRn5W00pFxzBFKXlbVACMx7aX0YOo&#43;KqWVrQyeczcrSSWFSlg73goinOQR6XvLpVK1LYnHxMznuKij2uyIt7IrSQ3wVpCBt0IqJW2tUUltMfdFLaRpxVtBBJGIZgnfI2WmlJWmxghTWxW4rEVlhKGCfyU1AeXm&#43;Ph4NBoBUxtqacPh8Mn6wBhzlnTjV6P0f9R6prRDzjB0QPXI1kxWOmKmRXgPgO/RKP17rSbKaG8K7g&#43;53fcylpWJuSGYrlLDwITwNBrtZX&#43;XZqaMtOaeuj2Gx07GddleeoHGvDdIP9R6po2yJkIu4eiAqK6ukIoVI3x7EMbuJDUW3g6Tn2r1IHVlzSV1/QgfUtPXlW/pLV4Y6Q6Sd7V&#43;kLo0hnobMb9PVFdVSEZqcXNh&#43;Cs1AbjkeZ4v0&#43;2f68WMKWZZNBx3/tN7RFCvrurIHXboa2wjWUsVKbhArpokiXlnlL53zmGUzvEDt3sd&#43;oa4VFZKCsnoajUMgnFD4njrvEVeTNA1Mb0ueytQV0lT13Wb8izGRLCkn7zGHlOcRPijUTzDrxM6thrVQOLY&#43;ja7Q0kNQZNe&#43;tp5hzy/w6dYZzl9m5A9q3FLb5vW&#43;lE3OfT&#43;fyNPORobRTL8JiH7Vj0a&#43;aZkv8y0WVbVeN50QznBXRazcV1VTgliY0oEdIlol64GNkB/nP8sSKeI5k4yZGOGF6Foa7QO6Dd0RtlPHOfzaGJqgm1MsaCEhobXbUhvEc/62Qklcc5fq9ohHRMvMKbWbtLA7tmxE0mNxz4wLBukbyiOuuKdrjEyMUURxqS9t6T5JHrpMcEiY8dKGqQT4iNKuPdfF8Azn/hK1xvKSdSJRzHLdWKU1FVZO&#43;fhBttykl8oSYsIqBdrJU1VSWddHMew8bTLMT9STjiNu7FaGClrY4wQUeBftHHmCxPnVcqHOjVVKZXUoQvP9tWZHUpqNFOmMc8p4bkYK2XrahG2McYh77D2lMVQKyNrLWsV2kM8CkVszlt55Gt7QAAAQgcoD2s0xgcj3gP/ArKH1trQankt/ouxVtYLI5Al9H6xXtfq0g9kEKW0lDLgpaEn6TaMWaXU9fX158&#43;fOecnJydwB9zY2hdvXfOsXOiHH6Dt7fNsX6bsAW4IdTuojmVZtgXYB&#43;FmWXkA2kCnpbIsIfhqb8Q1jalCg877&#43;3sAxRwfH6/1EBcxUENagV6OwJPw3rd35rHTWSNCgDGuqur6&#43;no2m&#43;3v70O4sA1vZbeSGs0r9cuQKyhEA06n5c60zBaA1KUx5urq6vb29uDg4OTkZCuAMXhjrYUDBSoI7QHQUJECXj90MMYYz2azs7Mzznmv1/u&#43;O8izA3A00A7Lew9yPtD3ExZKG08AyVdVFWSHGWNlWUIpi3PepuvcC2O3khowX3hoAb0BUwb4bRsjoZ1TkF7w3gNZ4eLiglI6Ho&#43;3WhxQCayqajQaQRfttWDosLzu7&#43;9vbm6UUiEHEDej5d4Ix9BsNru9vS3LEiE0Go0Gg0GoFrVfHNDe6OHhAcgv0BorTdPtK/47l9SAGi8U6OFAyfMcVDXWIvucnp5CY/yA&#43;LTWhrLJVotDKXV3dzeZTIQQeZ6H329vBFy8uLgoyxLO9SRJjo6OgLfSMsEAKd2bmxt4r1C/WJe3AjHjxcXF6empc&#43;7k5OT9&#43;/dAyez3&#43;1u&#43;0d1KaoCr5&#43;fn19fXUEyJ4xgKHWvpywCw4ezsDLZbWL55nvd6vW15K&#43;HAg218MwswnyRJnHsskgXeSnvEFERhWZYB9KuNsuSPBsDzoVkePC/QJNheb2WHkhrwC8ZYHMfGGLhVwfJd10lIboW0VpZlwCWDxn9bUROA&#43;AC0MODKrmUB1hbkYaWUjDF4McDiajlV2FS73S5jbDweO&#43;eyLIuiaF0Ue1AROD4&#43;RghlWdbtdiF631UIuStJjaCacHR0FOiQcBC0Ry&#43;DkQ8fPrx&#43;/Rqg9nDThOf/Vct&#43;Yy&#43;FENAbb&#43;M5wwqL4ziwUquqgovZWihquD9DdLbWM1o2kuc56MMFZDYEMdvDnmGae3t74S1uaQ121idH5zLlpI2R5fnCgB0ufFfbsvzCstiAb/Kkd/82/IYnggcbrNTv2xvtsGk64Ir7/T5Eprui3S5PE6577XGN388XXuLyX98BwHgnKMswse2tbUk2XP71DnkrWmtAyWwvqRHGs0bW&#43;jZedmNn1AS0taTGrsZOJDV2O0JACo1MtmS8fT&#43;Wp7xDot6/JTX&#43;m1yCpFxoDrNz&#43;/&#43;W1HjOyJ9EUiNJkuFwGETFt7H2b0mNttSEP5GkBuSp/tySGsvUhO&#43;ey78lNTYcy&#43;n8P7GkBnR6gJTqE5D7vyU1Nht/BUmNsizhaRpjoC73gqSGclfKzJETlX7YRFLDTGfyc2k&#43;B0mNhZH0p1QMOW2Br3&#43;U1HiY1L9W9vRbSY3/yMTeOpIaj2B/ZW&#43;XJDVcLz5qJDXY9pHHTiU15nN1XqiP0m0uqSFBUkP/07jbVpIawEuApJYxBkpzz0lqeOtUpe4L81ulb52llSqdZQznPEsZ5biVpAayTkszncvz2lwaYytVWEsJSjhJmGhpZHHGSTOfq0tlb4yRBXkwBmMf807KItFGUgOImcoUpbwqzWmtJ8RfKWO9ExxnLIkYWYGDbzN2JakBm642RaGAmjBn6FZp4yxlvaTbSlLjMeDTtirldWU/SwOSGga5iJMOT77yG75SE/r9PuTVAdDwrMh0o8YQR7RLfCKlrnRhHbLqQbj7Hpt3hebU01W&#43;YbBDUoZyo12lCm21wffc3XfprCfaS2owQTsxHU4srWWpbKV8RM19hqc9UcctJTUQ5SThpGsMrmRRmzn2Hpm72N33RZk1YP/t7ysAMD44ONgOYAzeppx07MLbSpr5IorX95F7WHjLW1ETMKKCpjHtIxdJKStTYG&#43;9vo/9w0CUuTDByDfUhPF4HHo8QNO076kJgia9&#43;KiU/1Gou1opZx32Q6x6pqaybqgJfDU1gRKe8tEg&#43;bmQt7WqnCuJ3yN4aGuhamu4bagJL28emBCWiT3gN0hdGT0hbojRwNaRrIwSmkQtqQkgqXEv1Vx7hmxG3QipvAH7a0Y5ITvoD0m&#43;jG0Sr8Hbor6r1Mx4jl2P&#43;j2sclWhlt4STGLWHSTvK3VX64nSyNsY2yGSua6QaqgJX9HngZrgl8azufcGFcyyaDTu/E/rPfW9upbCHWT0BJuoLmX0hS2ykhAAahjOWYKSeTlhDTWBukxWuuZ1m6psw2/IR9l75wzyfOpvsOl16LsI9VRtK14xuppi34D903560khqRGL&#43;m9M8RSdpg9Mvy4pRHkW7kdS4ubl5DPQ2ZbwFb&#43;1iyvTenyGT5eRt4y1q6W2jexH3klfW/f&#43;dQ8yPjWIpOkkaXY6yrPkXfsM31ITw91&#43;4a8HJ0k0OCWIp3a&#43;qyqmIupSRaLEft8vNBTWMMfpPTnqFmFrJiM04jb1HrXPAj/oS4/w/OM5n4sFISmwqaEowBaBsm0sj8BuG2TuK45y/0bVHOmG40eXQu2mUA3AkQBx2u90syzY21XjbHWbvCY47/EbXGJuUr&#43;ktwTRi&#43;SB9Q7DI&#43;YmqHVILIxTz5bLD80mwFl9b3E0OYt5TqaorJSuFvmw/LSf5RQ1jKGiqYllXuq4kSGq0D9kCv4HRpBtLWauqlM75NXUOgP&#43;S0/x1JvaUMlUhtTac7awIEiAX27BkgzFCaCMAIjriYBH5FdIYK7hYCwxACGn4DSeZ2NPK1KVSyoCkBhjZVlIDUmdKq6rcVFIDfWkmpnX1raTGOo0xHo2ALgfAUUNGYR2cvvtCkqjrL5Ia65Itnh07l9QIUwY2hpRyI0mNxyk7a6VUO5bUgJS8QIJkm0pqNGExaUQhMCaB7L&#43;WpAZcNRuqFUuSZFNJDbgOAHIxJoRCY7E/pqQGUCiaKWOSEIABrC&#43;pAVUpRAiF1V/X9W4kNQJGHlr&#43;biOpESKVzSQ1gLIR2pbD0txYUgOc&#43;bNIaiz//jaSGvCpSykvLy8vLi6Oj493IKkBcjW9Xg8A3xtIakyn08lkApn7KIqgbtReUiPoctzc3ABRZTQa5Xm&#43;saQG9N8Bpc9A6PhjSmosbgMN9hO&#43;Adg/1p1vePjgFRiEB7v54ggA&#43;clkcnJyAqD4dSF68F4/f/7snIvjeH9/H6gJSZK0lNQAXY67u7tffvllOp3CGoW&#43;4GtRE4D88vnz5&#43;l0CnU72Fr/sJIav/32283NDbSvFEKApAYcqe2NBEkN6Lixv78P5f7RaLQtNSFAv9baMJYHPDLOOZxNlFII1tp/XvDvwsV1Y2WP5SavkMQEWV2gJvwBJTWA3AYir2B/LSGR5flCPBTU7GD/3oGkBnxhw&#43;Gw/Vf&#43;xALkYWFugTPinFtLUgOMvH37VikF9J4NJDVAv&#43;H4&#43;Ng5B7sFILPh09yJpMZOGG&#43;B33Z0dDQajeDgA9pOeyJqMAIde6ClSpZlnU4n6LZuK6kBLWDhEruZESg6BJ4WhIFrgXvh0QwGA9ARA0LwBu8y6FRAXWn5Fe5WUmP7w4UQAjokQQsGtqLF/bu5rbQ0Ar2dgU0TvJrP58G3bXfL0PJyY2pCaGq4cdwX1D1D&#43;m4DnCbUEAI0HERCdgVLXpbU2B5gDI/9CSgkqDK09BmMhK86PLddUhN2yCQIt4MNjDx51huLv2wMZX15hF79u5Jx&#43;X4zC2bbB39PaibfP7ddSmqEq&#43;y/lg0QHNhA7O13Gr&#43;3pAaMUDTdlcGd8VZCfwvOOaBadmJ5swEA46qqgGj5L&#43;et/DdIamitq6oqigLi&#43;p3cmbd5hbBC8XKb24uLi7quIXJul7T&#43;aiSM9Wf1jZGgmPrw8AAXmfaK5d&#43;Dvna1qn4HSQ2/POWqqq6uriCjBRfRzaa8FTXhS8shFygnoHYACdPJZIIxhkz2y4tjYQRZkIZoQPEEf2FYtX9wjRHnvUWPuhwUIwJ72KQZoKexwghAHxt9icYIaeygdZ15YQDAGFowbAMwfs7bxZQhaVEUxWQy6fV6K8Ma0NPw3gL5iDRG0Jc4Bja2b6gJy0JwL1ETvFWmrO3UuBojxEgSsS4nMeOs1&#43;u9evWqTWsNgNjXeqJd6ZFjOI5YR9AMIRLqiqsfU9P9vzYTbUuPLMURGIGte29vD9Ksq6DY3lgp7UzZufOGICZoJliHkQjaV7R0ZpWrj9s&#43;5J22adL36K2ZO2Qo5oLmguYEsyRJQCKizZQbAO9iytYrgiinacS6MGVIgj12&#43;4BlEbRr4Xchav2&#43;aN70VC&#43;n9flUfpT23nvLaa8XnXSjY05SWS/mD&#43;mUl/2zTs/V1V35S2munVecZJ3opBe/jml3uWv/y19tY&#43;T6tvyl0lcOKYaTXBz34pOE95xBZbl4EysbATpvSnV/X38s1EUD9qcp3&#43;/FbzOxx0hkjWvpzMsjVH8YY9DOZDNUR/B2rs6tKwgWGX/Vi980ahO0rqVSCprhvDhlW&#43;nJffVprk6Nm2FEYrbXi9/m0QHHcVPSe5ReYMuHtJQyyzIo3UKC/UnRvNFJqebycrJYHJfaFsQntXpwzvWTN3GSBWj8yyvXeVPryVR&#43;KvTCP&#43;RZpe6cs4PkXfP1r27NA0YqdfdQ/aM059YXyOGCX9mG35Dwfrfb8f6b1gzPmnHeSjubydO5&#43;k3ZO2NlTPe1rb33nWifsSjg9Nu8vB8NCEjH4/F2jLdlbz9Je&#43;usmfMjY5VPf8rEXpom0BZsFTXB1no2rT9P1T&#43;0u7NOCTJSpvTed&#43;NXzZS/qPuEEtrl5eVkMoHKjZQS0oUQ9z4xrW1Zq5vCfK7Nnbe01qX3jOK0nwpB4zasgobTJ2vzUOgzqW&#43;sdZWaO8cIioYpj3jeDo7QGNH3hT7Xi/eqSjVxjmAU0Uwkoktxq4jYOqXMtNJXlT6r9ZThK22sd5ziuBOPCGHbqybsbjx6W&#43;rLSp9JM5/Lu0ZYBpOOyKMhWa3xsIg3rF8cK5W6quyZMjOCLpTW2AtO0jweU/ytagKAMOBQhGaxcRx/n0oCbB8nqXOokrNS3zmHtY64u&#43;jQ&#43;0zscRK1&#43;cYwJhQL5KhUZaHujNVKUWrPUvI65weCpWjVCmv4DZSRhOLMaF3qB21rhTE2ZzF&#43;nfPDiOUrpReA4UBxhL1QuirkvTQPyNdWd4V/1RUnqegTzHaimhAkNfb29jYFCy55q&#43;pC3S/e6yJ&#43;6DC33&#43;FHCe&#43;18HaxKTAcMZwY6yo5k&#43;Ye&#43;crpPEKvu&#43;Jdygf0S4zFQs3w&#43;Ph4OBwCAAQqWN&#43;rcWFEBE060WGHv53Vl8gV3jpnUosiVXmdGEvdSh0djPAigOLDbvRuVp&#43;Xfopc7X3mcGJqoqSx3BK&#43;8pq&#43;MJKJvWHyoZTXlZp6S6zPnEt0RVRsdCvphQbsz3rd6M2svij8nXcG2cS71NaRrpyJDIu3LdbvTlLjq7fT&#43;qyQt95659LF/2ikK9/SW4xpwrv9&#43;E0hL0p5W1vlXdRMWcjKqshQ8njTZKEpEWMMrkBQ/gam05MF3jTcF3m0v5//L&#43;M0smntVIyOEnzsdVSVUjAFVZxVk2QJ74&#43;zvxkrvROlm3K/n&#43;E3xGR1qSMu2/AbmhbgvVH2H8Yq5&#43;jM3VA7zMhbZrt1ZWpeU0JXXvcxJhHLh9l7APuT4jfv45z8FOOxlrisakr5TsAcO5HUePQ2fWds7Swi9hyjTpd&#43;iNG&#43;lqiltwRjwdJ&#43;&#43;sY4aaxFtuu0yPH7CO2b&#43;pGN8TXm&#43;J6i8uOrLKDas372BiEa4b2iLInpxGTEUGS01Vq36fS4eFg06sQH3iOGOjM6wTqNyIjhxC7OGG2FXbnCMMKM8Dza853/SVE6obdeRREeRbTjLYLNb&#43;WbAPx6Joa483eK44S8tpJyP4hIz1uspDKx2b6t7M4kNQKlw/8deZGSCyeFQKOY9rxr7y2oCfT2sp&#43;RZwl5pWrE3TChA&#43;ypVhp6m36TBGtfc2pUHfJh9ibhA5lJVTstF6cJ52s09m6oNUk3OeQ0Gya1qq2WHiMsRNQ&#43;9duQaKJuvM9J2o9LJa2unXdrkyQWT1wMaIfn4lA3RozxjLInGiPbjKBjumXDDwj7snhEiehGx1o6XXtnUbhvt&#43;YNsTTq7&#43;Ofc3GgpVW1swYx&#43;s2lfRtqQgPTdE5JBawCyJ&#43;sRTyBZGuTWjZ1YwSABQDBao&#43;ido0zRpuqoSaEvhrtt3GQgFgYsVbWClQT4IkDNWHLPMd0OgVJjeFwCCqLG1v7MmW78NY8eguQAxhtnxtM2VtrHFATIK8NU96SmvCIAsYRoZQBHrqu67X0RBZGFhESWQSPDTUBdEkAJ9zyIS4OSEQwwURQQihAh4wx0DK7TQz0SJJoZsQxJcniASmlptNpXdeDZmwTK0Dt4/b2FiBbAHjbcjQTJoQzShjAUADSsUY3Iv8Y12PmgaMDBZCiKPr9/raN8aGYFPBXoH8AONCWRgDlEFD23vvZbPbrr7/CFw/5ohYtfh6h&#43;iH0g1RNVVXt24EHI3CBhwoRUBOgIcU2SXR4YSsVX1uO8OQDdBcgYaG297Lo8LKRQMUIK/j8/Pzy8vL169d5nm&#43;rmgC0jl6vB/3LAYHY3oIx5uHh4e7uDvK&#43;aZpClqV9S2TI/U&#43;bYa2NoqjX60VRtK4zkCa&#43;ubkpigJj3O12QXwZqiFbllJ3LqkB1ARoxgRNmzudDsy65ZQDNWE&#43;n8PU4InNZjNos&#43;Cc25aacHl5Cd2oIb5dF28CrIL/&#43;q//Ksuy1&#43;sdHx8LIQ4PD9M0bSm2AifIw8PD58&#43;fjTGQ7w8MjvbOAFT/06dPl5eXGOPjZuzt7aVpur1qwm4lNQI14erqCrZqaEK/OAgY22C&#43;YXGkadrpdA4PD0ej0VYxB1rS49lYvB9uy3BYAgoVoj84mNtTE7atdn6pPgJGFzZFQki/3wdp/u1VEyCCgZTBNkicMF/ZMHphcVBK4YBY6&#43;wDI4CvgMM0SZIsy/I8h&#43;LJVudoHMcA&#43;94s/IbPqN/vv3nzBtqRdbtdEDxoo/oZjECjeGg7D&#43;Jk6&#43;7bYCRJkvF4DLVDCIcDZ2J79PmuJDWCq4BJgEMEME1rARADsAEClHA2QcV4B9SEJEkODw&#43;ttXEcb3Y3A2EHoJlAyAYH3looG6AmwFkO1&#43;mNPaGUgidwJwek/06aoO9KUgNc7XQ6JycnQWoC1gcEmO2NdLvdN2/ewAUndCCFZqbwM1vtHKFvWICArDvgNQQlNpAZW2tlwJRAlyNMcgOexLIuRzjs2j/rlcZ3K6kBri7/JoSAcGVby8gT6YXpdBpmva1S0/Y5xGUj21AKtr8iPgF/7BDGvVtJjV25&#43;qyRXfJWYARwYbgdbHDxC9/9ls4EB7bE6f/xJTXCePL8N74cPPmdXVITACYJccO/nJoAXdj/INSEHQakz47Q7r0sSwg&#43;/uXUhG&#43;c01pPJpOzs7OiKEBMeuPywfZXA9A9nEwmhJCVgNvf1RkY4eNZpqbtcCxj&#43;UBPevtsyoaLwze8hIZVADsvCa8EcmKvXr2CyP8lI4/o&#43;AZiD7yE9SfzjJFGUgP0gh8eHkBgtr2RZi3QZYmJnYwdMt6eeNtITWAoF9zd3V1fX6dp2iJ0a5LuyCIPkhpADfl6sn&#43;jmtB&#43;ON/U8MzcghoGTQTNKOYgQrm3twd53BXwYO&#43;Nk8oW2lXIe0oiQTNOY7hiPds8&#43;dnHZJ2SBow4SoSgGSMxalr/Q6lsZf6qUQjRypbKlt4bghlfeJJQzNZy5uWxK8bbsrfON9QElnGShJyT9x7ohi8&#43;f2&#43;d1QsjhfMaY8ppKmhKMYcrcQA8PC6O0CQp3OKebVILagxzeTOTp9JOEPKCdjvRUcb3GH9Mewshut3uagC0mU7q3yp965HhJMujo1zsc5I2gPhWctTO2UpPHxZGbjzSnKSZOOyIQ0Gzbrf74cMHpRRk&#43;l5aHN5JU0zkWamvrKsIZgkbd6OjmPcXC6WpCexki4ZjZTPlyme8VZfGVxSLTBx2o1cR7aRp&#43;ubNm/39fWhp8YLDjbpBOa3PCt2wMTBN2KgTHad8QDCPIgHV/2/Q55PJBHBcUHBijHW73Sc5bI&#43;cMuVMnj/U/5DuxrqaoLTS96P0b53oMMvT0DBvpaRGre8f6n&#43;W&#43;tz6EntRqlub/mc3fsVpGtM2xVjQ5bi9K/9vZS48qpGnGX9tUtmLX0eiM9obeedXgge8t9JMp/WnQn/WbmqdjshY2XKQvE/FgDEOc9m&#43;GgIC46EB5ma7UfB2rj9pN/XOzeWRtnU/PolZr9fvdV131cNfrLBGl&#43;PTTP1q/cQ6LchImmKYfMjEqKmH868djMH1z58/g&#43;YDNM3sdDofPnwA8MiSXW&#43;dqfW0UOeV&#43;Sztg7O0lBNrHfasmxxyEX/Rlvqxc486OmWprmbqo7J31vpS3tvmVtFPjiOWNcDglUYatQN1OdefjHuw1szpjTbGOT9M38W8S9jqFeaR066q9G2hTmtzLfWU4r7UtbVunP8tj4aU7ECJZ2eSGt94e6VMyfGl1JU2epx9yKIhoSs3Of9F0ed2Lk&#43;Vu1RmTlCnVqWznnR4Jkbsi4oIW04wAECmKArgKEDX0uV7YEPNZBQLY0wh76rFVoyVIsQOEnKY8AEnEW51oC7iPud8pSalvjRWS&#43;Kx6wu81&#43;g&#43;pW1ULDAmBAvkmdRFpa&#43;1rTk23uTcj1I2jljWwpPFEiSIIU9qNZ&#43;py9pMiJ8ZHVE3zNhhwnuE7kZddReSGsFbXKtipq4aykmplcC2l9Jx3MrbxcdLMSeIa1PP1U3DxphoJZjfy/lRwnrhe2AhXAIRKLgrK6U6nQ5Unr7BliLCWZKLg4wfT&#43;szax&#43;sRQZzjaisnI6NY62oCf8vc1faHDeOZAECBMGjVIdKVZJsy7Zmenpmtzdi//9P2Yj19rTbsqzDdZLEjY1iSnBZcqtYx0QPPnQo2nI6kwSBROK9fCSiPO534jdz/Km0E2extSsjOkaaW9dCDQP4DXl83OOXlbyp3cRagz3RniqCVWoNsxGmLagJlNNuh72e158W7tat0lJqHTMRUcIabmh0gILmgSQ1vnk7q39f2BtrJELMucTUVKWupbcNv&#43;Goy98sxaelu7G2RD52jhlBRG11YihxGK9RE4Bd2ev1gqQGANqeUxMaQO&#43;ptr9oo7xlyhvuX6fo3MtE1DqJNeebyy8RJlk8GBZ/11Y6R2q5ZH6c4TdYF7I28lF6YeOTSln/JP/ZWGktitw9sYMcXVDTlZUVTMIXsJmaEB8Nsr8Yq53F2H1ENi2iy8SPjIhELSlhB0lIw039PoXX4K02whiH3WfiukfRX3nDKmjpbbQyUgyyt9rU2mrvcmR5jv/C3MjUuGaCNv2Mv20rAdu3Xnz9IdH0wXT&#43;DqEoIcd1XUe6l0ZDinmgJrR5JY2qw7n3iOJiWc2wLjg&#43;oTg12imltuQ3/BdB2YzeIZVyfJKQjrNIScUTvlncAzX9&#43;fkQo38QzHN6YVTE3JBHfW&#43;xlIpzs78A4DrjbS9JDfA2GfrOPxBiObn2KuFolJCud1Frb1e5Qcb6J52fMaIpeWUkZu4kJQPkidIP1ITvJDVaxw8aA0fD4jKLh41SgTfKNyG3hcbD4sFo2s9eJaQQaa1qp6WH0&#43;OW/AZ&#43;lAG/oVTCarGyvVV99kG/gQ8pSY6SV0oaVXtnfqxVtds4FOPtG6&#43;Mj0jEe/xCCaAmfOs334qagDFZTbKG38BfKWG0QNagmDJKvr3E3bKt1fxI4iImqU2sSlRV1aF9Q/vIYX5QwvKVEd2oRzt4JYCFbPNuGsx5SlOWsZ7muq7q0EEAjLSZ983aGWe4l9DCcCuYkFIFrDLw//YkmxyE8fZoLYpJQvggY13NjahX3gY545bSpBByjnucFpZbIZQQYrUyNVczAD3ZnbeCHlSNHxoaBSAu53xLDK0HAR4AfwNqHKos7e2AJwFuCPgSkA7dqiIJWG5jHiKq6xpy8z27nMHKUZYlgNYOcvEWIOMQaWiQB9WHts/t8QYbgEJa67IshRCdTqfX6&#43;2HIXUPDsFeALeygN/Z5n0gKM7CghFUE96/f98yyKDxD18MAFiklFVVhWLfVkbgfAE4/clkcn5&#43;3p4p9MMRxHgOInEdOlyHBDFoeq6DvTcaWY8X/iulvLq6urm5OTs72wtg7JyTUi4WC&#43;ccXAMGhY2t4oTqkFIKeoGAzTiOAfi6cYWEh7JcLgFTTykFJf3QHbx9OFAmllJCeg6OLRaLZr9rpQj2gvG6rkFSY09&#43;VLA2n88BCx1gXVEUGWPakFZCvNPpFOYTbCVKqclkMp/Pu92u1nqvyQHYdqUUtNDeAWwCLl5dXS0Wi/F4PBwOgXDMOQeSQZuHqLW&#43;v7//&#43;PEjqO&#43;8efNmNBrtQE2YTqcfPnyAtHE8HoMGD&#43;d8t87uz8O8vb2FzGPPbpPW2tls9uuvv06nU5gfwOeAzh/t453NZh8&#43;fJhOp/CJeu&#43;LouCcj8fjfakJYHE2mwkhjo&#43;Pd&#43;4IC6o5MFsBHQ/CGi0bZ8HyKISYz&#43;dlWQK9YFu4IcwhWCqAjJnn&#43;cnJCfBaO53OPv3/YBxKUuOJq0IIYwzwwYDps5URYPDCJgD7EYQMWPYDUBOklFBD2yFsyAkA/AFJH2QwW&#43;3xsKgCin237xIOI6C8DM&#43;o2&#43;2CHUiG9ldNOJSkBngCDw0eFyTgvV6vPTo1GAG&#43;FqUUmEe9Xg&#43;65cNKufvkAE2Gi4sLa&#43;3OVFKYYaenp1rrNE2DFMa2qgmwDIacA4i724bT6/Xev38PF&#43;t5nqdpeihqwmEZb8CiePfuHcAB4cQOqUZ72D0Yuby8hHaJsPDDOfYw1AToRQk/7wZTgIfV6XSAVLODEWhoBmKtQdxwBztwwRSUjmDNOBQ14eCSGuAqelQTCGlN&#43;/0UjICmTMAnO&#43;cOSU3YUw0Dfd&#43;7f7cTQdjOgyTbbppR6/yGnXkSPxyHldR4TsUIlbr2oNfnnTLCDhX&#43;zyGpCX/62OrpbDR1WGrCYSU1nox1P/8dqQnrVbY/lw0QoN5KqVAp&#43;nOn779aUmM9ZKgBHiTkg7FLoLUDtEFO03QfXe6DXIGCKCYwQvc5iB7kRf6rJTWgLHZ3dwdNSnY&#43;PD4Zu1ET/CM1AQEhYJ23UlUVKLu2piagAI3f2pNH0fRHagJGzboNvJXpdJpl2Wg0AhrtywG5b2D/qE0T5m3H4SQ1nnqLmjSrqqrr6&#43;uvX79GUXR8fLxRahkEJwI1IcLPmQnbH2WhqbS0lbESY0SjlJE0wjGc4DudDhxrN8FIvXVamUq72nsfk4SRjEQMPjIAPWz2BHnnTIPTr713NGKMZkHtAOgbsIa1wOnXAPaPIpqQnBLe8EG2cOblcThJjQdvpS2dtySKE5IBpQMKd0qpl7viw2h6lAtlS&#43;N0hAkjKSMZSKOsszGeUhNg6YPZ/Rx47ZE3TpXq61xeSTNDyHPa6ySnaTxgSXx6egq1io3UBO&#43;tMIuZ&#43;FTpO&#43;9tQopOcpazIcFJezaA964xclXpW&#43;d1TPIOGxdsRKPVHL28vFRKQWVsE06/nMvrpbqxDsD&#43;o04y5rSDMTkUNeFQkhpr3n4xto4JL9i4SE5ZlBdF8fbt2/F4DCXwl9kY2tZz&#43;WUpr5VbEkyzeNhJzlLaxfih3R5cnX5HTQjbVV3XQI95sjv4lXP1Ql5Pxf8Ke&#43;OcpPhImMtB9tciPukcFQA73fS1rb54oScz8WGpr6yrCEqFfm&#43;znzrJKaEJaUdNsE5X6v5r9T&#43;NakIdIVazC5v9rZOcsyQbjU6c8xtTnwD2X6iPj2D/sbZ/66fvOO3GMT0INSHUcIEytEdbn&#43;Dtb9rNkcelOtdW9vhrFncGg757ZGO8&#43;D00fJ/6t4X6P&#43;2m3rskGipTgtoEY3EQ9aXr7aHKsoQadlmWlNKLiwuo9YZ/aXUUtqrW01Jd1ebjavFwrFYz5zzOSZGMWMLaUBPgCyjVl6X6pzIT51CtptY55KMjfho30gtt&#43;A3SLpbqc6n/qd3MWVfJe2O1c6iXvU5oDqnDhmwDOW2rWt9V&#43;kqYG6WXFH9SpnYOHeeXabzvlRuMIKmxX0L64G2lb4GaoK1YRNcNkcIM8vdpfETp5jy0MVJX6nYpf5fuizYlQV2pK&#43;/RMP8pY72YxOiJUhPQVeq6hgJLv99/fqfQsCoJRkQbUYr72tw6h5VG2HWT6ITTHiUtPgtYUz22VtdqUunP1hqpjLdFjPucdilJolbvA0eIeoeEmtfmejVrsXAmpX7A6YClabRJUqMBMmCEiHWultOlvpZmFvmpMXHkepwcJ6SIDocUDJ199khIgdLhajVbqmtllwQttKLYFgkZJCSP6EZvPfINw9ZjqculupV2iv1Ea0rQIKOjhHYi8j01AS7KsyyD2gDn/LkSDwBcGUnzeMjJeOZ&#43;MzqyDkXGS2Ql0zoxjLrmm/9x5KFppneYRUcZPZ36X525Mc4i6yUyIjaKW96OmkCiRnqBXSzEVWnutJXOO&#43;GdpFZxY2KLYxL9wbkjlJyd83GU53Q8xX1nroxZ/Zl0XmCnUmMSS6IDFAwgIV1nvO1kBjeN549yejZBvzp7ZTR2CGmLVORUqk1iSBSD2N3GkAt2NqtPFisjq0ekHZK1FVwb9o3f8B1vZTAYQANKOHo8z2swjihJjvjZifkPpStjiLQm8a&#43;ZHTvJ6krSSL4ANoEufUIIhBFlaZ//JHVpDKrkgqHT1L/COhOV5lRHvA01gWRsMCx&#43;VrYyxnlzR91x6l5hXYhK10Sg9KV2P48ZoiZxdMTeqkxY67z93bs08xfMHesaiUSChMD&#43;CekhGG8II8Lp0SC7lGapjfbmc&#43;S6GX7H3FDXuGYSo5eeG5DWlJI0Jp341Un&#43;izbSGu5twtGb2KxCrtk3fsM3MR6YEOu8hB8&#43;lCgiKTtqGu5HFA2qqqT2uKDnkU9ELTFavoCBhoahNzc3hJCz89PeYHTa&#43;e8I5XM8IaZXkHPiMyW0YKJNN0HA2XbTM&#43;ccdnyKb7AucnLOcEdLu8RLpRRMjufOeO/rur69vV0sFsfD49Ozk3HxnxRzjn8zgqb4NCUDa1Bd1SzeCyD46OpBGG8P0PMOHzv/C/IxR5&#43;8SnNyzknfar9cLI02L4QshLi5uZlMJoNB/9Wbs2H2d&#43;QpQ2MlMEenKRl6E4laJCz57sp&#43;iyvyRpAhS3on&#43;KeUHtdZrQX2ZnU8Bga2lDIgE58MrfVkMrm&#43;vm7wDflgMOhnFwk9qpKlEshrSqI43OS1cabBr2f97HUc5X0&#43;17V3mjT9wAlgiP7oRjA0I7&#43;/v0cInQyH3eKkIfO9krW1MsKekojuc1WxPgDeELpE7nfrBpSfU4KTo/hCCWcliRCNooeQIbofTg7gznz58sVaOxqPjzrHMeUFO5e1tpJgH5NHqu3u1AT8KNjBSGa4kUJVde2dhxv8F3TCw81hk/AOEsYTxpI4KxIthRK1cM4DeL196X01P&#43;KsG7E8GahU11VtjA1wldBS/fmTSpIEmuAMBoMsy1nMWZzw&#43;EjzRnqhAfsDmeAg1W5INQ7T2A5HjKbdLM5YXytdV0IpHYpXfwSOBDQhJJT9fj9fhZwyzNP4SKdG1FJKBXM3hLwfNeGxmy6AgddJGT80C1uvlBLO/eEKKlzagZH2HWqfeBI6vcPq/UcLLAzo32utBfzY43SEGywD3Tmhjcn&#43;r/Pgkhrr2b1uRuj8&#43;QJ1yFoL7aZB2vERn&#43;Wde3iJCCHGWHh0&#43;168AWsICjsblWYAawRl//CbYZoHI9smgPCMApYJYnvZDvwmQHvCVUIwEtgVm5RH246DS2oEV8FbeHShePVHfwseTsginqzxD0noWl1nL4AxcGAA4fekXPbD8fxthR6MwcgORwPYa8uyBNgcIPxetvMc&#43;QEo5eVyqbUGasJz2dSdx2ElNQJFKrSch9oa0KVediNEFOIFagLsvwD6DzXcfdHnX79&#43;Lcvy&#43;Ph4t/aBgZpQluW4GS1pF&#43;tuwCHo8&#43;fPQogkSc7Pz3eguQYpgvl8Tik9OTk5Ozt7XunZbUBb8QDs2F9SY7lcfvr0CW48oCQPvIT2RyEw8vHjx&#43;l0Gjodjkajt2/f9vv9A2wrsM3vKVeglJpOp7PZrCiK3ZB5gTIE3fV7vd4OdoJ8zP39PSR3wMTZwZ/nA&#43;YEzPv9kxhgEkyn07u7O&#43;AldDqdfr&#43;/1YoLRiaTyc3NDZR8YHkbj8ch6r0mB5zQkiSBDGs3&#43;CcAjPf5pMAI&#43;AB57g52YLsFlDL8cJBblWA8tOra32ZwFb4BUCBZ3w7au5Rl2WAwgC0GY/zkEnsfAcCH0wEwTXar7cDKsVwuQSprh20etpWqqpbLJayxRVGAna38gasl4FTCJNvYlu/PGpBjgashm8nzfKsrPYh3Pp8DmwHmGTCjgp3/DwAA//&#43;FEQwcVSEW8gAAAABJRU5ErkJggg=="
+                     data-src="/components/display/images/addressable_light_pixel_map_8x32.png"
+                     data-srcset="/components/display/images/addressable_light_pixel_map_8x32.png 621w, /components/display/images/addressable_light_pixel_map_8x32_hu_3d9586e845b8368.png 124w, /components/display/images/addressable_light_pixel_map_8x32_hu_64841909714cb02b.png 207w, /components/display/images/addressable_light_pixel_map_8x32_hu_251324c2df25d7ad.png 310w, /components/display/images/addressable_light_pixel_map_8x32_hu_6133d9756872261b.png 414w, /components/display/images/addressable_light_pixel_map_8x32_hu_e8a8468f7ad7a8a3.png 621w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>LED layout for BTF-Lighting 8x32 WS2812B Flexible LED Matrix</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>Below is a definition that includes a pixel_mapper suitable for these 8x32 matrices.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">addressable_light</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">led_matrix_32x8_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">addressable_light_id</span><span class="p">:</span><span class="w"> </span><span class="l">led_matrix_32x8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="m">32</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="m">8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pixel_mapper</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if (x % 2 == 0) {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        return (x * 8) + y;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      return (x * 8) + (7 - y);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="l">°</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="l">16ms</span></span></span></code></pre></div></div>
+</div>
+
+<p>It&rsquo;s possible to use two 8x32 LED matrices in a 16x32 configuration (one above the other) by using the following definition:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">display</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">addressable_light</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">led_matrix_32x16_display</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">addressable_light_id</span><span class="p">:</span><span class="w"> </span><span class="l">led_matrix_32x16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="m">32</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="m">16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pixel_mapper</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      int iMatrixOffset = y &gt;= 8 ? 256 : 0;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if (x % 2 == 0) {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        return (x * 8) + (y % 8) + iMatrixOffset;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      return (x * 8) + iMatrixOffset + (7 - (y % 8));</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rotation</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="l">°</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="l">16ms</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>
+<a href="https://api-docs.esphome.io/addressable__light__display_8h">API Reference</a>
+</li>
+<li><a href="/components/light/">Light Component</a></li>
+<li><a href="/components/light/fastled/">FastLED Light</a></li>
+<li><a href="/components/light/neopixelbus/">NeoPixelBus Light</a></li>
+<li><a href="/components/light/partition/">Light Partition</a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Addressable Light</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#pixel_mapper">pixel_mapper</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#default">Default</a></li><li><a class="toc-secondary" href="#btf-lighting-8x32-ws2812b-flexible-led-matrix">BTF-Lighting 8x32 WS2812B Flexible LED Matrix</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#pixel_mapper">pixel_mapper</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#default">Default</a></li><li><a class="toc-secondary" href="#btf-lighting-8x32-ws2812b-flexible-led-matrix">BTF-Lighting 8x32 WS2812B Flexible LED Matrix</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/display/addressable_light.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

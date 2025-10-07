@@ -1,0 +1,900 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Resistance Sensor - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up resistance sensors in ESPHome">
+            <meta name="twitter:description" content="Instructions for setting up resistance sensors in ESPHome">
+            <meta property="og:description" content="Instructions for setting up resistance sensors in ESPHome">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/omega.svg">
+                <meta name="twitter:image" content="http://localhost:1313/images/omega.svg">
+            
+        
+    
+    <meta property="og:title" content="Resistance Sensor">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/sensor/resistance/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Resistance Sensor">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Resistance Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#note">Note</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#note">Note</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/resistance.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Resistance Sensor</h1>
+        
+
+        <p>The <code>resistance</code> platform is a helper sensor that allows you to convert readings
+from a voltage sensor (such as the <a href="/components/sensor/adc/">ADC Sensor</a>) into resistance readings
+in Ω (ohm).</p>
+<p>In order to calculate the resistance, the circuit needs to be set up in a
+<a href="https://learn.sparkfun.com/tutorials/voltage-dividers/all">voltage divider circuit<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.
+This consists of three parts:</p>
+<ul>
+<li>
+<p>A voltage reference, usually this is connected to 3.3V (VCC). For example in the image
+below it is 5V (though on ESPs you should not use that voltage)</p>
+</li>
+<li>
+<p>A reference resistor with constant resistance. For example below it is R₁ with a value
+of 5.6kOhm.</p>
+</li>
+<li>
+<p>The variable resistor we wish the read the resistance of. Here R₂.</p>
+</li>
+</ul>
+<p>There are two kinds of configurations for this circuit: Either the variable resistor
+is close to GND (DOWNSTREAM) or it is closer to VCC (UPSTREAM).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/sensor/images/resistance-downstream.png" width="25.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Example voltage divider configuration of type &ldquo;DOWNSTREAM&rdquo; and a voltage reference of 5V.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 150px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/sensor/images/resistance-downstream.png"
+                     fetchpriority="high"
+                      style="width:25.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAHqCAMAAACa4JQzAAADAFBMVEX///95AACAAAB2AAB8AABxAAB/AACdOjoAgAAAeQBzAABwAAB4AAAAfgCAgIA7nTt&#43;fn4AcwD69vb//v56enqePDygQUEAdgD9//8AewC4b29tAAB0dHRxcXHevr5ycnJwcHD39/jn5ubBg4N3d3cAeAAAcQD9&#43;/vevLx8fHz6&#43;/qbzZuoUVGoT0/6/v7x8fHf799Qp1CFFxf19/YCggIAcAC8enqVKyvn3t7TpqbChIScODgAbgDz7e3z5&#43;fj4&#43;OjR0eUPDyWMDD19PTt6&#43;vp0tLly8vVuLjZsrLFjIyzd3ekXl6cTEylS0uaR0eaQUGRLi6NLS2SJSVqAADr4&#43;O7hIR2u3asaGikV1enTk6UNjaLKCiDExOBEBAAdQDr5&#43;fj1tbgz8/Yvb3PsLCpqanEnp6dnZ3Ll5fHlJS9iYnDh4e&#43;fX2yfHyrbW20Z2enY2OqVVWhU1OVQUGfPz&#43;aNTWPNTWLIiKGICCMHh6IHByJFRWBCwuBCQmDBgZ9BQUAagBlAADw4uLk2dnczc3eycnhxMTRurrJp6e&#43;jY27dnawb2&#43;dUVGhUFCaNzeQISGIDw&#43;EDQ32&#43;/v38fHt6Ojp4uLW69bQ6NDbxsbZwsLUv7/cubnQs7PIoqKioqLCmpq/lpa/k5O6i4u2f3&#43;vdHR&#43;DQ1&#43;BwcAhwDy9PTu5OS107XKra3Qo6PMnJyampqWypaIiIhtbW0/oD&#43;YMTEfix&#43;DGRl/AwP3&#43;/jl8uXb7dvt29vq19fX19ff1NTjyMjDw8PXr6/UqqqWlpaRkZG2goKBwIGxa2tqamphqGGqYWGtW1tXp1c8lTw0pDuPKCh5BwT06enc3NzT5NPL48u7u7vRq6u3h4e7gIB1s3WxY2NMpkyhNzsLhQvl0NC72Lu0tLSqzaqKw4pyuXJusG6LAADt9u3h6eHF18Wvzq&#43;l0qWDtoN7vXtoaGhfr19FmkWSRkGEUzs1lzUplCkWgBYXaABKIgCp1Kmuiop&#43;sn5geDt4XzsNcwAZWQAPRABFOwAvJABaEwC9soQvAAAx3ElEQVR4nOy9e1BT594/yuw/tj1/lDrP89aTzR&#43;ZQc&#43;Zx71wg4KD0ndWZBFzIYSs4Gx20pDMrngh2G4VfiUkXDqTU3NEjJKurdVfUF&#43;PlwF2oswuN1cYiPo2Y9A3EzdmKA7BWie13Z0yG/KOZ1/OnJnfrLWScBEttI3JmvGTBZKQyDeffJ7v5blmvMZrvAYLCJFgyS3xGwFc8kSYIiMXA6KCvKXoysZgRgbEssVdGJp/ZnZXXld2Wlidm3d/ePTjp6MLvw3f31mABNk77w8P7yiIW4kK1g&#43;PDq8vSAersR0P9u&#43;/xlzz384/Gv49hv3&#43;6aPze0fXY/En/n70/P69o7/HUmww85kXDJ/vzezNXHj19u5/sAPLvr&#43;3t7d37/2YICBzP/P23h3Zqdc1zB7e37s2cyHWZrJGi4f3r/23zP3DMT0Isof3Z2b2nh9OA33AAsYWjt/Ede3R6E4se/jar3&#43;deX5YDBNP7F2beX64CwrSwejetb23r51PYO/e0eGd2QIxY3Tv/uFszkju3fXuH85LA6Zjn/roMIOPnw5/PDx8f30XhqB4&#43;NpajmkYM/p8Zmbm/uGu1BstYG25/eh&#43;npjxfYy7y8tGuRAKEkZzauDEzzCdBg2RkUfm7Uc7xF3rR/fuv7Z/72hetgDCDJbptYs1nS5Mc7bcfjS8/v7o3ttrf7329qPhPARZZuPySDyRYzoNjGY&#43;9czevQ9GH52/nfnrf/u3zFuP7ufF5bE802nhPTIze2/vv3W7l3PTvdce3M&#43;LN8RF3uN82ngPzimw7vn2tf3XbvX29t56MPz7bMFS75Ed89Pp0hDXZq7NvH3r/KPRj0dH997u7b31aHg9lr3YewjEaeSnWXmszbx9/sHw/Z1deTuG9/YyCtmRvVjTEGbH/HQ6GJ3NJky3z4/e35mdm5ubvePBrczeWw92ZBcs9h6ChPdIeTvMyMje8Wj/tfOPRtczjQ/C3LzR85m9tx5xRrNMcxqG4oT3SD3VKO/&#43;6OjHTBhkIgqrgt6EPH6duf/jPEzAPe/ja&#43;mi6QwBJs7bubMgN2YKZzTDNJOUrM289WBHHgYzIKOb22xqKk6998iAWN6OHesTRguY9sZqOvv&#43;o9u9mb3nHwzv/ARi4h2jrPYf3U&#43;HKhEW7Bh98HR9vD6ZZxrtHH50rZfR93AeYzPjVW7vHd2Zm2qLGa3uHN17fu/wTgwKIBRA1MUwzWhakP374Ue3MzMZhezcMfroNmvzjnRohxnY&#43;ge3em/tHd7ZlZ1dkJ3dtX70FhMT72MQZe9kre49P/oxG3NuPxre0YWlgc1MNX6LKVi5KmB4ePR8b2/v&#43;dH1n0ABxBire9f2Xjt/jdXzcF52enTXoLzhvdd6e2/vP39&#43;7/nz55nE6fbeB8M7Ga8tYKxmspFeVtv38z5JtbUxCLJ33mcaWWYvh0yG9fV5YooCCEIsb/jB&#43;dtr18baYzqwzAErWD96jUmaWGT27v945yfZFC2xAobrPM7XMarPTQtpxIC6hvf2ct00TGr9aEeBANByl9MK2BC548H&#43;3luPRnd&#43;kg5&#43;IwEBtnP00f79&#43;69du7Z///5HwztzISUs1BZWi7JhhgB23X/w6MHw&#43;ux0cNDzgDB75/DHox&#43;PDjNfw3mfIEAbVSfJymorBiFEeTvu78j7JJ20wQJmd3V1deXl5XXl5RVgSEzvOWhyWMjC6iBif5v9SXq4usUQCHJjEEABoEOXPzQMtOSTbR7A/jat1DwPuADU2WO6/NZfDrSa/U4qDVL&#43;lwBmxOjErC6lxdEy0NqSr3J1o1TbtSJAyqZQWxotHfpdFUThESpNpbEIEND77KaG4hPmkjE/qd1Hp1EYfCEQLvPpCL9iU6D4ovsQ2e7E018gEHhKVaTC5fZv23TT1qZStXlAGnq7xYBU9aTOHwrLJ9WbvHSnXzcpw1GaGw0xq/s48cGISHhw2ya5aKSQUBp3p7lAIBY8U1ivdf0WF06qN8nx356rI8qMYXFaexBEhfdplRNHKMrGGk1JJ0jdoZAoralGwTPGQ5flIgRYeVBIJNeoyo52p7XbQ5Sn&#43;px8O4AUKw8Kgu3etv&#43;wpbeoIRIHaRGAEAgPskZD0O3xBNOaaHZ2BEICCCnb5DbWaIgAU&#43;Km2q6VAFLCgxWM0QK2UzLV5qwMEAhjTKfaklUAci6PSv1A1irAyEPNO6bj8ki1IasBP&#43;UR89Npn5QuBKTOaiqOy3im6YIza//5z/8Z4ZPNGbBg&#43;sncP6b5xbSgYPrJ7N3pCG&#43;iYQbH9PdzW3oi6V5oLQIcHP9&#43;dktPhE9EZ8DI9BMeMs3IY5pfRgsKXsvj1SAuD565PEYezwZ5xbQgMv0V1xB5ZDUnD741RD56D0HMe/DK6HnvkWpLVgFeew9&#43;&#43;enX3uMVgafeY5yH3iMy/f3swx6eVeN8ZJqnmp7mvEeqDVkNmHKLlQevOiDZiMizMM5GxLs8Y5qn1fjTJ//gWwckBGf&#43;wHb18slqKD57qEIro/jVECmbpsIup/hVjVPc6Ba/jI4NFPFNHjxkmoozzSejQVzTqbZkFYiP2PLMaH4O6B/krTz4xXRsthi/mI7Jg2dM81EeQMhDo6m4PHhk9fwMyFRbsgqw3uM33GRC3uC193hVYHOP3/BttljM5aX1vOmlYCuX8pAIIB6ZzTTEAPlOtUcE0nFN3/JgXN7JXUpFzdlTFACIH3kTBDZfwBIgDtW6nNL3aFzMB7MhCB&#43;oI3Q6QmX3Kw5c8ErTeylDDEgkdNUqNPYPTeaAjiwzcitA0xsQAWtY5q6crLc4HHqT6p0wSHd9QIhRIonM2D5GBvItgZJiRehUiphesIj25c/CAN7tkRkVdbpAo1lt1xQaZZ6UzFmHCIF5vGjlCmMwhVulzqPGy3WEuqKBsLcbZUc83SkpFiEK0pKwJH55rMumQhDhdFgov1B4SKusJ1RajaI0dNYjYndyePU2ZyDRRuP7cRS&#43;f6BIshx3SHS25gPNJpKoVx0vO2YMCaX/V5DCUhVaIJBOkCVq9baKbeptarVap70geT5eQBCuVKnN&#43;flq7aV93iM0TrE6SpXbgJRMa2lubWFuV1tbWxwn/SH6Oa6ZMFhhuHLVUeE3Vr8nolK8ZgtS8uOGgYHWq61XW1uvtg60OnSXQ5KliScE4Vp7g8mSH1Aq2kI2j4hKqd0CqrPc0OqwnDSfNJ08aTLrHU26MePupX4MBc&#43;4K7P8qjUEade2t7mcNk83xaRLKTEcUl6lvqNk00Efg4OTxQGHwbTJvXQdO8Qoq&#43;SIzFXp09pVZHGdv73W5QzTIhxgKUg9ICVX6s2b3EIbC6F7zNTaEjg2sjQ2Q4gAwK1hoffcgXatiiRUTGhxyaRW8OrZhrjcrj95UBjkYgvuMa5pvmqeFC5jCrtsUoxbPcKQUXFQu07XQBRrC0P0q6ea0bTe5BuhIIIQQYSHig2t5knhssEZsoxjlMhjc7rbiSaH3qJTjIhfPdOU167f5bMBbjsMSMnLOwZYpl/0AogAFdwe3qM4oW9pcQQmhakwmmE6yxaTA6Tkdker5QVGMzQDCqelMtfFLHuF2awmtEYJgJDbfIz7evG7jW2&#43;uPQZ8Zevxug40zGjveXLywNyFHukwtAFhb9OSZKqw5pCozeMIwSoBQDLxXa2HTOJCvPcRc9gEjEOK/efCaa55oRwb7ljOXlAQOEiz9lQm0KjVZIqpfbQpRqvLbw9CBAmGpHJ93i9nczVKRtZZtE&#43;0w7CwnAQYaIjMufCZ0BgtcmY18mPPB&#43;IXwQB5VXmn2SZZoCsbjJmNFz83uiz3nOVGjuhayDtmkp3yCn9LS5mwws1UnnYrmRv5cpy7cRz7jIDUfSRoku&#43;WqmYOlKp1W6YfwbErCFfnb1caa/zuUeCK3REjJ9uMvmEFAAYwAA1UljRymiaiguQexpmDbXb63WmfpNa1b7PGT4VpADGyRPhcq3F0GHo6DB0GPR685hsibQgojyhSq26wi/DcZm2sVEri6cJEFHC9hK9wdBhaAqUbxhZYb8VxJngMlYklXgkEo9kxF1naW0JZLFcMAIELCkQhDcQ&#43;Vear1iIMoUrjGczDMfeEcJDyo6rDofB4DA4DHrT2MbF2wZBFNx9rl1VlV&#43;lqcZxr9JgUHrx2GaHGCWpUeYbOgyGjisd5nKjZ2X1JqQ67fqmf/dteOed2g0bKo9pAx0Gs519NcRE0mrbdkbtEEgv6foNV/QVdYrSPe8FAUBIkLDJq9Tn61TFKpIki5VjbYsrXYiJzlZqdQGTbuyCR0x12g1XlHsoBBEDXOLyB0wnVOXKYp3FYPKHVrbjkIB1F02BkoYSBhVmvUVXZpTiMAMikXPC7zvHpiGILrp8WKVTq0m7v7CmU0p34wCwVEMUDCnzdcdqjJXtvmO17s5FHSEQgeDZCbKi4oR2wuuhEMUy3YkjEOzuxoFVXqgzqSpD8s5Q5bomg&#43;7AyvojGKYdA63NjmZHc3NLS0trU/GE9z3G/SBceOlEY8DHyhuJ6ZHOotL2MRVZTyr9iosu&#43;RE6yJYCKLin3EJWHjX6flM8NuEKL9wSBmI4LZtQqUlNbUj6R4CYFmS4ovSKRLu9547arJ4ijdrkl4twyurUnHSoC1fWH8FkeR0DLR36pg5Dy8AvB5pLJoTdjCOFlLSWbLqqt3eyrQMiigrSR7w1/9nuVxInCJW23RiqltIUxjKt1o6p1JYm879PFlnn/y5EwSM17UQVoSiyeYKM4ijvcYNB&#43;SeJbEKr0hrDEtdBdcBnoyAEI1lVzYFC6QqNliv1rU3bPvzss21NzQO/6FC5rRirYvpcnbn1l4byPWyrYYSQi1H4qbBtT6lfZ&#43;q3VBB1vso9EhwE9xTr9SZzfnPrRy2GkssLNjqCVPhiXUX&#43;yTqj84zUSiHmc1Uarqj23VSssfTr/lMqcWkYowFj9LHAlRUbjcuVHfrPxrKysiaLTR1XO9bVeJhmQm13KtTNvxhwME099h9BLip222p8dlLdmG9Rqy67jwRFIaWjtdlgaMpv6mjJLzbSCV1i1pv&#43;QHOLpVhR2lbjpQESUF674QrxQSFp0TfaL0jec02qAwdtFETUSPuuK&#43;pC6Yo0LaDkdr15U43QZpMZ/W&#43;bDQG/S/pHQIVdCtLsaP2Fo3jPQufJ2A2CYZm7rZ1sdOjNOq0x3O1VNhnMOtWmscM6S3NAE08JOEepHxhwmHQEqfLdpAHC5UrDVRNJBirWlB2wieiig&#43;rAmFwEQFA&#43;Zm6uWLGmO5VNpoPCIEXhHmdb3a78iroJGU0f9RNVAVPHR4YFTMdTJnz7iNc9URfQd&#43;QHVAek3bKxgM5/4JzcGVKom/WbnBTrwwWsUHe1DLR0WMxmi7lEU&#43;TBg53lhgGHpeptzUVvmPEeEydMZKVTQtsm3tbrT5Su1Ht4lfqTvhEqA0KAS9xak96iy5LZLtp1yrFyU6uD0XQi6DIp06mw01XbXqZ8W61bZ/e/I7NS0tqD73vfE&#43;E4XUNc6XhXTnEpFACUzWdq6dhW/JtNm8pPmEoOFXmsXqVjYKCJVMhpHCAmVE6qTaqsGm&#43;lymTRTXpXttkQ0xDz2dSU3ZbG464zt&#43;jJNqH8/7nU5vYFWhYwzQqjOmS8dEhJNJxQaX3vuEPCsAgAq/OckwYIIes50mAol1MoKHV2bpRaRbYsU7PJXyOXyYsKCTNZK/R4lYZftFq0blqMoAAiinZpA&#43;a32zccNplJXxG9woiIy4/nm&#43;KpKRKH2wj9lYrCM7REKhEeU7c4ijmm2b68btvFSWV9g6mxitB&#43;4Dor6caZihx1y92ybsazi1z1VwzvynFqpLas7lCtVyL0ma6oC0eCFGW9edise9/pCdlZptvCbEoHkVg6UWIpGTtG5gfGasJgZbmHgJKVmXQJV4Nwp6akiqyViAGgpIXq1hjTTJSQCve8o21o7GdMvnxRRrMdeTADAs&#43;Fy6VHcAAoTh5eq8e1qVFfpdyw0ek7eaWicAQHQOTVmhij95QbfjngCIy5wiIKQQECnlLCUjJ2mcxXa1wesLJJ2RCEDxxqd1lB/C4duuSrdQaRQADC7weaHeWs90AiYc0Hmk31JQ2ESnvZuMcW7gZY4n&#43;oVGrbNoYlUplCfSX/sNcjL9Rd&#43;eiKqczlzaoymMpcI5KwsJQ0k7U2OqR0fOSwmErKaouOiJj3ubGwJP&#43;zsSxSv2us1CZa4Q5JKBiuFtKJOg&#43;CbumZsCibYTBcuI3VNGJ&#43;brPrTJb8Crui7ajQI4plfywwj1GpVvkKJ96ffNuiL1EIw0WabS2//MhQf8FZu86Sr/MXTrzfXh4o0Xjpbq/d0FylVOrUurpL1aJg2FtZbmr6bExB6ptOlB1Y6V5UjEcQL&#43;hxEWCxughj5eEoDgURQkDSpiUC5vyAsr32nDNsZdOl&#43;NvGhR&#43;QpkCJTh2wNJW0e2nam6VzXL3ar3RJhJWqgCWg1pWoTSWaIprCZXX9/aramnaVOnDcGKblE/ZdesuHk4XKJkPTtjo3vdLiZXGpye2uhAAuooVZgRaDyu0RBSkQHDn3zuUylU6nI&#43;2aWpdzhMbjHyXERLIswmQym8wB0heyguCIURuw7CKzqkUiW6mfDJhNZpPaX0QDJLZdrlcpqj1Co0arOeehnRtUu0wfjtW6fR&#43;aLYE6N/1jx0IYszHRyEane&#43;xka/OJCflGmwcHVLdkRG78A1HVb6nSKf2XXOFgbNgAQmANHSxet26d6vAEE6xB0HbgcPFYpZzGsKAkVLhJtW5dsb/GAwQQWW9OGKu7AU7bOmVhnKJDWeX2LJdN6posXnd4w9ngT&#43;iOQEGhcaLQ9z&#43;aBlp2aY9NtBVJKIiyAR52KbRkQ5XFpFZpLsikbF8eYzcIu9&#43;ZmHj/nRqnh0mLskVO4zs1NitAEImtcuOG9yc21LC1FBRLhLuDGKNJXERhiJK4NpSGPBQudW943yiz/oQeTQgkpXWETm12tLbqAzqdyicLIoZ/nLZ5z9X62PK23D9hdMmlVjGjJsojZSDp5vJY0C2RekRsVwEC1jDzKzY1ZWpcK8VVcAhjk3ZaKqEphIIe6YjEumz3w4qNlhauqTKfNFuamsxms0lddlOEYo0WF3mEoTaFv45UlxCqwx/cZLwljI81cUxxY08x1uLjUJw9TJkV&#43;yNc3QPYAXbuP/hJExsg8LjbxxLw&#43;0pHqER6igHcOtLpLmQTJpNqA5eYLR3RY34WJH5EcBkKE7&#43;OP&#43;sndr9CymNzVm90btzIftnCQbQgabIe6ayp1BBmfX6AGJuvoF/4R1eWT2T81C5jON/TxeVrKGYWk5jS1bV&#43;FVFlyTeRZZWhcBoN6C&#43;oVmLqi/XljVQfnbBXNPY3qsmxSzVnrek8UxZhFN7N9uVNalUEQSr9hW75EY9InMbrzhDlEe45V6mpU5H1qjrNhDtUvfsUnqoB2xUCo/dp7GRJhU6l9dW6hOHfspl0qq16OSCQTuj6DVfyCU1baCQ2GJfGHLOAwNOmarxyxRCwTxTtDgIkWKEjSymQSHapjlRbLGq7wl3tCa6wxEgtoNhq69w3UbZOpyPrNG3O7jR2dPOA7NCnrEYxdpzUkc8PjqYjuBFEgNMjMpeC3KV18mWuKeTstt48HODVbpswAyJqIw/nT4tjM9VTbchqwNMlI7Hp9ak2ZDWYX&#43;eSaktWgYQ8&#43;BAT4&#43;Dt6gs&#43;eo&#43;DvJTHNjv/5MFDlwf4qGleBhfAR3nwNCLy0eXxUR689h48k8dB/kVEfrq8lwUXAcKw3AWDGAJs0f1UAYKzf6ioky27MFiADUY2b44MwsT9yOYbmyMFKbcaip9yJzIsYwmKfDqdkzO9GUvcH8&#43;5fr1naPBVG7kUUPz0zj&#43;29Cw3aiEYPJ3z5OHM78Zj1AoGT1/fcm/mi6eRFNi52DLucIPljIYF49/9ua/vbnyvRVgw/sVcNPrwy6FU6yO&#43;g&#43;xyTBeMfzUbjT7siSSe&#43;qTv/5yafbw51fp4ye71MDL&#43;1ezUvNECxuipqbm/fjqYYqq5fU2X3ZkQFkx/NRudSmzFCSPj38&#43;9mRZGR6ZfKI/B8a/&#43;izU69tTB8Sd9W6fmvvs01U5vfgfZ51fvsPLoe/isgHPigggjj61zf/90MMWZiuAlmp6XBzfjIMH0YIq74BM7yC4vD4bpuKY5pqdYplOrDxjbQfZF3iM6lTCaVVJM0ymXx4t2kGXk8V&#43;sy0sw/VVMHikeKk3sIPsCecy7PBhn&#43;u8pZ5qNiAyZL/EeMQmzmo41xNRq&#43;iX7T7PyWOo9Yi4vxQ3xxX6a8x7Rxd4jLRoiFxGXb4gx7/EsznTB9FeMy/tuBUwn95N4yZ7qbHCZiv45ZzMXTLDIs&#43;/73uByj5cbBbFBLJkb4LxE04w83opOzT3puRERwAxB5NPHb01tnbp3/cYPzDCGg0M3hgqSaPVLmWaKgKnoW188uzEI0eDmb&#43;/2bf0VUwS8PIoLsMjTb6eTWZTBlzF9&#43;luG6r6ZL3qGBiND03&#43;fnZrqm33yNLJgPSq7pDXxnzEPQqzr0&#43;tPHifTxQhemHtAiCKne76b6Zvqm/nd9OnxL383E43Obfniy9MRBl2DjEgEg12RrgJMwAq5INI1OAgHI6efff/W9z1DkaR1NjDeY27Ls8hyMoW5g0Pjj2f6pqL3vrr&#43;17uz0b7ZJzk9PT3f9HzT0zP9aWQQCgpuPGV&#43;Yup1bGh8enp8qGDzdM6T2ehbnz8bH8KSYzJWsPnZ3bk/X/80skw1AiEcjIw/ftgXjc7NzPZNRWef5Dzt&#43;fzOw4czDx/efTwdKRgcevbF3TvXTw9Cptl&#43;fvfu5&#43;Obp383Mxudis7e/ft4cooFbGj826/m&#43;ua&#43;fzy9HC0xq&#43;/ORaNTU1ujc09ynl3/gmE&#43;OhXtm/lrz&#43;mh04/vRee&#43;GC/IhTAyfZcp3U8/u9s39ebWrdG&#43;O9NdyZA1LBj/fMtcdCvT1p4ueygDI&#43;zx63fmpn419a&#43;&#43;OznffMey&#43;K/ov6JT0T8/yfl0/PPZaN&#43;TcSagRnoeRqMzPTe&#43;udMX/d&#43;2Mm9xOimRE9ucc7cv&#43;ubWrWwIKRh8HhiGYTuf5tztY6h9/JRhMTp3b&#43;bhzL25aN9bv5se/25uqu/JeAGEgq6eh1PRmZ7N44/vMm9s5s71pDgQ2DX&#43;xdy/tr755q9&#43;tXXuybNPT994/rY5Mji4c/yvd&#43;fu3Xn89MazLdF/zd3J6en5JufOXLTv&#43;57x72anWKYzYKRnhmE6MjSe82Qu&#43;tbnPZ8u27p/KnKHnm2Jbn1z65tvvPlmdPbJ54&#43;XQc700CAWGb/&#43;18fTf4kMffNwamomZ8fOrshfrt&#43;bmtrybPrzOUYeBQJWHgzTkcGh8ev3&#43;maeDRVgyZA0Gsq5N/Xmm2&#43;&#43;8cbWN7ZG52buzSy9Zma2PB4fhCjvxl9O7xwcjHwzE52a&#43;SaSm4t9nXMvOrXl2fh3czFNCxhN/2tLTx4TW&#43;6xlWWSfEfOzNSvtr7xxhtvvLm1b3bm4cOZLTNbHs5fD2e23Hn8F6a4GsweRAJB5JuHbKoqyMhlXhp9&#43;IzT9NNBNC&#43;PXOZTYI1OSv6aO/TlwyhD9BtvbJ2afXI958ucL3MWXl/mfPnl&#43;BBiD1BnPEnkm4fRqZkvI4NocHPOPcbo6c9np/ruTEdyUW5MHl0ocpox&#43;lkkORkT7Jq&#43;27d1K6PprdG7X/7lxo0bN75mrvubvz799den2VtkXpmCSM&#43;W6NS9x&#43;NfD21&#43;yli7pYdxedEt354eGho6nTMT/deWb7pyC07nzPS9df10QVIO5IeDnz6e6Ytu3bp1qu/e4/GIWCwu6CoQiwsYdLHfCxZUB5A9XTjad/evOd/mfP6wb&#43;6t302fZnzm7J3HOd/m5HwxyzZEQcHmnu/n5u58Ox5JSp8OFpl&#43;/OQtJj5v&#43;et0BEMCiCDKRQhhKA64UJnY5m&#43;f/Hmub3Zm5t7s3Nzdx9ObmXg52zfHttm56P8e3dLTlYsVnM65MzvLRfefHxCLfNrz&#43;Uzf7JMvx4eYDzORaMJ4ybTozwoGN09fvzvXF&#43;3ri87dzfmU8YZ/&#43;ebvM3N9fX190b5oLHRjBae/vTNz93GScg8mj&#43;u5Ozfz7Y2uFXyUEAoGI6e/fbJly8OHW&#43;5cH&#43;/KhQLYNfT08Z0tD1ncfXL9LwUQQig&#43;/c316z3rkyJqTqds//TKmjrMEBRsfjrd09PTM32jKxfCDPZ9sA&#43;wD34awdiNbgaHvv56Z9L6KQXxzpqVvoDJ9SORCJOXxDqesEH2kdiDgviDg1jSOhq4IqBnNQNWAuaWG99vFmZAmBtb6pW7YBPan74O6sWIn4K96tdlLF6NFvv31fQ8cV0I0/w64Sx&#43;EmWq7VgV4uOIqbZjVUjIg1eTVOLjiKk2ZDWIjyPyy&#43;hYXx5vdvnOWNhrmmpDVgN&#43;M80no3l55md8xJZv8uBGbFNtyGoQH7HlFdPciO2zwSRVRskBT1PT16ervhpAcPbQP/&#43;5MZ33bXgekDpzqELLt0NogFDDv7PkYmd&#43;8kvTFB9PVwXcYWH8Mvq1PF4ReLtunH8HlfL2qEHeGf36qMFXBH4vOOOV0byVB&#43;&#43;M5qef5mnCVMG7NbaxM/T5wzSEEHEnBuM82HuOmyaIAIUHT3nHAuWu7SKcEqf7kZ/srpX0bueekPsSadYp3EdDzhGPNQjSuE8PItxTHTIq/EqVSme5kq9WqZTaywcueHcHkzKZ7ucAxKjdNRoloW609Pf3Gwz6/v5&#43;S2OVjiwrPSMCKA0dCYSY2Dpywa&#43;2WBrVRL0qhnq1yWKpqmsT0nj6lTEQw63S0CUtUaJT&#43;RXGo6GjoVAo9CfXhUsau4og6i4b94SDabbnHwJWofuSVrVOe7nWJQvTomAQD&#43;LBoOhUWLjHXelXkqqyDTI6rfr2EOVxKewEqZ0IsQf1YQhBBJGA83&#43;isLfWT&#43;pUPvduPBUn4S0PKJZcKCN0qna3tHuRWxZwO/6BYDhUq1ER2jZbdwpOwlsWEOsOlW1Taytl9HJnMMMMAQKisFdBVhxvq&#43;5OD5cNQbft0poKbZvz1AsPeBBgwBrSqBu0bbaVHpuVVEBA75mw67Q1R7pffCgFzEDAU3RI13C8TZoGm35A7FSRhtCVuSXUy/cShoAOTaor6i54QMpHF1HQ&#43;Qd1VV2N54eOFBcIAB3yqXR&#43;b8o3loXgvdr6qvpaqfiHpQrBdmelnbxkE6d6iScl81c0aDpX1LwgEFW3E3UrPKEsecCsbmVDmVGysg2QBcDTpiJrJSs8RiZJgNQZRb22ZvdKN6dHQZmG9HdaX/1hmvOAyHpOS1aO4Cs&#43;qwR4jErVMe&#43;p1OVOEFE2BekPrex0Ju4luFNzglRsxFNnNNheVEZWruZ8fAjo0nqTym1NWTRHwTNtKrtLtBq/i3BvXWPDxGre6M8LjA61k2VyfDWFFKTOTpqq2m2pMhoCaa2S8J1dVbYJQfiSurFMlipRI1zmVxOVktWRhugLZKNqdZr6GQFFRcpG0r3K&#43;AZxrzZAXvzRhyP9RCDrPrJfeRNfXSYBqY2TamKDJEXuA6ONhKV8tZviQUroKyEmdqeoJWKeNl2/3btao4HQ95lOkaIzBCAIF6rzy&#43;XLbor3kpdRtqwP1RpbagoYCGw&#43;k/7d1U5UYo0OHHamyGjKNmnWv&#43;ulVtdJB4Et64QpVftDMkab9D9KHidO2lNlNBAeNDPyWKXRwHbsw5QybWaY/hGaPvluSuXxrjxvtX46pZoGQo7p&#43;F&#43;HEKEFq/C4&#43;89tIcI1xNQybY8PFkIE8G5rcP7AfgQo9uTtRQf4IwSCwqwPTb9J0RjjYk1DgNPVrn2hs56YxhHlEYb2uTslCzQPEWWVjLj828xJYxomsPyvgfBgYxPj8riRgN3nfKr6usvu2AF9gD6nUZKqQ/sk8b4n5rOQ3Kw5kLXObEmO0YnDDLkjCZfrwo0zzR4iR&#43;2&#43;oNE19lcRh0LcKe9BWXtJf39/w6GjEjz2WYikspr2sXfX7epoSobREFHdtCQBj1X0/DAPZ7RdTuWyXQMXtDo1Ud9gavDJcMS8iQ2qqgqCaCD9F9mOUgjoPZf8SkJdUdXU3PFuEoagESUtKp3YEL8dqAmNPFdqsPKIMQ1xp6aqSltr/EOJhaiVgAzMeq5OV55lNGoaAnXnrBiEGH1UQxKk0m4nd&#43;lZpn/uhoho9xihVpfEbjrSPiFc2osUyz3k3FnB51T9JRNnJG5Vv8UvFEMgLTyx7sBZ2lND5qsLpQBC3OmrV7aXnvOGajcFzElgGoLw&#43;zpHSwzNLc2OfLI2vOTPzOceTBFTQ&#43;YTRjq457iBUQwCtoNq&#43;80gFvQW69mTqAFtVKoqhZ5uvNvp&#43;/Dkb35&#43;TTNEBVp&#43;MTDw0UcfXR346KOBgVaL1mVd3MvIBReOMmStIfqJGmuwU2kwKDspSHFTJxAlt&#43;tNB4UAgREFofX&#43;EUDEhHFTEuaCMEZvax1oaTKbT5pPms1NjqsOtcK5&#43;CTnBNO5jJxq6vOJmu1BOWM0w3RsVi8lL9ebDtooSFX7P9QIKcglTCeTMP2NKUoCLa3m4snJgwcPTk5u0pn0TeTEyKLcKKFpCGGcaTzGNIpN&#43;oaU1643a2wUwuVa3TEpgFzCZEqSPLa1NK&#43;plduEtrO2jaF3xtR6i9YrAoueFPMeuaymGaatQbnyCsN0YlYvx7QQoOCeOoLtDGNzj&#43;Rp2qEsElFADChKtNt12KwvPmpdWI0uYJqRB5FP1tAc04yxsdlijKZZpoOhOmKDBLAvO/ZZMrI87hRxB3teO2Rn99iOqfUq13NGc5qG80zHG2JsBiSivJymUdAbNxokqXKJM81UJVwiIZlQ5xcvMTrhPTJYTecTNacSDTE&#43;xY31HpMxptkeNC6f/k0yGiKjaYd9T6ybEALJBnW&#43;arHTW8Q0vYTp&#43;JoAtiH6WE3b5&#43;XxoTk58ji27SrDdGyvGSCZKGGNXniwckzTONtDVkP0v12zHY81RBSfPx13eXFNcw0xKTUix7SBO86fPeA8/L66SeWiFzEd9x6CZTQdmyCL5huil5VHEqvxuKZvBjGAMIBR3U5fgG2IC5&#43;U8B5scFkQEeUL/XTc5S1g&#43;liS/DTrPUi3hLbSVist3TNB6jtUrkXzHhZERBhjOtYQOU0vCOMM04ymwzGmkxZcAq3NusIir9d782ZRqV&#43;X39L0biiIkAAhln2E0Lz3YDW9yE/HJ30nIuK8n2ZdXtI03Wqy&#43;9qzsrKyfPaAo8WhzrJRCAERzcGKU8KDTBHAeBiMXhgRF2l6sTziwSUJlQube7QOOE5uU7MwG646SjQ3rQABj7zmYmlpaelFt43eGE9N437aGuw8fsVw3MsynfDTZk4e8YaY6MtLTpY30OJodjiaW1pbB5q3&#43;byszef85BqCWEOcsE84vZOW&#43;dSU0/Tzfrpcb4rJ4&#43;2J5HsPJjVtMluaOloGBgYsh4tOAYRZj/rV5saTJpM537Ku0jjGFbYCznu8PZ8wLfDT9nl5VCaCS3IiIuM9Ws3rxsYmD68zt/zyalW7jYIQr24vqSAP&#43;/1jxRX5puKDxSzTXO5B9hM12/Hn/LQ3Lg/vcXIiLo/keY&#43;W5hOVcuFGea2qaeAjs6aaQkjkOl5R3OZ1bpQbx9SWAHnCorfH5GGs13MNcYn3kM/LI9EQkyePba0G5c1uigoKFdscH&#43;nX1XgAJgodUn1g&#43;yNF4bZKpSm/pMQS62FCtJvoT7i8JX7afFAIsPncAyQvNT22rcVRvoeCAswa8gcczSb/URpQH9dclIswCKmwUbvLUlKS37TUezznpxfkHgvCeNLkYVDKmXwabL85WdGkD0yGugHu8QSzoQBYve1vN&#43;5ac8IS70Kg3fHUdKmftsfk4Y2Hccp2TJccebBhvLyT6xqyhtqLTfkll6RsKIQQdMvbdY0mlZ9piN5YFwIjD9ZP62NMb0tExERwCccbYnKYlmxQXzHYuR5RCKw241hVhYZxIJA9wL1dl29WvlOqjQ9fYLSRyCfdVtwbK2wXR8TnGmJSOtURfaG&#43;v7EsNm4mQJTHXUde4kZZISWd0OXriQNnvbEOSAEEnjZdv8rVHc89EsugGKa5ymVBRDz2WTJcXgYKyhR1ZZVSrryCGYg60nap6BRge1Npl9bUSF6W0cJJLveAUCxV6AJjXpySH7&#43;yuEZcUNgmOSIyijgjk0mDiU5HFAyP0Ew1iImkR30NFZvanFZcqDHri29aKQqnXWU6e6WUomTaxn6lF2fXuRyWsRGxyTwppDAR6z0wpmHHa8Sf2&#43;gMhFEUtWDkASIgBsxftMoqtTq11h3GASWcNDtOvH9TLve6fWRdrbAbUdKJ&#43;iqVm6ZE3jG1X8jIxG&#43;yaL3WoOeCkiz1JLNGzEiMAyy6n8H6jTWmgN14RIRTwY2T5mbLv7&#43;7adMmFamaOCsCEHULa1XE5VC1/D9VJOPhME8tYSIL93gv&#43;Aj7uW6UkbwaMWbmcw8Aq9en0zsCk0a5c6NQWOQ3t7ZYzCZT4G1t5cYgxqgnWK0gCK2mjPysLCRCGSjozCLVpFarUuvahawHfcUjthDf2F7iaG05uW7MPzl58Nj7hy1XO3Z99tmHqnb3iIhdfwMxq9tuajSZGslarhNse&#43;cHZGNjY79JaaSZp3DBJQlZ3guArO51TR8NDOjNu3bt2hVY5y&#43;2NO/a5MvK2uB9j&#43;LWDEFE2S6p1FUVhM8rwlgHSe9pJyuqGlTHzrJzcJKW5b0AwFNK6Jsdjg59flN&#43;k0X37v&#43;wGNYccAptI1YKxYlDomqjov1yaSedHXsXtKz0smLiwsZuBBPyeHUjtoh2TZJrThBriLeJNQSp1RRb9OU3uykgBmh&#43;O2mA09KREU8w1rEjQCDoGRmR0DiKDXIxRcCrG7GFlMTrNsZR466JVS5LhjUgBsQACOZrQIQBABJ7wya6EF7RiC0ColNMIc5&#43;WWm537zczBrOV8LFjyS8UZJd3jIQsFteY&#43;wXE1ziA0WrAFcjvvoBfcixuaBTfTUvZud7pHJmTXz4YlUvS1rusZK//qOZTuV0IGDzmZrKVz2zhmmIu7SpmuIGRhSBfPuPmcOkC0xuTM1iFwg8lSX9P2Kuqc33YUnKZn1jdBvRzxS/q9S0MKuEKNydooWJyHqB6GeH7VbzKqZ8LCFStSgAom63yqJyrWLBCPsySu6vINo8KZo/jXCv3USUelZnNOp2qUyk25qilVCQqtaodR9IV7kmwHNRZ1HeXOnCqZ8bEEgrlTqNcFULsSAIF1ZYUuWm4&#43;tctKFVrZqFVPWhqqr2FE1UZ4uS8L46Vduq1iRgVrfKRBhT1Q7ZGYTCdlIjW4XTg5RNQeg08lRJmpvm&#43;B9KpXEVa1ZQ91EtoXF7UrktAsTlZUS7bcXpBwThDaTSGM5L5dJPKB65vKbunGSlViPcqSH8smBql&#43;kjuuY4odkXXtEce6bltilV74RTvMYWUWcVhE67byUihZjoiLuM9MlWGfh/fmDWkL&#43;qwn/T&#43;oPrmSFmdU5oCa2bXtnS5yQCAo/Rrtb5On&#43;QPhQUKuqryMoj6bAZAnWmsk5NTEh/IK&#43;GwNOmspj88mAabLkDgVU2oWrQumgce/HCSIhAd6dGbSJrwykXRwbXL1p9SUX&#43;wV3tedH6cYjEQY9XoSK0lRtT3go5QCByFipJpc8o/C2F0NLOeMiwLN3TplGp2l1SUXrspJKRIcBEZ2u1J3RKheuIFRcvXCQCEQYo0e7QJa2q3j4hP5U&#43;&#43;wNBiILScwotSdgV&#43;&#43;Q2DyNuATdmg&#43;F0WHh0Qks0EH6jLeU7eywCRJTV5tI0mCrqtYpzR6wURVFiip1aG6ptt&#43;tMVar2IkkeSpOtgeKAiPKc8&#43;saLVX1h9pCcpmQhSx00WfXVTU2aCeKfnCvlVcPmIEoj7eyrJ4gSGVdmd/v92t8Gr9WWU8QhLbwqG17&#43;sh5IRAIhuX7ahV&#43;rVJFEgFTgCBVSm2ZT1EaknaDdNk1aikECOBWyYgstO/ixORn&#43;dsOF9ZeKJIJpZ4/gnRT8yJADAMUbvVI3Zt2kaU2iVVEUQzJ6RAFXwx2YjvCcOdk4F2vKBvjxofSmOZ58HavXnWqhih&#43;LBJbOae3lheDt3v18o9pENuePNWGrAYJ75FqQ1aDxBS3VBuyGiS8R6oNWQ0S8uBVQ&#43;TrRvAVfJTHNj7Kg38Nka/HSPBPHoCP8qBiS/v4ZHXi5BxeyYOfCZNNo65b7RZNKQYUn/3D3/5WzTNNFzy9849//E&#43;enflZ8PTJ3J2e9Dsa4GWAkafs6app2ef4IsBB7hRsfjFdMP09747uFsQO3&#43;UX04lD0nlkNXsK9pZpfjEtKIifzcwjq&#43;Py4BXTcXnwieiYPJ4NpvVQy1JA9gx9njVETh58Cy4FvDzZPR5cUm3JKsBz75FqS1aBuPfgFdOvvcerQsJ7pNqQ1QAOjvPQe0Smv599&#43;Jrpnx8QQsHCC7GafjaIxR5IfKXa0AVAQEwtxk7G5T0bwpc8nEYzmRDlEco7vd4F15&#43;uzfTd&#43;3//5JUvfLDTOZI2RyRCzFOjqbPb7XZl4kv5z3/8d9/flOXHmfuJq0yR2nUXCwCpkcs6s6XRwlyxr8b&#43;/&#43;&#43;///&#43;/9XP341djFaE4Q6XaXA4QSEr9LL3zpB7/5/9x5x/Hjy9i3263&#43;2tXuTwteUDBsLNT7l14yeSdPf93j5e76419yTud0rQ4HjGDm4ZOLUUkQkWCVGTpwyCNklW4GAiihWAfE6AX7ymfKggyBDB&#43;i08pRBDF3wa7E22amfw8FjGf5ubC5ZFqs14GCAAAVPxa8FP6RO/ngChaOmKL3&#43;b/sUnpFC6afDkg8LgKs9qzfFlZvsS3duY65l7lMWivDlBsU5A6dUlJg7qkoUTdUMJ8L2Huv92&#43;MV0SpaWAQNrmr6urq7PX1W1iL3sdh7EJW9oO3qKgVCbn0MlecchGROkqj2XDOUXlMdE7XRY/LQcm9Aly48uJctkb81iaCnoeTLyOhfPYLY1Z5ju4PI&#43;5&#43;EMyRAAk0me&#43;mI0oq8fDHhOUNsX3DwICWuauqakx1rg7rSk62nPVQLhToVUqVUpl3aUjaRtUlgAFnQqlilSRpPKDlB&#43;IvlJA4Ol0G0uNpUbjHjqdQ&#43;EizO/LL0rbPOl5IIQwFvzxeCzSvzZ8jdd4jdd4jdd4jdd4jfTF/woAAP//v46ODUUQ98kAAAAASUVORK5CYII="
+                     data-src="/components/sensor/images/resistance-downstream.png"
+                     data-srcset="/components/sensor/images/resistance-downstream.png 150w, /components/sensor/images/resistance-downstream_hu_38ec112724fe195e.png 30w, /components/sensor/images/resistance-downstream_hu_e1aaab6f5d66e265.png 50w, /components/sensor/images/resistance-downstream_hu_fdf6bf65f20dfe6c.png 75w, /components/sensor/images/resistance-downstream_hu_bd96dd011e45f6c2.png 100w, /components/sensor/images/resistance-downstream_hu_754f593afe5bb6e8.png 150w"
+                     width="25.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Example voltage divider configuration of type &ldquo;DOWNSTREAM&rdquo; and a voltage reference of 5V.</em>
+                </figcaption>
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">resistance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor</span><span class="p">:</span><span class="w"> </span><span class="l">source_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">configuration</span><span class="p">:</span><span class="w"> </span><span class="l">DOWNSTREAM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resistor</span><span class="p">:</span><span class="w"> </span><span class="m">5.</span><span class="l">6kOhm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Resistance Sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Example source sensor:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">adc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">source_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l">A0</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="note">
+    Note
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="note" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accurate result because they have built-in voltage divider on ADC pin (<a href="https://arduino.stackexchange.com/a/71952">https://arduino.stackexchange.com/a/71952<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>)</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example source sensor:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">adc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">source_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l">A0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">multiply</span><span class="p">:</span><span class="w"> </span><span class="m">3.3</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>
+<p><strong>sensor</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The sensor to read the voltage values from
+to convert to resistance readings.</p>
+</li>
+<li>
+<p><strong>configuration</strong> (<strong>Required</strong>, string): The type of circuit, one of <code>DOWNSTREAM</code> or
+<code>UPSTREAM</code>.</p>
+</li>
+<li>
+<p><strong>resistor</strong> (<strong>Required</strong>, float): The value of the resistor with a constant value.</p>
+</li>
+<li>
+<p><strong>reference_voltage</strong> (<em>Optional</em>, float): The reference voltage. Defaults to <code>3.3V</code>.</p>
+</li>
+<li>
+<p>All other options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+</ul>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/components/sensor/adc/">Analog To Digital Sensor</a></li>
+<li><a href="/components/sensor/ntc/">NTC Sensor</a></li>
+<li><a href="/components/sensor#sensor-filters">Sensor Filters</a></li>
+<li>
+<a href="https://api-docs.esphome.io/resistance__sensor_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Resistance Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#note">Note</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#note">Note</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/resistance.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

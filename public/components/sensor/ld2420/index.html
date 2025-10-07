@@ -1,0 +1,1840 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>LD2420 24GHz mmWave Radar Sensor - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up LD2420 sensors.">
+            <meta name="twitter:description" content="Instructions for setting up LD2420 sensors.">
+            <meta property="og:description" content="Instructions for setting up LD2420 sensors.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/ld2420.jpg">
+                <meta name="twitter:image" content="http://localhost:1313/images/ld2420.jpg">
+            
+        
+    
+    <meta property="og:title" content="LD2420 24GHz mmWave Radar Sensor">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/sensor/ld2420/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LD2420 24GHz mmWave Radar Sensor">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>LD2420 24GHz mmWave Radar Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#button">Button</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li><li><a class="toc-secondary" href="#factory-reset-values">Factory Reset Values</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#component">Component</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#important-information">Important Information</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#module-pinouts">Module Pinouts</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#firmware-152-and-older">Firmware 1.&#x200B;5.&#x200B;2 and older</a></li><li><a class="toc-secondary" href="#firmware-153-and-newer">Firmware 1.&#x200B;5.&#x200B;3 and newer</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#number">Number</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#platform">Platform</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#select">Select</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#component">Component</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#module-pinouts">Module Pinouts</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#firmware-152-and-older">Firmware 1.&#x200B;5.&#x200B;2 and older</a></li><li><a class="toc-secondary" href="#firmware-153-and-newer">Firmware 1.&#x200B;5.&#x200B;3 and newer</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#platform">Platform</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#select">Select</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#number">Number</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#button">Button</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li><li><a class="toc-secondary" href="#factory-reset-values">Factory Reset Values</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#important-information">Important Information</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/ld2420.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>LD2420 24GHz mmWave Radar Sensor</h1>
+        
+
+        <h2  id="component">
+    Component
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="component" title="Copy link" src="/images/link.svg">
+</h2>
+
+<a class="anchor" id="ld2420-component" role="none"></a>
+
+<p>The <code>ld2420</code> sensor platform allows you to use the HLK-LD2420 motion and presence sensor.
+The <a href="/components/uart#uart">UART</a> is required to be set up in your configuration for this sensor to work.</p>
+<p>Depending on the firmware you have serial baudrates will be 256000 for any module with less than
+firmware v1.5.3 and 115200 on newer versions. The tx_pin changed from ot2 to ot1 with firmware v1.5.3.
+Firmware v1.5.4 and up now features the ability to observe gate energy signal levels and with this
+release we can dynamically calibrate gate still and move thresholds.</p>
+<p>This component has dynamic configuration functionallity with a compact UI format.
+Select, number and button components provide configuration value inputs and control.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/ld2420.jpg" width="50.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>HLK-LD2420 Low power motion and presence sensor.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 300px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/ld2420.jpg"
+                     fetchpriority="high"
+                      style="width:50.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIALIAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APbtR1G30uze5uXCovU15H4n&#43;JdxcytHpjeXEv8AF3NW/ifrkrXa6cj4iVct9a82sYbW9v8Ay7uTy4cctnFdNKl/y8OGrV/eezNRPHOtySZ&#43;2virP/CYa1/z/PVC60jTUv7W3s7lpEkOG9qmvtIgtbuWGOQnYgfBrX92Ba/4TDWv&#43;f5vzpy&#43;LNafpfOfpWZqGjNaWFrdFh&#43;&#43;ydoNbegRxNL9nykSrCZNzAZY/jWZoU/&#43;Eu1nzNn2qanyeLNaSLi7lX61U8O63NeeJ/sl0sSw725KirNz9p1&#43;TUreKFA9q37vGBxQOxWPjDWgmTfS/nUX/CeakOPt8mafa&#43;EtYeHLQKQf9qg&#43;BtSYErbp&#43;dafug9kV5PH2rZ/4/nxUMnxC1cPhL56qaj4V1C0geVoVMcf3irZxXOvbb3zT/dmR2UXjXV5Rl72T86rS&#43;ONYj37L&#43;T86wIx5ceKhlAMb7RWgG3H491uQ/8AH9J&#43;dbOi&#43;NNXuJ2jmu3ZfrXnsMezOa2tAP8ApjfSuDH/AMI1wv8AFPT4vEd8P&#43;Xl/wA6l/4Sa8x/x8P&#43;dcuG4HNSGTAr5F4mofQ/VaZ0H/CTah/z9v8AnR/wk2of8/b/AJ1zgkz0p/aj6zVD6rTOki8TalHIJFuia7rwz4yj1Fhb3RVZegPrXkcZ55NW7e4NtOs0ZwQc104XFVLnNVwx9CAggHNLkVi6FqaXuj28zn5iuDWj9ph9a&#43;gTOA8K&#43;I//ACNE/wBBXMaRFcS3cq26QuduSsn9K6f4kf8AI0XH0FZug23l3ditsiG4uc5kc/dxXf8A8ujzf&#43;XpW1DT7yO&#43;tsvFHM3KlOgxVd5bmWa4Yz5ZY8EsOtXtaMkd7dxzIontWBWRe&#43;as6b4c1/WrZruC2XZMMdMcVkdFjH1OOW30&#43;0drozRsMjB4U&#43;laVtpkOtLbxy3DWzJAW3Bsbqu6zoB03SoE1fzImVsBUGRTdMh0TVruC1ja4ldV2KF4pgc5pOnQXmrw2EsjwqHYGXPJ/Gur8L2qWNp4iiQlzGMByckir8vgW4gWR/7OxEnIYyc1S0a/tkg1TT4LcI7RneS2elZGp3fhS&#43;0s&#43;F7f7VPEku35t7DNaS6xoDK0cd1AHx0JFeJr4X1PUYVMCylW&#43;6VziopfAeuxHzmjm&#43;X60ezH7Q6fxEIw2s&#43;TKjo0Qb5Dkda8vrq9Js7ix0vW0uwwbYPvVymeK6aSMqoHpUR6Gl6mkkrYyKp71oaB/wAfjfSqcnSrmif8fv4VwY7/AHaZrhf4p1oyUGOtdLa&#43;CtVvbSOeNU2OuRk1zQ6fiK940AD&#43;wrP/AK5ivlKVM9&#43;rVdNaHm3/AAgGspGNnlZ7j1rO1Hwjqul2TXVzs2L6GvbK5fx2f&#43;KZn/CtLHPTrVLnkKnpUvmYqtF0qST7lclP&#43;Id1X&#43;Eeu&#43;DTnw5D/vGt&#43;ue8Ff8AItQ/7xroa99bHinjfxIP/FUXH0FY9tp93qJ0u30&#43;Ty7gqcPnFafxJ/5Gu4&#43;gqjpMd3qFvayaZceRdWwI3MMA5r3P&#43;XR59P8AiEWoWNxp731tey&#43;ZchV3NnNJp3jrX9GtktbZ08pfu5FWtYsr2zgkm1GYTXM&#43;ASOelYa6LrN6FktbCV4j0cDNZHSafiXxHq&#43;tWludQVFiflWQc1jaN/aMGpxSaUGe6VsgDvWrr1tdWekWK3kDwsFK/MO9Z&#43;hXF/aaik2nDzLpT8qYzmtOhmd9LrPxEa2cNpwZSOQRXI&#43;HZbmXUdWe7i8u48ttygdK6mbxt46WI7tHO3HPyVwlhq2pSa9cTpARdSnDx7f0xWaNT1fw/wCO9F0jw9bwTk/aFX5hsq//AMLP8PsuHMhz/sV5lJq1&#43;kwgmsoVdv4TFzRcaje2abmsYFX1MYrP2YvaGvruo2epRaxcWTkwmIclcd68z8vMea3LrxBfXsT2pWOGFvvBFxmn2uiXVzCDDayMnqBmj6z9WH7L2pgCLZUUn366r/hGr7/nzl/75o/4Ra9P/LjL/wB81l/adMX1GochJV/RR/pn4V0H/CJXR62M3/fNWbfw3dWz5Sxl/wC&#43;a5sVjqdWl7M6qOG9nUGc/rXvnh7/AJANn/1zFeJNpWoAA/Y5eD/dr0XTPFd3Z6bDA&#43;kXLbFC8LXj0qR04k7o1y3jz/kWLj8KPDNzqF/d3V1drLFEzYSKQdKPHf8AyLFx&#43;FH8OoZUzxyKppPuVDFUsn3K4v8Al4enV/hHrngr/kWoP9410Nc/4K/5FmD6muhr6COx4p4p8SP&#43;Rsn&#43;gqhZXVtZrpi3bmOzkBMu3qav/Ev/AJGuf6Cs&#43;0t7C8Okw6jL5duVbc2cV7n/AC6PPp/xBup30Nw96tlMZLRcGPd2re8OfEK90vSY7X&#43;zvOCcBgOtcvqUVnaz6hDpz&#43;ZAoGxs5zV3SL7ymsLe5lEFqykufesjU0PFuoat4xtYdmlGJEblqytGt9V0DUkv0tA&#43;w8hqZZay83iRrK91B004SH5g2BiqmrXhXVLu3tLxprLgxkNmmaHcXnxcmELxzaUmMbSN1cZo1xe3euXeoWqRxtJyEb09qxpUcw5Kk/WrY1OWdYlC7REu0FBjNaeyM/am3ffajrkLXMqROw5YHOKpahatFYvdPeedHuwBnk1nTXO9gX3EjuTVeS&#43;QkRdR6U/ZiK1vcpJM/HcV3upa5Po&#43;k6attL5KvHliBXnhkRbraiY3H5q3/G8pGj6Qg/541wYml7SodNOp7M1R4zvyOL1qD40vx/y&#43;tXC20n7vFLKfej&#43;zKZH147X/AITi/B/4/TVmLxhf3L7EvTmvN5K0NFJ&#43;39e1ZYrAU6VL2hpSxN6h37eINWIA&#43;1t1r0Sw0PVbvTobj&#43;15F3qGxtryYZ2fiK970H/kA2X/AFzFeHSqndiSj4fi1S2mnhv2MkOf3bnqar&#43;PP&#43;RYuPwrqe1ct48/5Fm4/Cj2v7wypnjkVSv9yooqlf7lcy/inqVf4R694J/5FmD/AHjXQ1z3gn/kWYPqa6GvfWx4Z4n8SOfFdxn0FYmkCLV9mmXFuJNufLcHBWtv4kf8jXcfQVz2ieSl45ledSVwvlDmvZ/5dnmU/wCKaWuWEWiWKWqWwUyH5nLZJxVe2tYL&#43;7sLa4lEcTxklj2qnro33ceya5IUYPn9a1NIfSZLQHUoi4h6FW55rM6TM0&#43;xt9R8QNpF1IkNornE/c/jVHVtOt9I1K6t4JDJbqRtcHrXWeX4envYrX7M6RSciVW5H1qv4t0nTtOtE/s9w4Y8ktkmhGhyaSySRn&#43;5j5abZ3B2P8w&#43;UU1HKtt9asR2MZs7ht&#43;whc/d6101Hoc3UiMhuId5ljXDAcd6QaeJJwq3KK3mFc/1rlGdlYgMcZ9aPNkzne2frXN7U6TpGsSzA/akzubnPpS6jNJe2kMc1yreRDlf8K5nzH/vN&#43;dG5vU1kBp6OfML76S8l8u62A8VJpltutZZhLtKdEx1qjftunB27TXVSM3SLWc1f0X/AI/6y4v9WK1NF/4/qxxX8KoGF/inXj7n4ivd9B/5Alp/1zFeDgllBHaugg8baxaQJBG6bEXC8V8hTPcqUnUPasVy/jsf8UxcfhXBj4ga7j78f5VS1Hxdq2q2rWt0yeU3oKf7syVGoYsVSyfcpIhgUsv3KypfxTuq/wAI9d8E/wDIsQfU10Vc54I/5FiD/eNdFX0C2PEPEviT/wAjVP8AQVz2l6hNpt2J4lU8YO4V23j7SPtPiOWQN2FcfLpbxjG6u76/SX7tnLTwtRjdX1ifVpFedU3L02im6RAbuWSBLUzyN0wcYqL&#43;zZBzuqzZw3dlL5kMpjLdwcVn9fwxr9VqjGTydS8uS1ZCvDRg803UNskamOCSMDuxzmrO26e7895C039480XZvbpNkrgqvYDFH1&#43;kafVapzEgf7RnO0VsaZOGs73DSN&#43;6PAGcfWqt7YzR8r0p9jGsVjdEb95jOdrY/Our2tOrT/dnN7L2bOIk/wBY31ptOf8A1jfWn1iaBRRRQM39KuXh0O6Ckkkj5dmf1rGuIJJW8wqQK1dKlEelXO8SYJ4IPH41n&#43;Y7zqu7g9q2pCqEMEuPkNX9Nufs15vc/JWXcIY7tlqUfcrSrS9ojO/s9Tto9Yt8f61aU6xad5lriM&#43;9RyE15v8AY9M6Vjqh3f8AbFp/z2Wk/tiz/wCeq1wGT60mT60v7HpGv16oegjXLQf8tV/Oh9YtJP8Alsv5159n3pQTnrR/ZlNB9eqH1d4Aljl8JWzq2QWNdPuT1ri/hdz4Dsvq1dlgVraxkef&#43;M/8AkNy/hXITDk12HjP/AJDcv4Vyc3U189jv4p6eFKnFNk/3G/Kr&#43;mRJJrFpG6bkZxXsKaHp2wH7JF09KypGlWr7M8LDkHo35U4sT1BH1Fe5/wBjaZ/z5xf98iuF&#43;IVhbWcds1vCqbifuin7MzpYnU841GMvatg81l2UTJZXSybHyhILHGK2L3/Uc1lLFDKxSVyqMOcelfQZZ/COHHfxDimxvP1pK3X0W282T99hQwCn1FSR6DYmTBvFx5u3Pt611HMc9RxW4&#43;kWe7m7UDLZ9sdKhfS7VId/2gf6vcPr6UAS2SQrok7OinJwDv5H4UaJoN5q18Fs494Xrk1RWzW5aCGyZ5Jn&#43;8vauis9M1PQLiCVy0W5hghq1M6hk6r4Z1eHUZIzaOSp7U638N6rOQptXUj&#43;/wAV6M0246nNc3GJNuYwfpWKNXs1ksJNSmkMCxncAeppe1NPZ3OPk8OaskhQWjn3HSq91ouoWyF5bZ0QdWIrt7HUre9mna3ncWv2hcZPQUuuTqbzUYYJTJB9n3AGn7UXszzPvQeOtNR/33tmp7rY4GytLmZWzzUg6iox1GasyeXhNlAH078Lf&#43;RDsvq1dlXF/C3P/CB2X1auyrhOk4Lxh/yHJfwrlJuprq/GH/Icl/CuUm6mvnsf/FPTwpLo/wDyHLT/AK6CvbF&#43;6PpXiej/APIctP8AroK9qLBIdx6AZrKkZYr&#43;IPGM1wPxL/497X6mum03xLpupNMqTBGhbawc45rkfiPd28sdqI5lYgn7pzWrRnS/iHnN7/x71jGt25xJFWRJFzXsZZVp06epljqX7wy7iKSST2qrJZt5nyg7a3PKGKj8uvT&#43;tUjl9lUMby0zsfrWr4utY7ax0zy0C74BuxUL2W&#43;48yr/AI2GLHTB/wBMRWNSrepoP2bVMxfD8ccV7HI8xi5&#43;&#43;O1dVqtwbpLQtdxSASjaFHP41yFr/qhUnmNFIrr1U5FdXsjl9oehIbZ5dTiududg8vccdq53&#43;zbG8nsba8m8qHyySc471qW2o/abFLm9htgZPlUnqTUeliz1vUns720iXyRhWDYH0rm9kdJm6bZ2elzXKpIJLZbhfmzxj61a1U28t9qMlqU8r7N/C2atambbSb4aVFZQGCXDkls1laxeQ2&#43;jTfYIbfy5DsZl6ij2Qzz4D5z9afR3orpMmRkc0DORUlA60AfUfwu/5EKx/Guyrj/hf/yIdj&#43;NdjXG9zqPPvGH/Icm/CuTm6mur8Xf8hyX8K5SbvXzmP8A4p6WF/hk2if8hy0/66Cva&#43;PL56Y5rxTRP&#43;Q5af8AXQV7UVDxbT0IxWVIyxJ5jfjRbjVLtodIupnV8O8J4JrF1GTTYnTfo91Ee3mMea9b03RrTTBL9nTBlbcxPPNcZ8S1AFpgDPNdzqKxlS3OKN1pIHNg/wD33UJu9F/6Bzf991RvOI&#43;Kyyx9a68Lhva0/aBiqvszeN3ov/QPf/vuovtei/8AQOf/AL7rCyfU0mfeun6kzm&#43;tG8LvRf8AoHP/AN91jeKr6PUTD5cQjSIBFXOeKmsNKudTEggYDYfmye1UrjTG&#43;2wwB8mQ4&#43;nNa0sN7OpqFXE&#43;0MgDaAOlEnIrbvNAniv2s42EkoXJHpUUuhTW72kcsnNycEY&#43;7XpHCWdJvNC/s/y9RE3mocqM8GqulzaSb66&#43;1SzQRMf3bKeRVmbw7Cmr/Y2uDt25U7etUX0CQaVJqBf92svlgetZGg67udJXW4JI5pprdMbmc807xLfaBcWSR6XFIshOXJOAfwq1F4K&#43;1XaJBcBkaHzDx0rDXw1eFTIQPJ8zYWz0oGYBGDSV10Pg5l1JLO5n8t3UsOM1zv8AZzvqv2NDuPmbN340BYp9aXBB5re1vQf7EvYozJvVhnOKyrwAOMdKAPpr4Xf8iHY/jXY1x3wuH/FB2P412OK43udJ5/4w/wCQ5L&#43;FcnN1rrPF3/IYlrk5a&#43;Xx/wDEPUwv8Ml0X/kPWv8AvivbE&#43;4PpXienSx2ep287/cVgWr0UeOtHAAMrf8AfNFL&#43;GTiVqdTXnnxK6Wn1NbQ8faOP&#43;Wjf981yPjHX7PXPI&#43;yMTsznIxWhlSpP2hxV9/qKwZZcVvaiP3VYJj3ua&#43;iyj&#43;EcWP/AIhZsI3vpBEuNxHGTipH065MRkCfKDjd71Fp1zHp14Jn5UD5ee9T3niCSKGK1mixF5nmYxjNd5yiJNeaVuiDBJOCfcdqdFd3N6EEcUYlh&#43;bzD/KoNQ1KLWZmliURjaF9&#43;Kj0y6XSpgWBkL8YpAXbjTtX1CVLsAqWGDJnGaz73Vby3khtJ0AktmyretaaeLvJI06WMhA&#43;4ZrntTuTqOttLtKICNoPcCgdjfivNRa5TUDHCTIuwBuwPeqN22qWkVxYiRHgQ&#43;ayqcgVYW58&#43;2EUEReZBlsHsKxRrqC6v/OgbM67VHpQBaHi69juUkgVY2CeWcDqKtSaXqpgt3DZS4bco3fxda5y1s5riTdtKoOdxrrW1mVdMtJWhMsVo/G00BTMe88Q3llrLvdKrTJH5R9qowXMt/cxLbRqsofcHA/nVTV5Pt91LfRx7IpG5Gc4NO0KR7W&#43;WYLvRfvL6ig1NzVbHVdXaWe6kiQW6jPPX3Fc9f2NxbRxyS/cbpXS6tcXqQPc/YnSznAVSeeBWJrWtQ6nHbRQxNGIl247VmB9H/C/H/CB2H412Ncd8L/&#43;RDsPxrsa52anCeL7fOqOf7wzXHyxYNeu&#43;ItGGoWhkjT98o4rzi7snjcpLGUavAx1L95c7cLV9mYhHrUXlD0rQktcVF5J9K83U7/a0yn5I9Kj8rB6Vf8AJNHlYo1F7VGNqI/dVgt0NdHqsR8hsdaz7C0IhR3jVmeQAZPWvq8s/wB3PDx38QztG0efXPEFvZK6oB83zUnj8zwa1/Z0nlgRqFDKK1tVheG&#43;MtsTbSKPlZDise&#43;tX1ML9qdnuB/GeSa9I5adQ57SvNju/LzkV1PhfT7nUfEUixeXviXcBIMis7TrDbebnXaqVoyJdWd0LuwkMbD7wH8VA/anM&#43;Kru4k1qRZURZEcj5Bipba7FzZ7mT97Gv3qua7D/aWpW80kQR5PvgVBNa/YrkxwrlD1FFMKlU1/CenXt7De3cMojMKHgjO6uRnnc6g00pG6N/u4rqLQXWlpvinZY3&#43;8qmqE&#43;n21/qYkgUhDy496zBVET3GriWzCRoAMDOBWymnSp4Inv0kQRseY&#43;9c9foEu41gi2pjawrTgu2trU2krF4WHKVpUEcWZCiEI5wx&#43;7Wvo8nlxq23kmnW2mxCaad1zGjcD1psiOLvMKlU6hfSgftDtdTt75tBtJTOskRIAQD7teez2p/tGSNegbFdemsTtozWrFQykFTU/g7wTf&#43;I9YjlaF1td&#43;ZHI61m/3YKoe4/D2yNp4KsI2zkru/Ouo2CpLKzWxsoraJBsjUKKsfN/cFcp0jz0rkPF0aAIQi5&#43;ldhXI&#43;L/ALqVhW&#43;AaOR2rs&#43;6PyqTy08v7i/lTP4Kl/5Z15B0ieXHs&#43;4v5VHPHHtT5F/Kpv8AlnUc/wB1KyGYetxoLZsIo/CuPUkN1PB4rstc/wCPZvpXGD7x&#43;te/gP4R5lbcfdMTjJJ&#43;tQseQe9S3Paom6iu4xCPrVk/dqtHVk9K0Ay7r/XCqx5n5q1df60VV/5b0GdQsnkgHpVe04unxxyasfxCq9p/x9P9TQWJN/x8UsgHycUkv&#43;vp0nRKzY6ZdRV&#43;xt8o6&#43;lZsgHmNwK01/482&#43;tZsn&#43;sagAskU6lbAqCC46ivqPwzFHHo1v5caLwPurivl2x/wCQna/74r6l8Of8ga3/AN0VlVOmmbNFFFZGp//Z"
+                     data-src="/images/ld2420.jpg"
+                     data-srcset="/images/ld2420.jpg 300w, /images/ld2420_hu_73f10a4e096e10d.jpg 60w, /images/ld2420_hu_8518252e082ee826.jpg 100w, /images/ld2420_hu_e9530bb7c31c4801.jpg 150w, /images/ld2420_hu_5a7e06da18f00fb0.jpg 200w, /images/ld2420_hu_beac538022e24bf.jpg 300w"
+                     width="50.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>HLK-LD2420 Low power motion and presence sensor.</em>
+                </figcaption>
+            
+        </figure>
+
+
+<h2  id="module-pinouts">
+    Module Pinouts
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="module-pinouts" title="Copy link" src="/images/link.svg">
+</h2>
+<h3  id="firmware-152-and-older">
+    Firmware 1.5.2 and older
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="firmware-152-and-older" title="Copy link" src="/images/link.svg">
+</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Pin#</th>
+          <th>Name</th>
+          <th>Function</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>3v3</td>
+          <td>VCC</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>GND</td>
+          <td>GND</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>OT1</td>
+          <td>Presence Signal Output</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>RX</td>
+          <td>Serial Rx (to ESP Tx)</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>OT2</td>
+          <td>Serial Tx (to ESP Rx)</td>
+      </tr>
+  </tbody>
+</table>
+<h3  id="firmware-153-and-newer">
+    Firmware 1.5.3 and newer
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="firmware-153-and-newer" title="Copy link" src="/images/link.svg">
+</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Pin#</th>
+          <th>Name</th>
+          <th>Function</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>3v3</td>
+          <td>VCC</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>GND</td>
+          <td>GND</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>OT1</td>
+          <td>Serial Tx (to ESP Rx)</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>RX</td>
+          <td>Serial Rx (to ESP Tx)</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>OT2</td>
+          <td>Presence Signal Output</td>
+      </tr>
+  </tbody>
+</table>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">ld2420</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">text_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">fw_version</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">LD2420 Firmware</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">moving_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name </span><span class="p">:</span><span class="w"> </span><span class="l">Moving Distance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">has_target</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Presence</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">select</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">operating_mode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Operating Mode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">presence_timeout</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Detection Presence Timeout</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">min_gate_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Detection Gate Minimum</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_gate_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Detection Gate Maximum</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># See &#34;Number&#34; section below for detail</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gate_select</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Select Gate to Set</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">still_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Set Still Threshold Value</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">move_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Set Move Threshold Value</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">button</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">apply_config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Apply Config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">factory_reset</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Factory Reset</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart_module</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Restart Module</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">revert_config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Undo Edits</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="platform">
+    Platform
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="platform" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="l">ld2420:</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h3>
+<p><strong>ld2420</strong> (<strong>Required</strong>): Component platform.</p>
+<h2  id="select">
+    Select
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="select" title="Copy link" src="/images/link.svg">
+</h2>
+<p><strong>Operating Modes:</strong></p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">select</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">operating_mode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Operating Mode</span></span></span></code></pre></div></div>
+</div>
+
+<p>The dynamic UI provides three operational modes: <strong>Normal</strong>, <strong>Calibrate</strong> and <strong>Simple</strong>. The select component allows
+you to choose the active mode.</p>
+<ul>
+<li>
+<p><strong>Normal</strong>: This is the default mode. It sets the ld2420 in energy reporting mode and is availble with firmware
+v1.5.4 or greater. When in this mode the module logs all gate energy levels continuously in a local array making it
+available for dynamic calibration functions.</p>
+</li>
+<li>
+<p><strong>Calibrate</strong>: When calibration mode is selected the module will collect the average and peak energy levels,
+reporting them every five seconds. The report is provided in the log console for information only. In order to
+calibrate the gate configuration, no objects should be present in the target environment. The recording will
+establish the mmWave noise floor levels and undesirable reflections or signal distortions peaks. This should be
+collected for at least 30 seconds. Longer runs can catch more potential false signals when devices near the module
+are used such as microwave ovens and other sources of noise.</p>
+<p>When the <strong>apply_config</strong> button is pressed in calibration mode the LD2420 will be configured with calculated values
+based on its collected noise floor data and the module will return to Normal Mode. Selecting any other mode drops the
+session&rsquo;s collected noise data and no changed settings are staged. Once the <strong>apply_config</strong> action is performed, the
+computed values will then persist. The gate values can be manually adjusted or calibrated again or you can use the
+factory reset button to restore the module&rsquo;s default settings.</p>
+</li>
+<li>
+<p><strong>Simple</strong>: Provides backward compatibility with firmware v1.5.3 and older and will be automatically set when the
+detected firmware version is v1.5.3 or older.</p>
+</li>
+</ul>
+<h3  id="configuration-variables-1">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>operating_mode</strong> (<strong>Required</strong>): Provisions the operating mode select component.
+May contain any options from <a href="/components/select#config-select">Select</a>.</li>
+</ul>
+<h2  id="number">
+    Number
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="number" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">presence_timeout</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Detection Presence Timeout</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">min_gate_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Detection Gate Minimum</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_gate_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Detection Gate Maximum</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gate_select</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Select Gate to Set</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">still_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Set Still Threshold Value</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">move_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Set Move Threshold Value</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gate_move_sensitivity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Move Calibration Sensitivity Factor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gate_still_sensitivity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Still Calibration Sensitivity Factor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gate_0</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">move_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Gate 0 Move Threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">still_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Gate 0 Still Threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">gate_1</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">move_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Gate 1 Move Threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">still_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Gate 1 Still Threshold</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-2">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-2" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>presence_timeout</strong> (<em>Optional</em>): The time in seconds during which the occupied state (presence) will persist after
+presence is no longer detected. Any energy detection within the time window restarts the countdown from this value.
+Defaults to 120s. <strong>Required</strong> when <code>min_gate_distance</code> and <code>max_gate_distance</code> is specified. May contain any
+options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>min_gate_distance</strong> (<em>Optional</em>): Minimum distance for move or still energy detection. Value between 0 and
+<code>max_gate_distance</code> - 1. Each increment equals 70 cm. Defaults to 1. <strong>Required</strong> when <code>presence_timeout</code> and
+<code>max_gate_distance</code> is specified. May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>max_gate_distance</strong> (<em>Optional</em>): Maximum gate for movement detection. Value from 1 to 15. Each gate detects
+movement and still energy at 70 cm increments. At the maximum value, the sensor&rsquo;s range equates to 16 <em>70 cm
+resulting in an approximately 12-meter range; however, accuracy at this range may be diminished. The recommended
+maximum value is 12</em> 70 cm which results in approximately 9 meters. <strong>Required</strong> when <code>presence_timeout</code> and
+<code>min_gate_distance</code> is specified. May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>gate_still_sensitivity</strong> (<em>Optional</em>): Gate still threshold calibration sensitivity factor. Defaults to 0.5 with a
+range of 0-1, 0 = high and 1 = low. May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>gate_move_sensitivity</strong> (<em>Optional</em>): Gate move threshold calibration sensitivity factor. Defaults to 0.5 with a
+range of 0-1, 0 = high and 1 = low. May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>gate_select</strong> (<em>Optional</em>): Selection of gate value to edit (gate # from 0 to 15). Gate thresholds
+are edited by selecting the gate number and then adjusting the move and still thresholds. <strong>Note that when this
+variable is defined, the component will run in compact UI mode and the following two configuration variables are then
+required:</strong> May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+<ul>
+<li>
+<p><strong>still_threshold</strong> (<em>Optional</em>): Gate still value threshold level for motion energy detection on a currently
+selected gate number. A value greater than that specified for the gate (distance) will trigger movement detection.
+May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>move_threshold</strong> (<em>Optional</em>): Gate move value threshold level for still energy detection on a currently selected
+gate number. A value less than that specified for the gate (distance) will trigger still detection. May contain any
+options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>gate_n</strong> (<em>Optional</em>): Provides individual gate threshold number inputs. Range is <code>gate_0</code> to <code>gate_15</code>.
+<strong>May not be used with</strong> <code>gate_select</code> (above). Each gate entry requires a <code>still_threshold</code> and <code>move_threshold</code>  :</p>
+<ul>
+<li>
+<p><strong>still_threshold</strong> (<em>Required for each gate_n entry</em>): Gate still value threshold level for motion energy</p>
+<p>detection on currently selected gate number. A value greater than that specified for the gate (distance) will
+trigger movement detection. May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>move_threshold</strong> (<em>Required for each gate_n entry</em>): Gate move value threshold level for still energy</p>
+<p>detection on currently selected gate number. A value less than that specified for the gate (distance) will
+trigger still detection. May contain any options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+</ul>
+</li>
+</ul>
+<h2  id="button">
+    Button
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="button" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">button</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">apply_config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Apply Config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">factory_reset</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Factory Reset</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart_module</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Restart Module</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">revert_config</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Undo Edits</span></span></span></code></pre></div></div>
+</div>
+
+<p>Four button components are available enabling configuration controls for editing, saving, restarting and factory reseting the LD2420 module.</p>
+<h3  id="configuration-variables-3">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-3" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>apply_config</strong> (<em>Optional</em>): Saves both manual config tuning or the auto calibrate still and move threshold config
+settings. May contain any options from <a href="/components/button#config-button">Button</a>.</p>
+</li>
+<li>
+<p><strong>restart_module</strong> (<em>Optional</em>): Reboots the LD2420 modules. May contain any options from <a href="/components/button#config-button">Button</a>.</p>
+</li>
+<li>
+<p><strong>revert_config</strong> (<em>Optional</em>): Undoes in-progress edits prior to their application via the <code>apply_config</code> button.
+May contain any options from <a href="/components/button#config-button">Button</a>.</p>
+</li>
+<li>
+<p><strong>factory_reset</strong> (<em>Optional</em>): Restores a base set of LD2420 configuration values. May contain any options from
+<a href="/components/button#config-button">Button</a>.</p>
+</li>
+</ul>
+<h3  id="factory-reset-values">
+    Factory Reset Values
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="factory-reset-values" title="Copy link" src="/images/link.svg">
+</h3>
+
+<a class="anchor" id="ld2420-default_values_for_gate_threshold" role="none"></a>
+
+<table>
+  <thead>
+      <tr>
+          <th>Setting:</th>
+          <th>Value:</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Timeout</td>
+          <td>120s</td>
+      </tr>
+      <tr>
+          <td>Min Gate Distance</td>
+          <td>1</td>
+      </tr>
+      <tr>
+          <td>Max Gate Distance</td>
+          <td>12</td>
+      </tr>
+  </tbody>
+</table>
+<table>
+  <thead>
+      <tr>
+          <th>Gate Number:</th>
+          <th>Move threshold</th>
+          <th>Still threshold</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td>60000</td>
+          <td>40000</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td>30000</td>
+          <td>20000</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>400</td>
+          <td>200</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>300</td>
+          <td>250</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>5</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>6</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>7</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>8</td>
+          <td>300</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>9</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>10</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>11</td>
+          <td>250</td>
+          <td>150</td>
+      </tr>
+      <tr>
+          <td>12</td>
+          <td>250</td>
+          <td>100</td>
+      </tr>
+      <tr>
+          <td>13</td>
+          <td>200</td>
+          <td>100</td>
+      </tr>
+      <tr>
+          <td>14</td>
+          <td>200</td>
+          <td>100</td>
+      </tr>
+      <tr>
+          <td>15</td>
+          <td>200</td>
+          <td>100</td>
+      </tr>
+  </tbody>
+</table>
+<h2  id="sensor">
+    Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>ld2420</code> sensor allows you to use your <a href="/components/sensor/ld2420/">LD2420 24GHz mmWave Radar Sensor</a> to approximate the distance
+between the sensor and an object moving within its field of detection.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">moving_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name </span><span class="p">:</span><span class="w"> </span><span class="l">Moving Distance</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-4">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-4" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>moving_distance</strong> (<em>Optional</em>): Distance between the sensor and the detected moving target. May contain any options
+from <a href="/components/sensor#config-sensor">Sensor</a>.</li>
+</ul>
+<h2  id="binary-sensor">
+    Binary Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="binary-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>ld2420</code> binary sensor allows you to use your <a href="/components/sensor/ld2420/">LD2420 24GHz mmWave Radar Sensor</a> to sense presence.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">has_target</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Presence</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-5">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-5" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>has_target</strong> (<em>Optional</em>): If a target is detected with either still or in movement <strong>has_target</strong> will be set true
+for the duration of the <strong>presence_time_window</strong> setting. May contain any options from
+<a href="/components/binary_sensor#config-binary_sensor">Binary Sensor</a>.</li>
+</ul>
+<h2  id="text-sensor">
+    Text Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="text-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>ld2420</code> text sensor provides version information for the <a href="/components/sensor/ld2420/">LD2420 24GHz mmWave Radar Sensor</a>.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">text_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ld2420</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">fw_version</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">LD2420 Firmware</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-6">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-6" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>fw_version</strong> (<em>Optional</em>): Allows you to retrieve the <a href="/components/sensor/ld2420/">LD2420 24GHz mmWave Radar Sensor</a> firmware version. May contain any options from
+<a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</li>
+</ul>
+<h2  id="important-information">
+    Important Information
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="important-information" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Solid objects and noise outside the <code>detection_gate_max</code> and <code>detection_gate_min</code> may cause false
+detections or result in abnormal gate thresholds. For example, a wall within the gate max range can result
+in signal reflections. If your sensor reports unexpected detections, you should test it by placing it in a
+completely open room with no moving objects.</p>
+<p>Also, never place two or more sensors in a manner such that their detection fields overlap, as this will certainly
+result in false detections.</p>
+<p>Firmware update capability is available using the LD2420 tool provided by HLKTech.
+You will need to email them and request the bin file.
+At this time only firmware version v1.5.6 and up can be upgraded.
+<strong>DO NOT</strong> attempt to update to older firmware versions. It will brick the module.</p>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>Official Datasheet/Manuals are still in development; for info email <code>sales@hlktech.com</code>.</li>
+<li>Official web site <code>https://www.hlktech.net/</code></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>LD2420 24GHz mmWave Radar Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#button">Button</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li><li><a class="toc-secondary" href="#factory-reset-values">Factory Reset Values</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#component">Component</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#important-information">Important Information</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#module-pinouts">Module Pinouts</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#firmware-152-and-older">Firmware 1.&#x200B;5.&#x200B;2 and older</a></li><li><a class="toc-secondary" href="#firmware-153-and-newer">Firmware 1.&#x200B;5.&#x200B;3 and newer</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#number">Number</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#platform">Platform</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#select">Select</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#component">Component</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#module-pinouts">Module Pinouts</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#firmware-152-and-older">Firmware 1.&#x200B;5.&#x200B;2 and older</a></li><li><a class="toc-secondary" href="#firmware-153-and-newer">Firmware 1.&#x200B;5.&#x200B;3 and newer</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#platform">Platform</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#select">Select</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#number">Number</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#button">Button</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li><li><a class="toc-secondary" href="#factory-reset-values">Factory Reset Values</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#important-information">Important Information</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/ld2420.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

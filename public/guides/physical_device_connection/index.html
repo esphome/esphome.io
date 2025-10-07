@@ -1,0 +1,2415 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Physically Connecting to your Device - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+
+        
+    
+    <meta property="og:title" content="Physically Connecting to your Device">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/guides/physical_device_connection/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Physically Connecting to your Device">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Physically Connecting to your Device</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#connecting-to-the-esp">Connecting to the ESP</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#usb-port-on-device">USB Port on Device</a></li><li><a class="toc-secondary" href="#pre-soldered-programming-header">Pre-soldered Programming Header</a></li><li><a class="toc-secondary" href="#unpopulated-programming-header">Unpopulated Programming Header</a></li><li><a class="toc-secondary" href="#solder-filled-programming-header">Solder-filled Programming Header</a></li><li><a class="toc-secondary" href="#module-only">Module Only</a></li><li><a class="toc-secondary" href="#bare-chip">Bare Chip</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#materials">Materials</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#connecting-to-the-esp">Connecting to the ESP</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#usb-port-on-device">USB Port on Device</a></li><li><a class="toc-secondary" href="#pre-soldered-programming-header">Pre-soldered Programming Header</a></li><li><a class="toc-secondary" href="#unpopulated-programming-header">Unpopulated Programming Header</a></li><li><a class="toc-secondary" href="#solder-filled-programming-header">Solder-filled Programming Header</a></li><li><a class="toc-secondary" href="#module-only">Module Only</a></li><li><a class="toc-secondary" href="#bare-chip">Bare Chip</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#materials">Materials</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/guides/physical_device_connection.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Physically Connecting to your Device</h1>
+        
+
+        <p>The most difficult part of setting up a new ESPHome device is the initial
+installation, which requires connecting your ESP device to a computer using a
+data cable.</p>
+<p><strong>You only need to do this once per device.</strong> Once you&rsquo;ve flashed ESPHome on a
+device, you can use <a href="/components/ota/">Over-the-Air Updates</a> to upload new
+versions or configuration changes wirelessly.</p>
+<p>ESPHome runs on a wide variety of devices, so it&rsquo;s hard to list any specific
+set of tools that you need or to give instructions on how to connect. This
+guide tries to cover some of the more common flashing situations. If your
+device doesn&rsquo;t fit any of these situations, try and find a guide for your
+specific device in the <a href="/components#devices">devices guides</a> or elsewhere on the
+internet.</p>
+<h2  id="connecting-to-the-esp">
+    Connecting to the ESP
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="connecting-to-the-esp" title="Copy link" src="/images/link.svg">
+</h2>
+<p>There&rsquo;s a wide variety of situations you might find yourself in, each of which
+requires you do something different to connect your computer to the ESP in
+order to flash it.</p>
+<p>You only need to physically connect to it once. Once you&rsquo;ve flashed your device
+and connected it to your WiFi, you can use <a href="/components/ota/">Over-the-Air Updates</a> to
+install software remotely.</p>
+<p>Programming a ESP-based device is done by connecting the serial port on the
+ESP8266/ESP32 to your computer through a USB to serial adapter. Some devices
+have adapter built into the circuit board (and some even have the programmer
+embedded in the MCU, in which case things are a bit easier.</p>
+<p>In case you use an external serial programmer connected to RX and TX of the ESP, choose one based
+on CH340 as it&rsquo;s the most reliable and the cheapest one to use for flashing. Programmers based on
+CP2102 or PL2303 are compatible with many devices, but using an external 3.3V supply might be
+necessary for them.</p>
+
+<a class="anchor" id="esphome-phy-con-drv" role="none"></a>
+
+<p>Plug in the board or the serial programmer into a free USB port and check if it has been properly detected
+by your computer. The firmware programming tools use a serial interface to communicate with your device.
+On Windows these interfaces are named <code>COM1</code>, <code>COM2</code>, etc. and on Linux they are named <code>/dev/ttyUSB0</code>,
+<code>/dev/ttyACM1</code>, etc.</p>
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>If it&rsquo;s not showing up as a serial port, you might not have the required drivers
+installed. The model number you need is engraved on the chip connected to the USB port.
+ESPs and programmers usually ship with one of these UART chips:</p>
+<ul>
+<li>CH34x: <a href="https://github.com/nodemcu/nodemcu-devkit/tree/master/Drivers">driver<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li>CP2102: <a href="https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers">driver<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li>PL2303: <a href="https://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&amp;pcid=41">driver<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+</ul>
+</div>
+
+With the exception of the situation where you have a USB port, you need to make
+five electrical connections to program an ESP-based board:</p>
+<ul>
+<li><code>+3.3V</code>, or occasionally <code>+5.0V</code></li>
+<li><code>GND</code>, or ground</li>
+<li><code>TX</code> of programmer to <code>RX</code> of the <code>ESP</code></li>
+<li><code>RX</code> of programmer to <code>TX</code> of the <code>ESP</code></li>
+<li><code>IO0</code>, used to place the board into programming mode. This is often a button
+that you need to hold down while connecting the power (<code>+3.3V</code>  ).</li>
+</ul>
+<p>The power supplied to the device is one of the most important elements for both flashing
+the device and for stable operation. You must ensure that the device receives sufficient
+power (current AND appropriate voltage level) to properly flash the firmware on the device.
+When using an external <code>3.3V</code> supply, ensure the ground (<code>GND</code>  ) of both are connected together,
+this ensures a common ground. A PC power supply can be a good source for <code>3.3V</code> DC power.</p>
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Some adapters can be switched between <code>3.3V</code> and <code>5V</code> for the data pins, but still provide 5V on the power pin which
+will irreparably destroy your device. You <strong>MUST</strong> make sure the data (<code>RX</code> and <code>TX</code>  ) and <code>VCC</code> pins are
+set for <code>3.3V</code>.
+</div>
+
+ESP needs to be put into programming mode or flash mode before the firmware can be uploaded. This is
+done by connecting <code>GPIO0</code> pin to <code>GND</code> while the chip is booting.</p>
+
+<a class="anchor" id="esphome-phy-con-prg" role="none"></a>
+
+<p>To put the ESP into programming mode:</p>
+<ul>
+<li>Disconnect the USB connection of your board or serial programmer from the computer (to power off your ESP)</li>
+<li>Bridge <code>GPIO0</code> and <code>GND</code> (by pressing the on-board button or connection with a wire)</li>
+<li>Connect the board or serial programmer to your computer (ensuring ESP powers up)</li>
+<li>After a few seconds disconnect <code>GPIO0</code> from <code>GND</code> (release button or remove the wire connection). On devices that
+do not provide the <code>GPIO0</code> connected button, it may be easier to leave the wired bridge in place throughout the
+entire flashing process (erase &amp; upload). Doing so will not create any problems. After the firmware is uploaded
+successfully, remove the bridge. This allows the device to boot normally.</li>
+</ul>
+<p>You may need to power-cycle the ESP between erasing and uploading the firmware, this can be done by disconnecting and
+reconnecting, of course with <code>GPIO0</code> and <code>GND</code> still connected to each other.</p>
+<p><code>RX</code> and <code>TX</code> can be sometimes swapped. If programming your board doesn&rsquo;t work the
+first time, try flipping the wires connected to those pins before trying again.</p>
+<p>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="">
+        
+            <img class="w-100 h-100 " src="/images/high-voltage-warning.svg"
+                 fetchpriority="high"
+                  style="height:50px;"
+                 
+                 
+                 alt="High voltage warning symbol"/>
+            
+        
+    </figure>
+
+
+
+
+
+<div class="admonition warning">
+  <p class="admonition-title">Warning</p>
+  <p><strong>Do not connect your device to mains electricity while following this
+guide.</strong> If your device is open and plugged directly into the wall, you&rsquo;ll
+be a single touch away from being electrocuted.</p>
+<p>Note that this does not apply if your device uses a separate &ldquo;wall wart&rdquo; or
+a power brick. Using an external power supply while flashing is an advanced
+topic not covered here, but does not pose any safety risk.</p>
+<p><strong>You are solely responsible for your own safety.</strong> If you feel something
+is wrong or are uncomfortable with continuing, stop immediately.</p>
+
+</div>
+
+</p>
+<h3  id="usb-port-on-device">
+    USB Port on Device
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="usb-port-on-device" title="Copy link" src="/images/link.svg">
+</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/nodemcu_esp8266.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>A device with a USB port and a serial adapter built-in</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 300px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/nodemcu_esp8266.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAJAAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APWqKKlFaAAqWiigzCpaKKACijFS4rMCKipaKAIqKlooAioqWigCKipaioNAqKpaK0MyKoj3qWg0GhVNFSmoqACiiigCWiipRQZgKloooAKB1oxUtZgFFFFBoFFFFABRRkVFJLHEnmO&#43;1aAJaK57V/FtlpTKWJfd/d5rm5vGur38v/EttCsP956APRaK81k8c6tpak31oH91pmlfEy4vL3ZPaERE9V7UAekd6Kr2WrWt5GGjkQk9iauZBouBHiojUtBrQzKtFSmoqDQixRUtFABUooooMyWgdaKlFZgFFFFBoFFB461Uu9Us7B1&#43;0TKm7pmgC3UNzd29rF5k8ionqa4zV/iBb2c0kKRlwR8simuJutZ1PVfknuCLQn&#43;KgD0fV/GFpp8iLGPNVxwy81gtqWr6qXjTH2V&#43;7cYpul6RYC2jZJBOwHc9K1hC6DCjA9KAMS28PRRhjNI00nbdyK0ERoYxGoAHoBVsHBw9Ekg/hoApy26zJtlUOvowqhLots6nyAIm/StbzcdVpGVZBv3BR71mBzbWV9YyK8LMwXuprRsvGV3ZsxufnUdj1qvqfinTtGVwZFmf0Bril1CbxXdyJA0cCdQOmaXszX2h7PpXi3TtUQASokn90mtoOrjKkEe1fNV1Fd6Ld7XdkK/xg1p6d8RtTsp4oluDImec1qZHv9FZej6xBqthDKJk3suSAea1O1aGZFRRRQBLUoqKpRQAVLUJYKCSeByaxdQ8T2UFpM0EyySp/ADzWYHQZArNvdesLSQwvcKs2OFrzfVfHVzqKBbUtbPH1561gzSy3EiXN5IZSerKea0A6/VPHd1KXsY4DHIxwsoNMGmHU7VX1C8aUgev3a5mLWbeK72XNtsiI/1nUrUup3wVFTSrk3CSDop5H1rixVOr/wAuzppez/5eEer2&#43;m6OdyTeY3vzis1tSSeF8SK8SrnIFVoTvnKznzW/iiPWo7uwja2l8qQweZ/CeBWlKnU9n&#43;8Mqv8AELNneX3liZJWhA5X5vvV0el&#43;MrqJFXUY8xnjeOtcJJdtEYFQDES7euc&#43;9Iurxs2y4GSWwqk8VqB7DZ6zpupj/R7hC/8AdJ5q3MFjXdKwRPXNeG3Fm1rK1zZXTLJ94KhqefxHrDWCJdyyE&#43;54xQB6Lq3i7TdNRzG/nSfpXCaz41vL8gRyeXEey1zcnn3bb3JVT/FThbJChjI3SpyDWZoRv514xd9zerVoaZLHp04YEuXGVbOMVI9hdko6xZDpyBxVmx8NkW6zajvRAcLR7Mz9oUJZdR8QzkTTfIDgL3NW49AmsrOWbywrL93PNbQVNOuY1toY5lC9VFOW2ml3PczeVC55DGugzMvRbrVIbiN4JJNwPRTxXv8Ao1xLd6TBLP8A6zb81cx4b8J2j2sNwpXyyu4Ed67OKFIIvLj&#43;4KDQKKKKAHs6Iu52Cr6k1g6x420fSBsM4kl/uoc1U8dtM2hOts5Q57V4nc2czyIzyHfnoazA7nUPHGo3OpM9mzC3YfdrMlkhMr3VyXTfyET/ABp8ENtcaStoqGK6B&#43;8B1rZ0zw7Lb2ywXeZBMeuM1oZnB3&#43;oXP2k20MaBCeGz2960NNgvJ5UiWQBVO75uleiXHgnT5DFsgVWQ56da53WNKn0u3nlEDYLclR2oAde6SiaeZ3eNzIcfKeKx4bQ6YXurGUZAwy4yKxrjVriVVhUska9FzioY72W3fIkYjupNMC&#43;ZfsomlaFvtEnzBhzXNXmtXTysLsNgdB6V1drrlndTFHXbcEbcjoB9KZqGkJcpM0SJIoUc&#43;9AHN6NZ3niTUFtLNljz/ExrrNV&#43;HDaRYC9Nys86csmawNK0&#43;/0rVY7hcR46MOgqXVtW1S5vbnEzzQIPmcHikaFG01OG3u5ZLkE5GNq&#43;tTSXNtdOrQyFk6Mj9qp2dhLqqlkiP1Fbem&#43;Do2lHmzgSD5jGTin7MCnY6LPqUUiwSfL5nyAV0n9j2sLxxXgCTYxuI61LZtA0EkFpA0Vwhwrp0qW5XfbRvqtwpKccdaRmURd&#43;XLPa&#43;X5gAwjL61JD5j2Zhv5wsCfNtzzWbfeIre3Cx2ESkf3yKyBBqWq3LygOYz37UAa9z4itLeJo7CHJHG5qr2dhrHiG&#43;QIjup6&#43;grc0TwdFby25vMSeY2dtd/4fSGDUrmOCNURMDigDo9CtX0/R7a1kxvjQCtDtVYSGpc0GgUUUUAQ3Vpb31uYJk3K1cJrfw/cK81i2/vsNegipM0AeEvbahFdfZ5GMbDjBHNX7XxVqvh&#43;Yx6hGzwL0YjnFd69lb3ur33nxKdq5Brn2sHubN/tCrPbhiuxx82PY0GZq6b420nVLTdFcokuOFY85rO1Hxfa2lqyXXlzSdlXkVxd54a0&#43;0vvtVo7x458pqx2ikN8vmr34HrTEO165fW7xJIYBag9CBiqF3omqx24lZT5f95ec&#43;9dDr2oae1tErwsk0agbV4rJg127u9kBbyraL7ob&#43;KgZnadbSpcjyiEk9W71ZuL3VtKmUT5Ysd2F6fjW8FtdajEdtbCG4X7zg8VctbG005imol5Q/AfqK0Ar2Opf2jblp7YgyLt&#43;UdKtf2PAls0ufMhUZkjU4J&#43;tWopBaX/AJNiizw7eFx0qCWwjtGkuby68pX/AOWStQBWXyPs0Z0mJ1Yt8yAdKuPaxQuLzU7lUIH3FPNY9z4nitkNtpsW0/xORWKq32tTbHdi7HGWrMDavvFcVvKYbCJVU9GrGYX2oyEyFyrH7x6Vq2WgwokonG6RPu1rLCF0yJQAOf60gKOmeHYbacR3OJMKTXRWkMUOlSJGmz5qW0t2l1AYB5Tityx0OSWCRJfl&#43;bigCnGGN1Z4B6Vv6LYzxXc8j9Har1lpUcUaZG4pWrFEBQAAVL2oxRQaEfNHNScUcUAFR5561JURFAGXLa&#43;XdSzI336y7iPHA4ro5Ysisy5tT6UzM5q8tIrhdsqZPrXPajoBC74OSOxrtpbWqEsXNaGR5ff6dcGUsT&#43;8/wBoZrHk0i8R9zfMfXNesXNhFccunPrWZNo2fuNWZp7Q4/TLO&#43;fMcQIfuwro/IhtLRTq12XK/djqc2s9lZypAB5rfxVy9zpeq3NyhnjkIc43N0oAt3XisWsbppke0HjeetZPkanrT&#43;cC7hfmYmui0/wlHZX0YumEmedvatyC3itmuYolCJjtQM5i18PpFai6kbc7NjbWx5CxXUHlRgYA6VbitpJbLZGm7axrZsfD0twsMzNt29RikBg29rLNcyog5Irb03w3JPahZgy4Oa6m10aCJw6oN9bMVrgdKAMq00mKFY/kG9R1rVjtR6VMIsGpRQBEIsdKAKloNBoJxiozQaO1AEfeko70UAS0VFmpc0AGKhliBqajrQZmXLa5qhLY&#43;1dH5Waiktc0xHJy2h9KqSWp9K62S0z2qrJYe1ae0MjkpbXHarVxEG0&#43;FcDIrdl0vzB0qumkSSny3VlSgZzl1Exuo5VUnoKvW2hzyz&#43;YQNj9a6e00lYE2FQ/1FX4rUDtiszUx7LR4Lf7qVsRWoAwBgVMIsVKBSAiEOD0qUCpaKDQioqWoqACjtRQaAIu9BoNRGgAooooAKKKKAJRRUQqWgCUUdaiFS0AIYxUZiqWigzIhFUvlUVL2pmhFjHajFS0UgDFFFFABRRUfegCSoqKKACoqDRQAGoqDRQAUVH3pKAP/9k="
+                     data-src="/guides/images/nodemcu_esp8266.jpg"
+                     data-srcset="/guides/images/nodemcu_esp8266.jpg 300w, /guides/images/nodemcu_esp8266_hu_91b128772fe0498f.jpg 60w, /guides/images/nodemcu_esp8266_hu_d225445e816c4da5.jpg 100w, /guides/images/nodemcu_esp8266_hu_9ee4fde780a24062.jpg 150w, /guides/images/nodemcu_esp8266_hu_6192db8128f28510.jpg 200w, /guides/images/nodemcu_esp8266_hu_fba25236201d9c82.jpg 300w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>A device with a USB port and a serial adapter built-in</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>Development boards often come with a USB port built in. This USB port is
+connected to a serial adapter, so you don&rsquo;t need a separate serial adapter. You
+can use just a <a href="/guides/physical_device_connection#usb-cable">USB data cable</a> to connect it to your computer to
+program it. Additionally, a development board can also be used to flash other ESPs.
+<a href="/guides/devboard_as_flasher/">Read more here.</a></p>
+<p>This isn&rsquo;t likely to be very useful without connecting additional sensors to it
+by either soldering or using a breadboard, but you do not need anything else to
+<em>just</em> flash ESPHome on it.</p>
+<h3  id="pre-soldered-programming-header">
+    Pre-soldered Programming Header
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="pre-soldered-programming-header" title="Copy link" src="/images/link.svg">
+</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/programming-header-populated.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>A device that comes with programming headers pre-installed</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 822px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/programming-header-populated.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAJEAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APULf&#43;Opf4Kqxn95VntQZFaTrWXroEumyB14rUl4qnqKedYSqOpWgHscJdaRa3llsWAucfeauFu9FGn3209M10lxql2m6FZSoUkVjXNyu/8Afvkn1oPA&#43;tWl&#43;7J5bJ7yOPyz8tTWujnVLtIJ23JFWr4ajLygG3Mqn7uTjFaGt2Bt4jc2p8mUn5kFZUqXsz0amJeI98aNMfTgIURfJ96vRRC3VDbLE0jfePpU9pPLf6SiTRK0oHXNZ2ooLfT38u4RZP7qmtQxVWn7ITVbVZojJd3Kh1&#43;6qmuWz5LeYp6HigPK/wDrHJ&#43;pqGQ/w1ofP1KntGbFzr8d3pi280W6UfxVjx75ON3yVEF5q3FEV6CgVSoN&#43;ypUscWKcAzHCgk1sWeiG6sXmSUNIP4KDP8AeVDK7VFU8kbQEhwR9ag8wZoMrMKKXetJv5oFYl7VF3qWjFABRRRQB7ADiUVZB&#43;frXFQ&#43;LTtRZotz/wB4V1UE3nQxy/36zPsMNiqdX&#43;GTXNVGG5SvqMVbuOlVc0HScA9jZfbLmOb/AFm84rA8R6TBb2g2s0lweVAHaui16C6XXHFsmd4B3elU73R9Q2CVyZWx&#43;VB5FX93V/d0zK8NXuorCI5H8rZ9zd3rp59Xj1G3S3aMtOOG2964XVrW7tUW4diiHoM1t&#43;GNVQiKW3iDyRn94xNBpap8dMuTanNZhoIozH2&#43;brWf9nubg58uRs112tQWV9At5EUEp6kniqcGtR6fDgusr7cYA4FBw1cP/wA/KhhzaNeR2jXJjYItYpyTzW9d6vdXCMGlIjP8NY5QtlwDWhxPk&#43;wXdHso7&#43;fZJLs/u10ml2CWOoG0uoBKsn3Xx0rlbSb7JcRvtztNd6dRe7iglsrcyOo&#43;c8YFB04elTqPUZbaAlnrJcbGhPYmrtpDa2mqSCMMrN2PSkcxSMty8vlsF5BOOao3XiSwtl5&#43;eYjBxWZ6ypYamS6rpYv4ZlaNY3Xow71wtxa/Zbgxyn5hW7N4mv7v9zbQED&#43;8aqf2ZPeT&#43;ZdN8zUHFiaP1j&#43;GZYx2pfLya6e30SCOEttyPU1kX0UlldJJsBjB4o9qc1TLKtOn7QrxaddTjMcbY9TV&#43;Hw1qL/Nldg966vTbm11ywjSJkiZD8ygUv2iJZJLOOB2X7rODR7Q6aeXU3TuzBXQICo8y7VX7inf8I/af8/q1tyadCj4S3LD1zTPsCf8&#43;p/Ogz&#43;qUzk&#43;nNeg6PL5mlQ&#43;wrkF0djbOWkAlX&#43;Gt/wvMHsXiLDehrQ5MsdSlUOjk/1VUc81aX/VnNUZPvVmfTGJrkiW15HOxwrKQTnFc2mspHMd100g/uCtvxnF5uk5H8J61i6HptsmmG7mgDOvOc8EUHNVqVPaezpmTqsy6lKWkQhOy1nm9k0fBt4FVT3xXTxXdpqIMJtggQn5hxgVi6xCLmM2kBVUQ/e65NBzU6fs6n7yoXtNkt7pYpLq4G2U/cB&#43;7WhqOhQQAzJcAxEZGK5DSIodPkMd3cBi3Tviti0nupr37Kkm&#43;Mj5d1BDpYfc19OsNNuo/wB8HCjqxNR3mr6fZwyW1taK/G3eaq3cF2kojJyO22iLQ7m7B2Bd/wDdzQY1J/8APumY&#43;7zTjpmr1hqt5prNHbyYRvvZo/sxrcOJpFVlzx7&#43;lStZLJYhgFy/A55FFSp7MWGw1SpUNGCxvNYh86Sc7PUGrsehWsAV5FZ/c1k&#43;Hb&#43;fTJGt5R5kLtt47V1Mkbhs&#43;Zuif7vtWXtT1MNhad9SGK0iiB2gBW&#43;7TkQAGN/vfwtQ0ckaYLhlqNCXVQ&#43;7P8JoPRskWrOT70MhCn3FNu7CCeJ0Lc1WO8yZ/iWpft0bf6xTvHpWQ3roc1m40G88yLOzPPvXU/2zHe6WFgVUmfrjqKpXoS8XMuxYscE1zNvqD6dqTNE4eNT8w9q1pVDzatL6v&#43;8pnYQm5SJVIlJ9c1J5lx/dl/Os1/E0Ex3rKyAj7vpTf&#43;Ehi/5&#43;GrUx&#43;sU/5yjJdzTyF2cio455rdy8EjK3tSBSeAKX7NK6syqQq/erQ&#43;WXtTq/DOpT3kcsc77nWtSWsDw9b/ZbpHV8&#43;atb91&#43;7PNZ1T6nAOp7P94ZWt24uNJmU9AK4q71a207S47Wydmlb7wftXc3s0QsZvNOxCvevKdWktJbgJCx&#43;U/erOma4lmjawXlxALgygRMccdjVubTcJG0Mu8kfMvvUVpqFtHo7RqVV&#43;nP86pWd&#43;kRf980jflWhxeyp8ntJmfrVutk6yFwZSPmX0qGz1dxcwyBwrKuM1b1Y/arWWbZnHLEVy&#43;UeRNmRtoO3DKnUpnoujXP2uyuA84Ds/DMa2NLEcMzQpMzzBc9a81sb0oiruxiUV6R51kwjngKG5ZQMA4/Gg1pr/l2Mn0m1jQ3lzO7Zb5l71XEgnyLCFkQDDyMO3rir0d8sErw37xDd90dqoXv2pEb7OB5LdCpopr2hw4mn9Wq3EtpBa3AeRXaIH5Mj73vXWQTxyQDBUwt&#43;aGuJnumMEUTyb36IufumrmmXgtJvJeRSv/LTnOa5nS9melRqe0/eHTXCMPlP4NVYy7U2t8xHTFXMo0Kws4YP80bZqpJshO11&#43;b1pHUQ4nlO/oKSaJJIjGoYO3Vql3zyn5BhaikaO2TzJps/7K80AYKWU9vOYtzzJk43Hiquqx6dpjrLPdqzTDBjX&#43;GtafXxDgRWwC56tzmsTxHZWGtiO4hjaOT&#43;LPAFa0zmq26kUWjXl0gmtPnhb7pp3/CPar/cqSwupNOtEto719q&#43;1Wf7YuP8An9f8q19ocP1fDG0l3bpHFKoXevysv9aSXUQZS0aYBXBz3rEDc1YB6VofMOpUJ/tlzCytG5BXlfarr&#43;LL8RbWRGb&#43;8RWY5NROARQVSxVSmVdV1S9v8&#43;a5C/3V6Vg&#43;VzW7LDxVGSPn7tB2/WnUKqWsrsEVCS1WodIlLsWwu0Z&#43;tadoWmt1VVxLHyG7Y96WaO7e3Eq&#43;4wlB00zPhI8uSLb&#43;7f5WFczf2L6dMVkGUY5VvUV3EQtrTypXYDzPvr1qjq9pHqQeNOMHdEf6UHVha3sjhlby4y3&#43;1mur0aaOW5XzJvLBSuZuY2DtDswyn5qs2dyYLxUOPmTHSszuqfvP3h0l5Fb/AG8StctMg6YNXptUmurcW9uhRBVXSrO3ubdpGyzK33R/OtaGeOF2itYRjuzjGKDlftMQY6Wdw7AiNjk9TWo9nJbeWJVSIAbh3L1YvdaxbRwIELKcllHesuS6lnZS75K9M0HNSxP1epY2dJvEuL4JesU/554NXNV1w2d79ke38x1Xh89a5l5VnkQhvLkT&#43;Kor/UfNlR5G3uo25rL2R3U6/U05NWu5&#43;DJsT&#43;4lQ/aXP&#43;tlCfU5rHe5nlXaPlX1psIZZgzfPg5wafsgq46madzdwoNyq0h9T0qnJcyXBz90elWLm9FypUQqq56AdKrx/Sun2R5lXFVCPy296PLb3qzz7Uc&#43;1I4vaM0KkjkqOig4CznNRSUR/cokoAibpVI/JLuIyPSrpqrJ9&#43;g1pl99RjEcXkRbTtIYdjSQfabmGRonWNFHKg1R7UtvI8LHYeW4NB1KqS3WmL/Z6XMUu9t3zAnpVVGdlBB&#43;dK2v7Hkjt45ppf3Mh5CmqOqWcdjcqYHDofeg6KkDH1XT98f9oxL84GJU/rXOxyb7pJNnSu3ik2yfMmYpF2svrXMa5YnR5CyLmGTlW9KzPUwWJ9poxdM1iS3uSEO3mtc3M877i&#43;QfSuGtZZGu1Vc8tXXwMUUZrQzx1P2f8Mtd6lqgbn56U3Lufl&#43;Wg8v2ZLO7L904aolTHLcmjknnk1Jigd2lYKkjTeMio6UExmgkkRwuf71G/wDi/ipHQP8AOpxUiQvO6CJC7&#43;woHa43Abmjb71tReGNWmjDpakKfWn/APCJ6z/z7Gg0&#43;q1SrRRUVB5hZjPFKagGan/5Z0GbRGaqS/fq0aqy0GtMjooooNTUszdX6fZxKRGo4FacGkWsMfm3E6mQfwt61z1vdSWb74mpLm6lu33u5FB1U6kFua&#43;o3diYVVAvmE/wjGBWPeSWl5pxtrwEhTlGHaqp61I1v55RPagtVbVPaI5lLMRXJaBOM8Mavqkj/far4gCsRjpSeVTNauK9oVfKqUR1NtoxSOf2ggp4YULG7thVJPsK3NN8KahqBGIiif3moY403U2MIr6VbstJvtQkCwwMR64r0PTfBNhZASXbeY/p2roYfstomy3iRB9KzPRpZbU&#43;2cVpnw9kcCS9l2D&#43;6K6/T9I03S4wIIEZx/ERViSZ5O9RCg9KlhaVMvC4AGAAKX7TVWig6rI8rvIvstwyVWJBNdX4w0r7NOZEHFcdk5rSmfGYrDeyqWLHapk/1dVc0vmGtjkJDUUifJml8w1G7k1iNLUgooooOgiPWig9aKBhVmGTZIPpVanKrMcKCT7UAD/eJ96bjNbeneHdQ1A/LCQn95q6rTfBNvbYku3Df7NP2h1UsLUqHBWum3V7Jsgidj9K6vTPAtxLh7thGldnF9hsU2QRIp9cU2S9eTjtWR69HLKf/Lwr2Wg6Vpg&#43;WMSP/eNXHuwgxEAB7VWznqaKDupUVTJfNMnWigUUGpKOlFAooAlzRUWaM&#43;9AFjxDYC9spDjnFeQXkJtbpoyO9e8zRAxEHvXlnivS/LvfMx8hNH/Lw8zM8L7Sn7Q5Ey4qpJfxRn53C1a16L7PZK8FcNNOST5hO6h1TzMLgPanaQXkVwcROGNT9awtAtFvLR5oSVkj61sJuPHU0U6hnjcD9XYYorRs9Gvb0jyoziuq03wQgxJdv/wGtDOlhalQ8/Kkc4OKmgtp7qQJFEW/CvTbrQtHEIh2DIqxbR6dp0Y8mNM/Ss/anorLKhyGm&#43;Cbq5IkuP3aV1dl4d0vTF3lBI/&#43;1TrjU5HGI&#43;BVUzSS9TQd9LA06e5pvqCwjy4owB7VWku5JO9VaB1oO1JIl6nmpRUQ7VL2oGA61KO1RVKKAJc0VFmlGaAJM1LUQjqUUAHl0eXUvaitAOgl&#43;7XB&#43;NP9Utd5L92uD8af6pawn8RliP4B53rX/IMrze6/1x&#43;teka1/wAgyvN7r/XH61Mziy06/wAE/wDHld/Ste2/4&#43;F&#43;tZHgn/jyu/pWvbf8fC/WrpmGcfHA9M8Pf6kVt3P&#43;rrE8Pf6kVt3P&#43;rqzuw/wHP3H&#43;tNQN0qe4/1pqBulYnaIKctNFOWtSWPo70Ud6AJR2qXtUQ7VL2oAKd2ptO7UAFTx9qgqePtQQTUd6KO9WBL2oo7UUwP/2Q=="
+                     data-src="/guides/images/programming-header-populated.jpg"
+                     data-srcset="/guides/images/programming-header-populated.jpg 822w, /guides/images/programming-header-populated_hu_9d92ce5e5baf9aa9.jpg 164w, /guides/images/programming-header-populated_hu_2b2c6a7b477e2db1.jpg 274w, /guides/images/programming-header-populated_hu_57401f7f4d565266.jpg 411w, /guides/images/programming-header-populated_hu_fdcd045cba26bbd5.jpg 548w, /guides/images/programming-header-populated_hu_64dd038317fcbd50.jpg 822w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>A device that comes with programming headers pre-installed</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>In this situation, you&rsquo;ll need just <a href="/guides/physical_device_connection#jumper-wires">jumper wires</a> and a
+<a href="/guides/physical_device_connection#usb-serial-adapter">USB to serial adapter</a>. You don&rsquo;t need to solder
+anything, that&rsquo;s already been done by the factory.</p>
+<h3  id="unpopulated-programming-header">
+    Unpopulated Programming Header
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="unpopulated-programming-header" title="Copy link" src="/images/link.svg">
+</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/programming-header-unpopulated.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>A device that has a spot for programming headers on the circuit board</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 795px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/programming-header-unpopulated.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAJkAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APPvNo82o6K8w&#43;aJPNo8yo6KYCu&#43;SKe&#43;xAKrt1qSYZjVqsdgcbF3J3qR9ixpu6mo5P8AUpRMQUSmWE4CyJ6GpBsR9nrUc330om/4&#43;UrIA/5eNlSSSRh9m2o3/wCPqo5v9fWgWLD/AHKjqR/9XUdZmZJRUdFZCsSUVHUlAE0VexeE4/M8KxfjXjkVex&#43;DD/xSsf1Nd2FOrAfxSCUeXfr9a7OXnTY/pXG3f/H6PrXZH/kEx/Suqr/CPcpfxClRUWaM14Z6h88ZozUVFdx8SS0Ug6UtAEUlTf8ALrUMlTf8utaDAbHhXc1RzbMpsqKn0D2LLoH2c1HN/r0qPJ9ajJ561mJFwIPO35qCb/X1Hk&#43;tJ3pDsXWP7s1EOlR7zUlMQUUUVkIWiiiggsx9K9f8Fn/ill&#43;prxyM1694HyfDP4murCnTgf4g66/4&#43;1&#43;tdmn/ACCV/wB2uNuuLhfrXZJ8&#43;kD/AHa7aux7FLcyM0ZqM9aTNfPvc9dHz1uzRuPpViOIJ1qzaadNds5iXcFr0j4y6M/cfSk3GtaPTLmS5aIRHev3h6VWu7ZrecJKhVhRYNCjzVsf8e1XNNigkmYzIWVVLYrqf7BjTQTqYt0aEDO3PNP2RoqftDgBkngVL5UmM7DXdaDocWr2zXFvbxrt6qTSavp1vBLDDDGgBb5yW7&#43;laeyD2ZwOHzRXd3WmaQkFw6MhkC9M9OK4wxjzKyM7lbD5p/lvU2Bvpe9Zi9oQ&#43;W9HlyVO23I3U99mOKA9oVfLko2SetWv4Ki7UB7QjTe9Hz5qSM0d6AFizv217N8PGVvDjoSM7jXjK/6yvUPASkaW8hkOFY/LWmF/iG2G/iG1qIxP&#43;NdTan/iTD/drj9VuQWH1rrNOOdDX/druZ663Mw9aKU9TSV8&#43;9z11seBqa2NEjMkc4M7Rg44Vc5rESuh8M3F9ZtJPbxRujfL89elSPjILUmtTH/aF0Jbl1Qpjdjk1Q1K2336rFKZgqc5rUkt9Va&#43;nuhFCA456YWooLO&#43;N8bh1icFSGVTjNampU0nT7iS3nulA8lQRJ6gV2VlcK&#43;gmzXcLeWPGT/OuSt9ZkgsL20t7fAdTu57Vd0SWaXSIepAoOjDDtK8TxaA0sERkIBx0rntVvn1HUXuY2dQxzgmq13l7qbK7TvNMQGsjmq1BULlzlzz15pNn7zdmhEPmUFCG354rMyDb89DrjvWtoOjx6tPKHlK7F3VONBSWS3y7bZXK8D0rT2Q/ZmC/ah94x8tXr2yitdQa3WTeAwAJrTm0a0gdVnv1V8Z2gZo9mKxz2XIxtpeUXlPlroV0ixaVIxf7XfplCKx9QhaxvpLdm3gHGaPZBYrIin7tGz56XymGSgJWhYmA3kHFZ2IECYevTvAn/IEm/368x&#43;ffXpXgT/kD3H&#43;/WtI6MN/ELepH9&#43;v1rutJ50NP92uA1I/vl&#43;td/ovOhp/u12vY9hblEx8mjy6mPU0leI9z11seSCwSfRnvBbRqjJn5R0rGtL1oNNhJAK&#43;f2rrzNBZ6Fe2duZGQKeSOFribeCSe1RI4/3IlBDk9TXpHz3sl7Q6i61GKfRbvYNrhO3FSaTLbHTYX2kzbaryaaz6JdzAKvybcA1Y0SG4azFv5cY8tN27v0oNGqZzVluku7tFjLlgwwO1dToNhBa2ZaS4K4Xhc8ZrlrCV4r66Co7SOGACiu1S1hk8FPG8ey6Vcr8vJopnPhzjZNHvLu5mkTaBvPJas64t5rKdoZvvCu&#43;8HpbLp7w38W1jn5mHNczrjW48SNvI&#43;zoR170ezMnS1KWm2DXYlmdyqRrnAHWrcGgm7a2AkO2ZiPpWtp92bWFZoooUSbIAIzmprbUpJpVSJYVeM5XA71lY0p4YrWdu&#43;iC4jUJ5gkCbj6VqtcSf2dIzmENEpaPYOlZXiW4aC1kjkB&#43;0uVZiB3qpaJc/Zi8hYKYjWo3SMWKR7i/86X5mLd66VBGviVpZolk2RAop7nFcvDxdJ/vCtbWZJY9ZV4Cwkwu0D6VnSOanU1N2Kx1DUL0XN5bBIYyNpC4xzXP6tFGPEUjSfd31rtrOutJbQXbNHC7KMbcZrF175NcuFbnmtKppiKhp2b2FpdziSRCrcrxkY9Ki1i80&#43;4sUW0Cq6noBXPKrPL0PShUZdxIIrL2hzc44V6L4E/5Bdx/vV5sK9E8B/wDIOuPrTpGmF/iFzU/9ctd14e50df8AdrhdS/1y13Phr/kDj6V2vY9hbjW&#43;8aSlf75&#43;tJmvEe566POorgt4fvUmRRNIh&#43;6wIrhLe7ubO28lHHl7s4IzXX5s/wCybpkXZIqGvPDNkldxr0qp83iL9DaTX9QhicKylW4YFaWDxNfQZKuoycEhccViG5ItJU45x9az/Nk6bjiikXTp1D0W01m1iv1ukkQHyzgBe/vSaj4pln0dYVcrOX&#43;8PSvPxNIOhxS&#43;dIf42rX2QeyOtvZb6zSAm/8AM81cna2dtZkVypvlaVTPg5bPeqNv5j27MW4FXNOkjhvYncbkU5NZHPU&#43;M7EpZHT7VHEoMhyox90Utrp1tA1xLCJfMhOQO5qK21K4vY4l85IgXIHyDAFac0F1E6hdQVjJxgKOa1OgptqcWvs0d1E0ZXHJXripJHt4NNul5LbSFwvSpvECNpligziU7dxAxkVUSOJ43&#43;zz&#43;aXjOVzntQD9pY4uGXE6nr81dMJo21rzGXbL5YEYb1xWDLp13ayLNNAyR7upFXdRSbUNahjsgzSFBt29qypHFTWp0sFrqWWn1CQGMEeWHPQ1g6mUPiVzNyuRuqe5sNZt3tzfTu8Yccbs4qlroJ16UJ/FiiqaYg6NZ9CikIkKMWAxgdKzNcnsXtUW3Ksw/ujp9axm027W5&#43;aJj8ueBUctpc248yRGVG6Z71l7Q5uccNnkfw5ru/AH/Hld/UV52M4r0D4f/wDHvd/hTpfxDTDfxDQ1T/Wmu18Ln/iTj6VxWrfertPC3/IGH0rtex7C3IZpCJW&#43;tM800&#43;f/AFzfWo68R7nro8SXdMXiN9KUfsBVe&#43;0hbG2WdWLBjj5hg1f06G5t7hfMijZV/wBoVreLZoZtJtTFEFK8Ng5r0j56rTOFl2/ZnqhVuYfuG&#43;vpVTFa0jan/DDNHmUUY56VqWbOlKJbOcMfl45zitDRrI3t&#43;Eh2gqcncfvAVnadG0ltIqE7iRgVbn0&#43;/wBMC3DBowemODXNUOaqb6tH5DIIkVkY8A0WYlVzMqK0qfMoLVl2gZwspBVemSepq9tmEEzKf4e1I0p/wxt7e3muRSNK&#43;xUIXb1zW1oulraMkyOfmBDbh04rA0HaDI9yf3ORuUda6/8AtC1giJjhk&#43;VCQGHBopnPTqGJ4gu5p7ZFedGjD4CgYqa2cReIY/I2RubcBSfXFYV7q8d3GI/s4STzMk1Z1K0uL3VoI7f75jXGD7UzLqdFBpcli01xqd6rJJ0TdnJ7VyXiKXy9cdh0GCKmutMuoJU33SyFWG5VbOKr6&#43;udTYM24lRSqGlUv23iWOO4dyGfdGExS6nrVte2cduiNvX727&#43;lUYdBvY5Iz5fLrlabPpV1En2l1G0cZHrRY56luQq45&#43;98td18P/u3Y&#43;lcAN&#43;/mu/&#43;H/3rv/dFZ0v4osN/ENHV/vV1/hHnST9a5DVvvfjXX&#43;Df&#43;QafrXaz2ER3P/Hw/wBaiqa8/wCPp/rUFeU9z0kePo0Z1U5B8rPHHatDxGltHo8LQH&#43;LkU&#43;3&#43;zfa5BJJtHk5HPQ1yt5cS3BeNpWdQTjJrsPn6lW5WW1e6tZXVMbfeqosLgru2HGM/hVwEiMqpIYjHB4pI2uAm3eeOKPaGntfZlQWM5xhTtPSpf7OuN23yznpVyxtpL28EPmsM5Nbcvh6WC2nuPtWTGBhc81r7UPanP2gaydVlwvzAlxyQK3Zp7e/Mdut3LIxYfeHArLngRYIypLOfvUlgPLvo2bhc1l7Q56lX2htQ2ieUYYp3YbiOVq0umSxR/NLKqEY&#43;71p0dlLBEssci7i5ZTniriajdXUgW5aFYY/vba1NzI1PS5NL0xpYZvlcg89a1dFunu3ghkjLfLyT34pmtvbanZtFayE7SOAa0bWwSys45p7sKqL0HXpWZrT9mc1rcTMQXt1iCy4DKMbqv8A2v7HqkTMpCPCF346cVU1qa1njjEEzOQ2QCcgCtAvdXWoWtlC6KDECSyg0I4v&#43;XhetdO0yyR7ua6EryDCxqMkmuX8SkLrLsowAAQK30Wdbtoo76F3j52hBVPV/D&#43;p6pqMs0NuzArktjjpV1TWoRjxLMTbsYx&#43;5TA/KoLjWmuLJrcRhSTnNFvoFyXTzVAjPBOahn0p4kkmDpsU469fpXN&#43;8OJ85mb8mu5&#43;H5/fXX&#43;6K4Xua7b4f/8AH3cf7oopfxC8N/ENrV&#43;p/wB6ur8GH/iXv9a5jW&#43;tdF4I/wCPN/rXcz2EX7iP9&#43;31qLyxU12f9Jf61BmvKe56SPGJfC&#43;rRn7jMfamDwtqv/Pua9m2L/dH5UbR6CvW9kfP/V4Hik/hvVI/&#43;XVvwFRf2DqmP&#43;PWT8q902Kf4R&#43;VHkL6Cj2QfVjwyHR9Vik3x2ciuP4sVK&#43;m67IzM0EuG68HmvbvIX0H5Uvkr6Cj2QfVzw5NC1c/8ukn5Uv/AAj2r5/49JPyr3AQL6CpPJX0FHsg&#43;rUzyyPRdSkjtd0Eq&#43;XjK9vrVo6NeR2l5AtgzGY5Vq9K8oegowPSj2Rp7I8WXwhrqtmOJk/Godcgv7WKKG5RlK9TnrXt&#43;B6V5b8RNp1WIbiox0rKrSM6tP2dM42LgD612umRQPq0BuS8cTQAbwK4nao/5aGtKwvLya5jgS5coOvPQVlSOWludxb&#43;HdMtJZrmO83uchflrM1LxlqGk3slrHtaHZjBHtUNzcSRabcSrcsCjYQ561yU8sl3IXlZmdurGirVOirVNb/hILspEpC7VJJX1zUMuqGaN4zCgU9Pas/GBUfNc3tTi9oH8ddt8Pv&#43;P&#43;4/3K4kPzXa/D//AJCMv&#43;5WtI1w38Q39a610Xgf/j2f61z2tfeat3wMf3Utdp7Bp3n/AB8vUFWbzH2lqg4rie52oXijimUV6Z5g&#43;iiigAo70Ud6AJaKKKACiiigAry74g4/tZCfSvUe1eWfET/kJJ/u1lV/hmeK/hnH4D9hTVJRsqSD6ili/wBWKWvMPI2HmRyu0sSPTNNoooEEnSo0epG6VEKBoWux&#43;H//ACFZf&#43;udccK7H4f/APIYk/65GtKX8Q6cL/EOk1rq1bHgfpLWVrXR61fA3/LWu49g1L7P2t6rc1cvv&#43;Pt6rVxvc7Uf//Z"
+                     data-src="/guides/images/programming-header-unpopulated.jpg"
+                     data-srcset="/guides/images/programming-header-unpopulated.jpg 795w, /guides/images/programming-header-unpopulated_hu_ff332c33ef3d748d.jpg 159w, /guides/images/programming-header-unpopulated_hu_96b16eeb3db51bb4.jpg 265w, /guides/images/programming-header-unpopulated_hu_218de83f5a6280a.jpg 397w, /guides/images/programming-header-unpopulated_hu_1a0356b51a055c9f.jpg 530w, /guides/images/programming-header-unpopulated_hu_6c49f2559351b1be.jpg 795w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>A device that has a spot for programming headers on the circuit board</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>You can probably get away with <a href="/guides/physical_device_connection#jumper-wires">jumper wires</a> and a
+<a href="/guides/physical_device_connection#usb-serial-adapter">USB to serial adapter</a>. You can place the male end
+of the wires directly into the circuit board and hold them into place with your
+hand until you&rsquo;re done flashing the board.</p>
+<p>These headers sometimes have writing on the circuit board indicating what each
+pin is. If your header does not, either look it up on the internet, or use a
+multimeter in continuity mode to figure it out (advanced topic).</p>
+<h3  id="solder-filled-programming-header">
+    Solder-filled Programming Header
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="solder-filled-programming-header" title="Copy link" src="/images/link.svg">
+</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/programming-header-filled.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>A set of programming headers that are filled with solder</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 500px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/programming-header-filled.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAMEAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/ALFo0dxCUlflRxWcwbzSB1pI18vvR5nze9ZgEexPkde9WSoG05GyojGCMtTSy7FQKd1AD5rhHBTZVVUDIavIBJESU&#43;76VX2IMnbx3zQBD5mE&#43;fdR8mzeM5pDIHc7fuDpmiGVPtCAr8u4UAWLaN5EbdE3txSyQ3GOIW/EV6FaW9rJAh2IvA7VcliiEHyJH&#43;VBl7U8xFrcPHloW3D2qN7O4c48l/XpXpse3/nlHUotml&#43;eOJPSl7UPanlklpckcQt&#43;VLHaXcaf6lt30r00wNHuzHH8tAxv2&#43;VG3y1n7UPanm4tbzgm2b8qS5tbuYbI7V/yr06MN/cjpJLhIWw4hBrT2ge1PLDYX4jwtu//AHzVVGniv4kljKKvWvWp7oLGHESYNed61cH&#43;0JiwH3qYe1NC3lgeNi6VJ9qtxDuCgqKyvPzb4jHzEVUiJWSPaWwPvL70GprHUrd8hvlPpVdZ1didp2fStDw/ZW93dTtPEGZQNoIr0BNIsPsG37GgP0pe0NDyc3EeT&#43;7I5o&#43;0R/3DVS/PlaldxjgLKwAqDzfemBfKZG/O2onOZFwaofapJPkL8Ueds&#43;6SaDMv8mRhvp&#43;5T8mTvX0rN&#43;1fPmlScvIZMbaANjO21K527veqnmxkbEcn&#43;9WZcX3mHyw529zUcc3l/Kh&#43;93oAvMn7z5X&#43;WofNSKVX98VWeV9&#43;M8VRuZn8xV3/AC5oE9j1vTb&#43;MRKZM7NlVNW1dlA&#43;yO4PX5xgYrk9Iurq6mECzYGw/eNXNRS5&#43;xhpbhcR8AKc0jxHVLieIrmKNy&#43;Rj&#43;Lsam07xZqTRNsUeWW5duAK5oLLdeTaB9285P0rP8S60NOUWsPO0YCjp9azNMNf2n7s7y48RCcspvEVmGMZqjqPiW8tHieJcxBcFlOc14xJq9483meY3Wum8NeInnmNtcDcG4INaHVVpVTvB4wu5MbCKp3&#43;vSkb8M0jevp7Vz8q/ZNRlj3ZQ8rQblwQAw9OaDzadV06v7w6CLxNdBYoHfiqF/dma/kUnqwqqunlZQ73UfZutQzSb9WaP/aFM7sNrUOltfuhal4DnGKihx5YGeaGTYCVNB6Rd0nWY9JvmknjZ0IHSuxk&#43;IVi9qRHbybsV51bWtzqV00cGPlxnNdL/wAIRqP2XzC6Yx92kaHGX9y13qFxOI8B3Jqv839ym3Jazu5rc7so5BqP7Uf9qmAuMJvLYo3J5e3NVXleSPj9aiffsB3UGZaMhA&#43;7&#43;NRmSTZ96miXfHs5zSl8R9KAIkzv5pZPM25G76UnmYXpk0GSbvxQBEZDjlmquzZxz3qeWTH3xu&#43;lUmbLjC7eaBPY7Hw0YxqkZmwE285roNeGl3ESR6cAZf4sVymjxvcXaRJ95lPNb9tZPptwszFWT7rEHOM0j5x35PZlbTAi3tsD8pOVzXIeJbU/25Kj8DtXoV/pNtDAZIpiJF&#43;dGzwTWHfWkOuQhldUvU4YN/FQehhX7L93UOBksYhTtNtT/acHldd1bsnh7U1baLUk&#43;oHFaGnafb6MpubwA3H8MY9aZ3uqGrRj&#43;1go/hjG6qEjbTkdqtOWkaSeX/WScj2FUJiD1JFI&#43;fq/vKtzQh1KORhHNCi8AKQO9QzIE1hjuy3B&#43;lZq/wCvTn&#43;IVoz/AC6mx/2RTPSwtQ2Yb1fMAzVieY7WIrDtpMS/3q03kyyCg9M6LwWS97I5I6ivVZ5CLIdPzrwSGSW2uGMUjp/unFaf9rXnk4e8nx6bqXszQydYkU61ekt/y2aqW9fWpJl3zM5OSTnNR&#43;UKZmRRoPuE8UfJnZxtqKQ/J8i/rSZ2D5VoAU8PgGhpN8ZTdh1qN9v393NIMMd/WgAEjjbuTc1SOwZstkUDB/8A10yQpnk0AQyyIw9KpOdjh896uSBPqtU32Fh/smgT2Op0SQG/hxkZHUHFdJqFsttCq211u3vlkb/GuW0m6S2u4JSu5VHIroZdVbUlMMVugk3ArgYpHgOpZmnfeUNJ2Lbs8wGfM6Yrk2KyHJJV/wC8taE2u3ckgikwDjYeKzbyL7LcGPfu4zWRliajqP2kC0lxdImxb9yvpVN4oxJ5jMZH/wBo1D5p7UhOBypZmrUx9rVqaEkjCYMo&#43;8elZ8ySucSDaq881YEuZPu7WWo7qUnqMUGtOp7P3Cl/y2T6irtz/wAhT5fQfyqieZVHvS6ze/Yb5ZMbsAZoPQwW5ow8Sj61uRCPaHPzVhaTcpqMHmbNvNbLpiHCGmesRz7A3ytknsKQmQr/AKpsL7Va0GDztZQMMj0Neoy2lrHaBHt0&#43;bHO2g0PGTOmTkEH0o8&#43;P3qPXisGu3kcajaJDis7zz6CgzOgHhy7jdEARtw65qrc6RcQqxfACnBxV&#43;O8vtjLk5FWrCY3FyovSzxr/CO9Y/vDzPrxy5tXzjBo&#43;zSdNtdpqceltaF7eJ4pQe4rE8tP7/6VqZVcfUpmD9mnST5VOKJLaQ1veV/tUqadLINyqzD1ApmX9p1Dm5LW4xgLUcWmXUjBCmBn72a6z&#43;zLj&#43;4//fNP/sm5x91/ypGv16qZ9vZoZordW5OBurctbKSxb7VINvlsBgj7wqrbaPJb3MUk6uI93BrUvAILdlmmLknMee1ZnNa/7wrTWlk0s05YEFSQncGucIe4uSxDY7E12TRKLM3kdtuk2YLZ4/KsGwkRb6N3QMpblaQqnufuym1uUGWQj6io54vMTYrbW967TVBBHpbuU5b7oY9PpXGB90o96DnqU3QqEP2UxJ97ef5Vm30xjjI6tXR3On3kds0xVQmODmsnS7Fb3VYopmDKzcitTpo0/aVP3hF4ba3n1WBLhVI/2qb4ls0utcnhQgR5GMV6DceDNFtxEyMVkY&#43;tczr&#43;k2enXOYpPnxnLNTPcpUvZmVp0X2K3MYqwL6TbgKM9DzzVWOWE9ZRn61aj&#43;zR/OZU3Y9aDU19L1IabqcN0U3Ljla6y4&#43;IsDjb9i&#43;UVwH2u3x/rF/Oo5LiApxKufrQaFfVz/aGqT3YbyxK27b6VS&#43;xn/ntVwzLnkpR5yeqUGZoxzn1rR0WeVtTC28XmN71nCyjMmBqENb/AIfgOl38kjNvdU3Lj&#43;Ksj57DYWp7TUs6wJk0998C/M3zOp6VyxYRnrXXanfzXelXQkiWPHzDbXLQuF02KRYFlmeQryKDTE4b94WdOhimLTTSBYV5J9fai81ly2yB/KiX7oB61pJpGomz3G2t1BGdpqtcW1s2htNd2YWZZdg2cZrQf1UzhqdzjP2lvzpw1O5/5&#43;GP41JBpAa185dOuDH9a0beGJNEE1pZgTmXZiTmgz&#43;q1P5zLGpvlPMmdlDZ25q3f&#43;IBcW4haNQo/iPWthfDWpPGJmW2DYzt21TvLaNdIY31ovnLLsG0YzQafVahiS61M8Cwefti9B0pNPlRryI7sLu&#43;9itFfD0jW/nLprlMdCatrG8OjxGztVSdpdhUrkigz&#43;qu5Z1KbzdOk84AEfdJHX6VykAH2uKM4&#43;Zu9dk2jatNbgNPHvx90rWVdRPBYp9ptVkuVlKDjFB01MKM1d7ubTHR4kRI1yrA1x1lLcWl8l0iM5Vs9K7mXR9RksvONluTGdm45potZbnTbWK0gEE7uVK4oNFSsc9qfiS9uwCLeRcema5bVdQurnHnI49Ca9PufCWohdq3J8zHTHFc3f6XJJHBbXa4lEhUtimdXtKhwltAkhZpZmX2zUNxFJ5n7uVmT6110fhyOVT8xDM5ROOtJceGzZ2xkBZmQjcMVoHtTlIrO5k7t&#43;dadjYyW8geQM/1NakMPHCGrca9jGaDL2xUkKyNu8pBTdi/880/OrrwRhv9Uab5Cf8APJqDm9qzJsorqaRhG24p81blxrV1bXUJhkIcIAayNIeR71IkO3zG216APB9jbxpc3Rdt3y9ay9oelVpe0OVufEN7dRsjzZU9QBWto1xEttatJjmWr/iLwrpunaL9rtg&#43;8&#43;prmLG/shY/Z7lXyG3KUoOH2fs6n7w9llhR7aAoRtxlj61kXRs7idIV2NEso3fWuETxMkdv5K3Nzs9M05NXs5NMeCGdoZd4fe/NZ&#43;zOr6zTPVjYSKyBD&#43;7YdB0rLv1tbJ0I2LH5wLfWuKj8ZX8Vp5H9pRtjo2KWDUI7rR51uHe6kL7yynGKPZl&#43;0R6YqPMBJCymP72c1h6lJZ3F0jMV8pJhu&#43;tchb61NFEsEUV15bcL8/rRLeRSwjTsSW8zOGy3OaPZj9qeqrbxmJHSVShHTtXNaldWVndxylkVRN82Oma5w6nfwj7Il5IQF7LmqN1MsOhOsqvcbn8zc1AVKiPT1kspoxcpNGRjLc1zj6hp15qcTSY8tZdoPvXnEPiBQnlLE208bd5q80y3NnHAIJoJFfcCgzz2rT2Zl9ZPWprFvOEkUg8rHXtXOXeq2WnalDK&#43;zyRIV3e9cU3iS8hhezm1G4ULx93mqU&#43;s276WtsFM7B926QYo9mFTEnr0upafLD9qW4TA5615t4g8QRTXIuoYwyJIQM965n&#43;2JAuzy02f3dxqG5uvtMaQqqquc4FHszOrifaGrZa5MFkxEnzNuGf4fpUmpapc3lkIPlAHU9M1jxlI&#43;M8j9aXeXPzEe2aZze1LNkjJF87r&#43;dXgBj7y/nWdG4HHy/lVkOcdR&#43;VAiz5f&#43;2v50eX/ALa/nVfzx6j/AL5o89fUf980BY57Rr37NqMbhVcqc810Oq&#43;OdTcJFLEqpncoFchZyxpcbscirmsSiQwMjA7UwaXsz1KlU177xrfarZi2lT5OlZkUhRGXZ96qMZuBEHWP5PXFWYzePIiLGdzdsUHDV/eEuD1xU0FrNcAmKJmHsKZP50C4cYI6girVjqs0WlT&#43;W205HNMypUvaCf2Vef8APs/5Vf061vIYrgPbyDcmFrF/trUP&#43;flqjk1i/PH2h/zoOn6sdvbsRa2sTq4MTbmNV72aRtVt3jhdlh/i9a437VdHn7Q/50v22f8A56v&#43;dBr7I7&#43;K8nbUTcfZmxsK7QcUlyjPpzJHE3msNoDHjGa4SO9ukbf57/nSm&#43;uiv/Hw/wCdAeyOki8N3YdXLxrg5IyK6Se3IWN4riIOzLn5h8uK82&#43;23JH&#43;vf8AOj7XL/z0b86A&#43;rHYazpTXF5mCaIcDcwYcms//hH5sf8AH1D/AN9Cue8&#43;Q/8ALRvzoDSE4DsT9aA&#43;qm9/wjRP3r2Bfqwo/wCEeaJ1UXlv838W&#43;sYWt1OOElI&#43;hp0unXVuFMscqhuhINIX1U2P7CJTd9tt927H36BoJZ9gvYCR93DVz8iiM4VjmprGYpcxZPO8Uw&#43;qlyRmtpGhkc7lODgVEb7y8je/5VHqszf2hKfNC/NVO33zTZaQ7RyfpQc/sjet4JZoRJ54XPY1J9jl/wCflfzrkrq&#43;na4baxC9Bg1D9tuf77fnQdHshsVnJhm3N5npipWDnAds4rvxbBdTfMSIkSfeI&#43;/XPXOnm4vGYIN7NwiUGdRjmtpJtLhlhfbEowwx3rc04RJrFt5g3ExYHHenS6PdTaZAttuRVGGT1NbUWnS2d/aySIGJjwx9KQHBeJDv1ecoW2g9DVS0B/s24z6it7xMM6pK6rsQnj3rFD/6BcY9RQFL&#43;IUKKiQvvokkcGtTuLUfSg1FHIcUZk9qAJY6U5pqb9y0wyPk0AWU/wBXUR4pEk4xSW0E15ex2yfMXOBigDT0XSrnW5/JtkOP4n9K9T8P&#43;ALHT4w92nnzerdK0fDGh2&#43;j6dFHHGA5GXb1rpR0x2rlq1TQqx6ZaxpsS3jVfZadJpVtcpsmgjZe2Vqz5mKPNzWdwOM1z4dWN6pktP3M3t0ryzVtKudD1FYbuMqobhx3r6L7VzXifQ7fWbJ1lUb15VvStfaAfPupy&#43;ZeyYJ&#43;9TYZTFYSSf3jitG50oDWJ4ZTt2njmqd3bCKzRA643Hoa6Tn9mZ/n5o86pPsw9aPs49aAPSdWlxps7S3Cs7Y2jIzXL2F4YrpC5J&#43;ap59B1ZGWNoXce1Mhsvsdyi3iPGM&#43;nNZHDUOvnybMTq7qsnQZ6U60hU24mnlkdVbHLVUubuP7KkamUxgZHyUafdNcp5EaSspb&#43;7XMdyVMzvFMEQ1FUtVIV1BwxqnqOiT6TojSzAfvcHiresZOsRgo6umAQ9b3jMD/AIRuH/dFaIyw38SZ5dHRJRnFHmZrqOkBJso8w0cGigBfNkqTOaiooAkJwDXS/Du1F1rzTSciIVy0hwK6n4dXPlaxJGf4xWdQD2226cVaqpZfdq2a5TQKM1FRQBp2w82PFUL&#43;Py2KHpV/Tj81VtSHmSGgDwP4hWxs/EAmh&#43;UOK5KRi1lnOSrV6B8UovLmtz35rz2BtyvCf4q6qZzkYlOKPNNRkbSR6UlaAdpL4uuZ/lXIb1zUOq30s1vayEncR1audgBlcAdSa6qbw3qE9jFcSuq26jC81kKrSNfRtUjhtx9oeN/l6FhWhH4it4sGDyhhvUVyreD7waRLfLMvlx/nWFEVBUKfrWfswq1KlOmdV4h1L7Xqv2sFW6fdNSajq9z4h0o20NtgQgBmzXO5BHWtHR5bmGK5eKHfGvLc1ocWFqfvA0DwqdZMoe4SMpxtPWuij&#43;HNuBzfp&#43;VZuiX8lpay3USBZJHOTirL&#43;KLjP3vrxWZ6xZPw7t8/Le/&#43;O1IPh1Zp9&#43;9J/Cq//CTSvH8pYH6VEfEN4fuy0v3gF/8A4V7p3/P4/wD3zS/8IBpYT/j7k/Ks0&#43;IL7/nqfzqI67e/89Go/eAab&#43;A9KaBsSzZxXMaZoep6b4hiaCN/LD/ex2rV/ti7x/rW/Op9F1O4uNbgjd22fWgD1qyQ/Z1J64qxiorX/VJVk4rMCI4qPvSyZzSUAXrI4brS3Q61WhOD1rWe2&#43;0W6uOTQM8P&#43;K9rL/o1wAdgyK8rWTB3AfMK&#43;mPEOix6rbvazp06E147r/g6fRzM&#43;0PGfulRXTTMqlM5EKJRvCjmjyR/dFaVvHAkIDA575FS7bb/ACKYWM&#43;z8sXamRto3V1&#43;oeLFFgLCKPbEh&#43;&#43;e9cfa&#43;XJLmX7tbGqQCTTbUxrwWNAVanszYHjGOTQ5bNtvKlelcYuS3Hc1dj0y7cfJatj6U9bK9X7tow/CkcVSo6gxj5MfzH5vStPRtQuo7a5WKDch&#43;9isOYTRy/vVIYetaui3N0VnaODemPmxQGGpL2hpWErnT3Lrt&#43;c/LTfKaQMYULDvxTLMvcWMpddreb92tSKMrpnyK&#43;7J6VkekZ72t0qAhCFbvT4bC537WAOav7mmRGkDoUx9DSQXkP2hsIdqAluetAil9jnaV4vL5Hej7DcvCzYA28VsJcxOHZIgSyjaM1BExa0fzFACk87ulZgZktjcxqpwMsMUaaJrLUbeeQ4XfitSaRZEhkkKqR3Dday9RvUYwJGg4P3vxrQD2rTpt9ureoq5WNoVwJNNhb/ZFbI5rMAIqI1ZxxUfl0ARR1ft7uSAYU5FVfLxRQBZubmOcZ2fPXLa69rHFi5Aw3rXQdOa5fxjpZ1HR52BIdF3LitAOcfT9JkYsFi5pv8AZelf3Y680aTUI2K7ZeD70nn6h6S/rWvszP2hTt/vV1D/APINsv8AeNcvb/erqH/5Btl/vGmZVzpLXof92qsverVr0P8Au1Vl70GUjjtV/wCPlq1vCn/Hrd1k6r/x8tWt4U/49bulMqj/ABC3Yf6qf/rpWzZ/8esn0rGsP9VP/wBdK2bP/j1k&#43;lZHaUrz/jzT61kRfx/Ste8/480&#43;tZEX8f0oEWrft9KRv&#43;PaSlt&#43;30pG/wCPaSkBUl/1SVTbqv1q5L/qkqm3VfrWoHs3hb/kEW/&#43;6K6aOuZ8Lf8AIIt/90V00dc4EtFFFABTTTqaaAGVn6t/yDLj/dNaFZ&#43;rf8gy4/3TTQHmM/8ArPwqKpZ/9Z&#43;FRV1HMf/Z"
+                     data-src="/guides/images/programming-header-filled.jpg"
+                     data-srcset="/guides/images/programming-header-filled.jpg 500w, /guides/images/programming-header-filled_hu_e68b197ee7d21e5c.jpg 100w, /guides/images/programming-header-filled_hu_afb2170a288a2b35.jpg 166w, /guides/images/programming-header-filled_hu_a7468fb0c7a0918a.jpg 250w, /guides/images/programming-header-filled_hu_aef8a2db29a0d782.jpg 333w, /guides/images/programming-header-filled_hu_977dc01919fb35f3.jpg 500w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>A set of programming headers that are filled with solder</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>You&rsquo;ll need a USB to serial adapter, <a href="/guides/physical_device_connection#jumper-wires">jumper wires</a>, a
+<a href="/guides/physical_device_connection#soldering-iron">soldering iron</a>, and probably <a href="/guides/physical_device_connection#solder">solder</a> and
+some <a href="/guides/physical_device_connection#pcb-headers">breakaway headers</a> if your board looks like this.</p>
+<p>You can try placing the jumper wires in the right place, but you&rsquo;ll have
+trouble holding them without having them slide around. You&rsquo;ll want to solder a
+header onto the programming port in this situation.</p>
+<p>These headers sometimes have writing on the circuit board indicating what each
+pin is. If your header does not, either look it up on the internet, or use a
+multimeter in continuity mode to figure it out (advanced topic).</p>
+<h3  id="module-only">
+    Module Only
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="module-only" title="Copy link" src="/images/link.svg">
+</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/module-only-programming.jpg" width="75.0%"  alt="From &lt;https://tasmota.github.io/docs/devices/SM-SO301/&gt;"/>
+                    
+                
+                    <figcaption>
+                        <em>An ESP8266 module with programming wires soldered on</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 773px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/module-only-programming.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAHkAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AOSPSou9S0eXXhnzIdqj71JR5dBmRSffSpRUVxw6VLFSMqpKKXdig8VUvb37OF&#43;X71FKl7UzpUvaM9G8KS/8S38a6OPmvJtH8ZppsHlmAtz61ux/EqAH/j1P516dLC1D6XC1PZU7HpdvbeYDVWaPBIrlLD4rafbI5ktX3H3qpdfEyxZiYrZ&#43;fU0/ZVDX2tM6yWXy6ytSm8zT7hG/u1zFz8QrSQfLA&#43;aoTeN4JopB5B&#43;dcdaTwtQVWpTdKxTkYAkVTlP71aigv/tMpXbSz/eFcPsfZv8AeHzcIezqFh&#43;lRYqQHgUtZmhFRUuPajFBoRb6KkI4qPFABRRg0YPpQBLRRRQZBRmiigCvcf6xasRVXuuqVJF0FIiotCzWZq3&#43;piz6mr&#43;arTWE&#43;ozQxQ/MzttVfeurC/xDTC/xDFEfzZo8v5uteiwfCTV5UDGeJCR93NaEfwevHj/eXCb/AGNe59ZpnqfVqh5Ts560OK9ej&#43;DVxt&#43;acUyX4M3fk/JON1P2tMv6rUPJRH70PHwtep/8KY1LH/HwlUNU&#43;Euq2GnyXKyq4jXcVo9pTI&#43;rVDhbMiOdee1X5DvOVrNERiKFjhgcGtCH95HJjrXl47&#43;IctSi3UshzyMAPu/nSfaJP9j860LK1jkgUyABunNWRoZlZvJ2Ntrh/dnV/ZeJ/wCfZjfaJP7yfnR9pk/2Pzrej8NTydVQVZj8O20J/wBIkUVzPE00dFPJ8RU&#43;wc2JpXOFCk1o2ej31wQWQIlbSjS7RwI4g7f7Iq1N9tuYwLeB0Q&#43;g5rOWKSPTpZPh6euImVo9CgVAGlGad/Ydt/z1FOHhfVJRvzJz6ml/4RPVfWT865Pa/wDTw1/2b/oHOVoxSjrUleofFEVGKP8AlvUtAFK4/hp8ZqW4i8xOOtUsSxn5gasfsyw8nOK6rRdGa1vNPu5bmIo0qkLu5ri5ZMda6PT5NFiFhMbiVrlZFymeKqkduBpfvD6ATBIIx0prXMcdykZzk1DG8a20czPtQqDUcjFruB0aMo3r1rpPdOhHQUtIv3RS13AFVdSQS6bcpjrGR&#43;lWqZcLut3HqDQB8pT6ck2ryRyyrGqSNwfrU0n&#43;g3RtobbzXxwQetP8TQLBr91uUlRO3SqS3M4uYxFJhcde9cVX&#43;GFFezqqodjY6Bql5py4tlRW5yetadl4b1OBSvmxrXN2firU7e38lJSwXuajufEmtyrhJzl/u4FeA6eIqVD6&#43;vVxVOlNzsdn/wAI9ctzLqCoPakfRtGgXfeXxkPu1cPeN4kFopuHdVb&#43;JWrFktbqQ7pnlf6tVrA1P&#43;XlQ&#43;ZxOZtHpraz4V0wZUxsR6c1m3PxNs4SVtLXd&#43;GK4NrDH3oj&#43;JqM&#43;RAcGLP41vTyenPa8zzKuZVH8B1z/Eu9LErDgU3/AIWVff8APIVy3mxf88jR5sX/ADyNdf8AYf8A07M/r&#43;INXgUZHrVOSSV/&#43;WX61H5kv/PI/nS9meP7It5/efd/4FUtU/MbH&#43;qP50faJP8Anl&#43;tFg9kXR1FOuFG3pVAXMuf9V&#43;tSyXkvl/6n9az9mHsinc27s6ydv7tRWkgS9idF3ESDKn61Ye6lKkeUPzqmPOG3aqq&#43;7O4da6aR34XQ&#43;j5JTNocL9FManpml80eRay7yqg/TNV9IkMvhK1Zjk&#43;UAatSrCNKheU4VT0FanrnVwMJIFPtUlZ1vqFskMab8FhxVv7TH/frtAmps3MR&#43;lRm5i7uKqXes2VrOsEswDt0WmB89&#43;N4pLfxTdpFF5jb9yr65rnfOk3YaLy3P3jjpXa/EyFovETSQuVaRQVfOMVx7zQ2pBmnaV8fNjnNc1X&#43;Gc2JpuoXYPKjh4II75pHnYAeWpZgcqVHSsqO&#43;tmZ9mef4TUp1GaOBvKU7T2ArmjTp/8vDqpZXen7SpiDoLnWNRvLdYWKYA6tgVgzTeUf3t1z6DmrEOn3N1bJckErjpurJuLASzNzjA9a7frOG/59nRiMoi6fP7Qle8R&#43;kjN9TULSxt1cD6Uj6eHjGwL&#43;dLHpDuOdv8A33QsbNfw9Dy8Tglh5&#43;z9oRZB/wCW1HH/AD2pZNMw5GP/AB6m/wBm&#43;3/j1Z&#43;1q/8APw5/ZnQfZk/utR9jj/un86yf7d1T/n2NL/b2qf8APqfyrm9kep9Sy7/n4acltGI3whz25qgllI6l2cr7Uv8AbWoY5tv0o/tq6/jtT/3zRYX1HA/8/BPsmP8AltS&#43;Xx/rj&#43;VEes75NhtsfVatJrNnu8qS3G72GKTRr/YlKp/DqGXJEQf9YarzAhQfO&#43;QHmujM2nSjAjKE/jWDNZjz5AuZFz0Wikc1TLKuGqfvD6C8Dzxz&#43;DLYq29QhAzWjJmTTCZWUgN8uBXjPhDxle6JC1ukDTWpJAjI&#43;7XWL8R2SLy20wCPrya6TQ9CJH&#43;i/MoBx&#43;NT6jbzzwoYJNkqnK&#43;h&#43;tean4jyS7THp4bZ90DnFKfiNfkZ&#43;xS8&#43;1Mzud01tql1PF9odIoozlth5auZ8QXkw8RoHi&#43;RCAHwelYo&#43;I98zFRGQfc1VufFd/dtlrd3HqozRqL2o74pNDKLeVGBJj5xXFra6VJoInjk/wBJU4IzV/Xbl7iBpbi1myeAWrCtrUTQsIojGMevWj/l2FX94WLWzja9QYXDJnmukh0XNs8n2aQjs2OK59YpoAuFMm3v3FbMfiHUVsvsiuVixXL&#43;7MKeFrfbgVZYSp24YD0Bqr9liz9ynhpWJIOSfek/eZ/&#43;vWRwVoVqVS1QX7LCB9wU&#43;GzjkYAR8k1H5cn&#43;TUsSSLICOMe9FzLmu9ToIvAWpXESyx2i7WGRzT/&#43;Fear/wA&#43;a/nVeHxNrUEYjjuH2jp81P8A&#43;Es13/n4f/vqtb0zuVXDmJtX0FLhfQVHRXNc8skxF6CjbEewqPNIzYUn0oC7IrlYok3kLmszyRI28pT2keeQlugNTx1qqZ108fVpU/Zog8txIPk7Yq9YWN9aO11HCWz2K1p6XFbQwteXYLhThEHc1Ym126jmCKMZPEYHA9qSbR3f2jiKsOevMpWD6nGs00duEMrZI2cVFfR6jKwknULu&#43;VSR1rRuNV1Rlz5LRxg9AMVatLuPV4RZXeROvzRvXUsSL2vtDDQ6lobq4i2tKMAFetXpNd16EpHJbYZh8o2daz9X1K9mnRJ5S3lNhavPqNzc&#43;VJLISyD5aKmJOV4ky5rTVLjUAklsySynjIxWzYya7pkwsE2hs5CYyagk1K7muEmeRi6fdNUZ9Q1A6j9qaZw/wDC&#43;elL617QdLFUy/rOoa5PvtbkoP8AZK1z0NreyhlYlMHtxWhPq9zLJvuAXbu1TRS&#43;Ym&#43;s6uJqBUxVRbFf7VqFtH5awh17moo9UijLrNGylhjkVpeZ7VDKkU334xWftUdq4hxCJbH7HcJuFwof0qWfT5lO9Srr6rWW&#43;lRAboW2t7UiTalYN&#43;7YyR&#43;h61ovZs87FYmeNqe0mXfKkEnOae&#43;8fcptvr1tP&#43;7uo9j&#43;vSrnkxXA3W0ysP7ueaPqxytNFbPvRn3pz2swb/Vmk&#43;zTf88zWfsRENHl1R/tI/8APKpItR8yTDrtFZezD2Za2e9I0fyH6Urx7h5kb5FVbi88qPy&#43;rH9KAM0OUcj3q7FbybM7qriMkbu&#43;c112m6zosOltHdWJe6I4YdDXSdNP2f8Ay8MdbtILaFZf4ZgdtWb1421hZcfLuBxVHUcC0WZ4tgknXaPbNTarIjXqMnAyKdiqvwQO9ubzS59DAXC3OPue1cNBdfZtVtmA&#43;YuVovEkjlhmD/IQKqSzAXEco&#43;9HJuNI7KtT36ZHqq7buQH&#43;9mrUMkYhT5u1aWo6dHqSC9sSshYZkj7isq9niSBYorfZInWg53Tpw9yZJ8/mcfcpMM25HHyVmi9uPQUfbbj0FZezOD2SND7BFnOW2/Wp/K2riOs37bPjGBSfabj&#43;9T9mFy&#43;m/nfQazTc3H979KT7TP8A3v0peyCxpg4qTePSsj7RP/e/Sj7RP/e/Sj2Y7GnJawXH3kUGqn9nS27braYqfQ9KrfaZ/wC9Qbm4/vUfvATaLyarqsK7Cm7Henf2zqn/ADyrLNzcZ&#43;9Sfabj&#43;9XT7SoaXRLgUPHR3qQ9K5jmuEFzJADGfmU1Y0/TnvrkgLle59KqDrXUeGv&#43;PW5/3aDph70&#43;Vli3ttCiBhcM8i/eI6VLMdEgkTy7Td75rnj0f61G3UUHVP2cZcqiW9cuYnlGWVwv3VHRawPNe4ul/iOaluurfWmaZ/x9N9K1OeUnJ8zOnvrMz2Ns6HCqPmrm7zfFcN6V1c//ACCYfpXNan9z8aDoxP8ADpj7G/ktruK5t32svVezV1zTaVeRC5urYK7fe2muCg6rW2n/AB71nVMY1XFcpuqnh&#43;Rj5Vs/4nFV5o9LkzHHatGcfeJrHTrTm&#43;9WRdWULfCQTW6xyHGMVZ0&#43;O0adfPxtqtNUCVoeXTep2UCaGyHfbLvH&#43;1xUZOjgn/Q4&#43;P8Aarll&#43;7SGg9BV1/KjpftujZ2jTwR3O6qt7oMc6NdaaweM/wAHcVhw/frsfC33/wA6DqVKNSPKzimgZGIZSCOoNN2&#43;1bGsf8hOf/eqilRzs8xwRS8o&#43;lJ5R9K0BS1rzsOU/9k="
+                     data-src="/guides/images/module-only-programming.jpg"
+                     data-srcset="/guides/images/module-only-programming.jpg 773w, /guides/images/module-only-programming_hu_6293f7d5290c2a2.jpg 154w, /guides/images/module-only-programming_hu_693e80de421678a5.jpg 257w, /guides/images/module-only-programming_hu_65b21d69ddeefc1e.jpg 386w, /guides/images/module-only-programming_hu_85e12a2f7cc21eb3.jpg 515w, /guides/images/module-only-programming_hu_cc02055da35f561c.jpg 773w"
+                     width="75.0%" 
+                     
+                     alt="From &lt;https://tasmota.github.io/docs/devices/SM-SO301/&gt;"/>
+                
+            
+                <figcaption>
+                    <em>An ESP8266 module with programming wires soldered on</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>If the device has a module but no programming headers, things get a bit tricky.
+You&rsquo;ll need a <a href="/guides/physical_device_connection#usb-serial-adapter">USB to serial adapter</a>, :ref:<code>jumper wires &lt;jumper-wires&gt;</code>, <a href="/guides/physical_device_connection#wire-strippers">wire strippers</a>, :ref:<code>wire snips &lt;wire-snips&gt;</code>, a <a href="/guides/physical_device_connection#soldering-iron">soldering iron</a>, :ref:<code>solder &lt;solder&gt;</code>, and a bit of <a href="/guides/physical_device_connection#soldering-flux">flux</a> would help.</p>
+<p>Cut the jumper wires, strip a bit off the end, and then solder them onto the
+module. You can find the correct places to solder the wires by looking up the
+module model number on the internet. You can find
+<a href="https://tasmota.github.io/docs/Pinouts/">one list of commonly usedmodules here<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.</p>
+<h3  id="bare-chip">
+    Bare Chip
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="bare-chip" title="Copy link" src="/images/link.svg">
+</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/programming-bare-chip.jpg" width="75.0%"  alt="From &lt;https://tasmota.github.io/docs/devices/Teckin-SP23/&gt;"/>
+                    
+                
+                    <figcaption>
+                        <em>A bare ESP8266 IC with no programming header</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 845px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/programming-bare-chip.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAGsAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AOEi8LQySrJdfu1/55itMeGtJ4/dH863ZrYPdP5jcZqVLSH/AJ6Cu&#43;lhf3Z5FXM6ftDC/wCEZ0Z/&#43;WT/AIGpR4Q0aRPuP&#43;ddFHZw/L&#43;8Aq/b6fbDk3C0vqof2lT/AJzkk8GaNtO7zfzptt8PtJuZ1T7Q6Bj3rvU02ykC/wCmxrn2qT&#43;wbXrHqEeaz9kaLFX2OZf4N2Bbel5ujx1zVGX4UW0bYjuzz716JZ/uoTFLGXI4Xac7qrXakxm4WMxGM42ml7M6va1PZ&#43;0PPn&#43;FiRP&#43;8uHJ/h4pqfCkyycXB&#43;UZPFenJrFtLbN5MR85VyzNTLSW5dpBDMsrynp2FZ&#43;zNKVU8gu/h21pdsstxhPYU6L4dPcR74LjKj1Fe4aBppurqYajErkdARXQjQdOQYW3QD2FZVDWmfMsvgcx5RrwB/cU3/hB5yFLXAA9cGvo&#43;/8ADmlfZJZfsqbgp5xXFWdlPMu4Ji3VipytCBs8ek8FSGTH2mOln8CzJGpguFb&#43;9xXqqaFb2939onnQwhuQaspPYRR37RxKYgp24GcmtalOmc1OrU/5eHi7&#43;Cr0x&#43;ZHIj46&#43;1Qv4Q1AjIZXx716zoN7aPpl4s0AAGWBA61F4f1KyZLyOa2G05IbGfwo9manlX/CIX&#43;zdsTP1qp/wi&#43;o/N&#43;7X5fevXNIubF5byOeMcgshxn8Kn060tNStW8qOPzVfLBvSj2QvaHiV1ol9bJvkgIX1FZpUqcEEV7nr&#43;hz3EqPaW6ogX7qnOa4fWvDU80RItGjlXqwGAaPZmftTg6KdNA8EpjbqKZg1kdJ7fdJGtzNG8mDmqwto8/679al1S3R9TuHkOPm7VWjgtif9Yfzr3aX8M&#43;Qqx9nVqe&#43;XRbx8f6QfzqaeCGOzaSO5bf/AHaoiG2z/rT&#43;dOkaNIGRHzSMlMW0dvKc&#43;Ycip9KusX0XnO2zd81UrT/VPTLT/j5Aosa0W6dSZ6ZbX0dm5u4sTRNwM9VqvfST3d6sqoSn/PJuM&#43;9Y&#43;jJOY2mRwVDY2MetdDd6mstlHJ5YDodpYdvrXm1afs6h9Bhqv1ilqMXT/tNqzLEsRIweaZB5FjdrJG0YZP4d1aCrmwMrOqRnkD19657V7OzcrM0jK7Y6enrWRr/DOm8K3qz311JLIAS3HNdf9ohx/rF/OvG7a7j01nEUrOCM5I71ONZl8kqbpgSaPZmvtD07U7mFdPmw652nvXIaffGLTHhUo5Ylgc1yxnmkQiS8Zhz37UsEH2a5iMU/mIRnAPStadOmc1WrV&#43;xATU7jUrgmF7YLGzAtgUpvX0i6lhitlkWSP7rVdW/iA3I5eXZyrCsq5d59T8xxglM4FZVTWl5mXo9zf6bdTu9okiS5wp6Ck0m&#43;vdNv7i4&#43;wq6SZzH2rfhiDR/MtJ5YjZsJWR0nOafqN1Y6zLeyWKtG&#43;f3daOgXVu97PNMfJEr5Ef8ASm3MbK7l14NQ6bZxyulwTgCX&#43;Va0zKodTqKS2cwunUJG4wvOOaxrqzm8uW4W4Eu9TtiBzXSeIntNQ0yCGOUZUiqNtALYD95EBEnUnvWftDT2eh5LcaPBcTtJcExS5wVxUX9g2P8Az1/StXXLmSXV52yDz1FZ3mSe1dP1Y4vrJ3GoywJfzpN61QBsu2avarFGl9LvXfjHNUN9r/crupfwzwsT/FqE0f2HPP8AOpLhLH7G3kq2/P3s1V32v9yiWSP7PtQcVoZKpUJLQ4hetTwpFHcaziZFZNvesa0P7p60PDkuNXjB3f8AAetOr/DOnCa4iZ3Mghjufs8Fqu3Gc5xVH7Ffw3EkjqnkOfubuMVPdoY3kmDNuZfusavpHu00tLAWO3g&#43;teY6nIeqqXPsc1rM96rwQgGO3PTac1MApK7m3gDvTtVdorS0Yja24/LUYIEhJzyKKv8ADNML/EncmESSHAQflUv9nwkfdFMt5QknPSrxljxmuU7jGlgWOQptGKjjaBL5Ub5cjHFTSyeZK5qquPt8JKcbvvela0zOoa8ENs&#43;XLRrs4&#43;YYJrnZ7lZtanIYMD8q7ab4h07VtVvmWyB8lD1BxmspNAvtMsZrt2kEy/dxyDWTNDqojHHGAXpZGg6&#43;ZXIafqDzWE0t80iTD7gA4Nar2/l6KLyaR8v90UAWr4x&#43;UWD7qyINUNlbMjxIy7srmr0enBtOFxcSSKJMCPA71U1Xw9JHJDHbu8zOueRjFdOG/wCnhzYn2ns/3ZraFqf9pYUwxxq7hfXpXS3Gl2zQSE3EeMdMVymjWsmkeQJovnBZ9prRvvE0sduzNYRBTwDWdWxpSvY568sIXnysSEY67feq/wDZ0f8AzyX8q0J74bwThNyg7cdKj&#43;3r/fH5Ue1D2Q3VJzDfbMb/AJRVH7Uuf9R&#43;laOpDF1lRu&#43;UVQSeYZ/cmvTwv8M&#43;axX&#43;8VB4uV/59/0p9zcRvZYWEIc&#43;lNju7jP&#43;pp00U0iBmiIDd60MlTqMiss4falaHh0qusqZFCnnGauWFlElttf/AL6FJPDbRzRGNsPmuJ4n2lT2Z9Ass&#43;r0/rB1F/bTSIWVRuKjODWhm6i0sRfaET5cjdWfYQSNKWaRkVj1z7VPcaTFeYzesSnQZrlq1DppQRkaosixWvmEOuTlgM1Dwrjbkr9K3FtITbFJgSqEEYrL1B4re6ZYSWXFIYyP5/4al/gxVUaimztxUb6kmR8wp2C5Zfy0&#43;Xb1qqx8yZIf4d3pSSX8Z7rmo7FGvNQBV&#43;FOeta00ZYirrY0ZmurZGjgBCnpTra5ljcW14hAP96i7v5I7tYVPy&#43;pFRXTyT30aORISuflrm6nStjP1zSGur8LZBBGVztqG&#43;0u&#43;ls4oty7EA4zVq61FdPlUFGyy7a3DbzSaRHflgEUZ2e1ae09mR7P2hx2uTXllaWsTuDgAqo7Yp2g6jc6hfZuJkUKvy7jgA1u3EK6liVUjYIeQ2OlcnqWkXAuJ7iDakanjDdq1/dmVT2h1d/lpGkHzbYT8wOaxdTuopNMihUlnyMjHStzw8ywN&#43;/BKtEAMjINW9UaJVAigiIJ5&#43;XtXNVOmkefa1crDeqm08Ris77cv9w1c1y5VtSYhBjArN88f88xSA6HWbl1nhKcbkFVormQ8VLrIR3t&#43;3yCqscfl/PXqUv4Z89iqVP2hqxE&#43;Xl6SSaQxMmeKordPIQh6V0NtbW0tr6Njqa09oZ0qdMzre7mW3MaAmq8ZY3qF92K6zTXs47Uxt5RZvzpJYoFdSIlPPauWmv3h6VR1KlIgj&#43;0PZ74534P3c1b8Mw3R1B5HDuP7pNQpKsVu7cfe6Vdtr3ykhYSeWHY8itay/dnNhW/rNjXjE899cKY8KB909qpW9vIba&#43;mEGQMjpVZ9SYXKgXflqQcsT1pJL5kx/pe1Cucf3q4T13TMrRZLaOS4F4AAT0YVgX0&#43;/UJRGP3e47cVpayW&#43;056FgCcVmRgM270FelSX/Lw8irW19mCZC7y3zehrqPCOnG/ujLllX1A4p8WmW7WFqiWZuJ5lLNziug0mP&#43;zbHbHB5Rz8w3ZxXNVxP/AC7OnC4V&#43;09pUCaztor9VuI&#43;FPWnyQWccjzwoMfw0ajNJdNGzKEA43HvVeA&#43;cjovauE9M4rxDJPca5bqkfy5xwK6&#43;LUPN0j&#43;z3t3Q4I3HpWb4lkj07SRdpErTlsKK4ldb1O4kzNL5Y3bgPSgDp4LVvKmUkqGBVTmoT5M2jeRbsXmDbWz/jWC/iW8tGC7I5k/lS&#43;H/EcRuzbyoEJcsMjr7VoZnV6dG8mnTYWRplbauOnFQ3Us0cKo8Dq&#43;DuYmq/229UBLaQp5jF&#43;KpzXl9cXE0FxPu2rnnig0OB1q/mj1ORfSqH9pTV0N5pcMt07yTDcar/2Nbf8APYUGZ2GuRRAW&#43;77&#43;wVjyScYp/m3N5HmfG9feqciy7&#43;hxXfS/hnj4pfvC/bGDKF60W1EQo6RcjHXFc95mKm5WLzCx2/xVqcpP9odGLAnPtV211OZJVBc/jWdb&#43;I7S0fCwrIfdc0l74iF4ysllsC91XFK5tar7M2JbyQk885rpNKjWewillB2oSeRkV5xBrcMj4kyh969F0zVtLPh5U&#43;1qJcfdrPE1P3YsDhqlOp7SoXZtKtZZo2aWPaF&#43;6TipH0u3Yht8ciIuevSs0TWcscrpcsXcfL8vSpftkEVsQsuW2FT8vU1xKme46tOxm6rNBdXu1WUKBgfhTtK0eK/VyrEbOuKNPsxdys0mwqozU8Op2&#43;kGWJUDhz2rtqbfuzyKdLX2lQ6bT4Rb6pbwD5gkJqd1kWKRuqlsVHpsqSagJiwGbb1qR5R9kIVx1JrzKp7lLYoSzIJdkh3Jtzt9KnjaGOJpU&#43;VSmazZDHLeMCcEJU2pzLFYJGpHMf8ADWYHF6zf3F/MkLOGQHKqKzLkQ24zPIFqaN3XUg2B8g71Prmi3t1HDK8S7WGRt71oBiRXNm9ykSKW3H7xqX7JGNej2hcJz8tY91C1vN5eCkgq7okuNQ8y6c7QCMitDI7yPTrz9xLBGHXb/e6Vlajb3Ful1JOAjNgZBzViHVrfARZ5QnfA61U1y/tnsHjhLk9fmp&#43;yqGftaZxTyxSSMzySbs0mbf8A56SVCeSTikx7Vp7IPanU2yQzwtPtCqvbdTRPLdFoLW3Jes2JmW3IBIFXdAmkj1iLY5GW5rV7GTXtHqXNP8K3t9v&#43;0M0ZH3cVFqKPbW7WMozs/iHevSbZiZWOedtcBr37y6d25bJ5rkp15nVUwlMh0u201FjdYleTuGrQ1eaMsiRwpGuM4VcVgaYSNQjAPG6uh1QAzDjtVXFY5250iO4BkjG16qRaVcIdyhx9K6CL&#43;KtbTlBmQEDFamRiaZfXdl8h&#43;Zf9oVak1aRi26Pr1rUuoIvt4XYMHtWi1ha4H7hKPaGXs0c0NYK9FZeMcVGNSQnDRlie9dX/AGbZY/490p66XY4B&#43;zJ1rX2hn7Ms6RtGnm5uJAAq/jVIXz30ohh&#43;VA2d3tWjcxrHpcyooCkgYFQKiwonlqFyvauVncjD8T/bLbUYZbYsEKfNin2000ujmaUkuM9afqUjmdMsTxViMD&#43;yJuKyNTmLuVWaWQcEJUmjeLJreRfM/eKq7VDVDIAUnz6Vz0nyyrt4oAtavc/b9RecIFJ9KjsXlSR8QhuKLcBp/mGa1dPADTDHBIrWkc1X&#43;GOtrn92ySxbfTApY0jkDgBnY8bSKG/1wHvWxpcSGXO0ZrqqnLS/iGWnhLzl8zdsz2p3/CG/9Na63pRXN7Rnb7NH/9k="
+                     data-src="/guides/images/programming-bare-chip.jpg"
+                     data-srcset="/guides/images/programming-bare-chip.jpg 845w, /guides/images/programming-bare-chip_hu_40b909ac751d4337.jpg 169w, /guides/images/programming-bare-chip_hu_c9d53b1c7efb2441.jpg 281w, /guides/images/programming-bare-chip_hu_8868f2c366fb5af8.jpg 422w, /guides/images/programming-bare-chip_hu_27fd58efc44bd410.jpg 563w, /guides/images/programming-bare-chip_hu_3239ea33434ffcf5.jpg 845w"
+                     width="75.0%" 
+                     
+                     alt="From &lt;https://tasmota.github.io/docs/devices/Teckin-SP23/&gt;"/>
+                
+            
+                <figcaption>
+                    <em>A bare ESP8266 IC with no programming header</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>This is an advanced topic and won&rsquo;t be covered in detail, but you have three options:</p>
+<ul>
+<li>
+<p>You can hope that your device is supported by an OTA conversation tool. Most
+these tools have been broken by vendors, and the ESPHome community can&rsquo;t help
+you with using these tools.</p>
+</li>
+<li>
+<p>If the programming wires connect to a larger component like a resistor, you
+can solder or clip your <a href="/guides/physical_device_connection#jumper-wires">jumper wires</a> to that larger
+component.</p>
+</li>
+<li>
+<p>You can use your amazing microsoldering skills to connect directly to the IC.</p>
+</li>
+</ul>
+<h2  id="materials">
+    Materials
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="materials" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Because we&rsquo;re working with hardware, we might need some additional tools,
+depending on the situation. Already have all this stuff? You&rsquo;re good to go!</p>
+<p>But if you don&rsquo;t, don&rsquo;t go out and buy everything just yet. Read through the
+guide first and make a list of everything you need. Different situations will
+require different parts and tools.</p>
+<table>
+  <thead>
+      <tr>
+          <th>Name</th>
+          <th>Purpose</th>
+          <th>Approx. cost</th>
+          <th>Picture</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>
+<a class="anchor" id="usb-cable" role="none"></a>
+<a href="/guides/physical_device_connection#usb-cable">USB to micro-USB/mini-USB/USB-C</a></td>
+          <td>If your target device has a USB port on it, you need the appropriate data cable to connect to it. A power only USB cable that usually comes presupplied with powerbanks won&rsquo;t work.</td>
+          <td>$3 to $10</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/usb-cable.jpg"  alt="From &lt;https://www.stockvault.net/photo/271754/usb-cable&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 780px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/usb-cable.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAHoAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AOr1PVbfTbYyTOM9hXlniXxdNekqr7U/u1W1vXpdRneZ2Pkj7q1yVzL50lc1KkdVWqRXN1JLLmk7UeXjmjzO1dJyibBUdLk0lAB3qXtUVSgE9KACipo7GSSr0Ok5xvoAy8E9BS&#43;TKexrp7bS4O4rTi0&#43;3/551l7Q19mcXHZzSf8ALM1Zj0a4k/5Z13UVlEP4R&#43;VW4oIx2o9oHsziIvDV3JV&#43;Lwbdyfx128USdhVuKM1n&#43;8NPZUzF0my8Q6Vb&#43;Va32xP7tQ6l4Y1rV38y6u92a6qOI/3qtR20v980v3o/3Z5wPhrfMeHBqST4UasI/MDD6V6ZGZ7fnrVr&#43;1p8YPSn7WqL2VI8E1LwrqOnSHzYHIHcCsVoChwwIPvX0k/kXYxNEr59RXPat4C0zUQZIgEc&#43;lae1M/ZHhvlZo8k13d18OtRiuGWI5TtUP8Awr7Va1M7HM3sv/LPP3aqxx96JT5klSxRb0oEVZD6VFWgLE&#43;ZVn7Jx9wUAY&#43;DT8cVqfYB6Uv2aP7jrQBmRQmQ9K07a0z/AAVdsrJDII8jmumsdBkJHy1maGBDYO/bFattph4zXWWugoAP3dalto0Y/wCWdAHJRad0/d1fi0uT/nnXYxaXGP8AlnVuPTx6UDONj0uT0q1HpXtXWjTx6VILAelaAcxHpeO1Wo7DHat4WnPSpfsuKAMaOwx2q1HDjtWpHa4okhHagRlyxZFVfJ9q2TFURh9qCDLEZHSpYzirRiqPysUeyD2om/2o3&#43;1GPajHtR7I09ofNMn/AB8Yq0D5UeaivIvLfzB0aiSQm3WgyJf7R44So/7QuD0ArT8PW1vcOVnVceprpvsulQcbrb61maaHB&#43;ddSHq1SpbX85&#43;VHP0FdwH0CJcvKmf9kVYTxBoVuMRI5/3RRqF6RwrWWp2rCdkdSnNev&#43;CbqPV9ISRx&#43;&#43;j&#43;Vq5WbxfppUqth5h9XNbnw2v4LrUrxIYvLRsNtzR&#43;8I9rTPQIrQDsKmFqB2q15dGKCyIRYqURUvepKAIsVKI8ij8K5Hx74u/4R&#43;wWG1P&#43;ky9PagZ1jBE&#43;8wH1NV59S063/wBbdRr9WrwCTxjq1wT9ou5DnsDVZr6a4O9pXOfU1oI90ufGei2uf9KVv93msaX4laTHJ8kbtXkJJ7mkrMD27TvG&#43;i6gcGXY5/vVoXWu6RbLmS7iH0NeAgleVOD7U0Su2fNcn6mgD3e18QaTeuViukLe5qO98RaXZA&#43;bcKcelfPst/Nay4Ryv0NPm12aaLYwz7mtDM9fl8eaeJDsyVpn/CeWXoa8U&#43;1Sf36PtUn9&#43;gC6pFxb&#43;Sfv/wANUmWSE&#43;XIKVi0UoIzVueRbuH5sB1FAC6bNhJUHXaartMecmoIZPImDelMZkZifm5oM6lP2hIbmj7T6VF/wGlil8qUEoritfaB7KmSiSVugNeh/CYuNclBUgbOpFY&#43;keJ9Eg2LeaWh9WFem&#43;HvEHh2RQbJI4WPouKyq1TSnSO2FS1nxX9vJjZMtWhIp6MD&#43;NZGhNUnQVECPWpgaYHHXHj7TrPW5NMuQ0Ug4Dt0pmraRY6y/wBrlVZ/l&#43;Vgc1N4n8D2Ous86gJc7fvYrz9ZfEHgi68qVWntSejcjFKpT9psOnUE1vwZHuMtqNrf3a4ue0ubGYpIhUivQ9R8dWptkkhtiZGHzKexriNX1651AEm3VF9aKXtP&#43;XgVfZlH7ThPnqJ9R7Cqplz1qKtTItSX0naq0l1I/wDHTT0qOgBwBncAnknvVu505bVQzTIzH&#43;EHNUulKST1OaAH&#43;XH/AHqXyo/79RUUAal9D9luHhkHNUJD6V6D430Hy3&#43;1RR/72K8&#43;PyHmgCKjFS8UcUAJsd/ufNTChXqMVLsK/PGcU9btl/1sayfWgCt5Yqe2uJrV98ErJ&#43;NXrf8Asq54k3wP&#43;Yq6nh2KcZttQhf/AGWODQAy18Vava9Lhm&#43;vNbNt8RNUt8eYN/6Viv4V1NDvSIOn&#43;y2aqT6Xfw/6y0lH/AaP3YHcRfFC87x/rVuP4pyd1f8AOvMzHMvWJx&#43;FMJZeqkfhR7IPaHqUnxTkx8ivmsu&#43;&#43;Ict/CyXCh1/2hXAb29DQQSOho9mHtDcutat5o/3MQU9ax5Lp5fvNxVfYx6KaXyZf&#43;ebflQA6kzSrFI3RCPrR5D/AMZVaAI6SpcJ/eqKgAooojjDnk8UAGKMH0rSjuLSJAhiLEd6f9ss/wDn3oA911HTo7y1kikGcivGvEvh6XTLxmAPlk19C3Nr7Vz&#43;saJb6lblJo&#43;fXFBofOxyDSc11/iPwncaXKZEj3Q&#43;1cqVxnjFBmR&#43;YelSRv6io8c9KvWtxb9LqLcn95eDQBFiN&#43;OhpVgK8rIR9DW5b6TpOoD/AEa/ETn&#43;GT/Grf8AwgWrsm&#43;3aKZe2x6PaB7M5xL2&#43;g4iuJB9Gq4viLVohgXBb/e5qWfwtrlpnzLGQ/QVny2d5Ef3lrKv/AaAL48Tah/GsLfVBTn8RSuPns7dv&#43;ACsdllX70bD6imEt/dP5UAa/8Ab4/58bf/AL5qKTW2P/LpAv8AwGsna3oaNrn&#43;E/lQBonWZv4I4l/4BVeXVbqXuF&#43;gxVcQyHojflSNBKv3lIoAe0sjfecmoySepNSJFI3RcUeVs&#43;&#43;1AEWKKk4xUdABRnFKAScAZNdDoPhDUdblGyBlj/vMOKAOe5o5969ntPhjYxW6pOS8nc1P/wAK20z0NAHp8sWaz5oevFap6VVlFBoc/eadDdxGOWMEVwHiH4fJJmWyG0/3a9RkHNQSRZFBmfON/o91p0hSaJlHris/HOCK&#43;ib/AEe1voyk8SsfXFcVq/w6jlzJatt9qAPMFRTyCQfarttqOqWeGtrqVR6Bq0r7wlqNlnEZcewrHa3urU4ZXH4UAdHaePNetRh5PM/31zWjH8R7v/l4062l/wCAVxvnyY5X9KQ3A7ij2YHaP460&#43;f8A12i25&#43;gqCTxXo8n/ADBIa47zU/u0eYnpR7MPaHWHxFpmPk0eCqkviKE58vTrdf8AgNc75gqMyUAa02tPL/yzRf8AcUCqUl4zdQD9ao4J6ZqWGzuZj&#43;7jd/oKAB7h26nH0qLOfet&#43;y8H6vqBG22KL/ebius0z4W5xJfXSr/srQP2R5skbyHaikk&#43;gro9G8C6vqrD9yY4z/E3Fet6b4U0PSgPLt0dx/E3NbDXkES7UAUD0rL2hp7I5TQ/htpumgSXY86b36V18Yt7WLyoUWNB6Cs&#43;XU/eqFzqeeBTA2zdjPWk&#43;1j1rl/tcp70fa5fWtBHp9RSirJ6VE3Q0GZmS1Eamm61DQBER7VEYs1apD0rQChLbI3BUH8Kz7zw3ZXI&#43;eBOfatug9KAOMk8F2XmZSNce9RyeCtKkGHtdp9VNdketIQKzA4SX4c6VJGTGzq/1rLl&#43;HkEZ4kevSiKiIoNDzb/hBbWP77PQPB&#43;nRH543avQ5gMdBVGUD0FAHM22i6Vb/wDLmD/vCtW3&#43;z2/&#43;ptUX6LVsqPQUoA9BWPKVzii/kAwFwPYUv22U&#43;tOwPQUuB6VryIOdjPtMuO9REyyHvVzAx0pQKXIh87KPlSUfZietX6KoXOUfsp9KPsp9K0qKBH/2Q=="
+                     data-src="/images/usb-cable.jpg"
+                     data-srcset="/images/usb-cable.jpg 780w, /images/usb-cable_hu_188dfd0dec30de7.jpg 156w, /images/usb-cable_hu_3103475ba98c1ccb.jpg 260w, /images/usb-cable_hu_8ce968df431de97.jpg 390w, /images/usb-cable_hu_391dd199eb360ade.jpg 520w, /images/usb-cable_hu_4f5b0ba22ad730fc.jpg 780w"
+                     
+                     
+                     alt="From &lt;https://www.stockvault.net/photo/271754/usb-cable&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="usb-serial-adapter" role="none"></a>
+<a href="/guides/physical_device_connection#usb-serial-adapter">USB to serial adapter</a></td>
+          <td>Serial communication is a simple way of talking to other devices, like the ESP32/ESP8266 you&rsquo;re flashing. But your computer probably doesn&rsquo;t have this capability built-in. &ldquo;Serial&rdquo;, &ldquo;UART&rdquo;, &ldquo;TTL&rdquo;, and &ldquo;COM&rdquo; are all more-or-less synonyms.  There are many different types of these, so don&rsquo;t worry if yours doesn&rsquo;t look exactly like the picture. However, you do need one with a voltage regulator.  The <a href="https://tasmota.github.io/docs/Getting-Started/#needed-hardware">Tasmota website provides a good set of suggestions on what to buy<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.  Any ESP development board with functioning USB_UART bridge chip can also be used instead.</td>
+          <td>$3 to $10</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/usb-serial-adapter.jpg"  alt="From &lt;https://tasmota.github.io/docs/Getting-Started/&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 500px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/usb-serial-adapter.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAKsAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APcJ7jYNqVnnrv8A46kJqIkKCT0FeHVxXtTpSsWbe8deHq9HNHJ9015vrXjE2119msE81wfmFdHoGpTX9oJpYWietKWKqU/4gOkdZScVViueMPVkEN0NelTq06mxz2HUUUVsIKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigDBz70YDDB6GvPdQ13VtRnDWUbpGvpXZaRLdnT4/tq/vfavmTuK0vhewN/9rVMP14rYhQQxbVGKdzSUAS54pUlkT7tQ1LTVV0gsXYbxHAD/K1WwwI4NYxj70sNy8AOTuFelSx3/Pw5nSNV5VjGTUBv4M4LVz114itH84GdVEQy3PSuDvfirYRX3kpCXQHBcVo8RUfwAqdvjPZY5UkGVNO71w&#43;i&#43;JrbUYUmtJwfVM11FtqKS4D/ACtWtPEX3E6fY0aKQEEcGlrqMwooooAKKKKACiiigAooooAKKKKAOVsksW&#43;aFUHtitDgelZtxppQb7dtrelRRajJF&#43;7uU2t/er506jYqMjmmwzBhkHNTcVmaEYHNPklEQ&#43;c4pahuoI5oiZGwg70ASBg67t3HrXL694hi/wCPK3fax&#43;UvVTXvECWVuLeBmEQO0vXBa1rdhb3Vusrkvu3YHeu7C4X/AJeVDKpULV3os&#43;qXEsMF0UyvJB&#43;99a86vbSSxupLeXBdG25Fd7YTTPqV1c2E0kkRTd5Z7Vw9w02rauyn5ZHfB9q9OlY56o/S9Q1Cyn32byAjsteo&#43;HPiNDMqWupAxT9PMPSua0&#43;1ttNtfs8SGS7Y4Z9vArF8WW4tb6LG0Fk5K9/enUpU6gva&#43;zPofTtWVoxIsokiP8QNbsN1FOuVavBfhudWnm2i7H2UfwMc160sxgcc1j&#43;8pmn8Q6ejFZdnqQYYc1pJKsgypro50QPoooqhBRRRQAUUUUAFFFFAFOW3Dj5eKyJbD5nVxuVvWt6kkiEgrhq4X2hqqhyc0c9id8R3J/dq1aXyTcNw/oau6hYb4sjPynNcfrmuWenPH5gKTHoBXBVpVKZqmde86xoWYgAdzXH674hluQ0Fudsa9W9a52fxRLq07WyylY17etc/dTyw2l6sV2jzdVTPNdWFwv8Ay8MqlQTWdWuF0d5TGJCr468Cs&#43;HSo/FEYv1CRywJ0PRjWPolwkV2Bq87CORssh/rVq8K3WrtbaHLIlu/3ipwK7xEuk69qkRl022iQux2F1HNdLH4DEdqs0wIuH&#43;bdnBzWFbRT&#43;GsSyqJYiwLSL1X61r33xBgktS6hnkUbVB4/GtPZ&#43;zMzmNS1fUrKdrV5NvlNjOOTWJc3U1/cB5nLt0Ga2bW3ttUumu9Qu8B/mKKMmodR0Sa2g&#43;3QgLblsRgn5jWgHQWU83gqwtNTUlzN/rEHYV6LoHi7TfEkAaOZUn/ALrGvOItSg1TQxbTAOdoV1PVcdxXLvpN7okpv9MmLxoc8HkVz1NQPpGFJEcqnLVeiu5Ld8E4rxzwj8VQfKtdSz5vTfivTbe7h1FBPbzLKreh6VlZmh1lvfRygbjhquZBrl5GS3t9&#43;7BHvVmx1KTy1LMHHsaPaez/AIg/ZnQUVBbXkVwPkIqeum9zIKKKKACiiigAqI1L2rP1W4eDT5JISA4HehgV9T1JYkMMZHmHjPpXivj1hY3Kz3k3zt92vR7mVvsTzqvmSqpb6mvnjxRql7quqTNfFgVJAQ9q8yn/ALRVOn&#43;GbekXcSiaXzQxkXCtnpVWwmttB1mO6vZftDM&#43;7YOcD3rjhHMo2xysqt2zWppmlXNxIJTG8qBsOx6Y&#43;td9Ol7Myq1DqtSRfGWsomkWm1c/M&#43;MCugu/DT6BYLBs2jgtOD0rrfC9tptrogNgio235j1INc/rWpyeILK50tJgJkbGD/FXD9a/e&#43;zNfZ/uzlvEs1lFpIhjujJI2D8pzn61xEf73jNeiWfw51KLT2vQ6STqpIhIzXG3ukSWssVuqOuoOxLo3AFelSq06hzeyGQtJCytEWDDuK1LXWzEyieMSsOhkOVH4VjpflMwSDDocZpDL5hNAF68tftOyawnP2lmLNtGFFP07xH9llNnqS4bp5gHH41mxTzRLtjcqufmC1KYo71Nkiqpz94nmgDe1Hw9aarAtxZMkcp6Mh4P&#43;FZmneIta8IzmF2favQdQ1ULWbUdGkd7dma2B5VuhretPEGkam0Zv41BXqjjj86AJ0&#43;IOt&#43;Ir6G0BaNSwB2&#43;ldJqXiq68NavEkDmWCRAzox6etc5Nrug6fM0lksKN/CEGT&#43;dZrQX/iW5kuUOQBhcnA&#43;godK4XPcPDfjDTNZhAt5RHMP&#43;WZOCa7Cy1XzFxMu2vmaPQNU01EuY3McvUANzXT&#43;HfiXcWky2mrcqDjf3riq06tP&#43;Gaqp7T4z6HjlWQZU081xGkeIIruITWtyssbds8109lqcVwNpIV6uliefcVSl2NGikBBGc0tdVzMD0rO1aza906WGM7XYcGtGigDzWO5l0658m8Rgfu7u1Y/iXwTpfiEGWACO625Dr0b616fqWl2&#43;oxlJEGfWuOutMvdEnMkOZYP7tcNTDNP2lM6VVT/iHgmoeGrrRdTWHUI2SItjeORiuqlsRp2hPcabfRmMr80Z5r0ySOx1&#43;FoLmGN1xghuoNea&#43;KvAeoaVBNJpkrS2jcmIdVrWlif&#43;XdQzqUjU&#43;H97Fc6U0Ik/eq3zVuWvhi1t9bN/Idyvzj3rzDwLePYa4YZmMYcYIPFewRXasoAYEV5mO/d1NDqpfwzRmuo7OPEXzM3H0ryrxJBCupXlxduxu5Plt1Fd5fNtjypxXAeJtOm1XUIvs7kzkfL&#43;FaZY/wB4ZYk5u705o3tdOnVVz&#43;8llUZIrLeGSASzRAvaK&#43;xZDXVS2uraDbSjULQublNomYZ2iqD2EU0ttDYsZbeJfMnz90mvYOUw0kynydarTO63CIjEyE9PStG6iW6S6vlPkFThYlXiqsGkzahbCe1SRynMjUAa&#43;lwS6lI0V1cAxL1C1fk8G2gsWlMrZdsKB1A96q6PBNotytxeW8ixOvDY6e9aF/qtvDFEy3rTEtuwvYe9AHI3eif2ZfGIsZD2rqfCty0EM0TkI45jjbjNbNxLYmxhuxaFyeVG3LH3NRXOnWl9GgDFbiUZiJ&#43;Uj1zWgEOt61PbsrOq78fKgOcH1NYfh7w/ceJtX28rFndJIegqWfw5cyTyKk3mhOpY8k&#43;len&#43;ETpy6ZDaWZjilX/j4V&#43;CTQBnT&#43;FbrQoGvNCvG/dDLxueDWz4f8T/aole8CwzsMFgeDUWpXtpq95PYRXoRI12sobGa42LTIdNN9ML7zbeEZ2BsmuKoqdSp7NGlN1Ke57MmsyqgCS7h6inf21P/AHjXztD4r1Xa32a9KRbjtUnpUn/CV63/ANBH9aPqtUr2lM&#43;s6KKK6TEMVDNAswwwBFTUUAcdrPhgmTz7E7H64FYyXpgm8m/Uhvu5I4Nei4rN1PRrfUIyrRgP2bFZVaXtDWnVPJ/FvhLT72KW609lgvAu4bO9cDpfiK&#43;0m7W21BmVUPVu9es6lpd/pjOBGZYfWuL1fSbTUw6yR/OfbpXnVP3elU6af7z&#43;Gbtpq1lqkUYSUZc&#43;taMWhxxalDcJztryGSy1Lw3debAHlgHP0rsdE8ftfWxgKkTgYrza2FqJ&#43;0os1p/vP3bPQbx7ScvBcJHNGR8yMMn8K8m8V2Npo2oE6dcGBJvvwn0qxN4rm0WWW5eRZLl&#43;EjPO0eprlHN34n1GW4uZQh27tznH5V7&#43;Fp1fZ/vDlq&#43;zVQsaxdrf2sUFhEI4kTDn&#43;8a1vD0hsNLR7lCIwcJsHX61izaxbWmjmwhiBlJwzGqul69eW37ncDG3TcM4rpM/3dQ63VNbE8EkBh3SyjbGuO3rVzSvhqt9pfmvMBcuuQuelVbSzbT449XmgN40h&#43;YAcKPaqt14uurPVDNBuigPEak9D70GQ6DUbnw1qbaZfIkm0bQ57Crt/wCHZNTEd1b3RSc/dOeD9KibQrfXLYXk9y8lxMcmVeQvtU8Fxqng24hW7tTc2w5jYjoK0ApvdzWRS1vUENwg2iTsw9a3NM0hb0RNcy&#43;UGPNwGwPzrS1CfSvEcEFzFDG28/v26bBXVR6JpA0CKxiXzrbrvB6fjQZmZf8Ag7R7myW2VWjfGEuEPLGvMrvwTqlj4kGmRXBkEnJIP8PvXpD2eu6K2NOYXloT8ofkx1atdKk05/7SuA015J9/2rgx2N&#43;rmtKn7Qw4fhnoUUKrcO3m4y2PWpP&#43;Fb&#43;HP7711f8AaFpJ8zqQ3fNH22y9DXie2xr19odvsqZ6DRRRX0xwhRRRQAUUUUAQTQRTxlJEBBridf8ABoYNPaDDdcCu9qIjPB6Umk9wTtseG3NpJG5iuU2jpyOtc3feGnSbztMPlzv2r33V9Atb&#43;IlkUH1rzfUbCXT7gog3qp4K9RXlVcO6X7ymelhantP4h5DbeH7&#43;XxGtvqWUdzy79KNbu2S5NnHGF8jKKVGC1enz2UetXMTXLbcfLx1rnbrws2g66NQuo2vLMHPHJArsw2K9puZ4nDez1Rx2nadbyafcy6juimK7os96p6RBHcaikcz7Ys8mtTxDdrr2s4sLcxxfdRBW9pFhDo9kUljje4kONx5x7V1e0OalS5xLvxudMT&#43;z7aJWjC7ST0/Cn6Zp&#43;l61p8k08/mXL84H8Fcv4sjtP7SjSz5lI&#43;dR0B9qfaWeueG0jvntZBbyjnI4IopmVX36h1cEF94cQS6fILu2B3FD1H4V10HiOPxTpkcZgX7SvDAjG0e4rkfDt9BrGoR&#43;QxWYjBhY16Roun2VusqwrENR6SZGDWhmSaLo&#43;j21hMlj5chlP74entVVNOvNKke50eYvCT81q/8ASrM&#43;jhpzPYym1u0&#43;8B9x/qK07VpIrcTXSBJh129DXNisVTw9PnmaUqXtCzZySm2WQxlHf7ynnFWsAjkVFb3UUqfIwzU1fK1atSq/aVDu9l7IrnS7eQ7sDmk/si39Ks&#43;Zijza0A6iiiivqzhCiikbO0460ALkUZFY7W99uOJeKQJqOQpcYoNOQ2Mj1pGPyEjrisqS3vN&#43;9Je3SmCPUnQfOFoDkQ0211eSHz5THF/dWrS6TaeSY/KUg9SetMgt74SLvkBTvWn0FZ7hOdtjgda8LSW7PcWoyvXaKxY0hmUw3CMjngqx4r1QgMMEZFYOteGoL5C8Q2SeorGphqdTY1pYqpA801LwbCkyXmmoiypyy44auavbvTtOaSK5gkiuW5/ejIB9q9BkS80qXy7kMY/71VtS0XT9ftx5yB3HKvXPSq1MP/ENaj9pscb4Q8GjVNUOs3kAFsOY0P8AGa9H1EW6WXlXkIkhZdqw7c4rKs9Wl8Potpfw7rVP9XLGOn1qMa2NSme8XEtuvCxjrj1r0fa3p&#43;0pnD7L95&#43;8MPwdb6Haa1dyeWLe&#43;L/uYpOwrubizhupx5itFcYyky8V5V4y0&#43;We9i1KCQWrAZUZ5/Gp/DvxOeG1Wz1Vi7qcLLin7V&#43;zD2Z6paNdR28ouykjJ9117isga6k/mQTgo275ao2Pi6N3wWR4X7g1R8VeINLsLHzEUNK/TbXy1XEVauJtUpndSp/uy8L&#43;SwuN2/KsflrpbHWI7hRvO168o0HXrq9UvexDyP4AetdhYnzpkEByproq4X/n2a&#43;0/wCfh2wkDcgil3VnJY38ahRyKd9k1D3rL2NUyud5RRRX0xwhRRRQAYoxRRQAYoxRRQAUUUUAFFFFAFK/0&#43;G&#43;iKSIDXEaloFzpkhntcmP&#43;4K9EqF0DghhkVlVpe0Hc8zhuorpDDNGA3dXrmdZ8K3EYmutGnaF2HzR54Nel6z4XS6Jmtvkk68VzEktxpr&#43;ReRnH96uL2VWl79M6Pae0PIfEWq3t7bJZXQMFxH8pyPv/jXGvBN5ohkRgxPA9a991jw/p/iC2O5Asn8LjrXAvo0/h3UkbULX7XaK/DAciumlifabmdSmcxbW2paTH9pO5oR95Celbel6fc&#43;IrgXUwZbVPuq3eugvYh4u1BEsbY21kgG/Ixurdj09NPtxDEvyrxxWWJqLoa0tDMGmkbY4I/YAV6N4b8JtFp4nuMrK3I9qPCvh7zGS&#43;uE4/hU13YUKAAOKMNhvZ6iq1faGJHZ3caBPMzjvT/s93/erdAHpRgeldtkcwtFFFMAooooAKKKKACiiigAooooAKKKKACiiigCLFZ2p6VbalGUdBn1rWNRd6APN9S0C90uXzIAXhHaoEkt7xNkqLu7q9emTqrIQwBGO9eK&#43;OybTxJbCAmME87a5KtBG1KozadbazQhAkfsKv6Do7apdCeRMQKfzrC0aNLu8Xzx5n&#43;9XrGnQxw2irGgUegrOlQQVZsnggWCIRxjAFTYpaK7zEKKKKAP/2Q=="
+                     data-src="/images/usb-serial-adapter.jpg"
+                     data-srcset="/images/usb-serial-adapter.jpg 500w, /images/usb-serial-adapter_hu_37cfdb84ef7e0ac4.jpg 100w, /images/usb-serial-adapter_hu_5fa1abb04121d69b.jpg 166w, /images/usb-serial-adapter_hu_e63a06088b746f66.jpg 250w, /images/usb-serial-adapter_hu_5c0f321485170733.jpg 333w, /images/usb-serial-adapter_hu_8ef5ec48fb2187bb.jpg 500w"
+                     
+                     
+                     alt="From &lt;https://tasmota.github.io/docs/Getting-Started/&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="jumper-wires" role="none"></a>
+<a href="/guides/physical_device_connection#jumper-wires">Jumper wires</a></td>
+          <td>Used to connect two things together electrically. The male end has metal protuding and is plugged into the female end of a wire or board. They come in varying lengths too, but for our purposes, any length will do.</td>
+          <td>$3 to $8 for a pack</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/jumper-wires.jpg"  alt="From &lt;https://www.flickr.com/photos/snazzyguy/8096512976&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 272px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/jumper-wires.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAIQAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKKKAK1/f2&#43;m2j3Ny&#43;yNBlmqhoviPTdfV3sJxKEOGxUfi6xOpeGb22X7zRHFeT/BCY2uralYSHkGgD3Simq6E4DA496XI9aAFoprusalnYKB3JoR1kXcjBh6g0AOooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACkLqoyWAHvWN4m1KfSNAur2Bd8ka5ANeO3/AI51LxH4KvZopmt7u2fLeWcZFAHulyUktJQGByhHBr508J6qujfEnUI2&#43;VXLisLw58QdcttTtkub&#43;U2ofD7ueK6K4t9CvNcuNXtbh33fMR0waAN3XPG994ftVmtpN008vAJzxXa2/jV7fwUNZvYlSdl4TPWvn7WNXj1DWldifs9ucACpbDVNQ1vUVhad/sCuMoT8oAoA9R8c&#43;O57rwnZpCGhur0j5VPOK7j4eWt7a&#43;GYTezO7OMjf1AryHTV/wCEr&#43;IVvbxgGztcKmOmBX0TFGsMCxqAAq4AoAkoqodQtlnWEzJ5h/hzzVugAooooAKKKKACiiigAooooAKKKKACiiigAooooAq31tHe2c0Ei7ldSpBr5cvd/hvxPq&#43;lSfLBMrDH8q&#43;re1eAfGDwXez6rJq9nFmIr&#43;8I9aAPGlmYBo9w25zXU6NdR/8ACP3sSMftDD9K5aPT7lskJk5xXR6fp1xZoyzJ5bSrj9Kf/Ls0pr94cyA7S7ATknFey&#43;AfC8K6RNc3Mf7sRnJPc153pNjEJSkiZlD7lb&#43;le4aVGLPwzZW0soUTt5jA9lqzNl7wX4T0/wAMQvq00gQygn5&#43;MVQ8TfFSCPfZaODPOeN46CrHinStV8X6attpxaC3j6NnG6rPg34Z6focaT3oE931JfoKzA5jwh4V8RaxrEWr6jcyxIrbgCete2INqAE5wOtMQwxgIpQAdAKfuB6EUBcWijNGaACiiigAooooAKKKKACiiigAooooAKKKKACs3XNPj1HSLm3bjehFaVNYAqQfShgtz5VfTjY6rcWwHIlwPzq54itpLfa7SjeqjPtkVteNY4rTxZcGLHB3muT1PUG1S4PPEjY/CnTp/uzoqVffGaE8E0lxKx5iTC&#43;5rvLXxNp73MD3aO/2eMJFEvc&#43;9eXKfsVz9miPzu3zVorMUlZ8kFeBiuilT9oef7R3PT7/AOLs1pE0VrYpGQMDcelcfqPxK1695W/ETf3UrmJ7gSH5kLH3qvgE8Q80PDo15X2OhtNf8U38/wAmpkH1Z8V0mneN/Enh91e/uI7mD&#43;Ib8mvPVLqeFKVJKzSx7Hf86y9maeyf8h79pXxW0W9SMTOYWb16V3Flf2t9CJbaZJEPdTXx/AyQygEEfyNdV4f8Y6h4X1KJkmd7NzlkJ4FZmex9RUVlaDrdtrmmx3Vu4YMORnpWrQWFFFFABRRRQAUUUUAFFFFABRRRQAhrD8S61HomlSXDn5gPlrbryz4parFsNpnlF3EVnU&#43;A1w1P2lQ8zvruTUtalvJW3CYEVgIMXSxD1OKvaTKbq3JyNytmq0luYNXXd0J4pYarpOmdWNVO5UtLeRtZcdWBNdda&#43;H5JYt3du2Ki8O6LPeeKHhG1NxGGIz1r2az8CWiojXc0kpHYcCnV9p7OHsyaValh5z9w8mXwrao2Z7mNW9zmrVt4d0nfzcMzf7MZNe2ReGtKiA22UZ9yuauxaZZRfctol/4CKx9hL7czT&#43;0ZvY8Ok8M6W/8AHP8A9&#43;jVK58LaYel06/70ZFfQv2W3/54p/3zUb6dZyg7reI/8BFVTp&#43;zM/rtQ&#43;Yrvwd5r4tryNj/AA5OKoy6FewWkkN5ERs5STqDX01ceGNHulIksos&#43;oXFcj4g&#43;HsH2KaWxmlTaC3lk5BropnFiantDybwb4v1Dw7OEEhMKv8657V9CaF4ltdZgRkOGYZwa&#43;Yby2EGpSp3wQa9c8BzG88OxSqwW5gPGO49K5sV&#43;7qfuzSn&#43;8R6&#43;KXtVLTbn7VapIeG71dzV0p&#43;0XOQwqG6uYrW3eaZgEUZJNSkgKSTxXkHxH8XSXDtpNlIVhX/Xyg8fSthHS6L8QY9a8RyabbwFolOBJXd1418LdR0qCOZnj8uQMFWR/wCLNes3Op2drAJJp0VcZ60AXKKztM1u01QuLZw22tGgAooooAaea8H&#43;LrJB4ljYt&#43;7li2OK93B&#43;WvGPjVoMsqQ6nEhZFG2TFDp8&#43;g6VT2fvnmVlbfY5OP8AVsMAr/OotZkk3wzj&#43;E1QstWksXEcv7yA/wDjtatyE1K1P2OQP3296zpL2dT94dFV&#43;0p/uzqPAepGbxZbB/4sV9GqBtFfLXhGR7DxBZySIUKON2fSvqKCQSwI4PDKDXRU8jip36klFGaKzNAooooAKgvMCymz02H&#43;VTnpXNeNNaj0jw5cyvIFdlKqPU0CZ84a3JnX7x0&#43;6pNdV4JvZ7LToJFJ&#43;aU8VxcuZxJzma5fgV2ujQPE9pYoOIRuc&#43;9cOZ1f3Z1ZTSvN3Pa/Dk3nWZYdzW0wBFcfomqWWn2LNNcoCT93NZHiD4kRW0Dx2YBPTe3Aq8NLkw8DSWGqVKtoGt4x8ead4dtJIWfzLlhhUFeMx289/O&#43;p6mTFBJykI/i&#43;tZ&#43;pa3Hqd4ZWha4uVbcG7Uy/m1O/hRZZljj28gdRW46uFp0/tnQTXVpY24P2iOIEZRQelZUnjWeOcW0rPOjkfMTnC&#43;1VNJ8JNrtxFaQSSSEnl&#43;oWvW9I&#43;EllbLCb5hK0YwMCtDhOs8H21h/ZEF1ZLxKoJJ6109U7K0tdKskgi2pGg4zVJ/E2lLeLbfbIzKzbdoagDZopAQQCOhpaACqeo6bb6pZSW1wgeJxggirlFAHzh45&#43;HEujXTTWcTPauc5A&#43;7Xn72E9tL&#43;4kZHFfZNxbQ3MRjmjDoexFedeLfhrY3dvLdWCGKcDO1eho/ibgeEW&#43;vXdkQLiMSY7kc/nXoeifFK5jhji&#43;0YI42yf41w&#43;o2EtnM0NxGCFODxWbJaRlvkO0/pR7P8A59mqn/z8PdrT4mXGQZbZZE9UNai/FHSs4likRvQivniKS9s23QysB7Gr0evXBYLdQrKP72MH86dqn8gOlTf8OZ7&#43;fiXpIGcP&#43;VIPiTpsi5RX/HivDk1LT5lxI8sLexyKqXmowQ/8e87St/dAovTJfPDeB7HqHxdtbWTYtuzfjXmfizxbe&#43;KLzMmVtx92MHrWFBDcXs24ozSN0Udq6S00y302ITXWJLk9E7CsatanTKpUqmM9ynTKOnacLfbdTrm4biKP&#43;77muttlTRtMe6nIE8g4z3qjaW6Q7tRvTtUfdU9TWbfa1JfzlnVfKX7qt2rxXCpjKh7E6lPBU/ZiLqkolMjMXVjnAFY2pazbXNyVmITHGK0HlvJ4v9E2Bf8AZFc1c6BdSXDyTZZm9K9qkraHmYnHe02LMeoK7rHaqodvlU9BVK8urgXgtbqQq24KxQ8Yqxb6BcAgmGRV7GtO1h0i1kY6hb3DSL3VcitTl3PVfAd/4d8M6PsN2JJW&#43;YnHIqPXfiVfXWpfZNAQSDH3sZNHhTwnovifShc2zyov3WVq7Dw74D0vw/dNcQqGduMnmgz/AHhwkOneNdeZZJ7iSND1XoK39H&#43;GIiu0vLy4JmDbsA8V6WqqowoAHtS4oNBqKEjVR0AxTqKKACiiigApCAQQRxS0UAea&#43;NfAy3jvfWcYZurx4615ReeGoJHK5a2mHY19PkDB4rm9b8IafrHzmMJL/fUVy1KD&#43;OmdNLEKnufN8vh3UEJCyiRfY1VXSNWU7Fjz9RXst78N7yKYmBtyeoODWDd&#43;HLy0k2yR3A9wpNc/13G0zT6vSqfwzz5fC94/z3DqnsTWlaaHYWuDLKZH/uoK6j&#43;x2cYe2uJG/wBw1oWnhzUJv&#43;PXTmX/AGpBiub6xiKpt9Tp/wDLxmFbQzlStpAsEXd34JqeCOKOXKKbqUdXYcD6V2um/D&#43;7umD6nckJ/wA80rsofCmlwQJElsmFHXHNa0sFUb/eG/1ulSXJE8W1XTJtQhEkc8nmf3CvAqnB4MvLpf3l8kef7wNe5P4Y0/P7uMo3qKjbwwuPlkz/ALwr0l7OntA86VX2m8zyq28CPBbbRrsCH0zVZPBN9I&#43;W1qAAHrkV0PxI0LUrexg&#43;wwbiDyYl5rzy3n8S2T5NtI4H8LR10fuzmOl1vQLi00h531mOQwLwqCuCt/EjiZY5LfzU/iyOtdivi69hs9t7o8DRt8rBkwa7HwFaeH/EyysdFhjMeO2azAyvCfjmW1sJYLHTFiWNS/J&#43;9XSeEfH2o69ra2dxYNHGQfnxXbw&#43;HdLtxiGxhUdOFFXoLC1tjuhgRD6haALFFFFABRRRQAUUUUAFFFFABRRRQAU0xo3VFP1FOooAjEEQ6Rr&#43;VPCqOgApaKLDuxMD0paKKBBgUUUUANZFcYZQfqKia0tzkmCP/vkVPSHoaAMm90HS9QhIubKJx/u07R9C07SFf7DbrFu64q//AMszTovu0ASUUUUAFFFFABRRRQB//9k="
+                     data-src="/images/jumper-wires.jpg"
+                     data-srcset="/images/jumper-wires.jpg 272w, /images/jumper-wires_hu_4fd31625e1f59b92.jpg 54w, /images/jumper-wires_hu_63e4be9075d1cf91.jpg 90w, /images/jumper-wires_hu_aebe52bf7cc82bb1.jpg 136w, /images/jumper-wires_hu_16f5f7e950bee38f.jpg 181w, /images/jumper-wires_hu_1329ecebd60c0684.jpg 272w"
+                     
+                     
+                     alt="From &lt;https://www.flickr.com/photos/snazzyguy/8096512976&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="pcb-headers" role="none"></a>
+<a href="/guides/physical_device_connection#pcb-headers">Breakable headers</a></td>
+          <td>Soldered to a PCB to provide a way to connect jumper wires. The distance between the metal pins is known as the pitch, and is usually 2.54mm for what we&rsquo;re doing. This sort of header can be cut to the correct length along the groves.</td>
+          <td>$3 to $8 for a pack</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/breakable-header.jpg"  alt="From &lt;https://www.flickr.com/photos/snazzyguy/27120004896/&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 263px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/breakable-header.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAJ0AtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKM0AFFFFABRTHljQEs4H1NY194p03T8q0u5v9nmgdmbmaa8iIpLMAPUmvN9T&#43;I0yhxZW68fxOa848Q&#43;Ntfu1c/aDt/uR8Cgv2bPbNV8baJpCOZrpGZf4VOTTPCvjS08UtKLWNlWPue9eEeE/BmteMr1ZrrfFaA5Zm719C&#43;HvDlj4dsRbWkQXjlu5oMzaooooAKKKKACiiigAooooAKKKKACiiigAooooAaWAHWqtzqFtbpullVR7mvNtR8Y38m6NGCfSufub67uh&#43;8lZvxrL2yO2nhG9z0bUfGtpbnZbfvH9e1Ytz41vJI/k2r9K4vzCBURusDrxWftTb6rTRv3Wt3l0PnnY/Q1i3d5GikySZPvWXNqfzlIT81UpY2m&#43;Z2LOe1ZGlkhLm6kuZSIz8ldb4M8DyaxMLi8Vlt1OcH&#43;KrXgzwLNfMl3eJtgHIU9TXsFraxWdukUKBEUYwK6adOxw1aoyysLbTrZILeJURRwAKt0UVqcwUUUUAFFISB1NV7vzGtpPJOH28UAWaK5jTddk8429zw69QetbF5rFlYwCW4nVVPTmgC/RVa1vIbuBZYpA6N0IqzQAUUUUAFFFFABRRRQB4VqlzbS3W&#43;3dWT/AGaom5CA4rlvDE99dWqxvbuFX/loa0b65No&#43;zq1eRT9nSfsz3be0/eFqa/ESne1Zkt9JcH5PlWqpMlwd71ZggMxCqOT0ArpExYYiWGOSa9F8F&#43;DJL2UXl8mIhyqkdal8GeBTKEu75MKOVU969VggS3hWONQAOgrpp07Hm1aotvbx28IijUBQOBUlFFanKFFFIWA6kCgBaTcDnBFIw3oQD1HWuNlvbzRtUMcrM0THhjQBp69Jd2wS4g3Mq/eUfzqTS9biuocSuFYdc1NcaxYR2PnzyoqkcgmvNfEOqWTL5um3BRZDhgD0NFKjUqVBVK1OnTOn17UdKe4byZ0W7UZBU9fY15pq&#43;o3N6zF52dAeAD0rMuvOWUlnJz/FmqiNJaygqd6N94GvYpYanT3PIqYmrU2Os8MeL7vRrlYpWaS37j0r2nTdQg1KyS4hbKsK&#43;aX&#43;2TamkVtBlH9K&#43;gvCFp9j8PW8T/f25auDFez9pod&#43;F9p7P94dFRRRXMdIUUUUAFFFFAHgqKkcWyIBR7Vka1DHsV/46vTXMVrHvlkVVrMDS69dItnE7Lnb0618lgaNWpUufS1aqKVnZy3kwiiUkntXqvg/wCLdkvL9fm6qhrS8H&#43;CYtNiS6uow05GcHtXdAAAACvqKdO254lWrfYERY0CqoAHQCnUUVqcoUU2SVYhkkYpFlWRflIoATzk37Nw3elZms209zaE27lZE5GO9ZOsJdWN4LuNnaIn5var1v4jtDaGSeRY9o5yetRqy9tShpWvNGfs90SrLwd3WofEHiXRVAtZ3Ds3cfw&#43;9c54l8RaTf2801q4iuEON3TcK88mkaVjKG8xT/Fmu3DYW/wDEOLE4n/n2autX/wBrunihuC6L0G6sGVHb5dxFQyLJHJ5kJ2t3ovWvLpYVtEBm/ir0v3VKmcPsqtWoWEuZPs7xS/MV&#43;4a0PC2gX2uylLjEcW7h66rwz4DXUbeKa9mCSjloxzmu1ufC6WFsr6aNmwfMg715tXFe0PSpYZUytpfw&#43;s7G2yXL3GOH9KtW1zdaRceTMTs9&#43;/0qxpGssMW90CCOMmtm8soL6EbgCcfKw7Vwv94dRYtbmO5iDo2R6VYrlEefR7jBz5Wfzro7W7iu4g6MPpQZliiiitACiiigD570PwLqOtzpPqG8j/nn2FewaH4WstGgQRwqHHfFbkFtFbJsjQKvtU&#43;KmnTVPY1dVgBgUtFNkkEYyelUZDqjNxEH8suN3pSxzRy/cYGuf8QWM6OL213Fk&#43;8o70Aa97ALq1eMHGRwa5W11GfTLxoLkkDODnv7ir&#43;n&#43;JoBbn7WQgXqxrl9f8WaTqUc8SkLJGMpJ0oVJ1PgE6qp/wAQ6XWPGGk2NsEldZS/BUV5b4j1S0ur0xWsuI2XKqD0rDuHW7YzLKX59azp4Cx3A4evXpYX2erPJq4p1H7NEsqE5Rz1qGAy2z&#43;WDuibpROJ5rTy4ziX1rsvBfg4alAp1WXax&#43;5g0VcSqZrSwvtP4hyuiaXqOo6z5bYFuTyx7CvadB8BaTYp5zETMw4J7Vor4OsYdPWG3UJIo4k7mqlpeT6VOLe5B25xz/MV5NWrc9GlSsJdadNotx58BJgJ/Kuh03Uor2EcjfjkVYVoby2GcOjCuevNPm0uYz2ufL9PSsjUv6roy3AM0HyyDnjvVHTNTltZPs9xnHTntWnperJdoEk&#43;WT&#43;dS3&#43;kRXgLD5W9RQImuLaK/ttpwcjg1j22iXVrq0U8Vw3kgEPH2NWNC02805Zop7gyoXymeoHpW7WhAdqKKKACiiigAooooAKiuYhNA6E43DrUtFAHErd3WjXxinyY8/K3rV3UvGOm2FnulkDu3/LMda3b&#43;wt7&#43;ExzJkdj6V4p4s0qSyv5TG5eMNx7VrhsN7SoZYnEezpj/E2s2d5KotZCkUvJX0NcnLHuyrHIPeoriMyd8GkPnmzeEff/AIWr1/3VKmeR&#43;9q1BluklrLlTlP7tSxWGoajqqC32iM9QTW94G8Ky6mx/tWXZGfu88mvX7LwbpVrYeTHGC2OHPWuGriuc9KlhfZnO&#43;GfAOmokd1O3mybfmTtmtjUdDNiRc2S4QclB29xUUUlzol15bgmPPB9a6y1uobyAMuDkcivNb9pud38MydI1lJkWKdsOOhPeruo6bFqEWSAHH3WrO1bRtubi1XDDkgUaPqpJ&#43;z3BwR0JoAp29xc6RcbJgTHnv8A0rpYpoby23LhlYcim3llFewbWwfQ1maPosumXs0guGeGToh7GgRX1DQHkdWtJmhZXDDbXSxArEoY5YDk04AelLWhAYooooAKKKKACiiigAooooAKKKKAGsuUI9a878S6Sbd5JJAXic5r0aqt9YxX1u8My5Vq1pVfZsyq0vaI&#43;a72wvbjWdlptEW7kGvVvDfgbTpLaG4nYSSgZZQeK6G18F6ZbpITHvdv4j2rMH2vw1edC1qT&#43;VKrVvMKVK0C/qfhtIlE&#43;nqEZeqjoafo&#43;uEN9muuJBxzW1Y38GoQB4mB9RWZrGhidvtFv8so5471znQad1aQahAY3AI7GuYf7X4fu93LQsasaRrjQz/ZL4bW6Kxrorq2iv4NrYZSODS&#43;MYyxv4dRtwyMM9xVHVNBS8V2gcxSkcMvrVSy8PXFhqyzw3J8nGDH2rpx0rUzM/SLW4ttPjhuZfMkUYLetX8D0paKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAqtd2cV3AYpkDA1ZooA4G4gu/DV75tvlrfPK112manb6narLEwJxyPSp7q1juoikigiucg8O3Gn6qlxZzERMfnTsazLNTVtCg1CIlfkkxwRTtBsp7CyENxKZGU8E&#43;lao6DPWlrQgKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA//2Q=="
+                     data-src="/images/breakable-header.jpg"
+                     data-srcset="/images/breakable-header.jpg 263w, /images/breakable-header_hu_10c4aa6595c56bf5.jpg 52w, /images/breakable-header_hu_f56e9c0777876650.jpg 87w, /images/breakable-header_hu_5346fd68335796e5.jpg 131w, /images/breakable-header_hu_7f99bebc555cc456.jpg 175w, /images/breakable-header_hu_e2b306a4f9886034.jpg 263w"
+                     
+                     
+                     alt="From &lt;https://www.flickr.com/photos/snazzyguy/27120004896/&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="wire-snips" role="none"></a>
+<a href="/guides/physical_device_connection#wire-snips">Wire snips, wire cutters, flush cutters</a></td>
+          <td>Used to cut wire. These can often be subsituted by a knife or scissors, but be careful not to hurt yourself.</td>
+          <td>$5 to $15</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/wire-cutters.jpg"  alt="From &lt;https://www.flickr.com/photos/snazzyguy/3932324106&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 400px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/wire-cutters.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAHgAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKKKACiiigAooooAKKKKACiiigAoozRQAUUUUAFFFFABRSEgdTVe7vo7aEyEggUAWCyr1IH1pFdX&#43;6wP0rjbvUrnVbpYLckDPJFdFbQppliNzkv1JJ6mgDSoqG3leWFXZdpPapqACiiigAooooAKKKKACiimPLGiks4H1NA0m9gyaTJ9Kw7zxRY2ZI3729BWLdeOxgiCL86zdWmjrpYDE1doHcbgBycVE9zCvV1/OvMLnxRe3J4lKfSqcmqzyffmf86y&#43;so76eR1X8Z6jJqtnF96ZfzqlL4p0&#43;LP7zd9K8za8B/1k/wCtVJdSto87pl/Os/rR1U8hh1Z6W/jK0zhVOK6Cyu0vLZZk&#43;6wr59uvEEasEhO7mvVdA8S2tvo9mk52vIuFHrWtKr7Q5czwFPDQXszt6ZLKkSbmrNGovLHvj27aqTXDMP3kgA9zWh4g27162tpilwxUN90ms&#43;81ewuojAJQ27jiklFteFhIEkReCOvNZNzaxtJtsrQZHcDrWRoaugyW9q0pHz44VjWpE8mp34P/ACxj61j6X4XvZT5t1MYkPPlrXYWdlDZQ7IlwO9amZOAAAB0FLRRWgBRRRQAnWkIoB4rO1HWbTTULXEqqfTNMKdN1NEaHAGTVG91mysULTSqPxrgtW8fSSuYrMYX&#43;8a5C81SW4YvPKWPua5amJS2PfwmRVautTQ73VfHq8x2g/wCBGuWu/Ed3c53ztz6GuRutYgt8/NuNYVz4gnlJ8v5RXD7arUPoaOXYXDHbTalGnMkv61mXPiWCL7nzVxUt5NKfnc1GollOFBNBv7WmjpbnxTIf9X8tZkmv3bn/AFrUtl4b1S/YeRZyuPXbXSWPww1u6xvg8rPrWipNmFXGxpbs5J9TuX/5aN&#43;dRfaJnPLE16tZfBm4IBubkL9Bmt62&#43;D2mJgzTOx9q1VE4quc0l9s8j0fTb3UblI7WEysOSK9RbSfEB0y3EWnRecnAyegrtLDwrY6DYyGxhHnbeG7msXTdQ1aLVtk0NwYe5I4rWlS9mfPY7F/Wan7szYbfxp8kZhihiBG7HpT/ABRfTwWyQNGxXA3Mh5zWhrvi&#43;ZWeC2Gzbwc9a4m5vZbpy80jMxoq1TpwmT1Kv7yoS217e2j2zW87yRyybXjk6getev6Zb24tI2jAJIzmvF15Zdn3s17B4byNGgz1Aoo1faEZngYYaCsbY6UUUV0njhRRRQAUUUUANb7hx6V4R4x1eQa/cRXTkBWwo9q93/hNfPnxa0&#43;W2177Rg&#43;XIMg4rmxN7aHs5JUVPE6mHc65BEP3Z3ViXerzXB64FZ8cckzbUUsT6V1mgfD/AFfWWBMDQxn&#43;NhxXCqVz6itjFSV2zlj5kxwMkmtTTPC2rapIFgtZCD3217X4c&#43;FWnaYEkvB583v0rv7WwtrNAkMKIB2Arqp4fueFis5h/wAujxjRfg3cSosmoS7P9kV3uk/DnRNLAxbiR/7zjNdnijFdKpU0ePWzHEVd2Q29jbW0YSKBEA9BU4VR0ApaK0ORtvcKKKKBCdqz9Wuo7PT5ZSACFq8zADJNedeMtb86U2kR&#43;UfexWVWoqaOrA4Z4iqoI5W7m8&#43;eSVu5qpRn3qN3KkKOprzb3PvUuVWNPRrb7XeBQOhr2HS7f7LYRRei1wfgrTsyhnHTk16OMAACu3DU7K58fnGJ9pVsOooorqPICiiigAooooAKzNW0DTtah2Xtusg9xWnRQNNrY5TT/AWhadJ5kVmhbPcZrpo4I4kCIiqB2Ap4xTqbKnVqVPjYUUUUiAooooAKKKKAE4xTeKTI29a5rxF4ki06MwxENKR27U27GlKlUrVOSmJ4l8QR2Vu0EL/vW4&#43;leZXE5nmZmOSeppbu8kuZnkkfczVSMoUZNeZVq&#43;0PtMBgKeGp3e4rNjJzTrFDNODjOT8tZ/nedL8p&#43;Wu78F6Ib2dbiRP3SdKVKkPH4pUqR2/hzTvslghcfOwzW4aRAEUKBwBTuteofD1antHcWiiikIKKKKACiiigAooooAKKKKACiiigAooooATjFMZlVSzHAHrSsQqEk4ArznxV4vfzXtLU4UcMw71nVq&#43;zOnC4Wpians4Gj4j8Vx2yG3s2DN0ZvSvPJ7yW4mMkkhJNQyzlyWJznrVO5u44BwcmuGrWdU&#43;0wmX0sNT5Ibks0wiy7ms2W6NwTj7tVZbqS4c7un92t7w14ZvNau4wIitv/E2OlKlSDFYpUkWvDGgT6rdIFjPlZ&#43;ZvSvbdK0&#43;HTrNIIlChRUGj6Nb6PZpbwgcDk&#43;tauMV3U6aSPj8VinWYtFFFanEFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFAFW&#43;BNrKB12mvnPVtV&#43;yarPDMejGvpCdd8Tr6givmDx7pl1Za7cFo22s5IOK5sSrnuZHWVJzuEuuJL8kNV8vO2Bkk9qztG0y7vb1I4onZmPpXt3hH4dR2rpd6iAz9QmKypUj18VmKp0znfCPgO51R0uLtTHAOcEda9k07TbbTLVYYECqo7CrMUUcCBEUKo6ACnkZrpp07HyuJxVSs9R1FFFanMFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVmah4f03VObu1jkPqRWnS9qAvYyLDw1pWmtvtrONG9QK1QB6CnHpSUDuwooooEFFFFABRRRQAUUUUAFFFFABRRRQB//Z"
+                     data-src="/images/wire-cutters.jpg"
+                     data-srcset="/images/wire-cutters.jpg 400w, /images/wire-cutters_hu_5e14149ad3e68e4b.jpg 80w, /images/wire-cutters_hu_73990a8a558c9df9.jpg 133w, /images/wire-cutters_hu_76970ac277191bba.jpg 200w, /images/wire-cutters_hu_8b07f1bdcce6e92e.jpg 266w, /images/wire-cutters_hu_5d840447e7e1d6c4.jpg 400w"
+                     
+                     
+                     alt="From &lt;https://www.flickr.com/photos/snazzyguy/3932324106&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="wire-strippers" role="none"></a>
+<a href="/guides/physical_device_connection#wire-strippers">Wire strippers</a></td>
+          <td>Used to remove the insulation from wires, leaving the conductive metal interior exposed. These can often be subsituted by a knife, scissors, or fingernails, but be careful not to hurt yourself. There are many different styles, not just that in the picture. You&rsquo;ll want something that works with fairly thin wire, about 20 AWG to 26 AWG.</td>
+          <td>$5 to $15</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/strippers.jpg"  alt="From &lt;https://www.flickr.com/photos/snazzyguy/3931542659&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 400px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/strippers.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAHgAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKKKACiiigAooooAKKKKACiiigAooooAKKMiigAoopMjHWgBaKwvEXiK20K0MsjBpD91fWvPLn4m6k8n7iJVSgD2DNFeb&#43;FfGup6tf&#43;TcW/yeoWvRwcgGgBaKKKACiiigAooqN5Y4VJd1A9zQA8YpeKwb3xTp1mDumVj7Vh3Xj62T/Uxs1Z&#43;0OinhatTZHc5FGR615lP4&#43;un/ANXGFqlJ4z1GTpLtpe1R1LK6x6yXX&#43;8KaZYx1cfnXjMnibUXPFy/50z&#43;3b1/v3bf99Vn9ZRqsnrHtCSRsflcH8afkZ6ivD5fEGoWse&#43;G6cN9aqjx5qmmSJeSPJOi/eTNaU6lzhxOGeGqezZ708iIPmYL9TWfea3p1hGWuLqNB/vV4rfeLtZ&#43;IDJbaXFJbCPlmDbTUA&#43;HfiSY7574E/8ATSTNanMeojxzazzFLGIygfxk4FTP4kuCM77WP6yV4xreg6r4b003U&#43;pRbM42I2TWLo99/a&#43;oR2f9oujN/wAtHPAoA9yufE8x4/tK2j/3eayb3xIEtpGbXCxUZCxriuJvfCotLfzE11ZZP7oHWudvrW5NhIiyHzf71AFfXL/xJqs73DTyvBk&#43;XuPOKueApptT1hbG7KhgfvPXLxajrEbeVJLtA&#43;UbhTbW5ubDUTdCRiwPBHGTQB9ZaeNM0ezSJ5oA4H3uAaTUvFWl6XGryzq277u05zXzyNTvrhVeSfg9SXqaOee/uordHeVmO1QOcUAfSWm38WpWiXMH3Gq5WN4XsH03Qra3k&#43;&#43;F5rZoAKKKKAMvW9TXSdLlum/hFeO6j4yuL6Vme4IT&#43;6DXs2p6dFqdhJay/ddcGvGda&#43;EmspeFtPnV4ScgHqK5qvtD1ssq4an/ABTGk1RXywLN9apT64EOC6r9DXYaZ8ItRuCP7SvSif3UrqbP4S&#43;H7bBkjeUj&#43;8az9lUO&#43;pmlKnseONrTSPhTI3&#43;6tSb9Ql/497W5k/4CRX0Ja&#43;ENEtAPKsIRj/ZrTj02ziHyQRj/AIDWn1Y5XnD6I&#43;afsXiOT7mnT/kaT&#43;y/FH/QPm/75NfTwgiHSNfyo8qP&#43;4PypfViP7YqnzhYaT4kvG&#43;znTpN3qwxWr/wh/iBFxJppIPoc17ykUatlUAP0qXA9K1p0vZnBicS8TU9ozwyz8JeJLU7rWzMRPcHFXX8L&#43;MZ/vcfV69morU5jw28&#43;G/ijUImjmaBk9GJNV9L&#43;DmrxSGSSaGDHcCveq5Lxf4kXTbNreBx57jHHagDyXUNJOi3zQPe/amX9KqyR&#43;bTrlppZ2mfJZjzUFzcLaQeYfvnoKAM&#43;/g86RLOBA0zn06V6n4Y&#43;F2ly6LC2p2/mSn5vTFZXw18JSXtydWv4&#43;CcrmvZ1UIoVRgCgDkY/hx4aQYWwB&#43;prV07wro2lyB7WxjRx/FitqigAooooAKKKKACiiigAxRRRQAUUUUAFFFFABRRRQAUUVHNOsELSP0AoDfQztZ1ePS7J5WPzfwj1ryK&#43;upNT1BpW&#43;ZpG4Brd8V6udTuAiHCIa43UIbk27NbPtmHKtS9oka1MLVp6zNq/wDD13ZWBvJox5ajJwelc/4d0a48V64uEIt4zyaoQ6n4t1eWPTZ5SYWO1vcV7v4N8NxaBpSJtHmsMsaZlsbWnWMVhZR28ShVRcVboooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigBhXiuW8Y6uLKx8hG&#43;d63dU1CPT7N5pGHTivIdZ1R9RvHlY/L2rKpUsrHdgcL7SpzlCWYsck1UubryxRNKkaVX0&#43;wn1rVY7aIEox59q4j6CVkrs7n4c6ct9cyX00fEfC5FepqMCs3QdHh0fTY7eIdBya1Old1I&#43;WxNT2lXnFooorQyCiiigAooooAKKKKACiiigAooooAKKKKACiijNACCqt/qEFhbtLM4UAVnax4jtdKhbc4Zx/CK8u17xNcanMSzER/wrWVSokduFwNSsXfEPiN9SnZVYiNeg9a5iWbGTmqs13jk1mzXbzyBEBLHgAVzbn0NKkqKLUkst5cLBCMuTgAV7L4I8MR6RYLcTRj7RIMnPauf8AeCWi26nqCfP1RTXqPCqBjitaVI8TH4v2n7umPHSiiiuk8wKKKKACiiigAooooAKKKKACiiigAooooAKKKKAExxXP&#43;K9bXQ9JknH3yMLXQZ4rlvHOhPregyxwf61RuUU&#43;hpR5PaLnPGrzxBJdyvJLIWZuxNZst/x1rGmTULC&#43;eOW0kLIdpBU1oaR4d1vxLeBLe0eKM/xEYArzbM&#43;qVajSRB9qnvZxBApkkJwAK9Z8B/DwwlNS1RMueVjPatnwd8O7Pw7EJrlVnujyWI6fSu8GFUYGBXRSpHiYvH&#43;09ymKiKiBVAAHQU6iiuk8wKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAoxmiigCjLo&#43;nyyGSS0iZz3Kip7ezt7ZdsEKRj/ZGKsGigd2JiiiigQUUUUAFFFFABRRRQAUUUUAFFFFABRRRQB//9k="
+                     data-src="/images/strippers.jpg"
+                     data-srcset="/images/strippers.jpg 400w, /images/strippers_hu_bce859362a11a5f9.jpg 80w, /images/strippers_hu_8cf163084fc0bb0b.jpg 133w, /images/strippers_hu_8c9de52e25f5b812.jpg 200w, /images/strippers_hu_f05264f97cc84721.jpg 266w, /images/strippers_hu_e7fa77634f985ee1.jpg 400w"
+                     
+                     
+                     alt="From &lt;https://www.flickr.com/photos/snazzyguy/3931542659&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="soldering-iron" role="none"></a>
+<a href="/guides/physical_device_connection#soldering-iron">Soldering iron</a></td>
+          <td>Used to melt metal, called solder, to connect things together in an electrically conductive way. You&rsquo;ll want something with temperature control. Other than that, there are many varying opinions and options here. <a href="https://www.reddit.com/r/AskElectronics/wiki/soldering">The /r/AskElectronics wiki has some good suggestions<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>. The following would serve you well, although be careful to buy from a reliable source: - Hakko FX-888D - KSGER T12 - TS100/TS80</td>
+          <td>$60 to $120</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/soldering-iron.jpg"  alt="From &lt;https://commons.wikimedia.org/wiki/File:Soldering_Station_Weller_2.jpeg&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 500px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/soldering-iron.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAHkAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKKKAGSyCKF5D0UE14b4t&#43;ImoXd7Nb2btBAhIOOpr3RlDqVIyCMGvLPFnwuF3dSX2nSiMtksh6UAeL6r4gmU5mkkldveq1lrLXUgVAVYetaV7pj2t5JBLGrkHGRUH2cWx/wBQFP0rM0Ol0fxfq2kSxtHcMYx1QnIr33wxrLa5osN4ybSw5FeOeD/AcurpHfXgK2w5CActXsVlZtaWcdrZR&#43;TEgxzWhmaUtykTAE5ZugqYHIBqCG1SMbm&#43;Z/U1YoAKKKKACiiigAooooAKKKKACiiigAooooAKKKKAI846mo5Ly3gXMkyL9TXmi6rr92ga8uFtQDnavcelVJoFuQiz3E0mM4O71rp&#43;rVGclTG00d9d&#43;LdHsiRLex5xu69q57VPihokEMiRyGU7eMd65ZtA0p5VLwM23rljzVDVfCtndvvtcQlRwuODR9VqEU8dTZkzrBqWq&#43;chbZI24E1DrUMMFwo2biKjixYajHbXEvklG6tU2vX1m1zvSVXx3zXM0d17npngzxRaQadBazTIrYxtPUV6FDPHNGHRgQa&#43;UZb3fOJIHIYdMGvavAOoXsmixNcMxx/e70QVzOo/ZnpNFQ20vmR&#43;9TUGiCiijNABRRRQAUUUUAFFNZ1QZZgB7mm&#43;dFtz5i49c0ASUUxZo3&#43;7Ip&#43;hp&#43;R60AFFFFABRRRQB5ddLE8mDJjb/DmqzwZ6Ma1NZ8Mi7bzIpGR/9mucl0LXLc/ubkkf7VevSZ8r7QvpayCP5ZM896hl2xMrzSqqr2zWa&#43;na9IcNclf92p7fwrdSyB7yWRx7mtWwSZkap4dfxbqfmW8vlLGMZI61H/wqi4kI8y9H4V6Barp2jRfPPFH9WqnqHjnQLIHN0Hf/AGa4avsj06VSqZuj/DbStNkSS5dp3H8J6V3VqkNtEIreIKgrzK6&#43;KsJk8uytd/oWrm9W&#43;JOu72jGIQemKy/dmvsqtQ96OoC3G5pEQD1NUr3x9othH&#43;&#43;ukLjsDXzReeJ9XvM&#43;beykezVjPfSTS/PKz/U1k5pnRSpVKZ9Eaj8ZNMhBFupc10XgXxnH4utpnC7WjbGK&#43;VzkivVPglqv2XxDLZE/JOnT3FZm3sz6IrnfEvi&#43;w8MiP7Vks/RRXRV498aI9jWM3uRQaF66&#43;M1guRDauxHrxWHc/HGUEiGxAP8AtGvLLiQAK3HIzWbcMGkYj1oA7TxB8Tdb1liqTmBB2Q4rKtPGGr/Zykl/NtPbea5hZBtOaXyyT8itn60Adpa&#43;MdWtT&#43;7vpQv&#43;9Vh/iX4gilG2&#43;cgdjXEpY3rkBEck9hWtZ&#43;C/EN&#43;Q8FlKR7rQB2qfGbXQqriMnpnFa2q/E7VYdPtcSossq5YgdKf4V&#43;ERu9P8zWUaGbPygeldXJ8JtKlt0hkeRtnQ0AebH4m67n/j8P5Un/Czdd/5/G/KvQv&#43;FOaN/wA9JaP&#43;FOaN/wA9JaANz&#43;2A/wDBWfqeuJY2c108W5UXNVqranb/AGvTbiFv4kIrqPHVJHDah8WnyRa2iqf7xrmL34i6/f5CzmMf7Nc3qEHk300X9xiKrJJsbC/erL2p6apUi/Nq19dk/aLmRz9ajt7hVLGRC/1qpnJpQayNLI0X1FhsMSKhU1XuLh7uTfK2WqKgdeBzQMUqQORxUkltBFAjxtudvvcdKlF07qInjUAe1SKIkG1iN3WgCP7LGLXzXl&#43;f&#43;Fa3/h5ff2f4xsZs9X2/nXNzuHmDM3A7Yq1a30dreQXES7WjYE80AfZaNuQN6jNcf8QvDDeJ9DaKAqLhPmTNcS/xrjisIkgtSZAgBLGuR1f4ra5eAvHN5C9glAHCa9p2paHdG3vlKsOgFWtB8Nav4ijaTT7dpAv3qrXeoXOv3bz3crSt03NXa&#43;AfHcfg&#43;6W0njDW8h&#43;YgcigDP8A&#43;FU&#43;KI4Xnez&#43;RedoPNZieC9emuFSLT7hGz/dNfVej61Y65ZpcWcqujDpWgIogchFz9KAPHPh38PtSs737Vq8KmLHyq3Jr2GG1hgXEUaqPYVLRQAYFFFFABRRRQB5oOtPYbkI9RTKK6jzDwjxda/ZPEdymOC2a5x8JLmu7&#43;JNr5WtLJj74rg5RmuU7qRLJJDj5OtEdKIF8lGBOe5qQDFBqFEcnlyK9FA60ASzzyTEyFQAP7orMMsqXG/JIataW8Z4BCqKqj7xHeqSQ&#43;bJsWgAEuSM1aeW1&#43;z/ACId/vVR4GhfaxywpetAGjCkU8CFgc0l5DxEI&#43;maSyk/gNXiBig0KNkPLeVMd6smAGTeQKrh9k2AMk&#43;lbFlpl9eAGG3kkB9FrJsC94f8S6j4evFltZ2CA/NHng17t4X8dWHiCFE80R3OPmRjXjVp4B1q6Id4TEh9a6nSfh&#43;1lLHO120cyNn5TWX1qmP2R7YJOlSA1zlhfmGJIZX34GN1bEc4YZB4rWlV9oDplyiohJUm8VqZC0UUUAeaYoqWT2&#43;7UVdR5h598TrTNpBd4&#43;6cV5NIcnNe7eObT7T4Zl4zs&#43;avCTwTmsqh1Yb&#43;GXImmktfJAGzOc0gglXkgkU2K58tMJWlb6iqIFYAr/FWR0mbgjtS7WPRTWvcXFm670iq/p&#43;o2X2IpJbDeOjUAc75UgOHTHGai6cjg1pS3sYvJmZdyMML7VREMlw&#43;ERjk9hQBXJJOTzUmK2bPwpq14RttyqH&#43;JuK6fT/hlczYNxcKv&#43;7zQZ&#43;0OEi4k4q0Ln/lmw/GvWbT4aadHAQxLSY&#43;8a4HX/Cd3oF5IZFLwMflYdqDQ774f&#43;GPD99axXMyB7nurHIr1SDTbS1j2QwRIvoor5k0LXr3Qr1ZIZG8vP3a9z8LeNbPWIFVpAJcfMM14mKp1bnTTOuMQC9OKxrxrfzSA4V62XmHl7/4K5&#43;4sreW4aZXYFq5P&#43;vZ1UyAPOsnyDKVft7y4gXzACy90/wqS3hCRMi8&#43;5qWOJox0DVrSrVKQNXNSyu47yLdG2MdQeorQFcrJEIZhcQSeXIOozwfrWjpfiC0vZjbmVBcLwVz1r2KWJ9ocNSnyG9RRmiukyOS1TTPsr70T91WNJH3H3a9CmiSaMo4yDXLalpJtGMiZaJu3pWiZy1aRyesRi60e4h9UIr56v4Nly6ehIr6RufJ2snmLg8EGvLNW8CyT6tNKs8cduTuBJp1DOlU9mea8x1btGD/ACGNn&#43;gruh4Z0OyGbmczv/dSpEksrTiz05R/tMKPZnT7U5m00m9nH7q0cj/arRHhq4toGnuJYo/&#43;me7rWs11qM52q2xP7qjFImlS3D7pWY/U0jP2pX06y0OKDzLmJ5Zv7o6VopqscAxZ6fDGPUrk1UGntZ6hHA4ISTpXYWnhOQgNt4PtQFQwUvdSuushUeg4rpNFubmHAZya1LbwoR1FbFl4dSLtQFItWuZoxxzV19AttUtnhu4VdWHRquWOn&#43;VjitiKICszpPBPGnw4k0aY3VorPansB0rhYXudLuftNm5VlPIr61ubaG6hMMyB0IwQa8h8b/Dw2zPfacm6M8tGO1Jq4CeE/Hsd/FHbXTbZum1q7W5vLGKHzJJEUV883Fu9vN5kZMc0feqd54p1S5HkvctsHHWvOq4HX92dPtT2zUfHWnWRKRyK341zGpfE/wAsHyH3fSvJmkaU5aUn6mk9q0&#43;o0w9qdfffEPVLnPlyFQazNM8QahBrkF4bh9/mAtz2rDQc471at7S6uGCwRuz57CumlSp0zN1T680y8W9023uFOd6A1b3CuF8FHUYfC1pHPG4kUY5rofNu/wC41amRv0yWFZoijjg0&#43;loA8/8AEHhQSO8sJI&#43;lcVe6DcI&#43;HZiK9pv/APUPXEap1NaHJVgjgP7BJOfL5q9beGHk6rxW/B1rYt&#43;lMZzcXhcf3ea1LXwwBjeBW7B1q/H0pF8iPOfHejrZwWl5GMbHANeh6LHFd6RbTYGWQGuW&#43;I3/ACLi/wDXQV1HhL/kW7L/AK5isyzU&#43;yDsKUWuDV0dKKDQI4wqAU6gdKKACmuiyIVZQQeoNOooA8t8bfD4XKyX&#43;nptbq0YHWvAtRsJLfUpIWQqwPTFfZVx/qH&#43;hr5f8Y/8jhL/AL9AHOWPhzVNRkCW1pI4PcLXeaP8GtWvQJLqQQJ6d69C8A/8ecf0r0aP7tAHmej/AAe0mxAe6zO/vXZaf4U0jT8GCziBH&#43;zW8elIvSgCJY1RdqqAB2Apce1PNFAH/9k="
+                     data-src="/images/soldering-iron.jpg"
+                     data-srcset="/images/soldering-iron.jpg 500w, /images/soldering-iron_hu_5e324b777d1edf34.jpg 100w, /images/soldering-iron_hu_be1b43966c69e7e2.jpg 166w, /images/soldering-iron_hu_4703f12ea60b5e55.jpg 250w, /images/soldering-iron_hu_c69838c57a5c741f.jpg 333w, /images/soldering-iron_hu_6618a75146c95adb.jpg 500w"
+                     
+                     
+                     alt="From &lt;https://commons.wikimedia.org/wiki/File:Soldering_Station_Weller_2.jpeg&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="solder" role="none"></a>
+<a href="/guides/physical_device_connection#solder">Electronics solder</a></td>
+          <td>Molten metal used to join things in an electrically conductive way. There are two types, leaded and lead-free. Leaded melts at a lower temperature and is a little easier to work with, but is hazardous to the environment (but not to humans in this form). Electronics solder also usually has a &ldquo;rosin core&rdquo;, which helps clean the surfaces to allow the solder to stick. You absolutely do not want plumbing solder, also known as &ldquo;acid core&rdquo; or &ldquo;silver solder&rdquo;. It needs much higher temperatures than we can safely use here.</td>
+          <td>$8 to $12</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/solder.jpg"  alt="From &lt;https://commons.wikimedia.org/wiki/File:Rosin_core_solder.JPG&gt;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 440px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/solder.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAM0AtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APKqKKK5TuCiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKjJ5pM0UAKDzUlRUZoAloqMHmpKACiiigAp8ShpVVjgE8mmUA4OaAOg1nS9NtrSKSzuPMlIywrnzxTo5Cs4kBJHcVdnsi0f2iP54&#43;&#43;O1AFCig9aKACijFFABRRRQAUUUUAFFFFABRRRQBFRRRQAUUUUAFGaKKAFB5qSoqXmgCSio&#43;aOaAJO1aGjaiLCfEy&#43;bA/3kNZ9HvQFztJ/Dmna1F9p0a5VZDy0LnkVg3egajaPtktmwO4FZkc09vJ5kEjRn2NasHinVIk2NOZF/wBoZoM/3hnm1nXrE4/CoTG46qR&#43;FasniG7k&#43;&#43;if980Rawj/AOutlYfSg0Miit1bew1BSbZtk3901k3VrJaybJE2t60AQUUUUAFFFFABRRRQBFRRUZPNAElFRZNLyaAJKMVoWGh3moYKJsj/ALzVuQ6ZpWmjNzIZ5h/COlBrTpVan8M5uKxuLnCwwu3uBWxb&#43;FL503y7Il/2jXTaSbnVBILFY7eOPrgc1ELR31tIL&#43;4cwN36UHTSwVT/AJeGUvhvT4cfab9Sf9mrMelaFEu4maUDvirN9YPG8nkWaqIWyJGbgin/ANrLc&#43;GpRmOO4V8YUDkU/aHUsDTGw2uhOMx2Uzj1xUpHh4N5TWThvTHNTaFq1naaIkc2fMaX5sdQKnuL&#43;yfxE1y3l&#43;THF8uB1o9oKpgqftP4ZQ8jwzKdvlsh/lTT4a0G4P7q8KZ9TU1otsdOkubcRS3Ukhyr44FV20u71e5BjijhC8Mynij2gfUKD&#43;2E/gPeN1neJJ7GsS98I6tZk4i3r/s81u6pZXWgvbi0uZHlkGcZq0nifUNKdI7&#43;NXDDPvR7Q5nllT/l3UOCkt7ixk3SK8bj2rqNPtV8TaPMuP8AS7ddw/2hXVxX&#43;heIItk0aLIexqzo/hiHSdVF3aykxOpDLWh51VVaX8Q8ddGjcow5BwabWz4n0&#43;ay1q4PlMsbOSpxxisasy0wooopAFFFFAFXNHejNPgglup0iiQs7GgB8EEtxKIok3ua6qy0K00yJbjUnDyYysQqza2tt4dst74e8cf981mFzf3DPPNtPrQ37M78DgHiH7Sp8Bv28F7q8BeIiG1TgKnWmw6bbsjWl7G0co5WUf1qpaXz6MvmWt5u/wBg9DRf&#43;JZrxCEiWJn&#43;&#43;R3rO569PC1E/Z0/4Zbs4v7AmM0V35spPEacg/Wp726uL2NneCO2DHlj1rO0C21CaVlghDq/V2HSu2sfB5mZXvHaVvQ9K1p07mOJrUsNU/eHGvGS8arPNcofvKKt2&#43;mS/wDLHTSw3Z&#43;bivRoNIs7JNoijX3AqcT20fyALWn1Y86rm/8Az7PO59Gv54SqWKR5OeKRtKv0Azp6uAuDXoElwo6AVEb0DsK19icv9sVTzT&#43;zGhkleWzlTd0C9qjk8uGNjFdyxFeit3NektdRt95VP1FULzS9Ov8A/WRID7Vl9WOmlm6/5eHE2nigG7je&#43;i8wxrtVvT3rK1WeO4vi6TF1c5y3UV0mp&#43;CQAZbGXd/smuNvbS5tJSkqFCvrXNUpVD3MLVw1X95TNUWNsu1o74K1amk&#43;Kp9LuDBPJ58Kn71cW0rjHNAkfPOaVzSrSpVfcqHs6nTfEdkchH3D8RXB&#43;I/BE&#43;mK9xajzYTzgdRWToms3GnXiurHYD8y&#43;teu6XqNtrNkrYBUj5lrqp1PaHzmOwDw79pT/hngxBU4IwRSV3vjTwibUvf2KZiPLKO1efHI60zkDNJmiisQK2cnA613PhvTo9O019Tuh8&#43;PkzXI6DZ/2hqsMXUFsmu48Uz&#43;RBHZRfKqDoKb/dm2Ep/WKvsznb&#43;&#43;N1cPI7HOeKp/aAPWoyS3zf0pmGJ71zH1KnZWplhZTnoa6fw34fl1m4VipWFfvGuds4POnVOeTivc/DGmR2emwRheSMtWlKn1OXHY6ph6Re0vRba0tkRECqo6&#43;tT3t1FYw5Z1Uds1ef5Y2AOOK5G8jkkd2dizZ4d&#43;n4Cu4&#43;NcnVd2Q3&#43;pyzxs8ACL/fk4/IVh2Lytd75bmVznsMLWrJE4i&#43;6Gb&#43;8/&#43;FVWhZPnkkz7CnTpiNCS64qrJdVUkuarS3NdJmX/ALVUX2vnrWWbk1F53vWJob0Wp&#43;XxmmalY22s2xUgeZj71Ynm&#43;9W7G78uTk1mzalVdL95TOF1PTpbG5eNxwvSqQHevXm8NW&#43;uv5jL/D61DJ8OrYRb&#43;AOnWuZ0j36Wb0/&#43;Xh5dDKprqPCGsmy1MRO37uTit8/Dtc4QqCenNFt8PZGuVaOVN6HPWkqVRGtbN8NVpezmdq6RXVqYpBmOQV4n4r0M6PqskeP3Lncte3W8EltGsMnLoMVyfxE0sXOjfacfPGetdR83Tep45RRRXKdBveALbzNVeQ/wLWn4htrqfUXdEJSqPw6l/wBPnT/Zr2bTLC0lsi7Qq8mO4rV0rmWGxNTD1PaUzwp9Ouj0hk/Baj/szUv4LKZv&#43;A17kIZUkC/ZYFGeeBSPbzeZkSxImfQUeyOr&#43;08QeT6D4f1ttTgkaxZYww3Fq9009dkSgjBArNsJI7eeQS3SyZ/hA6VqxnY2exp2OWriqtX&#43;ISNJwRWFcmNHct8x7E1qXx8uIyCuO1XV4YFJeUbv7g6mtDmH3t2M8Gsa6vQDtLDPpmsy41GeUZDCCM&#43;vLH6VhTTRrPvzI75&#43;87Y/Sn7UDopLqoZLoVmC6yBVp7O4a089VyvtWntAJPtIqMze9ZhuCpweDR5xrIC/5pz1qzDLyKy/Nq/p6&#43;Y/nSfLCnJY1mB6p4Sh3WhduhWrUqW5tZo3aTETbvpXntl48u7JXS1ijaIcLk1HJ8SL4u6eRCufvVoB6AzWj&#43;RdbpPl&#43;UAVYtfs0GrkIH3Ouc9ua8t/4T3VHibC26xg8ZFU28ea1LcIsNzCXJAAUUAexXH/AB9tWR4mjE/h67U9oyal01rieziluG3SFAWqt4ql&#43;z&#43;H7ls9Y8UUwR4A4w7D0NJTnOXY7eppv/Aa5mdxf8FXws9eiDn5H&#43;WvcrLVINPVpJ32w4zur5ot55LeeOVOqnNez6DqMXiHQ/Lc/OF2stdJzVDVvfF3h1bt5nv2bP8ACpqjJ8Q/DsTBUEkp64rzTxN4em0y9ZkB8ljT/B9vpst7v1B1Gw/Krd6DI9BuviXp9oPNTS2G7uwqqnxgFxcpG9rsh/vZrSvtG0/WrTy0SMKo4YV5nr3hS80yY7Iy8eeCtAHvem63ZaxZI0UqsGHTNc34g8NPtkmsh8zcsTy34V41p2s6noVwrI8iD&#43;4a9G0P4pQSKIr5drf3qAMC6hvojskRowOpI5P41nOYY23O/Pua9UOsaBrMfzSREmsW/wDBOkapkwXAX6GgDz&#43;TU4xwHWr&#43;l&#43;LlsX8qZ98foa1J/hdGASt3gepqmPh3aI2JdQQn0zQBpyRadrkfn2ciJJ/drGnsrqCTYY2P0rp9L8Cw6dsnid39gaZ4ludU0&#43;0Lw2I2j&#43;MDNZgY1vYqieZdyCJRzhjWFrviR2zaWh2xLxkfxVi3&#43;p3d7ITPK/06VnEknmtANrSdXitt32kFt3bNXZ/ENm5ylrjFcvVy2sJbgAqCI/4moA25fECzW7iOyGzGM4rY&#43;HmgSalqovZYz5MZyM&#43;tN0fSP7RWKztY90ef3kmK9h0LR4NMskhhQKFHJ9aANWGLYgA4AFcT8SdVFvpS2iH55DzXdsdsJI9K8F8ZX1zca/cLOSqo2EoHSOf570UUVynaY2DXfeD5JNPhSXJw/wB6uJiXdKi&#43;pAr0W1t/Itolx0FbHKdbc2trrNpsOGGK8513wlc6bM8sKExdRit6G/uNPvA6E&#43;W33lrrbe&#43;tdThCvjkdDQZnkWl&#43;JtR0ibG9mQHlWr0jTvENhqVnHPM8alvvI1V9a8D216DJbgK59K4TUfCmp6YTtDMg/u1oB3&#43;veFrHXYlkt9ok2/LtrgtR8B6lZEvGBKvtTNL8TatosoDl2QcbWrrW8b2k2ku5bbc4&#43;7QBx2geHr6&#43;1hLJt8IPXJr1LTFjtroaZYqGaLiSSQ15xoviyWDxHHe3IJiBwcV6BbTWGoXMt9pt2qyydYy1AFzU72ewnFvdhJYJOCU/hqhD4YtrfxGsrSvJE0fmIjNVk2JmkabU5kKpyFWue1TW9Vl12Geyt2W3hGxc/wAQoA39MurjU725kcsqwNsEKnFNvnutK1K1XJltrhsNE3OKfZ30EkbTvEbaY/f2/wAVQ65rlppVp9pAM82Pk3fw0AeffEHT4rHxCwt0CI67torlIYpJpNkabmrUvptQ8Qai9xIkkjN046Vt6L4K1eeZJFBiHuKAMq08PlsNdts/2B1rsdE8LXV&#43;ohVDFae45aux0fwZBblZbv8Aey&#43;rV1kFmsKgKoA7YoAy9E0G30mBYoowo7mt52it4TJKQEFMklSBMtyf7tcd4m1S4nj2Kdif3aAOjg1OPUFfyfuK2K8z&#43;JOlpFPFdxj73DV2fhGM/wBmuT3asn4jQiTQlf8AuvQH/Lw8moqLNGa5juKkH&#43;vj/wB4V6an7y3j/wB0V5eDtIPpXpOh3Au9Iib&#43;MfLXSc1QW6i/cZ71W06dlkIVmBrXaLIINZBBs7zeVwhrKrTCmbVt4kuNPfbcr5kX94dq6Oz1PTdWjyGQn0NcXKI5sMp/wP1qvLahG3ws1vJ/eH3TWftQ9mdveeGNNvusKc&#43;lc/e/Da0lz5eVqja61q1mRz5yDuK2bfxyq8XMLCum9MyOcm&#43;GlwmRDLTLHwPq2m3izRtkL2zXc23jfSZOsmw/7VaMXiTSZf8Alun50AcrJY62wwsQP&#43;9UQ0bxBIQuUVK7T&#43;3NMP8Ay8J&#43;dSf2zp3X7RH&#43;dAHIxeFdTf8A19x8relaEXgyCVALpml9mrfHiDTTwJ0P41ci1DT5I/M&#43;0Iv41r7MDOsfDNhZ48u3QH6VrRWip0AArH1XxRZWYxA3mv7Vlrrep6mP9HXYD3rL&#43;GB181za2se&#43;eVFUds1Vg1CTU5PK05CV7u3QVz0Hh&#43;eWUTX9ybhs/wCqU8V32h2KwQBQiomOFX&#43;tZe1NBjWCWtiWlO&#43;THzN/hXnOuRedcH5cKT8or1m&#43;hElqR2Hp/KuDlsTdall0&#43;RDTAn0S2&#43;zaYiYxmuY&#43;JMoi0ZY/7xrtmARQo4Aryb4kap9qvktIzny/vV0GfU4Oiiiuc7ihXUeFdT&#43;zT&#43;RIfkb7tcvU6OUYMpwR0oOY9YBzzUN5bCePpWVoGtrfW4ikIEqcfWug7c1oZGNHDtG2pWG&#43;HCjkevSr0trvG9KrINj4cYFc1Wka&#43;0KsabTkgofVeRU5hMq8pFKPyNNlyr7kPFTIS0eTsP6GsjQxbzTrU/etnX/drKlsoR9x5Uro7oso5Dj6GsuVgc/OfxFamZjG1b&#43;G6k/OpY7aXvdt&#43;dTSKO0n6URitRGzoWnQyXKCSZ25r1ax8NaY9qCySvx2GK8v0O7aCdcOq8&#43;leuaXqcMtmFEs0r4&#43;6grppnPUMDVdGgtZMQQxovq55qDTYkMu0bnPoOBWrqdleTuZUtiif3pDWWkX2d8ySlz/AHV4Fc1U6DolDpsVtp/2Iv6mui007lG4hQOir2&#43;tc5ZlpLbIXYPXpWjaXJt0KRZZz1bsKypAdDeyRpb7Wxn2rmWARicdasyyyEbnfc1ZuoXsNnbPcTuEVRkk967TMoa/qkelabJcOQGA&#43;UV4RqV495eS3DnLOc1u&#43;LfE0ut3jKrFYE&#43;6vrXLHNZ1TWlSE60UUVkalWipaMe1ADIJ5YJRJE5VhXc6J4lju1SC6O2UcZ9a4nyqVUKsCCQR3o9oL2R66pBXK9KUwxy9q8/0zxLd6ewST97F712mm67p9&#43;BiUI/91q1OcdLpsh&#43;5UaWskfyuK6GFVcZVgR7VN5Ech5FHsg9qcndWzPH2rFmtX54/WvSv7Mt5B0qI&#43;G7eX&#43;Gj2Rp7Q8wNrn&#43;H9alisMnp&#43;tej/wDCI2pP3KsxeFbSP&#43;CixkcbpmjvJKNqV6hoWnPZWwLFFOO7VQttIjh6cVox2q45c/nWtMzLN9KrRGN5Q/8AuisH7D5kvyJx71rkRx0eYAM8UGhHDZlFAd8j0qyHjiGBWTe6zaWKl7i4RQO2a4bXPiIPni09f&#43;2hpAd1q/iCy0u3Ms8gBH8GeTXkHifxZc65K0asUgB4XPWsS/1O51CZ5p5WdvQms/zM1n7U1p0iTr1paiqTPFcxqLxRxUeaTNI0Dy6Mc9KlooAKMUUUABjyKYqshypIPtT80UwsaFl4i1TTyPKmLp/daunsPiBjAu4PyriKK19oZeyPVbXxvpUuP3hT6iti38SafIPluk/OvEsUodh0Yj8a09qZ&#43;zPeY9cs/wDn6j/76qX&#43;2bP/AJ&#43;Y/wDvqvAxNJ/fb86lE0v/AD0b86Pah7M9zk8Q6dF9&#43;6j/AO&#43;qpXPjTSYv&#43;Xjd/u14xLI5HLH86hyfWj2oezPVL74jWkcZ8iMsfeuXvvHupXWRG4jT2rkj0qKj2hp7Iu3WoXF05eSZ3PoTVKSUvRSYrMYzJ9aSjtiikBKKKI6KyAKKKKAP/9k="
+                     data-src="/images/solder.jpg"
+                     data-srcset="/images/solder.jpg 440w, /images/solder_hu_d009ad7653ca7634.jpg 88w, /images/solder_hu_c226ddcdd4c9c2d5.jpg 146w, /images/solder_hu_57817ea5272ec64a.jpg 220w, /images/solder_hu_5c2bbb7ce21303ea.jpg 293w, /images/solder_hu_3546ea05a358ce98.jpg 440w"
+                     
+                     
+                     alt="From &lt;https://commons.wikimedia.org/wiki/File:Rosin_core_solder.JPG&gt;"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+      <tr>
+          <td>
+<a class="anchor" id="soldering-flux" role="none"></a>
+<a href="/guides/physical_device_connection#soldering-flux">Electronics flux</a></td>
+          <td>Used to clean the metal surfaces before soldering them together. Sometimes the rosin core of the solder doesn&rsquo;t provide enough, so you&rsquo;d want add some extra. This stuff is helpful, but probably not needed for this guide since we won&rsquo;t be doing any advanced soldering. If you do buy it, you absolutely do not want plumber&rsquo;s flux. It will destroy your circuit boards.</td>
+          <td>$8 to $12</td>
+          <td>
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/flux.jpg"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 173px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/flux.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAnAAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AOjooxRivDPUCjy6KUGgCLyqTy6tdqjxQBDiipcUeXQBEOtS1FL&#43;6TfRFKGkxntmgCWijrRQaBQOtFFBmS0VFmjNAEtFRZozQBLRUWaXNAB3qSiigAooooAKKKKAIyOaTFS0UAR5qSo8c0c0ASUYoFS9qQFG/jxayH2rO0wmS5k56KK1dQ/48ZPpWVov/H7Kv&#43;yK1/5dmX/Lw1cUVKRUZjNZGolFR80c0wJKKizRmgCWioqlrQAooqPvQBJmjNFFZgGaM0UUAGaKiqTzKDQmoqIGpaDMKKKKACiipOKRoU7/ACbMj3qvpcaJczH2FXL/AB9jP1qnpY&#43;aR/etf&#43;XZl/y8NWiiishkXlUeVUtFMCt5VJ5dWqj8s0AQeXUferRjqLyq0AKKPLoxQAUUUUAFFFFAEVFRVLWZoFS&#43;ZUVFAEualqrUuaAJaHNReZzRIaQEd9/x5n603Sx8kn1qcW0l5EETtT4bSS1Zg/8AEa1/5dmX/LwmqPmpKKyGR81JRRTAB1qXtUVKDzQAYpPLqWigCsQaTHtVnApmKAIfLox7VLijFAEWPajHtUuKMUAZdGfeoqM0GhLmpaq1LmgCWiovMqTzKAFokooj/eSYoA2dNHlwb6L2TNRRS&#43;UgQ0lxLHI1dP8Ay7Ob/l4R5oqLPvRn3rmOkloqLNS0AFA60UDrQZktFFFABRRijFABRRijFABRRijFAGDUfOas1ERQaCZFLmo9hzSUAS1Jnio6KAJfMqS2P7&#43;q1S238T0AW7iXnioYyfO5qKSX95QJf3ldHtDMtZ5oqLNSZFc5oLUoNRUUAWqKiFS0AS0DrUYNSUGZLRUWakyKAFooooAKKKKAMGjFS0nFBoVqMVLijHtQBFRRRQBEZKltz&#43;7eoniJPFSxxSRigCL/AJaUf8tKl8v56le2/ciSgApcmmjpS1oBKJKlBqrUoNZgWhUtVRJUmfegCajNRA&#43;9S0GYUuTSUUGhKDUuaq1LQBLRUVFAGXUXepaioAk4o4qOigAooooAI/8AWVLPIMgD0qKPmSo76Uxzoqr2rQzJByKLmV47RfrUMc1W7hI5NK3sf4q1Az/tXH3aWKXzDUUZg9aljjjzvSsgLVHeiiszQlpcmouakEnatAJRUoNRZorMC0Kk7VWBqUSUAS0UmeKWOgAoqTYPWjYPWgDCooooAKKi71LQAUUGoiaAJLc/v6NSw5U&#43;1UpLkxScVUuJpJPvPWhmSowD8nirUt1Amnbd/wDF0rH59aQxkjB6UAWo5YC/36vwmM9DWD9nOav2ZeORMnigDZooHNS1maB2o8uiigAqWiigCWPpR3ojo71oBLnihJcUCpRbo8eR1rMzI8n1oyfWkxjiig0MuioqKACiiigBJWwM5qlJcEnApLyb95szSJIE27UzQBFLv/jqPrS3EpeRt1QiSgCXFWYIBMxHpVYc1Zt0kdiqGgCvKNrY9KQEjGDzSvwxB61EOtAF6K9ePAetOGYSisJ&#43;1WrKXZOBmgDZoHWjrzQOtBmSipaiozQBLRUYPNSCgBeakS4MYopMCgCM/vDu3daNn&#43;3RjFFBoZdFFFABRRRmgDHuP&#43;PhqkiPzpUVz/x8PRH95aAC5/1jVV71LN/rDUXegC0P9XVmwkxIfpVWPpUtv980AV5z&#43;&#43;b60kfWib/Wmox1oAsSdKdCf3yVDP8AcFLB/rVoA6ZfuilqFT8o&#43;lLmgzJgakqsDzUooAkHWpaipY&#43;tAEozUlJxS0AFFFFAGNUVFFBoGeKiMvWpTVWStDMo3J/e0&#43;LpUcn&#43;sorM0CX79Rd6JKioAtA1JHJseq0f3Klj&#43;/WgEcpzKTSDrRL1oioAln/1YogP7wUXH&#43;rqOD7wrMDoVk4FTVUToKmzQZko61KKijqWgCWiowakoAUE5qTNRDrUtABmjNGyjy6AMaiiitDQilqrVqU1VoMyrJ/rKTtSy/fqKszQDUVS9qi70ASj7lSR/eqMVJH9&#43;tAK8v8ArTUkVRy/600DrQBZuP8AV1HB1FJP/qxSwdRQBuQ/dFTVDD90VNQZix5qTNIMUtZgKDzUgNRDrUtAEtKDUQPNSUAS5ozUWaM0AZeaiNFFaARGoqlkqLtQBVl&#43;/UVLL/raSszQD0qLvUsnSoqAJaljqIVKK0Ail&#43;/UY61JJ1oFABP/AKsUQ9qLj7goh7UAbER/diphVWHoKtCgzJRUtRUUASjrUtRDtUtZgA61LUQ61LQAUUUUAY1RVL2qKtAA9KiNS9qqy0AVpP8AWUlS4z2o8qszQio8urQizSi2OaQEPlfJQI6viE46UfZqYFCSOox1q9JCai8rmgCK4H7sVFF2q9JF&#43;7qt5eDQBfi/1YqUVFF/q6lFaGZKKlFRUUAWhRUQqXNAEtKDUXmVJWYEtFRZozQBl9qiqXtURrQAqrLUpzURoAIh7VaEWalsrYSJl6vx20YrP2YvalGOE&#43;lSiE&#43;laQhHtUohHHFHsjP2pQ8h/L6UzyZPStdwEQDigRA4rT2Qe1MeSDjpVYwnPSuhkiHtVaSEZ6UeyD2pjSRfu6qyRYropLaPy6oy2yAGj2Zp7Qz4&#43;lTR1GeDipBQMlooooAl7UUUUAS0oPNJQOtZgS0UUUAZfaoqlPSoq0ASTGKrGpZKioA1LKT9wtX46z7L/V1oRUGVUmBqTzaiqPnNamRLISakilqL/lnUeeaALMktReaKikPHWq2TmgC9JL&#43;7qpJJkUpz5dRH/V1kaFCQ/vKKilP7ygSUGpaBqWqoNSg0DJalqHIpaAJalzUVGaAJc&#43;9GfeoqKAKslRVKelRUARSVFUslRUAall/q6tx1UspP3FRXlzJGmY61MqpqZ96PM5rkpNXuw&#43;M1Vk1e83/62j2Zkd48g8sUgQHuK4SXWLwRr&#43;9qtHrt55n&#43;uatfZGR6BInvUWPauOk1y88v/Wmkj1&#43;&#43;/vVp7IR2xH7qqzf6s1l6dq09zHiTFXzJmM1zM2pGZKf3ppBJUcp/emkrI6i0DUmfeq2aMn1oAtZ96lElVQalElAFrNGaizRn3oAtUVFn3oz70ARUcUVFQAkmKrSVLJUVAi9Zf6ulmGQQaLL7lSyCtTI526jRJDVAwu5yordvbX&#43;NaquMQdK7qVI5qpn3Fs7xJ8oqqLNs9RWheEiBMGswNJ5vWtfZGRdexbyx8wqMWrj&#43;KrURJXk1NFH81HsgL2lWpEe8itM/6s0WoxbDApT0NcNU7qRjy/62kqWaL94ajwQa5TYSpRRRQBLRUVSigCWijtRQBLn3oz71FRQBL2qKpe1RGgCKSoqlPQ1VPWgRqWX3KsyVW077lWn&#43;/WpkVLofu6zZR&#43;5rXuelZkv3K78Kc1Uy73/VrWYM&#43;ZWvff6tazB96u45i/F/qxUoOKSL/VUtYsEdFZSZtlpZetQ6d/x71NLXm1T0kVJMb6PKD1HKcSURy4rlNQMR9KjwQelXY5BQQJKBlXilqU2/vUeDnpQBJ2ooooAKKKKDQlqKpaikoMyKWqtWpOlRUCL9l/qatVVsv9XVqtTIimH7s1QMfyGtOUZFUjH8j13YU5qpi6l9xayx/rK1NSH3azB/ra7zmNOL/VipOKii&#43;7S1iwN3Tv8AUVaOMVR07/UVa5rzap3Uihc/6yohUtz/AKyoq5TqJRUoPvUVFAFoGpMDHSq0ZqXzKAAx1H5RqxGRUuARQBRoq15VHlUAVc&#43;9RUUUAIajNElRUCNSy&#43;5Vqqll/q6t1qZAelVvL5erJ6VFH1NdVI5qpg6sMVjd62da&#43;/WFnmu0yNeL/VpU3eqsP&#43;rFWR0oMzV03o1X&#43;1ZmnVp9q82qdtIy7n/WVFUtz/rKirlOsKlqKpaACpaiooAmBNWI5arUUAXvMFHmCq2fejPvQBVooqI0ABqKiigRftv9TVoVVtv9XVoVqZEvakTG&#43;jtUf/LSuqkZVTG1v75rnT1roda&#43;/WF5T56V2nMX7b/VrVqqttwlWhQZl&#43;14Sr4k4qhbdKvx1xVTupFC5/1lRVLdf6yoq4DqJaKKKACiipaACiiigAooooAhqM0UdqAIqKDUXegRp2yb46njyDUNkf3dWq1Mgo/joo/jrqpGdUwtW/1tZ/mbKv61xJWN5ldpyl&#43;LmrUVVbb7lXoulAE0X3xWpF0rLj/1i1qR9K4qp1UirdffqrVq561VrgOoKlpBiloAKl7VFUtABRRUnFAEdFS0UAUKO1FFAERqKpTUVAjQss7KvVVsv9XVqtaZkFFFD11UjKqYurR73rCkixW7qpw1YRk5Nd1M4i/bf6tavxVQt/8AVrVuPOaDQsj/AFiVqRdKyx1FacX3a4ap1Uitc9aq1auaq1wHUFS1FRQBLRRRQBLRR2ooAlooooAoVFRn3ooAKioo7UCNTT/9XVrvVHTvuVerpMiWopKloNbUjKqYOrdKwe9b2te1YXeu6kcRetui1fjqhbdqvjtQaCvwRWva/dFZE33RWlafdH0rlxJrSI73rVWrV7VCuE7iWpBio6KyGS0UUUAS0VFUtABRRRQBl5ozRUWaDQlpD0qPNFBmamnfcq/VDTvuVfrWmYkook6UdqD/AKuuqkZVTB1blKxuK3dS6Guel68V3UzmL0NX4qy7b7lX4qAJp/uitKx/1VZlx9wVfsf9VXLVNaQXv3KoVfvfuVQrhqncFS1FUtZDCpaiqWgAqXtUVS0AFFFFAGNRRURoNBc0nmUVFQBvaUcpV&#43;TrWZpP3K05O1dJzVQqX/lnUVSH/VVtSMjG1Poa549TW7f96wm6mu6mcpZtqvxVQtqvxUALcZ2CtLTf9VVGTHl1f07/AFdctU1pBe/cqhV&#43;&#43;&#43;5VCuGqdwUUUVkMloqKpaAJaKiqWgCWioqKAMuojUtRGg0IjRRJUVAG9pP3K1JO1Zei/crUkrqOaqFGeKTtS4/d0IyMa/8AvmsKXrW7fffrGl616VI5qott1rSj6VmW/wB&#43;r8dMRLJ9yr&#43;ndKoSf6ur&#43;nVy1TWkS3v&#43;rrM5rTvfuVQrhqndSCiiishknFLUVFAEtS1FRQBLRRRQBl1Ee9S1EaDQiNRGpZKiPStQNrRfuVsSVj6N/qa2D0rU5qpFmpfM/d4qKjtWhkZd99&#43;sebrWxdffNY03&#43;sNdVI5Qi61fiqjF1q8vatQJZP8AV1a0o/eqrJ/q6l03/WVlVHSL979yqFX7nkVQMb15lU7qQUVHzmkrI1JaKiqWgCWioqloAkpaiooAoVEe9FHag0Iqik68VKaiNagX9IuvKnZH6NXRSEbQR0rigSGyOtdFpl79pg8tz92tKZzVS2etJmrItwR9&#43;opbN&#43;qGtTIzLrvWPL/rK6GWyd&#43;9VpNM3r711UqhiY44Iq7F85q0NIfFSppvlqcZzT9qZlI/cNWdO/1lRpazbiNvFXray8t8l6VVmtIlk5kqKSMpV4xonvUZwa4TUoeV3qKSJ&#43;1X&#43;HOyiWNBH8tL2Zr7UxsSCTmrI6VMYt/aq3RsVmaElSiohUorIZJS0UUAY1B6UVEaDQDURqXtUVagRGrWm3P2e4wfutVWSoskUzJnbhd0QKPUchIT77ZrP0q/jECxyP8APWk8Jl&#43;cMPzroOYpyGX&#43;BzUPm3A9avCBvQU4W0mfu1sYlWKe49Gq9H5hHNSSL5Ua8c1RkunElIC35dAj561CLml8w1mwLvljHWoig9aj80461Cd2c7hj61kbE2wZ60mwetRefGOsi1HJdwD&#43;OgCyRGBWRJ/rXqSW938JVbJJzWVQ6aRIDUuaiFFZGpL5ho800UUAUKi71LmoqADtUVS1Ea1AiNRSVKaiNBmRgkdCQaljvbmMf61sfWoTUeTmmI1bbVLkn77VYvNcu7cIUasu16tUmo8xJXr4X&#43;GeZif4hNJ4pu3Hz4aqv/CRSPJ/qxWXLVX/AJaVr7KmZe1Ooi1yeTjav5VZ/tKf&#43;9XPWxNafZKVWloOluWpL&#43;f&#43;&#43;aZ580n/AC0NQd6lFeIz1ybJ9aSijvSAlFS1EKlFZDCpRUVS0GhLRUVFAFCiiitQCojQaKDMiqKSpTURoAi7VFUpqKmBZtvvVNdcwVVt/v1auf8AUV6&#43;FPLxX8QxpRVX/lpV&#43;XpVH/lrXUcpetq1P&#43;Wa1l2v361P&#43;WdKtsbLcKlFRVL2r597nroloqKpR2pDJe1FHaisgJaKKKAJaKO1FAFCiioq1NANRGpaiNBmRUUUUARGou9SyVFQBKpxirMn7yKqOfer0PMQrvwJwYozJetUZB&#43;8q/P/AK01Uk6165wFqx61sD/V1mWPatPtXNW/hmtL&#43;KR1LUVFeGewS1KKiFS0hktFRVKO1AEtFFFZAS9qKKKAKHaoqkqOtTQKikqWg0GZD2qM1KRUWKAIjUVSyR1F0rUREa0LbJhrPPWtPTsEV04X&#43;Ic2K/hlG9GH6VQkrZ1EDf0rGk617B5Zasf9ZWo/Ssux/wBZWo/QVzYr&#43;Ea0v4oUUUV4R7BL2ooooGSipaiFS0ALmpBUXepRWRoS0UUUAZdFFFagFFFFABURFS0YoAqkVFJHV7yxUZipmZQ8qrem9Wp5jGOaW2aKOXqK6cL/ABDHFfwyLUfv1jS1s6r97IrClNe4eQWrH7wrYfoKwrWXDCtxpR9nD1zVv4ZpS/ii4qWoYrmKT&#43;IVaEYPI5rw2j2COpak8vimY5pDEqWiisgDvUtRd6loNAooooAoUUZqLvWoEtFGaKACiiigAoJAjyaKiuc&#43;RxRSMmUL2&#43;x8iVnQTt9oGSetOmB3nNV14cH3r16VL2Z5lWr7Q29Skyi/SseQ5q7d3IktgO&#43;Kzea6jMliOKv&#43;d/obc1l1NHLmPZQwCOYjvWzpV8SdjmsXy60LGL96hrlrUv3Z00qp0Wc0Ug6ClryD0wooqQYrICPvUtFFABRRRQBl0UUVqAUUUUAS5oqKigCWkk5FR0UzMqS2vmZrNltJIycCt2kIB6ivSpYqmcFXDHPeWe&#43;aNp9K2JIhn7lJ9lf&#43;5XV7WmZeyqGR5JPapI7WT0rU&#43;yv6VZihGKKuKph7KoZsVqe9aVtD5faphEBUuK4KuK9odVLDBRRRXCdxKKBUQqWsgJaKiooMyWiiigD/2Q=="
+                     data-src="/images/flux.jpg"
+                     data-srcset="/images/flux.jpg 173w, /images/flux_hu_ec155bf1e6e5fe9c.jpg 34w, /images/flux_hu_4baf6f2910d9355f.jpg 57w, /images/flux_hu_43cdb1e3179c9736.jpg 86w, /images/flux_hu_f2cff283e819e168.jpg 115w, /images/flux_hu_3a7e13ab1231d74b.jpg 173w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+</td>
+      </tr>
+  </tbody>
+</table>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/">ESPHome index</a></li>
+<li><a href="/guides/getting_started_command_line/">Getting Started with the ESPHome Command Line</a></li>
+<li><a href="/guides/getting_started_hassio/">Getting Started with ESPHome and Home Assistant</a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Physically Connecting to your Device</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#connecting-to-the-esp">Connecting to the ESP</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#usb-port-on-device">USB Port on Device</a></li><li><a class="toc-secondary" href="#pre-soldered-programming-header">Pre-soldered Programming Header</a></li><li><a class="toc-secondary" href="#unpopulated-programming-header">Unpopulated Programming Header</a></li><li><a class="toc-secondary" href="#solder-filled-programming-header">Solder-filled Programming Header</a></li><li><a class="toc-secondary" href="#module-only">Module Only</a></li><li><a class="toc-secondary" href="#bare-chip">Bare Chip</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#materials">Materials</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#connecting-to-the-esp">Connecting to the ESP</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#usb-port-on-device">USB Port on Device</a></li><li><a class="toc-secondary" href="#pre-soldered-programming-header">Pre-soldered Programming Header</a></li><li><a class="toc-secondary" href="#unpopulated-programming-header">Unpopulated Programming Header</a></li><li><a class="toc-secondary" href="#solder-filled-programming-header">Solder-filled Programming Header</a></li><li><a class="toc-secondary" href="#module-only">Module Only</a></li><li><a class="toc-secondary" href="#bare-chip">Bare Chip</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#materials">Materials</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/guides/physical_device_connection.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+</body>
+</html>

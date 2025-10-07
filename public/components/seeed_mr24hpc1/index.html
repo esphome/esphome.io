@@ -1,0 +1,1981 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Seeed Studio MR24HPC1 mmWave (Kit) - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up MR24HPC1 mmWave (Kit).">
+            <meta name="twitter:description" content="Instructions for setting up MR24HPC1 mmWave (Kit).">
+            <meta property="og:description" content="Instructions for setting up MR24HPC1 mmWave (Kit).">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/seeed-mr24hpc1.jpg">
+                <meta name="twitter:image" content="http://localhost:1313/images/seeed-mr24hpc1.jpg">
+            
+        
+    
+    <meta property="og:title" content="Seeed Studio MR24HPC1 mmWave (Kit)">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/seeed_mr24hpc1/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Seeed Studio MR24HPC1 mmWave (Kit)">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Seeed Studio MR24HPC1 mmWave (Kit)</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#button">Button</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#home-assistant-card">Home Assistant Card</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#number">Number</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li><li><a class="toc-secondary" href="#sensitivity">Sensitivity</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#select">Select</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-7">Configuration variables</a></li><li><a class="toc-secondary" href="#scene-mode">Scene mode</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#switch">Switch</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#switch">Switch</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#number">Number</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li><li><a class="toc-secondary" href="#sensitivity">Sensitivity</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#button">Button</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#select">Select</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-7">Configuration variables</a></li><li><a class="toc-secondary" href="#scene-mode">Scene mode</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#home-assistant-card">Home Assistant Card</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/seeed_mr24hpc1.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Seeed Studio MR24HPC1 mmWave (Kit)</h1>
+        
+
+        <h2  id="componenthub">
+    Component/Hub
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="componenthub" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> platform allows you to use Seeed Studio 24GHz mmWave Sensor -
+Human Static Presence Module Lite (<a href="https://www.seeedstudio.com/24GHz-mmWave-Sensor-Human-Static-Presence-Module-Lite-p-5524.html">Product Page<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>) and
+Seeed Studio mmWave Human Detection Sensor Kit (<a href="https://www.seeedstudio.com/mmWave-Human-Detection-Sensor-Kit-p-5773.html">Product Page<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>) with ESPHome.</p>
+<p>The <a href="/components/uart#uart">UART</a> is required to be set up in your configuration for this sensor to work, <code>parity</code> and <code>stop_bits</code> <strong>must be</strong> respectively <code>NONE</code> and <code>1</code>.
+You can use the ESP32 software or hardware serial to use this MR24HPC1, its default baud rate is 115200.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/seeed-mr24hpc1.jpg" width="50.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 300px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/seeed-mr24hpc1.jpg"
+                     fetchpriority="high"
+                      style="width:50.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAIcAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigCOeaOCMyyOFRepNZVx4o0u3j8x7gbfWovE7RjSmWVyELDNZeoxaN/wjrfcI8vj1oAmPj7w6DzfLSf8ACwPD3/P8tfOd/t&#43;2zeXnZvO2q43E4ya19mc3tT6U/wCFg&#43;H/APn&#43;Wj/hYPh7/n&#43;WvJtO8J6fd29tJLcFN68jd1NW38G6QkUx&#43;3HKdOfu/Wj2Ye1qHp3/AAsLw8P&#43;X1aP&#43;Fh&#43;Hv8An9WvKp/CWmIsZF0WLDjn730qsvhqyfVPs&#43;WVfLBA3d/ej2Yva1D17/hYfh7/AJ/Vo/4WF4e/5/VrzC78IaXGInW4&#43;XGZDuHFEHhXS2iIdio3fK5bgj1o9mHtah6d/wALD8Pf8/y0v/Cw/D3/AD/LXifiLQrbS7ZJYJGyzkbSc5HrXN89s0ezH7SofSdt430W7k8qG63sewFbNvq1rNMIlk&#43;Y9jXjXwtiszfS/aMF&#43;MZr1HU/sEU9sysqSFx93vWR00/gOlopFOUB9qWgAooooAKKKKACiiigAooooAz9XtYbuyaKZMrXOyaLayReU8Z8v0zXT6h/qKx5JkjHzttrKoBgnwZopPNkmaQ&#43;DNEA/wCPJK1ft3mSYRR&#43;dSxy&#43;aH/ANmoVUPZHiOtQ29r4iubczyRQx/cCnpWfc/Zo7OR47&#43;R5D1XPWneNc/8JNdf71YGDXopnCa&#43;l29xeOPNmlVB9xgavzWEsV0rJcStkdcmnaTd2v8AZ6xyvtlXPatA31qYY1837vtTAxZyIHSKaWQBu&#43;6rVnc2YDx3FwcD7nzGszW5oZrxfJOVArL5zQZ6npvgrTLPWpLkXi&#43;dGh&#43;TJzXaf8IZov8Az5JXJfCn/V3X4V6LLK&#43;/5F/WuCq/3h3Uv4Zm2vhvTrCTfbwBH/vLWgNOhnuIXkBZkb5afHcZ4fb&#43;dW4f9amKzOg3FGFA9qWkHQUtdJmFFFFABRRRQAUUUUAFFFFAFTUP9RXMar/ql&#43;tdPqH&#43;orCuPJCfvsbfesqhrTMyyj/0hKsyPPG8vlIGGaIpI/M/dqvtzVqONxvLfxVkDOMv9C067u3muYYTIx53NVRfDej85hgA9d1c14jgmn169IuJFCtwqmmQaBNMgYX78jpmutUzldVfyFLXrKwsb9k0&#43;XeD97Hasr98T8rHatXL/TpLeZ0D5PHWqjxz9MhfxrpM6dWmdh4X0jQ76JpJ3R5/4lc4xXSf8I3oP/POD/vqvI/njdgkpU&#43;oNJ9quAP9dJ/30ay9mHtEe6aPY2&#43;nB/7Oii&#43;b7201pgyGGTeu1q4X4WTPIl1vct06mvQ5C/z5UbK4ap00irFH0zWpa/6xKoxOnoPzq9Cf3qYopGtU3R0FLSDoKWukyCiiigAooooAKKKKACiiigCrqH&#43;orl9Z5iQD1rp9Q/1FY0kUco&#43;dayqGtMx7KP8AfrWyehqOO2SM5FSHoazA4DVVgudQmhEYVs/M22sq4aO0bZDGzbTU2tancWer3AS3BBbrWHd&#43;I47lsSwsjqf4TXajhqumM1OVFZZpYMmQcc1VsorW9nZDCVZVz1pl5qUd7sDQSYX7uKsafqEdozuls&#43;8rjkZrYytTJJNMtdu9YDjvUAsLV8r9ncVUn1a9Fw&#43;WKJ2Uiq6a1dBzvk4&#43;lBn7Smd/8NY/KnvIx0zXos/&#43;pYe1ec/DKUyy3snrivSuo5rgq/xD0qX8MqRRDFXbbPnJ9ab5aVND/rUxWZrUNwdBS0g6ClrpMgooooAKKKKACiiigAooooAxPEuprpOlS3ToWVfSvPP&#43;Fm2Xe3lrtPH3PhW6&#43;lfPtxesjeXsXjHaj2dzKp7ToeoD4m2jDi0mP4VE/wATrRPvWsy/UVzWiYmsFUoA&#43;7OT6VR8SxukC7lU89hWvsqZn7WodBNdDVpftiZWKTsRXG3NvMt1dSKoZQSB9a6XSXkGlW6gDp3qjkNHdsVH3zWhl/EMOPX5Y1WNYhlBzwKd/wAJJOH&#43;5j8BVGN0SRvkB5p/7vZvaIfnWZ06FhNQm1LUEDwgqBzmn2OlfbdQlglbYF5pNFMb6h8q4rb0zjXJzxwD1rU5aqNfw5ex&#43;FmkVYnm8zGMVr3fxKhtTiSylH1rm7nEjQOfmJbnZ3&#43;lYmvRRqcRwSRlj1kbOay9kdVJnbxfFO0lkEaWsm410OmeLje30ERs5UDtjJrw&#43;CPbdx71zz/DXpnhlFXULECKZD5n8b5FZeyH7Q9rX7g&#43;lLSL90fSloNAooooAKKKKACiiigAooooA5H4gySJ4aljjTez8Yrxy68OXWIL82ThFX5h617t4hi82x3GPeFYHFZ2p6rpy6C4Kr/q8bcdKFUD2Z4ta61a28PlEFCpqjreqQ3UarE7Ng1nX8bSXs0kaHYznHFQeS/TY35V0nD7Rnb6OBJpkL8/Kp71TikBiugcH5zV7R9q6ZCDgbVOaxLC4t4dYuRexSPbsTjbTAwJH2TsQOM0huDjGwV2q/2GVB8v81qaKLQ3HKDv/DSNfaQOT0Fs3vXFdLorxRa1dNOoI2ms/V/sNtcwzWULFR94KMVS05zLfbpvMRD6UzKr&#43;8OlvpYbgQCCMgFvurxWFqdlJMC8KsAh&#43;Ys2avGeK3uY5Az4U/WmalfRyWMiRkszt2XFAaoxtH0281S&#43;8mCIyMD2r0LTtMu9I1Gx820lX94MsWyKp/DC6trK/lW5UK7Y2kivW7ya2uXhVFV2DZxiuapUOmn&#43;8pmyhyin2p1InCDtxS0jUKKKKACiiigAooooAKKKKAGsiupVgCDVCXR7GVSklsjKfatGigDG/wCEY0f/AKB8P/fIo/4RfR/&#43;gfD/AN8itmigLGSPD&#43;lKMCxiA/3aZ/wjGjn/AJh8P/fNbNFAGN/wjGj/APQPh/75pR4c0gdLCH/vmtiigVkY58OaOeunw/8AfIoHhvRx00&#43;H/vkVsUUDMf8A4RzR/wDoHw/980f8I3o//QPh/wC&#43;RWxRQBkp4e0mNgyWEQI7havR2lvGwZIlVh7VYooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA/9k="
+                     data-src="/images/seeed-mr24hpc1.jpg"
+                     data-srcset="/images/seeed-mr24hpc1.jpg 300w, /images/seeed-mr24hpc1_hu_869b2b1fe5240219.jpg 60w, /images/seeed-mr24hpc1_hu_31bf126d27f105a9.jpg 100w, /images/seeed-mr24hpc1_hu_70d883bd3a8aefde.jpg 150w, /images/seeed-mr24hpc1_hu_9b77c4ee7159a3e8.jpg 200w, /images/seeed-mr24hpc1_hu_f20a8bf7733c5890.jpg 300w"
+                     width="50.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite</em>
+                </figcaption>
+            
+        </figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/seeed-mr24hpc1-mmwave-kit.png" width="50.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Seeed Studio mmWave Human Detection Sensor Kit</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 500px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/seeed-mr24hpc1-mmwave-kit.png"
+                     fetchpriority="high"
+                      style="width:50.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACXCAMAAACLK4GYAAABgFBMVEX////8/P/y9P7v7//r6//o6f/n6//j4vvd3PXn6P/n5//Lx92wrbzLxtbj3/LW0&#43;yhna&#43;MipfW0&#43;bj4//e4/7r5/W5t8ihmJfHw8vk4/XX2/vr5//d3v3n5/rb1/Tb1&#43;/TzufPy&#43;bX2/bNx&#43;PW1vXr7//Pz&#43;fn4/vj5//X1/vc2&#43;/DvtCWlKW2s77Tzt6yqqza1ubOy97u6/bW3O/Hx9/Ny9W9vNCpprimo6zH0O2yr8Ssqr/Gw9bHxduCf43y8Pjh3OR2d4Nta3OutMJiX2hXV15OTFBBP0U1NT0qKjAmIyEfHSQdGxoXGR0QEBMfISdAODJnWUqwtdJomI2Io5ZeTDVKbFehj2&#43;4qYfCzObHtpQ2U0pUdG14ZUvj2d/o5esmc1SPd1Swx83Z1NrHzN0TYUQXc07z6&#43;8yd2IPUTdCinels6fh2LTaz6u5xKXOxKLq4b3Sy865uKTV0tDy6sfO1OfBzNPD1t&#43;Zubynt7uLrKwTgGAPJRzW3Obm7Pb////5OO6TAAAAAXRSTlMAQObYZgAAG99JREFUeJzUnP1X2vj273PmKgkPGhI8qXTEgNiUSQI1Fwx8McmahDzyYOzgQU6hZ&#43;ya/MBw1ug69yxcd2b03H/9rv0JCKg91Y7Wzm4d6cOavty&#43;93vv/UkC9txhJIvUczM8NExxUxWSz03xwDASP5WD2nNTPDD04hVZSjw3xQNDS9C08meTB8XQuQb256I2sf/H5VXxuTEeFrpCk5yM/bkqUSxyJJ0iROzPk2xLqwUsSZIT/qqG/UlajInxAbtNTnb59St&#43;/89RjUaVv2L5HZLc3cHx9Kv0n0AhNqbIZZ4gWIAmXm7sTDhZe26oT4SpyUGZILaJbYCG&#43;G4iJ7/uetQo5n92CBQA/XL7u52XL3d3Jl9xNdp67aJMbBFbOI4T2zvE1tYWsUW83CKuJjKmPzfdneFgVG1CbOApHE8VXuPpNF7AUxv4BkS5XHxuvLuDEouTNJ5KpQqxaCSykolEViOFWCGWSuEpnCcvvkKJ2Hpts5yOxWKx6Go0srLyKvJqBbCjsWg0WoiliJKQwIznprwRVE1K4wgxEolEViIrK5EVeLW6uhqNwm&#43;nryZf2Xyti4mfNv4TjUKWZ9QIGaARdnQ1xnPMV&#43;TYNra/eZUphICReUyRZ9gZ/iLx1Ri2SZWu&#43;OgccA69ugQdjabpi&#43;LX4X0GJV&#43;lI9HonDCyejdzNIrzNPPcvMid1Qs&#43;s4gM0KuL0rhGjkYjBb68/&#43;zeZ2pyab2wmNTVKW7kFnGInZaKz7vQWCb2anKTeSmiNyOW&#43;c&#43;V0nhGXVvYemQ9HfkvzLehkbA3k9hzmZ9F7dN8pBCJPggZCTu9/0xrmIF9c5WO/Jc8340cCvvV1ZdMtX39eZJJF5Y7yD2RgRq/Ur7YKGIbmoaZyJwFichMve0u7P/KDMIuT75Un9HF4kUNw0xDZEAaUUS88hnM0WiGWA&#43;&#43;zBpGNUpBkcIo8YIvwGQ0zfTtVH8aOlpIf5MJoa2nhdaKNM0ka79K64UMQp5&#43;fAZzNBIt8CVGwzSdqj2plWiJyV7pYnMCJbgauf64rer7UEejmfJFUcS&#43;Z5jik&#43;rkR44u85nMdCCKRD5WiPeDjkTTV9//52qvJD9lqotMiWTx&#43;cQcDYX9WZWIIpbB1wkY/Z4u1Sb2iiPLeGEBGvXDSHQVlpaHM0PgBCkFTygP8aK0N880pBm&#43;xdfxWcwFnKcriSezbEN8E&#43;yRKNNRGDkKUfgZjcXuQb0avflb4V9bXY3iLJcjn2o1MCjmiudJbpfACwsRK8ypP6aP1ehqbDV2F/VqJIOz2SxXkv/Q3Gd/xOtN8aKcJkiOJF9ubG3g8COFp1IpdNRxG/oG9bfRGPwxfF/mfx/sJ1ogWI7ky&#43;ubf4BY1DVNpHQ0YCwF1WBxnCBJbnd3h3hJvNza2trY2CjEUtFFijuZIc2zZMfmAX8UicTSuyTJp9fLm58naxsTitUaRPHNTQ8yRYkg8G0yS5K7uzu7L1&#43;&#43;BOhppu&#43;AXl2C/haIv41Gl6CRsGI4wZLkNo4TwWddMjAogZEZhmFkQbjiEzf8vjQhcIKnOZLc2d3e&#43;W5n6yWCXsjax6GB&#43;Vv409gcupCKpVIFvIATLEvuEFtEmfuMNBtUQlEEAagFRdpfY5b2T7HI4wTOkiT8Ay&#43;3tgikDnTceA390faCqCHVqwvMqRSOb&#43;E4QbAki87fdx/MbGFrjBoEAnNQrVYb8tqE3mdqC1O6XiQyG2mCJwhUgRsbWxupG8yRO5lXp8wIeS6PVArf2EKXDFi2vLv93e727s4DkR1sc18JSoHAVJOiKCYTskSTQYNahOYjmUgmHDsKUfjmFlKFQiz1iUSjIgRkVIkLzKnUFkHsbG9vsyy7u/Pd7u72AzNtaYysSFJF&#43;aGaFCmKEpNFQbpiS5wyxy5dZSKvIq9evXoVWQnPQm8YwS1oBD4tQvhlbKEOU4XU1tZWeKFjG&#43;B3dnfpBzGb2LoQSIEqMwdVEaApscqoEsvSyrwcixdphPzq1auVlZUVsNjVsBve5R3X0KixRL&#43;dtZYZM8hji8C3tvCtNHzaInYl&#43;SHMhrgXxKWKItfrB5BoTaPEZENWSiR/tZa49r79/fTKyquVCCCvRCDdkRt2fJc&#43;pmmexYI6oAZf468Lrws4jm9sVw4e0BItjCmCNIQf6vUDUIemAXWVkRWOZkk&#43;uD6huFpLZ6bE4enzbG5avTOmmGH93YBG2ASBvw6/1gxeftDNITq1KahSRZWZer0&#43;Y9Y0MZlgZEGiy3SankGL1AUfjawsEX&#43;KGsTxbfQ2dCoWy7zG0xkYxyOZAi9j1XsjOwZVVAKoQKZePzioJilK0yEosVZnGCWeZUlJScyGGUbmp0vLMvZHDxFuiONGQ8zEkE9m8Cv5/sjQt5m1gKugNE/FoeuGAdTJapGRhYBmy5J0fbFEYCbp68OOT1BfN/Db0Ckcz0BzRGWQSZPMA676m5RwoXJSXJkyV0VR03QsaZiGTonVBDT0SpYlJ9L1DletBelMCLXIPT2TvqMOo7cjFoPSi4W1G80QwcED9KxrCUGScgHYRigOkdKwhGZaJlAnE3WgDrJ77GQzIc52CzogFn0CoUc/KpCbQ3RI/RpP49OXOCsnsXufRlp6sqhIeVVRBYa5FgelWbbjOLZlUGK1XgTqOLfHXq1Nr7hqGCYpRGZxIQy1ghrOLfS7kKNox5oyp9mH3DRk6jV5nwtUpijLMsozQOuW7Xq&#43;3/QwXRNrByjVQrxUZsvrPxZn&#43;ZAueHzZlyOrHzvVuy2NzHxniGVwkrm/NBysmEB9m6kmE8zUOURNxwyv1Tk87PiOjVRdZ2RZUCSa5feC67swReybvXRhCXslPAK5fap3CxrH8cz0dSZFSPX7nx2YGiOsSZKkMFVRrFVREQKzYbqtw0OgbrmhQABaUKQsy5OB8Os01zUMl9LLyf7IOdMt6gXoGOoo9/Y6TXsDs0ZFYBI1iqJqicQ0z6bnt1rtTufwsO05tkklq0gfihKXwPpKs1sJKKwU8KnoIvbsvOkTqY5lMvi1NGTs4N7a0F4wF/FcRZGZYhVqT6wiPRum5fq&#43;57pes3PY8j0XqKEvCoAtZfdYml4Tp31GFGUeR96wLOs7LWRZ1OGnwvrkAXK2jReyika6YjFREzUsQdWqySSlW47n&#43;Z5rmbbXbvme57m2QSXrsiwLkO14tszSF8y1BGWh/HqR&#43;mPYd7pH7DXBPUDOBlaSoW/LTLGRqMIcqmvJGiQas6bQlut7ruOG1FNZC4KyliX5PUmuzQxbka/w0Arm9Xjzsufd2LEYzksH90fWa5N9KVAFptEIhQzd70VShBeQad9zHMd1bdtxIUAh9VAhgrLG0fyedHFtq0KdSxdiN5KN/BphRzOx6EdsD2cfMNQZeo1ZC&#43;KqzDTqCSRkzbBMg3oBL2wXoH3Pcx3bth3HsmzXgVwXr3MtkWVWUhozw07UAmJquzNq1NNX0KSNp/HMXdSxDE4zWPWeJ0oOlkigkY5pNGB9TUI3waj3&#43;ol2LGqmA20FqENcy9BNe5preUod5Gie5abX5IGc3l&#43;mXrj9IEOwPB69LZBYgaDvX4K2nmCUQFKVHxrIl5MiDM/d4fCDfkIdaxYkGkRtW7bjOpapaYbluI5taskGMj5BUdQSWWbpq/1rE6kFUxOJrs5vP0BDdoany3jmFjTI&#43;f4laOg1eQ1N&#43;7M0wxw67I16w5Pjfv8EJA3SgNkDEgwjqoVeWppYZwQFQcdLJM/TynVLx2iBTRfm1HNonCfJdOGmPjI4Kdy7o1g6VRTiQUWQGwfTNMNI99todDrqHvfPzvraW8cDZViOC&#43;imYZg24sdMSxcTQI2aDM2yfDl9NU0WhSWYCdqaoqtL1BmcJCfb&#43;Pw6QSgNmJ3v2wShAlUph9J8UK0hZk3rdsenp6PhyfH5&#43;S/n/ZOe41imBbYBY55lhcwO6FunDmRZUeIlem&#43;P5HmezfDJmfUdJKYmsgRdIEiO4/H5LhZdjcVeE1nm3k6nU0VlTeICBTFP09zVx&#43;PR6Wh83D//5fz8/F2fem9ZtgMScRyYTx3I&#43;fRLMMQqA5MTz/N7JMvy7KTUmP3fqwkpLMdF6kyazHFlfN7aY6sx/AEDko0pzH48qCihnpNJdE6gY7&#43;Nh&#43;Ph&#43;OTsHCH33/VfGJbjAaTjOAPoLkjloBXLBGrlJ/7H9Dq/B9hlerI203Wtqq7j4QF0WIorK5DpPEfimfCiDGwD4bx/z&#43;HZEDcFZHR1Rm6EeaYovdvtjrvj8bjbP0PMJyf9s3cnhh0iO7bjgpUAs2UZugG6Lu7/9H36r&#43;vr/B49oVmeVmrUzGxLF8Traa6hwaxEVjLERMqRfAFqMmzcoTvfWxohc7VWLRartdA1sN/G4y7KNKJG0Ofn714YPdt1XKSM0LTBRzTdNC29tvmvn77/8a9//XF9LyuVaLZMXgiz77UoCmV8ej6G&#43;vlqms3lK1w5XYiE2yz&#43;AHe2sU1mP4hXBOYgKSZriSp0bA37v93xuDscj4ejU0T97l3/HYq&#43;/hYl23V9v9W6ZrYsQyz&#43;&#43;6d/7H3/43p6fU&#43;KqxLHsnvS5nVjk2U2PTvXW10FSUsVKUemC4VYqpBK4YR0cF85mxqzGfZtdOBVg8kIpDFG0hiNT09PT8fHKNdA3O&#43;f9U&#43;gD0KeO1NmHbqMpb/Z/PdP//jpH99///1eSVIVVcru8eVAudaownBEKhUrxAqFMLFBviJxxBY6FSbK93ZnG2MSQhCvKHL9oCpS2CYFeQZljJEyhiNg/nDcn&#43;v63bt/nqAZtdMBbViGrlEipYGkQ&#43;r9/bW1QFGUNVXi9tg9LmBm5cjUAgJHt/DiOJ4u5&#43;KVeCVH7hBbW8TO/ed9S2M2lSCuyAxatcWaRlGi1v0tVEZ32EWONz7pdsNq7PdB1&#43;cvjIF3ifJsm4amibVGI6kZpv7izea/Sv9i3lQZWAqUtbjE0SRd2qxib6aTSEnlN/ANdKf3DilVKqoan&#43;zu7OzscvX7yjk8wI0rcr1xUK2JlG4YutZFtTccj4bdrj7ujUYfut1xbzwOc/3u/Pz87KTbc73Llu86hqZRyYSsyj9UKcM0qNrmZvGFRtUQtRqPx&#43;MSTdLr1zdRieJaeWuLIHaIbTYbV&#43;OVSo7c3dklK/d2Z0u8kgKpIjD1RAI8Q8NE0xjqU&#43;YRZLo36vXGH0DYIfUvqDHqvd6pG8qZEmtFNYCmVKVMy6De1F4Y2AstwShKPB5XVUVBR5QX1//olcoS6Kh8m&#43;QkjiTJnZc7pHz/9VWrrZUkVWbqifBIg6KM3nA4QtIYj0bD7nA4GAx6PaRrRH32y/l5/2Ro96zeYIBKkHrDXKhArYbUum6a5ltdLMrKmhSPK4qiSiRJ8tI01Rq2JpPbxNYWTvBlgiA2NraIh6yvprg/yaNz8mo19Ayz1xuNRmGiT0ej4bA38I6OBijP4w/j8fHZ2Vlf7zlH7sAe9XpDQ9dqjKLIckCSXEWuUsZb6y1mH9nh2ZQkxWHwUyW6TF7Mv/sKw&#43;3gOF7I4IVCppAmuAesr5he5Dg1TDOa9jVjOBqcogyPILmjca/nHHmDn0974/HJeDz&#43;fXzcP&#43;6&#43;t13XcwdWzzQMQ6sJsiwHHLk7mahyldJt2zlyLMvUk4xU4iQVTasSzWeZ&#43;WkccyCxAB3NRAoZInjQMy6iUMrLzMFsdNZ0A4QwGh4fw2j3&#43;2g87PYGjjsY9MZD8OzfT8fjbnc47MGUN7Dtt0OzZ1BF5qIyKe&#43;WdyeTgPmVMpwj1zJMy6QSQjzMtKLEOZadLKSzWlVJYh3H08R6WX3YczlVZVKR69XrcR/7rdc7HXVP&#43;v3j7mg0Gn84AX0MBoPR8AN43&#43;/j0&#43;6H8XjYQ785&#43;NvgrQXbY0Ke7JYn5G6Z5FQmqVu2ZUCvMcSEsKYqyPsg1cLiuacoNpRA4iROrT/w3pPqGqcyaA5F4qBevO/1ht2Ts7Nfzvpd5M3QYE6hFMfgJuDYXZhGer3e6eB08NZ&#43;a5uG8aIRkBw32d0pT5QDSjcNCrzTgvFJRpujAusuWV62hyQWF5OiiD30gVVKpuMyEocI6&#43;uL9&#43;b7k&#43;P&#43;GbjaWf/k&#43;GT8AZleb9AbDse9Ue&#43;01wNq8PHh8PR0MBg49lvzvfGioQYqV97ZVQ8o3dCSjYSoW45t6VQ1UWRkJGqSrt&#43;4M0a8/s&#43;DwizSHMgDMVOaaRonx&#43;/Ais/fnb8768Ng2u2C7/V68HEEGYfuCF/KcHQ6cI&#43;8wdu379/rVFUOJjukktQMnUoIqlKkTLSso8syITSp3Ab4rLuShAmthCflOkZBYZ28O//ll/N3fQR93O12P8BPaI492zk6Ohr0UHOHkaTnXvpNz3Ptt&#43;/fG1pNmUzkpG7oYjEoBWvCAWXajmMbmpgoCsJanC5zyiPdOMXslzmhjg5wDVie3p78n3Ng7vdhwADs4&#43;5JdzwcDXswiXr&#43;NNmg6p&#43;9y7bvN5tHtvn&#43;ralVmYaoG5q4KZGTuKDIITVGaWKCWYuXSJJ7wMWp/xpJocxy8gGlYyZa9QbWSf/svH9ycgIjxtlZ//i4O8uzi1Yrd9AbjcbQc/zLTstvd/zmkf3Wti0YTnWtJgdXpKQwsqI0krAWWKYmFuM0SZLcY90MqBXLPCvVKcMKdz3vyIbJs9&#43;HcR/K8ez4BFr6aGjDAuv5IfQppPmyDcxt3/OOnHAzN7XqRSDRJLcmM7JSkeuU6Ti2qSUqJEmSuUd7jjZNEjyrUCY6OfK8ZtMbfPjnu/Nw2EcmMjULmPpRoq3e6HTwc7Pd7rSaLZin4Us9chzbtvWaHKzFSzQtKbIQBNzfD3TbcSytnqPJCZlvPNI9/mIC9v1sQ0MnGb7n&#43;U3P/tBHi/dJH4ry7J/d0EHMAbRu2xr2TgceYm63On7Ta6LF1kUprV7EBWFtQpYnUsBx2coBNBo9KXMklyXz9UdBxjBsU&#43;K3eTZX1wzTtF2/6fttoJ7qGqD7x10DUVuO6wys4RAGaZCG3275Tc/3W2Ah03NqQWGKzBoHCy3JSeqBBpKR/yfLcRwZPBo0o6BTFU5Oiprpei2/6be9wYcX785DeZyfdcN2MgSjtobD0QBco&#43;17TR8hdzqdy1BYrm0ki7LMFOU1jiyTtBSXk5ou/qD&#43;HZizZK7xWNBikeSBmgwY0XRb7TZQNwcf&#43;mewoABztzfuQUeHJjgcjQauf9npTMsWkDudVqvpuk2/6do6omYUiSOzkioXk1SyXslz02Ae7QkQusSyLMvzvFQzHL/V6fjNy6muwzL8AOPdeGygRXc08C4vOx3f85p&#43;2293pgGpht0LTRuCogYlLi4wTCLRkCu5KTIpPdqtopqosCE1KYumC6lr&#43;03vqAe5Pjvu9sZdmOvGQ9S4welanVar1fT9zjxa8EW02j70bfFArkhSPq4wiTojK5DmHJfjuCwnPd4znZRM8yE2LScNxz887LSaHvzzJ8fH417v/bALG8FoDEPqz4Da6rQ7vt/uHC5Qe&#43;hKjIv6dlVWVWVNYZBMQuZcLsdllUd8hOx/k&#43;w0rtSa4XQ6h52W5x45dm/Y68GA9wEdfYzGvQGkFxpKx/ebnUXoNipFF5qMAw1dEJS1QI0j5Fnk64/3Lg2JIj1l3ubJIGm6ncPDTtNz3SMHmI9gaRmd/n4KDeXysNMC2beafmuRGQohvEIwALumDhhGkGg6C6LIzbDzdwx5nx2SNMs0y5MXouW2w1w7R0eDQW8A4z6si4Ofm53DdquFOuFN5k7Hv/RDfTiOpYtVRuBIchE5l4s/4lvq6JRC8jNoNouqcZprzzsa9AaDv/V6p6eDyybMGa12p&#43;X76B6E5Wi3WiAS13Vc29KSTIVb0kYun5cf9Y7&#43;9DzV6Dw5rEb4fjcvfx78bQDk3mUTOkoo5/Yt5lanNStI13UsraHkptLgQuJ8Xq0&#43;5rMTFPZNiZxjXwU1w212Djttr9lsNo8GR0eDo58BuY2so&#43;l3OoeHh0tlCNQhdst3XUuvKn/nrolDZuWh6&#43;snQsS&#43;yc&#43;hWTKYOl/b9y/bbQ&#43;wAbmD5lDkdcvM13lGhu1YelXmFsWcz&#43;fjyr3Pne9PvSJd55pnyYuq7niQa9TSm81LlGaoQND04eFtcYTgrZbvgneoU2eeMufyqlx9/EdUROzbRV2T8YRm&#43;5BMmPqAuN1stq7d&#43;bCzbB2t6Y&#43;O77m2LjKVXG7B6HL5vMqI97/V6/5BYf8rt6BrNmhotncYUrc7nTZMrPC607mFPM81SEOrysGCZ4QlyIhP8&#43;Y/IvZNdm&#43;uELbEaHazc3jY9j0fPprwIxzqDqcW127N7a7T6vgtzzG1X5Vln3uCElykpor5xVxLCd322h2gbsLo7HlHMInOkgyDf7O1kGjf9xyDaqi5xTTn8vm4fPCU77FUqylzar4sNSjLa3WQYfi&#43;d&#43;QceV5zrmLv6Gj2S7A73/dsQ2TUBddAaVbl5BM/Rb0e31vMNRNSgyl4nnt05HkzVwaVe0dNf/YVoCtcenJRznnkdOhw8UkfoxYxXl1QCD8Ban86DMEm3l6wZR&#43;a&#43;TWzC7PdxbI3T0vwqZ/q1bCSQC/kmmYoy/URMxTiZes60QufoQe6tiE2FO6mnJX6F3nAXhQXqcscQ5mOCwV42ekslt2C2fmuZRq62AgWzTmUc/VLvc3Z/iL13kRJGgPPv07rbW7fs6ha7VdByi3ruQJy/mJvzSbJiwqZXMAgcquZzOk9x6heqPHcbXfWvuC7L4jUkq5JFQbs1keYfd&#43;1NabE3ewoFeVJ3fmO2JSzi4OIIpofyXXodOIFR97QRvwpBqRPRHyRmqWVpOF4t4Chc8McKsoSd8M1VDn55d&#43;YQ8T&#43;sqRrBUZVfznHvuf7sKPU5CB3owvCsPEM76SUWHI&#43;Phyw/SVdeK7nOib1q7LUUZA7P&#43;RJpUcNRabnawHPBlXNnlODlj3PsdGAdKNzq/Kj7yj3j/0l5yODhmZ5l9fePL1vuhEH21jYBOMgjce6tPLwELG/5NiFXHMNynZbM2jo3DAgZZdXlLh68IB74Z8gEhSzsIKxPFCHCoH5yLGoqixx2ewSs3L/e7SfKop1iVymttAtbeh0kmoEHJflFo8JnmDl/oyoL1GzuTplWLbt2KauJRnEnM1lQ00/1cr9GVGsLypkkpcbSYqiqGS1cVHJATM3P0KCEnz2NzFDsaQQks6pCtNgGPmiUsnfYn5G17gRTHFOTWa5fKWiKoFaiedzOdAGN9VzXH3Ig3dPHkxVnRk2SeakuKoqqqrm83mQxzTTaN7/KvSMgsIwMTlb0kk6l0O3rIWZhjJEyGgV/Gq0MY30VCEkmQUhqKoaj6NMg3VMmb&#43;OEpyHiKXXQmo6izIN1PlcbqropzxB&#43;gNBYSWFDjOdkypAXank88CczeXiwpfeUe4borhJTu1jLg9QR77y5CdIfyD2INdhJVZUtRK6Ry739CdIfyAobF&#43;hSahEKR5X4yjTOWD&#43;6lxjKShxE6BzeUj1NfPXqeaF2BeyNIJGic7n8l/FUPepkOTcNXQ8X/lKhrpPhIj9JR6XEHRcVb7mElyMBPZXRlYURRGEL3e4&#43;IcjiSWoZJ05qCapPw0zCpGqYYnnnDX&#43;fwAAAP//mLUUR1ezeA4AAAAASUVORK5CYII="
+                     data-src="/components/images/seeed-mr24hpc1-mmwave-kit.png"
+                     data-srcset="/components/images/seeed-mr24hpc1-mmwave-kit.png 500w, /components/images/seeed-mr24hpc1-mmwave-kit_hu_4bc35bc899652c21.png 100w, /components/images/seeed-mr24hpc1-mmwave-kit_hu_81df1155182c3065.png 166w, /components/images/seeed-mr24hpc1-mmwave-kit_hu_5ff0f4f81fa521f3.png 250w, /components/images/seeed-mr24hpc1-mmwave-kit_hu_83bb8f2d92e8386d.png 333w, /components/images/seeed-mr24hpc1-mmwave-kit_hu_9660e8ba4d6c7055.png 500w"
+                     width="50.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Seeed Studio mmWave Human Detection Sensor Kit</em>
+                </figcaption>
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="l">seeed_mr24hpc1:</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>uart_id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID of the <a href="/components/uart#uart">UART Component</a> if you want
+to use multiple UART buses.</p>
+</li>
+<li>
+<p><strong>id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID for this <a href="/components/seeed_mr24hpc1/">Seeed Studio MR24HPC1 mmWave (Kit)</a> component if you need multiple components.</p>
+</li>
+</ul>
+<h2  id="binary-sensor">
+    Binary Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="binary-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> binary sensor allows you to perform different measurements.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">has_target</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Presence Information&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-1">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>has_target</strong> (<em>Optional</em>): If true target detect either still or in movement.
+All options from <a href="/components/binary_sensor#config-binary_sensor">Binary Sensor</a>.</li>
+</ul>
+<h2  id="sensor">
+    Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> sensor allows you to perform different measurements.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_presence_of_detection</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Static Distance&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">movement_signs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Body Movement Parameter&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_motion_distance</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Distance&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_spatial_static_value</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Existence Energy&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_spatial_motion_value</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Energy&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_motion_speed</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Speed&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_mode_num</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Current Custom Mode&#34;</span></span></span></code></pre></div></div>
+</div>
+
+
+<a class="anchor" id="seeed_mr24hpc1-spatial_static" role="none"></a>
+
+
+<a class="anchor" id="seeed_mr24hpc1-spatial_mtion" role="none"></a>
+
+<h3  id="configuration-variables-2">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-2" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>custom_presence_of_detection</strong> (<em>Optional</em>, float): Valid only for <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-open_function">underlying open functions</a>.
+Radar detects human breath at a straight line distance, usually no more than 3 metres.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>movement_signs</strong> (<em>Optional</em>, int): A value calculated by a built-in algorithm to determine if someone is moving in the current environment.
+When the value is 0, the radar determines that no one is present in the environment. When the value is 1,
+the radar determines that someone is present in the environment and is stationary.
+When the value is greater than 1, the radar determines that someone is present in the environment and is in motion.
+The larger the value, the stronger the motion.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>custom_motion_distance</strong> (<em>Optional</em>, float): Valid only for <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-open_function">underlying open functions</a>.
+Distance in meters of detected moving target.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>custom_spatial_static_value</strong> (<em>Optional</em>, int): Valid only for <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-open_function">underlying open functions</a>.
+Electromagnetic waves are present in the environment, with a low change in frequency when no one is present.
+The value of the overall space electromagnetic wave reflection weakly floating when there is someone breathing in the space (chest breathing micromotion).
+The output range for this value is 0-250.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>custom_spatial_motion_value</strong> (<em>Optional</em>, int): Valid only for <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-open_function">underlying open functions</a>.
+Motion amplitude values, different motion amplitudes cause different electromagnetic wave frequency changes.
+The output range for this value is 0-250.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>custom_motion_speed</strong> (<em>Optional</em>, float): Valid only for <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-open_function">underlying open functions</a>.
+The magnitude of the speed of the target movement is determined in real time. Approaching radar speed is positive, away is negative.
+When there is no movement speed, the value is 0, and the speed gear is in 0.5m/s increments.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>custom_mode_num</strong> (<em>Optional</em>, int): The custom mode number that the radar is currently in. If it is not in custom mode, then the value is 0.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+</ul>
+
+<a class="anchor" id="seeed_mr24hpc1-open_function" role="none"></a>
+
+
+<a class="anchor" id="seeed_mr24hpc1-standard_mode" role="none"></a>
+
+<h2  id="switch">
+    Switch
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="switch" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> switch allows you to control your device.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">switch</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">underlying_open_function</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Underlying Open Function Info Output Switch</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-3">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-3" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>underlying_open_function</strong> (<em>Optional</em>): Enable/disable <strong>underlying open function</strong>. When this switch is off, it indicates that it is currently in <strong>standard mode</strong>.
+Defaults to off (standard mode). Turning on this feature allows you to observe more information about the environment and is recommended to use it
+again in complex environments where the basic functionality is not sufficient. When this function is turned on, the stationary/motion and approach/away judgement of
+the basic function will be disabled. Notice this requires more resources and is not recommended to be enabled when not necessary.
+All options from <a href="/components/switch#config-switch">Switch</a>.</li>
+</ul>
+<h2  id="number">
+    Number
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="number" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> number allows you to control the configuration.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensitivity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Sensitivity&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_mode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Custom Mode&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">existence_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Existence Energy Threshold&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">motion_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Energy Threshold&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">motion_trigger</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Trigger Time&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">motion_to_rest</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion To Rest Time&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_unman_time</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Time For Entering No Person State (Custom Mode)&#34;</span></span></span></code></pre></div></div>
+</div>
+
+
+<a class="anchor" id="seeed_mr24hpc1-custom_mode" role="none"></a>
+
+<h3  id="configuration-variables-4">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-4" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>sensitivity</strong> (<em>Optional</em>, int): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-standard_mode">standard mode</a>. Used to adjust the sensitivity of the radar.
+The sensitivity setting adjusts the detection distance of the sensor for human body in static state.
+There are 3 levels for sensitivity setting, with the default level being sensitivity 3.
+All options from <a href="/components/number#config-number">Number</a>.</li>
+</ul>
+<h3  id="sensitivity">
+    Sensitivity
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensitivity" title="Copy link" src="/images/link.svg">
+</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Sensitivity</th>
+          <th>Detection Radius (m)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>2.5m</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>3m</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td>4m</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>
+<p><strong>custom_mode</strong> (<em>Optional</em>, int): Settings and go to the Custom Mode option. Some of the function modules can only be set up in Custom Mode.
+There are four storage areas for custom modes. When you finish setting and click the Setup End button, the radar applies the custom mode options you have set.
+All options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>existence_threshold</strong> (<em>Optional</em>, int): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+This corresponds to <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-spatial_static">custom_spatial_static_value</a>.
+When the value of <code>custom_spatial_static_value</code> is greater than the set value, the radar will judge that someone is stationary,
+otherwise it will judge that no one is.
+The default value is <code>33</code>.
+All options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>motion_threshold</strong> (<em>Optional</em>, int): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+This corresponds to <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-spatial_mtion">custom_spatial_motion_value</a>.
+When the value of <code>custom_spatial_motion_value</code> is greater than the set value, the radar will judge that someone is moving,
+otherwise it will judge that someone is stationary.
+The default value is <code>4</code>.
+All options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>motion_trigger</strong> (<em>Optional</em>, int): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+Used for time accumulation of motion triggers, multiple judgement triggers to reduce false alarms.
+Can be used with <code>motion_threshold</code> and <code>motion_boundary</code> for performance limitation.
+The default value is <code>150ms</code>.
+All options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>motion_to_rest</strong> (<em>Optional</em>, int): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+Sets the time for the radar to judge from body motion to body at rest.
+Can be used with <code>existence_threshold</code> and <code>motion_threshold</code> for performance limitation.
+The default value is <code>3000ms</code>.
+All options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+<li>
+<p><strong>custom_unman_time</strong> (<em>Optional</em>, int): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+Sets the time for the radar to judge from body presence to unoccupied state.
+Can be used with <code>existence_threshold</code> and <code>existence_boundary</code> for performance limitation.
+The default value is <code>30s</code>.
+All options from <a href="/components/number#config-number">Number</a>.</p>
+</li>
+</ul>
+<h2  id="button">
+    Button
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="button" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> button allows you to perform actions.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">button</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Module Restart&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_set_end</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;End Of Custom Mode Settings&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-5">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-5" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>restart</strong> (<em>Optional</em>): Restart the device. All options from <a href="/components/button#config-button">Button</a>.</li>
+<li><strong>custom_set_end</strong> (<em>Optional</em>): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+This button is used to end the current custom mode setting and enable that custom mode.
+All options from <a href="/components/button#config-button">Button</a>.</li>
+</ul>
+<h2  id="text-sensor">
+    Text Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="text-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> text sensor allows you to get information about your device.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">text_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">heart_beat</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Heartbeat&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">product_model</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Product Model&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">product_id</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Product ID&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">hardware_model</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Hardware Model&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">hardware_version</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Hardware Version&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">keep_away</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Active Reporting Of Proximity&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">motion_status</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Information&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">custom_mode_end</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Custom Mode Status&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-6">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-6" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>heart_beat</strong> (<em>Optional</em>): Sensor operating status indicator.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>product_model</strong> (<em>Optional</em>): The product model.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>product_id</strong> (<em>Optional</em>): The product ID.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>hardware_model</strong> (<em>Optional</em>): The hardware model.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>hardware_version</strong> (<em>Optional</em>): The hardware version.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>keep_away</strong> (<em>Optional</em>): Indicator for detecting objects approaching or moving away.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>motion_status</strong> (<em>Optional</em>): An indicator that detects the movement or stationarity of an object.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>custom_mode_end</strong> (<em>Optional</em>): Used to indicate whether or not the current radar is in a customised mode amongst the setup functions.
+There are three main statuses: &ldquo;Not in custom mode&rdquo;, &ldquo;Setup in progress&hellip;&rdquo; and &ldquo;Set Success!&rdquo;.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+</ul>
+<h2  id="select">
+    Select
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="select" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The <code>seeed_mr24hpc1</code> select allows you to control the configuration.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">select</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">seeed_mr24hpc1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">scene_mode</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Scene&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">unman_time</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Time For Entering No Person State (Standard Function)&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">existence_boundary</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Existence Boundary&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">motion_boundary</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Motion Boundary&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-7">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-7" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>scene_mode</strong> (<em>Optional</em>): Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-standard_mode">standard mode</a>. Used to select a preset scene in standard mode.
+The function of scene mode is to adjust the maximum detection range of the sensor to recognize human movements (Maximum detection distance of the sensor).
+There are 4 modes for scene mode, with the default mode being the living room mode. The detection range values for each scene mode are in the following table.
+All options from <a href="/components/select#config-select">Select</a>.</li>
+</ul>
+<h3  id="scene-mode">
+    Scene mode
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="scene-mode" title="Copy link" src="/images/link.svg">
+</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Scene mode</th>
+          <th>Detection Radius (m)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Living room</td>
+          <td>4m - 4.5m</td>
+      </tr>
+      <tr>
+          <td>Bedroom</td>
+          <td>3.5m - 4m</td>
+      </tr>
+      <tr>
+          <td>Bathroom</td>
+          <td>2.5m - 3m</td>
+      </tr>
+      <tr>
+          <td>Area detection</td>
+          <td>3m - 3.5m</td>
+      </tr>
+  </tbody>
+</table>
+<ul>
+<li>
+<p><strong>unman_time</strong>: Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-standard_mode">standard mode</a>.
+Same as <code>custom_unman_time</code>, but this setting is only valid in standard mode.
+All options from <a href="/components/select#config-select">Select</a>.</p>
+</li>
+<li>
+<p><strong>existence_boundary</strong>: Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+The distance to the farthest stationary target detected by the radar. Used to reduce radar false alarms. Reduces interference outside the detection range.
+The default value is <code>5m</code>.
+All options from <a href="/components/select#config-select">Select</a>.</p>
+</li>
+<li>
+<p><strong>motion_boundary</strong>: Valid only in <a href="/components/seeed_mr24hpc1#seeed_mr24hpc1-custom_mode">custom mode settings</a>.
+The distance to the furthest moving target detected by the radar. Used to reduce radar false alarms.
+Reduces the detection range of out-of-range doors, glass interference from moving objects outside the door.
+The default value is <code>5m</code>.
+All options from <a href="/components/select#config-select">Select</a>.</p>
+</li>
+</ul>
+<h2  id="home-assistant-card">
+    Home Assistant Card
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="home-assistant-card" title="Copy link" src="/images/link.svg">
+</h2>
+<p>For a more intuitive view of the sensor data, you can use the customised card below.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">horizontal-stack</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cards</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">entities</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">entities</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">button.{$DEVICE}_module_restart</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Module Restart</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_hardware_model</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Hardware Model</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_hardware_version</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Hardware Version</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_heartbeat</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Heartbeat</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_product_id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Product ID</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_product_model</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Product Model</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span>{<span class="l">$DEVICE} Information</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">vertical-stack</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cards</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">entities</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">entities</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">select.{$DEVICE}_scene</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Scene</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_sensitivity</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Sensitivity</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">select.{$DEVICE}_time_for_entering_no_person_state_standard_function</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Time For Entering No Person State Setting (Standard Function)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">binary_sensor.{$DEVICE}_presence_information</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Presence Information</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_motion_information</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Information</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_body_movement_parameter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Body Movement Parameter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_active_reporting_of_proximity</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Active Reporting Of Proximity</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l">Unsolicited Information</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">horizontal-stack</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cards</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">entities</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">entities</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">switch.{$DEVICE}_underlying_open_function_info_output_switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Underlying Open Function Info Output Switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_existence_energy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Existence Energy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_motion_energy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Energy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_static_distance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Static Distance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_motion_distance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Distance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_motion_speed</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Speed</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l">Underlying Open Function</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">horizontal-stack</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cards</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">entities</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">entities</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_custom_mode_status</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Custom Mode Status</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_custom_mode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Custom Mode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">sensor.{$DEVICE}_current_custom_mode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Current Custom Mode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">button.{$DEVICE}_end_of_custom_mode_settings</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">End Of Custom Mode Settings</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">select.{$DEVICE}_existence_boundary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Existence Boundary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">select.{$DEVICE}_motion_boundary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Boundary</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_existence_energy_threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Existence Energy Threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_motion_energy_threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Energy Threshold</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_motion_trigger_time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion Trigger Time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_motion_to_rest_time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Motion To Rest Time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">entity</span><span class="p">:</span><span class="w"> </span><span class="l">number.{$DEVICE}_time_for_entering_no_person_state_custom_mode</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Time For Entering No Person State (Custom Mode)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l">Custom Settings</span></span></span></code></pre></div></div>
+</div>
+
+<p>Then replace all instances of <code>{$DEVICE}</code> with your device name</p>
+<p>The result:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/seeed-mr24hpc1-card.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1337px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/seeed-mr24hpc1-card.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACICAMAAAB5qzHWAAADAFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAArLCsPDw8AAAD////6&#43;vr19fX7/Pzg4OAAAACOjo5Ec54hISH/5qj//&#43;oDqfTq///g9P3Dw8Nhq&#43;rO//&#43;Fy/8hhs3/y4XqrGHNhyGp5////82pYSGpYWBhYamFIoT///mguM3x/v8qISL//uDx8fFhISHt7e0iYan&#43;2Jz09PTa5Ozi/f///vGW1f0hIYW2ydnS0tKnp6ddp&#43;Fylra/v8AhIWLR3ej/&#43;Nefn5&#43;JqMJqj7GEIiPq6ur4wX7l5eWTr8e6u7oiMlQ2KiH/7bTj4&#43;ODw/OsrKzH8P9UMyI/ltT/5LdoyvjI1eSxsbEhKzbgpl59UzHr8PVRfaW68v/IyMghJUYhIS/OzM0vVoDn5&#43;e1tbUqZq3itn6FyPyj3v7W1tb/88TI&#43;v9vtPHwtG/UmmDa2trCgTxMJyHj6vG24/5&#43;n7xMarNLeKJfIoWbYzXWl0bU9///79JQQ4Zjiq5Zg6nd3d0ncrmrZCg8a7IxZ5vb7/qkYT&#43;/z96Eh4Gvw9Ox6/9wb3CgT0iXl5dhm9S0bUiXzPC5dSp7rN2ovc8oOWFvRClRot9/uOPzxIXb/f9iV6d3dnZilMa6hFXNjSkTrvRDgsbr/&#43;svTG8mMm5tLiXvyZRFQEOGqvRbfLqkWXOFI11WS5qXTGeeUCPv2arNi1KBcEtHbX&#43;MPnMqtfby389Uks68p4WMRCLq/86BTZh40PkhPJTbqHLH3PfkysbFmGaCQ1Wfc1IkUZyG1/8hP4JhbWhRUGGBZC9zPY5gPC1iPoSf1MZYg4zFw62yjGuUlmCGilr95vfYxJZ3K4JCtPWhvNvGsZ7O/dxfb4lYwfPFxNpVeKysxqe4uvVugoAojs1Ie7Xlzfaxkr&#43;27syOZKWDj5QaJ1QzAAAAKHRSTlMABgwQFRokHypNL0Q4Mz9XYKitO1NIXG91aXuAjZWbiJGjn2WE/srnyRAgoAAAEQpJREFUeJzsPMtq5MqSpXq7u/yAuu6eZpbeKDNr6fqDiyBJSMMFD5jmLEThRXF6c3qRMHDRXVyvDHU/oDYGw6G/wPv&#43;iAOznLPvH&#43;jlEBGZqZSUUhmfGbkHTkiqp1IZCsUrIyJz8Cf8CX/CDwUJbD8oIHIRlJPhcPSjwnA0Gg6TOtpJMpq9WS4Xbl/&#43;YK&#43;L5eJ4VkM7SUbz08dfnwC&#43;V16&#43;/zC/TB8HoxDrJBlOT2/&#43;cXvzA8P19fBxMAxYOxmOFo&#43;ft0YZY6Qy0m2wS/NNaqO1fdGSXugXaRSdI7/Z810jPA62ogb1ZrLWCr8ZcT2YlaROkmQ4mf56q7RUuGktv0kNIL9pzkSapql9wU3gN/ggGGNcf9NcS4ldSOhRaw3tOaMz463w3G&#43;SYzdaa86/ac41tmMiFZVm8K7&#43;c7wYD4dJSejJbK6KYn&#43;/3&#43;/vV9vNarXabjfb/X61zTVLW0EwpnM8dbWCfbuClht83&#43;ZadLZa7Vf7LQL2Vmyw4XZbSBZrKK&#43;/DCYjJ4xJMhpPz//jptjc393Dvlrt7&#43;/u96v7u7v7/UZFL&#43;G7l3Cr2AzO3t/f443f3d3db2X8doHScgvnw1nQEzSFm4CW9/t9zmOt5O3geDb2SA9Hk&#43;ni&#43;00uiyLP8yJXSuVFnqt8sylyxdspDd1zmefFrijyoigKpeACSsHnXMX6trfKVZ4Xm81mWxTbTVFARwY6BQRUk9LAIUDpKZDaqo7xbH78eCsZZ5zBzuwrfm&#43;nM3SPDAoncteau&#43;/E0pENm/hWnHOmK50KUUdZCAGUfhpMHKmHw/HszfHTjRQWmH3vwBYvk4oUZUY4NIQ94AV2e6nai6C/BLWs9en7toKLfWXr9WWmrgfD2WxMCiRJRpPp8QKQ5nCXeO&#43;cd9JYCJFlGcM&#43;UB1wDlJPzync659gs7fD4JZtV/Scyhd6Ew7nh0//&#43;q&#43;1uf4yeDMdjyx7AEsD0szsjGASeFrlSvEOWovMrNcGu2bcMC5VriRvAGiyyieNmhDu1mgmGDTLgY2xTw/0zbG2WP/rb7/989PudvCrZ2qQw/li&#43;XhrmDGINIpD0SWBgPSlyZAT&#43;O5qJ9Vmu1G6iXX9JqSURGq4VQZ9UW957nFFYSakbV/rT3/77Z9Xu78PJlNA2vlK0&#43;Xy6cYIxulRI0F4twgKZtnD7K6Mylf7bY72SHPYHFkbIC2liUc4nEptLJ8ga2iUT8YC9vi0VtdfBsfzkNLLk8dbTcJXSkTajbU7zWijc6A0Wl1reemzDn7BNylJUaSVvqzopaKUz0rfmTY6U8Ae88nYCuJ4Nl&#43;eEKVJ&#43;rlTP52U5kSzFCkmFRpw6XGmz7JyE3gflj20qfbVpaywL3k9mM3noPNKSn8nQWRMAzshZ0necSGmcgVUS5HazOqAGnC/WQVuQQh9dbVjjHgYRF&#43;2WSJCWhteZ4/Z/OTk6UZyszMZR&#43;Egy9jhdgiwaRJVsjGAE7IrZ6RgvfZdk7Q6XMmwAKXN7qPh3BQkhZsi7xL7lEnJJbLHLEAa2EMybjgT3HKjlp2iKDhxJ2gPwxmI/C6veRvi8uHBlOoX/7TMALeKgiitb9fZF9yqZQ&#43;LdDKezE9OHm&#43;NtxWBbDTal5vVAXy3I0Wdq7rXILKHhzVyML1YWWCOqaqC2AVgxq9/GiwCniZKa4F2Hy5nO4ngzEoetQ&#43;aWpEPwWteRmYy5kwybakz42R9qatOKXQ9E3tUedobFy4dNJ8Z2DAUHTAE4AAyz71VEPVvVj0ypyfx&#43;TDsRinZKfKWP5TTHoMqT6P2kIWVDnAu69diTkzRjknUimiQYOhiAq3nRjI05tKcV3wPJjhoD66gK/Bj435/0C9noD0WNZ5&#43;ujFWD1gyox1oUNpaSzB7WjMrUkYbZGm3596lsF&#43;VdF6ItNqdIaW5G6I9h9LWuIQ8/R1cU&#43;Suv5YPPdZcMCdAjma/XCmVb0KfR6oaSOtNed&#43;DXAbvqXaiTB1XtYdnD8FQbogH29oy6zp4K86vPl7t1Habe1GQFaCvPOJ7pPbGDykPElV59yXQHlblIU/vGKNOWvSmIHtt0UFBBPaQsihUiaIfm9tvgSdCvocg&#43;qAgYrtOjxJQ4o49apQ24GRypjabYrNpGeAJDuM5J6rSalyUw9JB0oHbpHXd&#43;yD24GbHBFdbuFax6RREAZZL8brvEZhxp/LaLDjDyIgXVG&#43;ayfcg49f0QcJBIbODAMMF85zUFadIQV7r2sNTWnCOlqCTpx1Tk8VE7aExZIMRF&#43;fIlSalfLfKgnSO4DTecramA2frwcqbwdPA62lnxrVgjJWmtfMy7krgr&#43;12Bt0njDog47R4Wkzi39Y3rPnTBzpKhfx7THsYemSWWgfUkHCxBmGwlSxHSypilFJrTuEc4hCeCWQP7YxvR1eIj2WPcdWMo0XMOFCryOsOW4RsINL0oIVwHrV151pCS8z73ILvDBccw0GbzWZTtMexBNNonFu0BygvYDz1HG&#43;AwbjO&#43;Wv4DNNnPGv0mfBOQXtYTwbI3&#43;m6o6SqivYAniaLSGEh57B3g49euGgJK8dOB20yjNAyVnGzOkdbDP3puvZAlSdE5gJGh2QjLS2wjZao3BvvTv1FSKRe6A&#43;6pu7pyZum74ERJhAppn1UpfVCDK0yp7ETaA8cubjjkMtGt2qYD2Y1PbPK2aT4VcP3sP60HYPAqLYoWqOeMEAsio3zp7lBHgljSN04kz99ZRgjN7AoOh6O1TmSe&#43;0xKHm69Kct1l0EQ7daSd6IYKTP0vDu&#43;XAbgmvRkbYvDXpBMnUTH7nYgZONwLaHPdzoihF3cidSfgxDGqWlbWqDS2XkoUt2hQuOqIbvQTxdEqsTUpGWMVvGkae9v&#43;Z9kzbmYt4t9Zfp6NXJPBN17eFGLsyPNbtwtmfYSDT404YGTnbolONb2xMX/rEwUQ6jBWvr0ga7hWMPr6dp5KKig9IYuCsxpz3QF9IVr7/VDxDp4Q5ioKK&#43;hwpuzw9N0sie&#43;j/wOTMTUok52nWI1otA1nyPifU9vB9sPYjDLiMylDVJ7pHTA&#43;jQIi&#43;kdCTu8XRD6hkNxGYL45NcHfKavDsP/oHCCIYi16XDe2kESZ5L6TDu4fR0nm/3mNnbr&#43;6vrzHLt23LX/r&#43;MRjAwSJuis12u93g3RbFZtOu519I6ajvkatitd/vV6si38L7/u5&#43;c8DXS0uDTLEiovaBIdSLcGYyEvcA48LJH&#43;fcOuedaZeSp/1A0YKzMC2ZhBeyR8z3CPKIYQYj3q1Dx6vXtMw&#43;lDonbjFejHQj7oGUplQmE4GjGw9&#43;MGey3XnluwhyoKU&#43;CbeXQsz3QIfJjhGtNVZK6hhTsyBY0x9Y41KP5Tl33oYy24wxOKZoqpXuE&#43;nmyGXpKU1DZB/dijGIs9m94lxGTQdhqFcyxhtZ9hb5L92Z3iAWNX28NYJnPMCmmj4RWeMGXur6vAyq2sMJoqYhEAUTa5FMka3XWaC20hcbtpcjfYthsTqlzdUvVxyGZCCIVTMssocHI0rtm9rYS48gG3GPEwr1ftwRpXWd0mm2vszKWOKrULpFe3DjgxEN1zLqavaJdMz3&#43;H4jq1FTi3tUfXhJ7BHpuu/hVB6GEBivVmd04Nwrg9TjHiiIN0bvPu44Bm0poxZPJZY4/7VPnFksY/t0IynnwikYoMhBPlD/2CPE4x5GoCDWUDlQE9QfxOIeJIhZIIR2SB6XRtIuvVrESNzDCyLnWttcJRb1xNLNYNWxwqBPpCPa4/FWmo&#43;/XHFO2Rys&#43;7RJvqKZywCzvjbZK7BHnafJjJuyoC&#43;n8GkkWyUyY9Y9UzpW74H&#43;tBHMlU&#43;6RCbGR5tFrq/lmtb9aSt4BMK/2pLXelSS9Yx0S8aWyoTDMstqfWtY&#43;opB7H4p3eZ7cA6DLeWCzYqK9eNlo7rfcW0kaup9DyNJb9hIs2wtenXlJr1BVXvYuAcJItaqeVDSl7xqTnWstghWa0rY9gfxuIehgl47b8SV8QQFJ&#43;HWe9ijUWvq6vKECEowXFjfxvWCQ7uf&#43;Wtrj8db6TKNzwJts1v9IX0Ti3sYCud7xj1ceP6qvodXeZozaRp1aW06r1fuiMY9bL0HqjzMYnQqvNdQedF6D6fybJYZFJ701fpNQveu8qJxD0kZ5oru8CVrkRkJfVvEqO9BKo9KsMv6vw7oWU/Hcy6pVR9&#43;Wo/P7COQo5SVqPKevbxo3APrCcoApBtsSar0z8yluVyv1w&#43;GYjqsvWjw/wR8pXo17iG44cwOt2iYRW6T5GB11ggPnz4ZqnRgUvUqivGMrcEsN1ZwubGWrUtnfihr1ljlj1UpXGrWY&#43;BUxnMuqa3E5H6GSjglkcYrWZa5CQ5/JFX1ArDGpc7TZUSDlaEPH/UoMxtB6KNPpONxD1swx73jYfWaj3Rka6IzFS31G1OPxz2c9pBunoK1i9LOT8kMiKFhLuQEgtgv0rGcC2iPjDFJ8wFzV8hlsxgghyiFNqecMil1n8SO&#43;R44tc/OtXGV22HRmBCZyC4zIfzM9/7wRVDRuIdJg2x&#43;GiTqS7mrJDV6D9ZEcy6uwq4y0anE0U8HToVP6veItGrUmp5Qbhzn2GKpCdYmhoUmgG92uX54uKSCDt17Qj8&#43;z8XWmtI03QJn2/hcohCXZMUfbPle78lx1Yh7nFjfAyeSopKGsRYLAtNI6cysM5qlwPr2l9pGLmVRTFpJzVYEMZx//xquac2f1k5VOJ0Ry1rYeYfOKekT6btYtZihmnG/gkNkSoJgHEbrspyF1SPSjXoPP7B1kz9suXy9to7hDPECBmQ096M/aM5z8SqPcVzlQylyPmq5T4FIbwspNdb&#43;9wnNuMeSak1xNrOfYYzF&#43;lWettX3&#43;hXKgeraI0xfpEEBXdpYHgTnG7nlA1437uFCCJ2LHxClmQ2FSJxX3ivSUe2h3STptFIrXbkTOwVYvkLcIzbH9vG26jD5dSuqswwY1xSZ7D9Y0xi5BHO3tE195nYcAFqiNOaC48xUWi6qV6S99hiEORdjc&#43;NS2alBqPtwPkvAH6gSqcrpVYoJ4zVMrAxAu7i6qOo8LJEGndcr0mhcpm7VicSt72EHJn41LxGuYVAi7adY9Ezp5vIvy6dbyUL9XK5HVi2NDpIylWuWYcr49kd3pv5hVwcqlzQ6nu/39Wn1hyD3KUcXR6OP0a1jP3gCXnh/OxjN/Tpdw9Fkenz&#43;NLj/&#43;fPPnz9/hpdwd2&#43;f6b/q5v8sv/z8OXKRzr1yqdb9p8FPgzfTiV/xajx9M5s9DUbjyeNgOn0cTOfPPKZtR/2H2R87JuNR8mUwPcYVrxK/INpiOjv79e1/J1/Pfp98vbDHh9/Hzz4uwuPp5C&#43;/n/0&#43;&#43;nrhj/HXsxcfo6&#43;nT0dH06PzxXxml&#43;mipeeOT47eLo/O3727ePfh4o8eHz78&#43;/vyh1N4v4DPZx9ecpxevDv7y4eLd0cnx1O/yl8yHAGpT45Ozy7ev/&#43;3HxDev784Oz16ezyfTUZ&#43;ZUIg9Xxxcn50evruzMKFf3P7hf3xwv9J34IvZ7XW/0vw7vT06Pxk8aYkNJB6OJ5M58fLk7fn50c/Hpyfn789WQKdx&#43;Fym8PReDKbzt8cHy8WiwUu3EqLty4XdnNvy2CNWfq2CL40ofPPZwHgc3z8Zj4FnINFZJMkGSHa0/mPCdPpdDaZjEZJdQlZIPZ4PJlMJrPJbBLuM/cLvtX&#43;9GcHb3hYaJxdOem5x2QyGY&#43;bawwD1rgq8ng0HtE&#43;Dj67j7Xfamf7E8ajMe2RBuFJz95GgHFsWeQEEQfcCZJh&#43;K39txdAUrtc1&#43;FOTZIGzhbxQeJXzh74I9zK38Jz/ZdB&#43;aHSuLIe98Ctgp00umoeZePoqtn/j&#43;B/AgAA///FqziCWccqRQAAAABJRU5ErkJggg=="
+                     data-src="/components/images/seeed-mr24hpc1-card.png"
+                     data-srcset="/components/images/seeed-mr24hpc1-card.png 1337w, /components/images/seeed-mr24hpc1-card_hu_df84a5056dd37772.png 267w, /components/images/seeed-mr24hpc1-card_hu_cd268538a163b31c.png 445w, /components/images/seeed-mr24hpc1-card_hu_fe7e47a5cb723338.png 668w, /components/images/seeed-mr24hpc1-card_hu_751db1e7e9cc01a9.png 891w, /components/images/seeed-mr24hpc1-card_hu_73a6af566cf7efc2.png 1337w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="https://wiki.seeedstudio.com/Radar_MR24HPC1/">Official Using Documents for Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li><a href="https://wiki.seeedstudio.com/mmwave_human_detection_kit/">Official Using Documents for Seeed Studio mmWave Human Detection Sensor Kit<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li><a href="https://www.seeedstudio.com/24GHz-mmWave-Sensor-Human-Static-Presence-Module-Lite-p-5524.html">Product Detail Page for Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li><a href="https://www.seeedstudio.com/mmWave-Human-Detection-Sensor-Kit-p-5773.html">Product Detail Page for Seeed Studio mmWave Human Detection Sensor Kit<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li><a href="https://github.com/limengdu/mmwave-kit-external-components/">Source of inspiration for implementation<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li>
+<a href="https://api-docs.esphome.io/seeed__mr24hpc1_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Seeed Studio MR24HPC1 mmWave (Kit)</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#button">Button</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#home-assistant-card">Home Assistant Card</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#number">Number</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li><li><a class="toc-secondary" href="#sensitivity">Sensitivity</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#select">Select</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-7">Configuration variables</a></li><li><a class="toc-secondary" href="#scene-mode">Scene mode</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#switch">Switch</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#switch">Switch</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#number">Number</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li><li><a class="toc-secondary" href="#sensitivity">Sensitivity</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#button">Button</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-5">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-6">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#select">Select</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-7">Configuration variables</a></li><li><a class="toc-secondary" href="#scene-mode">Scene mode</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#home-assistant-card">Home Assistant Card</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/seeed_mr24hpc1.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

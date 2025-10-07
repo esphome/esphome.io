@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Using an ESP devboard as a USB-UART bridge - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+
+        
+    
+    <meta property="og:title" content="Using an ESP devboard as a USB-UART bridge">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/guides/devboard_as_flasher/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Using an ESP devboard as a USB-UART bridge">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Using an ESP devboard as a USB-UART bridge</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#making-an-esp32-s-series-devboard-act-like-a-usb-uart-bridge">Making an ESP32-S Series devboard act like a USB-UART bridge</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#making-an-esp32-s-series-devboard-act-like-a-usb-uart-bridge">Making an ESP32-S Series devboard act like a USB-UART bridge</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/guides/devboard_as_flasher.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Using an ESP devboard as a USB-UART bridge</h1>
+        
+
+        
+<a class="anchor" id="devboard-as-flasher" role="none"></a>
+
+<p>ESP development boards usually have an onboard USB interface,
+either built into the chip (e.g. ESP32-S Series) or via an onboard USB-UART bridge chip.
+However some ESP based devices not designed for development work don&rsquo;t bother with this,
+and only expose the UART0 pins (TX and RX) for flashing purposes.</p>
+<p>Normally you would use a dedicated USB-UART interface board for this but what if you don&rsquo;t have one?
+In this &ldquo;emergency&rdquo; situation it is possible to use a development board that does have a USB-UART bridge chip to flash
+another device. This is achieved by holding the ESP chip in reset so that it doesn&rsquo;t interfere with the bridge
+chip operation.</p>
+<p>It does NOT require any firmware to be flashed onto the development board
+and will not change anything already flashed onto it - it&rsquo;s purely a way to use the serial interface chip.</p>
+<p>We will refer to the devboard with functional USB_UART bridge chip as flasher board for this guide.</p>
+<p>Make sure you&rsquo;ve read the <a href="/guides/physical_device_connection/">Physically Connecting to your Device</a>
+for properly understanding the functionality of your flasher devboard.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/devboard-as-flasher.png" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Connection diagram for an ESP flash target</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1290px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/devboard-as-flasher.png"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACmCAMAAABEDVWQAAADAFBMVEX///8aGhofHR2ZmZnh3t5NTU0hKjszMzOwlQDMzMwOgIhGRka1pzmyAAABAQGfn5/s15gxQ1S0ZQSzs7NJSUm9cAD6&#43;vk2NjbQ0dErKys&#43;Pj44ODj/w2Ph4eHPz8/S09RDQ0MhISB2dCXm5uaysrLLy8vW1tfX2No8PDyvr5E6Ojpqd4IRERGtra2oqKiko5uRkYxlZGQKCgrZ291AQECOjo4uLi7U1da/v7//0YePjolnZmadnZ24uLgxMTGBgICMjIeVikCkpKSlZgBQT0&#43;LioTUqgD/oVIoKCiHhHzb3d8lJiZ6enrd3&#43;JXYGktMDOIhn/GxsatoUSKiIGEgnnf4eV/e3F8fHxJUVhibXexpUTCwsJ3cWSBfXS8vLzFxa2VlJR7d2xTU1IkJCQXFxc8QUd&#43;eW6SkpKDf3eHh4fy8vLj4&#43;NdXV1zc3P19fV5dGjZ2dni5OlaWVmDg4JqampWVlYzOTthYGAgGRlxcG9YWDptbWxrYlGqqqqgmHRzbGBDSU9mcn3SwYvs7OtvalxNVl2XlY05PkNuZyv/zABjY2KhlTfu7u6SkIfo6ep2dnWOj5OmmjlkWUlPSyReaXI5MywnGBhbUija2NB/eDeXl5dmXU3e29lraDrh0Jdzc3GVk4q4s5H5GAVUXWXSyZP/ZmY/REnLyrbbzJV2cTm/upSZmJBFTFIvFxeekmicm5PIv5TRz8M6FhbAr4JIRzlSTDxHFRW7rHaDeVpjYSOupYeGf2o9OSIqJxxGQyHDnWQzMB5YExPn0JX&#43;nQCWilbOxJRxEBD/sVqabiaKEhLEsluJhUKJdBzo59SfnpWgDAy9uKKkbBGGgXbpSEdpYDv9c3PX1r7FDAyzqGDOrCNYShHuMy94XSn57&#43;X/t0HAoqLOhYWOPkRzLS/eFg3noVuEYy3/hoagf0j/u7vggIDjWlm7mhazMTLZcXHvvGtWKy3/29vjpqbMtpGqbm7k4Lu4S0tXVEjSoaH/nJzOQzSclIXrvQjWz6I&#43;maDJx7u2ZwMc8lesAAAvpElEQVR4nOy9f0wbd54/nBgmIzR/OCtGM3w8B8wUTKbznB04hgkXw9C1XN2UgXWtlnpXUEI9t00xxoEB4&#43;VXshu4VKIORNxOlgBterpH3US9pOpz9rNRCS1PtM&#43;t7vLQi6KqOlWHrld1FVZaLfAccu9btdVXn8/YxoBNtpfujz/2PeOZj38NL95&#43;vV/v9&#43;czH48P/cn&#43;ZP9TozKb3E/9ERoVDobDVDgcpih4g3YI3cKm/VHiDlY0l1ZMT5eWTk9X9PRMx2ITE7FgLBYLTlT0lJaWVgT/CFFTsb6SkhN9iyfKq8qLfPaSqhMl5bU9tX2FPc0nynz2sr7p8B8aYg6LNVdVVS02L/ZVldh9vrKSMnvZYuliVW1p4Ykyu71sceIP6mlI1f0rFZ7oqaiYmJiYqOgpLCzs6Skt7JmITVRUxKYrekoLSyuC4RTNd6&#43;/H8jhtTy2urq5uoaWzdXVtdVU21zgJrf9PlBTa9vbRz&#43;8s3/5YvvOh0c/PPrhnfUvtmF7/Quz/dr6F9upPXx4z7K9/ftATa3e2Tq/dW3rzvmtO3CXdUst17aund&#43;6cx7u/390u7Z1PnW7tu895&#43;9srv0eQG/fubO9vb2J1ixLPbCZaa&#43;vbm&#43;arc3tzH6f3dna3gv6d8Dztc3z62tUGK1ZFl6j4AIfp8Jr4bVwmMo8kno5fEOYCu9&#43;1/ado3uyDhWMxb5pSQ9v39mmUsdMhT9yDWUiMnMf3FOp9Gg&#43;kH6OyrwDLfBoa3sw9zQv9nzDqMPbd9b3H5GiphfLS0rKSkrmyuZKSspL5spKSkpKyufgA&#43;WoXVJSMlcytxjb9WZq&#43;876npwTrCg81vwNg17b3PF01h&#43;fsLu7qqtPnqx7oq6u7nR1Xd1JuFTXna6rqzuJ2ifr6urquhzl2XgoanOfp6ngRMVE8BvFDH2zvT8fUz2VfldIj0DTo9FQSI/oEV0PwZb5KHxCj7q66yd2ucCkB&#43;JWel0LrwWDJvvNNeu5r7&#43;m/0wuepSO9wYwgmAJliUxD0aysEmQHg9GEOhhAt2NtDROU7tdsB6mqLW17dXtzJrVhOve&#43;19nXTWTF5WbHqXjwx6ShdAgapJATZEgMZJl4X&#43;CniFICDr7fWYghlePvnbnKLQ7cH3tNbh/Lf3Azu7rbuFxVqkDPO0cDZDQmfCGkYRIkCSCT7IEfJAloauxwMwuT1OQbGvU2vZrr32xfXT7i21zk9VOP2S2v/b22jUUMvDP5KTHaACiRKBTW4gSgibNDZHb0&#43;thCHoblSbZ9clq1i5f3fIwWz36GgIN1WN/J4QqdQ4HoFMx6FToZAJLI2czm32eNumBQKeyTcZSbYraaX89g4eDB17Lr9OQHml80EQE2qQziRF5PY0kb2376OraISocm0jbTmu3xfJscj0EYW8fRQVZ&#43;AB6EKkYRHEHmWE2d0BjkT2cXkvR4&#43;gqRQVbS&#43;w&#43;ux3ezNVu3rH70vd9u7ZZrZ23pFs&#43;e0l/mKKgpxHorRx1WYoeKPIItJCY2YQtcsfTM7s9TWXRo8JXXNzY&#43;GV55gZ32fe/zu1L35f901QYehrR4y9zeboVqgd0KoaRaEGWbkDsGLzt8fQO6NU1qrWzsaS8trXWvLXV1rbVlsP9/&#43;RW21ZS7&#43;sPhzOe3lUBm&#43;FDBZuR5BEpsNA8Ho8n3U6MjCSTiZERT2CmuD9d6aUkz1SPVSrc2tleW9vW31ZbW1vb2tYPra2trb/fbO63tjxt02q/rG0LhtOc3lUtULGKwubmwtq&#43;9nlXACMRZo&#43;5BPSIBzYwDEt&#43;cOX6bPLVX15PRobd9r7mwubawv4YRe2ox9FtKtxa76tFf668vLW/vz8YjMVi/cHYdCwWm471x/qnp6f7U3uzsWuJTcNXmi&#43;OBWP9/eXtbf1pT&#43;9KLuEe37i1oKCgYP6JYT2ALJJaI6GaUMRsBSJjV66MzV6/&#43;8vZQKilbh6&#43;wTru6wmn6IHUgwo3d5bU9seC/bW&#43;8tr&#43;WKrGTVuwfxqhjU2jrYl8Om390/3B4I7Ywde31bfX9odXTdDZyYWaqO8eDQUCkUgAIz161JVlg4PDo4OuQdQ&#43;13HrVse5jlsdoQBGYh70Lw12d05TWfRYC7d9WdvWHwwH&#43;yEn0mNUQYSyv9nX6Kh0FHeeOtXZeKr&#43;VGdjI7w1dp5qPNXZeaqxuLLRV2v&#43;U6n3hdvqv&#43;wPZjydlVzCfQ2DEY9NEG24zHsGWwa64YJsILVF&#43;4Enn3nmme5nnnlpNELQsszYbKIn4nqzHBIjHYhUuL&#43;8pK0fObU/FkR/ggo2&#43;xqLKysd4w0DP/7Od378vaWz/3Zz6ebZmzeXbt68ubSEtrBx9cffG2gYdzgqizvtqBanwm3wY8sKxAw9wiXVrqkQwbO8LDGe3u5L811d8&#43;jTbyhoMNeCBsServmurq6uJ2Z0kgZegWXJ0NTU/Xvb29vr5xE9XoOc7vS19adTICQ8FSyzPnvmhRc6pvTAD7915FtDI3e//e27d&#43;9&#43;&#43;5W7yK7fTdn1kW&#43;9/MPvRkKhyTPPXrxXAvsZ4bbO&#43;tr&#43;LNCZKi9c1B2NLhCCaJMBE&#43;m9hPC6neMOh7k6xsfh6kS0LyiYr2sJEQyQeIIlF6ILZ352/s7583&#43;5uWYmFwi6tT/dhUSHr7JORiaXnp0cGZK8R44cORK/8sq3716/&#43;wpE/gpEfuXVV0fg8vKQ1&#43;tdAfGF5566/8zjteFDaXqsZuix42l7E0aItMHQEmACvSjEGtyVjSnrTO0d7jTomRBBA4lneUYksI7/eG396PrcGoVAr4Vbv2xFns4o00Tj1eTkm6d&#43;eryDXwFHjhwZit&#43;9&#43;8rdK3CDbleuXB95&#43;eWhl4eGho4cASoHRi6e&#43;um9z18/NUEd2kePTCAG7S2iAVQNAAV6Og26srixsRJmt2KEuTjb0yQDAM3IQJJtHY2bFWiEKZvTWaU61XpcT9z/6cTE3OsjXi8CfQV69&#43;63777yGIJ/5dWhoSNwOYJACx2nSidWH3/dUQoDsbO&#43;NZse6&#43;nPMOx7nhAMoELQQ2lPW53O8XGn24l245Ad7gbEbggacloBiiLRDPGcL9VdpHZxegd034Vk8uKH4fDq&#43;0kZQNQjV165&#43;5jp5VfuwubIy0fSBlT13ed&#43;GgtXnHry8T7o6WzJg55Ol7erXzXpkSSPZ9Gjwep2O91O987W7bbCpSHFaQhakvlkRG/yhTNl09HVMEwuuzwdrqrG4ks/7al4&#43;&#43;KIlPY0pMcrj71y5e7/l/Z0yrwcNzR5r3niw/eff2sufCgjeWhYhdo8f&#43;fO0e0723e2X/vwP&#43;6PuaKkwNpkIAR6L3UVFFjdKACd445KR9rGYVi6G9Ke9uK8jYxORp&#43;274BGnoaczqZH1UnSWHjy3r03xxgVcvrIyJW7d799JeXnu69cuftqBvMRVeVWRp5//N77L0xWn6CQ5LVNZ&#43;ixeefO&#43;Wtb166dv3N&#43;6x9f0CNJG83zEhBMTluhWlY6xiuhQeDFxRB3pcPZYHKaliRa4NmkrjfZw9SOp/dzOlx1kQRGYmoyKayoZiBeeQXqx90rZiS&#43;8lgWaC/HcSA&#43;NZmMJ03QiNPpjLi2tr2eHre79wIh0ECRcQBokx5Wt3PciXiRsvFxtEl7mqAVALxAogWiJZseaU7v8vRFYlldkVZWVE7zHvEeOTJy/e5jVx678tj1x&#43;4&#43;9tj1K1eujOywQ1W5w&#43;ryCr4iEU&#43;Y9Gjf0elUYbdGrYXX1nxQPTRNAUBJBWJDg9VqhXmlwQoXeAdt05yGgahqmirJtplseiCdLmnNDsRwVTUJFEVVNc6ipTx95dWRkZF4HG5GRl4dQZQeOgI1z6tyhzmOUxUZqz6RxekM6PSwZtju97CioUgy2NHphgZT4CDshhR&#43;a0NK8pB6qArARRZ7yZcNGup07W5Pz1UnCYwUZLDMpTh9/coIVGUkzS/Hh15GmL&#43;lL0Qi/zCkchCzzAYG3&#43;&#43;D9Civbcvy9I4F7d3R0CxLC0JaPRqsVre1YN6UEStUjgbIGLeJ2lQP4KUFYiEaGrDvpkd/7V716KoZfqIpisXlZTWtHtDTGYsPQcwdN//t327eGoGkloY8LRfeL16kDu3mdLaF7d3RqE7QvCBDnYZpfN7qdF/qrutCUN1Op7Whwe10jKckbyZkqodIhqK71COVxvdw&#43;s3hkw5rS2gkfltJZcRv371yHZq5fTU&#43;dGTou0v/eP5f3rsZkDkOiNjgW42NX/WgKm8Xp7NBN3kShAF26FE3cMlaMNDSdKkAutcNlc7qdpqKVzB/CdEDeHFcIBKepl30COfg9JuDTQV1g8nET24rUKiHkhD03eu3rpu366/&#43;w8vfGvru1bPvnb3ZkZQ4ThKxqSfc452l1D5O77gi7POzuKRxmqIg0AUFl7ovNcwP&#43;AcuFViho8fHrdmgU8lFVVVFwsVs9TB1eg&#43;nq17XI64Qwby7cVvCh4a&#43;9TejN28uvXD16gsvXH3hzNWrV6&#43;ODn7n77/z4xn/i5MLSRFwnELzRGjY714MH9qt07s97WcZQ9E0RVGQp2HQua2n6y4V7KGHE5HaLJigeigGzbb4guYIO7V29IucOl3tYTHCkAxjhU9GIn/fdPzeKYfT6UTJ1vk4UlYortaBKX0hySxzHAA4Gxh8q2&#43;vTu8GPaAnMUaSZZCqPaxWq9tUD4jeuhOI1oKMp4FXlnksEHipHpYCYVgOoCqvbS&#43;n507r&#43;ugUaaOBkbh188UWq2&#43;uZK6k5MOSPdbeMPPc/VtxwGlAFkNXB9yL1D6dzgb95FRNNM4IghcwgRmk0wUpxYNS14D0D2kfkrxLZiDSPA/T&#43;It/90XqbNHRa1n1dDanR59tOD0cIQwjuXT2/rOOkubF5tXa5ubm1eaM1TbXFrn998/eSqxwCh0PnXSOn2rb293axWn7QGghItI2Qc7o9AGW7gTgNG1LhvSOn/2f1167dufanWvXXtte3c/pcN&#43;bw3UOt98VEJnE2JnRGWc5RFtaWtrcXLravNq62rzaXNpcWlvi/tFkx1hc0QCPuQoaG9t7oKfz6XTY7id5RgL4Thp/CGikHkBRJcYWP3Nv58zc2tqhcH&#43;tvW06uzStujA13N00GA3YjPhCNHTVWd5cWljYDPFCsM1ws9pculjmHg2FknGVU3Ab/LwrCw/mdItNQmkc1dOwyjsQtEkPReU4TZH4q/Vr6fN2axR1aJ9Oh6uqAwQ6vcDQicmljpnx8sXSwsLC5tLmwsLC0sXS0sLSxebSxcIyd2/Hrcm4wi0rACf10ff7DuJ0EHkaAEkCSh56IDY3mH3dApMe0CTGRrS0x7LPKQZrv2zN9jRFzVUHWIzkBcbAk0s37z/rKIdo01a6CDdwX2ZyGmoewAmYxvfXHtme7tb1pEgLWX3EPZChhqDCyW11N5xG6uGlX&#43;bZgK63FB9rbW0zl7a21tpy317JuxB1vdSrs4xkJG4tvdAyXlKYbaWp/WKJu&#43;XMi5PxFU6ReWz46WpH4d56epeni7qnxqKEINAg093aZVZnZSXsBJhFtrOrRScZ4BVYkVyoCV0tKK7vrK&#43;Ht064fFni2xeIT44XXA2IshRPjiFOF&#43;awxRL390JjSX6ZAzzp6qos/qr04NqjKeAhDQDSyWWvo92VnfX1jZ2NnZ3t7fWdlQWoNAU4jQukxzPaUIzQplD7yn2w/7xb8pqspwdJG23Ex865ro6X5AZd5h6dmlyIqxB09KTT0Vl6YO3h87OGrHAWTcvNaXdxu89XX9/u89l9Pl9xg5nGFVVTJEP8UWVta&#43;2OlZfXtvYH96Tx0OgUQeMy1OmlgfHyXJgLCxGnOxIrnCrTbHRmwLl4MKdbWFnSOE5TlaFILk8Xt/va2yHmIruvHnqaYICqWSyqhNtm2veNzwazz&#43;bANC6SIg4k2UjeOvu831GSEzMMxOdudsBA1BRZ9Ey91XeATlOwyiMJGqpH7kB0F7cjzNDR7Y2O&#43;VTPRVVwlvT47eFwOIhGdM2B2uDuaXBU1esRTygiMgZuxMcmp3rzc3p0amohrnEakPhAzcxxpB75Of0kGhbjBSlPIFbWI9AQd3snBA0lz4szhB6NDtjNU8iZAdr0cNgOp10tXU&#43;6PDAQZ6eiV53li6WLyPbSAwZifJkDAqs/1XC8sfDg2mMgFIqweSUP0cPns7e3&#43;&#43;y&#43;9vriVCB6GYGdDYWesgd3VPoQtQey2Ql4wmFt0VkZFkzP&#43;aFOLy7O7UW9WOZuWbp/Ky4BnPUMFqBOwIGcbiLjvKQoedSjwF1ZD/nsa4fUNjlNw1wkybxI&#43;n0HT9QLV11w9dYNDEZYaSW5dPapp2AgLs7Nzc3tAV0CA3FpxJBono34uxoqC1Oczq3TKI1znEVTc4O2OhrbfXY7Csb6ND0UqJBAss3YD54gEe6rjpCRAMkKACQmb6E0jjw9N7eX073nbo3FZUmWJQYLDT&#43;M035CMICmqXk8bR3vTIH2tbc3jpuB6PUysjmWtyuN7xAlffS5ag9LEgIjK8vx2WjoR07o6UXk6dK9nA4l40CWJckQPTVvPaT2GNAjSV6GVV7uQHS02&#43;1Qon0&#43;09M61BpBFNlkJNLS2TY9PT09Mb2znZ6e2Jm/FK66EIq&#43;MBgQDUVKjN0anYFpHFJ6Lz3K3Fcnz4zFpRVc4EmX/8mH6HTRk1NTURKpR6oTsDsQrZUwEE3xgIHoD6E0TrBYqCZ61V2Pcg7c2NEO3TsxnTk5cmH0aXfXcESUQAJ1Akx6wEgs3aPT928uJSQgi2RNtcPR&#43;ZB6ekBPJnkcl/PotNXRCIuLRlhitNejjMgASSBsoicZGCwobtxnxY7i5nAa9JujA&#43;6CXp1FBdOLfjMQF/vm9knezAtLk4kVVeaJqTqHo77woNojCDu2sqKpiqoMBXq75/dYQYM1PXpaWVxc7Ogy1QNncAln2FFHeW3tMbgcO1EO7cSxY8fsxePpWU7UiQuh6MyojtmAAjl91VmyCEHP7Ze874VCIzYoSwbh8j85fnAf0dciygCmcUVhPMMDdZcyS2pzen6&#43;oGC&#43;y&#43;wydnX36in1UIFsm2mPwZQIk2J/f39ra1t/fzDY356ZmmWmcYI3AzGVEZF67PM0KpiALCmKJHpcqU5Afp32sKIBgKQAmowOz7TsXvZab00ADaoDNJbn96XPKAT7m8vtvvLa/nA45nOUp2bBUXPVESzi4WlJMRJLN&#43;/D2gNi7svB6aX7txKGjOOykJG8/JzujoYWWEaA/UQiENGRheAKl933QroeCWAszIiCQOhjmbE8igq2HSvytdtr&#43;8PUtM9RPp0&#43;ufVmzdWTTSGWhqDPPv9sRqdzJJebLyRwmRHJiP/NhuKDOV3UHR3TCQTaa2PfYEWRMOeFmTdip8kSrCiKImvDgReHoKPR7vRY3qFwrK219lhtf4yiTE9TqUAcfsLR0BsRAYgvnKuZMXUaSd4enR6G9IB9rew0fsBYHsHikB6KzAiMjIYHaBpuGHqX4TQuAYkWBDxFD9Kzk8YpCjIbnSGGoPvTnL7gaunqHo2wEuR0tNeJOgH7CiYYiNGpZHxZlUUsNFCQLpjycRoGYqqe9jI8DTQOdswRLHOT2sK9wnEKLvC0pMI3SMbOoHp6oB5mQwg6mKYHLE11jBWAkehYWvKnOwF74hD2EV9YggWTzNvisDRdPJjTfoI2FBUilQWeAZyF0zjT0vudhsWi4jyfGsuTabYlR8GU8rQ5eF8F0zjLM4YmZQqmwqwe7Q49/Etnl0Zw2RAYmk2n8fw6PRBJYjacgaUbI9DAYjkM152N5QdmC24PW1QZvgh4vTKPJSNNOQqmLE5T1NxpPTRag4m4spI4d&#43;tMS/4&#43;4syZW5NxA&#43;dZltzpbuXjdFG3qyaa4G2CBHDBxgDu8EFmUXCbjfYC3BzLG7Af7GnYsX3K2jUc4GFyGYuOOksWc1qRexAWTBIuJnVXtdPReTCnzbE8HBZMXt4m/DagodAwtJgM6TlBB3fUg6p6c7Tb2TCj28BKfOzM5HCDb&#43;5t&#43;9tzZW/b594uersE3Sl52/62b37Q1TEWBxLv0UfnK4u/6jm4nkZjeZqiqIoMA9FyMGjVK/CoN65KjI3My&#43;mMTl&#43;YGvTPhDABSImls0uDA/dOjR&#43;/d&#43;receepe8eP3zvlSN8ZGFy6eSuxosgsGRjurnY85JwLSuNoUP23oQcMREZSOYtFg52AfKAznkbDYqJgKLBg6tAnP3/n7PMX3/n8ufvvvPPcc&#43;88fvbZzx///Pn773zeoXcsdcTBsibhNBEYfP9ATgftfkzkDQlWeV7&#43;twNNA0WzaBIvki89jNN9rweIAGYTDO2GkUgm4smlsx1jt&#43;4vjU3eXBpbWDrbMbl0E91ZiMdH4rc1C6cqxs4AZP6xvNBChBVEARJVoJWHgZYFAdIDeMXIQmggl3oEd3SaOnFhavgZfxQTFE1bBgqIzy6MJJILH8QTC7Px&#43;MLYSGJ2bCSRWIDJEACNs2gS7Zk5PV9ceHA9DTsBhCDQkpLSaShth3NT22KBL6K9wOuliVDN1G&#43;hHsMnHW5/lJA4C3eZ45YNw5AMwwCSYUiwYaTuKCgLWDggkIOZQfWDxvKSJI06ql5GGJIyiSS3KV6GwVGCZBKeQF6dDmbUY7DJ2tUbIiQI2WLhNG2Z47hlbllRllVFUbRlVUvlLWjolFyde7zzwHGPoL2FxQ0V5kEVeHGvF6JXlCMwkytq2jRN49AKXwSAonEWNOqWMxCDWZ6eO63rg64AZjMHKRRteXlleYXTAE7TsiwZkiQpKbymKYaNCF1tci4eXHv4WVpSICpUWNBe79DQkFca4l8e8gL0hyBoC4cWSyqrQ5&#43;oMs625KNHxtPVSRYjbYIhM6hQZIx33/3b2ysyoUcjhMjzNl6Q1WzUy0Ay2IDr/aqDa4&#43;BQJJkJBloFovy/YCHYcgIKYiBUIQUvAo4Ys4hMDluOQyRQ2qrqkKTyZ0ztnk5fUHXXVFSZPjZ4RdffPFcJJ749482DEFvGbgaQd8&#43;EGlleQc1pwHZFhp&#43;yf2wc&#43;NTUwsEQ&#43;OaxSIlO8bY&#43;Ni5JIsNzgyH3qC9XkkCinoEUgQx8ogXHIExfkSmCb1m59z4XnpkPH1hsKmgbtTDJjr&#43;652zH98cS2xsfPSuYQRGZwYDJKrWRYGWdpytMGyoO3OaOW893R0K6aIsA&#43;0wd/uDu2Px&#43;PW7SREb9veGSAbHZdzr9Qpv/PCNIaBx2hE24BElzcIBGRd1KHk5punvqqfRCf2ZCDH74L1PP33vvf9MrKwsKzcAzpJmD4MgA9EoZmiWTCB6RhseNpYHk0uclzQNSt3tV69cf/cn16&#43;M8KxeEw0QDI7jskwTU70zvfqQyql0qHc4MKRyhzVNkXg251jebk5fQN0t0vbJg0//6hd/9emDd5dvaJdhzW4IIgLtGXziiVEiHY0csJF6y&#43;mCh&#43;l0iygB9I8etqQ9PcILBIYRNhqHJkab6rouDX9f5TQ6Mjj4XVzLsG8mHz0yGbE6QAY8oiCMPPirX/zmF58&#43;2DBwHGgKzZJkytG9DVY/BtL8WJYMBtOHzTR&#43;wLgHaWNg8WE5bJGSkwvx&#43;OyYh7cFdN3zfehpnCYGuwsa5mfeUDjN&#43;zJGijDcOVgwZc1hyuPp8Fx1gPCQNsb44MGnf/Znv/n0QSKRTMYlxOkIiUDPWN1NHpCmB6cAmYi4Dj6PCEtTPWmTDImzWBRbkmRokRAFcnBmNEQINAI9WjffUDBDKJwGaAaFDQe8NJvU9VyBeGhXz&#43;VC1PX8sI7FZx/84jd/9ot/efDB2M&#43;XZg1enxkYRqCJwIzV2ZTxNKfJDDY6UO04uJ4u6p6aDCVwWtYOc4CPJ&#43;KMjeUFbLRlGAViGvT8DKFoihcKKw04zssIZHSyJm8gBjO98dGnrfMz0eTsg98gT//ywXvv/TJhiJFQBCMynt4BDXhyqm7cUV96EKeDRQORpIcBQLFYODkxMpIkPLrHhgKRZbI9/YaieUUSI0mbxFlUryxggcgBOm22TyDJm4l6Pnjw6W9&#43;85t/eTD24L1PHxiKhAuiOULhGe6anyFBRvJoNvqk29l54LhHqmPLadzhw5wcnx1JYmPnFmwCgZHpQGRd3acLunpZRfMSmMeDiV4k2YrM5M6Iweze&#43;AVdH3bpHiJx652f/exnZ2/9&#43;4P3Pv1lfNmgbSnQWGimN2RTdjKiwUZ7n3pIH9HnF3GgotTMyWwSSySv3x0RRY8ewUQTNB8Ybhrw17ysaYDm&#43;ZdR78YCOwFG/k5Af1YngCRtNiE&#43;tvTM2aeWxmZ/&#43;d6DBxs4odeEPCmlJlgG7ORETZFZj&#43;uth47lkSwO65bDHM4msOTI9SsfwIwIAxFHQi2QkcjfsF50igNWU2bpgYuEx58vELPGPQJRnbQZDDmr6wuRxMbkfz1Agdg0HCGhr0VG0rSd2kMDMh9xPec&#43;cNwjiGaqszQOC145nhxJJq/fmiUCZiBCV3uB5PXiUMsPW1DNBBVdA15Wj&#43;ZO49mcrnrT9XzXEy4PL0myQRuGhCdmxxKG4XENRz1olM2Gq1n1Egd4IvS01d14MKeLuqMhncUlwB3mpPjISIKcnUyyhB4NecQhGYdwFVjyWrK7BZzqxcWFUDRnz2WXTs8Pn6y0tkREcFlDiwIrf02RedbG0DQDi3MtG7RMBLLSeF6d9nvirKyg5KJKxm2D5lmRYXgbPyRLAC6KynEWVJFmo1ZlkcCef0g9TVVdcM2c7nZ5eACrWw31AhB6DdXtkmEAjbu829N607y1&#43;ECdDpppXFPQp2&#43;OJPDxOAP/DVU1uwHwbyleL8juP5q98VwZ8dD0bk5jeoAQDdgBgH9FU26kWjeklWVjwzAuZ/cBoHoInuhweiyvP1/tQdAGAJDThzkVHhBPjHwwIqCTAwBNqVA5mE34IW8WQ8yeS840HszmdLVHJFk0GCspigQUIAMFwKZk3N64ffsnP1nZ1XGxaAqQRU9NQVX4gDlMQTQvj2dstGrh0H&#43;uCAvX747ZNE4FXskreb0SUDRNGhJSnV60cJoioLG8XJ62Z&#43;t0KHRmMEAIkmRApAi0JGmKJK1s/O3tjY8&#43;2vhBNmZOwXmypqXpeNl0rL/8y3xVXlH3VE00IRKCarm88cl/frKhCAu3rozFVQ14ZRmHixeoKsCHcDQijPqgnOr1EiFX9Ol8Qwj9O8NiT1m7enXRgO6Fn5sE0rvbGysrP9lYWd4FGtjImjqnc7zTV2T3&#43;crzn5KbDYg2glcsN/6fX//6nzf&#43;b1ty4foCryqSjKfMqyCvA&#43;BFpnKHVcXLJ3U9bxoP7gxAdrvnhwM80JTLmnZDgzoPwA1Fu6HcWFleMd7dhRkNIdScdjjdjsbGL2u/bMvbCSAEWpIZXLv8f/3TP/&#43;vf/3kNpOc1ZO8omZAw24NClHv998gfsgKXiQmCs3kLE0PZev03OnQ1MyohwHaZc5ymdM0sBFPbCQYxRw20BTl8i5OX9Ykg3A1dTfU17a2tfb373yJcren0&#43;rBWZY/&#43;ddf//qfVgzM4/EIqiKlHQ1FHCYVlSY8Hg/GSlBFOA5IfM5OwC5PVydZEipqChtgx37&#43;4Oe3Zg0NicZlC7c7DqEkGqKnZr4ETdOZDucEjcbyBElRNMsPbmx88sknGysMiWEYo&#43;yAlmWA&#43;uCcl3&#43;DIFgBIL2VeJHMqdO7MiLquQiSolmQ2EvJpff&#43;8dP3zsW1PWDTmDlFokl9tKA8CC0cpoJ5x/JEA0qeZXnjk40VhcZM0LK8y9OHYWgzgsDgCsdpamos72G1x4Wa4ZNNUQJXIJstGkgu/dd77/18UtAu5wRtUQxbwN817/xwNW1Hr&#43;WZXh&#43;naUmzWDTDJkgKDYvmbE/jaCxYVVXFy9hEBvZcVC&#43;emg6Uz9Np9Rg&#43;OW6d0W1AZglBuawYidkPZpNxcDmPpxWGcM0XV/7d//vFF9tfbH9xdPu1a6/tu7pMauKVoqiwDKIJUYagoaezAlECKvB6ca&#43;CE5EIYfYRFTqOJf25JqmYnjaPjuYwnRyMsBKvuzCJgwWtYRjghpbb0Zwm85GBhvcfP7V9dPvotrnZd/GhoK9FNCQNDRwd5nDCJqk0SWIko2kgJdOyDHV1iB/yAkHvHY7QGncYkVoWc9fT9syZAGquGpamHlKQBD1KStxlTbkBbm8Yuf1sZkQh4Jp568NV8/oJcLfvChlhu5/F0Vie5fBhTRYFgDxNMjAjSpIsQYMZkRYYL2Aig4MBXIMZn1MlPGcaP5Q&#43;fUEdotAJfYLgBUMBNpZWLmvKbeP2xk9uLx8A2hA90bfmgtkzdfbTI5IkGdixtRzWZIEGKg5rc1qzcCpMBIo57xjQDO0FXoF4A4oHTPEMiQVypXEq5hu395tz3mJlJ3V9cMoD&#43;ScZ8I0rG&#43;&#43;&#43;&#43;9FHG8t54jD1RYYm92I4L2RzguxUKMHD2sOiDPG0pNA2XuCh/CsSqpgkFWYByQvzsBeXJUU7rB4RBCI0lTONH4oVOYvt5Wiqv73SX/NSQ9dwiDAAw&#43;Mad&#43;P2Rxu3P/rk3Xye5gwy4qpzovHp/IYkT2cZRtZg4md5XOZZgeZFXNO8tCTRkoz6hLAO1hTBxjNDXtXCAZphk9GFnJIXPlbsTH8j8NKPprrHrf4aUpZZklc4btlYMTb&#43;diUfpzUc04e7itEpuYNA&#43;0mRl5F6cECwCV4EWoCgJVqScEnCAQfrZ1jZMeLLNviZHNZUNd&#43;8PIrqr7WnpzON/x/6YFNLNCBKgOENBXZdbsCCaZ/iodRjsXASi0V6u7scB3o6aE/NrIHBpQwJtKLINC1JUIwlGcAVB2Y1Cnu1ABd4WrFYDkPxyj2WB1mdmS5b0u0hMFK04cplNCdA0TRUuOx1sIqG7zmLRcEZhoica5jLxeVsT9sYSQEKZ9EYT4SUYMyhaQachJugFeQG1TsENE0mdQ&#43;tWTRNlRg&#43;58lP8&#43;pG5tzTYEldgPWQos1QOU6RGQZXYAT&#43;YF/4yTTD87TCXQY4I5CRwYbFg6ZWBiGnA3FawFULwHqbBnlFjsdpmaYBKiNhLCoawIeAHI8bGmcbbOrFgKZ4aTGp60/l9HTqOhbTPYWLXz29MPq0P&#43;qxgcucQttstJKTyYDmWZawSRwn2YjATF1X5eKBnEadAFLgaZXzBvxPDLPASCTiZDT6BlAB&#43;h4aUAERDZFCPGGoCtvb7Q94VS/D5xvLS3tjcWtra&#43;vjFye7HdYWXQScRZNwetcYx46pksEIAuS8JHoGC4obv3qIegxEkknBwCVNoz2jvVOiZMQTZE13d5QGOGMTeYaWmJrugWg8HjcUwNb0DmJeBeA07wnk7m6hK6BSm1u/&#43;tXWxx93jDU1nB4N8AqnSQZNG7tHDLLpwdDwOWDDog&#43;VPNgJoHE0a0YRsIgeYCVg4PGauq5REedF0kOwNpztna&#43;LCpKhqDgb0SMkrmqqCgwmd8fWtM2tra31uc/uz0ZcUcxmKJyEpnUFSHl/gafRZESPRDwi0BSDJ3TzRNFBnm6BaVyRJQ3wMH&#43;zssZpUqSuoYVgbCzmIQmWwZoauj0Sx3EqzZIYxjKKpqGv9uWa1Uutba6tUeHNra318NrcSZKmcQkonCZEW/wt/haXuM/VHCAG/S0t/hndQF/2NWx619zBnm4KkHEG52kFCCLLsjbYL1HJbnddRGQJTwAjCVavc/tZDZaBuPh9kWVpRcJlhiU9L&#43;33NBXe3FzfXAtvfra1GQxXnSSUG2h8RhNHm2aGe5uGif0iLXl6/b3DMy01gnaZu6xoCnmy6iD1CNu7p6IhUiR4BdACzdh4iTts4YgBR8FgJDTlGqypCQUGC5x&#43;EfaxNFlgaN5GSzhvIxemco3lUWubm5uba&#43;F16GkKgtZgMaosizU1JE/UuIh9AsIBzKWzAlajC5oGDMYwiItVB&#43;p0UXd0QU&#43;IhA0AmsZxRoCe1tgBh3PAj77oN1/XMuB2tEDQFs1L4zjN0zDHEPkGINcgZkiPxXB48SQBjNmOM2NxyaYT2l9fFnVR2cdpiQgwP/hzhfAIipE8d2Yskaw70NNBexNGxGlED&#43;hpPg26uNHpLK6HVux2FztMT6syw9Boao0k0SKB5Zxeb6o05DQVnjtJboxdOHXq&#43;Lm46OF/8Bd/TnvEHJ5mMfDnf/EDG8YYyWfufXV86dyFqgMDEU2QVRQZaEAQRZtoQ&#43;NjbFNxe327eckqX319e2WT6WncJtpEkUbjLnvm5e2APkRRh8Kbn/33Ypiqeh1LPPtVxcSHnydJnVT&#43;WiN0dn9&#43;kYgIb/lrgHn4jY57FWuLx&#43;&#43;/nzeNo4mtaNwDKBLQFJ4gSVKUucOHuTeaKn0QclFRUZHd7vNV&#43;lkTNLruFQ0kWpaM3KfkUs4wPb1Y7UGXyig8voC5Bj2sxzVI7KMHJ2GDUYwNuKK2&#43;NLbsXDFvc&#43;P51OP8Nrm2mbhVy/pepLHYaXEkJFQhED0EP2Oxs52hLnI3t7Z6PB/H3bIOC8bCOkYAyTBxgYi&#43;dI41JB1yGlq8a1k4vmveiY&#43;vJhMjDb5Z1qaevcHokXCZppmZvz&#43;Ght/7l7hxNzj94/nSS7hzXWYaP/jKddklBBsjKLJ5ODMKAlM0G6rtdGHMPsarVYoebATCWyh3t4Ircg20TPmGjxZls/TFJS8Naqi0hVfuHjv3luTvC06A3W6xqakTyikHW0BhAtNc9YNI/HUvXvH798/VZETNLW29dlnn21tfXZx2LVAMAIDFBmb6Z7xyKqmAcLfMH/agUAX&#43;Sq7uqwDJBpGAKJroCnEy7TIkqHJq9a&#43;A&#43;jx2Tp1KPj2yUhi9lzHWNwwyIiuRyIkDetTFa4KWmA&#43;gblYj3hYHBjJyTMdHW&#43;&#43;nfurKGaeXS97&#43;7NLM4N6JBLweAKuprqBwQiGYR5XncPp7EyB7nQ6HV2D6GpdnlDLE929oYAeCoVcM9X10/mCHCaXxfAharr&#43;yRp9YSGAEVgyEIlEAknMPCeePrVFJAgigXlmA5FI0kMmyKQ&#43;dubCV3mOC0GvTwfDwQp7pdtqftfa7SiG7YKGBjdUOxNzUZGvvb690W1&#43;Fds9XlzpRBfOOO6u9OX&#43;EM28CAPx0KFwxduO9y9Uv37x4snq16HB5usXL6IN2tddrKu&#43;eLru9ddfP/3663XV1Rfer3w7ny8g6M0glKdYRXqeamlPT2lpYWtrYXPziZKyoqIy04qKyorKa5vhE62tPT09baWtpaUPucS6KXlouLpisW/uRNVcVWqtWoQr2syld3BdrDJf0bc4nfe4VCEEbTb3W7Ciue/YsWNVaDl27FhtT/Cgbw7lAL1u&#43;sQ8ejh7ybrqmXlFYPNqralv2YVzDhrs8XS&#43;j3diemJ6emI6vfuaV95FpeneS/iaz&#43;xqUukdte/Z/KAP&#43;Kvmv535778e6HQgfsN2sKcf2cKbW/89943/GALk9NzaISp9Nfq9y86l6Skq1/N5Xp25Dv761mff/FXLEek2Y//D67o&#43;1DbnfvU7&#43;CBRRtzaWt&#43;C1XqOdT37uTyvyfdi1P7V74LTa&#43;uf/eq/P/7s488&#43;&#43;9XuFT2ys8nap57NrL/Kfv5jeNtCW9j&#43;&#43;LP1zW8&#43;YqjNzfWv1qGV5d6&#43;ndnseTZjex6c2/1gz&#43;/gR0koKhg0v&#43;CWw8Lo1FKq8TAL77wFvct8c/jrquRvjTutDru&#43;RL0/76UlhMr8wMuuDbWjIYcyivNH&#43;6M1f7JHsUwplP6A85&#43;w&#43;eMxKjZdMYHqrmDqZE2somJ6eho9&#43;ocGl8eoWJXPZ68q7Sk9Vl5V2NbTM11R1d5ub/f56u15&#43;yl/aKMq2h2O8crGzkaHo7ixuLi97ES9e9zhbrCi2VCPduwM8TKilWLhox64v70YQYRdK2tXgcNX0mh1jxecLnB3HnjK6bc4dLCidMKsddFlQSrQ7wdlLrLxKEeOHSsp6ywurnRUdrY3Oirb&#43;0rtxY2dleONvsJH/DkLqsde7ztRu1i7WNtXVdVX5atvL6ktbF481te32FwaexTU4WAs1tO82LzY2lNRWFs4HQxOFxYW1vYVxh4xDinIPKezsrKy0mkdhy4Zh/cclZCFlZ2Lj3R46hAVnO6ZjgXhFiXkYCxYUfFInjAPPFFS3NBldbsb6p4oGG9sLx63Wq1Ot3vcMe60Okoe7XOkwj1l9b7yxdqientVX1/hsaqqKruv8NELzWBbUWNxZ32x0&#43;ps9JWc8NV31tenLtHS2f6Ix6cqfONd8&#43;7iYneB2&#43;Ecrxx3jzuszpJHB02FJ3pKe0pP&#43;OxVPdOxWEVpT0UF6jdXVFQ86k&#43;&#43;Uf3tjvnT1spxd4PbabW6GxrcDvf4gcPcv&#43;2RzWSFfmrh0N467REPHVu013f6yoqK0KVI2uvrfWW&#43;oryjSV//&#43;L&#43;THEUF4YcWQz/aNzExMT0di008ehz&#43;zi2rjM60/2Rf0/53AAAA//8C9HpYQlDdwQAAAABJRU5ErkJggg=="
+                     data-src="/guides/images/devboard-as-flasher.png"
+                     data-srcset="/guides/images/devboard-as-flasher.png 1290w, /guides/images/devboard-as-flasher_hu_c563d692cc63ba89.png 258w, /guides/images/devboard-as-flasher_hu_a78267be2f358eae.png 430w, /guides/images/devboard-as-flasher_hu_cb083b2d1a4a87ea.png 645w, /guides/images/devboard-as-flasher_hu_7af3aa4e7840ef89.png 860w, /guides/images/devboard-as-flasher_hu_27502bd7b3a575f4.png 1290w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Connection diagram for an ESP flash target</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>You need to make the following electrical connections:</p>
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <ul>
+<li>
+<p>Most ESP32 S and C series devboards do <em>not</em> have a separate USB-UART chip - they have it built into the ESP. See
+below for instructions regarding ESP32-S series.</p>
+</li>
+<li>
+<p>The 5V connection on either board may be labelled either <code>5V</code> or <code>VIN</code>. Some boards may not have a 5V connection
+and will require 3.3V only.</p>
+</li>
+<li>
+<p>Rather than powering the target board from the flasher board, it is also possible to use a separate power supply,
+just make sure all the ground pins are connected together.</p>
+</li>
+</ul>
+
+</div>
+
+<ul>
+<li>connect both <code>EN</code> and <code>GND</code> together in the flasher devboard</li>
+<li><code>+5.0V</code> or <code>3V3</code> on the flasher devboard to <code>VIN</code> or <code>3V3</code> respectively of the target device</li>
+<li><code>GND</code>, or ground of flasher devboard to <code>GND</code> of the target device</li>
+<li><code>TX</code> of flasher devboard to <code>TX</code> of the target device</li>
+<li><code>RX</code> of flasher devboard to <code>RX</code> of the target device</li>
+</ul>
+<p>Pulling down <code>EN</code> by connecting it to <code>GND</code> on the flasher board prevents
+the ESP chip on flasher module from booting and polluting the serial lines.</p>
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <ul>
+<li>
+<p>If the board has not previously had ESPHome loaded, you may need to pull the <code>IO0</code> pin low (i.e. connected to <code>GND</code>)
+to force the board into flash mode.
+This must be done before power is applied.</p>
+</li>
+<li>
+<p>Do not connect 3V3 to VIN of the target devices with a 3V3 LDO as it may lead to brownouts.</p>
+</li>
+</ul>
+
+</div>
+
+Once the connections are made, plug the flasher board into your computer via USB and proceed with flashing the target
+board via whichever means you intend to use.</p>
+<h2  id="making-an-esp32-s-series-devboard-act-like-a-usb-uart-bridge">
+    Making an ESP32-S Series devboard act like a USB-UART bridge
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="making-an-esp32-s-series-devboard-act-like-a-usb-uart-bridge" title="Copy link" src="/images/link.svg">
+</h2>
+
+<a class="anchor" id="esp32s-usb-uart-bridge" role="none"></a>
+
+<p>Users with ESP32-S2/S3 devboards can have a look at <a href="https://github.com/espressif/esp-usb-bridge">https://github.com/espressif/esp-usb-bridge<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> instead.
+But be warned, it demands flashing your S2/S3 board using ESP-IDF to act like a USB_UART bridge first.
+In the SDKconfig, make sure to verify the GPIO pins for the TxD/RxD signals.</p>
+<p>The connections needed to flash a target device using an ESP32-S devboard are:</p>
+<ul>
+<li><code>VU/VUSB/5V</code> or <code>3V3</code> on the flasher devboard to <code>VIN</code> or <code>3V3</code> respectively of the target device</li>
+<li><code>GND</code>, or ground of flasher devboard to <code>GND</code> of the target device</li>
+<li><code>TxD</code> of flasher devboard to <code>RX</code> of the target device</li>
+<li><code>RxD</code> of flasher devboard to <code>TX</code> of the target device</li>
+</ul>
+<p>Because we are using the internal UART of the ESP the TX and RX lines should be crossed.
+This is in contrast to the aforementioned devboards with external USB_UART bridge chip.</p>
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Because we have made our ESP32-S Series board act like a USB_UART bridge,
+flashing another binary on it won&rsquo;t work because the exposed COM port corresponds to the USB_UART bridge.
+For that, you need to first manually put it into DOWNLOAD mode.
+(by holding RESET and tapping BOOT button)
+</div>
+
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/guides/">Guides</a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Using an ESP devboard as a USB-UART bridge</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#making-an-esp32-s-series-devboard-act-like-a-usb-uart-bridge">Making an ESP32-S Series devboard act like a USB-UART bridge</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#making-an-esp32-s-series-devboard-act-like-a-usb-uart-bridge">Making an ESP32-S Series devboard act like a USB-UART bridge</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/guides/devboard_as_flasher.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+</body>
+</html>

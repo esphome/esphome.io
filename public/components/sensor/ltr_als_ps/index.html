@@ -1,0 +1,1317 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Lite-On Ambient Light &amp; Proximity Sensors - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up LTR303, LTR329, LTR553, LTR556, LTR559, LTR659 ambient light sensors/proximity sensors with ESPHome.">
+            <meta name="twitter:description" content="Instructions for setting up LTR303, LTR329, LTR553, LTR556, LTR559, LTR659 ambient light sensors/proximity sensors with ESPHome.">
+            <meta property="og:description" content="Instructions for setting up LTR303, LTR329, LTR553, LTR556, LTR559, LTR659 ambient light sensors/proximity sensors with ESPHome.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/ltr303.jpg">
+                <meta name="twitter:image" content="http://localhost:1313/images/ltr303.jpg">
+            
+        
+    
+    <meta property="og:title" content="Lite-On Ambient Light &amp; Proximity Sensors">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/sensor/ltr_als_ps/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Lite-On Ambient Light &amp; Proximity Sensors">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Lite-On Ambient Light &amp; Proximity Sensors</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#ambient-light-sensing">Ambient light sensing</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#ambient-light-illuminance-calculation">Ambient light illuminance calculation</a></li><li><a class="toc-secondary" href="#als-gain-levels">ALS Gain levels</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#sensors">Sensors</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#example-configuration">Example configuration</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#proximity-sensing">Proximity sensing</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#ambient-light-sensing">Ambient light sensing</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#ambient-light-illuminance-calculation">Ambient light illuminance calculation</a></li><li><a class="toc-secondary" href="#als-gain-levels">ALS Gain levels</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#proximity-sensing">Proximity sensing</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#example-configuration">Example configuration</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#sensors">Sensors</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/ltr_als_ps.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Lite-On Ambient Light &amp; Proximity Sensors</h1>
+        
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/sensor/images/ltr303-full.jpg" width="90.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>LTR-329 and LTR-303 Ambient Light Sensors.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 637px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/sensor/images/ltr303-full.jpg"
+                     fetchpriority="high"
+                      style="width:90.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAEAAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AKGi2Ubh7mdhHbINzMavx6jp2sF7XS53juE&#43;7vHDVFoPkXukyafI2135q1Z&#43;HrfSrlbokKE/WszQs6J4f1q5uUN6VFsOrCsDXX1bSNRlQoy25YhHI6122i65BFp8848yVBKd3&#43;yKwvEt3Brd0m25H2YNwM4xWhmZkF1OswSabrHuXin6jJd26QNDNGxkXJzxTbnQ4LdMS6gSyj5eexrNs9Ni1GA&#43;deeWyvtBZu1AGnaXFxPapIWG8vtYAZp91JNDYz3KzoxjO3ZtqpHpXlYjh1YcZI56YpDZQ20yG4vfMTcGZfXNAFXT9Qv768SFI0Ut1JWuhXU9EW5Fjczj7SflZtvFXprvRY5YFt/LWRht3L2rKn8I28tyZgykE7txrP2hoVdd0Y2rNLEAYwMgrUehaNFqTGeZ9kUfLmr2s3Qe3eGNsiJQvFL4WlhksrnT5G2mb7rUGZbiuvDN7MbC0kxOOFbHU1FbeGdUuLlsCJolbBb2qOy8Fta36zOVREbdvBrYsdYghvL6eJ5JI41wyryPeg0MnxXo91pciPZ23mW4QFn296yrdstbCZF2yru4Fa3jHxX9p0q3jsJiqSZDr3rj9OuEnHl3NwyBWAXn860Mzo72PbpcVxA0e5327TiotNV7hbhJvLSRBlSBnNQ30GjwweWL9nfqBu4qtaNposV3XzxyEfOoPWgDobjThb3ccEkiNvj3ZA71N4d0O21e0nnuZUUoSFUVhb7OUhv7Uk&#43;4Rz1&#43;lY39qXFhNLb2Vy4jJ4b1rOoB1tjYwo9xNqDxR2cDbQ2PvVYfTdF1qB30q43SIPu1Wt7L&#43;3/C8dski&#43;ej7nGfvVPoGgt4fmkvLkiOPYRjPWg0OYnt3tpmiLqCKjw3/PRak1t0n1SSRPusBWds&#43;taGZ33hIaUdL3TnZOGwrda1kvdP&#43;zPbX0bT4Y7WHeuT8MRJLYb/AHrdli2JmgDFkc2iXqRvst5W4jHpV6C&#43;8KKsKXGxX4yue9VtXBktYwHiHzc4HP51mm10STVlu3f5FUBkxxmgC1qNppusatI0F4IIVAxuPFZWr6JBplqJ4b4TktjappDDDHrAilXfDIdy7T/D2rYuLTTfKnUWzn5cphulAFHRbCzudPMs5ZZN2BzWx/ZGnMfnctx93NcfBqZhtZLWNWzuz9KnGqzWbxyZZgeuaALMOjG6v51iYxojcE10VjYXEgWKbUwsI4yByKZb3O8wSIqKJVywUc/jWi9rvHHGaAMPV9Mh02GYQXf2hXxlq3PAWiJqdjLJlFZH6kZrntXjMFpLl&#43;4rsvhaf&#43;Jbcf71AGvb6DcK1zFdkzRMfl5xxXHajZDSGvpIQsUDpjZnqa9aPSvLvHJL3E0JMQBXjPBrM0My0bw5LpkAvpI1mUjjdWD4ni0qSWL&#43;y8ADO5getVpNItJLeBJnCyLyxBzmk1SGCFQbYoFCgEZrQzMI25J/eE4rT0bT7S4v1ikcsp61ftNKtZ9OFxLcHJ42qKgjRNJ1Jip34HBxQBrf2FYtJJ9nuTgN69qg1TTLG2s4WiLSSucE1TW41J45LiOLClsnA4q9pWo/a9ttNHGWU/x8UAdHo3g3U1gjubOQqHXPWtO/8Ga1eWJa5vuFGdvau48OjGjw52j5e1Wbw/6JN/uGszQ&#43;fNSh&#43;z3hiJyVAFVPxqzrZP8Aas3Pes7J9a0MzrvCEn/Es6d627m42RkMwHsa88trzVkhjttMTluSakmt/EsjrJcAOinkqc4oA2tR1FJIVto5G88NwmOKrJoM0shUmTkglcdq09Q02yg06LUTIBOmCcHrT7D4jQb0tlsC02Noes/ae0A5WW6kj1T97lRF8o/CtKPWo1ib94zE&#43;1N1myu7q7mvWtwFcliF7VgKNzAR9zWgGnbXBRLiRVGSvBIqK4uHl05Gfrn0ol0m/gRpGX5QM9aqXF20wVWUDaMYoA7HSLtJlgWN2cxoN3HArpBKCOK8kjvL6CNorUkM/TFaltL4stoN6xF19G60AdB4jk/cP/vCuy&#43;FP/INuPrXmM&#43;p3Wo6c5uotkiMARWz4e8YXvh6BYLO0Nw838NAHux5BryX4gTLDqEivJtYr8ilev41LJ8Q/ESxlv7IHvg9KzNUjbxBprapfThZlGQn92s/aezNDljbXs6LJjbuUkD3qtdSPEgtHTLHBYkV1&#43;j&#43;KrOWNLb7K0s8IOW29qy9Xu5v7VTUmsh5KDBXHU&#43;9aGZixX95bxJDDEpQc8ipJL555d8kY3H0FbMXiO3v8W8GlxLK/wAuTWBc2d3ZO0ssfG7kZrM0NFNSlMxjjc7e4HSq2myJHqkjyyBFPcrmtC18QWK&#43;Uq6eoZhtfHeqOr2F010bi3g8qAfMBWhmfQHh0h9Ggw5b5R1GKt3/ABaS/wC4a8Z8PfE3VYLVLNdOa5aPjcvpWne/FTUkgaO50R0SQY356VmaHGa3/wAhWX61n1Z1OQzXnm4xuUHFU8GtDM6rRrVn8OXD2rAXTccdVFReG9N1Kx1ImaR5IJAfMV65/Stcu9Dm82JTLG33lrRvviFuhIhtHRyMHNZmhW1Ni2sTWvmt9n8zAGeKt3Onx2kUcihEZWGxlPUe9crBrW28WaaJnBbJyK3bnxbYyWskYsmLMuE9q0MzaumlSzbMoVHwAQ2d2etVrrSI4bPzMKnQo&#43;fvVy1nroS7iaeORo0blK6C58XaZNDs&#43;yNgA4rP2Zoaty0w0w&#43;ZIu3aMPnr7VSuNHiSxeYhdmwMHz1PpXLJrgNwvmLJ5O7O2uhl8U6U9v5bwSbcHC0ezAm8J2sdxqh3AMyqSg96SSDW11j7QJJc&#43;Zjy&#43;2K5/T/Ew0&#43;/We3RvlPTHauyHxEs5bff9lYzfSioAviiGGJAEAR5VBbHrU/hyBf7IubiFQ91Gny&#43;1clfapcancPPMCoP3V9Kk0rWLvQ7z7RH88R&#43;&#43;nrQZmlosmtDW0aWR3WRsMjdK0dQtt&#43;uT2ysTHs3GFWxk0yf4jWCQl4dPCT&#43;uO9c1Y&#43;KU&#43;3T3VyrPJIflb&#43;7SNDcisorPWEjjHll4yzJnnPpmpL5DNNb2sjtGshy0ZOawdb8R2t35EltE8cqH5n9aNJ1&#43;yS4eTUBI/y8N1OaYGvcadBZT200QNvKXxhjnPvVrVZXltSsq7AXC5ODurN1DxNo93bzbIpPNwNhPOKwbfXlNxCLks0Kt/F6UAdJf6TFBA0qI0bR4KuTw1XbkyvpB3sw2x7t/Y5qpdeJ9DubZYmErKoP/wBauVn1qSSNoTMwg7L7UAdufN0rwpBLp6Dzpz80uOlSeGp77UhPZ6kBNFtyHK8isTw943tLS1FjfJ5tuOnFat942shbmLRbYq7feYigChqMSR3roOi8Cqm1faorm5uLyYzsFUt1FRYm9VrQzP/Z"
+                     data-src="/components/sensor/images/ltr303-full.jpg"
+                     data-srcset="/components/sensor/images/ltr303-full.jpg 637w, /components/sensor/images/ltr303-full_hu_7b13dfa3ace41dc7.jpg 127w, /components/sensor/images/ltr303-full_hu_14a88b92806d8942.jpg 212w, /components/sensor/images/ltr303-full_hu_e163dace62de604b.jpg 318w, /components/sensor/images/ltr303-full_hu_e927d04d912feb72.jpg 424w, /components/sensor/images/ltr303-full_hu_32f24c4f8e06936e.jpg 637w"
+                     width="90.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>LTR-329 and LTR-303 Ambient Light Sensors.</em>
+                </figcaption>
+            
+        </figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/sensor/images/ltr303-ui.png" width="60.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>LTR-303 Sensor in Home Assistant UI.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 504px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/sensor/images/ltr303-ui.png"
+                     fetchpriority="high"
+                      style="width:60.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAB0CAIAAACjR4/RAAAaaklEQVR4nOy96XbcSJIl7Oa7A4iFpJburq/6mx/z/k8z/2bmTPd0VqYyJZGxAvDFzOYAICmmGCFRyqzKLBL3HImMDUTAL8zNzK&#43;baWYWI3iEmPGyASOm3/X0g5mJaCbHDACQUk780Pc2Y2LG9Ow9d2a8EEyj/xkT9EOzIUf80ec54w/AZA7oDpPx0PdkgTv80ec54w/DRIB7SsiHrujMjBeOiQD3fJgnkRlnMZNjxlnM5JhxFvrcC7deqhA8/E73GZBhWrrLh0w&#43;7cOJ6t6xvf/QQx9HAMjZ5/3nwWlyMFPOuRQcxpUwxpRzJhZKKyUlExIRSGWs894ZPRyk5BRjKohKaWOMYEo5EQutjdEKseRcBEhrrbNWKjkT5M&#43;Pk&#43;RgxLI/7Pf71lsLArfb7Wa7S4VCqJyRsd1nFNq6qm4url6tlwspaL/bXl/ftH2vlKnqGhjbrsuFrPNV8Jhj1/UEqlmuX11dNpVTc0LlT48T5GDmgnm73fz8y&#43;ZyvVpUrqR&#43;e3O96/J6feFlvv7lp8TG1411m4TCaG0l7XebDx8/bDebnLOvGq0kssgpIXKzWCrJKfZ9prDqlXHBmZkcf36cmVYI&#43;747HA6LeuFCWOFys9m0Gbz3uuS&#43;PUZhQZtS8v6wb/s1WAUgtZI5xc3NRh26UIXlxdoocdzcCICmaQjL8dAmCDHlaRVnnln&#43;5DhDjimnjiRAWOtUXVdV5ZMMIUDfMZU&#43;oVDGWJtj3G236K0A5ZwFITIS5mKJvffSiOOGtVIhVCL3RDi6qfPy3j8HzkYrU/xRSsmliHHZRSmltAI1YVq8U0zYHvYlamsNSB0q76wuI7kQkZFY3K7kOeecsUQ0PM8sZtPxp8dpcoCAMSopu&#43;32vbdWAwnpnLPGAPnl&#43;tKD89WCmZumXi6XCjjGvusjgG6aRihrjckxlpykrbQxKfaMaJ2DIbpRQzQ7M&#43;NPjxPkABisQ13Viybkkja7XVNXPjS2VsvFAoL&#43;t78Sm&#43;B9wJK1C6vlSkvabTcpJhvqN82qboZo5dh2Kbv15Zu6rjDFrhVrVy3WVxerRis1c&#43;PPj9OWQyt7cXElwcScpTKjzdBSKWstUB3qBpTRWhOikMpZK6XQ2lhXpVKMscF7Zuy6Dkk4N1ieklKMUUhV1U1dhTnN8U8BmJyAaQl/dCXGYRsVHsPzY1Rxlwi9T4bSlPkUY0JU3j05vp0nZ2QSBzBPWdRbycioMlLT0f7oLz7jBHj0FO/JcMYhBZBKSaXOLOWfSFHA4KWoh88opX7XM5/xj8YXohUxKzxeOOY05YyzmMkx4yxmcsw4i5kcM85iJseMs5jJMeMsvhLKPsSd0m&#43;Ob18KnkQOZiYWpWBBUkoareQXKfJ4I8xEK/j1zghmIQHgQSp92pN3/3Bm4d8D45Wn&#43;23zcKcEfvzOr5MDiQtiLnjochtzcLrx1hmt1W2a/NHfppJzSolBGm0ABGIhRFBaay1HyTIS55yJ0Fqrtb43SsyCCJlozLpLkFINf2VeifndMI1O7PuYMxODlNZ5771W6jE9vkKOUTJIhzZtjv3HXbtvYxPc61V1sQhNsACPj8iE2B4PNzcbFOB9EMwp9ohJueCtsxIKcx9L13UgxOXF2nvbtW3OmaUmFpii4CKUAWWMNstFXVVh1hT&#43;LmBmLPmw37x//3F/aIFJO79YX11dXdbBPx7Lr1sOImpj/vn68F/vt9tDv154ECI4U3kjHil2Rn1QPux3P//yc0zFeU9CYeqYovSVk9qK0mXeHGPfxdWidlanKH9599N&#43;f0DlYmGKrVOkQkXgvHV//cu/WmulnY3H7wBmin13/fHDD3/7cbs9Wg3VYkHKNYtF5d1j8dWTfA4k6lLet3HfJaNVnwsSi1Niv4EcKfV9n1Luuy6mTKAlFyULtcdjn6D0bRbX&#43;1gKGiXLOONsbq4/Xl9ncG0ikbt1bQILoZhyjrEnJjF5wjN&#43;G8ZbF3MpSFRKkQyIt2vyJ7WbX5tWhKDRe7FaXSyCUrL2RgLQcLzTH2ABzvnXr1/F2PcJ&#43;0RaGmtkIe6RGchrvRSGWCxXS&#43;cc5jh&#43;Eow1jVGK7Xrh6/WF1F4L4b2TY4D0&#43;1yelw0A6Xy4vHrNoJtqSyUb7&#43;sQ7OALfrtDCkIoKWtv/&#43;VyUXl76KK3Zt344MxJNxEkWOfXl1fL9QViiamkVABYa0XMOSYmFCAzDsxq6qpp6tS1r16/8fXCNyvrgpHCO2O9B6mlECH4WTb2e0GO7ufFxVWomqvLV1iykMqFqgru9GieFvvcgUefIxfKBds4RCve6tpbp5XW6qSgawyUJrPCo7nih7VB7g8rRtpJgFxyezwWROvC4F7AJ23R7Y7LOVr5XTFlEe6nknv91WOxz1fIcTuQ93kOIiWl0Wcj46&#43;e1sOHtydEt3PUFHDP6Y0/EE9Tgj3ANFwKhDTKsPotGdKTH5yY&#43;30HnPF3xTekz&#43;f98S8N8y074yxmcsw4i5kcM85iJseMs3iqQ8osppTFFK3MjulLwFP1HAUpZiRio6UZiz/NBHn2&#43;Do5eJRfHPt8s&#43;9iLnWwq9oHq7WS5yzI08U&#43;j7MmU8m5k0mR&#43;/rc46Pb1x&#43;&#43;7dHffYkm7kGG&#43;vayTxqqu3L3APDU6hdfX3hDomOfPu7an28OXcy1t22fr5bVonJWn&#43;DHN4h9EI01SilEhHFdZszO0VQA5LPDTiUJsRTEMnzhUQakpJy&#43;/JRuL1hyjAJAKSNH9Qo8IMhU2f1584WJck59HzMyCLpNcBOBBGO9tebhl7/b/izP7V7&#43;GjmIu5g/bNsP22Pb5z6VmLEbJxijpVbu8ZrYJPa5vrlBlsF7ISCnrpSsXPBj7Z9C3KfctR2AuFivtdHHw76ULKVOhUpJw5ewdqA7owBJPIy/UhKRYt9RSWCNAGOkskYzAGHR2vgq5NhvN9dMpGwtlFYgJvMGPBDO&#43;lBVlbPmufLjVsuz27z/sDkm0kpoJZAEY7FGh3rpvaOccik8EkIPt5d2PlQh3BZN&#43;TW&#43;Qo5CtGvjh82xEFXe3N2NYiJK7e1Jsc9ut/nb334c5qC6BmUxdURRuuCkNgLbhJt913VxvVpYY7WW73766XjYgdQ9ypJ7b6QytiADoTIGUQIXo2WXSt&#43;2TrNb1Jk0IAfvibnEPtTVxdu3VNKHdz/mGNksijBaotGaSuYSrQ&#43;Xr97&#43;y9u3Rj/bVV5mTmNpv3fv3m&#43;jqIJuvE6pMGFd&#43;4zQHg7H/fWxiwhWS&#43;GMkMavLl&#43;/fa2U&#43;kYl2Lgky23Mxz7XwSwqlwspCSkjjS4qPVaIMGFOsRvR94OB8bXigb257/uUZe73Ed9v2lLQGo1EonDsY9&#43;1oF1bZOnbDIWULoUFonGOeLgBtKTtMca&#43;v1hY4XQbIyUquQy3S&#43;qFFCEVyYxYUuwLWgRwmobz329TuwvNwtdLJDwtUnoWYB7sQt91fez7CFpxNqKUgRwTBIkUY4opg1Si5JiFSto15QJP1mn7up7jfg3dauWMJuJcSII4Ga9MemYfqrdv38YYCaSQRkvWEDJzbjtWojaA0hIOc0rwXkpYrlfOaalsV6CkMNhCkCnl2B5ISGN85YzVrEMqKS8b5&#43;vKJ6ZUnHMgpaASqlBXlRJEF5e9D6Qa1t5pIUG0VqXKuapeLBpjnu2cclusS2sfquVyqSI7rypvyA6TjXM2VMEopQFDgwWcwCRFIqmDd&#43;qMKOJL5BiYoeQi2HXjU8Y2ZgWQkQpiE5wfV&#43;4//whI4/z68lWzXCNiQUISI5MEMWPOU4nC4YYXog5hsWgAhLGGRuFJGSfI0fUUse8O25u&#43;kPGLZVN7qwoxE1qjpNaIzEiD1yklMGujjQ8geOHNcK&#43;AATkJqjmnK8KsjAmhDpOu7JkC5Cj0evPWN6tUWCnQWk1eqpLSWDf4/qsGiUkoZgSBLKSx3jv7PWIfYo6p3Oy7m0Pfp2F0JEDlzOUyrBtvT3kxn0KpsQKQuI0tb9NokyZ5MmJSwhSVEN2qRO/3rfDIpL7vCpIyzjun9W0yd4pzHwS9Q/wzOd3TtDb9wfsoZTqLL7vlzwaTiudWyPPrr3rbg&#43;tut8pUT/ThhfkesQ8Rx1zaOHigSKylDE5X3oxbm77jQo/kGH9&#43;4dNjLUqmsbb&#43;dPbwMrMW/1h8s9hHSvBWG60WFU8jOu43&#43;u5bEB78O/&#43;mMTum5qWfPxRPSp8DgB7Dv7mw7IvCt92aMzNeFGa7PeMsZnLMOIuZHDPO4tuKt4w/54jypeBJeo4h/CUq44ZbpeRUmeOZp5NmPKE&#43;hyh4u8V&#43;d4y5YHBmWbk6WG/P7IcUnzKh92bmXoZzr8y4Ixc83An3UK1zLwu6P&#43;zcTf1r&#43;LT/9DN8qlD/6cX71p1nL&#43;lXyEHMbUw/vN/957ubXzbHgrSs/Zt1/dfXq7eXTeVPrGNNkpxS8riXTd3lsLmMUGOpnskCTQnZMeOL4zZaKZhKjihAaauVhGk9cUqOg1DGGK3nQj/nQEgpxZjSdE8i3u5MFiCtc0YrKqVgkUpLIUrJoLQ2w3X&#43;nrJPk9nYHPr/&#43;cPH//F/3u3atKjsvku7Yy&#43;EaKrBeMhH2ggi7LrjbrcjlpNmhxkFi9j3se&#43;cc8o6KkVraZ0FqUpBTJGYlfFSUGx3iUCaYBRIjCmXSEoCaC2r5XK9WvpnvbL63ZiUPsfDfrPbI5ICzmW45wST1LZerKtgc3fsU/ZVbYC79oDS&#43;Kqpgg/OnRR9flnPwTGXD9vj//1l81/vd0bJv7xaLGvfp3I9loBa1f4zpfGdGGn7448/5UzOh8KCCQEg9n3u2xCCMi7HXgLZ4KRxqc8YO210WF4FI/v9zSFiASNKhtwWlpGtYHROv2L2VeW0mZNxJzAa4JTiYb/vut4oKMR9zIKysaHNUHuT220s2BTyShx3N8fC2u2vLq/U5YWS9ttqgjFzzrhr4&#43;bQdzG72i8qd7UIH3Ztn0oXBw/185Q6c8m57/tR6xNjKiQNAEsJ3bGl1IEQpe379igo&#43;Sbo0OQORe5DHcxAeIGIqW&#43;PSaSuhdwqV6MBLgmEKVNDlzmJfwY8rpsNM3ouggQOhh8BC8jMMQrK2LWFRN9HZaCU3B576pJz1Xq1PHnAL&#43;s5QCkZrKmccUYLEDFhGwsRG6OsObEqO&#43;msrPOvrl6NYh9NYLUSAMIqiVEb64il1Qq4uCYYXxVPUCoXvK8rr6WkBYHCfZ9aQhYhVH6xllycVZUPevA9ZmacA0ilnPfjKjYXZGMBuMjBLHurgGRdSDjnnFWCSwFVhLZWSzid7voiOQC81a/X9X/7l4s25i7mQ5&#43;UAmf0q2W1rE5MVADSWLdeX9aLJZaCDGOvpmE8U7qgnKWSDIoRQdDAL61pnHiUUspYJYEW1TLGxf740btS8vrqzWJ1YZRQUtoQvDWzv3EaANqYZrFSNhDibaWc4V4aRkDp4doyrsae88YoiaVZ5sJCOh&#43;s1Sev6lf0HEi0b9MP77f/&#43;fPm/ebILFaNf7Wq/nK1HKKVU8Wf7mqg3ke0n0Q3QwQ7fo1J2SPum0TeqjbuO4hhjKltWyLyVe29n4riygeylBmPcV&#43;v53E0CzDeoLdCnwd7h8arKr&#43;vss9tniPmfRs3xz4VrL1Z1b72X8pz/PYvef89555w/0h8e9mnuwzpFBppJadqYPOIPT98e9mnaee0VFrJX2U9Zzx3PHXhbS7k9gIxL9nPOIuZHDPOYibHjLP4JrHP/Trv3/OMZvxp8MTKPoKYxr2NrKXUSsKcinoBeEq/Fc5IbUzbQx8zNsEuKzdlwE4z5L5HFHyi0FT1/Ku1Ux6k9r7fPj1UFX3nIf4J8TgxCuMeVP7s17uXJiXNw/c&#43;xtfFPl3KH3fdu&#43;v9u&#43;tDF/O68W8vmrcXzcUiOPMoacaMhDmllAtIZa1RUuZcYowAwnuntea7kkRTCkU8lIEREROMDbzkAzHYJ3nYmK6fNkuKu6/3STM2Pr5Lrd7W8Xn21XxuqymVklNGIhhGTYBURsspzfzpoo1aMSGlNUZKSVgKkgA5bm39xjZeLEQptNn3/&#43;tvH//jp5vNoS9E767VzzeH//5vV1pJvQhaPSrekuJ&#43;tzt0WWlTV1ZJeTi02&#43;1Wa3V1deGtTRkLIjOBVFIqwcREMMrDSk6IWSitpDHWaKMZC5U8rtULpbQLYWRbmjQiZeCS0ON&#43;7pwKEQrBuSAiuuHjRhsbQrBGP2d&#43;MBNi7NrNdhdjFIITCqlsE5ygnBGVttObAEROKLVerVbWqvawOxx7bav1elUHB4/WZr&#43;i54i5fNgd//Zh92HXplyEEIiD81F7&#43;&#43;aiXlTukdiHcuqP&#43;92uQ2VMigyCrq8P19ebqnLOyKTl9fbYxSQYpdIMhnIERmWc1BpTKqVnpUFo77wOrsSO0/CFSyFr7WJ9aYzpjgcsCUD0icrAAy2l2h96gcVY2Y/Fo6rKKu2qZvX69ZVW9XOt5jOBCVPsdtvNdrtnKm1mlu5yWSmRUkFpwjBIlECIto2gDUuorHz/7scPN8fm4o0PVfDuceD6FXKkgvs2HbuESLkM5tpbQORjl06LfcYTHdWihES5bXNJN5v&#43;cGy1hpITJdxuNrtjB1yUsZlUia0W5EJtq1oyMsWxKFyKfaSjiu3RSQreYULKSRqrjW33e8o9Czr2FFN2VpKQ2230BpYL38aCOXIxrCwKtVqtuHq21XzuMBiPlNJY1SgfeySRvRZOYSyowVpjmBmYUoqiUE45MXTHLqU8zdXfUbwFlJTOajv6FtMC&#43;1T8who1dV15/CGlbVXXwg5zf&#43;qGWTCEyhi3Wgbvg6ASQugzYiFjjNWendbAxnrlnAIhwRMoLCAY&#43;4JkbO3Noqm4IAihvZdSoXMkhQAmIK21kiKTCJVsKrtaBJtKSdEZRVI7Zweb8ZytxgQYXQdTNw0za1cKQfCu8qoSYPzCGE0lApP3FQlVV5VRsFxfuRovri6Ct3Bqff3rYp/LRXi1rA9dmmyJlFB7e3VO7COl9WF9oZqBppRTnUspgycgnDNVcEyk/WKxPqTYOx&#43;cr6QQEhikEsOcx0oKBsmDSaI0RM/DrOGsnVaHwVgQkJt6bAcG41aawQXDIaQS3mrndBl8j6IUsJDK2CqEc0qnZwIQUumqbl6/UUNUCCKXwdfQSgZvlNLK2FHxjzAYGBqb8DkY7nDLQgyjYM0393gDEEbJi0X497crIcSH7TEVrJx5va7/v9erZnQ4Hn1ksBxemdvyPBymwGKq8yHH&#43;qgu1IvlsmDRSj8u0vVwM8t0kNsYhT&#43;9zFyN0crDQGd4/WGAA7cJu5fQBwykVD7UxoXp8bjyPvgAYzFJNaUUPgtlhRDWWnF3iU4f92tiH86FDn262XfXuy7m0gR7uQirxlfOfl9tn882OP1eccQsO77Hfannb7283yH24SkPNpZ9oqmmoJr1Wc8R3yH2gbFmn7Ra8VSa7WXlHl8uniz2uWXETIoXhGftxs/4bZjJMeMsZnLMOIuZHDPO4mlin7uAdgqd1RzFvgw8SexTkPpc2j7ngt7qyk0Nls7uTPyV6uRuX/y5hMzjMkDn8DJVPE/EZ2KfTxWV7h7e90e7f/13EfuU6137YdveHLqUsfLmogmvVtU5sQ&#43;N5XiIxbjexVhyLkUpo81d06/Pau9jQSRQWil1mySHu94cL17F80Tci32IxZSdVOOmxFJyQZqu1HTppny50kqCQMRS8LeJfQ7d//7x&#43;t31fmqZ8GF7/PHD/v9/u/qC2Kdr2y4jkgBBJfVt2xvrQlXJccylUpNUeRrdsclXMX5hrWXMgkfhDzMwKyUFyDIu4Y&#43;J/HsVj7XWBe/N81bxPBXMNIp9dvs0rrdJqUJdGyXa/b5PGbQdF1fI2WG4WdqqqjTQ8bDbH7vfJvbZHn&#43;63ueCf3m1rL39sG1/vjm8uz68Xp8W&#43;5TU7bcfP&#43;xj2xcNJEU5HnutTah8iT2WrG0g0MyojVbKlNgCc32B1pi&#43;awWjlDIXEpidkSht13eUeyGgy8NVaILTNtSL5eury7FT4IsnBwtCTLHfbrbHtjNKaWMKs5Fi&#43;/H9sU9gqlESTovghBBFeQFSc/z5px/e/xaxT8y4Pca2z6va/evlYj2YCnlz6I4xt/1gspz5bMGLpxNt23Z7LFZRZdUwyWAvRTnsNu3hYKqVMJWgZK2V2mLsvNWmijmlw&#43;EoBUoJXUJOrVMigT10neakjTskAYxAWSVkUKvl4mTlvJeHsbIW5pRijGN3RAk5p8LYdV0fixLWGjM2MiEQMDZJQsqpPbYxpgWIc3sJvuxzDIGJ1cMMRcwZKRcc&#43;7vxQM/Tdf2GGc04FwIXgVZyHYwxGQi1Fjl6zNk4p3wFZIw1oEwBskZbo1mIcZUXxlKngrVRkgSyBOlccM6TBsnFewvK/p2qP/yTYnLLpJTO&#43;Sp4NYpqMeO4lD8abWelwBDM&#43;O7BZAth62atPF5drKvvEPtIEN7qy2W1bvy&#43;jT&#43;8337ctZtDR8TrhV&#43;cq&#43;zj/GJ5KV1eZVbA1igsJAgBOFR1Ssm4Wlk/Th8DkzAtAGRoFhIgWEOEUqmCDAIVcEyYkLzT1thYBgfXjI6Idd5799yFGk8EjB1Aq/WaiMGPrcpQcJZg1KWQ2oXaGCMFWSNBgGNpjRVsXr0FYq6bhRtjhRPH/fKS/VhqsvuPd5sfP&#43;67mCeftAn2r29W//5mPfocj6KV4YCl0CRKEmMLtknwwyWPR1BaSjV11xIAPG5p0dqABBzf8KmK7XACyCyUlkrKsdkXTxIfpbS1Vp3viv2iwERDsJIyA&#43;i7zmilFDHuS9DayHGcprEiMYQvYlydH6&#43;8/u7KPpzGgoI3h27a1FR5s278uglNsFOf2cenOnkCd/tpHjw3/n96OMdnH/sQn7U9/&#43;wTMzPu8Vmr9l89PHGZ7rIF04MHXeW/WeyDNISRMWNBslpZo4x6/s30XiC&#43;R&#43;yj1eCZusFnnMU&#43;LwhPF/t8qmM/44VgXpWdcRYzOWachTzX3GTGC8RnzW403IHv8Eef4Yw/DHdVjR9xYqqvcreoPjueLwsP8lDirjYK6IeEuLccs/14sbi3GsPvj/urzXjJeJh3/n8BAAD//4L4E1iXaEwaAAAAAElFTkSuQmCC"
+                     data-src="/components/sensor/images/ltr303-ui.png"
+                     data-srcset="/components/sensor/images/ltr303-ui.png 504w, /components/sensor/images/ltr303-ui_hu_bbf778e102ebfcc0.png 100w, /components/sensor/images/ltr303-ui_hu_435f36cbe76e3f1a.png 168w, /components/sensor/images/ltr303-ui_hu_8291fd26c9f1e97b.png 252w, /components/sensor/images/ltr303-ui_hu_e5f5649ef77440d5.png 336w, /components/sensor/images/ltr303-ui_hu_d47fc79f8e702030.png 504w"
+                     width="60.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>LTR-303 Sensor in Home Assistant UI.</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>The <code>ltr_als_ps</code> sensor platform allows you to use a range of LiteOn ambient light and proximity sensors
+with ESPHome. The <a href="/components/i2c#i2c">I²C Bus</a> is required to be set up in your configuration for this sensor to work.</p>
+<p>The family of sensors includes:</p>
+<ul>
+<li>Ambient Light Sensors <strong>LTR-303ALS</strong> and <strong>LTR-329ALS</strong></li>
+<li>Integrated Ambient Light and Proximity Sensors <strong>LTR-553ALS</strong>, <strong>LTR-556ALS</strong>, <strong>LTR-559ALS</strong></li>
+<li>Proximity Sensor <strong>LTR-659ALS</strong> (with PS gain control)</li>
+</ul>
+<p>The sensors are very similar and share the same datasheet. First two have default I²C address <code>0x29</code> and the rest
+have default I²C address <code>0x23</code>. The sensors are available on breakout boards from a number of vendors, for
+example <code>Adafruit</code><em>or <code>Pimoroni</code></em>.</p>
+<p>Proximity sensors are the same sort of sensors that you find in phones and tablets to disable the screen when you hold
+the device up to your ear. They might be useful for automated turning on or off of displays and control panels. An
+example is the CoreS3 board from M5Stack that has an LTR-559ALS sensor integrated just under the screen.</p>
+<h2  id="ambient-light-sensing">
+    Ambient light sensing
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="ambient-light-sensing" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The sensor platform provides a linear response over a wide dynamic range from 0.01 lux to 64k lux and is well suited
+to applications under high ambient brightness. There are altogether six gain settings (1X, 2X, 4X, 8X, 48X and 96X)
+available for user to configure. Use higher gain for dimmer areas.</p>
+<p>The devices consist of two photodiodes: The <em>CH0</em> diode is sensitive to both visible and infrared light and
+the <em>CH1</em> diode is sensitive only to infrared light.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/sensor/images/ltr303-spectral.png" width="100.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>CH0 and CH1 typical spectral response</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 674px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/sensor/images/ltr303-spectral.png"
+                     fetchpriority="high"
+                      style="width:100.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACCCAAAAADKhb1eAAAR10lEQVR4nOx8CXPbOJN2d&#43;MgqcORHWeS79va///DtjI5Hd/iAXT3Finb4ilRjjPvvlUvaio1bgHgQxyNpw/QKvz7Fdv5S&#43;v/EP9laGaWDmiJCgLOgML/qQlAhM5AtkErFxUxLBMI3Aetg&#43;F/lUQBBqKjrRCNJZwADVJskW3iuYy9blSou2peKREhOrkVgE09TIGuF4cSgYLtdc1C5hUSNj1JjNae3k&#43;IrJMjbRdW0XoEsq73MDb2LSSVqbs/sZVA1V2tbdBoshQASRGJqNORaP/tXyURI&#43;bknof6rDPSaJ5qDQoO9s8cyZxyvJ9hr/SK5/zLy39A/1PFnt6kWfKqqtIsOAWaWMu7iqDaLMs3ZAcngxZm2Skma1iQiDFxw0NNargcgTAGBmMVnHkz1KeC1nB/V9aIWNNEFayNuDFmUCuICsZgE6y2QfwCdJH&#43;60DH&#43;x&#43;P3GjT9ZlBEA1GhrW4ZBGMlQOMIbB6kAGd&#43;edAo11DWTPYqFmGivVID1cH2kRUIVrn0UIA50XfbnWcDtpt1s9r2omCQQU7AtrULxbYOBRfr3zR4av9Y6CBqFnADUN4Pq6GcBpVoQLGYF0f39a26IMWwWOqG5/&#43;xXkwnmu9oT3UA62hMp5qLSzth4jUTBhOldTd0E5V17pa630rJ/dcHwkHQUvYWoOqsTOMqpG783uCpNYlkRlIxVgRoJP7ETkMGlRY6sXIfTrfW5MnSKQqo0SyHI3FmvWe2o&#43;wTvPpZtt7IkAypts1QN/imCsBCXm0HshIFKnQ98ny8X7YCB4E7ZZQD4exbwFawRit8pgsmjNcuHrIi8S1ucqcfjD2TNY&#43;aEM79dTTDPg6CTTjnKwS06xtayRUuU3wtH4GdkJ/TdfV3&#43;681ahFTBfpbmwRbbKoYo7&#43;NwnxK6jp7KISomiS&#43;f16oMSFUtX3GdZp5U&#43;CBi6iS1PXGlcka/NCIfmtsf6DoJWripKsu6XROHwskfzvHJB/DrRyWUDaw1wrVYLHUJrfIX1/zEZULh6jS/uYAcAkGVbhd3b7HwMtxUPl0jE&#43;iibxMnRxnlD&#43;FGgJRfCZGyWCZD2W1dDemV3&#43;EGjlitPllI4gZ8P2N1CfvhGbaT22iyRU2Bi&#43;owVtGkNhXm3LdF29RwGp1CwQiejgktRYBO&#43;Ip35Hn2mMQzNtZulEAmKpJOiN9nl3Td214br5wzaAcYuMBiRzVwd2miMHa4b0XZ97RueryLVhsG817GffaAJ0/VN&#43;K7YymwVIxL7PuKbzUtxd324FyGWLJFsvzEiduki1jQmJ7CUvdZ6tCwXOobaRRur0JQPvg32pWrKp8mhLt1JV7kcCamIu258/crv2KLF80OTyw6J9QuzJu4ZtZRNi4Nin85FxZ4Mq6JaXDmcZAdIb62fQsv0Z1j5lMrbh02bIjCHefS0uLlcepcofrm8r&#43;LhsvVtTp/lTFNKssTSh1w&#43;pPnNllBi4Xon9OkMJknTf4mWky6stfNwAKCUIZPtGABrL&#43;a/i/L83DRouzz7ffCdc7y0cbXhFM9Bqk8zgXrIfsxr0roVFLgTtsM5AomJ6O3q/pjmqzbBmvTok5iSo2x936/9/vtO9xhL6m6/h02bP4WgXlVKpSmOblxnS&#43;b0EXSbCijSIZfUlNZ5x0KpA5inSMqrNtPz103y8eDovkPw7v7i6Et0kvR41bKOfoc0oiWVpX0XYXhpxPEwGZHvNl5fpy7iic1n29Vr03Pc0XxCfzgCNxleFPazvj4FWjgfPVX54XFwuTeehlj5fCZ&#43;nHVUjbNNZbBmdrUr3Gh6xnx7decsnilQP4XzVGUCk9L18vonVZVv1SWDjpmIDXdAmE4mvWR8t0PHAAlF5vINFbwCRsg/m&#43;/3f8ePS7jEXPNfnjy7JS3jFAmmDrg6gjnd3y8UAjFnY9PvPL/Dped1ozEvn54ImC4Wk7vWgkWiKlO2iFsVFOrShKTk3&#43;vWLocVO72hVwkgIZgq1tVsm/xugbZJMG/ZSFHbVV267ZuuP5dVXZ3Y/ctTEz1rRTWOThjzIMHliNmjjp6dVJa9W61E9hu7df8HtN3fhGnUXTHKCQqBE5BXBmCfQylURDjBpLvhiNT4R6M4B7r7Zd/UiymN6kvuInM2DzJ6aHuj4&#43;KgKKuPNlStIJ40nvwnllTNZfYDT3F343Ji4zE5Vey8sTy1ZrYAUbePO68yZVMEkpi1ThZd9i/48//zNXCYYMHH4UkuHuVA1x&#43;yI0FIIvuv4h4FGmODT5Bdkq0c1Yla&#43;Nqo6/cRt4b22He1Ss97nOuov8m9f4NxE63E/WcLC2AtN9HoGJRtDsFM9w87Eg1HQSMSx2j6oD95b7VkuWj4W75zEznu07QtN3xe/vnFqFxBbDLs&#43;rrrUNMSeA0AFeEvtlTe0XJhlPBJgHJVRUXU3F30TMYp3nUnqmZFm/SG/ieebxrs9UadtI&#43;4lQJqbdv7PWCuAMdBI1gZMEzFiE0TqZhGpIZt0z4zGLGgJzPvt/f3Sd1xK/TrN4/vZUZBq2YmfDlsRj4cvVOuV49O6isF&#43;zEUQXOLswVgJXlz9zJnswdCEWLX9aI6SFSRzoBWbifAFV1UQcs9GQM/iiFybKkMjpPW3yTZ39z8XvTeBScvlRUQeSpaWojwevnh6beXASDjSafNrVZpxt9y&#43;itL6L3/9/f6ILTFS0OiJTlT70tJOZsiAVJU5YotIFbNPy5srhPHT/kAha6vgTwmdP29E6/2kM1K1Ckeom5QP0WWr9Ns3PR21TZj5lFPxRXu41CZTJ7DEeHikNea5c46s/P0NaXXasYzka018&#43;kjX57iZpmcieJDUKEebeTDLv/jrd2cWJwavjOMYT/ChvrgQuMRJjqhy2LerEiFNSdCsPsn3H96kJ5mrCKQFDRKhpsu&#43;dwlTG19ZpjdpUyEU2qhxtOtPF/mXX&#43;VpDnM0hkM/1eBAaYGuwsSjlOPB1aFclLSzV2pDZn33&#43;ddpbn403skJunJvuaCKju8GrSo6uA&#43;ZTfLsV3SbEG4JL06yBdCaKhw5CYagVQdUqg26PARaa8MweZ4KSt7LlzvUi1OCskhGyvm25fNIx6IQBFbUYdK&#43;VKU9BDrk3PKDUfqBvtxEeZ/OBw3kK46zfQkvIw3OJvwAViGxXXaoXFbO9NnqSxWN262rKemzBJP3wNcsl8kcavokML6IvMsxG2s1Chrt&#43;v&#43;ZRXWraYTNCjS2bAcNeZ4pxy47i/EppCRlzgmw7CVq3oVwA3JBqt1jVmJEHO1HlLfYrLF9P89VpnKY0G0ytAWzCShamxPSAl1WjfnQfRg/dc0lOw/ckgDYjXy9/xzPLGC3FTPRaD8KUig4hE4/T6/KE&#43;ELShNQ3LBVSkmIWqxXqKbuU0k7KmDTnd9/z4PVOv/3jcgmMX0bcSI7SklUlQiHfFrRTIQvGh9&#43;aoUADSK2wxdCNZ1yE6ClYpN46pN3azHeAiVdPtMKXwxeHiGQMSOggcNEJAB2CUyNou7nMNUDTROZRqosT6lUHS5u0vcMD1&#43;tzdrtxoyAJwlaHyMbHA96TIN&#43;TrHs62tWN63xmG0y9iulf5m/bz7Lh&#43;VM9UsGSzuSaTFSZrBIZXGTFExCnHiSyS5BbwJ/movauhB4ln9qFmidPFsk5GEqi4qSc4Hrz/TX0K89VpCSKPMI6jzQUyOtUpZm0vFPfkP25qtcrmbNOlqXBzfnWJxjZIi4qafGQKPZM08w3LlPrr/kHzZzCDYiSW7nzMpx0KrTG1GiJIfCb2S9T75/y&#43;PlHNTkXJ7bGYGB2Wt6DJlyNblydgXtmfVfbgEu0uNDiDZjjjNu/c5ZHqrjppBqVaE9rBvQLK39cv&#43;5vFgeZ9jk0&#43;JwNHNX5oy0AI0j4wBHA8po0kvz7ebzw/vz7JgViMZVoToOad5I09ggqUZ2MwLKlLx36a&#43;rh/yv1dHrBtbmMBJE65UTc5g6JVYyJwheq75k9f3X5/hxeSDqBztjsSwxOTaS/Rwmq&#43;Cow8Nr03E0GymGbc0KdC8Zo/zN/5mF8/bHl/JiYY2dMCZ2qK3nYNw8I6Apkt9oqrRMOkaAxijM1HNdaoicV2nLVzIg79DkMO36UbP6SD9/3K3W5927PL1WCgYKNf3wxQHQGh5jBJt2jQANUYSxB0g5hGgT3MdDhuS9yUZ6/h2XlFzf/u0&#43;fuqkBfRbKVIIhjrLetIIgF2OX0CwTfLanqrXdNpZ23ePC4BP28p3xIWu0KL81i02v/6&#43;Yvi4btnd/VZqNGxDZ&#43;dPGwF1oexCAGyC0DYCGNH7IWgWTjuBzrErCd1sJJ9kib//JXGzp1AjdkpkUdPWsYeNAGea&#43;enmMKFoEwbonYmxkt5l/6NXEhAX783d/W2RX65eUkL6rdCm1ZM10OpmGvT4FWzl/uXznVshpJOu4amC6M9W2x9X/3P/1/kkX0WbljEcTAqfQZhi/&#43;MAO8cfzU&#43;RaCMyWeK/fnvcflhN5d&#43;g1VDQgZSIOaCZB/aUcsV2vhurXchuXPb9/kvx/iwd56FoUCqgA7f1joLW3bcJtIc5nBq532Oy62R1dXW9Xa3XK49jnwOwqVRbnPbxz1ke0Rjsxfe37F830DsKZdPV9f2Pn&#43;vLi2QYj63ZCjyWZvDBjFNAs3R1PUjYVv7kXdiGbVfJ&#43;v76&#43;urx7iz1KfW7QpPEbWlx6hEzQIt2dY6EvHKZOzmJp40Kvc3O3v28&#43;3nr03fvMmd6ng6TcihgamCOg&#43;4HiSQUlVmkOpmGPg&#43;2IZus7h4eH29vzs7WWdKNCKPLIOY66lGZAbofjqvHmZKkn2j7KthuVW5v7/Lra788Wy&#43;crQ/vp4ACJZiHGvXYbjyuParg9qe1SshLk06MwCtgp8tN/nBz&#43;ytbr7JF5g0Riqoikse8yiVpTt1j11X7f0tR&#43;QSfs3SkyoNJUzumqV4DGy3Q6uLi9r4otiZNvE2yBJXVEKBTqPLKe9O/NTC4zcwRWjNSU/2iXHrkKIISVcrgF7&#43;jOIawyaTZpizyoizvIrrEIybL1NaUydiyLDwp4zQ1bRbDva6TZ2NBOcTioSIoy1Kam72kSZbUWvuQnXJE0rdcAI3xS&#43;Yqz6tYFQ&#43;VWG8NGectCiswm1UGh0CXt&#43;J8vf0a33Nxty1vWPJtGZg8grXGWm1SRlj6W3FM0jM4lZV7R8Zzq1qbnEms8rysyu22ErSJr895jZq6g7eZd3laRLvMMC4fH4M580GNBbRYH90kTx8lgV4MflSisSdB5clWaIz1C&#43;ZYg2aRxvMsYMD1HBX9i8HJRjMCt0saogWsVE1qoD60Osx3aLePSbRvWZqBpN&#43;qXnnSGFhc/yMqAG7pO9/uwv51Hm5SxrS5NKK7IC5KPRi4JwOqLNBcInjpSZrYaUuiGptWtl2HoVenkbQuqKg0VqzW5t4uF7HJyusagCNXsLnYsqpdpvXRanS3SkTRZdnL02JesoBfvnwcReO2EEXfuhjH&#43;ZYR3eIlfqH8uFWoW73UCY&#43;FQLuOVHnJgOCX2ZMZH0PUWAmlLbfa8HDR/FclnDW21y5aFm5/RDLZuXvmTcqPd2WEpXnpR8qbuyi4oj2zl&#43;K6UMr296013F0J6pJe&#43;KGGu&#43;sIZl9HJb96CIi4eMkv5O1Wym20Z2bvuR7lrH091VfuiDRIIhXtfcIDzdBBjNBdwTtW0zbGdz6O1t5RYebeF&#43;sGI42UXURQu9jnJ7h3ToBaErBLigp&#43;P8&#43;UbDIB9Nl&#43;EMzShAhun2WD7szWy2O/ytCdOa6Xx8uapnSzrDG7BT2/eorADJS2vtMzPI&#43;1ebH2JlMW1SOSZiMiGtQnIqu7/ESkZvvu&#43;EN/I4L0N7Tw7iNze5FEaWKE7Y04QiJ2kqFi6kzjoM5OUnMT52rF03wrT1SjGkTC&#43;mWegjPDVoOOu56yvmSM5Y0Qi4FoWKeRqNx/uU8XxiDHyqYQFaroLTU6Pnm3GOyguR13yxtfdtfy15X16ok1YMa5JsLemcDWuXWavdFT3hZ0PZy1HvFGMYIPJVuDhojE2Zn3jGY95m2/BSrlY8kKNR0WoLgNqScUbHwZbvJK9qnljUE3V0tf1qFEIfv8DSZF81aX1N8adKc0&#43;Jsn4NgXTV9d/ijoP1X&#43;Lb9M&#43;B/Q/1T5D&#43;h/qvxvAAAA//8YYlCsuCX96AAAAABJRU5ErkJggg=="
+                     data-src="/components/sensor/images/ltr303-spectral.png"
+                     data-srcset="/components/sensor/images/ltr303-spectral.png 674w, /components/sensor/images/ltr303-spectral_hu_870753f1f315010e.png 134w, /components/sensor/images/ltr303-spectral_hu_9834ba795fd8fd3f.png 224w, /components/sensor/images/ltr303-spectral_hu_544336884d3db12d.png 337w, /components/sensor/images/ltr303-spectral_hu_9c72590c2afdd7e9.png 449w, /components/sensor/images/ltr303-spectral_hu_6cdda034cc8fcb70.png 674w"
+                     width="100.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>CH0 and CH1 typical spectral response</em>
+                </figcaption>
+            
+        </figure>
+
+
+<h3  id="ambient-light-illuminance-calculation">
+    Ambient light illuminance calculation
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="ambient-light-illuminance-calculation" title="Copy link" src="/images/link.svg">
+</h3>
+<p>Excerpt from the datasheet:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">RATIO = CH1/(CH0+CH1)
+</span></span><span class="line"><span class="cl">IF (RATIO &lt; 0.45)
+</span></span><span class="line"><span class="cl">    ALS_LUX = (1.7743 * CH0 + 1.1059 * CH1) / ALS_GAIN / ALS_INT
+</span></span><span class="line"><span class="cl">ELSEIF (RATIO &lt; 0.64 &amp;&amp; RATIO &gt;= 0.45)
+</span></span><span class="line"><span class="cl">    ALS_LUX = (4.2785 * CH0 – 1.9548 * CH1) / ALS_GAIN / ALS_INT
+</span></span><span class="line"><span class="cl">ELSEIF (RATIO &lt; 0.85 &amp;&amp; RATIO &gt;= 0.64)
+</span></span><span class="line"><span class="cl">    ALS_LUX = (0.5926 * CH0 + 0.1185 * CH1) / ALS_GAIN / ALS_INT
+</span></span><span class="line"><span class="cl">ELSE
+</span></span><span class="line"><span class="cl">    ALS_LUX = 0
+</span></span><span class="line"><span class="cl">END</span></span></code></pre></div></div>
+</div>
+
+<p>where:</p>
+<ul>
+<li><code>CH0</code> and <code>CH1</code> are the sensor values (measurement counts) for Visible + IR (Ch0) and IR only (Ch1) sensors respectively.</li>
+<li><code>ALS_GAIN</code> is the gain multiplier</li>
+<li><code>ALS_INT</code> is the integration time in ms/100</li>
+</ul>
+<h3  id="als-gain-levels">
+    ALS Gain levels
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="als-gain-levels" title="Copy link" src="/images/link.svg">
+</h3>
+<p>The table lists gain values and corresponding illuminance range:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Gain</th>
+          <th>Illuminance range</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>1X</code></td>
+          <td>1 lux to 64k lux (default)</td>
+      </tr>
+      <tr>
+          <td><code>2X</code></td>
+          <td>0.5 lux to 32k lux</td>
+      </tr>
+      <tr>
+          <td><code>4X</code></td>
+          <td>0.25 lux to 16k lux</td>
+      </tr>
+      <tr>
+          <td><code>8X</code></td>
+          <td>0.125 lux to 8k lux</td>
+      </tr>
+      <tr>
+          <td><code>48X</code></td>
+          <td>0.02 lux to 1.3k lux</td>
+      </tr>
+      <tr>
+          <td><code>96X</code></td>
+          <td>0.01 lux to 600 lux</td>
+      </tr>
+  </tbody>
+</table>
+<p>This Wikipedia <a href="https://en.wikipedia.org/wiki/Lux">article<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> has a table of some lux values for comparison.</p>
+<h2  id="proximity-sensing">
+    Proximity sensing
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="proximity-sensing" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The proximity sensor has a built-in emitter and detector. The sensor detects reflected IR light from the emitter and
+gives a raw count value inversely exponential to the distance. A decrease in the count value means an object is getting
+further away from the sensor, and vice-versa. Neither of the datasheets provides any information on how to convert
+the raw count value to distance. The only way to do it is to test the sensor yourself and select the threshold
+according to your needs and environment. Exact numbers will depend on the type of the object, its color and
+reflectivity.</p>
+<h2  id="example-configuration">
+    Example configuration
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="example-configuration" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ltr_als_ps</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="m">0x23</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="l">60s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">ALS_PS </span><span class="w"> </span><span class="c"># or ALS or PS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ambient_light</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Ambient light&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># PS only section</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ps_cooldown</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w"> </span><span class="l">s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ps_high_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">500</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">on_ps_high_threshold</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="l">....</span><span class="w"> </span><span class="c"># do something - light up the screen for example</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ps_counts</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Proximity counts&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>
+<p><strong>id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID used for code generation.</p>
+</li>
+<li>
+<p><strong>address</strong> (<em>Optional</em>, int): Manually specify the I²C address of the sensor. Default is <code>0x29</code>.</p>
+</li>
+<li>
+<p><strong>type</strong> (<em>Optional</em>, string): The type of the sensor. Valid values are <code>ALS_PS</code> <em>(default)</em> for
+integrated sensors, <code>ALS</code> for ambient light only or <code>PS</code> for proximity only devices.</p>
+</li>
+<li>
+<p><strong>auto_mode</strong> (<em>Optional</em>, boolean): Automatic gain and integration time selection. Defaults to True.</p>
+</li>
+<li>
+<p><strong>gain</strong> (<em>Optional</em>, string): The gain the device will use. Higher values are better in low-light conditions.
+Valid values are <code>1X</code> <em>(default)</em>, <code>2X</code>, <code>4X</code>, <code>8X</code>, <code>48X</code>, <code>96X</code>.</p>
+</li>
+<li>
+<p><strong>integration_time</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>):
+The amount of time sensors are exposed. Longer means more accurate values.
+Valid values are: <code>50ms</code> <em>(default)</em>, <code>100ms</code>, <code>150ms</code>, <code>200ms</code>, <code>250ms</code>, <code>300ms</code>, <code>350ms</code>, <code>400ms</code>.</p>
+</li>
+<li>
+<p><strong>glass_attenuation_factor</strong> (<em>Optional</em>, float): The attenuation factor of glass if it&rsquo;s behind some glass
+or plastic facia. Default is <code>1.0</code> means <code>100%</code> transmissivity. <code>2</code> means <code>50%</code> transmissivity etc.</p>
+</li>
+<li>
+<p><strong>update_interval</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The interval for checking the sensors.
+Defaults to <code>60s</code>.</p>
+</li>
+<li>
+<p><strong>ps_cooldown</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The &ldquo;cooldown&rdquo; period after the proximity sensor is triggered.
+Helps to avoid multiple calls. Defaults to <code>5s</code>.</p>
+</li>
+<li>
+<p><strong>ps_gain</strong> (<em>Optional</em>, string): The gain the device will use for proximity sensor. Higher values are better in low-light conditions.
+Valid values are <code>16X</code> <em>(default)</em>, <code>32X</code>, <code>64X</code>. Only for <strong>LTR-659ALS</strong>.</p>
+</li>
+<li>
+<p><strong>ps_high_threshold</strong> (<em>Optional</em>, int): The threshold for the proximity sensor to trigger on object getting closer.
+Defaults to <code>65535</code>, which implies it will never be triggered.</p>
+</li>
+<li>
+<p><strong>ps_low_threshold</strong> (<em>Optional</em>, int): The threshold for the proximity sensor to trigger on object getting further away.
+Defaults to <code>0</code>, which implies it will never be triggered.</p>
+</li>
+<li>
+<p><strong>on_ps_high_threshold</strong> (<em>Optional</em>): Actions to perform when the proximity sensor is triggered
+on object getting closer.</p>
+</li>
+<li>
+<p><strong>on_ps_low_threshold</strong> (<em>Optional</em>): Actions to perform when the proximity sensor is triggered
+on object getting further away.</p>
+</li>
+</ul>
+<h3  id="sensors">
+    Sensors
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensors" title="Copy link" src="/images/link.svg">
+</h3>
+<p>This component offers five sensors for ALS-equipped devices and one sensor for PS-equipped devices.
+You can configure all or any subset of these sensors. Each configured sensor is reported separately
+on each <code>update_interval</code>. Each is an ESPHome <a href="/components/sensor#config-sensor">sensor</a> and may be configured
+accordingly; if you don&rsquo;t need to configure additional <a href="/components/sensor#config-sensor">sensor</a> variables, you
+may simply use the shorthand syntax for the sensor. For example: <code>ambient_light: &quot;Ambient light&quot;</code></p>
+<ul>
+<li><strong>ambient_light</strong> (<em>Optional</em>): Illuminance of ambient light, close to human eye spectre, lx.</li>
+<li><strong>infrared_counts</strong> (<em>Optional</em>): Sensor counts from the IR-sensitive sensor (<em>CH1</em>), counts.</li>
+<li><strong>full_spectrum_counts</strong> (<em>Optional</em>): Sensor counts from the sensor sensitive to both visible light and IR (<em>CH0</em>), counts.</li>
+<li><strong>actual_gain</strong> (<em>Optional</em>): Gain value used to measure data, multiplier. Particularly useful when &ldquo;auto_mode&rdquo; is selected.</li>
+<li><strong>actual_integration_time</strong> (<em>Optional</em>): Integration time used to measure data, ms. Particularly useful when &ldquo;auto_mode&rdquo; is selected.</li>
+<li><strong>ps_counts</strong> (<em>Optional</em>) - Raw 11-bit reading from proximity sensor, counts.</li>
+</ul>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="https://github.com/latonita/datasheets-storage/blob/main/sensors/LTR-303ALS-01_DS_V1.pdf">LTR-303ALS datasheet<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li>Application note <a href="https://github.com/latonita/datasheets-storage/blob/main/sensors/LTR-303%20329_Appendix%20A%20Ver_1.0_22%20Feb%202013.pdf">LTR-303ALS &amp; LTR-329ALS Appendix A<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li><a href="https://github.com/latonita/datasheets-storage/blob/main/sensors/ltr-559als-01_ds_v1.pdf">LTR-559ALS datasheet<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li>
+<a href="https://api-docs.esphome.io/ltr__als__ps_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Lite-On Ambient Light &amp; Proximity Sensors</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#ambient-light-sensing">Ambient light sensing</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#ambient-light-illuminance-calculation">Ambient light illuminance calculation</a></li><li><a class="toc-secondary" href="#als-gain-levels">ALS Gain levels</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#sensors">Sensors</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#example-configuration">Example configuration</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#proximity-sensing">Proximity sensing</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#ambient-light-sensing">Ambient light sensing</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#ambient-light-illuminance-calculation">Ambient light illuminance calculation</a></li><li><a class="toc-secondary" href="#als-gain-levels">ALS Gain levels</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#proximity-sensing">Proximity sensing</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#example-configuration">Example configuration</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#sensors">Sensors</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/ltr_als_ps.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

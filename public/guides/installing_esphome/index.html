@@ -1,0 +1,1188 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Installing ESPHome Manually - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+
+        
+    
+    <meta property="og:title" content="Installing ESPHome Manually">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/guides/installing_esphome/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Installing ESPHome Manually">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Installing ESPHome Manually</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#linux">Linux</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#mac">Mac</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#homebrew">Homebrew</a></li><li><a class="toc-secondary" href="#pip">pip</a></li><li><a class="toc-secondary" href="#cloning-the-repository">Cloning the repository</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#windows">Windows</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#windows">Windows</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#mac">Mac</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#homebrew">Homebrew</a></li><li><a class="toc-secondary" href="#pip">pip</a></li><li><a class="toc-secondary" href="#cloning-the-repository">Cloning the repository</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#linux">Linux</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/guides/installing_esphome.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Installing ESPHome Manually</h1>
+        
+
+        <h2  id="windows">
+    Windows
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="windows" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Download Python from <a href="https://www.python.org/downloads/">the official site<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/guides/images/python-win-installer.png" width="75.0%"  alt="Python installer window with arrows pointing to &#34;Add Python to PATH&#34; and &#34;Install Now&#34;"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 666px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/guides/images/python-win-installer.png"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABvCAIAAADKVn2JAAA7MklEQVR4nOy9WZMkR5Impqp2uXtE5FFVKKCB7umD01whRTh827/OJ77wcV52ZYayyxWKNHu6p4EB6szMONztUoqpuXt4npVVDXQBjTJkJSIjPDw83NRUP/30MP1//J//1&#43;bkpGk7q5VRiIjAnDkDjI9BHsm/cTAwMwPXx2WML6H8G18rxyOOz5bDmMfj5D3j&#43;RanXZ7lexpcT8fwvZ/5o38c33oG77gGvn3Ijasqs1V/4TQdOef9fvfm7RvddR1oF9A01q474zTFEIbeAymtFOTEwEobpXWREDlfzinGyFz&#43;iikzZ6WICBEJAVJ5MTEgERlVxI0ROZdBVJ5MKQFAORyRyjtFJBHKA8IfegL/PkadUJ6WLuId962sUc71GChzc8dRzGW&#43;QggyO2SMUUplzvud0RjLlG/3/XBIQ4zWtK1ryKd&#43;t8siHRwGzqybxrhGUREOrRUh5&#43;gzEwAOfUgpukZZawgJAPr9frs7ZAZrzapxCsFniDHlFJvGucZFP/jB55QR0DSNtpYQjDHdyjaNK1L2t7rFP9HBADnlEEKMARGNMVqbG7etSE/OKaUqQYio6gq&#43;fqqcuR96Pwx&#43;6MvcONs4x8wKchgaDTnHYehT5ghr2524p5w5Bt/7GFOMfY/MyjVkLQIohFXXNq0NwTMoUiYM3ocBwWiFRCqntN9t37y5ylCOVLnIxLb3PkTKeXN6Agh&#43;OFy&#43;fbvf7kU4OlRFQFfr1ee/UK5pVFEkf&#43;O7/RMbZb6LIk4hFOHQWleVvFQM5RAxENWQiFZHdf0YUSgZGLwf9vu9oIgNEQGwUqQVFkWwdmRSaJphY9jpE1Drs3PcH/r9YZ&#43;LplekDRMVgSKRU6WLOKJSxiGT8WScdq7VSqUY27Y9TYBar7q2syYMQwLSOhGwddZag5CbtoWCQBCUDjEnUX4jrvkkGe8aZabFBFR7oovFv9OwlCOXpufOsxGhtTZnttaK8GAFIIigiz7vWmNS1/iTlXNuDbhC1bl26Py6fDYpVEqMHBBCldOCG4qm0rnLKUUq8lOuNad4pvTJGWtjrDGKMMW48SEXA5hJKWst57TZnKSYyvEMIYSUc9O0q1WrPtmUxw0iKuvMmPr49sRXAaqvzn/eeZi19vT0dL1OSmaneiHVmdA&#43;Y&#43;u6trXGcES18w0g5cxJOXQCI6ggyhkDx&#43;KPAJMqaLTABmKlMkIIBdqkFI3SbaudNfVqipQ0jXgwRSLrtZYn6tUxp5xFJymtdUVZ98n4pzGPBzTB8ph6t&#43;c/7zxGa62Uqre9jtnF0a&#43;3Pus0ACovxh5DEQAGntwgBFyqeub51&#43;JJ4JRy3w8x&#43;LNOPz9bF7kjglsXVF2VG9c3nSE98mt/Go8cj7mTd9zw6S99eQjogodAqqr0h07Hk2MMfM2DZoYQ425/iL7n5DatcUYVhIL4yEusJ6428pPy&#43;JEMnTnHVH5oJK5usyvTOOoMvsGxMHOI2cfKcegCpTlTBr4uHOMDviZZ86s8jR/oq34ajx1ceRTQmpjERyiy8a554cVvmGBIcbsB8jyzfPwAyBkqzVpthyCd8fWZe320arnvopbihNMH3XPa&#43;eAfgW6armV5zT&#43;K66rkWAZtNWiFYgHoEW9EQSPlN46PQTwRyFDZOL4JU5ZmaAY7C772rqsTlDqxqDfc95mdH9VQTjGmmDIiGq1JEeccU6rgVylVTyIhgfJfTkVgCwZTd6D35RBSN7FwvUqQnbyZ57kU80f1PHJwWQkzT8NFfY4wfMaGlXioUD2nlFIuJ1dUD888EhJH3vNjiQqL5rCajCZdviE9hDf4&#43;C6Y4CiD&#43;MQpJyFqUy4vlS9OiHee64Y5GnkNBLgmTSmFw6EfYrbWOqOXdzbnHGOIMQstqAA4&#43;mG/3e36gKTOTjdNY/f73ZuLq5S4bZuTk03XtogQhqHv&#43;1DeXLzwVdet2lYpqnMsswXiNo3zDQDD0O922xBS0666rkXIh/3ucBhIGaXICzdsrdts1lbrcvD&#43;AGTW61VjdU6x73sfQnHgcjbGtV2DnA&#43;HQwJadZ012vf9fr&#43;n4sw1BNmHwYfEGSqTqbV1jTPCYXyv0/4eQ2uFWkkQhN6tOa4jjiImBVwwQiySkXPWCFp42mvfaP5j1unjb1kZeJSPuiTD0L9&#43;/fL11aFr28ZqRHLWEaH3Pnh/OOz7Ia7Wm661nFMa&#43;qvLyzdXg7auON3cvvju2z/86Rsf4ulm/dVXX3z27BkCv3n18uWL73pfNEwCdXZ69vzpk6axwXuZY6s1DYc&#43;hGhduznZWFPm&#43;9XLF9vdYXP27DN6ZjBfvnn96vVrVo1Warvd&#43;hhX6/VXv/jiZN1dXb799sVrVu0vviC1aQ/77etXL/eHwXvPgOvNyXk6SaH/7sXLAOYXv/jibL3aXl68/O5FVma1XjuDYegvLne7Q&#43;8au&#43;ratlufnz9Rq04p9X1P&#43;mOHJiJNWGTjEWalKvTZkc1c1DUwJOZYlGRyGq1Ruqy8u&#43;V9juJOOvOmjmHmFMNue/nyxVvRZ8wZnW2sUYP3KcehSEc8PTtfNXroD8n75P1ln23bPX92Hhu93&#43;9ev30bQuLk20aJLorffv3v33z9l5BJOReYLi8uh/1us&#43;4Ow9APvmkba2h78bbf&#43;259&#43;st/&#43;NWT89NisPyw323JdGdnUVtESMn3hzhkUPveAzDRvh/6VeeAcwh&#43;8Dj4opy22/2Ll28Ofe&#43;Hg9amrKccD7uLb757yWa1Wq018uXFxcuXLwbGpm0bTRD9qzdXb6&#43;2p0/Onj17GiK3Tdu1zccRjsqQgoRPi4y8i5wUkcApUF9ERAxJkYwQ0&#43;BDztlq3Rh9LT5ym5W78f9bL1bOYxgOvfi0MeQc3jqrUaliSgqqRRGgw&#43;XFhT8cNJEHp0xRXhJ3KKa7adxqtUop/8d/fJtjHPqhGHckBAKgGNPl29cp9BH14P2hP2gFh&#43;029MEP4fTsbLNZF4SSiv8Vgo8xoiujcWaIxVpkKBCnBrgZ0BjjrImBaj7D4NOhj8MQDvs9Aofg377V/X57uT2YFe72e6tgt9sP3kcy/TAcLvYQw6FPAGSbVhsrke/4cX03nVkVKyuRm3fENY6uLGbmJPHglLJIRhx8IM6d060zWs0CcLdBqfri3oiAyKtS5SzGuTikbX8VfWAVU9Zt44zJwQ&#43;7frvdbnMMnWuUKXJDEoCyzp2fP9lsTp4/Oel327/85evEfLru9Dnsh5hJN7opiigN5f4jppipmBplrDNQPjQnCSLHmGTmY/SHw9bKOjLGGIspJBgO3nuj3DAMh2EgkQ9d0MusgFEp0lr7YTjsD6RNTjwvwfIF5YKLaS74OxGzNkY5ssYU5J75IVrhBx41xqXL4iyTgeqdmkOAgYT7yr&#43;Yso&#43;p9/EwhP3gYwwbi5vWtc7UW3D8ZtcJ1Rlw3H1ZiEqb1Xrz9EkiROOa6GOjTc4x5KSM6dom&#43;hBiSNF0q5VRat11aFdN23Zda6zbnJ59qdrTk9PTlXvDyWpM5E7Pn0AazHbPZE27dsZgHJjT7jCwprbtVl1TEGmMkLnrOir4NDFSgYvOci6faUi36xOw3IaAmAcfijghDz42RnXdiiwVsVNkDXWNSrlgpsNh0MaenJ04o/uhT2Cenp&#43;dbjqNuT/sLw57JN2cP3GKYkYfoyLIMWjjlPqYaBQRdeZKUYhH&#43;uCoCSZZvJIQUx&#43;KZOyGsDv4YRgM8tnKna3LoqzOCt6nEycUeo9hIeOaJ08/a1cnRWqVypn9sz7nlDiT0sbo4rymFIPPzFopZyworbVZrzpr9RPSq01y1hJkY/XJ6Zlu18&#43;ef2YInngPpJVxBRXlxFko/5wklcEAj/fCta1zlmDz/HNMKddgstJGEzVtt8lFbs7PT32IRY84Z4wzmtqmSUzOOUO4WXfx2ZPIUABHZm3serNyVounBUXcjG5ECz0dekHcRaZyhhC990NKWbumaVt6hJfwvY&#43;RYkDSQ4h9iOTjO6&#43;j3rqUc0zsQ&#43;pDPAyx4LG&#43;xxzPVuaz09WmE6NCY2ogVt8GcaEwpqxDwCUdgoskQVJmtdJtu5oZoXyaqw89RoYWXOrEBqBEiYtYktKNfHb0g226p88/b7vN6emJ0Wp6C81ULQuhUkOWMCk5rCFDrV3TTY7uTbplvd6Mwar51QXztlqvtTGZURcERjgxLvWi6xu0Uta5MSOzuAMFz&#43;WcYgjF3CntXPNRhGN2JPVuCLT3nvWdId15VDpHhIOrQRl8PPTDMAzE8UlnvjhfPTtdtU5yAkb3FOt0ju9fZovOM7q4nFmXVH1DiPNbFoid56TU5bXOgjiRbUI3IXWrjWvXtgxDN8lTOYHiGwzreEJBtUowwcy4ze8lohsBz7oGahaOXLDuOn0j/pQESk85EyIlBVhpOLKCDKgNkrG2fsginjBNzpJJlRmBay/fmOTqEH6AbSp2Qu97z3o4JCXfFu/EAiO7MWkOAaHR&#43;xCCV5xOOv35eff8bC1qg3Aiyq5N/40EpGv/u/lZKYRh6GPK9ZI4Z8kwFRqRGUmDJI4gghL3u16ViDZWFos5D96jpCaRHBx8ludZGLtKeqriCsXEOU0Gs/L7kj3HoDQxxxAzKm21Zi7QmzNoLdm18t3kNJXfLNg8FiQUCyg2xtriwZa7FDNwsWEps9G6cU5pVVwRH1EpYzSKV5Ql5ykUDJwNlecFrtZ1VaRISD&#43;oLkwVUM6SLJjSTAUvRJHroqppoe8lH5U&#43;z5n1YRgiDSq&#43;myGtbmIuV59ySsDJKT5rzefnq1882ZysxIetBPmEQG8S5I&#43;IbHDO3g9vX7&#43;&#43;2u1APE9OCRCKfi5&#43;FSnbAeLQ7zFnLc5kkphwcXEZCNAamyFdXl0yFNtvjKkMtjaGlE4pSMSHjHGKdH/oYxiYY06RASNQmUcfEahdW2a/OwRUtnWGgQ9DTCE7q61WVV6t&#43;Lc5xcPgfYh&#43;8Cl6Y/TJZt11XYrhcru72vmcQuYcGZ22m/XKdm2R/703tulak0Pf930saAT6WOSx0aprG1KUhXVW2rim6boWOW/3hxiSMcoak1Lc7w/94CUxTBc3QFaI8MjFm2zb7uzsrLzxPZWHMBSoD33v2ZDP72BIJzOPkBWCVbBu9ZN18&#43;yke3rSbrrGFqVBo3ZfiALyzHvd0I/3f1TOw9BfvHnjEytSUFRV1tY0rrgOBjQiHQ6HHEK1FBlUcV6C5wyNtZv1BomHgpIHSIM1JiQOiY1rVusVYRajztZFZ9xhdxj6XYx9zsXMRybvPfjoTKOKR1kWfhzCcCgmwEeIIfkeqKyUbLRen5wgsPf9xeXuUKBtIuRVazm7lPzhsL&#43;6unx71UfvlSYg3ed9f&#43;jtZlXuhk&#43;OCSH1u7fbq23MWRkbmOLgo6LoPQMPQ58z27ZZrTecEwJfXG69D13brFrnh2FbhCMA5zFqQeVXDLn3nnM&#43;PT1tu7ZpmveFLpkxZ9KavWJPTJjfoTkQmQidps7pk9aerZuzdXvSSQRAzbmrDHO0aXrf&#43;HGTjLzDEEpsw7mmW61tzsWdk0AaKbK2LCBbYI1SuE6h3JSii4F0UrH44tg2bbdeaY2osO8PRhWFqxhVzFqbxloi8GV1JaO1NRraRhGHiDFFIh1zwTpkXFs&#43;v1OKbZv2fZE0a23T2pwycvGUMmdnbNO0rnGk0IeMFBFYK2o7265WWmsh45t1Vtw2xmggFX0oeLcgC6ONpPopyNa6trGM2roMmMXfMcaE6IMfoiDWaj0V1YxRaprG2uJeucRKW4kLZQkKwlguVNQIu6YRf/j9JGOWD/3VeWvbTtsWST2AOAQhglbkjF41dtXYrjFFXdTM5wleLOspGObnjieBqZbpvmuSXHt7cnpmmlZ4JIXVpGOlQLSk4VPOnSSN5EqI1roYENayJsp2q1VMccxEQCyWBKAY&#43;GK228SsZX6KlUwrSWhJiFRwQ0rFNtnioiIWg9X0gw/BOau1rXHgGnA1WptyB3TD2TWrlDIU1wa1Vkbwr1LWulXMxdVSigAxFcQgQLQYSZIlxatVcxoiCLKoeQ61CCgG33VdSKlp2yKF1hBh03bAIGnelLrYrmNdcrmWoi0ybMr3LQL9YS5PmSD968/PuvWZa1ak1E0PYpQNrjVuBQBSccBMQWT1i03rfyYtrkF/rsTZNabvcWFolCWiyuIuM13BYq7MqbhDzCROKC9hTS3WqOxqea&#43;IT/1ICdnUSS1iVue12KyCOhWAq2fwZQRFVF5VKqUEGTQpMmSMNdYAcAzlbEpGjRUTlaU8Vo5VVlGcV6eMdddQ1vH2LCr&#43;lm55RWx1laYU21UnNIlRSldvezbN8tg2S6rxFq10X17x4wbqs3WzPumadlX0z92h9jmL55iDitfTNXBZjAc3IvA8P4MPZvdMty&#43;H4Le7Ylm1ccGEguWjzwwRCiI1BQuKx1izH0igtax1RByGHpglyqqDL&#43;agmCmtc&#43;b&#43;MKQQqi5DZ5pV21pbK39UkZXy&#43;Opqu93uVJlsp0gNwxB8QHEYVeNc22iF/X5Xrq1oHlv5w7KorUmMIaYcQ4EjxqzW67Zt39dTWA4i0to8kFf7Q7OnumoCK8v0vq8x5ddcuyZevjrlpo/wc46owKJeduIWHpAMGAv0cowxpZgz77e7w2EXfI&#43;kApQ5tsUHLSqUhPQCkONAbTYn1pqr7WUYhqYpKKzfb7dXW0HyLqW02x04Z0l7JrSm26zWXRuH3ofo2nazWXPKr169vrraqgIdFCAWsF7egvNbusb1u6ury8tcfCWTgTSpdddoZz2TjykOe47BufbZ8&#43;dKFxD9wVP40XOtBTLgzAHeE&#43;9YSikuSIoxDDeSg5XCPL6Nr/EZEyk7cVv3LAWhJssqRamQiCHK7FpUCrlgAq1EjIt1V0XP5OLtUlHgzhrtrIWUq8431jVNqkgFwqhadK3ONbpxjdY6R6VyxR86QbLWtG1DEt3NuZh2ouktVhfL3zZKvm7wvqIHq0cGQpFyVhvMORXUIVRBZv4Jl2npysTdn7wl437P4vrfjBPHyZNoLPlxnCHHXWKIE7NtrVtvsCmeOld2qLKUWaCPwI4jZVn5byIlOJS6tokxCuTQWQpparJZqo9r9Xat4itYmorfkXMxKtZwzsa6GOPYaED0ZS1AHt8i6Wc5bc7OzuXCKg4r9698W1JIQpPkXGG1NebjZ4R&#43;8EDQPGn6B2TjXSc5SglJsvFIgN2yRBNp/uAdk5LfRim&#43;kXZ27ZCbVOCs9pyzY2VD1WcT4KlQcQZDs4TOqaBlggtYcVNvietY6XofCu54aWpHkzqazWP4meinXYOjQ6or8ns4V70Rtfqu8mV4/TVEfCSM&#43;jjRSJRMoE9DBiLolDHz9ybd8&#43;p5GHXe&#43;/bF70/jI46yTIpZ&#43;VCdIQ4kc76WCFLZffprrNSn8SMYYybYB9hESTtgH/MhpN6nIUotiJC7VlNrdWMKhn9XXcgjPmiCHR/dqYNbWQf3HlPHR7/av27UFEVNcxL4o98WYr7q48ur4dvL/vV22B6Cl6CoUbBy&#43;nzlnp80n512J521&#43;p3Jh9MQuDdX1EniLscUfQjAyYysubo3qYCvdydb&#43;s9/5RCXFFIqD5SC27ngPIaTQFbIKENaw1115D&#43;VUb&#43;NEDwPFJ/dfA/7yK93/k8v9398ufvL6913F4fL/RBCBM4KudF42pmvnqz&#43;5y/P//HL889OWmsepAjvsWqZefDh1eX2zdvXKu/OVs3J6TPTbIA01dZjizCvaDIIEtrTOPPSMBU&#43;TGzLHJR6/CjnDbDdwuVlkY&#43;zM1ivJz9o&#43;kkJYgTvy480ogDnypGrVRGRn&#43;womqM6go8EHplhO8Q/vtj9v99eXR1CiHnXh5cX&#43;8PgOScCJshO4XevL7f7XhE0Vp3r5nYfpzsc1OuV9Tnz9tD/2zff/du//38uvfjVk/UXX/2n7twk1RKiFnnLBe6M0d6Q&#43;RAyInSSbZSY9RQPrNJPoiSNxvL8Y&#43;SjzvpuB999B3/8I/zpT2Wmf/97&#43;OKLIhwxjnJQlUpK5c8QQDQonJ6CtdC2j7JEP&#43;Khqy585EiZL/bhT6/2Ly/7J2t32up9P7x8K5lMKSJn5Bwhp&#43;AN8vPT9qunm5POqYV/eGQvbtXac84we7DMKcXhcHlx8SIfXmiO3Vmf2rjjiIhWUQKIkTNzAMyZQ2Kf2Ck8a8qTPtbszoqNC3ImgM7i2UqvLTwKv6RUtMUf/gD/9b/Cf/kv8O//Dk&#43;elGd&#43;85sy8UUwpxtHVGyNMeVntSpq4&#43;SkSMZP2azUofOjqyNYNMchxLe74XLvO0uNZLhVmRDKOUtryuxDutr3F1f73oecF1HkRZ&#43;FpWxUo5YlZXJ8hrC16rONebM2r9JpMp&#43;h3TDpwUvRds77VCSApFVhHzmm8pgcJQYUdTL4HKveyMKEM2ySah2vzCMmjLnogFev4L//d/jnf4Z/&#43;Re4uIAvv4Svvioi8uQJdB00TZGSikK0Lo&#43;NKb/nn49Xxvh9jXcbxWlGyx2PuQa982EIf3kVNfLlrtfEjUHPnCRZUjhSzikGKQ0CGMnvmpnIeSEaE2NZozN47JcKhNg69/mzZyn89nzrT06fPTl/Rs4lMffFrAS2NAqHFqGyClaWNo4UQpd477OXaC0wECsGcEYyVkZ&#43;H5Zw9YhnJ4TCVaZdA8&#43;e4a9/XXTG8&#43;dFOH77W37&#43;vAiHa9gYlCwNlOZYo6qojwGXydIws6nXKWNYXMAisfKOY5aVP2MY/IfXSu9wZVkE4uBzH1KQpPNdH6zCzlINm7aWPts0Ww1vr&#43;I&#43;hgxVPhg4QY6Ye&#43;JL4lokZ5gtyzzx4n7Udj43M5ARtbGnp0&#43;1ab8IyTVt27RZsmGq8elsEVYEiJIKK43twCg0NOLFTUMhQZJjagEeEjqNBSTMDZVHuMoxQxQqsJZV1IganD/F/&#43;2f4PMv8MV38OYNGsO/&#43;x3/w2/y6Rmb4owkqP0bb4GYYxsTzjy3u2A5eLJFOLV4ltVQrkoeKMm1rKJAOIe0y3nSROvXw8wjwdOHjspz8H14lBl8zK93/us3&#43;&#43;8u&#43;4OPMRWdcbkfFI5xNaVJI6VIW2SEjJyAs7SUS8gD5VcqfqtgL3fjBPAzxjMGOxbqPmjPJH230cbKLJY594nrxEnuF2gERqAMShXJqMxbzKM01MKIlFlCi0XaMnAfOMQynTWBjMTsAMAQ&#43;RCK/mp0ueNim1Dblf5FA08/h9/2eDhgTrlbhWaTkq51JkGuxyhUQruP5RG1IGPK4RadVAR6EBhkVBFlYDAaazNxZk4F&#43;3KInBBs8cagYCYAV&#43;DzGK1JIr4g2dSZoTG4tuQ&#43;PFfk3aMWUgPcA9Fi5jc7//98ffmvf37zl9e7wxBqb9RcI6XFkGeUhHTv/eCLwyLPFOFAEQ7MLyl8o9J3xbfAp6D&#43;kdXvmZ4C6tr95ZgcBAi3Ii9zq4yKhUMsxkISBiFFKeQG7AssBUPilMu6NDLlQyrzPYTitrQGpQC73FYp/ISackwINfstJD748qczmAFCKuK1dthonUhl58BsFBYjtR8gHpJ17EwR1lgTkMYSkmpPMPIYk67CR1hk8eBrKUzB0cTcWKp9RMduNIKpE6LWOWbYD1lhsZJG1aKYMTmCEEIuynLtlFUilz&#43;YZBRljLAsiL/mTB58&#43;vPr/b/86c3//afXr676WPy0Mv1VAiAnURVZkltTksqM8mcRC0ZWRT7yFtN3lP8M2RO8UDqx3TCuMq7H/D5&#43;74BKbSqEYgs885AKGh0ArEKlseYNMMM&#43;8BDLHddiaMzEStTqHB&#43;5D7mqeq0q54ZMZX0nhljehcEUbRMiSKhf1SS9PpV3qTyu4GJ2pdCrDzlEsAaVwigethI9YRRaDdW4SFkKcGKLHGKORetVbgbUGI4AuWaIqTjfQ8ghIU3FHlqhVXNazPcuD3eMIyC9oTwS81Uf/vxq98cXVy8vD8JkTFZjlA8RBRj/PEoMly&#43;kELRihQFzD3DAPAAH4r8QfUXqC6YOWC9yPhYh&#43;HsulBCtxpVTZcUToCkPfIbWlEstVqZ4lGNYuOgSXX2UYjiNAlqsAOYiWEPEIZQLkEtFqYmpzg1UHdBIjVzAsbthhQtWhKQxpEQVgYAJn9gQDIobQ0X3yPNaUm4VlZMXzGE5MvjEJHqufFCRvUrAjNcci7YuYsfMZjJ5VatnBkVgNVbw0Ri06lF9uj5wyDWM&#43;Ry3XhIaqg/fXRzebnsfQjUZ8jPZjmI&#43;8kJWRGdAliR17Bp10nKjeso9cCzgtAjTW1Iv0O4QnjLWXh9HwXi4FwWKPSaUosLxfnHK14r3cZFdkbiWUxyBxXxgxXQxU0wwRyBpkV1dz1mlIfPx5DM5PoeN6mXEXAxTzEXP64m&#43;nc9Wuy7UviFphkQ4xi&#43;q9ZmZgszHJ3FR9TldElbHR1ENfPx1EnD/GGMrsxd3Y2SGg0&#43;X&#43;&#43;EweKlvO5oSgqKry7IQqFf8DQG1YzoU4brRv3xmvzoPJ&#43;aN4ivMAQpGAeQ9pkvMhyJkd6Z2PCgfhEVL68kO8qN16y1nAqdP42O&#43;zvuo6utHIh9PdceE4eKw5ZN862zL0NIDn/s3cGXn/hx3q3JpLZp6HyrUqJJBMAdQ9NlKdxY1scDPEZwiltVzvsLffBb&#43;8dnrE/OtyleQIkhoH3jAdEAOY74YTN91YjzeScctre3DN&#43;dmHO76Nz&#43;e7vsYj4xM4YN/Ph53/S3wRm37xFMC3Y2&#43;wWM3jpS5RhBEZyjglaUvn5j/6QvzD8/wfJWNqh4s1TeIUskr2583r8/N1y28oNQXtcFJHNAIOYj1GT9ksXrenYl7Q8ktL3hq6Di&#43;lOdy&#43;0kp0JKSArgjh/4a04RLC3XzMhYFGYt7eQTWP3HSfB6oR/4z87GqVexh/ZJKpr3iUILsDH5&#43;pv/p1&#43;p//4fDL59cre2&#43;QM6KRcaAdSaImnsNlzpfUD4Uach51BwIcBfEGT/2wVQx5mLXfS0OHHM/x7qVnAsqPEIBLs6IF86IxOQbjU4IjCB&#43;LwjIUJI0Oofuajqx1IsD0oglBSxUhLhgtgSQTY6roFfByxXPaoEd6qcvH0VzjCtKOj2Mi2laz0YqY00xHBkgEULn6FdP8X/9cv/759&#43;eNS817rCATVEtOIlIcViKhijmI49aZ3TUih9pAY2sZOSp&#43;8&#43;y4Ok&#43;&#43;cgMfeS3&#43;xQSTyFZlnxvTJGHlAmLEFhdXP9tn7deKpGgwJSuVWdt&#43;eyrQ&#43;pDmUxrqBHkL5lKMGsNFlwJqgiTcFCYRCKTXEBRozwi05xYq3K5KY8eh1blAjpLa1u3JvvbTeQPNEZ4x8eqxymZG9gZOml1a2hbblqlZfTzE/785GpjX1p8LQ5qGkOUx580SUk&#43;PiiPCcgybYDaSjrzzfpAfFAjc8o8RN6HXBfuWDIDkCQkK3uBlblpFA5Vx0jjba2YFTpTpPfNPl31GQnbhteOhJ/gGMWhFa3D8kamImStQUvghS8BhfXgwFITKl5KcWdETJGLsBsNrVNE3GgYCYmf&#43;NBzfHTsUT0ZWUJcN&#43;azk/Z8ZS&#43;32MvddxrWLrf6oGEP2UOe1MZSCDIfn&#43;HFk6iZTth8BmotDVjohqKqe9Tdd6HCPWNniyWRhrhF4dQFnYUAqCq9rHiFwKSL1ahhl6I8ao5AJUuktGmKiTCwwnKY5H8wsaKiWoxCK7y4UtBIn1ZmNrQQjqN/Mvo/WmFjx3f9HQzmUTiuxdAn7xw2jfnVs/U3z08Off/6MiPkxpDToDBijoiTZNS5Z8n14bFN/hieFRQimTwE6ozdP7D9JasNV6J7qpvFaw/u33AKwSqcIrgwq/pqijTJlAsI0GoEDZXNk64HBXysGpKOyOBMeZAyiCRBlIJrQkzFOsj&#43;RbpMc1k9UkAj&#43;INWdqTAcwafiiGuH0rTHTOqWCv9k0/kGMdROGA2/hPwbqz65bNN/9vnVuN/vLqMMT4/U2erwRIWiJrTZEEAwDKtC56oMc3RcS2&#43;bUV5jI7N57n9X5L9VYJWegXkKhG189UsEPfdVqE1uRdGvIZavODQqQFb0eQtIiPvPe&#43;HrAidKXKQcnmjDwVChcyewciyGAIfJNtEISRBMFqhF7OCgJ0jsBATh6ndf1UYSsq29p6vhmK1WoONOWY/a5VrR6if/iirVC9TbnDRywCYNeL5yv2nXz59smleX&#43;1DiCuXvzp92VpR01U4BEwwOlBPmU4A1ITsibFjdZbBAagiHPqczedJnWVWtbHlSHRK8eAY9nhwv5Ua&#43;A6JK2N9iJxybVRSoKXTyAVEQx/yITAhh4zaSCQsSiAG2WchcWXxp8RXfU4SIK26oWCIzEPgIHko0tenAI7KBEmUHKxQ3ds&#43;Xw1ZQmIYM1UekLng3NbS91gH9HHH3ck&#43;84bTRtP5ulm15sunm5yzIt9R3ySFYYk0GWAA2CKBLEst71VsniX3u6yfZzCACtAxWq7t&#43;3j&#43;mCNfQdJLHG4xLnVUzNHa2ieNbWatC6SokfoyxwrbMUUUrRatRSD1sBAVszSFK09TsU2GMFNldwSRyNy3poCPRkusxFBjUCFrGtkPItCSNUJTGIwEt9b8&#43;hqYVVNCyU9/lEkahePOti3VvijChrQzRSUQok5aJZCcmdlHZeQtRM/YoDpj9UTW&#43;BXgCYPOdJrRVTXF1XW9wWTNpbUPqg0scFj63eTRuUpi0HAshS22RS8iZ3V39NrwRAR4SgSRMIpYPz7Lqs5r3aTKSAD0NFVgUSBLmt0iOIbgZR9ulceWflO2AY5HWY0fs&#43;/w9zTqLOmZX7hJ8eO1oEPtAkvlbpPYDrymOXIA9kDM&#43;gu2vwJO2H8jnjEK16BmTTE385iSfY4JcvwgCV3bXDlEO/3JS34VrjGkM9V5TAq83WyUlyQ7H4uk9TKB8V5a9WaV&#43;BQlo78XhrRox9vNMq4tbbz&#43;EImx4aISOuS3wGFBaaCkiyKgKfhUbVidADWwZLjHCVvcVUacA0mPqKTF67lAcOeF3vnE3QGxuwI1eCON89ExkL8LmViO0azcrc3vmC1i3GT9S9LfcfKQXyFLRJ7r5isR/GvAf2N1wmqT3VflwaQ2ZC3yoo01TvkcH9pk99P4gYeeYgbXxOPOALYoU8y4QvMbCcCvkP4M8Q3EGkBh8UoaQfZrdr/O7teZhNKA2/oZ7jAGD3YM&#43;zT&#43;9kMvZ62mNOKii9fN5oDlSZPVUyQH&#43;imF32J8DXELeRAAqIHWbJ4Wl1V/lulEcolhpmBhyaXUT1zGz&#43;GTZPy4hpiVpcEdwRrDHak3YxicwbA6Z73O5heQawpgrFwAkwNqmVoGKwkeR691&#43;oDrp5zzdvCeVJlP4&#43;MNPZUd34EH70&#43;9QS7IVLNyQCc1qDu9QgWXSInioqX/valWC84e74vlfxofa&#43;hxi8abmW94O2Pv6I6O2wrMhWsI1/Idc23dety8Yq51v9cpgk8G5Uc45rqVW6&#43;MG3pM9XxVEXCtFhmfqbFzXhBb1/fXGbfrrZ0sb7Keo7syl55NP5/Gj2boh9J05/o7kYy6H/O0sbPUNtXtNSYlMZunsaMjkVayN0kdY4f0I1HFOErGAz1Q57oxxCMZeuyZXJmqRb7oNSbvVoUqXKf4bhSgLnJZFgdeP&#43;3Paugjf8hjvRAspm8eaSEM8iilKP/JGHt2Sg3jPJTSPCW3k2y5UGOwVWUctzafNue6oTZqWUCSfgqytwY2GhVCyBzzyHZXMnuuNMHrNG&#43;NtU7NXsbT1931aYLdNUOtRval3BJsLZed7gNNVQI4tjv7GQmKnhbYzF9Or1yLgCwfVkUyjTT&#43;v/rAPOUrj0YJYPaK592vcPKQqw6qAnmjf3vdrvYQeOfz5ZCvhmwVfr5WjaYhZp8kzXNSGz5xytIMQRJ8JAkeM5TnpXZtfF5LvC0kCSlR3WudM0OULFGfuI&#43;sEbqaOUmoNNatuVSBZmwUOk3OoKGfi/HTsz6&#43;odfHdT3vrkeYiXBqAjzOt8AJldWkOSSXa1QbStqp67r5gaobtC9GESYl&#43;ReLffOWH5&#43;k8cblkN8e8ptDUgSNRnBSsVgEC6QCsYjFIeTEYGWPlZyZJNkgIfaRfaw7qGMGXFlaW&#43;x9Lk8SJrliAugz7CMPtXZZZC5mMIbalhJjCJkyO4K1o00LZ6T0zwYa1YZx8w6HE&#43;slTX1n4qEagpyzUirLNgNZ6zSrDdlo9khvTRpCcMbx36w26gfffgDHGgmQpM4iDSduzOWTUsSa2zeWjoUEg/QtqHVv4iNJVzdAUQxjaniUXA0tZau1F1QtfU5Thj0DRCmccFI1mSR1TFLJMY9wi8eMAhgr0n4mQ1OdPJnLGzWJSzJ73nQOmLPWo6sychmLrZnmRL&#43;6nwxNumT0Zm9WUC3DqGMtGo/l1Qqxk4pQpwvaQIQTpyQDj/rIiLx21NnycSmPrVMquLYEhiABDon7kHMWsZBsD6vLOXMmAvCCSBTikPnEsSQKFUyTRGqMIV0LU21BII0q16A12Xdt2/33NPTsWjwQ17i2ievUeXrWMbdXElaeDMaaBhyD9/ctufl5IrQVAsJYNVM&#43;cYUkIBElpQRiYpLrbiwqmqqNpxPhImSzBkjSCKrayNrdZWxfJ6mBspcnrBiC5SphR9Q52VqSAEDtu1JbpvxMbMoiE&#43;yemVtkmDIg3t5&#43;d3lo/Z8o9wTsIQ/Ig4RdgiSK3yZd62nrY0Q0CKeongCsZp1C4pXoqRTap9xHPnjpg6BJMmtunLGMIADC6LHpYMgc0nQqwa3VrPg4&#43;ktBeqeMeSvl48YUeqdquxVInBVJHpoB4p&#43;Lx6LrznGSwn&#43;9fnXaH3ZWDQQPUxLV5gfIPaQrSJeYriDvJKYfADLe4f8srQyBahG/BNMCtADLLX0n5nWEGmUi&#43;5CTl6ImnMrmZZ5JFvfgc8w1j7y8q7ozc&#43;mRNaTEbdlL4ZNGqLUOqhgjCMKpJMmRbYtFK4hEEgfxvNOKpBPq9zkFP96hZ590jrghLIpE&#43;ei2wEPxdFEYRSwuMbzE&#43;ALyG&#43;Q9gK/94&#43;6pYV9mFRUYgHiGEB&#43;I6kj6v6SVI4WawM7HrDKQghRDUsgXjxRXrU&#43;sFqeWLIzNSeW7KBI4Ja1RIkBfAakgknrNisAUkDvWWv6MAOm1upWxjOyhmNtdo7aHO2B8Df4bjN9gfoPgBSVqICvZxXQ/zTjVBmEHqikH33NkLU9au7GSMU/8KRwDxiMySIlSvpVCIn8oqVCqxQ21gVj9utICSjyXcXvlcZ1I8QvWA2ytuX2ve/NTHnpeenBkoPFmXIyPZMitM4hkpB3Gl&#43;i/hvgN8iVSBtWC6spvHItjH7yMGv5zoM4A3X00wpjtbJD17N3ccaIb&#43;aV3nAdx1og3zr80eMss1PmNfzcpoo8ZetEavNoVuEMylgfcGJxFZ7xE/28Y/wNwj1qDWoHeAK2ROhEOfX9xPcxnL5JKa0lBvfdInKrx3/G13n3AzzZg8h7jdt3Knftm3bdTIRewGS/Afy2SsUPtQJ&#43;CPkXaAK1EDegJXb5zwhTgQ2bl0/gbD33koR7iISazc5PkTpD2GF9helF0hjKgT1CfAZ1A0RlOZvpxkvFp/MgGzvT5ktC63i5n2s/gDs1R1AamK0wvEbaoFOgVqHURC6piwQDS3vqRklEQYJr820/C9DFHpUW1rg02gW/sLDy7MMudgo/px7XlcvFd30K6KJOqXEGg1IyggfOUzPPY6xFpiwta7NP4WKP2syCtaExR4NGtP6qNuVSxcmE1nUM2BRYYywnzAdIFwl5aHrkJYaC0Fs7w3vXEVdPkH&#43;DbfhrvMcb2xYr0bC7mNJ8jXz45sSmnOMSUkvdea71adUZr4IhpB3kLHLk4qwZASpIhvafOGC9JqKz0vhzLp/FDjBpv07NkMHANwS9sR/mdUw4hDMNQf7dNo4igcQoGCDsIe0bpwpCIc0IMSt3M3Hnk9chPgluR20/j44xp69AiGTHE/X4fQpiz/YzWDOCH4XDoD/0h5xxj9N4zQNtYSz36t&#43;i3QAGDjTBkzkShaV3TGK3ek0isOUUcP5mVH8OoaTUj15hT3u12r1&#43;/jjHWwgIiWq1WCLDd7bz3KSZSVDNGQwiIuTW&#43;gdcqbhOkRBQLAtVaqc2mUdQq976NCGqkPn0/m2N/Gn/lEFgxhhhzTn3fb7fbmq2x3&#43;9n32S320qNAdWXjDE55&#43;32YlD9qds5jEPKQwpM6BwgZO8xBcVm7Pn96IHS2SEtcsY/jY83agdjnGIRYjIGJaUEiJgz933PzN4H55wxRksCWONcSmm/p&#43;r6jkEzQlLkrJL&#43;m1PPuPeaYabi4CwiG5/GRxyVvNBzyo3IR2IG51zTNDnn4P1hGJiztbbrOvFgwclLAEmxaeCgstaITreoiggV/1gTiXg9EOC4YTrGBFTGOd7Fi4K5H8V21D&#43;/URvjj3OgVJnetm3Pzs6apkkp7XY7urrinM/Ozk5OTopwCMkBzJt1i&#43;mC/B7DFRlEuwGyShrpEaK1CqUH7S1KdX6wiIrysWKGJIs3xRhCTikxs1LKGFOV2S3yfm4FCjB3rsLFq3M53cj/45HZW8rc2L&#43;5HEqENyokbp3v2DXi8SJ7fO9UsiHXcF/E6scyxhxSpVTbtk&#43;ePOm67vTkRBuTUjIyEPHs7Gy1Ws0zxMzO6dh7RKu0UxbROtSOalx&#43;sf/5rXJbnueUj6VmPNFlssNTZh/8dnsIIVRc3LStMbr8p2vn4DEdnMV7QkBStbUXKaH05g0GcwycEiqFpGb6P8bgvSelrbF1u31mDoMPPgCRbayetvzME0E8y0FKKcZEVG4XLhKgbo85Yx7HThZZqsCYpD405RxCUooaZ7X&#43;8XbC1rPa2Kw3zlpjy1BELCCjbVsiqphjFvNicQoWGWDwFhKTIg0GFL6b3hh78PMxS2fe/WQSJuYQwuGw7/shFTeIBu8zs9HKGYsIMXPKmYBzLPfblFnWwafM3LTWOJNZ9vdLMfUHDoMyJpPJDMYaY&#43;0w9FeXF6R0164aV75sivHq7dVh35u2WZ&#43;slaJac&#43;FDijGSZLAqpbQg8f3uAJxlFbBSWmsj&#43;8wUuc6TMiBkKXHIIRbh1ppyzoOPhyFJD26dmULMbeuenm2Uan68wiHFJFKDVMyKnavSANEYUw&#43;6SWoxpxiHYeB&#43;SBAwZgMZFVj1QLoXTOAmT9TrjYQzrFtA1gXa98N&#43;v2dm6xzG0Pd9jkn2KeLI5QDpQgZGm3W3SlFdvN0eDn23dq5rEqoiH2GIh51KXlkzJIwxt&#43;v15vQ0xXBxeRljaprtuuvWq5Xvh1cvXoeQ1&#43;enqChF3w9DjHHfD94Ha7TVymjVrVdK6e3V3veHGIeUYgHp1mXZRJCw7jyBdatKTexDOPRJG&#43;OMTikffDgMMcVkjSHbkrYAHNfdw/tTfdwhwqHkP2mbOGvL4yTf0bejwhRCohwREiiuU3t71/rFu/h2XjEvjHgtSiUWNWatSckhYlFatqCZFCJILTcxRyJOiZDapm1XHSFbZ1JOdSvJWqabMWNyBo02BmMOsfhZzjlwNoq01XVf14J1zjbUrYr9yskDMBJqpdFhY60VayX1PeXCELKOlFIkqk3R5fPKR7PYuLpjPpDSjMlobYwKPiYgIJNT0kphMZO24Pd3Laf3Hd&#43;vqJXvrUb5mDjNOUorYbYbWcWVJ40xGaMVNBQtaGWcVUojPMSKzpukwLTzyvV9tAhrKRqptnVPnjwteAKxllLmnKo1qtsDSWOYTEjF8hmDwE23ijGpuoufKt&#43;pHBhDOamiKIVx2mhrHQN3bRNDObngGJVWcbXZAJKxRVbiqo0xSlP9XG5Q8b6wtpNg5rZpZePc8SvV7cvk/h1TXmpOfEo5Sv03IYoBzJnnHkbln7EiH9/fzsG1GPHhdq4PThDesBIal6UoeIy8Cfgqi0NpveyukVLa7/bb7VWrc2ut1g6NUuW2KgBaXNW0VxIu8w&#43;zUPWjDC13hyyCJXnIJA5R1&#43;k6NzP5dvO8Yxi5brWArm2XvWLweMCxt8Jcw22NXnZ&#43;KFO&#43;aJDKzi6KuEi2F57aNcSYkdAPKB4/NM24RfmNtndTq4j5zxvTxdMupupDglB3j8pUDWIQP/gkRDQTWnNPMMx1KhZpHEGGItKCPKSjb/FOh2G4uLi4vHwLG2xbsbOSCZ7TuA3eDFrHukKpo6ap6H4K9R7hBk65JbLGSGraYt8HWb6stXZCrvFUScBTckH5hBixfB8rNl9UXRWma4HDUcrrx9XlJUUMujbTrgIsYQE/9gqQXvqCxIq9KJ40MIbAV1fq5Ut48aKc&#43;Ze/hM8/B2vnybnRt2j6eotVB8cnj/0Hcn7oyEePKhyHw0GCG8u8i8x8r9c9FjdPL9Za6KPmqKcIoTh4qfpq4kCGEFIarXg9u1KKmYdheHtxsdteGVQ271U&#43;sFJoe2WKgk0pi54sD0JIWtN63XSkZXuLI81xzAbAmegSyAKUmft&#43;ePPmooDQnK01m/WaxP2rdj0l2eZdGc5x6LeI1LSrcsF&#43;yCkZW/4bv57MbkphOPRIyhrDOYWUhhCIlCvoQToyCynsh/7y8iL6IHKGGQiNQ1LO0FljuxDwu&#43;/wD3&#43;A//E/4Ouv4fwc/vN/Lh/RtkB0x9Qu/7zrN95&#43;ngi0BmOAPrD4ocp9NcfjnqYhDL5IvGwdNV9ada2kILmsfaOmbUgrsTSrOT0L3eXl5dXVVfFBmK09qtaUYgVuBWgUcVGDjO02m7TVfPCZIilQoQhHzFpT8QYZYkzOFkDmHJCiSSkJmTHmpS55oBp4k41URD1W4UgpIufyeT5aMdAhAZO1zVqr3O8uUsra7gDID32OsWlc0zhFAgW0c22nkPthyJk9qpyjz/ngo1bkrI5hAADrWte0KQyXF2/3u52oDNs0nW6pj4Oh7DrXXF7Qv/4r/PM/w3/7b3B5Cb/9LXz2GShVhOP23H/An0RFCZ2eFrEr9&#43;sD5WPBttV42eHyapszE9GUjFHWQwWORLptVuv1uiFbP3BB9MGR56jK4&#43;3bt4fDoVKlWmuhjIpArNdrANhutyGEk5NNfalYHR2QOIS8T97HVO04KWqKh2FSgn6Ihz52HQt9BZkpj1ahltzjomRBXJWphUOVF6WUKfYPQpBUgVxkLOaCJKVLAmmtUxz6wx5QM2dC4WCCr11EFOqYMulirlLmhEwwma&#43;6tiTIDKSVsfXjlDaciy5xwhZjTJRj&#43;dR5IgXwQt12MEbw/thc78jr8c3f9726KMeCriunXa2OpuqvGWLkqy4J0n8p&#43;ABFhRS8nFLyIWhtCU3X5fuSdkfhMMY456wx5f3SkaGyXlWInLNEqsZjiy5S2LaNJdlgGLB4AcoG6Y2hTZECa23bOkQvk5rEWViUluESbxyFYwr3kDHUdV3lW6wtyqftViHECVwiauOa1moVW9sf9r0PSlstBKpgC67qUduGtCHZ8dRakCYhmCA3IUq2iopdE2MqtsM1ZelqFWLdZ1JcaNdsZGOhTiE5B//0T7DZwG9&#43;A99&#43;Cycn8LvflcdNc7c0vFNcbvxGLDKx2ZTffzVEHa2WTKJzjijEpLQYjwqzUs5GOMG2bbRR13fKgnnex7oVpdR6vX7&#43;&#43;edlJYlLUhmwCkTW65V4Ldr7QVA2dm3jVK9CD3HvtFuZ01WglFlrBQBNY5UiZiRS1jmtjDQnPUpG/YcIyz6CY1svROfs&#43;flZlM3Ea4egGhZZtK&#43;sDWGIcxNWxYml2pJu6oBYrKw46IAEXJALTD0CahcauXVlxSfBg0oV77MTl6d6UOKl1PAQl9O2bVnZz5/D738Pr1&#43;XC/7iC3j2DCae8K61e5c/&#43;YCTibKhXFVLHyoTgrHSPMdN25LS1b&#43;tX7ny&#43;rW1isStyqKqyHLZl6ueUNdWNUqpruuqQNRpmKMJzFy1yGazqck&#43;4v2j5h33Owg9mobcaQIr7YDEHJTbys41zNk5a11VQnne9A/hRquXUYXIlq7Fj1CtmeRgjtZcZ3jGb6CNsdeCYdcchfppirW&#43;UXJx/P7Lagx1/32v2NO5ojO&#43;/LLYFGvLz4dO5AMz/MFvFc/OVUQ5r/6u4xsNeZZbkUyd&#43;sYPJSJrbYH/dZZDymmSI7r1VW9Xskx8QC5mHFrQHRqLtgFqpj7E4ww5yyO5hcD52CUBj00hj/FSOTnJnr9cu/tci47eXnDXv&#43;Lx6bsPufnnAy/dOXj6pOJQ1MjcxAk9/Mb3Hh96QnFJqGADaz&#43;YBJu6MI16Wg&#43;DH/pejdb68VcicCwCRIWVgLhNBC&#43;qnWfW7o5WYHCsf0BMqPynTtcfPP4a&#43;nxyTout6Pt&#43;GAa93&#43;&#43;MgihM8/ucKEPaQ4iYERTikIDC3S2jjlMPD3Z8Ld7DqDBw&#43;CQcH3HknIWq2P7/AQAA//&#43;1LxX/oWqBQwAAAABJRU5ErkJggg=="
+                     data-src="/guides/images/python-win-installer.png"
+                     data-srcset="/guides/images/python-win-installer.png 666w, /guides/images/python-win-installer_hu_573e7b5260e81598.png 133w, /guides/images/python-win-installer_hu_e20517c99c6a7c3d.png 222w, /guides/images/python-win-installer_hu_a570556ce01df3a.png 333w, /guides/images/python-win-installer_hu_511eba78d8995b6.png 444w, /guides/images/python-win-installer_hu_3d6e1222038f02f7.png 666w"
+                     width="75.0%" 
+                     
+                     alt="Python installer window with arrows pointing to &#34;Add Python to PATH&#34; and &#34;Install Now&#34;"/>
+                
+            
+        </figure>
+
+
+<p>Make sure you check &ldquo;Add Python to PATH&rdquo;, and go all the way through the
+installer.</p>
+<p>Log out and back in, or restart your computer. Whichever is easiest.</p>
+<p>Open the start menu and type <code>cmd</code>. Press the enter key.</p>
+<p>In the terminal that comes up, check that Python is installed:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python --version</span></span></code></pre></div></div>
+</div>
+
+<p>It should show something like:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Python 3.11.13</span></span></code></pre></div></div>
+</div>
+
+<p>Looks good? You can go ahead and install ESPHome:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">pip3 install wheel
+</span></span><span class="line"><span class="cl">pip3 install esphome</span></span></code></pre></div></div>
+</div>
+
+<p>And you should be good to go! You can test that things are properly installed
+with:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">esphome version</span></span></code></pre></div></div>
+</div>
+
+<p>It should show something like:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Version: 2025.8.0</span></span></code></pre></div></div>
+</div>
+
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  You may additionally need to install git for the external components feature.
+Download git from <a href="https://git-scm.com/downloads">the official link<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>
+</div>
+
+<h2  id="mac">
+    Mac
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="mac" title="Copy link" src="/images/link.svg">
+</h2>
+<p>ESPHome supports macOS. There are several ways to install ESPHome on macOS:</p>
+<ul>
+<li>Homebrew</li>
+<li>pip</li>
+<li>Cloning the repository</li>
+</ul>
+<h3  id="homebrew">
+    Homebrew
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="homebrew" title="Copy link" src="/images/link.svg">
+</h3>
+<p>An easy way for installation is via <a href="https://brew.sh/">Homebrew<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">brew install esphome</span></span></code></pre></div></div>
+</div>
+
+<p>Verify the installation:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">esphome version</span></span></code></pre></div></div>
+</div>
+
+<p>It should show something like:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Version: 2025.8.0</span></span></code></pre></div></div>
+</div>
+
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <ul>
+<li>
+<p>If you encounter any issues with Homebrew installation, please check the
+<a href="https://formulae.brew.sh/formula/esphome">ESPHome Homebrew Formula<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> page
+for additional information.</p>
+</li>
+<li>
+<p>Homebrew may not always provide the latest version immediately. Updating Homebrew will
+automatically update ESPHome. If this is ok for you, Homebrew is the easiest way to
+install ESPHome.</p>
+</li>
+</ul>
+
+</div>
+
+<h3  id="pip">
+    pip
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="pip" title="Copy link" src="/images/link.svg">
+</h3>
+<p>For the latest version, use the pip installation. This may be more difficult to set up
+and may need additional dependencies and path settings. Setting up a virtual environment is
+highly recommended. If you are not familiar with Python virtual environments, Homebrew
+may be easier.</p>
+<p>You will require Python 3.11 or newer. While your Mac may have a version of Python installed it may not be up-to-date.
+Python can be installed from the <a href="https://www.python.org/downloads">official site<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>
+or with Homebrew. Once Python is installed, create and activate a virtual environment and install ESPHome with pip:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">$ python3 -m venv venv      <span class="c1"># The last argument is the folder in which to install the virtual environment</span>
+</span></span><span class="line"><span class="cl">$ <span class="nb">source</span> venv/bin/activate  <span class="c1"># For bash or compatible shells. If using a different shell, use activate.csh or activate.fish</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span>venv<span class="o">)</span> $ pip install esphome       <span class="c1"># Installs ESPHome in the virtual environment</span>
+</span></span><span class="line"><span class="cl"><span class="o">(</span>venv<span class="o">)</span> $ esphome version</span></span></code></pre></div></div>
+</div>
+
+<p>Any time you want to use ESPHome, you will need to have activated the virtual environment as shown above.
+When activated you will see <code>(venv)</code> at the beginning of your prompt.</p>
+<h3  id="cloning-the-repository">
+    Cloning the repository
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="cloning-the-repository" title="Copy link" src="/images/link.svg">
+</h3>
+<p>For development purposes, we recommend cloning the repository. See our
+<a href="https://developers.esphome.io">developer site<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> for more information on setting up a development environment.</p>
+<h2  id="linux">
+    Linux
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="linux" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Your distribution probably already has Python installed. Confirm that it is at
+least version 3.11:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python3 --version</span></span></code></pre></div></div>
+</div>
+
+<p>It should show something like:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Python 3.11.13</span></span></code></pre></div></div>
+</div>
+
+<p>Looks good? Now create a virtual environment to contain ESPHome and it&rsquo;s dependencies.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">python3 -m venv venv
+</span></span><span class="line"><span class="cl"><span class="nb">source</span> venv/bin/activate</span></span></code></pre></div></div>
+</div>
+
+<p>You may or may not see <code>(venv)</code> at the beginning of your prompt depending on your shell configuration.
+This indicates that you are in the virtual environment.</p>
+<p>You can go ahead and install ESPHome:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">pip3 install esphome</span></span></code></pre></div></div>
+</div>
+
+
+<div class="admonition caution">
+  <p class="admonition-title">Caution</p>
+  <p>Don&rsquo;t use <code>sudo</code> with pip. If you do, you&rsquo;ll run into trouble updating
+your Distro down the road.</p>
+<p>For details, see <a href="https://wiki.debian.org/DontBreakDebian#A.27make_install.27_can_conflict_with_packages">DontBreakDebian<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.
+<code>pip install</code> is equivalent to <code>make install</code> in this context. The
+advice in the article applies to all Linux distributions, not just Debian.</p>
+<p>Some people install ESPHome without the virtual environment, which can lead to issues with PATHs etc.
+Installations without <code>venv</code> are considered not &ldquo;supported&rdquo; as people end up having to know your exact system setup.</p>
+
+</div>
+
+<p>At this point, you should be able to confirm that ESPHome has been successfully installed:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">esphome version</span></span></code></pre></div></div>
+</div>
+
+<p>It should show something like:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Version: 2025.8.0</span></span></code></pre></div></div>
+</div>
+
+<p>If you get an error like &ldquo;Command not found&rdquo;, you need to add the binary to
+your <code>PATH</code> using <code>export PATH=$PATH:$HOME/.local/bin</code>.</p>
+<p>To set this permanently, you can run <code>echo 'export PATH=$PATH:$HOME/.local/bin' &gt;&gt; $HOME/.bashrc</code>, then log out and back in.</p>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/">ESPHome index</a></li>
+<li><a href="/guides/getting_started_command_line/">Getting Started with the ESPHome Command Line</a></li>
+<li><a href="https://developers.esphome.io">Developer site<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Installing ESPHome Manually</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#linux">Linux</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#mac">Mac</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#homebrew">Homebrew</a></li><li><a class="toc-secondary" href="#pip">pip</a></li><li><a class="toc-secondary" href="#cloning-the-repository">Cloning the repository</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#windows">Windows</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#windows">Windows</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#mac">Mac</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#homebrew">Homebrew</a></li><li><a class="toc-secondary" href="#pip">pip</a></li><li><a class="toc-secondary" href="#cloning-the-repository">Cloning the repository</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#linux">Linux</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/guides/installing_esphome.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

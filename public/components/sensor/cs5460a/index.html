@@ -1,0 +1,976 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>CS5460A Power Sensor - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="CS5460A component configuration">
+            <meta name="twitter:description" content="CS5460A component configuration">
+            <meta property="og:description" content="CS5460A component configuration">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/cs5460a.png">
+                <meta name="twitter:image" content="http://localhost:1313/images/cs5460a.png">
+            
+        
+    
+    <meta property="og:title" content="CS5460A Power Sensor">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/sensor/cs5460a/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CS5460A Power Sensor">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>CS5460A Power Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#cs5460arestart-action"><code>cs5460a.restart</code> Action</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#cs5460arestart-action"><code>cs5460a.restart</code> Action</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/cs5460a.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>CS5460A Power Sensor</h1>
+        
+
+        <p>The <code>cs5460a</code> sensor platform allows you to use a CS5460A AC voltage, current and power meter
+chip (<a href="https://statics.cirrus.com/pubs/proDatasheet/CS5460A_F5.pdf">datasheet<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>) with ESPHome.
+The chip is usually sold on a breakout board with a 4.096 MHz crystal. However it requires a few
+extra components, specifically a current sensing circuit and a voltage sensing circuit.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/cs5460a.png" width="30.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>CS5460A Single-Phase Power/Energy IC module</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 243px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/cs5460a.png"
+                     fetchpriority="high"
+                      style="width:30.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAADMCAMAAADtYnmsAAAANlBMVEVLTEvAxcvj5Obp6ekzNjpgYmSsrrBHcEx1d3uanKDZ2tvV1dba2tuKiooPERUYGh8jJSmJi44uKZgKAAAADnRSTlP&#43;/Q7&#43;/v79AP7&#43;J1efl0e&#43;zYUAACSlSURBVHic7H0NcyQpzyTuB2qoDwr4/3/2AmVKiOru2WfjvZuLN2LKXq/HbldnCSGlPoDw63/h9Rf0n7r&#43;gv5T11/Qf&#43;r6C/pPXX9B/6nrL&#43;g/dX0F/fp//uE/55f5&#43;S9Bv16v43V8ul7j88Xv/kfX65A3WT/ml/G/cf3XoF&#43;v4yjHfdSjnvL1qMeNj/u4i3xT7iOe5ev1m1/Jb89yH58&#43;6tH4pvdR5Nn&#43;O9BDzLXetbUyPmNpMTZe5a71vmsdX0tIoYRPn1E&#43;&#43;c/09rXId7HV&#43;77vcbvxIW/YYhkfrbRyl/u&#43;Y/mM&#43;gl6SPkudyu1tBhCDHIV4K51/IerxZTC2xXxgU/&#43;5MOVcgp2J9xuvKO8dtw2xjh&#43;1Fobwn7DHd4hn3eNMY6/TinllBPQQdzzXUoKOgJxXEG&#43;Nn/VJuJr8tvgfh1TDnHFrO&#43;Y83jD8Y7j1aUOJfkt6NfrKLXdrZUAvFn&#43;A/ASDbSIPKSAf/INQ8L7yCtkzGXYG34d8OD4vYDm84uylaoywkVJxfHQpbzJegF9HEObhlz0r&#43;eVUoheOAIaehKDjYm8EQETNH8N8QG1qFasqszjZirl3vv4qu8oel5&#43;B/p1lBhrG28yJNxx7fsuN0opedQthNAM0xTQArtW0zMRnjx5q5XqcQM3BnbcYx/XxndMhvo5HT3o4wwlNhVzl7&#43;Xj23f8eix2ZC2MP6FJ3TjAflUWIbxSMmmBgZdgMQAndbBwGv6vv1sP9v43HZFHQX1V9Cv44xTNYh527afcSegHnhuoG4lybsDM0fFRlVEfTeIeVGyMRQmacFcGgTdt595bVu3RyxPUS&#43;SLmOmB0AYYySD9SP3kkenoZJRHZNrCBKQd1yEHaJodBXM&#43;kh7H7&#43;G9GLIqXG6UqEXzBtQU9taKF9Bi&#43;kwzCK33veN9&#43;I94qIekZh2vbqpkYCmReidr1HpxZRTVMyRmLefn//8/Gci3&#43;0Ry&#43;9A32UMHKffla505ctQYzZCP26Ahip1BU1VhKhFhGbG0phk27532mABDXPXMBy7Vw4V05gM4xHL&#43;RtJ3wMGxHKRJ1zjGjekVjdTjxQiFVomvKA2UVfRDkw&#43;EW&#43;X&#43;UxRBy9pebS&#43;/WzXzzU&#43;t0tFLU/7T6DvUod2DNC9CF85j&#43;M8B3KM1lTqgQga3TOsjEzarWO&#43;RTxXpoHmvN4m6J7U5EHSfb&#43;u68TH&#43;CLTaAxQSjGk6zegG1Q69371U6ih0KfjOK9r6ybpSjGG8WqR9LVf&#43;35t3jZCpYG65Ovql7wKoJNJupqkr2vy1vMcw3t1uYFI&#43;vgOurQwMOfey0nn&#43;YIxLNeVVdLyZrGMu0E9hgYNPdr10QYiDHxOSfVsvEKtnur0rd4w7xfEJBdgd7xjjOn6HejBKMZUv8Yd3G9ex3kJHLUe9xBjpJUuVzmP8xwPttt43CrDPORE&#43;RVqB6wHvAtcS76EYrwQMw3cZ7kogBiu8h10FMM7HrCsoI&#43;zwJOH1sh/I02eyBKozrJjwsPkyWRNOV3lJOpSpsnLptMx6k0mx1AxiaRbeNi84MR5VrW8ZcB4aej2euGp1UMD0PhHBGqJRsZ8NUdezT9nKMg5RqIYbQoEDUMtj5bGs8k0Quh00VMN55LPL6ChHg0&#43;LglsCeMwUok30HcS9ZjUI5VUQslGc/TJ4vx1BC0SN95M0mYaUwZsahIxw4&#43;HUs7P6vESXtrm&#43;0A8x4j3Eo1PrErgAJp6myEUnYSMpMCY9KmU6IElU9Kgr43cNl8Zb1pKUWLJV39Vj&#43;NAqKFkuiSEdSUooXacs0V6kKZuUcxOButWQi2A4GImKR&#43;EdoBuN1l3bRa19Hwl8cRz0AaVLNcSvoTF4o0YkBrSITjHz6JOQlGPkOgeFFZetL5S1BORJ9st9BwY096k3UvcoowwcjRX77Koxw1RqykDavo4eWaHJorkm4VTCKgkMhkfLvqTEBFBroVboQ9J8163BTjAapgj&#43;fvTjy&#43;gRdDVwXahVmtTn2XYxcEipNUYW3BpNO6ugNB8/jSkDvXQa4ZtWYNbhNIM/K/Th1yLeiCAm8HqiFYRGNN534zqBr9PSiz&#43;&#43;Qr4IrfDPYWeGGL6c0bkGgPP8Yph9eMO9FlcjkATA3LNAFtjUfCccXuFovDsu3&#43;4zCxOWQvuppkIF6wPm/dfSHpC13/eU9Kc8vIG7tHa/KZJViri43k1oKpOOahzzE8AxE1BAfQXSR/H0Ps5jW4H3m5781bMD0DjJCEj/9X50LdKSdIllsTxErB5yLvdllIwF8YoKabFJTpJF07ENZOkf3hr8Dzhyxfh1Ux/qZhrNSxNNEFobKCmOZ2YubzbSXamQ3TAY/k8EV&#43;iHmrB4pLiaB7&#43;1GwRuxC2wWsSrVQI9HU3OFOWYCGJq058qMejPyVE&#43;wRlAugvOi2xuHGupHk3pul03A21OZksoLNwWtirEOeTtUTQ4uslDEGsbupxq4aJsotOOy8JwxXjZ/V4vYqIOSC3NDgx06YkZnFyaT&#43;iUUALJUWSQd092fIAPaIrEBRYM9Nolel4HxgdSvcWIHjM1uo3Sb&#43;Os0ZJDTIRNtRQYowMa51Tigtmkp3cRTWQS4PuNptN4HMx9xw0So2xVjfz5DXDViLdk5gGboJ5xBSDFLboybZXj7uALSFD0SXYhntiBiiF6RNt&#43;E2nxRuGORH5NSTqdEhQd52JpspNAmDJ4/U959QFJ4GADz9Sp07Soh7yxEirxBgcdUmMte6Hm2nCKGJQ61ypF2oFxCbP5HVdE6rq1ZGnGkRHUh1NpTdGHAnfzzp9VJmHEu73vYtOi2sD/aeuPQy4zBuxOatVn9YMtqctv6yTayNyjepFx8wTateYNRqiEnL6TdJiLcimwb5h/Mhd2qoWEQ7vAde5zhX7fBxFjTkvAmlaJxgar0SQQMT4flWPFsHwUPbAn4JfRxKF6adaBK1JYS1DeKHe92QX5ovcbZqQPYhSx6NZglMJLxxG&#43;w1oYmzx4RInBPKxNjPl0SxhNTVt5vycA6yTZjBiC8lnvZ13p09T/g2d/gy6Ke14d&#43;LO0dY2y0gzt6&#43;Ig1G94P15NadtjknjS2atvOuqyvrm8H0DXSVyWYiNQz2RP4psQK3Bh0VMGuE&#43;YBvTEsOSLMda2xwue6r5KG3JqzvQd1W/HWidtK5W7UnoX9&#43;5sYxmoltklKY5m3udlnPIgiUmnKBmDU05rEj6/vVZ0q1ZFBrUeGiQJODk72d4FRfULcacWSpBYE0SMm0I1PW28YvUDkw6zgWdfKyKcZoWH457SZfbDI2YvMhCYghMIqCc9TkMGUFR11yuZBS3fZYopqGb6nHDUKOaYZnJhJQhiBvs9DDbC/nwoG/6FjHqKWoit/fhnPoQSvuMWSP9Lp4Uc1FAxzeyfy/ONFlqr&#43;eeJQOOEkgkYZL7yaCfX3S68ZVScNHss/jSvu/iX&#43;lv3greoK4yMqAgQSoKjqM&#43;KT90GgWxgJkgjGfQDWEMMSXlE0EqoM58rDrdgpZ9BjcLFDR4H8iHq/K/T8WIzAZYSGSuaZKNJfaW&#43;GHfhoS0qjekswnoFCS9DyBCRZZaYjDMB2qVqPsoX6KuQSIpDBrIXgMPPSobdbayTSN2O8dYnaGOedv2MYhGmEQPSXVCAhBx5O2zpI/7vFG&#43;yEpTYmT&#43;RYOI6G3Hm3p49jHr&#43;hoNrD4RvkgUeMgnaH4lqMMy8sEy4GdJQz2aRSqNSQK4dgbbUs8MS86Ipq9Nz3mrxKeTMCF7Ly45d6bSNCRu03cLFNO8L5Iu9CJxmnQfEJun/iRpR5vIAdsaVPtgZ/KuZiznflIdDNdEssTjYTHTmkBwmrk68mryTepfSMaaxVj3dL&#43;3Jy5vCQO7/&#43;rm5wxw3OML6PNmpmYhHm3yAIwor7fUV7TX3C7dMhMZt7HphVx8erjqOYq&#43;sfcuE3QtmridqTSf26veGyafsYtq9Fzc9zbcM3W0Xq36VIqL5m5vjtoX0EUnoo52ndODLUotqHQdZrgSLQCQymvDE2dxbZ7nax6N37w9ZqOSNUu5jCF28fgEjVsgBBJqzxBRUgnCQtDlFVwK2EmarSkSyfr8dLOWLMtRMm7HLxiazK4s&#43;Rk7nRBCitXyVTkDfbZobrzTvAtV62gNmu0&#43;lPRiPJLmbqlCCbg0r2AYPTfEPxgChIEOfxXIVqOmjcAR3kG/XmcrYOVdsx74ox3dHwNxn5jD4g7xE5RkmGw0bFE79Ax0lBeIx508VMgkqZ5k3NWPk5cv5EMlfRwQdNdukiBZD8Er3jSsoNMCHF6AU8YP/tv14YeQtLzD3nvWwrkwCua6vkha0o&#43;NJG8bfxs1EBmEQOo3kiCbOp0ewCMLJHOKDeeB6U0O5boNfVYb2bMUqA3StDcTdF3SZPGDpJl&#43;hEaIoLWfDn0wszwRrC7iUCeEiubz367qChPMwLZKt8DCIm1SpJ63kLTvCema813SB4SBUtzQUEsHuOxVMkHrfHTqEeIT8/RWbfKDRrh1/lrkGnx5A1aOvYWDln&#43;SNCqfWhazUNUHmxIAedORVlGzhmilirpiN9WoLk0GhcJPov8JjGdwiZWPoEt1za4fkjViN8MUNUtb7xPRFViaynlG1hNxcx9vztN6ES2D6Psgw&#43;rF9T0/eeLpD60Q56zHEAhZqfFZY19OFgtOe6j7fvh6MnHmLeS&#43;n9SjzSpRa0&#43;vWtVDrbBX7&#43;JU6W1GRk0xqhJrqpWP4BiiSdoI&#43;q05ptcDNNKVbWZIePM5oM2AQjWeNk&#43;pBYtzzqzZXGaysHnN9zGaZ3vaD6Dyvz9OxHsNXDSciKzioI1GFZjV41WnDS0MwlIP1cSwewKx4lWDlfZevlwCkvNdp09yPGQg2HpLUoSe7qDJRVaV6WEM9kwvt4nN12uV9E5ZUFskAy7vw1IWc66NHiKC9n1QD2CGa9mReIALzJl/O2nSrIUnp9RIjU/r&#43;8mLK9Gl8KkuYXZXowVealIrY6r1Cfr1Oof1iMI1tOIirQKBTCZl6yWwlpMH0xMW6ubgQ9JtYZ9T85Bt0Q6PJpwD5COQsKHYU&#43;aShinpalUiycgJX4K8kQHy2mAdEeEh6eBsnRIOfs/yvtX5qfNoHNem8PHrASKs1UGp4j1Bv14yDZE&#43;M76Upe2vs8aXJxUJqtSrpKOApj1b5DtnXou&#43;WEBRa5cT6oyQNETO/mVh1Oe7pFGutQGBjEFuNXD5KOnJsKHTtS0mglidQoDGxOjsScAqDxNKSqgXT0m3Wkt9WA&#43;UAZpMVy2DtGiBK7MzWjYLvmnmqR4OdIiLUOPS/0H7wRiPYR2MFIOwORHhAs4n6Nd5k4kF5nzmTCKIpjYkpPQIx&#43;HTORGrZSAnUJuEUTtblG/j3lITn5kAhruaVkcx3QWJVA9J1djsad4jVg2q4zR86eldkpk8TaY5Z/KPV3AVrvrmXGLTsstjIkrO1BiZsl3HbVpFA0SYcYufiagzcCIuUlyIyFuEwDmLbson1au3MaY1x6SSrkYEPEd3NBLTxVCHlZrqRAyxruiqA1fbO82umIjsYiXjqpM9WdK1voF&#43;HWd11jVaJGSo4eK/dYElTkTotKuHfbnqQvYi1ON&#43;FuJuL3WfGFPQ1OmZXnX6zRkCE7jS0YdHFElrZ99/c1XV6fBBO6wqJ//&#43;BNpIQM/Kl8hh0OOX0Qr9td9u0en6Lb596gwlklKYbHKG6FaVq2tLkFcPOM7OVA07qQJaOHWJ0yfUas6dTjdnQ&#43;YPFtjusSKjN/BKSqtqaxIzYy4xNiUNzOaDYuo7OpKGHFAu09bcJ2Zdaxjnukp3vf3IhVws9apPm/2tqGOyUSVZz8cKupVqoMGX8t6TOhI0KZEgpCfkTD9WIzsuvPls1axo/RjEVmuPx92ldphZqLLWpPZJ0nWVdJAMWRJSmkCoYTzQweUhs&#43;bIafDB3rqZ9cmDVF07IFdIWrOUijHWTvW85phM0pGgkdMJwhC1LVjUGtYj923vmj/gQjGkWKOfiM48&#43;wR1XCfjnIm6CCwnXfsJ0Bx4gj49aOaXWghM6gY1y7IiJUSaPCH/WOtEXZEVWZk55wqOlDStm95y0UviF0lUtByt7doi8lZ94hmSPrykjyIsbzKUGfTPwA4delxepitZ2cEXkRVTcw6tgnpBzzApkM6V/wIyjniJ8MgUtcAfaOZ0yUnSNshF0ggRXaT/Zmir8qXUbXkhpSDNmCx5tBbztue07ynvGwAnqcmiLSCFYZP63kPCN/Ib9AtOWxObkiQ2vtO7rDp9lPrgN3VhS5Pk8dF1fTfTqVoqalKGlR7NBERiDyT4Gd8MAUurQQ6h60t6D7PpyM1bJUwzWbSoB5JibRKbx0dljwHWt8nEnFlI46dcVR9yhpNIYoMS/B1LN2OOIGse/Uve6ouPjl/mmE7G48E5xIf9X/JuY9wzDDbL7XDyhK/5abTIYZYlm4j6TdJpx/nX9Btfz310hsw6Y6sa2q6SRnXnkwtTnU5I5US4W&#43;sbQwaSwRPCgbDYCbUeWt1ojW6/Ra7IvZ9Wfa0kSh/TavIKu73pqGH/mMqIbBdFCaPvYkJNggieU9KnaFqjkueKif/Rrj1Ezy53rYtFZvqqNRWyJ4a4tY8pqG&#43;JzQLJYSQj22TQGiVcJqP8soNORVjkFvK&#43;dQ3O1Q8hB5UDYmN2VbOrGdZOOtjRMJ7Q6oS9BiK0jq4V9lvz6qudnkVEaQdm1mN3y8gyMed9uJbgYuo07LZbhMrsjtiKYYhzGJZOBlDsilgRfBHroStXa8y05zDioVmXbNbEWHET8fU6ovIlVhFjRIKGpc&#43;duyrImuSedMkCtAO1PslJyYigaz2lXQDnYafxg7zDNOe&#43;idkTC451OlIqkmeBS&#43;x9KXCRUi8TURp6oRCylDoTNLNh4CNdbK/sMJDYbtiUiTFwkKfIKkbBumdgFZGPnwxk4nZE7EI2FDSZEpp7XGKMnd8zxxRYrjWVlkxeIOhkzC5zfeDORehB7R3Yx1ysKKM8EAHr&#43;GY8psDbdtQkDTQ9TWxS6YUmKGhIGpxB2FBtT0kXDRRE0Ahc0OWmLhAWIu&#43;y4J&#43;NjlhYj70WIktSgnMg2jdx2Io&#43;CeihEQO0aI8MiHThUX9BCgT0mJ2D1IOborJYFknTSqfENBQ74hu5i1a4xbnIlgU/24bdHbgofW4yErnODYQJugIyPrRdFpbQwU9Pj1XmoJWwVm4i7p15U&#43;j0S0Er9dAarfcucYZ58Lx9X3csQNOjdU5UI6Hw3ml1LkFXjQct3Yc8V2NG9sVb94T1zYMMeUlj4cXsRWkuKQGvA8KClUFJ9qLAtVscQ9C3NqZU1mmiUf6VSMaZPWXOo1r0UGt0LcS2XrQs6uFInq&#43;qkmHZogqslQ7axYr&#43;QlRkdFHWXd/88VtsZbW46aKNavjGJXPjWky87wV0LR8DZmaabCUI9Ce6XlOw96A7JDwaHbXrfD6M9TH5pqrqW8WWNjhXE72fJu8wzFTguqyWm5yWoQTRotk5zbqn75F&#43;W2z4bCb03WK&#43;UWyuPrBXWR/fMhGbhlTBstN1SRRF69rSmaHBeHJrtVybdHVLWtzqC9/sxk2amq7Zme2&#43;rmlsEZnWisKkHrbMPcy6mRLMoGtI8Bq/vpb9XLM901Th9itRV63hC/1SOKqzziO1RSpH1Y&#43;pHq3AjWvDclTrp3u3WA3BNorKXF9Ga3M/OwTdQhc/xL5fsHJZWbe9YLhBC5gv/5l0l5NV0scRsS0Q954ZfCmOAHbHXh/wkuyPo8Oi&#43;QhuRRb1R&#43;1a88tcH12bOgRkF902&#43;0BMJ444NDgcsA9Mm&#43;J0mv1L3DAHCSatcyFnkFN0vXK2G1C32rAQYnpQCQB0pbprQV56TbkwEDVK3QOJMV1gVU4Z07bv4urrlPRLM3mdL0BWTDbHyUKHt1136EL1rIsT38bDBFNpCVnCDNYTqyX3uszTrw9w60wbjFrQFRQd8VHihjhdWvtL9erRXOUTCxej0ABKWiTK9mmuE8DeUh10T7XRcn34XwhxNcCP7l1ZdGY1eywjzlyNgfqrSEwkJJtN1dOBLlb5JA8kT7BEVdfMdktuXwetj7emUtKcvOW2nZtcJc2PxuVbDBMrEoYiacR8bvDnuqIwWxCE5DHYZm2VOQ3b/6EiJMzqD8HJQEqj7qihjHAK8IO0CRrti1hTClHDJGXrguxqG9pM1wSfQNDGOA2JZ6eA9jXF1H9&#43;JHQBFxPCzGB6kN&#43;erICMltHVXDywo/luGCl9oS6BjEmFlGabm6VrAvq9lYBZtfZDKxpu0m3XrzEIuXMJzl2bxGI9KYuToLY5X1K9cnAiaopRh0QdYHM5BCSC8I/T1EOZ6ZKb&#43;Zz/jkE2W&#43;PuaBK5dG4DJaA5CugJHqAdn3DO3ExK1B7gtmxVYDyvzva1e3qXKenqyw1fms0rUgabVDaUo1KnRd23qfBBQ7DHVHRLR&#43;Y&#43;byH6DR1ut3rY07zaylQPk7SpRl22n3CLWObaNWP0xgCZtPBdBtVjsHU5kzqPiFI6kEKr3mOuzNr4DBNjgfu&#43;oLHedmH4XNKp1bFy9zy3FSrDsuOm94T3fa/roThFZP/Enz3MVbyOnb4NuLMed9GNEbFXnPXoKeVSmO/547nO3hVpHZ&#43;u63919S1V5vXPf372TxX96paW07cVZ/K0U4wbEgZ0ZJBr6R/WOhdBrut8JxOuji0/YN8uPrBHCBkBfU/sINIuPY53nP0OuubdJqKQADpxZMUQTpO1yNV8jHG7HoEP171&#43;rA93u7mpS9olc42gSONQ4Wgh6YIEAeBBo1zbsXkgs2IpSFEuaAOa31v3nmFee2vkbX7LmNtNBVMrNwLVdg1qmj3MO/OTWXYzmVW5aEkE9Ygq6U3721IQ1jIUZXi64LYVmwER9kDQjE6Ifs&#43;Dap0EXPIVrTvTKcuMyGOyzV&#43;Ry9Hln7oP4yQfptMBkv7ZlJkGUi1mBuP7oHN7wohkEtfAUP1NzqxXJKSipQuuugDcQkFJAnLZxOD8kgEWVCLI3plkMkkLVUjcplHT04lRVgjZNnC71wXg2PsFFVOkeJFQdzwamwHKveYOMU7cU&#43;YxgRmB4UUsjg2SEUepWfrcxCUGNsdOPiXZvjh7M&#43;ndYqtP8iNDOkZExCj5UCyh0I2h4D5Q9uWvsqwJCd4D0mBi/WZW0CGJQeHWosrzbqoHAhdHnmEyXI0HJsj1NdvINqstBm6FIu&#43;Z5t5zmpDES5BMhFVaCbauZkuRWxtGbDpnjQg9z4bTMGKAu85GEVtQ/TQFNHKLc2i&#43;TTKDRCB4cuZh5lC5tENjbf/4VmJt3Pyh6Z7Pcxe5Ckm/RNJsX5qNaR/N7m0JmRU1IsPA2nbkxhpTgjFoopsdL9FlZ5wZnwTJv3/U9ktdtvoC6ONosc7dqtoXwDRfxKL2g7IJcXYh1nWCaW9CMof8ePD77XL2yTosiEsljSUu3uFXS7nWSRy41lAF6L1Gw7ZTtc4lCc4PqaWeqxLfXP2n6xFN8s1OBV3qfJI208kxNr&#43;kd&#43;a66l0/tqHPFukPjUsuG&#43;se6Wskdns64H7mJT3XhWjydFIrR3Gqm13vV/AfboF2/Lpmrn4TdV1jJ&#43;eECPocE3Eu/4rP3RHf00Qt5vzY4u99x7&#43;wrOtKYV1wwp7aj6BJZ2xjQo8akn7pPnnVujOTbVs591G83RyXhXhhio6LJO1oA79x4luz&#43;vzKnol3yHOTfqt&#43;WJ6kQNJYiagr3cNc7gnOyJzc4r651a6FlQZoKm6rfm11dUvJpjVTg/4Qsm5qnnSj7&#43;hudb8g6ZM6rTU5KY93D7vV1ec2IQY6XSLzUS5efM6vGUk0S1Vjg/Mn6Lkdvu0eEcK8rU5EqV0gxkPX5t6J2rqUwoPfRIK&#43;bX9gSy4153&#43;sKqB7&#43;toJCTezSeHhYbnKl6zfbU&#43;q2yZh2Vl4HScSC9y6ZNdt63U/&#43;m7b0RuSmHqIBjlPepAplaeQgURjOXZVvalHtaY2rES2bfxNR9k&#43;EX5Jact2u0W618qE2Llbqrz&#43;3rITzF1dp&#43;c&#43;292ew6LV623XDeyxXDsmTeG5l3YuD9r1cAbbxZ&#43;uTiVdmemlThjk7Wf7QQW7J29SB2gJ&#43;Rt3O9kX2DH6wgWXVmHbdT1LAG26KYX2JucsQpMDFX5QzWaZny0fQ6lF0tizDnqBUxwIWQrfuSNyeeo0lu4ycliFbQ7JVtiMYSNudJ0g7PGiaLLV2Iif1jL23ufeJLekqIPuk2f3/oFeTNRIWjsFoaSJWfetB6TOdlbOQd7XXmMvkR7gVdJ6RIEeTKAHHezW5quMKSDRK9nrTe984XCATQcIgcMKOo6gzsP5MYFnVSbZbFFGQo/Q0LvJdnzBT5XaeBbE9n7KwZ5nhYuShkZ3HigyIM9jDSbqHBbQqbEZY&#43;OYbAppG69lEjRil0Qc&#43;wHU88FWSaug9&#43;1nu66NH3o2g51hQdCIEDvefb&#43;uy20Sfl37BgXx&#43;gFJj0BUn1NQmxx1WKpXuh8e/PGzqxBi8PekoHcZ5/M8z/FF5bZ3C66LSRo9X&#43;PzKudx6K73ONWAPmZYZk5zNOJmB3rbYWtgqHoOuj8ofwLEPzph8GApeUFQ0Pt1ne54rlPOsNAzTiLIR5BNySMlsl/lcT7AUS4FbW/QRNLBrN0l5xrsGxMUu2VuMRi7s/xQcPmhZMCqA43TU67rmIccyC701zVFraDvckt7GU7pWA&#43;ZeL1e53lhHqySTqJRm0DG4WADue601XG6Qcz8yTUvPY5nz&#43;EhaThAnlDgTzkYfySV4xzRcBpex22gr8dxDegk67sm8/QNRD3QydUvnOxxHKKCTGyppAn60tMPZCt9os5h0WnJHI6XPo72ecn&#43;&#43;&#43;Iueo6Nki6cMMN8Pv9CDi665G452UyXLSIwd3vPpw2nQMq9bzQfAE3p4cSBoW406QN0etPp9fwKHW05ngJLAyBpORxMyrJXehP0r1&#43;v88oPnYak4UJxZoWhlkrkvmeWFpHpytfpVdTrtAON0c5voAUCD7YKstvfmIgYG9787Q&#43;Ocgl5mHYam3FwZ7DstmWR18pbo40bt91NT0VJB2hBLfm06G&#43;6Q9JvEF5HIW8SmzfUo6LSJjd/U48x5FzV4zxikBowGFaWjQ5fOGOjYL1AJgFXpc7l0NNhRD1QH1vjLcyr/FXSWtiFepywB3L35aQPTMOiGePm758j9tbLeegUFUQwKx3S2UUdOueZFjoPV9BU6qu8HR33UtDca/jARNS77x0nwfiBuWDD/O1bEu8RWVmQsz3GZ1HaHuy0MLUf&#43;cKpiBeNBzrHF&#43;6Itt6cz&#43;d5Zq/jROGuM68uzqWxsD1uzkNRBPjAzA0Vl6MIWpAUpnU382Ccki/EHK7mOV3Q1a985atDo8V6xZSWncxlPmDk3H6gIrnd2msiJI0wQhbCZYFdDgI/SuHmQD5yuXmwie1czHBSzB0H0Q&#43;60uldyTcp1SppNMAMCFfhwT88TmaMNqZGbCrpUoYUG/py5F0vHFBylJLYq7QEc&#43;IRY9W3mUuL&#43;hvmu6qsNXDZZvdGXSVtzRdymAxOk6HksA1l1i0Kj3CUkJq2i3QNxK9UUkmXbmS9BqB6hAwPvQE5I0NJjyo3YsR5lp527qDVOi8vrjyLasxuyg0&#43;lLYjSgdAKcN6XEJrNUjl3kdoBtNtq9ecG46QwZxsQXMlXde53sslaYE0o9&#43;u1fv6Ftnq3MYFuQ3JsaiCpQ1JJH1iJcFdbSsEtLlrAL9E4g407cPAxJ6eeQDNA7btiW9Brer7o/mAflGTFyJ1LnDj/pUhlVMkjV1TNbsj&#43;Ymk6wLfhhs0Oc8V9W0e6WkF9KWZwHZ/Dros7UaeZyHUhjoxitu7Hh8oe51yy92UiziXwm0/7BQc661ikuT29WyCTt/y0/6YC7dI9e34EJ78&#43;azi6O5tmvHo2u/fuNfbMC1BLIoMGjs43E4pYW5S5T6wKDR/SPKGx0Y28ZGktk9mTfPsF5qNtW3uecctWjUQH48jjD/8kqPEum3VkdhM&#43;li3PLO5IepBBO6imZkfbhFnyu4L21R1wQL3I6u6YQRXtdrJp3l24GJjPKGuaFK5etdFrgai60x4v9zJk5pk3fUkSP8guds5UXgmEEz9JQ/D0N5xKxpoxltXhOnIwPGwYjuYzkUketLhTGNtSKP&#43;q2umXnf1PLuZU13rahqQfWo324m/7sAurLHq/UJgE4x/LpnHTfNYGjzbU&#43;j/NF9kD7fbM75d/EMN3iW2nH&#43;32XNirJiE6nMw1XJfxfo99CjBEVLb53ZtEmJfP/t2KXnQIzInh&#43;CBsW5kNkU0x2y9fjYe2opXMl9ikvpwafr0Kq7XVDTkxBGG5dIv&#43;D&#43;usvy/XP/NJSF4x5PvFAM&#43;dv4nX/ft2vRZ8d34uo1I8vphOCl/f13Pxe5yjiLPy&#43;SXQwNoOftQ/3u7Bk0eX&#43;bnPHJc/nGd1xTHCVlMqRQK4ffiKJKpO1bQAvvXa7nk7PWv19tx7Me/P&#43;4dscOQixPWqR/kS/w4juNtb7ElUpBn0GPtX79e&#43;uWfrn9&#43;xfrYH35w8Jsv8vr1FfT/jevxMP/ucT6C/XKo4x&#43;8NOfAj397/f8B/T&#43;8/oL&#43;U9df0H/q&#43;gv6T13/K0H/nwAAAP//VngpSrTHoGsAAAAASUVORK5CYII="
+                     data-src="/images/cs5460a.png"
+                     data-srcset="/images/cs5460a.png 243w, /images/cs5460a_hu_f6bc153c85a26ce7.png 48w, /images/cs5460a_hu_fb8f6e8811a78dd7.png 81w, /images/cs5460a_hu_1f7aed61182f567b.png 121w, /images/cs5460a_hu_27ade5235a077cb8.png 162w, /images/cs5460a_hu_bd407612d985f7.png 243w"
+                     width="30.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>CS5460A Single-Phase Power/Energy IC module</em>
+                </figcaption>
+            
+        </figure>
+
+
+
+<div class="admonition warning">
+  <p class="admonition-title">Warning</p>
+  Do not work near live mains connections and only modify existing electrical installations if
+you&rsquo;re qualified.
+</div>
+
+
+<p>Your device communicates with the CS5460A over SPI so you need to have an <a href="/components/spi#spi">SPI bus</a> in
+your configuration with the pin numbers set for the <code>MOSI</code>, <code>MISO</code> and <code>CLK</code> lines. These
+connect to the <code>SDI</code>, <code>SDO</code> and <code>SCLK</code> pins on the CS5460A respectively. The <code>CS</code>
+(chip-select) pin of the CS5460A can be driven by any GPIO you have available or wired to ground
+if the CS5460A is the only device connected to your device&rsquo;s SPI bus. The RESET pin can also be
+driven by a GPIO or wired to VCC.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">cs5460a</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">current</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Kitchen current (RMS)&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">delta</span><span class="p">:</span><span class="w"> </span><span class="m">0.1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">power</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Kitchen power&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">delta</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Mains voltage (RMS)&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">delta</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">samples</span><span class="p">:</span><span class="w"> </span><span class="m">1600</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">current_gain</span><span class="p">:</span><span class="w"> </span><span class="m">0.01</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">voltage_gain</span><span class="p">:</span><span class="w"> </span><span class="m">0.000573</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pulse_energy</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="l">Wh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cs_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIOXX</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>
+<p><strong>current</strong> (<em>Optional</em>): The sensor subcomponent that will report RMS current values in Amperes.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>. See note below about throttling.</p>
+</li>
+<li>
+<p><strong>voltage</strong> (<em>Optional</em>): The sensor subcomponent that will report RMS voltage values in Volts.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>. See note below about throttling.</p>
+</li>
+<li>
+<p><strong>power</strong> (<em>Optional</em>): The sensor subcomponent that will report the power readings in Watts.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>. See note below about throttling.</p>
+</li>
+<li>
+<p><strong>samples</strong> (<em>Optional</em>): The number of samples that go into each reading &ndash; determines that
+update interval of the sensors and the accuracy of the readings. This is the number N from the
+CS5460A datasheet, defined as the number of <em>conversion cycles</em> within a <em>computation cycle</em>. The
+component reports data at the end of each <em>computation cycle</em>. With the standard 4.096MHz clock
+rate, each <em>conversion</em> takes 0.25ms so setting this to 2000 means 0.5s update interval, 40000
+means 10s update interval and so on, similarly for other clock-rates. It is recommended that
+the interval be an integer number of the mains AC cycles, so for the 50 Hz AC frequency countries
+the interval should be a multiple of 20ms, for the 60 Hz countries a multiple of 16.66 ms.
+Defaults to <code>4000</code> (1 second at 4.096MHz). Admits values from 1 to 16777215.</p>
+</li>
+<li>
+<p><strong>pga_gain</strong> (<em>Optional</em>): If set to <code>10X</code> (default), the differential voltage at the current
+inputs must be between -250mV and +250mV. If set to <code>50X</code> it must be within -100mV to +100mV.</p>
+</li>
+<li>
+<p><strong>current_gain</strong> (<em>Optional</em>): Set this to the ratio of the differential voltage at the current
+inputs (in Volts) vs. the actual line current to be calculated (in Amperes). When using a shunt
+resistor as the current sensing element, this is going to simply equal the resistance since
+the differential voltage is the line current multiplied by the resistance. When using a current
+transformer, the value is going to be the burden resistor&rsquo;s value divided by the number of turns
+of the transformer winding. For a 2000 turn current transformer clamp and a 2 Ohm burden
+resistor this works out to 0.001 (the default if <strong>current_gain</strong> is not specified).</p>
+</li>
+<li>
+<p><strong>voltage_gain</strong> (<em>Optional</em>): Set this to the ratio of the voltage at the voltage input pins
+of CS5460A to the line voltage. When using a simple voltage divider, this is the divider&rsquo;s ratio.
+When using a voltage transformer this is the secondary turns to primary turns ratio. When using a
+current transformer (such as the ZMPT101B) this is equals
+<code>(secondary turns * burden resistor value) / (primary turns * limiting resistor value)</code>, and
+similarly for combinations of transfomers and voltage dividers. Defaults to <code>0.001</code>. Must be
+a positive number.</p>
+</li>
+<li>
+<p><strong>phase_offset</strong> (<em>Optional</em>): This can be used to account for a phase offset between the voltage
+sensing circuit and the current sensing circuit to improve power measurement accuracy. Admits
+integer values between -64 to 63, which should be offset by 0.5 and multiplied by about 8.2
+CS5460A clock intervals to get the resulting time offset. With the typical 4.096 MHz clocking
+this scales to a range of -128 μs to 128 μs, or -2.3º to 2.3º phase offset at 50Hz and a -2.8º to
+2.8º phase offset at 60Hz. Defaults to <code>0</code> (i.e. time offset of 4.1 MCLK cycles). An easy way
+to find the correct value is to plug in a resisitve load such as an incandescent light-bulb and
+find the <code>phase_offset</code> value that results in the highest power reported by the sensor.</p>
+</li>
+<li>
+<p><strong>pulse_energy</strong> (<em>Optional</em>): Sets the energy (in Watt-hours) per individual pulse on the
+CS5460A&rsquo;s EOUT pin that can be used to driver external counters / meters or a LED. The allowed
+range depends on the gain parameters, defaults to <code>10 Wh</code>.</p>
+</li>
+<li>
+<p><strong>current_hpf</strong> (<em>Optional</em>): Enables and disables the High-pass Filter on the current processing
+path in the CS5460A. Defaults to <code>true</code> (enabled).</p>
+</li>
+<li>
+<p><strong>voltage_hpf</strong> (<em>Optional</em>): Enables and disables the High-pass Filter on the voltage processing
+path in the CS5460A. Defaults to <code>true</code> (enabled).</p>
+</li>
+</ul>
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>Negative values</p>
+<p>Since the current and voltage values reported are the RMS values, they&rsquo;re absolute numbers
+and are always positive. However the power measurement is signed depending on the direction
+in which energy is being transmitted through the shunt resistor or the current transformer.
+In other words if the sensor is installed between two circuits (e.g. the power grid and a
+household) the sign informs which side is producing and which side is consuming energy in
+the last <em>computation cycle</em>. If the power values are inverted compared to what you expect
+to see, set a negative <code>current_gain</code> value.</p>
+
+</div>
+
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  <p>Throttling sensors</p>
+<p>If <code>samples</code> is set to a low value, e.g. in the range of a few seconds per sample or
+shorter, consider <a href="/components/sensor#sensor-filters">filtering</a> the measurements if you have a Home
+Assistant instance to avoid filling the logs with too much data. The <code>throttle</code> and
+<code>sliding_window_moving_average</code> filters are some options. Additionally the <code>delta</code>
+filter is almost always a good idea for all numeric sensors regardless of Home Assistant.</p>
+
+</div>
+
+
+<a class="anchor" id="cs5460a-restart_action" role="none"></a>
+
+<h2  id="cs5460arestart-action">
+    <code>cs5460a.restart</code> Action
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="cs5460arestart-action" title="Copy link" src="/images/link.svg">
+</h2>
+<p>This action can be used in automations to interrupt the current <em>computation cycle</em> and start a
+new one. This is useful if you&rsquo;re measuring multiple current/power values using a single
+CS5460A chip and a signal multiplexer. As an example you can measure the power usage on up to
+wall sockets in a house by using one voltage transformer and 16 current transformers, each on
+the cable leading to the corresponding wall socket. One side of all the current transformers
+connects directly to your CS5460A current input terminal (plus any filtering and protection
+circuitry as recommended in the datasheet), while the other side each connects to one channel
+of a CD74HC4067 analog multiplexer. The multiplexer&rsquo;s single signal pin then connects to the
+CS5460A&rsquo;s second current input terminal. Every time the CS5460A sensor publishes a new power
+value, an automation can switch the multiplexer to the next channel but it needs to interrupt
+the <em>computation cycle</em> automatically started when the previous one ended, and start a new
+cycle that uses current samples only from the new CD74HC4067 multiplexer channel.</p>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/components/sensor#sensor-filters">Sensor Filters</a></li>
+<li>
+<a href="https://api-docs.esphome.io/cs5460a_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>CS5460A Power Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#cs5460arestart-action"><code>cs5460a.restart</code> Action</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#cs5460arestart-action"><code>cs5460a.restart</code> Action</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/cs5460a.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

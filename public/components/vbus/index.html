@@ -1,0 +1,1626 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>VBus Component - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for integrating a solar energy collector controller using VBus protocol in ESPHome.">
+            <meta name="twitter:description" content="Instructions for integrating a solar energy collector controller using VBus protocol in ESPHome.">
+            <meta property="og:description" content="Instructions for integrating a solar energy collector controller using VBus protocol in ESPHome.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/resol_deltasol_bs_plus.jpg">
+                <meta name="twitter:image" content="http://localhost:1313/images/resol_deltasol_bs_plus.jpg">
+            
+        
+    
+    <meta property="og:title" content="VBus Component">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/vbus/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="VBus Component">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>VBus Component</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#component">Component</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#custom-vbus-binary-sensors"><code>custom</code> VBus binary sensors</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#custom-vbus-sensors"><code>custom</code> VBus sensors</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#hardware-connection">Hardware Connection</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#supported-models">Supported Models</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#supported-models-1">Supported Models</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#supported-models">Supported Models</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#supported-models-1">Supported Models</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#hardware-connection">Hardware Connection</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#component">Component</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#custom-vbus-sensors"><code>custom</code> VBus sensors</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#custom-vbus-binary-sensors"><code>custom</code> VBus binary sensors</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/vbus.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>VBus Component</h1>
+        
+
+        <p>The <code>VBus</code> Component provides status reading connectivity to solar heat energy collector controllers using VBus
+protocol. These devices are mainly produced by Resol, often also found under different brand names like Viessmann,
+Kioto, Wagner etc. The component currently supports natively the models in the table below
+but any device can be added via lambda by knowing <a href="https://danielwippermann.github.io/resol-vbus">its packet structure<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/resol_deltasol_bs_plus.jpg"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 207px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/resol_deltasol_bs_plus.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAQUAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APfaKD0rmvEHiu30EBXUtK3agDpciml1AyWAFeOX3xJ1S4kcW4jiTt3NXLKDxFr1qks2oNHE/wDd4rT2Zn7Q9IuNXsbNSZrmNfq1Y15490O0H/H0HP8As81z0fgK3Zt93dTTN7tV6DwXpEPS3z/vUWpi/eEc/wATbPGLa1ml/Cqf/Cw9Tk/1OkSV0dvomnW/3LWP8qsiCJekaj8Kf7sZzSeL/EMv3dMx9ak/t/xK/wDy4JXRhVHQClpAc5/bnin/AJ9I6P7c8U/8&#43;UddHxRQBzn/AAkHiWMf8eCfnUf/AAmOvx/f0omunxntSbVP8IoA5dfiHcxn/StKlX/drQt/iJpMuBJ5kR/21rVa0hl&#43;9Gp&#43;oqlc6Jp0/wB&#43;1j/KnamBrWviTTLoDy7uI5960kuEcZVgR7GuEm8I6c53xxsh9mxT00W6tFBtNQlU/wB1jkUezA77zBS1wjanrWnYkmKTQr971rptN1dL63SZejdqyNDVopEORmloAKKKKAGMeK8T&#43;Il89xrVxAB/qkr2mT/VmvCPFzf8Vndxk/eirWmKpscKJpUcbT3r3XwTN9o0CE/3eK8KkGJ/xr2b4cS&#43;ZpDJ6Ggg7iijFFI0CoLiUwQSS46Cp6ivAJLOT/dNAHMReJLmVJJVgXYh&#43;bmpLjxSfsCTwRDO7DA1gWVm92LqOF2DLk7fWq81wo04WpTZIj8&#43;9AHU2mt3srCSW2AiA3ZFVo/E93c3TmK13QqcGoNM&#43;yxLHJLenG3DR1TvJ47C9aTTp8pJ1SmBq3XimZphFZwFyvUVKninNpKzxbJk/hNY&#43;i3qabfvJeREbxnJFUdQZr&#43;9uJ7dCIuuRQB2NprM1zHC/knD1sDkZxXOaBrFpDp8MEz/ALwe1dOCGAYdDSAjx7Unl8VLUZpgUr&#43;LfZzJ/eQ1z3hm&#43;kXdCT9xuldQ4yrA9xXDWZNtrtwnQbqRmepWM3mxVbrG0iXMYrZrM0CiiigCGf8A1deA&#43;NDj4gtz95MV77cf6s189ePpPL8fRt9K1piqbHM3I8u4Ye9ep/C2bMEqV5Xfc3jn/ar0X4Wzf6XLHntQQetUUUVkaETELyxAHvUbSxMpBdcH3qrrtubux2K7If7y1xLaFOoLHUZwB/tUGZ2cFnY2kxkiCKX6802TTdLkkZ5I42ZveuGTSJZ03pqUzL7NTZNHaEjfqM43dPno9qL2p3X9k6Qjf6uP86r/ANh6QJvNATI5HzVx39iyEf8AH9cf991GdBb/AJ/rj/vuj2oe1PQZ7bTLmMJKsRx05pI7fS7eDyUMW1vvDIrzv&#43;wmz/x&#43;T/8AfdH9hjvdT/8AfdHtTP2p3ottGibI8nIPrV0ajaKuBPGAP9qvK7nR47eBn&#43;0TN/wOud1uGa008TRzyKxb&#43;/mj2pp7U96huYLjPkyhsdcHNO715X8KL&#43;eW9uraaUtxuGTXrOK0GROK4jU4vJ8Qsf71dvJXG&#43;JR5Wrwv/eFAHW6HJ&#43;7FdGOlcl4fkzGK6yPlBWZoLRRRQBBcf6uvnP4lSbPHCt/dxX0Zcf6s183/FH/AJHP8BWtMVTYxbw5nY&#43;prtPhhLjWdn1rirz/AFn/AAEV1fw1OPEUXPrQQe50UUVkaFW&#43;/wCPY&#43;lcJfXr3N39itx8vR2rvrsZtZB7Vw1lFHH5rd/MPNFUyqiadEYDLCDlEPA9Kbf2IumQ5I280jTm1nuZT90DNV5NTniVZJIvkbpg5NcpkXwNqgegqJjtBPpS&#43;b5kSyYxu7VBcyfuG2fexQZlN9W2gkwPtBwretJbakl1IybWVh2qjcXZNmi&#43;Q/yN8xIqtp87wXTyzIdsv3T6VqaHQSRpLGyP92uU8XW0dvpA8vP3h1NdK1wg4LDJ965nxi4bSBgg/NRTAT4V3Pl&#43;KpI/7yV7oOlfPfw4lEXi6H/ar6E7V0mpFJXJeLhi5tHrsTiuT8Zj9zbv/tUDNPw9KDGK7GI5jFcL4bP7sV29t/q6zNCWiiigCC4/1Rr5u&#43;Kf/I4n/dFfSNx/q6&#43;cfir/AMjef90U6Yp7GFfDiP8A3RXRfDo/8VTFzWHfj9zD/wBcxWv4Ck8vxTb1oQfQNFIOQKWsjQgucm3lA64NeeaUtzFNdfaXUp5h2ivQ7jiBzjPFeVXmoIt9OPsk/wB7&#43;HNFUyql&#43;8mwZz/Cy4qgNTikSGMKSyEZ4qo995qlf7OuGz7GqcJuYZgyafPx/s1l7MyOtSQOm7pntUUtZP27U3HyaXN/3zSfatZPH9ky/lR7Iz9kV5r5RFcJLlw77FArHvzLb21tbyFieSRnp6VrT6bql2oA0iVfm3ccc02fRNXumRn0piy9MmtfZGhXyYb2388CRZECqQehqj4lhNtpm0gnMnrWumg6/wCcsg0wZT7u40mp&#43;FfE2qwKj2QVc560eyGcn4Ml8vxXZ/79fSanKA&#43;1eIaF8O9dsdatruaIKiSBm5r29BiMA9hWhqMNcx4y/wCPOH/erpzXMeLv&#43;Qen&#43;9QBJ4aP7sV3dr/qhXn/AIZPAr0C1/1QrM0JqKKKAIJ/9XXzj8Vv&#43;Rtb/dFfR8n&#43;rNfOHxW/5G5v90UCqGVcf8edv/uCtDwbIE8T23&#43;9WfP/AMeFv/uVP4UOzxLa/wC9WhB9HKcqPpS1BGf3a/Sp6zNBCARzVZobQHLQxAn1FWuKxNatLm6njMBIVT2oMzRFvB2iT8qcIYs/6tfypYI3jgQOfnxTqDQcI4wOEX8qrXzSRwboIgz5Hap6KAMr7XqJk5tlAqMXOpeY221x6ZNbNFaAZcUl/O/KCOmoNT&#43;0uGP7vnbWt0ozQBmxyaioVHCMM8mtEHgZoOMVHQASVzni3/kFD/erekrB8U/8gc/71BmVPDR4FehWP&#43;qrznw10Fei2P8AqqzNC3RRRQBBJ/qzXzj8V/8Akbm/3RX0dL90184/Fj/kbT/uigKhlSc6Zb/7tP8ADfyeI7X/AHxTOumQfSn6B/yMFr/vitDM&#43;i4j&#43;5T6Cn1XhP7pOewqxWZoFFFGRQAZNB461lalrNvYxufM3P6VzUviG9u/9Qrke1aAdzuX&#43;8Kiknii&#43;/IK4ZLzVX5IZfrTzeSSL&#43;&#43;b5l680GZ2qXkL/dkWpDcxgcuv515691z&#43;7f8AWq0M11f3EkcNxgr/AAlqAPR/tCHow/OnAg8g1wH2XVox97p6Gr&#43;m61c2jeXeI23&#43;9QB2FFQxTCaESJ0NLn3oAQ96w/E3/IIk&#43;orYzWH4pz/ZEn1oAp&#43;Gugr0Wx/1Vec&#43;GP8AVLXo1j/qhWZoW6KKKAIZf9XXzf8AFv8A5G3/AIAK&#43;kJf9VXzf8XP&#43;Rt/4AKAOcsrrzbfy/7taWgf8hy1/wB8VF4P06O/kulf7wTK1o2Fp9g1y3aQ4QNmtDM91hP7pPoKseZVG0mjmtkkjfcuBVjPFAE2feoZ5NkMjA9FqPPvSMNylfWg0OGhB1LV5FmPyxn7vrW&#43;uy2TZHEB9BWLq2m3OmagbuAEg8kCpLLXVl4njZDQZmjfXSxWpJ4bHNYtnbtqrllfbApwfem&#43;Irndat5Z6irWmg2WhRGMZJwWoAll0G32/u2ZX&#43;tc80MmnaokrEoQ3zY71u/bL1pUAjO3PLY7VDrkEcxADfPjNAGncTTNbq1t8zPT5Bm1AnC7sVnWN9MLVIo4SWHGa1bayluCslz8v&#43;zQBqaefLso0b0qzmoQAoAHQUufegArG8VyD&#43;xmH&#43;0K2DIAK4vxdfSeclvn5MZoAveFvuCvSbH/AFQrznwxzGtejWP&#43;qrM0LdFFFAEM3SvnD4uf8jb/AMAFfSEv&#43;rr5v&#43;Lf/I2/8AFAEPw2GdSuM9Nlaviaya21BJUH7pqzvhsP9OuP92vRZNMj1VTbSAZ/hY1oZjvBd0ZdMYE5wa6jPFcNb2mreGnKLbmSFj/DzWrH4ohChLmGSJvUigDoO9SdqybfVbKTlblfxNXUvLaT7s6/nQA&#43;ZVmTEgyKyrrTLfBKRhTWruBGQQRUZ5HNAHG6hamaAo3bpVrRbxVtVt5W5XjmreoQSwS7wm&#43;Jv0qn9njk&#43;dNuaANOS4ijH3hWJOPt16Wj7CpXtpWPzSDb6LV/StMIlM0i7V7CgDVsLVYLZAQN9XD0qMe1VL/WLSxXbI&#43;6T&#43;6KALdBIHU8VzU/iDUrj93YWDnP8RWnWui&#43;INRObqcwIe1AGnqGq2donMmW/uiuZe1ufEV67RQFYwv3mrsrPwlYQgPMGmk/vNW3DZwwJsiiCL9KAOM8OoYH8mT5XQ4r0Ox/1VcnqEMVtq6eX8u4Zaun02UGIVmaGhRRRQBFL0r5v&#43;Ln/I2n/cFfSEn&#43;rr5z&#43;Lf/ACNn/ABQBF8Nh/pF0fYV6bb5E8eOOa83&#43;Gw5ujj0r0y3H7&#43;P61oZnXCFXjXcAeO9VbjS7eddstsjr6kVcT7i/Spu1ZmhzFx4O0y4&#43;7G0R/2TWTceAWXm2vZM9smu9IqPBoMzzVRrfh&#43;cC7UzWndhziuktLyK&#43;jEkDqy9xXRz2kVxAYpUyHrh7vQr/Qr17jTlMsDHLR1oBvlQy4IBFU306BukeGqhB4ms8&#43;XcBoZO6tV3&#43;2dPcfLcJ&#43;dAEqWsEI4RRUvAHoKzJdcsU/5agn2qu97e6oDFYwOAeN5FADdY1kwZtrP97cvwqr2q34d8Mkj7Zqi7535w38NXtA8LJpx&#43;03R825bnJ/hro8UAMS1jjGERR9BT/LqWiszQMcUh6UtFAHG65LjXEGf4RXT6Qf3Qrj9V/e&#43;I2/2cV2Okf6sUAbPaijtRQBFJ/q6&#43;c/i3/wAjZ/wAV9GS/wCrr5z&#43;Lf8AyNn/AAAUAWvhrEPst0/&#43;0K9GtObiP/erz74cxEaTK/8AeevQrAf6ZHWhmdYvQVLSLjaKWszQKKKKAA1ERnNS0UAYt/4b0&#43;/&#43;eeBS5/iHWsR/AGnGXIeVfxrtaMZoA5y28G6bbYPlmU/7Rrcgto4IwiIE&#43;gqeigAooooAKKKKACgnAzRUczbIXb0UmgDiJP3niCd/9qu20wfuhXBac5n1KWX1fNehaaP3VAF&#43;iiigCK5/1dfOfxa/5Gn/AIAK&#43;i5f9VXzr8W/&#43;RqX/dFAG78PovK0HP8AeJrt9NH&#43;mJXLeD4vK8O2/wDtc11Wlf8AH&#43;taGZ04zxUtFFZmgUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAVT1KTydPnf0WrlY3iaXytGk5&#43;/xQBzWgJumZvU5r0KxGIq4Tw3H0NegWo/dCgCaiiigCKX/AFdfPPxaGfFSD/ZFfQsv&#43;qNfPvxWGfFkQ9VFAHW&#43;H4/L0O0X/YFdJpI/0tawtIj26Tbr/dQV0WjR/wCkZrQzOjooorM0CiiigAooooAKx7/X4LC4Fu3zSnnFbFY95okd3dCcp85/ioA0rWb7TEJemamqGCHyYhH6VNQAUUUUAFFFFABXL&#43;Mpf9BiQd3rqK47xdJm5t4PqaAJPD8XyA129qMRCuW8PxfuhXWxDCCgBaKKKAIZPuV4H8TY/N8ZQJ7L/OvfJB&#43;7NeH&#43;N7cz/EGyX2FAVDq7KPyraJP9kVv6KD5jGsRBtUD0ro9FA&#43;zsfetDM1aKKKzNAooooAKKKKACiiigAooooAKKKKACiiigArg9Zm&#43;0&#43;ImT&#43;4MV3Mr7IXf0Ga87smN3rE8r93zQB2ehxYjFdGOlZWkxARitWgAooooAbKP3ZrzHxJockvi2DUdw2qMba9Pk6VzGtW37zzKAMLHOK6bTY/LtF9652LEj47109rHst0rQzJ&#43;c1JRRWZoFFFFABRRRQAUUUUAFFFNZ1X7zAfU0AOoqlPq9haA&#43;bcIPxrKm8ZaVHnYzOfYUAdFTWZUUliAPeuKuvHMhBFpb/wDAjXP3GpaxqLHzJ3CH&#43;FeKAO41rWLMWE0cdypmK7Qqmuf8O2xL7j1JrL0/Rpnl3MCfrXa6Rp/kgcUAdFYx7YhVuobdNsdTUAFFFFAAay7&#43;180GtSmugYUAefXunTQy&#43;ZGxVgc4pg8UX9qArwK4H4V21zp8cvase50KNj9zNAGMPG5/jtG/Ol/4TeEdbd6syeHYz/BVWTw6npQBL/wndr/z7vR/wndr/wA&#43;8lVf&#43;EdT&#43;5UX/CO&#43;1AF//hPLX/n3kqP/AITuD/n3eqv/AAjqelSDw6npQBL/AMJ2na0aopPHVwR&#43;6tR&#43;NSjw5H6VLH4dj7x0AY03ifWrkHYyoPYVmvLrF1nzbqQj2NdrFoMY/wCWdWotBjB6UAeero9xOfnZj9TWhbeHT3FegRaPEP4KtR6ZEO1AHE23h32rUttAA/h/SuojtYx2qwI1HSgDHttHEXatCK1EVWqKAAcCiiigAooooAKKKKACmlAadRQBGYEPamm1j9KnoPSgCobWPPSk&#43;yx&#43;lTnrRQBB9ki9KBax56VPQOtADRax&#43;lO&#43;zoO1SjpRQAzyUHajYBUlNoAKKKKACiiigAooooAKKKKACiiigD//2Q=="
+                     data-src="/images/resol_deltasol_bs_plus.jpg"
+                     data-srcset="/images/resol_deltasol_bs_plus.jpg 207w, /images/resol_deltasol_bs_plus_hu_63b06cdc5cfc135b.jpg 41w, /images/resol_deltasol_bs_plus_hu_996fe0a44e054f99.jpg 69w, /images/resol_deltasol_bs_plus_hu_4ee8394006435d1a.jpg 103w, /images/resol_deltasol_bs_plus_hu_594337f6ac46af0.jpg 138w, /images/resol_deltasol_bs_plus_hu_90af1397ead51e71.jpg 207w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<h2  id="supported-models">
+    Supported Models
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="supported-models" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The following table shows the currently supported models of Vbus devices.</p>
+<h3  id="supported-models-1">
+    Supported Models
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="supported-models-1" title="Copy link" src="/images/link.svg">
+</h3>
+<table>
+  <thead>
+      <tr>
+          <th>Name</th>
+          <th>Config Value</th>
+          <th>Hex Address</th>
+          <th>Notes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>DeltaSol BS Plus</td>
+          <td>deltasol_bs_plus</td>
+          <td>4221</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>DeltaSol BS 2009</td>
+          <td>deltasol_bs_2009</td>
+          <td>427B</td>
+          <td>DeltaSol BS Plus V2</td>
+      </tr>
+      <tr>
+          <td>Dux H3214</td>
+          <td>deltasol_bs_2009</td>
+          <td>427B</td>
+          <td>Pump 2 unsupported</td>
+      </tr>
+      <tr>
+          <td>DeltaSol C</td>
+          <td>deltasol_c</td>
+          <td>4212</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>DeltaSol CS2</td>
+          <td>deltasol_cs2</td>
+          <td>1121</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td>DeltaSol CS Plus</td>
+          <td>deltasol_cs_plus</td>
+          <td>2211</td>
+          <td></td>
+      </tr>
+  </tbody>
+</table>
+<p>The <code>Config Value</code> should be used for the <code>model</code> parameter in your <code>sensor</code> and <code>binary_sensor</code> entries.</p>
+<p>The <code>Hex Address</code> field is the value sent by a device in the <code>from</code> field of a message. To identify an unknown
+model, set the logger level to <code>VERBOSE</code> and look for lines like this in the log output:</p>
+<p><code>[10:53:48][V][vbus:068]: P1 C0500 427b-&gt;0000: 0000 0000 (0)</code></p>
+<p>The value before the <code>-&gt;</code> symbol is the device source address. If it matches one of the entries in the table above
+then that model should work with your unit.</p>
+<h2  id="hardware-connection">
+    Hardware Connection
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="hardware-connection" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The device must be connected via a <a href="/components/uart/">UART bus</a> supporting the receiving line only. The UART bus
+must be configured at the same speed of the module which is by default 9600bps. The controller outputs data every second.</p>
+<p>To connect to this and read data from the bus a level shifting is needed as the voltage is around 8V (direct connection
+would damage the MCU). For our read-only purposes it&rsquo;s
+sufficient to adapt the level appropriately to 3.3V using a circuit like below:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/resol_vbus_adapter_schematic.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 300px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/resol_vbus_adapter_schematic.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACVCAIAAAB&#43;X0f2AAAo6ElEQVR4nOxd53LjVtIlSOREEowilazgz&#43;N9/9fYKletPeuttXYUmQEmRCJ8ZZ7dOzCTGECRM1L/sDUSCVwAjb4dTp&#43;moyhKfchBBY8A/6Uoivz34EIfegEHkyiKwqkc/PUIw3AylUwmw7JsOp3ek3JQU8lkMmse/50qRxRFQRBYljUajSaTyQFf1jAMHccxDGM0GgmCoGmaKIqZTGYf50qn04IgyLIMFXz18&#43;9XORzHeXl5eXh4cF2XYZj5m0UsykK9idubVxVrxaF83&#43;/3&#43;3d3d61WK5/PX19fF4tFmqbjn1y9knU&#43;gM9kMplsNnt&#43;fq5p2odyLBUoR6vVenh4YBgml8sxDLPweUDmb/p2yjHz4SiKfN93HKff73c6nVQq5TiO7/uw/2ue69Wlkj10PB57npfP53O5XBRFry77/SpHEATY5svl8tnZGc/zC&#43;/76ndx/f1o2YeDIDAMA&#43;90pVL5&#43;eefS6USTc8&#43;l1fP9epSJ5NJr9ezbXt9N&#43;udKgcknU6Lolgqler1uiAIB3E7wjAsFAqZTCaXy1UqlaurK0VR1rH5G0kURa7rplKpbre7/sFp8mW47hRFkS9HU8FNnDkiPgy/&#43;kjiri0ErjvDMCzLchx3wJVks1nbtjVNk2WZ47g93VKGYdYPVf6rHNj5RqORZVncVNLpNOIr3/czmYwgCDzPE/0Iw9C2bdd1OY4TBGFPrvWbCdHvg2g5toN0Ok3TdCaT2dP7ttEOSIQmNqfZbDYaDVmWVVXNZDKu647HY9u2eZ6vVquFQoHneaJJuq73&#43;/1cLlcul/cXl78rif4nh17IV/nvtjKZTAzDeHl5kWXZMIwgCGzbHk5FFMXxeGyapizLCL1SqdRoNOr3&#43;zRNFwqFQ1/CtypwioMgcF3X87zJZOJNBZsdrMhhV/jV5/B93/M83/dN0xwOh8gR6bpumibDMKZpSpIURZHnedh3PM8LguCoNP0bEtzJ0VQsy&#43;p0Orqu42byPC&#43;Koqqq8a38IELHl5tOpyVJEgQBnovruoIgpNNpVVVpmoa7StN0Op0&#43;Qhv4bQmyDk9PT&#43;12ezKZ2FPB/k7TtKIoZ2dnC1Nzbyl/CWXT6bSiKKenp8imBUFgmmYqlUK2lcQsQRDout7r9Q637CTlICoOp94wDOzX2Ww2iiKkN0zTHAwGmqbl8/mZVOmOsukr/RfloCiKYZh8Po&#43;gH5kTz/OiKGJZluQQXddFOSCpRR9QDmX84HCEYSiKYq1WKxQK0AzP85rNpq7rvu8HQQAPj&#43;QXwjDEO/w2GYTZJBgJ/SmKCsMQ6/N9n2EYxFq4qoP7SknJYeOsdDrNcZwsy8jfY1sZDAYw2&#43;PxGArEsqwoilEUYesRRREZhH0v/qtDijwYTAVRDsdxxuMxsh0QaPdkMkEWFvJNh7KHWjze/nQ6jcAE7xt&#43;QOmn2Wx2u13HcRRFKZfLFEW1222Kour1eqVSEQRhuzNunASDZriui4AW8Qj0YDgcwmOSJAkOB7L0pmlCRTa/LR8yK3hmZI&#43;DcpimeXd3Z1mWqqqWZVEU9fj4yLIsKvsLi0HJyn8tByr9oijatv3w8DCZTGiaFkURHgZiccMwLMsaj8cwgPM59Q9JUJBK6Pf74/E4DEM4p8AEobiK8sVe10BDbXmer9frHMdNJpPBYKDrOs/zuVwOiS&#43;owmQy6ff77Xa7UCicnp4qilIsFlmW/ab3lGMWbDrYdziOkyQJ5sSdyhu40jRxiyqVSi6Xcxzn6elpNBpJklSpVDRNI&#43;VjhFiZTAbhbj6f53l&#43;BgbxIUkJTdO5XO7y8hJYJFEUeZ6XZRk2PtkQd&#43;ka8D/4RMxUBEFgpwJIGdZBknc0TcN5liTpGFK836Wk02me5wtTQXiI3GMmkwnDsFQqQUv2vYyvoexMcTJu08jOgj&#43;R&#43;BZ&#43;9YflSFwoiuI4DjgP8mYi4w4MCs/zqHgQ528fT&#43;GrciCOtW0bzs6yL8BR6vV6YRgqiiJJ0tuYuD3J0RYBMpkMShZBEPA8z7JsEATIJnAchwSrZVlRFPE8L0nSOs7flhlSqOFgMOj1ev1&#43;H4m5hUd3XbfdbgdBoKpqvV4/OztTFOVbhHREf5VDLWDZn4IgGI1G3W7Xdd1arVYsFh3HGQ6HDMNIkuR5XqPRaDabAJIBM7yO/7fRlX61HEEQOI4zGo1s2w6CYMWiTdOE5sJpPc43b305TrM3mUy63e7nz58ty2IYRlGU4XD49PSUSqUURXFd9/7&#43;HoVcwzBoml7HS930SX1VDhQD4Uwg5TJ/Joqi4I1WKhVVVavVKsq2G174UQhJUB4K6bj6vNjlB4MBIFdA2Ly8vPT7fVVVWZY1TVNV1XQ67TjOYDBwHEeSpNXPYtMrpcnXoByZTMayrG63u&#43;zoLMuWSqUff/wxn8&#43;Lorg/wOPbyHFiYPE4GIZRVRU9V2SjeXl5sSyrUCighE7T9ExMsNA8RItk/qQzv/lLtIKS22rrhCgrO5Vv2hU92g0FAuiupmm&#43;76OaAW8DFbjJZBIEwWAwII4qKduivjHz7OEsOo7jeZ7rupZlBUEQv3wcf6aYt6Aqu/quEWv8AR3dk&#43;CuItlVrVaRqmZZVlGUy8tLOBwURTmOgzhWlmUC88ZOZBjGZDKZeUBwYvr9PnSIYRj8HlaEZdlisQhTRL7yHvtWSNog3t5&#43;bEJRlCiKZ2dnlUpFkiSe52HXT09PAdAEzgbBraIoKNIilnx8fEylUnAHoR&#43;ksJpOp13X1XUdfyI9w9gE0KZLVGqxchzn/UpEwjD0fR/IBPReTCYT3DVkIY/Bv4Z5xj5C0lzowSceA8lFEUAynrTjOEEQZLPZYrEI80BeA6AsqJig8N5qtcbjseu6M/mtVZZjmWuT9K14OwnD0LKswWBgmqZhGLquD4fDdrvNsqwkSbIsK4pC4AoHlxm6hJl&#43;s5lPIhkRb&#43;M7OTlhWRZRDzwMgvKEEsC/RKXX87z5BbyvbQUt7ff396PRyPM8x3HCMBwMBtiDNU07Pz8/CKw3Hj6sk5Rb7RRiA&#43;I4jmEYlHBt24YpivdqC4KQzWZRUFvoQb4j5YAptm3bNM1MJlMsFjVNQ01rMpmgE6dYLOZyuTdbDzYC5JbwbAAd3d08kyft&#43;/54PMYLgLjXsiwSdQK1syyeX6UcC7/wHUQoLMuiaxlbeBiGSD7C/L4l8JGgqMgOQqB32x1wnqyB6By2DygfAmDHcRD0LtPFxcrxHWjAMiGOXjabRfO07/thGHIchz17nqFrT8tATXswGLiu&#43;/z8jNADGc9ldn7rE9FToSgKGD&#43;GYWzbJqDgZfKOthUISdKQVE0c8hiGIYrScegvaQhI0BfBlp/L5UzTRJ&#43;HZVmiKMIjzmazgMtsqh8zn4dB4nleVVXkuLCN4mVgWRa4kGVneXfKsVBwd9CFBg8AeQJ0DMBvRS4hqfpzJpORZfn8/DybzZqm2W63e72epmnlchkqks1mdz8XzKSqqqIoklZFiqKCIFAUBdwTK7awD&#43;X4rwC00O120T6O4uf5&#43;TnP891ul6Koq6urk5OTpJQDVSpN08DMAegdaGSQ78Kz3P1ESMOT9EY8JsJvlsEzPpTjL4LK5/Pz82g0QkYZ3VyNRoPneU3TSqVSgphZ7FNIV/M8z3Ec/z9J0NeZiURmjrw6LPpQjq&#43;CghYQ3nBUDcOIokjXdVVV5xOIycqmHUevyu7x8MbKET/lvl36txe8ykgsImSACQGyd6/Z4Thj7tYnIl/E0UirbVz5Nut42/T0YPIA2BW/JNS4R5J43lQI9ZkgCGjIQO27UChIkoSs0f4A38h2WFNBKnO7940wdaFqPxwOSYGXbGFImybPYEz8l8Fg0Gq1bNsmNwudL/Dnj18/luZ8pnCncrmMTKLruiDBQgYJIM3EF4OG6aenpz/&#43;&#43;MMwDN/3t45TEG2hXm&#43;aJt5hJEbhmaqqinb&#43;vSgHy7I0TQ&#43;Hw/v7e6IHSLHBt0ei/hvdaEAGWigUWJbFvUaRAu8iCnLIqJKXG/8kpG&#43;bvvQww71e7/fff//ll1/y&#43;bxpmpVKZTsGY3TYDodDnufhIUE58AO&#43;CyKQNZe3gXLQNK1p2uXlpW3bHMcRVAgAAZ7nFQqFIAj28XolKCtuDbQfgR8g/5lMBqBr3/dRg0BbKPIHyHajoRxZ1&#43;2YEfDwwAwGPZu3HOuQ1MZ7WFA6EUURiGA01m5q1NfFc&#43;B2lEoljuOghmShnud1Op3xeLzRiQ8lq58cjDzKVKVSSRCE0Wj0/Pw8Ho81TavX6xRF6boOFySVShlTmUwmyFKcnJxs1KgBPcjlctfX177vl8vlZQzG6wi2lWazOZlMkMFDDYWoL1Jh6x9wAzwHgAIcx838Hm34QDJ&#43;ExvKsoIiarbj8fjx8RHIGhgPoEBEUQQs6PHxEVxNIMzAk0C1E0wFG5VF4ApcXFxkMplKpfLDDz9szWAcBIEoijB1giCoqoqHJcsyjAoZ2bHmATfT0HnThE0X6bxvQjOWCbZ/WIKnpydZls/OzqIo4jgO7YeiKLIsOxqNOp3O8/MzsL6DwUCSpHw&#43;j&#43;wImMVJJLlmRQZbgKqqKKlsB&#43;hH3Y4w3SIwQWUR/40HtGse8yMJ9lVQVRkOh67rsixrWRayYXCkoBzYRvF7hmEQPTqOAz5nHIdQr6RSKcA/F&#43;oHwXUOpgJI8Nax3gwyPJGWnI3xHCvkaPtO1xQUMNE9hvcPGQ7QukmSBAqCcrmMzBh0BRmFMAwx5AZlrfF4jCp8vV6fh5bhRsFV7PV6jUbDMAwwfB6V9d0ez7GQgBfU/ISA96gu9VVhGAbwfNd1EZ7g8ZOOL5Zls9ns7e1tvV4naoFGAYqiCoUC3AUwu6FXUdO0mZwyEpeu645GI13X4cuLonhycnJsrUBbbisoQ4CAFxVnwzCw0QK9CFagb8hFhR0WBKFYLAL3EEfzkp4fmAfkNpBlIt1B6HbPZDKgSgPIitDqweEFQfRoNBoOhyANj6KoPBVkY48qhbilcsCxb03FcRzkfeGxg4zw5uYGE24WOkGH1Zj58hDJIkAJYDBmhLQLkGhwpq9wxmOYwQyj06Tf7zcaDRgVURRhbFRVJXPXjupd2t5yuK6LHK0kSRgLBUJ0UDbncjlN05DVwR0nbBOAqR2KtSEO68XDgB9KYL2rq1OvunjxjimyicC9GAwG7XYb47rK5XK1Ws1ms4RM/KjUArK9cuCpq6paLBYxhSOKouFwiHa88XjcarVM04QhQUuI53m2bedyuVKpdCjWdzKNETqK38DIJ1uRJ81kvV4PuQewAKLAUS6XkYdI1lokGxDsFMoisAZ1N5JFYRhiKwFo9u7uDmGhLMvlchnJx5ubG0TzyV3FZoJpId1uF9BimDTbtnEVSYEqSEWt1WoRFuJSqZTNZhVFQXqNFGjIt47KfuykHDMEvPHYGkMPG42G53k8z4OBZDAYdDqdQqGA7Sa5q9hgtYIgKIqCYULgB8a0RFEUMdM1EXuGBAZAh6j0EpcTvgWcWbxg8FVBjI8s1i7XuPviiWzfKzvvY860e5B6ErK2qqqmUqnBYHDAdAhN0/l8/urqqlQq6boeBMFwOKxWq2dnZ9j4khq&#43;R6AVuVzudCrFYhHkO7AoGGSD8h7DMCifKooC1pMjiVk27pVdU5AbkGUZOwjP85jEANDzoS4e5SGWZfP5vCRJmDNUq9UuLi7QYJ4UXgkAl2KxeH19fXV1hRpYnNT8/v4e8R16ztBPlc/nwQf3DSjHTsel6Ww2e3Nzg6QhXhFBECaTCQATh9pcETrh4bH/E&#43;B7E1wSjo&#43;sGrqnSBOzZVlIC4miGIbhaDTCfofoDxvukRB4LlWOrc0GfA6O4&#43;r1eq1WI/UIWMtSqSROZRkM&#43;g1uynwZIvGDE95f&#43;BDklwhhXNeFqYBnBmXFdIQEPeLdZaly7LI&#43;7ClkqA8cLqI3uF9IM5D3CWmGt8y7zxNk7cMTmrmQdDoNugff9x8eHkC/pCiK4zgURWWz2SNRC0iShbcZQUbB8zz0K4NRVVVVSZLGU4FTQlEU0vBBEAiCAG9gO7TL&#43;kKGyJumaVmW4zgJpqEILQycjPif4PRUKpVerweAGUZQ4Id9aMYyCNmfv3/tdDsV3pb9nkwx7vf7o9EI7PrtdtvzvNPT03K5bBjG3d0dy7K1Wo2m6U6n0&#43;/3gVU5Pz&#43;v1&#43;t7ZdiBbUdn/cvLC7Jh2Ww2qTNOJpNWq4Wpq/MsKxzHoa5bKBQsy8LWg3p9pVIBxn3&#43;iS6728ufVBSFYeD7wZ82m0KGgRwWNR/SzL3sQnZ6QZcFpUgbg7ISuUhYzsFggFKCruv/&#43;te/wjAEpArEvAzDYMIIJs3ssrBXZTKZ6Lr&#43;x1QAsSwWi/GK6ELqnPgFzhww/kUMZe71esgaz3&#43;S47hSqaQoCoF2osEf8Bw0FhCvJT4Ri/Qwkm163qchP0wm7tgcjU07laIEnqMzlOf5EZWm6Yw/HWGbphlZVjLL9WMv1juebsLLAbUlMDXP8xDoq6qKjBlc&#43;sFggKzlGyRCSNUDBVhoZ/wDa2K&#43;F1L5Lut0JXSiyKnTNI09FFQZmHeDcjdcEJZlCfAYU3&#43;x&#43;wBcznFcPp/Hx2aW8eeebludbrfZG9A0o6kinQrGlhumWYZlXHvsOjbLicVSVVWVcMlLvmuGdGn3/vSyNU2Dq4WaC/HegZohdDaknEuwEbusah3BNJOLiwuapv/v//7v06dPZD5jXFaHlAuVA2AGSZJQSZj/q&#43;M4Ly8vv//&#43;O1hEUWYCqghZuOFw&#43;Pz8TNP06ekpx3GGYXieJwgCOIkAGOj3&#43;57nKYpye3t7c3ND8qpfTxdF/mRi2Y7t&#43;TLNpcLA8yzbdicpP7LSvmcyVJhifN//M2hKLXkTt1eO1XVLVLez2SzADaPRCOkdZIg1Tfv06ROKcIBEI65DZ8C&#43;AVHAfGezWeS&#43;bm9vz8/Pk8qN4hXHGLx5RYfqGIbx8PDQ6/UYhjEMQ5ZlTFcBhZdhGGCQRoMM9uXz83OgTAArfHx8RDEI4wkURVmwkuml0gzH8TzLUJ5Ppam0Pwkc389QlKrI2WxWkSWGWQov2iPVJHJ/PM&#43;jex0gmlwuB7wdWipgfmEwse9sPaZ7vr9oxSexo2MquKqqmD&#43;UiEbCMyBjVheGCWQEted5&#43;Bi2YFmWsbnwPD8YDF5eXpCGx&#43;aLSV7pdBrwM9u2aZq2LGsJddN/aVvEIMOxTDoTZdKZ6cZJhWlK4EStmNdyOUEUoz8908Wv&#43;h7T53A7ANtHwZYwZgI0NXND8TM&#43;sMVzQmXVcRykYpeVr&#43;AwYl4/KsYbofVflVdXjtYpWZaxq6LbA1zV8EklSVJVFZx/yIugUAeQOsdxo9EITD1oOlxMZJ6mWJbPqipFewxNcwzF0nSa96UoE6UZgWfyqiJJIj0dSn8YZh8Skc47d/GHt3vNGo4eqEU1TVuGqkKxtN/vt1ottJwkDmec6XOfca6x2&#43;ZyubOzMyAEYLcAN5xMJvJU8vk8x3GCIPA8j&#43;ItBiQwDENmNAHvXi6X40zFsROlWY7Pc5wk&#43;6kUxWTSVCrywzBKUenMn2aNZWj4WCsu/I1aE1bf&#43;qTwE5ZlGYaBjWw&#43;9MDu1u12Hx8fMb23UqnUajVM5dx9ATOLQQKQdJsRh5HjuFqthnZW5MTgamBDgScLZB1qhPDG8HWYVVVVy&#43;UyqN9yuRz0ZmYBfxrpaf6GF/70Pv7cOFKp&#43;As6Q/SzUPaYIX17wcs3M0kIVhfjWNvt9tPTk67rLMuenJycnZ3hHU024UZGFvV6PQQgCElgn2A5ZFkm&#43;yzBc&#43;CfURTl83kC9SCeKUlyyLKMwYBkm164/ld9r1fle6aaJBBOoPTa7Xaz2bRtW9O0k5MTzBPaB36AvJToXsGuoWkaPHHC2kb2vvgbHMeGLdyCCQAv/vk9yfbmNHpNEl3nxmsjfQDD4RD4TdM0aZqu1&#43;vVarVQKGzXEb&#43;mIBQCcse27UajMRqN4E/AjYB7Ae1ciJxaffy3eXt3TZ8D7oZeakC/EJQmt8INFhNXC/j/rVar3&#43;&#43;HYSgIAjLWiBj3DajBkO9yuVyr1cAnNh6Pe70eQvd&#43;v2/b9uXl5Y8//pjL5RJsZDoKgDEhTUZH6Gg0grXE1Op4R9BbCpkpYRiGbduo5wFxA9ANuh3jU0jil5OgxFukyuUyqi2tVuvl5eX5&#43;fnLly&#43;maf7tb39Lp9O3t7fH1uhGZHvlQDETxDSdTgeleVyhpmmqqr79BQOeSVi9kT4qlUrlchnpI0Q0SB4g4QjmiD15HjgyAIjIsw2Hw16v98cff/T7fdM0saTb29t8Pp9IXvgtAMbrLEIUxWq1CkIIXdfBtJrP58GpBZqXBBf6qhCcAAoQ&#43;XwemwhSrlEUwSft9/sYWSXLsjkVNJIkBROMMx2Q&#43;ALJYjjCp6enuq7TND0ajX755Rd8GPbjgOjahbKlcgAjCQsBpEwURcViEbjA&#43;UGCCe6Fqx8hRrDWajVYCywGgcPj4&#43;Pvv/&#43;u6zrDMCcnJ8ViUdd1wzB&#43;&#43;OEHZBSSeu1I5218tUhpoERycXHxPJXBYADkAMMw9Xpd07TjQRfv5JCSJkckdgDTRVIvDtIkHmIi/WTzCIb4n1Dqq1arJycnaMLDjUYR/OXlpdfrpVIpy7L&#43;&#43;OOPwWAAOFIul5sfp7jjItHkF0URNguslmEY4NzOzs6wv3Q6neFwGEVRs9lEaQkzQZNayY6yU&#43;EtbkLjIyNnulcwdttxnB3XitwASpHzuwAWQIh44nYLWXPLsjArD1PZkXVAwiBZJz&#43;dTkuSVK1WoyhC3z1ZIc4IHp9KpWJZ1ng8Hg6Huq4j2E42eNlRkiy8zac3UL9uNpu//vqraZozz2zhuZb9FZEIy7JnZ2eXl5cLW7Hj4zJmfg8aJHge/X4fRF6CIKBRMdmXFTsIyEzntwmS1kShJJvN5nK5TCbT6/X2Sp&#43;9hSTQmkD4BVA9miE4ALLh&#43;fkZPsp8U8KaAgCVaZr9fh8zLubpcpZ9F7wa1WoVMERY71KphIarpCIFInGmhtUN&#43;9j4QIZ/bLQ&#43;CbQm4PEPBoNGo4Gs30xRAOwdYRgWCoWbm5uFVaJ1ZDKZtNvt5&#43;dnRKrA2MUdXsDpFg5Iw2Tei4sLSZKGw6HjOCzLlstljuPI1NYVyK4tbs5GeDYqJmt&#43;5W1k12okQMLPz8//&#43;Mc/gFUBuI14o6ZpdjodIOc0TcvlctsBeUDz2Gw2h8Nho9FwXTdeSoVytNtt0zTn9YP0ZtI0XSwW0VmPbivwhQDHOl8JI5X3&#43;GMjE2iTfZbHUHaYkV2rsngqSFT3ej2MVkQvE/4KdiwgSjL/k01XiZAHmJfhcIj&#43;sHnlQG/0/M4Nh9QwDDRA8DyvKAoKp67rgnwYWo54h6IojGzCiQCDRQoY/oSmaUCBbHohq69xd814i/T5RiYRDGC1Wg3jtU9OTmYsh67rANASsptNV0kggDAAhUIBvTDxD2C2&#43;3g8nrdMiJju7u7u7&#43;/RzA5&#43;ccMwXNcFnyuS7oBkep53f3&#43;Puc6maXa7XRQEQCKoadrt7S1C92Q9laQOlZTsuq0gbMOAdU3Tbm5uEIzhr3haAGgBUbF1GztmBFMUlc/n6/U6OKBJsRvKgU8uJA53HKfb7TYaDdAPgTUEPXZAYna7XZToeJ7Xdf3z588cx11fX2MCAdxt3/d5np9MJkjJJ9h7PdO&#43;u&#43;NxkpJdlQOeeZyfJD5VA288iGwAbuj3&#43;9tdAEZ5eJ4ny7IoigCpk78iUc1x3MJGZEIHC9YDhK9BEGCAKM/z8FSwMfm&#43;3&#43;l02u02qqmIdDCvCR2daN50XTcOg91dvkPLEa8wIX6b8dRQyKjX6&#43;QVXJ3niG8isEz4JdKsIKdbCMVYTdhL/gQ8N8wAGnRRkyNVZQxfhflxHAecfxifMBwOyeAc0K0civbubSRJ7OSylHa5XAZ5zYqHF&#43;/jI0wVZMIL6RaEcizjvoFWzfukJJ8tyzI2lGKxKEkSyujgvCMsotVqNZVKFYtFUMxikCdgCSj5Ert1hO96spJk30qcyyBecJJlGbnIdQ6CpNlwOMRAK1BLA0CkKArChIUPhrD3gRowPhYIjhGKXp7nSZIEjwEnQoyNdlm0oIG&#43;DB4GCqqwZLIsgzHh9PT02Ahl9yHbp8/xjiIlBfA0fEbEe6Q8RiLYNRUOzmO73UbqDH1QSMNTFKVp2rIEA2kmAzldGIZoIoULjEiqUCjA4cDGVCqVPM8jmXXsJkh4Z7NZMiQEi&#43;d5HuUSEGwcVfl0hcR7I&#43;I5w1jHfdJd9nhag8EAr3iv14OrDyoBQncUT2KumTXBtoK3H7UJTdMymQxmGKymIcSqxuMx/M1KpZLNZskEGuQwyNAJOLAEckEMHn6Ox8mkpqooSnwa0na3bsXiEz8g2ltIzz5JXsPlwm67Ivm2Pb21ZVnNZrPdbmM&#43;HmoflmWhQ/ynn36CTd76qlBAwdaALQNnWcFUQWg2wA8DGClI60iOCxsTMWnL1jD/7L8t35P06fT7fTTIwONGwZKwkKOCvWzH3zJDCiOMVk9wNOPDUA7kDOAobPqGkTne4NhDyACinGVIjq8XQ9OqqmqaVigUkFaBy4nhGJ1ORxCEn3/&#43;&#43;erqaqNhW28gSZmN&#43;HGQTe50OrB24JtALztyQmRq3Wb8HK8&#43;URwOHVflchmdfVEUASqBNPZ2Fwxtu7y8BL4SAGbXdaMoIsQ3y75LopJyuZxOp8fjcafTeXp6&#43;vI/QaMpwzCXl5ebztvaq&#43;xjGcTc4p&#43;g9EDch6F0COv2xexDdm7sIKjBbhHjxWMcKAfBWACjRaIVSZLi/WHx2JgkGUERg1XBq2i327quPz4&#43;wsfEG3N6evoNDf1YU&#43;LXkslkEPkjJUN6qADrRDSHTEHyjdQzMLB5WfM4pPkFOyIxDGCxURQFJVPSIkaAIyvmKxPUD1K3Z2dnjUbDcRxYtb///e&#43;ox56fn6NUewz6keAayNgCRVFAOBbPKEJXVgwPIXL4GW/gbmu320EQoGd8MBigbzGXy1Wr1XQ6DScXjgJAuSA2LZVKIAfGoWZgYKjUY7aSJEmfPn1qNpuNRmM8Hj88PMB&#43;AG16QNLcfQjSuLDiMwRUeAPxM95htN8t9EkPrBwg1Xh6evr8&#43;TPWCrxWs9k0DOP09BTcQPf39yh38Tzfmwp8K&#43;ydJGePDET8SaOz6OTkRNO06&#43;trOGitVgs0j09PT77vo5163&#43;SWbyDEZnue1&#43;v1YFzJX2Gh4dfHjSWSQwv70A58RxBtPj4&#43;3t3d8Tx/cXFRqVRATQHOK4ZhwAnZ6/Wq1WqxWASjDSgMhsOhZVnwUhGqwMDEL56QwYmimMvlKpXK5eUlAX83Gg20t3wfzgf8cQR6MzVOgrOUJCkerMGBw9TSmZtwSOUgbUjdbnc0GiF3gjQaGo4xExp0ct1uF4YByUpE5/HsDbZYgDHnMb1xvmkykBflEoRCB7oHSQqCAxQBSJACQeoBNUXQe8z4aoA6z5jPw9tSws2F5krAggDqgeXgOE5VVZBlgxcb&#43;TGYTRgJCMuy8T6ReYm3G0GNkoJgHYMgUlMUBeS484PD8ctSqVSr1eL9iPG5OfGvrCq87fuWIS1RKBQ&#43;ffqUzWZR&#43;sISkfaGNqiqenNzgxeC53nbtsmguJkGli1gvfu8vs0kkbu9opKFqhAiFIT6M1&#43;cP9pO/BzLfr/&#43;u4isBlDgoJok5g6XAa7W6&#43;trUGPB2wLil6Io9J7sUgD7bszGjMzDneK/WRN4tlPfyuo7O2N&#43;4sWt&#43;CoJI&#43;XMVZHNAr2WM1MXSS1&#43;lyxnfO7rdkdISt7GVG96il37Vl6tv8RHtsbToHGrvpoGf/5PCc6qSQq8&#43;a0sY6NT7EpvveyXSGCgzg6WbkEQkJ6DrwDWigTPu91xDq4WbymbJq9XFd5WH2X1X8MwRDNLq9VCY2qxWOQ4DjQeZ2dnCDiP4dkcwxqOZxlx2VcoC5Kd5&#43;fnh4cH0KkixWnb9mg0yuVy0JU9nf1DEpF9KQccDvQ927atqir6CoEjPJIBdx&#43;yWvalHPBAMYYZGa0oijqdTq/Xy&#43;fzR7KhfMhq2ZdyAKt3dnamqipAJQzDgAl0pjb2IUcrexmpgWA1PxVAwgD/dF3X9300uy6rgi4bf/Tdy8FzLfOyfWvCTFZqRtANgI4PkqsAxzvyWoAuArVG5nwRHoR9cBxsd5nvWXbaVpBeBIMxkHzkBzID0DRNkiNHHRm1&#43;Gw2m0qlABHF5AD0uZumCbYdVN32rR9HohlvkyHdlAJkVwZjFFGB1MLDHgwGsBYAfzcaDVmWr6&#43;vc7lcq9X6/PnzeDw&#43;Pz//4YcfUqkU&#43;IAwplrX9fv7&#43;36/j&#43;60y8tLkGVtt8IP2V22Vw4UxoCawcxYggpGY4FhGP/85z&#43;bzWalUimXyyzLttvtf//730DrFItFiqJeXl5ABqqqarfb7XQ6wBwA1w4Uz16Nx5E4N2&#43;TPk8mQ0qOteJPgiBUKhVMBdB13XEcbAeVSgVszo1Go9ls9no9QRDG47EoipZlYbAZcIuYbnd3d2cYxsnJCaggi8Ui8MYAbWx&#43;BzaWo9KPo5It&#43;1YWMhiXSiVC64PJsaSgisQoiLzi40JQggFyiej1uw1Yjk2SZDAGQSyS4qBzBHM0EhuYgVgul1OpFGBd6XS6Wq2CEyGXywEwDSyPoijfSqfydywJVGXJG0/oU&#43;CRlEqln3/&#43;GdPqMURBkqR8Po/&#43;90KhkEqlbm9v0XwAdhRC3QRC&#43;&#43;8D9PvtSpIZ0niYBGRorVaD40lYpDHjn8wG53ne930CNibj2cgkigSX9&#43;qaDyhHyDO5Fob01VQYCJncqcTHNKG2MpOrIP4EQYTHOX3Ix&#43;K0CAld6eyyCesylPJQD4bcQDjp&#43;1vJFsq3VDnwvGfoPhd&#43;cjwed7vdp6cnx3HAoXb8DUJgXW63251Op1AonJycrEaj7U/AQAemQ2y4e6J7AFHHRsq34CkisT0ajdCTuHqhGLr/&#43;fPn3377LZfL&#43;b5/fn6eIAfjnsR13S9fvvz222/tdhususVi8SA6HQSBruu//vrrf/7zn0qlAjKBmaG4iQg621zXXf8rf7kdZDKZqqr9qdi2HeeNnH/kQRD0&#43;320sTuO8/T0hCMsy&#43;osm47w6ri11fHtwq&#43;vOJfrui8vL61WC6/s8/Mz&#43;J/W&#43;fqaS1rnw9jder1es9nsdrupVOrl5QUTkxfen40uf0bAu4RpYmumFmffFaQmr66uTNNE/exVOCAa4RVFYVn28vIS/YybXsaOs/hWHHahgsLVaDabgiCcn5/X6/WFheLVoKRE8jHguqQoqlQqqap6cXGRz&#43;e3CNNexU/hA8garLltzd4ODG8Ds8eaa5pMJrVabTQaocD2NlHGjjKZTMBNWyqVfvrpp9vb263HOewo0NTT01PLsliWxUS6PW3K2Blm&#43;u5XyALl2JSBGvOISqUS6Uc9cocDoTLm/pFZllsPgtldBEGITy/ft44mgz5f/2RkBPf63zqskO5QdNuuZj9&#43;m8Uc5NSrJTH//Pg1Y37E2LIfjv9a3kaOPSGxuxDO6xmmPUwlxg&#43;e58V3Q0JEeZwv9JvJd64c8JfH4/FoNCKFXxKB67o&#43;GAxAQUmadbE/ghWC5/n3rB/fv3Jg&#43;NeXL1&#43;ADUCUjwEJoF/udrsAxxM2rVQqVSqVrq6uEh8c&#43;W3Jd64cJFY0pgIKWzCQgpEyCAJuKkCgAbgUhqEgCAcsuByJfOfKAawJqidgs0StGPpBgPKE1BAcIaIoYmrkezYb70I5QB6E0mur1bJtG3gRoI0IsTp2mSiKMCasXq9/KMd3rhyoI/I8Xy6XMaADo0yBRYL9AIYefO08zxcKhVqtNjPy4X3K968cRD&#43;q1SpN0y8vL71ez3Ec3/eBeAUbQLvdpmm6Wq1WKpUZssp3K&#43;9COZDXFwQBOX4M&#43;4G3IcsyqsqYmf2hGXF5L8pB7AdaH4BRenh4wCjQTCZTqVRqtdqHZsRl1RSn71Iwd6zb7WIr8X0fE5Or1eqHZszIO7IcELK/EMh7sVj80IyF8u4sBwQziE3T9H1fEAQwzHxoxoz8fwAAAP//gsgy385HwaIAAAAASUVORK5CYII="
+                     data-src="/components/images/resol_vbus_adapter_schematic.png"
+                     data-srcset="/components/images/resol_vbus_adapter_schematic.png 300w, /components/images/resol_vbus_adapter_schematic_hu_43f8a0733bfadd44.png 60w, /components/images/resol_vbus_adapter_schematic_hu_27986bc0c0f6392f.png 100w, /components/images/resol_vbus_adapter_schematic_hu_3bb305893fac90b4.png 150w, /components/images/resol_vbus_adapter_schematic_hu_bd85b302f9254bae.png 200w, /components/images/resol_vbus_adapter_schematic_hu_31e76bd56770bf23.png 300w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<p>An electrically isolated version using an opto-coupler:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/vbus_serial_optocoupler.png"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 512px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/vbus_serial_optocoupler.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABLCAIAAABWazqpAAAXLklEQVR4nOx9eXPbxrLv7IOFpKTE8TnvvPx3vv9HelWvbpK6N8mxrYUEMEt335ppEKJk2VEc0qYdtVQumgKBAeY33b/ehiZBmvI05UkI4bX3xhtlpJRSSFGFiCLGKU0Zs1a6MY3VVglFghKmDFkpZZXlj5R/HgmJ&#43;UxUfjLmjFlK6ZRTSi1XeZE/FBIECFOeQg5lskyZLC314WQhYYQ4pjFT1lIbZZAQCZVUSqqMGQm10kYaIAAEJVU5RiAizpNbp5LPZgBhl3bX4zUJ2viNkILPpaVWUkkpkXBK09vpbczRKLPyq972RhkimmAa02iV9cYLIayy5X1BJIiHS0RCCL4YEaEoQ5/SpJWWrv68D6YX&#43;ZCQyJiHNNxMN/NkCWGUmSerrjQkHNLwZniTKbem1VJHiBmz0cYoE3IABKON1z5jDhCkkDx3GbNT7qq90k5rofmCs5JAQhKEhGMad7RTUjWmaU3Lk50w8TXKC4xDGhg6SBggOOUChAixta3XvqgTLLCVQmbKStxjc4G21bYxjdPuSz/vr0qkYByUBYyYMe/SDrGs5M52rS1QIKIAYZd2Ws0TNKQhU3bktNQBAhEBAZVVS2MaE6YOO6cdYFEkPfQddYs2L7izyjrtyoon2sbtlCcp5cquVKuUUqwJhBBa6QTpNty&#43;G98RkTOuMU3REEYIEEMeEiajzF24G/NolDHS8DveeKrC6GalUoZYT/sizxQppFbaadfoJskECEMaQg5KqovmQinVmras8IobtilCiDKDudgjkpQgKalY30gpBzkkSGhQCQUCpHzMCspBWmmrLVJZ2bzuhRBRR0CYp48EIytTRsQpF/5Bgow0Bc5Q4KWlBoSQw/V0PebRKeeMS5C00nzmYvZIERFfsSiShY6cQIoVq7pqsWvL68XYfXVGjfHBTGLR6FLKAMVezIut3hMQ8Mq0ykZRtL6SZZ0Xtqed067MYH0OiDjmERBWbsUMZrmckUIaZVrTMtVg/VFMkd4zUyoHMHqccl77DrqMudiF/fQ3pvHGAxW61LveamuVtdrymFrTskFhEkNEhXOccmIQMVYpWlcprbU8EEQkImutMebrwkcBhyxPW6tiQcqqI8EcoExWBbzTrrMd803WH8V8S&#43;G0k6L8tbWtFHIbt1bZlVsxUKSURpsyLwfrtbANQEiQ&#43;OIJChiFEDzfTDwjFJ6RsCglIyuBIDSymKSEiV0PZrKFl0Ba6DEz0&#43;VOpJTlzQqO1rROO9ZyxxUiSintquRcbltrzRBxrrhIDJq&#43;79u21VoffQCnk8VqzJoDCgWUQramLZ5Lfc5TnoY0AIFRRkvNk8LkgX0TrTQv46J1RJkR1jqFZdrWqXsvwfDkLZNUcEcda92y0PdgZGbKjIHVl6w/h/4IO6v8zqG9mD2XvQvDwug5yRMkAoAYY87FCOacAQoFa5qGVUiMEQC896e4&#43;kmlzKVSTjqeAq89v2CVzJPFTP9wsubXfECdDUPF3CzzuLx4bFb43Qfa9T1F&#43;7GJ3B/MBFjQDJoFB1/EtDP/LfhWRVFBBYizlvWHMQYrXAiRCkcuo/zMI/xkefB4nxr1c1Ydr/w/vJb55FEeyuFiJSJjjNaap4dff2Z8MB6p6gyJaLU2SikhIEaJCDHmGNM0JWsF4vPHVh97&#43;T3x8M9FjgaOGON2uw0hIKIxxlpbvF&#43;tu64rHuxnBIcUQgKIaUo3NzlGpRQTT5XzFIIQYpqmlLPY7eRuZ537Y83BplMp471brbT3fxN8PADHTBf2L3jpP5rX5ZjDPy2ag5VH4bNNw2rDe7985KRyP3jEPAzxt9/S778DojZGVnCAEKk6MqzegjHknFbqOTaFqoPj1&#43;vNjz&#43;233&#43;v5L3RPPFtHUfYzi4DZp/xcCqXNx9zjuXDHBjgmeYnyMtO7RcK/4n9Q2vtIdVfzsB/5Y8gIpPBsvhO7LvyhbRSlHPabqc3b3AY/Gpl21YtCKjPwx3EOZ6jNsp95Rzu7tJu5zcbt9lgPQ87QeePDyLKOaeUyvPR2lpblgpASokni00/H8l3xDd1D45UhV&#43;HEKZpYvbgnOOnsKgHRHTOdV1nzByDY&#43;pnreXLq/oWOwspRmia8sah/jgqS&#43;XBT9OEiMUlqXNJAL7v1//6V3N5qf6av0qIcbulX35JwwAxphhTCEjUtq33/szBwbMWQhiGAQB44rTWIYRxHAGguKjOtW3LESCmBE&#43;AYxxHPmIYhhCCVNJoE2OcGT5iSimEwEAxxqSUAMBa67231vZ93zQN5JxCgBixQjWNY3ZOAhDAzOYQlTHK2mNZbl4Z4zjyvRU9QSSVsl3XffddsQLmL1ErQjTeT9fXEAIghhB2MfIycO4rSA8xPhaPQWvtvWcLEEKIMTrnOBqUc/bem/3jun9qiBhTZNMQYgixgAA0zO4flCP5jCRmFZIKDELXtrqqjabSC0hpDGEcBlNNCd3dRaKsVBoGDpxSzqZtm4sL7dwjlU6ftAgJsTrzZeiQM1ZHaVZPWqv6O1/oQ3bkESuSkt&#43;h/aOVWsu6JKgaMMwZiWpGAQ4S5ucij2ITUkprrXOOjUPOma2BMYY9Cf5Xa81LffmgOTxlxhxi4IApFw1oU34UKo01Aq0kKsyQIQCoAsaQglKicVbVqCjbJNzt4PqahJBal2vvdkLKeHenrDVNgzHa1UoQudVK7hU&#43;CUJVwEHqTz5pJAkEMVBKxYpKqYzJIUD9L4SQQ1A5syEr6uopE0Oi4L2ATEqlNY&#43;gLINqGYtLXE9YrFXOmqgxpijknMuFIFEZ&#43;blAZMm/cCRjIRBMy3hVMxPg8CAfwPxDV7mPkM5nLItMosYRR0AgRWALv0OFqLCG2fkQDQIyZY1aoJBKCosgYhx2cgqqRkwhRhhHTClPk6waHsZRVJ5Y/hRjsQHTJBCby8tZeUiBUmRN2Uqsc/dM90YKoYBUJDFmGKdCRXMWSsXtNlcTGe7uZDU0hCi1dquV7bp7RcJChCmFu7u43Wpri0prmqKEpilNE9OXWNlonqY8DDiOxXgh0jSGnMCIbAVq&#43;Wlq74jC8NRKe&#43;1b23LZzuIoMA6YHjA3YCu8kAylFNODx&#43;AQsiiJpm2SSEAgxZydYm3BcXGGGGENPippjVVKCrQWpISie3E/paZtfYUCIWrnIEaBaPuekSG1hhjHd&#43;&#43;k1n69Lku5ggMEZVUg9/ynLKmAwwBpQc6Y4qtIxfyGf4v&#43;TwmFgBDmhHC1r/LAfylcahzvfvnl9uef3Wr13b//3VxeQkpxu4UY52VXIcK/AguAK8UWBLnCWqD88uBYYuGcEZvfqbNujOm6jjMGhwlIzi4xiWTrc5iMvNcczrhNt2l9Owc59qv3/czIEquv/yGFwqBUJO/DI5XBIUAOwTRNrqEnv9nANOVx1N5jjYWYtnXrdWGL5cmSUwLUnzYrEkk5oQqm5iEXh2K3M21bzt/3xZBVvppDiLsdmzZtrTRGVL8Ga5pufPPm9qefmqur/ocfpFI5BALQTWNqwEZIabsujaPte7/ZmKZhbLE19PrPW8MTiRRcXaWVXsxcmVznzAdY&#43;bzm69Q98sz34KiGqrVtY5pPGVIx2gRVedWMvzBKtQA5xsJUU0Ii23V2tcIKF1HVUnN5WTTHwaA/bfHJQyNElEOwbau9LyBwjhDD7e10fZ0rNONuZ5vGX1ywJgs3N5ASAaRpShW4cbtlN8quVsXEeM&#43;c1DSN8d62rVutFnD8lWGfSqRY0mzzG8y39uphOfBB0vQpMYfn/GTizVYtA0zTlHMuVEBK0fe6aQrJB6DqQhnvm83G1dhAcQWdO6JDuwxFVc9Cqrl2JG63u19/nW5uMOfUNPr2Vnu/qgZivL6&#43;&#43;&#43;UXIvKbTbE&#43;AHmaCnpWK7/ZNFVDKK2Zr5RxKsUvHrOWr0Qe4eAPIzTHya0swYZpmriKgmmO0dpqLbQGxClGJ4TrOsMhy2OHwh7I4rjWiWSglBfs5dYVU9TG7W24vVXG2LYlxMJRahjQ9X1zccHIOASBPDz530COuWrZYnGhzbZKTElIqa1VWiNRquEBnjN57MAzHWYLliEZ49Zrf3GhavR29lnWa9v3xAESwfUzhW8KImmM7Tq/Xr&#43;PjAdXOkjlfMNyNM1xaMMWgkN74WzL6SLNS1pnvvRccCSl1swShBChGpT&#43;9evm8tL1PXvamNKCktk3NqY6UIXJyIcpIcYE1gIRUbXSV1GIuszCk&#43;W0T77/IHx&#43;lBFwuo7T9GxWtNY8ZwCw5OqO/jTZoi2xYf1wUcvKdaTWaRjYjXJ9r53DnI1zbr2WSrm&#43;L3&#43;tQZq028XtVgjB8dxHeRnOM4R9SoIDz8e9nePKo1IbDnMtvokQ4jD8xZlXdmiLA3ysQSwJek7xLYk&#43;Bgfn8b33p3iafP/TNKWUtFLe7L38fdIJYlzSwlTdGVVzIuyUqlrSMd3ccPA0brfbX381NzdutWqvrmzbPrgWYk4pVLj3fb&#43;ULh/3jo4oS0XtUm7NcTAGt5QyhJBS4nXL09S2bdd1xfs9zhCk4HQOo/LQiCwKv6gpRsyxsbG8YrPCeZY5OcJ1XyEorZvNRldHiWMtxvv2&#43;&#43;&#43;Zpca7O6W1MqZoFMTdb78RQHN1VejsYcT9oN5lqWo47s18&#43;CaJi7S5TvtRF&#43;THZRkqEY3jyA&#43;Ka27aCv0lpcqHAQBHTg9iDLVdcS4F/TSRQhl2Q8R9GK0WOGvS/BoIBH7i6Z&#43;&#43;JreQpoIAiFF7X2vjkfZBF2WMX6/x9WvTdbZtmXCYrjPOzZF1ojyOsiLD1KgXAaRxnISYLi/tamWqDcKafMF9kLTQkaoSoTrupw51cA/AXbyb8uS1X7u1N09XC3BIQon7xTm/X//LqVPWdhxQd3U9LAUxbKM5lX&#43;fss&#43;YpzxFjNwN8Sx5NDZ66k/00Y/8FalnVkAyYd6FcbuDnFXTRGPi3V0aBiFl2m7ZlbVdp5xrNpvm8lJXCiKXemwAZa1frfpXr&#43;xq1b9&#43;rZSabm6w5u3CzU22Nm63abdL4xi3W3V7mxBJCEAMmCerwQjUH6z4PcqdAsFdvPv59ue349sLf/Hj5sfL5pJbIx&#43;Jkspp15jGyLmThRX5PN91PbBBYRbIcXSmHUtVF1OCPThq&#43;9SQBm7QnkksPQ6N0f6nvK3kQZH5lxFJQmWyE8oJdM6KSKaUY0zDkEOQSsXdrngfSpEQRSt0nW4a9aiXSanixfzzn8pa43336pVyrn31Kg8D1gxRDiFtt2kc8zTBOOI4zpnbECKk7GR0AkxVHqcEx/V0/dv2t193v07t1Lu&#43;kLzacfjggdRId2c77kHkBWCMaWq9FdUCpcMECpuOhaIuNNHWSv2DCClJI4xX3qLNkFNOh2WCi9uTYSa9TrtD1&#43;MLwaQO2pBqhEBuvhCYUt7tjPecW3GbDUcsONil3nOXyuNzrnv1ym82qgJFae26DtZrSAlrpl7WTJCpuZXu6oqTybxqQAtnBKoTBse4x11KeRNuIsbvu&#43;&#43;/a7&#43;78BfcWPTo4KI5jFs6UBgcnHVb6OCiIQ4hcrgfwoyq&#43;&#43;sDySy98EBQbEuo2VcjNWptNHdTcSVHIbre9ap31vED4qaaEz2aPxRJB&#43;kVIggh3t3ZrnNd5y8umstLrgRjDfu0na6V5eZ&#43;yuuRlWNzHQS7u3kc/XrdXl4e5lZYYZyal5Kg1rQhBy31D/0P/&#43;j/0dnuyQXJN3CIG17brBUWxDznovecAzKkkIQUCBinGKYghSRDlImp60zRY/F2UCNmTCIJqnW2bt&#43;P&#43;qUrXqiO8j69crhQFoL2IRfjvQPKDdWup/uzVadGHRQ9fLb7QoOd7XrX97Z/tMvKH8qn&#43;dsPXFkOSDBxRcAnT7oULscYVZ6LSYv10WfRlDxXAVYjCJV8BO//ag0pQNrtuCKET/4F7rPyOyWkFqp4Ip/FjN8bG1YPHAax1nKxz&#43;LusrlaVNPSl8ws5tza1bkCbbq9vfnpp/HdO/WwOWUOGD/4wMcGT4h5HMd37&#43;amt1OO/KNCCoROpPAzBVfuwWGt5bogJp7OOQ6GMFDY1TG1djKlZIxp25ab1t8vEvmSUq1roaKbTX7zZrq5icOwpHuebOb5Q0vMpkpK6Tcb23XyS&#43;Tri2lDYRP5kawniZ&#43;jhuQeHFrrpmlYGXBP&#43;hJy5ygnG&#43;&#43;lbelEiZK/Lkprv9msfvxR9j3UbMuh8iOiWEs3DrMMrCA/fi8cLGmvrv5iF8wnCglFwibZTdImrrs74dY3LAeubMXH0sTGHUrvE44n2yHPS2rYT63XhVfmrGpfDauLuYiyduVwv33ttBC2abqusx&#43;mmfwuNzp8uUZZqVEYkBo/02N/wNQe5W2f/MCZAuKhIFEEmGoYGGuzHWPaVw2ha/C71kRD4qSD1g1HOD5OKb70vRdOSp/PITxmPcdZyWEvKLMiTissWemln&#43;cwm3D&#43;0KfaTEVcq3vi0X6b4GDni6k0c6MFBPzXpmnYz2qaZtnm5UuP&#43;hlSW2zi7W3oOiGlOfFmEN8mOLTWbdtyqtpWSSkxfWZ&#43;yvRiKS7h1vDzVRu8CVHOxamuG6EUQHONAecOTyPfIDgYAeyWs1nhwB2nhDhkx3pi8VCWrQe&#43;9NifFqyBlnBzU2CRM6SUQ8CcPxjqPZJ8g&#43;BYzMqy9dSj&#43;tblsENTcrbI4MqiNAy7338f/vMfSGkugT797g/fJjjO2tP&#43;BNnbDtrXMdFSnnPKyu1vFhzfkkhOWdS6DOYfOYRpGGItNvBNc7j70hHlBRxfgfC&#43;UzkECIGE4ALHmHO4vdXWrgCWCN5xVcgLOL4GqWpDOye1prq3hfJeNg1ojUIMtamCU13H3ZD5BRznKIdtSHNpllKm1j9jSlB3BrBCeOdk3YiH9&#43;s6&#43;gZ2L&#43;A4OzlsQxLckl5d2bjbpd0OAWzb&#43;s3G9j06p/Z7tXEhznFH8gKOs5OlDSnwhjOVkJqaCqClJYdjdwCpxm8WWBw3pv4CjnMUdlPZIQ91G5l2X0UOtYmXy54j4jCOgOi9570iXwjpty/cWrL0WuZpohjzbhd3O21te3npr65k18XaBc5q4xShjhdwnJ0ctiHVL21UynslBPE2MlL6i4vu1StUKg9Dzpk1xylCHS/gODtZCClvk0RE3rlmvXbVGYEYldaqJpyh7qZ0uqzyCzjOThZwsA/C2ySZprF1C9fx3bvFhCx7WzzaP/RY8gKOsxPmGUvp61Kuq6RU1oi6w6WQ0ljTti3nk3nHhKPj4wUcZyeFVdRa13kzcf6uQmsJUqQ8YjAYOwKjfdd3XIayfIPFh3ZI&#43;LQulxdwnJ0c1hsc7MlE2xh&#43;i29&#43;D/9zNQmdLla1LkW72vos8SNbZ8h5g&#43;o/rVdewHGO8ihiQYIy5Lu8&#43;6/xv///8P9e3Q1qu/pBglH2OWdbNmX4Ux2UL&#43;D4OmTeRJoQKCfME4QhDdu4M8/btYu/99lqa&#43;qXgT7/ui/g&#43;DpESdXb/v82/9Rd2Kx&#43;&#43;Ef3um82Wj4rB6ukKsiQf7pl9QUcX4coqTrd/h//Q9fAqnt91b92vn3mZN9vBPUnaekLOL4Gqck2LVWjPKiu161Xrm7rI/edVi9lgn8/4R5u/qIgiJFSFhkoZQhRkpB1K8T69SAnufoLOM5Y9nXnse4OAilN19dpGKbr60IzndP1e255L6tTdK&#43;8gON8BYlyStNuN719m6cJATAEoVScpvz2rdLa9T3vzyxO0/j/Ao4zlflbKEKYck7GUK07t&#43;u1qxtSZwDSGqxFrUmcajeGF3CcqfA3sd1utylGaQzWnVF4j&#43;g4DPOG1M6BECjEiTYMeQHHmQpvAsC7UWutUy0Uhfp6ilFI6a0VSsFBjeDR5WtoLf9bCleGHnxrHi5fFp648Pj0zb0vmuNMhTP1vDMb513ZpixfSb98LcbpNo94AceZCm8isl6vY/36Ur2X2vkWuMbHOceIOdUY/g5fR/WVCm8Ly90rS8MSezFscbTWJ922738DAAD//5I8xQ3YlMpGAAAAAElFTkSuQmCC"
+                     data-src="/components/images/vbus_serial_optocoupler.png"
+                     data-srcset="/components/images/vbus_serial_optocoupler.png 512w, /components/images/vbus_serial_optocoupler_hu_68f7e750c57aa35e.png 102w, /components/images/vbus_serial_optocoupler_hu_c473ddf8dba2add3.png 170w, /components/images/vbus_serial_optocoupler_hu_c687a23cf362e4a0.png 256w, /components/images/vbus_serial_optocoupler_hu_cea2ed35c1c79d95.png 341w, /components/images/vbus_serial_optocoupler_hu_a1cb9a98fceb001c.png 512w"
+                     
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<p>Another approach, with PCB design ready to be manufactured <a href="https://github.com/FatBeard/vbus-arduino-library/tree/master/pcb">can be found here<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.</p>
+
+<div class="admonition warning">
+  <p class="admonition-title">Warning</p>
+  Do not connect the GND pin of your module with the ground of Resol unit as that may damage the output port of it.
+The output of the device is symmetric, meaning that the signal is not referenced to the ground, but rather it&rsquo;s a
+differential signal between the two wires. However, the MCU references the signal against the ground, so the two
+grounds are not supposed to be connected to each other as can be seen in the circuit depicted above.
+</div>
+
+
+<h2  id="component">
+    Component
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="component" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">vbus</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uart_id</span><span class="p">:</span><span class="w"> </span><span class="l">resol</span></span></span></code></pre></div></div>
+</div>
+
+
+<div class="admonition warning">
+  <p class="admonition-title">Warning</p>
+  If you are using the <a href="/components/logger/">Logger Component</a> make sure you are not using the same pins for it or otherwise disable the UART
+logging with the <code>baud_rate: 0</code> option.
+</div>
+
+
+<h3  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>uart_id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID of the UART hub used to connect to the device.</li>
+</ul>
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Functionality of the sensors depends on the type of the device and the scheme arrangement of the hydraulic
+system it controls. The actual arrangement number set up can be determined from the settings of the device. Please
+check the user manual and assess your arrangement to determine the functionality of each sensor and name them
+accordingly.
+</div>
+
+<h2  id="sensor">
+    Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">vbus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l">deltasol_bs_plus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature_1</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Temperature 1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature_2</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Temperature 2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature_3</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Temperature 3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature_4</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Temperature 4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pump_speed_1</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Pump Speed 1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pump_speed_2</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Pump Speed 2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">operating_hours_1</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Operating Hours 1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">operating_hours_2</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Operating Hours 2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">heat_quantity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Heat Quantity</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">time</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Device Time</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">version</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Device firmware version</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-1">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>model</strong> (<strong>Required</strong>): Specify the model of the connected controller. Choose one of the config values listed in the table of supported models above.</li>
+</ul>
+<p>Supported sensors:</p>
+<ul>
+<li>for <strong>deltasol_bs_plus</strong> and <strong>deltasol_bs_2009</strong>: <code>temperature_1</code>, <code>temperature_2</code>, <code>temperature_3</code>, <code>temperature_4</code>, <code>pump_speed_1</code>, <code>pump_speed_2</code>, <code>operating_hours_1</code>, <code>operating_hours_2</code>, <code>heat_quantity</code>, <code>time</code>, <code>version</code>.</li>
+<li>for <strong>deltasol_c</strong>: <code>temperature_1</code>, <code>temperature_2</code>, <code>temperature_3</code>, <code>temperature_4</code>, <code>pump_speed_1</code>, <code>pump_speed_2</code>, <code>operating_hours_1</code>, <code>operating_hours_2</code>, <code>heat_quantity</code>, <code>time</code>.</li>
+<li>for <strong>deltasol_cs2</strong>: <code>temperature_1</code>, <code>temperature_2</code>, <code>temperature_3</code>, <code>temperature_4</code>, <code>pump_speed</code>, <code>operating_hours</code>, <code>heat_quantity</code>, <code>version</code>.</li>
+<li>for <strong>deltasol_cs_plus</strong>: <code>temperature_1</code>, <code>temperature_2</code>, <code>temperature_3</code>, <code>temperature_4</code>, <code>temperature_5</code>, <code>pump_speed_1</code>, <code>pump_speed_2</code>, <code>operating_hours_1</code>, <code>operating_hours_2</code>, <code>heat_quantity</code>, <code>time</code>, <code>version</code>, <code>flow_rate</code>.</li>
+</ul>
+<p>All sensors are <em>Optional</em> and support all other options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Sensors are updated every time a data packet is sent by the device. Some models send data very often, possibly every second. If you are
+concerned about the load on the receiving database, you can add a <code>throttle</code> filter to the sensors.
+</div>
+
+<h2  id="binary-sensor">
+    Binary Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="binary-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">vbus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l">deltasol_bs_plus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">relay1</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Relay 1 On</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">relay2</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Relay 2 On</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor1_error</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Sensor 1 Fault</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor2_error</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Sensor 2 Fault</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor3_error</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Sensor 3 Fault</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor4_error</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Sensor 4 Fault</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">collector_max</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Option Collector Max</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">collector_min</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Option Collector Min</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">collector_frost</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Option Collector Frost</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">tube_collector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Option Tube Collector</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">recooling</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Option Recooling</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">hqm</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Option Heat Quantity Measurement</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-2">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-2" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>model</strong> (<strong>Required</strong>): Specify the model of the connected controller. Choose one of the config values listed in the table of supported models above.</p>
+<p>Supported models:</p>
+<ul>
+<li><strong><code>deltasol_bs_plus</code></strong>: <code>relay1</code>, <code>relay2</code>, <code>sensor1_error</code>, <code>sensor2_error</code>, <code>sensor3_error</code>, <code>sensor4_error</code>, <code>collector_max</code>, <code>collector_min</code>, <code>collector_frost</code>, <code>tube_collector</code>, <code>recooling</code>, <code>hqm</code>.</li>
+<li><strong><code>deltasol_bs_2009</code></strong>: <code>sensor1_error</code>, <code>sensor2_error</code>, <code>sensor3_error</code>, <code>sensor4_error</code>, <code>frost_protection_active</code>.</li>
+<li><strong><code>deltasol_c</code></strong>: <code>sensor1_error</code>, <code>sensor2_error</code>, <code>sensor3_error</code>, <code>sensor4_error</code>.</li>
+<li><strong><code>deltasol_cs2</code></strong>: <code>sensor1_error</code>, <code>sensor2_error</code>, <code>sensor3_error</code>, <code>sensor4_error</code>.</li>
+<li><strong><code>deltasol_cs_plus</code></strong>: <code>sensor1_error</code>, <code>sensor2_error</code>, <code>sensor3_error</code>, <code>sensor4_error</code>.</li>
+<li><strong><code>custom</code></strong>: See below.</li>
+</ul>
+</li>
+</ul>
+<p>All binary sensors are <em>Optional</em> and support all other options from <a href="/components/binary_sensor#config-binary_sensor">Binary Sensor</a>.</p>
+<h2  id="custom-vbus-sensors">
+    <code>custom</code> VBus sensors
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="custom-vbus-sensors" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Devices on a VBus are identified with a source address. There can be multiple devices on the same bus,
+each device type has a different address.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">vbus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l">custom</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="m">0x10</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="m">0x1234</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="m">0x100</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensors</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">temp1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Temp 1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="l">return ((x[1] &lt;&lt; 8) + x[0]) / 10.0;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-3">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-3" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>dest</strong> (<strong>Required</strong>): The <code>DFA</code> value corresponding to your device (see below).</p>
+</li>
+<li>
+<p><strong>source</strong> (<strong>Required</strong>): The address corresponding to <code>your device model</code> (see below).</p>
+</li>
+<li>
+<p><strong>command</strong> (<strong>Required</strong>): The <code>command</code> corresponding to your device (see below).</p>
+</li>
+<li>
+<p><strong>sensors</strong> (<strong>Required</strong>): A list of <a href="/components/sensor#config-sensor">Sensor</a> definitions that include a <code>lambda</code> to do the decoding and return a <code>float</code> value.</p>
+</li>
+<li>
+<p><strong>lambda</strong> (<strong>Required</strong>, <a href="/automations/templates#config-lambda">lambda</a>): Code to parse a value from the incoming data packets and return it.
+The data packet is in a <code>std::vector&lt;uint8_t&gt;</code> called <code>x</code>.</p>
+</li>
+</ul>
+<h2  id="custom-vbus-binary-sensors">
+    <code>custom</code> VBus binary sensors
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="custom-vbus-binary-sensors" title="Copy link" src="/images/link.svg">
+</h2>
+<h3  id="configuration-variables-4">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-4" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>dest</strong> (<strong>Required</strong>): The <code>DFA</code> value corresponding to your device (see below).</p>
+</li>
+<li>
+<p><strong>source</strong> (<strong>Required</strong>): The address corresponding to <code>your device model</code> (see below).</p>
+</li>
+<li>
+<p><strong>command</strong> (<strong>Required</strong>): The <code>command</code> corresponding to your device (see below).</p>
+</li>
+<li>
+<p><strong>binary_sensors</strong> (<strong>Required</strong>): A list of <a href="/components/binary_sensor#config-binary_sensor">Binary Sensor</a> definitions that include a <code>lambda</code> to do the decoding and return a <code>bool</code> value.</p>
+</li>
+<li>
+<p><strong>lambda</strong> (<strong>Required</strong>, <a href="/automations/templates#config-lambda">lambda</a>): Code to parse a value from the incoming data packets and return it.
+The data packet is in a <code>std::vector&lt;uint8_t&gt;</code> called <code>x</code>.</p>
+</li>
+</ul>
+<p>To determine the correct values for the parameters above, visit <a href="http://danielwippermann.github.io/resol-vbus/#/vsf">packet definitions list<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>. In the search field of the <strong>Packets</strong> table, enter the name of your device.</p>
+<p>To extract the values with a <a href="/automations/templates#config-lambda">lambda</a>, look in the packet structure by clicking the <strong>Bytes</strong> link in the table. Each value is placed at an <code>offset</code> within the packet.
+For <code>float</code> values, let&rsquo;s look at the temperature example: the value is stored as a <code>16</code>  -bit value in <code>2</code> bytes little-endian format. Since it&rsquo;s always the second byte containing the upper byte, it needs to be shifted by <code>8</code> bits (multiplied by <code>256</code>  ) (e.g. <code>0x34, 0x12 -&gt; 0x1234</code>  ). The result needs to be multiplied by the factor, which is <code>0.1</code>, to obtain the correct values: <code>((x[1] &lt;&lt; 8) + x[0]) * 0.1f)</code>. The number within the square brackets is the <code>[offset]</code>.
+For <code>binary</code> values, multiple binary values are stored within a single numeric value encoded with a bitmask. To extract the binary value all you have to do is to apply <em>bitwise AND</em> operator <code>&amp;</code> between the value at the corresponding offset and the <code>mask</code> shown in the table.</p>
+<p>For example to decode some sensors of <code>DeltaSol BS Plus</code> via lambdas:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">vbus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l">custom</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="m">0x10</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="m">0x4221</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="m">0x100</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensors</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">scheme</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Arrangement scheme</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">icon</span><span class="p">:</span><span class="w"> </span><span class="l">mdi:pipe-wrench</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">accuracy_decimals</span><span class="p">:</span><span class="w"> </span><span class="m">0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">entity_category</span><span class="p">:</span><span class="w"> </span><span class="l">diagnostic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="l">return x[14];  // Configured arrangement scheme</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">temp2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Temperature DHW</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">state_class</span><span class="p">:</span><span class="w"> </span><span class="l">measurement</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">unit_of_measurement</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;°C&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="l">return ((x[3] &lt;&lt; 8) + x[2]) * 0.1f;  // Temperature 2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">vbus</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l">custom</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="m">0x10</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="m">0x4221</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="m">0x100</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">binary_sensors</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Heat Quantity Measurement On</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">bin_hqm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">icon</span><span class="p">:</span><span class="w"> </span><span class="l">mdi:counter</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="l">return x[15] &amp; 0x20; // Option Heat Quantity Measurement enabled</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/components/uart/">UART Bus</a></li>
+<li><a href="/components/binary_sensor/">Binary Sensor Component</a></li>
+<li><a href="/components/sensor/">Sensor Component</a></li>
+<li><a href="https://www.resol.de/en/dokumente">Resol manuals<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+<li><a href="https://danielwippermann.github.io/resol-vbus">VBus protocol<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>VBus Component</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#component">Component</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#custom-vbus-binary-sensors"><code>custom</code> VBus binary sensors</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#custom-vbus-sensors"><code>custom</code> VBus sensors</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#hardware-connection">Hardware Connection</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#supported-models">Supported Models</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#supported-models-1">Supported Models</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#supported-models">Supported Models</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#supported-models-1">Supported Models</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#hardware-connection">Hardware Connection</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#component">Component</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#custom-vbus-sensors"><code>custom</code> VBus sensors</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#custom-vbus-binary-sensors"><code>custom</code> VBus binary sensors</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-4">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/vbus.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

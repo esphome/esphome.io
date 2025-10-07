@@ -1,0 +1,984 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Monochromatic Light - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up monochromatic (brightness-only) lights.">
+            <meta name="twitter:description" content="Instructions for setting up monochromatic (brightness-only) lights.">
+            <meta property="og:description" content="Instructions for setting up monochromatic (brightness-only) lights.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/brightness-medium.svg">
+                <meta name="twitter:image" content="http://localhost:1313/images/brightness-medium.svg">
+            
+        
+    
+    <meta property="og:title" content="Monochromatic Light">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/light/monochromatic/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Monochromatic Light">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Monochromatic Light</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/light/monochromatic.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Monochromatic Light</h1>
+        
+
+        <p>The <code>monochromatic</code> light platform creates a simple brightness-only light from an
+<a href="/cookbook/arduino_port_extender#output">float output component</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/light/images/monochromatic-strip.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Example of a brightness-only LED strip that can be used with this component.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1500px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/light/images/monochromatic-strip.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAFIAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APX6KKK0MwooooAKKKKACiiigAqKijOOTQAUhIHJIA965HxH44t9KZ4LVfNm/iPYVwF74w1a&#43;JzclE/urxQB7TJe2sX3541/Gqz61pyjJuVP0rwuW&#43;upOXndvxrSsPFlxYRqghik/wB5aAPW/wDhIdP7S/pUZ8S6eOsp/KvNI/iha28mye2g/AUl98TbK5tzDa28QkfjJFAHpaeItLkOFu4wfc1oRXtrN/q543&#43;hrwnRY4dQ1TdeTbIydxAOK7tYNCRQLe9kgf8Avb6APQM0Vwon1jTk8y0u0vof7pPNaekeMbW9k&#43;z3Q&#43;z3PTa1AHT0UisGUEHIPcUtABRRRQBaooqKgCWioqKAJaKiooAlqKiigAqK7/495MHHympaguVL27qOpBFAHhGq5XULlWbed5o0vSXvrqJZWVI2POKp&#43;JLa90rxI/2hG8lpM59RXW6Z4cj1S1FzpV&#43;ElxnYT0oAt/8ACCWcEBae6OOu7Ncfq9rZ2c5itp/NHTNbWraL4mhhK3MjvEO6tXIpPbpdbJW5B&#43;ZSaAM9/DbXszPAjsx7KM0ReGLmxmWWWJ/lOcEV6RovibRrNNjR7Bt6gVM/ijSJ7giRsx&#43;60AcFyp7qaXzH/vn866HxDe6FcIn2I4b&#43;I4rm7iWCNk8kll/izQBet9Tu7dt0Vw6n0BqO5vri4uPPd/3g/iFZkt/FGfvLVaTV0PCLQB7d8P8AW7jUbBoZ2LNH/Ea7HPvXnPw5Z49NzjG85r0EHNAEtFFFAFqiiigAooooAKKKKACiiigAooooAxNc8N2etwFLiMbj91/SvOb7wZrOgTGbTZ3ZfRetewFgOpAqGWaFfvupoA8I1fxD4j&#43;zG1ujMo6E7cVxsCWv9pK18XCE8kV9J3zaVOuyeONyf9muevPCmj3weQaemxf4ulAHBeF5tIbVGgeAz2zfdYrk5r0M&#43;H9EkVSlkgZvUVV0LSLC0kdYrUKFOAQOtbU1jPKhCts9KDSoeX&#43;JTpGlap5E0ICeiCuY1jWtPlHl2Nmw9zXq03w7tb&#43;5Nxdu8r&#43;5q5beAdIg/wCXZSfegzPAorDUL&#43;T93btz7V1/h/4fXlxLHLdDanXbXstt4ds7b/Vwov4VoxWkUXQCgDL0fSo9Pto4kGMVtYoEWOlS4oAioqWigC1RTZm2wlh1FZ0OrPLESkBbZ96gDTorCvNfNvD5rIAtLBqN5eBfJ25YZoA3Dx1pCyjqwFc815dliJHxioo2aedUmmYJQB0v2iGMZeRKrvqdonWUH6VzV3GqNJFG7Of4eahtFuIxH5lsxbNAG7da/DBGXRN2KqW&#43;uTagV8naiH&#43;Km3FjNe7tsKxhhjmk0/QRaReWXOOuBQA2ae4MzIZN&#43;09qWF9kpd4nkz/DWpBYwxnKrk&#43;9WNijoooA55tOnumEgTy8N0NXrexkjjdJ5co38IrU9qPLoAqQWkVun7pKm8upcYooAAMUYoooAKKKKACiiigAoqKigC8RkYPSsdrC7guZGtnGx/4TWzRQBz1xostxb&#43;U&#43;1jnLZqey0ya2XHm7RjC4FbJxUdAFBNNTJMjljUv2GD&#43;7VqigCBLSFDlYxmptq&#43;gpaKADAowKKKAE4o4qOigA71J2qOigCXik4qOigAooooAKKKKACioSwHU0bh60ALRSbh6ijcPUUAaFFFHagCKijvRQAUUUUAFFFFABUVS9qi70AFFFFABRRRQAUUUUAFFFFABQelFB6UAZ1z96lHSkufvUo6UANooooA//2Q=="
+                     data-src="/components/light/images/monochromatic-strip.jpg"
+                     data-srcset="/components/light/images/monochromatic-strip.jpg 1800w, /components/light/images/monochromatic-strip_hu_5a81cdb5fb55dd33.jpg 300w, /components/light/images/monochromatic-strip_hu_d422bd3c8ed40560.jpg 500w, /components/light/images/monochromatic-strip_hu_1678764bb0e595b7.jpg 750w, /components/light/images/monochromatic-strip_hu_6c12284ba0171a44.jpg 1000w, /components/light/images/monochromatic-strip_hu_6939d62a9b597792.jpg 1500w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Example of a brightness-only LED strip that can be used with this component.</em>
+                </figcaption>
+            
+        </figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/light/images/kitchen-lights.png" width="40.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 796px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/light/images/kitchen-lights.png"
+                     fetchpriority="high"
+                      style="width:40.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC5CAMAAAC2jeXeAAACkVBMVEX6&#43;vrl5eX/AChiYmJkZGRgYGBWVlZcXFxZWVlTU1NfX19eXl4hISFRUVFYWFgEqfQ3NzdNTU1JSUnh4eFBQUFycnJPT08&#43;Pj4Em&#43;VmZmZEREQ7OztHR0c6OjqFhYVGRkb92DULCwuJyvANDQ35&#43;fn4&#43;PgHBwfn5&#43;fx8fEuLi739/fc3NyAgICcnJw0NDTLy8vz8/PX19cjIyPr6&#43;vT09NnZ2fk5OS9vb1zc3MTExPe3t6Li4spKSmUlJQwMDAnJyf29va5ubn////19fXj4&#43;Onp6d5eXlqamoyMjJ4eHjv7&#43;&#43;qqqqhoaGXl5dwcHARERFtbW2ZmZl1dXUdHR3u7u6&#43;vr6RkZGCgoKOjo7GxsakpKSfn5/09PQbGxvNzc17e3smJibV1dUXFxfp6eklJSViVRbg4OCtra0rKyvZ2dnExMSNjY27u7tgUhXw8PCxsbGHh4fq6uqvr699fX1hVBbDw8OJiYkUJDFjVRbIyMjR0dHt7e20tLSIye/i4uIUIS0SHSgQGyQZGRm2traIyO7AwMCzs7OQkJD75umPj4/Pz8&#43;Fxer45OfQ0NAUHyqpqakPGSKsrKyCweV/vN96ttjS0tK4uLjZ7/qg1/X/ip1soL3/y9R2r89xqcj/nq7/Dzb/X3kQm&#43;IanOD93FKN0/f689c9ndP92kP/H0P/rrv/MFL777n/2N5an8f9319nxfZVv/ZjsNv/UW394Wv/&#43;PnF5Pb78sxPoMz/ucX/RGIpsfX/7fD/x9BhlrOPpLD855D/d4z/8/VQrODC0do3lcj6aoBjX1Dk8fjT6vcqouMqnNnjzNEfKzeSz/H69uOuytqRv9idsr7/qLf/lKVhXU5vtt9jWStiWCthVypfVSkrmNS30Z1oAAAXrklEQVR4nOxd/W/aWLqGEr5FVkCXmWayzWhly5adCFtQs/KokhlDo9KkaiPSLMQispAcmUXQgBjJgPwLQ&#43;YOWxRlR9BcrTSdTnc0vZnRnY821bSzUrcdddJqp53VnY&#43;/5&#43;qY70CgTeiWSPtgju3j8x4/vH79nk8b1YkTYyfGDg6NRmsyaTVas74GraYebdIbDGZNW8Lvf/71159//r5ddkyj1YAQBLX9sfquprmtaUvagOrEiRMd2bzoB3DWarVmg9FhtTqMOnP9fCb9uMGkbUsISP/6c4esyWDQmzRas9msAQD5gF9r1pr0BhAFVGFSDilJtUBDZr1Zq6or&#43;sTswXDixNipU7OnTp0wGa1Wm9VqNJ&#43;YPTU7O3tKUc2ptpTff//rr99/3y57SqvT6bUard5gVn6nxmTWnBgzj&#43;u1Zp3ODHSo1&#43;lMioJPaMd1epNJP240OizjqpqeT/12&#43;vI7B8DlyycvX758&#43;Z13Ti6dOX/&#43;/IXzCysnQUaX3zm5tLR0sj3Pk&#43;mVlenLl9tlp8&#43;eTU&#43;n02cWzqSn09PplTNn0ktLKwtnV1YW/rAyvZROrywsgCPT00vTC2fSZ2YN1snJCZtNVbOLC5c3vJ6DIB6P1za81fVkcn09X4g3j3TmGK/eSlbjHVHeQtXrrRby&#43;UKhWgDrfNXrLaznC4X8eqFarRYK&#43;XwVrEF0tbD5J41tYmpi6jVVzZTPn14kafxwHxzHRRzfG9naEEn8M/yO2CmhBIpcC517rehI&#43;IJjatJmU0hrAOkYTR0SPh8I&#43;qaQ7ULvBGrlcJu0r2NV23afW9BZHRajVQU4azTnT4do9YjDx6&#43;uACei1yua1mounI4Jr5rUIPj4VHrMBLyiakwzpgWkM0dB02nAdWxMMQ&#43;t9sKl0de0zK&#43;mNSatRjOmUgpi7YVLo69p2b26AkjXNK01mWbfyxwBTW&#43;uaMymhqbN5tn32jVN&#43;Sg18GDtIpTP55NlGfg1sOuzyx2Ha&#43;nrQpQMDlIUNVzS7s0Vjd5UuxG1NdItTftoERcEnKR9LQkfTooi7yZFHBcoipLxCg8ON1ysmhJEkfYJOC5TlI8medznE2g7NUziMr95RqNXbFpT0/T7bZq2V4qhSjlTrNhbEkK5GMt4MlJEimVpGhedBU8ZFwQap8GX9slkSCIFsewGZVdp0VMS8YqTx2lc8A2NtHtzRWs21zVtMutn32/TtFBKbqRS4WSkFUXRMb//XKqY8ayGq85QLFNYnivESiUpI0mhTCwiCuVCtUzzIckZyhS9G&#43;H1jFQ955FisQguD4s0v3lGqzdra5o26c2n2m1a5uMzb/1pJs7LbaTjp9&#43;ZyWe85y6&#43;NZc6dy7lP31pOZxKhefCG8vhjXUnHkmuR/BIIZna8M/NzZ&#43;e8afC8/5Vv7&#43;QtQ&#43;LtLtOuk3TLdIUHptJTy&#43;HcKotyvvO9Ol8MRm&#43;&#43;KeZuXCysDF/ce7ixUuX5ufnL81tbMREZzLlFEMbyzNh//L8/MxceCN8cePc8vJqZFhuqUvTs39sMw&#43;Z9M689dZynGzTNB6fvzSzWdj0z52em/PHF1dn/Knl02/98eLMxfnN/LmMGEmlJHcmPHPRn1q&#43;OONPbaxuhlPJuZlwiB7Svdit6T&#43;2aVqIrPuTqXCqw6ZDm8nkxuZqanPZf86fzKf8yeq5uZmLcxv&#43;cNWTl8TS&#43;kY15tnwh&#43;fm5ufDKW&#43;&#43;UNhIJv3L4djQSPew6RZDeyUT2&#43;s97JWM0&#43;mpxovFgtdTWK/GPTEpsxhPJr0ej&#43;QMuWlyMZWMe&#43;Lx5Nyl95fzGSkkxbze&#43;PpqtTw083BvnjHta9M&#43;msTte/00LeI4X&#43;FJsuLms5Eyz4uiSJKlSJbnRVykZZp3SpGsu1z0z1/MR0hcFEV3pRKJuPFh&#43;TyZP3fWbNCbtT1ter8SkZLtsizb7bJdsIOy0eerbynpZUEQ7HY64k1VI7hy1G63C4I8tNJFdm8s6CyWcb22l6YPCkq5Iu6Smx5agdIOueKftU5MWI26hk1fGlaFySfvrZUMC3Jl7sTUG6&#43;9NjXR0PR7R6Bqmp3TTLx2/PjxN3ra9GhCzi6fsE5OTk4d7&#43;WnRxRyJXzB6DBaLI5efnpEAbyHftyg15uH6T1eMmT35lmT3mzSaho2/X5MQNSj/aH41RVTrRiva/qSpHaNOKJicqVeYapr&#43;nQpR3CjDdSeT2vbNX1hvoLC0GiDURfSnZqer6CQarSBIdXpdk2bZy9WiJEnra7u0fRF9&#43;iTRqqdNn1END29R9NHgPQeTT8HaQiGMQyGIRUEgbAZq9zYtUiw8TJJd9t0tj9pDA3mXLlggGBYNBckMAAGg7kEwbAEx7KoK0AQBMtgL4/3C9s0RFB8hRRF0o6o8Yrb7lpDolFkLbFGU4Gg0mCpkLSIU4iLGyZrCMYwrHFdMbU3rWnTtGkPaZAYbj87nKsU8iFnMR4qR2IFb8hddjqdTt5Hl8ko5XZKoUwhvhgvSk7ehQ2NsQpmd3ev7gZZuEa626bbXR787JM7d549aye9JoX98WI&#43;uZjJxFOpajyfTCXjMVEMleyiJ5lMJlPrydW8txqT2WHwhWCGwbjdxzs/Pv1xZyehKKKH92gjDT2789n9&#43;5/daWMNuyKp1Wo8n48vFj35qjfvD/uTi5IoZjLZyLrfv5GqxgvJaiEVp7khcGZ3r159/Pjxzr9&#43;eXjv4Rf/erwLK6QLK/t7D&#43;yT&#43;7du3Lh1/1nrSsMJ2inFQrGYFAqFQs5IqJr3xsqkLDiLztJiMhyuSiUpFivGM/bDaxpir&#43;7sbG1tPf3g4b3rH19/8uVTNQupVBi1vmLaz09Dz&#43;7cuvHppzfuf9ZSNcQEomoZwC4IMoL4cJz2Ia5E0EfbfbjT6y3LUbUs0Lg9AB&#43;aNLa7s/X06dM///Lw&#43;vXXX3/9&#43;pMPdnYZlYrxJc&#43;Y99TyWpp&#43;9tmtG2&#43;&#43;&#43;emtzx60zByCMYYF4AiOZRiG4zgW&#43;G2W49gEgtNrHMOwIPLwnFXs462nv3/33b989QRwfv31jx9uRTFAev2seV&#43;bhu/cv/Hmmzfutxu1Sik9VFCjBGkUJBAEQzBLEMA/Q0MqXpjHW1vv/v7dP7dI/1jX9FnzvjYNf/LZ/9749Nb9Ds5sIsDBCnNYKf5gBRDGoSzWigWrw3KGsKs7T58&#43;/f2ff3nyBHC&#43;fu/hVg6r3Yim/Wt5z&#43;7cv3Xr/p220g1iXLLdxbEoAEGgKIEm0EQgQQQQdTRAYBiHomgigaIJ4vBlIrT7GNyHW//66snH11&#43;/fv3JX0TgPprFeO8SEfoEuLxPbrfygQlKFOVczmf32QXZJ8uUD9x2gl0Q3aSAoOiaLNgFsKgTh7dqaFdxeN9t/fLwycdPHv7y42MObitcetc9FEf9SUfhEhBEko4ifDYbiZQqPEmSZMkZiVT4stNZFqMuuuwsVbLlUoWMsoe3a5gBV3MX//GDr7766oMfHwcZqFvTe2t5Dz6508FZBSfsPElHqawkFWNSpMK7&#43;YokRZyRcskpOd1qxJ3xxJySJEXc6iGQVm5qmN1Vf/fdj9/tyLWCvIemOytM8LPOGwriEFGkgghZzpZKQM8iybvdIggrlayIREVnyCmFImW3uMYMgXPtpBhL7O5Gcyij1IOaxXifWl7nLkysrSVYIopEEWTNFY2uRZG1tZzLhQCsoUTUZ6f5CqjmEUPw1E0OMMOyTL3&#43;vlfTpoH1aRWMMTAoYRiGwTCGwZQ1puwzGAxjLJeIIkFu6BXqluvvYdOHbthCMMu&#43;xCZATdOaobfGX25r66Vo&#43;qWj2Vnz3G3EEUBXidhRyxtR9PDTR8A81F19eS3SA&#43;uXB6uAHlqqX4kIwcwD5gGGPWh&#43;9gQPGLaZ4AUC5gHXkcuAT31hWm60Xy0P&#43;vbKlc&#43;vfP45&#43;NaWtr3Gqj16T6reu4pQZyY9l&#43;79b5nn0DR25ZsPfxoZfPh/f0WbnTVdNt1wedC3f/3vr&#43;82sH13&#43;25zqQeNT9ehffe298ptd&#43;e2T9TdR/9zBRuoaYj45tH2zZs3b27f3L4GcKyx1IMGju09tO9eM33ze60rt32j7v50hR1o09C3gPT2NtDzzWvHXjWu3f3pc663pht9eRAEY4lvHgHGX3/00d3tV0/62PZPn7P72nSNNIyx//XNI6Dnr7/&#43;esQ13ShcIAiGE998tL0NaG&#43;PAOdj17Z/kut9Rn1qecCmbyq4dvMaYH1NWY71&#43;gHX2r7H2tIe20duv3z6kb7bMo/uWl7Le/z9H9vbN7dvjga2v/7wCreP92ir5X37&#43;Yf/ePToI7B89EjBR82gHz56VJfq3B4oNwD/&#43;GcfP&#43;1ulYj//Ps3o4N/fs7dhvp6D8U&#43;GDQXDAQCgWAgEMzlcs9cgWAw&#43;EyJSgQSgUDQFY26XLlgDhytI6gc7oNgcA1BXDlXPbWSPqEsjQRtobIKgtPmcleI5phLH02DBqoCpvblalssA1ZKQKBobXs/1JO2pWBYFkUJrhnDNLJn2vJtnbO5cATa7DzuUSK2mlsQjD2A&#43;wBjOY7BOqJuY/0E6lIEhw1O1i3FQM9Ry1PVO5p74jYMQRDGMu3TLG7XRkBv7y&#43;kyGEss2&#43;e9WVvHARBDNden37xWQhKrzQEwzDDMjCMNYdoG2a1v5TSmc1wTG3Mt7MJc7ueRW1R3a59YSUdDMMs1zwX07/XtPfZGWDKBIomAgmOCOaCCZQjuEGjhhCrSCVQtCFFcATxnFJt5yI4AqVefBYCHFAjwSAiC4KgzrloUcQphEIGjagzOQoJBNWyXbAjuSguirhPbVcPlgLnivpqUjSO41SUUgu9a3l9M4riOELhfLaUFdU&#43;PuKUyrwbz/XvboQIRKSjCE2WI7xICdmIJJXcJXGglBqnEUQQ3W5SQGh3ySllebeIF2rdYs/fwwRxCO8W7CJfckoV2V6JOCWnM0IOGFWGUZknZQp3S1KJF/BIxBmSJCeZGyRFkaSspvlSibcjeLYcCUlOJynuncP0PKRJN02TJJ/Nkmo1TtO8u8zTwQE6A6e3yyLvdGZJShZx2l2OVOgBg40QoSZJu4/myxFS7fLhNO2OOLM0XnhR7wExLrtAycoDpr5cwBUMIpSdcg2SYl12AUGUh1KpnCuayyE&#43;QV57Lim1nRZJPJrIuQJBRMDtiDBgJKBXTlwggAbWQEGMMgzLMBxBECw86PYFUmgQlNwEw3IMw6Eoyg3qd29IudZyKMuyGMOhCZTY6z2epy9P8baYUqq1SoEBMnUpWCkK6yLPM9RYl1Jme9SlYKbvLIQRxQHmML16/Gde3r8Le&#43;cwHY2RgCNq00d/BuQRsekXHrF99RgwL2800cN7HAHSR1PTfUZsoUb15uUPd78QurxHWy0P4oLBQDAXJBgMbh8Re&#43;XoV/fAXAJtx0XcHnUFc1EkwIwK6342zSA8KVZKkSxP4rgoqoc6Ifow6FcislTZLZLukiQ5s6SbHyHSfUpEBuFFQRBEvvaOiWHMWBsOmjat7dY0nFCr11xBVxRRJlklRuZOrA9f6PWGrhFbFYQRBMdgDMtxLPeSpyW9EDB1YcU8rh9vPvnZMX8a7nj07BVTbQFT5xeMRp3RausxCwFjGaURvH9P6KsB5ludtVl1Rputuy8Pywm&#43;6FqA41iG5ViGYYcxj3sYwHybp2yOlqY7huRETzGSxWVB8NG4oKZoOXiop0BArWAoVwyjUhccRsO4w9FVIkJoKRzOeyUpE8vE44tS0ZuhD/OoIswFc8GBXUrPRVqdP2swmPUGQ/eILVryL8/5C16PdzOcyq/OzeUrA3pm&#43;58qQNFUYBhP7AA/bdabTdpuPw0RlWQqvJyserz&#43;cNW7MbNccB&#43;GNEwgdgQdiqb3r&#43;VBBB6SinlPcdFT9UpOTypZxA9jHhCGBoYw5X5wLU9tF3GcJ0nR56N5t&#43;g6VEkOwfCQbsQ&#43;z9hCLEoQiUTAlQskUBQN5ILECw//9cDhS6l&#43;moZZNJFojfgGAoHEEIAe3kR61PKas8WYRPRlvBUgd&#43;gqbp/6NMQk1qLI8DEE0n368mBGefZmyB&#43;CO7x59HvGFoKGcN9134iHpHx0&#43;/KmX3DE9tWjX7/HyKLNpgFlg2F2/kj1mhrGdTqjcexSefRfldHqNTUaLQ6H1fx&#43;6Uho2qS8A11lBKwtpvdKR0DT&#43;bPjOoPOYW2Zx&#43;hrmkpesFp1lqnjKrNZPz4&#43;fup0tvl0mzJHSRnCVpp3I9OLoDRsrTqLbUql1QI7mZ2voPVjcIKyIwmOSBAsF4gGOYLgag/E1fDqmuZKF4JjXOewKH66swNSljJOmhJoSk2JEdIu0D4Ecbmia2vRtVx0bZiPG74gaSp13qgzGHR6pUTsmF5PiNVUQYo4pVI5UswvSlIoEilVsqVspcyLbh55Zb2omLoAWuNms6ZL0xBBJjdW45lM3JMp5lNVz6KnmMl44vFisRiLxCR6KI3Ug5EGLs&#43;srb8DsrNhCzS9GAp5vPFqvlrMZIoxKRQveIuZ&#43;KJUzJBDeNnBAUm3JhN21fJYWSpKFVIsharJuMS73WW3SJYlKVKWpErEeaiem8ORbk3bbNTy3G390wK1lnOpxVCxIq&#43;51qJRlyuKUAjiUyNqdfCVjcH007TipzEMY3I&#43;YY1Q3qdTfwCYBcFwugMORLo1FXnfEVsI4w7fRBom9mq694jtqBSFdey16aMxzLzXpo9Uy2XsaM2smf6Ppv8d6OE9OkmPTi26hR7eo&#43;NNKjBLoAMn7P670bdEVMFEjsJxdXDg8wYHwCGu4F6bbq97qGBUdofiHsktD70WCjG7u7vwAXPFkMKKXgdY9/AeDBKpFqrVQjWCtN7k0vE0yp6l37djgdirO1s7j3cPSFq9vmCxWnTj5h5P6BN0sRDj&#43;Vi&#43;SNfiIIzdxXaZXazjw3Rs7fftlHi89cWXX/zt6sEsBKNSF6YmJidthu5nt&#43;Bc1pvBgzm8GM&#43;6YOWaXn28Mxz87Yt7v7n3xc7BVA0atlPHJ45PGXs8oY9IBUnNcVSoIEWx2guotrb&#43;tj&#43;2GsF&#43;31bwxZe/uXfvy60Dk75gm5qasul6jAS4Kt4insvhRW9F0bQKvnp1SJre&#43;uLevYNrmkr&#43;wWh1WC2GHs8jEnSxGnLzsULDplUQuOe7FkhZ4N0XwNWaTe&#43;&#43;fSDSivcYNzT&#43;J6CjRMSiJY/X6/V6StGGo36771neBsf7fJrHVbu7O1s7V3ffPtCdWPPTepO2V30aIhAxsliM4EjbMEz//PoehtqP7&#43;7uHrR06T9THWJQhKaj6Etpwh7IMhQMmqkOMSgxMjMfGxg4ujWClbxeM9WPUBuxNbp1BEh3z1Q/Qi2XIz5ie6TGEY9ga/w/Nv2S0V0iHgXzaGlaozXrDYZTR4G0uvkOSL1BZ3RYNJeyoz/MrLy4Uvn7TIvVNmmz6d8vEfu/IKM5/xvavxKqHHwuPGeyLjCgRDQrf59pVdqKusshpDmF7kBIdInvzag7c7Dfby4fyKK2BkGQXl&#43;pa9oxeXzi&#43;ITjt&#43;FiKBQKxUIhSXI6m0vHtxndSlGDso4pAOJK&#43;vqBprjkDCmHazkpqKUJxWLKmWMxcHZlW1KY1DMPhSQniHM6F2d&#43;a6r9fabOYbNNTloN59NL09PpdHp66eTSSYClerDUtt3YbyVZUnByaSl95uzZswtngHwt5dL0Uof0UnphYWGlkUFNfnppaSmdXkkrZ15Jr6QBpgFqRACmp08uTaenT15&#43;5&#43;TCmLmmabN&#43;XGc0Woy6cZ3R4rA4LEajTmc06urhnkXXFe9wWCxGi9FhnZyYmJq0WS1G5YDR6HCAvBQhJbTYXvvdG1OOej61RBajzmIBOVjAqra2gPwslpqwEWwqoc5gNpn1&#43;hpp5R9hgQuxWK22A2Bq4vjExMRxBRMK77b4joRv/PDDD7&#43;b6Mpg0qaITE6CTWXVE1arxTg&#43;rowy1/6b2axXWDsc1m442sJesNkmJwDZKZvNamsTsk1OTdk6Eh7/4YffvTa5J&#43;PnhsNh1I0b9PX/Zq79ZbB&#43;HJiHsXZpXgxWK6Bbv8a1iwkUALTjUC5uM93UhM3xwtkr1gcMSacz6E3AOsZq/&#43;xu0usN4zrFYJvm2mHKtaB5oPWpm6ZivIp4PRpYm9VhbEnqjMbaL&#43;rOsP1kuh5nb&#43;RsUB4I0GjG/j8AAP//uXi&#43;bHSXvPoAAAAASUVORK5CYII="
+                     data-src="/components/light/images/kitchen-lights.png"
+                     data-srcset="/components/light/images/kitchen-lights.png 796w, /components/light/images/kitchen-lights_hu_1ec2feaa0619f2fc.png 159w, /components/light/images/kitchen-lights_hu_12eef2b1e3825a34.png 265w, /components/light/images/kitchen-lights_hu_2defcf3a5708a49c.png 398w, /components/light/images/kitchen-lights_hu_13a8d31da3d06008.png 530w, /components/light/images/kitchen-lights_hu_b856d6d03dce3d0a.png 796w"
+                     width="40.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">light</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">monochromatic</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Kitchen Lights&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="l">output_component1</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><strong>output</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The id of the float <a href="/cookbook/arduino_port_extender#output">Output Component</a> to use for this light.</li>
+<li>All other options from <a href="/components/light#config-light">Light</a>.</li>
+</ul>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/light/images/monochromatic-detail.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1500px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/light/images/monochromatic-detail.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAEkAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APRqKKK0MwooooAKKKKACiiigAooooAKKiooAKp391FbQl5PSrlc54kjlks32ZoA4jXJYL25LwrtrCGoy2cnlq23/dq1PcIjFW4NXNG0611KVgxG/wB6AM46tJJ/rGLCuh0rU9MS08i4w2/1q&#43;/guOSP5cfhVL/hGYbb5JkP&#43;9QBdjt9AP3fL5qre2eg9d6r/umo5fDto6L5M5RvrWXJoNx57Ijh0/vUAVb0WHmf6Kx/Gs&#43;5t47mPy3Py1fudMntl3PH8vtVMRL5mXR8UGhiyaHBvOG4pv8AYcH96uxiuNNEYDWxzT/tOl/8&#43;1MzPaKKKKQBRSblPcUZHrTAWiml1HVhRvX&#43;8KAHUUm5fUUm9cfeFADqipN6/wB4fnR50X98UALRSedF/fFJ58X/AD0WkA6oJ4VmUgjilN1EOrrUcl1B1D0Acbr/AINS8zJbja9cPNpmp6Lc79jjH8S17L/aMH979KgnlsZ0xKoOfUUwOB0nx1JakQ3aFv8AarrrfXNO1KL5mUZ9azdR8M6TeZdUKP6rWG/hO4hl/wBHuSE96QHS32lW1yCbeYL&#43;Nclf/bNGJfz1dPrWpFoN4RsF25x/dqrdeFPNQtcXjt7UAcjc&#43;Ky8mJFbFXLLxDZz8Moz71qp4DsZxkzt&#43;VW7PwDYw5m2SMn940GhQGoadjkx5pf7Q031jq9J4d0yNyphY496b/YGl/8APBq2Mz1umz8QNjrinU2TmNh7ViBy9tNcm4YBjtzWleWl/ZwRXDTBkk/hrIeS4tJS/ks67u1aVxrU17bwwtCVVaf7wCjqF41rb&#43;e4JA&#43;9UNhqLXyebGx29jml1SSJ7doJMkOOcCq2jx2tpF5MW7r3FaAbken6hc28twk21EqtG0wT94xq7BrMlpbTWvkswfviqqpJKgOwis6ftAGb2/vGrNnpcuoTFUmK4XNQmJ/7lS295d2E&#43;6JDyPSnV/h/uwKzRSwySRu5bYazN0v2zZ5w3Zzt9q0pZLya7z5Xyv8Aeqr/AGI/2z7RuO6pRpTLdpZG5uUjeQ7WarGoWSafdNCjll96oxR6kJ22Rbdh&#43;Vs1Z8q/lDvMu5/c0/8Al4ZnOyXdxHri2wP7tua6ewht5b2MzkBBWZ/ZV6ZhKY03etXzpUzgFnAPtRV/eUwC88v7XKIv9Xu4qKrcem7E5fNSfYY/eikA7SruztXkE5ALLxWLeTRtHL5fz88VpyaXAerNRHpsEP3VzR7L957QDGtJwIF81Njd61P7Rt/7N&#43;zAHdnNWXsbd/vJmlSC3j&#43;7GtHswOankRpSQD&#43;VRbl9D&#43;VdZ5UH9xfyo8mD&#43;4v5VqBr0cUVFWICGKI9UpPIh/55inUUwIGsoGOSoP4UgtYFPCAfhViigCHyY/Sl8pBUtFAEXlJR5VS0UAReVR5dS0UgIvLo2e9S1FQAYo8uiimAeXRRRSAQgVGY6lopgReXSeUKmooAi8qjyqlooAlooopAFFFFABRRRQAUUUUAFFFFABRRRQAdqiqXtUVABRRRQAUUUUAFFFFAEfmKn3qPMT&#43;9SSVHQBLvX&#43;8aN6/3jTaKAP/Z"
+                     data-src="/components/light/images/monochromatic-detail.jpg"
+                     data-srcset="/components/light/images/monochromatic-detail.jpg 1800w, /components/light/images/monochromatic-detail_hu_c5fde93e2c2883e0.jpg 300w, /components/light/images/monochromatic-detail_hu_7c20bc1cf43f014d.jpg 500w, /components/light/images/monochromatic-detail_hu_c7e276183cf4a26e.jpg 750w, /components/light/images/monochromatic-detail_hu_d6597bb8deb56b99.jpg 1000w, /components/light/images/monochromatic-detail_hu_24b48c57ad95160b.jpg 1500w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<ul>
+<li><a href="/components/output/">Output Component</a></li>
+<li><a href="/components/light/">Light Component</a></li>
+<li><a href="/components/light/binary/">Binary Light</a></li>
+<li><a href="/components/power_supply/">Power Supply Component</a></li>
+<li><a href="/components/output/ledc/">ESP32 LEDC Output</a></li>
+<li><a href="/components/output/esp8266_pwm/">ESP8266 Software PWM Output</a></li>
+<li><a href="/components/output/pca9685/">PCA9685</a></li>
+<li><a href="/components/output/tlc59208f/">TLC59208F</a></li>
+<li><a href="/components/output/my9231/">MY9231/MY9291 LED driver</a></li>
+<li>
+<a href="https://api-docs.esphome.io/monochromatic__light__output_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Monochromatic Light</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/light/monochromatic.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

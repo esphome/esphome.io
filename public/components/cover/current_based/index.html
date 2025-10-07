@@ -1,0 +1,1174 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Current Based Cover - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up current-based covers in ESPHome.">
+            <meta name="twitter:description" content="Instructions for setting up current-based covers in ESPHome.">
+            <meta property="og:description" content="Instructions for setting up current-based covers in ESPHome.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/window-open.svg">
+                <meta name="twitter:image" content="http://localhost:1313/window-open.svg">
+            
+        
+    
+    <meta property="og:title" content="Current Based Cover">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/cover/current_based/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Current Based Cover">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Current Based Cover</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#use-with-shelly-25">Use with Shelly 2.5</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#use-with-shelly-25">Use with Shelly 2.5</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/cover/current_based.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Current Based Cover</h1>
+        
+
+        <p>The <code>current_based</code> cover platform allows you to create covers with position control by using current
+sensors to detect the fully-open and fully-closed states. This is pretty useful when using motors with
+integrated mechanical endstops. During cover operation, the component monitors the current consumption
+to detect when the motor has stopped.</p>
+<p>When fully open or close is requested, the corresponding relay will stay on until the current the motor is
+consuming goes below a certain amount. The amount of current needs to be specified in the configuration.</p>
+<p>Open and close durations can be specified to allow ESPHome to approximate the current position of the cover.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/more-info-ui.png" width="75.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 774px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/more-info-ui.png"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACTCAMAAAAQusOOAAABHVBMVEX6&#43;vrl5eVhYWFbW1teXl5VVVVTU1NYWFghISFQUFBjY2NBQUECqfRERERMTExHR0c5OTk7OztycnI&#43;Pj5LS0tOTk5ISEhEc569vb2cnJyIiIixsbHk5OTMzMx&#43;fn74&#43;PguLi7S0tJoaGjf39&#43;pqamNjY15eXnt7e3w8PDV1dWYmJjAwMDIyMiCgoInJyefn5/o6Oh0dHS3t7eFhYXa2tqTk5P29vatra3q6uq0tLSmpqb09PTh4eHExMR7e3vy8vLZ2dmhoaF2dnYrKyuQkJC5ubk2NjbPz8/X19ejo6Pc3NwyMjJzc3NsbGzCwsK7u7uKiopXxfba7/mT2Pir4PgRrvTt8/cwuPV8nLpag6lPe6MMDAygt82HpcBylbUiC3kuAAAORUlEQVR4nOx8/3eiPJu&#43;1G&#43;f9ny2u9tjn4OFlDcNMyGaWXmUAgoMdLYuyD7VZ6yv84v//9&#43;xJ4AYrM7Y2nbKOe8FxCQEenF75c6dyEzlLMVJum1w9tu2kxpDRqHIJ8MHIc1nT2q1aq1We0p5i/TNh8LPGGWkT87OHq4Hf18xDNg&#43;SD/Y/l4YDAZbxaQi4TLguAw&#43;PzBRMNI313djMcUsT94Vs9mML&#43;xtN&#43;x8ZlKunJyc3AzGJEZxHBeTd9u5j3WWK3A1Rmh9uTk5SUlfzZAsy4LAEnmdezcIm491VuDqsxpWcqMhTzpm1R8eMpGuzzLSZwMx/t18DoJMpC8Z6drNoHSWrtXOBrPSWPr6rFZLSX&#43;ZoVJY2o2krwnpWq169uVjykN2EXJ5YjKxrk&#43;qtRojfVIknXu/4g1cV97/ZOy0&#43;7oPLsuIeF4Yc39VJtLXDekxJw8ZxUh2UVx8xpiEYYQ2jyLnSXYaQIIKJ4/ljCIg3f&#43;tUojcDWnrc21DemNpGUEPRBEAkctzpuPhsAsRQq7LvjSWkfOS7EJ2GsRpwU1PHmd5Nxy2r2vNP28tkBvDjazM0tXqyTXnPeTYs6zZ2JJCt3CHkWVJFAIPEEhpSCkgBHheSEJKCYqpaklqH0BKQUSAByJCQXRM75aN8Zda4/LytPrZIuvvV46sr7VqNSXNa1pGQO3c3rb7hFeMN1HF2VDsWiN13FetvjRRx6I1Gklja6KOoTFVh11rIvUtVRLHLJmpEj2KdGRd/Hvj4Vv1j7MeXJtPJoz0DksLciTefv3a9niZx2LPmvat/vDutjOZ9Kzh3e19e3I36rV7nfvbCY26qgiGnV5vpE7uenfqZDTqSeFRpIPhxeVNp/3t9GZE1qRdwlua07TgRuPb6&#43;v2NOZJd&#43;/UsdqbjDqfPrXvRn2pfT&#43;474ykSef26u/biRdN1Rkddjodazi5vR8NR&#43;27iWgco2k5kP66PLvvXFzeTGDewfeRlhGw2u12u084TSOqTqxJp9e7vf3UnlhjqX1/dd/ujdqd9m1nMoTBdGT11dGop1qTdmdije5GlnfUgCVH0l&#43;XjbOb&#43;vnNZEseKenaNU86psO&#43;N&#43;2LkO&#43;IRLTU0Uiy7np31lD0xqNee6T2OrcdS1WlbhRTS7Wk2XRoWdZQUlVrOJuF6AjO7Mu9/fPk9Lz68KkfcZb&#43;nJMuWNqNQhLHBBYGSZdQz6MAeFMPhDCCtDv1RLXTUaeUUhi7BvAoiAJIPQohqyLQ&#43;MlYdADcyJPuH24GahfmvpPXdIE0G9xYvF30smxEjZHrojjxzS6bRlDpbtQlrFqWmc9mLjpx3an/PnKEkeU46vbafciNcgVL8/LYf5N8WrOeRtApJa4srGsELgR4lTHRNQAgfM/ISFdTl3cA6R33ZBbdfeoYroU/UYx3ko7Y3CWPZ9zzVQz6DLicPF5m6d&#43;AvX76I2PTEWuJPH43n4PASFfrzWZm6ZJMt4j6Z7PRqJfN0n/VG41GNt1Cui6s9&#43;TQ9Twv6IWDb8HVFXK7yy/e14ccWd&#43;q9Xomj66MywA7Hn6uNdngUqueDDzsOGa2pQmD6RSqtorFJmYxu6P48i1PfLl/nZO&#43;opqiVIpbZbtiR4NftnnlzdTH1/kwzkhXSoAN6Vp5SCv67Hode5wNqPa7&#43;RyE8lo6iz3Orspk6WYaexxiacU0nzZRFNN8M4a7SPCW/qWmFRPrum8qFYWhkh4VxbEFW1PWpcqbS&#43;x5mlbsAEAXa5qvaRpmieZrvm9HIUR2Uuv7mq&#43;8NeuN96htaVpRHGfpOCZHQXGQN6XQiIgRMRiEBBGJdUTZxDswDCOK48B9g95cvGNm6XQSMOAsrSxt2UXzeG5zcvUjcep50&#43;FwNhZnw&#43;F4Nu5L0jQ2aAjG/a4njsVpVyT4YNJPvxPTNE1lu1px/EJPyjRdfWJpxSaLFV3RlbzMWSt&#43;IM7EodVrW9JQnfRGljVq342jgAJvKM1ESR3Oxn14qAtSHK1IpqL4uuu6LnaK7XwBYb6n7/Uey/nKW61WK7AQNu0dl3bF8VC1xtNuX7UsS7WsoYcQoN5UnE5nY3HqUeQcZmnT111BK7gdE3XVycjyhEKtYkPq8s&#43;xsfRW7OGj1Yoy1nS&#43;aa9gFEVBFIZBHJMwpOO&#43;FxIXYxTECAWBEUQxcg9Uh&#43;LrKDJkjbO14tOrWrN504E&#43;35E02RMj7GweZKPp1NL5iSVaZdCXFf4O2Ncw1hxfw7YLIcKab5pa4jY038ea4xzmshUTu7FhIJ3vtli8&#43;Y///se/feVl6gsxEYfAkLn&#43;xnmPbXmECwBWKzgvfDOZf07gY9s3U9esVFKvvaNv7YFj24LrCjxpBc/O/vf//dd/fvM40hiKQ2siiaGeW2NvaOqjVQgX0cJbIJPnnLhA0zGVvPAyKIrvY1nHvlOw9MP//INZmpOHFvR7fw86EsRFS1d3WdplvTDRtM&#43;ZB9uaqZiajn3TVEyFOahkaE9c1fOeQTE1wS6ORBq9qtUTTW/qTDtUr657VNiIf9t75G2X89XCW9DVCnCkTWwEsu/YiMSCoNvY1nXbdzRdt21Bt3Vbe1YIovg2Ll5guqI62vYeph1aqifwHXYr9sjPOC5Y0RVcrAinaVMOQYxxHFIIw5AEEYSRjl0IAxKGJHrmYKiY/pZ3zP10odrEyND5jrUde2xOzINFuKBggZabZ3RkAAJdCEIaAm9KKQAglG2DZahHQ2jYz9P4Uzkpu0dER3kyIu4MTR1bduU5muOlwj0igYauGzCEIYs3QgKJqxuAQkA9AEmM3yVELcQeWwHTksHhB1pFc5GsaUJsICMiBMZujGxNDgwDUhDFSHfeg3Mx9hj8MjRVfKyZpoZtDdu6LGMNaw4r2iiIdaz57zNb2&#43;s99rFOxxamO8dnI0sC09Fsbdec5m2wN/Y45NpN70hnMu8FPvYozRLCfu/xgbEde/xuPgeBjz1&#43;7T0&#43;CPaOiB8Z/FpeCTVdNu&#43;xK57&#43;yCiv92j&#43;y3u8PfiZS7k03Sxj7PEv7/EOONp77Fr6V7gzyvbq8lbg/ZIwfO9a3sE38H2fTZbTdTHTMRXFNJ10OuM7rGyajplNcdbztXT9jLXxtRdMK4&#43;ZuVSytWNZsG3sszkXtnWMsa0LGGu&#43;pru6bbOirGusjDXf8XUD2UlGw1jTNBm9YAJ/rPcwcQQgCWIkaL6A4iCKURxAGMeurceExKxIwiBGyEUxcnUbheykoOsoNpAbQyg/39THeg/FJtSjAMBYxwiGBJIQAApASFwhAiEAkJVDQgiBMCSujkAYhjAyIgAgJBAA9/mkj/UeJo5DOvVAGOh2DEIIkxKlNERCDENAw6QAwxDCKAwRlgl7DAiBRwmEgAL0gs5/pPdQNAEFEEIS29iFxAgIszKrEGwBxYREMCQkikgUIzkggm8zvUQGCQFByCAhdLVnLz0cHXuYmoZ1W9ex6WBdZ51QTl4QspO&#43;Zuu2LujsPOuRLsJpb7WxLgi2ptm2oOMDf6LhcHTskXouM/lBwEz9nWlmP6wlqzrmumj6tu1UsuZZg/TC5&#43;IdZy6K6b/SGtS7rnu81s3LG3uUct3j8FXTj4HyzlyYpqvVaq1UMxcmj2azXi2Vppk8GqenzWuvRJZm8mg0Gs0vZbJ0Jo9aWUjnlq5Wm6XpiLmmq1vvMH1kFNanS2bpRB7lsnS1jJZuJppuloZ0buntjmiam5cflfRFpQ8DPp6ubaI8xbTdWNCSmZPjY4yxn02bfjPfBJz34DuiogXTLjVkQddlQQjC0BAEQdddAb/PyxE/B&#43;eneU0rOOwPZzRMVlqg159RGAIAKDDe5zWUn4MbEXlNM9LjKaVUnM08IA77Xa/bFbviNBQ&#43;AOnNzKWoaS2ioREB2u12p9QTRY9Op90pBfAjkN5naUdwdSwEkJAQRhEMicEyQYwOf8/47bBH0xXF903Ft3Xb1nWcrODauo2x9vw1rDdA7j2qqTz4d2UqFTNbA1LS5aD3fX9mPwrrHqUbEWslCpi42IP3Hh8bXOxRMkuXUtNPY4&#43;Pje054u/mcxD42Xi5LF22iS33i215plvvue6hLJfLV5m1cbFH840HF3M5X8zny1dgnWl6b0dUlOXylfb54vH798f5/HjSmaX3reUpy/lrYbF4/PHjx/fFK5D&#43;haWX80WKx3XyuCny6eOvM4/ff/z/f/54nC&#43;PJs0sXV1b&#43;qmm2ZfKeCdplmSZp&#43;lPM0wcP/75OqRTSzdzeWxrerlczpNjvk6UNKM8SZNTyznXhsuw7fH7j&#43;&#43;vIo&#43;NppsvCU0VLv0FlvP54&#43;Pja3AuWPqt/XTSH1/DURc0/eYj4vJ4PVd2eI9Xuelbo&#43;CnS/WLbaLpZql&#43;sf3Kj4glsTTriM2yaXp8XUJLj3OXVyJLZ96jxizt4eSfKG9tW1hW0mRZMZVlZako6Z60NJWn7Xdeny0Q7vpzv94cob9ZYbruG&#43;n/t&#43;4m&#43;/pwC1tW/xTuZs/bbu3sEApXFP7QQQf7IOq3XNMPt5YkSZLFkKYc9lTvxe6WUrI95z5PrpckafTpoZqtMFVrDxff/rp4&#43;Ni4uLj48&#43;KGGTpZQmg2m8366enp5fn5eavVap23zjm0WuvqdcV5scEWkusvW9uVrfTO6W12NfkZWueXl&#43;eXjTpjmpGuNuuN08vzVuuP1h8FtLKDJa2tSq6qtaPt0zvlrfY0&#43;Slaf7Ra55enjXqzmr2XV23W643G6eXlJf907NmS5DLNJZkkvy5yNXl1ftX6JHfRuml2fbHFU/BcGJ2EMzM0I50IpN5oNBqnRTROGyxJs2mm8aSQf6TtG/lVaZMG33RzQX5r7h7bxzaXRj3jnJNu1usJ7wLq6cZOpR91dmW9kVdu6taN8mvy9lzT9QX1vEljc6ZQ1XhKp75WdK32fwEAAP//PDjc7NFQ2TcAAAAASUVORK5CYII="
+                     data-src="/images/more-info-ui.png"
+                     data-srcset="/images/more-info-ui.png 774w, /images/more-info-ui_hu_e6b8460dd3c517e4.png 154w, /images/more-info-ui_hu_783f7addf5eacd8d.png 258w, /images/more-info-ui_hu_a6491a85935c5316.png 387w, /images/more-info-ui_hu_1fa91e3abe70bb99.png 516w, /images/more-info-ui_hu_e4d8ba014472fe8.png 774w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<p>This type of cover also provides safety features like current-based obstacle detection with automatic configurable
+rollback as well as relay malfunction detection: operation cancels if there&rsquo;s a current flowing in the opposite
+operation circuit (typically caused by welded relays).</p>
+
+<div class="admonition warning">
+  <p class="admonition-title">Warning</p>
+  Depending on the cover and motor type, obstacles can physically damage the cover before being detectable.
+Verify your setup to ensure the current consumption will increase enough to be detectable before causing
+any physical damage. Use it at your own risk.
+</div>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">cover</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">current_based</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Current Based Cover&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_sensor</span><span class="p">:</span><span class="w"> </span><span class="l">open_current_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_moving_current_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_obstacle_current_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_duration</span><span class="p">:</span><span class="w"> </span><span class="l">12s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_on</span><span class="p">:</span><span class="w"> </span><span class="l">open_cover_switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_sensor</span><span class="p">:</span><span class="w"> </span><span class="l">close_current_sensor</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_moving_current_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_obstacle_current_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_duration</span><span class="p">:</span><span class="w"> </span><span class="l">10s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_on</span><span class="p">:</span><span class="w"> </span><span class="l">close_cover_switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">stop_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_off</span><span class="p">:</span><span class="w"> </span><span class="l">close_cover_switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_off</span><span class="p">:</span><span class="w"> </span><span class="l">open_cover_switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">obstacle_rollback</span><span class="p">:</span><span class="w"> </span><span class="m">30</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">start_sensing_delay</span><span class="p">:</span><span class="w"> </span><span class="m">0.</span><span class="l">8s</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>
+<p><strong>open_sensor</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The open current sensor.</p>
+</li>
+<li>
+<p><strong>open_action</strong> (<strong>Required</strong>, <a href="/automations/actions#config-action">Action</a>): The action that should
+be performed when the remote requests the cover to be opened.</p>
+</li>
+<li>
+<p><strong>open_duration</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-time">Time</a>): The amount of time it takes the cover
+to open up from the fully-closed state.</p>
+</li>
+<li>
+<p><strong>open_moving_current_threshold</strong> (<strong>Required</strong>, float): The amount of current in Amps the motor
+should drain to consider the cover is opening.</p>
+</li>
+<li>
+<p><strong>open_obstacle_current_threshold</strong> (<strong>Required</strong>, float): The amount of current in Amps the motor
+should drain to consider the cover is blocked during opening.</p>
+</li>
+<li>
+<p><strong>close_sensor</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The close current sensor.</p>
+</li>
+<li>
+<p><strong>close_action</strong> (<em>Optional</em>, <a href="/automations/actions#config-action">Action</a>): The action that should
+be performed when the remote requests the cover to be closed.</p>
+</li>
+<li>
+<p><strong>close_duration</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-time">Time</a>): The amount of time it takes the cover
+to close from the fully-open state.</p>
+</li>
+<li>
+<p><strong>close_moving_current_threshold</strong> (<strong>Required</strong>, float): The amount of current in Amps the motor
+should drain to consider the cover is closing.</p>
+</li>
+<li>
+<p><strong>close_obstacle_current_threshold</strong> (<strong>Required</strong>, float): The amount of current in Amps the motor
+should drain to consider the cover is blocked during closing.</p>
+</li>
+<li>
+<p><strong>stop_action</strong> (<strong>Required</strong>, <a href="/automations/actions#config-action">Action</a>): The action that should
+be performed to stop the cover.</p>
+</li>
+<li>
+<p><strong>max_duration</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The maximum duration the cover should be opening
+or closing. Useful for protecting from dysfunctional motor integrated endstops.</p>
+</li>
+<li>
+<p><strong>start_sensing_delay</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The amount of time the current sensing will be
+disabled when the movement starts. Motors can take some time before reaching their average consumption.
+Low values can cause an immediate stop because of the first current reading happening in the current-rising period.
+Defaults to <code>500ms</code>.</p>
+</li>
+<li>
+<p><strong>obstacle_rollback</strong> (<em>Optional</em>, percentage): The percentage of rollback the cover will perform in case of
+obstacle detection. Defaults to <code>10%</code>.</p>
+</li>
+<li>
+<p><strong>malfunction_detection</strong> (<em>Optional</em>, boolean): Enable to detect malfunction detection (Tipically welded realys). Defaults to <code>True</code>.</p>
+</li>
+<li>
+<p><strong>malfunction_action</strong> (<em>Optional</em>, <a href="/automations/actions#config-action">Action</a>): The action that should
+be performed when relay malfunction is detected. Malfunction may require device servicing. You can use this action
+to notify other systems about this situation</p>
+</li>
+<li>
+<p>All other options from <a href="/components/cover#config-cover">Cover</a>.</p>
+</li>
+</ul>
+<h2  id="use-with-shelly-25">
+    Use with Shelly 2.5
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="use-with-shelly-25" title="Copy link" src="/images/link.svg">
+</h2>
+<p>The Shelly 2.5 is the perfect hardware for this platform. It features two outputs with current monitoring
+(thanks to an embedded <a href="/components/sensor/ade7953/">ADE7953</a>) in a very small form factor (39mm x 36mm x 17 mm).
+It also features an <a href="/components/sensor/ntc/">NTC temperature sensor</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/cover/images/shelly2.5.png" width="30.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 399px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/cover/images/shelly2.5.png"
+                     fetchpriority="high"
+                      style="width:30.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAACUCAIAAAC1A5RTAABWjElEQVR4nOy9d3ccyZU9GD5tZTk4ghZkt9hqjUajmd/3/wq7O/9opTY0IGz5Sh92T0RUJYogQLLZRtKeDvKAJFioysy4&#43;d69zyUxxoDf1&#43;/rroX&#43;2Qfw&#43;/rXXb&#43;D4/d17/odHL&#43;ve9fv4Ph93bt&#43;B8fv6971Ozh&#43;X/eu38Hx&#43;7p3kX/2AfySy8dsjDFa6&#43;6fuwtC&#43;Et9ln8rhNAv&#43;7b/UuvfHhweAXq7lFJCiLZtpZQeIvdt3md&#43;cxdh3f9CCBFChBDGGCEEbRd06xc9v3/m&#43;ncFh3FrFw11XTdNU1VVURR5njdNo7U2xuzuaPfjt7bw83fUvxJCSAgJwzBxK47jKIrCMKSUEkIwxv//sCj/ZuDwmFButW1blqWHwmq7creqquKcd5bj4/v0U7fQmweMsQdHr9fLsqzf7/d2VhRFlNJ/d5TAf4vcijcSWmshBOe8qqo8z&#43;fz&#43;dStxWKxXq&#43;LoqjrunVr16d8wfJ7eR9lQQhhjIMgTBJrMAihCFlDEgRBr9cbjUb7&#43;/vj8bjf76dp6lFCCIHb9bMvxm&#43;3/nXB0ZEJpZSUsmmaoii8eehgMZ/PvZ1o21Yp5QHkrcsvfjyeZ2BCwiDIsv7e3t54PI6TWEmZ5/k6z5u6VkpRStM0HQwGo/HYvsKhpNfrdU7n34ia/GuBo2MSfkkp67ouimK9Xi8Wi4lbHhAdJqSUSqlOp/yyx9Pd7p5&#43;BkGQJMlgMDg&#43;Pn727OTo6CiKYyVVnq9n8/l8PlssFkVeNE0tpSIE&#43;xePx&#43;PRaDQcDrMsS9M0jmPGmPc4Hij/sn7nn885di2EZxKNWx4Wy&#43;VyMpnMZva6L5dL7zuEEN5x/EpGYmMnMCKYEEIoZZRSxmgQhFEUWk6RWvdxdPQg7fUQhFyIut4Q4eVyOZ/P5rN5XuS8bb3XY4wlSZJlmUeJJyV&#43;7eqdfzWL8k8Dh9kuKaUQommasiw7arneLv/3oijatu0wcZ&#43;RuFN23vey7gW3fspTCkqp3bo4ZpS6V0KMkNI6X&#43;dFXrRNSyhNkiSKoyBOWBDEcTwYDqWQbdsUZVl447Ze53lelEVdVfYEq/Lq6sq/c5qmvV6vo7GenXQW5V8EJb81ODrH4TFR17UHxGKxmM1m/j7L89zr0qZpOOceEN5O/KQP&#43;kkv8LDwO&#43;dMQy&#43;2ZJNwztfrdVnk/uVCCGMMF0IbQwhhQXB8/DAMQ2thAGaUhpGlpXJv3wnsxp1H7QR2vnArz/PZfH59fW2MYYx5guLIyXgwGOwqHYzxPxclvwU4OkLQOQ4vNzwmrq&#43;vJ5PJcrn0FqJpGiHELrvcfZNfY/kNIITEcTwajw8PDg6Pjvr9vlZ6uVzOptOaVIRQAABjDCIEjEEYcc4vzs8PDw&#43;Hw6G/470xwhBjS1upJyg&#43;MieV4lZ4W/K0Wq4WS4uS&#43;XzuPdHl5WUYhl7p7O3tDYdDb1HiOA6CoEPJb09Nfi1C2nmNjlp2EnS5XE6n0&#43;vr6/l8vlwuV6tVWZZN03hq2QHi12bKW6aJCcGMBUkSj/f2Hj9&#43;8vjx46OjoyRJeMvni/lquayrWkhrMFzQwnj&#43;q5QKguDZs5MXL77qDwbWcNj3tF9uXwr/y2illXTxuqqqnSFZzufzxWJuLVNZtk1rgAm2tmRvb280GnmUJEmyy2F/s9jJLwyOW17DRx2qqirL0tuJ6XTq2aW/It5reEz8ZoDA20UIZYzFcWwJQNbzW7K3tz8ej5IkMQa0bdO2rdaGWg/CCMYGbMWUsgccuyAYpZudc1&#43;hx3b3cVu4uCtjPO92N4zzqi6Oly&#43;Xq9l0Mp8vyrKQUiEECaVRGGZZNhwOvbuJ4zh0KwiCLsL2q/qdXwYcuxZi12usHSNbrVbeQuR5XrrlwxL&#43;FvyZB7DLLu97q85IUEqiKHZ6MmL2EjNKmQ90WpcBIWPM80MWMAiR1lpwbgDo9/uHh4e9Xg9j1IXtOect54ILrbULiwUuJkb8/0IIKSXU8lm0vWeUkNJaCKODIGAsQAj6i9Y0dV4Ulu0WeVn4X9bDKqUsF8aIMhZHUReQ3VXFv17s5Ms5R&#43;c4doNUXl/MZjPvNXw0wrNLLzc6x/EFmPjIj3wcFrshiv2Dg8ODwyzLGAsABE3TCiExRlKI0gXdLQPNc7WQ2hgIgRTSp28Gg0GWZQhhe75K1VW1WtmTbZoGQhiEQWxhl2CMOben6UhMFMf2O0Lwpmn9hWrbFiHU79sDwJhgAiilQRikvexgf2NunZKvHI0t/a1VOlWvHeaiKBoMBl4V&#43;6Pq/E4XsP9F1k8Gxy0J6qMReZ77IJXHhFehXYKjW58jQX&#43;RtRu5CsMw6/f3xuP9g4Ojw6Ojo6PReBzHMUJYSuGs24pzURR5VdfWNbiL6/iBVUlSSQihx0dd18aYuq7yvFitV/k6l1JSapGnLdFuOmHlE7aWoDgHZH1HWQJjvF&#43;IoigIgg11sL8ghhAjbCyNDT2NdUhSnLdVWa3z9XJpSezSumMr9SeTiUfJaDQ6ODjY29vru5VlWRRFHYH9uZfx8zemIxOc8y5C5fXnbDbz7NKr0M8JUv1KEe6bQAVzotRFqx64NR7vZS7fEQYhJgRCwLlYrZbzxaKpG39SlJAkTQihbm&#43;EtwFBwEaj8WDQ51z4&#43;IU7R44xyfpW9SKE3BlL4/RtEARhFEIAvev0zsfBiA7cShLrDhC6Ywt3eby7RNDb5rZtyrJcr1fz2fzs7N2r168uzi&#43;apmGM&#43;bTfeDw&#43;Pj4&#43;OTl59OhRr9fzBPlnrs99C3&#43;IZVnO5/OZW9Pp1McuPbW8hYnfgF3uLk8z/cZEUZT2evYm6mdp2kvTdDgY9Pv9MAq1Ui40tdbKmgQplRBcCIEQGgwGBwcHBGPobuhtxFa6aESQpqkxZj6fXV9PvMtw30z6g37AGBcCSkCIV7CMUGqMcZ60kVJhjHyAywdRHEugHyKjozJKScdkuNGGuYUxCoLQb0FVVQhjJVVd1&#43;v1Wil1fX1NKY3j&#43;ODgYLFYAABOTk6cafy5/uVzwaG1tY1v3779&#43;9///ubNG88nfDD7N5agt9Y26xGmaZL1&#43;0PnjPf29oajURRFnjZCAHx8RSBptG55m&#43;fFfDYryzLLskePn&#43;zv76e9NAwCAKC1GFI0TVtVZcutAbH2AGMA7UXwZskzQR/78gaLOGgELCAECyHrppZCQoiCgDBG3SsphB5ztzPGnUn24qh1mr/IC6VUHMdJEmOM27b1jvvy4uLs7N3FxUWe59v8szU1S7eklF7gdG7r56zPAofWum3bq6urv/3tb//7v/97fn5eVVWX8fplExyf81ad&#43;6CUhmGUZdloPNrf3z/Y3x9ts6BxHDsmKDjnwIBNKAlZAdI2DTDg7N27169e7&#43;3tPX36bDwaxUkCIbQ7ZIx2Aruu63ydG6PD0PoIhC0soijSWm2C61EYBiEAwBohdymo9VYWJwELwiB0ZMVunndPECEfjO&#43;2bVf4&#43;GCxl3LFln5GcUwp4dwi4/rqajqdet/t&#43;Zy3014YG2Palp&#43;enr569er58&#43;ej0cjXCfycvfg0ODz3XCwWr169&#43;sc//vHu3TtvzX5xI/H5sPB0zweLhnaN&#43;v1&#43;kiae6Ekhl4vlerWyMtXJvzhOgoBhZO9&#43;ZelhsXKnIKX0CEMYSWstmqIo83xdVbX/oDRN7X0fBI6HWhvpoh3EF4BRas1G27Z1ZT1IGIb&#43;PvFH6Gmsu4W0A5ZVr3Ech1GIseO87n8dejfLK748X69W66LItdKL5aJp6sViMZ/Nlsulx4QXfV0Q2cFSG22kVKvV6vLyaj6ft23rjcfPwcenwaGUKori3bt333333bt374qi6FLkP2l9OZLc&#43;fnIoGcVqYs0Hx0eHR4exnHspYS/auvVmnPu7y2MUb8/ePDgwZOnz46ODoMggBBBKI02Xk8eP3z47NnTKI7W63XTNC4WY6UpgjBJLJ&#43;waGMBocT7GqZZFMVJYtWpUqppWs65j9n48AljzINMKeV0j5dLFsrWzkQhs0DE2hgleMutZvXJGoQsdowx3Lq8tRC83YQGNmnIWwFD78a9wbhJMlii0y4W86urq&#43;Vy6TLJrEvQfAFKPgEOrXVd1xcXF999992rV6&#43;8V/up2/zFsNjNkYZhGMdx2kv7/YGrtjo42D/IsowLPp1MpVJREERxrLVeLhaCi9VyWdf12zdv3rx&#43;XVaViysGGNs7iVjVMDw5ea617mW9pm19CL8sKy54wILE5UgBAJav2NdjFrAezGKpwjBkLPC3eNM02hjkJGUYBi7C0Vpu3jQEkziOXPDD1ZYy6gvG3Pbb1VpOU7UtJwTHSRyEDBjAufVpQvCyKCaT6&#43;l0ulqt/MukFFtLsUk6bbWgj84D4yL0bcsn09l3332XpumjR4&#43;sQU2S3eLWn4SSj4HDn8l0Ov3uu&#43;/&#43;8Y9/XF9fu1jyveV3v6CXQcgHNC0J71nZkW2&#43;uD&#43;jOI7CKI4TF0sAvV4v61s5F8cJ59zfLlk/m89np2/eXl1dHlweVlXlo42cc3ejR&#43;O9sS9CrsrSRSZo2ku10q72InaZti72CrW/9lq7iBkGwFh/xChxMXiEkRCiKOz7GGDCwNeWpmEYscBuC4DIaN35Dhf/LJu20UoHAdNG85YXRX51dXV5eXFxcXl9dTWbzTrKueNDjLMVW1S4AzT2N1LG8huu1NXV7P/6v/93Nl8cP3hwcHCwt783crEyX7Z4q3zk47vwMXB4h3J6euqpRlmWnmr8euuGUgQsiV1Ac//g8PCwPxg4p2ANSRiGCGFfTwoAEO7aQYO8lHD7&#43;qDfzxbzhdZ6PpvHSTIcDimlQoiqqler5XqdC8H95bYcM44YDXwc02FIOyPPKGU&#43;zeY9qVQKGBNFIAwD7yYwtySGYOJuDAtoZ7xuMiCYYGt9lRKy2XAFuQmSFkVRVZWwelVfXSIh&#43;GQyOb&#43;4mM2m69Xa09IuoLxxIhYWmzSe/0QHCwJwBGiGSQINkKIsRf7qbHE1WfXSHwb93nDYH49Gh4cHx8fHh4eHo9Go18vSdGNOujTenetecGiH9Ol0&#43;urVq3fv3uV5/muQ0A4THaUIoyjLeqPhaM96joPRcBTFMQCwrmveco20lYjIIqNt2iAMpZTL1bJteb5e9wfrLMtcEc2Ac54k8aPHj/v9wdOnTwGAi8Wyrqv5fF7XTRAwVzYRbVNxyNkDq0EgQt4XGGOs189zwbmXRVachFaDtC0vq1JwjhAKAvvNfj/zNDkIAu9BrL1x19CKU8G1Uhhj5l5hDKjrZu0yka4maOUDoOv1ejdcdGMtOlPhMOGCqsggYiCDbECShyx7EvQeYBpIvm7y83Z9UVXTcrG6ml0wfJZEwWDQ39sbHR4cHB7a3/tujUajLMvczXa3FbkbHMYYIcRisXjj1mKxEEL8nHru3f6RXUx00mNDKawAGe4fWFgMh8MkSbQBdVV7QmClXRQCCKUQq9VKKZVY3ICqqq13qCsfIQAQuqjX4NGjx&#43;Pxvo9GzGazzuz1emmcxIwyrVVV1W3bYkzC0HJ7H3SijAIIeCs4FwiiKIq9JUBOCRfWKdj7HiEURaG7V6CLiroiHYS0qwaSQvgvjpwifxgQWr8mhWjqar6Yvzs9nU4nvvzxViGL55uea25CBcZ5EIgBCiBJMMtQOGa9x9HoRdR/wpIhJlTLWlQLXk6b/LJenTXr87aat1W1rovLafHqzUU/iwf9bG9v9PD4&#43;OTk2fPnz4&#43;Pj9M0vTPifgc4vHZdr9evX7/&#43;&#43;9//fnZ2VlXVlyFj18x0f&#43;/y5j5a0O/3rUccDPqZq11IExfWTKIohggWebEtLpe8bSE0GGPpIts&#43;6uDfh7j8p6cOwAAXneRKG6lUVdf2xtX20wnBQRimaRIw5lJc3KtZt23Ia0vu7IHPicduudyp8ZsHIfQCwUdCIYBlUVZl1TR1mvaSJCGEWMHikmdKKspotAUW53y5XF5fX11eXJ6fn52dnV9fX6/zdbuFhQVGJz92YGGMtUMGYmsqSA/HB6z3MMgeBL0HQfqAxnsIxz58ZyRFqM&#43;iAON&#43;ED0Qg6VslqJdynYl29VaFPmkupicBW/Oht&#43;/evX6zWw2/z//53&#43;ePn0ax/FngcPehVV1dnb2t7/97fvvv18sFr&#43;UQtkt407T3mA42N/bOzg8HA1HYejzHQhCQCkFYPNKhJCQwhtbS&#43;aBsYabBaPxKI7ig4ODMAp9ftzd67yu67qqFouFSwXXSmnfkcYY82kO&#43;y4tQRBqyxKsVfDhClfHaiHoKoott/ef7g26dWKOvfooOCHEq808d9EqreM49uUgsTNmSknBhXQlQgRjH1&#43;&#43;vrp68&#43;bN29O319fXy201pIOFrw9xoNDa6w8HCnclHbEw1lr0cLQX9B7H4xfx6EnY26dhH6JAct1WdVsVoq40r41qjVYQaNdNM6bZOAJSa6F0q2Qh&#43;UxU11U1qWaron6NMTk8Otzf3/fq7BPg6BTK925Np9P7FMrnw2U3R&#43;pNxd7e/tHR0eHh4WA4jMIQANhuAgbcB6S9dfVwNhaspeDCBQ4Qo8x6nDRNkiRNU0pJ1w5ZltV0Oi2KAkLocvSp0ztW10AI67qS0sJICqmoppQaQoWwxgNCBIDxgYEwDLz9bzlXLlvmqzRcFteaGU9RF4uFtyWttWewC2RFkbcTlrT6hrzZbFqW5eT6&#43;vT07fn5&#43;cyF7R0/lVsn0hmLrqRyc&#43;UMwAAGgPZIdMiyx9HwWTx6Gg&#43;Og2RIWAghFq3gzbKYTev1TDVrI2ugODDK0RKECMUkwCwiQUqjozhiiCqt1s36spx8Xxevp4tisVj6LXas635wdA7lzZs333333eXlZV3XHyLjM2GxmyP19N6VSY6Pj48fPX58cHAQx4l2FzovirZphRT&#43;9b5EaiqnXpQqpXq9nv9gQmicxMPRsN8fMEa1MVVV50W&#43;dpVE63VeFIXPog2HgyAMXTmnFfjKpdGjKPT8xm2n8A7LJzajyH6ElMKXIgiXkQPG9Ho9Qgne6CPu6lwLH6wMgiDLeoSMfKVPr9cbDPpxHBNKjNtvzvnl5eXp6enV5eV0OvFFo06dKmcpPKsAXpruCBHoSCc2kAKc4nCfZU/i8Vfx6FnUPwziAQ0iiKl3cGBTf8ihrIheY1hBLADYmCDNseRMNBFiWWAIDvth0ifsEUseApg2RnG1qutNIO7DHbwNjrquz8/Pv/vuu9PTUy/hfqpC2aUUlps7lu/Jpk8u7x8cHh8f7&#43;3tG2NWq6WvLXWs0G6k&#43;0R7ucqinLVzSkmWZQcHB/1&#43;HwAjhPTtHgjBTSmJ44dVVStlb2tPv52gJUpKRH2lDzPGYIycfmMQQl&#43;QJoTwDWr&#43;pzhv67par9dSSpdFY1Ec9dKUEFKV1WQyXSzmpaUXjZSSMTYaDgfDQRCEQcBckUZIKDVal0W5Xq&#43;m0&#43;m703dO653O5/YHOfdBC72NbHbEAmxiFi5iASABOES0h4IRSR6E/afx6CTqP2TxANMAQaSlNqLdbJlWLCBxLyEggW2JNcdAQwA9Ou0nACiNkYAb1SgplDQAUa0jiAYA9bhcVXXDuegC/3eDwzuU2Wz2ww8//Pjjj/P5/FYv8ufAYodSpD7q4uunfe2tTw61zcaIubI8S/JJUZRl6WmgZ4LGAM8wkyT2/R3j8dglJ&#43;2ZWOlSVb76RkpJCO1llkb4C&#43;wDPNoYX4nJGPUZOKU2itB/UBxHCCW&#43;Ycmfu&#43;OnaqNIw9CX5bGACVfGcXF5WeS5L&#43;2xQAjCOEl8B0oUR5Q4e&#43;1aNS8vL87Pzy8vLq6urqbTWZ6vt9ZiW1GvzU2pyw2xQM5URIgNaXIQZI/C/qMgOw6Sfcz6EFIpTFsVRnKjpNb2pkUYE0oQgmEcErIPBEOmQKBFUAMtjFYIUYhCqUgriQQJRFi0UgotLR8CUllF3U0k&#43;Jjl6HjoDz/8cJ9D&#43;Yip8DrQ&#43;o4sG/T7VkP3MoigyxGUdW2FX5qmSRwPh4PUsnrsCiPwYNC3ZtkRRs8BMcaa0ti5of39vV4vC8NAG9NWVV1XbWv9NYQwDANfHuEDD03bCPd9dx/7ZLq9I7nwlmlTt5EkyIXAGeeBL&#43;epXQGYVR&#43;EOFGXGWB8tKppW9&#43;l4vkHobQ/GCRx7DJnECHoKkIEalGR57PZ7Pz8/PTt6fn52WQyWa3X1XvWopMhoMtid07EAApwgsIxSR5Egyfx6Gk0OA7TPRKkAJC24uU6b/I1rwq1oZzSHgChlp5HMQlCiCmiIxyMaYAIRRBYdwUAMgZDrk2rgYDaECWVMUorZbRR2tS8Wa3W9&#43;016cyGcoUwZ26tVisff/x4KH6XUqRpOhqN9vb3XTFBaJRyOeh1VVUAgCRJDw4Ojh48GO/t&#43;VI2znnTtlppZ9X74/GoaVonNUqjTRxHTmTEaa8HAagtsSjKMtfGROEGEN5KEUogsATCaIMwcrd16EguKF2dc9tyH01BEPkiSwiBL1wqisK5W&#43;BIKCaWvmEIgBSyqqqyqiAAQRD6QOdgOEAIDQfDtJdghKWSdbXpVuK8nc5mZ6enZ&#43;fnk8lkvVo5GbLlmxuBesM3LWZhBwtikLMWvUfR6Kt4fBIPjqPemIYpJsxS9bptyjyfXNarqWrWQNXQCOt47RugFrOaRjhIcNgLkwzhAUsznEQYI6ONdSOtEEBIIDVwn683NTf2ow3090bL2ztj3&#43;&#43;5laZpfFdWWZbOSd8Uv9&#43;afIIcKKhTH71eNhqNDg8PHxw/GI1GWumrq&#43;uL60mR5xDBfn&#43;wf7B/eHS0t7eXphmjVBvtQk9N2/IojtJe6mmEqxppfETLbRXxxbrL5eL6erJaLY3RLgbSi5PEuOoY71&#43;CICCYZFnPN6H4E7HQLIqmbhDGPSdtunFQQghf0uby2pag&#43;G5Ee3us87ZtrM01wDdpIlS62Szh4eFBGFrIBoxZM9Y0bdMWRX5&#43;dn5xeXF5cWFh4bK7HSw8sditlvSmAkDgnIiFBaR9Gh&#43;Fg6fJ3tfp&#43;FmU7dMwwZQhiACE7k2UltzIGukSw5ySCiOrVK16UEZprHkgRSGbQgt7siRMSIgAQFIo3ijeSMmVlg4Vm7i7PwpoVaGrNREu3/QxzuGXr5jylbRkuzqIdJQicv44y7LxeHxwaGXp/v7&#43;YDBAGE8ns/l84fxLz7WB7PUspafObZWtpRrI0f7cKiijozCyN737CErZYBB4KPpKGe9rCLFAJI48EkIEFy1vtUuLb8ivvemJzyH7iLWXnf1&#43;P3C5EIvIsuKt8HEqQqifxePD7Y7hovV63bbNOs95y30gPI4jCGGcxFmWxXHEGAUAuFB9Pp/PLi4u3r59e/r27dXV1cpai8blTtVOMh3cwMJ/tZrZhzhjFAxwdBD0HoWDZ/HgUZgdsKhHKMPIVZ0Y5WNgEBgWsiRLGE4Qr4lxlNN3SSlpvRSiCmiuuda14rXgnNfcACC5FFYCKk9wtiZge4Nb5mu5nVfjd5ZhkF3eQCn1VQX&#43;4vpwUEcSvQAZDAaHR0eHruJ5vLc3Hu8NB8Oe8xSEEq0URoQS8uTJE0ppkqZhGLj&#43;4/VqvZZCBIFVLr7owedHfPmT9dwYDfqDLMs2oVwIMCBRFBNsaWWSJA5MpqoqY4CPUbqS/I2oK4qiKkthDxszV1YTRVabWA9SVaXTkBgTP5EnTXtZlgEAduLiymVJopZz7UKlXt1Yr9fP4igGEFQuvHZ9fX1xbimnE6hTK2vrWnCxay02wc3OWvgkGSQAhZD2SbzP0iPHNx8G6RGNhpjGEGLZKlkX0Eivbl37tqPtlKDBUMcEigSqFdAVtHxTaCXs3UozgyIuSatDQwOtdFM22gAllVZ6k5LZ4QLbPxGAyFWp8aqyd9S94PAk3zd3UEp9H4on&#43;V6RdpUj4/Hey5cvnz9/vn&#43;w38/6UXTTqWcvAiHDIen1er4019fdKyWxy7/XddPV&#43;LsoNfQuQLoYqL&#43;bIQTe8dv7zx8ipb1ez0e7ld0z7OBKwjCyxJYSn6F1el9TStJe6pNJHmS&#43;TxUA6BqBemkvjbdR0a4bSmvVJUEYZTrQvhdNCIEJjuKoMuVquXp39u7tmzfvzs6ur6&#43;t8y2Kpm2l2LEWW1Nhbpy1hwU2kAGSkfhBODixxGJ4HKb7NMogCpUEouG8WvG61LwGihvtrh5CfvADpgxiglmGox7CDxBSECqnRwQECOFIawqFARwIRZWCSguPTvDBbKKNa3H74lKDxjWhlZ8Ah&#43;/38pFm7192l88TsiBweqEFEIRBGMVxGIS7ORsIIKLW9dyqLXWB0axp2vV6PZ1OXSxBxHHirHRrgHEl42mvl1JLMMF25FfVNI3vPYmiyN/r26i2NgZwIQwwlLI4YcQVBFkNTFzpaMutYYgiZl3VwCditnlq3HXIuVJv7ro2N87Iywm9da91Xa9XK97ys7N3r169uri4WCwW2xJOpfV71Vjb/YDeYDi&#43;iQ0KANnEspK9r9K9F/HgiMUZoQEALsRZ5cViXq8WolprUQHVAuPzFdBNLHQhzrAXJL0w7YWsR5IAM2IJibK2QQkjWm15DlTGBcY867x/OZ8NNnljT63uTKy&#43;Bw4fKu4Kl33AtBu85N3SKbJEqWnqsiifPXu2t3cQxxHZpkW62/FWf&#43;L2dqcAmNXKl5MB57aIT9P3HGkMXKK8rMrG6W9XeCGiKNrf33epuEgqaammazOxdMQ1lFqVgTDBFjRty12PXSWkDCxvsHzTxVoscbHq07JBv5laCOkHPXhp5jqqadPUXRqsqsrJZFJX1Xw&#43;v7qyTsRHvnfC3l3dzU180xtiay0QcyHOA2aVyEkyfpYMH4bpkAQRQsTyTSsqZVPl9WrOiwUQa2IqZDgA0qfedAtFS7iFV9KWAyX2rUEMYwQZQFD7&#43;siai9ZI4SjOTwlLGWeepdR&#43;cz9Mnr8HDu&#43;P/XwI6Kiyj390RdLSrbqul9b1TibXk&#43;cvXriBBZmz1XRz9Xfec/dwsGMDaZqOxyMIkS9iCwIWOM9v7Q0w1p4XhYuK2W3wALL0ybkJUfHc/m8BHLYwwb4y3s1&#43;KbZ63d4&#43;jFor6KuOnfT1cNfSn4UvmnCBcmP1KvNdRm3b8JavV&#43;ui9C1b0&#43;nED6Rb&#43;QIcby22xOI9depjWcASPQpIhGgPBiOaHkeD5/HoadQ/CpIh9bAwcHOc9qvGyDAGSWgQ4ViXCLSu/EZvIAiYNFJopVvdFoiGEY5igLHRRrRSNFxwqeXndphChwlfEWKpMUQQaV/u&#43;uF&#43;vadWfI4gjmMPDk/0docpdN2eVVUtl8vJ9eT03enTp08fPXr04Ph47NoMCSZ&#43;Jz48LmAARjjt9RyJYTfTsTBCzvBobQgm7oa3VMp3ITt70LpaTmK0xr5eHPo8O3SzR0u31cL7jk17MSXWS0YxdcjwHsSbUCd0m5vXR7EvM2tby44n08nZ2bvz87PryWQ&#43;m7kqztrl5zonYvSOz9xJkiFXl5XgaMzSB6x3HPQeBNlxaClnnzLrf5EBdqP1xvBDaBDQURwSkJlYAd6C1mXOtDJaYtUAYxAhkDAJQmGYopY484YrDbUyUlhYbFjnZy63/3YfECM0pCwKAu3vnw9LwsitH/R5KV9AthsYuQURRyqbPC&#43;uJ9evX79&#43;9Ojhixdfff31148ePc6yjFJ2R3GR2ZT2pGkKrSK9GSKwcwCAMZakKYD2xpFCFEXBOQ/DcDQaZlnGgqDf71NKm9aV4gjpaoBBEATdnAJXi&#43;Xkt/sFANy0cDZ1XbkwW1W7SQfSp9eDIOCcl2V5dXnx448/vnr96uryshsw5J3IttIC3JT07jgRA5C2sIgRG9HecTx6ke49D/uHNOwjnABArSioOAISAbuZUhqpDLCmGhJsGRCKeyAOkI4NzzRfKV4a0WjVIIho0MfBSKNU6IDrWKFICiMlNxvBfAPPT&#43;LC//YEwBBKgwRE/STRvV7mb49PgMOHMRw5uGPd6qy3/q6unIu5vrq6ns1mf/xm9eTp0/F47Osk3HHs7D2APvf9YWBtx0LZf0oh3eyGddM0PhyHMWZBAAGoTVM3zXq1dtkvyzmiOPLhik21lT13azz95RNCWA5SVi7XVviUW1XVwLHgpmnW67UQ4ury8rVbV1eXDpGi6wPYJRY7ewE9/zaAGpcQIclxNHiW7D1Px4&#43;j7IAEsdFQNLKtmrYsRF14sukmdLjpHk7BBWHIoogEIWEBig5xbwwBN4pr2RolLCfFoYGhUQRwCAUCGmk3POYnJkQ3sAAAOYcgjKW9ihIWxdg36X/McnShDs85Oif04RHcsiK&#43;W6t0Q0Knk&#43;lXl5cnJ88eHD0YDEfWy1g0dANM3GAkfPsgtj373Bdau0rgqm05RKiXZUkc97LecDAMg7BpmtaNlmuaJoqi8Xgvy3ouC&#43;asHcSebvoWdc&#43;QfBtBVVvD4SaPTV0yxXLPtm1ns5ngfLGYX15euulTK5/M2yUWXan39kL4lDrZlOsFAxIdBoNn8ehZMnoUZfss2kS&#43;ec2bsijms2o1E&#43;XKiBJojoD2aWdtIMSUsJCFaZBkcdYHWR/SHo0ChKFxMWAttZJGcs3t6fg0/&#43;YwPg8Z3WV3ZMheGyFlK9o1L65lPg10E7C&#43;3/EPf/g9y9GFOryR8ci4Ex9dK58n9r6nqK7r1XJ5cXH&#43;5vXrk&#43;cnJ89OHhwfD4fDMIysUoBbqnrXSSml3PZVvOXehDv3RD2H8MbMcmSjkySVUiVxkiTJaDSK42gTZYFOmrpMGG9bIfwGa1f1zRuX3y8200utJyoLXdXlaul/dVWccsdUvJ8NATfZELAxFfssOQqyB1H/UTQ4Dnt7LExdTAI7Na6tTK7WPJ/Kcg74moCKYuVyO8BF/636BA0TItLtSotKGw0Jw0EMXQGKFFBy6QKd2iVib/bhs5HhncgGFqIt22rdVsu2XCm&#43;JmqRBCJNgigKP11Duhvq2DUyH8HHh0RktVpdX1&#43;/e3f69u3br776&#43;uTk5MGDB/1&#43;nwV&#43;6IC7wub27CyndQnnBCGJCQ6C0Aewd&#43;cbAQDCIMDDQRzHvmHVa1QvQ&#43;wBcDf5pG2lkMgVY7m5TgwA4yITrVIKQdS2zWKxWK2WhQvOdn2nPqevd2oswPvWwgBsYOAKvo&#43;j0fNk9MxpkBGL&#43;jSIEWHQH6cP39n7ylCio0ATaQwWWJcEKUfIiDVtvDIGIGw0hFwZWcGahiTp4yiWUjslIpSQSnaKGXxyR3au6qauxoHDKFm3xSxfXJWrWVsXWnKCJGFNFOJ&#43;f9NX/OF73cs5Pr8vahciWyJSWxcznV5cXJyfnf3h5R9OTk4ODg69l3H4gMDc&#43;lwcRTEhVLqG5vsmQTt3gFwFBuhsm3VtgjuP0/qIhWtsjxwFwZ43sIAZo4siv7yyv2azmcumvlerd&#43;NBbkzFJh7gYBECmuHoMOw/Tfa/TscnjlgkGFMvt4C2hkvfFIAahGCUJgEc6sSoqlHV0ogKAo4gBZADXGNMgxBBzFpFa000RkrptuJGA2kdiS8Uu7cg94Pvw22oCTpu4SQq1FoU7fp8NXm3nk/rqtJKIYww0wjwKCRZrxdGd3cn3AuOn9rA3&#43;FjM&#43;DF7ZaPh15dX02n05cvXx4fP3SKw8lXpyN2PtpKNkyw43sf6&#43;307hNuuYVvVfK1ZL501AVCN30AQsqqqiaTydm7dz/&#43;&#43;OPbt2&#43;vLq9Wq6WTsnJbq/cesdjxe74uC2tAAUlJdOSIxfNk/DTqH1klgixGlTDatNBo4Cv&#43;HKWw6IfIWGYS0N4YxYFJsCwBLyeKN1b0IIhpQGlMowzRIQIJNKnAfWMIr53WvSMt8hF8wE22d0uTNzFJw7Us2/yymPyQT67rqpXKUlx3kgoazgiO4yhwJRAfvv/trKyvAQ7DjRP6SSM3ukHVG0cjlS8B7CaXf/XV148ePdrbG2f9fhRGGJNbOtb&#43;08APpzXufsTWi21iWFVd&#43;xYxAEDqli8Rreu6KIvV0vq4169fvXr16vz8fDFf&#43;BKyrTa921r4WJbrA0gQ7eFgQJMH8dgK1HjwgEV9AKkSuq0bKbgW3MgWSGGUtFccaoggJgQTZhDRkGBGGRuQIA7SMW6Xqs214sBIaE0LAzjVuGdADFUAFVMaGqXusxZ34mMLDrgJbdlrqLVqtay1KA1fNavzannF60pJi3UIsTMpLYIiDFiaJnfq2Lsthy992/2B&#43;z3cvfu3S0Satq3Kcjabnb49ffzk8bNnz54&#43;ffbgwYMs63ty85kuzJsKzn1DPfctilVZzWezxXJhDOj3M8dAedPUk8nk8vLi0q2ry0tX8/0eLHaHzezkyTblepCkONpn6XGQHQfZUWhZ51GYDgmLjIFt1VarVZ2veV2qtjaihqoBRgCrMLXTnxQRBnAIWcziLO5ncS9lySDoHRvNjavhc8FaIyVSEkuFlYZKA/PZsNjsDOhyJcghQ2vZ8qZoqxWv10DVCLS8mPOmURoCSCEiCFOMIUaAEpMmYT/r3Tfp5bbl8L1Zvd7mB7o42OfgY/c1tyMiLso0n83enZ2&#43;ef36xVdfvXz5jUvN7PtiYOi9zP2f4JpHpA9hbYkFC1gghXTJdCt16qrM8zUAcDqdvnt3enV1tVws8qKoKx/L6phF10MGOifiKqOstTA4RsE4yB4n4xfJ3rMoO2TJgIYJoSHCrsOlFa0VqNfVaqHaGuqamBpDjoCCQPqgtzBQG6JhCEhMo4GRBwQf4iC0vBUBo/Smyl06kEtfg/7Z1gJ0KYqNtfDxJEt5eF6tp8Xiui6WSrSMkSDA9nMU1IBBHEBMEHaz6TCMAjTop26O6t0U8w5wdGrW39O7nWpf0Nq0y1V9A/Fi4SYYX11fX1199bV1NIPB8JOTRnwspHHtxT4H5Kce&#43;ME3TojWi8Xi/PxsvlhMrq9ns7nLuW9iJ&#43;8Fst4jFh0sCCAJCvdp&#43;jAaniR7J&#43;nocZSNnQwhsEvkame/RKN5iVQJQY1BHuAypIZR6yW1Aq6rgUuNpWm5bEUpKgRJGOE4RpQCCCXXola8UYJrlxa5h3K&#43;9w/4/vf9F7TVI8DoWlSLYnm5ml6W64XkHFkU9AAjWmNtmAEUwMA6FCv&#43;JMYmili/n90nVe5wK9t2oHv90MehcN/3u6fzeYj4IZ6TyfXl5eU3f/zjixcv9g/2kzhxLch3Q8TXeURhFPipBsSC3VWz&#43;PyqmM9nlxcXfqhhUZZ8kyTr0PneAd60hzgnYnAI6ZD2Hsbjr5Pxi3h4HPXGLEqw/RS0wYTXWF6gMpTEKATQCA0ER6qgSDMSYxJopRFokKlCFBjMhDK1NQ6V4LVj6UJJLRppxYhQ9037h7dB8P6XbTWGhQVyVfeybPLzYvZuPZsUeSG4MACxwF9JZAw1hgHIgFVJ2F1MiZFO4mA47HtwfK7l8G7Ft6H&#43;BGh8dHVc1Xv9HSuycEMJr58/f/7gwbFvnqaeiNy&#43;cxAlFMfY77WvA12tls6DvPvh&#43;&#43;/fvHnTNZPt5E5vPMiudrbcwoc4aYqDIY4OguxRPDpJx0/D3j5lzloAYIS8qQ32NyqERhsWBmTYB5EBAqumldVKi7LlLZbMACVlCaAiLCQhC2HCdNTCBFEqhdJFK4W2sFB6l&#43;28f6obHMBb3wDvwcL4Xg/dGl3z/CK/&#43;m49u6wqLgTUxkWUrInAEGAIGcQAQWYgdbeEAqYlGPTSeDQaJsm9cwdvg8OV/IeuZPJea3Pf&#43;qTfuYOrunmJTlC8fmrXs8ePH&#43;/v728jIreVizGm5W2R59Pp5Pz8/Ozd2fnF&#43;dXV1XQyWa/WjX&#43;Yl9oZetOFNw3ctof4gu8QsT5JDoLsYdh/HPWPw94hi4aYJRASJY1oGyB9lYR9O6srgateJxQRN&#43;Y87OMwQDoxnMmK8XqueKst6CSmFGLiE2YG9QHoQZMqnChhJBe&#43;bwW8/8yX7Um&#43;hxW4iw3jEeLCnS7EqkQjeGlkBWTRrE7L2dsmL6QKDQggJBBRSzwJxYQRhlhogKQaYAA1hByhJqC4nyX9fv8jLuIOy&#43;GbwHy94K39/uT2f3wG&#43;S2IbJ/62eR5fnV19eb160ePf3z58uUfXr70I4sCFvgsXTeode2c0buzd2/evHl3enp1fb1ynYm&#43;H2k74sQDA74fsbAnpyE2MIJs4Aq&#43;n8Tjk2TosyEZwqFWUHIl2po3Fa8K2TglosQ2qIUQoTQIaRSzKApChqME0xj2hmTwiIpai9pIbox0k1woRJEGoZJMSWo0MQZr18u37W17b/vdX/z&#43;d2V83UvgxmBAr0eAVpw36zqf1vkCGE4R5&#43;urplpK6c0hs5LEaWlCQxr1MGMwxKRFrtpLQFATXMcxGwx6vTQl9wc87&#43;iy93TPV3X4iRQf2en7IPJJ6rprRYQrIPJB1al7kNvLly&#43;fnZwc7O8nSeo7mIs8v7q&#43;evvmzatXr07fnV67mWi7XerbUm9zo0Hg9i8G6U25Xp8kD8LhSTJ&#43;Yfnm4CCIM8ICCLDkmrf2IOr1silWbZWrttKicQEJvanbQBiRgIZx2Btkw2GA&#43;yiIYdCzlwwaoJVR0mjp/gRCAMGN&#43;7dvhN0cDdxC4QOI3PWvbVDLxSfcZ4iqLqb5/LJYTkRbMUbjEFpCo4wyTFtkMISJK6VmmIYsGiDaZzpsW9O2QvLayHUA8jSJRoN&#43;ksT4fh1wBzhupd9&#43;KjI&#43;f93SMpt5Wa6M6PLy8vz8/KsXXx0fPwyCIM/XZ2dnvtji8uJitdM1tJM7vUUs/H44J4IDQDJiicXjZO&#43;rdP95MjgKksypU&#43;zL9awUytfF7Kpez0VTAllj0zIkIFTAKON6xJQAiiPVBrLJgawoksQ6EIbsHxhgA5Abli4k50K0SnKlFexurg&#43;cRedEbkfBt199vZYXq5ZeiHZdrSfr2UW&#43;mLR1DSDAKNXOLAEQGRgCEABIrVuBBCE3r0BriBANQxrT2EroSNaAiKCXBoNBL4o/xizvBsduqONn7f9H132VZk1dL5fLK9ef/uTJ0ziKFovFu3enF06MdNbC&#43;PFsO&#43;P0wNZiWEUBkOXnOES0j6J9V8X5LB09iYcPwnRIWYgwgZtaAufjBBf1WjVLqCqGOKE1QxUjmmC7MQ49LhMjkTTWg7UrtbL6lyUkpiRA7mikULKRvBGyFS5htnVvYOs7XNLxwxlHH14bB4uNHwGGyzZvy0m1uioWs2K9bptWG0BcU7grHoitwzTM4sOqEuQKTaAUTbG6RFXB4mGYDCgLGZEKNAjWSWQJafjR&#43;/8OQurB4ZsWb4U6fvF1K0LvCyl8EUae55PJ9McffwyDwKdpfF3W&#43;9U371mLrUD1fQA9HI5pehhmx5ZyDh5G2UGQ9Alz98pWoHamHEFNkIyZMkADJaCqsFlRbLa&#43;VQlYEcANowBhaVSrGsmLqixJJgCVxgDFlcuwKy18wwj4wFPsxq/MB5jYFbDOj1jsaqNaUU&#43;rxZtyflrl66aWrTBaI4B8LRWGMEC4hykhkCoQOqz4d7KbK3kpykWdn/MkS3oZQULXl6E5j1jsBhx9LMN6r&#43;XowHHfdn7mrn/&#43;K2/JXV/ys1jMfWesvukC6F7s2&#43;rhxlq4fjLtZlqgaD/InsTj58nwUZgdBPHQt54ilyCXrpnY2hcEkb3HEACGMJz0Yg1C2FaGC9XUql0r3mgB3XPdlFIcGM1YSsPYYCQM4yTElCip27LVwiipvLXYNKt86rxvuOfNd3aIp/3IRolStat2fZZf/b1cXnEOpIld0MLlR7CVJISEKKRKx0AQoZkxCECNiCaUhmkMkW6KaZOf182pLjEBFRDXLJER/SaK2MdHYN8BDl/V4Yebeodkbumuz5AkXxZR/VDu&#43;idRdOn792t6O3wgA7GFBYphMGK9R/H4RW//RTx8GMQDTEIAN8P9XDG/EdzKU4QAJRAQCBB0XYqAJSkkY1gL0JQS4xZAfwjAwlFDoDEhmALMIAoiQvcIPdA00xIqIVwX0nvlYrdOq7squ1fovb/s&#43;BFjpOBFU8x4tdSikOV5tT63HBn0NMJOCvkUCSWE0SBGcYBDTDhuORJSGS0IVjTAQdwLAsKIQPxNvXzdlGtkKgIrGA7jEIXBHaWBu&#43;tucPjpsG6oEu2YwRdMSf5il3STLd2unWcQbczvtpnMikbIMhKMSHwYDp4m42fp6FHY28M0AgApoRTnRnEKBQZKcNW2SiuDCQQUIow0RBIQgAllhEVjHFLAIxilIOzDplBSGKMgUK45kSASAzY07NCQfQD7xjAtXEWnubvC7ZNXaPN1Yy2AMUKKhterajUpVxMlGoqVbteyrS0lRtR6TMiQBYcVq9gFMVg4YL000KxtNW9aKVoIGhYoDCRQFZIzpCZQXOh2qQzHFDE6cq2/7OMbeveoSYyxH6kQx/Fyuez603eb7n9BLvLxSkTfpejPYfd5A1IDAxlie7T3MBw8jQaPw/5x1D8I0xFhsQFECe0zwm2Zy6YCsoGaSzcp1nWL2L2GCANseSsOk6iXoizG0T6KByh9iERFRaO1sBrVChagNdKaaBBoEykTaUWMgeazYHHnBnQy1ZenSMlLC4t8Xq3nVbEUbU0IJpFrH7R2MQAodjEu5hgJhogYAARvDKxJGLGQsphpnVhvyNdQzVUzFc05L16L/JURC6BrCAxGgRccvmn0Iwf9CXB0Eyo7r989EeKXVbn3uardR9tvPxeATasW0CSK06fZo79mh3&#43;Ih0dBbPkmREQrwBvRFGW1WlSrRVvkkldQcWgEUMIYAV1ufTNPB1GAQxr1NN8LyGEQuOhFOMRWbFgB69PrgmvdKtm6WIaCnw2LO84VbE4DQoi9TNW65tW0WlwUy1lVrBv3xBIrQWliFSmKIB5afQpSiCLLNJ0YceMl22JZaHNJwkEyOIqz/SCIABES5Hx91qy/4/mPsr7UYmVU4wM2llO60UufVKN3uxU3gzEaDAZdVsbfu10hz68kce&#43;EyO6DAbZHggDQSGkDASKYhlGYZmHap4G9lNoAzSWv6nI&#43;LeaTtlwr0WLAGWoploRKCCQwbmabMlIZIZHgpOVFCWQUsiCOcBhBRAH0&#43;NkUFvFWiAYqsQnCfhEs3mOdVmjYc1FK5G1xUUxfF7PLqqhbroQywNKKACGCSQgNIMxurDShi2fgTYzEShWgZF1XS72&#43;bMsr1Ryn/REGDS/e1ot/tKvvZX1lVOUKTW4uoB&#43;i8cli0LsthweHb1fcJbTdXM7O1H/SfvxM79OVv/s38UPlnLY0CCuhW1O/ra5DlwlXoH9EWOIcCm/LvF7PVb3EhhMsKCgiUocMMEbcI/6oewKw64lUsBG6lUC3i2rdi/ojkvagQ6OSSrpCX9FK2UqfA/4ZsPAGA21ciQW5UHxVL0&#43;LyQ/F7LwpKy6J0sQAl251D4wgLAY4UJICpIAKlAmMK&#43;pBWBNKwiSASYIZqfMrUbwp9Aw0GQYFz9/y4lS1M6MbYHSnoDtC2fU1fuSI7wWHH8CYZVkQBH4kfsczbtmPX/vRyB0yuhHprm/WzWzRRskpn/GlWItqkux9FWbHJBxKgZWokG4iyjFtgW6gygksCCQURS6bYKzdNjWGImQ0jsJW6EYLoBohuBTSQOQoi4OFb0ZV&#43;kth0WVT0UapAmM0l4oDXYvisrj&#43;ez75sSlLqZiG1EAMAbY2w2XOCIsIogj3aGQaQR16jNESI0EDHCVZEAdxlhVTWUyvVXFetRDqQrczLQugha9M63YIIRTH8XA49ITh4wd972B837c4HA59tGO3JKyzH597YX6i8fjw9bsVIZ3FsvIFA2J3ba3WPxTtol28ZtmjoP&#43;YREfIkCTWhGoCGiALxddG5IrrRrnHjgCjFFeKIwgoSygFhBEKqYoCiJBoJG&#43;15GoT0XKhC/gL&#43;BGXNnP9I7xea1lhIER1US3e1OszKbFGY20ZhhNRXU6VMhZkNA5CzUKJWw4Et4oG6IYy7cceQQUDwjlYtOJCthwaDuxvvXUlNxeWUppl2f7&#43;vn&#43;C5JdYDt9xn7iHUfjnDN4qCfuC/f6p80y71SVfujfphlEh/xxYA7RpdHsl&#43;IKv31bT/aD/LOw/DlkcMkS0BrxWoJaglUJIbgQwvo8AIitgIQogNpiFQTCUwdAA2lTCaLCNf29SeOYmGfK55&#43;yL0K3B2PIkKcqmnJXLSVMsETRRxHS75PVEtGsNBgBRA&#43;xv5DIjCDOMKQBIA4hZTGjGEIs0dE8mrhUviCmAbkR&#43;xctTvvpe82uoVkZLV6Bgdq/8LjIeutXr9T5JHO&#43;1HH4svK&#43;&#43;udP&#43;/AYP2u&#43;WZzndX7Yz8En37H9riIHSxhXftcuynoryUg4emnQQMULCnrUxNIJSIKm0kgBou2/WM8Uw6Bs2MuxA4wMN&#43;0oibeStQRdmG9H8vHOGmzElwEfBvVLlolmXq6v19LxczZXgYRwHNNWyVZJrgwyOAYwMDDb1WpAgl4kVvKrrCtEqSGWQDIMwCqNQSyDrVjVC1ef1&#43;odm/YMo3ym&#43;BFrcWYjro96j0ej58&#43;f/&#43;Z//eXJy8rPcyq5z8vbnI1WAvzhQPrQ0Hhb&#43;q19&#43;GoyfIuRtG7YkzyCrVSbtPBfVVds7SkfHSbbHegduHoVLrBvpNtrVjeIEkEyDRJpYmUgpot&#43;r6LwpxvkkPoxnnOY9euESY1KJoq1m5eJqPbsuVwvOW4SIn1TjGuUDYJXqAGCvVLF/B2P1qhFNnq&#43;mUoGwt58OHsSD/TCKoeFQXavqVbP4R7P6h6gutCzB5rzeu4zeCcRxfHh4&#43;PLly7/85S/ffvvt8fGxb&#43;D4&#43;C7cCw5vhbaPQaQfcSW/ngm59Ym7XNjzD/9118tAy&#43;UgglqqSlZN3S5ls&#43;Tt82T0JOwdsLhPWYwwduNToFRASqwksV810Pre0MW2RORWle/O/277R1wgGW0qCoHSqhLNvF5fVIvLcrWuyppzqQ1EjDiLghCOSHDILKkZKtgDIHQC1cV&#43;IUWIQKgglKJZyXYhqgteHqTZAMNGFGfN6geev5bNxMgagNuDRLvJwVmWHR8ff/vtt3/5y1/&#43;8Ic/&#43;GckfE4w4mOP8fKzTXx//icRsMtIPvmpX7y6QL6fYeWR0ZmQzstYZBOAtFa6kOu3ebuuVpfh4HGy97w3PgnSEYChEkZYKqNcKaCfMbZZnWXewYnZdS7vr53yi60ERchA02i&#43;4KuLfP62WJw3RcUFFJJos3mNY50MR&#43;NkyGirpQy4CoWmrtHTYKQsJQ3iIMwIC4LoolmfyeLHqj3VRYRBreorUV9psTa6dX257x/TljUeHBycnJx88803f/zjH09OTobD4Z3TFu5cHwOHd1RdKO0zH/B2K0v3a6wPk3N&#43;Uv37JsRn2wzQNS/qcnW1vPw&#43;HPwwfPw//Qf/Q8MjrbCSRqmdik7/7hBsC047KNwUre/k4W/1IfpiLTcvBhkEWiCnav1jPfkhn5zVRe5kas/1ByCXNnOZMxpSq0cGSkEhSM1Jy6EU1vFBKDCBlEVR2ot6gzAkBVgU/JUsF01tEOBGlUY1Prp162r75rRer/fkyZP/cMv1Kh90ybLPvM6fAEewjbN&#43;WZvChwf9xZrlzo/YeeiV7ljI5uHTXVTG9bOquq2aq3I1VQICsJ&#43;MU4hjNwF2s/uwqyw0d3CLDSZ27IYxXVTJ5f498bSKpJW8hqoE9WWz/LGcfdesF0Igg4YGE&#43;BqtFxnkfvt4ruEMYBDDeJA0qZRvGlF22hVEyrta1xCGUOBYUXMSqmpEVJDDYAvR72NDF8F3O/3nz179l//9V9//etfT05OBoPBT2ou9OtjnKObyPA5JWH3jXn5OVbkc2C0S0S8Fdn1LzdMVisjW8Hn5fIiWU9Z0tAgBO&#43;f1HsVyf7N36/WMTcvcj29cKfhzO6hkLzk1UI2BYYKtPNicVmsLtumNXAIEDOAbBoSEYGuVEdrJUWLKCU0ZmxAYRAo49pbKtHkyJQICtUuZTtrVt/x/I0WK2haBwuwrcyHu1vg63/H4/GLFy/&#43;8pe//PnPf3727FmWZV/26PJPWA5f2LHbjvZlJRq/sZfxxuP94UTWKxslZZOLeqlETVgGDfq4NoXgvUkiW4xsxMimSwACo4XkjWhWTT6t8znQOopDw8t8vaqqUmsGaQyRk6nAy1QnvQ3gbVUXc4PCIJVhBlk0YGEYRDiMoaikagojl3V51a5fNevvZXmuROlDWx9ez13u&#43;fXXX//Hf/zHy5cvHzx4cN/D/T5nfQwcP6eH5db6LYlIJ2c2zGMLEfcXKUXFm6WSlQH6xlTsBgfMDfnYVbTmJjuBbtpTgVSibMtllU&#43;r9awtVlK0QRgzhrRouVUmFOKBlakoBVamUuitDnCDBXlVLM&#43;auibRu3T4OB0&#43;jPt7QRgTKDSYyfZtu37Fize8PFXNVMub/Nnu6hKl&#43;/v7L168&#43;NOf/vTNN988efLEzVS697Ggn7M&#43;bTlu9bD8nETaT/3BL&#43;vO3e2l8JH&#43;bqo/hEDLWrZrLRtPRO&#43;4cDcNRu8TppvRF554aqMq2czr1VW&#43;mBSrRVNVSkqEMGWhPQolDECIDhE5RHRkUAJBbDkHcjMpnXNBxCAMlVzxxULU07a4ENWjtD/GkLfr1/X8/22tUp1qWQDVgrsKinzEIU3T4&#43;Pjb775xovVw8NDnzH9mcnzTzzL3sdPukp0f90/GfD4BQuSv8yXdUWpnfTdPsEJKM2lKJRswU5h&#43;G4jEbwVADM3VTlwo1QtvVB82ebn5fy0XEyronLPCTUGIsp8CMtAiGgwcNxzz8BEmUCayFhCahDWmGBCoygdsDAJkn61OhPVol2uCzUHzQiBkuev2vy1audGu8kw98Q9GWPD4fDk5ORPf/rTn//85&#43;fPn4/H4092pX/m&#43;ixw&#43;MKOz5kS9q&#43;zdlODHh8&#43;DyOVlLx0lkOBWzW&#43;8CZkYW5cyY3BcIF6g0Alm0k9e7O&#43;flUuLttGSMWUIu5Jjt3nUBz20&#43;GJMSGAqVKoFQRKpizLMQgpTBBhcZgMSRglo&#43;Nq3s&#43;v/p9qeSryWdkyaArdTlwM43Y4fDPZaVuWsb&#43;///Lly7/&#43;9a/ffvvto0eP/DyFX6ra5hOcowui&#43;wzLPwsTP3V6zK4Ne89yYASl0qKSojRaAD9ZDGwDnDdBjC3j2MS/vR8BGEkMcsDP1fJVdfWqmFw0da1BZKBvxvdxLV/dGVAS0mAIYQhQqBRhHDUt4sISZgCEcygBxoyyGGNkkkwEWMI1b1aCG2g40K2ran6vF9X/pWtZPTw8/MMf/vDf//3f33777eHh4Uf65b9sfdpyJEmyt7fn2Y0f5/tLffavx1I/rE/eKD1XedXRDsCyzX2486qbrzf0Arh94kAWmp/p/B/15IdydtmUldIM4sTV7W2azBCiLoDhRyshRDPM&#43;gDHgSb/H3vX2da2snVVRrLce6EXA4GDQ7n5/z/hzb2UJIdL6OWAAVeV0WhG8z7WJopiDBjHEMjN&#43;nAec2IVy8t79uyytka4jQmxMXMwkogke&#43;XEuM5wjbROGb4SWFty22DSvCTNDzcPLyBsnc/np6en3717t7i4WC6Xc7ncowWhA&#43;ARcoiiGIlERkdHy&#43;VytVqlnv7afaoSwaMG&#43;6EP65zBk/94Ek9dj9rUbjOKBe52tpQBa8G/i9t7SXbZG13NMHN0Ti2R6a55hq/3G5cHeqPpUFlE4W&#43;6F4oXB0Md4yFK3KUEG5S6KIzCoYwSiiKkhbgY9to&#43;HdvkThuJeocW5MZuHeLGLtGPXEcXBCYK3bFw/wlAbe/4&#43;LjvYRSLxeEuJUE8Tg5N08bHx9fX1wkhiqKcnp62223asY0P&#43;YlP5Uc/JmSAc3Y5H7cyoS5hRHcdGyZQ&#43;GEu/kM5OPSP2A5uEaNGzKYouEikpF1vVK/atRvbJoKcQmJYFMNeu4C3sngJVc4F6ti2cWW0G1KoHndYLCN4NfEaUhUeEmiIUJNRs471I9zcs1uHFF&#43;6tH2bcL&#43;TJfGXkkQiMTU1tbq6ur6&#43;Pjs7681aHI7v2ROPkwMhlMlkKpUKDF3e2Ng4ODhoNG5nXA&#43;LH88RK7u7rHhelEApdnCTUZNz95u&#43;T5AW0D1LGDGwWTObV7hVcxkJhSOqKlqmbuhtbDtc0GSUFuQklyJeh6oiSHDz3iLEmUNMvXlO2T/YbNpmPZ6djCRzqhYWuSOQG2ae4sZXXN&#43;x28felgSLd9Kq/j0jhKLRaDabnZqaqlQqKysr09PTMCDgWUNHj5BD&#43;NYAl8/nVVWNx&#43;PpdDqVSu3u7l5eXkJt6XD5MVwvpMduVhQ5w47dYMTgLgOv83Y/4iVHuEuYYxCzbrau2/Vrq92gDkGKKisqkkVKbcaoIIWRWpBDIxJKCmLEFcMeOQRJ4p5wCpIVVY2mtWjNaFVx86tLasT4h2TGI4m0LGDHOMPNA7t14BjnzGn1NBj&#43;AwyFQplMZmpqasFDuVwulUp&#43;kc2wHlRPPE4Ofz&#43;dyWTAeMDMx62traOjIxjuPRg/HuhlekChts&#43;ES9eC4h8uyaLgUOYY1DFcl/JvzSOdNVtiLtUd48pqXhjNa6PVsgzTcWjnX2Xkz0yQUFiLJdTIlISynCvMRRQ2LF5ru5c20dRwUotl1WhGr&#43;3bzUPHOse1G4Fc0HZCEnRqnjnmBSMNTi2B0/s8DIh7FgqFxcXFtbW1d&#43;/elUol0OJ5vqUkiL7IEfSGJicnvYn&#43;qbg3U2dvbw8mFA&#43;dH/eZkMGs0fdPIXlRU2ZTYris88V7cSpREgkjdVw7bl8dWM0rbNrE4Y4jMqGz7bg9WJRkRQvHi0jNqpEJUYoyh9lEFKjKOPICGF4rqxxCalSLZ8Kp0Wgia1SRfvF/WD93WlfcVERuctrgzBJcKtzve8JSMjo6urS09OHDh6WlpUKhAEJtL1ag2S85gkm/XC7nq9YjhPb29hqNBogjDLCheCAGGuy&#43;94M//Z/ZtxxdK4sseZMlOpaDSJKAEEOSJTg3TuvIuPxvq3pGsOPykMtDvPN8YMptZ1srIyUUySElroSyqpYTpBCjokJECYsdB4xRUaSSzCVJ9ZqRVFFGoptmkSRRJSq2qWMzh0NLlfg9Ft5d1QDreDKZBA9jdXV1bm4ul8s9t1zKXTyBHAAI5qdSqbm5OeBKPB7f39&#43;vVqswa3OwKNl99uBW0Ol75uzJ6LGySAJjmOKGS1uS2FI4kewq009p/QjXT4muM64JcsiLl3s1hxCx8KY9y1KahzhSEyiUlFCMS5rKZIRdy7QdbLvMlmXSWbkE7lLLm319Sa3rzh7VxSLHXtiN30dwv94zl8uVy&#43;WVlZXl5eXJyUnwPV&#43;YGYOQw/8MiUSiXC5HIpF8Pv/Fw/7&#43;fq1WAxMyrPvz7Qqgzza7Lqvzo1sKqXvDNs6IfsAjjiC1mHlqNc/1myvc2aUjQYp6w/GQJCJXkL1QmKexzF1Obeo4XFClkIxCcVmNKaKiRLkWI8S2qW0JrqkgLLi2o&#43;sOruLGHq7/7VjX3CWi4AbNxN0iHTAYY2Nj7969W15eBifDj00P65H2j0HI4fMD3I5kMjkyMlIsFmOx2OfPn6&#43;urmCXO6xbDPZQQSd3/1akK4/v2SfXk10zcOvEvPkbI90VWrh51qpXmy3dwpIrZUVRE8WQIKrCLTNk4COjGLcvzHZdVDJRimJSRENhFNJCqqyGFZeqlCBmu5wYFF9R89xq7tutA3pb6cm6HmDwT4h7FgqFcrlcqVQWFxcnJiZgB/AyvmdPDEgOnx/QjxuNRmFcAULo8&#43;fP1WoVpng&#43;SRq753uCVe9&#43;xZfvfzz81Pyjuk/FueA6Dm5arYuWIgukbjTO9FYdE5dLaSkUlaSoJ76mgt6vF7roHEgdbLSv6tVDxiMRA1sYJ/LTsVRJiyYQkrnIJG47pIXxOW7sWo1dxziFtGrPOozgY4xGo2NjY5VKZW1tbX5&#43;vlAoDCXn/pMYnBwAf&#43;DjxMQEzGqJRqPb29vn5&#43;e6rgd3uf0k3x8uBgATEqTIo7&#43;qYHmH38h5&#43;y8uJTZuNxvEuLLaNYfYXIxIKCl6cS3hm/KaeFvzAUVfMhcE6hjYqhGCid0mVo3as8nsmBaJdpYS8wo3j4ybL1ZjxzHOudMWuHO3l8R/AQ5cPB6fmJhYXV398OHD3Nzcc8c9&#43;8fPkiPoRo2NjUFxUDKZ3NzcPDw89HcxwTcPnNf1RWN8xTh/lbnvOXbtVvyNj1fEJbiM2jbGlkkI5WJIVjNIK0hqGjrPOJBD9BQPJEWUVEULx7JlxyFS7Zg6OjUODW6IrCE4dZpIi65J9FOrsYebe9S8cKnhJUru/SwIoUgkks1mJycnl5eXV1ZWyuVyKpV67rhn/xgCOQDQx1AqlaCyMJPJ/Oc//9nd3YUl5uFA6pMQ7OT2vdSnx1XBjAnepCaBSyEUSmuxaSU8KYox5krUVVwBBHQESXYlpMgoFIokQ/FcKDEar&#43;1ZjUNqXrnOhdPUDbfG2jHB1R3z3DH&#43;YaTuK6UEbzv4rCCoODk5Oe9hbm5udHS0n&#43;bml8TQyNEVSE0kElkP29vbJycnkKvrpze/T&#43;/Ef2cwhtEPvh3rNxpLEgqrshZOTkdTC4pW5K7sEGYTiTCvAaljOVxJlkRZldWIGk2Hk6Ox9AiuFcyrDetmh9inpHnJdFlwMadtzqxvYYzui/pPSdO0fD6/uLi4vr6&#43;sLAwMjKSSqW8YYa/ZldyH4ZJDiHQTgPrCyRi/v3vf&#43;/t7dXrdRiiMxQT0iVt2BP3X8g/VkJKWIqFkBqPpsvh&#43;ARS4pzLlIrIFiXMCWGuS0WRduyH6CmIIUVCqiQygeRZO&#43;Ygl&#43;EmtR3qde571uLebZrvexaLRYh7Li8vF4tFiHv&#43;Wt&#43;zJ4ZMjuAuplgsQsMctEXt7OzU6/VHc7lP8ksGqzD9vteRZFVLykpcDWfD8VFVS8lKVJTDrqgpjoxMYukWsTF3bVFmgiR3LsWI6xJq1ah5Te2GSy2vxtP5dup7b9LPuU9MTCwvL0MlcKFQeI4inWFh&#43;OQA&#43;IFUhJDqIRwOf/36tc9A6mB1509ZXLw2e1GSZaQgRZZEwWWdJUaNyqGUIIcRl1GYqmETmyYlpizasuRy16FWjTltu3Vs1Xdw84jafgCj99X9PndvfnZ2ZmZmZWWlUqlMTU35XWhP&#43;pgvieciR3CJmZ6ehiLpUqn05cuXo6OjWq32aKCsf6vQpYH8wM4lGCARQRCOYWJirN/ImhFmclRJa2EFtI5lRVE1JRwLOTjkOm3E28xukPaN3T7FrQPSPqL4yqUmSH30NBrBRMnY2Nj8/DzEPaHX6FX5nj3xjOQIrrKQyy0Wi6Ojox8/fvzy5cvl5SXGeIgVqT768We/zUVj1G7bZt00TI4uIgZOuXJSlMPxvBKK3OouKUhBIjUdatQtKNxqH1Kr6jotwSUPexiQc8/lcnNzc5VKZWlpCeKeP9lr9GJ4XnIEc7nQ5Z1KpRKJhKZpW1tbFxcXpmkOpVyonyFRP2wZRNH1KkYpY6bVbjcvGa9Z2HYopcRKFmZj6ZIajnbeRQ1OatQ8sxr/NWtfOgbDrgku9kbI3ns5L03X&#43;VWMjIz89ddffjXGa4h79o9nJwcAfigQSFVVVVEUTdM&#43;f/58fn7earWGkovpR3vo2xtu25ckOYTCOY1JNqHYbFLrzLjmAjMZaTBnNpYsyDJnuGa3z3Fz36zvkvax6zQ8g9Ej2&#43;7fBnSUwFKyvLy8vr4&#43;Pz&#43;fzWbfisHw8ULkCJqQUqkEvkipVPr06RNUHEKg7Dmu2xUkFW/b0URRkGQlGs3MxQqRSHZer&#43;3Z&#43;j8CbbnmV/NKF2idmSOKzBzrkrRPiH5GcdV19LvSSl2fEZIJIyMjs7Ozix6mp6ch7vlWDIaPlyMHAH5VhUIBcv2lUimRSGxsbJyfn8MSc/eQn9nZPrSFEUUJqVqsEMnOJ0rLXpL2E7755BhVRg5IvaXjI0kgjFwzu8apzt2geGNvmwGb1ZmZmdXVVdiS5HK5LqHfN4SXJocfSE2lUpqmweAOVVU3NjZOT0&#43;7cnU&#43;fqZjtidutyseP9RIWlbD4VhaCyGdN012Y1sNhtu2LYuCI7iWN4f8e7dqz6/Zb1stl8v/&#43;te/1tfXp6am/I6St8iMX0OOYKAMlhiIlflND8MqF7prcu58Sbyzunj90dzrYZSQ6jWsENElniYQFG49RAtYSqALbX5&#43;fm1t7f379xMTE/F4/LWFw5&#43;KX0MOgN8KHIy1Q67u0V3MA&#43;jDM/WVejh3HZea3CXUvCb6P45VZw722mhZsJ7vvu8YPkI6nYbyrUqlsrCwUCqVXrgS&#43;JnwK8nhN8WAxB3ILufz&#43;a2trePj47tNDwOMBuvpdsCC0vkvZ65jEr3qUhO3TnB9B7eOKdG9oOe9lZ7&#43;JXx9z4WFBYhujY&#43;P&#43;9UYgz2QV4VfTI6Hc3V3K1IH48ddSN5sN4EzimtmjRCjs1klxqlr33BqdTGy58nB9xwfH/cLxH8cpP074NeTI&#43;iCQCIqFoslEol4PP7333/75SDBN/9kXrdDR1kSZCS6Fm4dCa5N9FPHuuS3Ywb4o75nUCr6/fv3vr7nU8ecvXK8CnIA/FwdDARJJpPxeHxra&#43;vs7OzRvsunXkiSZFHmnNRw3XKp4ToNzvB9ehjB/wO&#43;Z6lUAo0lkIp&#43;bUU6w8IrIkdXXx2IJ0ej0c3NzZOTk2azOUDfVE8hVKggFZjtsmtPTpQKvLeATvBPv3UApKLX1taCUtG/HzNeHTm6AqkgdJnJZLa3t79&#43;/Xp5efkzu5ggPO1ah3Py7aLd93D3lqLRaKlUgrjn0tLS9PT0k6Si3yJeHTkA8DPNZrN&#43;rj&#43;bzW5sbJycnOi67o/XGODMgS/&#43;3j7Vrj8RQiCM8d7DzMxMPp9/Ezn3n8QrJUfQBQmHw&#43;CfQpXl8fExBFKHK1vYE/5SMjs7u&#43;4BhDEGkIp&#43;i3i95OhK94PoPaRzDw8PB3BB&#43;hSX8l&#43;A7wlS0WtraysrKxAR/&#43;0Nho9XTQ6Av8QsLS1pmpZKpTY3N/f29kA95mF1kCD89OwD4h/&#43;Ff2c&#43;8LCAsQ9R0ZGfmHb6i/BGyCHv8RkMhkIpBaLxVKptL29fXBw8IA6SM9BgvcFtfwXUL5VLBahqg/aVl9PF9pL4m2QI&#43;gYwm86n8&#43;D&#43;uXu7m69Xh9Krs6Xih4bG/vrr7&#43;gSMdvW/2fogXgzZAjGEgFbwAQiUR2dnaq1SrG&#43;GfUY2ApyWQyMzMzlUrl/fv35XIZbNX/msHw8ZbIAfDzGrOzs9B6mUgktra2zs/PBwik&#43;q0DUIK0tLS0vr6&#43;tLQ0NjaWSCReT9vqL8HbI0ewGg8CqbFYLBKJbG5unp6etlqt/pcYP&#43;4JlfGLi4u/Sn3rdeJNkgPglwtBx1Q6nd7e3t7b27u6uupTZtnPuc/MzCwsLPhS0TC27H&#43;cGW&#43;bHL6jAAJ2EEjN5XKfPn3yW7fvHuL3NQVH5EHcs1AoQOXAH1oA3jY5goFUTdOSyWQmk0kmkx8/fvR3uXeXGFmWfbk&#43;iHvOzs6&#43;pL7nW8GbJ0dQCAXip5FIBHYx&#43;/v7Nzc3lmX5bZK&#43;hwFTB0Aqempq6o/v2RO/AzkAvjoIVCyn0&#43;l8Pr&#43;zs3N2dqbrOuccfJRcLjczM/POw8zMDEhF//E9e&#43;K1D1x6KmBQqGma19fX&#43;/v7Wx5OT08ty1IUJZfLLSwsrKysQBkwhNT&#43;LCX34fexHAB/lwsy7dlsdnR09ODgoNVqqapaKpXm5&#43;f96TV/DMbD&#43;N0shw8wIZZlNRqNer2OMQbh1HQ6DVuS37hIZ1j4bckBgDHEMNUc9inQ5P7HYPSD35wcgEdbDf6gJ343n6Mn/hBiMPxZd//gXvx/AAAA//8dUgFApX8uQAAAAABJRU5ErkJggg=="
+                     data-src="/components/cover/images/shelly2.5.png"
+                     data-srcset="/components/cover/images/shelly2.5.png 399w, /components/cover/images/shelly2.5_hu_f418e40eb6c73410.png 79w, /components/cover/images/shelly2.5_hu_dc9b5c43541c6298.png 133w, /components/cover/images/shelly2.5_hu_cbe4e2e1d615baa8.png 199w, /components/cover/images/shelly2.5_hu_d9144b1333fcaeb9.png 266w, /components/cover/images/shelly2.5_hu_231f71a402687a1.png 399w"
+                     width="30.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<p>These devices typically run hot (~55Cº at 20ºC room temperature). Long-term heavy loads (near to its rated limit) can overheat the device.
+It is strongly recommended to monitor the device temperature using the NTC temperature sensor, shutting down the device if it exceeds 90ºC.
+This safety feature is also present in the original firmware.</p>
+<p>
+<div class="admonition warning">
+  <p class="admonition-title">Warning</p>
+  The ADE7953 IRQ line is connected to the GPIO16. The <code>irq_pin</code> parameter for the <a href="/components/sensor/ade7953/">ADE7953</a> MUST be
+set to GPIO16 to prevent device overheat (&gt;70ºC idling).
+</div>
+
+
+Configuration example:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">esphome</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">esp8266</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">board</span><span class="p">:</span><span class="w"> </span><span class="l">esp01_1m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restore_from_flash</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">i2c</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">sda</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO12</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">scl</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO14</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ade7953_i2c</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">irq_pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO16</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Mains Voltage</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">throttle</span><span class="p">:</span><span class="w"> </span><span class="l">5s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">current_a</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Open Current</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">open_current</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">current_b</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Close Current</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">close_current</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="m">0.</span><span class="l">5s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># NTC Temperature</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">ntc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor</span><span class="p">:</span><span class="w"> </span><span class="l">temp_resistance_reading</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Temperature</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">unit_of_measurement</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;°C&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">accuracy_decimals</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">calibration</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">b_constant</span><span class="p">:</span><span class="w"> </span><span class="m">3350</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">reference_resistance</span><span class="p">:</span><span class="w"> </span><span class="l">10kOhm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">reference_temperature</span><span class="p">:</span><span class="w"> </span><span class="m">298.</span><span class="l">15K</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">on_value_range</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">above</span><span class="p">:</span><span class="w"> </span><span class="m">90</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w"> </span><span class="c"># Security shutdown by overheating</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">switch.turn_on</span><span class="p">:</span><span class="w"> </span><span class="l">_shutdown</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">resistance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">temp_resistance_reading</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">sensor</span><span class="p">:</span><span class="w"> </span><span class="l">temp_analog_reading</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">configuration</span><span class="p">:</span><span class="w"> </span><span class="l">DOWNSTREAM</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">resistor</span><span class="p">:</span><span class="w"> </span><span class="l">32kOhm</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">adc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">temp_analog_reading</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l">A0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="l">30s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">gpio</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO13</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Open Button</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">on_press</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cover.open</span><span class="p">:</span><span class="w"> </span><span class="l">blind</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">gpio</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Close Button</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">on_press</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cover.close</span><span class="p">:</span><span class="w"> </span><span class="l">blind</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">switch</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">shutdown</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">_shutdown</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Shutdown</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">gpio</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">open_relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Open Relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO15</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restore_mode</span><span class="p">:</span><span class="w"> </span><span class="l">RESTORE_DEFAULT_OFF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">interlock</span><span class="p">:</span><span class="w"> </span><span class="cp">&amp;interlock</span><span class="w"> </span><span class="p">[</span><span class="l">open_relay, close_relay]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">interlock_wait_time</span><span class="p">:</span><span class="w"> </span><span class="l">200ms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">gpio</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">close_relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Shelly 2.5 Close Relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">pin</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO4</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">restore_mode</span><span class="p">:</span><span class="w"> </span><span class="l">RESTORE_DEFAULT_OFF</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">interlock</span><span class="p">:</span><span class="w"> </span><span class="cp">*interlock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">interlock_wait_time</span><span class="p">:</span><span class="w"> </span><span class="l">200ms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">cover</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">current_based</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Blind</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">blind</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_sensor</span><span class="p">:</span><span class="w"> </span><span class="l">open_current</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_moving_current_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_duration</span><span class="p">:</span><span class="w"> </span><span class="l">12s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">open_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_on</span><span class="p">:</span><span class="w"> </span><span class="l">open_relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_sensor</span><span class="p">:</span><span class="w"> </span><span class="l">close_current</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_moving_current_threshold</span><span class="p">:</span><span class="w"> </span><span class="m">0.5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_duration</span><span class="p">:</span><span class="w"> </span><span class="l">10s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">close_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_on</span><span class="p">:</span><span class="w"> </span><span class="l">close_relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">stop_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_off</span><span class="p">:</span><span class="w"> </span><span class="l">close_relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">switch.turn_off</span><span class="p">:</span><span class="w"> </span><span class="l">open_relay</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">obstacle_rollback</span><span class="p">:</span><span class="w"> </span><span class="m">30</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">start_sensing_delay</span><span class="p">:</span><span class="w"> </span><span class="m">0.</span><span class="l">8s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">malfunction_detection</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">malfunction_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Malfunction detected. Relay welded.&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">status_led</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">pin</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="l">GPIO0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">inverted</span><span class="p">:</span><span class="w"> </span><span class="kc">yes</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/components/cover/">Cover Component</a></li>
+<li><a href="/components/cover/template/">Template Cover</a></li>
+<li><a href="/components/sensor/ade7953/">ADE7953 Power Sensor</a></li>
+<li><a href="/components/modbus_controller#automation">Automation</a></li>
+<li>
+<a href="https://api-docs.esphome.io/current__based__cover_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Current Based Cover</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#use-with-shelly-25">Use with Shelly 2.5</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#use-with-shelly-25">Use with Shelly 2.5</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/cover/current_based.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1245 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>SUN_GTIL2 Grid Tie Inverter - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for reading data from a SUN-1000G2 grid tie inverter using ESPHome">
+            <meta name="twitter:description" content="Instructions for reading data from a SUN-1000G2 grid tie inverter using ESPHome">
+            <meta property="og:description" content="Instructions for reading data from a SUN-1000G2 grid tie inverter using ESPHome">
+        
+
+        
+    
+    <meta property="og:title" content="SUN_GTIL2 Grid Tie Inverter">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/sun_gtil2/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SUN_GTIL2 Grid Tie Inverter">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>SUN_GTIL2 Grid Tie Inverter</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sun_gtil2.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>SUN_GTIL2 Grid Tie Inverter</h1>
+        
+
+        <p>The <code>sun_gtil2</code> component allows you to get voltage, power and temperature readings from your <code>SUN-1000G2</code>
+or <code>SUN-2000G2</code> grid tie inverter. This is done by reading the UART data transmitted from the inverter&rsquo;s
+controller board to the display board.</p>
+<p>
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  You need to open your inverter to apply this modification. Use at your own risk! If you want to connect your
+inverter via the (more limited) external RS232 interface you should use the
+<a href="/components/modbus_controller/">Modbus</a> component instead.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/sun_gtil2_controller_board.png" width="50.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Pinout of the inverter&rsquo;s controller board</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 600px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/sun_gtil2_controller_board.png"
+                     fetchpriority="high"
+                      style="width:50.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAB4CAMAAABsOSjPAAADAFBMVEUEBQMHCAbx49z36eH///705uAEOSECOR3s39cGMyD05t356&#43;MCNRzp3NT77ecCMRoGPSUDLBfv4dgeHhkPEAvt4dwMDAgiIh0XFxICPSEbGxYlJiATEw4FLx0GQijg0sne0MX06eQoKiT88Ovo2tDj1cvl18/v5eELNyQEFAkFJhQVYTgNPigMRCsCDQULZDMFQiLj2dQESiksLijo3dkVdUIHdj0PSS4EGg0EIBDazMEMaTbf1M8Vajz37OjQxb4DUCsOGxHUycLb0cv&#43;8OYLXTAxMywNbzsYf0lvf2wSWTT&#43;9O8NRyYERyU9PjY3ODELekLXzccKPSFCRT0TIRYIgkgJVjARUDAJWCrLwLkYUDaLj4ANTipKSkG6sKibl4wyXUTXyLx1hHAtVj0bSTEXQywVMRyRlYUbVjrSw7dXclxQZ1I3Vj4lUThXVkz/9OrMvbIgZT8hNiUaJxyEi3oWNyFKYUwebkKnoZZYalYOKxlmc2AYPiZme2eWjoRqZ1/FuK99g3IfLSJed2FveGazrKM&#43;XUa/ta9gb1k3SzdEaVJiYlqKhH48Y0wpOS1NcFhwb2haXFSypp5PUUlraU&#43;spprBsqgxQjN2b1kLh0wjQitDUzmAfHYndUotakd7dWhkXU9IRjPz8/IjWz85OSgnSjNNW0EzMSLFvLV9indAQS1bXkakmpGfkoAkIhYhilREVES5qp&#43;foJFTTkKai3pmYkSCgF0sKBt3eXD/&#43;/BZVz2ThXKKfmy9v7uzo5OUmnM5dFBQTzfHx8SKiWKmqKGen5utno17fFKPk2no6OeSk5DIt6ja28o5jlzPz8yomYW1trOur6t1b0icoXzV1dIxgVTd3dzBsJ8dGQ6SpJBIgl7qjKFabUjl5NTCyriDoYeFcWF9lYHP1MFtj3dbiGhvnnykkYlKk2e2wK18jlndkKH62tyasJj0ys&#43;5rZWouaOkqYVbmnLspLPSr7LedInktr32ucO/a3zTn6fHfIyTgU/AlplmJyunkWTAVmiQPkmO4DMcAABDFklEQVR4nGz8DVhS&#43;b73jxNeKD5ghjGapoABUsIYYcMMkRSWJePIwGpgRDQQKAVxzIyJEFExVBbgWtKEY6R1GY32MNGuZtaZmpmak1MXc7dnmvvu2rvuZpe39jS7ru6mf2e3z5zr7P/1XdjM/p1zf5bIArRe673e6/PwRSX02M3JC/EoyACfFi7MyEhOzlLxuJ2jgweOHj169PjxL44fP3786NFY7GjsQEtLy2BLS4u3xRvzHrXbb&#43;Nx9EDMjY2P1&#43;3eemFk348jVz7rcw447MZOk9WJ1uTnLX3ttQWJeG0B2CMQwP7ivPouadqyt5cxaeS09MxyGv3FLy9f0JUNdU7HQGPHVE9PR8dUY9&#43;Aw2G1OpzYVEdd19atdT1Oh53Q4zNxU1LxTZWakZqSqspQpaiSubxdneHBAweOHgXE544fP3rgQCx21Bs7MAgNDh5oOXAAf3zUfvy24/bto0ePou4&#43;rKOrrqfP2VfV&#43;Fljn7NvoMVssjvhmqLs3ATzawnkBQsICwgLFizO/fzMVhkJQJeRieWZSTT2i5fPX4hrL085Hc7GqZ6qqp6pjp7GPpfH43T19Uz1dPjr6vw9fQMOoHRqRkbqqy01I0OVoVJxd3V2RgcPHDhw6SjOfO740QMQwDxw&#43;PDgscFjB8Br4JCOHrcfP2o/fvToUbivp6eurqOjZ&#43;pqY5VnwFPlCoyavW4YEubkLZ6nTtxw5gWL8z5pPVHBXPZ2ObOMQkzPZNLoL16&#43;fCHt34o5nX09PY1VLldjR0dHT2NjIwbwE4H19TkJmN2cumfhooyM1IUL9yzcs2jRnoUqVSdvV&#43;doGIc&#43;c&#43;aL44eAO&#43;oPQNCB2KX6A4ePHTt2rOZYzeHDhy9dunT0C2ChAweOHh/AGqfq6urqttc1Dun1AU&#43;V1WRuGUChyqIE9KvbvD0W/1l4aDed&#43;fbby4opZWnl89DPJ3f7&#43;5xIVU9PlcvjrOrpSARQI1KF9fT0VPUhTgJmHU1duGhhhiolY&#43;EiPBZu29Xe2d4ZHRwEaNClM61fHG9t/aK&#43;vv5Afeho6Ez94ZojRyo/&#43;eSTI0eOHDt86WjsAATOwlHU6aqaqZvZvnV71ViTZmLINWQ021B7TWVR9tJXxpgXGkC/trQIHhaUL3u7vFhAJqZnlpcxAPTwdgRx9mE9jVVVLiB1XV1CiLq6DnAEPT240laTaiFgVqkyFi1asWLRokXbdrW3t4&#43;GB4&#43;FKysrFTVQfWtra2soVF9fXx8Khc7U19Qcqfw8f&#43;enOTn5RZXHampqFArc/g6Lq7Gubvv2O40BTbUm4LIYzaYWKCwE0K/Nm/qVpYGpi9wNnPK33y6nCShp5eVMMuOXly&#43;HuzAYHkCqGnt6GrHGnqmOuu2J6Nq&#43;vW571/a6qcY&#43;J6HHGlWpMjJSVCtTVEDqFXsWbWtvD44ODg4qKoVFQqGiBtDWn6l/FVCNQiHM/zQvNzc3Ny9fKBQKi4RHakCm8Q4BqTs6qnzaapHeY9GbzdHBoLAoZ&#43;ni&#43;dQBsAmJ5PHa4kpkf9myD95mkgW4p8kvnr/89T4Go6jD2VfV09gz1TM19Urp7du3b9269Q9bt3f0VPUBaG6KKkWVAj4BTy/as2vX6Gh0sGXwiLAov0hYWVMDQYchqB6CoBpwU4CDyc/Jy126dGluXnZOTk5OvlBx4NKBA4Mtno7tHVNVriGb2WwcsujNvOhgOFiUk/sanjkSShPmjbK0cnySlvn2MuZPdEFaeTmJ8uL5z2fvoqFYyI46nM4qEI2NjY1TU1NTHbjiW7du394xhVUROhzR1NQMVUpKSkaKauHCRXv2qDpHo9HBlgMHFML8nKKiSkXNPwVOLCwqys/JzstdvHjp0tzcvNy87KJjl744cCDc4uzYXjdVVeXx2kxGKw4dGwTQi3Hm&#43;TS94LXFIHJrIpO0ZW8vKxZUsNLS0//65PnPf78LQzXhQShmt1uHHEOWIYvF4/G4XK6qqsZ50UE2IfgtUW5GqkqVAjKeSrUnZVfnqA3UjqMHaopy8vOFwspKxXxUVlZWCvNzcvLzi/Lzs7Nzly4G2EDv/CNfHP/ii0sHnHVbwTXT6LHarRaPz2a22WOKop25ixM5OoGcW1SJ/1NnuqS0ZW&#43;XE&#43;kMDoB&#43;8fLnv7nrFcFgOBxtafF6A4FAwBfw&#43;YaGhiweD84NoqenkdBhsXGBN1Sq1Iw94M5sMgasjtvHj585AqCLgGmFgBaPopy83LwcAA38sTgRS3M/PXLp3Llz544PgCrW0VHXgbmcVZgnYGtxoFAQr4mviuKCXAWKRSLj4&#43;P&#43;YWXxsmXlFLGYU5xOevLi57//7VCNsD3YHoxGB43GFr1enyD3DQ3hgs/7pYrQY7HxVCpgapUqJUOlMjdN6IdcVc59t88cKcrPzy/6p8jPz8/Pzs3Nzc4vKvpn6MVL84ounTv3448/nkOtdqvVg3VgbtSBuJwBu8UdUuD&#43;eEW9uAi&#43;39Dd3d3d318rYS5blv7EIOakpSc9&#43;eXnX8&#43;3KoQgCwSjUZvRaNTr9fp5aGAUC&#43;4Ul8tF6LEYeckpqiUqnDy1WtM0scNX1XjFee4LhTD/tyjKx5GBk19BZ&#43;cu/V3qz4998SOAPjoYHo3GnJgDCitiqNNi9bhbFfnASa8SdV69f7&#43;MQZdwOBJ6GWnZsnTOCxmLmP7XJ7/8/Hd/qyIIAijd4vV6A3afFfDikTA4CEKPx8ZLTk5WZWUtUSWrVCKtVqvVDzlHRvZ9cUz4eX4OHriJwQ4wMg6NH0Du&#43;qW/&#43;QNA//uVH48PjnaaWzxIqDInWwgNOB0OR6gSZ34tUQkXC927pQwGnc1hsSUUXGmZmEVK/&#43;uTFy/vn0chCKo/EDvQEvNareBC9LiAI0ChwXETnwkYsMcSgA2UVpk0pmqzzTswsm/f8WOVgDQ7G0AnmPOB0EvzcKXz83fmvdJ66dJPP/ni3JUr//7jjwfCo6MtDmcomJPdW4M6fLEQFMxemnAHYV5oMZ3BoNPZ9Ioy5rJlpCcGMYuUlPTkl19/jcCtKAy7D1lRq8PpcjldfaAkgroyBVqRRHg8BKc9ylsCeJOBRURaXXV1tall4MrIvuP1lUU4dPY8dHZOwh15OQl/44/mqfM&#43;uXTux3&#43;/cuXHowei0Ra7BYWCihoohMYCKKQoylu6eGnu0tfw5Oze3cxgiMUMNptOpzCXZZLYL5SUtKS/Pnnx6/27bjdy98KF8X0DDmdVVZ/H6eqp6zpx4sSJrropl8viASYZGhoioF5TVvKSFJUKaF2tbTLpzNUm78DIlZFzhwF0dnbe70rn5OTl5eFC4x7Pznul9dLczy&#43;du3IFQLcMRgdb7PZQCIVReyzkcMMhqDInr0ghzM5dmids7eoW05VisZjNTniaxJExKKR00pNffj0bcbvvXjh//sKIAxRF14DF2dN18vvvv/9&#43;a0eja8gXCIwFxvR6PcHhNfFXJoNcp1qyUtdUotHpRFrvQN&#43;VkX2HFZ8ANXGhcwA1fgjgcZGwKKH9K&#43;qluZ8fPvfjlX//cZ/V22KMBsODMTsyBUNQDHZFEBRVFEEwCopTyH9ayhCLDQYxg03HoZkUGQNX&#43;vmv9&#43;/Ch9CRCxcujOw7PtDX53I4XJGzIE6erOvxDAXGJkA0NRGqrLbClaolyUtUK1XVuia5SSfSab2ezz7rO3fpiLAIuOP3DJKfnTCLEKcG1gEGWbp06eLcT48d//HKlZF9dm&#43;LLWpqNwfDVgQN9wZr4AiCICHIDe4wLHJif5vBIDZIDWJGRQWFtGxZuUCppABPv3h5P&#43;JGWw&#43;NjF8YGQD9h8sy0Ndx/vxn4xfOd9X1uKyBBHJTE57yslZWq3BPV2t11bzqarPe0dd35dylY58AyvkEUgRAEw4vKhL&#43;F&#43;jcvE&#43;PfbFv5MrIbXuL3miLdu7aswuyhHrXbwmiCIoiiDsSwfwnpk&#43;c2H36T93NzQZpc3OzVMYhZS4rL1PSKcSkJKq4f3dX5K5738jdC&#43;P7rNaBPtwe5y9cGL9w/uTJjr6hQAK5SUuYshhFfD6/OkuVkqwSaTTVKq7KbHSMXBnZd/TYJ59n5wFMQCqsFOLUOWD/d&#43;hEs5ebB2riyMiPALrFFjW3b&#43;sNwyHh&#43;l4IgaEw7J/xY1h8eO/w8OnTfwJaN9d279/fLAFKlykrKKT0JBp98vSJ&#43;2fP371w4cL4wHH7gKvP6Rjo6zl//uz5kydPdlQN6RPQ2iZCo2eCz6/mV69cqVIVauTaalUhyB7OfSPnvjh85PPsvERk5&#43;OlHKQMXPWi&#43;cSSB6jB658KDx//cd/Aba&#43;3RW80Rs27gl4EDQtjCIaGFag/HkEi08MNDQ3dbbXNBoPM0Hb622&#43;76cVAaTodQBMlkw3DX90/e/78hQt9t71eq7PP47Ba&#43;jrOnjx58uT2Ho9PP6Ft0jZptVpCo8XI5/MLV1ZXF1ZXa0o0ourqaq1&#43;wPnjvn1fXALQuJIAGkidoM4HbV4COjsBnZ2X9/mxS&#43;f27bt9VN9iNBptUVMUrfKEIBTDfDVBCIlgiP9yQ39DP7gMxWKxoe2rsydPi4nlb5fTJBIKKZ1Jk9Q2DJ84e/7C&#43;PiINWZs8Q64XBa73eGcwns715A3YQ78QrTY&#43;IWqwurCVdXvVGuaNNXVvGqT3jGw7/a5Lw5/AloN0H1mZ&#43;fPN0z5CX//zpyXl4D&#43;9JPDx8/dPu5tMRr1gNroRWPhcAwNQEFuUQx1Y9PX&#43;xv6n8vodAaDwRC3DZ89Oywmli9bRhNIyKQkJlFS2z&#43;8FXOj&#43;6xHvbZo1Otw9Vl83oAVpGyXZ8iHdyKgFwkQqiwTfL4qeeXKrJWqrGqdGeQ&#43;XtQLZvAvjn2e/edcvGXGrz7QRwNX78zJz//dHKCdzs7O&#43;3P2J8cuHT8eAzobjRM2WzRqCvbu5Paaeb1bdgYh2D/d3/&#43;8v1bGSEAb9n/11X4lrXxZebGAQyamJ9EqavuHu5DYgcHBaDRqMukdriqnw&#43;fVB0D7MWRNNE14LSdUWYyiwkJVsio5NYPbaeapChZxd422xM58cfzSkfy8hDcSNRE010XzRSbBnIt7Jzsn&#43;9O8vOyiI4cvXTowGAYNms0WHR1tL9iyYkvBloKCgpwiCI5PNzT099dKGQyALTY0t9VKJVTmssxiFodMTCLRJLX9DVuRWHB01GQym6JGq6uqz&#43;ILePWJPs9icYE&#43;ZHZqqpFQ5dHzC6tXAmxup63F2L5r12g4Fqu/dPzcmSNFRUIwAVQqFDUKYU6&#43;sAaqUYAsjWe&#43;7FcDF0iK2fmVYJY8DMUGB71eb8tgi7clHOT2FqwvKNjZG6yE3P748PD1/lqpmIGHWKxkMCQ0ZmY5kZOArqjtb5jGYtHOTrPJZDIZA86&#43;qgFrAHeFzwp6PbwzrXK5CI2WCVHhO4XVK1WqUa/DYm0JttgdMIy2In2tUH19qBV2o6CLQesrK&#43;tRGA7V1NTX5ONpMHcp7maQTnLyFSgMw62hEOq1O5wOe8zqgYdiEBQseKsgGENDIcQfn748vLfbIJ6XWixmSNgUUnkm8QmHQiLh9mj4KNIaHh0F7tDavA6X02PXGyeMeiC1z&#43;fzBfDNRxjyafnvgJKo6vQ6PfZYLAZbUNjldke2I60wHEIRDA25MQRx19e73Sg4BHdIiF&#43;Eubl5wpqaSrzRLoLcbtSNwW7M7cY8ISjmxlwYYrHYelcUhJEIgmLx&#43;PTw5dOTMoYStHgMpVgmVlYIiOWZJArrldL9p7sGoEFwlow2m97qdA3Y9Uaj3ucAVh7yzSfqJoJNxC98Z2WWKoMbhavs4WDQjqFhyI0hILVibgiCYagGjmAYhsJISAHBbjeGVmbjkZdfg8JoCALckDukaMUwLOJCMHcoHMOLtgvRc7f0xrAZDIXj05enTwzXKvG2FEgtbZYa2LT0TCaNQgZKM9q6uxu2YmgIhQccVq&#43;&#43;xTrgGrDq9Xqrs/FCR0dPlQVkao1GJCIUpCYvWVn4zkqVyuhyxbgFQRQL9AbRKQzzT0UiboWiFa1UwP6IP4LC7pocIYogEbQST9aKyqLKkDvihyFhTj4EQ/kQEolEYBTBEDSEYC6XC/HEuDuDlkjED6PI9HT8RIOUTqdX0AG1uLl7f5uMwiwvJ5YBpSni588n&#43;z/yO91YxB/BLPaAb8DlHPJ6rX0Xzm///uT2ukZLYKJJIxLxCW&#43;tKFCtXKVbVc03erBAsDfow9BgEI4gGIL444iiMhSqrIQjWAQoDRVVom4EgxX5OTlFivp6RWW9O&#43;JHoCIcWghhESyChkMwhrmwWQ8aGEICvcEA5o/EkRASn47v7sbTNICmi2v/9NVX3ezicmYxpYxISnvy4nn35OTerZEL57//9vu6ngGrfcDltFjtA&#43;MXzn7//bffd3X0DeltWhGfT3jzzUXJ71Sv01VXm4YwS8wIhRBPyIcgiBuFI6&#43;g8aYHhjG4HnXDcAQDjiiqrKlRQCgCo7HK/LwcCEFD7giGzKIQ5MNmMTCKh9FZNBCDI4gFw2AkHo8P1wJaOp3OZtMZzadPnhwWkwE0mUgiUl48/66ttv9E14WT33717Ul/n9XqcPV5rNaB8fMnvz/x/fcnO6oGvBMmoPT69XtSVdXvVGdldRotiAcNxFAYgRE0BKMxdwQWFkGQUAiFKhUoGgIvwKEQOP1QYmUBCoUgRRFoumvcCHgefKcFwZChIV/YpPVhs7AFGcK/BYnH7w9L6Ww6EJrDYdMN&#43;&#43;&#43;f/aqWQmLSysqIaX9lvXjZXVvbPdx1/uzJE9&#43;fPN/nsFudLqfDOjDeAQaBk11nGwcCRq2IX0go2rmt0ywym808rnnQh/qgYFAf8sUgKATVQCFFTnaRMCdHWJmTIwwKFVAopACHEArVVIKmT6hQ4Ks3OXl5QiiEhkLgpVjI5wsYoQmtyTQR8PkCkBEKoQgwW7zhuRK3B4fNYbMZbac/&#43;pNUQCumUShEEpH14vl3tc2TDff9F86fP39&#43;3Gn3BnB/OJw9J7d&#43;f/Lk2Q5swGszAeiaGijmDXgD&#43;pZoNBoLQOFgMBwOBoM1EKSoxJdm8DoNCh&#43;Ys0AlLApWVlYqKhUAu6gIr46gICZW/aCaYDRsC5pMpqCWZ9JqtbwgFwrBCIJF4vHhyWaZWEynszkcDocO8geDQ6bRBGVEIvFJ8/PntdLahhMXxsfvjo84j3uNLXjSszv6es7Xne043&#43;O0tjSJ&#43;IWFhPqQo69xahbM6NZALBCLxWJQOBiGoHpIIcSHrZycRHsEuufsnBzQLAnxGgmo5xcW8ImmSAFdugTVBIPmoClsM2nBxuNxucEADBJgxB8/MdzfJjUw6BwOh8Xh4PACAa0MV5rz4nlbrbS2/wS279DxQ8ftMVvU5gNJz&#43;v1OZx94319A1avzcQH0Efq4anp6ZmZmZmIy2JB0SEE9kG2ECiBNVCNsKiyBpzyEAT8UlmUDxwCVSqAojU1isTkOz/d5CtCbveh1kGoJWwM&#43;VA9BDoymy1sg1CAHIkA6ob&#43;tmYlnc1hsVgcNpvN4kgEZWUCCo1IfGJ4/lwqlfafQEIQ3jSZRTavwzlgBeXFa7da7bGWKNB55UpCjgLFbk7HZ&#43;Izs1UuDzKLYRheBkGudSP1EAq7Eb8fQUBHjNZAMAZqRwhBQxAEoPGVnBx8Pi&#43;qxyKRHqTVCtthF2YJBWAMQ4Z8sA&#43;1IFg8Dpj9oGlqa2bMQ9PpbAldIhBwyqgkKufFc6nUUDu5G6sPtneazTw&#43;z2y0Oj1WrxEUdZstqjXxeYWqlVkrCXn59QONs41Vs9iQbwiZ9btQHwpjHh&#43;MeOBI3I0iCArjFQNP1SiGwAiGuCNIKLFSXalInA9FZZEwFMHcWMSJYB4EVPIQMovMYsgs7EGQSHw6jkTi8cvXG/bvbzPQE9AMsVhmULIlCaVlzbVSmXRyGIu1b&#43;NyVSpeltlmH3A6vEaNmc83m/nmLF5W1sqslVmEpdnBQbyz1tu0RjQyGwoGIUvEFwy7MQSbiWARNwQhbghyRyJ&#43;DEYQFAoBBgSFQIRQN4zWKyohSCGsDCEohEYwLAK7wdcFEAyJYC7MA8OANwLD/unrl4cb9n9nYLBZLBaLLW5u&#43;667WSmRUIgkmkAGlDY0N/hD7QV7ClKTs1Q8k9fitNiNJhGPl8XDkVWqrKwswtK83mC72cwzc7ncXj2GxYLBMIKFuEEYCIb54zAEIQgEgdoAoEMKMDvFMRQ4HY3E/QgK1YTQ1ppgMITEgiFsFptFYyiCwSg2M4sMwdgQiheWOAIq&#43;fTw/u9wf3AAdPfpb7/aL67glNGKaSxZbZtBLJZ2b4WDexYVpCarknmmFodnwK43mfm8rESoVFmqLEJuXlEwyOVyC1ILCgrCeEELIbNoGLKAEgP740gohCFQCAHtBwJaPuAUoBsKH0L8J&#43;IRdwhUncFg0I6gYRTDMCwUhNDZCDKLDQUgHwKjMBafjscxFIlfnj7d3dZsYABXc9ji/d&#43;e/P50s1JCKQZKT7ZJDUpx7W4kvG3PolRucpaq2mgfcFr1NjNvHhogA6WzhYpgLyAuKNhpc/sjCAxbItgQ7BryoYHQbBwJoRgWCiHAzOB8I1gEA9cVhrhH7o5f8EfAd7jtLdGgD3PBHpcFdqFQAMZmEYsP4mnRWcSCxeP&#43;yEwExuKXh/trmw1iMQNUcrb4u&#43;/Pnv2oWywhF5OKBbK2SYNYLG7eG4ntXAH8kZzMi3otTgdIdFmq5GRV8pJkVZZqSRYhN1t4LAhMVFBQwIWGMGwWg0MWbBbxQROQLehDhkA5Q0EOBGUNicQjERhUN3/k7t2RuyPj4&#43;Mj7n2wvSVqC7iqXB5fLIAGQhbEBfp1LTeoh4H24PpFEASHNuDjuBifbr86efKrboOETCymCWRSqYzBUMr660LtKwoKUlOTVVnmFocFmJqXlZyIJeCDkJtTCdW040IXmGMWGAwnoZAF8U3weSYeTzth1Idg3MAhAA7&#43;bzcMQMbHR8Y/&#43;2z8sxH3yD630&#43;o12owBH0jMNqPRGAjoJ7RhLZfLDTYFUMQC44HEp4cbaqUysdhgaDYYDKA73d/dLGPTipk0gVKGT2KyyRNwcM&#43;KgoLk5AwVz2gfGLAbTXzePHQKwCbk5tdcgtq3AeZUXFdQSQKoT8/n8bg8Pl9rMobQQCgUCAVQFMX/dxSG3W73yMj4Z&#43;M9PRewkb6&#43;vr4Bn14/MTExYQNhMpm02qBWq&#43;VyUwt6gxOhEIri1JgfUBtANDc3N&#43;N6s&#43;l0AY3JLBbQlaDXZsiAqbesWFSQkZqczI3aHQNWfZTPxaVOSUlOSU7OIuTm1LTWj3ILUrlcringQgKhkC&#43;EwkMTWhOPx&#43;eLRNqJQAjU90DA57C4LQ6r1Yo6HPAAPOB2Ovv6Gqv6nH0uj8V3cSyxqGlrmjDabNqmiaYmLQ9IbYagAAqjMIqC1HcfVHKxmCE24CunLAqZxSEXM5m0MgmdzWHTGTLpXmxw54oVBQUZqRmqUa91wOqNmrMSxCnJKQmlD7fWh3kAkK/Vz83ip9LjCkwEtSY&#43;X6QVabUT4IzrwSQ/NDRkDwQCdm&#43;sJRaLeb12rxVfj7D6APPYwbGE3K9Cq9VC&#43;lAghDe1KK60Pz68t79ZzKFQySxQETkUCotFJgGl2RwWhcNmKKUN/ljvWysWAWqV2WgHLYeZB5yRAiIZQBfVtx6NmjQajVajnfDNuVwuj8vimwDnFwgtEom0Jq22qWlix0FANTZhm7DZTKPmUbN51ByNGgMB30WvcUI/Bqgvjk1MNM0jN2m1vAnUgqIoyOf4lRiJ&#43;&#43;OXr&#43;&#43;vpVPSktKT0sh4/8HmkJlMJo0l4ZDBgYil/V2h9i0rVhQsTM1I3RW1OxzgSuQmp6RkpGQA5mRCrvDModCgVquRa&#43;Ry&#43;YQeH9YDTVo&#43;X8sHIQI3bVNTU8mOHTt2TJRo5Rq5xszlpqZyC4Cj9PqLQxafDX95bGzs4lhiYG7SarV8rjmAwVBQAaHxOD6/RRAkMv1DQy2dnLRhw4b0NCqLYTCI2URSOZMsYbOoZAqHLpZNboWDW1YAqRem8qJeh8PaYuKpUlMyMgB1akoyIbvyDBwKm81AUtzCWpsWNJQ4cWFhYSFgVjeptfKSEnmJXC7XaXQifmpBIrPvsvksc7NVHr1WW1Kyo2Ri7NViPWDm80wo5gsKISiUSOwwBofc8R8aJpUsUvqGDelJaSxx23fNbCoznURhiNnAHnSGuPYyVrNnPZC6IJU76rU6rN4oj5eampKakgFsnUzIqWw9FAp38sxmHo/HzeLOB4/HKyzM4nKzeIUirVqrFqm1arlcLldr1DqdjsdN5Eguz2ipmm2cm/NpNXJ5SUlT08Sr1XqtCJws3ywahFAYjkRAHQf1FI7/0NAg5aRl4tBk8Xd/amMT08uL2c1tBpDx6HSlDJh6xVuLFhUUpHLNRrsFmBpkjwxgbKB0jqIVbg13cnm8Tpw2NTWVm8oFya4wcQR8kUgNNrVcrVZrcGpRtQpInZqayrNZZqfmPB6ftlr3/sZSuVqrnV9Dxk&#43;c1heBoRBoZzEkHseQCIJGpq8PN9Ry0jZsyExKS6MyvvuujUFNYlIZz0//qa3ZIGbQK2STcbR3SyJ/JPMG7Y7fy0sK/kHIURxyh8K7XvFyUwEMlwcuwcKsVG4WfjGuEqnVGpFIhEut0/F1hSpusipZtZKvDXjmhgIBfVN1tU4tL5WrV4nU60RqcC0AaL1nFgWjPT7XgpYlEp&#43;&#43;PL2/mZWUCYROo9Lb/vRdM4tK5bR99e1Xf/quGRR4Ze1ud3APUHphajLPFHBYfHqTKFETl4AgFEEoXD&#43;6i5sKmFPxzikVyKtWryvMysoq5INhYd06tRrgqOVquUazqrBaVF3Nr16lW6fTTEzoJ5psWq1IJ9LIS0pL1SDAd4M7UVPA5xkaGhpChlAkjoExMR6f/rVfSctctiyJSKWS2c3f/alNzOaInwPoZgMY1ZXzmXrRwozkZJVJbwX&#43;EPGyADFOTRBCrSg0imcDYAtugp0P9CosTDBnZfGBQYCtNXK1XKcDRheJdDq1Tq0WaTQaPo/H0&#43;HQa9eUlqrlGzeqS9Wl8jVr1E1NBwOBiQAQG8EAdCQ&#43;Pd1fy0la9sEGEpVCIbPoBoOBQWeLm7/7DujMZtPZFQlTryhYCDIcMLUlAHqmJUuWZCWUVkChWLST&#43;0&#43;RyuVmFfLXiVYVFhYCj3BTswpXrROt08jlGrVGrtOIslRcHq&#43;az9et061axV/Hz0rlJhcCqUtK15TiH2vWbFqzCUTiHQcfgszixID5Za2EuOztf8lMIrNYLAqFhU8xHHypnc1is9n0CuXk9tb2PUDplORkni1gsfiMWn7WygTykiWEUGwwajbzE8EDmvEK8fK9TrSKvw74OjU1OauwUKTWyjUa4GmNrpCbDLaswupV/MJVIlEh&#43;BL&#43;Kh1fXVJamqAuBcxrS9SJt6N8s7O4M&#43;Lx6cv9tRW0zH/5lw&#43;WpQFoMpn8E5lMJoPCiAeHzaYrJ&#43;No&#43;4q3FhVkZKQkq0xeq8Wqt/F5ODDwB8ETsJm0mkTINTqNRg1qYCJhiFYV4ldnclZW4SqNGv8KkUijKcTdlMpVZWWtrBbpRPiBVesKV&#43;lwkcENV3ptiVqN5xPfzDzy9PWXX0pomW//y7&#43;8vSztJ8BMoVKpVDKZQiaTwQ6FxWFLKmp3J8pLRkZKispstFocAZuoMGvJElDJlywh&#43;IxakwYkKGBOHchnGpEoUb5XiQoLUwsKUrN4fP4qzTqRSK3R4F/HV&#43;GXbUJsjYbHA8dQuKr6Hd1GQF2aoN60tkSuVTeVNDXNQ09PT/96/QephLTsbVxpKoWCA1PJZDKLQk7AA6krZJeR4J63gD8yUpJ5RrvFETCaCrOWJKcsARtBq9VqNCI&#43;SGF8nU6HWzkLmBpUw1XVqXtWcHmixAsg8/L5fI1GlIWnRnA4Oo2Iz&#43;OC/ZW6VYXrNpauKSmVl65Ziwu9Vq6Vl6wt2TRxAyeenr5&#43;vf95bcVfMz/44F/e3sAEvGlEKoAGzGlgn8xisdkV0r1IeMs8dAqo5BY7MPUSvGNakkIQabQaUSGXu2dPKm&#43;VWq3W8Qt5qQUFXJDuqnWiXdt2buMVruKv4q/S6VaBoiPSqfGrc8&#43;ePVyeRqvh81TcbXtWFPB0ukKdurRUrtapS9eu3bRm7doSUGWaNjWt9s3izL9eb&#43;jv75ZSkjI/&#43;OCD8vQ0IjUNkFLJFJw5LS1hjwpl7bQ7uOWttxaBSzFl3tSJ9IFzE4BPQb&#43;/q3cXT6feuFGt43O37dwGMsgqtUYUHYSCZj6vsHCVTi3q3NVu1ohEah0/Ab1L1DShreZxuanbdnJVOt0q/Kh5PL587ZoSdalcrgXTgLyk6cYsUPry9Yb&#43;5/39zZy09GUffLAhHVQXEomURqWSqcS0pKSkNCqFxaErZZPDkVjvm2&#43;&#43;tWIhyB8qsz5hah6w9BJcablcVMjjjUIxo5mfgOYFw2Eer1Ck1uhMLW7EajPz36lW60T80cGYUSvSyTX8Qt6u9mB41NRUouXzuLvaw&#43;GoWaPmv1Ot43eOBqPykjVqtUirNQ3GvBNNJU0H53B/DPdPTjbs76YT09M3ZG7I3JCemVm&#43;oTw9iUhNS0oHx0BlcRiy2obdkdb29W8uf2XqapsdDIrgSkxJKA0KNJ9vbnH22aN8nRpni1lDUR5fI1fzTbEqv8trKgQv8DoHUafdphGp1SJep3kwFAPzicbM6&#43;wMh1CvVqPWFfJ4u0ahmH2ipFQtMptHjagTDkysPeibnbkZn77cMFk7uf90m5iclL4BxAd44PU8PX1DenoamUVX1jb8AQsF17&#43;2fPmbuD8yEqb2GU385MQYkELgazaK&#43;OZoCOtx2Ph83SoR32xDXY6oWSRXi8xRO9KBxMx84PXOcAipchhNOrVcZB4dDKHooLZpR5PJPBoeRGGvTbNRV8jrHB1sha1GuVwt6hwdtLsjVb6JsYtz8embN6evN0xKnzfs/87ASkoH1B/8Tp2UlI43fRy2ePKjRntw/fLXX1/&#43;ZkLqDJW5ZWgAZOqsV9A8jVrDN8UGeqZgo5nPXyUyRe1OzBkzA9&#43;YBq2RDsQ7KlLLdbywHcEiTq9JpJGborEB2BEbNMl3NJlGB6FQqz1mAmdmdDDmgB0hm3ajRmeOoi6/H7Pqx&#43;Zmbj5&#43;fPPyXlzp/d1iFjFBvaEcYG/YkJmOBz7KVExu9YS3LV6&#43;4PXly99csWJhQUYGXskdARtflYzPARkEnkauEw06IvE6zB418/miqBWZ6sCsUZNGLorGsLo4hkbNarXIPOism45HHDazWmNqcXdE3KFBk0YuNw3a4QE01BLVyOWiqB3pQeCY0fS&#43;XGSOIfHprX6HN3Dr3p2bj6enrzf0d3fv724zcMBll565IT19Qzm&#43;bZiHJpJZFQ/rhkb3LH/99QXzUi/MyAAzOd6eJqfiG6FTt1Fj8lbFr1&#43;vg1vMfL6pZcA//Qe/s8UkV2uiDv/0HyLwoFkjrzbFIpd/aOjqazFpNNpY4/S0H24xaeQabYvTH48gdqNW3qQ1Ouqmt0YGWkxyucZm79jd8JHfodffuPXs3uPpy3v3NjTs39/dJuaA/Ia7GPgiaX4vDUALZJdnveYV65cveH3BcnApFiwsyOCavI4Ba4vJzFUlc5NVqYRqjVqj9TZe/qY/7mwB87fRsv3y3jqL0SSXa42W&#43;PXL252DZp2OZ7JPXf&#43;mf7uzxSzSRr2Ry/27sVi0Gqjumr5&#43;2e&#43;M2eQarRGO//DDHzC7TSPXGq3&#43;Ex/FsVbjxIenbjy7&#43;fjy3r17Tzc0dDeLWcQ0UlJi3gKRlJSe2CNSKRVf3rHYeAVvLl&#43;wALgatHoLU1M7W6xOR8Bm5nG5Ki43lcBXy9Umoyf&#43;w9Mpa9TMy&#43;LZ7Nj0zYjdBDp&#43;21D84Q9xz&#43;CuVO62XYPI9PWtSCi6q7OzcxCOX467B9tV1bzOqCN&#43;eToCt5jMIt6ot&#43;P6D3GkxWTSaqJ2zB9B0FhY27T24IP49OW9w3uHT&#43;9va6ZTSDjzPHRSWlJSWhoRrzIc6ePZMS2v4K3lCxYsSOQPQN1ptA5Y7EYwTyenZqQSVoF2Q6v3zMwOGc08XhaPb/O5XD4buBDl2ouzjx/f83VuWbH&#43;rS29gzACQ8GdW/bs2dlbgyIo1LtlxZ6Cbe2DMIaFBoPbuNsKtoXRqYgbat/F7exsH0ThUD0UDppFTTsuztZt3T08PLx3f5uMQwXJYsMHG9JxmdMSKhOJVKqg4uGdoR2alQUrgNILXn/zzRWLgKu5UfuAx95i4qVmgCCI1HJ1IV87EQgAZhBmrdFoE/FFGrlc&#43;&#43;G1Z89uTPDWL35z8fr1vcFwcOeW9euXrl&#43;/JbuoUpi9fv36t9Zv2dIbrAkLd27ZsmLF&#43;vU7g1As2LtnxZ6CPdt6wzVBYbuwd9sunjlqhyNbd3&#43;093R3M4NDTMrM3LBsQ2Z6UhJznpqYRiWSyey/TM&#43;NleiqU1e8&#43;Rqwx3IcOiODO5owNY&#43;bgkM3lZRoRWYTADWZzCYTIDeLTFqbtmnHjokdB2&#43;cOijnLl6&#43;ePHS9VtArN&#43;ydD3gzsN/ZHP9&#43;vVbcvPytmRnZ2/JXQ8e7ezt3blny549e3aC3d723t5tO7dt2xUcDMEXtn40vL/bICGT0tMzP9iA1/GkhMxpVCKV&#43;pNA&#43;cPMrR3y999RLXrz9YSp38KVTsYruTfKVyWghy5e1Bv1eq/P58NX7FoAuk1v9/l8t3y3Lj54cO1g07b1ubm52dnZO7dkb9mZjSNm5&#43;GYS7eA&#43;&#43;zs7N6cnGzwak5vEY66rbdd2NteGQwG29t3bdu2qz147MxI1/fD&#43;9uUHCJIdyA9JyWQE9agkimSv9ycG5O//371ykVvgfTxW9JLfZWp8SW9FMLNWdeQpaqqaiqCuVweD2LxxQIBq8uFzc3Ngrhz79ZYWFGpqKmBoBpFWFEDKfD3EBWKysqi/JwiYSX&#43;Q/fgobBSKKxUHFOEj4HtWM2RY4OHDx84Fm5v39XeHjxWf&#43;hC17cNbXQyKbM8c8MyvBCmJaCpVOJPVIpAdn3m4o6N77&#43;vW1kwDw2SHmj1VDa7xeEzmgvxmkh4enPGNTsTn56Oz87OIEMezOVyuWb9M7PY3OzMTPzm4zvP5jxIJBLx&#43;yMRDAyn2DiCuN2I2w2jra2tKHoIhlEUhtFQqDVUf6b1eGtr69EQ&#43;BRrPX78eOvRA4Ph8Gg4fLj&#43;0N2z3/&#43;pGRc6fUNmZvo/y0ylkgUVQOiNAPqd1BVvLn/99dfnr8QMPFODnrowC4f&#43;4WZ8tnHmzvTT&#43;OzMzKzFNesZuuVxzcbjs3NzM9OPb965c282frl/cnKy9svJyf7J7v7u/v0NDXv3Nuwd/mh3Ik6AuN/V1eX3&#43;7u66vxn/f7zHf7IhYi/x98RGUecA26n2z1yAdhDzCLh9SQ9iQm8TCMSgZ2pP5EpEtnTmYsl8vfff19XvWTRm4AZ98fChQszVGa9wzKE99QA&#43;vHNmdlZ1&#43;zsnZnZ2VnX3Owt39jY2MVbMzPPfBdnZ&#43;7ce/bs2b2bX0oEZWU0WllZGaWMImAJKAIBR8CRSCoqKioYFRUVSplMJpNKa2trm2tr29omu7snJ7u7&#43;7u7u7u/62/Ym4iGhu62ZjGHSsJLNgnAJjYq7ScqmSKoeHjz1ljJ&#43;xvff//9alXBW8tfX/D6b6ZOnh8U&#43;StxT8955iy3Lo5dvHVryHfR5/P5JsDMH7h1KzAxcfDBgwenTl17cPObMloxickk4UEkgg8SiVRMpNGoNCKNSKSRKSDIZHIZmcLhcFgUCngG7IEQcCT4e3DgK6hp6ZmZmZnpJDAZUmnURJDLKBLp09mLawEyMPW8P3Bo4A&#43;eDV/9EPFwpRMLhvKmpqaSCfxnItVqdZO6aWJiQi1fffDjjz/&#43;&#43;NStm9/QiDgnM72cySTh&#43;8xyoBaIpKQkEgmM01T8UKgAjZhGIqXRqGQqNS2tOA24lkZMSyOlJaWR8MKyLD2JjB8ClUqj0sBAK1B&#43;eefWWMk89Duqf4IGSqtMXovFqtcWAqkJJWAQVYNtjXqNepN6k7pEvUm9du3akk2bNr377ur33t186&#43;YfabQyMC4TmZmZTCIQFdSHdBL4j4mkzMxyIoXFoZBJzMx0EpHCYZGJSelMJpFMoVJBl5GUhs&#43;wiR4DTFbpmZkkMouFrxuQaVTaT2TB/5DhQm/E7fF&#43;dcqet5Ynqkui0VOZcFMnplsCvhL0Bv6B3/453njj3Xff3bz5wfQfBRyGmM6mc6hMEo0uFtPZHCqTSWSBJ1lUEpNEBk9yyKQkJolFFzPY5DRmOonKYXNYYJJKIlLYbBY5LSmdmURlgeeYSSQyhyMA1LSfaOQyiqDiyztzB0s2/qZ0xlvLl7&#43;&#43;/FUdx03tAf7AlX7jjU1vbHrjDfz2av/dTe8CYID87nvv3Zh7/McKaVtbs8wgppPLGM3dzQaDjE4msw1tbc0GMZ1Coyib8TdiKUQqR9wMnhQQiRS6wSBm0FlEIpHCwN8UoqWlkdli8ByVSKRIJAJKWRm4DsoEAsk3T2cvfrhx47zUwNRvLV/&#43;ZsIdABo3tc&#43;Im5qwaU1paekanPjdeanfeHde6E0Ae/WNZ9PfyNrwn4kx0AVsgC82SMVstqENkDZL6RxxW/d3bc3NzXQO3dD2XRv4Cg5bDA6kuVnMwd&#43;5bwPfQuEw8KMT0ykCSUWFQPBT2U9lZT8JBP/jj7WPZ2&#43;UlOLUCakXrXjrzbfeWoS3eQtTUlTRwIDHqjdVL1mSQkiszQLqTZs2lcjVajW4L0ncg1h9cG76G2mtjM7hsCUcDt1gYNAlbDqdXdFcaxAnfmJN1txswH8PRCJua8Z/5F9MVza3NTeLDeBLpM34eTIw2IxacHIMMgZbopQpKyQSiUDyPwT/q&#43;KP33z5ePbg2pKNr6jfUS1ctAL/lU78N60zMrJMXotnyNsEkh4hsZKsBs4uUcvlJfgD9W&#43;xpqRkx63pL6VSpYBMLqNwBBUGJYdGBYmN0WygU8hkCkdAlzUzOBQWhyNhi5tlbA5&#43;eOLaZgabjR&#43;doVmG/1oLWyJuxpdz2XQJQ1r7F&#43;k33/yfb/74zf/55pu/PLz&#43;ePbih6Wlr6irV2YULFy0MIGM&#43;6O6JWHqrOQUwroEXGkCdFPJ2nnaTfP08pKJW/EvZTIlhUajlbE4dBmdQism0gScCqmYQwZpRcARG&#43;gUUHsoEjH&#43;o1Tg8BhSMRtfD&#43;XQZQY6C&#43;yyOAwZgwOeY0mUtQ/7Hz784cuHD//y8MuHT58&#43;fnzv1oel89Tq91etBEPswoW/Q/Nsdo/TajQV4tAbS0sTaqtLN5VsKlmjVvPV6pLSTWvWlKo3laxZe3Bu&#43;kulrIJCIxLJFAFdTC8jkmg0CoduEHPIRCKNwuKIZfQyGigxHKVBTKERadQyDlvMwF8mUyRiMZtCJRKpZBZdTAepk8yRKGsbnl5veHr94cOnOPKdO7M3Piwp/U3r6iV4F7pwIf6OFJ707BaPQ2/iJ6A3blSvW7dunXo&#43;T6tF6wC0epN6jbpEvbbp4K34NzJZRRmNBPQF/y2RVEwr41SIxRxQdMgCDkNGpxDnoZUsvESyOGw6hUykEckUthJ8D4CmSBhAc3zxa/LyHy4/vfwUxOPH9549e3Dt4Idr1vxGXb0yOTklI6OgoGAPd1tqakFGsrnFAfzBV6UQ8PU79bpVot99jOte&#43;tujiaGE0kQSiUaRAHsQi0k0CoetFHOoRCKxjMIRg7xHBPIzpAyQzwA/HRgljUijSMQyBlCaiL&#43;zzCKTWQnom7sBMNjuPHtw6tTB1Ws34dSAW60rVCUnJ2ek7tnW2w568lQwKDo9PqM5K5WwUb1OvW7dqnVqean6v4ZIpBaJtE24pyvK0hLQuNJEYhkHUNGIxUQyhcMw4FLSKAKGYV5&#43;CoehZJOB6BQ2w8AA8uNvyNJ/8/Tem3&#43;4/PTx48fg9uzaqdWrV2/atCahdelG&#43;fs63pLklNTUbTuFisM1wV27MlRR34DHahTxkgkluDd&#43;U3aNes2aTfMel6vlcnlTydhQ/EuptIJSnEQiUiQMJYNCI5GIZI6EoWTTiCQgJcPAwN1D4VQAo5MAtOS3I&#43;EoZWIWGfgDl59CpVIpnIravdtvPn769ObNx3fu3Ll37dTm1as3/SZ1aYlcU61KTlZt25b/yTHo2JH2XVwuSHoWvYnPJaz5Jzes2QRq4btrS0DSWLt27doda3es/fDgXPyHyVolhZTETKMwxAYli0giEcs4oHKTSSQijUUXSxkUIpFEI3PoUgOHih8JWyzFoYlkDpCf&#43;rv81DQiVVAh3XuzDlf5zp179549ANCrN61du6akFM/Wco0IGIS7s7foyJEjQmHvrtR5U5t5BLlavbF0zZqNIMut3nzj1I1TBw&#43;OTYwdPDg2NhYYA58uzsWv99cqKcVJSUQKQyoVA2gSmS02SOlkYHQWQwpGbNwzYoOBDuSnsugGKYNFJKbRALSMnVCazRDTKdQ0Io1VId07M3XnJhgynoGrcPPmeeqSko1qtU4j1&#43;hUK5eodm3r/fzzzz/9vHfbNhUPmNpuFPEIGnXppk2b1oCi&#43;O6NB8&#43;ePZt9NjcLxsM5fJudm3XNxH&#43;olUnIpKQkEhn8r2QSiUmicRgge4D&#43;msIwgLYDeIYtlhrY1MSRGJoZLGpaWuJJOpmYRqRS6GIDuFDTaJSK2ssdc3PPQFw7de3aqYTSq9euXSNX61bpdDpNdXXWkizVrvb8/E93ftrby03l2aweJxhffoMufePdzQ/uAH/duTMTvzODRxz/FL/8g0xCLk5iJiWl0Sh425xESqNRWCxyooNmcegcIC8JXHR0Fo1ETCPifR&#43;FCHppViKjJ/jFiURCYUv3bp&#43;79eDBAwB86tSpzZvfXf0GrrRcp9Op1brq6sLClVm8ztFge35&#43;b&#43;&#43;uVBXI1E6Q9Ahyeekm0DSteeO9U88eA3s9m519Njs3NzfnmpvzzLk8c7PxLyvKiEnM9KT0pESkM9NB508C&#43;6SkxFSQGGqoZDJ4QEyjgtGFCEiBlVkUYmKtDrTdxITotU9n5q5dw5k/PrV58&#43;p33920afWmtSVqzTqNWq1bVf1O9cqVK83m0WCwvb1zl0oFBgGXxWfTEHaUJC7XN94F0PcenLoxFgCT19jE2MRYIODzBQJD8esVZSRmenpmYlLKTC/Hl2Yzwaz3auUzcRCk&#43;QBTCgAmpZESA3dipfHVLpEE0kvt42cP/ol59burV69eu2mtXKRTq&#43;Xr1lW/U13NF5lNtmg0Gh01mUUmm9fidA15bYSDuMxr3nj3vY9PPbtz79rHExO&#43;IZcF/4XFicDQ0FBA75sB0KT08sTid3kCHWefXw5Pxx&#43;&#43;Og34ESSR5h8mzgiYshJrM/hLIOlQ/vj03oMH1xLW2LwZdMGrD67&#43;cI1crdapdepV71RXm/AfnmrxtrToEytKHpfLMhQgbN6MDwDvvvfeezj06omAD8FcQ4GJkomAD0bgId/QzA8SGo0E5n7gC0AIpAZAzPnDwB/jrEn4l70CBieClIQvjCb9/izYIxHJFQ/vPEvY49Tmg0Ds1Tdu3Fi9tmSjBlCvql4lmgj48Bjy&#43;cBe4tfeh3yEU5vfew8QvweUfnzv2sEJH770Epj4cCIQCqEo6oNnvhSUEYkkHLH8FWISE1yZ&#43;OfyzPLMcvyAcKLM8vSkBH9CXWLS/MN/PgMkIlny8PG9B9euPUjErVObV9&#43;4cXD16jV4zlsHEohNHwhcDCR&#43;izkAdi/iWZiw&#43;eP3EvHxx6ce3LlzbXMgUA9BITSg/3AM3wuhlvgPgjL8/UkikHt&#43;JQHszu8B4zCZ&#43;GlPB/jMJOAIfEEmKQn4&#43;5VR8A34nUQk0sokf3l659mDZ/fu3Ll35&#43;bNew9ubD546uDqTZvWJsqLWqPTlOyYmCjZUVIyIW8qKWlKbE3y36A/fu/jUw8e33vwYSAGVSqgkH1sx5gdgqD6UMgS/1IiYSQaYXIxcf5dbDKRSSLiCxc0Er6uQCLSqOB0JBYWiGnAufNXHq5xGniOhC&#43;gU/GfO5D85SlIV49B//Hwy6d3rt1YjTcgm9asKSndWCrfqHlfI98o18jl4A7vKjbK35er5YTNvzEnoDeP&#43;eproBDqGzt40Beqrz&#43;Dwp54v8zw/AWHSiRz6BwJg04mEWkcCYvM4oDejsIR0MgcShmRRuZwyoiUJ2AKoHAoRCK&#43;fENhgRKYeDOZgpcYMA3Q2RxBxZegj34MmtOHXz58ePPZjc2rV78L0h7eN5UAQrn8N4FLJvBPTRNNhM2bP/74Y4CMQ995cOqgz4KisGfoxubNFy0O2O30uO701&#43;5/aXhCSiqWKGVtbUpieTmJQq9QGpQUEpNJk9AldLGEyGTSOEo6&#43;4XhCZkEXuZwGGwySMgMNp6e8R6PQhZwKBQOXSlT0mUPH98B0KADefr08c1n10BVXLt67dq1JWtK1pRslG&#43;U75gY048F5jfv/D3h1OaPP8Y/NgNPP37w8akbt6qqquZAM3Djlquqce7W3J0fGr766jmFVF4skO3/aLiZVr6svEwi7T7dJiBllhdzZNK2WglpWTlToDQ0P39J/2tmOa1CLJM202npTCJHJmbIxJRiJpFSoaTTlfQyIk3AkEqlDx/fAwEapnv3Zu7dewAuww8B89q1a9aAJqRkhz7g1XsDYLN77eDm9Xq9hBunNm/efApsp049u/P4walTp249mHtw7capjzefuvbg2dyDa8/uXN&#43;9/UQbh0Qq5kg/Ot/VT2GWM2nK/vtdwy&#43;ISZnFAmnD7r2y4vJlTJqybfjbl4y/Lisvlsgm93dXkDKXMQVKaXd/M4WZWU6TKKW1tRU0cHaktQ9v3pu7heeOWyAe3Lp44&#43;CHiUj0lzt27NjhbRmMDoKP&#43;QgPhsNhwq0bv8W1Z/fuPLt249qtBw9uXbtx49q1a7cePHv2YO7Zzcs36252S2i0MoH0o8j4RxXFzGKacnjcffblk7&#43;SiILaE/6uSVo5OJK9/gu/ikmZ5SRJ7UdbE0dClvXv/sN&#43;OimTWSyR9u9tUNLKy4kSaf/lmapb83Fj/v7ixYvgFhi7OHYRhNfbEm7v3bZz585tO3t3gnsQewhzV&#43;Y8c488c49cc67ZO3fugabj0dwjvPeYnZ26d/Xe1Mz//cP//Pp/7leWlZVJZA1nx7fWlhUXlyk/Gjlz9&#43;&#43;/PKERBZNdbqxBAuSXnRhH7suKy8uLJQ1dPSdqwZGUST/yn//qBSWJWSyZ3L11t5TGZBaDY&#43;qYbWyscrk8cy6n59GjxkdVj6oezT1yXbl9&#43;8rtK7cf/Xjliuf2gd4tSxe/&#43;erPzCxevnj5a8tfI/zro6uPHj26&#43;q9XH129evXrr7&#43;&#43;&#43;vXVq1dnrl4Fjx99PR83v/76f&#43;6VsgVlkorJj7q6GpQCWllFQ&#43;TMP/728sUTokAad7tP/BGXf7f7UJe0DJz/Bv9IV7eAyWSW1W4dvwvOCZMo6e&#43;6cKINf7n/Dxc&#43;&#43;&#43;xRz6NHjz678gjEvz5qBA/A7pUrj648utL36MqV28c&#43;Xbx8Af72HL4l/l4W4WodjtVxteNqx9dff33n66tXG69evTr1aOrRo6lHU1engAY9/9rx9f/tVwoEkgpp/&#43;4Tw5NKiUBSe9996D///suTvwqUw&#43;Nw12QZs7i4Yu/4IX&#43;/gMQsFjT43T17JcVA6a373H/79d/IpGJJg3/8bL&#43;AVEyraKgbGdg3MjLy474fR8C2z7nvx5GRkZF9I/v27dt3e9&#43;52&#43;eO3z536cifl&#43;N/I4uAf3oV4x1fb9&#43;&#43;/euez/r6&#43;hqn6ro6qkYGBpx9V1wDA7dvO26Dm/347YF9n3V8O6kUSCSytv3Dw6e7pcoK6enz7n/8/ed/eyKQ9PsPRRoExcXFgm4/PL5XAvZq61DnCSWNWUyTbj105h9/f/GESJQ0RA5heznFAHr8zOHE34G7dAB8HD52&#43;PClA4fxOHb42LEjeHyyZfFrhP8ecB/WU1fnR/Ydav2i1d03PgIfvXTp6HHr8QPgOg0Hw8Ej4XDN4dZDI5GPaiskjBfPn&#43;8/PTzc0F1b23//wt2//f9&#43;eUHh1G51j&#43;xW0oqLy2Qn3Mj8XnzAWldbVsykKU8cOnboby&#43;f/LVY0B9pde&#43;uIBbTKvYiNTl52Z/m5Ofnf5qT/Wl2dvanedmffpq9JW9L3pY/Z/85L/fPubm5Sxcv&#43;P9qnIj6EAq7ETccgmoU0BkURs/UKCpr6kNQWNjb2wsu1t78IqECOoq6/cNS5YsXL1&#43;&#43;3H96&#43;Kvdw6cbhs/e/c&#43;//fzihUB5OoJ01ZYV4053b8VRKy677FM/CGjFZRUfwYr/&#43;M&#43;X/0YlCiYjZ9ATyuJimqQBEea&#43;9tprixcvfm0&#43;Frz2e7yO/wGk1xf8P5EJhGCwBgq1huprFPhvn7aGIIVQqIBCg8LenfhbtFt27szv/aQmdCYE&#43;/c&#43;f/7Lzz&#43;/fPly&#43;Kv7J7eeOHH/7t1//O3n5wzl5P1xf38FrZgmqN2K&#43;LsFtGKa5IcpC3YdPCdpGD/8H3d/fvGEVCbtCrVuleGvIpVLARdh/g/oJVz76sH8Xy8k/Fc3zx9Eb3uwsgb/a3LCIqECSCwsaq8JtULtgHn9&#43;vVbPt2Zny9U1NdD0CH/ry9//t//&#43;&#43;efX&#43;4//dX9s/7z/rt3/3H3P399KZ0c9kd2SwU0mkA5HPHvrSgrpgm&#43;&#43;QPWc1lGodEEtf76//jH3//tCbFMFkdbu6Tg1X5MsfQV1m9or/j/y5P/LdqFwaAiXFkpbO/t7RWGayBFb1FlzO2ob08gr9&#43;yExxOZQ1U&#43;YkCPf/rz4D65fPnDbu3no&#43;M33X/4x//uPv33fuHuyL&#43;BmUZrex/dXf5dwPUMtllP3aill1WXCa731r/D5BnypS74VZ/AjpSs/S1Bf8daMF/p/zvXzT/BnYR/p52b1GwUtjbCzkRGOoFzOvXr88rUoSF7cJgZVFOvuLQWQD9yy/Pmyf3f3T/wvhdt/vMP/7j7oX7u7uw8a2TkrIygXTaf6L2CaWsrKLBj93vfkGh0ZSX4f8A0BRaxbC71Q/ML6j11&#43;Qu&#43;H9A/7&#43;o/yv7/z8AAP//Kqyl3IRN83wAAAAASUVORK5CYII="
+                     data-src="/components/images/sun_gtil2_controller_board.png"
+                     data-srcset="/components/images/sun_gtil2_controller_board.png 600w, /components/images/sun_gtil2_controller_board_hu_7bb96c0f0b9f9dae.png 120w, /components/images/sun_gtil2_controller_board_hu_6d8fc6d015438be5.png 200w, /components/images/sun_gtil2_controller_board_hu_65edac94d0904d36.png 300w, /components/images/sun_gtil2_controller_board_hu_75376d473516cb53.png 400w, /components/images/sun_gtil2_controller_board_hu_e1db11db47eca82a.png 600w"
+                     width="50.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Pinout of the inverter&rsquo;s controller board</em>
+                </figcaption>
+            
+        </figure>
+
+</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/sun_gtil2_display_board.png" width="50.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Pinout of the inverter&rsquo;s display board</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 600px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/sun_gtil2_display_board.png"
+                     fetchpriority="high"
+                      style="width:50.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAB4CAMAAABsOSjPAAADAFBMVEUIJhUFJBMHKhgNCgYEKBT///4KLhsEIBAELhQFBQIEMhcGNxoSDws1c7IDGgwPKRgCFAc4drYCDAQDCBcGPh1XQTM9erkwcLEPMSBcRjcwbq1SPC0CPBUWNiYZfkESejkXdDwoZ6lLgLMBNg8CKA0ZPCwULhoqa64FRhwPOR8eMSBUh7gLVyoKTyTl1MoNIRJCf70WajZhSzwfiEYRYDAdJRrg0MaIhHYBLgny8vJKTENFea0/QzqnrZzLzrxdPy7S08LFyLfp2s8sMiQkOykzPi8aGBFciLBAOy2alIdxbWDaysFXU0XQwLUCZLe&#43;w7FljrWQi3&#43;AfG7WxbtpUUCmmYqwn46iopVqZVctKRq/rJvCsqQ5MCPHuq5iXU57n8KttaRKRjfj5OTv3tNgj7yYl5YXJRFWW1G5uqo&#43;da&#43;ok38cRjKXn44BIAdIcaBcYlr45M1mSTZ6dGaOZFQleD4lHhNvWEd3YE4URCSHXEsQGgyhoqEFDiogaUEiXzc6cKfQz85rlsCGh4InRjNHhMOejnswMzC5pZKPjo4dVDB9f3mVbVyypZk5ZZhmaGJRNCW2r6KqrKt&#43;aVeHpscLcS4mJiJUfqq5ytiMeWZMV0mxwM&#43;GcV51dnItgkbY2cmNmIXKtqSYh3UiYaSZq77fzruVgGwrkkxub2za29k8VT/y38nQvqwzTDfHxsW/vbxyk7a1tbN&#43;VD&#43;dd2UlDgQORYV2RDIQExwoVYsBWavn1L9vfmjs2cSmhnGarpOptMCCmbSTorNJKBaft86AlnoKN3KSrstheF5Rc1Py5tt0i3HphZYET5kyajoWhjs4Gw21moFEaUfZx7I9e0gubkltiKjevLiOnKM8i1EHGEBRjMlce6D969LG1OBbMxGIpoR9kJ7gsbEIKFtajWceVZcQcr2xwqdOhlYZISz7&#43;Og4o1PkxcHty8fvlqOui1csfsLefIvturxrRR3jpalsoHFugo&#43;QbD/3rbVTaIHZlJscnENPsmFimdRoilLRrYbCZXQcR2clqoJKAAA&#43;uElEQVR4nGS8D1QTd97/O6SeyCVw8&#43;O3KEGNVbuJTEr0kQI5J6Q/76MTlBD6mAASQeJytnRq42FKrMkoJWwzDymTahC6uJmSXkBksyNThd4u1fF56p&#43;0Myd3ufubGrF93LPFpn3k/Gi3t7W4eM7u/XnP9zsB7f4&#43;k0yiu4VX3nl//nznj8jPnojp6WMHDh683tfxVs&#43;bTQ/v37/b4B7Mza0aDDHxWDgWJ8wWxkxptVodHQjQpBazWqwGVKlXw1CqtJjFzHGcGDxS3bD/ZMOo10VIM5LTYfK6D1ZV5VbBGDxotRoMGlVBAUqxllb/6CujA26Xw2Tq6THx917bUVasysnOyVGhFGNz9DgFURRE/1A0OuArdUcihEvgneF/gB48cL2vr&#43;P4&#43;//9YcvE3buzJyODJ06UD1rweDgcDsdxM46zmFZL0gGaJklsr8WqQzVKtVqpViuUGtLKms0sK/BeU8/&#43;pv2jQy6R9XC4y&#43;W2WwerjlWVV5UfKz9oaTWbLRRZYCRp1lLqHR2Nev3exLCjocGRfAydg2KMzWSC0IJztKcnaqu3u0RGkhgR/yn0/IG&#43;9aWlU&#43;&#43;/8nBkdnZhoabZu3e6CjL39vYGgxGciRCcTusBSqMoRnFWLapXqhVqRKFWoBTL4CIh8HFbtHp/08lXvAM4R1GsO&#43;LG9x4chLF7cHer3e3COdJIGim21T3e0zPu9DodjuEj/z6cvPfur8uMG3IUOTkKFcYSNpsLZxmBNzU839DjdblxjuICLMv8FLr8YGu9/&#43;hb//Nh82zNQsW2ihaHZX46ZI4E2zo723p7wwQRiTAezEMFaBoF1FiGGUEQtYFlCIHnwyYnUPrkyZ5xm5vDrAzvtdnNrZa9VovFYraGrKxZYmmyoAD1sIzLVO1wem3ehCOZTPw9fe&#43;1X/&#43;6uCBHochWKLVWzsJxVorDBX648cgRE&#43;9iKIyTJJH4KfSgxecdf/9/PnzzbsW2iopt2&#43;qq8fn5kDnW23&#43;hv7O3Nxgn4nGcojxcIECSKo1Wa0D1agVERpQYS0R4p8k07DA5eqr37&#43;8xRW0shrGiKLEWs9lsZhhcBO7CtCRJqpQqLWcmnA6TDcdtzgT/93uf3Xxt06/LjCo1sj1r&#43;8/V&#43;vLy8pdeqjJYcN6ZcHxRPcwzGCXxybjwU&#43;iQfWi04ZX/9&#43;HDhV27tlVs21ZzMhKaD5njwf7J/rbe3mAsHgsTnI4CeYgqlXpUr1eqETWigEqbI0LMZDpypDrhcPS80tBjMvEMpscolsIwiuMsFMemaK1GrVRqUFSlUOsxiuFNSZzjcJ4XUq/t2LRj09M7StDtJ06c&#43;C8nck&#43;cyD3xVO6JqkGL2&#43;biE8PDYQajiEQizCM/sbTF1rP/5MP//vAugN62bVvN6ZhlPmQhwp39nb3B3t5wLByOsB5gDxJVKNR6jV6thjojiFrLRnivabi68YjJNDra82&#43;jUa/NjCmVpJFUqfUGgwZWHa1Wq1cqVRq9Uq3UaLkI&#43;GAUQwjizI4dO1577d3UDPbSiaeeyn3qqaee&#43;q9gl1u1F3fjbsGZ4FkDhfNJ/ifQP5s3m/Y3Nzc9/Pb&#43;N7t&#43;CfxR0RI0fx6y4LG2yf42IHUwGF7idB4qECBRBaLW6zUQGoaBw4UI&#43;CZNvHf8L3/5y/iQzcVgymwlqIqgLup1nCSxLMthWr0WwwxaFGOFcFKiaEkQxFTZjtduptN/F63lkHg5cqtCbpfb7XZ5XRYDJvFJPvYT6EHc0XS39u7D&#43;3/9ftcvd1VUVCy09LpD8yHLUueF9/rbeoNAbILTgepBokqFWqnWK5aZFRqMxQkRFwXBOzQ&#43;/m9/GR8a8uKUUpmjRA0AUa/lxDTP87zAUBhrNls4imaFBC8GAmIyyKd2vHYvzSeSEfPgiSehn6oabLW77Xa3y8UZMIbnk&#43;Gf2gPvbZmtu3v/27vfA0/PLsze3R&#43;xhOZDRO/khf5eGDHGo9NxMwEaVar1&#43;sfMCKLEOJZhOUoSeNP4&#43;Cs94&#43;MmXuRIEiVJzsyYLRjG8MmkIPC8yLGgejMczQphXgpwUnI4KXXdTPNO06it9UDVT5TOrRrca7bb7W671aBjRZ5PID97/Wevr9iDaLhbUzN799u733&#43;z65ua2bv3778ZtYfm5y2R3s424I/eoMB6dB46RdMqvcGAGdQZajWiVGoo0DZolk&#43;OmkZfaRh1DI8KEm2k6QAj2Fxuzirx6RTLSoKQYgmb281wGCc4nSI7I4aHk8JNIemM9vR4W3dXPYmcm1tVZbCaWQvL7dZrKEkSY8jrr69Qvz5PtNVWVADW7xe&#43;Waipvf/w/sNen3l&#43;/nNA3dnW2TYcxj26jKc1mNWKZYo0goCWiFlbOSstJU0mk6knMepwJASWLCmjZ6Qhr40wc0xa7CJRCtRA0ebGzRzHxsMmXhSJpCPJC8kEH21oGLIfqMp9Qubc3BPlgxhmMBgMaoVaQwdSBIBeZp6eJ9pmt21buHv/r99/v7CwMHv/4bcPG&#43;Lm0Px0CO/t7O9s7A2LnE6no&#43;gAXYIaQlarYaVMKxRKlYGzsFRASoadUa/XZos6vS6apEvKZiQbVJoVbpYVoB5RkKSIzWU3tzK4zWniY7zg9XptyWTCaXplv9e&#43;&#43;zE0VLo8ZLEagDZZWauUKE0zEBpQv/6z1z//krhdt21bzezd7xcWvlmoAErfPxm2h&#43;an583h/v7&#43;3iTOeeYBdaCMRFEsZA1pVoqHWoliFMtyrJDkndEh24BraMgrsiUldFkA56M2N2tlhM8CBSQlQnu47GYWx11erzcZ420DNi&#43;fTEZNDQ1R&#43;8F/gD5msVsMWdtXr87KysouMNIe5PPXZYO8/vrnn3&#43;51Hbhm13bFiq&#43;2fXNtm8q6lru37/b3IOHpqfnLfG2zraYRHm0Wi2YPWgjqteDmqBWPJGIDC7iYjLpjZrGvbYBbzQqzNBlRpoWow6Tq5VihZsBI9klCgyAdtvtDO622Ww2nneOjjr5pCkZbWgY/wm0XKgtVv32rNVZq7OyENRIojJ0hvnR0lztNtAKf/nLXbt2bVuYaLk7O9vmCk3nTg&#43;aY0GeoXRajVar8wRo2ligVOsNT5RptZ4SeYHnk8MOp6nHFHXZoiYTL5XRRiMtOntMLoaThM&#43;6jCUBkU&#43;xhNfmduMSw9jdbhfvNb3S4ADUzlcaTPaD5bn/QD1YrobMq7NWqYxGFfK5TP35519&#43;&#43;fGjU3MXMtC/BIW6tna2oqY5trcq96npkAVnKZ1GA6dpijZ6UKVCoVYrVpRW6zmCj3ud4cSwyTTc47TZeJOJv0kbjSQteU1eF8NK6XuBEpoWBZwVvE6bC5fYVrvdjtt4Z0ODw5lMmpw9&#43;8fde4/9hPmp3Nzt25EsoHNWFqIijTnIY&#43;YPPvjw1NULFQB6F4TeVtdSV1FR67AP/uyp/23aoIM66zzcDBugaFqnhC1FvdLHlRgLRiKCTyZNiYSJdzpNSWGmzGg00qzb5nIzkpi&#43;11VSRktxiSOcTq&#43;LYRjW7ra7BZvzlYZRnk8A6FEA/Q9Kl5eXq9WIejuCrFIZSRUiI3/&#43;5ccff/DhV&#43;23PqrZBfo3sMcvt9XU1tZsqzsZ31v11H/9L1VajKIojpVEkZBwSWJhQgOxV6QOUVYOzL9J3un1ep1OZ1KYoUtII8mKLpvbDpTuKiuhJYHhGJvT5mZZxu4acrlscWdDw6gXQI/u73HtPfZkoX7qqdzyvWaL1QDaqj6ngCxGkdc/f/3z17/88uMPPvjw7ObuWx/VbNu2ULPwzTe7du3aVVHbUlNRAVo5LDysmcEJIZ4MJ2PJcDLCaZAsBHnC1Forx5kZMB14ndHo0JDX6xWAp4tpzu6yuSVW4u&#43;9FigLiILEgSnbzTCizdTj9PJeU8P&#43;UT6ZTEQBdOtgbq48MYGX3NzckD3iNlta7XYOKzaSBUqg9OeQ&#43;auzZzcfvjVW&#43;w2sed8D7Ira2tqKirrTJvNgbu72kJnBRTGdBCuv4eFhngU9fEXoLESNsfKHSvJe0/j7D6JDXicvlZUYSSMNWqKZk9Lpm6kZSYwRHG7jbQzLiM6G/T1Op9PU0Njj5RMJ7&#43;j&#43;VwZaD1SBniLHCdDGzW7Cbbe7bHiANBarEEROwQ8&#43;BMzrus9cu7BQsTB7//7333yzDTTFlrqF2buwgJwY5BiJEOHEwyeDw2FWq0YQBaLOMCNqimFwIS7wPO8cH4&#43;&#43;9dZQFCQiyESKdQugevA/poV7fDIpUWBMsVo5N//FERPPO5PDw05eSCad46/02FoPHKuqKi&#43;vWo7pqt0Ws91sd7kYmixQIQAaMH8FmTcf3nJ1Uob&#43;K2iJCwu1tbV3794/GTWXA38woiAIAiFJoiCEk4xWrVAolh0tK80QoiQJcefo&#43;PvR6JApkZQCJUajkeRYieUwTkwnQQicTqM1GPQoJokCL8DgBULkk17n6OhA6&#43;5j5YO7BwfLB8vBqrL8pe3btRRr4VpZDitWZiNZCGCGMm9et3ldXuXFj2bB9PHt/e8XwNJ2oWUEtMWG&#43;N7p3O0YI8LFMJNiWTHOs2CaV664A1FoMY5lOYqVbKaentHR0cR4TxLYw0iSqAEsKo0zYjqdTKZTHo1SrVAgag3GsTNcgJtJ3RRFURSStgGv190aGtwd2mvZ22oBK3ezZbdaiZIY3FB0gzo7CwGl7quvIPK6desqb429t1BRd/f&#43;/b/O1s7WbKuYbWn6FoxN9sGqqnIPR7EsTkhMgMX5MKPDMINSuay1QqHRWa1Wq46SBGcikUyYgKapQEmJ0bhBv4Eki1UknRKTiQSf8qDyf6VEUdJIkkYyIMm&#43;c4Ehxd5qMbsJV8Rli9jitjjBaguKyWJUpVKpCshiVfYq5OOPP4TM69ZtLSzMO7znWu3CQg1YB8y2tNR9s62mtvnh/fv3T5paB6umDRjHEgTOsBRHhHmJClkxvWYFWqnRYlZryONhRYHnBZsg/F24N1MGoMlnUPBri&#43;mZdDKRSEslcAkBVj6ojO2RhGTMKbhdAwMDboZh3HGn02mLuGxeL0&#43;wJFpcXFBcsEGl2kAWqLKzEVA2gM5b161bV1iYf&#43;bqhdmahdr79&#43;/fvds8UbNtW03Lw4f37949Gd97rGrQysTDMdwSwqwEH2MozIpplcpVEBlRKFQAmsJIVhTSgsvlEgRBnCkrK6GNxTkq0kgWG&#43;mAmBYEMeAp8ZAGg2H33r17rRhJeUiMFSO2AV99/ZS/tNUaohgb77S5cbvbFSEkjkTJYtJoLFCpVBvQZ5TZiMy8devmdVvXFeblbbnY/94CWAfc/&#43;tEc3NtxbaKupbmu7V1LQ2uvaG99tiRk41Oe2jQikd4ljKEML0mWwGQ4SoA1QJmmhV4k3NoaGjIy/NSoKysrIxEC0ijsdhYQnelUqkATdNsa2tra1G9z2cvAu841m53dxT17fyhY&#43;fBY2oDR3i9NheYS1wuguVomqTBuKNCNxSgKhQ5KzODx7pCkIn9F4CpH96/f3ekqRlIPdE8Mlux0Nxrs7ujDSO1n5702lvNdoLgdFoMKA1UhgN1thLVaknUI8WdptHxaDQ65OWFGRg0aQRKlxiNdBlAZtx&#43;EMf9x8HLVH1Hqd1X3/Hn69f7du68fmy7miO8ziGX2&#43;6y2bw2QRAlNiXN0MVkMVlcTBYjZzevW7d1mXrd4cpbY7WzC3Ut9x9&#43;&#43;/3dk021CxUVsy0ttTU1Nc0N0dGGkXOXL0/sH/WCdoYZNBhG6pUgB2VXg4W3CvVINud4z1/efz86FHUm74n3hLQgBsjiYuDeYjIQYFvtPv8DSHzcfzzz4n8w1dF3/Y/Xd&#43;68fmC7msJtTqfLbmbcNt6ZTIT5e0JapMnigmKyoKAYyZSNdVtBJh4&#43;c&#43;taf&#43;1CzUILSL&#43;7zc21NaBYt9TWVVTUNe/f3/zp5fNXLk80N&#43;1/xem2luspjqMMCmRl1MtGsrNVmGQzOXpGo0NDQ6aeRJJPJoaHk1IJqdpQbCwmSc7u9vkf&#43;PxTPt&#43;Ub8oPdlNT/uPHB45PAei&#43;H/oOvKSmcAHowpoZQuCTyWRaENJiwAilJosRoHFmK6zcc/XaZG1dzUJN7cjDh9/evdtSOyu3mLqaioXakeaJT6&#43;cP3/l8rlPPx3ZH7XvNljwCI7p5UREVslyq0iJN/X0jEeHvOOOYQeATnyRTNFGVIUaSSPH1j/wTdXLAbjBHwD38eNT66//8UDfzr4/lqOUJBKixLAzkiSJ4j3xpnRTStGgT4FA1q1QFx4&#43;c7W/tqZmoW6hZrb5IZB6Yrbu&#43;9mFhTrwQRZma0dGai9fefU85J7Y79272&#43;LiBUq/3F0QZJUiO1vvYfjh4epRRxSsbk0CIQrCPfG1MiNZgBpputU3Vd/R0dFRX98BuacyT6D4zut/vH59Z9/BcjIQmJlhZ2YCgUBgpgvsA2WBshIYZSUlyFYZGtRowHzu8uWamtnZugko9Wxd3cLswrmKutq62dm7d0dGgNSvAuzL50Yc5gMHzARuVSJZSFYWsgpZpVAolNkqjxQedvT09IyOO51OwUxRXCAVCJSVlZAkzRXVT9X/AJg76qfA5vPVr&#43;B3rL9&#43;/Y99O/98sJwsoemyMrqsDNYeECUQeVlpOQkLCwsPn7nY&#43;c81ly9frliYXaibHbn/8Nv7s7N15xYqKioq6mrvgtLdMjF7&#43;fz5V1999dUrlz99xT1YZbBiYGzKkvu4UomCHifxJtMoPC7msjEUaB80/MU03Vrq8091dOzs6Ojw1df75ZiqB39RX9&#43;xs&#43;/g9esgEw2kMSNrJozyjoTIpBEovXVdYWFeXuWe25N15y5fuXKlog4k3whoKrO1dTU127ZV1E2AGeTu3ZGJTy&#43;f/9OfXn31/OVP97sO5G5X6yEz2BRKVGvQaklQPUzjo3/5t&#43;gDl0uiQPstMNJlZTsCM27/g6n6H4p2FnVAO/j88NlRtHNNUUdHx5q&#43;63LNO0Aa6ZISWiYkjcVGUOPJjMzFQGm52OV1b7nV31J37sr5X17ZtlC3UDfR/PDbh/dnJ0Ym6ioqKmommh6CD9HcNHLu/Kt/&#43;pMMffDECbVauXIwT4larRiG0SxvGh39y/hfhoZsNpxGiwtUBcUlZYGZm3/3Pxg4PgUdDW2R8UXpmvU71&#43;9c01G0vq/vet&#43;ff99Xrs9oWgzDWFwMWYuNK4kIq10hFLoWCH3&#43;l9uAqVuamh5&#43;CxpMU0tNxbaFlqYmIPVIU9PEFRl6Yv9AqEqt1sByl4WsUuQoScy6G8MoSTA5RkfHh2yuAUGkSGNxMVlAGgMzfx&#43;KvnX0eD1E9tXDdATURWvWr1&#43;/Zv3ONUVr1vdd79v5&#43;76DelTuI1Do/yVKkK3rCtdlsvCCzHx&#43;20LN7GxL00NAPfLmm811CxXnapubRkCTbF6GPjfR4DpYXm4AQ2ZGaJVGi&#43;3GMJIVwomexKjX5RbcDA2/2OJickaMRt86ehQUOL8fpt/OotL6eh8QGiCv2bkTSN33&#43;9/v7CvXy62PXBa3BG6Zt0YEMq/L23Kr/0LFlStXrpw/v2vbuZqFugkg7cP7D5tONk3U1YAi3TLRAqrep1de/RNIxIke9&#43;7BQYNeI5doUDlUqEGnJckZIZkYdjh4sZXlKBLdAH4zSc/Yho4eH/BP1fsHBvw&#43;35S/vqOotN7n95WuWbN&#43;TVFRadGanWv6&#43;vp2TtWvP6BGi0nQSqDUMAkz1KA/FYPqUQhL9GTNZVCBr&#43;w6v62mrqamtrm5BVA3NzW3TMzOTky03K2tna2dgNB/evXKuZFR8&#43;Axg0EDpnm4ZStzUBSMRpTIJxIJh5fBMFSfk6MqANPSjMs79KB&#43;qt7nHxgY8Pn8A35/R3293&#43;cD0EUgM0uL1q/vO9i3c2pqzYGXlAUFxWhxAQoa90oGFhuLN2wofmYDtMfWwrwzVyfrrkDoK7sqztXV1dRNtNy9//D/fni/eWRk5P7I3ZaJ2pGRkQlQqWHJ&#43;3TEtLeqSq1XKxVqJQLIEUW2SoWqVAVgOP7RlBBYPRimsrNVBcUkLfHRoamOonrfwNDAVL1vYOC4XPR8paVFwCb&#43;AT/IxIN9Ozt&#43;v&#43;bgS2qVUqVSZudk54DuLxcQkJEbNjyjfwYBWVi4bl3lXH/dlStXLldc2XWl4tOJ2k9rJ2pBL384cndipKnp4cjExGxLU9NI08g5AH3&#43;8qdNzr250y/pNWo1XDrJixcoN8mKaT5twzm5V2bnqIrJgMAPHfft7Kj3Dw0NAFv7fPU&#43;aO7S0lIo/9CAD3q6o6No/QG1WgHmGPAEo7isNIAv3oA&#43;k4Ns3ryuUF6yXKgAElfs2nW5bmSkeWSirg7UuabZutmRpv&#43;vaWKh5tORN98cmXgS&#43;kQ5hgGDgBX5qszMlJ2DerjUTZajtLDlrEJyVEBoL5Cyw&#43;cfGgKg9b4pUKp99UBmPxi&#43;h/z1O9fsvd63Zuf6vbu1qFKtVGers7OzVVBqCA2wyQ3PqMBoWgim/zMXx/657sLkv9Rs&#43;&#43;W2upEmQLfwadObD0fOVZybaG4amT1XUTPS3DQycXkZOhqqqgqxjAXLHO7NgoSIMkdVYAyUGVGlelVG6YKSGZEf8k/V7ywF7gDMQGafrx5awzcUHR/y19evWQPssbdvfREboA2owUAaVDk5OSqV3F1gDSKN5AYU&#43;WoznP5BFx/7qP9a/3u7du2qmGhuap49VwEUrz0HFi8jLbU1FTUTLc0tE&#43;fOy138Tefeqt1MJE5wBnntIqu9KjtHpSLLykgV/BMYSFQonRL4gQFgaf/AkK&#43;0tBQ4Y8pX3yHrHI0ehW1x/Zr1Bw8evF7kFiW2dW9rK8uR&#43;mfg2f1M6QPQdHEx8tVXYMArLFx3&#43;My&#43;i/sujr23bde2itoRQFlX29ICRuma2traltramtrml1taZE9fgfYoD&#43;FeZ4TTgpWLAjQYRJGtANDGsjIjhFYoFQqlsoCcEVwDQ1NFHaDe1XeU&#43;uDQUd8BbDIwFB0a8JUWrVm/Zs369QcPHugrmpqqf9DxQ329z46pcnKyc7I3ZKhJmuZoI4188BU0dWFe3uHKLZXA2WDSaHkP8MJHS&#43;1Ey8vvtbzc0tJ8&#43;vSF0811YDi9cm7iTe/eqkEzIeAcMLUSHo3MViizlSpVQXHZr40qULmVBo1eg6IeTiJs0QFAOwDTcGDAP&#43;UDzP6h8eiQv760aA2M9X0HDvR1THX88MD34IcfHthp/TPKZeoSI03PiNIMZkQ&#43;/vDsZoBcmJeXl3d4y8WPauvqWppfrp083dx88vSFl083jTQ3nb7Qcvpk8&#43;mTpydPNwOlz185N7LfFcp9CeNYDtPDM4oKuEpUwaMTxrIdJWh2do4GozjOaqWsnJn1j78l4/oAul/ORv/Q&#43;PiQv7QIBKTeex1AT/0w9cMPP/xQb7eCxTdMRtgcOfHvXokikY&#43;B1CAT8/LzwKh3tX&#43;y&#43;SSgPXlyf&#43;PJydMnTzaBP06C14bO5tOnQZ0&#43;f3miyeEezN2uwXTLjRwIi6JaFC0oKCDLdhiLVTlKlHO7XG57a&#43;v69et94&#43;8f9/n9Q0d9sOItM0cH/EDmIjnWQKWPP&#43;j44cGDjimfm9M/AypINpxFjCTtTiZxTIV8&#43;fGHZ9fB2RTG4T1XO082NnS29Dc0NFQ3TJ5saNi/v&#43;Hk5MuNDY0N1Y39JwH0&#43;SufjjR491ZtL9dqtZrMoTGFIgfVURgGqIvLfl2GbkALSNYbHY8O1P/w5/V/rn8w/sDv8wP/ltaXlhaVgkoSjQ74oMRFa4rgo&#43;/gH9f7jvqn6h88ePBg6O&#43;t6EvZq0B/Ios3AGjJmRQpPfL5xx9&#43;tRV6Oi8feKRyca662tE4eXLY0eOoPt1Z7aiurm6c7K9uqK52tJ1uPDlx&#43;TwY8Zz47qryQQwDFVWBIFmwSmCc1WAoANA7ykqMRpqWnD09PdGpH/785x&#43;mHgwdB0UDGBhEqc8fHY/6fRk3y39XtP7g9fVTQ8c76gdGR8fHB1hD9s9h2VTpn0GNJCY5kzZOiXz&#43;8QdQ6UIIXZjX3c4nTcG2040Oh8lU3dnocIDPcPp0dXV1taP6&#43;YaG5nOXL3/a5LC1Dpbvtpg5DJUPjK1SZKtQrXW3waBRocVlT/8/O3bs2DEjjjbs3z8uG/TB0eOwnchuKPUNRKNRf33RejAtQerSjlLQyHceP&#43;pbY3c5nU7eBZpqVtbPQc8CFiEZPsFzeuTzLz/8ap3cX/Ig9NK9JT5c3d8YNJmcjv5Gh8nR4wBKV1f3OKr7q6tPjtR&#43;2nzSZDPvNljMjJnSokogNDz7qcV2G/QaVU5ByWtP79gR2DEjDje1NL8SfeCbmnowcPS4D8xHpYCw1D8AdK4vAnM0GD&#43;KSkF0FPX1dfiP1x/czbEM28oZXlqVlZXB1heTNOsddrJa6OnNGU8X5hWu6z6VuinGjvQ3mpxOkwMo7ah2NEyeBEI7qoFbTjadPtngcBIsZjWbWSsJlgFZWVmIAl5uYNArc3LQkh2/BqMlLVb/87n/1tQzHn3ADw0cPe6f8vtKgXlL/UMZZiC0vH4pLe2AU3bHcX/pgZf0Br1Br//5qqxM/BxRkTQnOoedBIt8/PFXZ9etW6HO6z71bkqM9fZ3Bp1OJ4A2OUyOttP91Q6Hw9R2ss3kqAYp6TAJLEZZwISBqgHzarB4UeoNGmVOtkJl3FG2Qf&#43;MHrMPN//zv&#43;x3jDv/PiT6/ANTYMlStGZNqX9gfBzmIJj&#43;i&#43;D8BAenqeNTHb/3Hy86cGI7ggA7/3w7/NnbsxAkm5yRbCaHyWtDPvjgw63yscdCWPTa21Ope/ztXzQGw85YsB9a21Q92V/tqHaY2jqrTQ5HdUO1w8kTnFaLWSlMr1erke3bke1ZiFqt0eizgbuNO&#43;gNej3GiqbqxmGnKIo2UZJ8x49P&#43;cGItKZeboP1mSQszYx79f6j/qmpjqmB0gNVq7OytiOyGnKsyiZZweU1jTudyFegTMuJWAigu5eeS4np3v42UyzuDXY2BsMmk6nt5eeh0tWdDqcTvHHaIrgV1ZNgzNdiVgwLYQYDhlk5CtPAk30AGuVcvDMc5gmOYwVBlOyA&#43;jgcOPxDA/6VPlhU73NnoI9P&#43;To6po7XHzyxentW1s&#43;zVq/Okk8vZ2UBpUXCNeQcsiFngTmgOwpl6FPvdqWEROcXcZEg&#43;LbeeIR3Bo&#43;ARHQ4ggDaZALix2wEq9UadAa9nmPMFgtBmC04ESFwxqpBEBW5owx9Rs/yTj4iRCQPGRDTosTW&#43;48fPX7c1wEGJwBZBAcOkIil0NS&#43;4/76Hzp&#43;qPfXH6xanVF4WeisVQpyRsTtbpvLjkCd10FrQOr2z1JdXan07aTIsmxkOCgyhNPR9vLJXmCP6ufbHI4j1Ueqhx1BnjCzLEsZQgxusZjji/FILBYjGILRqlep6B108Ut6CicYlmU4mqSlpCCxdp//6NGjR/31HTIxYF4vl&#43;hSCO6fqv8BlI/6vqrtq3&#43;CjGQh2SgrMWa7y70XWbdOLnV5&#43;YWQuvtUalNZl/DFIstxLDEcY1gBKP28w&#43;R0xoKNjW1H2hrbwKMtGIvHI0yIwpkQZY6HY&#43;HgYpwxRwidWqE0AqXVWorDdJgHrDwCIi9ynEx9HK7GgTXWy0rL1PX1U0ePdvT9uW/nlG/9k0pvh8xZCjIgMRazy9WKZNp3HszEwsJ13Usbu0oCS1&#43;kWY7iiMUkwxK8qbq/LY7jOEPEY8kYPGE73DYcFuICwehCOMHgRDweWewNhwliidGpV&#43;WQO&#43;hidbZar1eqlWC5RHokQWQ5rtR3/PjRo0eHhgZgY4TdW9YZDCRHh96a2vnngzt9U&#43;vLT6x&#43;Qmd4sDAbDUg444463UgGOA&#43;Mp1u3bt28&#43;cNHXSVd4hzPejyUGEwyLM6Hq58PMhQFT43LwURiPMFSFKWb13IEQUQIxkzEI7F4BOc0ilU5xWUlaLa8LlCowGLcSItLEqSeGjj61vvjYLgD3RGuYsA6xucfeOut99&#43;a6vvz9fVTvjXH5GtSVq8GCSnbQ4FSkujy9oxGl5UGyGfPvnD20tmvPnj0qGspkeY8OgpfjLEczjuHOxOs1oAatBgG0HU6ChciLKYb1OoRtdZiZi2h0DzFsQzOWLRqRJGDlhjRbHjZLKJQqgqKjR6aFQWJ5Vrt/uNDR4&#43;&#43;P/pvo&#43;PRoYEBsBjwwefxo9G3okd9O/v6dtZPrRk8sRoEvJ5mdRZca65CaUm0mXp6xpHMJF24dfPZS5n4wwePlubinE6nIxaTLMdE&#43;OHOMItp9VqDDqMsHEXpKCYiMCGrNWRQb0fmNfPzSjUyXT6PWayhcrVGqSRLaFKv12sNBo0&#43;GywagdTpeIrjQCfxTw28FR0dHR03RaNDMvmUHywM/AP16wEzUPp/37569fbtakSud0pltkJFSqLNaRp3ItAd&#43;YVbN1&#43;6dOmFSy&#43;88MILly794cP2L5ZY3bwHKB1iI3ywM8haMYNBi3EMjuMsRTFChLFYWAtmQNT63Qb1vGFQozdgIRCUleJmWI6ysqyFs&#43;j0imx4vCYgCATLMnY7WNQODIE&#43;Hh3yDsFzRaBT&#43;krXlPp8pfUgTVtDg/pyZLsaCxnUq7OykBwURbNVZEqI2JxeG1IoG3rzpbOQWKb&#43;qn1u8ZHuSwhNmSN88PkgzpotHMaxLlvcRrAcQwBoiyVkUGMW1hKysGaL1cJYLGYzThAEwfMCTkTicQJndGpFjrIA9dABUSTiEcLtdg0MeAe80aAp6hwa8E35BwZcPp/bbra2ul0u25C/vsiMmy1UqDxkZjgDshpeT4PmqMgZgXc6nV5E7oVbzy7rDOIPZ9uv3nn08aMvl4JhnMV573B/WyzOxyI4IYRNznAsIkbCsThBELhZG7LgZjND4AwRicQiRIQgYnEhFgwGY3ycD4djEU6jRLUUF6A8rBRfTMb5WMwZc8ZtJtha/aWlfpPT5YrYImaMJezumNNtsdjjMQI3c2YcZ0IAOhstKFChJC3Ca/4Q2dGA&#43;YXHSp&#43;tvLrnww8&#43;&#43;GBpLhjBbU5T7/OdR9oaG4d7E72NjY2NR3qDR24f6QVgRIjCcSrEEGYLsRgLLobDBB6JRMK9bcPhWMQV7w3GWA8KslBkU1xKCPLxZDAYi4W94HMFnbH69WtswWA8EgsTHMUQZnM8jO/GmFgwAjRhzAyFrF6dheSoclRgNLU5o&#43;NRpBCU562yN75epj575uqeU3&#43;A0ATuMplM4UQ4GOx1BMPB3iNtbcPB5OJw2/BiOBbDKQvOhELMkjlExECD6Y0w8QgRvt3WG465cK8jmJRoDy3xcVGUWIpY5CPhYJCPxGPhXkc4EomYQ&#43;Z4MByLxGO4h5IIjovE8BBmjoUjRDxOWCxQaTAuKVVGI82JgFqu0wD6669fyGxnvz575tCesx988OjDRJgBJU&#43;QWJbBCVxiJCEiEITEMgSwK8OyIQ4nGAsO7RGPx4O9cSIeicSCvWHQMGPBcFhgaYoVRZH1eDxSMsYvJoJxIh4OhmO42RwhzPZ4PB4jiAgLoBkmEiNYFo/FCDYSI0KWR9ZpeD3eqmyV0WikGLctKpe8ws2XXrj09ddbv87E5u591/Z8&#43;MHHOmaRZ60ML0iUTqO1WliWYxmJ5SgPxRE8gMYZEATDwqICuMMR0GoikTgfj/AxXojzaSLloQOpQMBT5kkJcUGI8PAOlIjZErIQERy3my1ms5llKZZZEpb4uEBE4jGB01lwi85iDilAm1m1KltVXGKkOLPdO4rItePspa9f2Prdd//0XeHXW78rXLsFQD/6XMeA6sHGBYnzaDEK8IlAZjCV8MFkRIjx8ThsjPMeClZviRAJCRfB/xOXcIkQGVaSUgF4fq2kpMToCbBdFMeCz2W2hsrLtSHQlqYHBwdDlIURI3GBIESCEAiRm9fMa&#43;fnLZx2O5jw4JBeQpMc12oD0IWFhWdfuPTC19/9x6G//cd3ILZU7ru6&#43;OjLAh0bhEoneVFiWZzA4R0hAiFGBD6cCCZjyWAyKTCUx6PTYR6dzrPc5TkYFAe&#43;E49HR5LGEiNZYDSSBTqPh9R5KNYSGiwvn66arpqGl1dNV03vtsjjAMuyKZb16JRZq7dvN1hDGkWOUqVSFaDFxrKyAMvZIbTs6a&#43;//tdDN24c&#43;o9//e67tfnde67eeaSb1zKLcZYyx51Jnhd4XgAigu&#43;c52PJcNIpX30kppgUy7EswwJICgwm4Bcz8D2HYToU9nES9BcSfCyK4jhQ4UMhy&#43;7B8qqncqfhHTAhBgcDOYGzlMdDg/8StgBWBw9Pl5SUlIDl/U3JFl2BfuHS12v/duPGJ38D0Hnde64uPtJpgKcZihFi3mQ47IzxAiEIcZ4HBTgOliKSBI0oLIFvdAl8AxJD4Et8PLIU4wWcIQSQspQqW4WipIckSZLlk3EROD4C6zphtgzm5g6acdCSIi63zRu3xQS2xCMRAs6wFEuIUqCkpEQ&#43;Z1tWVjYjic6enkyd3nz2hRe&#43;&#43;6e/vf23vwGpCzefubr4aF6jZYIg0YOO4d7q4aDDFE4Eg8lwOBmOAfAIQYh4iuNEQmTEuCAKseRijI8RREwgYsG5RDxNiEJcEDk0G0U94Cvw0EQwHAuGe0HPIeLhWCxOhKarLKCTxGMxlz3ijLjCCclDsulFISLihIgvBUjSCK&#43;5KC4GhRrnR5eht3596dLXX38Hmf/pu81nz1xd4nRaHbs4PDc83NbZ2NjYeaRN3oZ74TacmEsEFxNxiV0SWY4QGDayGA4nF4MESxBMbHg4uBiXOGKRj7MkSnIsJ/ICywrBMB/sHQa4cgUhQsdCBJQmHDHbI143HgviOpSKhOPEkgDKElegysnJUWZnq9U/V6Mc43KaEFDxoNSXzr7w9Xff/et33333NWgudx7N67QeRuDjoO/G&#43;FgsCXbA0XEhnk7H0nEBZCjHigTLEks4SyRj8UgQQDPSUmIxGREYFheW0iJH0&#43;wMK8aFFCvMmcJBwBiJh8Mx3GKOmEMW8JYAbcZCRECdFikDRfCEGA8THIcHNAr5cP3PEQQxWFk370Uyi5bCrZtfuPT1WVClL5299FU78PS8TgsHf5hc7HLAxQDV1cXSIPs4nY7FGZYhRJwgGImJxBmOSbGECFIKZwiREESJ83goik2xHopIhsPhWBxncNgMB0O42WwmcJwwm82hUIghGDCJcSEWFxkOF3DKwlCaVVmrsjLHmRQGinGFEXiwQ6Y&#43;e&#43;mFsy&#43;c/cOlP3zwYfvcnUchj06n1el0OopicbDYAr0FrFV0Wi1Jlhh1Og/LhrQaHWUBHw2UtxDHMiEPxdFUgAuAdc4jNsAynEej1Gt0Oh2poxhQHlizGVaP6dzBEHgzOAhKSeveEAubLIWBwkPpKJYKPWI8WqX68bJLbeAiTiQ/L3OYBqy2zr5w9quvHj169Ch9cfHDRxaO0mE6zGLGI/E4SBqCYcBf7cY0BQVkQYGOspitWo1aM6/RaHXz2mmNdj4U0s17Sko8nhIP&#43;MQcTXl0Wj2CrFIqUWMJSeooirJyFkto8Nh0bu5Tucfmj81XTedOHxtcg7tBDTFzIa0Wg9UTo3QhMJZTBuQxtZ4inEh&#43;PpQ6Pz8/v7Bw67p1p57r2lj2KD23&#43;IhZwlmOCrH4UiwWC8PcAe0P02oNmhyVqqBAi1ktIUytMWj1WozyGLRqDUaFMK2xjPbQAQ6oL0kspVUr4RlSlCyhPRRn5SxmwmUZrKrKrcqdXrl&#43;95jF53K7vV4C5ygPSwhwsrGwZtZMMJQayazKV2eprQT/JDQ8VtP&#43;2aNNZV3iXIx5RMQjOGsmwNDjjHljNls8JgATa/RqhSJHqUSxkBXTajDOglGMyLAcFmItlBY1dqUkURQlBgf9k6EwHabTYlq0gKQlMeKy2WxRW9EgvFy3Knf6/4KK504Prre7oo7RqM0&#43;w4rJZEyAoyn4GRHWkAWRQagxhpCh8/Mz0PmV7b/duANAJxmG4MNgYOsd7g2HTWGnE1SpJYajQjpMi2kxHWXlzJTBwBGEhcOXBIIwswSr06AlqXt8Mmkj7IyLj8UiBByqGE6nQSnRUd1TPRp1ulqPLV8gvXx9d9Wg2TXu6Bn1uriAlE7yhAhaE8fiEZzTIlnLx24QLccgch5C7LzC/PzK9s&#43;6NpV13bv9xaIQCw/39va2dfY/39nW2Hakujc43HYkHIuLYD1FiGAEiTA6TYgguBArwOGO4LRKFX1TSPZUO912u9tpMpmS4TiomQSlQalI9emmNxtMA67Wwarp5Qu74fgxfSxkcXudXpuLoUgONluWpea1OoqjsMeZmIXorQA6P09&#43;5BfmF&#43;ZXpn8LoFOLX/Qm5obbOp/v7P/F5OTk6cn&#43;yf7nOzs7&#43;ztvDy8Gk8HFRBg8k4ROrzXjIQqPsBYitoh7FAoVeTNtqm4YHXC7baM9DsdwELTSsMBpNBgxfPrk/h4b4cLNod3HysHAVH5s8Nj0sfLBUMhixhkzZ8VQPeoJeDxa7bxGgajhnRJPQmMsnD3yV0wN7bFpR1nqpiASQoQPB4d729oa&#43;zs7G9s623rBwiUoECIOhhsJlEFKV661MBbzUsSiM8firAZRqOibfLKhocfrcg2NVlebnEKE5wWBoTQaLRtPmkxgKrG57HsHy6uqyo&#43;Baam8ahpQWy0gzfVKhRKlSZV88UuWfAb7iaKnxZYP1gBgEJXtv&#43;16elPZjgAN&#43;gEObBwOOxqf72yrbusNgyVJnPVotVqNVg6NWq0NcZRZINh5imE8IEXJm2mnw2EyOU1O06iJZziO5SwcpVVqNDqOZXCW43DcvjcElM6tqqqCF9LnVg3utnKshcIwvVJZYCRzFPCKLthVfhIIIh&#43;syV9OxfzKdGrj00//ekdZmcfj4cCqKBg0OZ6fPA3EDoIVK8/q4KF/ZLt8z4VarZ3X6ljWo5/X6TQKRY6KTqWTTqfJcQTIHI5wmFar02o1Go1Sieow8BFYs2X3MQALCwdMxtxjIbOdIFxu3GzVK1EjqVLIxx3/kXl11upMIsqmzsvPq&#43;z&#43;7cZNT2/asQNAs0vBYG9v0HTk9OSFl/t/0d8btwXbFlmdUgEvOYAXpijVaoUa0XhonQJRwFt&#43;UfImn0iYTA4HkDvMM6A/cByn02hQqDThxu2tu6G8uU/lLt8XMmi3eQdAzXOxBhVKGlEFPOyYhTz2h3wn1OrVCDRGXmaflwc9/fTTT&#43;/YEfBQTLy3t/dIsLrxdEvLy/2T/cPxcFtnmNFpMjcTKdUatRKeYNbQNKlUACUpHUrOpIerh01eW8TmNJmcEbBqFGIC6yFJNuI1ORymqBPeNrSsM3wdtHsHbKMNDaNeO4aitEc&#43;P4moFWqN/slUBEpnvCHXvPy8yvRzAHrTpk07AoFU7PaRtra2zskLL5/uP93fGIwFO59PSh6NWoEAYq0B3lCtUCpQY4BUKXNQHWe2aklOHG5sGLW57SAThx2JRDg5PJwQZwIBMXHydNObPSanrXUwF958Iz&#43;gPdaY3d7R0VEvQ2k9gRmOgvflGjArZ8E0iOzt1bArIhnijKnzutuf27jx6aeffnrTjq5Aiu/tBMz/7VfvTfb3n&#43;4Mhtv6&#43;2OsZx5eM60xhKzW3Vq1RqlUovQOElWqUI41W7VaWjQ1vFk95HK7xnsajhwZHk4EE8NJIRVICUdeHmluHLd5XXsz3ljuL/Afimi14y4C5zBOEgQRDGhWjjUzEYLFgNTbl88NII9VXrt2bf7hyrRsj6c3bdrRlUrP/XtnZ&#43;eFX/3uVxdOT/Z39rb1Tx5Jszo44So1BqvFgmk1GmCLkgCJ5qhIjLOEDDqK5avffMXpcruc1fuHwdJMEAgxQNG0lGx8vtpJ2N343qrcp5ZVBi8yNWbFrJgBY3hTgo&#43;A2ZbBiQgfx3XI4zqyOgtZ0Th/7dr8/MOV7b/dBJUGDum6mezs7&#43;zsnHzvvQv9k5P9nf2Tv&#43;glKAitUEOlQ6AqKBQoDeyhQsEIiGk9rOCo7hn3umxDDodTAutyyuPRokoUYyICwXAcw4SqHntaVvxYyGrFNAYtqoe3k/OCQOAsxxBCXIBKyw9Y9PKX20p&#43;PoSWPZ2BTqVvPw&#43;o&#43;yf7J0FcmGzkU5QWukOpMWhDWMbVaEnAqFfmqFAthmEkyRK802ky2WwRm43gYLkDBU&#43;p1GAUCz4DY9&#43;7cndWJqpCdpfZwlk4C4VxLC4KooizmBasQNiQZqXNwGulgMT5K3G4Mv2ZLDSg3pj6LNk5Odnf398/&#43;R6If&#43;lMipxOq4DQas28wQDLr0JZQJfROdlKFYpiGIlqKQbHRbAylRiG1UFcUFuUGg3GsQzDMjabebdMvTybVh2zuLwul83ptTFWLYZRXIoNeDRg8NVqNUoFooD3XClWZSuyQSKuzV8R&#43;3DlciI&#43;vWnjpk2bUukE0PjChV/96ne/&#43;z/fez4hsh5Q8cDPUCrVYLRWA5yCkoARzVYqVSoU1ShRLUaB2gxmHZ0OmB5uCqVGxxLeMG&#43;zOZ2ug1WgH&#43;ZO54LJCSwDQnbXgLNnf0OPl9WDgu&#43;haVKlVKo0GpVGhcLLFNGCggK0GEWWe&#43;FhCF95Rk7EjRs3Ambg6sTtX0z&#43;y3u/&#43;t3vfvd/9CcI1uPRaZWZKwfVavClq5VKVUFJmRHNhpddKVVKpUap12tQzYoroEpKhVKDEY6Gk/t7nFGv/eAgPMCU2XKrpgcPWlzOhv37G3jWoMxW5BSQJSVGEl5zmrl8Wr74u6wEQh&#43;G2Gvz166tBJ7euHHju&#43;9&#43;lnpu46aNqdRn6XTii9vP/&#43;I/J/&#43;zMyGmPGDhmLn1CWAr1aANqsiSshJUlQ31h5ENdnrlciggt1JjjTS&#43;3NLcELW5WkODVfNV04NVg/PL/8hKKGS2mUYTJoHVqpQ5SlWBkQaIZZmjNStRggBkWKfXgu2wDP3uvXvpe/dSG7s2plKp1Gf30ulkejF5TwQ663RyyZOxEQCuhNdyFeSoFYpsiK2QLZwJTQZardBQkedbJpqrvS7cbrGELCEL/NdKzGY7GBvNFo6VcEmSKJKER2josv81wKdAVnIQVLx8WenUPVHgk&#43;nPUs&#43;9u3HTxk1dqa5UKiWlWI/MDNu4PBXIKalQFRSTxSp4QxRUdBlZ85hcoQbYGOM40lidFEWBj0fiYLkcDoNlEYikIAUCM4FAgIZsj4npzB9peGcAbQRK5&#43;WvPbx2LbTIWlCnN6Y&#43;EwVhcXEpnXrutY0bNwF3d3UFKLCwlkMLL7WSLxFTQ9AclUqVrc5GZORMsdAolx29bBClhmLEiCBJkpBMJpLhRDITaT4t3BNnAmV0AFLSEBO&#43;wsPENF0WAA8a3j4C5ul8iCwr3f4/Us9tvHlTXOIXk&#43;kU9PfGTRu7ugIeGuqsBczQ1FmIQtYaVqMckIWPkWWZM2moXFY&#43;R6lCSYymKHrmpnhPvCeKN8WUdDN1MyWlZma6AoEyegfkpgMyXQBIPzMzM5OSpJuSJEmiBJbMmYFpLXR0/uEtoHqk3hWJ&#43;OJiOp0CwJtgIemiPZRHB&#43;d&#43;sFfKRVMGlj2RDcqIDIuCARVeowcD1qsCtAAlUWBWkibpQKBrpivQBSIVAHkz05ViU8shpW5KIrwXFMSSuCQspRfTS4tL4Ll0Z2m5I65dC7krt6R/u3FjKiUuJRfTn21ciU2bugKy0BmpNTC9MsIqoIgaFUSEXKSHpmkPTXpID0mD9zT4ZtlAIBVIzcykZlJSCuiWylAJS/eWxKX00lJ6SViCaItLd8DWfqcd7mG0nwHbmfY7SF7mCMLhtYfX5sOS9xyQOp1Oi6mNT1LvoJctDW2t1WlReVsWcBmPCwRY8H1K4FtPSTcl8BRFUUjH4bbEp5eS6cX04tLi4p3FO3fgfhFiLd65c&#43;ZO&#43;50zd86c2XNmz5kz4M2ZM5UQtr2yvbKyu7K9u7IbWV61yFJXnvkfQN/UuzfFz557buNzG&#43;UdwO7aQQNbezwUDfwNbEfRGfOlWFk8eJDmniCmBT65mFwEebaYWEzMLc4tzs3Nzd2eg3ELPG7dunVrD9zt2bNvz749IM5s&#43;em25UxlJraAXffy9vhgDUjEjNIbN7727sYUIF6Od5977rWurq4AF0jNpOB3K66EICzdSy8J6aX0UnIRyLa4uDg3d&#43;R2/7X&#43;a9eu/fu1a9eu3b52&#43;&#43;rVa29fffvqoYsXL17ct0/e79snw4J49tktz&#43;55dsueLT&#43;NSvjMUMvRfRhZC6eOlepxJv3bFFA39dxz777728&#43;ejHv3RJDwgrCUji2mFwHgE3FL/orP3LlzZs&#43;tW3O3xz766J2P3vnoxtgnY5&#43;MvQ3ikBxvvPHGG/veePENgPzivhdffPHZF599Fj5BbAGPf8CuXKY&#43;XNl9uPvw4cOIDAtK9Nr8vMOVlellxvRn6Uz8CAz44&#43;KPy3xzibkvbs/JqLdu7YG&#43;23Jmz5nl3/Lsnj1zt8feAXHjo08&#43;&#43;eSTtz95&#43;&#43;1Dbz9mfvGNF8F&#43;OVaIIfUWCA5ijyz0lscqd1d2Hz7cDe2xdi3oLrC9VJ658&#43;OdHyFjenHxx7kf574ALvzx1txixopz&#43;&#43;YuzoHve/HOUvuZPbL3YDwLfx0Q7cV9V6&#43;NvfPOb95558aNG5D6CanfWMF&#43;8cU3/oFZ/hnyj3qs8xPO6O4&#43;3A2hIfFaKPjayi23fpz7YhHIuOfW3Nzt27dBxuzZd2vfrT23ZPPt23fr4tWxa9dutbd3V2Yon30RSHcIbIcOvf3229euAubfAKlvrDBnxM5Arwi958XHGv&#43;Dp5dZz0Dcynaw7&#43;7uPiXP07DcQZNs2XPr9u0vFhfvtN/Zc/HqtWu3L17cs2&#43;Zd5n66qGxsWsXb93Ztw9AAspPPrkhx0c3gCs&#43;uvHRO7/5DVT6kxuyPVYMsuLpN4Cl94FPvOdZkIlyGu7ZsuXMFvgFQtj2ynYY3fLu1KlTp9pPIY9nafhSueXW3O3bi3futN&#43;5eHXsP69du3hxz0&#43;J9&#43;3bd/HQ2Cdj18bGxgDmOxATxm/e&#43;c07773zznu/ATLLzCtKL3v64qGLgDeTh/v2vLgPIAPqLZmqJ0d7ZfsZmbcdknefaj8FmU&#43;dOoWsTNOyP9Zu2SebYvHitbEbY2PXrl7cB8ooLE/Lby4eensMIMtskO83EPk3mb/41QrzJzI0RH776iFQ8t64CJDf2LfyI2Fs2ZPpJ2cqM8zLEp9qbz/VferJyKxc1ubL83T&#43;Wqj01dtzV6&#43;OffTR2Ni1QxefxAXxxhsXgSU&#43;gRb4VQZ6WevfvJP5JLB23LgBCt4nb48dunbo6lXADKj3Xdz3D1VaBoWwK9Hd3n2quxvidstbd3f35u5Tm0EiygNT5hjC2sNb9szNzV0FHWFsbOyjsUNXL&#43;57Ii5eBN0BUl/75JMb0BBybXvnBqzLwNDvvPPP8AU4/KNPxsbGYFu5BvvKxUxK39pzB9RKUC5lG3QD21aCR3d7909i3crruu7uvLzu7sPI4zMXcipuuTM3d/X2VRl6bOxQRmkAvO/ixTcOXTx06I2LF2H&#43;jX3yEajEN26ADrIcH419BNqKzA/&#43;17GxsbevXb129erFW8ukspSn4BffnoGENbiyG7SQvMPdh/PyuvPyDh/O6y7MO7z2n/5pbabArYU&#43;/v8DAAD//3SQHrDj14qZAAAAAElFTkSuQmCC"
+                     data-src="/components/images/sun_gtil2_display_board.png"
+                     data-srcset="/components/images/sun_gtil2_display_board.png 600w, /components/images/sun_gtil2_display_board_hu_f4b06081c17185ef.png 120w, /components/images/sun_gtil2_display_board_hu_ee8396710d92eaf2.png 200w, /components/images/sun_gtil2_display_board_hu_9f4aee7619c7fed.png 300w, /components/images/sun_gtil2_display_board_hu_d33568d61927c4eb.png 400w, /components/images/sun_gtil2_display_board_hu_3bc2f73837802a8f.png 600w"
+                     width="50.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Pinout of the inverter&rsquo;s display board</em>
+                </figcaption>
+            
+        </figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/images/sun_gtil2_schematic.png" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Simplified connection diagram</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 891px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/images/sun_gtil2_schematic.png"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABeCAMAAAC9zM7kAAAC/VBMVEX///8AiQAwMDAAAIDfAAD9/f76&#43;vo5pzn8/PxlZWXE6cT/BQV/yH/3AADmMTGX05e65LrfQkLzAADzxMTqpaUMkQzLy8sAAIM3pTevr68wpDAFBYi3t7fV1e8BAYU1NTVLS6qkpKT7wsKcnJy7u7vzo6MTE45QUKwPD4xRUVFDQ0Ofn585OTk3N6DZ2fFtbW1oaGg3NzfT09NiYmJHR0eZmZn/AACVlc9LS0sxpDHR0evBwcELC4r59/d8fHxvb7tISKh/f397xXvs7PqdndTFxcU8PDzw8P3Jyem0tLSnp6cYGJDd3d3IyMjPz89hYbaTk5NcXFzfRUWnp9iQkM1YWFhVVVXNzeu8vOKLi8l3d3cwMJ3gPT37&#43;//j4&#43;OIiIggIJVwcHDg4OAqKpru7u49PaTn5&#43;fExOaFhcf4JCTV1dXw8PAcHJLe3vNAQED09PS74LtDQ6aWlpaEhITa2tq4uOB7e8J1db&#43;QkJDi4vVgYGAkJJcJCYnl5fiAgMTs7OxNTU2amtGysrL39/&#43;0tN&#43;trdsNDYvz8/RZWbJUVK&#43;MjIz09P10dHT/&#43;fmPj4&#43;iotXwu7vo6Pnl5eVoaLm34besrKyT0JM/P6XinJz/6&#43;vmoaE&#43;Pj7nLS2/5L9dXbOxsbGqqqr/FBQtZQL19faXl9DJycnxwsKrq6uz3LKVlZXjj4&#43;IAABuAAChoaGOyo3/OTn/JCQGcwTKAgC2AADX1/DX19fKysqgoKD/iYmQAAD5&#43;fntAQHt7e1bW1vy8vLYbm4DgAD/2trwnp4ANwAeHpTKGhaBDAysAgLe3u/beHj/ZWXXX19aWlrtHh71zMy3FxcGagb8xMT/mZlnRkZ6AAD42NjQmZazfX0kmSQijx8jewn&#43;qqr0ExPlAAD/eHivb29bfScmUCYPfQ8ABgD8t7dVs1UfVB94AADq&#43;eqe1Z63nZ3/SUk7mS2pRh5MKRbtLQBvAADrxb2niIinq4eet4JjumN/XFx&#43;j1h9S0tzUCZaWhw5RQD/JABxAAAAAACQuG2mAAAR0ElEQVR4nOxbv2vjzrZ3M2JQ8wIJhgffNEtuu4VKmamMsS9M1GwRNVYxGAlkLnqFXLgwKuLgIggccYs7C6nEhmXrKIUIvvhWurcYyIPZ5gu32mLedvoPHjOyE//IJt5Nvvu973GPIkcej2aOj86Pzzkzrv2b/n8Q&#43;L7OYHHDd932IgKwC7tAO4Vd0AVQO4X5qXaqyb8u6OZdrSs/kq9aF4KqJZfXXa0LVcdlf3mAn8S31ry4mDSHxajfnjQvhsPhsPhTIf9Gk/ZoOJQto9FwdFEUo2bavqhahtHF6KI3GhbDYSE7/6m6Gk66P4VncF50zGLYsT3zuhiattfxPHs8sO2BVxSdTsfzVIvn2QPPHBZm56Rz4tl2x/Q8s2MPbG8sO3u2bXuDsVfkP0XU4LzwvOtC8im5HCj23p2Nz8a2adpefTy27cG7d&#43;/G43dnNr7ueJ16xzt7Nx6MB/b47GwwePfuzB54troaXKc/g&#43;caSIuOZ5LOwLM9Z3ToeYbpe&#43;OBPbDMwvSUgD3JXcMenNmHRadz4p14g/GHgXwYdsOTfY2O2bEtbzDwyOlPkvTQNIvCNMNDpzkrzJOiGF53rBOzmDUL88Q0TcPEptExr7FpuiNsHl6HpmG&#43;PTQzMzRPTjIzOywKl5ycmGb49vYnMQ3T3kW/2Wv2m2l&#43;OolGs3QyGw2j/jnU0iiK&#43;hejXnPW7DVn7X7//LwZXfQuRs1ZOms2&#43;81mNLpoNiftSbsZjW6bszb6Sd4DdKUDg1oXAAC60tEBqGndLgDyo1P5CYRQnV2g3mka7Ha7EAIAuxrUIIRQ3SJv/Tk8P/ItQA0sqVad6q86wLdCyO/Gr5oc5gvS8sdJ&#43;1352yAAIAAgjZynKYkQABD&#43;a3AOYDBLNS0y6pbxxGFZ2a2Wz/op/L0ZlgRQ5LgBciwDE&#43;IQsiZeopokhYbl5hMHR79lHAG7/Unf52LcCxILR1EU9fqzFC2UGKWzXq932&#43;tFruu62HDTGTHwDIJa7Zt2&#43;QKG4TdsaYsQitHM8bOIEoskOAyJ29fuPUYaJQ4hiUtwhkloOTQK635E4&#43;pbaa&#43;qKCAXidAF0QV57p/gfM7Kg2PGy5uQWPXjmyy69xJahHFoWSEJfSMjWVlyVh5NGedu4ghdCPGaTEOh65e6pOpV3/vmP6tkrJy&#43;n07L6dTAltVqWK62HEdzfRx&#43;&#43;OATHPo4YUfTsjyYTst9VsqRL3WRvyLTeaLrjuMILGUpBeoooVaiVY1O1eg6gnPOQxZyftNixDCM&#43;irTtxiHhuFj4mDi4rLEnGeMc8oTx9F13XlFQApycUmESIXItVSkqZaLPM&#43;FvEpFIHItF4Fq1HKBUJwjhCiacQsnhCROMoM1oCI0gIHrOElCnOjWdfvYIvQcofg0RjkSMXL019QPkJLFeADKE4KaigkAwqoRLBtrMI4lhJB&#43;zzHITHoOpEmHMpsFQYD6kZNE/dkMoTQNHD857SqkIgeCubh8ZUnvkfz7TBvkjpGkKjbWAJy5juNgkjg4C50oUBgpdXw3fvB0EJHXlXSgf/94eWI4C7cBUBKGYVb/YPmG5We4p6lGx0&#43;0h/6VpF/P6QEo9O&#43;VdE1KeuEMYECMMDSOW43jej3LDPcxph90cDeepF5VuiVT/C4EXbCGaMHak1MgR1qWRMYP8HOL6cRwlkynxPcl2Gi16jdGlkVLpt1VpnNxuTPToHvenLSb/faknTabw9HFqNduN2fn59rqeHskXbAFtPbFpJ22m83ZxcXsXOum7cl5er4F1vLESPIFls5vcRhmMqb4ho&#43;dQFrutnqQ3R8naBbXb4vrQ/Pw8O216XVOTszrw8PromjfDwCCFUmDZmFev5XdTfPELJqT4eHbt8Uw3SxU5IlBJqgC02imwMZt5LpJ4vYVFkEzYqxJGond1UMbmZ2TTsezB2PbU3UH27Y7Hbvj3ueWa5LWhiedjq1KFIPBYFktOGxuykhzLZ&#43;sgjtMOFbwbtnkG9FKBISprjvpbi4P5EXHk8fg7OxscCNZGTcGXn0wOJzcM73iPYA27MjOg/H4bDwYDExzcDaw7bC9xfRtuA6fy0ZZv3&#43;rWnB/5SZp7TtLujsyO37H8Oy6Z9snZnZieZ7ndWz7sHe6Mt69umkj0&#43;rUbc9u2V5meicn3rHnnwy3UQO6ddeAtDGt4zVo7fZXYwnIHX3b5X1D8jBwiz8Ni6IYuoUzjEbRKBo6RVGQor1EZ2veA05k38J5&#43;7aImlFB5LtRtGK29/NpK7khyinf5xSh1RRxzXhBvippoJ1q3VyVKFVRctNiuqdpjtJJIENrihA6zfPzNM3baf6oTgOYtoM0nczkHWjSDCQfp9&#43;y&#43;iWQ1vKAMx7EtZWkfKNnuuI94LmqVqpapKJJd6s/iBFdEoof8v7l58Ga31/tTRFcFAeeIohcB5dTPnui25qktaFndzpKS22lrcWWiYKYcrYgPqfxI&#43;M9SLpWg5SyRX/OabyDa4X90Do&#43;OgjpE32UpINF3M&#43;LwbjuDQaDszPpGmzvEaYpZ3cVF3dv7ni89fk69ojp3X7V/W7/jtNtbd5mepLgsCz5Ux5tTdKnxWDsdY4H47PWScceDDznfGtMyu74nKpDmssW0&#43;vYI&#43;b7jEvkzjlnV8nWd3yENIRmfJ8/VaGTktZr98Gg43VMqR&#43;HyWGnbp&#43;4WwXJmDJGZ5PJbDLpc8ZpF9wn19URkEsi7o0qnjOu8mlHpXmTHZgGAMq7nmRaSvre2lN36EZDN7qdtG&#43;HwyLaCgO12N0vnchNHDeKOGO3aDPDFmWjFEt3hQK&#43;zyOMXexb9cZBuPVgHqeYMv4UxpeSdoJ7h9VF0puhFMWBdJTbdah4XraYE/qGgQkvy1DFgtVEGx98&#43;lSqS/VRWXI3DBPsGx&#43;ODsgu6iF9vcuSZyX9YDgwpvP5nM8lUfrIHJo7bTASGtaNQbg1bVmWtZ59l5/&#43;8ffyY5VzW5Z1PMUuxiT0Q&#43;OgwdGWt3mUYjdz0BOeRnmPB0uNKdtn&#43;0y&#43;7D&#43;qVzEvjxj2s9AyEn5VZktBV3ImQg8P/vtvpbzU3YWkI4c4Yaic7/lu6pEL3RFPMb0u6ZhL58ClsDljNN6KBJo7nfqZETqY3FLGIoRkup0KIfI8ELmI0ZxzSlWmnSOl05Ne7zZyexG7cndUjzzRxZNMK5S37ADi&#43;R2n6SRF&#43;YyzfZ5qm1od0yuLZ35GsCMNkaaxBvM8p5QGSNM0mCNBBUWxMkUtR5zxnsTHibTb&#43;W5MS0mTpzRJ&#43;VWhaVquSZKSSftRNEG3pJwaUR/VNpneZ9ivG1bdcPi&#43;wRM3Eokg5a9fmEjEKiUiEW7CSk4UvPQdzuhuyyPgefUgMoQlapJITTKLcBjNkvrnry3mbgYmjTLGcd03Wi3My&#43;mNnxnS&#43;v7yj78fLMpgD&#43;T7vnE8zcJWo/WhcYwZm&#43;9Wq3hePXJxuZwt8zOjnPK&#43;Gxpu3/nw&#43;fMvVrQ5jXShLjFCfNzKeFlnISYYh5ef/vrP0sAVhfiBwrJkYaPRumm0Ms7mW/jrWzzp5Cmma5pIdAfrDqkmqU95LwoNJyLW&#43;68Hxu0mOFUR0ckwMeoZvmNufzKbiT4v35c6FZsUBD1&#43;xXH9pm5ZdcakeuzCdaUeT/aAeSCCQE2SBpRd8b6LsZMQY3pwgyebEAdRxlwHOw7GjgzjqAshhMLZ02kcV3UuGKtDXSG&#43;z50wy8JQdd81uBAlaXiPDbaOqiqxuET8js&#43;kY3Uwa00/kGjTdKSksW9kYRYmvHJ5eZ4LXScCoc2YXoVxkvmGkRF3Z0OEiJUlF7sW5xW&#43;ihwZwaz6weeGhaONtTDJtNFq1K1ji/D9MiRVdNE/7i0r5Q8hvQouoZNZVr0euju7vJge/P1TSZ4rylcXRE4y5U4YYr/eOvr89eDY2sjUJWxj5dFRy2odYxXGDRXGP/7Hx0tVKV8UzS&#43;rKG5YrSlzcRYaLd&#43;d72qIMf31n3892FvggvVq/OXaPzWLYZVT5viZb9Vvjj5/PWpZZJ1pmFO2bzVaH6zj40yGcflFHaFfftzDzlLQi4L6AjARSkKSWT7fWT1iWn5SUGClHL868HIeR2CpyA4uSxwRCeKym/efGzeZG2sA1GBl9QCmEStbZatePz6&#43;8flVFcZFLvCeLgSSgTwPVEgXuciDKow3E&#43;KQECcybu2kHwDhUhdUIBEjESiUEKgafbBaqU&#43;FPCqdvprTyCEEY9Y6KEPnNkgDCVaVFwGBG1oHv/zSuDlutG4MxtgtPc2hlgtp7nGOJNygc0rRg40wfusS6VBJWRruZBeuARJ7XMRxXFO&#43;Gm68ArWWv1yRTuUkb3jPTQgJjfr0yOLYcV0ikYPSEtgPjZuD9388ahwf1y3Lv6pzpQRC1/9Hr54ZDr/87Q9l9QDdyhB5GEq7to4&#43;NxiZ7FI2RELX46eyYJCLSlUWk1zxBGOSWa3GH//SMMIslHHSJ6oqBfvYaH0&#43;ajRaLck0KxsKT1&#43;uGOKlwtN/VoajKrZTI5ThvNVofP763vLdHXZJQYU8n/p2UOgqjqtJlLWTLMTGh1bj4D&#43;PLKnddev4g&#43;/CKh3Lyl8OSt8wLCvD/GoaciVosvfxz9XKlV7&#43;5a&#43;fSj2RRqIMccpCw7KMeuvo6&#43;cjq6o37yBp8lREBFVgWGRHDrma8iQMQ6tuGeXnYyvLwswy6pZfTQYDl01L55ZGrhvRhDHaljYnx9BFriGhxaJ8X3IRC4FQUAUXmZxloW8dfG35Tn8nSTvPASaiO0JAZe7KEJVO41B6YaXTCSYEO7NqDJm&#43;MXoen8YxQnPGqQYAgEATuptLI4Ex0nUZ0WGtiuNzxvu9yO3d3iZserWjIeY7SNpJawuPBuP5/hyhfr/XoxG74sP&#43;JJ30J5NZsHiqQKI8SuMYxTGVl937bx5U5q2t6WPMGZcpMkWU8isX7ebyngNMG2suSnoI0RhRqvISII&#43;VYp2qii3zsbt5lV&#43;o0usiE5Vg5z7rkN&#43;RVYkyl/Aq3ikkgvyZtU2Jpx9CtYrSago5yX2OuDpTPFe1uX1VnluGuDwpk4ppiMTeiqSh/I6qL9tn8/Ndc8Rn1WNN0nClVMfoY7UViOh8kfrO6eJxA8RZEsfVx7q&#43;kv6DmNLqscwp3S0ebiXbj/CQS8k8vFeTqINS&#43;qilw1iLtbhb/S24kKq7YFpT&#43;qjAsIK7Goo1rZtrCMUx&#43;CY&#43;Xjuk93ha0un64ifQ4jzWKu/wLQUEG1VpoLD&#43;opCLiK5vQ161VWZHfJzn4jn12Fr8XDK0G4xUcqbzN79ezSldPDndWd2Joi83TGCxArk3z3WkrO/p8JnE9oVr4wDN3/z6hy9f7lQZLRf65QoE3luAXxnkL6vLvUfOjT0t/3XpPrW2&#43;V2Ln49TTPkbxvjdm7lUEE0sce8C9JLlxpSqGX9b4g8XRDy5ceZZS32epMehlM7v5pUp5gKpkC6RMBJL6AtTUSHhVIHi7TMXabDYvZIL9KQc4XoB8kcopnNG43h&#43;N3/IJ5foVzmD&#43;18cLPYwVptWNk/ZUW1hUXc&#43;OeOrSHrOJdOskvRP2Fq5tnzxYyQjO43RnM01qGnaaVUW/C33ha4tX/wYwYV6sHnaHKkfRwyHw9Hs9PWY3Joxf/F2oHihHnfzC9MzPdv2bM8zr2e/3S85QC72XrgdCC7Vgxf22PMGg8F4bHvmxS45yg/OmL54i5vU6Tmi8zt&#43;bY&#43;tTse7UUzvlFj9GK1D0x8bgrI7xtndGx4V5tsiKcxOx&#43;oUW1tRXo&#43;&#43;c&#43;PVo0NI6PHrly938/PJpD05n1xEw&#43;Gw/xv&#43;KEIB7pdJWrqPuy9v&#43;BzF3W4MQDfuxvFuOcqPTvhy71GrxYi/4bQbq81uQAHFV2LvcQIbScCPDRLzfR7/vF&#43;cSO/x4h2Qat3&#43;J/6o43UkjZKy2sD6jWO3NGvzFqByNqByN3h/LV9e7qdljpXoRNxvkto5rfphEvrL1aOWO5e6o2D/Tzp0XX8xIpM51ubS529Ke7p4saRljkXIMondOlXGitXaztrrs40Pd66PJd30y1ECRAIJgZAQebo48/trTROaepevvz7bKHJtdRw1luqRa&#43;nrOCtY5VGqjg0WOVXVvLxSydbK63OND3c&#43;nIvo9S/xG65/0/95&#43;t8AAAD//3WaZHtQaEwvAAAAAElFTkSuQmCC"
+                     data-src="/components/images/sun_gtil2_schematic.png"
+                     data-srcset="/components/images/sun_gtil2_schematic.png 891w, /components/images/sun_gtil2_schematic_hu_d8145eced4eadf21.png 178w, /components/images/sun_gtil2_schematic_hu_9e35f8ac1cfaccee.png 297w, /components/images/sun_gtil2_schematic_hu_774ccf4a41601863.png 445w, /components/images/sun_gtil2_schematic_hu_26f7ebe3b2d94e93.png 594w, /components/images/sun_gtil2_schematic_hu_a23d6b9460881e6d.png 891w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Simplified connection diagram</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p>As the data is read from the inverter using UART, you need to have an <a href="/components/uart#uart">UART bus</a> in your
+configuration with the <code>rx_pin</code> connected to the TX pin of the inverter&rsquo;s controller board. Additionally, you
+need to set the <code>baud_rate</code> to 9600.</p>
+<p>The inverter will report new measurements approximately every 1.3 seconds.</p>
+<h2  id="componenthub">
+    Component/Hub
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="componenthub" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sun_gtil2</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uart_id</span><span class="p">:</span><span class="w"> </span><span class="l">control_to_display</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>id</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The id to use for this component.</li>
+<li><strong>uart_id</strong> (<em>Optional</em>): The UART Bus ID for receiving messages sent from the inverter&rsquo;s controller to the display.</li>
+</ul>
+<h2  id="sensor">
+    Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">sun_gtil2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_temperature</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Heatsink Temperature&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">throttle_average</span><span class="p">:</span><span class="w"> </span><span class="l">30s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dc_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_dc_voltage</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;DC Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">throttle_average</span><span class="p">:</span><span class="w"> </span><span class="l">30s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ac_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_ac_voltage</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;AC Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">filters</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">throttle_average</span><span class="p">:</span><span class="w"> </span><span class="l">30s</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">ac_power</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_ac_power</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;AC Power&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">dc_power</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_dc_power</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;DC Power&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">limiter_power</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_limiter_power</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">True</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-1">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>sun_gtil2_id</strong> (<em>Optional</em>): Manually specify the ID of the sun_gtil2 instance if there are multiple.</p>
+</li>
+<li>
+<p><strong>temperature</strong> (<em>Optional</em>): The temperature of your inverter&rsquo;s heatsink.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>dc_voltage</strong> (<em>Optional</em>): The voltage of your DC source. (battery or solar panels)
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>ac_voltage</strong> (<em>Optional</em>): The grid voltage measured by the inverter.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>dc_power</strong> (<em>Optional</em>): The inverter&rsquo;s input power.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>ac_power</strong> (<em>Optional</em>): The inverter&rsquo;s output power.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>limiter_power</strong> (<em>Optional</em>): The power measured by the inverter&rsquo;s &ldquo;Internal&rdquo; limiter.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+</ul>
+<h2  id="text-sensor">
+    Text Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="text-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">text_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">sun_gtil2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_state</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;State&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">serial_number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">gtil_serial_number</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">True</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-2">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-2" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>sun_gtil2_id</strong> (<em>Optional</em>): Manually specify the ID of the sun_gtil2 instance if there are multiple.</p>
+</li>
+<li>
+<p><strong>state</strong> (<em>Optional</em>): The inverter&rsquo;s state.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+<li>
+<p><strong>serial_number</strong> (<em>Optional</em>): The inverter&rsquo;s serial number.
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</p>
+</li>
+</ul>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/components/sensor#sensor-filters">Sensor Filters</a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>SUN_GTIL2 Grid Tie Inverter</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sun_gtil2.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1058 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>RGB Light - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up RGB lights in ESPHome.">
+            <meta name="twitter:description" content="Instructions for setting up RGB lights in ESPHome.">
+            <meta property="og:description" content="Instructions for setting up RGB lights in ESPHome.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/rgb.png">
+                <meta name="twitter:image" content="http://localhost:1313/images/rgb.png">
+            
+        
+    
+    <meta property="og:title" content="RGB Light">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/light/rgb/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RGB Light">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>RGB Light</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#color-correction">Color Correction</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#color-correction">Color Correction</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/light/rgb.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>RGB Light</h1>
+        
+
+        <p>The <code>rgb</code> light platform creates an RGB light from 3 <a href="/cookbook/arduino_port_extender#output">float output components</a>
+(one for each color channel).</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/light/images/rgb-strip.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Example of an RGB LED strip that can be used with this component.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1500px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/light/images/rgb-strip.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAFEAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APaaKKK0MwoooqACiiirNAooooAO1Rd6lOKr3FzBaRGSaVI1XuxoAfRXG6n8RdNsiY4Mzye3SuXvfiTqMpxAiRD86DM9ZyB3pDIg6uo/GvIovGCSpm6vbnzP7q8Cnf8ACQ283SaRvrJQB6z58X/PRfzoE8R6SL&#43;deYRapDInQ/8AfdVNS8SWNjCdpcyY4CyGgD10Op6MD&#43;NLXg&#43;leIdYvr3bBdTJETy2c4r0C1l1aNAYdTSV8fdkGKAO4pDXHnxPf6c2NRsm2f8APSPkVt6dr1hqaAwTKW9DQBo0UUUAFFFFAFqiiigAooooAKKKKACjNRUZxQBU1S/TTbGe6l&#43;6i5FeI6/4ovdXumZ5SICfljB6V6141j3&#43;Gbr59uFzXhEeJJUGR1oAia5RZPmYA&#43;9IJ1J&#43;8KsalZQpIhmUZPpWXNYRFcozL9DQBdlljAyawrzW5YpGjjjPy96si1kEi7pWZf7pongt24I&#43;f2oNDNTxBqPZto&#43;tSx6vLJMgnjLZp/8AZMHXc1WYLW3i&#43;Y/NQB0&#43;meIG06ARpAm081tx&#43;M0bbviKkelcRkdqPMoMz0WLxxCVKuS6/wBx6xb/AFu2aT7VpzNbTq2Sq9D9K5TzKSWXy4t9AHtvgrxcNZtjbzn/AEhB&#43;ddfXi/w1uYDqDv/AMtccV7FFKSOaAJs0Z96iooA1KKKioAlqKiigAooooAKKKKAMnxHZNqGiXVso&#43;ZkIFfOEcM1prMlndkptfbk9q&#43;pCMg1wPjHwJa6yGuINsNx13dN1AHm93oV&#43;sa3CIbmLHyspyKw3LxylXUqfQiugju9b8KXn2XcJYx/B94Vj&#43;INdm1aTy0tYoZc8sowaAMy8ecgCL/vqrlr9ns0Bn&#43;Z2/iNUbuyv9OhikmdWSSo4bgzxvvKjZ096DQ1DJA&#43;90&#43;ZaoylHzhdtR26XMi4jhb8K0I9F1GQb/IP40AZPmXEZ3D7tPjupt&#43;XVcVaudK1BAdyhRWW9rqDHy1iZ/oKAL8l/bxj52rOfUGu38qIHHYetaGm&#43;BtZ1KUZhZEP96vTfC/wwgsXjnux5jjnBoAl&#43;GPhmS1tWvrpCryfdBr0&#43;MYGKhtLdbeEIq4A4AqegzCiiigC/nAznimGVB1dfzrI8Um5GhzGzZlkA4215VPqV62igNcTi7DcjJoA9r8&#43;If8ALRPzpsl/aR/fuIl/4FXz9puoaoNQT7VJdPDu&#43;brTdWg1S51SVrMXRhb7vWgD3yTXdMjXL3cQA77qpT&#43;L9Egj3m9jOemK8g0zS9VbSpba4sp5JH&#43;6xqSLwXrM9qieQVKNn5qDQ9D1L4jaVpy5fe2emBWbbfExdSlZLG1PC5y5rCufAms6ska3AjiCDHFXNN&#43;GMlu&#43;&#43;S9ZT/scUGZh6h8VtZEk0McSRsrYqG/8RahqekwTrey/aGb5o0ru7f4a6NHJ5kqtK/fca27PwzptnjyrWMY9VoA8ltNM1SXUhcpayzKV531dh&#43;GupajctcTMlurNnaK9iW2hQYVAPoKdjFAHn0XwxtZYkS7uHl2fdUmpP&#43;FaaZH9yGu9xRQBxcXgW2i/1Z21YHhGHGGdvzrrKMe1AHJp4KsjzIpf61ct/DOm25&#43;W3Q/hXQUYFAFOKyhhH7uID8KnEWOlS0UAGKKKKAIqKlooAssoZSrAEHtVI6VZEkm1jz/u1eooAoDTLQdLeL/vmphZ2w6RKPwqzRQBAIFXooH4UuAO1TdqioAKKKKACiiigAooooAKKKKACiiigCKipaioAKKKKACih3SMfM1R&#43;enqKAJKKj3r/eNG9f7xoAvUUUUAFFFFAB2qKpe1RUAFFFFABRRRQAUUUUAFFFFABRRRQAU2nU2gApnen0zvQBHPVfvVieq/egCbtRR2ooA//9k="
+                     data-src="/components/light/images/rgb-strip.jpg"
+                     data-srcset="/components/light/images/rgb-strip.jpg 1800w, /components/light/images/rgb-strip_hu_eaecfc6b976f1f2.jpg 300w, /components/light/images/rgb-strip_hu_fe2366052f43d7d8.jpg 500w, /components/light/images/rgb-strip_hu_d5cd1f81d1a351f5.jpg 750w, /components/light/images/rgb-strip_hu_ca04e9cd93cc2ce7.jpg 1000w, /components/light/images/rgb-strip_hu_2175f16b7322fdd0.jpg 1500w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Example of an RGB LED strip that can be used with this component.</em>
+                </figcaption>
+            
+        </figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/light/images/rgb-ui.png" width="40.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 858px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/light/images/rgb-ui.png"
+                     fetchpriority="high"
+                      style="width:40.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAE4CAMAAADFFikXAAADAFBMVEX6&#43;vpkZGTl5eVcXFz/ACRUVFRra2v///9KSkpAQEAiIiL/AEE3Nzdmph0B//9BAf&#43;//wECwP8A/7//vwH//wMAAf&#43;/AP8B/wJA/wCAAP//AMCB/wH/gAD/AP8A/4AAQf8A/z8AgP//AYD/QED/QAA///9Az/9AQP/P/0D/QXBA/3BB/59w/z//n0Cf/z//z0CfQP//QM///z9A/9DPQP//P59A/0BAn///QP9Ab/9vP///cED/YGBg1///12DX/2Bg/9f/r2D/YIdg/69f//9gYP9h/4ev/2Bgr/&#43;HYP///2H/YNf/X6//YP/XYP&#43;H/2AODg6vYP9g/2BgiP8EqfX/h2BycnL/gIB/n/&#43;A/5//gN&#43;AgP/f/4CfgP&#43;//4D/v4CA//&#43;A/9&#43;A/4CA4P&#43;f/4DfgP//gP//34D/gMD/f5///4CAv/&#43;A/7&#43;/gP//v/f/n4C///j/v9//v8fd3d3/t6D/n6D94P0Em&#43;X/n7fX/7&#43;f/&#43;fn/5&#43;g5///0J&#43;3/5&#43;fz/&#43;f/8&#43;ftv/nn/&#43;f//&#43;f/7fP/5//n&#43;ef/5/Pn/&#43;fn///n///n9D//5//55&#43;//&#43;C4n//7/9&#43;//7/v/7/f//z/49//4Ovf/&#43;D/89&#43;FhYXw4P/s/9/f/&#43;z/77&#43;/v///z7/A/8/A8P/fwf/vv////7//37&#43;/z//Qv/&#43;/3v/j3//59vnf8//&#43;1zSIye/g6P/z8/PW1tbu7u2Ojo7Nzc3FxcXo6Oi&#43;vr6VlZWbm5t5eXl/f3&#43;4uLisrKynp6ehoqJ1dXXx/vqvr6//z9Z8Sf/Q4v6UH/&#43;T/x9bf///HVl5tdcb/1kZ/5P/b2v/WRcZj/&#43;zs7P/EpBb/xv/khr/JMkz/8dN/0se/yIkHP8TVv/IMP//fUkzYf9Iqf&#43;5aP9Zn8f/N5X/Z7f/eJX/JP&#43;U/2hq/2veZ//70fyH/8j//1H/T//Ghv&#43;ulv&#43;Qy/3/5I//4EX//5P/pdf/kP/eTEziAP//j5D/YOrl/z9AiP/mP///P&#43;eWwmWAzv//AeK11JL/5AHk/wDT5b5R91cdAAAsmklEQVR4nNSdB3gU1d7/t5gYnjwXQdFruxYiJRTpqEhHAUHhoUgRpCNFRcgAUkJTepOEkj9JqAJhIjkzzO6a3C3shqABwZUiRVDEgnrtvl654n3v5f&#43;cNnPOlG2JsO9vNpsts7OffPM7v9PPsdn/JHM6nc4/69oQOtWeSp6lVtuBqKvvgnYO0Ma8Yk8dVPb3v5dVz1FWdqCsjD6r4sX&#43;XnYg1VRp&#43;Oqg/xfwI/NV8QfeB/zkYtSqcMHS/YOwzlhqVunUslKPokiKBO&#43;q8oMugZ9JzJH4hT2lZak6pVXuv/sVwUEPckvoscA94o8ELioo/jLGqSG09jeU&#43;RVHMhoHTRMixnYmLbRD8ZVp8YMmxGRXWvKX2Z0aNZMQkdLCjQY0NSVAoVPtvNJO&#43;4FkVVrxH7A7Va1JQsQ5GIROTOk/&#43;/&#43;j&#43;A84nWz0YNzjQEDhSQQORxDgSwJ&#43;yL0uSZIJNzlfwKcIif9tvNKpjHs4nU42IQqSIkmSIjGflRRJgICCA1EKAiSCT1xejwu&#43;AP9I/CLmVRR4PnwiuRRJEtCHEiHXlCbRI5U8ctqdrHsISjjs8YYZfxEUr0sQFI8iSYoLGnqgSIIS8vt8XsWlKJIE78ibguTxKBBXcbk8IZ/X5QmHXfADCSgdOGB3auHDpjkH7x6C4it9u9THQntCLkHyhMIeTzgc8vkDvrDXH/C5BBcqZ/h8vrDH6/OFw/5AqT8QcklKKKwIitcb8vsDpW&#43;XBvxvl4Z8/rArfq0V/yDGO5jMxel0ctFDCu8v2x9mfFVw&#43;T2SFIZlnwCmQOaRXIFSxOSDb/gDgf2lpaUBv0dyhcOK5EJnv72/tDQAXw2UBjxxQwuMe0BsLRt3IqVZ99j///aHmL9C8Pi8khL2&#43;0tLffC/AB/4fRDaj4DC4UBpaSgUePttv88fCnkVJeRzSZ5AIODzo9f8AX/YXxrwmiXaKEoHDjiZ8KEmRKfd6eTdA3pqSOGU9nm9IV/YH/B6IUDIHwiUlnolVygE9fehQqkvEAiEvGGv1yMpPn/I4/UHAoHS/aVhbyjk94f88AOJKG13sqU8GvKcfOYiKC6Xoni4hBj2&#43;8Jej8vjcbk8Ya/L5fWV7n/bI0kul&#43;LyepFPh3xhr5ekRMXr93u9Xi90Dh/8jDccDvl9rvhTIqM0KeWpPm0fxGYuOFZx8RgGDUlC4Q79Ujz&#43;0oALRTVJUhT4Hiz&#43;whMkQYKx0OWSFCUcKA25YMCD7yYUPaTAAaedjR6papy2D2IzF6Pj0fjrwHkMLOd6vEg3UvxFMVrLkcj5ksvjUSRanhYSyWKQ0naETUt5pu5hYm7yw0og8ZmFW/8BN2RX4k96/Nco/kF2Jx/yzJWO8XpVoonViNK0FqBXOimLppzSEX06mYxXWufTSQpNckSnliOmciHvRvOZG1NgStUVTfk4bWFu7bfb9F03OqJ&#43;Pj5oruzBVQKcZX7JIbuNB76pj40v6k&#43;NdK7xQbTD7Za0SoBB6QM&#43;SQYAAHRnMPNXufdk07Nls4tEuprh6pKPKU8zCRHm7WU&#43;AYjE1AfMI/wYMK/pH&#43;s/ALi3DWeAaDd8JhBCZVr0SOWih7Ms5AC22E2M49yqmAgcvjJOaScqlDqdKbAS4BOuF0hcxiqNWk1TsKXBu0F&#43;IR6lr5uJjhCvdFpaWlpKWg34Ky01kLxKc3Ea0daokQa57YEkVZp1D5gjIsdIS6NKR4IWAUp8opoCAQCi&#43;q&#43;BD0QRvYvTfPUlVFGvtJMa9OmICVEEsqyLtQ7BwcRbcoIMYMYhw8dV41Y/DJBPc215dlKthSGPg9ZpBRySw41alARS/xA8Hhcu3&#43;M6C/wj3LjqJUmKIAhy4tAiAMWA/N&#43;x0mZx2u60c9AiWJeXx3oLEBRY61M8xBRJCftCHhc6PB6vRxEgqQfWX8OwQut1JZZExKAYBCVFRUVFQrFoI0oz3ZJcuwefuawrLFxTWLiOg1Ykj9cbQi0EobBHUUKweu71YkqPS5IUSQr7Qv5Q2BsOhUPeRKCDxcUlxSUVCw4frn94X0WBqCltVvawc0qDvDUTOk5Yk7eOg1YUKKpLcXnCYY8Eq6zEXLCeLUguSfGEfT6vy&#43;XyuLweAcTrH2JxSUVRUdGCfYcvvPrqI5/sq5BVn2aVJg2Q0KtZpfMKO/7w1g8TVjNfK5NWBejQksvjEtwOgb4k4GInaiD1ehRUFZcEd9xKg5KifQv2eQ5/MvDVV199deDhbEeQzxH5Phcn79N5ayb88NYPHQvzNBFo9IDmFiSBxBKZeV2WZbcgSW4ZBRE5fu8orliwb98&#43;pDO0T/YJQdEmsmUPrvMTFk1DgvrpdYUQekJuXpD53wEafeEfgJFEEr3VQA0SgqXfUFyBmOt/gqHrHy6QdWUPo9Kae4iF33f8oeOEQub7UYQOisAGYAIHIgJGAqPwKNqAaANVLP2BiiJE/SqrdFCfuXC9W2zIW1c4oePkwnwmBsoOwY08ABl94BYcbhkwr4vBKkAH3dvX7p6zb99hKPUnrx6eA5MF0BeYtKY8XeYCctd8vyafFVqmnSgkNeK&#43;CRjmBBm4yVNH/ImPMRigHRVChbTv8Cef1P/k8D6UP5Gyh9opp3Vf2Hn3sIl5hbm72NwFJT7UFwMzPJLxkS53t&#43;xAffgS/AOqVuYAwQJQXCCs3Xf48OF9AorTuBKgRjzr6AEjdWF&#43;HquCGymtwkkwqyYjDBxuQUGhWpIccpWYcakLumKRslYgiV3QckRDY00ZEz0QNpemkE/DiIYLHw7WWaDSSHkhgdhsYkFbUC4okYP4WqTApIU8p10rMukKTHrD5TtZS4nwOUqL6LfbIQmOKoQ7zlB91kbSNFs0xeVpVC5FzPYo0ER3VFZGMQ79AjR0B1EmUy3IOsMFJlr2oNUtQn4gxtq4eUxDofpPMV7pVLsN1w5TUpz6OJ1Exvo0ap&#43;ugSu1KU6ThJgsxkYP5NNpKWkpCDp6QrxhRuO0k6sjIu/QZS5JZFyOSLsvaPiwVrp6KqiJGpsjcn0uTl5p0az1UjQ8II9Fy3fZ06Ld4AGLjfSm/dVs9Eg15IgqtLyhXLUsdJSjH/JCOfuu5QPt4&#43;jFqLdyIVfYdC1fmO2AxyYVhq/YWpY9xPJZv14afGnwJXQ3mH1oelPfj3SL9vPrjP/l7Fq&#43;zCrNVrdSzcoeoPxSZgY&#43;Kq/b8csvV/9y9epf1ON/rwHNp51cdcvUPTZmHa3MqKyEl0q/6ab0m66LZfzyF0RL7eo1k8Yau50fpGIvI81iok1G0BmZ7TMrWeTY6eP4O7VTITQSGzNf1ZTWV7f4oikqc9uAnNUV&#43;kb7zMwM7dLp6newT0xvDI3VKdy56KIP/fILVPoqpf7fa4xP6&#43;I0M7KG&#43;rS4Iat9ZUYmdOl0a&#43;Eiq5kep&#43;BUadVBrl6l0IBvQmBHi7HRQ87qin06PYMTLl39pUGZvJ7O0abfZHK67mR4&#43;wX5tObWmntwTQgG96AJEWR1zajMyEjPqEzPSM8gqTsd/aSrj/hn&#43;tfJY/wCfZk5RzvIKzf98stfypjwcfWqQNvkhDDj0&#43;z4aVZpEZTP6Hq0a/uu7Y8e7Xo082j7ru3bd0V36EX8EL1EnmcehY/wA/gpdOuqfiyzvfb2UfXj9Addt/3Ro&#43;2fvcrZNcHGJkQ7F/LU2RJM5rKhPIu1WVkWZvlGbGf&#43;xDxUslxbr229tku6tuuaAI9cGXAJkQl5qnvY2fI0rPOhHl63&#43;ot9RDuKUQUR/ibdxujm5rqW3W6HA72l9Rrj35vJBcmp8kbcfSDnwbt1IA8AYDMmRJPOT6apl&#43;1XRZ0rfKcsoL8A94u7I32yMuDOoG8zvb/0GvibgsCGz2cLTFxCTEmBNURjW54tyPYuA7avOU6L&#43;bO0yiySjhNgs5llLrRi68RjTfnuC1LxphLbLL4If4P2ts1wKtvXpeHZmEMUdd/LIvM9AbRiWwNJbdI3jhpBRWBDYgH4IK4CPVIN/9dxU2ui1SK2aIqVTkFVcaPSODWi1hmc4Eg/W8zfhJvb4YcB&#43;XCirSJ8gYnWEQ1FU3wu6mLDI7vdaMyj4BBibqkjH4afcjskPGA8wbZJrqlXV3PRuwdAnSwOibY7uhRFkWKVWpTRSEPUpurA4zUVyZ1g07W&#43;m1kL00b3kGkbtOB2k6GikjvG7xFlB4GWJKS34lIkd6JKG&#43;J0qknNhZ6Mm89R7oH&#43;10LsDbmAtqhKDgfMYeL6sO5ShhyR6yjiowdtIqUVbJioYtaKNqi6aY&#43;6HMeHdWbd&#43;WnSlieKQVFrpEaxNQ6vxEFaDdAg4RYQrsBkUrFNymYxG9/ugWsuqRY&#43;nSzGtk8bKgEHklRpXbOYXad08jZA6ociJ71P48YatfsilZvIEGv3xfU2oC97sIO&#43;k1VptmJr1w&#43;vT1af5nu39Eon6bBNXVueXulkjdM&#43;a6WTNk4bWk0tfBpXkG4srGpcC1OqrqlXU1rt87aJcY/4qnYjOSLXu5Vq9Gk0IAVWlGRURbzBMYVED15pWnfR3EN045EQsNZRTaMhqgKtH4XAzWZW3QO41eUuIPiNjt6GOQGm7dM2N54uje&#43;TwT2slGagg7iiBVB74o1m5hJiql03mJDrsUWtS0EYOm40Mx&#43;nU&#43;12C5/GbVrBGx7siAlhXY&#43;taeenCGgzFm7Pu7HMukEqbLuH3VkWVqOHQ5EESdDGOibuItUwNwAYai5a9wXbUSSFvR4vmrqsoIUXEqZGQ8yqSs0PRdYnRFVpyef3B0IejxeNSvd5Ep1LIgK3w11Vaj4bT9VXbNVsXPL6Am/7w2GfL&#43;z1lQbCCU&#43;AAbKjynkTQAmRVVor5TGtpkBQXF6f1&#43;PxelwuTyiU4JSE6nIP/YQzi9q4jKZ7o8n4DjTqNfFvrHqYp3Haad6Wpw1m0YZnygCVUVGnk3aI9Ee9i3hUyYwd&#43;sxKKkxCxMxqT6FcVauSi5j1I5qUPQBIaAKv9XTgKpVfgKEnwHwiA6iytm7mp6pjfbn2abs&#43;c2HKHrjblO2Sje9gJ&#43;RWsbap69DXsnH95JxkMt1I9VR9xfZG85kaNyeA7ZJLZqWNBab/A029NpNs3KSUl1xmPvAq6X3arDxtKDAll7HZuNlY06T06Qgziuz8cCCtKbIqE8iqxfjJ7vqxplrFVkYVDhn3LaPfYhDdqlxkS8RM&#43;hFNiqbAjaY0CWQVJfQIr5IC/5jr7UNA0E0ZsagjCi5YZ0ETgb1k4i8a7wHvr3t7pLEf0bwBUvCgSdUulwfNAUczlvFaaB7XdQ8xutFiqdxqm4x7OFxEXVRLJJq7FJdHcSnXfZUHXc3FMnNxk1UqIS8aXeMgi7UJUsyDa6rNotRctDoiriO5JUnCs2m1u&#43;vfiApI0dSpKm02qhcN28Qzrd2yGBTpeEE8zu56M9tsgm&#43;QM0VdH4NbHchsRtGNb31ESvsG4QVqUpzwoOt7pDhTUpzJ26HvSyXL6iBwWxqeJAdvKYOStOwhQqWRytjQfEQ0I7FGWlrklVRunAGH7wCdVQvLSLY0xgb5ktU9uEmUdht0ZvSTkpaSrItH2QTdmjVkIjNa8sowFPmGF0qxmc2So5VxJ1fdEgGQ5T9rfnJ8xg36To2UuaC5&#43;I5qzv4S6y&#43;LVEdkoUVZQCWkCEOPg9yd9iwCcklFcXECKgDLPhd&#43;1QlcoPZ4XGofrhgEzBEE6AVRvacHfA/&#43;iOQeqD&#43;geHv2vuyiggTENiqt9rmw2bgseVyCILg8eKB2EBQXV1T12L6vw4X6&#43;4rWx01trCPazYqmwO3yKDJwK15S5C&#43;u2F6UXbUje0GHgQMHdlgA4o5JfHnaelyeW/EqbgYaVGzPLiqKeIv2ftG&#43;DhcGXuiQHX/3jbGFyW43GWsqQveQYFqU8HcEi93FjmJHQUVBSYGjuKCkoMJNbwX4de2efZN5v2D7gg4d6u&#43;rSFhpu1XNRR3D5HDBmqG6PJiawgBMhADdkxt5nabQYu5N9n25OHtf0Vo5/rBnMl3VZOYnWt5KcXldCtsXJ&#43;JhCaIYtAXpxB8y74gOR6erZYjMDS8EglZBkuXiRPIrw6Ik1i1MbrTOVrVmicEgiGd8vspimOdiPkhF7Wut9uJHAirohrjZdU0IyVnKM1sdyGRcXnKZWaupWrNNVqWBXmmntuBV0roHHmvK5IgpTjsT8pK0uqVfEC3FyfXY3mg&#43;UxP1RdOU/ws&#43;bVb2MI/TyWPRhm3eaD5TM66XZzcd9J1Uxjf1Mtl4sveN61adSE16pW2CoftCVbo6EiKaOLlZ3AzwIW7mJrInaGalvOpKiKIINoO9e3dA27N8z/Ide&#43;CjvZc3izOrRq4rT5uuWZMocMnePXu2vPHGyy9/3K9f837Nmzfv17zfxy//Y/xrO3dc3lwVydmJDHbdFlYJT84RRQT8xrfPP3XwYLtDyO5Ct0OHDjVv3bpPn/HjX9u5E4EnBu0z&#43;HTV3EMUwd69GLhdu1va3XLLXZwdOnTHHefOnTvXus/48Tt3Xk6I2&#43;geVRuFIIolkPipp9q1u4UaT30HtnN3nGvd&#43;svlr&#43;2cOTOBiq3PkLmYrtUbM/KWFcMOMsR65rsO3aHauXPn&#43;ny5csrleNWONIYp3gITQh7yZIMGt/BmxQztf/716DMrp1yeGV9VkR/DZBhMGA8zRH6qwZkzZ/TQ7e666xA64E0H/T&#43;ffYaw41FbF6cTn/kpgr1bVjzZ4MyZ22&#43;/nQFud0u7u9rhsEHsjnM89N/&#43;hrFnxk5tEqediSREsWT3imEYWaVuAJFvadfu0KHmzZsfOtj8EDpg6DhHySHz3xD2Cysvx5wiDZMocXdinNBYZop8O3KQBne1I3awOWPnVIPgBBpif/NzzGIbJlEyC&#43;3EnBDFkgoo8&#43;2q3XKmQbtb2jUg0Ic46tbQCPX/nPubaljsmKBt&#43;rY81IFotqRRhD&#43;8hJUZCn0GekU7U6VbUzsH0T/722ca9WfPxCi2oR/RSdZhin3ZW1CyZdh5DvlMgwbtWDOFbt269b/&#43;9dlnn33GiP37c1M2xkAtCvqlnKmH67vkrC4AKhYN0JjP3A6ReWhW6XPNOehHOex/f3ay99KZ0ds4DUsaxRvyiiHz2ftvv5/K3KCBNXS/5v14pR&#43;FRrH//e&#43;7T7bovfRyVK0Ni0dZ9SNafLy4YtG758/ef//9mmfoqA8ePNi8H7Hm/fq17tO6D8/8KBX73/&#43;&#43;&#43;&#43;67T/ZeOiWa1oZluuIrMIHdK66cvx8Zh0ygDx48ePCpg0891U&#43;zPn36tO6DwSk0ERsx333yZIul06IEEeNEhjiKpmLx7kWPnb2f2JkzZxtw0IgXGsv8cR9srfu0/tc3jzLUmBlit1g6JYqHRBq2Ga0SACpWXDlLoTnkBg2eJMA66j6MfcNAP/r77ydPatSXI3pIlLJHRGjozxT57Nnz51nkJ598kmF&#43;ygz6my&#43;/0bB/Z6ChX2&#43;M5CF8QsTdzDGWpwFkJtBnz58//xilPg&#43;RzZX&#43;mIF&#43;5plnvnmGYv/&#43;e4uTLTStey&#43;NFK&#43;5oRP6tryI7hEsWTSAMJ9FzI8R6iepmXjHx30&#43;ZqEp9u8QukWLk5T6JIzX1tRms5ljSohiye4B56nODRDzY&#43;cbnDdjfv6p5z&#43;mpgn95TPYkI9AZJb67pPPTdtoCR2lCcHaPYJFL17RfOMxbE&#43;ef5IxTPw8ZH6Z2vjxX375JcuMuH9vQahbqNAnJ06x/G5SNGUSYmxr1oCK7x4hQhPfwNQ89DBI/Pzzz6vM/xiP7csvGeh//vOfLahRrT/44OlV5VYOEnkUgs/KPYLFC3q&#43;/&#43;CD0KcZ5nffffddjXnYsGEYmaGm0OPHv8BC9&#43;7NU38A7emfLB0E1xGtFhi2co/iohcfefBBSH32rCrzuxz0MKgzZX5e9Q4V&#43;oUXNKF7c9QQum7dDy5OnGYRraP0BFi4B3SO9x9E1A9qzI8NeHeAij0M2vM6oTWlX0CGmJ/pjYyhhsx1637QZqJF3BMN5Wn1iXVCJM4B7f3HNJ0HQEPQ7w4bxkE/b/QOQv0Ccg6Ous1FxFy37gefWjgIcPgHkQG9eNgmqSFGbPcAFdg5Hnzw/fevPHLlCmK&#43;gqEHDHh3wLCneOhvX/725X8g00O/8E&#43;VmVK3adPmAyT1B5YOAgR/agraoANvQGlLSVOhrdwjWLLgwvsq8yNXIPWVdynzgGGMIeRvv/32H8vfWL78H8uXL3&#43;NZ37hhef&#43;&#43;RxH3aYNosZStzGXGggBe40aeBwvNJszhYU2dQ9Q1JMKfeURaFeuMMxDhgwYwkBD5G/fWE7sNWTjf1apn3tBY&#43;7du8XTbThoC6lFBF1DHRNrszujKc0K/Qi2KwNUGzJgyJAhKvKKb99AxjG/9trPP2vMzz2nYn&#43;KdVYdpO4HbVaZpUUg&#43;O14Bxe0dGyKze6MVvYoLurJOAeyCxd6qjojQ8wrhq2g0Drqnwk2YabUTz9NlFbT4sVPp200U9p3wJmija&#43;PvkxXsOQ7vdAXevbs2ZNlhtQQecWKFRw0VXrlypU/Q&#43;zniCHsTyEzob54kXr1qo1GDyXjp9XSafRSHih6UceMoXsO6KkxDxmyAtu3mHr5G5zQK1ci7OdUQ8yfakq3uUjc&#43;uKnJl5tXKYrSnk6WLzgwvvvG4VG1EMGqMiUmhN6uSr0ypUrl/68VKOe&#43;ClEflrFptAfdF1lEkDY5V9i6bENVoytP9CUuWdPRudFK1Yw1Hve2LN8x/IdHPPKlUuXqlr3VqHbcNSVdTMnTTMIZxzVG2W6anB7h4EDaw8c&#43;L4GTalffPHFIS8i5kXQKPOWPXuWo864HTt27ty587WVrxFkaETniXql21y8WLeybnplemXXLENSNM78tEes2AaLs&#43;vXrl174MCB71/QC/0ipKbIi7DYi7Zs2bJ8z549iHonop4yBTFr1BMhtME/LtatTE9PT6/MnGXwD928cct1mDShx0Lo2rVr13&#43;kPg/9IrEhi4ZQ6kVvbFm0Zc8eFXonhp6ycilVGlJPnIihWeqLFzMrEXR65aRyfVI0FJii9I2D7R1qE&#43;j69S/Uv3CBdQ5sizTbAk1lxtRTIPUUlXnpqokTKbXKfPFiZqYK3fUn/RBayz2K9MM2qXeMrV&#43;fMiMzCL3ou0XfMciUeg9Vegq2pVMw8qrnVk3USd2mayaySuofG8RICTFqyIOxgwhNsDt06MAxf/fdggWEeQGF3sK49BRCPY3ovGqVTuquXQlzJlY6PfOSPlSLzPIvWmON5QjIIPWO&#43;qp1gNgdVOf4bgG0RYsWLNq9e/duKvWOPTt27GWEnga1Xrr0p1WrWGpEzEATqQ3xw9jUG6liS2IHS90BWc8/GKGRbdm9m1Lv2bN37969my/vvXz58uUplHralJ&#43;W/rQKYk8k1JMmEWheamP8MKxer7q0WZ&#43;LWKx6B8fcocMfHf74QxN6wYIFuxcQ6t17Kvbu2Lt3897NmzdvJtjTEPW0n4jSGHrSp5cI80Wdf0zSlT/MmnqtG2vUgEc9WoUeO3bsH3/88YfGXLSbWEXFXmSQeSbCxkJPg9CYGko9CdolndIWQU8UQgfUrQH0CwwbEmKQDXgs9B9jkanQu4uKijA2klllnjlz5syNl6dp1Ah6FkaedIlC8&#43;GjsmsWD41KeeomHVEa1YPF2R3MvWMssezsbARdtKAIGZS5RIPGtvHy5WnYEPSsVbNmzZpkpjR16q6r&#43;CXj0SRKbfPJFKt5LuTsbF2U1kFnI1uQTZCLiir2VpSU7K1gld44c&#43;bGaSo1BFaZ9dQkfKRnztqoS4h&#43;O502CSsvEdvy1OChd&#43;k/xnLU2UVF24nQJdCI0jOp0jM3EuasrFmzWOpLeqcmKXHGBn7pfyGAoHE9sUYNJiHaDV1ywfWj6tWsWbtm7dr1IimdXbR9O6KuKCkpRtAlmwEQxZkAE8/cuBFTZ037KYuDNqZEtDdU5q/luoToTyV12hRcsY1Qng5uh9A1a9asV79evfr1rJizs7djq0CbspeUlKB9Z2w2UYTUyKaVQ&#43;asLHPozPaZaJMvsl9WxqVyYEyIZAIzqiNGCHnBqQS6Zs162J544okOT6jJcCzHXLS9uBhRF4OgaLv55pvROBaoM5I6CzGvotCzkHdA6KPtu7bPzMCGN&#43;qqHJzFT&#43;bEpTzcRxutfTo49Yl6LDJkRjZq1KhRY0eNNQqNDSPffPPNoigSpcvLy7MYpWdMmnQJ7WV49Gh7ZJi5EkNndM3SKW1dYDJEj&#43;D2JwxCq9CjRo16fdTrr7&#43;e/Xr2VAy9vrh4PWS2Qd6bEbcoihsJNfYOCD1j1owZM34djIwyt&#43;eUPmqmtMXmBgZo1T146FEUmtj2qVOnbp&#43;6ff36YngEgzdTEyE02LhxwwZ1H69Z02dA&#43;5WHbs&#43;5R0Z7PncxW9LIch2m4NQnalq6hwY9lVjx&#43;vWQO2hTodHuRhs2bNi4AbkHNCSzCn2Udw8CnX6UL&#43;dF6HMxCXkW7qFXmkCvx8ZBywDKDJXG0NPNlc7gqDMys2RR59P6VZEti6YREyKj9Os8dPBm1amBLOdtJMxbs7KmZ2VhZg2aUzo9JqX11S3OPYKqe6hKY&#43;xRT8SmtM0my2Bj3gaNOmv6rBmmSvM&#43;nZkl66OH&#43;Xb0RqXF4PZoSs9BB4EumFqwvmB9QTBog/ED3oBbzsNKb9i1FVrWdF7po1YJUY7m05bLdBmVVqFHowMxz5mzdio&#43;IDKlRiNn3bIM8vI2QK3LITKinj59xnS9e/BKw5Cn92m7YaXvaNk4A90Z3kYj5tFziE1dOxXeIDC09UGbDW9p5JbzQB6mxkpvnb4VU//6yq&#43;vWIe8rqY5IufTlrXx4NRRhLlmvVb16rWq16rzE507d&#43;48uvNobBQa6rx27dQCgp0fDIp4GyaIjKh3lVNqZDNewTb4WRz0&#43;MwlY3C5idJcAyQtT9uNOSIq5d1as&#43;atreq1atWqVb3O2J6gzJR6LaZeW0AN5AeBDNaBdesI9a5duxjm6dMJ9LODn3326LNHjz6egbExc&#43;Xg8rhyRBsHXTy61a01b7311lOnTrVCRqhH80rPwchrCzD1pk35Bfnr8jEzpt4FqXdt3TpPB/3Ks8g&#43;av84tIxjGQ/d9NBNN2XMKNdXt8qcjH9EjtPr57Q6dSu0U/VOsdCd9dDEEPUmSI2w10FD0IW7dnHUr8wg3kGgP0LQxzIeeuimhx7KeFxXCRDxQjsqtlqeNmtCENfP6XwrhiZSd25llHrhwoULKfUmavn5&#43;ZgZURfuItTz5s2bZxSaQj9&#43;7CFk7afzrXmwjoiqiKTTM3KrKZiqQrcy94&#43;FyOZsQ2Jv20ax8xE0wc4rLCTU87bOw9gjCTN1D8KMoY89uzVPX3Ox0x65lEiLR2H/WNv5FKHmmCn1VwtHY&#43;q12xAzNAy9iVH6zUJKPQ/b9JHTXxnJCf0R8WkKrWtCgHVEVEWsQaG5LWFtPPTU0ac492Cl/graQmoEmWJrUr&#43;JmCE2ZZ43b&#43;TIkYiaQD/7OKv0sYxXNugba/x2XA9Pi8E9xII5rah/4KSoKv3SS6NfeukllXrbQgyckzN72&#43;zZKnTum7nr3qTYa3ZpzBi7i6lLPz59A9D79CAnXuzKaVLd0rdPF9OUWJMPet1eIkapF&#43;csJNA5Odtmz569aXZ&#43;bn5u7rrcN6EVIuw1a&#43;atwd5BqLs824V3aaz0R9PzdNrhZjG1xBStfZo6NRc&#43;unXr1o2DXrxw8eKchTmYOWd2zmxoubNzc3MxNGFes4ZVeuTILl26QG4q9ONY6GODt&#43;q6AoybpEfskguuH32Kjx&#43;duyHmbi91&#43;wpTL/xq4WJkOQtzcjhobBR6DTYdc5cuTJjGQj/&#43;is47aDbu5KtbFhVbmw1o2QuCPtW4W6tu2FQHWUwtZzGBhm6tYmOpV6&#43;hpjIT6C5dmjZF1DTgPT5dv8um2RqQtLpl1o8YnKoGvVOnTjVu3LhxNwpNpB66WLP5iznv0KhXF1Lq77&#43;fYGCG1B/RdHhs8NY8m1Fp3YbSqZH6EcFUzT8aY&#43;vGST10qIq9bNni&#43;cQ9cjj/WP3m6tVrCPX3EyZg6i6UuinCbqoFvF16CNGwqWPkfkRbAfaP99577z3CzFIPhbbsJcKMLCdnCUam2HPfXA2N6gxt5ARNaIzc9MSJe48de&#43;gYjB2GRW2MjTXmi0dx/vHee/e9dx&#43;FVpmhh2BqiL2MQM&#43;fPz9nSc4S6iFz585dPXf1aopNoQ3MTZueOHbvvceOHTvWZathGALfzczvu2U6kQEUfNX41vugUWgNe6hqFBlTz58/f8mSJXOXzJ07d27uXMq8GvsGto4jddAnTtyL7CN9zqJvrDEqbTKGaf3abu8h5vv0Uncf2p3BZpEhM7S52Aj0j98z0B31QmPoE13mGTeOFQ27QfEFJgOzDax96T1MrToIxu7enWEeM3TZUCM1C/3jjz9OZpg7Ymwd871NR&#43;4yG1kT76jeYMFCLDXj1Y0RcncNe8yYMWPGLRunV5qh/vHHyZMnT&#43;aYO7LQmPlEUxOhuZHquhYmYx1RlbrxfTx1427du3djqMdgG7ps2fxlZu4xFyNT6I7UDM7RdGS5ySA7Ut2i8hq6mY2fsNmMUjfurhnyDQw9bsyycaZK/ziZQE/mmDs2a9qMF7rLPLNFvHilYxs/LRbopG7UqFEjFnsMtXHjxo3D3BR6ydzhc4cPHz5ZNY65WTNe6I9GblhnAqAb9M0VmKzGmiKvZrRu1LhRo&#43;4a9ZjuYzjqcePGjZg/Ysn8JSOWjBhOTIPu1ZGBJtgnVKF3mS5eDASfYQxTtNkXoljwFZW60XuNiKnQX3zxhY553AhiS4brqXv16sUK3QxRqx49vdB0VDGsjTvNFnCINJFBlNd2I9T3NVKNiv3FFxR7nJ56uE7qXr169ZrQi2du1owyP95ll/mydEDwH7AsMFkNRQ4GCxY2Rv5x5MiRI404rb/4on///v0Jtl5plRlR90LQVGqK3PSt2zD1iabz8swHygPBd8Cu3z4zinugsPcVpD5y5AGOulH37v37E&#43;gvNOZxI8bpoScPp8iEWtX5rdtuu&#43;22e&#43;89caLpyA0W6/&#43;Jgk8/JyCW2RdBmC8eue&#43;BBx7gqQkz5u475nO90ip1Jw0ZUv&#43;gMt&#43;GoE/cBvNCqzULTfe&#43;iGHCGYwgjR44gqk1v27Un6Hu2/fzzz//3MQ9Og3v1KkTw/zD181&#43;YHVG1F2snINWbC33CbCcUSSCTYsbIWZO6w8//LARA90XcXNSI2DIrFF//fUPeubbbutozWyya19MPg3zxbVDKfUDFLpt27Yffvghy4y5e1DrpJmG/HXLloRaZX6r2YRC6wUtzaaMxDKjCMa9bUOP8Fq3/RBTY&#43;y&#43;GnUPM&#43;pOhLklNESt6dxsZARmXU9AXKtOBDctVKmRY7clhrG/6Btd6q8JMqR&#43;6y2VuVmzCYX6yqxRadY9Io1h0n12U073Rir0kbZtOWpT5h6dRmjUXzPMEFrTueO8vEhrcHJK8xXb6OvlgYLFKvUDpx9oy2I36d8kinv81qkla//5j6pzx3nrIn&#43;vQz/zU6u5RJ/sjqixh5z&#43;6&#43;nTpznqJk36Eu4ePQzUDTs1/O233zTkOi3rvEWom3VZkxd5XnCMe8lZWBBsolr/9YG/stiQGRkCZ5h7NOzUkBgDXadlnTpY6mbNOhZaBztsUVaQjTpDHxTkoMh3&#43;q/QNGoVuknfJk0efvjhHg/36NED3jdsqFJr0HWQQeq3mnXcFY3ZbAVZ873krKkXD210BDNr2BozxH5Ys4asEeo61P7zn5iYTZoQ&#43;F37oi8BgbQ&#43;/cBfeWwWusnDFtQIuk4dlfo/b/0wYVfkNIhMt15eIotHgYJty75oq2qNsI83OR4DdMPf/ssg12nZstca81J/LErHGKfVPxxsWjym7WkN&#43;/Sdx49/aM78cEMGu1bD/2rIdVq2nFy4LqaFfYCxsYarucS2/AvIzxnan6G&#43;E2Ifp2I/3MRM6Vq1atX673//qyF/HSszt4e&#43;nW3Li2fNGpsNyLOXjfmQYp&#43;&#43;E9rx4wT8nYf1/lGrYa1aiLoWgW5Z5&#43;teq/PyY/syiz2K4vJpZEGwKQd6NsK&#43;UzXE/c477zwMb/io9U4tzYjULVv2Wl2YH9c6TPqaSzxxmrmSvGnxuP4Q&#43;zRDDcHveeeed965hxwsMqJGyD8W5ps1cFiYcem52Ca7m1gQyNtyxvRve/rOO3XQx&#43;9hjIeu1bJly16TcwvXxbMmmsnClXbL8R7Rr4awPzx&#43;nKNmke/hlG5Y67ffvh5e&#43;Ga8K00afDphpTG2e3bO/M/7NmlyXHPre8ypG9Zq2LDT8LlQ5Xi/JMIQt4TWNQ0CedO1nHGI&#43;zhxj3sM7gGBG3YaPjw3Ny8OX6bGFZiMwzYTWW0T2ED&#43;pms5yyB3k&#43;PHVZd&#43;5x6cFGuhqNep09zc3PzEtjs222UksejBcwch9/xx4/r2xeUlGPRgxIOBulMn6BW57vxEl8IXjatOVMsKsqIoBuX8Tde2XVuyZP6IESNG9BiB25mWzJ2bm7DExPjOz5ibxWK8OAiCfDk/35E7&#43;9qm2bnXcjflO/JltCNkVS6rJkSn3diEUE2LZuPNKgEANgCil5VjMn66avQe22SwCD22ybt6vSjox5rytfGkhOa3sIqtd&#43;uGGzD0IxKdIyt9ff8BKCWLTPLSj&#43;qlS6qgrQa1bdmAWwZADIpoe3eAd&#43;6/XolUdrth5HGru7gaxk876aIqKWkpg/yCulGpJDjcDhnIbrfb7RAEweF2u016gP8EAw5JcsiyIEmU2jAnIEWjTkn1MVvCon1U3YKkSIqioJ1WpesSEIEsuVyS7JBcLk1CH7&#43;sAN2JEtoBTWnJ6/V6PZKkKC6Xy&#43;X1hTwez3XaC1aWPC7F4VAYaP3AK7xrH962T5t9AQTF4/F6kcoQOuT1eFzKddkLVoRKKw6BUdrm0G9zzEYPdZkuIEtQZckh4N8K9A6hKoWe2A044He5GZ82LMbKF0216CHLbodDhvduZA63fH3SIYwbDhgCHGr0MI734IqmTFKD0U6E0RIVgIB4HUslAJa2mAhrliOqG0kkazbOlz3sho6iG81nahGmjCRx0dRk1z6zhBiDibqfeD8o6ndvs4Y29NgyPn3AJ8C6USSL8L4c&#43;e2YzjB/W2aGTth1IyDtg0phHhjxiPxW5E9HP8P0&#43;pKkuEoH6ccwqXVEe9n&#43;t6tk&#43;9mH&#43;/UX28&#43;fEbuV7ud2hLWzG5XCPybVTouqVbWU6rkMpbJsgETlprRqMmZ9O8ZSIjwzPxVv2e106uK0Vkl0ol2906p04F9peF9tw9tpumcRrsS8l8JuRs82ixFoWiGokqXhf1i1XIjozKTD1P8fAAD//xTVCTaBnZ3HAAAAAElFTkSuQmCC"
+                     data-src="/components/light/images/rgb-ui.png"
+                     data-srcset="/components/light/images/rgb-ui.png 858w, /components/light/images/rgb-ui_hu_bf52d56b21c95a79.png 171w, /components/light/images/rgb-ui_hu_fa181df16f71ee3b.png 286w, /components/light/images/rgb-ui_hu_ce83ea2dfe5d86e0.png 429w, /components/light/images/rgb-ui_hu_f24866cb22398461.png 572w, /components/light/images/rgb-ui_hu_23c646d64b680ba6.png 858w"
+                     width="40.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">light</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">rgb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Living Room Lights&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">red</span><span class="p">:</span><span class="w"> </span><span class="l">output_component1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">green</span><span class="p">:</span><span class="w"> </span><span class="l">output_component2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">blue</span><span class="p">:</span><span class="w"> </span><span class="l">output_component3</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="color-correction">
+    Color Correction
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="color-correction" title="Copy link" src="/images/link.svg">
+</h2>
+<p>It is often favourable to calibrate/correct the color produced by an LED strip light as the
+perceived intensity of different colors will generally vary. This can be done by using
+<a href="/components/output#config-output">max_power</a> on individual output channels:</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">light</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">rgb</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Living Room Lights&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">red</span><span class="p">:</span><span class="w"> </span><span class="l">output_component1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">green</span><span class="p">:</span><span class="w"> </span><span class="l">output_component2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">blue</span><span class="p">:</span><span class="w"> </span><span class="l">output_component3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Example output entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">output</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">output_component1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_power</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Repeat for green and blue output</span></span></span></code></pre></div></div>
+</div>
+
+
+<div class="admonition note">
+  <p class="admonition-title">Note</p>
+  Remember that <code>gamma_correct</code> is enabled by default (<code>γ=2.8</code>  ), and you may want take it into account for the calibration. For instance if you command a light to <em>50%</em> brightness and want it to be the new maximum: <code>max_PWM_power = max_light_power^2.8 = 0.5^2.8 = 0.144</code>, then you would set <code>max_power</code> to <em>14.4%</em>.
+</div>
+
+<h2  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><strong>red</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The id of the float <a href="/cookbook/arduino_port_extender#output">Output Component</a> to use for the red channel.</li>
+<li><strong>green</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The id of the float <a href="/cookbook/arduino_port_extender#output">Output Component</a> to use for the green channel.</li>
+<li><strong>blue</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-id">ID</a>): The id of the float <a href="/cookbook/arduino_port_extender#output">Output Component</a> to use for the blue channel.</li>
+<li>All other options from <a href="/components/light#config-light">Light</a>.</li>
+</ul>
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/images/rgb-detail.jpg" width="75.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1500px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/images/rgb-detail.jpg"
+                     fetchpriority="high"
+                      style="width:75.0%px;"
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIAE8AtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/APWqKKK0MwooooAKKKKACiiigAooooAKKKioAlqLvRRQAy4nFvbSS&#43;gzXhnibUf7S1SSU9j8te034M1lLEO4NfP/AIgjkstRlifIAJoAVbnpV621KNGw2PSszQZLe5vPIuP4vu12tx4Jga182ByGxmgDlLoxyHNRYt5I8fLupdStZLBiH&#43;bFZ8Uiy/6sHNBoWTp1nL99VzWbcaHAZPlU1a2lz97kVZjkdOvNAGX/AGGe0rYo/sNv&#43;eprZ8zNHme1AH0jRRRQZhRRRQAUUUUAFFFFAEVFSmoqACiiigAooooAiliyK898a&#43;EP7Qja4iHz&#43;1ejn3qCdEIwxGPegD5ql0&#43;ewuNrgo6ng12WgeNXtIhb33zx9N3evQNY8OaRfxnzGjWT&#43;9kV5xrnhOLTyWgvYXT&#43;6WoA3r/TdN8RW/nWM6GQ/wAJNci&#43;j3OizSM9sSh74rDFzPZ3Gbe4MTKf4WretvG9/ZKE1FY7iI/3hzQaHJXfnx3ruCwVu1O0&#43;aaeRkkfAX1rsL&#43;9t9VtDcW2jkDGd1cHeiUuGjiMYY9jQBbuNaa2naLbnb3qL/hIX/551AdKuGAYsCWGaT&#43;yZ/UUAfXtIzCJSzHgcmlrP1jzP7KufL&#43;/5ZoMypN4p0qKbYbpM9MZpT4t0iIZNyoFfP8AMsx8SDeGA3j5d2a7TxFaQjw68iRhZMetZmh6KfHGgjrepUY8daAxwLwE&#43;1fOcySTLHtVo8dcnrWnpSodTtQyYG4bsnrWhme7TePNGhXJn49cVVHxH0U58ty&#43;OuK4XxjaWqaCzW4RWz2rzewMkaPtm27gQc0AfQH/AAsjS5E3Rh2OcYFQzfEeygTzDbShPVq8Q0H93rEQllO3eM88V3nip7OXRzHDIu72oNDsbb4k2t0jtHDkLWWPisk1wbeC03SFsda4Dw/NFa2kySSEE9guaoWRittbWd2&#43;TzM5IxUAelal8RNWsoPNFkFHvXL3fxW1sSBCix7&#43;nFSeJ9a06/0xYYJBvB7VxUwBxgGT6jpVmZ2ln411&#43;/vktpLnaX&#43;7ineLdQ1zTbRJBfSsWPY1y2mzT2l&#43;l0kEjle2K2NbvNU163SNbGQbfagDDm1y/ns2Mk03mf71avhIvrV6Y78l0VeMmqkHhbXJU2C1bafUVtaT4L1&#43;2PmQ/umrM0MzxZpUFnq8KwLtTjNR61DC8MAXy2OOi114&#43;H&#43;qXrCW&#43;nLGteH4bxPGPOkPFAe0OZ0rWLC18P8A2aV1WQqRXGSkSNtVC4JOMCvabb4c6TH/AKxN9a1v4R0m3xstU49q0MzwD7LdHn7PN&#43;VH2S7/AOfeb8q&#43;jRotkB/qI/yo/sWz/wCeEf5UAbtMuUEkLIejDFPpD0oA8l1L4dXsmpS3FvIqgnKmo5PAWvXEXlPebk9Ca9aoxQB4u/ws1NyN10OPapIvhbqCyAi7AI74r2SjFAHk8vw31GaPyp75nSoYvhGn8c7V69SYoA8si&#43;FNrEc&#43;c&#43;atp8MbdhhpnI9zXolFAHEW3w5sLf8AiP51L/wrrSS&#43;&#43;RC3412WKKAOWj8A6In/AC7L&#43;NWY/COkwfdtYz/wGugooAy4tE06L7lrH&#43;VWxp9svSBR&#43;FWcUUAQC3hHRQPwqUQqOgFOxRQAYHpRRRQAYFFFFABRRRQBaqKiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKiqWigCKipaKAIqKSSYR/wANN&#43;0L6GgCxiiofPb&#43;7R57f3aAP//Z"
+                     data-src="/images/rgb-detail.jpg"
+                     data-srcset="/images/rgb-detail.jpg 1800w, /images/rgb-detail_hu_b38d189786a49591.jpg 300w, /images/rgb-detail_hu_c647931570e13191.jpg 500w, /images/rgb-detail_hu_a9ea0f1378d648e6.jpg 750w, /images/rgb-detail_hu_56c9f755166b42fb.jpg 1000w, /images/rgb-detail_hu_123f77670b2847d6.jpg 1500w"
+                     width="75.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<ul>
+<li><a href="/components/output/">Output Component</a></li>
+<li><a href="/components/light/">Light Component</a></li>
+<li><a href="/components/light/rgbw/">RGBW Light</a></li>
+<li><a href="/components/light/rgbww/">RGBWW Light</a></li>
+<li><a href="/components/light/rgbct/">RGBCT Light</a></li>
+<li><a href="/components/power_supply/">Power Supply Component</a></li>
+<li><a href="/components/output/ledc/">ESP32 LEDC Output</a></li>
+<li><a href="/components/output/esp8266_pwm/">ESP8266 Software PWM Output</a></li>
+<li><a href="/components/output/pca9685/">PCA9685</a></li>
+<li><a href="/components/output/tlc59208f/">TLC59208F</a></li>
+<li><a href="/components/output/my9231/">MY9231/MY9291 LED driver</a></li>
+<li><a href="/components/output/sm16716/">SM16716 LED driver</a></li>
+<li>
+<a href="https://api-docs.esphome.io/rgb__light__output_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>RGB Light</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#color-correction">Color Correction</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#color-correction">Color Correction</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/light/rgb.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

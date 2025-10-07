@@ -1,0 +1,769 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+	<meta name="generator" content="Hugo 0.148.2"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        
+    <meta name="google-site-verification" content="Q5q5TFbCofxA8-cSa1Frv5Hj4RopF5zwEZf_zaNHqf4" />
+
+
+
+
+<link rel="me" href="https://fosstodon.org/@esphome">
+
+
+    
+    <title>ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="ESPHome - Smart Home Made Simple. ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.">
+            <meta name="twitter:description" content="ESPHome - Smart Home Made Simple. ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.">
+            <meta property="og:description" content="ESPHome - Smart Home Made Simple. ESPHome turns ESP32, ESP8266, and RP2040 microcontrollers into fully-featured smart home devices.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/logo.svg">
+                <meta name="twitter:image" content="http://localhost:1313/images/logo.svg">
+            
+        
+    
+    <meta property="og:title" content="ESPHome - Smart Home Made Simple">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ESPHome - Smart Home Made Simple">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                   title="ESPHome Landing Page"
+                   href="/">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="hero-container">
+    <div class="hero-content">
+        <h1>Smart Home Made Simple</h1>
+        <p>Turn your ESP32, ESP8266, or RP2040 boards into powerful smart home devices with simple YAML configuration</p>
+    </div>
+    <div class="hero-img">
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/hero.png"  alt=""/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1500px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/hero.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAABmCAMAAABGF1z5AAAA6lBMVEVHcEz////9//lesrLo8/Lp5&#43;a14uLe8vLk8PDu9fWEzMxInp4MCwtORjoSERAAAAAiIB/4&#43;Pg8OjrZ2NkaGBdVTD8qJyUzMC5&#43;fXxnYFng4OF5dHC/v77/AQHV1NVrampVU1RhV0is1dVGRkmIhIHH5&#43;h5bFrJyMempqW4trbw8O/7/Pv29fSLjIyZl5aWkY2wrq2gnpzQzs2UfGFEMiSYi3qsoZbr5&#43;NEdJ9VXWgBlf95X0OWycomMUKqmIG3rKD/QD78x7r&#43;fXrFu67MZB6UnKZyh5x9Oxw/rvjur4bg9v2L0PuTrMJqwvjJHZHcAAAACnRSTlMA////fJv/9bETQM7qowAAF51JREFUeJzsfQ1zosj2/kTRRl1TAiqCFCAktgLJJX1vLbGGVCrrzWxNNvf7f51/ndPNiy8oYmar/r/aA4Iah9HH55x&#43;zukXv/1j/9g/9o/9/2e9q&#43;z/0jV6NbCSrjD&#43;H1x1DfEu4RpNL9OTesUb6UniQpceaqDVk6ROW5bldoO9I9DqSdKzNJAGgyYHWVyjt5EGz8/Sy&#43;X78&#43;CZf9JeT3p5HmyeXwbPL3iQnp/r3ts8n0er1&#43;vJ/dTre56Xet6lx35H4teQ2u0&#43;bJcf2u0BoAXXGIC1Gx3xGgDWgF&#43;liT1LZ6nV60my121onpy/yX5jk/Er7fWk58Gg3cAG7TaChYg/N8ZqMHipQS2p028KVrffkYQfthuD1S5o0QgsBCy/xjVo1QhbPUlOv4BacnO0MloMOk3Bag8k4cxX&#43;OHguV7UuppavSuohWjBNQbNqdX&#43;m6jV&#43;ypq/a8pWPLgK6glrrG5AqzN2Rjf6/U6/aoYT0iX1KBW7zpqYYzHBrE5WBla0hV&#43;WI9aneNgkS6xAa1TeOWN2U7U8i7Y&#43;v0&#43;vksJwOKSosE&#43;yCTIyxVgvTSmFunawk5SK3fEdsGtbrd7Dxc4e7znX4Usy52O1JHlrtftd71&#43;t3vh7vXlv5FaB1ELoerazGaM0lNoyUI&#43;S1KBFfm4zAghMvFIlzS2bn&#43;QRb5rqFVTmR6AxWzbZowxalneKbT6/ZxaJbBarZaitBQ4hvzUOnZfAWu1WkHUiiLSiiJFCcMwVEJ4/iOs2sOP7AVooRIRr/0l1KqnTP86AIsIqKx4fVLjy52MWu0crLDFTVEiJcJdifAAZ4XDdcwQqsxalXurlb2Am6IQr0icrqFWjYT6CLVyqNbr9do6Ra2/MGr1vhVJT5coHC0lIiTBzSRJdjcJgiCoQgthECBUvkS8TrwaXq4Qr1/Ih2uoVUeZ7ic9BJCiFl2vrfX6DLUy&#43;ZBTKwcrImxLt9v1dmtRtt1SuoWvAACLTiNxqUXIrFLi1Jxafq2otafjASdBrHVsnULLy8osmXzokowWyTaO49UqjtdbCw5ry9raSZAEXwwWumF7IL1w0fd8BVxSjRgvSXvUstZxhtV6vT7ZIOalmkF7F6yIUIB6ba0tSuFalsUYiYLkq5mFbthuD3qZ6LuGW3Wotae1PCujFnzKkw1ikfR02gIsEZMCExpVW9OIJu4lSdKKAsGs6sh1OVio47N84hqwzjeISK0dtGyKlFhzcp30w/2kp3DDCII5RPQoCoIEHwURWCtqtfB85IMrKDrOxPcDsPp5Pg3v46oWsUGphloxQGVZiBc9peP38ukCLMCr2AGdIDERriCIAmImICSiHD6EinwQBUXGBXBFnFlFg3hVqaZe0lMGgHgQbyyEy7IoO8UspFahTAs3zD4Lp1CQJAlh1EySxNS0hG2pRhKuJzQSoG&#43;C2CD35AO2JswalOqujZlVT5nu&#43;iGPWmuEyrZtcsoT&#43;&#43;UqYJfsBaMogZAeJcxiGtsyUBFbyli8ZZTaNqV0&#43;0rNhAD9COn&#43;9Vf3/v6efFzALIWkovwgfYEyrRXjO7vKlEcti1Ke&#43;Xgnig9e2smiRXvPDZFYiZZEUWRura0G2MTQ0GrMonS7pdaW0vjpVQM9EX2QbpcnE/cf52Rp&#43;X8QzCpVAX95Pr2rte5BagmoqMfY6aQnz8z&#43;V0p3hAUJIqFtLWqDTF2vKWVEY5oNrGU2267WBMVXlBUj7j8&#43;LghaojUUWgvRuoZa56uAh/LBptwBKaXUoqc7gf4qSjWFgi&#43;Tq9WKTMtihFHGKCWmBtEq0RhmQhoFqQox64Pcf9zzWsQFwkIpmPUlSU&#43;DUg2WaRggZVneGbC8fk6t9kHMEoAlNkkSHtGBa9AgJkJXJAEXEgqHCQ&#43;NmFUkPb&#43;2QTzMpzWMMJblrb3TQmtHPrQ9crSsEEVJAjcAieuIVvBBooAUwgEsbF0QrA6YVZYPV9jlnYikazNqrVPL8rzzPbFFJ2L/OLNQOgjjIj4i6HT3l6iEKrB2y/Hoh9fIhyZRywOR5Xke654sLu9SSybRUWYlNmUmozajdsJD/gf&#43;y/tLwtNZsHJqvVwTtTb1kp4yAMyzcGCD14XtDFh9SRLX6B4Hy9yCuqIgsswkCHjbB5rqarCikhuWqPXr5cMeBEgrdhaqHWp5R4sKkWZtLY1tQS4QACtSPrBr4/4SlXDUdpiF/dPfRLdtc7Be6gxB2u/pYcgrAOyc5VFLrgBri9KB2kQDN2y1oo97sI9LxHoVWP29TkQ&#43;BOkKtGqMbzvWiVjHCQtq9SrBSmyeC2KDiMpL9O7wvo3rwDraP32NfDif9PQOkp4u0qqeiVKNJAdHPxIK&#43;bxKw&#43;FSsCsjCpRWhHUJlK8XI7fLrFI&#43;fQ1WteTDwUCRerzqZklPFVhRQGwuHLRcQgRJgP0ZGqpT8VxwcdW5SKTLSc8X9PSc88PeNQO2OFry8Y&#43;UsC3TKMUuDMuCrMdmTNMYZdRimqZpNoPcimA8u4ZZX5RP/&#43;rhbQiWVAFWwLaUvr7GT4&#43;rOI5fX1dry2IaW8fQQFK6hVTUimMGQv9isPYGinxFqeY8tY5FrTPmpWkqJD5SqxIszaIUu3tWMcC1WlvU1mgcW9SCVMGiTKPxlpEmYPX30frbhj7s90&#43;fhurz/cfDZyrQkqSq1rAVJdhxy6hlreM1pRaztSTRLMvWGGSh&#43;OhyNww5WPmAmmJg75W1h5o9PfWp5aXpw2zjbJw2RwvkQxVY2BwS0A7EpjaqCKw8mEmWNfIgX9GTUQUV5N3BPR9AnfKB1KnXl/udjtSRRIdTMRbs4Lh7kvvYpyasVk9P3ajleZ/vs42/2Wxc44Gj1e9IlWBlkiEIRO2BP8KqQ8QBEw9EJ0dL4VsUcTmhwA7/ohAXOPYhVALCBwhk9kGIDFt3d2hO9x4e49Azcdw94cu7coaWNKgRtQ5kfBWr3mfORvXd&#43;cZXNxwtT5aqYlYGWZAEeQECq1mCdcnb2xsQKytMINHglAi6YZ8QPoxKxLq5uQnDEEftKCDXlBaOFeFjUQISlbdIUT4IHBSi4DEirfwUESVSPgJCvHb9qHXYP13JKmfj&#43;77q&#43;6o&#43;Ujc/MMz3Zfl4bphhlWiMaTYOO2GMaQhEK4qSNwCrMIQON343KR4lSUEspXWDFvLoBccb3Ljd3LRwE4bP3GQH/nR4U5zwL1G3fVmMPzeVgEPl&#43;r4/8X11Oh3pL0PuiV5fJqfBoltKt/HqaRXHrzFN&#43;MgH8EYB08&#43;fP/GUY7YD4NtbKyjFtDC8&#43;WILo24/B&#43;v8yMmz1CpYNXHdyVCdjqb&#43;ZuNufiDGhJz0woRaWyt&#43;enp6AsCoyWUVeBkQ5&#43;fPt59/AFwcsgRRSwqwfr69lb8KpfXlYN1E3feCWXUaxPaJBrFglT9xJ5PJcKjruusYqg6eCGCdSu6iRNNs3t1N6XrLklwpHHgiOF9Q8kbxaOfq6IZh4U05P8L9Z&#43;raDrMGL3Xaw0qptQeVu1hMJkNdV31/Opq6ELe8KmZxSmBjSDTTTBJimuVUENmF0Z&#43;HemwcseXEqI4peBJEh8wKFR6fwtwpMbo3ZZZdiIc6Kl5qn4DqDqFyF8CqyWRhLCbDoapPR&#43;Pbse7OUrkqZmE/hRAQvKkLeLGGj4RANCNFaAuhKZRsgCWa0gqVvSqsArEc21R4VRAoSgh7YGpaEsE9MUK1fmwLo&#43;7nJQG&#43;SmgBVA8CKsMFSk0WC2OxGA6H&#43;nR8e3s7nrqzjnxcOkQJhCfe/4U8Me1MPwjJxV&#43;XN/v4EVut0ijTfHjkDrPCiGhI0sS0NTgmSWBCW0tMMTITFFhtnoVRN2fW&#43;TpNFbE873O1A9Vk4gO1ALQCLV/qWEf9MCJbqpmmpjGLaRozbSzJmzZl8DmTwr&#43;ETOK&#43;VeHRJbRuwkCzTZNSxngfOrWYaa95UGSUWtCgUC2ojVZEPsvEOgPWkXHxAFW6esAW0DUEVPw4meygNX6R4uNgadv1lm7p9un3GGsM6xVk0GyLJZqy0gQ9UGcQLoIFVADocZhiHPMRw5odxzGOa1ljUcOiNKkLVhjkOuv84OWjAv4QKh84BWGLhy5AawRo3Y78R/tYJhyZOJIwXj0&#43;xpYVW9s4tqwtYxZl1hbk1qVVrFbmhoHG4DI4TpFSax1btmYJW1tr0L7MTmoHrYJZdYh1ME0MoZpvXN93XcOAiD4Z8oZwgcRaIFoqR2usGzI7UuxE6c4QL4uBMLW2WPVjzLbWDGN9I7RuQoUwZttYPrRNja3jtZaYGmQJzGaU2Ri2grpgAbPaRcQ6CRaOVtjDKl39mHGoXNddGMijIUfJnSBk0CKW0HpiR2gSQWAnpondFhpJNJIQEwc/MEbOFpOPazeUDmGUiMw8CAKI7QwakijgSaio&#43;SsXMOu9JrEOZ/IgVI7v&#43;q7vD1V16AK1OLeAUrCDlTxxrDsr7Ri38roDCoNAVB7wE&#43;V9GBkIOH4S82KcvlJVtwFRmrWW/E6UmEHEH&#43;DsFgXnt1wgHTJm1XDCvTliXvr5gKzyXX&#43;i6lPdXyyXKK2GAi1wR2MhYv1/RhC1psP57ySpoEjEv/UcK3wAuU6UVRcCfuM6FCWXgoLjOLMOUABw6iJznFkcrLNOuBexOFSYLg99INZUH7rL5XKJRJqIxhC4tgDFtVwMp&#43;PxaDrVfacKrShIbC3RbAhgmqYlfGBWi1do3t6EfH8TqU&#43;SCC2/U2vYY9bXWhhwUSqdXUdkJ4X2Uvkdw7o/8QEb152oKjDr30uDux2ELOGGC8NYLpcTfTqdTnV1OJmvj08NiJLt1tpuX19ff3/dvr7miTTg8VNUHbLyQylLDKqw&#43;hWJ9KcY/nc2YrVF34MHUHEHVP3h5M/J94lhOIY/dI3lXHgixi0X0QKk5svlYqjquq66zsZ51I6DZYJIXD0&#43;Pj6unv71ZGncv6IoEPD8/OMPAdXPUmWmqtJ8ncdVgIX9tOfBkiRRSweofmAL6A9VXV18/&#43;&#43;f3435bOa4E9cocws1vLFczv/N3XMIDuvM5vOn4ylilDAGgnQFAjKOmSmCEUfr0IQ/VhQyjsWsKy3E1rCGbABiiVj1w3ERqomvTqf6n9//&#43;/37Yn53NzcQrTm4HG8SOav&#43;PZ8vl44B2sL3h64z&#43;5dVMUMH9EMCoghURLnqgCFdxCtRFxWdGW9vRwcxtcoxK/wy1IJuv54elVIO1WzjT19UH0xV9dH0P9///P59YdzdzZeGj9yaI7cmEwEV0Arc1DBcf&#43;gbsyeLVClyVBCZLCopAqw5KFmFoWgncchpNbMyrIqaDJcRuN2E&#43;VZNpfzlvAgWdd/rZdB9D1vAja&#43;Pb8e6CrrKV6ej8fQ/35fLBfjh3OHc4mhxBwSonKUDYG2AWcYstsmlPaVoIones6iSWHnMCgOSifRQCYJITAjms4L5qdLt&#43;HemwD&#43;LbkKswdfICqVO3/PS97n7MhrfjsdTXZ9OgVjj8UifGIZrOPP53HHcPG4ts1gFlILbZuJPXNdZ1Zl/eVxklmf&#43;ispDWD1POHdDhXiMCLACUzPRwI25s5MkCY63BaGC02ESkgREI4HCY1YNPYrEenc2vjoC01UVhMBoDHchgXZ9F0I3cAuFAkI151BxVi0wI5oBWA0sCMTEMZzqJCZV81nWVZYFeIV8eiaHIww0m2KlgRvOEmFMq8gOw8CmzLaZlpi2FkQQs&#43;QaBVJIdLz0wXEcX9X1qY59XNPRaDRV1YVjuL46VDlarusvACCUC0tnCfc3AinX3czSWgsMfJSOaFRGw8lOxzax401Y5nqB9/kpHoRBojE&#43;0wHHmiBsjFal0mFgYhZuJolmJmF4E3ntGsVkTHS895kD3ALzASCQmK7hGq6q6xDCHAhcBhbgFzysI6kMN4PKmbVxpAiO6&#43;J7&#43;VbsHp498TrPkzt8WbmO3O&#43;nRzZ4Fk&#43;5pZ6ogIaB/fmpRYJlUUDMzBETPJOEAGmO&#43;yEm3HxSZBTehBGtU0zGRMdb/XA2BqY3qgoQqUPXNQzf10fjqa5CJjO7u3NcAHPCA5VjbACqiS&#43;getz9RLWtI9akkdq1LSUcoPCDeJ64j&#43;0bBPeAt6481lcG&#43;Jss2ebN4s0NkWtEd17z87z3mWFMQLb7Q8wJXfBAnRf2RuOR7oM2NSaqrnNf3KC8muDNmQ8e31eNoCoWaau/NlS/f5&#43;xKTDNgzJMOW88rcLK2kKRz3khvEdPiPfHmTNRfYxAyJYFsOr2t98ArtvxSHUdZwn46apvCFKhGEVa/Z7223ETrPhcwQsX0krtDCCkz0lAaloYydJpH4SIJYZYdb30ae76rmE4jmH47sQHWv2WYTWeqv7CcBx0xEkG6ASkvuR0Hlb9VVMnbLKeXZoxS4xT&#43;AqwAvlsotMphjdAiwhwgKgywBOn49vfAKfRGLHyXQhVrjvk6dAEWeVKqjRrv/cb&#43;qBYzu5bT3oeyI3A&#43;ioLIWadjVjlMtbTw&#43;xuNgO9DtTRR7fj8Rik13g0Baxc0FTAKcALAPOloSRJs&#43;ZL/yGxenzB0vpYtVMSfHlBK5JrZtA5WvHT48PdDDSVsxBqazTlmgvjE49SKlZQXV9SJVWaSu3GvOLEwhVtLlqfLb2PvhqsMDjDLJFBl&#43;GyVoDWfDZ3JqC4VH06HYGcn&#43;oYxnyXl08nENwlnQukdrNoVSbWhcuVpiTIPmMpZom27UwCvYdRKKJeGJ2OWcf6oD3v9fEOmLVQp6BOh/p0CsniSFchoOPALGwFDUeaAFTDa7Aq1v27CKt&#43;akd59pwpB8zFxSpcUVSvqyLkxQ64wrmYdbQP2rNW/7oDXukj3Tc2IOARL9V3h74L0QqgcuaduST1hlcuViqIJb1cuP5m2s10FiH2h1DzvKsjE&#43;9BRQa9Y0oA6bSZwEtPS4f9iJWj9TQzFkNwQNVduBMBFUR0zivf3cwf3juSpPaAWl&#43;xaPCla5XmCj6wPz0tS6RtZmMXK2OUMts8378aBgQXotMC5Zx0qFhPkniru4U/VIFSoE3VKT9j/wWIBXf&#43;8J6&#43;d/gi41etGZxprOdLl99M73lrGJLu5yf5QFSUxEaYKPboU2YnZz0xDDSGHdgkCk&#43;7YdXoZK&#43;bPhr&#43;kOfUkCoKWg191FWu8/D&#43;GcvvebS5jli4zvnFi&#43;CmWsYs5nk2HykTRompcePlhBoDaKIk0UwzQT88GeCr18D1Vo6/cIeQJGK88t3JUKhQgOo9XadyJ1&#43;RtTmxpGwu&#43;uVg3eeJNO1m/oaj2kpWI2aFCi9hQzp9Sjocmb1ayK0HB5LqoaqCeB/rqKuwBZwhVBauq8LBah7eM2K9XL4GbhazbpTgo2BQuTe/Zs99PgTgpHQ4ukxpCa254asqjr36bTziyaDrzH6s0tTyPC9v8p&#43;vIVY&#43;KelSrPppNxOlVUMhLx6IeypmnZxg6HmrB2eoqqo&#43;ur2FtJBD9f4ep1YKWGXN2PMViU4G1qWyAZlllxLpL8oSq5nV60mfp1bt9lYz199sXBXyHMdxN8b8xwocEBcwKJr85sSSxdxA6bnBQtS/IpGujlmHic4&#43;t9ozZ/bgbHx39uP9YYYOiFjBH7P59psrFu3OZp2&#43;NFm0&#43;9fkhhXMOr8cvOf9/jAbzOez9ir10vd0haTK58td/UsDxeLMjcCygzySX2XFNZTKmFVjTpPnPT3M7gCqruetUy/HqivL&#43;edsTqxcjzZaDT71CMoEwgfVX2Ek2wjpHGdWRaKzh1Yar9K1KDnTYhGfL4lY7WKVviZg9dOu3WW8C43Srn2wZYf7I38jXmmTc&#43;tUlOBx1EwNS4tXWfm9bAnq3kDmU27317Sv4ZtyVnjfoCAt7&#43;1a6L33P1NZ/LZT5/Oz/bl7&#43;yzO&#43;39qy/i0zG9yZ/9Xpo6BJTc2qdBHktzpDDodeWcfwFPl25E9&#43;1Uo/IEh6fRe/XTWhYY/LYVPdcR5IOV3skPnWdp7snSNUz8c9jW/8yV&#43;oKv47S2p9EzpB7x6u7v4iS6&#43;HmxP4lu&#43;X7QJu/SfFduLwKj37cTgyF62nd/zi30rLtq7/sffvuwaX3ORGtY7uH/4zM5dToeMnr3dN3rZ2/52/QfNv/jrL/I32cH/1qv6S&#43;/YqwXFdx6XOF3/U4qr98pfbNmHOKgl9zjyXv6x5vb/AgAA//83hdWX16LibwAAAABJRU5ErkJggg=="
+                     data-src="/images/hero.png"
+                     data-srcset="/images/hero.png 1980w, /images/hero_hu_8c39c4bc03825940.png 300w, /images/hero_hu_c408b7e96ca61063.png 500w, /images/hero_hu_747c86c9a35a18e5.png 750w, /images/hero_hu_aa5622a6f032ee60.png 1000w, /images/hero_hu_ecb451859007abf4.png 1500w"
+                     
+                     
+                     alt=""/>
+                
+            
+        </figure>
+
+
+    </div>
+</div>
+
+<div class="cta-container">
+    <div class="cta-content">
+        <div class="cta-buttons">
+            <a href="/guides/getting_started_hassio/" class="btn btn-primary">Installation Guide</a>
+            <a href="/components/" class="btn btn-secondary">Browse Components</a>
+            <a href="https://devices.esphome.io/" class="btn btn-secondary">Device Database</a>
+        </div>
+    </div>
+</div>
+
+<h2  id="what-is-esphome">
+    What is ESPHome?
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="what-is-esphome" title="Copy link" src="/images/link.svg">
+</h2>
+<p>ESPHome is an open-source firmware framework that simplifies the process of creating custom firmware for popular
+WiFi-enabled microcontrollers. With ESPHome, you can:</p>
+<ul>
+<li><strong>Create custom smart home devices</strong> using simple YAML configuration files</li>
+<li><strong>Integrate seamlessly with Home Assistant</strong> for a unified smart home experience</li>
+<li><strong>Control and monitor</strong> your devices through multiple interfaces (web, API, MQTT)</li>
+<li><strong>Automate your home</strong> with powerful on-device automations</li>
+<li><strong>Update your devices wirelessly</strong> &ldquo;Over The Air&rdquo; (OTA) updates without physical access</li>
+</ul>
+<p>ESPHome takes care of the complex parts of firmware development, allowing you to focus on what matters - building your
+smart home exactly how you want it.</p>
+<p>
+
+<div class="feature-grid">
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">No Coding Required</div>
+    <p>Simple YAML configuration files instead of complex C++ code</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <path d="M54.2 202.9C123.2 136.7 216.8 96 320 96s196.8 40.7 265.8 106.9c12.8 12.2 33 11.8 45.2-.9s11.8-33-.9-45.2C549.7 79.5 440.4 32 320 32S90.3 79.5 9.8 156.7C-2.9 169-3.3 189.2 8.9 202s32.5 13.2 45.2 .9zM320 256c56.8 0 108.6 21.1 148.2 56c13.3 11.7 33.5 10.4 45.2-2.8s10.4-33.5-2.8-45.2C459.8 219.2 393 192 320 192s-139.8 27.2-190.5 72c-13.3 11.7-14.5 31.9-2.8 45.2s31.9 14.5 45.2 2.8c39.5-34.9 91.3-56 148.2-56zm64 160a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Wireless Updates</div>
+    <p>Update your devices over-the-air without physical access</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Modular Design</div>
+    <p>Support for hundreds of sensors, displays, and other components</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <path d="M256 0c4.6 0 9.2 1 13.4 2.9L457.7 82.8c22 9.3 38.4 31 38.3 57.2c-.5 99.2-41.3 280.7-213.6 363.2c-16.7 8-36.1 8-52.8 0C57.3 420.7 16.5 239.2 16 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.8 1 251.4 0 256 0zm0 66.8V444.8C394 378 431.1 230.1 432 141.4L256 66.8z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Local Control</div>
+    <p>Devices work locally without cloud dependencies</p>
+  </div>
+  
+</div>
+
+
+<a class="anchor" id="who-uses-esphome" role="none"></a>
+</p>
+<h2  id="who-uses-esphome">
+    Who Uses ESPHome?
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="who-uses-esphome" title="Copy link" src="/images/link.svg">
+</h2>
+
+
+<div class="feature-grid">
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M224 0a128 128 0 1 1 0 256A128 128 0 1 1 224 0zM178.3 304l91.4 0c11.8 0 23.4 1.2 34.5 3.3c-2.1 18.5 7.4 35.6 21.8 44.8c-16.6 10.6-26.7 31.6-20 53.3c4 12.9 9.4 25.5 16.4 37.6s15.2 23.1 24.4 33c15.7 16.9 39.6 18.4 57.2 8.7l0 .9c0 9.2 2.7 18.5 7.9 26.3L29.7 512C13.3 512 0 498.7 0 482.3C0 383.8 79.8 304 178.3 304zM436 218.2c0-7 4.5-13.3 11.3-14.8c10.5-2.4 21.5-3.7 32.7-3.7s22.2 1.3 32.7 3.7c6.8 1.5 11.3 7.8 11.3 14.8l0 30.6c7.9 3.4 15.4 7.7 22.3 12.8l24.9-14.3c6.1-3.5 13.7-2.7 18.5 2.4c7.6 8.1 14.3 17.2 20.1 27.2s10.3 20.4 13.5 31c2.1 6.7-1.1 13.7-7.2 17.2l-25 14.4c.4 4 .7 8.1 .7 12.3s-.2 8.2-.7 12.3l25 14.4c6.1 3.5 9.2 10.5 7.2 17.2c-3.3 10.6-7.8 21-13.5 31s-12.5 19.1-20.1 27.2c-4.8 5.1-12.5 5.9-18.5 2.4l-24.9-14.3c-6.9 5.1-14.3 9.4-22.3 12.8l0 30.6c0 7-4.5 13.3-11.3 14.8c-10.5 2.4-21.5 3.7-32.7 3.7s-22.2-1.3-32.7-3.7c-6.8-1.5-11.3-7.8-11.3-14.8l0-30.5c-8-3.4-15.6-7.7-22.5-12.9l-24.7 14.3c-6.1 3.5-13.7 2.7-18.5-2.4c-7.6-8.1-14.3-17.2-20.1-27.2s-10.3-20.4-13.5-31c-2.1-6.7 1.1-13.7 7.2-17.2l24.8-14.3c-.4-4.1-.7-8.2-.7-12.4s.2-8.3 .7-12.4L343.8 325c-6.1-3.5-9.2-10.5-7.2-17.2c3.3-10.6 7.7-21 13.5-31s12.5-19.1 20.1-27.2c4.8-5.1 12.4-5.9 18.5-2.4l24.8 14.3c6.9-5.1 14.5-9.4 22.5-12.9l0-30.5zm92.1 133.5a48.1 48.1 0 1 0 -96.1 0 48.1 48.1 0 1 0 96.1 0z"/></svg>
+      
+    </div>
+    <div class="feature-text">DIY Enthusiasts</div>
+    <p>Create custom sensors, switches, and displays tailored to specific needs</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Smart Home Hobbyists</div>
+    <p>Extend their home automation systems with affordable custom devices</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M184 48l144 0c4.4 0 8 3.6 8 8l0 40L176 96l0-40c0-4.4 3.6-8 8-8zm-56 8l0 40L64 96C28.7 96 0 124.7 0 160l0 96 192 0 128 0 192 0 0-96c0-35.3-28.7-64-64-64l-64 0 0-40c0-30.9-25.1-56-56-56L184 0c-30.9 0-56 25.1-56 56zM512 288l-192 0 0 32c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-32L0 288 0 416c0 35.3 28.7 64 64 64l384 0c35.3 0 64-28.7 64-64l0-128z"/></svg>
+      
+    </div>
+    <div class="feature-text">Professional Integrators</div>
+    <p>Deploy reliable, locally-controlled smart devices for clients</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 32C145.7 32 160 46.33 160 64V215.4L316.6 131C332.6 122.4 352 134 352 152.2V215.4L508.6 131C524.6 122.4 544 134 544 152.2V432C544 458.5 522.5 480 496 480H80C53.49 480 32 458.5 32 432V64C32 46.33 46.33 32 64 32H128z"/></svg>
+      
+    </div>
+    <div class="feature-text">Manufacturers</div>
+    <p>Create <a href="/guides/made_for_esphome">Made for ESPHome</a> certified products with standardized firmware</p>
+  </div>
+  
+</div>
+
+<h2  id="which-microcontrollers-does-esphome-support">
+    Which microcontrollers does ESPHome support?
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="which-microcontrollers-does-esphome-support" title="Copy link" src="/images/link.svg">
+</h2>
+<p>
+
+<div class="feature-grid">
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Espressif ESP32 and ESP8266</div>
+    <p>Wide support for ESP32 and ESP8266 microcontrollers, the heart of many IoT projects.</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 407 512" role="none"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M372 232.5l-3.7-6.5c.1-46.4-21.4-65.3-46.5-79.7 7.6-2 15.4-3.6 17.6-13.2 13.1-3.3 15.8-9.4 17.1-15.8 3.4-2.3 14.8-8.7 13.6-19.7 6.4-4.4 10-10.1 8.1-18.1 6.9-7.5 8.7-13.7 5.8-19.4 8.3-10.3 4.6-15.6 1.1-20.9 6.2-11.2.7-23.2-16.6-21.2-6.9-10.1-21.9-7.8-24.2-7.8-2.6-3.2-6-6-16.5-4.7-6.8-6.1-14.4-5-22.3-2.1-9.3-7.3-15.5-1.4-22.6.8C271.6.6 269 5.5 263.5 7.6c-12.3-2.6-16.1 3-22 8.9l-6.9-.1c-18.6 10.8-27.8 32.8-31.1 44.1-3.3-11.3-12.5-33.3-31.1-44.1l-6.9.1c-5.9-5.9-9.7-11.5-22-8.9-5.6-2-8.1-7-19.4-3.4-4.6-1.4-8.9-4.4-13.9-4.3-2.6.1-5.5 1-8.7 3.5-7.9-3-15.5-4-22.3 2.1-10.5-1.3-14 1.4-16.5 4.7-2.3 0-17.3-2.3-24.2 7.8C21.2 16 15.8 28 22 39.2c-3.5 5.4-7.2 10.7 1.1 20.9-2.9 5.7-1.1 11.9 5.8 19.4-1.8 8 1.8 13.7 8.1 18.1-1.2 11 10.2 17.4 13.6 19.7 1.3 6.4 4 12.4 17.1 15.8 2.2 9.5 10 11.2 17.6 13.2-25.1 14.4-46.6 33.3-46.5 79.7l-3.7 6.5c-28.8 17.2-54.7 72.7-14.2 117.7 2.6 14.1 7.1 24.2 11 35.4 5.9 45.2 44.5 66.3 54.6 68.8 14.9 11.2 30.8 21.8 52.2 29.2C159 504.2 181 512 203 512h1c22.1 0 44-7.8 64.2-28.4 21.5-7.4 37.3-18 52.2-29.2 10.2-2.5 48.7-23.6 54.6-68.8 3.9-11.2 8.4-21.3 11-35.4 40.6-45.1 14.7-100.5-14-117.7zm-22.2-8c-1.5 18.7-98.9-65.1-82.1-67.9 45.7-7.5 83.6 19.2 82.1 67.9zm-43 93.1c-24.5 15.8-59.8 5.6-78.8-22.8s-14.6-64.2 9.9-80c24.5-15.8 59.8-5.6 78.8 22.8s14.6 64.2-9.9 80zM238.9 29.3c.8 4.2 1.8 6.8 2.9 7.6 5.4-5.8 9.8-11.7 16.8-17.3 0 3.3-1.7 6.8 2.5 9.4 3.7-5 8.8-9.5 15.5-13.3-3.2 5.6-.6 7.3 1.2 9.6 5.1-4.4 10-8.8 19.4-12.3-2.6 3.1-6.2 6.2-2.4 9.8 5.3-3.3 10.6-6.6 23.1-8.9-2.8 3.1-8.7 6.3-5.1 9.4 6.6-2.5 14-4.4 22.1-5.4-3.9 3.2-7.1 6.3-3.9 8.8 7.1-2.2 16.9-5.1 26.4-2.6l-6 6.1c-.7.8 14.1.6 23.9.8-3.6 5-7.2 9.7-9.3 18.2 1 1 5.8.4 10.4 0-4.7 9.9-12.8 12.3-14.7 16.6 2.9 2.2 6.8 1.6 11.2.1-3.4 6.9-10.4 11.7-16 17.3 1.4 1 3.9 1.6 9.7.9-5.2 5.5-11.4 10.5-18.8 15 1.3 1.5 5.8 1.5 10 1.6-6.7 6.5-15.3 9.9-23.4 14.2 4 2.7 6.9 2.1 10 2.1-5.7 4.7-15.4 7.1-24.4 10 1.7 2.7 3.4 3.4 7.1 4.1-9.5 5.3-23.2 2.9-27 5.6.9 2.7 3.6 4.4 6.7 5.8-15.4.9-57.3-.6-65.4-32.3 15.7-17.3 44.4-37.5 93.7-62.6-38.4 12.8-73 30-102 53.5-34.3-15.9-10.8-55.9 5.8-71.8zm-34.4 114.6c24.2-.3 54.1 17.8 54 34.7-.1 15-21 27.1-53.8 26.9-32.1-.4-53.7-15.2-53.6-29.8 0-11.9 26.2-32.5 53.4-31.8zm-123-12.8c3.7-.7 5.4-1.5 7.1-4.1-9-2.8-18.7-5.3-24.4-10 3.1 0 6 .7 10-2.1-8.1-4.3-16.7-7.7-23.4-14.2 4.2-.1 8.7 0 10-1.6-7.4-4.5-13.6-9.5-18.8-15 5.8.7 8.3.1 9.7-.9-5.6-5.6-12.7-10.4-16-17.3 4.3 1.5 8.3 2 11.2-.1-1.9-4.2-10-6.7-14.7-16.6 4.6.4 9.4 1 10.4 0-2.1-8.5-5.8-13.3-9.3-18.2 9.8-.1 24.6 0 23.9-.8l-6-6.1c9.5-2.5 19.3.4 26.4 2.6 3.2-2.5-.1-5.6-3.9-8.8 8.1 1.1 15.4 2.9 22.1 5.4 3.5-3.1-2.3-6.3-5.1-9.4 12.5 2.3 17.8 5.6 23.1 8.9 3.8-3.6.2-6.7-2.4-9.8 9.4 3.4 14.3 7.9 19.4 12.3 1.7-2.3 4.4-4 1.2-9.6 6.7 3.8 11.8 8.3 15.5 13.3 4.1-2.6 2.5-6.2 2.5-9.4 7 5.6 11.4 11.5 16.8 17.3 1.1-.8 2-3.4 2.9-7.6 16.6 15.9 40.1 55.9 6 71.8-29-23.5-63.6-40.7-102-53.5 49.3 25 78 45.3 93.7 62.6-8 31.8-50 33.2-65.4 32.3 3.1-1.4 5.8-3.2 6.7-5.8-4-2.8-17.6-.4-27.2-5.6zm60.1 24.1c16.8 2.8-80.6 86.5-82.1 67.9-1.5-48.7 36.5-75.5 82.1-67.9zM38.2 342c-23.7-18.8-31.3-73.7 12.6-98.3 26.5-7 9 107.8-12.6 98.3zm91 98.2c-13.3 7.9-45.8 4.7-68.8-27.9-15.5-27.4-13.5-55.2-2.6-63.4 16.3-9.8 41.5 3.4 60.9 25.6 16.9 20 24.6 55.3 10.5 65.7zm-26.4-119.7c-24.5-15.8-28.9-51.6-9.9-80s54.3-38.6 78.8-22.8 28.9 51.6 9.9 80c-19.1 28.4-54.4 38.6-78.8 22.8zM205 496c-29.4 1.2-58.2-23.7-57.8-32.3-.4-12.7 35.8-22.6 59.3-22 23.7-1 55.6 7.5 55.7 18.9.5 11-28.8 35.9-57.2 35.4zm58.9-124.9c.2 29.7-26.2 53.8-58.8 54-32.6.2-59.2-23.8-59.4-53.4v-.6c-.2-29.7 26.2-53.8 58.8-54 32.6-.2 59.2 23.8 59.4 53.4v.6zm82.2 42.7c-25.3 34.6-59.6 35.9-72.3 26.3-13.3-12.4-3.2-50.9 15.1-72 20.9-23.3 43.3-38.5 58.9-26.6 10.5 10.3 16.7 49.1-1.7 72.3zm22.9-73.2c-21.5 9.4-39-105.3-12.6-98.3 43.9 24.7 36.3 79.6 12.6 98.3z"/></svg>
+      
+    </div>
+    <div class="feature-text">RP2040</div>
+    <p>Support for Raspberry Pi&rsquo;s RP2040 microcontroller.</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" role="none">
+  <path d="M349.4 44.6c5.9-13.7 1.5-29.7-10.6-38.5s-28.6-8-39.9 1.8l-256 224c-10 8.8-13.6 22.9-8.9 35.3S50.7 288 64 288H175.5L98.6 467.4c-5.9 13.7-1.5 29.7 10.6 38.5s28.6 8 39.9-1.8l256-224c10-8.8 13.6-22.9 8.9-35.3s-16.6-20.7-30-20.7H272.5L349.4 44.6z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Others</div>
+    <p>Realtek RTL87xx and Beken BK72xx chips are supported.</p>
+  </div>
+  
+  <div class="feature-card">
+    <div class="feature-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <path d="M384 96V320H64L64 96H384zM64 32C28.7 32 0 60.7 0 96V320c0 35.3 28.7 64 64 64H181.3l-10.7 32H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H352c17.7 0 32-14.3 32-32s-14.3-32-32-32H277.3l-10.7-32H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm464 0c-26.5 0-48 21.5-48 48V432c0 26.5 21.5 48 48 48h64c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48H528zm16 64h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H544c-8.8 0-16-7.2-16-16s7.2-16 16-16zm-16 80c0-8.8 7.2-16 16-16h32c8.8 0 16 7.2 16 16s-7.2 16-16 16H544c-8.8 0-16-7.2-16-16zm32 160a32 32 0 1 1 0 64 32 32 0 1 1 0-64z"/>
+</svg>
+
+      
+    </div>
+    <div class="feature-text">Desktop</div>
+    <p>Many ESPHome components can be run on a desktop computer using the <em>host</em> platform!</p>
+  </div>
+  
+</div>
+
+
+<a class="anchor" id="getting-started" role="none"></a>
+</p>
+<h2  id="getting-started">
+    Getting Started
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="getting-started" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Getting started with ESPHome is easy. Choose the method that works best for you:</p>
+
+
+<div class="getting-started-grid">
+  
+    <div class="feature-card">
+      <div class="feature-icon">
+          
+              <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 240 240" role="none"><path fill="#1D2126" d="M229.39 109.153L130.61 10.3725C124.78 4.5425 115.23 4.5425 109.4 10.3725L10.61 109.153C4.78 114.983 0 126.512 0 134.762V224.762C0 233.012 6.75 239.762 15 239.762H107.27L66.64 199.132C64.55 199.852 62.32 200.262 60 200.262C48.7 200.262 39.5 191.062 39.5 179.762C39.5 168.462 48.7 159.262 60 159.262C71.3 159.262 80.5 168.462 80.5 179.762C80.5 182.092 80.09 184.322 79.37 186.412L111 218.042V102.162C104.2 98.8225 99.5 91.8425 99.5 83.7725C99.5 72.4725 108.7 63.2725 120 63.2725C131.3 63.2725 140.5 72.4725 140.5 83.7725C140.5 91.8425 135.8 98.8225 129 102.162V183.432L160.46 151.972C159.84 150.012 159.5 147.932 159.5 145.772C159.5 134.472 168.7 125.272 180 125.272C191.3 125.272 200.5 134.472 200.5 145.772C200.5 157.072 191.3 166.272 180 166.272C177.5 166.272 175.12 165.802 172.91 164.982L129 208.892V239.772H225C233.25 239.772 240 233.022 240 224.772V134.772C240 126.522 235.23 115.002 229.39 109.162V109.153Z"/></svg>
+          
+      </div>
+      <div class="getting-started-heading">From Home Assistant</div>
+      <p>The easiest way to get started with ESPHome is through the Home Assistant add-on.</p>
+      
+      
+        <a href="/guides/getting_started_hassio/" class="btn btn-primary">Home Assistant Guide</a>
+      
+    </div>
+  
+    <div class="feature-card">
+      <div class="feature-icon">
+          
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M9.4 86.6C-3.1 74.1-3.1 53.9 9.4 41.4s32.8-12.5 45.3 0l192 192c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 9.4 86.6zM256 416l288 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-288 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/></svg>
+          
+      </div>
+      <div class="getting-started-heading">Command Line</div>
+      <p>For advanced users who prefer working with the command line.</p>
+      
+      
+        <a href="/guides/getting_started_command_line/" class="btn btn-primary">Command Line Guide</a>
+      
+    </div>
+  
+    <div class="feature-card">
+      <div class="feature-icon">
+          
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+          
+      </div>
+      <div class="getting-started-heading">Ready-Made Projects</div>
+      <p>Start with a pre-configured project for common use cases.</p>
+      
+      
+        <a href="/projects/" class="btn btn-primary">Browse Projects</a>
+      
+    </div>
+  
+</div>
+
+
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+</body>
+</html>

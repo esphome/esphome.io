@@ -1,0 +1,1493 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Daly BMS Sensor - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Instructions for setting up a Daly Smart BMS">
+            <meta name="twitter:description" content="Instructions for setting up a Daly Smart BMS">
+            <meta property="og:description" content="Instructions for setting up a Daly Smart BMS">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/images/daly_bms.jpg">
+                <meta name="twitter:image" content="http://localhost:1313/images/daly_bms.jpg">
+            
+        
+    
+    <meta property="og:title" content="Daly BMS Sensor">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/components/sensor/daly_bms/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Daly BMS Sensor">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Daly BMS Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#control-bms">Control BMS</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#uart-connection">UART Connection</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#control-bms">Control BMS</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#uart-connection">UART Connection</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/daly_bms.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>Daly BMS Sensor</h1>
+        
+
+        <p>The <code>daly_bms</code> sensor platform allows you to use a Daly Smart BMS
+(<a href="https://dalyelec.en.made-in-china.com/">more info<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>)
+with ESPHome.</p>
+<p>The BMS communicates via <a href="/components/uart#uart">UART</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/sensor/images/daly_bms_example.png" width="100.0%"  alt="Image"/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 944px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/sensor/images/daly_bms_example.png"
+                     fetchpriority="high"
+                      style="width:100.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAAyCAYAAAD1JPH3AAAw1klEQVR4nOy9S6wlyXE29kVm1uM87r19&#43;zk9T4o0ZQ7pf8Sf/v0TPyHJ0NobG/DCMKCFDQNee&#43;mlufXGa3tvQDsbBgx4JVmQZYigYPChEUnNDGc4090z/e77OKcemRlGRGbWqXNuDyVIMij/rWpU33Oq6lRlVn4Z8UVkRKb74g/&#43;U/xfb13HvaOWnjeV6a2pAlFjY3THL87N3Y/vmdPPHhh7eUkxRDCACIAJIGYQ5AsgH/Qbpa96gghEegWYWfey6XE5n77oj&#43;SKdHZ2HXb3wPQYPapfov6Ed/ecbXJteU4qULqUQEzle3rw7hIqv5ndhfRoqVIuezpChsp30H6pZ/dn3juqFZ1dLd84FUQ&#43;I&#43;&#43;kVaXyDtgAMEyRIkZiGsjaQKsV3/wfvo/Xf&#43;97&#43;Mfe5u11uB2&#43;63/o5r3f&#43;/zkyRN8/vnnuH//AZ4&#43;fYzlIuC9dyvcvXUOi2cgnAPckb43qkF0DLI3QA9&#43;9z/CvaMVfXxtZT89Xqyf1u61raHXEcPJ8YuL&#43;q1P7ts7nz2w1cUlhRDgAQqpujAFYAXJO8zsWrdUPL8cnk5RPpXAsfsh67/pNgW8O5AnSO6&#43;TNe/BNDT9eXy6dnlHM8efAWYuHo/otnnUkWaPzCVm&#43;clnNdPy7ODCsuVXN6jvgpWJPGuA2VAW&#43;jeG7KP2LpPn6/a5//H66f&#43;F4sqv2LeEyDTI8q7/zUAneo4e4dN0&#43;ArX/kKvve97&#43;G9997D9evXYa2d7jWOI&#43;7du4c///M/xw9/&#43;EM8fvwYghHMBNgVIZY3&#43;a3sckzuKXtVVbrLc9u2xdHREdbrFS0XFm&#43;/7vDdbzd4500ma3tD2Bpwn&#43;VnFUCLCLNkR37E6dm57YM/3sTwtc3x4l93tf0dH/nOGEIzxmBC8Mb4gQYf0DMwZDA7kRhTY9MMOTxv4MNmnYReruXBW54AnZobdHir3U1mr4tp/8z0mXf/Y1ZW7BUU&#43;6A&#43;KM9Bc&#43;zB4uWCan5/3h2Zug9Nr4NKCVMpuXTR8lvKWsxIw4NibeyZddVPN7X90x&#43;ftB98tqg6Y8x&#43;/YjKm0n/vQTcB9ftHSubMUa&#43;EzPnvqwbz69VzWEMF1DOn/nrOlCMsdyXrLWyl&#43;fJ70ik9GazoRA8hdGa/tSSH5yBN85QbIGxAQaB3xaILwBcgOPojB/Nsu9XN4bht84Rfve5xR&#43;c0&#43;Jbo8G1AHYejJEjcQjYBk8XzNgww4HRQl7yTuIWQToD5PSJ9yT3TnoxzYBdmnuPcuz2&#43;Q35AEicRPTudzM6VMq3gyb2pfRBWQ9vPNc4fOVamvrkruS0e1ouh7nyiFl5ijxnxo7D7epsMqArMrGxfIa6Orm3brYfHS&#43;PQuU2jq4COmGK91797NjfaXPOkTFGmtgRkc2ARtGGxphorQ3WWu&#43;ci845ngP&#43;bwG13Lcmospaawqo5a8xRps8hGCGYbC9JTsOZMJAlj01xvKaEZdAMAA/B7mfA/wLRDx1dhwrGsbbC8K/f2z5P1wu62/btrrFztYxMsWiOmL660XVJF6IqJJ6jy9MzSbojJlvB5Kdpj1x5nwPOWctmAyM3C8yDEf9a7XjQP/aQym99zjSZ/gMaP0d8wTmw/IlwcA72FwR2LteE/OVkVM9Yn6W1EPKrG9e3g0xgjGIJpXUKC&#43;WekDLIgLAMrSOOw2xI1O0p0eykJtKnN5XNOAItNvKfvPhemG6RfNeVdUDjJnoVgFc/mGcAXraZyDbU2aHb7eqKgGagLkxxtQZbJypDWcQj3Vd903T&#43;LZtYwiBv0wjzI855yrn3FLuLc8oQM67KX&#43;lOWOMNvhogmdizwYOgcEjc6iJ0Bkb7wDUA9XGRe&#43;XYRzeCeDvxM5&#43;k4fhFsfYMBvaGSdJQjgQlqL6pKH0OwqP3oNDTEwdnoCehO0YbJ1Fby1GAa&#43;c9R5GOLmzGOsa0ToFrY1Rj1choPEBa&#43;&#43;xkmO80wZ00AJROoohDMaolF6GCBcjLBUJzTgkx/zSdrwKaznrQRgJ6AyhswZdroeAl0KE9YN27r6u4asaZIzWQ8rgQkDtA1YhYBkC2iiiiSaqVkpgGPuG6Ow/wah0nUp&#43;Z9D4yt0dmnpNVd1VdR3keant9ygDz&#43;wK3tNECWUvI0t7xopI6KqqrDHG5V1oAgsdqKpKaIaAOlRVJWAObdtyNu74ywBd7GMBaYyxEgntnLOF3hQtkFVBtuujCTFgHD1C4I7Z3A8B90KMrbN81xB1ZML7TPGXrgthtY3hjaccvnIvjjefcKh7Vn6TrZQ9ha&#43;SRuRKzGWOB0CQ34hZ0BNwZgyeVw7P6grntUNXVfBS8BBRdR1cMBjqCv2iRXAudQ4WKR1RCZD7Abe2jFsjYxWBWigOJwls9uxNoUVAlz9XSJKd93wJvMcb9kgR7b/88r9I5RHAxhBeuFSXs7rGpq4wOqe0xw4jqm1QTdMtW4xNq4BO2ibCCoiHEaf9gNvdgBMOqLPmMbmzmQzwL0OYyeW1pFqRPLHzzG2IwYYQ4mTHZPQeSOmr96Q93ndlEw5LOw9VYUwmxoiu6zAMAxaLBeq63pP8mU&#43;/1BAsx2YdzhCRaAAjHUfoxkvKpUJVjsfo4T0jhOiZBZ5mjBFepQO4BtgS2Lgt8&#43;Ix4vWPEK/9AqF&#43;zEFphs0qOc74anr5O37HMxOuXCtgFhAImD9vKjxYtHjWVNhULktnoBpHtN7AGULfNujqCjGfU2kaWc&#43;tY4AZDRxbNUYrJjQxog6cQMGJiElh5LNIZimrizz5EXi/peYw3tWDd8eYM1UiVg2zJcITZ/CgrfF40eKiqTE4p/SCYkQTAxpnEZzFtqnhG5epSNJuJlq0BhhigPVW6UrFQB0ZrdQlzunIFX4/K2v2fkT2dhifYNv9qt9snwwxjiYbVCJB59TjJa61PeVGVy/YA5MYbt574RgiTU3f93RxccEC6gLQcRx5GIbQ97385RDC3&#43;ZNUWEp92Nm4c9OOpA8q5R5xtWLC4wEeZHJRKjBsLWWl2SMNYYfE5mPQfQIQOdCZLtlVM8B&#43;5iZzpjRCHB5Z2hxATVdQcj0v0eiF50RSUl47iy&#43;aGo8XDS4rCt4m&#43;iAuqjYINQOMBahbYWs5ZZk9SuzqC2OGGLEmXDS1sIap1JtMXqs&#43;xHH3mMdpawC5qSOXe7NhpOKfvnrPPBTzFwXMdOXUhfRMhcGeFI7PFou8GzRKpijSe9EqJcV6lVXCE0DbluwSx0z6A0TfRJRsgXjWZVAL2VsQ8TxOOJ4GLEOcZLQBdTEM4OYEt1yRFwxb4&#43;H8Zd3LjZ//Hlb/6wHb0bnlHZQ9hLMwMwvlXrTbWkO7iugzx4OW3is956Ku012oRfe&#43;ziOox/HMeZjh4bn4f3VwxGCahfhz7V0GuHQBcyzzimYJWekE8hJsTrjMgILa1BZyHX0DOR&#43;ClSfAKZzLrJfRnSnQHcr2XtNnFzMyQds8k6TMTWZMYliELAhg6fO4JlwZQBbQzirHDqRZqJOrIF1FpW1aBYLNAy4ukbbNIhiTElFpfGHAWGzAfpBO8CLpsJ5VYGd00ZuBQTW4PYWuD16nGSeLxLaTIM9&#43;2DmPTfiSzhz7ryeCQMB51Y6pFGqMTDjzFpsnEuS2SbgCJDLboyFXS7hmiYZvjEgeI84DDDDCOsDOiI8bBvtvGwM6hhx3PW4RaRU5FqIKkgcSocsZU90pJAnA4SVD&#43;dfvdg8WIJ&#43;&#43;XzRPX2&#43;aC&#43;&#43;WC26F20d4j6HLr7pl0ricu5lgyTluHNOKIFIU6UcAjbnnF4j0jjGOCnyvMkxYOblyB4RKm5C&#43;d0wDGYcR&#43;Xm4zhS4dAZzNh5PRw5YxFFipjKMsWaKbZMXBltbLMBuUdM1VNQNbqacXkS6f5bZD4OcDct2deeEq1GEQjqTOOJx9lMKQRosXgyxPAzBi8qh3ttjYe1Q1DJFNVIIwFxU6NuW3WY11WldKIWEFSVdLp0vxi1omEYEMVIdBW67RYdR4yUvQ3SCWwCmtSv2vZKX0xIVCgZqTQZgbTPnPMXzqNBu2OlRcTwO3cGj5pK6dJGGnT0GKzRTkfq/Heo6hpNXaOSFy9S2liYuhYrKmmzGFOj9gNgHTwZdDFga41SFQVpjLg0BkP2M7t&#43;0He2A/OMOsyN4YgqhngrdP03l95XJ&#43;fus3et&#43;8g1za&#43;enBxd/OCNW&#43;FxXV9xa&#43;46L2MG5sn3&#43;7IBmVoETtuKYai8OnsnpsEQqaMgOANQ9/nASj7/MoNVpbtQGAG6fJ6XQ&#43;4jvNq5SpW3D8JCTbYiDEV4o&#43;RNVZmJTM6DKs9UsTOM8xb082Pj/vRa3XTLpv2dF9Z9bSQ6EYM8ZBVs1B&#43;dRHhQisF6fAvgmTW439a4v2zxTHpv8KhHD6od2sUCbr1Gs1wooLWXSoNLTxUQb7f6uVTWEKFZrYC2hRkG0DiChgG9SG7vVYJGaiYvCxQ8iX7USS1P6vulbZoRXjy0ifezGpQvrIDZ4fNliydtjYGBxvTpPpVTQ6haqjGkdbHGIIwjBtm9B0tZc&#43;NKx5WOTG2Dcb0G&#43;VFaEd04aj1CJKU3Um2RHGpsdwMQohZQO&#43;dV3zdFcLuJ4Z0HPrRnbN5bx/DZHea/OAX9n199cfHB14ewefDOm/EH3/ra3mhdERgCHqEGRYrOBkT2rpWtbVscHx/r33Je6l0&#43;F/Bm4Ou58ts5sAtIi8GYqYoal1kL7FEl&#43;Z7KkjpBCCaxRLJgEuuGZmMOSdwmS6SW90ZbWPurcdn4FzdOX1ycHMFX1Sk4rpnIcvYbmxxTYbJvljLQz5zB/abCvbbB07pGbw2M0Iuqwmq9QnVyDJKK5uHO9XqNa9eu6UvYbDY6Zi&#43;Vk&#43;OyybFtNjpE6i3bFnUIelz2cRjhGbh0Ds8qh6WzWPmAxWRMlbJede8B&#43;4MkMX8ULbM1Bo9qh88EzMsGG1elRhMOZgza9VrrYkX65bp0ApAMaAEp59E1abxBAO0cnKjQRYvWLNWFV/U9NpcbkU7akbfOqheoGT1a2VkM3lxuyu4F0ER6I&#43;DOwNc&#43;Rlw/RHzrJtObTfS0ZvsZx/CAxnH75q/u4T/&#43;X//o5SL6///br7U4hXqG5&#43;vVxc/evv3Zh69dX7xo6nc9&#43;JI9F6c8WZEYJZgoD4DIKxYVumkqPF20eN7U6mdmYetNo0BcLpeIzmLTdejHUSXcjRs38J3vfAe3b9/Go0eP8P7776sr6J133tEe/umnn&#43;LDDz/EkyePIfSs9PyjoyOVypfhXGmJSG5kKWCMDgurceiylN5T0wfWbDFyi3SWOgk/fiH1ECO2qhCERkgHbmospAzHx4hVpfUogTScRIjGH4hUmUu78hx5jXHwep10Yum4zlpcnDHGyxE0erBQLek8Jr1jm8MK1F9NNLn1bI6c2oLdI2J7n1ALhXoLfDdyvMkxLjh4E8ccbvMKbjqg9sf/8uvxi&#43;PVMBizDRx7Fh1OaUAtGOGWDIuIgYMaSSOAjoDnIDxxFi9qh95lMItUXa2xWC20kS42G1xut0ovBJwnJyf42te&#43;pgC&#43;d&#43;8enj59iu12i3fffRd37tzBW2&#43;9peD40Y86DXYRtSQdQ/fFAuh69BcXsH0PjB4dMZ5a0nHJ4xCxyO49i0NQ88xhCh35TC5GVi771JD6mUViKrCsQV03WK2WSpvk2sutaI9egSkdTOojn4shI&#43;WWv2oLZPeVlF&#43;00OXlpUr11WqldbE&#43;YrvZgocRldgNMeCCgGcG4MBYMpRCJZ97Arlyb3kOAdK9T0E4Bdm16EBG45itjUwc4m8aV7&#43;xzb3z8V/iv/lPfr9Yp&#43;oSLI4tbfjMN3XoN7vnBAQ9Axswttlfq4MMziXgrVeqxi8uLhTQ0pCFP4kEa7P0lr8i3eS8fL97965yNmn8zz//HM&#43;fP1ewF162alusl0uY7Raj94kmCCBDwOUw4k7vcV3oh4C6jAbMKrvz5ybpLCRhUDuA1RYY85B2kroOSwHzeq1S9uLyEpeXGy2LlFskrYBaAF0kNLKxUziq0DLRPlKP4uqSjnS0XqvUt8s1uq5Xt57w96Fy6EYP3424mSwhrYdFibAlVakC5N9mwhtMuBENvQHCEYFqeWRksPm7x2v827a5&#43;RcNLCGOszETddWphFAjzCCIjQlCNFBPgw1pVE8MINc0ypuFQwsoLzOYS&#43;MCV6O95JyA9uzsTHmlgOXmzZsaqihUQ3izSDm5n5Rj1TZY3LwhPB/bbouNgDkGhH7AAh3W3GMRkh9dXWB0yKFpijMpUa9RrHDpkCHokDULZ25aLBZL5bkCZNlHP6pHo4ROSrmlzIVqCJgFwNhFqk0ja8WIkvrIk4&#43;Xyb4Q7Xd5cY5L73EeI/phRE0dVpseLaeOXHi01QAlQsOElsW4NlgbwlEEKpOi9eQnyZP2am4K6Fl0FtNemINBJIPi6RjA6NQvS3hUOTxyRqW0GT0WABpRwQq0TgE4qCrdqb&#43;51V1cRrK9ePECH3zwgYJCJLVwa/nt/Hd9LxbxJVzlVGo2ApYzwtj38NJhmNAMHk6MrRghJmYaKqc9j0fpqeqhIcIza/G0tnhhoIadGz3sKnk0pGNuNlsFoYCxruqJYoj2keOFbkh9ihQuhqH8LZ1ZOmoZjNhst3puvVrBnZxo4QahH0JTjEETIup&#43;AHzEmoEGpPSD1I5n1AJqJFolwK5JhXKMPB&#43;3fTW3CdCz4HCmaZxqF9OTxwvTIIpNvtoHdYU&#43;ByqtrENTV0oFNpeXyYqP&#43;1xu7pssjSwUQ9T1gwcP9DcilUVFF/48dQLh8CKpNxtUdYV2uUQ3DPo8EUidcHnncGwtjiigzX5zygbsXErHTJ02hvCkrvBg2WBDyQVYi7RzFdq6UVfcdrvRoBihIML/hWpI2aWsxX9a4hDmnVWOSV2KC0rALB1AOq/8VkCtwewiBNpW3XmjdFxr1ad/LM8bPZbhAJw5WFGldXLvsckDukQoaS7/nwPnn&#43;o2UY7cIPNgkzwUmwYsKqUbRl3bwTpcNjXO21qDghZksGxaOGNx2ffo&#43;n7yQ863uYSWBheAfP3rX1dQKKXIEq3w0YMf6z1FhXddq8ZVUzfo7BZDCEobfOXUE2HGiErAiRQhOA89LfEmSjmcQ9c0uFgsdGSzEv5d11hkf/nQ97lTpTKJ1BbeXN6XgLRkWUjZ5wMEc9&#43;sujjzuUJT1O3X96ibRq&#43;pui6NLjJhrJxGIPIQ4NijZnVnKN1wWTLPfe3FzMnBNvuGwyu2HSKHpwC6YhBSGgBQqcZAD1KvwMZa9M5p9JyravjlQtXdNkuuw23utC9STMAhgL59&#43;7Y2cuGYQj9EYhdKMr9HAbWO1FmDWjpBvvdoCJfC3w2UR1PODovY5b1EJC/NNsdpnFdWh&#43;cHa8ACwuUKdrVSQ61oiOTcDwrGAl4BpBwr3LkMGMhvisQuQEaKX5goWJHmXu2LoMP/0pH8dgsRyJ5IteAlAdsc253iOYxqlqL3JpckUQ65ybmS/yyhJ8Bl6cw8y3HAPBcjCt8zpMPdIrHZOmCxQGxbVdF9brR5flvZ5LgAV6SxgEP4skinGzduTA3&#43;8OHDybh6mZTX60Ry9h0WxmIVWeMl5Fon1&#43;dYDo2zKPEdh9E5nIKQRmN0IMjrULpBqBywXsEJoIcexlqVtMgSWcoulGE27KtlLcZt2QXwUhep4/z9FnCXezoNA7BYVC5pjTF5SKxYdryjF&#43;bA/Vj&#43;0K5uAmRN38Akpl/NTQE9T9XhkqE5ywMqKUCaGWNIA3SikjZo1rOrKzXW&#43;nGYpNV8K9JKQPfs2TN89NFHqsKFNswDVsTQunfvng62CLCLYTjPfSvXKoCt0xBMqE96VGPqZAw4AXBEBq1yzRzVwTu9LNWoDGlsBuekgDQimmJPTOXgRHJmP/O8HsidqnTYLzN0ix/6MEevyRQDs1FFI4ZfiFgOI2Lfa2KA8OcjBpbGqD0gRmALowah2&#43;&#43;gxbsaDSim7vrPgJ7nf&#43;380NhZG4V2hOyTRpZ0ZbhXG/IlOWRlbF74p&#43;winX/yk58oYEVCyybAFcl0dnamgxCyC/UoHoWi3vcC8KVczsKLIWotnPDZEBUYVSxx29P0CCh6JuTRwRHJc7OLi85BS7nDzCPLCi9GBqrsc/AWyTy/Zl534GrmdXnfox/RS3ms1SQH6nrUY9BhcISoXiWbw2ErKrryyrg&#43;z6znV9nJsU85MpjjlXHibGeIMVIxNJa39R6Vswjsdgmps20KNjJGgfvaa6&#43;pb7kYfgLeMghxfn6uQC8jagLkW7duTcaiSHX5u9dZFNAOQ1Njs2hVEhszYsvQOOoQeE8tz9s55nrUMWqalxiDMcdRI3PbeQcysxSnYgcU6Tq3Cw6DezDzR5drkDtA6hgeIaQxTTFot4sWHDzYEFbMuPRR/eKkLsiC15S/OHdE5vlMZi6lV5xDF0qQOXTIce4loytdmWeTqJlxNI447YzGPXdEOrBipBHLJCmzTe5bRgHffPPNyRsgx0RiC1d&#43;/PixgkOALTz15ORErxXpdv/&#43;faUiLwvpZUpJqb6q1OUllOE5M868xyrEFMHGiU9j8tokr4co/SMfcNL1OkpoYg2I&#43;s/1mHeeAsYCxDl457SiaBLK8R0FyHOfdLlP0UpynXRg4fDq3WgaDTGtGRp0tYw6UjIl0FIJwWKak2ouacfaluYVpxxlfgUN5kpOgV16LOU8iuL/FD4XGUvheKR56Ki3HarloHEH8xHBopYL5Tg&#43;Pp4ohDRimVzk6OhoUs0ijeVzCSmchoxfkmxZcj1Zk2QNRmc1ibU3pJ4Mn7UKONkApf1LfHcVo6r2pfqgg45&#43;NgIyUM7g3vmYC5iLdJ5roLkEVm6fA5XKubmf&#43;rBzTMDPqV9e40gs&#43;soiWpOCrfb86LMZnIrDbsqWI5ZODfMSt&#43;crsmnNS5yFgloNi331lSc5SbHGOu2AQVc5DNYlsAwDaBg14F0a009RcDtA5IlD9DlCH0pMbAG&#43;GEqnp6f6e6Ejz58/1/MitQuI5omWNOOuc86oQ96cfbacjMJ5oNLcyS7g6SqrHUEAUvuUoV0b4ddGO0XhxuVZBYzlGGa8eB7XOw9unxu1&#43;/cqPN2i71ldeEXcGqTgpIUagymTZR4Su2e1F92Y0jGYX3W3XVGHMz90eftTjt3AjG2MOtR9QVbTq140tUbYCe1YyktvWpVwwzjqz0Uqr9dr9RYIMO/duzfFbhT&#43;XAyneaDS3G0nx0Syl3joMvCirrPRI8qzcswDibUaA3wM6MU4VAOWNDqtwFndZ4D6eM/J4LxyOF8kNa/xy85iYR0qB52DZGYsT6Ghc2OvAFe&#43;lwD3YjjOAV&#43;O4YCayPOsgJ6jJj5oYm3OfDdyjYA8lsEgylNEzBKUBcR5GFdAHUtsyiu6TYAutGNK9M7ho&#43;oPyrHDAo5C3ZQOiGSRPU9YuMqZHNuu0&#43;/Che/cuaNglQYUyTvnknMvQT8bXSxgKbEdIrnFYMy5aDoQ0VYVeNuBtlvYMfkrHDOawJr1jVmjx5yWxQcjhchTbXnrssZJMdAtR1R1o/bCOIt/LtK3GImHgVZzKjI/ViR36cRSDz1uK7SughsD7LbXOBLtsGp0R9QhTbhTXvp8RODAmaGg1vZSt&#43;orLqFzLhjnhEeN5eCZmpb3o1Fe0tgAVgwsxOjiHHbJnAL4xWjMftYy1CtSWr4LmKWxhC&#43;L1C2janMQFwOpUA35W&#43;Ih5LvcT65R/7DwzK6DvbjQhhcatBQjz0ecMGFFRgOmSp5h4RtMaRYm&#43;buKwNKnCWE4h49uh0ETEo7reopnnnP4g6zqSQrPDOu9vQB/LqWLRF&#43;0rXZMXGxgzs7RbLeaTCzvdl2y2jVmI6Vp2SktK3s7duDWvhqJORjAu1cc0GplJ1WZDMMswEqAv6ccB80RgSPIs1KL2tcwzmrwftf3ShOWy4UG4l9cXmqSaxkuFnBKI96&#43;fVslbhkxLNJPzpX4B6EWcl72Aiq5t5SxDExoPLR0iH7QRNmFMTgKEYthgNGYiORrjtPUCSW7Owf2ywHPGlxfST2kjJGVLsnzm6ZGCDHHjnQTOOecuPD/uSF8yKuLlJ77t8s7t86p9uj7DqO8p&#43;1Wh/KXzFh2qR7ybke1DYwKFq9TktlkshNrEkVO0eJIxIGA0b3ilKMAxHjP5D3vDI3sGqPC3ZJMaKNIwoDj0WNbOQ3DDAK6y0s0woebWn25xRAUHl1Gya5fv47XX39dQSpSu3DJ0vAlYP7hw4faGUqoZtf1CnqhIGSMBkFt5LeWcNRHXB9GnPqAa6NHwzybiYiv5Baq1mHotFxSj2uDR1&#43;FlE3uR63HxlnVNmoEZyCWspX4jR0Pdle8GHyQXX3oo9YYamPR&#43;VFjoQMR1sy41vU6pcGN0WMZy/QMO20pOrSXzkqJSK0JWIG4KoNfOkBT/Qag9E9jc5/&#43;V/81/jeREkQYsuuOqERE5OB&#43;UfUiZfJooIAl&#43;Iht7zHaAS&#43;CVQCzT5OqLNZHWNY1uuzJkL24sUpwkUhfoREC&#43;OLlKJqixEfMRwqNIR0qr6safZfCLwewpnwJBz0ZPG6FiGtMWBjKmR40xUIAKXRnx6MZtZyLjLEfMdhBjcvRGq2HGMHVyQkWVQ3fBo1RsTm2oxivZWi&#43;0KU5qPESiV2yrstgExnCdtNh40eYyqqWOB5GnW/kNESdR7AiM0U7Vjmb5jmABzp9BOMWMd4gxol0LGvBrgK3zW8MUL/pzVU//gDf&#43;/wpfvz6bfp4URvPrBmWu5nqaebqTHpbgLLyAbe3nU4hsKyMzmExmA6xH&#43;CFl56eKPUQqSLgLWr36dOnSjVE6j579mwaNBGwiiSXv8X4Q05p0rQnkZbGaKD/&#43;cW5UpyYw1CjqG6RYmVQpDjTiWczENHENjkHWRmR0j7iejcogOvRabTeIHXuB1X17fXrOFqvYLa7jJQSNTfXLnMjd&#43;5nng&#43;Dq5YqUyA4t8tkD0GFhncmuexiSr&#43;Keag&#43;DQKkQaKBgC8IeJ8YzynibWNEzkRnEJfWsKkcaLH4DULqN7s5utzSzU/u2995/GzZ3r157cNbpyfP27oZjCEbor54IjNBwuQ5I4Tn3fIBjgMWo8HjyuKZY2yGAcN2g3a5UKPHWJPTlJw28oMHD7TBBRglNlg2&#43;VyGvZFdWylTpVd3lmiIfrPFpdCPvtNZlijPmKQDPQJOZANqioGmK3SDaS&#43;OWA3H6wKojrHwHo8rh6fSQcV22GzAqyXa42PtaAI&#43;KXfi/cnlVlX1Hq&#43;eQkPTRCp7NsKiSUagSFq5l3TmUj8jHSpC8yFLPWyJGixTGeTpfHuAz8AiqcMJuL8EbwagWyi9NmxyjMyruDkaR2MiH6374StvxfjvxcXiXzy6cePmdtk66gccDwGLxUPUNgG7OP1tDlLkkDLAn1iHvml0Zk5R5wLqUDmsTOoMXvh2DNOghM2uuSK5y8yWJd0JZaBC6ME4oj87x&#43;WLF5qlEvI8eE7Ucj/iuuxR1K7RiRGr&#43;VwWeMnEHLMJXORJFSdpPTLwTCSl0KUm1WPcbHQWpzYHVxkyasSJsVaWT6gqtzd4Mg8tLckMTY55ljIPUhfpzMErmG0IWA0ep4PHjcC4RgYLUzwbuykMhHZEonjCPN6JGBrC9jrhs4bpY2I84RBHEyPXOQnhVdwcYnAxxDujj/8mXNDvN5ebd28uFnfpjddrEyPVIWL1yT0NtRxBU5JpiTh16spLoY0arCMGkwCl7xHOztTYFOpRV5VKIZ0lSYAq6lgs&#43;L1h7cQHCu8c8wQu/eUlhqfPEM4uYCzpZC8itY6GAbe2W1zvep3EscTs7AfA7xy20&#43;wcu5BihBz0T5zmdKh0qNoJGdN4b&#43;lAMdejbVs1eJvKpURUSiEBhRbtPBvJkFOenKmGJtd6j63c69kzBB90ZqlK6Ns44uamw41Nh8Xglddr2bKbsUwqb8HREXU3yDz8Kvizc6Yvjpk&#43;WgM/MMyfcQw9xhHLmzf&#43;QaD49NNHEDmk851Y6Ds3NAuG2kUbz9500ofXb1z/0vv&#43;T//j/wzvB4xjj77foO&#43;3GMYO4zhgGEbVVsW&#43;KsJAhMbt2zfx3f/gq/itt3pQfITa9li2TqeYWLRHqJoTuOoYrroOF5ldz&#43;HmU47f/Hjovv3g&#43;dM37NMn7c07t8y15TJZ&#43;tbsTc&#43;YIy1VajQMnERWQ2Y7jDqfnQbPUx4s8V5dUktnsXAOdbtQ44dn076qB0BAHHIUmwKpn1x3ovrt5QZt3&#43;tkj8JxFzHiTjfg9W7AjTEoBXLA3vpW&#43;xvvRVXOm8Oo0cU6C&#43;hNebGVVePwjAg&#43;0DToM3adBuMvXaX0gesKQ2T4kDN0ctCtSlTrNICfDelsT9tuq1rLnJ&#43;hvtwotVCaQcDtbY/Xtx1uDaMGVdlZGSNn/pwy1aOBPTs27q/eMPRnZ4RfVGQ/r219b9ucPP7o5nfDX3zlD3F57yb9Z//FH6b47pIzPr0U2lvPo8SFTF/A&#43;G//uwhrGcfHHt/6RsS/&#43;pcOr79Woa538wWGwDg7Y/zsF4wf/j&#43;ET&#43;8ThoHwn/&#43;Xj&#43;Y3m92b8Sc/UG8/CI9A8cdAeJ84PgK43wsriDESphCHwLU9Q0t/g6NKhIMnQjS1i&#43;SMYStfYh8xPuHgP4HzYHNJaL5APP5F8McfPn3U1r/8yH39&#43;AjNm29q&#43;KLlmP23aY&#43;zoGlD0CD702FAJyo6MmhR6&#43;xDXvS4Dzp/XadhkRbDeg3ueqCuVOoXB&#43;HY9&#43;oDFsHnDU3ZL9IhyHssYkATvEb2IQb1Od/tR9wagw701IfrvQCzyX6/fKMJ0NCQzTh4eOp0sEi0yaauEUxU6Sr0AzrNgdRjBVqvde66FDNdJ3DkWUe92AhDr4AXI1K58jBg0Q8aEFVnDbWMjNf7EXeGMj3wbKWCKU&#43;ZSpIFGzKdde0X9fLGzy6Of&#43;uvHx997fzs6N/pnx//tuvaGyvYig2VFLDZRGJz1OZglv3Fu3aAzlldOk3CMDB5P63FtftNDjVPoTRaLhizOzGVXCvCvAs9sBRCg7FbGN&#43;z5bgh4o7KqC3yNL8pqMvobKHWjNHigmsDIwwPoNbZWFWGR4vx3LC9oOhGkIsuxYxKudiHEKJIw/j4CboXLxBeu7M3ofkUMLAn6lIAuoDhDg867CyfnzWseYcagDOOKsV653AhfU5AWTmVYjpYIZ2m64BNpzONDsJfc66gvAvpVFWMWIeA0zGoWl5FVn&#43;tPKvO7sW55J3LIJ6rRsIsw2xv4R6lHKsYcbP3WseagRcxzT&#43;nIZzqWx&#43;xtRYXMeiklLZrVRJbqYfQlmEAthv0Ieh1oyGlJ5xjM6QuS6nHMKIevBqzpz5qferZUhXlXRd8pCQLQ97W1cXitdMP7/zrr7x/9/dxuXyzg1tFshWMsUxmB2aN8Cb6EvMYmC8&#43;N4XuZVAb9eCa7CQqa57s3p8xxMmTG4M1FAV8NuoT91cJm3WURFUtIteG0dY&#43;uIq9CNmgcXHzZSkUF6SaJRqKnrgPltgta7MkckdkuHXGXxqYjynaX8DUXwBV7yogrkCb1yK9&#43;CbT5jhS2LKxpyCqpheRPRzTFFtJSpd5i21eqsLFNCH5iRhXY8CFGnxRZyh64kxaYyWnYqnPl7yqXesD2u0WbhhBdZUWFxDpzWlScZFoR6PHTR9xx0esEZXq6BzTpRyUp/rNRt6uCWfwnozBuQSnydAtU9kKh60GjyONrQ7aMYNokRh02rG&#43;NmkW1HHU5TVK9J8uP7HtdUJG7yx82&#43;jc2EjrOWgywWr0OgD0mtKkFJfd6ExPNM3iPwcDzbDGRGawi&#43;Nnqze/9fjaN47C6u6Lqj0ejW1A1jFNIEiLe6TYHJo6Mu2JYcytihmogby6BFwlIA7GGKtrBzlHiBynRYOqimJVc6ga&#43;Zui/ObZqPuoRpHQMKa17I&#43;a6I8amIUlUkDD5Dmp84JBmcNTJHBg1jlIbeVsa2wjjE0QdU4YfpLmMeYOiE9cZWw4CnjuYH51TO7zt5erW89v3nLD9eu2ahqNpot59n1dAUs448F0JjyNiCXX03GIOp3uSQbZpYK5wTnSPULkHI0e1Hdsh0HnqnMhgsXgEnXvgwKk8R5H/YCbXYeTcdRs7rpMXJi9FGLYDQyc5yH6ldIHupLSPl&#43;tcJ6Ss5fNkgeOFkGMxKhx3yW&#43;&#43;swadIsGl2STj1jr4dPMHyKBhxFms4XxAcY0qq10gSUF85jr0eN0TFy5zUO1uzVr6IpBS3nlrDQDrKC&#43;Xozt6Ru8vH29WZ6O3BxH4yqIZDZJrGbVveMP&#43;9GkXx7nkdeWyxdEqmpDzlnZTeXk/lGN2eS5cVzXhpuWY9NQbBqjA0X8azge52hH6xbG4NhZXHOIx0Zj2xCvUA51OjhNnIvBe&#43;bIuhgX7DUTNFLuyaXhQV7hJ4D5EKBnztSNr8fxqSP8rKnsT5evvXa6/Hd/&#43;53zt99e9W1rvHUpkTRLMl2GjXdT0dIBYFx26QlHFGD5HNDEg0dtBlxGxmidTogYKJEw1w9o&#43;lHdVMFHhN4rQKrRa2zGehxx4j3WgdVvXGMnUWmW69jlueocjE6vy3zQfHT1I8/qwWXGT6QApjrK81gnORWJLBSEBo/WjNgI17dpYkcdxNF69Gj7QSWtl3qIxonQeizHAUfDqJ1SJ5WcLVxKe12rlIXKKh0H&#43;XAcxcRwrt66atlztWDj3LREM5XAvL9lRdC9yu&#43;aj6bFR5S1iE5gnXy/eHM2m40WZ7EUgAtt5GiFflhiEwlXV6OYl14YsZBuw9FW5FxNxDUs1TpAPf2q9EjW6c0pcrQaSaueBGsYlYmsK6PVIG4BbgC2UnaHxSLqwsnR/Dwcra51b9xtN3dvV5umeqsf&#43;hZ9T6IqrVycs6jLjPpltSn6knfFOZdL9MNy8LglBpL1On2AN0aj24RfGj&#43;iGUNKAuUe3KeUrioE7Ria&#43;8cpwaBMM0szNaq0Jwskn4PiFygZ3zxrOLoC5n35sbuieKY4xx9LhxED7mgIuBN79P2onhCph871J5JnTLzY6eiq1GNU&#43;uI0eddrAm&#43;jq3SlGO0rAmH6O2O8&#43;TqXJkYXi/6y7Z991HRnH8DHJ6GiIHRe4yNpj7POkDSz1PZ7yYxYq62RR9DYEEXjbCCO0bIwZV1WrYtnZ2ecQmIbisFBV98IzKMn2b9MPu9YNEeKwZtx7KvBd7VIWDY&#43;K5eUHqXknTQCy7LsGhFsqrTa1dgQnzWWNUfpAqCPCOYeYC/E2nJh0TJzGLbWfP7o1vW//PT0qHncb48v799vYtefLh4/cte7rW05mhFMA0VNRBUVXGe3kzno5rv3mKkIJ/deFSIi&#43;RxfnRbh5LxAZVlcU5dUzAtXmqz&#43;zSzYKF5xwO0MqIbyFLQZ2AGTDZNBfTWZFy&#43;53yE1KVCXciw4dTJdhDMpyl09CsXQemTXE6eJI00&#43;bmYDOii4o8PW5xnzTe&#43;XNTc2jo3fPjm6&#43;PTH15&#43;&#43;/yePr737SeeOhjSOvwPzrsNerS3NHrtvXJTljzV6mITXCqBDZJGGGlUwDANvtxu2thIjnzTuJiD6kXkcCbLvxhSuuE8ptVNADJ7GsXPed87waMkGg2wPZkDbBGjhyVyBqLHGtWR09diV4fMVgStD4Zzgfg6qfgpUzwl1cLGqEZsQH5yuu5/fvfngQWV/dHH24nSMsTN9f&#43;fa8&#43;erdd&#43;vm8itPMSSoSq/KkeHa6LurzM/dwtNfZdnOpR5z3IgmgJXp3vS/EZXGSDN7q&#43;DIoyrA4OgCbS7VcZ593QG4SBtb5qiYS7ZCyAdl/BQLqCZLY6cSx4nT1WSiWmpt/1Vzne33i34Dd6bWZCAiRMTmZ7Yf7bsHv7N2w//7KeXq7sf/7y51ft6lRLndhKap9Lw4buaGcQ8f0t5iWd12UU10pKNkNYG0&#43;mUQ&#43;BRs5FyillkqLMnJloWwtzFwVfaq7yjlGrmyZhIjoxxmlix54bRRYrAwmKE0ZBzlausZeEojUGo0zr&#43;ZiByT0H1Y6DagOrovDDGoyP86J278fNVs90afOK9/&#43;MYwgfVOJ66rj9pB39zSeYIrq6WHGksyzlcmdJxz4Q&#43;RCDntFueeYfmLssDqNKeQGW89An0Mj5xqPUOv9PByUIr8LLYjytklA/RMKnT&#43;ROI5u9kV&#43;US8oV93wMd3q2Yc4UWmxQiOlRk7luMf9Vu7j1875d/dH62fNN//Nrv7fmHr9Sbr9Z9/9yu5&#43;mMypprm0NgZy1QAq6MCdNS2Wn1OjmXloeZRktxVQjlwADd6yrC1haNW8IZp9HcJdIyh&#43;tSyhdlEg6vy74p1wxGtEfqrSaCXGAIjKtIlMYCcP5//xD//f/&#43;vyDoTYSzxAYhLNrNtn7zk/uLt3/56frk&#43;XlrgzcRoDD1/km9TDDjXeNwkdY0&#43;0o8G&#43;&#43;YJo6Z94y9vpF/SvuepgMfS4EP9uTCgf/oZaKdd&#43;f3GTQdWEw74imafw/Q&#43;075nV6hiZeC98j73oQMRLOUqsPiTdfnhZAsI1jwJYgegswjJtMxUfzuZ3&#43;Nf&#43;yNxy9f1YIq&#43;/e6589&#43;/GOMYdR98KNmOXVdj8vzDV68SJMMPX78eJrOwo8jnA1453WH7367wb/4BnB67MmK1aL61YJNwzAL6G7XybN19G/&#43;Fb7//e/r1KwxRh9jCBRCt&#43;gGWvpg2sCmVdXgEg&#43;aWB6mcE0crDp78Hr2FpJUSV0ySHjWBQhzl9P8Fe6kYlHutJtv72Wc8cvBzAd6fn/g6OrAOU0dpNR37&#43;770nr&#43;m4NZBmbn6FAkE/hAs6Ryq3k0US8bIxOzDqYGIq9K/0udZP&#43;w7e8L2l&#43;3feO99/4xbvNra/z/BgAA//8uZFjxrwQGBgAAAABJRU5ErkJggg=="
+                     data-src="/components/sensor/images/daly_bms_example.png"
+                     data-srcset="/components/sensor/images/daly_bms_example.png 944w, /components/sensor/images/daly_bms_example_hu_63f5c8ff7c3afcf3.png 188w, /components/sensor/images/daly_bms_example_hu_4faa22a3fb52c460.png 314w, /components/sensor/images/daly_bms_example_hu_a7b3a3959095bb71.png 472w, /components/sensor/images/daly_bms_example_hu_6f95a3885b85ce65.png 629w, /components/sensor/images/daly_bms_example_hu_36638b7dcf4faa94.png 944w"
+                     width="100.0%" 
+                     
+                     alt="Image"/>
+                
+            
+        </figure>
+
+
+<h2  id="componenthub">
+    Component/Hub
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="componenthub" title="Copy link" src="/images/link.svg">
+</h2>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># Example configuration entry</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">daly_bms</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">update_interval</span><span class="p">:</span><span class="w"> </span><span class="l">20s</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>update_interval</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): Delay between data requests.</li>
+<li><strong>address</strong> (<em>Optional</em>, int): Address to use, defaults to <code>0x80</code>.</li>
+</ul>
+<h2  id="sensor">
+    Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>A sensor platform to read BMS data</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">daly_bms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Battery Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">current</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Battery Current&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">battery_level</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Battery Level&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_cell_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Max Cell Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_cell_voltage_number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Max Cell Voltage Number&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">min_cell_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Min Cell Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">min_cell_voltage_number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Min Cell Voltage Number&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_temperature</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Max Temperature&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">max_temperature_probe_number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Max Temperature Probe Number&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">min_temperature</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Min Temperature&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">min_temperature_probe_number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Min Temperature Probe Number&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">remaining_capacity</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Remaining Capacity&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cells_number</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Cells Number&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature_1</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Temperature 1&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">temperature_2</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Temperature 2&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cell_1_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Cell 1 Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cell_2_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Cell 2 Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cell_3_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Cell 3 Voltage&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">cell_4_voltage</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Cell 4 Voltage&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-1">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>voltage</strong> (<em>Optional</em>): Voltage of the battery pack connected to Daly BMS.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>current</strong> (<em>Optional</em>): Current flowing trough the BMS (input or output from batttery).
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>battery_level</strong> (<em>Optional</em>): Battery level in % (SoC).
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>max_cell_voltage</strong> (<em>Optional</em>): The cell of the battery with the higher voltage.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>max_cell_voltage_number</strong> (<em>Optional</em>): The cell number of the battery with the higher voltage.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>min_cell_voltage</strong> (<em>Optional</em>): The cell of the battery with the lower voltage.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>min_cell_voltage_number</strong> (<em>Optional</em>): The cell number of the battery with the lower voltage.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>max_temperature</strong> (<em>Optional</em>): The higher temperature measured from the temperature sensors.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>max_temperature_probe_number</strong> (<em>Optional</em>): The sensor number which has measured the higher temperature.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>min_temperature</strong> (<em>Optional</em>): The lower temperature measured from the temperature sensors.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>min_temperature_probe_number</strong> (<em>Optional</em>): The sensor number which has measured the lower temperature.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>remaining_capacity</strong> (<em>Optional</em>): The capacity in Ah left in the battery.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>cells_number</strong> (<em>Optional</em>): The number of cells in series in the battery pack.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>temperature_1</strong> (<em>Optional</em>): The first temperature sensor.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>temperature_2</strong> (<em>Optional</em>): The second temperature sensor.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+<li>
+<p><strong>cell_1_voltage</strong> (<em>Optional</em>): The voltage of cell number 1. Cell number can be from 1 to 16.
+All options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
+</li>
+</ul>
+<h2  id="text-sensor">
+    Text Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="text-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Text sensor that indicates the status of BMS.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">text_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">daly_bms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">status</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;BMS Status&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-2">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-2" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li><strong>status</strong> (<em>Optional</em>): The BMS Status (Charging, Discharging, Stationary).
+All options from <a href="/components/text_sensor#config-text_sensor">Text Sensor</a>.</li>
+</ul>
+<h2  id="binary-sensor">
+    Binary Sensor
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="binary-sensor" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Binary sensor that indicates the status of MOS.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">daly_bms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">charging_mos_enabled</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Charging MOS&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">discharging_mos_enabled</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Discharging MOS&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h3  id="configuration-variables-3">
+    Configuration variables
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-3" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>
+<p><strong>charging_mos_enabled</strong> (<em>Optional</em>): The BMS charging MOS status to enable the recharge of the battery.
+All options from <a href="/components/binary_sensor#config-binary_sensor">Binary Sensor</a>.</p>
+</li>
+<li>
+<p><strong>discharging_mos_enabled</strong> (<em>Optional</em>): The BMS discharging mos status to enable the load.
+All options from <a href="/components/binary_sensor#config-binary_sensor">Binary Sensor</a>.</p>
+</li>
+</ul>
+<h2  id="control-bms">
+    Control BMS
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="control-bms" title="Copy link" src="/images/link.svg">
+</h2>
+<p>At this moment Daly sensor platform don&rsquo;t suppport controlling you BMS, but you can make some stuff using uart.write</p>
+<p>First you need to setup binary sensors for charging and disharging MOS</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">binary_sensor</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">daly_bms</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">charging_mos_enabled</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Daly Charging MOS&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">bin_daly_chg_mos</span><span class="w"> </span><span class="c"># binary MOS sensor must have ID to use with switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">True</span><span class="w"> </span><span class="c"># but you can make it internal to avoid duplication</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">discharging_mos_enabled</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Daly Discharging MOS&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">bin_daly_dischg_mos</span><span class="w"> </span><span class="c"># binary MOS sensor must have ID to use with switch</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">internal</span><span class="p">:</span><span class="w"> </span><span class="kc">True</span><span class="w"> </span><span class="c"># but you can make it internal to avoid duplication</span></span></span></code></pre></div></div>
+</div>
+
+<p>Then you can add switches</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">switch</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">template</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Daly Charging MOS&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if (id(bin_daly_chg_mos).state) {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        return true;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      } else {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        return false;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">turn_on_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0xDA, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC8]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set charge MOS on&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">turn_off_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0xDA, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC7]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set charge MOS off&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">template</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Daly Discharging MOS&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="p">|-</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if (id(bin_daly_dischg_mos).state) {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        return true;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      } else {
+</span></span></span><span class="line"><span class="cl"><span class="sd">        return false;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      }</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">turn_on_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0xD9, 0x08, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC7]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set discharge MOS on&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">turn_off_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0xD9, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC6]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set discharge MOS off&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<p>Also you can add select to change battery level</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">select</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l">template</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Daly Battery Level setup&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">optimistic</span><span class="p">:</span><span class="w"> </span><span class="kc">True</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">options</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">100</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">75</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">50</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">25</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="m">0</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">initial_option</span><span class="p">:</span><span class="w"> </span><span class="m">100</span><span class="l">%</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">set_action</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;return x == &#34;100%&#34;;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                  </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xE8, 0xF9]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set SOC to 100%&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">else</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                  </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;return x == &#34;75%&#34;;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                  </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xEE, 0xFE]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set SOC to 75%&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                  </span><span class="nt">else</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                    </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                          </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;return x == &#34;50%&#34;;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                          </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0xF4, 0x03]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                          </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set SOC to 50%&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                        </span><span class="nt">else</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                          </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;return x == &#34;25%&#34;;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                    </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFA, 0x08]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                    </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set SOC to 25%&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                              </span><span class="nt">else</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                </span>- <span class="nt">if</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                    </span><span class="nt">condition</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                      </span><span class="nt">lambda</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;return x == &#34;0%&#34;;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                    </span><span class="nt">then</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                      </span>- <span class="nt">uart.write</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                          </span><span class="nt">data</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">0xA5, 0x40, 0x21, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0E]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                      </span>- <span class="nt">logger.log</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                                          </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Send cmd to Daly: Set SOC to 0%&#34;</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="uart-connection">
+    UART Connection
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="uart-connection" title="Copy link" src="/images/link.svg">
+</h2>
+<p>Connect RX from BMS to TX in ESP board and TX from BMS to RX in ESP board</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="align-center">
+                
+                    <img src="/components/sensor/images/daly_bms_pinout.png" width="100.0%"  alt="Image"/>
+                    
+                
+                    <figcaption>
+                        <em>Uart Pinout.</em>
+                    </figcaption>
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 1000px;" class="align-center lazy">
+            
+                <img class="lazyload w-100 h-100 align-center" data-sizes="auto" src="/components/sensor/images/daly_bms_pinout.png"
+                     fetchpriority="high"
+                      style="width:100.0%px;"
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABXCAYAAACtHW8eAAAueElEQVR4nOy9268sSXYW/q2IyMyqffY&#43;py9z8&#43;Vn/2QZIbBskBAaWbyOQAiD5Jd54QXJD/6r/A/whgCJF154ABlmjCVgsI082J5bz3T3OWfvXbfMjIiFYsU1s&#43;qcPm2Pe2CrortO7cqqyoqM&#43;GKtb11ipcK1XdsTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTaldAX9uTauZn3YHQHh4eMB73OO4esLt/ienxAXa/x/jqHvuffILdj3&#43;M48uXsLsd/DSDnQV7BsDxfwJACkopkNZQWgMmPfoBehigNxuoTfy7G3oM/YB&#43;6KH7&#43;FB9B2WMfB9KwRHgQHByfgKIQIqgjILqNZTp4LzGfj/hcDjCew&#43;tNYyJQ8rMsNbCOSd/v61985vf/IJG&#43;uk3&#43;iJ&#43;5E&#43;&#43;/Z/g5xn2dMTx1Ws8/OCHuP/zv8DxRx/Bvr4HjkfCPEMDAjZzd4fuxXNSmw2s8zSdTjQfDnDTSN46sPcE9hnP6UoC4BSIFJNWgCJAaUBrDkBVRgewcgB7AL5ODyIVRoFlJALwPIO9g7MObprgxpH9aYQfR/hpgrdhMXl45xe/HR/p7/hHfD8do9JZlu&#43;zc/Jb5fvyibxIOU1M&#43;jefP70On/PpXOsmi6f0Q9W/w0IN16rqpDOjLrb6HM8crjH0Mz17zr0rvZTzsSIRAqRNeoQxVyJUKD3C6/Csuz4KlzDHwwATnvtOnrvNANMP6PpOBIwJn&#43;076TfLOXScX6Xi9ah4LaE3isNDpXH&#43;KbfvfOc7GD/&#43;IY4ff4zDRx9h//0fCHD9wwN1SqF/fgd0HU3Hk5ofd&#43;QOB&#43;JxVLCWlPcqjI/SRqmhV9R1mkkZ55321mpvnfbsFZipnU&#43;ZQiIOE0/xmcNrVvLsSalwzOfjhDAPlPBGaarC2EiTSWXv2Qfpai17a5mdYw4gZh8/kgFHFbSQc2bQUUWOHGf5pYKZgiQq58nvJqSBMnIIC9mTQbXGM&#43;czoC4yyn8rxRwAkU/F6TwZpajADl1jWdjhWgOgGT59tvw2pWsUYKmk2XQSJiqBL4I5v1bGiHAhY6CNaFKOGjVoV4rCKAIgAlfFa/BpUeX5kYUmAq32FUlj/1QA/T&#43;&#43;/R&#43;w&#43;4vv4/DDj3D4wY8w/ujH8Ps9hZXmidR8OCh/OGiyVmutDRljvPO9m6bBz/PA89yTcwM8d8TcE7gH0QCiHoyewT0z92A2DGgOYjWid9UTeS3ADZcIgkdiDgB5eYRjzBkqGZs&#43;CVR5EEiGKA6gd8xRRIUXnNYPEy1HMPxmQQstzk9FsNbfLX&#43;XRUBxmXIFNLyPPeElnjOw1pDOP1jXFOW&#43;xUVFipvrBGdpnADNFeHhSn0EtCxhecO3sM&#43;ALtJScQF3WkD5OQJTNCeT0j4&#43;qyxo0mko9i08K3k/nkNR7h8nLchVhsXriqD2Auy/EqD/57f/C1796f/C8aMfYfr0E7j7B3K7Pc0PD8rv9oa871ipjXfuxk/THWZ7R97fEvMtvL/l&#43;HiG8GC&#43;AfO2PDxvwH5g5g4sXD88tIySMYTOkFwQXxBUGaiUwCqADYAheUacqDyhdSATwJIkl&#43;9xWBCB3zDy6yj9QRUcGRd5gDNg43e4WUSe8gKKB7yAP15HWlxJ7AQwB1pinQB7dX0FgWhWVSU19XAiLdJXjteUEBv7liQul1NFFZRwLFj2nHVKWY3pd9JizDYGFDFXepTAmZ7DuCrlIEAO86C8jDHFuUnPXj4fJX0EvZYpl8/JAtDKh3OovEBIxb6FOfWe/9KA/v1/9S9x&#43;uGPMH76EvbhgexuT273aPzhuPWH450/Ht/HPH8A7z8A85fZ&#43;a&#43;w91&#43;Gc&#43;&#43;Tc8/hA4D9hhibIIEhEhh9oNEIIAYbkcjMKs1Y5BNh5Q4DYeiTPPZY21xlpglZWsbBN5GLceDhdubKYTMAqD6nSUgLIktyLu8rikw3iAWf5KUKnFLF33OOhXgWpV6EmjwXnkNR2hS1nwRlkDtwDjTPBOczxy1XyuvXmbMvmFhhK3lAEp8q15MvqAAblXTlPsbX1H4WhSIl8cpFDVGmT1THUcn0CVgpAFlFKRyAiSyZ87EoxdOz8kJL0iIgrT0Z7ZTWclwZ45XKgGbvvXef28sRrvKP//N/xMs/&#43;g7ml69gX74k&#43;/Bg3OF44/f7D/3h&#43;Is4jb9M8/TLsPYX4NxXAqjJ8wsw34kk9n4IYAUHO1CgphLTDDS/6GBwnZMy&#43;AHQOhkAwUCbbZyOhmcSNdyzUFUVv9sFCj4DczTuFte24LwJCVTf4tZAS/w0w0P&#43;NgYIhky4AGuB0L/GxZH5LLXnq/o/G4nxJ1Xiv&#43;Fc3uPCqi2cGUspvWyUluS5BG9XaFYNdbiy5M6nYcp8rKA8jEV&#43;nS&#43;GWtbTGrNFasfxTZQiCgAxLJUY8PFZQA2RwNGIF8mcQCwP3XWsOzFC66Jj9p8b0J9&#43;8hPsP/kE08Mj7G6n3MPj4O4fPvCHw//Px&#43;Pfxmn8NYzTr5KzP0fevx&#43;oBTwPkTawRgStAvN6Bqi17ONMtoZQ/ESwqotxEyTtbGXy2WQrntB6LERdB7UdvtuZOG2iym2elURyw6JIFnRU0DKllN/jTN8SmNP35FiSoNJHY6L0DL85z8nrQJVbNhNdXoc&#43;Bk0TvpM/b3Q0qs4s93yOlixjPZTtuC2I5QLM6YUvoKwA5QTp1lAoKiZJYpahjuNQ&#43;E3kyw0NiXNCLbCT1wPJAyIeDBOejQCbkkcqPCuls4dKnhOYER8mumgpa4PP6YcOk/PdP/kOjq9eYXx8pHm/H9x&#43;9zW/3/06749fxzj&#43;XZqmXyHrPoT3NxSpg5LLpDQKlI2cC2yHMt1f/W55P4JZJG1uAczDAL69AQJg83sBHNMEnE4RMAs9TPF7OkjUXtxCMjlBwoYBEnDZKBnDa0T2XCRisEmTBR7AzMejgHdxfiQXYHgdzjHE3yHxj5u6kAKqwnePRyjnKrlpFs4S1LSaEzRgWw9m/GMttQuoaaklIjDT5cblvDA0C9ALd4p9q8ZhBTFn4aLyWDUuxOTqQ/J45DGhRAkFwJ0hcbeG1wG4pj4CkHXfQYfvpPNHd576/IGV0&#43;4R0&#43;6R5t3O2P3&#43;A384/joOx2/Q6fR1mudfhnPPA5ApRiHjGl6QBloI4SxNl3KIz13klPhZAnReEwLuTQ///LmAJgNJwBw&#43;MAfpPBeJHydBCZhpM4DvbgMnj4uh6&#43;IkBO46TuB5BoVjOViS&#43;yXSNg/ICH7J8p2yULhOnHwv0JDbZ7LwhJJ0XVzboj2sLDqyc&#43;xztN&#43;LtDsH9BlgFwCtr6kZySU1WdOd9lE/XSzeulgyzSpSuWobrt6OqikTPSy&#43;Y2oldJbMWsaYwvgnwFIGcKfTcyeg1gXYukhoouXCl5n67//197MvqNiz8X1VAwYA/ui//QHm0wnOzmSnaWNPp1/gcfx7apr/vrL2V5UPHBmakLXpSq7QkgpmQZa9FYsPLqYqvxdXvgCauVyE/B0AEQYxuW8EYAVYKoI8S/e8KNKAcpCeAdxBQmSvQl71QZIEEOZBS5ND2d4LEtrEyQgTxWGyGHVyw1Xo/FumaJf4fV/oRjHb0nivJwpviIK1wKQVoJmWZgRazn5hYZTX4TKj37LaJQsJToU/ZwmdQUuN0EEKcAl1UjHSinI8BVxMAnUAch&#43;BGwCeJbFKx7QAO0ns/J4EW6gIw9A38&#43;//3b/BH3z7D/Dy05fY7R5hrSUV/kugcc5hmiY&#43;nk44HY/Y9AN&#43;46tfVttxvPHj9PM0TX9DOfeLxHwb1h61UKbVsDEle6uOPC2wu/bBraU0FSe9LLwwOAHMgas&#43;PFa6wcWdGvlyiiohRa44DUR4j48n8fUGiiERqXkCprkuiMSFM91JFnuN5s1xIVFYFGJ09hGoYREk751YueMUFxs1el7AnPh84OGNJKvRzgQEfz4qb2JuLTALJ18tgMIjaAlzbr5LjbXH1Bh6SRusI5gV0LHPWRtSNvpyAMboCuwkVASsQVJnAItU7qD7JKFjIKZ5NikgoxbayOwed9jt9nh4eFAvX740h8Ohd86ZRBk42jyOx2niAGx2HvtPPzW/MnQfvjeOv7Bx7msE3FJg78G84BpWoDU0V2K6zi0VIC4AfcZColEokpCSpAugzO87fz6vmReH7wWuLV6IRsEGCTtNIjFloUgww0deqJciLnobqJnUGFKmzRYwia506fwC7q76kCkujizZC3yypM&#43;TnN9ROo1RVucX9BZfMgiXr2tUp15HMbDRGHkX5P85HUE1che2Dc6PJfBQsTyyxktaL9ORaOgVLp0Bm43AhQRPxmQyGks0kbI3Kgzj/f09do&#43;PtN/vh91u96WHh4efn6f5g8D8JBgXppHZWWt9eIR2OhzMwZiv/px3v/Zl77/6QuthCB92Dj4bNigkuqT0nQEclS&#43;ulWp1&#43;2QpU0Y00ocuSsUMzrXlQ9XlVrlbVvmdWfrNkmSMi8XUz6tm8FUFcuuhEHrT2yjhE9Uo&#43;RRhMWUfMteYSXVNV1ATWguv0pmco5JDu6uLXHrzaOmuLlpqBdL8R&#43;HI5VA2&#43;FJspwl1LxYOZ&#43;eqiiZ/S2RShDO&#43;VnW8AvCYYs5FEBqqhuV9DgCm73LWXF6BXZgDHw1s1WKG2hBsTO1hhvnkk4/x6tUr/fDw8N7ucfcbu93uN6dp/hUibIlUtOOZvXXWuSCqPQcxTCeiu6NS/99O66&#43;&#43;33Vd7z3ZoIG9j9qRGZpZ3BtqoeZaVVbBe0lKF23WckBR4R6q62M&#43;QI6Ap3MG3i&#43;JR1o1PLRy07DgcrKN95wWUwabL5Sm8NZ8cm7cbKJVVXLd1EUjU&#43;9dSj5KE8NvAHSDxHDedpzihHIksoHjp2PMjRxdfZ&#43;KE5iDRo3JU56XgF6jfw1UVHcdOHs61u8310teQCdZBcmTQZyPVTuCfNBMBsp7eYh09UnqplBNoH3yvnNQnYPyrrzWwUg3ViS0Nh3M0MGE94KwKYFVH&#43;aWzf3re3r9&#43;t7c3z98&#43;Ljb/dpuv/8Hdra/qpTaKqXEySZIdgHLMSwKWXukZ6O3p77ffEKkFHsB8&#43;S9DKisQs4SunHTFymEyjEbvpfCPq1Lf8WzATUp9IOV9E&#43;jTeRrKYHFGIObYYvtZhNTOZOvVClqbQKMzmJ2tviaqZHK2SVHK/9x7mcAX9d16APHa4y/rFCcdTIW1uYkGpwBOoNTa42uM3I&#43;k/zrOS9BEoOsg51mzNMUtd9K0ynJBDBynshqHE6nE0Y7BuM9LtqiAVpIrg2cldeES&#43;ASbeNmEWFluFJMMFq8Ds8t99W6UopMJ1QymIuxt/BoVAMwjHMwDiUjM9gqinJGILN17OzMxvswAEd9OOzvDofD147H8WvO2Q&#43;11r1O7qoAggBobla7DJ53dHKWNCmJ1IYBdzntcCWFsqSolJQXUoOR83Lq4yw6llDTqx43RmMIF5ukqWePwKZ7RXixGXB3d4vNZogDmNxs8zxjOk04aY2D9xiRvXCqgHoBbqzzn&#43;LrcM6h6zAMg4CRkj9ZJcFkrcV40hhPSsYu&#43;704aYF8bQG&#43;pjPYbLeyOMMCCYaOgNg6EQx2tmKMj8cTnLOtLpPfDX3p&#43;14WROjcOI54APAwjjhZC5cDSPwWQBcKTIXbc8NN6EywV7qQc8RI5b&#43;joaYywAMIvYZhAyPRtXDd4ZwO5BXIqThHVgtwje/QcQfto2TWzkI7UxZCOGaC9J4mzDLOowTpw5mctc5sb7aha3qe7TDb&#43;cY6OzjndFJ40skM0BbQ8ixSyC4MhjNQNoBejd7SSMmqo5Vk7Xvpq9nCxWYjBt6cP6eiv9j3HSalcEp9324GdMMg1zA97nAAY1YKfrOR3NwAoLAoVMqNbmnK&#43;XKi0n2vNKZgnBqNznSShkDKAWRlksxmAFkN54JpoZJnri5U7bxQskApbN/HKOYwyCJk5zDuDziNk6QKzmGRSATS1z6msfEq&#43;tTn0BcGTkR4OJzwEoSDczLp7BtO3bjiFnNzwahrZrosI2rmkJDiJeJTp0Sd4lgGyqegoYnRBSEk42REACzpIEErgtEKnQmLs4vxBHGF1oCLpJwmd57qOhnH43jC6/0eznnuu84FmWVubp6RMUZ59r11bvDeGe99lLiey8S2AJWOZ0Mqk/gVoP06T6L1szbgLsBdLYK1IVOs6/Db4cKHHsN2k1SqL4OpU3J5kG5hMjcMGYgc&#43;PDJcOu3G1n1VYInqlF4MxXjqIVBSVUM9CWocufR9Yx&#43;A2x6B6JJPH2BaCllME4dxrETYAu95Mgjh9miny3GoC1Cf2NaHygsDlKwnjFOc/xdY9AnTZD7WXKWRa54WOdFO07WYQq0ygX6x3KehXDhZMSsHEqL9OwLjVA3HVC7vH2KPCffNCmGlmAECR7FTRoWYwKoRGWNasYYcBnY2TBXKcUh54pQ9V8HOmL6rrhtx3nGeJow947C3BujNWmtNTP3zrmNc95EMNIC0AspmRO2G6c/NxI2T/hntTeC&#43;Q3fpfTbQcXePHsmqto6KxOqkmFFRavEBZmBKOANg9HFcGmQzIF/qyQtWh9rQvVSI2VXX7LX4tYqD00eRjOe3QA3m1lANdvAa300Lg8GnvsguAsv1tbh2ezQ5&#43;BFoEti2PsmYIQiFLSp/UTrvUjJ94E3z7MVyhdolWz98pn&#43;Zc3aasuVUDkb52r88tkHGurYvBfTKaInQ14rv1okERthQYs0143v27PQKWsJNFHZzhbsHpW0ZxiDMO9BiG23W3EIBFo2jhPt9ntSx6MySmnDgZcRac&#43;88c5vvBdAF19aa4&#43;tAefzpJddBOeUgxbegsugvkhR1oOcVnG4uGAEmTzJgT3l/mS6knI3wvmCCutMNByDsSZAD6LSAZZtHNyzSaUCqjx1WRoGEAVea&#43;0EgkUvgkeJQWedjpOSMiTHqcc4AtPs4G3SWsGKny34NGG0FgdHOCkl0jn8QFDJJlvvAQTJt658HL9wDuea7VEcAR1AHD5rxd6xaZdHEjDsy0IgqqC8xD6inz0Z6rwE8eJjni/MDyfjmxYCTjRIShCr85iijWnunFynlT5Paq4CNHU6zHvX9yLEbu&#43;eif2y3&#43;9xOBzw&#43;PBIzjoR8maaZgogZu8H5yWh3qRE39zT&#43;MN5G8xKgmbQXgL1&#43;v32AtZgfqeW6Mo8zdg/7sSal4nM9Cap4bRdR0B/OhzxeP8oAzLOE6Zprt6CrGHW/J6wNBC5yqVo/M5gP2GzseCBcToAp2MvWbGmI2yGAHjGw&#43;OA/fEgIPdxS5O4oZ7JfkWLo3d4pQinpFaN6XA8HjH0HU7jiP3&#43;INeX1Xn20oh2KGMNkcQuuyO9x&#43;k0yqKL7km/GvM1MlexrOylxFKCU3Lptb6Q6kenIqGBuEkl4yEsrnluNFwz56okmZ1jyBfnQg7Aq0g1D0ccjyf0Q4fD/oBXL1/x/esHzNNE3rMyh9MxcE3lvJdtTmIwou7ZKz7OBoA5LN5K4bcahA2A13&#43;/KzXJ3DuA8bDbC6ijk9yXuEv97SihSYyNuH8tG7fO&#43;SKxLv4WsDAMFzpKaE2QyA43W4feeBz2jJefAoejkd968YKFbrx6Bby615imlEiVoh7Ge7zvGQfPeO09XoIxpd8JajYYhcMm2AYOp&#43;OI2c4L/tvsr4uHyh4DLpRGKMg0R3/05xEYzRg0g5&#43;oB5WoH2VvSAtSRD96jI1kMEfBkYWMeMG6qE2MifZLXQSqeJuW3qAc3HGSYx4W6jRO0qfdbs&#43;vXr7CfrcPx8mzV2a3P9A0jto533Hcs6daziwrn3yzYt4M1Ldx4XcFcEtNLn1WvBXjSdxT2TBqJ6IdiOyDru83O69XM8dnocozisRaSVUEPL9j9B0jsLWPHxiv70mMvvdeRMP8cGD85GNgtw8LLlvyWiLpGydbdGABfBokdABgdoUln3JQp2Gyxc04TQkY3AQSz8Usc72&#43;tbZ8W&#43;NVgObSnNWgVR6kpQcKyc4Uy4vpzClQpLVyYvNkYzzz5OjqI8l9zoGssy2jWYI7jxkCbN497kRKByxk&#43;8PsD4eghrV3znhmnRPv&#43;S1uuLUH4xI/fldqsf7uZ02Ab6x2zxc2FL7ht85eo4K&#43;TTvhJoCCoh1iCoLpJQsUL56TRMTv7xkvXzFNE/jZbcxHOp2Aly&#43;Bh0fQNHEGKnvtZOKMZxgQRmbsvcMk/vM6DplSBAMo/74TI89/5hh91jX/ZY&#43;v3z/7FJfwbyqxwDHvJX1HpWCVIiUuTK1d8itXqZwldAF4Ew8QsOvqwTJdJxL&#43;cOyiZ6rZFGlOxxPN86w9C&#43;UIoCa8BcztxVHj4Xib8fd5VN7bQM8lkshn0vlt33/bRDO3U5Gk1IJYsuRC3dwAL14E6Rw9SA8PhJevQMcTsN0w7p7F46/vgYedJAAWjsmcEi&#43;JuQ/UglkAPbGXTd05ZI3sgrNW9gJ3XScT78QN&#43;WaJ20rWz0sv3rVx63bFOc/OKk6ETPF7x5yNcCwYtUHTK4nuxetRLgdgUiwgAJYy&#43;OPx6B7W4tILYBbDcDOEz5Dznk/HE6Yx0iv2zGYcR7LWGu85GYRMawrRDtr6dQvgFtSXPB3vMthryrH&#43;blRfq77hIkV468TUH8zH1xMXXxsDfvYM&#43;OA9IDwH7X9/z3T/AJxGRmcYd3fAdgscT4jHT1mT1J8ItF1cfFBCN07syba1MZpx895TBrUxMSyegH52PS3vXGtOXKAR6zFej/PFMXrb&#43;OXjmYZkV2S4/rRBiWTLdvZTB7AmMKvquQqLVnvdSGxKAZp4LNsJ2dAdTIwGB/683&#43;15niZBRAS0s4E/b5i5awF9aQDehTa87dias2Elgd/k3sNqgTGfW&#43;HrPr6TCuaLzitpXQe&#43;u2W8n8A8jsDr16CHR2CcYqj75gZ8m4D&#43;8MA4HFIqdSu8kkYOJMIQcARLxNKt3GFt/5xzlIrmpHyPGEzIpcXasVob6et2CdTr939aLbJAL8w17zWmxmukOAZMAjBbV6zOXqAc45AHF8HgJboaUwJEa0rZNU2bzcAmBp2E7RhrrXLW9d77G8Qxp/UE/1XU2WdIZ2oGk6lNy3yDZGd&#43;e3&#43;YVxlmq2u43FpyGBm1McDdLfDhB0n6HiGei4dHlvz/0LNhSwLmSEE48GZUqrFsCowueQIi3eCas9&#43;o71a7WSvmYgS10TDenBnmGeSffY3v1t6Fsr31u63bj9HkfOS9Eckjohq3aPP9WNmgcmuJHwQgu8i7u96j6&#43;K&#43;T90ZiTGYtDPcwXmpe&#43;G8C3RDAE3Npso3SURckKaXpO0aWCuw0up4mbz8/meAcN0fvvzO29Qk8ugvgith4DdD5MvBNtvtgFevgccdF27c9&#43;BnN5JSIhTj/gEUJPhC6zeUSBOxDpKXgWArulh/43wDa0PpEs2QoQjU4xIA3nZ9n/Xeu3z285z7kiZo1Z9PQRK5BF9TzpceEUq1gKoEz0Ei7rzkfXAKLOXceyk6E4sIeaONVszce/YbqU6UkLaWAiVbjqp/az3AWA3ym4aiBX8bPqcm&#43;&#43;fSAuLs92yGi6sUICzTxD6zlbIENWE7eiXSlrdg2wSp&#43;3DP2O8Zc6KwwUjMOTRhLnY7DvxZctJTZ&#43;sYhc8HQxAxj&#43;REDJvyInSk1nniSw/KOeI4sHN2YS9cDNW/ZbzfqX3WuL3D&#43;d&#43;F7njUCgyy6cjnnXRLm2sR2JLzOBnfnP4buHPAzuFwlNhComfebDYbDdDAUnqLTdmmndVv7VkJMee6BNQklp87dlebeqgpqhYvNHSALnpFUkiX2vBn83pZL6Lh5EgbOd8Z1CkpvlPgDYF1SgP1jFkDDyfAjR7TAWAnm2Qkx6brgO1A0AyMe2A6AcpJ0RGZI07FZAyADahsrRf3HDOGcCyV683UI1yhFV5dgzs5f7gEesK4dx10kmgR3HHblvh5rYPHKlawiHSeN16OxhtBe2anlD&#43;4/s6l7/FylrgRJJJ2IKFyVYzaHEDDKhddjELnYedZbJB5igGncRxh7SxFZsIQm83QG0O0Ie83ynvToe5jrdV4UmwoD2pOGMm7wrHkuCjSt0qTDMw42DlPhLgNxOVNAL4Bv6zaVWpju1ONG41R&#43;duyLbTKesQ1wd1q2Pc7AXXgAjSnhesYnbXYKgcoj06T&#43;KFvn8XyeoEwzA64GRgHF6gHs/OVwgTgPgfJ8ylMAiKYt6CwOMTbcQxcGcAUDMXArZMHjJROtSdinnPZlJqihVGxUAGARAfD5M5zWvC8QOq6rk/rlWjHcVHBNI91moPWI1OrkL6LQdnMUZbAaYxinnIsidtqnuKXlkWtshFYAjJCRSKectEyqT1oNqTMDdFggf4ZkTakYIhFRZb4N1cwqLRjQ5MqsXhqdwinC1Ypz1U1NSVaIb4YNq5Decn/nf3P&#43;fy1DNwbRAovpXbtO52B2neE0zOD3Yc93FbBzAw9M2xP0CPjxk7ox1nyegPFeO854b334nlmH8RwMBIZD58CuwCsOfYvjEcH4A4kUnpE9G4Ew/AWsr9NOj8yJN/5AMYjvADaU6rn3A8SenRh8rKvlqsUV1yrk3rtJJ3VJw3XjvfZvsDFfkJaALQc51rUz5VMOU5/o/nspUXQquIFnEs6QRSMdVMAaFnPQ&#43;pJm1i&#43;wPQx024z9HFTRd&#43;JJ2S2FvevH8DTzPY0iS4wzwH&#43;Oa3xoViLHW/JYUilPqkGgFLxuUw3KQFblW1HC1An8FRacnnFLh3zKBSYU6bZAszMqzLGvMZuPdFSOKUHlSph1KhX1xEeB4NPNwbzoNCT1AmEHeLCfq9nPOtIfMjBuL6VRywm4xVgbmMI/H7P2B9RwCZJ/CKNgZ5JePOUtqNtkjspK9/w3q648qK09FpLUr8Nz&#43;KnVYi1hD1sLjTuvPh0kfduGh/zFtiv2N96o2sOldMZMH0DbpfcZQHEluvDJV9zrWLJZxUtz2ab2plPhiE1lZbSw0kudKqgpGOFpK7vMWwGbLcbbG&#43;26Dcb8fpMs8WnzkE/PFKnlD4F4/nnTedemG7irp/M7PzgKQ5c4nsZjBnQOVWJWv8iUrYVLy&#43;AFvAFFimpdE4AysCnkUkqhZb&#43;Vea1lF6CutlkW3512WfVvBcA9GiB2x3DTjlVMxBahpkYd55woxRM0DaBMlhgmBLNC3zaR5XcE&#43;FOAU5VCaUFzLEago9FqqUnOkGZE8CtlFwNkrsucZ82HM8qBmKC1A3cWQcLX0WJ3WpOzSwaQdxdbVHZVvvVEVwBeSmZM6CFlKaNDAJmNIDmCv4ssWv9aG63hJ4zdVo9o9JRTkUhw8nIeygbFq2FIZKx7D2jm51k3gUJTceJyLO6U6obldbmS13HN1o7J7V4Feu8AzkX2y61bJeAxsphjrwAFup&#43;qfqLFwHnjYtBl/PPORZozvVs67hQC9u6CBZD1i6mXNunaBxF6W4GiDvk7/YevZvhNQlYhK96MfTQjx6dTxyPhezC7dPdHlKhJQ7GzRz5IDV9UVnSraSjazlo44/WLQ4DeK1F5yOA5XwlRyJG3trdwzr00bmFEKqjVbPjGJlTvwnU9ZEKa0t/XTQvZHE54lIh3l9cFJRzZNKRC4Z/K3g81zTetANc6m2kopo0SiXSspk2aC/ZeuYd&#43;tNI742T2gbTR5E2ndHUKdJEJNkiKu0RizUhzoptnw1UrjQZXya3S4lT1HuLlMtiXuQgt2VgPSo4s3TwzQPcGjOcvItcJqfw/WwwZe6Mc6qBFOQIX&#43;6mwJvRbPmJgEYqmkM5jO0BOyb3nCqrJfJMWyt6ZfC4IrXOywFgdexc0yAC1PuGjtYP6MVENEGMS&#43;0zvD6N9msO5vFKAi0tFNV8ysdSsg0fx4raZBEGnNtMSNSjUbMUS7lR68olKvdyEVui2fcpc&#43;8dTEw4py75nTVAHYhkT36uSCQdSV7SfDFrSRc3N3iBBlP1kXJLJopobd0Z3Fwwl6nySX3FUvnMot5iDJ/8Gb9O8G4AxIX3R/6a&#43;D5H7hzteBV9whX5SL5Q1EgX4&#43;L8xm67GNrGuVavUm8V8GiPYbX5dm1QXUDbZaBe6CS/xfXG6742/BdYLroWd8xn375w4jf1nhfXUf5swLFYa3m8Fo4EioIVTdmxonXqjhyp65EAHSDfcwC0MSrtoYkAyf7PJHUpqdHF4Pm4fwxcXXRUPI2XLjRJ5Mao41QW0CdQi2rjuMHTsQ&#43;SOt8bYcGzl0YimqJTKBs1ldwliWIl9eSlkZ9Of6xv1LjOwTibLkZL088/19oBjWrls/M36j/N8mdAuwE2XzyKlehoX7S/X0HNDW9eSVa&#43;IHXb1bDuxsqeWWql1ZXxJf9pcypfv1u9wlzL9jbn5eY6ZAMFERko1ZMxHbpOSYmAoObUGDtIkcvk2sV&#43;obq5grqpQUgXKnjRG8KqefJ9Y4Rka3r2jDkCGhnQvkroqshWkpHyDVkoRuh0ukVAkM6qUB618E&#43;jmXC8XSadv8fnSUYFzryc1Po9asBOb/yts99tPlRsKr7cv/ULXvWvXXQVtLSiELzSNCuNg3MX6nJxZKlbF9F5J1vH7nLZnhn8C1G5vg6R0DBk9KA2Q6&#43;GjdLDIHWR3X4vnAWzirdWsLQohsitKswju5AIacsOX6i4vehwvhtP5JwRyF7qbUwNoM9BjXNA519miFXcxRULzdGzoLN/PS0whVWm2QXhswjh03Lg1xKVcWFCC&#43;DO7oFSjr3L4rk0hrzmLxnfb8u/OLsuXgJ1IbGba2tcf0stub7uN0vm82jlWkzT4touXkUryFbnFEEm9qTWRg2D6p/fsb69ZX8aORfD4ykW/pZEBu&#43;Ke4UW90Zqu70sahiTveu&#43;v6XCqJMvJqiXpHcpJzZ6L2FhKanVuIqKY5/PB6uhqSKhByJxpxkphJ0sACocvdz3TdFyqBYSaTGYXK&#43;rGfjW78Jo7bR0YlpOQvneaizOJxUNr2wPvklfX&#43;ak7apdjtuSbiw9H7x6XoF6NX9vWkMX1yHynZLaK6YFPWo05Uqkr659EamWNANyIDqS0veq7&#43;/NzY3zfR&#43;EmlQK8ccxgJoE1FItJdaR4GCBu/TMza4MrrcSjqlTnOod&#43;HbYKd6EJuabBaPPMdOJWR2dp6Nz6iSA9sKjbfEYREnNOXNrJR8XgCbCTApbRdhE8syKVPThkpLQgyfyPt2IswKaG&#43;nAi8TStf90HWVfSN5VMZezMovJGb&#43;&#43;inaqmk/XH5D0y3pfq0VbVzg/S5ThrDHqTRaLC48XA5HB3brl2loljOUNhNp7s1QK1rJ52bXcpDpUJzSvh2/91eWBxWdb0iiUgxTtiNSfMdG3vecdE92pzcZoZjEQXXciP44qgDoBWlwkkYZYKaEbXscQrARBcsYRxVuytQ/kG0CRZ9YerMOz9ayPzvaPnrcP3m/2znUn51SgG5aTcz9L1TP&#43;10xWc3lGKb7RBN8ZRtcxjGGlVHg4As0KfGJJn&#43;CRY7DOo97SLEGJW3rcYpObim&#43;ckV8jPi0ZqqK/CO3GWs85X3LbzVQnNoWHKVE2VRhHFCb5xidUzsjN/Jb3MnzLnilCvstnqsFe7/iZAJ3EZ/YlJ79RTONtt6bxirjzEoecYc1NThqRIxLh6eN6ZMWeVVmiVZagVSCU/zmHfFkz7bZQQ0o/wug/gtU7EH0LSt1Q1xkVd38Ty&#43;5Eo7zpFDunwF4FYHMGtJUaVzE3kr1KAUOprUUxQ1ILlY0bcJUH9Mx8c2T//uj5/dn729HZZ/sJdw/W&#43;QfAHNibkSOPdim3wdWstAVdWRpkMcFFG8Obvme73Tjabp0aBoeum1nrEyu1Y8anyvuPvLUfs/MPAdTELM6UbC5ztdiSSkKb&#43;9dGiKMnfGlprW7S2pqw8b59xddag6wByWKpUkljRCquJcWx4j3OfR7rIDzkbxl/XsSyuQiOunpYJRCrxoSIxzh/lpPaSeDOt6DGwjVS9E02o5YYLNZUGS4OYNbKkjYzGe0E0NYp75xh71VVErxgMekH&#43;YJkXh2jvGKDQWgmPWx&#43;orR5rZ8969VmMNSlUEugBkrFLKPOBBArkcgtoKXoidz5JIjQMjiUtu9Gz1mU0AzSB6Lt96bxl358PP6dE7sXnv3Wen83end7Am9HRWYyhiTkWzLvIqBd4vBFa&#43;Xd37nkl&#43;zB03yz2fLw/M7S7e3ot9vj2PeP1JlXrM2PWanvA/gzbe2fm9P4k26advA81/oHSewVUd1aQMX5XShejewUXDcYXvwN5iqhc&#43;lZqJrxK38LrFWW01GqUrrNnPfEOdgSgOwdxZvgy31a6i2ruAIzhyYaJk6Nuz4HTJMTisvzJRBnbFHj82/1EK2QV&#43;5ZKDfNNE71vdd9Jzfb9NOsaJqUdz7uYUmjdwbc1s&#43;JSxK6sdcYbPRm47v3XsxENOvbZwe93ZIUApvT4stRGaWBeSa5C6uzNaEkceiYuM2RegC5cHi&#43;O6WIovFmq//U2ff/&#43;KP9lz89HD60zv6SAr7C3m&#43;dc70DG6e18kr57HvOfNzn/XQSSYozk8t6pVtSy83Q0Xde3T2zm/ffP26e370y/fARdeZ73HV/5o35307r7zlFP3LOv&#43;T9Yc&#43;7/SxljpjLnWWrp4AbB3eNnDSBkypYcnFxv1wDaB4xDRPpHtjlfjF55129D0nJQAPVyYphbxEkLkhmF6vbKxUjPZfuFLDkqNXQWmYf0AKkrQeJ0dxjdv1ohCPX2EOGMlVQx3t2x/uosBqGUmYsLNCYyYKFa4ZbHxJf8r9TS7JKRf/QzJe&#43;/nX4eWY/nmDHI9vjCfPxCDdmIFO651wEsFczYOOxeNzWM3OuKyfgineEogh0/eUv4ZObrf70Bz&#43;c997j4J2yTmpVSAqwJzp52eoL4kb6NkQz8N&#43;0XSdBpWYv&#43;Zigpq3ph8lst7vh2c0nm2fPvjcMw3eNMeHxfd2Zj3XX3ZPWRwbNfrP1IhuOx8WdqMpIVoG9EMCtIMmCGHmvn1&#43;VfmiOZZbCefdzKuJdNkmkmxnFG&#43;3U2zkUGOYbCwWh4pd3KCvz7XlVMP5MpqFqCR370hqSzMXcrW7XeNcEkvuP2&#43;a&#43;j1k68tJMaw&#43;naJZonVQKV4SRs2LJyH1WUlJSuwi4ErRzmK8zOBNDk/TR3/zH//T8wn/Kzb76Q/7X//b3Mf/xdz2UGrUxH5mu&#43;0MQPRLRLQcbTrPixpgpbBVl4DhV22QfQ0lJLrNLN6eftdbT0PeHfhhed5vNR8N2&#43;6PNZvio67qXRpudNnrq&#43;971w&#43;ADz&#43;Z&#43;gPtbfxNms5Gqlt/85//ir30s/grtAkI/f/u93/u9xW7rXP1fqXXMtPnh5s4HuZZgOPa7v/u7P40u/VTb577x5l&#43;mKdqmOB2xVurQdd13h37Yaa2/DaJe&#43;HXjAalhbF5IAtFSAuqMZWT9LklhQUL3fT8Nw3Ds&#43;37Xbzb7Ybs5DX1vu653Qbv3/YDb589x9&#43;IFts9uwcrgt3/7t7&#43;IYfi/ov3O7/zOz7oLf63tCwE0sckVNFmRCpL0VdeZR1KUi5lVT3sTjVtL6ahRaynZvPsmG2laa&#43;66jk3XedN1bhgGv93e8Ga74du7Ozx/8QLP755jGG7wD3/rt76IS7&#43;2L7h9IYCOXrxSOYe10tZo7aipOBlVoC71zUohdV&#43;LgDOoVLV0zsZKoj6WkXUp7dBoDaONbPvfbm/wpS9/BR98&#43;CHe&#43;&#43;B9/KN/8s&#43;&#43;mMu9tp9Ze1MM9a&#43;1fetb36ogFgveYw5G6TSlwEk0eAIP0d5KadnJe9gEWtlblwxVR3lnS4kn4Bvf&#43;MbP4rKu7dqu7dp&#43;uu3Npu21Xdv/g&#43;0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu0K6Gt7Uu3/BAAA//8j7ADlia4hKwAAAABJRU5ErkJggg=="
+                     data-src="/components/sensor/images/daly_bms_pinout.png"
+                     data-srcset="/components/sensor/images/daly_bms_pinout.png 1000w, /components/sensor/images/daly_bms_pinout_hu_27fedcaad1440f10.png 200w, /components/sensor/images/daly_bms_pinout_hu_81a77d975296eecb.png 333w, /components/sensor/images/daly_bms_pinout_hu_424aa9bf2ed28b11.png 500w, /components/sensor/images/daly_bms_pinout_hu_738aad6200ea01d1.png 666w, /components/sensor/images/daly_bms_pinout_hu_ab2b9d77895c970d.png 1000w"
+                     width="100.0%" 
+                     
+                     alt="Image"/>
+                
+            
+                <figcaption>
+                    <em>Uart Pinout.</em>
+                </figcaption>
+            
+        </figure>
+
+
+<p><strong>3.3v Warning:</strong> some BMS 3.3v cant source large currents and may not work to properly power the ESP. If you are having WIFI connection issues or similar, try a different power source. There is 12-15v available on the Daly connector which via a proper step-down converter can properly power the ESP.</p>
+<p>On the ESP32 (untested on ESP8266) if you are having missing data (such as Temperature 1/2), it may be due to UART buffer size.
+Add the following to your configuration to increase the buffer from the default 256 to 512.</p>
+<div class="code-block">
+    <button class="copy-button" aria-label="Copy code">
+        <svg xmlns="http://www.w3.org/2000/svg"
+             role="none"
+             width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round"
+             stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span class="copy-feedback"></span>
+    </button>
+    <div class="codeblock-content"><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">uart</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="l">...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">rx_buffer_size</span><span class="p">:</span><span class="w"> </span><span class="m">512</span></span></span></code></pre></div></div>
+</div>
+
+<h2  id="see-also">
+    See Also
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="see-also" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/components/sensor#sensor-filters">Sensor Filters</a></li>
+<li>
+<a href="https://api-docs.esphome.io/daly__bms_8h">API Reference</a>
+</li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>Daly BMS Sensor</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                            <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#control-bms">Control BMS</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#see-also">See Also</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#sensor">Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#uart-connection">UART Connection</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#componenthub">Component/Hub</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#sensor">Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#text-sensor">Text Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#binary-sensor">Binary Sensor</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#configuration-variables-3">Configuration variables</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#control-bms">Control BMS</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#uart-connection">UART Connection</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#see-also">See Also</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/daly_bms.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+    <link rel="stylesheet" href="/css/chroma.css"
+        >
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,1969 @@
+
+<!DOCTYPE html>
+<html lang="en-us">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>ESPHome 2024.11.0 - 20th November 2024 - ESPHome - Smart Home Made Simple</title>
+    
+    
+        
+
+        
+            <meta name="description" content="Changelog for ESPHome 2024.11.0.">
+            <meta name="twitter:description" content="Changelog for ESPHome 2024.11.0.">
+            <meta property="og:description" content="Changelog for ESPHome 2024.11.0.">
+        
+
+        
+            
+                <meta property="og:image" content="http://localhost:1313/_static/changelog-2024.11.0.png">
+                <meta name="twitter:image" content="http://localhost:1313/_static/changelog-2024.11.0.png">
+            
+        
+    
+    <meta property="og:title" content="ESPHome 2024.11.0 - 20th November 2024">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:1313/changelog/2024.11.0/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ESPHome 2024.11.0 - 20th November 2024">
+
+    <script data-cfasync="false" type="text/javascript">
+        
+        
+        
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const tocSort = localStorage.getItem('toc-sort');
+        document.documentElement.setAttribute('data-toc-sort', tocSort);
+    </script>
+
+    
+    <link rel="icon" type="image/png" sizes="512x512" href=/favicon-512x512.png>
+    <link rel="icon" type="image/png" sizes="256x256" href=/favicon-256x256.png>
+    <link rel="icon" type="image/png" sizes="192x192" href=/favicon-192x192.png>
+    <link rel="icon" type="image/png" sizes="128x128" href=/favicon-128x128.png>
+    <link rel="icon" type="image/png" sizes="32x32" href=/favicon-32x32.png>
+
+    
+    <link rel="stylesheet" href="/css/main.css"
+        >
+    <link rel="stylesheet" href="/css/tables.css"
+        >
+    <link rel="stylesheet" href="/pagefind/pagefind-modular-ui.css"
+        >
+    
+
+</head>
+<body class="body">
+<div class="page-container">
+    <div class="nav-container" id="nav-container">
+        <nav id="sticky-nav"class="sticky-nav">
+            
+                <button type="button" class="toc-button" id="toc-toggle" aria-label="Open table of contents"
+                        aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M40 48C26.7 48 16 58.7 16 72l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24L40 48zM192 64c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L192 64zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zm0 160c-17.7 0-32 14.3-32 32s14.3 32 32 32l288 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-288 0zM16 232l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0c-13.3 0-24 10.7-24 24zM40 368c-13.3 0-24 10.7-24 24l0 48c0 13.3 10.7 24 24 24l48 0c13.3 0 24-10.7 24-24l0-48c0-13.3-10.7-24-24-24l-48 0z"/></svg>
+                </button>
+            
+            <div class="nav-logo">
+                <a id="nav-logo-a"
+                   
+                        title="ESPHome Documentation Home"
+                        href="/components">
+                    
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1194" height="240" viewBox="0 0 1194 240">
+    <defs>
+        <style>
+            .casita {
+                fill: var(--logo-casita-color, #18BCF2);
+            }
+            .text{
+                fill: var(--logo-text-color, #1D2126);
+            }
+        </style>
+    </defs>
+    <g class="casita">
+      <path d="M240 219C240 227.24 233.24 234 225 234H15C6.76 234 0 227.24 0 219V129C0 120.76 4.78 109.22 10.6 103.4L109.4 4.61999C115.24 -1.22001 124.78 -1.22001 130.62 4.61999L229.4 103.4C235.24 109.24 240 120.76 240 129V219Z" />
+      <path fill="#FFFFFF" d="M160 78.66H80C76.68 78.66 74 81.34 74 84.66V234H86V90.66H154V102.66H104C100.68 102.66 98 105.34 98 108.66V132.66C98 135.98 100.68 138.66 104 138.66H154V150.66H104C100.68 150.66 98 153.34 98 156.66V180.66C98 183.98 100.68 186.66 104 186.66H154V198.66H104C100.68 198.66 98 201.34 98 204.66C98 207.98 100.68 210.66 104 210.66H160C163.32 210.66 166 207.98 166 204.66V180.66C166 177.34 163.32 174.66 160 174.66H110V162.66H160C163.32 162.66 166 159.98 166 156.66V132.66C166 129.34 163.32 126.66 160 126.66H110V114.66H160C163.32 114.66 166 111.98 166 108.66V84.66C166 81.34 163.32 78.66 160 78.66Z" />
+    </g>
+    <g class="text">
+      <path d="M423 167.61V190.11H336V49.95H423V72.63H359.82V108.91H416.26V130.01H359.82V167.61H423Z" />
+      <path d="M491.08 47.41C503.9 47.41 514.54 50.53 523.04 56.79C531.54 63.03 536.76 71.39 538.7 81.83L516.3 87.93C515.04 81.93 512.12 77.31 507.54 74.05C502.94 70.81 497.28 69.17 490.52 69.17C483.26 69.17 477.52 70.91 473.28 74.37C469.02 77.83 466.9 82.45 466.9 88.19C466.9 97.25 472.52 103.13 483.78 105.81L506.66 111.53C518.48 114.59 527.32 119.45 533.2 126.11C539.08 132.77 542.02 140.97 542.02 150.71C542.02 163.21 537.48 173.31 528.42 181.03C519.36 188.75 507.24 192.61 492.04 192.61C478.36 192.61 466.78 189.39 457.36 182.95C448.04 176.27 442.54 167.45 440.86 156.51L463.26 150.69C464.08 156.87 467.16 161.73 472.5 165.23C477.84 168.73 484.64 170.47 492.9 170.47C501.16 170.47 507.08 168.79 511.6 165.45C516.14 162.11 518.4 157.57 518.4 151.81C518.4 142.81 512.78 136.87 501.52 133.99L478.64 128.45C466.88 125.77 458.06 120.99 452.16 114.15C446.26 107.31 443.3 98.95 443.3 89.07C443.3 76.69 447.7 66.65 456.48 58.93C465.26 51.21 476.8 47.35 491.12 47.35L491.08 47.41Z" />
+      <path d="M666.1 95.61C666.1 109.37 661.92 120.49 653.58 128.99C645.24 137.49 634 141.75 619.88 141.75H588.38V190.13H564.56V49.95H620.06C634.3 49.95 645.54 54.07 653.76 62.27C661.98 70.49 666.08 81.59 666.08 95.59L666.1 95.61ZM641.16 95.05C641.16 87.99 638.96 82.25 634.56 77.85C630.16 73.45 623.92 71.25 615.86 71.25H588.4V120.85H615.5C623.74 120.85 630.1 118.51 634.54 113.81C638.98 109.13 641.2 102.87 641.2 95.05H641.16Z" />
+      <path d="M687.38 49.95H711.2V108.55L772.98 108.73V49.95H796.98V190.11H772.98V129.83L711.2 129.65V190.11H687.38V49.95Z" />
+      <path d="M868.6 92.79C883.1 92.79 894.92 97.45 904.04 106.75C913.16 116.07 917.72 128.03 917.72 142.65C917.72 157.27 913.16 169.15 904.04 178.47C894.92 187.79 883.1 192.43 868.6 192.43C854.1 192.43 842.1 187.77 832.98 178.47C823.86 169.15 819.3 157.23 819.3 142.65C819.3 128.07 823.86 115.97 832.98 106.69C842.1 97.41 853.98 92.77 868.6 92.77V92.79ZM868.6 172.01C876.34 172.01 882.64 169.27 887.5 163.81C892.34 158.35 894.76 151.23 894.76 142.49C894.76 133.75 892.34 126.67 887.5 121.25C882.66 115.85 876.36 113.15 868.6 113.15C860.84 113.15 854.26 115.85 849.38 121.25C844.5 126.65 842.06 133.73 842.06 142.49C842.06 151.25 844.5 158.35 849.38 163.81C854.26 169.27 860.66 172.01 868.6 172.01Z" />
+      <path d="M1081.6 129.83V190.11H1059.56V133.29C1059.56 126.73 1057.88 121.61 1054.5 117.91C1051.12 114.23 1046.54 112.37 1040.72 112.37C1034.54 112.37 1029.6 114.39 1025.9 118.41C1022.22 122.45 1020.36 128.09 1020.36 135.33V190.09H998.04V133.27C998.04 126.71 996.4 121.59 993.12 117.89C989.84 114.21 985.3 112.35 979.48 112.35C973.3 112.35 968.32 114.37 964.58 118.39C960.84 122.41 958.96 128.07 958.96 135.31V190.07H936.28V95.39H957.38L958.14 104.49C963.64 96.43 972.6 92.39 985.04 92.39C992.28 92.39 998.58 93.89 1003.88 96.89C1009.2 99.89 1013.22 104.27 1015.98 110.01C1018.3 104.51 1022.12 100.19 1027.46 97.07C1032.8 93.95 1039.16 92.39 1046.54 92.39C1057.28 92.39 1065.82 95.71 1072.14 102.33C1078.46 108.95 1081.6 118.11 1081.6 129.79V129.83Z" />
+      <path d="M1193.54 151.11H1120.98C1121.74 158.23 1124.42 163.67 1129.04 167.43C1133.66 171.19 1139.54 173.05 1146.66 173.05C1158.22 173.05 1166.32 168.23 1170.94 158.61L1189.88 166.11C1186.32 174.43 1180.7 180.93 1173.06 185.61C1165.4 190.29 1156.6 192.65 1146.66 192.65C1132.66 192.65 1121.3 188.07 1112.58 178.91C1103.86 169.75 1099.5 157.73 1099.5 142.87C1099.5 128.01 1103.9 115.91 1112.68 106.59C1121.46 97.27 1132.94 92.63 1147.14 92.63C1161.34 92.63 1172.3 97.23 1180.8 106.41C1189.3 115.59 1193.56 127.69 1193.56 142.69V151.13L1193.54 151.11ZM1121.36 135.17H1170.48C1170.04 127.49 1167.72 121.63 1163.5 117.59C1159.28 113.55 1153.6 111.55 1146.48 111.55C1139.36 111.55 1133.66 113.59 1129.24 117.69C1124.8 121.79 1122.18 127.61 1121.36 135.17Z" />
+    </g>
+  </svg>
+
+                </a>
+            </div>
+            <button type="button" class="hamburger-button" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-links">
+                <div class="dropbtn">
+                    <button class="theme-toggle" aria-label="Toggle theme" title="Toggle dark mode">
+                        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                             role="none"
+                             viewBox="0 0 24 24"
+                             fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Getting Started</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/guides/getting_started_hassio/">From Home Assistant</a>
+                                
+                                    <a href="/guides/getting_started_command_line/">Using Command Line</a>
+                                
+                                    <a href="/projects/">Ready-Made Projects</a>
+                                
+                                    <a href="/guides/migrate_sonoff_tasmota/">Migrate from Tasmota</a>
+                                
+                                    <a href="/guides/faq/">FAQ and Tips</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Next Steps</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/components/">Documentation</a>
+                                
+                                    <a href="/automations/">Automations</a>
+                                
+                                    <a href="/guides/configuration-types/">Configuration Types</a>
+                                
+                                    <a href="https://devices.esphome.io/">Device Examples</a>
+                                
+                                    <a href="/guides/diy/">DIY Examples</a>
+                                
+                                    <a href="/guides/creators/">Sharing ESPHome Devices</a>
+                                
+                                    <a href="/guides/made_for_esphome/">Made for ESPHome</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                    
+                        <div class="dropdown">
+                            <button type="button" class="dropbtn" aria-haspopup="true"
+                                    aria-expanded="false">Keeping Up</button>
+                            <div class="dropdown-content">
+                                
+                                    <a href="/changelog/">Changelog</a>
+                                
+                                    <a href="https://discord.gg/KhAMKrd">Discord</a>
+                                
+                                    <a href="https://community.home-assistant.io/c/esphome/">Forums</a>
+                                
+                                    <a href="https://developers.esphome.io">Development</a>
+                                
+                                    <a href="/guides/supporters/">Supporters</a>
+                                
+                            </div>
+                        </div>
+                    
+                
+                <div class="nav-search">
+                    <div id="nav-search-container"></div>
+                    <div id="nav-search-results"></div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <main data-pagefind-body>
+        <img alt="" aria-hidden="true" hidden class="header-print" src="/images/logo-text.svg"/>
+        
+<div class="content-container">
+    <div class="sidebar sidebar-fixed">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>ESPHome 2024.11.0 - 20th November 2024</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#esphome-armv7-docker-support">ESPHome <code>armv7</code> Docker Support</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#new-features">New Features</a></li><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#new-platforms">New Platforms</a></li><li><a class="toc-secondary" href="#breaking-changes">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#opentherm">OpenTherm</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-2024111---november-22">Release 2024.11.1 - November 22</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-2024112---november-27">Release 2024.11.2 - November 27</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-2024113---december-6">Release 2024.11.3 - December 6</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#opentherm">OpenTherm</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#esphome-armv7-docker-support">ESPHome <code>armv7</code> Docker Support</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-2024111---november-22">Release 2024.11.1 - November 22</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-2024112---november-27">Release 2024.11.2 - November 27</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-2024113---december-6">Release 2024.11.3 - December 6</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#new-features">New Features</a></li><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#new-platforms">New Platforms</a></li><li><a class="toc-secondary" href="#breaking-changes">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/changelog/2024.11.0.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+    <div class="content">
+        
+        
+            
+        
+
+
+        
+            <h1>ESPHome 2024.11.0 - 20th November 2024</h1>
+        
+
+        <p>
+
+<div class="component-grid">
+  
+  
+    
+        
+        
+        
+        
+        
+        
+
+
+        <div class="component-card">
+          <a href="/components/touchscreen/axs15231">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="">
+        
+            <img class="w-100 h-100 " src="/images/axs15231.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">AXS1&#x200B;5&#x200B;2&#x200B;3&#x200B;1&#x200B;</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+
+
+        <div class="component-card">
+          <a href="/components/audio_dac/es8311">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="">
+        
+            <img class="w-100 h-100 " src="/images/es8311.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">ES8&#x200B;3&#x200B;1&#x200B;1&#x200B;</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+
+
+        <div class="component-card">
+          <a href="/components/i2c_device">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <figure role="none" style="max-width: 1500px;" class="">
+        
+            <img class="w-100 h-100 " src="/images/i2c.svg"
+                 fetchpriority="high"
+                 
+                 
+                 
+                 alt=""/>
+            
+        
+    </figure>
+
+
+
+
+            </div>
+              
+              
+              <div class="component-name">i2&#x200B;c_&#x200B;device</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+
+
+        <div class="component-card">
+          <a href="/components/sensor/max17043">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/max17043.jpg"  alt=""/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 300px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/max17043.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AABEIALQAtAMBIgACEQEDEQH/xAGiAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;gEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoLEQACAQIEBAMEBwUEBAABAncAAQIDEQQFITEGEkFRB2FxEyIygQgUQpGhscEJIzNS8BVictEKFiQ04SXxFxgZGiYnKCkqNTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqCg4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2dri4&#43;Tl5ufo6ery8/T19vf4&#43;fr/2gAMAwEAAhEDEQA/AOI&#43;/RRRQAUUfwUUAFFGDRQAUUUUAFFFFABRRR1/2aACiiigAooorQAooooAKPLoorMA/go7UbPeigCLvRUtHFAB5ntRRij8qACiiigA3&#43;9H8dGBmpOMUAR0UUUAFGP4qKl7UARUVLijy6AIn6jFSY4pUxjn71FAEWKMGpaT5vagCPHyfeoFGOalHSgCLB39qKkwP71BxigCPP8As0e1Ln5aT&#43;PdQAeX70eX70vP94Uc/wB4UASYqLFS0UARbPej&#43;Ol&#43;XPzU/jFAEdKM0YOakoATHFMwakpOPegBmDUlG/2pQKAEo5NSHCrk9Kk0y3k1i8a0smRWAySxoAhSBpHCoCWPQCu10b4dalqNj57Yi/uq3eus8JeBINIg&#43;2am6SzD5h6Cta91q8vLlLTR48BT8z44rmqYn2Zp7M88134fX&#43;lWizoPP/vBR0ri2ARirIQR1zX0/EjvaolwAzkYauA8YfD&#43;O7V7zTUCy9WjHQ1pSqmZ47xR/BVi9sZ7KYxzxtG6n7pFVs8VqBHR0/2qP96jpQAUUb/aigAxRiovMo82gCbvUlH/AAGigBCKZzmpKP46AE&#43;elo/jooAKOtFH3elAB/Bt/pSS3MdtH87c1PY2F3fzeXaxtI/f2raPw6nvImmlu1BT7y46VlVq06Zr7I4k3V1qE/2eAEhugFekeCvAYgk&#43;3anKY9i7tqnB/Gs/TdCl8KXIupLcXNu/STb92uq1TXbK60iV7G7HmMoDqP4ayq1b0uemZ&#43;yN631S3v4zCk7fZ0baeetdZpIsBbj7Hs46&#43;teIeGdQhWaeT7QrCPrHnrXdaTqQtlWZHCq&#43;CAD1NebTvT3Oi2h6TRjis3TtUju1GTtb0o1XWoNMhLOcueijvXb7UyMXxV4Ts9atmkZAs6/dKjrXieq6Jc6XPIs0Lqu7gsK9v0C61S&#43;vJrm6Xy7Y/dVq5n4nzQSaeojKk55xVU6oHj56/wCFFL8maSu0zCiiigA8v/Zo8v8A2aM&#43;9GfegCWij7lFAEfOakorQsNKuNSnRIxw3ei9hN23KCozfdUn6UnQ812pGneGl8p4xPOR826qV3pUGrQG70xQX6tGO1c312n7Q46eOp1KnszljKB1rNub1jJshH/Aq1r/AEDVFhErRbY84YDrVS60K8sQifK6yLuGK6d9jtR6V4WhbS/D63ySRnMZZlx8xNcRqHj7UjesVmKx5&#43;4BWl4T8VW&#43;kQta6nCHjKlQ3Uj2q7FaeD72OW/lCpMCSsZbg15LpclT94dv&#43;A6DRNXn8UeHlDlIQvDbx96vLLqGZdYu7O0c5Z9vHQ816BJr9lPo4s9MtAjKMs46LXOaZJbWc0twQsjsD8x5wa0w9PUzqD49GtfDWnYnYzXU/J29vatW3vLmIWokQRx4z83YVnadqcEd6bnVZhIOkeOT&#43;VXo7E6oZdSvJTHax8xoOC31rSrSMzq9L1l5pj5TrsXgDPI966Ozm0&#43;5cT3b&#43;a3Yt0FeQ2l5MEne1hcR5/1h/lXoeiIJfD7XF2VRSOMetcPs2maGrqviUyn7Lp2Ao4ZhXJa4N2iTRkGaX72f7tTu9tZQySmTaD3rPj1x7q3lt7SL/Rn&#43;V52HX2FdNJVKlQDgMbF&#43;f79I56V0&#43;t&#43;DLqyiW7hJliZctzyK5Q8KR6V6ZzD88VHmiigBcH3owfepN57EUb2/vLQBL/HRR/s0YP8AwGgAHWu28Ms2n2gkA3bjmuLTl1HGCa7izmi&#43;zRwIRkLXDjqtqZ5uZ1f3Zoah4ctPEsgnSYxSfxLU0OnWPg2weRnZy3rVa2aW1fzI3P0q5fxx&#43;JNP&#43;yzP5Uq815iqHjKoY8mr23iFJLa3/czn7p9axLgNps6x6hhWHClu9bOmeEk0K7&#43;2XFzv2/dUVS8Ru2tscxqSn3RXVSxXs/3Z6mFxXs/3czCudItdQtpb5JVRgcKv976VmR6RPOwhjjyP4m9KvWhu5JGt3t2SFO4XOK6izhQxeZFteHbtkkA5Fel7Q9dBpVpDpFobSSQYuV2gkcVma5oVppGlxr9szI8mWAHIFblytnZ2ux3NwD80LZ4SsuZ7HU7tZ7sOZFwACflNZ0v75qZlnoMN1NFdW7AbP&#43;Wcn8daiW8l5HJHI7W8MJy0WfvVpTWkSJm4ZYyy7oGTtUVtol7r8g2xskajDOD973pOrb&#43;IBzmv&#43;JIPs32LTxsjAxkDHNbOj6qIvDMP2m4&#43;VclhurRj8A6YYpmmkZXT&#43;E9/pWRrfga6ttOFxbbzbHkqeorm9rTqGhgXviYXd8obItkPT1rrdMurO8th5TKkajLAnCkf415Y1q6zuvO0HvWppttNJE6mRoou7Z4rupHOddrHigzs1hpxkaMDBdmyBXHsx3lScnNJcatBZK1rZrkH7znvVaKQynfWoi9H81LjmolzkVYA&#43;bmgA8tvajy29RTtqetJsT1oAl8z5OlAkz2pDjFMP3PloAmSNJJlXftyfyq/fNdafdRzREkKoy3asSSYwru&#43;8avxasusaebJHEUo4wx61zYml7Q4cVhvaanYWOsQXdtHhwH71bkcqCytg46iuQvNO&#43;xWMItWZpAMnHrWv4auJdWK2M7hJOhY15DpHiOj7R/ux4v728t3RA0r79q4rrfC/hNkT7XqpwT/AAmul0DwjZ6TbblIlkPzZPrTJ7LU9U1FomzBbIe3etPZezPewmCUP4hmy6dZ2fmNDH5kO7JAXkf/AFq53V9N&#43;z2s9xpTBFlGXTtjvXrNvp8NrbCPaG4wSe9cJ4p0Z7q6WPTZtiPw8Y6V6VKp/wA/DvOR0fRbXW9JlWO&#43;/wBIjGRGexrANlfpcG38rLA4J7VauI7nwzfnZGylG&#43;fb3rehI1OweeDczSjjbwQfetQOZ16We2htofPVtg5yen0r0LSrtLHwwLm2mMk6wbvKA6mvNm8PXi3TNqD7IkPLMa2tA8Ww6PNJaxwm5hPC8ZIrnxtP2lMdM4DU/Fut3GrSSF5FbdwvNey&#43;EtRuNV8KRNq0jQ84XP8AHVK3u/Cd2ktxPZxC&#43;HOzZWbr/j&#43;zTRRZW9uiSDgYGNtcvx/w6Z0HLaraW9nq11PcSKIdx2r61y&#43;q6093iC3/AHcI6Be9VL&#43;8n1CYmSQkZpba0J7Zr0qRzEdvESeea3LaIAVFbWuPvitCOLCVqZiJGHel6H5vu0fSjGaAF&#43;T&#43;9&#43;lHyf3v0p/lr70eWvvQBHn59lHzg0d80UAQ3P3axHRo5fNiJDjuK3JeUxVCSP8AhxQBuaJ4mDJ5F6Qr7dqOf61q6ZBNp0smoeYHkzkEdMVwE9tuIfo1amm67LZqbS4Znhb17Vw1cN2OaeG53oe66N4z&#43;yiIXZzG65HtXfWd7BfW6zwOGRh2rxTRbK18QWcXlXSiVFwEz1rqNKvrnw9KtvgtGPvCuanU9n/EPR9lodVr15qTXEdrYwnDdZOwq1DFb6RZebduhfGWJqre&#43;K7G2shJkGRhwtcBqWs3GqTlnkIT&#43;7Wl0Zm3f32k649zHPCqrj5Xxya52xmi03Ntav5cgzgN/MVBLdw2MPmTOFWqxMeo2pvJJAIFPyv/ABD2rWn&#43;8NTYk0641YyC&#43;ZVtygyScZPrWK&#43;k2&#43;ho8kEYdycB2/hqQa3DbWpeaQmJBgEnr&#43;FcH4j8ZXGpk29qSsOa1pKpTM6hc1LXra0mcQkNcP8AecVy08zXcxIJJNQwW7SsS3JrTtrUL2&#43;aukyIra09RWnbwiNuRSxRYq0Bv&#43;9QBF5fNSj0o8v3o&#43;49AB5f92ijNFAC5P8AdFGT/dFJRQBFRipfLocf3qAKrx/eqGQcVbxmo5IthoAz5IvnXdVa4tsnNa8keRVaSL5KAINL1a90S8We2kOF/hr2Pwz4usPEVsiXO1LoDv3rxmSL5&#43;lRpNcWdwJ7d9jL6Vy1aXtB&#43;1PY7iSa61p7fyQyL93bWVrGoR6VeeQyqWK8BT3rkrHxdcQo80c&#43;2424Yt3&#43;lYr6nLPffa5pt75zk1z/AFY09oauoT6lqN&#43;I5UdFP3VrTmvU0bTlhuZ9xxny81k3fi5wmQqtLt2q2OlczNNPqE3mTuSa6qStTEWdR1e61OQjfsizwoptta1Na2GSM1rrbRxgV0GZWhtcEVfWLH3qAP4qlzmgAxRn&#43;GjtQkfy57UAFFFFABRn&#43;GiigAooooAKk4IqOjmgA70SDNH36MUAReXmopIqtUeXvoAz5IuKpSxGtiSKopIfagDCktS/SofsUldF9lFR/Zf3lAGFHYsZOc1rW9gAOgq2LYA1MI8UARRxYqXFS&#43;XRxQAnao6lqPHNAEkdGaBRQAb/AGooooAKKPkooAaM0c07f7UeZ7UAS8ffo/3aj5qTtQACj&#43;9UfOakFABjiijv/s0UABjqLHtUtFACJHvFR45qV/ak&#43;4KAI/L96k8vimZ5qTtQBEaNnydaO9FABRUnGKj/AIaACiiigAooooAKKE96XHNACYox7VJxRxQAtFFFABQn3zRSJ980AMPU1J/BUZ6mpP4KACiiigA/gqKpf4KioAKkj6VHUkfSgCM9aKD1ooAKKKKAD&#43;9RR/eooAKUdRSUo6igB7/fpaR/vil7UARUUd6KAP/Z"
+                     data-src="/images/max17043.jpg"
+                     data-srcset="/images/max17043.jpg 300w, /images/max17043_hu_c74df8869691907a.jpg 60w, /images/max17043_hu_db625625be98a325.jpg 100w, /images/max17043_hu_f582c6f017057f95.jpg 150w, /images/max17043_hu_7103e9d31fe8ee14.jpg 200w, /images/max17043_hu_444beaa517cb511b.jpg 300w"
+                     
+                     
+                     alt=""/>
+                
+            
+        </figure>
+
+
+            </div>
+              
+              
+              <div class="component-name">MAX1&#x200B;7&#x200B;0&#x200B;4&#x200B;3&#x200B;</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+
+
+        <div class="component-card">
+          <a href="/components/opentherm">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/opentherm.png"  alt=""/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 200px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/opentherm.png"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAABfCAYAAABBTu1zAAA0OUlEQVR4nOz9Saxl53kuBj/P962129NXx2IVyRJ7iaSozteWbFxf3X/0I9eZ2eOMbiaZBMkkk6AQIINkkkGACyjjIAM6QIAbBEYG1/K1fS3Loi1KYiORLJLVt6fdZ3drre99gu9du0iWSUpVYnUiz0ts7MM6Z&#43;/VPd/7PW8fcCAH8gWSA0AfyBdKDgB9IF8oOQD0gXyh5ADQB/KFkgNAH8gXSg4AfSBfKCke9Ak8cJGwAeBYqnBycgPD6&#43;&#43;iun4VNhKWdg0bW3tY2RuhO5&#43;jrGucPn36QZ/xgfwa4X09mnRfD/epxx&#43;NgFdfBf&#43;f/xsrZYUjL53E4NRT4Fe&#43;jsP9Hpa2z6H&#43;GKDXt/bQn82xubGB0fIyghliSv7&#43;53/2Zw/2eg7kE/LrNbSEkxcu4Mj1q1jbuYGiGcFCAwtdAEN054bebIaiqWHBMOsl7A8q1HmZNAQ4hU03MXv/HHZefQej/&#43;G/A/6r/xYIbJdSflk&#43;zuJ1r4SLKw2CqglSrFENO4AlUEIxGyHsXIWlVdh8TiXz80kBqLoFUhE0Hg5gzLekxhxTTDDCC6&#43;cxht/dqCxHyb5TED/6SuvYPMv/xJ7KysI1nwq4pQfMAkLAeKvQ2REuXoUh&#43;YN4uVLQLcDFQugpQz&#43;ewzobCnkNdjLgJ5jVs6xv9ZHmAFlLNlthGLzOrm7g7qpAyqjDJh3gO21jolUHZOoBIRKleYwGo7qKL72yisHmvohkk9QjgxkLMBadQKmvQ6aggipZrCKFhLEElChmIQiSYUBVMOqTMxaOrmGFqAKqsZKO1lTB7EYon/0MGK3QxZZS5MO6HSfAN2BL7yqqjDe2pNNawwHnVCWZQyMBcEOgfwqJZCCQaoAVADznlNDTUrWKCv7YRnxyMkJ1k/toLNU4TQPtPWDlk9o6OnivX2aNUJTszBEQVGwwKT2&#43;aKWBGvyvxRRNAsWUESLIeSFYpLUERhQriwbVqIhxETUQN1EJJYkY1bxjuV7Cej83VOBc/oa6gZaMVhK6JgC1AOwCmFD0iEB6yQHTlDoe8cYwA6hLRCbQNwNRZzGDPAiKYmYjzqw&#43;sBh9DDIrRpawvf&#43;/b93a74ICbFoqKgOqGUBy2iJgutj5xEtsndiiHNAXSNWFbjiKDabw6yBRDIYYpyB3LfUZJCskjwOcsW/R/fBOF0cgSEYyJmkbTapBnAcxNMSTkE6KeAIiUH&#43;SydD0hjEDYIXSJwB&#43;Q7Js5S2uyFVa0tzDQcVrI7YOrN&#43;QD8esHxCQ58/dgxLW5tYrfc5CCoCtA7gaQDHFgp8bwHsNYDZ/nsXsqsihgJPSXgeUAngIoFtkF0WcYUxVsr/lrgl2WMCvgvhqcxs78uVKu86gEwNAjchvSVol&#43;BLAr4NIIN5A9BQYpGtRZINGGYgRnnh5vMH&#43;XMAPxLwem3cHO93mrTXkeYHHtCHQT7xFK49/jhmRcDgxhSWqg6hEwC&#43;49sy8DqBSwtG&#43;iiQNRm2IG0KMAFDAM&#43;C7AHcBXkp81KQT4A4DtNZAG9AOi7hW4S&#43;gfYzv9akvBtCtwsohsyJdVFwqn8V0vMAXpJwqF2IzPtFA3ACco/kLoCJM3HhcQjLyhaGNDJxMm&#43;Kfc6DmA4ox8MgnwB0tb6Oaj4Bdy&#43;SiaXocYevkFmT8peA9l3zykF9zImKlO26akFHMkB7dLLMTffdAc9aspMwZdqyC&#43;WFoFURhzNA7oc/fLFgLFuqBMYElvJuo7wo/XxQ&#43;o5DX4hXM&#43;gJnCNwGcA&#43;hFVJXxNxisALAN8WcMHEaVJQECXZvb6MA/kN8qn7ZDacHGMLRwTIkoFHADwFZQ2tszBdpJQf9AhCrdaXYKSD03&#43;WUJEymWXDqpBcyw9AFJBz52LBxe&#43;HetPiOGlxTC4uNavkrK0zrbgM4pfMuwjwDqWLeQciMIe0IWVNzUMIPOwURVpJxGYdkFAlzUcj4NAhYHPzPlzOgXyafALQg8kEw&#43;kMgVEMoXbrPobLZMjU4&#43;uCsqEUAX2gZBchm5tppsCslW8yh9B&#43;t7oA&#43;2RYaoMoGkuYLTTiTblf0UreVNS8RWOjAp3rb0H4R0I/BvQrgldcM4N1Jt4y7Yu8uPB65J1pI2t3o2Ilw3h7C1vnzgJPnDgA9AOUTwD6K7MZVkJEv7&#43;EkKYVrLkM8Kdg3qL5DIFvuoYL7gX4VTLbq6smxX5HbnW1eOlC2KDwuKANEo8whl1Q78LsqgEnH8jVLmQBZmXN21IKzrJGRgaz9BYYNkMoZ4wdU1MJaRYFNHCvubsZs22RaVNHAqfNFFdmW9juzIE/fAH4p58/yMv7UsstgP7//8VfoP/004gxInV7mk&#43;K1Fi9LdnPpdA4/81GH/hVBAQwMLJ4k8KW&#43;KGmDYSGdNAqQegrWQXyNQJvGnQd0NH7nUbyKZKpxzUAm/QIEN7PVIpB24yoY2/ZQigwH8/yFeW9p0NwIKLL9r6VeWGbEsZhjM3H55g&#43;0wPKR4H/9UFf2pdXbgF0fzRCevNNTPsFmqIhmzkhS84jTT8TuONbc&#43;A3QL4AMpKsYhdvpiaZW/8u/ubhDAjXYLaPhKsir8ksG1/3Ojb42fJR3kgj4ErLkzWGsAvZtNOpm3IYTUXC/nQbTZiFyBiJsAziMMklkAFyAzNfM6yswEO74KExcGjyQC7rQFq5BdDJDDafA5qTXQtg6oEcZgNO0BzEGQgVpBLk9xjCs5QuKIOCtrdAigEcizhP8g1INwiNKUwN1khavw9eut8kLaMH9hPsCmQTpNTEebJuM9fSgNjb7KJMFRndaMz34SjIxwCs&#43;DUSUxANSfXjEEfrDew1E1xee&#43;MBX9qXW24BdJUSlF&#43;ZCxeKKLAM8gk5f3af7XXfpqX3ST7LEI5AWoJZt/UcMHr4gpiDzIbWFdJuRFnT6coqs5jqBw7mmyIBlhLqJtUNrbJu3YjThJ34GFIqEEJmG1ZYcAPwGQFPQ1glcZXALsAJQ7SIZSzXPfQ2j&#43;By8X896Ov6UsstgJ6btW46UybI7q4D&#43;UjrrtN1CG8DyntqdF8u3UuQQT4n2QEwYKAjwZ1&#43;gQazhMmNtHrUsDVeFzyx6YHz54/EgDQJSk2UBeHG4BiqsIxuqFn6hWTjD48BfAnCKcC6MO4vrnsfoUiKPTEW6GgjU/IHfUVfarmVcnS7rWM2GhiS2uAI5h7qlo7BIwecUNqAbAeJZ0i8Y9KYwKpHCEMYsXVkJxiKBoGjRKx7KsfDGXjIjF7TgIodTD1QOPZYaIgqA107Pyfgq5AOK1&#43;XbAvgNWZqFYqUesuoOn3PrX7wtu6XW24B9OzwYc&#43;pizZRtxlZIRtTPAvQ2OZcyLPuTDtMdhnCRSMvyawClLn2FUg/yVs5pIuS5sagZmPDU5uw/xA&#43;bfl/Tv/zxmGzfUR1GGIRENgX8TjAFwA9rvYeXF/Qry1Ic6QkhKS6V2K&#43;svKgr&#43;ZLL7cA&#43;sbJk7A4Qme&#43;h7XtkQ0mcRqtcyEobLmrSugI6gBmMkwAjRI5RZs7vCVYpaQPEChKEwkjhJD6R/oaLgWOHtx13paENUMQ0EFCGWNJ8jDA5wU877kecudk5s6XAG3JUGNWqbO/ieH&#43;BFf/8NSDvoQvvdwC6K0jR9AUF9GdvgFhU8RGGkwOT4pmMA1WBKNlTknLz1XMW2&#43;qA62jIjOUfUOappAIBEVEo0KKDHrskT30i/rBXeVtSIjC8uMJ80mHxTTG2LrnvgLiJUinIA&#43;kzCFugbqE1ihsFKJfbW8&#43;x&#43;ahQw/6Mr70cgugt9fXAfwD5p2/BDFDwBMq0/OpX51gWRepCWKKCYkRUJnJpihDp45inWRIlso5FAsEFCpUoiT0&#43;Pp1jEfxwV3lbUjRF5aGQFEXtDp2ITeGX5LwQtbOkqLndIRs9fEaAsapKGw2XFJit83d40NIqb5kcmvo2xOGgaoLzPqPYt7vIxWPIZgpK97YZmDCggfOEBDRSQ06VQ0ZVFGSEsyj4vTfb6yPUJbNIh/o4ZXYI6r9LlEXBRHWBGZD8BuSnoA09D8iJgQ3Qe4qoE6lVA2BWbePWffwg76EA/nUbLtF5k7R9BBTmanFp3/SK2RLFA0R0xwN9KkK6tFnrkBGKHHx9XxAIcLPlDZoHzusR0Wk4hLgVONbEL7WZtmprc4hR231ivaRkAprNNS&#43;8&#43;5LJ7/6oK/jQD6z6tsTnt/z17v4fz/XAb5&#43;43/CrOqiHndBiwgkrYX&#43;opbwAcM7M/4ioFN2Isx58ykJ3wH0HUknIa85BMk5GW54gYO0h6QmNkI5bdCrxgu6diAPWu553dDOB2v&#43;Pq8jQtNhbBN9ooQA/frmB/dOPjpqZkedfgwhhh6IxwT8AaB/Kel5mFbkyVasPYcFeA/ABwT2ICQ2UKiErrvnD/jzwyD3HND7V5b8PZFg4SHGvEMHg4IesHZ2X00MKIJbuWsQM2/4Q0kvy3RkkVHnkRbCs/F&#43;lgENYZ&#43;&#43;3xBMQnlQ8f3QyD0HdDNrD&#43;EsNAgMyip6gYCFFXr/xRbhFISQtwx0JBz1Eiu4Zj7advHITIMVyesk3oDwBqBrAOp8ETGbjzEeVHo/RHLPAZ0NQpesl/VRBzAX3tck0puJownADG0uSh3ceePJV09CeA7CMXngO1u9TAtD8AzAnxM6B2kCVSZWSB2hPz/wbjxMct/2yltw&#43;4DoJj3dE7uUzmVwBk9r1QDgUwC/7cUL0mq7n1CtIYhLzGCW3iK0STUNMFPiGHWxd6CdHzL5sjSTuNljY0TyDIFXvW5QqOT9OPT7Av6FpMfafA3vsNS0hiDfAvSaoPOkTYtObTHWaEyY4&#43;GOfn4Z5YFYM/qUn&#43;6ptJ7CCcmzIH8M4MeUV3iviPympO/J9NxCO4c2gZ9jkh8A&#43;KmAXxqw3VBN6EmDdeDwUYOFdH/O/0BuW&#43;4roG8mtn2I4/uD58ziK7RJ&#43;T&#43;F9PeQ3m9DmfErCOFbIJ8DsKa2SCFr8xmISyBeA/FTAJcSNZ8aNao7mKcODj/S4K&#43;&#43;f9Cc8WGT&#43;0Y53Bprk4k/cjHcj8O21GGH4BlAbwK87nnb5ApCOMEMZLn/rW6LX5nBf5nCaw5&#43;4F1Ao0XBr2azAjsYYPXwtftzBQdyR3JvAX36NOYhIYIwCg3MQd2m&#43;d9zSLe8OTDz5gttCzN2Qb64aHjag3QI5H7m1QjBm8m0WXT4JwA/RAa14UaoVfeS1GVAHSOujboHrXMfUrlngP5XPzzt/VauYAuDcoAyeudcrwe5D81Gs2ZOCGE/BJ5bRPgg6TsQVxfNJL0vMIEdEhfatmVYR9v6628A/ATExaAwDY1UTIXAhGG/xA8PPBsPrdwTQP/pK69gf3oZa70ZZvUMMwQqdBlDEe4Db89gNgZOSV4E&#43;TqBa5K&#43;IuElKB0CWHiBSshcmZcJvkU4r34dwPuQfqGACyyKadHrWQkJ0xE0naMoD6KCD7Pc/acj4fLxQ7Cwil4YYNjpsl&#43;UoUTsRWDopVy8h6BmNuowB7zh4s9h&#43;oWkuYQjXhNoWpHZkr&#43;SrcvsMUGnFvmtv4SUjcALFjit&#43;rK0QsWjQ/RW11BPJgd&#43;54dc7rqGXjt7FpvDPtCsoDcXCg8Vlj2ARwQcBtAlWLZN5nS3rcOFR4ObBH5BN&#43;p0Q&#43;IJwNvl9tu&#43;fG2M0gOXyYYQHhF0iNI0CFtEmDWhtGkJ1cUcHET8wb/5Nzh9kID00MtdBfS3f/ADbH7wAeZdYVQUCE3JjmW&#43;GjKQXxR0HMCOJ/1wkVN99xC9MALDNsk3Cf0tDD8FtAKiL3nb3PixOCUXqauFzAa8OaFAsCKZdfeSanaw3a0w37twAObfEbmrgPa6vGtXoEEHZXkzv45r7uclv&#43;uVH9IbACPvrusu8&#43;EGDLshhLdB/C0NPxbsvIAnPX&#43;DH6/vvsUq1eJ35k3bJVUpIe1O0FwR3vjjf3uQGvo7JHcN0N9&#43;9Qco3gOGmPigoTKbgBFDLzQFf1/CtyHsSXr3w/7TdwfSrUeDYZ8hvAfyR4R&#43;BOg9QDMgjBYejBGoZtGTuhXSENiQYQ/EDZjtm6VUTSa6/Mv3sLO5dwDm3zG5K4A&#43;ffo0Xn9/jO3loas7eiqEehCOS/omoAzor0A6Iyi2dV13CSiksQ1rXyDwU0KvCjqPgJoMgeJY4HkAlyQeXbDn2BqPbBjCLkN4n8Lbkq6bWDdVjZ23z2DnvQ/uzjkeyH2TuwLo8XCI1V1g1gPmXR8T2xFwFMDLEL7n1R/SinTXjdBsBE5BXAX0LoBz8rXCxwEeF9C0uOUuhLfQtis74rnOZGLghCFcDOSrgF4DeSN/plGULa2gOXfuLp/ugdxr&#43;dwAy1TjwtuGbmUo6oiqZDRyFcTzAv5I0DfgyfOeh8y7mDxqICuQW6125gjCCUEnPqIVmXIwG4nbi5Fs17x7aAvsBuAegQsA3obwnpKNZrPatiYVZidPHnTi/x2UzwdoCbM3XsHFk3MsjQz01hWhBBzAL0nKGvrEotD0bjZOzjSjRshADefoAzG94uQFmZZuVpssxk3stCMm8Hcgfsx8Hm2hTJvob9pTwC6kSVOnZndnos3dKWadzl083QO5X/K5AL2&#43;/R7m3VXsruwhsWJ/xkjjEO0ouOchH6wzQNvM9K5p5gxmhrDNwLcB/qodDaEnZTqltsNRaH0Z3h3yCJJlw/FtED8h&#43;AHFGj4HV2ZEnSykxGhV02h/XGFe1Xg420oeyG&#43;S3zpi96evvIJHL50FVSB5o6FAAaWgw4vKjychrUG6uWhs4T77PFj5GJjDm2T4WxI/lzSVqS954KQDeXFrCamb/03SmqB1bw8c2ASzJiQjHc410ngi7O2rlxqcOLx80ED0d1h&#43;aw1dm&#43;HIlU1MhsHtq06FjOhlkE9J&#43;rq8pzL6i0YuyXOM29Fp03Yc8h03if5nYOZ/JPEPaoMlz3rZlBT&#43;GU&#43;X/xt9BmFv8d6xwBXQ00anIK8Hs3GT5jIzhY5hcvogk&#43;53VX4rQGftPG0a9HYSfMp3KQagR/GEiJcBvADhkPL3t26GGcnLAM5Auq52aCfuANQ3wbzFEN4C8R8B/TWEs5IehbwWyvBp0Rpv1MS2P2o2FolDiuEUpEclnRM1tqRpjSYlJDzo1goH8vnkjgGdwdy2h1FW04jM/8cCkesinpP0DQmPIW//7WBLz60A8QaF10RPzzx2B0GVm2DezGDOmtnBbHpbsmkbifR5gjMCSbciMoPZfESGN2736u6vgfwOyGXIZhLfVgiwMtLsziI9&#43;V5Y/mwImHe72F9awrzbQW&#43;6h0bXsId97I/mGG1WmOzW/sJ90P7teclfKbbvMQnZdJj1GjRFQEwNYjKkWKIu15HiGiKJfmeK9bUdrK9vY2lpH/3&#43;9Hcq9/uOAT3vJgQTQsiWHmgFAoGBgxiunb1yWu3YigYMeyTfIfQqoLfg27xupxhPCzC3yUbkGyT&#43;htCPZHoPShM3NgNrMmySuCHZI95ywzwBCd51LIQxvWLFc58fB/C0e1&#43;AkYTXXIeXJHqFmPeZ29kzJKztnMUvrryP45evYjAB2nn3Nbp1hY7N3ArOAIksMOx1cXi4guVnVjH84Q/xV9///p3e9juSs3/911h/7hl0NlaAQem9n25H8mYW8qqeANOqh/pqie1mDf/21R/gf/vOf3lPz/k3ioT17W1/bWxtoT&#43;dYtrvY2tjw9uweSs28s4AnVf&#43;uKgW7e59iBtJdo08JuIlQS9LOJ6NMacAbbXImcx1If4Upiug82r9hrh3m9Pcutgu&#43;zQt4scAfiZgR8hGHjdAdEmuLGoAfwUFk3CYtF7L3b1JzC6Jc94ZRPg6pJfkg/d1RvJuIb702CdQ3IaNvNgAmqKLebfErCuUVQNowqKugFqkJe/UuoQuilgiDbrqlMvodFum9a/uBahv3s0zwLW/eAdFPIZ&#43;7HkjnfygQ9EWViSLUE0knzICKAVQM8Sw7YvQQoPJXGhCB2Uw9eoaG&#43;d2PRqMRVT4fkvG3eZf/qWDti5LX3RZ8nuRqe9shqX9/bxN3xmgsyEoA1KpjB1SISpv&#43;eDzAH4P0jOQltV2HGqrpokfAfhPkM5Q2Dcu&#43;PNnIzpz7gRyH8Q5gv&#43;YFwSRQckOiG&#43;AXIcwlDy8LlI7AH8G4C0S6wg&#43;QD&#43;0FSnepLwEdELQC5InK2Vu/1HmHRdjkOJvYBz&#43;6/8ewJ&#43;A2kBR590KtKBAayJTKugGb4aQrIvYdELRoFs6NxMb5TUq7HhFz90tsj3UnuDRhPRsAW13mLohKCrbDdFaQ2KRPduaL7a4XKYk2sxa612xbgRF1gqxKSszzOhAeiAi4crf/A16sylWd3cw63URU0K0mmVDDeZjdMs5TpYX8J/p9J0BerK/3zoKsjbrhmztZU34qIBvCvi6hCMCSqcawA0IrxH6Wwmv07DVDqu82T/pU8GjNmDi/TM&#43;ADKQ9SMiG5Q8ivY4z2ctvABzkNmWGH5MIAP6okOzjQQWbHeK44K&#43;KelZB7O06hHGVoO3R71N03R9&#43;0k0xTsQXsXa9rNY35myW7NgKPqA1mhabV2F3lk1ERgHYodMI2A2l2jJxiLGiLPn8Ud//r9jVkyBFaHsBPSrEv1JxOjtD3D2/C&#43;w9uKzWDvyKJa1jG6TNVN7opkTb23MFsPEIlIaYvIfKlw98WNsPfIqykNHEOthIIohfKwGltQWVWRFE9tRZ5n2ydwcYlZTmnv/emGQPOjEa0HYTCnU41Bqa50YDfv4z//P/wPjtaMOqrKu/ZUlAz6/lnd2sH72LLbKErvdLmK/j5VeD52U0JnPsQ3g3PIy0uqqu5mK6RRN0/j22Y0R9WAANA0606lrXf67f4fXn3kKR4PQq0boNHv0J5eBZhH9MEI/znV06Yafx20DeumRR7B9/jz6x46gWBswxjKyCEvybDrvo3zCE&#43;hbeMxInCfwGoQ3YdhEEysGize7Q8vv6odOiXYaABzMOyGEd51iSD&#43;mfHzxY4LnhPweTCdlNsiqxnM1hChTiYB9BV6ywCqYFUE&#43;puiUpCcEvCzp6Ux9IRSL6V53JN/&#43;wQ8w&#43;flrqDcSQrGF1f2rHE7LMjKsMobHQHtcSiuQ2wfpZqNHAdcJfUA0lymbSLPkZQ2KoI8P/9jSdn8MUXb6KDs9MIRbVls2v40NptUW5tfmKA9tgLF9hLHpYf3q1xGxmvUNi6JbBAtHAL4IoJ3eBZ9Ud4ghlDLbZkq7bU8dBtLbowVIxwXOTfiJieMZimY07GKOQrHTBZdqWHEDMX3KgKSUMJ/PMStLqB3t104GW9A0C0AKWePkbS2162ohN32t4WM1H85LLaHY24St9kE2IaYmtr1TyCLbvHOl4XyGwWxf6Vy4fUCvPnkKe2ffR5NqLPVPIqjInz0k4ikBTyhTjdYnbKD7mzNvzTTjhhKriDLvYJn4ZN4aLT8efjhCuS2bao2/XzpNEf4BpusiTi06gn5X0uOQDf04Xm/SalpJFcyNvjpAGeQ9eRUKvoM2nyRTjQ2fgPvhDnFnUl29in58AsuHic7SEjtBRSRWGcJzBF5saZBuSDoPadpyAJ4C&#43;QQCj4B8TcJZKExg0XVtDEQZQjZiGZuQWZx3RO0Mh1jaOIJOd8AQYqYGbKLlhy1jpSrto96ZoFxZAwOYQVAigfMeu9dOoWSDqKIgmFGXd7Yu4INQlxHCM4xhSPLNfH&#43;ZF2C2Q0JYgWko6FnBF/x7JhZjKYy7tIiIQRFl3anb9fD4FdnO1HGNJCSpsgazftdvcigCQgH3tNRRSIFoCqGMCUyVovP7hBBaj2teVUE1LBv20dDkz5ZRS6litwkMEV1QA8m8uxWEmRpNminn881C9V55&#43;4A&#43;/Hsvg0WJoh8QezEgsCvgmKQn/aZp0a3TPRvcBXgexDUJM4qGTkchOLkMyYMgcBbuSULElOAVAK8T&#43;jsI/5TBAeJRCd8C9G1Bj3uexk0SSF8EjXdEapOMZu190ZKyZga&#43;B&#43;Bfe2tc4PACzL9VEHAwGKC&#43;ehVFeRxFXGc3DkPsxwEiT5HMi&#43;ZxAOfB8DZo7ykvTnlkkgzh2wjxm23xQAZz5xINNdmg7Ij&#43;1LP5XAcFhWSBVq4s61D/KdigDCEUsckWS0gKVPKhNnVXfStRWHRrI6pi4e2JLWBeKKCwRUDW57T7gFDghu&#43;m5MtgKBG0h8D3aRoRbpNsCHqk9bSiJ6BjUNkwlbGzOFIIlprGeQltGhJDsOhbDRCaRIM1g2DjwZCZkPowtEDM/DoDodISTX0zRE2yIRassBh8seZ1a8a8MPOt6BrnobDU6Vm/jOjQOkFcFTKt5TJ8CAr3ZLzRzAqbTbvVdLPRbQO6/61nWw9Xr8c46AYGZl520umAp4Y60LTwLGx5xTW0zczeQ5DF0O5urWO4baNLNvSZ2TxHeVejH7UVLRiBPA7h9wD9C6cNbbXLzUEtWvim9xhC5s2X2Ia/B4sI5R/qIzAf8XD45wjzr25sAFevAv0ewsYKqFBIXCc9X&#43;WrPgfd7ANBZyzgBlikkGyKgJIhPIrAb7uHJfAyrRiRNs&#43;7JaNiZOjDfSwhP8lRKjBCP1Sd/jIT1TNgyaB&#43;BrKRU7LYL/prVeyRiEXHFYma4FqY9H05L3AQtZSNZZ0BuCdgKmDDay7bFIQpQtiW6QalXUAjtikD80WEt2uyNQUOYywyHdxPwr7m3SoGZvx1ARtaQD&#43;r1hAwQ&#43;R&#43;WCqrpKxf1RWyQZqVWSwQQwHTXE1Tu32c8QgrQQ0XhvQ0IU0yOrxkjixSEafqhHGZ7W6yR2B1UZe6BrDxJDSxTinMZnW32W9ktw3o2fFVj2FHy8eOhdrSqpOunc2NLx&#43;qnDVm29tClwiNYmFJhUHNHHB3SztlxQHZZsmdB/kPgP6e0jtq96BMM/5AUqYaz0tubBW3gJkeAv8VPZfZI5CZhD8p/xy&#43;jxbMRxdg/lzpGY899xxiUaCoKnSzSRWyQtRhCE&#43;JPr/wLSW7ZNbsVkg1Ylcds1lAuq7WUP0mAx&#43;DwpMItumU0o1Tj1yukGGDMVNDXM6LIkFXFxbfYUrHMhBFdlvfebgQis61ALcRj0jeSyQriCX/nhAzVz4L4QNa2hWwnymZuYvWQfAhRc282kxzyuaM3qjvWNtCOO&#43;2ygb&#43;c3mR5OsleVXCO1Bnk0JXxBGPugLLJPsKYc68YIktNWlg8u/qMXDGGHssYlfJefs&#43;oLhAdAbpURFDELsCL7F1926AHDoFDXifwi6Zn6M62WYi0PVxkmAlcCixU4HTcTm4fUBXvYheZlJ1yJtP4ck&#43;wqPtallQlxakNwieoXSRxCQQlkIjaMa2dVymzqGmtMVgexJ&#43;0hp/di4brgjeRT8bgBnQz&#43;jjCU6EtYZjvlC&#43;RfBvAPw9ZNvw3YK/D&#43;mPfRzbR5r5c&#43;dgn/zud4EMuGEP9fIAVWBp0rrMHmGbqrqXt3VBTR0bNWjE2lJZ2Iwh7ngRQgiHYXYc7gPHioCTHrKnK4HDCDwEIfPXFYCvwayG8AiYuT9X3ZtELhF8D&#43;TPkO0G6FlAT7TBKiaRxzKXJ3kUiJWkd9O8HtXJFLtF/1OqyZSSpaRZ6hS9KRHrxXMcOLilmuQyQzySjXUfjZ2fRbL11rulTrbNQObfrzOGawDfV0pZk74EcADyamgDZPk&#43;XRMwUebsvlPka0AG74lFG4lsd20yAzyGw2DY9wWY7B3IwqLMSTd3&#43;rzrso0lZDKLOha3z6HXegX60&#43;gDR0DPYttQqz2c17baGeN8UgTeJnCNeQVZlOYFshnkjZPA1AY7&#43;CuatiF7TdJl90CAX1uA&#43;VsyPSGzlY/A7ItlDvBGW9WNvyX0DzJdBd1dmD/3x&#43;1cQR26W2DO0n3mmfbpd8g0yGyLhWUKZLaslsrMJKssmNQxxPFIRdUhY9aWHvqvF4lRS04N3N7wUXFXIF4AccXHLxNfQeRLPq1WGgF2eFEZP2ptDT7KGAeuuZJdhFl&#43;DplP7kO8mI1iEIdBnmLB98nivKVqUs3n1usUn7gRbWWwMLdGpdMAX1w3817GgC4wsMMYugjxkGSPKbnb71FAyxCvLhbzMkNYR1Esk2mOmqXnwefFAO7CdD7vBTDLVLLLwGVkmiNcArBNeNzghXZKsfbJsMUYlxHjMfdqSZeUMA2OHWcCtdpWiRWUX6otSZbuIFJYpIisaH1FtFxtw9NDW7qxAByvs81PPgNgV1KqsgGQgi8jRmRrYEo56Gtk3tv2aH4KcM38ezC9mI2TzId91bYRw6yBdryJYrtYMs34hUw7bWsEfkfAv5T04gLM5d1sopMOt136FRrIJ0Gnm&#43;62m9v3hwuHyYCdKaPHbeKi75kW3kqfLjRlNl3FLcA9Im/lTRZB2cbacE1OPgGzXVhYArTnY&#43;TIbcZ4I5RF5siBamqY7UPei&#43;&#43;yfMoARmR4gjEeC&#43;RKQNP1Pa9oDJ81nskbokWgF9ozdYwrK6aLAXg7hhAVQt5RVr33X6Y&#43;MTwOaRbMrrnrFNjzZx9C9GcKzgH39BSZcinZa4DG8tHS4QToSvAqYO/6aEtoWdJT7WQ0bQXyAmPsI4QjkGv7bhJ2A322TX5v8nFN/p07qptZM5pamuj2jcL5uEInRRI&#43;lCQDOmvUoZiiD7cPHhk8S&#43;BNCBclm1VK2ut1gOEMS6MZ&#43;nVPZSonRlzMC8qAEwJeBPC8oOcgnPK5gO5mcoBkbZ5v1jkQb3kkUHoHwNW29S1eFPACTN8U9DXYLZr5romOHUOjGintqx5PpcwqwGyQbiGGJR&#43;bLPaCGIoKSKGElW7YlyAG7aK3OaRtZh7s6NJY&#43;WfTHi1ZVLgEIlOpEwDXRJaIDDRt0bKRjCnJ7ZBNUm88iSlbAy4DaF/wNIOht0ALIa/mMjBEN79vRmQ&#43;S1Jos9VdBXh2V6YCIwNGHYbChHHKi9E0RAgDkodgdi0fn9KIwIR&#43;HSYl25HskHx0h7Ly2xTDJTK4dgaR6dPYNTu5l7mrSfsmzAyayTW0OwVmbfavSkmhoerIsB3l59bzPB9pbintV3ujau/tD9TcGN2&#43;hm7mtTvLXT8jPyj2MzFvwyNZZTmNeA/Se4R2EtVURdBsfYjSZqyLirG2YJay9hyIfAzAdwV8E&#43;201kPeDAY3FxlvgvltkH9HOtc&#43;z5YrHm95sr7hK1s6LrkGuetgdjl2DPujC5iOpwis0SHmgfEqg/PZDfdxg4eDwsWOyjotlYZYlohxBfRK857MrlM6G6AdaxesFkUPrY4ya6Mm5BymahHuyCAbs8G1zJlp1mFd99pt1oP&#43;arW&#43;u&#43;faviK42QvzZq&#43;I/D3FP2vH0Gpr56FRH86/wUdhLg&#43;H0HdHr/rRoskV/YzadsQ9MDSEbeUdlClFzi1aStHH4bVZjwlSY1CdWNRlZAzwnEavF2LLrfN328fuRxLo10EtYjMQswIE06xHzulxCGbro1FVN7OrN&#43;zqqz/V7q/ev31A511RuCWKo49NzUzuKmo7d94whLnFKPWNK&#43;MZOpViWffKkEHXAjlr5UWvDnfJLbeRNY8AuW&#43;aIeSV&#43;n42&#43;tjmPn9AoC94c/JMMb7lDRhNqy0vVbxn01vW1nD97I8xHW2jlxqtF/26G4vrML0l2TE/B7MnYbgWVIhBNQOXGPkEQjzpRQ3J3obZGcg559GFhdxFYM/D0dKakpUwbfl9zFwzG1vAmiL7SDKllK9/OXgkNuzLlbU/GIc&#43;Wx0b2oBbxol84Fg3Dhi8uY8/77j4G3/Pv/DAqbqUYvAQeVsux/w7tcOTbt7XbGjmhVV79DGEkxCvW2avqSnYoNf&#43;fVZ0noz54fmEugZiyYWby405tuephR3C9m99GX98&#43;YWbXa4mdWUsQioYSRV5rxIaIO3PNLl0Ddtn3rsDQFclUsePJFJVy39VyfMz/ObNMm9ma8UmUexNlelOGcQhFbKmegpCpgffaidO6ZEP/ct&#43;E3kzXXSXgRnMP/H&#43;dMJVkNkAfUnAv4CUDb9HF4GW4i5Xk39SlpZw9ewlBJsBXSoNaQjFHhIy/ck7w9clO5HPC8IggLNMf2R6llSfDG&#43;L/CcAF&#43;g5FP6QlhbA3mdb8HCC8vt63tv/xngo/xuIryKEtUxNfAio3&#43;dsALp67izA082GOqUeTB2ZRfO2glbAYuiGENyfLax6fotUsL3vywXYVYiZN5cLX7aDKvh3opekQlKnrZLwgNEVkEsI4dnFLtlTo2syM7Z0YKfNqAwl3QOCQZD6hc96VLE45/zdfRp65q4TdwMWEEvCc3S6i2KMvFjLfH&#43;CGIMJ&#43;9VEg15PBUufJU900OktoewP/FHdNqCTOjClvFkYDVPRttuSqswn8/eo3Z7cx9rEoEVSJt0RfgpANvpeFvA1SY9BWFV7c28mCWWtPCFxHWA2/P4R8HzlLe&#43;&#43;RHwza3S1GX0bbXLSPdTKH5M/JzH4X/5HHNkw9IoSjJ6OUVN2DW2n/xmkxwEddjom1M43m1QKOAPqXcjOBKVdgoNF7L1P4GhbUaMSZh2E8AGZjWpcWbRgOAnyWc8xp&#43;&#43;A1wRdN2CLH/GGquUX&#43;V5aIUtTS9jyxZFSaNVuJhZaIb3J&#43;y7MamUcmXk32LJTVvTUCM9U2mFwbp4R3E8pE2x/SjuQ7x5nW&#43;PTvSGPQnpKtMNexCGdA1QvbJ9dBM7zTkRpEJiZmjIfb2fY&#43;ALyGlAtvHA77sbLNMP8OubuCDC3PWLI&#43;l2BNjeM0g6WhkOUoYNOt8TG01/F9/7rZ/HnP/qz2wd0vV6iMaKTUj6ZCYWrIi6T2SDxXheZUx&#43;idJhiIrwN2GMAn3XDDa6RH1e2lE19feS7XmhlZA5&#43;jsTrHvqGfoUPPSD6Q4jfaheC87PiY/WDn18&#43;ZG&#43;f/SeT3RrLJ4HBYBmh7Gc7xZhsmg1gCBNAl9yn2hoseYfcdy9Eg2sKukZq1A/JaittUeAwc9eYf9a55iXAXZBXiTAB3QWXF/SehGX/WzIfK2vwnbyg5dQE&#43;2gjgjOYbSmlX2SgSNikpXFWQJ73TW8pfN4Xn3n95S6lPRIJrYe3bhcSfiKhIHTNd9123MEHCNzKRi3kUdkL/jPweNbyBGZC3kVxKTMDCHOvdpDHK24AmuevCbKGwKa1eaxTmuYtXfdryrwn4&#43;ayt5Zo0lkP0lmq/VzBFBnUQYnz/&#43;nvce5//m8&#43;9TndNqBVTjKXQFnBug1mi8T7dwQ8zzZUui7pRUD5YWyr5X/PQnjac5Hb5KC&#43;PqIIaskb9xF4lfDt&#43;zUIv2Dbtitrt2cA/ZE819pOQhosEpP4MSjembStDW4dxJVv4&#43;w3EJfTp3H4h6e9yT8RYVaJbCxYMTULGXx7CMxGbU8td8wAmYiaWlC1UjZpmBB22j7CJnfFeUT1fchzWWYwjMkwj9m4C9qV2bsCr7Y0ARXFff9OLzWzOVpvRNZ0NaWsdfdAbHlOR&#43;urnWT2Gizvog6sfVl6d5HomBfRHClNrarq2OkZiPOSrntDKjkgZ2rTFPYh90NWzOcqT5fbA3kO5jQn0Rcnp758oF3lhe7uStUmTBWzIY0A0yXP0zF3D8594g4/bNemBU&#43;vkZptkPlvFaAZg&#43;ZEUNntYPSPb33m4739SOHOHiwU6LCDkmUVvf2Wd7x/UnANsuqcSji22AZXvGMSbA2e/fZhHkbjWiFb8&#43;DWwvDLIP45ZO8RnHjUjPwqpG/Du&#43;578lNE6/NMv00DRd3642yRqZd8Y20WZbb49Tr/r75/2qtN5GO/pwgVxHEjValOXSZ0O1OGIogh23kWisLQDxZQaXV3hjr23EfQHsfD0Hl32zTaOBibqJjEjorYiLFRjThKxonc3yCVjVJRm9UxoA5up9Se1SbkTzp5a5jGyXMZASs6lsqhLScj0nS/TrOJWXJDkSqFWmpGE6t3djU4dtxCvxylDHrUkFVItQxlJ3PHafCEzajCotFK1Sgbmk0yrUGjTDaTNcmsrsluMUMJijWTkjxtKQzU7fTB1DRN3TDlVWDZzp1mtj0LofTYE9sEUiWHCRhDRBFhRUwWgucvYfs//NNnPqPbBvT&#43;jQmWeiuo&#43;6WsW1qA7XpQANpYGKXPeBicnvDfcWLf5hiGvM0tolgZxFOfARi8I&#43;h7lH4G4U1Cl7PmFXEc4DML7njIt0joYmsg/PY9Hm/5GDlF2wJst20J9pG75jfp/L/6/ve92qSs18HdgOr6LibjbWG9tLC&#43;biyXwdhlEUv1hssIw47G5y5iZ15Qw5i5WFyksM69QCTvs6ZmWlUpNFKnKLT2SI2im7Q/61oz71reqAtr0J9MsDSea9zvYNKLSjHrYqFIQH8qzzceD4EmTNGUhlm/hK1u6NFQKu1f4v5416yaQNYD69I92PWFLU2vXMPy2qNivyOFCg2naKpdTKYNUK5i2IF1AlAWPRQYaMQNzNG1cjY1zifgdIZYJ9hojDSbqDx2COwQKcxQ2wT7cyI1UY88egqxmWk62oPNGkxmEzSTTfSXaUVvFYW6iKmDJs7QdKaIiOiUXQyGwtJwpm63QhF/fSr7bQN6sl3h8IlldIohMjeHZhXUXAbwIxLbIJ5ZdMo/QmgN0EDI25Tn2&#43;YNfZ&#43;BoxZEzMbFFWYDQzhL041FctGGWm/gHkzvZCB7g8e7PmXIt9PLAD/w2d0mc/6s24svZk39p6&#43;8gq2z72LnygeYhzE6vXWVy32E0HPtF&#43;kZttjfqnD5yj4eWRtmiyxzDRPzPXDX7h7a6APqJml7a6y62sbqIx2sL/W9tstSB2atJy02QmdWwUhUnaJNwl2MUe9WQIqLfmshwWJC3RG0PMCgHGJu1xXmDZCq9rEzq3PB9uawvSmiM8FCYO05TKYZqrryxLt&#43;6&#43;Dz9GGUAeNyGakqxMoQrMrbAkItaDyDjSfgxobzST8PzDGvDU3VR3&#43;wAjRR1XTqG2OdhLqaoOuTqIft6Mi83oN3nW/9dQXQ6QvD1RpLS1OvQv91cvuA3q2x9PSyrxgEg6XGqDRZFKDueEsual0t9Vj1&#43;H4bus6kfrwYnzZZ9Lgbe46usCfTWPM6hSIUnuGduZ/ZZW/J1Gr32z3F25e2FCxr/m2ZTZS31nnrgLzdgPnNWStrL5/C6te/gtUTQ195H&#43;&#43;m3lQJb/7yDEIzx9pyR0XyFNGpyEtyb07etThFCMYYMa5qbG2P8dobBf71/6/3iXPxogCzD4tEf/N1CtELdj/7HjLQY0Ahxt/c0oqERWLe7yHUdqu3WN63FUrpE9uc50&#43;nZkEmbu/Uf1u5I82X&#43;aNLasBmimBzRKZA3/g8SbTI6olEV6D3B1tw5gpUhcz7fDU4d03ZMGmmc9P2LrprK0QZo9hmT314s/Rh9OrOr0Kf/XuZmdVNambzVM&#43;TGg8&#43;Rf/bf/wv7lLJ/unTbn&#43;tB&#43;HRXsBwbYnF2grDsB8QIxWCrCwsxajJrNbl9y/jxqXNDz97IHcud1Qk2/LHH7ZxURQolNCdNxZnc6tSk&#43;bRqrgEsNcJyYqsSBhDUFmaMTRWe7Czi2DR&#43;UXKe//eHuLOBJ3BqgKi&#43;y8&#43;gd3bWdX8ZwD&#43;ZAelj77OhGZWYXr9BkYXLmiyO0J5/CR6Jx67k9txWyIJs5//Apd2t9E5fkzdr7&#43;ozteeV1zbQBoMUPUHqjtd79tUYQBcOmjh&#43;3nkt&#43;amGdiHNjextL0NjMfYVcJkucHw6YCmv8Lxfg/NpECnG7C2UaM3GGl7J6Aar6GseogN0TBg5/x5rDQNlo4cQSjuz6RmSwnz3V1sv/cerv7sZ9h85x3/&#43;Z7KoUPAE0&#43;Af/RHCH/yJ&#43;DLL0Orq7CiaHNkbsrBCIzPJb91imXW1i&#43;9/joOX72KcjZDthOHhwzDo0Dsu/XtdfIgFbtSf8XQX2r8eVEtFxxUFU4eOYKV48fvG5gftLjbOwQ03S7Sojr6QO6e3DV1cFqnsT/pYnfUw40bQ2xf76LeL9DvRRx6ZI5DR0dYXh7/zvVKO5ADOZADeWBysN8dyBdKDgB9IF8oOQD0gXyh5ADQB/KFkgNAH8gXSg4AfSBfKDkA9IF8oeT/CwAA//&#43;&#43;ewmsrjFBQwAAAABJRU5ErkJggg=="
+                     data-src="/images/opentherm.png"
+                     data-srcset="/images/opentherm.png 200w, /images/opentherm_hu_30bce21f02b2c744.png 40w, /images/opentherm_hu_f51563065f8d3129.png 66w, /images/opentherm_hu_dd3e627ac4523b64.png 100w, /images/opentherm_hu_452ce20fbe865a0e.png 133w, /images/opentherm_hu_6fcc3539c10b66f9.png 200w"
+                     
+                     
+                     alt=""/>
+                
+            
+        </figure>
+
+
+            </div>
+              
+              
+              <div class="component-name">OpenTherm</div>
+              
+          </a>
+        </div>
+    
+        
+        
+        
+        
+        
+        
+
+
+        <div class="component-card">
+          <a href="/components/sensor/tc74">
+            <div class="component-icon">
+                
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+        
+        
+        
+        
+            
+        
+
+        
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+            
+            
+                
+                
+            
+        
+
+        <noscript>
+            <style>
+                figure.lazy {
+                    display: none;
+                }
+            </style>
+            <figure class="">
+                
+                    <img src="/images/tc74.jpg"  alt=""/>
+                    
+                
+            </figure>
+        </noscript>
+        
+        
+        <figure role="none" style="max-width: 209px;" class=" lazy">
+            
+                <img class="lazyload w-100 h-100 " data-sizes="auto" src="/images/tc74.jpg"
+                     fetchpriority="high"
+                     
+                     srcset="data:image/jpeg;base64,/9j/2wCEAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDIBCQkJDAsMGA0NGDIhHCEyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMv/AAAsIAQIAtAEBEQD/xADSAAABBQEBAQEBAQAAAAAAAAAAAQIDBAUGBwgJCgsQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5&#43;v/aAAgBAQAAPwD32iijNFFIWA6kVVn1K0ts&#43;bOin0zWXL4rsIwQhaQ/7IqkfFFxIf3Nqcf7VNk1bUpBxiL8KwtRkv7gENcu36V0/hK6Z7L7NJ9&#43;OukoooooooooozUbzRRDLyKo9zVCbXdMiHz3kQI/2qyb3x1o1twsxlb/AGBmse4&#43;Ik0vy2OnyN/tOMVW/trxFe9/KB9BUsVvq9x/rruX88Vcj8P7sNKWdvVjV&#43;LR7aMfKgzUwtAvRBUcsVVZbXPapdKBtr5dg4bhq62iiiiiiiiivn3xN8VPEtpqk9gkaQGNscDNZUep61rZD3WozfP/AAhsCt/S/D27HmO759TmussfDFumCY810Vro0MQ/1Y49qthIv9XFH89B026k/wBn8aPsV9GP73406OQxvsmTa1WdmRkGqtxG4NRAf36FwrAgVv28gkhVvapKKKKKKKKK8H&#43;Jnh6OLxQlwif60c1V0yw2&#43;Xx0rt9MhxjiunteAKuO&#43;UEafeatC3tUhQED5u5qxRUFxax3CfMOap248stG/wDD0pLlOM1VSLzKXyTV7Tz95Kv0UUUUUUUVw/xC0sXVpFdBMvGa5PTbU7EOK6ixixitmIEDpVq3f/SEyK2aKKKqT&#43;Xv96o3EvpSRb6tYHl1HbyCOfnvV&#43;S6giGZJUX6tinxyJKgaNgynoQc06iiiiiiqWq2v2zT5IsZyK4i1050kK46Gty1tfLrTjiGKZjEuQKvRXPHz1OsyN0YUplUdxVeW9TGE5qm8qKNzuFHuayb7xBo9n/r7&#43;Bf&#43;BVky/Efw1ag/wCmq&#43;P7vNcxqfxqsYi62Nm8p7MTgVxupfFjXb1z9n224/2a5fUfFOs6h/x8ajM30bFe5fB7xD/aXh/7HNMWngPRjzivUaKKKKKKQjIIrmDG/wBvlT/aq/HFipelPLKoySBWZe6xYWYLXF3FGPQtXM6j8T/D&#43;mdLjzm/2OawLr42WOP3Fk7/AFOK5fUvjLq1yXjsoI4F9TzXK6h4212/QrPfSc/wqcVhyXM03Mkrs3&#43;0c1Hk&#43;9HtT&#43;1Rn1rt/hjr39j&#43;KbdG&#43;5OdjfjX1GhDICOhFOoooooorE1QC2uEuTwuPmrzfWvi/a2U8ttZ2rSSI23cTgVxl98YdekkPkJHEn0zWFe/ELxHfE7r5kU/3eKwZ9Qu7yXdcXEsh9Waqskm87aToKE/v0eYJDQ/YijzOOlHmc0f3qA&#43;zirVjcCzvYLgN80cgYV9d&#43;G9TTV9BtLpCCGjGa16KKKKKKxvEcPmaJc7fvqpIr5X8RWzW&#43;pNIfuueaxJPZqO1L5nNP8A3e6goO1aWg&#43;Hr3xBdeRZxnaP9Yx6KK9QtPhNoUWlPeXOqhgi5dkIwDXn2u&#43;GDbsZtJk&#43;12i/ekXkj6iuaIxJsIo8r56JBRRjzK94&#43;COvGWxm0qeT54jlAfSvZKKKKKKKr3sImspo/wC8pr5i8aWPltOrjDRua4fjFOj2PSSD0opYyRXqfgfX9J0LwXqDTkC5kbaQPvc1U&#43;z6noth9uUyXejXo&#43;dOe9OXRdX0LThrulRvJp0vMkDjJx71wmrXlvqGoPcwQeSrclB2NU8tmncEfdJ/CoTUkfA4rrvhlq39l&#43;M7dpH&#43;SU7D&#43;NfVCMGRSDwRxTqKKKKKDyCK8L&#43;JmkKupzAD5ZF3V4y0OyQq/Y01xh&#43;KKH7YoHmf3OKkidlc5yRkEj1r1nSviXs0OLT5dC8&#43;GNcfKuRipdR8QeKde0cwadYx2dky4VScFh7Vxh8LafaRA3&#43;oFbtxnyUX&#43;db2l&#43;B9Ktpn/tC8jcOA0aBvmx71q3cnhrw9prLNBG7ZK7QAS3oc15DdzRTXczRJsjLEqtMi96ngmNrdJcRna6MCtfV3gnWF1zw1Z3QYF9gDfWumoooooorgviRp6y6at1j5lPNfPGv23lX3y8K3NY560V1/gLw/Za9c3cV65XbESjeldbD4S0y30F7O7CfbHYtBID94Cq9xpFhHpHl6fDbC8yNxmI4FWbPXtL8P6KkN0sM11G21xFjGDWY/jWyjnWSO0kmMR/c/NgAe4rFvfEN/dzgixiWWU5UlMkVi32o3s1yZJZWWZBtwKzHuZLjiZ2Zvc0zy/nzUnApTsPWvcfgdqgNlc2LScqcqpNezUUUUUUVj&#43;I7D&#43;0NGng6ttJFfM3iuyaOTkH92cGuU8smgR4OXrW0XWZtEuHltyCZEKnPvUM2r6hMyl7p8RklPm6fSqslzPIfMe4difetaweza2l327SThc7mbir95cRm2U2jwJEqAnI&#43;YGqOm&#43;Ifs18lxcxicohC57VQ1S9S91CS5WPy1bnaKo5Q80v8AD70g&#43;981Fdd8PNZOg&#43;KraZ5MRSEI30NfVcUiyxJIhBVgCKfRRRRRSMoZSD3GK8G&#43;Imi/Z9QuUx8snzLXj7rIjsp7GnJ&#43;8HNMMfNJR9/2oDSRPweDUqHIOT1qMogJNJjfR5eKMcbv4qHOUoAOKfG7JKrrnKnIr6w8B6idS8JWMzfeCbT&#43;FdTRRRRRRXnHxNsMxw3WOnBr5&#43;1uHyr9wg&#43;9zWYMipOoqLvQ/wBzijOU60fwfLRUvGyouaOqUC3cpUnEQ5ap7YJL0Ga&#43;hfg3dSy&#43;HpIZAdkbYWvTKKKKKKKxfE&#43;nLqeizREZYLkV8z&#43;K7MwSeao5Q7TXK&#43;ZlOlHmFKM96PMzuFEaZ/hqV4sDiosf7VTRRFvepJYfLjyRVFZCZgP4M10MGmb0Em7g1X1DR5WkQQIWJrQ0fw9qMUpZ7VihHpX0f4H0sab4dgXy9juNzcV1FFFFFFFNdQyMp6EYrwD4gaSlvf3kZGFb5lrylotpIpMDpTvKynSoZAYv4Kmss3Evl1r/ANmORWTPp0wndFUn6VsaRbFYNk0RDL3Iq7c2sckDLitDRfh&#43;msWvmCfaT2xU91o02kz/AGPltvoKt2elakJo7n7JIYUOWYr2r0vRoobi0VvLX16V3dowNqmBgAYqxRRRRRRRXlHxZ0xzELqMfeGDXh9zYSiB5MfdrJSOYuG2sRn0rqLa0heFHxzjkGo7zSxcyRIny7mxW7a/D&#43;e3i&#43;1xtv2rmoRFJu2hGJHoK1NAsQt&#43;TcW5KP0LLXb6h4Sh1O0jSyjSOU98Uth8KOA17c/8BUVag0ePQdRNpDu2dVzXS2GnWT3QklgR3YfeYVvS2dvJbND5ahWGOBXJ6dZG0up7fH3Gyv0rqrB/3eyrdFFFFFFFYHi7TRqWhTRhdzKMivnyeEiWSArkg4IxXW&#43;FtC0&#43;4TbPbrn3FLqPge9n1Jhp1uDDVq3&#43;GOpRx/aJ5FXb823rXSaCoa3aFxnHynNdLpvh3S1j3fZIy/Ukim&#43;IdEhl0wm3hVXj5G0VV0oFYI3HUda6qGQPEGrmvE9qd8N4g5VsN9KtWZyIpB0rdHKisHUwLfU4pAPvjFW4ZNkw9DWoORmiiiiiiimugkjZGHBGDWDF4M0aGZp/sqs5OSWGaxtV0uKw1hJYQEjcYwK3tOIiKHs3FbLKGQqehFcZHZGz1yWIjCOdy10tjJh2jq7Ku&#43;Jl9RiuY09tkstuf4WIresH&#43;Vk9KfqFqt1ZvEe44rGsQy24ib7yHFbdpKHi56iqWsW32i28xfvpyKqwSF4Uz1HWtuFw8amn0UUUUUUUVg&#43;J7XfaJMP&#43;WbZpLNs20bfjW5E&#43;&#43;NWrI1eJRLFcj7ynFLBJskD&#43;tbAO5QfWsC9hFrqayAfLJ/OrltJ5c/8AvVp9RWGf3V/Kn41dsziU/wC1V5lDIQe4rEU7GkRf4WxV7T5MlkNX6KKKKKKKKhvIFuLSSNuQRWBp37qBoW&#43;8hwK27KT93j0qPVLfz7Jgn3hyKzrR91uoPUcVs2p/cCq2pxBrcP3Q5qojcK1a8TiSJWrL1ZCrxzRjocNSQybJA/rWupDKD61i3yeRqKv/AASDFT2/7uda1KKKKKKKKKKwLgeVqLJj73NW7OTy5sHo1aZAIIrD8vyLiVD3bK1espfnZDVqeHzYHT1FYdt8gaN/vJxWtYtiPaafdIHt3GO2ayYW85B7cVqWjfJtP8NN1C3862JX7w5FUocmMZ6mtO2k3x49KmoooooooorI1aLY8VyB0OG&#43;lIhBKkVrryo&#43;lZeofu7uN/4W4pYsLLv9K0wcgGsu4iEd9v8A7wqaP93Ir/hV4jcuPWsYJ5N68XY8rVu3lxJsq8wyhHtWHAdjyxP2bitK0PzEVbooooooooqC7iWe2dD3HFZMAcRKrfeU4Na1pICm09qh1GLzbYkD5l5FU7eRWjVj0PWtS3k3p9Kq6n8kaSj&#43;E1CreYob8a0oH3xA1R1DYkkc2Oc4pgIyCPvVpRnfGKy7&#43;PyrqOQDhuGp0Unlybs8Vpg5ANLRRRRRRRQRkVjf6u7lR/qtWrY4k/3qvFQVIrHj8tJZYcfdar1vIA23&#43;9U88QlhZPaseBHTKN/CcVoWcg&#43;ZKkvIfOtXXvjNZVu&#43;VU/xjite3kylRahHvtiR1XmqMO1wH/hNalt/q6loooooooorK1KMpLHMPo1OSTYQ1aSncoNZV7H5N6sg&#43;7JwafG&#43;JVrTHIrKuD5d4ydmGaW3GyRWrU6isZ4xDdyD15qzby7Zeehq8yh0I7EVkw/uZZISOn3au2svzbDVuiiiiiiiioL2PfasPTms2Nt6KfUYrStHzHtPaor&#43;DzoCf4l5FVofmUZ6itC3k3p9KqanDujWZfvIc1EjZAZfrWlFIHiyKzdTUpLHMOnRqYTsIIrWifdGDWbqP7qdZP73FRrJslRq11OVBpaKKKKKKKRgCpB71jRIYZ5Im/vZX6Vft5Rv2VaYZUj2rIhb5pEPG1sVZs5P3jJVyZPMhZfUVjRHYGT&#43;6cVd0&#43;TlkNWLqITWzL61kQhwhD9q07CUPFt7rTdTg860bb95eRWdG5ktww61q2s4NuuSM1ZoooooooorOv4wJkkH0qASbJUatdSGUGsfUIzFdLIOjcVLE4jdWrTzkViSxmG/bP3X5FTwP5V0o/vVqnkVjE7LqWE9&#43;VpLabyb1Ywc7q2SAQR61jG2nR3RUyhORQNNuscSAe1bVFFFFFFFFU9QQtbMV&#43;8vIrMjcvHuHU81rWZzAuTTdSUG2LYyV5rMZj5QYfdrWs5RPbq3eq&#43;pwGSNZE&#43;9Gc1nM8szKY42DVvQ7vJG/riq1zYpcSLJkqw9KWHT4YZPMAy3qat0UUUUUUUUUUUjKGUg96wzstZHR2xk/LVrTZGd3Ug7a0XXehX1GKyBpczZXzMIDWlaW4totgNTkA9qQKo6AClooooooooooooooorGvgDfpkDpWrAAIxgAVJRRRRRRRRRRX//Z"
+                     data-src="/images/tc74.jpg"
+                     data-srcset="/images/tc74.jpg 209w, /images/tc74_hu_799b0e52322f906a.jpg 41w, /images/tc74_hu_4014a24d89ea3250.jpg 69w, /images/tc74_hu_f143656fd9e256b5.jpg 104w, /images/tc74_hu_85261e15896df246.jpg 139w, /images/tc74_hu_221108048af36f59.jpg 209w"
+                     
+                     
+                     alt=""/>
+                
+            
+        </figure>
+
+
+            </div>
+              
+              
+              <div class="component-name">TC7&#x200B;4&#x200B;</div>
+              
+          </a>
+        </div>
+    
+</div>
+
+ESPHome has grown over time and become more friendly for vendors to create and pre-install ESPHome onto devices
+they sell / give away / provide. We are seeing more devices with ESPHome pre-installed, and we are so happy to
+see how accessible it is becoming for regular Home Assistant users (not just developers or tech-savvy people) to
+get their hands on a device that; A, works out of the box, B, works locally, and C can be fully customized by
+the person who bought it if they choose to do so.
+Because there are now more devices you can buy and do not have to install ESPHome onto yourself, we have made some
+updates to allow ignoring these discovered devices from the ESPHome Dashboard as for most of these devices, you
+don&rsquo;t actually need to <strong>take control</strong> and write and manage your own firmware for them.</p>
+<p>Further to this, we have slightly changed the identity of ESPHome as an add-on in Home Assistant. It is now called
+<strong>ESPHome Device Compiler</strong>, because that is what it does, and most people do not need it if they are not going to
+actually compile anything.</p>
+<h2  id="opentherm">
+    OpenTherm
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="opentherm" title="Copy link" src="/images/link.svg">
+</h2>
+<p>This release brings <a href="/components/opentherm/">OpenTherm</a> support to ESPHome. Please see the
+<a href="/components/opentherm/">documentation</a> for detailed information about it and how to use it.</p>
+<h2  id="esphome-armv7-docker-support">
+    ESPHome <code>armv7</code> Docker Support
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="esphome-armv7-docker-support" title="Copy link" src="/images/link.svg">
+</h2>
+<p>We will be retiring ESPHome&rsquo;s Docker support for <code>armv7</code> hardware in the February 2025 release.</p>
+<p>This is due to both waning support as it relates to tooling and performance reasons. We strongly recommend moving to a
+more modern architecture, especiallly if you&rsquo;re using the ESPHome Device Compiler to build/compile firmware for your
+devices.</p>
+<!-- markdownlint-disable MD013 -->
+<h2  id="release-2024111---november-22">
+    Release 2024.11.1 - November 22
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-2024111---november-22" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>[http_request] Fix within context with parameters. (Bugfix) <a href="https://github.com/esphome/esphome/pull/7790" target="_blank" rel="noopener noreferrer">esphome#7790</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[rtttl] Clamp gain between 0 and 1 <a href="https://github.com/esphome/esphome/pull/7793" target="_blank" rel="noopener noreferrer">esphome#7793</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[speaker] Add missing auto-load for <code>audio</code> <a href="https://github.com/esphome/esphome/pull/7794" target="_blank" rel="noopener noreferrer">esphome#7794</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[qspi_dbi] Fix garbled graphics on RM690B0 <a href="https://github.com/esphome/esphome/pull/7795" target="_blank" rel="noopener noreferrer">esphome#7795</a>
+ by <a href="https://github.com/manuelkasper" target="_blank" rel="noopener noreferrer">@manuelkasper</a>
+</li>
+<li>Check for min_version earlier in validation <a href="https://github.com/esphome/esphome/pull/7797" target="_blank" rel="noopener noreferrer">esphome#7797</a>
+ by <a href="https://github.com/spuder" target="_blank" rel="noopener noreferrer">@spuder</a>
+</li>
+<li>Fix for OTA mode not activating in safe_mode when OTA section has an on_xxxx action <a href="https://github.com/esphome/esphome/pull/7796" target="_blank" rel="noopener noreferrer">esphome#7796</a>
+ by <a href="https://github.com/Dilbert66" target="_blank" rel="noopener noreferrer">@Dilbert66</a>
+</li>
+<li>Ensure storage I/O for ignored devices runs in the executor <a href="https://github.com/esphome/esphome/pull/7792" target="_blank" rel="noopener noreferrer">esphome#7792</a>
+ by <a href="https://github.com/bdraco" target="_blank" rel="noopener noreferrer">@bdraco</a>
+</li>
+</ul>
+<h2  id="release-2024112---november-27">
+    Release 2024.11.2 - November 27
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-2024112---november-27" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>[lvgl] Bugfixes <a href="https://github.com/esphome/esphome/pull/7803" target="_blank" rel="noopener noreferrer">esphome#7803</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[docker] Leave run-time required libraries installed. <a href="https://github.com/esphome/esphome/pull/7804" target="_blank" rel="noopener noreferrer">esphome#7804</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[qspi_dbi] Fix init sequences (Bugfix) <a href="https://github.com/esphome/esphome/pull/7805" target="_blank" rel="noopener noreferrer">esphome#7805</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>fix modbus crashing when bad data returned <a href="https://github.com/esphome/esphome/pull/7810" target="_blank" rel="noopener noreferrer">esphome#7810</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>[Modbus Controller] Fix issue #6477. Online automation triggering Offline <a href="https://github.com/esphome/esphome/pull/7801" target="_blank" rel="noopener noreferrer">esphome#7801</a>
+ by <a href="https://github.com/0x3333" target="_blank" rel="noopener noreferrer">@0x3333</a>
+</li>
+<li>[fix] Status sensor does not check if required network component is missing <a href="https://github.com/esphome/esphome/pull/7734" target="_blank" rel="noopener noreferrer">esphome#7734</a>
+ by <a href="https://github.com/rvalitov" target="_blank" rel="noopener noreferrer">@rvalitov</a>
+</li>
+<li>keypad binary sensors should be initially off <a href="https://github.com/esphome/esphome/pull/7808" target="_blank" rel="noopener noreferrer">esphome#7808</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>fix 32 char SSIDs <a href="https://github.com/esphome/esphome/pull/7834" target="_blank" rel="noopener noreferrer">esphome#7834</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>[honeywell] use warning instead of failing <a href="https://github.com/esphome/esphome/pull/7862" target="_blank" rel="noopener noreferrer">esphome#7862</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+</ul>
+<h2  id="release-2024113---december-6">
+    Release 2024.11.3 - December 6
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="release-2024113---december-6" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li>[opentherm] Fix out of memory errors on ESP8266 <a href="https://github.com/esphome/esphome/pull/7835" target="_blank" rel="noopener noreferrer">esphome#7835</a>
+ by <a href="https://github.com/olegtarasov" target="_blank" rel="noopener noreferrer">@olegtarasov</a>
+</li>
+<li>fix local time timestamp calculation <a href="https://github.com/esphome/esphome/pull/7807" target="_blank" rel="noopener noreferrer">esphome#7807</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>[online_image]Don&rsquo;t access decoder if not initialized <a href="https://github.com/esphome/esphome/pull/7882" target="_blank" rel="noopener noreferrer">esphome#7882</a>
+ by <a href="https://github.com/guillempages" target="_blank" rel="noopener noreferrer">@guillempages</a>
+</li>
+<li>Add IRAM_ATTR to all functions used during interrupts on esp8266 chips. <a href="https://github.com/esphome/esphome/pull/7840" target="_blank" rel="noopener noreferrer">esphome#7840</a>
+ by <a href="https://github.com/FreeBear-nc" target="_blank" rel="noopener noreferrer">@FreeBear-nc</a>
+</li>
+<li>[st7920] Remove unnecessary warning when drawing outside display bounds <a href="https://github.com/esphome/esphome/pull/7868" target="_blank" rel="noopener noreferrer">esphome#7868</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Fix recalc_timestamp_utc <a href="https://github.com/esphome/esphome/pull/7894" target="_blank" rel="noopener noreferrer">esphome#7894</a>
+ by <a href="https://github.com/RouNNdeL" target="_blank" rel="noopener noreferrer">@RouNNdeL</a>
+</li>
+<li>Cast port to int for ota pushing <a href="https://github.com/esphome/esphome/pull/7888" target="_blank" rel="noopener noreferrer">esphome#7888</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[lvgl] Bugfixes <a href="https://github.com/esphome/esphome/pull/7896" target="_blank" rel="noopener noreferrer">esphome#7896</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[lvgl] Fix msgbox content <a href="https://github.com/esphome/esphome/pull/7912" target="_blank" rel="noopener noreferrer">esphome#7912</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[esp32] Fix crash with empty <code>platformio_options:</code> value <a href="https://github.com/esphome/esphome/pull/7920" target="_blank" rel="noopener noreferrer">esphome#7920</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+</ul>
+<h2  id="full-list-of-changes">
+    Full list of changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="full-list-of-changes" title="Copy link" src="/images/link.svg">
+</h2>
+<h3  id="new-features">
+    New Features
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="new-features" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Support ignoring discovered devices from the dashboard <a href="https://github.com/esphome/esphome/pull/7665" target="_blank" rel="noopener noreferrer">esphome#7665</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (new-feature)</li>
+<li>[media_player] Add new media player conditions <a href="https://github.com/esphome/esphome/pull/7667" target="_blank" rel="noopener noreferrer">esphome#7667</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+ (new-feature)</li>
+</ul>
+<h3  id="new-components">
+    New Components
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="new-components" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Add TC74 temperature sensor <a href="https://github.com/esphome/esphome/pull/7460" target="_blank" rel="noopener noreferrer">esphome#7460</a>
+ by <a href="https://github.com/sethgirvan" target="_blank" rel="noopener noreferrer">@sethgirvan</a>
+ (new-integration)</li>
+<li>Add support for Analog Devices MAX17043 battery fuel gauge <a href="https://github.com/esphome/esphome/pull/7522" target="_blank" rel="noopener noreferrer">esphome#7522</a>
+ by <a href="https://github.com/blacknell" target="_blank" rel="noopener noreferrer">@blacknell</a>
+ (new-integration)</li>
+<li>[speaker, i2s_audio] I2S Speaker implementation using a ring buffer <a href="https://github.com/esphome/esphome/pull/7605" target="_blank" rel="noopener noreferrer">esphome#7605</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+ (new-integration)</li>
+<li>[axs15231] Touchscreen driver <a href="https://github.com/esphome/esphome/pull/7592" target="_blank" rel="noopener noreferrer">esphome#7592</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (new-integration)</li>
+<li>i2c_device <a href="https://github.com/esphome/esphome/pull/7641" target="_blank" rel="noopener noreferrer">esphome#7641</a>
+ by <a href="https://github.com/gabest11" target="_blank" rel="noopener noreferrer">@gabest11</a>
+ (new-integration)</li>
+<li>[es8311] Add es8311 dac component <a href="https://github.com/esphome/esphome/pull/7693" target="_blank" rel="noopener noreferrer">esphome#7693</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+ (new-integration)</li>
+<li>Add OpenTherm component (part 3: rest of the sensors) <a href="https://github.com/esphome/esphome/pull/7676" target="_blank" rel="noopener noreferrer">esphome#7676</a>
+ by <a href="https://github.com/olegtarasov" target="_blank" rel="noopener noreferrer">@olegtarasov</a>
+ (new-integration)</li>
+</ul>
+<h3  id="new-platforms">
+    New Platforms
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="new-platforms" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>[qspi_dbi] Rename from qspi_amoled, add features <a href="https://github.com/esphome/esphome/pull/7594" target="_blank" rel="noopener noreferrer">esphome#7594</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change) (new-platform)</li>
+<li>Add OpenTherm component (part 2.1: sensor platform) <a href="https://github.com/esphome/esphome/pull/7529" target="_blank" rel="noopener noreferrer">esphome#7529</a>
+ by <a href="https://github.com/olegtarasov" target="_blank" rel="noopener noreferrer">@olegtarasov</a>
+ (new-platform)</li>
+</ul>
+<h3  id="breaking-changes">
+    Breaking Changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="breaking-changes" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>[qspi_dbi] Rename from qspi_amoled, add features <a href="https://github.com/esphome/esphome/pull/7594" target="_blank" rel="noopener noreferrer">esphome#7594</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change) (new-platform)</li>
+<li>[lvgl] light schema should require <code>widget:</code> not <code>led:</code> (Bugfix) <a href="https://github.com/esphome/esphome/pull/7649" target="_blank" rel="noopener noreferrer">esphome#7649</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>[http_request] Always return defined server response status <a href="https://github.com/esphome/esphome/pull/7689" target="_blank" rel="noopener noreferrer">esphome#7689</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>[touchscreen] Calibration fixes <a href="https://github.com/esphome/esphome/pull/7704" target="_blank" rel="noopener noreferrer">esphome#7704</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>[spi_device] rename mode to spi_mode <a href="https://github.com/esphome/esphome/pull/7724" target="_blank" rel="noopener noreferrer">esphome#7724</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>Update UNIT_VOLT_AMPS_REACTIVE = &ldquo;var&rdquo; (Currently &lsquo;VAR&rsquo;) <a href="https://github.com/esphome/esphome/pull/7643" target="_blank" rel="noopener noreferrer">esphome#7643</a>
+ by <a href="https://github.com/Roving-Ronin" target="_blank" rel="noopener noreferrer">@Roving-Ronin</a>
+ (breaking-change)</li>
+</ul>
+<h3  id="beta-changes">
+    Beta Changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="beta-changes" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Fix temperature and humidity for bme680 with bsec2 <a href="https://github.com/esphome/esphome/pull/7728" target="_blank" rel="noopener noreferrer">esphome#7728</a>
+ by <a href="https://github.com/luar123" target="_blank" rel="noopener noreferrer">@luar123</a>
+</li>
+<li>[i2s_audio] Bugfix: Adjust I2S speaker setup priority <a href="https://github.com/esphome/esphome/pull/7759" target="_blank" rel="noopener noreferrer">esphome#7759</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+</li>
+<li>Update UNIT_VOLT_AMPS_REACTIVE = &ldquo;var&rdquo; (Currently &lsquo;VAR&rsquo;) <a href="https://github.com/esphome/esphome/pull/7643" target="_blank" rel="noopener noreferrer">esphome#7643</a>
+ by <a href="https://github.com/Roving-Ronin" target="_blank" rel="noopener noreferrer">@Roving-Ronin</a>
+ (breaking-change)</li>
+<li>Fix reactive power unit of measurement from VAR to var <a href="https://github.com/esphome/esphome/pull/7757" target="_blank" rel="noopener noreferrer">esphome#7757</a>
+ by <a href="https://github.com/felipecrs" target="_blank" rel="noopener noreferrer">@felipecrs</a>
+</li>
+<li>Disable bluetooth proxy during update <a href="https://github.com/esphome/esphome/pull/7695" target="_blank" rel="noopener noreferrer">esphome#7695</a>
+ by <a href="https://github.com/jzucker2" target="_blank" rel="noopener noreferrer">@jzucker2</a>
+</li>
+<li>ld2420: fix typo in log message <a href="https://github.com/esphome/esphome/pull/7758" target="_blank" rel="noopener noreferrer">esphome#7758</a>
+ by <a href="https://github.com/bfabio" target="_blank" rel="noopener noreferrer">@bfabio</a>
+</li>
+<li>TuyaFan control should use oscillation_type <a href="https://github.com/esphome/esphome/pull/7776" target="_blank" rel="noopener noreferrer">esphome#7776</a>
+ by <a href="https://github.com/pethans" target="_blank" rel="noopener noreferrer">@pethans</a>
+</li>
+<li>Bump esphome-dashboard to 20241118.0 <a href="https://github.com/esphome/esphome/pull/7782" target="_blank" rel="noopener noreferrer">esphome#7782</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[http_request] Feed watchdog timeout around http request functions <a href="https://github.com/esphome/esphome/pull/7786" target="_blank" rel="noopener noreferrer">esphome#7786</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Bump esphome-dashboard to 20241120.0 <a href="https://github.com/esphome/esphome/pull/7787" target="_blank" rel="noopener noreferrer">esphome#7787</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+</ul>
+<h3  id="all-changes">
+    All changes
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="all-changes" title="Copy link" src="/images/link.svg">
+</h3>
+<ul>
+<li>Update <code>pillow</code> to 10.4.0 <a href="https://github.com/esphome/esphome/pull/7566" target="_blank" rel="noopener noreferrer">esphome#7566</a>
+ by <a href="https://github.com/hostcc" target="_blank" rel="noopener noreferrer">@hostcc</a>
+</li>
+<li>Bump actions/upload-artifact from 4.4.2 to 4.4.3 <a href="https://github.com/esphome/esphome/pull/7575" target="_blank" rel="noopener noreferrer">esphome#7575</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>[fix] ESP32-C6 Reset Reasons <a href="https://github.com/esphome/esphome/pull/7578" target="_blank" rel="noopener noreferrer">esphome#7578</a>
+ by <a href="https://github.com/rvalitov" target="_blank" rel="noopener noreferrer">@rvalitov</a>
+</li>
+<li>[light] Add <code>initial_state</code> configuration <a href="https://github.com/esphome/esphome/pull/7577" target="_blank" rel="noopener noreferrer">esphome#7577</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[CI] failures when installing using apt-get. <a href="https://github.com/esphome/esphome/pull/7593" target="_blank" rel="noopener noreferrer">esphome#7593</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[web_server] expose event compoent to REST <a href="https://github.com/esphome/esphome/pull/7587" target="_blank" rel="noopener noreferrer">esphome#7587</a>
+ by <a href="https://github.com/RFDarter" target="_blank" rel="noopener noreferrer">@RFDarter</a>
+</li>
+<li>Update test_build_components <a href="https://github.com/esphome/esphome/pull/7597" target="_blank" rel="noopener noreferrer">esphome#7597</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>[fix] ESP32-C6: internal temperature reporting <a href="https://github.com/esphome/esphome/pull/7579" target="_blank" rel="noopener noreferrer">esphome#7579</a>
+ by <a href="https://github.com/rvalitov" target="_blank" rel="noopener noreferrer">@rvalitov</a>
+</li>
+<li>[code-quality] statsd component <a href="https://github.com/esphome/esphome/pull/7603" target="_blank" rel="noopener noreferrer">esphome#7603</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>[automation] Implement all and any condition shortcuts <a href="https://github.com/esphome/esphome/pull/7565" target="_blank" rel="noopener noreferrer">esphome#7565</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>Add TC74 temperature sensor <a href="https://github.com/esphome/esphome/pull/7460" target="_blank" rel="noopener noreferrer">esphome#7460</a>
+ by <a href="https://github.com/sethgirvan" target="_blank" rel="noopener noreferrer">@sethgirvan</a>
+ (new-integration)</li>
+<li>[display] filled_ring and filled_gauge methods added <a href="https://github.com/esphome/esphome/pull/7420" target="_blank" rel="noopener noreferrer">esphome#7420</a>
+ by <a href="https://github.com/artemyevav" target="_blank" rel="noopener noreferrer">@artemyevav</a>
+</li>
+<li>[fix] deprecated functions warnings for logger component with ESP IDF version 5.3.0+ <a href="https://github.com/esphome/esphome/pull/7600" target="_blank" rel="noopener noreferrer">esphome#7600</a>
+ by <a href="https://github.com/rvalitov" target="_blank" rel="noopener noreferrer">@rvalitov</a>
+</li>
+<li>[lvgl] Implement better software rotation <a href="https://github.com/esphome/esphome/pull/7595" target="_blank" rel="noopener noreferrer">esphome#7595</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[qspi_dbi] Rename from qspi_amoled, add features <a href="https://github.com/esphome/esphome/pull/7594" target="_blank" rel="noopener noreferrer">esphome#7594</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change) (new-platform)</li>
+<li>Add support for Analog Devices MAX17043 battery fuel gauge <a href="https://github.com/esphome/esphome/pull/7522" target="_blank" rel="noopener noreferrer">esphome#7522</a>
+ by <a href="https://github.com/blacknell" target="_blank" rel="noopener noreferrer">@blacknell</a>
+ (new-integration)</li>
+<li>chore: bump pyyaml to 6.0.2 to support py3.13 build <a href="https://github.com/esphome/esphome/pull/7610" target="_blank" rel="noopener noreferrer">esphome#7610</a>
+ by <a href="https://github.com/chenrui333" target="_blank" rel="noopener noreferrer">@chenrui333</a>
+</li>
+<li>chore: bump platformio to 6.1.16 to support py3.13 build <a href="https://github.com/esphome/esphome/pull/7590" target="_blank" rel="noopener noreferrer">esphome#7590</a>
+ by <a href="https://github.com/chenrui333" target="_blank" rel="noopener noreferrer">@chenrui333</a>
+</li>
+<li>[speaker, i2s_audio] I2S Speaker implementation using a ring buffer <a href="https://github.com/esphome/esphome/pull/7605" target="_blank" rel="noopener noreferrer">esphome#7605</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+ (new-integration)</li>
+<li>Bump arduino-mlx90393 to 1.0.2 <a href="https://github.com/esphome/esphome/pull/7618" target="_blank" rel="noopener noreferrer">esphome#7618</a>
+ by <a href="https://github.com/functionpointer" target="_blank" rel="noopener noreferrer">@functionpointer</a>
+</li>
+<li>[fix] ESP32-C6 BLE compile error <a href="https://github.com/esphome/esphome/pull/7580" target="_blank" rel="noopener noreferrer">esphome#7580</a>
+ by <a href="https://github.com/rvalitov" target="_blank" rel="noopener noreferrer">@rvalitov</a>
+</li>
+<li>[axs15231] Touchscreen driver <a href="https://github.com/esphome/esphome/pull/7592" target="_blank" rel="noopener noreferrer">esphome#7592</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (new-integration)</li>
+<li>[lvgl] Roller and Dropdown enhancements; <a href="https://github.com/esphome/esphome/pull/7608" target="_blank" rel="noopener noreferrer">esphome#7608</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[code-quality] udp component <a href="https://github.com/esphome/esphome/pull/7602" target="_blank" rel="noopener noreferrer">esphome#7602</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>[lvgl] Revise code generation to allow early widget creation <a href="https://github.com/esphome/esphome/pull/7611" target="_blank" rel="noopener noreferrer">esphome#7611</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[lvgl] Allow esphome::Image in lambda to update image source directly <a href="https://github.com/esphome/esphome/pull/7624" target="_blank" rel="noopener noreferrer">esphome#7624</a>
+ by <a href="https://github.com/guillempages" target="_blank" rel="noopener noreferrer">@guillempages</a>
+</li>
+<li>Bump bme68x_bsec2 version to 1.8.2610 <a href="https://github.com/esphome/esphome/pull/7626" target="_blank" rel="noopener noreferrer">esphome#7626</a>
+ by <a href="https://github.com/shvmm" target="_blank" rel="noopener noreferrer">@shvmm</a>
+</li>
+<li>Update Pull request template <a href="https://github.com/esphome/esphome/pull/7620" target="_blank" rel="noopener noreferrer">esphome#7620</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[lvgl] Defer display rotation reset until setup(). (Bugfix) <a href="https://github.com/esphome/esphome/pull/7627" target="_blank" rel="noopener noreferrer">esphome#7627</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[lvgl] light schema should require <code>widget:</code> not <code>led:</code> (Bugfix) <a href="https://github.com/esphome/esphome/pull/7649" target="_blank" rel="noopener noreferrer">esphome#7649</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>[image] Fix compile time problem with host image not using lvgl <a href="https://github.com/esphome/esphome/pull/7654" target="_blank" rel="noopener noreferrer">esphome#7654</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[lvgl] Fix rotation code for 90deg (Bugfix) <a href="https://github.com/esphome/esphome/pull/7653" target="_blank" rel="noopener noreferrer">esphome#7653</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[lvgl] Allow strings to be interpreted as integers (Bugfix) <a href="https://github.com/esphome/esphome/pull/7652" target="_blank" rel="noopener noreferrer">esphome#7652</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[rtttl] Add <code>get_gain()</code> <a href="https://github.com/esphome/esphome/pull/7647" target="_blank" rel="noopener noreferrer">esphome#7647</a>
+ by <a href="https://github.com/edwardtfn" target="_blank" rel="noopener noreferrer">@edwardtfn</a>
+</li>
+<li>feat(MQTT): Add subscribe QoS to discovery <a href="https://github.com/esphome/esphome/pull/7648" target="_blank" rel="noopener noreferrer">esphome#7648</a>
+ by <a href="https://github.com/Rapsssito" target="_blank" rel="noopener noreferrer">@Rapsssito</a>
+</li>
+<li>i2c_device <a href="https://github.com/esphome/esphome/pull/7641" target="_blank" rel="noopener noreferrer">esphome#7641</a>
+ by <a href="https://github.com/gabest11" target="_blank" rel="noopener noreferrer">@gabest11</a>
+ (new-integration)</li>
+<li>Bump actions/cache from 4.1.1 to 4.1.2 in /.github/actions/restore-python <a href="https://github.com/esphome/esphome/pull/7659" target="_blank" rel="noopener noreferrer">esphome#7659</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Bump actions/cache from 4.1.1 to 4.1.2 <a href="https://github.com/esphome/esphome/pull/7660" target="_blank" rel="noopener noreferrer">esphome#7660</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>[speaker, i2s_audio] Support audio_dac component, mute actions, and improved logging <a href="https://github.com/esphome/esphome/pull/7664" target="_blank" rel="noopener noreferrer">esphome#7664</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+</li>
+<li>unified way how all platforms handle copy_files <a href="https://github.com/esphome/esphome/pull/7614" target="_blank" rel="noopener noreferrer">esphome#7614</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>updating ESP32 board definitions <a href="https://github.com/esphome/esphome/pull/7650" target="_blank" rel="noopener noreferrer">esphome#7650</a>
+ by <a href="https://github.com/asolochek" target="_blank" rel="noopener noreferrer">@asolochek</a>
+</li>
+<li>Support ignoring discovered devices from the dashboard <a href="https://github.com/esphome/esphome/pull/7665" target="_blank" rel="noopener noreferrer">esphome#7665</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+ (new-feature)</li>
+<li>Bump esphome-dashboard to 20241025.0 <a href="https://github.com/esphome/esphome/pull/7669" target="_blank" rel="noopener noreferrer">esphome#7669</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>unified way how all platforms handle get_download_types <a href="https://github.com/esphome/esphome/pull/7617" target="_blank" rel="noopener noreferrer">esphome#7617</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>[media_player] Add new media player conditions <a href="https://github.com/esphome/esphome/pull/7667" target="_blank" rel="noopener noreferrer">esphome#7667</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+ (new-feature)</li>
+<li>[code-quality] weikai.h <a href="https://github.com/esphome/esphome/pull/7601" target="_blank" rel="noopener noreferrer">esphome#7601</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>Bump actions/setup-python from 5.2.0 to 5.3.0 in /.github/actions/restore-python <a href="https://github.com/esphome/esphome/pull/7671" target="_blank" rel="noopener noreferrer">esphome#7671</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>Bump actions/setup-python from 5.2.0 to 5.3.0 <a href="https://github.com/esphome/esphome/pull/7670" target="_blank" rel="noopener noreferrer">esphome#7670</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>[image][online_image][animation] Fix transparency in RGB565 <a href="https://github.com/esphome/esphome/pull/7631" target="_blank" rel="noopener noreferrer">esphome#7631</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>Add OpenTherm component (part 2.1: sensor platform) <a href="https://github.com/esphome/esphome/pull/7529" target="_blank" rel="noopener noreferrer">esphome#7529</a>
+ by <a href="https://github.com/olegtarasov" target="_blank" rel="noopener noreferrer">@olegtarasov</a>
+ (new-platform)</li>
+<li>gp8403 : Add the possibility to use substitution for channel selection <a href="https://github.com/esphome/esphome/pull/7681" target="_blank" rel="noopener noreferrer">esphome#7681</a>
+ by <a href="https://github.com/SeByDocKy" target="_blank" rel="noopener noreferrer">@SeByDocKy</a>
+</li>
+<li>[lvgl] Implement qrcode <a href="https://github.com/esphome/esphome/pull/7623" target="_blank" rel="noopener noreferrer">esphome#7623</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[bytebuffer] Rework ByteBuffer using templates <a href="https://github.com/esphome/esphome/pull/7638" target="_blank" rel="noopener noreferrer">esphome#7638</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[http_request] Always return defined server response status <a href="https://github.com/esphome/esphome/pull/7689" target="_blank" rel="noopener noreferrer">esphome#7689</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>[font] Fix failure with bitmap fonts <a href="https://github.com/esphome/esphome/pull/7691" target="_blank" rel="noopener noreferrer">esphome#7691</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[http_request] Add enum for status codes <a href="https://github.com/esphome/esphome/pull/7690" target="_blank" rel="noopener noreferrer">esphome#7690</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>Support W5500 SPI-Ethernet polling mode if framework is supported <a href="https://github.com/esphome/esphome/pull/7503" target="_blank" rel="noopener noreferrer">esphome#7503</a>
+ by <a href="https://github.com/slakichi" target="_blank" rel="noopener noreferrer">@slakichi</a>
+</li>
+<li>Add asdf to gitignore (and dockerignore) <a href="https://github.com/esphome/esphome/pull/7686" target="_blank" rel="noopener noreferrer">esphome#7686</a>
+ by <a href="https://github.com/jzucker2" target="_blank" rel="noopener noreferrer">@jzucker2</a>
+</li>
+<li>Add more prometheus metrics <a href="https://github.com/esphome/esphome/pull/7683" target="_blank" rel="noopener noreferrer">esphome#7683</a>
+ by <a href="https://github.com/jzucker2" target="_blank" rel="noopener noreferrer">@jzucker2</a>
+</li>
+<li>Mopeka Pro Check improvement to allow user to configure the sensor reporting for lower quality readings <a href="https://github.com/esphome/esphome/pull/7475" target="_blank" rel="noopener noreferrer">esphome#7475</a>
+ by <a href="https://github.com/spbrogan" target="_blank" rel="noopener noreferrer">@spbrogan</a>
+</li>
+<li>fix(WiFi): Fix strncpy missing NULL terminator [-Werror=stringop-truncation] <a href="https://github.com/esphome/esphome/pull/7668" target="_blank" rel="noopener noreferrer">esphome#7668</a>
+ by <a href="https://github.com/Rapsssito" target="_blank" rel="noopener noreferrer">@Rapsssito</a>
+</li>
+<li>let make new platform implementation in external components <a href="https://github.com/esphome/esphome/pull/7615" target="_blank" rel="noopener noreferrer">esphome#7615</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>remove use of delay <a href="https://github.com/esphome/esphome/pull/7680" target="_blank" rel="noopener noreferrer">esphome#7680</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>fix build error <a href="https://github.com/esphome/esphome/pull/7694" target="_blank" rel="noopener noreferrer">esphome#7694</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>fix: [climate] Allow substitutions in <code>visual.temperature_step.{target_temperature,current_temperature}</code> <a href="https://github.com/esphome/esphome/pull/7679" target="_blank" rel="noopener noreferrer">esphome#7679</a>
+ by <a href="https://github.com/hostcc" target="_blank" rel="noopener noreferrer">@hostcc</a>
+</li>
+<li>Add in area and device to the prometheus labels <a href="https://github.com/esphome/esphome/pull/7692" target="_blank" rel="noopener noreferrer">esphome#7692</a>
+ by <a href="https://github.com/jzucker2" target="_blank" rel="noopener noreferrer">@jzucker2</a>
+</li>
+<li>[http_request] Implement <code>on_error</code> trigger for requests <a href="https://github.com/esphome/esphome/pull/7696" target="_blank" rel="noopener noreferrer">esphome#7696</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>Bump pypa/gh-action-pypi-publish from 1.10.3 to 1.11.0 <a href="https://github.com/esphome/esphome/pull/7700" target="_blank" rel="noopener noreferrer">esphome#7700</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>[es8311] Add es8311 dac component <a href="https://github.com/esphome/esphome/pull/7693" target="_blank" rel="noopener noreferrer">esphome#7693</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+ (new-integration)</li>
+<li>[sdl] Allow window to be resized. <a href="https://github.com/esphome/esphome/pull/7698" target="_blank" rel="noopener noreferrer">esphome#7698</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>Add config for current temperature precision <a href="https://github.com/esphome/esphome/pull/7699" target="_blank" rel="noopener noreferrer">esphome#7699</a>
+ by <a href="https://github.com/JasonN3" target="_blank" rel="noopener noreferrer">@JasonN3</a>
+</li>
+<li>[spi] Add mosi pin checks for displays <a href="https://github.com/esphome/esphome/pull/7702" target="_blank" rel="noopener noreferrer">esphome#7702</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[CI] Fix webserver defines to be present based on platform, not just framework <a href="https://github.com/esphome/esphome/pull/7703" target="_blank" rel="noopener noreferrer">esphome#7703</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[touchscreen] Calibration fixes <a href="https://github.com/esphome/esphome/pull/7704" target="_blank" rel="noopener noreferrer">esphome#7704</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>[font] Add support for &ldquo;glyphsets&rdquo; <a href="https://github.com/esphome/esphome/pull/7429" target="_blank" rel="noopener noreferrer">esphome#7429</a>
+ by <a href="https://github.com/paravoid" target="_blank" rel="noopener noreferrer">@paravoid</a>
+</li>
+<li>[lvlg] fix tests <a href="https://github.com/esphome/esphome/pull/7708" target="_blank" rel="noopener noreferrer">esphome#7708</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[esp32_ble] Add disconnect as a virtual function to <code>ESPBTClient</code> <a href="https://github.com/esphome/esphome/pull/7705" target="_blank" rel="noopener noreferrer">esphome#7705</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>handle bad pin schemas <a href="https://github.com/esphome/esphome/pull/7711" target="_blank" rel="noopener noreferrer">esphome#7711</a>
+ by <a href="https://github.com/ssieb" target="_blank" rel="noopener noreferrer">@ssieb</a>
+</li>
+<li>datetime fix build_language_schema <a href="https://github.com/esphome/esphome/pull/7710" target="_blank" rel="noopener noreferrer">esphome#7710</a>
+ by <a href="https://github.com/tomaszduda23" target="_blank" rel="noopener noreferrer">@tomaszduda23</a>
+</li>
+<li>[lvgl] Don&rsquo;t just throw key error if someone types a bad layout type <a href="https://github.com/esphome/esphome/pull/7722" target="_blank" rel="noopener noreferrer">esphome#7722</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[spi_device] rename mode to spi_mode <a href="https://github.com/esphome/esphome/pull/7724" target="_blank" rel="noopener noreferrer">esphome#7724</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+ (breaking-change)</li>
+<li>feat(MQTT): Add <code>enable</code>, <code>disable</code> and <code>enable_on_boot</code> <a href="https://github.com/esphome/esphome/pull/7716" target="_blank" rel="noopener noreferrer">esphome#7716</a>
+ by <a href="https://github.com/Rapsssito" target="_blank" rel="noopener noreferrer">@Rapsssito</a>
+</li>
+<li>[lvgl] Allow multiple LVGL instances <a href="https://github.com/esphome/esphome/pull/7712" target="_blank" rel="noopener noreferrer">esphome#7712</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[fix] deprecated legacy driver tsens <a href="https://github.com/esphome/esphome/pull/7658" target="_blank" rel="noopener noreferrer">esphome#7658</a>
+ by <a href="https://github.com/rvalitov" target="_blank" rel="noopener noreferrer">@rvalitov</a>
+</li>
+<li>[lvgl] Fix id config for the lvgl component (Bugfix) <a href="https://github.com/esphome/esphome/pull/7731" target="_blank" rel="noopener noreferrer">esphome#7731</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>Bump pypa/gh-action-pypi-publish from 1.11.0 to 1.12.2 <a href="https://github.com/esphome/esphome/pull/7730" target="_blank" rel="noopener noreferrer">esphome#7730</a>
+ by <a href="https://github.com/dependabot[bot]" target="_blank" rel="noopener noreferrer">@dependabot[bot]</a>
+</li>
+<li>OTA: Fix IPv6 and multiple address support <a href="https://github.com/esphome/esphome/pull/7414" target="_blank" rel="noopener noreferrer">esphome#7414</a>
+ by <a href="https://github.com/dwmw2" target="_blank" rel="noopener noreferrer">@dwmw2</a>
+</li>
+<li>Fix dashboard ip resolving <a href="https://github.com/esphome/esphome/pull/7747" target="_blank" rel="noopener noreferrer">esphome#7747</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[docker] Bump curl, iputils-ping and libssl-dev <a href="https://github.com/esphome/esphome/pull/7748" target="_blank" rel="noopener noreferrer">esphome#7748</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Remove the choice for MQTT logging if it is disabled <a href="https://github.com/esphome/esphome/pull/7723" target="_blank" rel="noopener noreferrer">esphome#7723</a>
+ by <a href="https://github.com/solarkennedy" target="_blank" rel="noopener noreferrer">@solarkennedy</a>
+</li>
+<li>[sensor] Make some values templatable <a href="https://github.com/esphome/esphome/pull/7735" target="_blank" rel="noopener noreferrer">esphome#7735</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[lvgl] Implement keypads <a href="https://github.com/esphome/esphome/pull/7719" target="_blank" rel="noopener noreferrer">esphome#7719</a>
+ by <a href="https://github.com/clydebarrow" target="_blank" rel="noopener noreferrer">@clydebarrow</a>
+</li>
+<li>[midea] Add temperature validation in do_follow_me method (bugfix) <a href="https://github.com/esphome/esphome/pull/7736" target="_blank" rel="noopener noreferrer">esphome#7736</a>
+ by <a href="https://github.com/DjordjeMandic" target="_blank" rel="noopener noreferrer">@DjordjeMandic</a>
+</li>
+<li>Add OpenTherm component (part 3: rest of the sensors) <a href="https://github.com/esphome/esphome/pull/7676" target="_blank" rel="noopener noreferrer">esphome#7676</a>
+ by <a href="https://github.com/olegtarasov" target="_blank" rel="noopener noreferrer">@olegtarasov</a>
+ (new-integration)</li>
+<li>[i2s_audio] I2S speaker improvements <a href="https://github.com/esphome/esphome/pull/7749" target="_blank" rel="noopener noreferrer">esphome#7749</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+</li>
+<li>[opentherm] Message to string extend <a href="https://github.com/esphome/esphome/pull/7755" target="_blank" rel="noopener noreferrer">esphome#7755</a>
+ by <a href="https://github.com/FreeBear-nc" target="_blank" rel="noopener noreferrer">@FreeBear-nc</a>
+</li>
+<li>[sun] Implements <code>is_above_horizon()</code> <a href="https://github.com/esphome/esphome/pull/7754" target="_blank" rel="noopener noreferrer">esphome#7754</a>
+ by <a href="https://github.com/edwardtfn" target="_blank" rel="noopener noreferrer">@edwardtfn</a>
+</li>
+<li>[core] Ring buffer write functions use const pointer parameter <a href="https://github.com/esphome/esphome/pull/7750" target="_blank" rel="noopener noreferrer">esphome#7750</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+</li>
+<li>[Modbus Controller] Added <code>on_online</code> and <code>on_offline</code> automation <a href="https://github.com/esphome/esphome/pull/7417" target="_blank" rel="noopener noreferrer">esphome#7417</a>
+ by <a href="https://github.com/0x3333" target="_blank" rel="noopener noreferrer">@0x3333</a>
+</li>
+<li>Updated dfplayer logging to be more user-friendly <a href="https://github.com/esphome/esphome/pull/7740" target="_blank" rel="noopener noreferrer">esphome#7740</a>
+ by <a href="https://github.com/solarkennedy" target="_blank" rel="noopener noreferrer">@solarkennedy</a>
+</li>
+<li>Fix temperature and humidity for bme680 with bsec2 <a href="https://github.com/esphome/esphome/pull/7728" target="_blank" rel="noopener noreferrer">esphome#7728</a>
+ by <a href="https://github.com/luar123" target="_blank" rel="noopener noreferrer">@luar123</a>
+</li>
+<li>[i2s_audio] Bugfix: Adjust I2S speaker setup priority <a href="https://github.com/esphome/esphome/pull/7759" target="_blank" rel="noopener noreferrer">esphome#7759</a>
+ by <a href="https://github.com/kahrendt" target="_blank" rel="noopener noreferrer">@kahrendt</a>
+</li>
+<li>Update UNIT_VOLT_AMPS_REACTIVE = &ldquo;var&rdquo; (Currently &lsquo;VAR&rsquo;) <a href="https://github.com/esphome/esphome/pull/7643" target="_blank" rel="noopener noreferrer">esphome#7643</a>
+ by <a href="https://github.com/Roving-Ronin" target="_blank" rel="noopener noreferrer">@Roving-Ronin</a>
+ (breaking-change)</li>
+<li>Fix reactive power unit of measurement from VAR to var <a href="https://github.com/esphome/esphome/pull/7757" target="_blank" rel="noopener noreferrer">esphome#7757</a>
+ by <a href="https://github.com/felipecrs" target="_blank" rel="noopener noreferrer">@felipecrs</a>
+</li>
+<li>Disable bluetooth proxy during update <a href="https://github.com/esphome/esphome/pull/7695" target="_blank" rel="noopener noreferrer">esphome#7695</a>
+ by <a href="https://github.com/jzucker2" target="_blank" rel="noopener noreferrer">@jzucker2</a>
+</li>
+<li>ld2420: fix typo in log message <a href="https://github.com/esphome/esphome/pull/7758" target="_blank" rel="noopener noreferrer">esphome#7758</a>
+ by <a href="https://github.com/bfabio" target="_blank" rel="noopener noreferrer">@bfabio</a>
+</li>
+<li>TuyaFan control should use oscillation_type <a href="https://github.com/esphome/esphome/pull/7776" target="_blank" rel="noopener noreferrer">esphome#7776</a>
+ by <a href="https://github.com/pethans" target="_blank" rel="noopener noreferrer">@pethans</a>
+</li>
+<li>Bump esphome-dashboard to 20241118.0 <a href="https://github.com/esphome/esphome/pull/7782" target="_blank" rel="noopener noreferrer">esphome#7782</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>[http_request] Feed watchdog timeout around http request functions <a href="https://github.com/esphome/esphome/pull/7786" target="_blank" rel="noopener noreferrer">esphome#7786</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+<li>Bump esphome-dashboard to 20241120.0 <a href="https://github.com/esphome/esphome/pull/7787" target="_blank" rel="noopener noreferrer">esphome#7787</a>
+ by <a href="https://github.com/jesserockz" target="_blank" rel="noopener noreferrer">@jesserockz</a>
+</li>
+</ul>
+<!-- markdownlint-enable MD013 -->
+<h2  id="past-changelogs">
+    Past Changelogs
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="past-changelogs" title="Copy link" src="/images/link.svg">
+</h2>
+<ul>
+<li><a href="/changelog/2024.10.0/">ESPHome 2024.10.0 - 16th October 2024</a></li>
+<li><a href="/changelog/2024.9.0/">ESPHome 2024.9.0 - 18th September 2024</a></li>
+<li><a href="/changelog/2024.8.0/">ESPHome 2024.8.0 - 21st August 2024</a></li>
+<li><a href="/changelog/2024.7.0/">ESPHome 2024.7.0 - 17th July 2024</a></li>
+<li><a href="/changelog/2024.6.0/">ESPHome 2024.6.0 - 19th June 2024</a></li>
+<li><a href="/changelog/2024.5.0/">ESPHome 2024.5.0 - 15th May 2024</a></li>
+<li><a href="/changelog/2024.4.0/">ESPHome 2024.4.0 - 17th April 2024</a></li>
+<li><a href="/changelog/2024.3.0/">ESPHome 2024.3.0 - 20th March 2024</a></li>
+<li><a href="/changelog/2024.2.0/">ESPHome 2024.2.0 - 21st February 2024</a></li>
+<li><a href="/changelog/2023.12.0/">ESPHome 2023.12.0 - 20th December 2023</a></li>
+<li><a href="/changelog/2023.11.0/">ESPHome 2023.11.0 - 15th November 2023</a></li>
+<li><a href="/changelog/2023.10.0/">ESPHome 2023.10.0 - 18th October 2023</a></li>
+<li><a href="/changelog/2023.9.0/">ESPHome 2023.9.0 - 27th September 2023</a></li>
+<li><a href="/changelog/2023.8.0/">ESPHome 2023.8.0 - 16th August 2023</a></li>
+<li><a href="/changelog/2023.7.0/">ESPHome 2023.7.0 - 19th July 2023</a></li>
+<li><a href="/changelog/2023.6.0/">ESPHome 2023.6.0 - 21st June 2023</a></li>
+<li><a href="/changelog/2023.5.0/">ESPHome 2023.5.0 - 17th May 2023</a></li>
+<li><a href="/changelog/2023.4.0/">ESPHome 2023.4.0 - 19th April 2023</a></li>
+<li><a href="/changelog/2023.3.0/">ESPHome 2023.3.0 - 15th March 2023</a></li>
+<li><a href="/changelog/2023.2.0/">ESPHome 2023.2.0 - 15th February 2023</a></li>
+<li><a href="/changelog/2022.12.0/">ESPHome 2022.12.0 - 14th December 2022</a></li>
+<li><a href="/changelog/2022.11.0/">ESPHome 2022.11.0 - 16th November 2022</a></li>
+<li><a href="/changelog/2022.10.0/">ESPHome 2022.10.0 - 19th October 2022</a></li>
+<li><a href="/changelog/2022.9.0/">ESPHome 2022.9.0 - 21st September 2022</a></li>
+<li><a href="/changelog/2022.8.0/">ESPHome 2022.8.0 - 17th August 2022</a></li>
+<li><a href="/changelog/2022.6.0/">ESPHome 2022.6.0 - 15th June 2022</a></li>
+<li><a href="/changelog/2022.5.0/">ESPHome 2022.5.0 - 18th May 2022</a></li>
+<li><a href="/changelog/2022.4.0/">ESPHome 2022.4.0 - 20th April 2022</a></li>
+<li><a href="/changelog/2022.3.0/">ESPHome 2022.3.0 - 16th March 2022</a></li>
+<li><a href="/changelog/2022.2.0/">ESPHome 2022.2.0 - 16th February 2022</a></li>
+<li><a href="/changelog/2022.1.0/">ESPHome 2022.1.0 - 19th January 2022</a></li>
+<li><a href="/changelog/2021.12.0/">ESPHome 2021.12.0 - 11th December 2021</a></li>
+<li><a href="/changelog/2021.11.0/">ESPHome 2021.11.0 - 17th November 2021</a></li>
+<li><a href="/changelog/2021.10.0/">ESPHome 2021.10.0 - 20th October 2021</a></li>
+<li><a href="/changelog/2021.9.0/">ESPHome 2021.9.0 - 15th September 2021</a></li>
+<li><a href="/changelog/2021.8.0/">ESPHome 2021.8.0 - 18th August 2021</a></li>
+<li><a href="/changelog/v1.20.0/">Changelog - Version 1.20.0 - 21st July 2021</a></li>
+<li><a href="/changelog/v1.19.0/">Changelog - Version 1.19.0 - 16th June 2021</a></li>
+<li><a href="/changelog/v1.18.0/">Changelog - Version 1.18.0 - 19th May 2021</a></li>
+<li><a href="/changelog/v1.17.0/">Changelog - Version 1.17.0 - 4th May 2021</a></li>
+<li><a href="/changelog/v1.16.0/">Changelog - Version 1.16.0 - February 3, 2021</a></li>
+<li><a href="/changelog/v1.15.0/">Changelog - Version 1.15.0 - September 13, 2020</a></li>
+<li><a href="/changelog/v1.14.0/">Changelog - Version 1.14.0 - November 1</a></li>
+<li><a href="/changelog/v1.13.0/">Changelog - Version 1.13.0 - May 30th 2019</a></li>
+<li><a href="/changelog/v1.12.0/">Changelog - Version 1.12.0</a></li>
+<li><a href="/changelog/v1.11.0/">Changelog - Version 1.11.0</a></li>
+<li><a href="/changelog/v1.10.0/">Changelog - Version 1.10.0</a></li>
+<li><a href="/changelog/v1.9.0/">Changelog - Version 1.9.0</a></li>
+<li><a href="/changelog/v1.8.0/">Version 1.8.0</a></li>
+<li><a href="/changelog/v1.7.0/">Version 1.7.0</a></li>
+</ul>
+
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar sidebar-mobile">
+        
+
+<div class="sidebar-content scroll-trap">
+    <h3>ESPHome 2024.11.0 - 20th November 2024</h3>
+    <nav class="sidebar-nav">
+        
+            
+                <button class="toc-sort-button" aria-label="Toggle sort order" title="Toggle sort order">
+                    <svg class="toc-alphabetic dark-invert" width="20px" height="20px" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg"
+                         xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
+                         role="button"
+                         aria-label="Change sort order to alphabetic"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                            <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"></path>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"></path>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.28546,0,0,1.24993,-175.898,-69.8762)">
+                            <text x="494.942px" y="325.959px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                A
+                            </text>
+                            <g transform="matrix(255.79,0,0,255.79,686.785,581.748)">
+                            </g>
+                            <text x="502.061px" y="581.748px"
+                                  style="font-family:'Arial-Black', 'Arial Black', sans-serif;font-weight:900;font-size:255.79px;">
+                                Z
+                            </text>
+                        </g>
+                    </svg>
+                    <svg class="toc-linear dark-invert" width="20px" height="20px" viewBox="0 0 800 800"
+                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                         role="button"
+                         aria-label="Change sort order to as-written"
+                         xml:space="preserve"
+                         style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;">
+                        <g transform="matrix(1,0,0,0.914735,-4.13954,30.1809)">
+                            <g transform="matrix(1,-0,-0,1.09321,4.13954,-32.9941)">
+                                <path d="M356.605,447.266L199.105,657.266L41.605,447.266L356.605,447.266Z"/>
+                                <path d="M199.105,142.734L199.105,489.266" style="fill:none;stroke:black;stroke-width:70px;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-138.931)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,-33.5681)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,71.7947)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,177.158)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,282.52)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                        <g transform="matrix(1.05978,0,0,1.31704,-29.6607,387.883)">
+                            <path d="M462.101,199.062L704.231,199.062" style="fill:none;stroke:black;stroke-width:29.28px;stroke-linecap:round;"/>
+                        </g>
+                    </svg>
+                </button>
+                
+                <ul class="toc-alphabetic">
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#esphome-armv7-docker-support">ESPHome <code>armv7</code> Docker Support</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                                
+                                    
+<ul><li><a class="toc-secondary" href="#new-features">New Features</a></li><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#new-platforms">New Platforms</a></li><li><a class="toc-secondary" href="#breaking-changes">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                                
+                            </li>
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#opentherm">OpenTherm</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-2024111---november-22">Release 2024.11.1 - November 22</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-2024112---november-27">Release 2024.11.2 - November 27</a>
+                                
+                            </li>
+                        
+                    
+                        
+                            <li><a class="toc-entry" href="#release-2024113---december-6">Release 2024.11.3 - December 6</a>
+                                
+                            </li>
+                        
+                    
+                </ul>
+                <ul class="toc-linear">
+                    
+                    
+                        
+                        
+                    
+
+                    
+                        <li><a class="toc-entry" href="#opentherm">OpenTherm</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#esphome-armv7-docker-support">ESPHome <code>armv7</code> Docker Support</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-2024111---november-22">Release 2024.11.1 - November 22</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-2024112---november-27">Release 2024.11.2 - November 27</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#release-2024113---december-6">Release 2024.11.3 - December 6</a>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#full-list-of-changes">Full list of changes</a>
+                            
+                                
+<ul><li><a class="toc-secondary" href="#new-features">New Features</a></li><li><a class="toc-secondary" href="#new-components">New Components</a></li><li><a class="toc-secondary" href="#new-platforms">New Platforms</a></li><li><a class="toc-secondary" href="#breaking-changes">Breaking Changes</a></li><li><a class="toc-secondary" href="#beta-changes">Beta Changes</a></li><li><a class="toc-secondary" href="#all-changes">All changes</a></li>
+</ul>
+                            
+                        </li>
+                    
+                        <li><a class="toc-entry" href="#past-changelogs">Past Changelogs</a>
+                            
+                        </li>
+                    
+                </ul>
+            
+        
+        
+    </nav>
+
+    <div class="sidebar-resource">
+        <hr>
+        
+        
+            
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/changelog/2024.11.0.md" class="ghedit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
+                Edit this page on GitHub
+            </a>
+        
+    </div>
+</div>
+
+    </div>
+</div>
+
+        
+            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+        
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <a class="footer-logo" href="https://www.openhomefoundation.org/">
+                    <span>ESPHome is a project from the</span>
+                    <img src="/images/icons/ohf-logo-on-dark.svg" alt="ESPHome Logo" width="220px"
+                         height="49px">
+                </a>
+                
+            </div>
+            <div class="footer-links">
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Documentation</div>
+                        <ul>
+                            
+                                <li><a href="/automations/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none" role="none">
+  <path d="M224 96c0-17.7 14.3-32 32-32s32 14.3 32 32V128c0 17.7-14.3 32-32 32s-32-14.3-32-32V96zM76.7 172.7c12.5-12.5 32.8-12.5 45.3 0l22.6 22.6c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-22.6-22.6c-12.5-12.5-12.5-32.8 0-45.3zM416 192c0-17.7 14.3-32 32-32h32c17.7 0 32 14.3 32 32s-14.3 32-32 32H448c-17.7 0-32-14.3-32-32zM76.7 339.3c-12.5-12.5-12.5-32.8 0-45.3l22.6-22.6c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-22.6 22.6c-12.5 12.5-32.8 12.5-45.3 0zM288 384c0-17.7-14.3-32-32-32s-32 14.3-32 32V416c0 17.7 14.3 32 32 32s32-14.3 32-32V384zM288 224H224V288h64V224zM505 19L493 7c-9.4-9.4-24.6-9.4-33.9 0L241 225l78.1 78.1L505 53c9.4-9.4 9.4-24.6 0-34z"/>
+</svg>
+
+                                    Automations
+                                </a></li>
+                            
+                                <li><a href="/components/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M519.442 288.651c-41.519 0-59.5 31.593-82.058 31.593C377.409 320.244 432 144 432 144s-196.288 80-196.288-3.297c0-35.827 36.288-46.25 36.288-85.985C272 19.216 243.885 0 210.539 0c-34.654 0-66.366 18.891-66.366 56.346 0 41.364 31.711 59.277 31.711 81.75C175.885 207.719 0 166.758 0 166.758v333.237s178.635 41.047 178.635-28.662c0-22.473-40-40.107-40-81.471 0-37.456 29.25-56.346 63.577-56.346 33.673 0 61.788 19.216 61.788 54.717 0 39.735-36.288 50.158-36.288 85.985 0 60.803 129.675 25.73 181.23 25.73 0 0-34.725-120.101 25.827-120.101 35.962 0 46.423 36.152 86.308 36.152C556.712 416 576 387.99 576 354.443c0-34.199-18.962-65.792-56.558-65.792z"/>
+</svg>
+
+                                    Components
+                                </a></li>
+                            
+                                <li><a href="/cookbook/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M240 144A96 96 0 1 0 48 144a96 96 0 1 0 192 0zm44.4 32C269.9 240.1 212.5 288 144 288C64.5 288 0 223.5 0 144S64.5 0 144 0c68.5 0 125.9 47.9 140.4 112l71.8 0c8.8-9.8 21.6-16 35.8-16l104 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-104 0c-14.2 0-27-6.2-35.8-16l-71.8 0zM144 80a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM400 240c13.3 0 24 10.7 24 24l0 8 96 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-240 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l96 0 0-8c0-13.3 10.7-24 24-24zM288 464l0-112 224 0 0 112c0 26.5-21.5 48-48 48l-128 0c-26.5 0-48-21.5-48-48zM48 320l80 0 16 0 32 0c26.5 0 48 21.5 48 48s-21.5 48-48 48l-16 0c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-80c0-8.8 7.2-16 16-16zm128 64c8.8 0 16-7.2 16-16s-7.2-16-16-16l-16 0 0 32 16 0zM24 464l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24L24 512c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>
+                                    Cookbook
+                                </a></li>
+                            
+                                <li><a href="/guides/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm306.7 69.1L162.4 380.6c-19.4 7.5-38.5-11.6-31-31l55.5-144.3c3.3-8.5 9.9-15.1 18.4-18.4l144.3-55.5c19.4-7.5 38.5 11.6 31 31L325.1 306.7c-3.2 8.5-9.9 15.1-18.4 18.4zM288 256a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/>
+</svg>
+
+                                    Guides
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Community</div>
+                        <ul>
+                            
+                                <li><a href="https://discord.gg/KhAMKrd/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
+</svg>
+
+                                    Discord
+                                </a></li>
+                            
+                                <li><a href="https://community.home-assistant.io/c/esphome/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z"/>
+</svg>
+
+                                    Forum
+                                </a></li>
+                            
+                                <li><a href="https://github.com/esphome/esphome">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+</svg>
+
+                                    Github
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+                    <div class="footer-column">
+                        <div class="footer-heading">Resources</div>
+                        <ul>
+                            
+                                <li><a href="/changelog/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/>
+</svg>
+
+                                    Changelog
+                                </a></li>
+                            
+                                <li><a href="https://developers.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M392.8 1.2c-17-4.9-34.7 5-39.6 22l-128 448c-4.9 17 5 34.7 22 39.6s34.7-5 39.6-22l128-448c4.9-17-5-34.7-22-39.6zm80.6 120.1c-12.5 12.5-12.5 32.8 0 45.3L562.7 256l-89.4 89.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l112-112c12.5-12.5 12.5-32.8 0-45.3l-112-112c-12.5-12.5-32.8-12.5-45.3 0zm-306.7 0c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3l112 112c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256l89.4-89.4c12.5-12.5 12.5-32.8 0-45.3z"/>
+</svg>
+
+                                    Development
+                                </a></li>
+                            
+                                <li><a href="https://devices.esphome.io">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none">
+  <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
+  <path d="M176 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64c-35.3 0-64 28.7-64 64H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64v56H24c-13.3 0-24 10.7-24 24s10.7 24 24 24H64c0 35.3 28.7 64 64 64v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448h56v40c0 13.3 10.7 24 24 24s24-10.7 24-24V448c35.3 0 64-28.7 64-64h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V280h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448V176h40c13.3 0 24-10.7 24-24s-10.7-24-24-24H448c0-35.3-28.7-64-64-64V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H280V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H176V24zM160 128H352c17.7 0 32 14.3 32 32V352c0 17.7-14.3 32-32 32H160c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32zm192 32H160V352H352V160z"/>
+</svg>
+
+                                    Device Database
+                                </a></li>
+                            
+                        </ul>
+                    </div>
+                
+            </div>
+            <div class="build-info">
+                <button id="build-info-button" class="build-info-button" title="Show build information">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                         role="none"
+                         aria-label="Show build information"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="8"></line>
+                    </svg>
+                    <span>Release 2025.8.0</span>
+                </button>
+            </div>
+        </div>
+        
+            <div id="build-info-popup" class="build-info-popup">
+                <div class="build-info-content">
+                    <span id="build-info-close" class="build-info-close">&times;</span>
+                    <h4>Build Information</h4>
+                    <div class="build-info-grid">
+                        <div class="build-info-label">Version:</div>
+                        <div class="build-info-value">2025.8</div>
+                        
+                            <div class="build-info-label">Release:</div>
+                            <div class="build-info-value">2025.8.0</div>
+                        
+                        <div class="build-info-label">Branch:</div>
+                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+
+                        
+                        <div class="build-info-label">Commit hash:</div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
+                                                         target="_blank">45d1670b</a></div>
+
+                        <div class="build-info-label">Message:</div>
+                        <div class="build-info-value">fixe trailing spaces</div>
+
+                        <div class="build-info-label">Build date:</div>
+                        <div class="build-info-value">2025-08-22</div>
+                    </div>
+                </div>
+            </div>
+        
+    </footer>
+    <div class="footer-logo footer-logo-print" hidden aria-hidden="true">
+        <a class="footer-logo" href="https://www.openhomefoundation.org/">
+            <span>ESPHome is a project from the</span>
+            <img src="/images/icons/ohf-logo-on-light.svg" alt="ESPHome Logo" width="220px"
+                 height="49px">
+            <br>
+            <span>https://esphome.io</span>
+        </a>
+    </div>
+</div>
+
+
+
+
+
+<script src="/js/lazysizes.min.js"></script>
+<script src="/pagefind/pagefind-modular-ui.js"></script>
+<script src="/js/menu.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+</body>
+</html>
