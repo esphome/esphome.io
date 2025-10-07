@@ -172,6 +172,8 @@ and the buttons are pressed while capturing a debug output, the log would show s
   [17:16:43][D][hdmi_cec:381]: Sending: E0:90:00 => SpecificUse to TV: <Report Power Status>[On]
 ```
 
+An advanced yaml configuration can be used to create an hdmi *audio device*, and instruct the TV to enable its ARC (audio return channel). This causes the TV to mute its own audio, pass its own volume control over cec to this device, and send its digital audio as SPDIF through HDMI pin 14.
+
 ## Example: Create service for Home Assistant
 
 ```yaml
