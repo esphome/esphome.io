@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=8000&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -18,14 +18,14 @@
 
         
             
-                <meta property="og:image" content="http://localhost:1313/images/esp32.svg">
-                <meta name="twitter:image" content="http://localhost:1313/images/esp32.svg">
+                <meta property="og:image" content="http://localhost:8000/images/esp32.svg">
+                <meta name="twitter:image" content="http://localhost:8000/images/esp32.svg">
             
         
     
     <meta property="og:title" content="ESP32 Platform">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://localhost:1313/components/esp32/">
+    <meta property="og:url" content="http://localhost:8000/components/esp32/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ESP32 Platform">
@@ -306,14 +306,6 @@
                         
                     
                         
-                            <li><a class="toc-entry" href="#arduino-framework">Arduino framework</a>
-                                
-                                    
-<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
-</ul>
-                                
-                            </li>
-                        
                     
                         
                             <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
@@ -326,10 +318,10 @@
                         
                     
                         
-                            <li><a class="toc-entry" href="#esp-idf-framework">ESP-IDF framework</a>
+                            <li><a class="toc-entry" href="#framework">Framework</a>
                                 
                                     
-<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+<ul><li><a class="toc-secondary" href="#arduino-framework">Arduino Framework</a></li><li><a class="toc-secondary" href="#esp-idf-framework">ESP-IDF Framework</a></li><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
 </ul>
                                 
                             </li>
@@ -366,18 +358,10 @@
                             
                         </li>
                     
-                        <li><a class="toc-entry" href="#arduino-framework">Arduino framework</a>
+                        <li><a class="toc-entry" href="#framework">Framework</a>
                             
                                 
-<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
-</ul>
-                            
-                        </li>
-                    
-                        <li><a class="toc-entry" href="#esp-idf-framework">ESP-IDF framework</a>
-                            
-                                
-<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+<ul><li><a class="toc-secondary" href="#arduino-framework">Arduino Framework</a></li><li><a class="toc-secondary" href="#esp-idf-framework">ESP-IDF Framework</a></li><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
 </ul>
                             
                         </li>
@@ -409,7 +393,7 @@
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/esp32.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/esp32.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -465,13 +449,18 @@ This setting is no longer recommended, <code>variant</code> should be used inste
 </li>
 </ul>
 
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  At least one of <code>board</code> or <code>variant</code> must be specified. If <code>variant</code> alone is specified (the recommended practice),
-the board configuration will be automatically filled using a standard Espressif devkit board
-suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
-</div>
 
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>At least one of <code>board</code> or <code>variant</code> must be specified. If <code>variant</code> alone is specified (the recommended practice),
+the board configuration will be automatically filled using a standard Espressif devkit board
+suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.</p>
+</blockquote>
 <ul>
 <li>
 <p><strong>flash_size</strong> (<em>Optional</em>, string): The amount of flash memory available on the ESP32 board/module. One of <code>2MB</code>,
@@ -487,18 +476,24 @@ on your board will cause the ESP32 to fail to boot.</strong></p>
 partitioning scheme to be used. When not specified, partitions are automatically generated based on <code>flash_size</code>.</p>
 </li>
 <li>
-<p><strong>framework</strong> (<em>Optional</em>): Options for the underlying framework used by ESPHome. See <a href="/components/esp32#esp32-arduino_framework">Arduino framework</a>
-and <a href="/components/esp32#esp32-espidf_framework">ESP-IDF framework</a>.</p>
+<p><strong>framework</strong> (<em>Optional</em>): Options for the underlying framework used by ESPHome. See 
+            <a href="#esp32-framework" class="unresolved-anchor">Framework</a>.</p>
 </li>
 </ul>
 
-<a class="anchor" id="esp32-arduino_framework" role="none"></a>
+<a class="anchor" id="esp32-framework" role="none"></a>
 
-<h2  id="arduino-framework">
-    Arduino framework
-    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="arduino-framework" title="Copy link" src="/images/link.svg">
+<h2  id="framework">
+    Framework
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="framework" title="Copy link" src="/images/link.svg">
 </h2>
-<p>This is the default framework for ESP32 chips at the moment.</p>
+<p>ESPHome supports two framework options for ESP32 chips:</p>
+<h3  id="arduino-framework">
+    Arduino Framework
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="arduino-framework" title="Copy link" src="/images/link.svg">
+</h3>
+<p>The Arduino framework is integrated as an ESP-IDF component. This provides Arduino API compatibility
+within the ESP-IDF build system. Arduino framework is available for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3 variants.</p>
 <div class="code-block">
     <button class="copy-button" aria-label="Copy code">
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -518,49 +513,13 @@ and <a href="/components/esp32#esp32-espidf_framework">ESP-IDF framework</a>.</p
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">arduino</span></span></span></code></pre></div></div>
 </div>
 
-<h3  id="configuration-variables-1">
-    Configuration variables
-    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
-</h3>
-<ul>
-<li>
-<p><strong>version</strong> (<em>Optional</em>, string): The base framework version number to use, from
-<a href="https://github.com/espressif/arduino-esp32/releases">ESP32 arduino releases<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>. Defaults to <code>recommended</code>.
-Additional values are:</p>
-<ul>
-<li>
-<p><code>dev</code>  : Use the latest commit from <a href="https://github.com/espressif/arduino-esp32">https://github.com/espressif/arduino-esp32<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>, note this may break at any time</p>
-</li>
-<li>
-<p><code>latest</code>  : Use the latest <em>release</em> from <a href="https://github.com/espressif/arduino-esp32/releases">https://github.com/espressif/arduino-esp32/releases<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>, even if it hasn&rsquo;t
-been recommended yet.</p>
-</li>
-<li>
-<p><code>recommended</code>  : Use the recommended framework version.</p>
-</li>
-</ul>
-</li>
-<li>
-<p><strong>source</strong> (<em>Optional</em>, string): The PlatformIO package or repository to use for framework. This can be used to use a
-custom or patched version of the framework.</p>
-</li>
-<li>
-<p><strong>platform_version</strong> (<em>Optional</em>, string): The version of the
-<a href="https://github.com/pioarduino/platform-espressif32/releases">pioarduino/espressif32<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> package to use.</p>
-</li>
-<li>
-<p><strong>advanced</strong> (<em>Optional</em>, mapping): See <a href="/components/esp32#esp32-advanced_configuration">Advanced Configuration</a> below.</p>
-</li>
-</ul>
-
-<a class="anchor" id="esp32-espidf_framework" role="none"></a>
-
-<h2  id="esp-idf-framework">
-    ESP-IDF framework
+<h3  id="esp-idf-framework">
+    ESP-IDF Framework
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="esp-idf-framework" title="Copy link" src="/images/link.svg">
-</h2>
-<p>This is an alternative base framework for ESP32 chips; it is recommended for variants of the ESP32 like ESP32S2,
-ESP32S3, ESP32P4 and single-core ESP32 chips.</p>
+</h3>
+<p>ESP-IDF is Espressif&rsquo;s native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6,
+ESP32-H2, and ESP32-P4 variants, as these are not supported by the Arduino framework. It is recommended for
+all ESP32 chips when possible. See the <a href="/guides/esp32_arduino_to_idf/">migration guide</a> for help transitioning from Arduino.</p>
 <div class="code-block">
     <button class="copy-button" aria-label="Copy code">
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -580,26 +539,23 @@ ESP32S3, ESP32P4 and single-core ESP32 chips.</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">esp-idf</span></span></span></code></pre></div></div>
 </div>
 
-<h3  id="configuration-variables-2">
+<h3  id="configuration-variables-1">
     Configuration variables
-    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-2" title="Copy link" src="/images/link.svg">
+    <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables-1" title="Copy link" src="/images/link.svg">
 </h3>
 <ul>
 <li>
+<p><strong>type</strong> (<em>Optional</em>, string): The framework type, either <code>esp-idf</code> or <code>arduino</code>. Defaults to <code>arduino</code> for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3. Defaults to <code>esp-idf</code> for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-H2, and ESP32-P4 (Arduino is not supported on these variants)</p>
+</li>
+<li>
 <p><strong>version</strong> (<em>Optional</em>, string): The base framework version number to use, from
-<a href="https://github.com/espressif/esp-idf/releases">ESP32 ESP-IDF releases<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>. Defaults to <code>recommended</code>.
+<a href="https://github.com/espressif/esp-idf/releases">ESP32 ESP-IDF releases<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> or
+<a href="https://github.com/espressif/arduino-esp32/releases">ESP32 arduino releases<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>. Defaults to <code>recommended</code>.
 Additional values are:</p>
 <ul>
-<li>
-<p><code>dev</code>  : Use the latest commit from <a href="https://github.com/espressif/esp-idf">https://github.com/espressif/esp-idf<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>, note this may break at any time</p>
-</li>
-<li>
-<p><code>latest</code>  : Use the latest <em>release</em> from <a href="https://github.com/espressif/esp-idf/releases">https://github.com/espressif/esp-idf/releases<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>, even if it hasn&rsquo;t been
-recommended yet.</p>
-</li>
-<li>
-<p><code>recommended</code>  : Use the recommended framework version.</p>
-</li>
+<li><code>dev</code>  : Use the latest commit, note this may break at any time</li>
+<li><code>latest</code>  : Use the latest <em>release</em>, even if it hasn&rsquo;t been recommended yet.</li>
+<li><code>recommended</code>  : Use the recommended framework version.</li>
 </ul>
 </li>
 <li>
@@ -668,9 +624,8 @@ address is not consistent with the burned-in CRC for that MAC address, resulting
 <code>Base MAC address from BLK0 of EFUSE CRC error</code>. <strong>Valid only on original ESP32 with</strong> <code>esp-idf</code> <strong>framework.</strong></p>
 </li>
 <li>
-<p><strong>enable_idf_experimental_features</strong> (<em>Optional</em>, boolean): Can be set to <code>true</code> to enable experimental features in
-the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
-other issues.</p>
+<p><strong>enable_idf_experimental_features</strong> (<em>Optional</em>, boolean): Can be set to <code>true</code> to enable experimental features. Use of
+experimental features may cause instability or other issues.</p>
 </li>
 </ul>
 <p><strong>LWIP Optimization Options (ESP-IDF only):</strong></p>
@@ -911,14 +866,6 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
                         
                     
                         
-                            <li><a class="toc-entry" href="#arduino-framework">Arduino framework</a>
-                                
-                                    
-<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
-</ul>
-                                
-                            </li>
-                        
                     
                         
                             <li><a class="toc-entry" href="#configuration-variables">Configuration variables</a>
@@ -931,10 +878,10 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
                         
                     
                         
-                            <li><a class="toc-entry" href="#esp-idf-framework">ESP-IDF framework</a>
+                            <li><a class="toc-entry" href="#framework">Framework</a>
                                 
                                     
-<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+<ul><li><a class="toc-secondary" href="#arduino-framework">Arduino Framework</a></li><li><a class="toc-secondary" href="#esp-idf-framework">ESP-IDF Framework</a></li><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
 </ul>
                                 
                             </li>
@@ -971,18 +918,10 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
                             
                         </li>
                     
-                        <li><a class="toc-entry" href="#arduino-framework">Arduino framework</a>
+                        <li><a class="toc-entry" href="#framework">Framework</a>
                             
                                 
-<ul><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
-</ul>
-                            
-                        </li>
-                    
-                        <li><a class="toc-entry" href="#esp-idf-framework">ESP-IDF framework</a>
-                            
-                                
-<ul><li><a class="toc-secondary" href="#configuration-variables-2">Configuration variables</a></li>
+<ul><li><a class="toc-secondary" href="#arduino-framework">Arduino Framework</a></li><li><a class="toc-secondary" href="#esp-idf-framework">ESP-IDF Framework</a></li><li><a class="toc-secondary" href="#configuration-variables-1">Configuration variables</a></li>
 </ul>
                             
                         </li>
@@ -1014,7 +953,7 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/esp32.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/esp32.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -1026,7 +965,7 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
 </div>
 
         
-            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+            <div class="branch-overlay" aria-hidden="true">BH1900NUX-NEW-INTEGRATION</div>
         
     </main>
 
@@ -1084,7 +1023,7 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
                         <div class="footer-heading">Community</div>
                         <ul>
                             
-                                <li><a href="https://discord.gg/KhAMKrd/">
+                                <li><a href="https://discord.gg/KhAMKrd">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
   <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
   <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
@@ -1159,7 +1098,7 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12" y2="8"></line>
                     </svg>
-                    <span>Release 2025.8.0</span>
+                    <span class="desktop-only">Release</span><span> 2025.10.0-dev</span>
                 </button>
             </div>
         </div>
@@ -1170,24 +1109,24 @@ input/<strong>output</strong>&rdquo;&hellip;).</p>
                     <h4>Build Information</h4>
                     <div class="build-info-grid">
                         <div class="build-info-label">Version:</div>
-                        <div class="build-info-value">2025.8</div>
+                        <div class="build-info-value">2025.10</div>
                         
                             <div class="build-info-label">Release:</div>
-                            <div class="build-info-value">2025.8.0</div>
+                            <div class="build-info-value">2025.10.0-dev</div>
                         
                         <div class="build-info-label">Branch:</div>
-                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+                        <div class="build-info-value">bh1900nux-new-integration</div>
 
                         
                         <div class="build-info-label">Commit hash:</div>
-                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
-                                                         target="_blank">45d1670b</a></div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/842346cf"
+                                                         target="_blank">842346cf</a></div>
 
                         <div class="build-info-label">Message:</div>
-                        <div class="build-info-value">fixe trailing spaces</div>
+                        <div class="build-info-value">ported to md format</div>
 
                         <div class="build-info-label">Build date:</div>
-                        <div class="build-info-value">2025-08-22</div>
+                        <div class="build-info-value">2025-10-07</div>
                     </div>
                 </div>
             </div>

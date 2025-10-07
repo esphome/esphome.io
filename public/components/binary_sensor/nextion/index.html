@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=8000&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -18,14 +18,14 @@
 
         
             
-                <meta property="og:image" content="http://localhost:1313/images/nextion.jpg">
-                <meta name="twitter:image" content="http://localhost:1313/images/nextion.jpg">
+                <meta property="og:image" content="http://localhost:8000/images/nextion.jpg">
+                <meta name="twitter:image" content="http://localhost:8000/images/nextion.jpg">
             
         
     
     <meta property="og:title" content="Nextion Binary Sensor Component">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://localhost:1313/components/binary_sensor/nextion/">
+    <meta property="og:url" content="http://localhost:8000/components/binary_sensor/nextion/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Nextion Binary Sensor Component">
@@ -409,7 +409,7 @@
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/binary_sensor/nextion.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/binary_sensor/nextion.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -489,14 +489,19 @@ It is best to set the components vscope to global in the Nextion Editor. This wa
 <p><strong>Touch Sensor:</strong>
 The Nextion will send a <strong>page_id</strong> and <strong>component_id</strong> when the <em>Send Component ID</em> check box is selected for the component. To enable
 this native event <strong>page_id</strong> and <strong>component_id</strong> are required. No <a href="/components/binary_sensor/nextion#nextion_custom_binary_sensor_protocol">Nextion Custom Binary Sensor Protocol</a> is required. If <strong>page_id</strong> and <strong>component_id</strong> are set then the component will only react to touch events from the Nextion. Setting <strong>component_name</strong> will allow setting options like foreground color.</p>
-<p>
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  <code>background_color(s)</code>, <code>foreground_color(s)</code>   and <code>visible</code>   do not retain their state on page change. <a href="/components/binary_sensor/nextion#nextion_binary_sensor_settings">Binary Sensor Settings</a>.
-A <a href="/components/sensor/nextion#nextion_sensor">Nextion Sensor</a> with a custom protocol sending the current page can be used to execute the API call <a href="/components/display/nextion#update_components_by_prefix">Update Components By Prefix</a> to update all the components for that page
-</div>
 
-Example:</p>
+
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p><code>background_color(s)</code>, <code>foreground_color(s)</code>   and <code>visible</code>   do not retain their state on page change. <a href="/components/binary_sensor/nextion#nextion_binary_sensor_settings">Binary Sensor Settings</a>.
+A <a href="/components/sensor/nextion#nextion_sensor">Nextion Sensor</a> with a custom protocol sending the current page can be used to execute the API call <a href="/components/display/nextion#update_components_by_prefix">Update Components By Prefix</a> to update all the components for that page</p>
+</blockquote>
+<p>Example:</p>
 <div class="code-block">
     <button class="copy-button" aria-label="Copy code">
         <svg xmlns="http://www.w3.org/2000/svg"
@@ -591,15 +596,20 @@ Default is true.</p>
 display which will update component. Default is true.</p>
 </li>
 </ul>
-<p>
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  This action can also be written in lambdas. See <a href="/components/binary_sensor/nextion#nextion_binary_sensor_lambda_calls">Lambda Calls</a>
-</div>
 
+
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>This action can also be written in lambdas. See <a href="/components/binary_sensor/nextion#nextion_binary_sensor_lambda_calls">Lambda Calls</a></p>
+</blockquote>
 
 <a class="anchor" id="nextion_binary_sensor_lambda_calls" role="none"></a>
-</p>
+
 <h2  id="lambda-calls">
     Lambda Calls
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="lambda-calls" title="Copy link" src="/images/link.svg">
@@ -642,15 +652,20 @@ To have the Nextion send the data you can use the <a href="/components/binary_se
 component or function you want to trigger the send. Typically this is in <em>Touch Press Event</em> but some components, like a slider, should have it
 set in the <em>Touch Release Event</em> to capture all the changes. Since this is a custom protocol it can be sent from anywhere (timers/functions/components)
 in the Nextion.</p>
-<p>
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  There is no need to check the <em>Send Component ID</em> for the <em>Touch Press Event</em> or <em>Touch Release Event</em>
-for an integer value component since this will be sending the real value to esphome,
-but make sure you have both checked for a touch sensor.
-</div>
 
-Using the above yaml example:</p>
+
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>There is no need to check the <em>Send Component ID</em> for the <em>Touch Press Event</em> or <em>Touch Release Event</em>
+for an integer value component since this will be sending the real value to esphome,
+but make sure you have both checked for a touch sensor.</p>
+</blockquote>
+<p>Using the above yaml example:</p>
 <ul>
 <li>
 <p>&ldquo;mode&rdquo; is a touch sensor and will trigger when a user presess the component with ID <code>8</code>   in page <code>0</code></p>
@@ -665,15 +680,20 @@ Using the above yaml example:</p>
 <p><a href="/components/binary_sensor/nextion#nextion_binary_sensor_lambda_calls">Lambda Calls</a>.</p>
 </li>
 </ul>
-<p>
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  No updates will be sent to the Nextion if it is sleeping. Once it wakes the components will be updated. If a component is invisible, <code>visible(false)</code>, then it won&rsquo;t update until it is set to be visible.
-</div>
 
+
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>No updates will be sent to the Nextion if it is sleeping. Once it wakes the components will be updated. If a component is invisible, <code>visible(false)</code>, then it won&rsquo;t update until it is set to be visible.</p>
+</blockquote>
 
 <a class="anchor" id="nextion_custom_binary_sensor_protocol" role="none"></a>
-</p>
+
 <h2  id="nextion-custom-binary-sensor-protocol">
     Nextion Custom Binary Sensor Protocol
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="nextion-custom-binary-sensor-protocol" title="Copy link" src="/images/link.svg">
@@ -922,7 +942,7 @@ Using the above yaml example:</p>
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/binary_sensor/nextion.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/binary_sensor/nextion.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -934,7 +954,7 @@ Using the above yaml example:</p>
 </div>
 
         
-            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+            <div class="branch-overlay" aria-hidden="true">BH1900NUX-NEW-INTEGRATION</div>
         
     </main>
 
@@ -992,7 +1012,7 @@ Using the above yaml example:</p>
                         <div class="footer-heading">Community</div>
                         <ul>
                             
-                                <li><a href="https://discord.gg/KhAMKrd/">
+                                <li><a href="https://discord.gg/KhAMKrd">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
   <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
   <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
@@ -1067,7 +1087,7 @@ Using the above yaml example:</p>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12" y2="8"></line>
                     </svg>
-                    <span>Release 2025.8.0</span>
+                    <span class="desktop-only">Release</span><span> 2025.10.0-dev</span>
                 </button>
             </div>
         </div>
@@ -1078,24 +1098,24 @@ Using the above yaml example:</p>
                     <h4>Build Information</h4>
                     <div class="build-info-grid">
                         <div class="build-info-label">Version:</div>
-                        <div class="build-info-value">2025.8</div>
+                        <div class="build-info-value">2025.10</div>
                         
                             <div class="build-info-label">Release:</div>
-                            <div class="build-info-value">2025.8.0</div>
+                            <div class="build-info-value">2025.10.0-dev</div>
                         
                         <div class="build-info-label">Branch:</div>
-                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+                        <div class="build-info-value">bh1900nux-new-integration</div>
 
                         
                         <div class="build-info-label">Commit hash:</div>
-                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
-                                                         target="_blank">45d1670b</a></div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/842346cf"
+                                                         target="_blank">842346cf</a></div>
 
                         <div class="build-info-label">Message:</div>
-                        <div class="build-info-value">fixe trailing spaces</div>
+                        <div class="build-info-value">ported to md format</div>
 
                         <div class="build-info-label">Build date:</div>
-                        <div class="build-info-value">2025-08-22</div>
+                        <div class="build-info-value">2025-10-07</div>
                     </div>
                 </div>
             </div>

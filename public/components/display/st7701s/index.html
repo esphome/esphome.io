@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=8000&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -18,14 +18,14 @@
 
         
             
-                <meta property="og:image" content="http://localhost:1313/images/indicator.jpg">
-                <meta name="twitter:image" content="http://localhost:1313/images/indicator.jpg">
+                <meta property="og:image" content="http://localhost:8000/images/indicator.jpg">
+                <meta name="twitter:image" content="http://localhost:8000/images/indicator.jpg">
             
         
     
     <meta property="og:title" content="ST7701S Display Driver">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://localhost:1313/components/display/st7701s/">
+    <meta property="og:url" content="http://localhost:8000/components/display/st7701s/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ST7701S Display Driver">
@@ -375,7 +375,7 @@
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/display/st7701s.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/display/st7701s.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -564,76 +564,34 @@ ESP-IDF. PSRAM is a requirement due to the size of the display buffer.</p>
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="configuration-variables" title="Copy link" src="/images/link.svg">
 </h3>
 <ul>
-<li>
-<p><strong>init_sequence</strong> (<em>Optional</em>, A list of byte arrays): Specifies the init sequence for the display</p>
-</li>
-<li>
-<p><strong>data_pins</strong> (<strong>Required</strong>): A list of pins used for the databus. Specified in 3 groups.</p>
+<li><strong>init_sequence</strong> (<em>Optional</em>, A list of byte arrays): Specifies the init sequence for the display</li>
+<li><strong>data_pins</strong> (<strong>Required</strong>): A list of pins used for the databus. Specified in 3 groups.
 <ul>
 <li><strong>red</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): Exactly 5 pin numbers for the red databits, listed from least to most significant bit.</li>
 <li><strong>green</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): Exactly 6 pin numbers for the green databits, listed from least to most significant bit.</li>
 <li><strong>blue</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): Exactly 5 pin numbers for the blue databits, listed from least to most significant bit.</li>
 </ul>
 </li>
-<li>
-<p><strong>de_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The DE pin.</p>
-</li>
-<li>
-<p><strong>dc_pin</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The DC pin.</p>
-</li>
-<li>
-<p><strong>pclk_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The PCLK pin.</p>
-</li>
-<li>
-<p><strong>hsync_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The Horizontal sync pin.</p>
-</li>
-<li>
-<p><strong>vsync_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The Vertical sync pin.</p>
-</li>
-<li>
-<p><strong>reset_pin</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The RESET pin.</p>
-</li>
-<li>
-<p><strong>hsync_pulse_width</strong> (<em>Optional</em>, int): The horizontal sync pulse width.</p>
-</li>
-<li>
-<p><strong>hsync_front_porch</strong> (<em>Optional</em>, int): The horizontal front porch length.</p>
-</li>
-<li>
-<p><strong>hsync_back_porch</strong> (<em>Optional</em>, int): The horizontal back porch length.</p>
-</li>
-<li>
-<p><strong>vsync_pulse_width</strong> (<em>Optional</em>, int): The vertical sync pulse width.</p>
-</li>
-<li>
-<p><strong>vsync_front_porch</strong> (<em>Optional</em>, int): The vertical front porch length.</p>
-</li>
-<li>
-<p><strong>vsync_back_porch</strong> (<em>Optional</em>, int): The vertical back porch length.</p>
-</li>
-<li>
-<p><strong>pclk_frequency</strong> (<em>Optional</em>): Set the pixel clock speed. Default is 8MHz.</p>
-</li>
-<li>
-<p><strong>pclk_inverted</strong> (<em>Optional</em>, bool): If the pclk is active negative (default is True)</p>
-</li>
-<li>
-<p><strong>update_interval</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The interval to re-draw the screen. Defaults to <code>5s</code>.</p>
-</li>
-<li>
-<p><strong>auto_clear_enabled</strong> (<em>Optional</em>, boolean): If the display should be cleared before each update. Defaults to <code>true</code> if a lambda or pages are configured, false otherwise.</p>
-</li>
-<li>
-<p><strong>pages</strong> (<em>Optional</em>, list): Show pages instead of a single lambda. See <a href="/components/display#display-pages">Display Pages</a>.</p>
-</li>
-<li>
-<p><strong>id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID used for code generation.</p>
-</li>
-<li>
-<p><strong>color_order</strong> (<em>Optional</em>): Should be one of <code>bgr</code> (default) or <code>rgb</code>.</p>
-</li>
-<li>
-<p><strong>dimensions</strong> (<strong>Required</strong>): Dimensions of the screen, specified either as <em>width</em> <strong>x</strong> <em>height</em> (e.g <code>320x240</code>  ) or with separate config keys.</p>
+<li><strong>de_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The DE pin.</li>
+<li><strong>dc_pin</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The DC pin.</li>
+<li><strong>pclk_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The PCLK pin.</li>
+<li><strong>hsync_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The Horizontal sync pin.</li>
+<li><strong>vsync_pin</strong> (<strong>Required</strong>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The Vertical sync pin.</li>
+<li><strong>reset_pin</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-pin_schema">Pin Schema</a>): The RESET pin.</li>
+<li><strong>hsync_pulse_width</strong> (<em>Optional</em>, int): The horizontal sync pulse width.</li>
+<li><strong>hsync_front_porch</strong> (<em>Optional</em>, int): The horizontal front porch length.</li>
+<li><strong>hsync_back_porch</strong> (<em>Optional</em>, int): The horizontal back porch length.</li>
+<li><strong>vsync_pulse_width</strong> (<em>Optional</em>, int): The vertical sync pulse width.</li>
+<li><strong>vsync_front_porch</strong> (<em>Optional</em>, int): The vertical front porch length.</li>
+<li><strong>vsync_back_porch</strong> (<em>Optional</em>, int): The vertical back porch length.</li>
+<li><strong>pclk_frequency</strong> (<em>Optional</em>): Set the pixel clock speed. Default is 8MHz.</li>
+<li><strong>pclk_inverted</strong> (<em>Optional</em>, bool): If the pclk is active negative (default is True)</li>
+<li><strong>update_interval</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-time">Time</a>): The interval to re-draw the screen. Defaults to <code>5s</code>.</li>
+<li><strong>auto_clear_enabled</strong> (<em>Optional</em>, boolean): If the display should be cleared before each update. Defaults to <code>true</code> if a lambda or pages are configured, false otherwise.</li>
+<li><strong>pages</strong> (<em>Optional</em>, list): Show pages instead of a single lambda. See <a href="/components/display#display-pages">Display Pages</a>.</li>
+<li><strong>id</strong> (<em>Optional</em>, <a href="/guides/configuration-types#config-id">ID</a>): Manually specify the ID used for code generation.</li>
+<li><strong>color_order</strong> (<em>Optional</em>): Should be one of <code>bgr</code> (default) or <code>rgb</code>.</li>
+<li><strong>dimensions</strong> (<strong>Required</strong>): Dimensions of the screen, specified either as <em>width</em> <strong>x</strong> <em>height</em> (e.g <code>320x240</code>  ) or with separate config keys.
 <ul>
 <li><strong>height</strong> (<strong>Required</strong>, int): Specifies height of display in pixels.</li>
 <li><strong>width</strong> (<strong>Required</strong>, int): Specifies width of display.</li>
@@ -641,30 +599,18 @@ ESP-IDF. PSRAM is a requirement due to the size of the display buffer.</p>
 <li><strong>offset_height</strong> (<em>Optional</em>, int): Specify an offset for the y-direction of the display. Default is 0.</li>
 </ul>
 </li>
-<li>
-<p><strong>data_rate</strong> (<em>Optional</em>): Set the data rate of the SPI interface to the display. One of <code>80MHz</code>, <code>40MHz</code>,</p>
-<p><code>20MHz</code>, <code>10MHz</code>, <code>5MHz</code>, <code>2MHz</code>, <code>1MHz</code> (default), <code>200kHz</code>, <code>75kHz</code> or <code>1kHz</code>.</p>
-</li>
-<li>
-<p><strong>spi_mode</strong> (<em>Optional</em>): Set the mode for the SPI interface to the display. Default is <code>MODE0</code> but some displays require <code>MODE3</code>.</p>
-</li>
-<li>
-<p><strong>invert_colors</strong> (<em>Optional</em>): With this boolean option you can invert the display colors. <strong>Note</strong> some of the displays have this option set automatically to true and can&rsquo;t be changed.</p>
-</li>
-<li>
-<p><strong>rotation</strong> (<em>Optional</em>): Rotate the display presentation in software. Choose one of <code>0°</code>, <code>90°</code>, <code>180°</code>, or <code>270°</code>. This option cannot be used with <code>transform</code>.</p>
-</li>
-<li>
-<p><strong>transform</strong> (<em>Optional</em>): Transform the display presentation using hardware. All defaults are <code>false</code>. This option cannot be used with <code>rotation</code>.</p>
+<li><strong>data_rate</strong> (<em>Optional</em>): Set the data rate of the SPI interface to the display. One of <code>80MHz</code>, <code>40MHz</code>, <code>20MHz</code>, <code>10MHz</code>, <code>5MHz</code>, <code>2MHz</code>, <code>1MHz</code> (default), <code>200kHz</code>, <code>75kHz</code> or <code>1kHz</code>.</li>
+<li><strong>spi_mode</strong> (<em>Optional</em>): Set the mode for the SPI interface to the display. Default is <code>MODE0</code> but some displays require <code>MODE3</code>.</li>
+<li><strong>invert_colors</strong> (<em>Optional</em>): With this boolean option you can invert the display colors. <strong>Note</strong> some of the displays have this option set automatically to true and can&rsquo;t be changed.</li>
+<li><strong>rotation</strong> (<em>Optional</em>): Rotate the display presentation in software. Choose one of <code>0°</code>, <code>90°</code>, <code>180°</code>, or <code>270°</code>. This option cannot be used with <code>transform</code>.</li>
+<li><strong>transform</strong> (<em>Optional</em>): Transform the display presentation using hardware. All defaults are <code>false</code>. This option cannot be used with <code>rotation</code>.
 <ul>
 <li><strong>mirror_x</strong> (<em>Optional</em>, boolean): If true, mirror the x axis.</li>
 <li><strong>mirror_y</strong> (<em>Optional</em>, boolean): If true, mirror the y axis.</li>
 </ul>
 </li>
-<li>
-<p><strong>lambda</strong> (<em>Optional</em>, <a href="/automations/templates#config-lambda">lambda</a>): The lambda to use for rendering the content on the display.
-See <a href="/components/display#display-engine">Display Rendering Engine</a> for more information.</p>
-</li>
+<li><strong>lambda</strong> (<em>Optional</em>, <a href="/automations/templates#config-lambda">lambda</a>): The lambda to use for rendering the content on the display.
+See <a href="/components/display#display-engine">Display Rendering Engine</a> for more information.</li>
 </ul>
 <p><strong>Note:</strong> To rotate the display in hardware by 180 degrees set both <code>mirror_x</code> and <code>mirror_y</code> to <code>true</code>. The st7701s does not support hardware rotation by 90 or 270.</p>
 <p>The horizontal and vertical <code>pulse_width</code>, <code>front_porch</code> and <code>back_porch</code> values are optional, but may require
@@ -924,7 +870,7 @@ init commands, each consisting of a command byte followed by zero or more data b
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/display/st7701s.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/display/st7701s.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -936,7 +882,7 @@ init commands, each consisting of a command byte followed by zero or more data b
 </div>
 
         
-            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+            <div class="branch-overlay" aria-hidden="true">BH1900NUX-NEW-INTEGRATION</div>
         
     </main>
 
@@ -994,7 +940,7 @@ init commands, each consisting of a command byte followed by zero or more data b
                         <div class="footer-heading">Community</div>
                         <ul>
                             
-                                <li><a href="https://discord.gg/KhAMKrd/">
+                                <li><a href="https://discord.gg/KhAMKrd">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
   <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
   <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
@@ -1069,7 +1015,7 @@ init commands, each consisting of a command byte followed by zero or more data b
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12" y2="8"></line>
                     </svg>
-                    <span>Release 2025.8.0</span>
+                    <span class="desktop-only">Release</span><span> 2025.10.0-dev</span>
                 </button>
             </div>
         </div>
@@ -1080,24 +1026,24 @@ init commands, each consisting of a command byte followed by zero or more data b
                     <h4>Build Information</h4>
                     <div class="build-info-grid">
                         <div class="build-info-label">Version:</div>
-                        <div class="build-info-value">2025.8</div>
+                        <div class="build-info-value">2025.10</div>
                         
                             <div class="build-info-label">Release:</div>
-                            <div class="build-info-value">2025.8.0</div>
+                            <div class="build-info-value">2025.10.0-dev</div>
                         
                         <div class="build-info-label">Branch:</div>
-                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+                        <div class="build-info-value">bh1900nux-new-integration</div>
 
                         
                         <div class="build-info-label">Commit hash:</div>
-                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
-                                                         target="_blank">45d1670b</a></div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/842346cf"
+                                                         target="_blank">842346cf</a></div>
 
                         <div class="build-info-label">Message:</div>
-                        <div class="build-info-value">fixe trailing spaces</div>
+                        <div class="build-info-value">ported to md format</div>
 
                         <div class="build-info-label">Build date:</div>
-                        <div class="build-info-value">2025-08-22</div>
+                        <div class="build-info-value">2025-10-07</div>
                     </div>
                 </div>
             </div>

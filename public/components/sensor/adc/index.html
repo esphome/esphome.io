@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en-us">
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=8000&amp;path=livereload" data-no-instant defer></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -18,14 +18,14 @@
 
         
             
-                <meta property="og:image" content="http://localhost:1313/images/flash.svg">
-                <meta name="twitter:image" content="http://localhost:1313/images/flash.svg">
+                <meta property="og:image" content="http://localhost:8000/images/flash.svg">
+                <meta name="twitter:image" content="http://localhost:8000/images/flash.svg">
             
         
     
     <meta property="og:title" content="Analog To Digital Sensor">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="http://localhost:1313/components/sensor/adc/">
+    <meta property="og:url" content="http://localhost:8000/components/sensor/adc/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Analog To Digital Sensor">
@@ -425,7 +425,7 @@
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/adc.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/sensor/adc.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -594,9 +594,15 @@ to check the sensor. Defaults to <code>60s</code>.</p>
 <p>All other options from <a href="/components/sensor#config-sensor">Sensor</a>.</p>
 </li>
 </ul>
-<p>
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
+
+
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
   <p>This component prints the voltage as seen by the chip pin. On the ESP8266, this is always 0.0V to 1.0V
 Some development boards like the Wemos D1 mini include external voltage divider circuitry to scale down
 a 3.3V input signal to the chip-internal 1.0V. If your board has this circuitry, add a multiply filter to
@@ -619,11 +625,10 @@ get correct values:</p>
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">multiply</span><span class="p">:</span><span class="w"> </span><span class="m">3.3</span></span></span></code></pre></div></div>
 </div>
-</div>
-
+</blockquote>
 
 <a class="anchor" id="adc-esp32_attenuation" role="none"></a>
-</p>
+
 <h2  id="esp32-attenuation">
     ESP32 Attenuation
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="esp32-attenuation" title="Copy link" src="/images/link.svg">
@@ -632,16 +637,21 @@ get correct values:</p>
 Measuring higher voltages requires setting <code>attenuation</code> to one of the following values: <code>0db</code>, <code>2.5db</code>, <code>6db</code>, <code>12db</code>.
 There&rsquo;s more information <a href="https://docs.espressif.com/projects/esp-idf/en/v4.4.7/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t">at the manufacturer&rsquo;s website<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a>.</p>
 <p>To simplify this, we provide the setting <code>attenuation: auto</code> for an automatic/seamless transition among scales. <a href="https://github.com/esphome/esphome/blob/dev/esphome/components/adc/adc_sensor_esp32.cpp">Our implementation<img data-pagefind-ignore="all" alt="" aria-hidden="true" class="external-link dark-invert" title="External link" src="/images/external-link.svg"></a> combines all available ranges to allow the best resolution without having to compromise on a specific attenuation.</p>
-<p>
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  In our tests, the usable ADC range was from ~0.075V to ~3.12V (with the <code>attenuation: auto</code> setting), and anything outside that range capped out at either end.
-Even though the measurements are calibrated, the range <em>limits</em> are variable among chips due to differences in the internal voltage reference.
-</div>
 
+
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>In our tests, the usable ADC range was from ~0.075V to ~3.12V (with the <code>attenuation: auto</code> setting), and anything outside that range capped out at either end.
+Even though the measurements are calibrated, the range <em>limits</em> are variable among chips due to differences in the internal voltage reference.</p>
+</blockquote>
 
 <a class="anchor" id="adc-esp32_pins" role="none"></a>
-</p>
+
 <h2  id="esp32-pins-and-hardware-details">
     ESP32 pins and Hardware Details
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="esp32-pins-and-hardware-details" title="Copy link" src="/images/link.svg">
@@ -708,16 +718,20 @@ Even though the measurements are calibrated, the range <em>limits</em> are varia
 <li>ESP32-C3, ESP32-C5, ESP32-C6, ESP32-H2, ESP32-S3 &amp; ESP32-P4: Use curve-fitting calibration</li>
 </ul>
 <p>This is handled automatically by the code, but it&rsquo;s worth noting if you&rsquo;re debugging ADC readings or need to understand the calibration process.</p>
-<p>
-<div class="admonition warning">
-  <p class="admonition-title">Warning</p>
-  On ESP32-C5, GPIO2 is a strapping pin used during boot. While it can be used as an ADC input, avoid connecting circuits that might interfere with the boot process.
-</div>
 
 
+<blockquote class="alert alert-warning">
+  <p class="alert-heading">
+    ⚠️
+    
+    Warning
+    
+  </p>
+  <p>On ESP32-C5, GPIO2 is a strapping pin used during boot. While it can be used as an ADC input, avoid connecting circuits that might interfere with the boot process.</p>
+</blockquote>
 
 <a class="anchor" id="adc-raw" role="none"></a>
-</p>
+
 <h2  id="different-esp32-adc-behavior-since-202111">
     Different ESP32-ADC behavior since 2021.11
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="different-esp32-adc-behavior-since-202111" title="Copy link" src="/images/link.svg">
@@ -782,11 +796,16 @@ Please see specific sections below of what voltage is actually measured.</p>
 where you want to shut down the chip if the voltage is low when using a battery.</p>
 <p>To measure the VCC voltage, set <code>pin:</code> to <code>VCC</code> and make sure nothing is connected to the <code>A0</code> pin.</p>
 
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  To avoid confusion: It measures the voltage at the chip, and not at the VCC pin of the board. It should usually be around 3.3V.
-</div>
 
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>To avoid confusion: It measures the voltage at the chip, and not at the VCC pin of the board. It should usually be around 3.3V.</p>
+</blockquote>
 <h3  id="on-raspberry-pi-pico">
     On Raspberry Pi Pico
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="on-raspberry-pi-pico" title="Copy link" src="/images/link.svg">
@@ -799,12 +818,17 @@ where you want to shut down the chip if the voltage is low when using a battery.
 </ul>
 <p>Our experiments indicate the diode drop being ~0.1V for Pico and ~0.25V for Pico W; you can use sensor filters to adjust the final value.</p>
 
-<div class="admonition note">
-  <p class="admonition-title">Note</p>
-  On Raspberry Pi Pico W the ADC GPIO29 pin for VSYS is shared with WiFi chip, so attempting to use it explicitly will likely hang the WiFi connection.
-It is recommended to use <code>VCC</code> as ADC pin in that case.
-</div>
 
+<blockquote class="alert alert-note">
+  <p class="alert-heading">
+    ℹ️
+    
+    Note
+    
+  </p>
+  <p>On Raspberry Pi Pico W the ADC GPIO29 pin for VSYS is shared with WiFi chip, so attempting to use it explicitly will likely hang the WiFi connection.
+It is recommended to use <code>VCC</code> as ADC pin in that case.</p>
+</blockquote>
 <h2  id="rp2040-internal-core-temperature">
     RP2040 Internal Core Temperature
     <img data-pagefind-ignore="all" alt="" aria-hidden="true" class="copy-link dark-invert" data-anchor="rp2040-internal-core-temperature" title="Copy link" src="/images/link.svg">
@@ -1097,7 +1121,7 @@ on GPIO34.</p>
         
         
             
-            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/stts22h-component-new-docs-format/content/components/sensor/adc.md" class="ghedit">
+            <a href="https://github.com/B48D81EFCC/esphome-docs/blob/bh1900nux-new-integration/content/components/sensor/adc.md" class="ghedit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="none"><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L362.3 51.7l97.9 97.9 30.1-30.1c21.9-21.9 21.9-57.3 0-79.2L471.6 21.7zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L437.7 172.3 339.7 74.3 172.4 241.7zM96 64C43 64 0 107 0 160L0 416c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-96c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 64z"/></svg>
                 Edit this page on GitHub
             </a>
@@ -1109,7 +1133,7 @@ on GPIO34.</p>
 </div>
 
         
-            <div class="branch-overlay" aria-hidden="true">STTS22H-COMPONENT-NEW-DOCS-FORMAT</div>
+            <div class="branch-overlay" aria-hidden="true">BH1900NUX-NEW-INTEGRATION</div>
         
     </main>
 
@@ -1167,7 +1191,7 @@ on GPIO34.</p>
                         <div class="footer-heading">Community</div>
                         <ul>
                             
-                                <li><a href="https://discord.gg/KhAMKrd/">
+                                <li><a href="https://discord.gg/KhAMKrd">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" role="none">
   <!-- Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
   <path d="M524.531,69.836a1.5,1.5,0,0,0-.764-.7A485.065,485.065,0,0,0,404.081,32.03a1.816,1.816,0,0,0-1.923.91,337.461,337.461,0,0,0-14.9,30.6,447.848,447.848,0,0,0-134.426,0,309.541,309.541,0,0,0-15.135-30.6,1.89,1.89,0,0,0-1.924-.91A483.689,483.689,0,0,0,116.085,69.137a1.712,1.712,0,0,0-.788.676C39.068,183.651,18.186,294.69,28.43,404.354a2.016,2.016,0,0,0,.765,1.375A487.666,487.666,0,0,0,176.02,479.918a1.9,1.9,0,0,0,2.063-.676A348.2,348.2,0,0,0,208.12,430.4a1.86,1.86,0,0,0-1.019-2.588,321.173,321.173,0,0,1-45.868-21.853,1.885,1.885,0,0,1-.185-3.126c3.082-2.309,6.166-4.711,9.109-7.137a1.819,1.819,0,0,1,1.9-.256c96.229,43.917,200.41,43.917,295.5,0a1.812,1.812,0,0,1,1.924.233c2.944,2.426,6.027,4.851,9.132,7.16a1.884,1.884,0,0,1-.162,3.126,301.407,301.407,0,0,1-45.89,21.83,1.875,1.875,0,0,0-1,2.611,391.055,391.055,0,0,0,30.014,48.815,1.864,1.864,0,0,0,2.063.7A486.048,486.048,0,0,0,610.7,405.729a1.882,1.882,0,0,0,.765-1.352C623.729,277.594,590.933,167.465,524.531,69.836ZM222.491,337.58c-28.972,0-52.844-26.587-52.844-59.239S193.056,219.1,222.491,219.1c29.665,0,53.306,26.82,52.843,59.239C275.334,310.993,251.924,337.58,222.491,337.58Zm195.38,0c-28.971,0-52.843-26.587-52.843-59.239S388.437,219.1,417.871,219.1c29.667,0,53.307,26.82,52.844,59.239C470.715,310.993,447.538,337.58,417.871,337.58Z"/>
@@ -1242,7 +1266,7 @@ on GPIO34.</p>
                         <line x1="12" y1="16" x2="12" y2="12"></line>
                         <line x1="12" y1="8" x2="12" y2="8"></line>
                     </svg>
-                    <span>Release 2025.8.0</span>
+                    <span class="desktop-only">Release</span><span> 2025.10.0-dev</span>
                 </button>
             </div>
         </div>
@@ -1253,24 +1277,24 @@ on GPIO34.</p>
                     <h4>Build Information</h4>
                     <div class="build-info-grid">
                         <div class="build-info-label">Version:</div>
-                        <div class="build-info-value">2025.8</div>
+                        <div class="build-info-value">2025.10</div>
                         
                             <div class="build-info-label">Release:</div>
-                            <div class="build-info-value">2025.8.0</div>
+                            <div class="build-info-value">2025.10.0-dev</div>
                         
                         <div class="build-info-label">Branch:</div>
-                        <div class="build-info-value">stts22h-component-new-docs-format</div>
+                        <div class="build-info-value">bh1900nux-new-integration</div>
 
                         
                         <div class="build-info-label">Commit hash:</div>
-                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/45d1670b"
-                                                         target="_blank">45d1670b</a></div>
+                        <div class="build-info-value"><a href="https://github.com/B48D81EFCC/esphome-docs/commit/842346cf"
+                                                         target="_blank">842346cf</a></div>
 
                         <div class="build-info-label">Message:</div>
-                        <div class="build-info-value">fixe trailing spaces</div>
+                        <div class="build-info-value">ported to md format</div>
 
                         <div class="build-info-label">Build date:</div>
-                        <div class="build-info-value">2025-08-22</div>
+                        <div class="build-info-value">2025-10-07</div>
                     </div>
                 </div>
             </div>
