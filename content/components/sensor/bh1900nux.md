@@ -23,13 +23,6 @@ sensor:
     update_interval: 60s
 ```
 
-## BH1900NUX Temperature Sensor 
-
-The `bh1900nux` sensor platform enables the use of the **BH1900NUX**
-([datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf))
-**temperature sensor** from Rohm Semiconductor in ESPHome.
-The [I²C bus](#i2c) must be configured in your setup for this sensor to function.
-
 ## Configuration Variables  
 
 | Variable            | Type (Default)               | Description                                  |
@@ -38,11 +31,13 @@ The [I²C bus](#i2c) must be configured in your setup for this sensor to functio
 | **update_interval** | *Optional*, [Time](#config-time) (`60s`) | Interval for sensor updates.                |
 | *Inherits*          | [Sensor](#config-sensor)     | All standard sensor configurations apply.   |
 
+
 > [!NOTE]
-> The following features are **not yet supported**:
-> - `ALERT` pin functionality
-> - `TLOW`/`THIGH` registers (Thermostat Mode)
-> - `Configuration register` settings
+> The following features are **not yet supported**:  
+> - `ALERT` pin functionality  
+> - `TLOW`/`THIGH` registers (Thermostat Mode)  
+> - `Configuration register` settings  
+
 
 ## Configurable I²C Addresses 
 
