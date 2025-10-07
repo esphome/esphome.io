@@ -31,15 +31,14 @@ sensor:
 | **update_interval** | *Optional*, [Time](#config-time) (`60s`) | Interval for sensor updates.                |
 | *Inherits*          | [Sensor](#config-sensor)     | All standard sensor configurations apply.   |
 
-
 > [!NOTE]
 > The following features are **not yet supported**:  
+
 > - `ALERT` pin functionality  
 > - `TLOW`/`THIGH` registers (Thermostat Mode)  
 > - `Configuration register` settings  
 
-
-## Configurable I²C Addresses 
+## Configurable I²C Addresses  
 
 The BH1900NUX provides **3 address pins (A0, A1, A2)** to set the I²C address by connecting them to **VCC (1)** or **GND (0)**.
 This allows **8 possible addresses**:
@@ -55,7 +54,7 @@ This allows **8 possible addresses**:
 | `0x4E`  | 1  | 1  | 0  |
 | `0x4F`  | 1  | 1  | 1  |
 
-## See Also 
+## See Also  
 
 - [Sensor Filters](#sensor-filters)
 - [Product Page](https://www.rohm.com/products/sensors-mems/temperature-sensor-ics/bh1900nux-product)
