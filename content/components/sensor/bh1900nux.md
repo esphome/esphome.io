@@ -23,13 +23,15 @@ sensor:
     update_interval: 60s
 ```
 
-# BH1900NUX Temperature Sensor
+## BH1900NUX Temperature Sensor 
+
 The `bh1900nux` sensor platform enables the use of the **BH1900NUX**
 ([datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf))
 **temperature sensor** from Rohm Semiconductor in ESPHome.
 The [I²C bus](#i2c) must be configured in your setup for this sensor to function.
 
-## Configuration Variables
+## Configuration Variables  
+
 | Variable            | Type (Default)               | Description                                  |
 |---------------------|------------------------------|----------------------------------------------|
 | **address**         | *Optional*, `int` (`0x48`)   | Manually specify the I²C address of the sensor. |
@@ -42,7 +44,8 @@ The [I²C bus](#i2c) must be configured in your setup for this sensor to functio
 > - `TLOW`/`THIGH` registers (Thermostat Mode)
 > - `Configuration register` settings
 
-## Configurable I²C Addresses
+## Configurable I²C Addresses 
+
 The BH1900NUX provides **3 address pins (A0, A1, A2)** to set the I²C address by connecting them to **VCC (1)** or **GND (0)**.
 This allows **8 possible addresses**:
 
@@ -57,7 +60,8 @@ This allows **8 possible addresses**:
 | `0x4E`  | 1  | 1  | 0  |
 | `0x4F`  | 1  | 1  | 1  |
 
-## See Also
+## See Also 
+
 - [Sensor Filters](#sensor-filters)
 - [Product Page](https://www.rohm.com/products/sensors-mems/temperature-sensor-ics/bh1900nux-product)
 - [BH1900NUX Datasheet](https://fscdn.rohm.com/en/products/databook/datasheet/ic/sensor/temperature/bh1900nux-e.pdf)
