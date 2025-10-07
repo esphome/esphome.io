@@ -80,6 +80,14 @@ display:
 - **auto_wake_on_touch** (*Optional*, boolean): If set to `true`, the Nextion will be configured to wake from sleep
   when touched.
 
+- **max_queue_age** (*Optional*, int): Maximum age in milliseconds for queued commands before they are automatically
+  removed. This helps prevent stale commands from being executed after delays.
+  Range: 0-65535. Defaults to `8000` (8 seconds).
+
+- **startup_override_ms** (*Optional*, int): Time in milliseconds to wait before forcing the display to be marked as ready
+  if it hasn't responded to the connection handshake. This is useful for displays with slower startup sequences.
+  Range: 0-65535. Defaults to `8000` (8 seconds).
+
 - **skip_connection_handshake** (*Optional*, boolean): Sets whether the initial display connection handshake process is
   skipped. When set to `true`, the connection will be established without performing the handshake. This can be
   useful when using Nextion Simulator. Defaults to `false`.
