@@ -116,8 +116,8 @@ Before using any of the actions below, you'll need to tell Home Assistant to all
 perform actions.
 
 > [!NOTE]
-> Starting with ESPHome 2025.10.0, you can configure actions to receive and process responses from 
-> Home Assistant using `response_template` and `on_response`. See [Action Response Handling](#action-response-handling) for details.
+> Starting with ESPHome 2025.10.0, you can configure actions to receive and process responses from
+> Home Assistant using `capture_response`, `on_success`, and `on_error`. See [Action Response Handling](#action-response-handling) for details.
 
 Open the ESPHome integration page on your Home Assistant instance:
 
@@ -206,13 +206,19 @@ on_...:
 - **variables** (*Optional*, mapping): Optional variables that can be used in the `data_template`.
   Values are [lambdas](#config-lambda) and will be evaluated before sending the request.
 
-- **response_template** (*Optional*, [templatable](#config-templatable), string): Optional Jinja template to process 
-  the action response data. This template is evaluated on the Home Assistant side with Home Assistant's templating engine.
-  Only used when `on_response` is configured.
+- **capture_response** (*Optional*, boolean): Enable capturing the response from the Home Assistant action call.
+  When enabled, `on_success` must be configured. Defaults to `false`.
 
-- **on_response** (*Optional*, [Automation](#automation)): Optional automation to execute when a response is received 
-  from the Home Assistant action call. The response data is available as a `response` variable of type `ActionResponse`. 
+- **response_template** (*Optional*, [templatable](#config-templatable), string): Optional Jinja template to process
+  the action response data. This template is evaluated on the Home Assistant side with Home Assistant's templating engine.
+  Requires `capture_response: true`.
+
+- **on_success** (*Optional*, [Automation](#automation)): Optional automation to execute when the Home Assistant action
+  call succeeds. When `capture_response: true`, the response data is available as a `response` variable of type `JsonObject`.
   See [Action Response Handling](#action-response-handling).
+
+- **on_error** (*Optional*, [Automation](#automation)): Optional automation to execute when the Home Assistant action
+  call fails. See [Action Response Handling](#action-response-handling).
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
 the parameters in plain format.
@@ -252,43 +258,68 @@ on_...:
 > [!NOTE]
 > Action response handling is available in ESPHome 2025.10.0 and later.
 
-You can configure actions to receive and process responses from Home Assistant. This enables bidirectional 
+You can configure actions to receive and process responses from Home Assistant. This enables bidirectional
 communication where ESPHome can not only call Home Assistant actions but also handle their responses.
 
+##### Basic Success/Error Handling
+
+Use `on_success` and `on_error` to respond to action completion:
+
 ```yaml
-# Example with response handling
+on_...:
+  - homeassistant.action:
+      action: light.toggle
+      data:
+        entity_id: light.demo_light
+      on_success:
+        - logger.log: "Toggled demo light"
+      on_error:
+        - logger.log: "Failed to toggle demo light"
+```
+
+##### Capturing Response Data
+
+To capture and process response data from actions, set `capture_response: true`. When enabled, `on_success` must be configured
+and the response data is available as a [`JsonObject`](https://arduinojson.org/v7/api/jsonobject/) variable named `response`.
+
+```yaml
+# Example: Get weather forecast and parse JSON response
 on_...:
   - homeassistant.action:
       action: weather.get_forecasts
       data:
         entity_id: weather.forecast_home
         type: hourly
-      response_template: "{{ response['weather.forecast_home']['forecast'][0]['temperature'] }}"
-      on_response:
-        - if:
-            condition:
-              lambda: 'return response->is_success();'
-            then:
-              - logger.log:
-                  format: "Temperature next hour: %.1f"
-                  args: 
-                    - response->get_json()["response"].as<float>()
+      capture_response: true
+      on_success:
+        - lambda: |-
+            JsonObject next_hour = response["response"]["weather.forecast_home"]["forecast"][0];
+            float next_temperature = next_hour["temperature"].as<float>();
+            ESP_LOGI("weather", "Temperature next hour: %.1f", next_temperature);
 ```
 
-##### Configuration variables
+##### Using Response Templates
 
-- **response_template** (*Optional*): A Jinja template processed by Home Assistant to extract and format 
-  data from the action response. The template has access to the `response` object containing the action's 
-  return data.
+Use `response_template` to extract and format data from complex responses using Home Assistant's Jinja templating engine.
+This requires `capture_response: true`.
 
-- **on_response** (*Optional*): An automation that executes when a response is received. The `response` 
-  variable is available with the following properties:
+```yaml
+# Example: Extract temperature using a template
+on_...:
+  - homeassistant.action:
+      action: weather.get_forecasts
+      data:
+        entity_id: weather.forecast_home
+        type: hourly
+      capture_response: true
+      response_template: "{{ response['weather.forecast_home']['forecast'][0]['temperature'] }}"
+      on_success:
+        - lambda: |-
+            float temperature = response["response"].as<float>();
+            ESP_LOGI("weather", "Temperature next hour: %.1f", temperature);
+```
 
-  - `response->is_success()` - Returns `true` if the action succeeded
-  - `response->get_error_message()` - Returns error message if action failed
-  - `response->get_data()` - Returns response data as a string
-  - `response->get_json()` - Returns response data parsed as a [`JSONObject`](https://arduinojson.org/v7/api/jsonobject/).
-    The raw or processed (from `response_template`) response will always be in the `response` key of the JSON object.
+When `response_template` is used, the processed result is available in `response["response"]`.
 
 {{< anchor "api-homeassistant_tag_scanned_action" >}}
 
