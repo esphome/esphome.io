@@ -1,13 +1,13 @@
 ---
-description: "Instructions for setting up E-Paper SPI displays in ESPHome."
-title: "E-Paper SPI Display"
+description: "Instructions for setting up ePaper SPI displays in ESPHome."
+title: "ePaper SPI Display"
 params:
   seo:
-    description: Instructions for setting up E-Paper SPI displays with improved architecture in ESPHome.
+    description: Instructions for setting up ePaper SPI displays with improved architecture in ESPHome.
     image: epaper.svg
 ---
 
-The `epaper_spi` display platform provides a new e-paper display component architecture
+The `epaper_spi` display platform provides a new ePaper display component architecture
 with improved state management and non-blocking operation. This component implements a
 queue-based state machine that eliminates blocking waits for the busy pin and provides
 better integration with ESPHome's async architecture.
@@ -31,7 +31,7 @@ display:
 
 - **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The CS pin.
 - **dc_pin** (**Required**, [Pin Schema](#config-pin_schema)): The DC pin.
-- **model** (**Required**): The model of the E-Paper display. Currently supported:
+- **model** (**Required**): The model of the ePaper display. Currently supported:
 
   - `7.3in-spectra-e6` - 7.3" Spectra E6 6-color display (800×480 pixels)
 
