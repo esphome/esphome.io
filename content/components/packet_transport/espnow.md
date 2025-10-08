@@ -1,9 +1,9 @@
 # ESP-NOW Packet Transport Platform
 
-The [Packet Transport Component](/components/packet_transport) platform allows ESPHome nodes to directly communicate with each other over a communication channel.
+The [Packet Transport Component](#packet_transport) platform allows ESPHome nodes to directly communicate with each other over a communication channel.
 
 The **ESP-NOW** implementation of this platform uses ESP-NOW as the communication medium. See the
-[Packet Transport Component](/components/packet_transport) and [ESP-NOW Component](/components/espnow) for more information.
+[Packet Transport Component](#acket_transport) and [ESP-NOW Component](#espnow) for more information.
 
 ESP-NOW provides low-latency, low-power wireless communication between ESP32 devices without requiring a Wi-Fi connection.
 This makes it ideal for battery-powered sensors or applications where Wi-Fi overhead would impact performance.
@@ -290,9 +290,9 @@ button:
 
 ## See Also
 
-* [Packet Transport Component](/components/packet_transport)
-* [ESP-NOW Component](/components/espnow)
-* [UDP Packet Transport](/components/packet_transport/udp)
+* [Packet Transport Component](#packet_transport)
+* [ESP-NOW Component](#espnow)
+* [UDP Packet Transport](#packet_transport/udp)
 * [espnow_transport.h (API Reference)](/api/espnow/packet_transport/espnow_transport.h)
 * [Edit on GitHub](https://github.com/esphome/esphome/edit/dev/esphome/components/packet_transport/espnow_transport.md)
 
