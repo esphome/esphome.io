@@ -214,7 +214,7 @@ on_...:
   Requires `capture_response: true`.
 
 - **on_success** (*Optional*, [Automation](#automation)): Optional automation to execute when the Home Assistant action
-  call succeeds. When `capture_response: true`, the response data is available as a `response` variable of type `JsonObject`.
+  call succeeds. When `capture_response: true`, the response data is available as a `response` variable of type `JsonObjectConst`.
   See [Action Response Handling](#action-response-handling).
 
 - **on_error** (*Optional*, [Automation](#automation)): Optional automation to execute when the Home Assistant action
@@ -280,7 +280,7 @@ on_...:
 ##### Capturing Response Data
 
 To capture and process response data from actions, set `capture_response: true`. When enabled, `on_success` must be configured
-and the response data is available as a [`JsonObject`](https://arduinojson.org/v7/api/jsonobject/) variable named `response`.
+and the response data is available as a [`JsonObjectConst`](https://arduinojson.org/v7/api/jsonobjectconst/) variable named `response`.
 
 ```yaml
 # Example: Get weather forecast and parse JSON response
@@ -293,7 +293,7 @@ on_...:
       capture_response: true
       on_success:
         - lambda: |-
-            JsonObject next_hour = response["response"]["weather.forecast_home"]["forecast"][0];
+            JsonObjectConst next_hour = response["response"]["weather.forecast_home"]["forecast"][0];
             float next_temperature = next_hour["temperature"].as<float>();
             ESP_LOGI("weather", "Temperature next hour: %.1f", next_temperature);
 ```
