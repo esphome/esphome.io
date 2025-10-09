@@ -185,6 +185,17 @@ filters:
       }
 ```
 
+### `distinct`
+
+The distinct filter passes through a new text value only when it changes.
+If the incoming string is identical to the previously emitted one, it is suppressed.
+This is useful to avoid unnecessary updates or MQTT traffic when the text sensor’s value stays the same.
+
+```yaml
+filters:
+  - distinct:
+```
+
 ## Text Sensor Automation
 
 You can access the most recent state of the sensor in [lambdas](#config-lambda) using
