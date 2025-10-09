@@ -207,7 +207,7 @@ sensor:
 
 ## Power-Efficient OTA Updates
 
-ESP-NOW can be used to remotely enable Wi-Fi for OTA updates, keeping Wi-Fi disabled during normal operation for better performance.
+This component opens opportunities - as an example, ESP-NOW could be used to remotely enable Wi-Fi for OTA updates, keeping Wi-Fi disabled during normal operation for better performance.
 
 ### Remote Device (Wi-Fi normally disabled)
 
