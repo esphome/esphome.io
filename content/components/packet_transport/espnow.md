@@ -21,23 +21,31 @@ ESP-NOW provides low-latency, low-power wireless communication between ESP32 dev
 ```yaml
 # Example configuration entry
 espnow:
-  peers:
-    - mac_address: "AA:BB:CC:DD:EE:FF"
-      # Optional peer configuration
+  id: espnow_component
 
 packet_transport:
   - platform: espnow
-    peer_address: "AA:BB:CC:DD:EE:FF"
+    id: transport_broadcast
+    espnow_id: espnow_component
+    # Uses default broadcast address FF:FF:FF:FF:FF:FF
+    encryption:
+      key: "0123456789abcdef0123456789abcdef"
     sensors:
-      - dht_temp
+      - temp_sensor
+
+  - platform: espnow
+    id: transport_unicast
+    espnow_id: espnow_component
+    peer_address: "AA:BB:CC:DD:EE:FF"
+    encryption:
+      key: "0123456789abcdef0123456789abcdef"
+    sensors:
+      - temp_sensor
 
 sensor:
-  - platform: dht
-    id: dht
-    pin: GPIO4
-    temperature:
-      name: "Temperature"
-      id: dht_temp
+  - platform: internal_temperature
+    id: temp_sensor
+    name: "Test Temperature"
 ```
 
 ## Configuration Variables
