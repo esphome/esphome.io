@@ -1,18 +1,20 @@
-# ESP-NOW Packet Transport Platform
-
-The [Packet Transport Component](#packet_transport) platform allows ESPHome nodes to directly communicate with each other over a communication channel.
-
-The **ESP-NOW** implementation of this platform uses ESP-NOW as the communication medium. See the
-[Packet Transport Component](#acket_transport) and [ESP-NOW Component](#espnow) for more information.
-
-ESP-NOW provides low-latency, low-power wireless communication between ESP32 devices without requiring a Wi-Fi connection.
-This makes it ideal for battery-powered sensors or applications where Wi-Fi overhead would impact performance.
-
-> **Note:**
-> ESP-NOW communication occurs independently of Wi-Fi.
-> Devices can communicate via ESP-NOW even when Wi-Fi is disabled, making it suitable for power-sensitive applications.
-
 ---
+description: "Instructions for setting up an ESP-NOW packet transport platform on ESPHome"
+title: "ESP-NOW Packet Transport Platform"
+params:
+  seo:
+    description: Instructions for setting up an ESP-NOW packet transport platform on ESPHome
+    image: espnow.svg
+---
+
+{{< anchor "espnow-packet-transport" >}}
+
+The [Packet Transport Component](#packet-transport) platform allows ESPHome nodes to directly communicate with each over a communication channel. The ESP-NOW implementation of the platform uses ESP-NOW as a communication medium. See the [Packet Transport Component](#packet-transport) and [ESP-NOW Component](#espnow) for more information.
+
+ESP-NOW provides low-latency, low-power wireless communication between ESP32 devices without requiring a Wi-Fi connection. This makes it ideal for battery-powered sensors or applications where Wi-Fi overhead would impact performance.
+
+> **Note:**  
+> ESP-NOW communication occurs independently of Wi-Fi. Devices can communicate via ESP-NOW even when Wi-Fi is disabled, making it suitable for power-sensitive applications.
 
 ## Example Configuration
 
@@ -38,20 +40,15 @@ sensor:
       id: dht_temp
 ```
 
----
-
 ## Configuration Variables
 
 | Name                | Type                     | Default             | Description                                                                                            |
 | ------------------- | ------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------ |
-| `peer_address`      | MAC Address *(optional)* | `FF:FF:FF:FF:FF:FF` | MAC address to send packets to. May be a specific peer (unicast) or broadcast to all registered peers. |
-| *All other options* | —                        | —                   | From the [Packet Transport Component](/components/packet_transport).                                   |
+| `peer_address`      | MAC Address *(optional)* | `FF:FF:FF:FF:FF:FF` | MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address `FF:FF:FF:FF:FF:FF` for broadcasting to all registered peers. |
+| *All other options* | —                        | —                   | From the [Packet Transport Component](#packet-transport).                                              |
 
-> **Note:**
-> Peers must be registered with the [ESP-NOW Component](/components/espnow) before they can receive packets.
-> The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
-
----
+> **Note:**  
+> Peers must be registered with the [ESP-NOW Component](#espnow) before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
 
 ## Broadcast vs Unicast
 
@@ -67,8 +64,10 @@ packet_transport:
       - sensor_id
 ```
 
-All devices with the broadcast address (`FF:FF:FF:FF:FF:FF`) registered as a peer will receive the packets.
-Useful for **hub-and-spoke** topologies where multiple devices monitor a single sensor source.
+All devices with the broadcast address (`FF:FF:FF:FF:FF:FF`) registered as a peer will receive the packets. This is useful for hub-and-spoke topologies where multiple devices monitor a single sensor source.
+
+> **Warning:**  
+> Using broadcast mode increases ESP-NOW traffic on the radio channel, which may impact performance of other ESP-NOW devices in range. Use specific peer addresses whenever possible to minimize interference.
 
 ### Unicast Mode
 
@@ -80,10 +79,7 @@ packet_transport:
       - sensor_id
 ```
 
-Only the specified peer receives the packets.
-This is more efficient for **point-to-point** communication.
-
----
+Only the specified peer receives the packets. This is more efficient for point-to-point communication and reduces radio channel congestion for neighboring ESP-NOW devices.
 
 ## Complete Example
 
@@ -137,8 +133,6 @@ sensor:
     remote_id: outdoor_temp
     name: "Remote Outdoor Temperature"
 ```
-
----
 
 ## Multi-Device Hub Example
 
@@ -203,11 +197,9 @@ sensor:
       id: temperature
 ```
 
----
-
 ## Power-Efficient OTA Updates
 
-ESP-NOW can be used to remotely enable Wi-Fi for OTA updates, keeping Wi-Fi disabled during normal operation for better power performance.
+One Potential application could be to use ESP-NOW to remotely enable Wi-Fi for OTA updates, keeping Wi-Fi disabled during normal operation for better performance.
 
 ### Remote Device (Wi-Fi normally disabled)
 
@@ -266,34 +258,27 @@ button:
           id(espnow_transport)->send_packet(cmd);
 ```
 
----
-
 ## Performance Considerations
 
-* **Maximum Packet Size:** ESP-NOW packets are limited to **250 bytes**. The packet transport component automatically handles this.
-* **Throughput:** ESP-NOW provides lower throughput than Wi-Fi but with significantly lower latency (<10 ms typical vs 50–100 ms).
-* **Range:** Typically **50–100 m line-of-sight**, similar to Wi-Fi.
-* **Power Consumption:** Far lower than maintaining a Wi-Fi connection — ideal for battery devices.
-* **Channel:** Uses the same 2.4 GHz channels as Wi-Fi. When Wi-Fi is disabled, defaults to channel 1.
-
----
+* **Maximum Packet Size:** ESP-NOW has a maximum packet size of 250 bytes. The packet transport component will automatically handle this limitation.
+* **Throughput:** ESP-NOW provides lower throughput than Wi-Fi but has significantly lower latency (typically <10ms vs 50-100ms for Wi-Fi).
+* **Range:** ESP-NOW typically provides similar range to Wi-Fi (50-100 meters line-of-sight), but this varies based on environment and antenna configuration.
+* **Power Consumption:** ESP-NOW consumes significantly less power than maintaining a Wi-Fi connection, making it ideal for battery-powered applications.
+* **Channel:** ESP-NOW operates on the same 2.4GHz channels as Wi-Fi. When Wi-Fi is enabled, ESP-NOW automatically uses the same channel. When Wi-Fi is disabled, ESP-NOW uses channel 1 by default.
 
 ## Limitations
 
-* **ESP32-only:** Available on ESP32, ESP32-S2, ESP32-S3, and ESP32-C3.
-  Not supported on ESP8266.
-* **Peer Limit:** Up to 20 peers total (10 encrypted + 10 unencrypted, or combinations).
-* **Packet Size:** Maximum 250 bytes per packet.
-* **No Routing:** ESP-NOW is not a mesh protocol; devices communicate directly only.
-
----
+* **ESP32 Only:** ESP-NOW is only available on ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 chips. ESP8266 support is not available.
+* **Peer Limit:** ESP32 devices can register a maximum of 20 peers (10 encrypted + 10 unencrypted, or various combinations).
+* **Packet Size:** Maximum 250 bytes per packet, which limits the amount of sensor data that can be transmitted in a single update.
+* **No Routing:** ESP-NOW is not a mesh protocol. Devices communicate directly and cannot route packets through intermediate nodes.
 
 ## See Also
 
-* [Packet Transport Component](#packet_transport)
-* [ESP-NOW Component](#espnow)
-* [UDP Packet Transport](#packet_transport/udp)
-* [espnow_transport.h (API Reference)](/api/espnow/packet_transport/espnow_transport.h)
-* [Edit on GitHub](https://github.com/esphome/esphome/edit/dev/esphome/components/packet_transport/espnow_transport.md)
-
----
+- [Packet Transport Component](#packet-transport)
+- {{< docref "/components/espnow" >}}
+- {{< docref "/components/binary_sensor/packet_transport" >}}
+- {{< docref "/components/sensor/packet_transport" >}}
+- [UDP Packet Transport](#udp-packet-transport)
+- [Automation](#automation)
+- {{< apiref "packet_transport/espnow_transport.h" "packet_transport/espnow_transport.h" >}}
