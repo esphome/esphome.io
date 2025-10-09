@@ -82,7 +82,7 @@ esp32:
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
-  [ESP32 arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
+  [ESP32 Arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
   Additional values are:
 
   - `dev`  : Use the latest commit, note this may break at any time
@@ -101,7 +101,8 @@ esp32:
   - `symlink:///path/to/esp-idf`
 
 - **platform_version** (*Optional*, string): The version of the
-  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use.
+  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use. For known framework versions
+  this value will be set automatically.
 
 - **sdkconfig_options** (*Optional*, mapping): Custom sdkconfig
   [compiler options](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options)
