@@ -111,8 +111,7 @@ packet_transport:
       - outdoor_temp
 
 sensor:
-  - platform: dht
-    pin: GPIO4
+  - platform: ...
     temperature:
       name: "Outdoor Temperature"
       id: outdoor_temp
@@ -199,8 +198,7 @@ packet_transport:
       - temperature
 
 sensor:
-  - platform: dht
-    pin: GPIO4
+  - platform: ...
     temperature:
       id: temperature
 ```
