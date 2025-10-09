@@ -25,11 +25,11 @@ sensor:
 
 ## Configuration Variables  
 
-| Variable            | Type (Default)               | Description                                  |
-|---------------------|------------------------------|----------------------------------------------|
-| **address**         | *Optional*, `int` (`0x48`)   | Manually specify the I²C address of the sensor. |
-| **update_interval** | *Optional*, [Time](#config-time) (`60s`) | Interval for sensor updates.                |
-| *Inherits*          | [Sensor](#config-sensor)     | All standard sensor configurations apply.   |
+- **address** (*Optional*, int): Manually specify the I²C address of the sensor. Defaults to `0x48`.  
+
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.  
+
+- All other options from [Sensor](#config-sensor).  
 
 > [!NOTE]
 > The following features are **not yet supported**:  
