@@ -81,7 +81,8 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
-- **reset_on_boot** (*Optional*, boolean): Whether or not to reset the device configuration (including counters) on component initialization. Defaults to `yes`/`true`. Set `no`/`false` to preserve counters through ESPHome resets.
+- **reset_on_boot** (*Optional*, boolean): Whether or not to reset the device configuration (including counters) on
+  component initialization. Defaults to `true`; set `false` to preserve counters through ESPHome resets.
 
 - All other options from [Sensor](#config-sensor) and [I²C device](#i2c).
 
@@ -134,8 +135,9 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 
-- **reset_on_boot** (*Optional*, boolean): Whether or not to reset the device configuration (including counters) on component initialization. Defaults to `yes`/`true`. Set `no`/`false` to preserve counters through ESPHome resets.
-
+- **reset_on_boot** (*Optional*, boolean): Whether or not to reset the device configuration (including counters) on
+  component initialization. Defaults to `true`; set `false` to preserve counters through ESPHome resets.
+  
 - All other options from [Sensor](#config-sensor) and [SPI device](#spi).
 
 ## Sensors
