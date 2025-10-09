@@ -89,8 +89,16 @@ esp32:
   - `latest`  : Use the latest *release*, even if it hasn't been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
-- **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to
-  use a custom or patched version of the framework.
+- **source** (*Optional*, string): The PlatformIO package to use for the framework. This variable provides
+  the URL of the git repository or file archive of a custom or patched version of the
+  [pioarduino/framework-arduinoespressif32](https://github.com/espressif/arduino-esp32) or
+  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package for the framework type. Refer to
+  [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications)
+  for the supported URL schemes. Examples:
+
+  - `https://github.com/user/arduino-esp32/releases/download/archive.zip`
+  - `https://github.com/user/esp-idf.git#branch`
+  - `symlink:///path/to/esp-idf`
 
 - **platform_version** (*Optional*, string): The version of the
   [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use.
