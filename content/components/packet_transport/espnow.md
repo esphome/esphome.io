@@ -43,9 +43,9 @@ sensor:
 ## Configuration Variables
 
 | Name                | Type                     | Default             | Description                                                                                            |
-| ------------------- | ------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------ |
+|---------------------|--------------------------|---------------------|--------------------------------------------------------------------------------------------------------|
 | `peer_address`      | MAC Address *(optional)* | `FF:FF:FF:FF:FF:FF` | MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address `FF:FF:FF:FF:FF:FF` for broadcasting to all registered peers. |
-| *All other options* | —                        | —                   | From the [Packet Transport Component](#packet-transport).                                              |
+| *All other options* | —                        | —                   | From the [Packet Transport Component](#packet-transport).                                               |
 
 > **Note:**  
 > Peers must be registered with the [ESP-NOW Component](#espnow) before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
@@ -199,7 +199,7 @@ sensor:
 
 ## Power-Efficient OTA Updates
 
-One Potential application could be to use ESP-NOW to remotely enable Wi-Fi for OTA updates, keeping Wi-Fi disabled during normal operation for better performance.
+ESP-NOW can be used to remotely enable Wi-Fi for OTA updates, keeping Wi-Fi disabled during normal operation for better performance.
 
 ### Remote Device (Wi-Fi normally disabled)
 
@@ -275,10 +275,10 @@ button:
 
 ## See Also
 
-- [Packet Transport Component](#packet-transport)
-- {{< docref "/components/espnow" >}}
-- {{< docref "/components/binary_sensor/packet_transport" >}}
-- {{< docref "/components/sensor/packet_transport" >}}
-- [UDP Packet Transport](#udp-packet-transport)
-- [Automation](#automation)
-- {{< apiref "packet_transport/espnow_transport.h" "packet_transport/espnow_transport.h" >}}
+* [Packet Transport Component](#packet-transport)
+* {{< docref "/components/espnow" >}}
+* {{< docref "/components/binary_sensor/packet_transport" >}}
+* {{< docref "/components/sensor/packet_transport" >}}
+* [UDP Packet Transport](#udp-packet-transport)
+* [Automation](#automation)
+* {{< apiref "packet_transport/espnow_transport.h" "packet_transport/espnow_transport.h" >}}
