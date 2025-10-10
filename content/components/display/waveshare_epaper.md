@@ -113,6 +113,7 @@ lambda: |-
   - `5.83in`
   - `5.83inv2`
   - `gdey0583t81` - GoodDisplay GDEY0583T81 5.83" B/W
+  - `7.30in-e`: 7.3inch E-Ink Spectra 6-color display
   - `7.30in-f` - 7.3in 7-color display (black, white, red, yellow, blue, green, and orange)
   - `7.50in`
   - `7.50in-bV2` - also supports v3, B/W rendering only
