@@ -56,7 +56,7 @@ sensor:
 | *All other options* | —                        | —                   | From the [Packet Transport Component](#packet-transport).                                               |
 
 > **Note:**  
-> Peers must be registered with the [ESP-NOW Component](#espnow) before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
+> Peers must be registered with the {{< docref "/components/espnow" >}} component before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
 
 ## Broadcast vs Unicast
 
