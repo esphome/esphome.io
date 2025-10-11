@@ -7,16 +7,13 @@ params:
     image: folder-open.svg
 ---
 
-FATFS is the API for files and directory access storage devices with FAT filesystems.  
-API contains methods for accessing and control files and directory. API will the same on any platforms 
-even with another FAT library.
+FATFS is the API for files and directory access storage devices with FAT filesystems. API contains methods for accessing and control files and directory. API will the same on any platforms even with another FAT library.
 
 {{< anchor "fatfs-base-config" >}}
 
 ## Base fatfs Configuration
 
-Each FATFS device represented by the platform component with coresponding type. 
-Each platform type inherits parameters from fatfs configuration schema.
+Each FATFS device represented by the platform component with coresponding type. Each platform type inherits parameters from fatfs configuration schema.
 
 ```yaml
 
@@ -95,6 +92,7 @@ advanced stuff.
 ```
 
 ## See Also
+
 - {{< apiref "Component" "esphome/core/component.h" >}}
 - {{< apiref "api" "content/components/api.md">}}
 - {{< apiref "fatfs" "esphome/components/fatfs/fatfs.h" "fatfs/fatfs.h" >}}
