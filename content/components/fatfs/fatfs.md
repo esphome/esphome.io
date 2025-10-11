@@ -36,8 +36,7 @@ fatfs:
 
 ## Exist Condition
 
-This is an condition for checking if file or directory by are present. 
-File pointed by its path path.
+This is an condition for checking if file or directory by are present. File pointed by its path path.
 
 ```yaml
 
