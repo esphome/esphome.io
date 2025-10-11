@@ -15,7 +15,7 @@ and measuring the time it takes the light to be reflected back
 The sensor can measure distances up to 4 meters, though that figure depends significantly
 on several conditions like surface reflectance, field of view, temperature etc.
 
-{{< img src="vl53l1x-full.png" alt="Depiction of the VL53L1x sensor" width="100.0%" class="align-center" >}}
+{{< img src="vl53l1x-full.jpg" alt="Depiction of the VL53L1x sensor" width="100.0%" class="align-center" >}}
 
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
