@@ -1052,6 +1052,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Status LED","components/status_led","led-on.svg","dark-invert"
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
+"Tuya Low Energy MCU","components/tuya_low_energy","tuya.png",""
 "Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
 {{< /imgtable >}}
 
