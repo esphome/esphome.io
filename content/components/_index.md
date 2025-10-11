@@ -623,6 +623,7 @@ Often known as "tag" or "card" readers within the community.
 "Resol VBus","components/vbus","resol_deltasol_bs_plus.jpg",""
 "Tuya Binary Sensor","components/binary_sensor/tuya","tuya.png",""
 "WireGuard","components/wireguard","wireguard_custom_logo.svg","dark-invert"
+"Fatfs","components/fatfs",fatfs.svg","dark-invert"
 {{< /imgtable >}}
 
 ## Alarm Control Panel Components
@@ -1053,6 +1054,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
 "Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
+"Fatfs","components/fatfs/","fatfs.svg",""
 {{< /imgtable >}}
 
 ## Cookbook
