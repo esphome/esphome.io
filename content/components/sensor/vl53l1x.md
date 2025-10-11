@@ -162,7 +162,7 @@ sensor:
 
 - **distance_threshold**: (*Optional*, object):
   When operating in interrupt mode, the sensor can be configured to only trigger interrupts
-  for measurements within the given bounds. For example the sensor can be configured to only detect
+  for measurements within the given bounds. For example the sensor can be configured to only report
   measurements smaller than 1m.
 
   - **interrupt_when**: (*Required*, (below_min, above_max, inside_window, outside_window)):
