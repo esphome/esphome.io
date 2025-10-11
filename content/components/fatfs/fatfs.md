@@ -95,5 +95,6 @@ advanced stuff.
 ```
 
 ## See Also
-
-- {{< apiref "fatfs/fatfs.h" "fatfs/fatfs.h" >}}
+- {{< apiref "Component" "esphome/core/component.h" >}}
+- {{< apiref "api" "content/components/api.md">}}
+- {{< apiref "fatfs" "esphome/components/fatfs/fatfs.h" "fatfs/fatfs.h" >}}
