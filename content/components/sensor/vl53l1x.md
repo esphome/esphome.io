@@ -8,7 +8,7 @@ params:
 ---
 
 The `vl53l1x` sensor platform allows you to use VL53L1X optical time of flight
-([datasheet](https://www.st.com/resource/en/datasheet/vl53l1x.pdf) with ESPHome
+([datasheet](https://www.st.com/resource/en/datasheet/vl53l1x.pdf)) with ESPHome
 to measure distances. The sensor works optically by emitting short infrared pulses
 and measuring the time it takes the light to be reflected back
 
