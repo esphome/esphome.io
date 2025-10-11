@@ -4,7 +4,7 @@ title: "VL53L1X Time Of Flight Distance Sensor"
 params:
   seo:
     description: Instructions for setting up VL53L1X distance sensors in ESPHome.
-    image: vl53l1x.jpg
+    image: vl53l1x-full.jpg
 ---
 
 The `vl53l1x` sensor platform allows you to use VL53L1X optical time of flight
@@ -15,7 +15,7 @@ and measuring the time it takes the light to be reflected back
 The sensor can measure distances up to 4 meters, though that figure depends significantly
 on several conditions like surface reflectance, field of view, temperature etc. 
 
-{{< img src="vl53l1x.png" alt="Depiction of the VL53L1x sensor" width="100.0%" class="align-center" >}}
+{{< img src="vl53l1x-full.png" alt="Depiction of the VL53L1x sensor" width="100.0%" class="align-center" >}}
 
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -27,9 +27,6 @@ The [I²C Bus](#i2c) is required to be set up in your configuration for this sen
 - `XSHUT` connects to free GPIO pin. Enable/disable device. This is optional if there is only one
   vl53l1X sensor on the I²C bus and the default `0x29` address is used. Otherwise this is required.
 
-{{< img src="vl53l1x-full.jpg" alt="Image" caption="vl53l1X Time Of Flight Distance Sensor." width="50.0%" class="align-center" >}}
-
-{{< img src="vl53l1x-ui.png" alt="Image" width="80.0%" class="align-center" >}}
 
 ```yaml
 i2c:
