@@ -19,7 +19,7 @@ on several conditions like surface reflectance, field of view, temperature etc.
 
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
-- `VCC` connects to 3V3 (`3V3` will output 3.3V), or directly connect `VCC` to 3.3V
+- `VIN` connects to 3V3 (`3V3` will output 3.3V), or directly connect `VIN` to 3.3V
 - `GND` connects to ground
 - `SCL` connects I2C SCL (clock)
 - `SDA` connects I2C SDA (data)
