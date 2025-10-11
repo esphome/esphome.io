@@ -172,10 +172,10 @@ sensor:
     - *inside_window*: Only interrupt when the measurement is between 'min' and 'max'.
     - *outside_window*: Only interrupt when the measurement is less than 'min' or larger than 'max'.
 
-  - **min**: (*Conditional*, [Distance](#config-distance)): Lower bound of the distance threshold.
-  - **max**: (*Conditional*, [Distance](#config-distance)): Lower bound of the distance threshold.
+  - **min**: (*Conditional*, float with distance unit): Lower bound of the distance threshold.
+  - **max**: (*Conditional*, float with distance unit): Lower bound of the distance threshold.
 
-- **offset**: (*Optional*, [Distance](#config-distance)): You can use this option measure offset the
+- **offset**: (*Optional*, float with distance unit): You can use this option measure offset the
   distance reported by the sensor.
 
 - **xtalk_correction**: (*Optional*, integer): When the sensor is mounted behind a
