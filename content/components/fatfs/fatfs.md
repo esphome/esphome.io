@@ -10,7 +10,8 @@ params:
 FATFS is the API for files and directory access storage devices with FAT filesystems.  
 API contains methods for accessing and control files and directory. API will the same on any platforms 
 even with another FAT library.
- 
+
+{{< anchor "fatfs-base-config" >}}
 
 ## Base fatfs Configuration
 
@@ -27,7 +28,6 @@ fatfs:
     
 ```
 
-{{< anchor "config-fatfs" >}}
 **Configuration variables:**
 
 - **platform** (**Required**, [platform](#platforms-canbus)): One of the supported fatfs [Platforms](#platforms-fatfs).
@@ -35,9 +35,9 @@ fatfs:
 - **drive_id** (*Optional*, string): Manually specify the mounted ID in range: 0-10
 - **cd_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin used for storage media detect in case it removasle media like sdcard. CD pin used in some card holders.
 
-## Exist Condition
-
 {{< anchor "fatfs-exist_condition" >}}
+
+## Exist Condition
 
 This is an condition for checking if file or directory by are present. 
 File pointed by its path path.
@@ -59,6 +59,7 @@ Configuration variables:
 - **id** (**Required**, [ID](#config-id)): The ID of the fatfs device.
 - **path** (*Required*, string, [templatable](#config-templatable)): path for fs object to check for existing
 
+{{< anchor "fatfs-lambda-calls" >}}
 
 ### lambda calls
 
