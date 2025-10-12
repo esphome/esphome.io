@@ -48,13 +48,6 @@ sensor:
     name: "Test Temperature"
 ```
 
-## Configuration Variables
-
-| Name                | Type                     | Default             | Description                                                                                            |
-|---------------------|--------------------------|---------------------|--------------------------------------------------------------------------------------------------------|
-| `peer_address`      | MAC Address *(optional)* | `FF:FF:FF:FF:FF:FF` | MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address `FF:FF:FF:FF:FF:FF` for broadcasting to all registered peers. |
-| *All other options* | —                        | —                   | From the [Packet Transport Component](#packet-transport).                                               |
-
 > **Note:**  
 > Peers must be registered with the {{< docref "/components/espnow" >}} component before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
 
