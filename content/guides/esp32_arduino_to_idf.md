@@ -123,7 +123,7 @@ The following components currently require Arduino framework and don't have ESP-
 - {{< docref "/components/climate/midea" "midea" >}} - Midea air conditioner control
 - {{< docref "/components/light/index" "WLED Effect" >}} - WLED UDP Realtime Control integration
 
-If you need these components, you must continue using the Arduino framework.
+If you need these components, you will need to continue using the Arduino framework.
 
 > [!NOTE]
 > Component compatibility is constantly improving. Check the component documentation
