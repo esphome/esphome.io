@@ -51,7 +51,7 @@ sensor:
 ## Configuration Variables
 
 - **espnow_id** (**Required**, [ID](#config-id)): The esp-now ID to use for transport.
-- **peer_address** (*Optional*, mac address): MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
+- **peer_address** (*Optional*, MAC Address): MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
 - *all other options*: From the [Packet Transport Component](#packet-transport                                             |
 
 > **Note:**  
