@@ -1,0 +1,49 @@
+---
+description: "Component for accessing files on sdcard with FAT filesystems"
+title: "Fatfs_esp32_sdspi Component"
+params:
+  seo:
+    description: Information about the base representation of all FATfs devices.
+    image: fatfs.svg
+---
+
+The fatfs_esp32_sdspi platform component mount sdcard device connected via SPI interface.
+fatfs_esp32 itself provide methods for accessing files and directory on FAT filesystems thought esp32 implementation of fatfs library.  Fatfs library suport FAT16, FAT32 and ExFat. 
+
+{{< anchor "fatfs-esp32-sdspi" >}}
+
+## Base fatfs Configuration
+
+Each FATFS device represented by the platform component with coresponding type. Each platform type inherits parameters from fatfs configuration schema. 
+fatfs_esp32_sdspi component also inherit paramiters from polling component for checking if card steel present.
+This function is useful in case your card holder does not prifide card detect pin.
+
+```yaml
+  spi:
+    is: spi1
+    # ...
+  fatfs:
+    - platform: fatfs_esp32_sdspi
+      spi_id: spi1
+      cs_pin: GPIOXX
+
+    
+```
+
+**Configuration variables:**
+
+- **spi_id** (**Required**, [SPI](#spi)): SPI bus id for connecting with sdcard.
+- **cs_pin** (*Required*, [Pin Schema](#config-pin_schema)): Card select pin as part of spi interface
+- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+  sensor. Defaults to `10s`.
+- All other options from [fatfs](#fatfs-base-config).
+
+{{< anchor "fatfs-exist_condition" >}}
+
+
+## See Also
+
+- {{< docref "fatfs/" >}}
+- {{< apiref "Component" "esphome/core/component.h" >}}
+- {{< apiref "api" "content/components/api.md">}}
+- {{< apiref "fatfs" "esphome/components/fatfs/fatfs.h" "fatfs/fatfs.h" >}}
