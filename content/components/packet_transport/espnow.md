@@ -48,6 +48,12 @@ sensor:
     name: "Test Temperature"
 ```
 
+## Configuration Variables
+
+- **espnow_id** (**Required**, [ID](#config-id)): The esp-now ID to use for transport.
+- **peer_address** (*Optional*, mac address): MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
+- *all other options*: From the [Packet Transport Component](#packet-transport                                             |
+
 > **Note:**  
 > Peers must be registered with the {{< docref "/components/espnow" >}} component before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
 
