@@ -265,25 +265,25 @@ button:
 
 ## Performance Considerations
 
-* **Maximum Packet Size:** ESP-NOW has a maximum packet size of 250 bytes. The packet transport component will automatically handle this limitation.
-* **Throughput:** ESP-NOW provides lower throughput than Wi-Fi but has significantly lower latency (typically <10ms vs 50-100ms for Wi-Fi).
-* **Range:** ESP-NOW typically provides similar range to Wi-Fi (50-100 meters line-of-sight), but this varies based on environment and antenna configuration.
-* **Power Consumption:** ESP-NOW consumes significantly less power than maintaining a Wi-Fi connection, making it ideal for battery-powered applications.
-* **Channel:** ESP-NOW operates on the same 2.4GHz channels as Wi-Fi. When Wi-Fi is enabled, ESP-NOW automatically uses the same channel. When Wi-Fi is disabled, ESP-NOW uses channel 1 by default.
+- **Maximum Packet Size:** ESP-NOW has a maximum packet size of 250 bytes. The packet transport component will automatically handle this limitation.
+- **Throughput:** ESP-NOW provides lower throughput than Wi-Fi but has significantly lower latency (typically <10ms vs 50-100ms for Wi-Fi).
+- **Range:** ESP-NOW typically provides similar range to Wi-Fi (50-100 meters line-of-sight), but this varies based on environment and antenna configuration.
+- **Power Consumption:** ESP-NOW consumes significantly less power than maintaining a Wi-Fi connection, making it ideal for battery-powered applications.
+- **Channel:** ESP-NOW operates on the same 2.4GHz channels as Wi-Fi. When Wi-Fi is enabled, ESP-NOW automatically uses the same channel. When Wi-Fi is disabled, ESP-NOW uses channel 1 by default.
 
 ## Limitations
 
-* **ESP32 Only:** ESP-NOW is only available on ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 chips. ESP8266 support is not available.
-* **Peer Limit:** ESP32 devices can register a maximum of 20 peers (10 encrypted + 10 unencrypted, or various combinations).
-* **Packet Size:** Maximum 250 bytes per packet, which limits the amount of sensor data that can be transmitted in a single update.
-* **No Routing:** ESP-NOW is not a mesh protocol. Devices communicate directly and cannot route packets through intermediate nodes.
+- **ESP32 Only:** ESP-NOW is only available on ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 chips. ESP8266 support is not available.
+- **Peer Limit:** ESP32 devices can register a maximum of 20 peers (10 encrypted + 10 unencrypted, or various combinations).
+- **Packet Size:** Maximum 250 bytes per packet, which limits the amount of sensor data that can be transmitted in a single update.
+- **No Routing:** ESP-NOW is not a mesh protocol. Devices communicate directly and cannot route packets through intermediate nodes.
 
 ## See Also
 
-* [Packet Transport Component](#packet-transport)
-* {{< docref "/components/espnow" >}}
-* {{< docref "/components/binary_sensor/packet_transport" >}}
-* {{< docref "/components/sensor/packet_transport" >}}
-* [UDP Packet Transport](#udp-packet-transport)
-* [Automation](#automation)
-* {{< apiref "packet_transport/espnow_transport.h" "packet_transport/espnow_transport.h" >}}
+- [Packet Transport Component](#packet-transport)
+- {{< docref "/components/espnow" >}}
+- {{< docref "/components/binary_sensor/packet_transport" >}}
+- {{< docref "/components/sensor/packet_transport" >}}
+- [UDP Packet Transport](#udp-packet-transport)
+- [Automation](#automation)
+- {{< apiref "packet_transport/espnow_transport.h" "packet_transport/espnow_transport.h" >}}
