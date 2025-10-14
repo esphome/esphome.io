@@ -3,7 +3,7 @@ description: "Installing ESPHome Manually"
 title: "Installing ESPHome Manually"
 ---
 
-## Cross platform using uv
+## Cross-platform using uv
 
 [uv](https://docs.astral.sh/uv/) is an extremely fast Python packages and project manager, written in Rust.
 
