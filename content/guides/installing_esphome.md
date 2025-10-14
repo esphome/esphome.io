@@ -5,7 +5,7 @@ title: "Installing ESPHome Manually"
 
 ## Cross-platform using uv
 
-[uv](https://docs.astral.sh/uv/) is an extremely fast Python packages and project manager, written in Rust.
+[uv](https://docs.astral.sh/uv/) is an extremely fast Python package and project manager, written in Rust.
 
 It offers a simple way to install and run ESPHome on Windows, Mac and Linux.
 
