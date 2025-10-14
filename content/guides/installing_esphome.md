@@ -18,7 +18,7 @@ uv tool install esphome
 # upgrade with: uv tool upgrade esphome
 ```
 
-Now *esphome* will be available on your path
+Now *esphome* will be available on your PATH
 
 ```shell
 esphome version
