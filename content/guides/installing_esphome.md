@@ -8,11 +8,12 @@ title: "Installing ESPHome Manually"
 Download Python from [the official site](https://www.python.org/downloads/).
 
 {{< img src="python-win-installer.png"
-  alt="Python installer window with arrows pointing to \"Add Python to PATH\" and \"Install Now\""
+  alt="Python installer window with arrows pointing to \"Launch when ready\" and \"Install Python\""
   width="75.0%" class="align-center" >}}
 
-Make sure you check "Add Python to PATH", and go all the way through the
-installer.
+Make sure "Launch when ready" is checked and install.
+After the installation is completed, a terminal window will open asking to modify `App execution aliases`, enter `y`.
+It will open the app 
 
 Log out and back in, or restart your computer. Whichever is easiest.
 
@@ -21,14 +22,13 @@ Open the start menu and type `cmd`. Press the enter key.
 In the terminal that comes up, check that Python is installed:
 
 ```shell
-python --version
+py install 3.13
+python3.13 --version
 ```
 
 It should show something like:
 
-```shell
-Python 3.11.13
-```
+`Python 3.13.8`
 
 Looks good? You can go ahead and install ESPHome:
 
@@ -46,13 +46,11 @@ esphome version
 
 It should show something like:
 
-```shell
-Version: 2025.8.0
-```
+`Version: 2025.8.0`
 
 > [!NOTE]
 > You may additionally need to install git for the external components feature.
-> Download git from [the official link](https://git-scm.com/downloads)
+> Download git from [the official link](https://git-scm.com/downloads/win)
 
 ## Mac
 
@@ -78,9 +76,9 @@ esphome version
 
 It should show something like:
 
-```shell
+`
 Version: 2025.8.0
-```
+`
 
 > [!NOTE]
 >
@@ -129,9 +127,9 @@ python3 --version
 
 It should show something like:
 
-```shell
+`
 Python 3.11.13
-```
+`
 
 Looks good? Now create a virtual environment to contain ESPHome and it's dependencies.
 
@@ -168,9 +166,9 @@ esphome version
 
 It should show something like:
 
-```shell
+`
 Version: 2025.8.0
-```
+`
 
 If you get an error like "Command not found", you need to add the binary to
 your `PATH` using `export PATH=$PATH:$HOME/.local/bin`.
