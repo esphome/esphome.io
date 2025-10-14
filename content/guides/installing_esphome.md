@@ -13,13 +13,14 @@ Download Python from [the official site](https://www.python.org/downloads/).
 
 Make sure "Launch when ready" is checked and install.
 After the installation is completed, a terminal window will open asking to modify `App execution aliases`, enter `y`.
-It will open the app 
+It will open the app setting window. Make required adjustments as instructed and close the window.
+The python install manager should be ready.
+
+Proceed to install supported python runtime v3.13 using `py install 3.13`
 
 Log out and back in, or restart your computer. Whichever is easiest.
 
-Open the start menu and type `cmd`. Press the enter key.
-
-In the terminal that comes up, check that Python is installed:
+Open Windows terminal and check whether Python is installed:
 
 ```shell
 py install 3.13
@@ -33,9 +34,12 @@ It should show something like:
 Looks good? You can go ahead and install ESPHome:
 
 ```shell
-pip3 install wheel
-pip3 install esphome
+python3.13 -m pip install esphome
 ```
+
+If you spot pip complaining about PATH / `--no-warn-script-location`,
+add the scripts PATH to the user environment variable.
+`C:\Users\<username>\AppData\Local\Python\pythoncore-3.13-64\Scripts`
 
 And you should be good to go! You can test that things are properly installed
 with:
