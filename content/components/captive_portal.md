@@ -35,7 +35,9 @@ wifi:
 captive_portal:
 ```
 
-No configuration variables.
+## Configuration variables
+
+- **custom_html_file** (*Optional*, local file): Path to local file to be used as alternative captive portal index page.
 
 ## See Also
 
