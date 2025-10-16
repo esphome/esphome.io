@@ -34,6 +34,18 @@ binary_sensor:
     threshold: 0.5
 ```
 
+As an alternative to using this component you may use {{< docref "components/binary_sensor/template" >}} with [condition expressions](#config-condition):
+
+```yaml
+# Example configuration entry
+binary_sensor:
+  - platform: template
+    id: engine_running
+    condition:
+      sensor.in_range:
+        above: 300.0
+```
+
 ## Configuration variables
 
 - **sensor_id** (**Required**, [ID](#config-id)): The ID of the source sensor.
