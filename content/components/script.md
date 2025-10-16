@@ -26,19 +26,19 @@ script:
 
   - `single`  : Do not start a new run. Issue a warning.
   - `restart`  : Start a new run after first stopping previous run.
-  - `queued`  : Start a new run after previous runs complete. By default, allows up to 6 total instances (1 running + 5 queued).
+  - `queued`  : Start a new run after previous runs complete. By default, allows up to 5 total instances (1 running + 4 queued).
     When the limit is reached, additional calls are rejected with a warning.
   - `parallel`  : Start a new, independent run in parallel with previous runs.
 
-- **max_runs** (*Optional*, int): Allows limiting the maximum number of queued/parallel runs.
-  - For `queued` mode: Specifies max queued instances (not including the running one). Defaults to `5`, allowing 6 total instances (1 running + 5 queued). Valid range: 1-100.
+- **max_runs** (*Optional*, int): Allows limiting the maximum number of script instances.
+  - For `queued` mode: Specifies max total instances (including the running one). Defaults to `5` (1 running + 4 queued). Valid range: 1-100.
   - For `parallel` mode: Specifies max parallel instances. Defaults to `0` (unlimited). Valid range: 0-100.
 
   ```yaml
   script:
     - id: my_script
       mode: queued
-      max_runs: 10  # Allow up to 11 total instances (1 running + 10 queued)
+      max_runs: 10  # Allow up to 10 total instances (1 running + 9 queued)
       then:
         - logger.log: "Processing..."
   ```
