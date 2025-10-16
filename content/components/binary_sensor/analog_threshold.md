@@ -41,9 +41,10 @@ As an alternative to using this component you may use {{< docref "components/bin
 binary_sensor:
   - platform: template
     id: engine_running
+    name: "Engine Running"
     condition:
       sensor.in_range:
-        above: 300.0
+        sensor_id: motor_current_sensor
 ```
 
 ## Configuration variables
