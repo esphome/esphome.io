@@ -79,6 +79,33 @@ light:
 - **power_supply** (*Optional*, [ID](#config-id)): The {{< docref "/components/power_supply" >}} to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
 
+- **power_limits** (_Optional_): Power management for addressable LED strips to prevent overloading power supplies.
+
+  > [!NOTE] **This is a software-based power management feature, not a hardware guarantee.**
+  > 
+  > Other components (sensors, WiFi, etc.) also consume power and are not included in this calculation. 
+  > **Always ensure your power supply can handle the maximum possible load with safety margins.**
+  > 
+  > Power calculations are based on LED brightness values and may not account for all real-world factors.
+
+  **How it works:** When the total calculated power consumption exceeds `max_watts`, the brightness of all LEDs is automatically scaled down proportionally to stay within the power limit. This helps prevent power supply overload and potential damage.
+
+  Below is an example, please refer to the specification of your hardware. 
+  ```yaml
+  light:
+    - platform: esp32_rmt_led_strip
+      # ... other configuration ...
+      power_limits:
+        max_watts: 5.0 # Maximum total power consumption in watts
+        voltage: 5.0 # Supply voltage of the LEDs
+        led_power_consumption: # Power consumption per LED channel in watts
+          red: 0.16
+          green: 0.16
+          blue: 0.16
+          white: 0.26
+  ```
+
+
 **Advanced options:**
 
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will not be exposed to the
