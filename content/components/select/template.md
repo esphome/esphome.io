@@ -59,5 +59,5 @@ with the [`select.set` Action](#select-set_action).
 
 ## See Also
 
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/select/template_select.h" "template/select/template_select.h" >}}

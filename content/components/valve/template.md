@@ -122,6 +122,6 @@ Configuration options:
 ## See Also
 
 - {{< docref "/components/valve" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/cookbook/garage-door" >}}
 - {{< apiref "template/valve/template_valve.h" "template/valve/template_valve.h" >}}

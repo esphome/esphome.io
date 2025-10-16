@@ -103,7 +103,7 @@ text_sensor:
 
 ## Automations
 
-- **on_data** (*Optional*, [Automation](#automation)): An automation to perform when a
+- **on_data** (*Optional*, [Automation](/automations)): An automation to perform when a
   SML message is received. See [`on_data` Trigger](#sml-on-data).
 
 {{< anchor "sml-on-data" >}}

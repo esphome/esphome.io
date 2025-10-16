@@ -48,19 +48,19 @@ ble_client:
 
 Automations:
 
-- **on_connect** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_connect** (*Optional*, [Automation](/automations)): An automation to perform
   when the client connects to a device. See [`on_connect`](#ble_client-on_connect).
 
-- **on_disconnect** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_disconnect** (*Optional*, [Automation](/automations)): An automation to perform
   when the client disconnects from a device. See [`on_disconnect`](#ble_client-on_disconnect).
 
-- **on_passkey_request** (*Optional*, [Automation](#automation)): An automation to enter
+- **on_passkey_request** (*Optional*, [Automation](/automations)): An automation to enter
   the passkey required by the other BLE device. See [`on_passkey_request`](#ble_client-on_passkey_request).
 
-- **on_passkey_notification** (*Optional*, [Automation](#automation)): An automation to
+- **on_passkey_notification** (*Optional*, [Automation](/automations)): An automation to
   display the passkey to the user. See [`on_passkey_notification`](#ble_client-on_passkey_notification).
 
-- **on_numeric_comparison_request** (*Optional*, [Automation](#automation)): An automation to
+- **on_numeric_comparison_request** (*Optional*, [Automation](/automations)): An automation to
   compare the passkeys shown on the two BLE devices. See [`on_numeric_comparison_request`](#ble_client-on_numeric_comparison_request).
 
 ## BLE Client Automation
@@ -494,5 +494,5 @@ ble_client:
 ## See Also
 
 - {{< docref "/components/sensor/ble_client" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "ble_client/ble_client.h" "ble_client/ble_client.h" >}}

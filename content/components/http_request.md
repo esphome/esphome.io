@@ -114,8 +114,8 @@ on_...:
 - **max_response_buffer_size** (*Optional*, integer): The maximum buffer size to be used to store the response.
   Defaults to `1 kB`.
 
-- **on_response** (*Optional*, [Automation](#automation)): An automation to perform after the request is received.
-- **on_error** (*Optional*, [Automation](#automation)): An automation to perform if the request cannot be completed.
+- **on_response** (*Optional*, [Automation](/automations)): An automation to perform after the request is received.
+- **on_error** (*Optional*, [Automation](/automations)): An automation to perform if the request cannot be completed.
 
 {{< anchor "http_request-post_action" >}}
 

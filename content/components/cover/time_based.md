@@ -94,5 +94,5 @@ stop_action:
 ## See Also
 
 - {{< docref "index/" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "time_based/time_based_cover.h" "time_based/time_based_cover.h" >}}

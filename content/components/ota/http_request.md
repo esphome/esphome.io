@@ -25,14 +25,14 @@ ota:
 
 ## Configuration variables
 
-- All [automations](#automation) supported by {{< docref "/components/ota" >}}.
+- All [automations](/automations) supported by {{< docref "/components/ota" >}}.
 
 {{< anchor "ota_http_request-flash_action" >}}
 
 ## `ota.http_request.flash` Action
 
 This action triggers the download and installation of the updated firmware from the configured URL. As it's an
-ESPHome [action](#config-action), it may be used in any ESPHome [automation(s)](#automation).
+ESPHome [action](#config-action), it may be used in any ESPHome [automation(s)](/automations).
 
 ```yaml
 on_...:

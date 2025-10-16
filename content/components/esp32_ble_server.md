@@ -41,8 +41,8 @@ esp32_ble_server:
   packet. Should be a list of bytes, where the first two are the little-endian representation of the 16-bit
   manufacturer ID as assigned by the Bluetooth SIG.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a client connects to the BLE server. It provides the `id` variable which contains the ID of the client that connected.
-- **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when a client disconnects from the BLE server. It provides the `id` variable which contains the ID of the client that disconnected.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a client connects to the BLE server. It provides the `id` variable which contains the ID of the client that connected.
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when a client disconnects from the BLE server. It provides the `id` variable which contains the ID of the client that disconnected.
 - **services** (*Optional*, list of [Service Configuration](#esp32_ble_server-service)): A list of services to expose on the BLE GATT server.
 
 {{< anchor "esp32_ble_server-service" >}}
@@ -108,7 +108,7 @@ esp32_ble_server:
 - **write_no_response** (*Optional*, boolean): If the characteristic should be writable without a response. Defaults to `false`.
 - **value** (*Optional*, [Value Configuration](#esp32_ble_server-value)): The value of the characteristic.
 - **descriptors** (*Optional*, list of [Descriptor Configuration](#esp32_ble_server-descriptor)): A list of descriptors to expose in this characteristic.
-- **on_write** (*Optional*, [Automation](#automation)): An action to be performed when the characteristic is written to. The characteristic must have the `write` property. See [`on_write` Trigger](#esp32_ble_server-characteristic-on_write).
+- **on_write** (*Optional*, [Automation](/automations)): An action to be performed when the characteristic is written to. The characteristic must have the `write` property. See [`on_write` Trigger](#esp32_ble_server-characteristic-on_write).
 
 {{< anchor "esp32_ble_server-descriptor" >}}
 

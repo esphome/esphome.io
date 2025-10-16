@@ -43,14 +43,14 @@ wiegand:
 
 ### Triggers
 
-- **on_key** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_key** (*Optional*, [Automation](/automations)): An automation to perform
   when a key has been pressed on the pad. The key is in a variable called `x`.
 
-- **on_tag** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_tag** (*Optional*, [Automation](/automations)): An automation to perform
   when a Wiegand-compatible card or a tag has been read by the device. The tag code is
   in a variable called `x`.
 
-- **on_raw** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_raw** (*Optional*, [Automation](/automations)): An automation to perform
   for any data sent by the device. The value is in a variable called `value`, the number of
   bits is in a variable called `bits`. Note that this will include parity bits as well and
   no parity checking is done.

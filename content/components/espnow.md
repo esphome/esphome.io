@@ -34,9 +34,9 @@ espnow:
 
 Automations:
 
-- **on_receive** (*Optional*, [Automation](#automation)): An automation to perform when data is received. See [`on_receive`](#espnow-on_receive).
-- **on_unknown_peer** (*Optional*, [Automation](#automation)): An automation to perform when data is received from an unknown peer. See [`on_unknown_peer`](#espnow-on_unknown_peer).
-- **on_broadcast** (*Optional*, [Automation](#automation)): An automation to perform when a broadcast packet is received.
+- **on_receive** (*Optional*, [Automation](/automations)): An automation to perform when data is received. See [`on_receive`](#espnow-on_receive).
+- **on_unknown_peer** (*Optional*, [Automation](/automations)): An automation to perform when data is received from an unknown peer. See [`on_unknown_peer`](#espnow-on_unknown_peer).
+- **on_broadcast** (*Optional*, [Automation](/automations)): An automation to perform when a broadcast packet is received.
   See [`on_broadcast`](#espnow-on_broadcast).
 
 ## Automations
@@ -121,8 +121,8 @@ on_...:
 
 Automations:
 
-- **on_sent** (*Optional*, [Automation](#automation)): An automation to perform when the data is sent successfully.
-- **on_error** (*Optional*, [Automation](#automation)): An automation to perform when the data could not be sent.
+- **on_sent** (*Optional*, [Automation](/automations)): An automation to perform when the data is sent successfully.
+- **on_error** (*Optional*, [Automation](/automations)): An automation to perform when the data could not be sent.
 
 {{< anchor "espnow-broadcast-action" >}}
 

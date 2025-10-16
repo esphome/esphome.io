@@ -49,13 +49,13 @@ sun:
         - logger.log: Good evening!
 ```
 
-- **on_sunrise** (*Optional*, [Automation](#automation)): An automation to perform at sunrise
+- **on_sunrise** (*Optional*, [Automation](/automations)): An automation to perform at sunrise
   when the sun crosses a specified angle.
 
   - **elevation** (*Optional*, float): The elevation to cross. Defaults to -0.833° (the horizon, slightly less than 0°
     to compensate for atmospheric refraction).
 
-- **on_sunset** (*Optional*, [Automation](#automation)): An automation to perform at sunset
+- **on_sunset** (*Optional*, [Automation](/automations)): An automation to perform at sunset
   when the sun crosses a specified angle.
 
   - **elevation** (*Optional*, float): The elevation to cross. Defaults to -0.833° (the horizon, slightly less than 0°

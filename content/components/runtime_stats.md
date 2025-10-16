@@ -101,5 +101,5 @@ Components are sorted by total execution time (descending) to highlight the most
 
 - {{< docref "debug/" >}}
 - {{< docref "logger/" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "runtime_stats/runtime_stats.h" "runtime_stats/runtime_stats.h" >}}

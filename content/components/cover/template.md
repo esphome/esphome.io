@@ -135,6 +135,6 @@ Configuration options:
 ## See Also
 
 - {{< docref "/components/cover" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/cookbook/garage-door" >}}
 - {{< apiref "template/cover/template_cover.h" "template/cover/template_cover.h" >}}

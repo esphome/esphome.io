@@ -56,5 +56,5 @@ with the [`number.set` Action](#number-set_action).
 
 ## See Also
 
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/number/template_number.h" "template/number/template_number.h" >}}

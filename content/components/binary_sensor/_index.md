@@ -44,24 +44,24 @@ Configuration variables:
 
 Automations:
 
-- **on_press** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_press** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is pressed. See [`on_press`](#binary_sensor-on_press).
 
-- **on_release** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_release** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is released. See [`on_release`](#binary_sensor-on_release).
 
-- **on_state** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_state** (*Optional*, [Automation](/automations)): An automation to perform
   when a state change is published. See [`on_state`](#binary_sensor-on_state).
 
-- **on_click** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_click** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is held down for a specified period of time.
   See [`on_click`](#binary_sensor-on_click).
 
-- **on_double_click** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_double_click** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is pressed twice for specified periods of time.
   See [`on_double_click`](#binary_sensor-on_double_click).
 
-- **on_multi_click** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_multi_click** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is pressed in a specific sequence.
   See [`on_multi_click`](#binary_sensor-on_multi_click).
 
@@ -266,7 +266,7 @@ binary_sensor:
         - switch.turn_on: relay_1
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "binary_sensor-on_release" >}}
 
@@ -284,7 +284,7 @@ binary_sensor:
         - switch.turn_off: relay_1
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "binary_sensor-on_state" >}}
 
@@ -304,7 +304,7 @@ binary_sensor:
         - switch.turn_off: relay_1
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "binary_sensor-on_state_change" >}}
 
@@ -328,7 +328,7 @@ binary_sensor:
           args: ['x.has_value() ? ONOFF(x) : "Unknown"']
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "binary_sensor-on_click" >}}
 
@@ -353,7 +353,7 @@ Configuration variables:
 
 - **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`.
 - **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 > [!NOTE]
 > Multiple `on_click` entries can be defined like this (see also [`on_multi_click`](#binary_sensor-on_multi_click)
@@ -397,7 +397,7 @@ Configuration variables:
 
 - **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`.
 - **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "binary_sensor-on_multi_click" >}}
 
@@ -432,7 +432,7 @@ Configuration variables:
   set in `timing` does not match, a "cool down" period will be activated during which no timing
   will be matched. Defaults to `1s`.
 
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 > [!NOTE]
 > Getting the timing right for your use-case can sometimes be a bit difficult. If you set the

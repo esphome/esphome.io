@@ -59,14 +59,14 @@ Base Configuration:
 - **password** (*Optional*, int): Password to use for authentication. Defaults to `0x00`.
 - **new_password** (*Optional*, int): Sets a new password to use for authentication. See [Setting a New Password](#fingerprint_grow-set_new_password) for more information.
 - **idle_period_to_sleep** (*Optional*, [Time](#config-time)): The sensor idle period to wait before powering it off (sleep). Defaults to `5s`. See [Sleep Mode](#fingerprint_grow-sleep_mode) for more information.
-- **on_finger_scan_start** (*Optional*, [Automation](#automation)): An action to be performed when the finger touches the sensor. See [`on_finger_scan_start` Trigger](#fingerprint_grow-on_finger_scan_start).
-- **on_finger_scan_matched** (*Optional*, [Automation](#automation)): An action to be performed when an enrolled fingerprint is scanned. See [`on_finger_scan_matched` Trigger](#fingerprint_grow-on_finger_scan_matched).
-- **on_finger_scan_unmatched** (*Optional*, [Automation](#automation)): An action to be performed when an unknown fingerprint is scanned. See [`on_finger_scan_unmatched` Trigger](#fingerprint_grow-on_finger_scan_unmatched).
-- **on_finger_scan_misplaced** (*Optional*, [Automation](#automation)): An action to be performed when the finger is not entirely touching the sensor. See [`on_finger_scan_misplaced` Trigger](#fingerprint_grow-on_finger_scan_misplaced).
-- **on_finger_scan_invalid** (*Optional*, [Automation](#automation)): An action to be performed when the scan of a fingerprint failed. See [`on_finger_scan_invalid` Trigger](#fingerprint_grow-on_finger_scan_invalid).
-- **on_enrollment_scan** (*Optional*, [Automation](#automation)): An action to be performed when a fingerprint is scanned during enrollment. See [`on_enrollment_scan` Trigger](#fingerprint_grow-on_enrollment_scan).
-- **on_enrollment_done** (*Optional*, [Automation](#automation)): An action to be performed when a fingerprint is enrolled. See [`on_enrollment_done` Trigger](#fingerprint_grow-on_enrollment_done).
-- **on_enrollment_failed** (*Optional*, [Automation](#automation)): An action to be performed when a fingerprint enrollment failed. See [`on_enrollment_failed` Trigger](#fingerprint_grow-on_enrollment_failed).
+- **on_finger_scan_start** (*Optional*, [Automation](/automations)): An action to be performed when the finger touches the sensor. See [`on_finger_scan_start` Trigger](#fingerprint_grow-on_finger_scan_start).
+- **on_finger_scan_matched** (*Optional*, [Automation](/automations)): An action to be performed when an enrolled fingerprint is scanned. See [`on_finger_scan_matched` Trigger](#fingerprint_grow-on_finger_scan_matched).
+- **on_finger_scan_unmatched** (*Optional*, [Automation](/automations)): An action to be performed when an unknown fingerprint is scanned. See [`on_finger_scan_unmatched` Trigger](#fingerprint_grow-on_finger_scan_unmatched).
+- **on_finger_scan_misplaced** (*Optional*, [Automation](/automations)): An action to be performed when the finger is not entirely touching the sensor. See [`on_finger_scan_misplaced` Trigger](#fingerprint_grow-on_finger_scan_misplaced).
+- **on_finger_scan_invalid** (*Optional*, [Automation](/automations)): An action to be performed when the scan of a fingerprint failed. See [`on_finger_scan_invalid` Trigger](#fingerprint_grow-on_finger_scan_invalid).
+- **on_enrollment_scan** (*Optional*, [Automation](/automations)): An action to be performed when a fingerprint is scanned during enrollment. See [`on_enrollment_scan` Trigger](#fingerprint_grow-on_enrollment_scan).
+- **on_enrollment_done** (*Optional*, [Automation](/automations)): An action to be performed when a fingerprint is enrolled. See [`on_enrollment_done` Trigger](#fingerprint_grow-on_enrollment_done).
+- **on_enrollment_failed** (*Optional*, [Automation](/automations)): An action to be performed when a fingerprint enrollment failed. See [`on_enrollment_failed` Trigger](#fingerprint_grow-on_enrollment_failed).
 
 ## Binary Sensor
 

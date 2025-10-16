@@ -261,5 +261,5 @@ Most options can be left untouched, but some modifications are needed:
 ## See Also
 
 - {{< docref "index/" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "feedback/feedback_cover.h" "feedback/feedback_cover.h" >}}

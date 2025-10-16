@@ -215,5 +215,5 @@ on_...:
 ## See Also
 
 - {{< docref "switch/shutdown" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "deep_sleep/deep_sleep_component.h" "deep_sleep/deep_sleep_component.h" >}}

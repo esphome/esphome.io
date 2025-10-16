@@ -108,9 +108,9 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 
 Automations:
 
-- **on_command_sent** (*Optional*, [Automation](#automation)): An automation to perform when a modbus command has been sent. See [`on_command_sent`](#modbus_controller-on_command_sent)
-- **on_online** (*Optional*, [Automation](#automation)): An automation to perform when a modbus controller goes online. See [`on_online`](#modbus_controller-on_online)
-- **on_offline** (*Optional*, [Automation](#automation)): An automation to perform when a modbus controller goes offline. See [`on_offline`](#modbus_controller-on_offline)
+- **on_command_sent** (*Optional*, [Automation](/automations)): An automation to perform when a modbus command has been sent. See [`on_command_sent`](#modbus_controller-on_command_sent)
+- **on_online** (*Optional*, [Automation](/automations)): An automation to perform when a modbus controller goes online. See [`on_online`](#modbus_controller-on_online)
+- **on_offline** (*Optional*, [Automation](/automations)): An automation to perform when a modbus controller goes offline. See [`on_offline`](#modbus_controller-on_offline)
 
 ## Example Client
 

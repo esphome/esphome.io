@@ -33,7 +33,7 @@ dfplayer:
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **on_finished_playback** (*Optional*, [Automation](#automation)): An action to be
+- **on_finished_playback** (*Optional*, [Automation](/automations)): An action to be
   performed when playback is finished.
 
 ## `dfplayer.is_playing` Condition

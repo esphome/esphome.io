@@ -71,7 +71,7 @@ characteristic options:
 
 Automations:
 
-- **on_notify** (*Optional*, [Automation](#automation)): An automation to
+- **on_notify** (*Optional*, [Automation](/automations)): An automation to
   perform when a notify message is received from the device. See [`on_notify`](#ble_sensor-on_notify).
 
 {{< anchor "ble-sensor-lambda" >}}

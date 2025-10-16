@@ -84,7 +84,7 @@ Either the `row` and `col` parameters, or the `key` parameter has to be provided
 
 ## Automations
 
-- **on_key** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_key** (*Optional*, [Automation](/automations)): An automation to perform
   when a key has been pressed. The key is in a variable called `x`.
 
   > [!NOTE]

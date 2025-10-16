@@ -59,7 +59,7 @@ Every widget has a parent object where it is created. For example, if a label is
 
 Pages in ESPHome are implemented as LVGL screens, which are special objects which have no parent. There is always one active page on a display.
 
-Widgets can be assigned with an [ID](#config-id) so that they can be referenced in [automations](#automation).
+Widgets can be assigned with an [ID](#config-id) so that they can be referenced in [automations](/automations).
 
 Some widgets integrate also as native ESPHome components:
 
@@ -948,7 +948,7 @@ Widget level [interaction triggers](#lvgl-automation-triggers) are available, pl
 
 LVGL has a notion of screen inactivity -- i.e. the time since the last user interaction with the screen is tracked. This can, for example, be used to dim the display backlight or turn it off after a moment of inactivity (like a screen saver). Every use of an input device (touchscreen, rotary encoder) counts as an activity and resets the inactivity counter.
 
-The `on_idle` [triggers](#automation) are activated when inactivity time becomes longer than the specified `timeout`. You can configure any desired number of timeouts with different actions.
+The `on_idle` [triggers](/automations) are activated when inactivity time becomes longer than the specified `timeout`. You can configure any desired number of timeouts with different actions.
 
 - **timeout** (**Required**, [templatable](#config-templatable), int): [Time](#config-time) that has elapsed since the last touch event, after which the trigger will be invoked.
 

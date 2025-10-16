@@ -191,7 +191,7 @@ sensor:
 > and toggle those off while performing the installation. This will free up resources
 > on the ESP and allow the installation to complete.
 >
-> Additionally, you may use an [ota.on_begin](#ota-on_begin) [Automation](#automation)
+> Additionally, you may use an [ota.on_begin](#ota-on_begin) [Automation](/automations)
 > to do this automatically:
 >
 > ```yaml

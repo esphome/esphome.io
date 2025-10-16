@@ -38,5 +38,5 @@ sensor:
 - {{< docref "/components/udp" >}}
 - {{< docref "/components/binary_sensor/packet_transport" >}}
 - {{< docref "/components/sensor/packet_transport" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "packet_transport/packet_transport.h" "packet_transport/packet_transport.h" >}}

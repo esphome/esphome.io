@@ -40,7 +40,7 @@ rf_bridge:
 
 * **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the RF bridge.
 * **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub that the bridge component uses.
-* **on_code_received** (*Optional*, [Automation](#automation)): An action to be
+* **on_code_received** (*Optional*, [Automation](/automations)): An action to be
   performed when a code is received. See [`on_code_received` Trigger](#rf_bridge-on_code_received).
 
 {{< anchor "rf_bridge-on_code_received" >}}

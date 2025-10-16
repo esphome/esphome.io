@@ -55,5 +55,5 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "homeassistant/sensor/homeassistant_sensor.h" "homeassistant/sensor/homeassistant_sensor.h" >}}

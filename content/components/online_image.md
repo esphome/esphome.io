@@ -74,7 +74,7 @@ Advanced options:
 
 ## Automations
 
-- **on_download_finished** (*Optional*, [Automation](#automation)): An automation to perform when the image has been successfully downloaded.
+- **on_download_finished** (*Optional*, [Automation](/automations)): An automation to perform when the image has been successfully downloaded.
 
 The variable `cached` is a boolean available in [lambdas](#config-lambda) that indicates cache status:
 
@@ -101,7 +101,7 @@ online_image:
 
 A good example for that is to update the display component after the download succeeded.
 
-- **on_error** (*Optional*, [Automation](#automation)): An automation to perform when an error happened during download or decode.
+- **on_error** (*Optional*, [Automation](/automations)): An automation to perform when an error happened during download or decode.
 
 ## Actions
 

@@ -72,19 +72,19 @@ accepted until an end key is pressed.
 
 ## Triggers
 
-- **on_progress** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_progress** (*Optional*, [Automation](/automations)): An automation to perform
   when keys are pressed. The current sequence of pressed keys is placed in a `vector<uint8_t>` variable `x`
   and `start` holds the start key that activated this sequence or else `0`.
   Useful if you want to have a display showing the current value or number of key presses,
   or a speaker beeping when keys are being pressed.
 
-- **on_result** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_result** (*Optional*, [Automation](/automations)): An automation to perform
   when the sequence has been finished (eg. `max_length` has been reached or one of
   the `end_keys` was pressed). The finalized key sequence is placed in a `vector<uint8_t>` variable `x`,
   `start` holds the start key that activated this sequence or else `0`, and
   `end` holds the end key that terminated this sequence or else `0`.
 
-- **on_timeout** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_timeout** (*Optional*, [Automation](/automations)): An automation to perform
   if the timeout happens. The current sequence of pressed keys is placed in a `vector<uint8_t>` variable `x`
   and `start` holds the start key that activated this sequence or else `0`.
 

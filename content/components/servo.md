@@ -74,7 +74,7 @@ Advanced Options:
 
 ## `servo.write` Action
 
-To use your servo motor in [automations](#automation) or templates, you can use this action to set the
+To use your servo motor in [automations](/automations) or templates, you can use this action to set the
 target level of the servo from -100% to 100%.
 
 - -100% (= -1.0) is the minimum value of the servo. For continuous-rotation servos this will

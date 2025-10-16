@@ -57,7 +57,7 @@ Configuration variables:
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#text-on_value).
 
 MQTT Options:
@@ -87,7 +87,7 @@ text:
             args: ["x.c_str()"]
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "text-set_action" >}}
 

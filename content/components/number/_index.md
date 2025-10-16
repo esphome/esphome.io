@@ -67,10 +67,10 @@ Configuration variables:
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#number-on_value).
 
-- **on_value_range** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value_range** (*Optional*, [Automation](/automations)): An automation to perform
   when a published value transition from outside to a range to inside. See [`on_value_range`](#number-on_value_range).
 
 MQTT Options:
@@ -100,7 +100,7 @@ number:
             red: !lambda "return x/255;"
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "number-on_value_range" >}}
 
@@ -130,7 +130,7 @@ Configuration variables:
 
 - **above** (*Optional*, float): The minimum for the trigger.
 - **below** (*Optional*, float): The maximum for the trigger.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "number-in_range_condition" >}}
 

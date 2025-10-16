@@ -96,5 +96,5 @@ binary_sensor:
 ## See Also
 
 - {{< docref "index/" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - [GPIO Binary Sensor](#gpio-binary-sensor)

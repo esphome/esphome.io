@@ -87,7 +87,7 @@ canbus:
   - `500KBPS`
   - `1000KBPS`
 
-- **on_frame** (*Optional*, [Automation](#automation)): An automation to perform when a
+- **on_frame** (*Optional*, [Automation](/automations)): An automation to perform when a
   CAN frame is received. See [`on_frame` Trigger](#canbus-on-frame).
 
 {{< anchor "platforms-canbus" >}}

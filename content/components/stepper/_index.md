@@ -136,7 +136,7 @@ Configuration variables:
 
 ## `stepper.set_target` Action
 
-To use your stepper motor in [automations](#automation) or templates, you can use this action to set the target
+To use your stepper motor in [automations](/automations) or templates, you can use this action to set the target
 position (in steps). The stepper will always run towards the target position and stop once it has reached the target.
 
 ```yaml

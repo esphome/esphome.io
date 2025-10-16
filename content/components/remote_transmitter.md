@@ -65,10 +65,10 @@ remote_transmitter:
 
 ## Automations
 
-- **on_transmit** (*Optional*, [Automation](#automation)): An automation to perform before
+- **on_transmit** (*Optional*, [Automation](/automations)): An automation to perform before
   data is sent. Useful if the radio / IR hardware needs to change state or power on.
 
-- **on_complete** (*Optional*, [Automation](#automation)): An automation to perform after
+- **on_complete** (*Optional*, [Automation](/automations)): An automation to perform after
   data has been sent. Useful if the radio / IR hardware needs to change state or power off.
 
 ```yaml

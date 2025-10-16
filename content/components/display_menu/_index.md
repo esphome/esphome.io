@@ -97,10 +97,10 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level (here the root one) is entered. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level is not displayed anymore.
   See [`on_leave`](#display_menu-on_leave).
 
@@ -178,10 +178,10 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level is entered. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level is not displayed anymore.
   See [`on_leave`](#display_menu-on_leave).
 
@@ -244,14 +244,14 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
@@ -318,14 +318,14 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
@@ -374,14 +374,14 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
@@ -401,7 +401,7 @@ additional configuration.
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu item is clicked.
   See [`on_value`](#display_menu-on_value).
 
@@ -436,22 +436,22 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
-- **on_next** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_next** (*Optional*, [Automation](/automations)): An automation to perform
   when the user navigates to the next value.
   See [`on_next`](#display_menu-on_next).
 
-- **on_prev** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_prev** (*Optional*, [Automation](/automations)): An automation to perform
   when the user navigates to the previous value.
   See [`on_prev`](#display_menu-on_prev).
 

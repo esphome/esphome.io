@@ -54,9 +54,9 @@ media_player:
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
   - **id** (**Required**, [ID](#config-id)): Unique ID for the file.
   - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
-- **on_mute** (*Optional*, [Automation](#automation)): An automation to perform when muted.
-- **on_unmute** (*Optional*, [Automation](#automation)): An automation to perform when unmuted.
-- **on_volume** (*Optional*, [Automation](#automation)): An automation to perform when the volume is changed.
+- **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
+- **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
+- **on_volume** (*Optional*, [Automation](/automations)): An automation to perform when the volume is changed.
 - All other options from [Media Player](#config-media_player)
 
 {{< anchor "media_player-speaker-examples" >}}

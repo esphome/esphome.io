@@ -25,10 +25,10 @@ All time configuration schemas inherit these options.
   `<Region>/<City>`. ESPHome tries to automatically infer the time zone string based on the time zone of the computer
   that is running ESPHome, but this might not always be accurate.
 
-- **on_time** (*Optional*, [Automation](#automation)): Automation to run at specific intervals using
+- **on_time** (*Optional*, [Automation](/automations)): Automation to run at specific intervals using
   a cron-like syntax. See [`on_time` Trigger](#time-on_time).
 
-- **on_time_sync** (*Optional*, [Automation](#automation)): Automation to run when the time source
+- **on_time_sync** (*Optional*, [Automation](/automations)): Automation to run when the time source
   could be (re-)synchronized.. See [`on_time_sync` Trigger](#time-on_time_sync).
 
 - **update_interval** (*Optional*, [Time](#config-time)): How often to synchronize the device time from the source.
@@ -124,7 +124,7 @@ Configuration variables:
   the day of week field is interpreted like the **days_of_week** variable (range from 1 (Sunday) to 7 (Saturday)) and
   not like other cron implementations would do it (range from 0 (Sunday) to 7 (Sunday)).
 
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 In the `seconds:`, `minutes:`, ... fields you can use the following operators:
 

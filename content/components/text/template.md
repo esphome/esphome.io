@@ -51,5 +51,5 @@ text:
 
 ## See Also
 
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/text/template_text.h" "template/text/template_text.h" >}}

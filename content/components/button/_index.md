@@ -66,7 +66,7 @@ Configuration variables:
 
 Automations:
 
-- **on_press** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_press** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is pressed. See [`on_press`](#button-on_press).
 
 MQTT options:
@@ -90,7 +90,7 @@ button:
         - logger.log: Button Pressed
 ```
 
-Configuration variables: see [Automation](#automation).
+Configuration variables: see [Automation](/automations).
 
 {{< anchor "button-press_action" >}}
 

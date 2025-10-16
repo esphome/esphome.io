@@ -55,7 +55,7 @@ Configuration variables:
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#select-on_value).
 
 MQTT Options:
@@ -86,7 +86,7 @@ select:
             args: ["x.c_str()", "i"]
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "select-set_action" >}}
 

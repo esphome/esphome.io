@@ -98,5 +98,5 @@ Configuration options:
 
 - {{< docref "/components/binary_sensor" >}}
 - {{< docref "/components/sensor/template" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/binary_sensor/template_binary_sensor.h" "template/binary_sensor/template_binary_sensor.h" >}}

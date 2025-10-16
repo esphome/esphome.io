@@ -39,17 +39,17 @@ sim800l:
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **on_sms_received** (*Optional*, [Automation](#automation)): An action to be
+- **on_sms_received** (*Optional*, [Automation](/automations)): An action to be
   performed when an SMS is received. See [`on_sms_received` Trigger](#sim800l-on_sms_received).
 
-- **on_incoming_call** (*Optional*, [Automation](#automation)): An action to be
+- **on_incoming_call** (*Optional*, [Automation](/automations)): An action to be
   performed when a call is received. See [`on_incoming_call` Trigger](#sim800l-on_incoming_call).
 
-- **on_call_connected** (*Optional*, [Automation](#automation)): An action to be
+- **on_call_connected** (*Optional*, [Automation](/automations)): An action to be
   performed when a call is connected, either because an outgoing call accepted is
   accepted or an incoming call answered.
 
-- **on_call_disconnected** (*Optional*, [Automation](#automation)): An action to be
+- **on_call_disconnected** (*Optional*, [Automation](/automations)): An action to be
   performed when a call is disconnected.
 
 ## Sensor

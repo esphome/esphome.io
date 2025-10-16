@@ -255,5 +255,5 @@ status_led:
 - {{< docref "index/" >}}
 - {{< docref "/components/cover/template" >}}
 - {{< docref "/components/sensor/ade7953" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "current_based/current_based_cover.h" "current_based/current_based_cover.h" >}}

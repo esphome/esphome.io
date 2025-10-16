@@ -60,7 +60,7 @@ rtttl:
 - **speaker** (**Exclusive**, [ID](#config-id)): The id of the [speaker](#i2s_audio) to play the song on.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **gain** (*Optional*, Percentage): With this value you can set the volume of the sound.
-- **on_finished_playback** (*Optional*, [Automation](#automation)): An action to be
+- **on_finished_playback** (*Optional*, [Automation](/automations)): An action to be
   performed when playback is finished.
 
 Note: You can only use the **output** or **speaker** variable, not both at the same time.

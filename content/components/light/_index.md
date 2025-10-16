@@ -970,7 +970,7 @@ in [the source code](https://github.com/esphome/esphome/blob/dev/esphome/compone
 ### Automation Light Effect
 
 In addition to the `lambda` and `addressable_lambda` light effects, effects can also be created with ESPHome's
-[Automation](#automation) system with the `automation` effect type.
+[Automation](/automations) system with the `automation` effect type.
 
 The automation given in the `sequence` block will be repeatedly executed until the effect is stopped by the user.
 

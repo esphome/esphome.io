@@ -74,5 +74,5 @@ cover:
 ## See Also
 
 - {{< docref "index/" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "endstop/endstop_cover.h" "endstop/endstop_cover.h" >}}

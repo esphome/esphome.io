@@ -353,7 +353,7 @@ The device should now be linked to your remote Home Assistant.
 
 - {{< docref "time/" >}}
 - {{< docref "time/sntp" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - [WireGuard®](https://www.wireguard.org/) official website
 - [Home Assistant Community Add-on: WireGuard](https://community.home-assistant.io/t/home-assistant-community-add-on-wireguard/134662)
   (also on [GitHub](https://github.com/hassio-addons/addon-wireguard))

@@ -106,5 +106,5 @@ datetime:
 
 ## See Also
 
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/datetime/template_date.h" "template/datetime/template_date.h" >}}

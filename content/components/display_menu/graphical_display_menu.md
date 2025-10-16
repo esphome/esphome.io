@@ -54,7 +54,7 @@ Configuration variables:
 
 Automations:
 
-- **on_redraw** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_redraw** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu needs to be redrawn. This can be useful if your display has slow refresh rates.
   For example E-Ink displays that are used with `display_interval: never`.
 

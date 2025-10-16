@@ -109,6 +109,6 @@ on_...:
 
 - [Base Sensor Configuration](#config-sensor)
 - [Templates](#config-lambda)
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "duty_time/duty_time_sensor.h" "duty_time/duty_time_sensor.h" >}}
