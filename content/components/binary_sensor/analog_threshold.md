@@ -45,6 +45,7 @@ binary_sensor:
     condition:
       sensor.in_range:
         sensor_id: motor_current_sensor
+        above: 0.5
 ```
 
 ## Configuration variables
