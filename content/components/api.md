@@ -142,7 +142,7 @@ Then:
 > your device to perform actions.
 
 When using the native API with Home Assistant, you can create events in the Home Assistant event bus
-straight from ESPHome [Automations](#automation).
+straight from ESPHome [Automations](/automations).
 
 ```yaml
 # In some trigger
@@ -172,7 +172,7 @@ on_...:
 > Be sure to [follow the instructions above](#api-actions) to tell Home Assistant to allow
 > your device to perform actions.
 
-When using the native API with Home Assistant, you can perform Home Assistant actions straight from ESPHome [Automations](#automation).
+When using the native API with Home Assistant, you can perform Home Assistant actions straight from ESPHome [Automations](/automations).
 
 ```yaml
 # In some trigger
@@ -213,11 +213,11 @@ on_...:
   the action response data. This template is evaluated on the Home Assistant side with Home Assistant's templating engine.
   Requires `capture_response: true`.
 
-- **on_success** (*Optional*, [Automation](#automation)): Optional automation to execute when the Home Assistant action
+- **on_success** (*Optional*, [Automation](/automations)): Optional automation to execute when the Home Assistant action
   call succeeds. When `capture_response: true`, the response data is available as a `response` variable of type `JsonObjectConst`.
   See [Action Response Handling](#action-response-handling).
 
-- **on_error** (*Optional*, [Automation](#automation)): Optional automation to execute when the Home Assistant action
+- **on_error** (*Optional*, [Automation](/automations)): Optional automation to execute when the Home Assistant action
   call fails. See [Action Response Handling](#action-response-handling).
 
 Data structures are not possible, but you can create a script in Home Assistant and call with all
@@ -330,7 +330,7 @@ When `response_template` is used, the processed result is available in `response
 > your device to make action calls.
 
 When using the native API with Home Assistant, you can push tag_scanned to Home Assistant
-straight from ESPHome [Automations](#automation).
+straight from ESPHome [Automations](/automations).
 
 ```yaml
 # In some trigger
