@@ -9,7 +9,7 @@ title: "Installing ESPHome Manually"
 
 It offers a simple way to install and run ESPHome on Windows, Mac and Linux.
 
-Once you've [installed uv](https://docs.astral.sh/uv/guides/install-uv/), you can easily [install Python](https://docs.astral.sh/uv/guides/install-python/) and Python packages.
+If you don't have Python installed, uv offers an easy way to [install and manage Python versions](https://docs.astral.sh/uv/guides/install-python/).
 
 Using uv, you can either run esphome without installing it (`uvx esphome version`) or you can install it as a [tool](https://docs.astral.sh/uv/guides/tools/) with the following command:
 
