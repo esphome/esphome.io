@@ -32,10 +32,7 @@ sensor:
 - All other options from [Sensor](#config-sensor).  
 
 > [!NOTE]
-> The following features are **not yet supported**:  
-> - `ALERT` pin functionality  
-> - `TLOW`/`THIGH` registers (Thermostat Mode)  
-> - `Configuration register` settings  
+> The following features are **not supported**: `ALERT` pin functionality and `TLOW`/`THIGH` configuration (thermostat mode).  
 
 ## Configurable I²C Addresses  
 
