@@ -273,7 +273,7 @@ button:
 
 ## Limitations
 
-- **ESP32 Only:** ESP-NOW is only available on ESP32, ESP32-S2, ESP32-S3, and ESP32-C3 chips. ESP8266 support is not available.
+- **ESP32 Only:** ESP-NOW is only available on wifi capable ESP32 variants. ESP8266 support is not available.
 - **Peer Limit:** ESP32 devices can register a maximum of 20 peers (10 encrypted + 10 unencrypted, or various combinations).
 - **Packet Size:** Maximum 250 bytes per packet, which limits the amount of sensor data that can be transmitted in a single update.
 - **No Routing:** ESP-NOW is not a mesh protocol. Devices communicate directly and cannot route packets through intermediate nodes.
