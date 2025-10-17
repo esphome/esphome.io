@@ -24,6 +24,7 @@ Now *esphome* will be available on your PATH
 esphome version
 ```
 
+Upgrade to the latest version using `uv tool upgrade esphome`
 ## Windows
 
 Download Python from [the official site](https://www.python.org/downloads/).
