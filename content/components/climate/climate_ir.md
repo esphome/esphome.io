@@ -216,7 +216,7 @@ climate:
 
 ### `toshiba`
 
-- **model** (*Optional*, string): There are four valid models
+- **model** (*Optional*, string): There are four valid models:
 
   - `GENERIC`  : Temperature range is from 17 to 30 (default)
   - `RAC-PT1411HWRU-C`  : Temperature range is from 16 to 30; unit displays temperature in degrees Celsius
