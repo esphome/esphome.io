@@ -15,7 +15,6 @@ Using uv, you can either run esphome without installing it (`uvx esphome version
 
 ```shell
 uv tool install esphome
-# upgrade with: uv tool upgrade esphome
 ```
 
 Now *esphome* will be available on your PATH
