@@ -14,7 +14,7 @@ If you don't have Python installed, uv offers an easy way to [install and manage
 Using uv, you can either run esphome without installing it (`uvx esphome version`) or you can install it as a [tool](https://docs.astral.sh/uv/guides/tools/) with the following command:
 
 ```shell
-uv tool install esphome
+uv tool install esphome --with wheel,pip
 ```
 
 Now *esphome* will be available on your PATH
