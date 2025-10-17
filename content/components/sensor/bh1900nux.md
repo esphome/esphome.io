@@ -33,7 +33,6 @@ sensor:
 
 > [!NOTE]
 > The following features are **not yet supported**:  
-
 > - `ALERT` pin functionality  
 > - `TLOW`/`THIGH` registers (Thermostat Mode)  
 > - `Configuration register` settings  
