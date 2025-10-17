@@ -82,18 +82,27 @@ esp32:
 
 - **version** (*Optional*, string): The base framework version number to use, from
   [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
-  [ESP32 arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
+  [ESP32 Arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
   Additional values are:
 
   - `dev`  : Use the latest commit, note this may break at any time
   - `latest`  : Use the latest *release*, even if it hasn't been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
-- **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to
-  use a custom or patched version of the framework.
+- **source** (*Optional*, string): The PlatformIO package to use for the framework. This variable provides
+  the URL of the git repository or file archive of a custom or patched version of the
+  [pioarduino/framework-arduinoespressif32](https://github.com/espressif/arduino-esp32) or
+  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package for the framework type. Refer to
+  [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications)
+  for the supported URL schemes. Examples:
+
+  - `https://github.com/user/arduino-esp32/releases/download/archive.zip`
+  - `https://github.com/user/esp-idf.git#branch`
+  - `symlink:///path/to/esp-idf`
 
 - **platform_version** (*Optional*, string): The version of the
-  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use.
+  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use. For known framework versions
+  this value will be set automatically.
 
 - **sdkconfig_options** (*Optional*, mapping): Custom sdkconfig
   [compiler options](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options)
@@ -162,6 +171,10 @@ LWIP (Lightweight IP) behavior. Some options improve performance while others sa
 - **enable_lwip_check_thread_safety** (*Optional*, boolean): Enable LWIP thread safety checks to detect incorrect usage of
   the TCP/IP stack from multiple threads. This helps catch thread safety issues when core locking is enabled. Defaults to `true`.
 
+- **disable_libc_locks_in_iram** (*Optional*, boolean): Disable placing libc lock functions in IRAM. This saves approximately
+  1.3 KB of IRAM by placing these functions in flash memory instead. This is safe for ESPHome since no IRAM interrupt service
+  routines (ISRs that run while cache is disabled) use libc lock APIs. Defaults to `true` (IRAM placement disabled to save RAM).
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -180,6 +193,7 @@ esp32:
       enable_lwip_check_thread_safety: true  # Thread safety validation
 
       # Memory saving options
+      disable_libc_locks_in_iram: true  # Enabled by default, saves 1.3 KB IRAM
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
