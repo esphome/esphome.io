@@ -26,12 +26,10 @@ esp32:
   to the name can be used to copy the board ID). *This only affects pin aliases and some internal settings*;
   This setting is no longer recommended, `variant` should be used instead.
 
-{{< note >}}
-At least one of `board` or `variant` must be specified. If `variant` alone is specified (the recommended practice),
-the board configuration will be automatically filled using a standard Espressif devkit board
-suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
-
-{{< /note >}}
+> [!NOTE]
+> At least one of `board` or `variant` must be specified. If `variant` alone is specified (the recommended practice),
+> the board configuration will be automatically filled using a standard Espressif devkit board
+> suitable for that variant. Both may be specified (for backwards compatibility) but they must define the same variant.
 
 - **flash_size** (*Optional*, string): The amount of flash memory available on the ESP32 board/module. One of `2MB`,
   `4MB`, `8MB`, `16MB` or `32MB`. Defaults to `4MB`. **Warning: specifying a size larger than that available
@@ -43,14 +41,18 @@ suitable for that variant. Both may be specified (for backwards compatibility) b
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
   partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`.
 
-- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Arduino framework](#esp32-arduino_framework)
-  and [ESP-IDF framework](#esp32-espidf_framework).
+- **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
 
-{{< anchor "esp32-arduino_framework" >}}
+{{< anchor "esp32-framework" >}}
 
-## Arduino framework
+## Framework
 
-This is the default framework for ESP32 chips at the moment.
+ESPHome supports two framework options for ESP32 chips:
+
+### Arduino Framework
+
+The Arduino framework is integrated as an ESP-IDF component. This provides Arduino API compatibility
+within the ESP-IDF build system. Arduino framework is available for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3 variants.
 
 ```yaml
 # Example configuration entry
@@ -60,32 +62,11 @@ esp32:
     type: arduino
 ```
 
-### Configuration variables
+### ESP-IDF Framework
 
-- **version** (*Optional*, string): The base framework version number to use, from
-  [ESP32 arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
-  Additional values are:
-
-  - `dev`  : Use the latest commit from <https://github.com/espressif/arduino-esp32>, note this may break at any time
-  - `latest`  : Use the latest *release* from <https://github.com/espressif/arduino-esp32/releases>, even if it hasn't
-    been recommended yet.
-
-  - `recommended`  : Use the recommended framework version.
-
-- **source** (*Optional*, string): The PlatformIO package or repository to use for framework. This can be used to use a
-  custom or patched version of the framework.
-
-- **platform_version** (*Optional*, string): The version of the
-  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases) package to use.
-
-- **advanced** (*Optional*, mapping): See [Advanced Configuration](#esp32-advanced_configuration) below.
-
-{{< anchor "esp32-espidf_framework" >}}
-
-## ESP-IDF framework
-
-This is an alternative base framework for ESP32 chips; it is recommended for variants of the ESP32 like ESP32S2,
-ESP32S3, ESP32P4 and single-core ESP32 chips.
+ESP-IDF is Espressif's native development framework. It is required for ESP32-C2, ESP32-C5, ESP32-C6,
+ESP32-H2, and ESP32-P4 variants, as these are not supported by the Arduino framework. It is recommended for
+all ESP32 chips when possible. See the {{< docref "/guides/esp32_arduino_to_idf" "migration guide" >}} for help transitioning from Arduino.
 
 ```yaml
 # Example configuration entry
@@ -97,21 +78,31 @@ esp32:
 
 ### Configuration variables
 
+- **type** (*Optional*, string): The framework type, either `esp-idf` or `arduino`. Defaults to `arduino` for ESP32 (classic), ESP32-C3, ESP32-S2, and ESP32-S3. Defaults to `esp-idf` for ESP32-C2, ESP32-C5, ESP32-C6, ESP32-H2, and ESP32-P4 (Arduino is not supported on these variants)
+
 - **version** (*Optional*, string): The base framework version number to use, from
-  [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases). Defaults to `recommended`.
+  [ESP32 ESP-IDF releases](https://github.com/espressif/esp-idf/releases) or
+  [ESP32 Arduino releases](https://github.com/espressif/arduino-esp32/releases). Defaults to `recommended`.
   Additional values are:
 
-  - `dev`  : Use the latest commit from <https://github.com/espressif/esp-idf>, note this may break at any time
-  - `latest`  : Use the latest *release* from <https://github.com/espressif/esp-idf/releases>, even if it hasn't been
-    recommended yet.
-
+  - `dev`  : Use the latest commit, note this may break at any time
+  - `latest`  : Use the latest *release*, even if it hasn't been recommended yet.
   - `recommended`  : Use the recommended framework version.
 
-- **source** (*Optional*, string): The PlatformIO package or repository to use for the framework. This can be used to
-  use a custom or patched version of the framework.
+- **source** (*Optional*, string): The PlatformIO package to use for the framework. This variable provides
+  the URL of the git repository or file archive of a custom or patched version of the
+  [pioarduino/framework-arduinoespressif32](https://github.com/espressif/arduino-esp32) or
+  [pioarduino/framework-espidf](https://github.com/pioarduino/esp-idf) package for the framework type. Refer to
+  [PlatformIO package specifications](https://docs.platformio.org/en/latest/core/userguide/pkg/cmd_install.html#package-specifications)
+  for the supported URL schemes. Examples:
+
+  - `https://github.com/user/arduino-esp32/releases/download/archive.zip`
+  - `https://github.com/user/esp-idf.git#branch`
+  - `symlink:///path/to/esp-idf`
 
 - **platform_version** (*Optional*, string): The version of the
-  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use.
+  [pioarduino/espressif32](https://github.com/pioarduino/platform-espressif32/releases/) package to use. For known framework versions
+  this value will be set automatically.
 
 - **sdkconfig_options** (*Optional*, mapping): Custom sdkconfig
   [compiler options](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/kconfig.html#compiler-options)
@@ -154,9 +145,8 @@ esp32:
   address is not consistent with the burned-in CRC for that MAC address, resulting in an error like
   `Base MAC address from BLK0 of EFUSE CRC error`. **Valid only on original ESP32 with** `esp-idf` **framework.**
 
-- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features in
-  the ESP-IDF framework. Not valid for the Arduino framework. Use of experimental features may cause instability or
-  other issues.
+- **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
+  experimental features may cause instability or other issues.
 
 **LWIP Optimization Options (ESP-IDF only):**
 
@@ -181,6 +171,10 @@ LWIP (Lightweight IP) behavior. Some options improve performance while others sa
 - **enable_lwip_check_thread_safety** (*Optional*, boolean): Enable LWIP thread safety checks to detect incorrect usage of
   the TCP/IP stack from multiple threads. This helps catch thread safety issues when core locking is enabled. Defaults to `true`.
 
+- **disable_libc_locks_in_iram** (*Optional*, boolean): Disable placing libc lock functions in IRAM. This saves approximately
+  1.3 KB of IRAM by placing these functions in flash memory instead. This is safe for ESPHome since no IRAM interrupt service
+  routines (ISRs that run while cache is disabled) use libc lock APIs. Defaults to `true` (IRAM placement disabled to save RAM).
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
@@ -199,6 +193,7 @@ esp32:
       enable_lwip_check_thread_safety: true  # Thread safety validation
 
       # Memory saving options
+      disable_libc_locks_in_iram: true  # Enabled by default, saves 1.3 KB IRAM
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
