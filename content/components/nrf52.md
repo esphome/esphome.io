@@ -95,6 +95,66 @@ nrf52:
 
 - **reset_pin** (*Required*, [Pin](#config-pin)): The pin to use for trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
 
+## Troubleshooting
+
+### Flashing is unstable
+
+If you are using the Adafruit bootloader, upgrade to the latest version: [Adafruit nRF52 Bootloader Releases](https://github.com/adafruit/Adafruit_nRF52_Bootloader/releases)
+
+### How to start
+
+Try minimum LED blinking sketch for the board:
+
+[supermini-nrf52840](https://github.com/joric/nrfmicro/wiki/Alternatives#supermini-nrf52840)
+
+```yaml
+nrf52:
+  board: adafruit_itsybitsy_nrf52840
+
+esphome:
+  name: supermini-nrf52840
+
+logger:
+  level: DEBUG
+
+output:
+  - platform: gpio
+    pin: P0.15
+    id: red_led
+
+interval:
+  - interval: 1s
+    then:
+      - output.turn_on: red_led
+      - delay: 0.5s
+      - output.turn_off: red_led
+```
+
+[xiao nrf52840](https://wiki.seeedstudio.com/XIAO_BLE/)
+
+```yaml
+nrf52:
+  board: xiao_ble
+
+esphome:
+  name: xiao-nrf52840
+
+logger:
+  level: DEBUG
+
+output:
+  - platform: gpio
+    pin: P0.26
+    id: red_led
+
+interval:
+  - interval: 1s
+    then:
+      - output.turn_on: red_led
+      - delay: 0.5s
+      - output.turn_off: red_led
+```
+
 ## See Also
 
 - {{< docref "esphome/" >}}
