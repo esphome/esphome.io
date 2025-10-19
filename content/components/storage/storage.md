@@ -55,9 +55,7 @@ Configuration variables:
 
 From [lambdas](#config-lambda), you can call several methods on all storage objects to do some
 advanced stuff.
-
-- Attributes: All storage devices have  forlowing attributes 
-
+Attributes: All storage devices have  forlowing attributes 
 ```cpp
   // Initialize device
   id(my_fatfs).initialize()
