@@ -13,9 +13,9 @@ for filesystems library.
 
 {{< anchor "storage-base-config" >}}
 
-## Base fatfs Configuration
+## Base Stroage Configuration
 
-Each FATFS device represented by the platform component with coresponding type. Each platform type inherits parameters from fatfs configuration schema.
+Each Storage device represented by the platform component with coresponding type. Each platform type inherits parameters from storage configuration schema.
 
 ```yaml
 
