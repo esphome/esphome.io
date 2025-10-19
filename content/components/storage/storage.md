@@ -58,7 +58,6 @@ advanced stuff.
 
 - Attributes: All storage devices have  forlowing attributes
   
-
 ```cpp
 // Initialize device
 id(my_fatfs).initialize()
