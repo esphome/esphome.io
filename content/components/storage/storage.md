@@ -27,7 +27,6 @@ storage:
 
 **Configuration variables:**
 
-- **platform** (**Required**, [platform](#platforms-storage)): One of the supported storage [Platforms](#platforms-storage).
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 - **cd_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin used for storage media detect in case it is a removable media like sdcard. CD pin used in some card holders.
 
