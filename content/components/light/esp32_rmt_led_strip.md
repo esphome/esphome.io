@@ -21,7 +21,7 @@ light:
 
 **Important note** In some specific cases, the RMT component might cause flicker of longer LED strips. The fix seem to be to disable the wifi power saving by setting 
   [power_save_mode](/components/wifi/#power-save-mode) to none in [wifi component](/components/wifi).
-  
+
 ## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
