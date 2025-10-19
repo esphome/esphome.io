@@ -55,23 +55,23 @@ Configuration variables:
 
 From [lambdas](#config-lambda), you can call several methods on all storage objects to do some
 advanced stuff.
-Attributes: All storage devices have  forlowing attributes 
-```cpp
-  // Initialize device
-  id(my_fatfs).initialize()
-  // Read sectors
-  id(my_fatfs).read_sectors(path) 
-  // wriet sectors
-  id(my_fatfs).write_sectors(buff*, bloack, count)
-  // Reset initialization status
-  id(my_fatfs).reset(path,mode) 
-  // Return true if media present
-  id(my_fatfs).state_media() 
-  // Id drives iitialized
-  id(my_fatfs).state_init() 
-  // return error of last operation
-  id(my_fatfs).error(path) 
+- Attributes: All storage devices have  forlowing attributes 
 
+```cpp
+// Initialize device
+id(my_fatfs).initialize()
+// Read sectors
+id(my_fatfs).read_sectors(path) 
+// wriet sectors
+id(my_fatfs).write_sectors(buff*, bloack, count)
+// Reset initialization status
+id(my_fatfs).reset(path,mode) 
+// Return true if media present
+id(my_fatfs).state_media() 
+// Id drives iitialized
+id(my_fatfs).state_init() 
+// return error of last operation
+id(my_fatfs).error(path) 
 ```
 
 ## See Also
