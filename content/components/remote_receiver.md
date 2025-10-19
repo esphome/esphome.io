@@ -64,6 +64,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **roomba**: Decode and dump Roomba infrared codes.
   - **samsung**: Decode and dump Samsung infrared codes.
   - **samsung36**: Decode and dump Samsung36 infrared codes.
+  - **symphony**: Decode and dump Symphony infrared codes.
   - **sony**: Decode and dump Sony infrared codes.
   - **toshiba_ac**: Decode and dump Toshiba AC infrared codes.
   - **mirage**: Decode and dump Mirage infrared codes.
@@ -106,12 +107,12 @@ Multiple remote receivers can be configured as a list of dict definitions within
 | ------------- | ---------------- | ---------- |
 | ESP32         | 512 symbols      | 64 symbols |
 | ESP32-C3      | 96 symbols       | 48 symbols |
-| ESP32-C5 | 96 symbols | 48 symbols |
-| ESP32-C6 | 96 symbols | 48 symbols |
-| ESP32-H2 | 96 symbols | 48 symbols |
-| ESP32-P4 | 192 symbols | 48 symbols |
-| ESP32-S2 | 256 symbols | 64 symbols |
-| ESP32-S3 | 192 symbols | 48 symbols |
+| ESP32-C5      | 96 symbols       | 48 symbols |
+| ESP32-C6      | 96 symbols       | 48 symbols |
+| ESP32-H2      | 96 symbols       | 48 symbols |
+| ESP32-P4      | 192 symbols      | 48 symbols |
+| ESP32-S2      | 256 symbols      | 64 symbols |
+| ESP32-S3      | 192 symbols      | 48 symbols |
 
 - **receive_symbols** (*Optional*, int): Maximum receive length in symbols. On some variants the maximum receive is
   limited to `rmt_symbols`.
@@ -125,12 +126,24 @@ Multiple remote receivers can be configured as a list of dict definitions within
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
-{{< note >}}
-The dumped **raw** code is sequence of pulse widths (durations in microseconds), positive for on-pulses (mark)
-and negative for off-pulses (space). Usually you can to copy this directly to the configuration or automation
-to be used later.
+#### Signal Demodulation
 
-{{< /note >}}
+In rare hardware configurations where the microcontroller will receive modulated signals, the RMT peripheral supports
+signal demodulation. If you aren't sure, you probably don't need this. Infrared remote signals, for example, are
+typically demodulated by an infrared receiver module (IRM) before reaching the microcontroller.
+
+To enable signal demodulation, configure the signal carrier frequency and duty cycle:
+
+- **carrier_duty_percent** (*Optional*, int): The carrier duty cycle for signal demodulation in the RMT peripheral in
+  Hz. Defaults to ``100``.
+
+- **carrier_frequency** (*Optional*, int): The carrier frequency for signal demodulation in the RMT peripheral in Hz.
+  Defaults to ``0Hz`` (carrier demodulation disabled).
+
+> [!NOTE]
+> The dumped **raw** code is sequence of pulse widths (durations in microseconds), positive for on-pulses (mark)
+> and negative for off-pulses (space). Usually you can to copy this directly to the configuration or automation
+> to be used later.
 
 ## Automations
 
@@ -255,6 +268,10 @@ to be used later.
   Sony remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::SonyData" "remote_base::SonyData" >}}
   is passed to the automation for use in lambdas.
 
+- **on_symphony** (*Optional*, [Automation](#automation)): An automation to perform when a
+  Symphony remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::SymphonyData" "remote_base::SymphonyData" >}}
+  is passed to the automation for use in lambdas.
+
 - **on_toshiba_ac** (*Optional*, [Automation](#automation)): An automation to perform when a
   Toshiba AC remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::ToshibaAcData" "remote_base::ToshibaAcData" >}}
   is passed to the automation for use in lambdas.
@@ -290,17 +307,15 @@ The `remote_receiver` binary sensor lets you track when a button on a remote con
 
 Each time the pre-defined signal is received, the binary sensor will briefly go ON and then immediately OFF.
 
-{{< note >}}
-**For IR Remote Binary Sensors**: If you're using binary sensors to track IR remote button presses and
-experiencing issues with rapid button presses not being detected (e.g., quick ON→OFF transitions being missed),
-consider setting `batch_delay: 0ms` in your {{< docref "/components/api" "API configuration" >}}. This will send state
-changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
-network traffic and should only be used when necessary.
-
-For new projects, consider using automations with the `on_*` triggers (described above)
-instead of binary sensors, as they are better suited for handling momentary button press events.
-
-{{< /note >}}
+> [!NOTE]
+> **For IR Remote Binary Sensors**: If you're using binary sensors to track IR remote button presses and
+> experiencing issues with rapid button presses not being detected (e.g., quick ON→OFF transitions being missed),
+> consider setting `batch_delay: 0ms` in your {{< docref "/components/api" "API configuration" >}}. This will send state
+> changes immediately instead of batching them, ensuring rapid transitions are preserved. However, this increases
+> network traffic and should only be used when necessary.
+>
+> For new projects, consider using automations with the `on_*` triggers (described above)
+> instead of binary sensors, as they are better suited for handling momentary button press events.
 
 ```yaml
 # Example configuration entry
@@ -557,6 +572,11 @@ Remote code selection (exactly one of these has to be included):
   - **data** (**Required**, int): The Sony code to trigger on, see dumper output for more info.
   - **nbits** (*Optional*, int): The number of bits of the remote code. Defaults to `12`.
 
+- **symphony**: Trigger on a decoded Symphony remote code with the given data.
+
+  - **data** (**Required**, int): The Symphony code to trigger on, see dumper output for more info.
+  - **nbits** (**Required**, int): The number of bits of the remote code. Typical values: `8`, `12`, or `16`.
+
 - **toshiba_ac**: Trigger on a decoded Toshiba AC remote code with the given data.
 
   - **rc_code_1** (**Required**, int): The remote control code to trigger on, see dumper output for more details.
@@ -575,69 +595,64 @@ Remote code selection (exactly one of these has to be included):
   - **rc_code_1** (*Optional*, int): The first 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
   - **rc_code_2** (*Optional*, int): The second 4-bit Toto code (usually a command parameter) to trigger on. Range is 0 to 0xF.
 
-{{< note >}}
-The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
-Depending on the hardware used they may interfere with each other when enabled simultaneously.
+> [!NOTE]
+> The **CanalSat** and **CanalSatLD** protocols use a higher carrier frequency (56kHz) and are very similar.
+> Depending on the hardware used they may interfere with each other when enabled simultaneously.
 
-{{< /note >}}
-{{< note >}}
-**NEC codes**: In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with
-the NEC standard. Therefore, if the configuration file has come from an earlier version of ESPhome, it is necessary
-to reverse the order of the address and command bits when moving to 2021.12 or above. For example,
-`address: 0x84ED`, `command: 0x13EC` becomes `0xB721` and `0x37C8`, respectively.
+> [!NOTE]
+> **NEC codes**: In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with
+> the NEC standard. Therefore, if the configuration file has come from an earlier version of ESPhome, it is necessary
+> to reverse the order of the address and command bits when moving to 2021.12 or above. For example,
+> `address: 0x84ED`, `command: 0x13EC` becomes `0xB721` and `0x37C8`, respectively.
 
-{{< /note >}}
-{{< note >}}
-Some receivers, such as the TSOP38238, may require the use of a pull-up resistor. You can enable this as follows:
+> [!NOTE]
+> Some receivers, such as the TSOP38238, may require the use of a pull-up resistor. You can enable this as follows:
+>
+> ```yaml
+> remote_receiver:
+>   pin:
+>     number: GPIOXX
+>     inverted: true
+>     mode:
+>       input: true
+>       pullup: true
+>   dump: all
+> ```
 
-```yaml
-remote_receiver:
-  pin:
-    number: GPIOXX
-    inverted: true
-    mode:
-      input: true
-      pullup: true
-  dump: all
-```
-
-{{< /note >}}
-{{< note >}}
-For the black Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
-[this hack](https://github.com/xoseperez/espurna/wiki/Hardware-Itead-Sonoff-RF-Bridge---Direct-Hack)
-created by the GitHub user wildwiz. Then use this configuration for the remote receiver/transmitter hubs:
-
-```yaml
-remote_receiver:
-  pin: 4
-  dump: all
-
-remote_transmitter:
-  pin: 5
-  carrier_duty_percent: 100%
-```
-
-There's also a software ["hack"](https://github.com/mightymos/RF-Bridge-OB38S003) that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
-rendering the hardware hack uncessary. This software passthrough mode can be used for the OB38S003 (white) and EFM8BB1 (black) sonoff RF bridge. Then use this configuration for the remote receiver/transmitter hubs:
-
-```yaml
-remote_receiver:
-  pin:
-    # sonoff and wemos board
-    number: GPIO3
-    mode:
-      input: true
-      pullup: false
-  tolerance: 60%
-  filter: 4us
-  idle: 4ms
-
-remote_transmitter:
-  pin: 1
-  carrier_duty_percent: 100%
-```
-
-{{< /note >}}
+> [!NOTE]
+> For the black Sonoff RF Bridge, you can bypass the EFM8BB1 microcontroller handling RF signals with
+> [this hack](https://github.com/xoseperez/espurna/wiki/Hardware-Itead-Sonoff-RF-Bridge---Direct-Hack)
+> created by the GitHub user wildwiz. Then use this configuration for the remote receiver/transmitter hubs:
+>
+> ```yaml
+> remote_receiver:
+>   pin: 4
+>   dump: all
+>
+> remote_transmitter:
+>   pin: 5
+>   carrier_duty_percent: 100%
+> ```
+>
+> There's also a software ["hack"](https://github.com/mightymos/RF-Bridge-OB38S003) that allows the radio chip to mirror all the voltages to the ESP to do the decoding,
+> rendering the hardware hack uncessary. This software passthrough mode can be used for the OB38S003 (white) and EFM8BB1 (black) sonoff RF bridge. Then use this configuration for the remote receiver/transmitter hubs:
+>
+> ```yaml
+> remote_receiver:
+>   pin:
+>     # sonoff and wemos board
+>     number: GPIO3
+>     mode:
+>       input: true
+>       pullup: false
+>   tolerance: 60%
+>   filter: 4us
+>   idle: 4ms
+>
+> remote_transmitter:
+>   pin: 1
+>   carrier_duty_percent: 100%
+> ```
 
 ## See Also
 
