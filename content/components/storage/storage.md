@@ -4,7 +4,7 @@ title: "Storage"
 params:
   seo:
     description: Information about base storage device interface.
-    image: fatfs.svg
+    image: storage.svg
 ---
 
 Storage is the API for different kind of devise for save and retrive datas. It can be used for read and write data blocks, but primary target is to use as device driver for filesystems library.
