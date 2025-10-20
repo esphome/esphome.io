@@ -25,15 +25,6 @@ espnow:
 
 packet_transport:
   - platform: espnow
-    id: transport_broadcast
-    espnow_id: espnow_component
-    # Uses default broadcast address FF:FF:FF:FF:FF:FF
-    encryption:
-      key: "0123456789abcdef0123456789abcdef"
-    sensors:
-      - temp_sensor
-
-  - platform: espnow
     id: transport_unicast
     espnow_id: espnow_component
     peer_address: "AA:BB:CC:DD:EE:FF"
@@ -51,11 +42,14 @@ sensor:
 ## Configuration Variables
 
 - **espnow_id** (**Required**, [ID](#config-id)): The esp-now ID to use for transport.
-- **peer_address** (*Optional*, MAC Address): MAC address to send packets to. This can be either a specific peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
-- *all other options*: From the [Packet Transport Component](#packet-transport                                             |
+- **peer_address** (*Optional*, MAC Address): MAC address to send packets to. This can be either a specific
+  peer address for point-to-point communication, or the broadcast address. Default FF:FF:FF:FF:FF:FF
+- All other options from the [Packet Transport Component](#packet-transport)
 
 > **Note:**  
-> Peers must be registered with the {{< docref "/components/espnow" >}} component before they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data; incoming packets are accepted from all registered peers.
+> Peers must be registered with the {{< docref "/components/espnow" >}} component before
+> they can receive packets. The `peer_address` only controls which peer(s) receive transmitted data;
+> incoming packets are accepted from all registered peers.
 
 ## Broadcast vs Unicast
 
@@ -66,7 +60,6 @@ The `peer_address` configuration determines the transmission mode.
 ```yaml
 packet_transport:
   - platform: espnow
-    # peer_address: "FF:FF:FF:FF:FF:FF"  # Default, can be omitted
     sensors:
       - sensor_id
 ```
@@ -88,16 +81,13 @@ packet_transport:
 
 Only the specified peer receives the packets. This is more efficient for point-to-point communication and reduces radio channel congestion for neighboring ESP-NOW devices.
 
-## Complete Example
+## Simple Example
 
 This example shows two devices exchanging sensor data over ESP-NOW with encryption enabled.
 
-### Device 1 – Temperature Sensor Provider
+### Temperature Provider
 
 ```yaml
-esphome:
-  name: temp-sensor
-
 espnow:
   peers:
     - mac_address: "AA:BB:CC:DD:EE:01"  # Device 2
@@ -116,12 +106,9 @@ sensor:
       id: outdoor_temp
 ```
 
-### Device 2 – Temperature Display Consumer
+### Temperature Consumer
 
 ```yaml
-esphome:
-  name: temp-display
-
 espnow:
   peers:
     - mac_address: "AA:BB:CC:DD:EE:00"  # Device 1
@@ -147,9 +134,6 @@ This example shows a central hub receiving sensor data from multiple remote devi
 ### Hub Device
 
 ```yaml
-esphome:
-  name: sensor-hub
-
 espnow:
   peers:
     - mac_address: "FF:FF:FF:FF:FF:FF"  # Broadcast address
@@ -179,12 +163,9 @@ sensor:
     name: "Outdoor Temperature"
 ```
 
-### Remote Sensor (repeat for each room)
+### Remote Sensors
 
 ```yaml
-esphome:
-  name: room-sensor-1
-
 espnow:
   peers:
     - mac_address: "FF:FF:FF:FF:FF:FF"  # Broadcast
@@ -201,21 +182,6 @@ sensor:
     temperature:
       id: temperature
 ```
-
-## Performance Considerations
-
-- **Maximum Packet Size:** ESP-NOW has a maximum packet size of 250 bytes. The packet transport component will automatically handle this limitation.
-- **Throughput:** ESP-NOW provides lower throughput than Wi-Fi but has significantly lower latency (typically <10ms vs 50-100ms for Wi-Fi).
-- **Range:** ESP-NOW typically provides similar range to Wi-Fi (50-100 meters line-of-sight), but this varies based on environment and antenna configuration.
-- **Power Consumption:** ESP-NOW consumes significantly less power than maintaining a Wi-Fi connection, making it ideal for battery-powered applications.
-- **Channel:** ESP-NOW operates on the same 2.4GHz channels as Wi-Fi. When Wi-Fi is enabled, ESP-NOW automatically uses the same channel. When Wi-Fi is disabled, ESP-NOW uses channel 1 by default.
-
-## Limitations
-
-- **ESP32 Only:** ESP-NOW is only available on wifi capable ESP32 variants. ESP8266 support is not available.
-- **Peer Limit:** ESP32 devices can register a maximum of 20 peers (10 encrypted + 10 unencrypted, or various combinations).
-- **Packet Size:** Maximum 250 bytes per packet, which limits the amount of sensor data that can be transmitted in a single update.
-- **No Routing:** ESP-NOW is not a mesh protocol. Devices communicate directly and cannot route packets through intermediate nodes.
 
 ## See Also
 
