@@ -31,7 +31,7 @@ storage:
 
 {{< anchor "storage-is_pressent-condition" >}}
 
-## Present Condition
+## Is_present Condition
 
 This is an condition for checking if media present.
 
