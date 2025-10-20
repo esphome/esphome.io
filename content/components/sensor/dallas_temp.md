@@ -18,13 +18,15 @@ required to be set up in your configuration for this sensor to work.
 sensor:
   - platform: dallas_temp
     address: 0x1234567812345628
+    index: 1
     name: temperature
     update_interval: 120s
 ```
 
 ## Configuration variables
 
-- **address** (*Optional*, int): The address of the sensor. Required if there is more than one device on the bus.
+- **address** (*Optional*, int): The address of the sensor. Required if there is more than one device on the bus and index is not specified.
+- **index** (*Optional*, byte): The index of the sensor. Required if there is more than one device on the bus and address is not specified. *Note this index is based on the hardware addresses of the sensor and indexes will shift when during startup a sensor is not connected.*
 - **resolution** (*Optional*, int): An optional resolution from 9 to 12. Higher means more accurate.
   Defaults to the maximum for most Dallas temperature sensors: 12.
 
