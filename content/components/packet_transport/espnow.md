@@ -136,7 +136,7 @@ This example shows a central hub receiving sensor data from multiple remote devi
 ```yaml
 espnow:
   peers:
-    - mac_address: "FF:FF:FF:FF:FF:FF"  # Broadcast address
+    - mac_address: "FF:FF:FF:FF:FF:FF"
 
 packet_transport:
   - platform: espnow
@@ -168,11 +168,11 @@ sensor:
 ```yaml
 espnow:
   peers:
-    - mac_address: "FF:FF:FF:FF:FF:FF"  # Broadcast
+    - mac_address: "FF:FF:FF:FF:FF:FF"
 
 packet_transport:
   - platform: espnow
-    peer_address: "FF:FF:FF:FF:FF:FF"  # Broadcast to hub
+    peer_address: "FF:FF:FF:FF:FF:FF"
     encryption: "HubSecret123"
     sensors:
       - temperature
