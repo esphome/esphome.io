@@ -123,6 +123,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "ESP32 BLE Server","components/esp32_ble_server","bluetooth.svg","dark-invert"
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
 "Improv via BLE","components/esp32_improv","improv.svg","dark-invert"
+"Nordic UART Service (NUS)","components/ble_nus","uart.svg",""
 {{< /imgtable >}}
 
 ## Management and Monitoring
@@ -389,6 +390,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "HYT271","components/sensor/hyt271","hyt271.jpg","Temperature & Humidity",""
 "Inkbird IBS-TH1 Mini","components/sensor/inkbird_ibsth1_mini","inkbird_isbth1_mini.jpg","Temperature & Humidity",""
 "Internal Temperature","components/sensor/internal_temperature","thermometer.svg","Temperature","dark-invert"
+"LM75B","components/sensor/lm75b","lm75b.jpg","Temperature",""
 "LPS22","components/sensor/lps22","lps22.webp","Temperature & Barometric Pressure",""
 "MCP9808","components/sensor/mcp9808","mcp9808.jpg","Temperature",""
 "MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature",""
@@ -726,6 +728,7 @@ Often known as "tag" or "card" readers within the community.
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
 "MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
+"ePaper SPI Displays","components/display/epaper_spi","epaper.svg"
 "ILI9xxx","components/display/ili9xxx","ili9341.jpg"
 "ILI9341","components/display/ili9xxx","ili9341.svg"
 "ILI9342","components/display/ili9xxx","ili9342.svg"
