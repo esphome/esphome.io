@@ -28,13 +28,12 @@ storage:
 **Configuration variables:**
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **cd_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin used for storage media detect in case it is a removable media like sdcard. CD pin used in some card holders.
 
 {{< anchor "storage-is_pressent-condition" >}}
 
 ## Exist Condition
 
-This is an condition for checking if file or directory by are present. File pointed by its path path.
+This is an condition for checking if media present.
 
 ```yaml
 - if:
