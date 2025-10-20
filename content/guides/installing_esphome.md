@@ -5,8 +5,7 @@ title: "Installing ESPHome Manually"
 
 ## Windows
 
-Download Python from [the official site](https://www.python.org/downloads/).
-Be sure to download 3.13.9 at most because 3.14 is not working at the 2025-10-20
+Download Python from [the official site](https://www.python.org/downloads/). Confirm that the version is at least 3.11; versions 3.14 or higher are not yet recommended.
 
 {{< img src="python-win-installer.png"
   alt="Python installer window with arrows pointing to \"Add Python to PATH\" and \"Install Now\""
