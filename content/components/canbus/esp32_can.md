@@ -67,12 +67,14 @@ The following table lists the bit rates supported by the component for ESP32 var
 | 1000KBPS | x | x | x | x | x | x |
 
 ## Advanced bit rate option
+
 - **prescaler** (**Required**, int): Prescaler to compute the time quanta.
 - **tseg_1** (**Required**, int): An integer between 1 and 16.
 - **tseg_2** (**Required**, int): An integer between 1 and 8.
 
 The bit rate is computed as:
-$$bit_rate = {{80 MHz} \over prescaler * (1 + tseg_1 + tseg_2)}$$
+
+$$bit\\_rate = {{80 MHz} \over prescaler * (1 + tseg\\_1 + tseg\\_2)}$$
 
 **tseg_1** and **tseg_2** control the moment the signal is being sampled.
 
