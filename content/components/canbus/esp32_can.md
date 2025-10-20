@@ -20,6 +20,10 @@ canbus:
     rx_pin: GPIOXX
     can_id: 4
     bit_rate: 50kbps
+    advanced_bit_rate:
+        prescaler: 80
+        tseg_1: 15
+        tseg_2: 4
     on_frame:
       ...
 ```
@@ -32,7 +36,7 @@ canbus:
 - **tx_queue_len** (*Optional*, int): Length of TX queue, 0 to disable.
 - **tx_enqueue_timeout** (*Optional*, [Time](#config-time)): Maximum time to wait when the TX queue is full before
   dropping the message (by default, this is set to the time it takes to send 10 CAN messages at the given bit rate).
-
+- **advanced_bit_rate** (*Optional*): When present, overrides the bit_rate setting and allows fine tunning of the bit rate.
 - All other options from [Canbus](#config-canbus).
 
 {{< anchor "esp32-can-bit-rate" >}}
@@ -61,6 +65,16 @@ The following table lists the bit rates supported by the component for ESP32 var
 | 500KBPS | x | x | x | x | x | x |
 | 800KBPS | x | x | x | x | x | x |
 | 1000KBPS | x | x | x | x | x | x |
+
+## Advanced bit rate option
+- **prescaler** (**Required**, int): Prescaler to compute the time quanta.
+- **tseg_1** (**Required**, int): An integer between 1 and 16.
+- **tseg_2** (**Required**, int): An integer between 1 and 8.
+
+The bit rate is computed as:
+$$bit\_rate = {{80 MHz} \over prescaler * (1 + tseg\_1 + tseg\_2)}$$
+
+**tseg_1** and **tseg_2** control the moment the signal is being sampled.
 
 ## Wiring options
 
