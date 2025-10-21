@@ -22,7 +22,7 @@ Configuration variables:
   arrives, regardless of the configured time interval.
 
 ```yaml
-# Example filters:
+# Example filters
 filters:
   - heartbeat: 5s
   - heartbeat:
