@@ -175,11 +175,24 @@ LWIP (Lightweight IP) behavior. Some options improve performance while others sa
   1.3 KB of IRAM by placing these functions in flash memory instead. This is safe for ESPHome since no IRAM interrupt service
   routines (ISRs that run while cache is disabled) use libc lock APIs. Defaults to `true` (IRAM placement disabled to save RAM).
 
+**VFS (Virtual File System) Optimization Options (ESP-IDF only):**
+
+The following options disable unused VFS features to save flash memory:
+
+- **disable_vfs_support_termios** (*Optional*, boolean): Disable VFS support for termios (terminal I/O) functions. ESPHome
+  doesn't use termios functions on ESP32 (they're only used in the host UART driver for Linux/macOS). Disabling this saves
+  approximately 1.8 KB of flash. Defaults to `true` (VFS termios disabled to save flash).
+
+- **disable_vfs_support_select** (*Optional*, boolean): Disable VFS support for select() with file descriptors. ESPHome uses
+  `lwip_select()` for socket operations, which works independently of VFS select support. VFS select is only needed for UART
+  and eventfd file descriptors, which ESPHome doesn't use. Socket operations continue to work normally with this disabled.
+  Disabling this saves approximately 2.7 KB of flash. Defaults to `true` (VFS select disabled to save flash).
+
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
 multi-threaded scalability (which is uncommon since ESPHome uses an event loop).
 
-**Example configuration with advanced LWIP options:**
+**Example configuration with advanced LWIP and VFS options:**
 
 ```yaml
 # Example configuration entry
@@ -194,6 +207,8 @@ esp32:
 
       # Memory saving options
       disable_libc_locks_in_iram: true  # Enabled by default, saves 1.3 KB IRAM
+      disable_vfs_support_termios: true  # Enabled by default, saves 1.8 KB flash
+      disable_vfs_support_select: true  # Enabled by default, saves 2.7 KB flash
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
