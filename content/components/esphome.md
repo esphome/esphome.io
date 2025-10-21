@@ -17,9 +17,6 @@ esphome:
     name: livingroom
     comment: Living room ESP32 controller
     area: Living Room
-
-esp32:
-    board: nodemcu-32s
 ```
 
 {{< anchor "esphome-configuration_variables" >}}
@@ -58,6 +55,9 @@ Advanced options:
 - **includes** (*Optional*, list of files): A list of C/C++ files to include in the (auto-generated) `main` file.
   The paths in this list are relative to the directory where the YAML configuration file is located or `<...>` includes.
   See [`includes`](#esphome-includes).
+
+- **includes_c** (*Optional*, list of files): The same as `includes` but for files that require C linkage. All includes
+  will be wrapped in `extern "C" {}`. See [`includes`](#esphome-includes).
 
 - **libraries** (*Optional*, list of libraries): A list of libraries to include in the project. See
   [`libraries`](#esphome-libraries).
