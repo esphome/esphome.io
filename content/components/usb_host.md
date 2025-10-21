@@ -25,6 +25,11 @@ usb_host:
       pid: 0x1234
 ```
 
+> [!NOTE]
+> This component cannot be used in combination with the
+> {{< docref "/components/usb_host_hid" >}} as both components need to assume
+> control of the plugged USB devices, which would create a conflict.
+
 ## Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): The id to use for this component.

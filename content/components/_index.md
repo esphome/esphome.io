@@ -169,6 +169,7 @@ Create update entities simplifying management of OTA updates.
 "SPI Bus","components/spi","spi.svg",""
 "UART","components/uart","uart.svg",""
 "USB Host","components/usb_host","usb.svg","dark-invert"
+"USB HID Host","components/usb_host_hid","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
 {{< /imgtable >}}
 
