@@ -185,8 +185,14 @@ The following options disable unused VFS features to save flash memory:
 
 - **disable_vfs_support_select** (*Optional*, boolean): Disable VFS support for select() with file descriptors. ESPHome uses
   `lwip_select()` for socket operations, which works independently of VFS select support. VFS select is only needed for UART
-  and eventfd file descriptors, which ESPHome doesn't use. Socket operations continue to work normally with this disabled.
-  Disabling this saves approximately 2.7 KB of flash. Defaults to `true` (VFS select disabled to save flash).
+  and eventfd file descriptors. Socket operations continue to work normally with this disabled. Components that require VFS
+  select (e.g., OpenThread) automatically enable it regardless of this setting. Disabling this saves approximately 2.7 KB of
+  flash. Defaults to `true` (VFS select disabled to save flash).
+
+- **disable_vfs_support_dir** (*Optional*, boolean): Disable VFS support for directory-related functions (opendir, readdir,
+  mkdir, rmdir, etc.). ESPHome doesn't use directory operations on ESP32. Components that require directory support (e.g.,
+  future storage components) automatically enable it regardless of this setting. Disabling this saves approximately 0.5 KB+
+  of flash. Defaults to `true` (VFS directory support disabled to save flash).
 
 Some options can be disabled to save flash memory without affecting typical ESPHome functionality. The performance
 options (defaulting to `true`  ) improve socket operation performance but can be disabled if you need better
@@ -208,7 +214,8 @@ esp32:
       # Memory saving options
       disable_libc_locks_in_iram: true  # Enabled by default, saves 1.3 KB IRAM
       disable_vfs_support_termios: true  # Enabled by default, saves 1.8 KB flash
-      disable_vfs_support_select: true  # Enabled by default, saves 2.7 KB flash
+      disable_vfs_support_select: true  # Enabled by default, saves 2.7 KB flash (auto-enabled by openthread)
+      disable_vfs_support_dir: true  # Enabled by default, saves 0.5 KB+ flash
       enable_lwip_dhcp_server: false  # Disabled by default, only needed for AP mode
       enable_lwip_mdns_queries: false  # Enabled by default, can disable if not using .local hostnames
       enable_lwip_bridge_interface: false  # Disabled by default
