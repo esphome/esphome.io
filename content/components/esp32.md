@@ -175,7 +175,7 @@ LWIP (Lightweight IP) behavior. Some options improve performance while others sa
   1.3 KB of IRAM by placing these functions in flash memory instead. This is safe for ESPHome since no IRAM interrupt service
   routines (ISRs that run while cache is disabled) use libc lock APIs. Defaults to `true` (IRAM placement disabled to save RAM).
 
-**VFS (Virtual File System) Optimization Options (ESP-IDF only):**
+**VFS (Virtual File System) Optimization Options:**
 
 The following options disable unused VFS features to save flash memory:
 
