@@ -25,6 +25,8 @@ text_sensor:
       name: "Device Info"
     reset_reason:
       name: "Reset Reason"
+    power_save_mode:
+      name: "WiFi Power Save Mode"
 
 sensor:
   - platform: debug
@@ -69,6 +71,13 @@ sensor:
   Accepts all options from [Text Sensor](/components/text_sensor#config-text_sensor).
 
 - **reset_reason** (*Optional*): Reports the last reboot reason in a human-readable form. Accepts all options from [Text Sensor](/components/text_sensor#config-text_sensor).
+
+- **power_save_mode** (*Optional*): Reports the current WiFi power save mode. Only available on ESP32, ESP8266, RP2040, and LibreTiny platforms with WiFi enabled. Possible values:
+
+  - ESP32, ESP8266, RP2040: `NONE`, `LIGHT`, `HIGH`, or `UNKNOWN`
+  - LibreTiny: `ON` or `OFF`
+
+  Accepts all options from [Text Sensor](#config-text_sensor).
 
 ## Sensor
 
