@@ -148,6 +148,10 @@ on_...:
         id: deep_sleep_1
         until: "16:00:00"
         time_id: sntp_id
+
+# in a lambda
+  - lambda: |-
+      id(deep_sleep_1).begin(true);
 ```
 
 Configuration options:
@@ -167,6 +171,10 @@ Useful for keeping the ESP active during data transfer or OTA updating (See note
 on_...:
   then:
     - deep_sleep.prevent: deep_sleep_1
+
+# in a lambda
+  - lambda: |-
+      id(deep_sleep_1).prevent_deep_sleep();
 ```
 
 > [!NOTE]
@@ -199,7 +207,7 @@ on_...:
 >       then:
 >         - deep_sleep.enter: deep_sleep_1
 > ```
-
+  
 {{< anchor "deep_sleep-allow_action" >}}
 
 ## `deep_sleep.allow` Action
@@ -210,6 +218,10 @@ This action allows the given deep sleep component to enter deep sleep, after pre
 on_...:
   then:
     - deep_sleep.allow: deep_sleep_1
+
+# in a lambda
+    - lambda: |-
+        id(deep_sleep_1).enable();
 ```
 
 ## See Also
