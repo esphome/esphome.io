@@ -218,11 +218,9 @@ This action allows the given deep sleep component to enter deep sleep, after pre
 on_...:
   then:
     - deep_sleep.allow: deep_sleep_1
-
 # in a lambda
-    - lambda: |-
-        id(deep_sleep_1).enable();
-```
+  - lambda: |-
+      id(deep_sleep_1).enable();
 
 ## See Also
 
