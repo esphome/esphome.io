@@ -221,7 +221,7 @@ on_...:
 
 # in a lambda
   - lambda: |-
-      id(deep_sleep_1).enable();
+      id(deep_sleep_1).allow_deep_sleep();
 ```
 
 ## See Also
