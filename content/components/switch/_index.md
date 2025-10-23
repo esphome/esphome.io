@@ -26,11 +26,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name of the switch. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the switch to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> you want the switch to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   sensor in the frontend.
@@ -228,17 +226,15 @@ advanced stuff (see the full API Reference for more info).
     id(my_switch).publish_state(true);
 ```
 
-{{< note >}}
-Keep in mind that this does not change the actual state of the switch. It only
-changes the state in the frontend and the internal state. If you want to
-change the actual state of the switch, you need to call `turn_on()`,
-`turn_off()` or `toggle()`.
-
-For example, if you are using a {{< docref "/components/switch/gpio" >}}, calling `publish_state()` will
-not change the GPIO pin level. To do that, you need to call `turn_on()`,
-`turn_off()` or `toggle()`. The same applies to other switch platforms.
-
-{{< /note >}}
+> [!NOTE]
+> Keep in mind that this does not change the actual state of the switch. It only
+> changes the state in the frontend and the internal state. If you want to
+> change the actual state of the switch, you need to call `turn_on()`,
+> `turn_off()` or `toggle()`.
+>
+> For example, if you are using a {{< docref "/components/switch/gpio" >}}, calling `publish_state()` will
+> not change the GPIO pin level. To do that, you need to call `turn_on()`,
+> `turn_off()`, `toggle()` or `control()`. The same applies to other switch platforms.
 
 - `state`  : Retrieve the current state of the switch.
 
@@ -261,6 +257,63 @@ not change the GPIO pin level. To do that, you need to call `turn_on()`,
     // Toggle the switch
     id(my_switch).toggle();
 ```
+
+- `control()`  : Control the switch state using a boolean parameter.
+  This provides a unified interface for setting switch state dynamically.
+
+```yaml
+    // Within lambda, control switch based on a condition
+    id(my_switch).control(true);   // Turn ON
+    id(my_switch).control(false);  // Turn OFF
+    id(my_switch).control(some_condition);  // Set based on condition
+```
+
+{{< anchor "switch-on_turn_on_off_trigger" >}}
+
+### `switch.on_turn_on` / `switch.on_turn_off` Trigger
+
+This trigger is activated each time the switch is turned on. It becomes active
+right after the switch component has acknowledged the state (e.g. after it switched
+ON/OFF itself).
+
+```yaml
+switch:
+  - platform: gpio  # or any other platform
+    # ...
+    on_turn_on:
+    - logger.log: "Switch Turned On!"
+    on_turn_off:
+    - logger.log: "Switch Turned Off!"
+```
+
+{{< anchor "switch-on_state_trigger" >}}
+
+### `switch.on_state` Trigger
+
+This trigger is activated each time the switch changes state (either ON or OFF).
+It provides the new state as a boolean variable `x` that can be used in the automation.
+
+```yaml
+switch:
+  - platform: gpio  # or any other platform
+    # ...
+    on_state:
+      - light.control:
+          id: my_light
+          state: !lambda return x;
+      - if:
+          condition:
+            lambda: 'return x;'
+          then:
+            - logger.log: "Switch is now ON!"
+          else:
+            - logger.log: "Switch is now OFF!"
+```
+
+The variable `x` is a boolean that represents the new state:
+
+- `true` when the switch turns ON
+- `false` when the switch turns OFF
 
 ## See Also
 
