@@ -77,6 +77,35 @@ openthread:
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
 
+## OpenThread text sensors configuration
+
+This example show how to configure Thread text sensors for a node.
+
+```yaml
+text_sensor:
+  - platform: openthread_info
+    ip_address:
+      name: "Off-mesh routable IP Address"
+    channel:
+      name: "Channel"
+    role:
+      name: "Device Role"
+    rloc16:
+      name: "RLOC16"
+    ext_addr:
+      name: "Extended Address"
+    eui64:
+      name: "EUI64"
+    network_name:
+      name: "Network Name"
+    network_key:
+      name: "Network Key"
+    pan_id:
+      name: "PAN ID"
+    ext_pan_id:
+      name: "Extended PAN ID"
+```
+
 ## OpenThread Device Type
 
 See <https://openthread.io/guides/thread-primer/node-roles-and-types>
