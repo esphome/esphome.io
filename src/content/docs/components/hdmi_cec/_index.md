@@ -83,7 +83,7 @@ hdmi_cec:
   # - "source": match messages coming from the specified address
   # - "destination": match messages meant for the specified address
   # - "opcode": match messages bearing the specified opcode
-  # - "data": exact-match on message content
+  # - "data": vector of bytes to match on message content (or just its initial part), starting with opcode
   # Actions called from these triggers is called with "source", "destination" and "data" as parameters
   on_message:
     - opcode: 0x36 # opcode for "Standby"
