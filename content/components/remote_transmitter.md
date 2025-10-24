@@ -234,11 +234,15 @@ on_...:
 - **code** (**Required**, int): The 24-bit rolling code from a vector.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
-{{< note >}}
-The brennenstuhl devices use rolling codes, i.e. each button of the remote generates 4 different codes in a pseudo random manner. The four codes of the button are stored in a vector. The vector is looped to provide the **transmit_brennenstuhl** function with codes that differ from the previous ones.
-See [Rolling Codes](#remote-setting-up-rolling-codes) and [Setting up RF Devices](#remote-setting-up-rf) for details and a YAML example.
+>[!NOTE]
+> The brennenstuhl devices use rolling codes, i.e. each button of the remote generates 4 different codes in
+> a pseudo random manner. The yaml snippet from above handles the codes of the button **A-ON** that are stored
+> in the vector `id(a_on)[]`. The vector is looped with `id(idx)` to provide the transmit function with codes
+> that differ from the previous ones.
+>
+>See [Rolling Codes](#remote-setting-up-rolling-codes) and [Setting up RF Devices](#remote-setting-up-rf)
+>for details and a complete YAML example.
 
-{{< /note >}}
 
 {{< anchor "remote_transmitter-transmit_byronsx" >}}
 

@@ -192,12 +192,18 @@ You can adjust the `repeat:` settings accordingly.
 
 {{< anchor "remote-setting-up-rolling-codes" >}}
 
-Some devices are using rolling codes, i.e. instead of **one unique** code, the buttons generate **n different** codes in a random manner. Good-natured receivers have a simple logic: the current code must differ from the previous one. In such a case, the n codes can be recorded by pressing each button several times and stored in a vector. The brennenstuhl remote for example uses four rolling codes for each button.The YAML below shows the transmitter for three buttons:
+Some devices are using rolling codes, i.e. instead of **one unique** code, the buttons
+generate **n different** codes in a random manner. Good-natured receivers have a simple
+logic: the current code must differ from the previous one. In such a case, the n codes
+can be recorded by pressing each button several times and stored in a vector. The
+brennenstuhl remote for example uses four rolling codes for each button.The YAML below
+shows the transmitter for the three buttons **A_ON**, **A_OFF** and **B_ON**. Additional
+buttons are simply added in the same way :
 
 ```yaml
 
 globals:
-  # the code vectors of three buttons
+  # the code vectors of three buttons A_ON, A_OFF and B_ON
 - id: a_on
   type: std::vector<int>
   initial_value: '{ 0xbfcf6c, 0xbe821c, 0xb1d75c, 0xb593ac }'
