@@ -401,12 +401,15 @@ on_...:
 
 #### Configuration variables
 
-- **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,0x122a=swing..., see dumper output for more info.
+- **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,
+  0x122a=swing..., see dumper output for more info.
 - **index** (**Required**, int): The 8-bit rolling index (range=0..3).
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
 
 {{< note >}}
-The **dyson** devices use rolling codes, i.e. each remote button generates 4 different codes in a pseudo random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function generate a code that differ from the previous one.
+The **dyson** devices use rolling codes, i.e. each remote button generates 4 different codes in a pseudo
+ random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function
+ generate a code that differ from the previous one.
 
 {{< /note >}}
 
