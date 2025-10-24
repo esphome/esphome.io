@@ -239,7 +239,6 @@ on_...:
 > a pseudo random manner. The yaml snippet from above handles the codes of the button **A-ON** that are stored
 > in the vector `id(a_on)[]`. The vector is looped with `id(idx)` to provide the transmit function with codes
 > that differ from the previous ones.
->
 >See [Rolling Codes](#remote-setting-up-rolling-codes) and [Setting up RF Devices](#remote-setting-up-rf)
 >for details and a complete YAML example.
 
