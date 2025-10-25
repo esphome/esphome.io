@@ -8,7 +8,7 @@ params:
 ---
 
 The `zigbee` component allows exposing supported ESPHome components over a Zigbee network to Home Assistant via **Zigbee2MQTT** or **ZHA**.  
-Due to the limitations of the Zigbee protocol, only basic properties are exposed. Additional functionality must be configured manually in Home Assistant.
+Due to the limitations of the Zigbee protocol, only basic properties are exposed. Additional properties must be configured manually in Home Assistant.
 
 ### Supported Components
 
