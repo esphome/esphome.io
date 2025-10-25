@@ -294,11 +294,16 @@ the signal needs to be limited to 3.3V. In the circuit diagram below, this is do
 This should be a blue or white LED, as those have a higher forward voltage then red or green LEDs.
 Using a (blue) LED for for this purpose is nice, as it gives a direct visual feedback when using your circuit
 (in comparison with using a 3.3V zener diode, which is also fine).
-To have a valid reading in the microcontroller on disconnect, the GPIO pin should be configured with a weak pull-down.
 
 ![Schematics with HPD and UART](images/hpd_uart_schematics.png)
 
-Example yaml fragment for using HPD:
+To have a valid reading in the microcontroller on disconnect, the GPIO pin should be configured with a weak pull-down.
+Also, the use of `delayed` filters is recommended:
+
+- To avoid multiple triggers on glitches in the signal during connector plug-in and pull-out.
+- To avoid triggers when the TV shortly pulls this signal low, which is part of the hdmi protocol for address discovery.
+
+Example yaml fragment for using HPD, showing the connected status in Home Assistant and create log output:
 
 ```yaml
 binary_sensor:
@@ -308,8 +313,11 @@ binary_sensor:
       mode:
         input: true
         pulldown: true
-    id: hdmi_hpd
-    name: "Hdmi TV Detect"
+    id: hdmi_connected
+    name: "Hdmi Connected"
+    filters:
+      - delayed_on: 300ms
+      - delayed_off: 300ms
     on_press:
       then:
         - logger.log:
