@@ -7,14 +7,21 @@ params:
     image: zigbee.svg
 ---
 
-The `zigbee` component allows exposing supported ESPHome components over a Zigbee network to Home Assistant via **Zigbee2MQTT** or **ZHA**.
+The `zigbee` component allows exposing supported ESPHome components over a Zigbee network to Home Assistant via **Zigbee2MQTT** or **ZHA**.  
+Due to the limitations of the Zigbee protocol, only basic properties are exposed. Additional functionality must be configured manually in Home Assistant.
 
-## Supported Components
+### Supported Components
 
-- [Binary Sensor](#config-binary_sensor)
+#### Binary Sensor
+
+- Only **state** and **name** are exposed over Zigbee.
 
 ```yaml
 # Example configuration entry
+binary_sensor:
+  - platform: template
+    name: "Door 1"
+
 zigbee:
   wipe_on_boot: true
   on_join:
@@ -42,6 +49,5 @@ on_...:
 
 ## See Also
 
-- {{< docref "esphome/" >}}
 - [Zigbee2MQTT](https://www.zigbee2mqtt.io/)
 - [Zigbee Home Automation](https://www.home-assistant.io/integrations/zha/)
