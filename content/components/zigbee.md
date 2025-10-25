@@ -11,6 +11,7 @@ The `zigbee` component allows exposing supported ESPHome components over a Zigbe
 Due to the limitations of the Zigbee protocol, only basic properties are exposed. Additional properties must be configured manually in Home Assistant.
 
 ### Supported Components
+
 - [Binary Sensor](#config-binary_sensor): only **state** and **name** are exposed over Zigbee.
 
 ```yaml
