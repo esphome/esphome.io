@@ -27,7 +27,7 @@ Upgrade to the latest version using `uv tool upgrade esphome`
 
 ## Windows
 
-Download Python from [the official site](https://www.python.org/downloads/).
+Download Python from [the official site](https://www.python.org/downloads/). Confirm that the version is at least 3.11; versions 3.14 or higher are not yet recommended.
 
 {{< img src="python-win-installer.png"
   alt="Python installer window with arrows pointing to \"Add Python to PATH\" and \"Install Now\""
