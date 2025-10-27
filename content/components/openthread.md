@@ -66,6 +66,9 @@ openthread:
   to the ESP. Defaults to auto-generated value.
 - **poll_period** (*Optional*, [Time](#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
+> [!NOTE]
+> At present, OTA does not work when poll_period > 0
+
 ## Dataset TLV Configuration
 
 It is also possible to supply the entire dataset TLVs from the Thread information in Home Assistant and the individual values will be automatically extracted from it.
