@@ -39,7 +39,9 @@ esp32:
   `360MHz` or `400MHz`. Defaults to `160MHz`. Not all values are available for all chips.
 
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
-  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size`.
+  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size` and `custom_partitions.
+
+- **custom_partitions** (*Optional*): Add partitions to the automatically generated partition scheme. See [Custom Partitions](#esp32-partitions).
 
 - **framework** (*Optional*): Options for the underlying framework used by ESPHome. See [Framework](#esp32-framework).
 
@@ -238,6 +240,15 @@ git repository.
 
 - **path** (*Optional*, string): The path of the component in the git repository or a local path to the
   component if `source` is not set.
+
+{{< anchor "esp32-partitions" >}}
+
+## Custom Partitions
+
+The `custom_partitions` option allows you to add partitions to the automatically generated partition table.
+
+- **name** (*Required*, string): Name of the component e.g. `espressif/esp_hosted`.
+
 
 ## GPIO Pin Numbering
 
