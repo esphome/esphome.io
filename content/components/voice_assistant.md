@@ -10,20 +10,17 @@ params:
 ESPHome devices with a microphone are able to stream the audio to Home Assistant and be processed there by
 [assist](https://www.home-assistant.io/voice_control/).
 
-{{< note >}}
-Voice Assistant requires Home Assistant 2023.5 or later.
+> [!NOTE]
+> Voice Assistant requires Home Assistant 2023.5 or later.
 
-{{< /note >}}
-{{< warning >}}
-Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
-combination with Voice Assistant and/or other audio components.
-
-If you experience crashes, see the {{< docref "/guides/troubleshooting" >}} guide for how to get a backtrace.
-
-{{< /warning >}}
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+> combination with Voice Assistant and/or other audio components.
+>
+> If you experience crashes, see the {{< docref "/guides/troubleshooting" >}} guide for how to get a backtrace.
 
 ```yaml
 voice_assistant:
@@ -175,7 +172,7 @@ Returns true if the voice assistant is currently connected to Home Assistant.
 
 ## Wake word detection
 
-See our [example YAML files on GitHub](https://github.com/esphome/firmware/blob/main/voice-assistant/m5stack-atom-echo.yaml)
+See our [example YAML files on GitHub](https://github.com/esphome/wake-word-voice-assistants/blob/main/m5stack-atom-echo/m5stack-atom-echo.yaml)
 for continuous wake word detection.
 
 ## Push to Talk
