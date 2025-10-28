@@ -67,7 +67,7 @@ openthread:
 - **poll_period** (*Optional*, [Time](#config-time)): When Poll_Period is set on an MTD device, the parent router will enqueue any messages and wait for the child to submit a poll data request
 
 > [!NOTE]
-> At present, OTA does not work when poll_period > 0
+> esphome.ota does not work when poll_period > 0, instead use http_request.ota, timeout and watchdog_timeout need to be tested to find the correct values.  Values greater than 100sec may be required.
 
 ## Dataset TLV Configuration
 
