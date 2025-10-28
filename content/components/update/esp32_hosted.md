@@ -44,9 +44,7 @@ update:
 
 ## Platform requirements
 
-This update platform is only available on:
-- **ESP32-H2** (as the host device)
-- **ESP32-P4** (as the host device)
+This update platform is only available on `ESP32-H2` and `ESP32-P4`
 
 ## Obtaining co-processor firmware
 
