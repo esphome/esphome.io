@@ -408,8 +408,8 @@ on_...:
 
 {{< note >}}
 The **dyson** devices use rolling codes, i.e. each remote button generates 4 different codes in a pseudo
- random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function
- generate a code that differ from the previous one.
+random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function
+generate a code that differs from the previous one.
 
 {{< /note >}}
 
