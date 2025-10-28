@@ -79,7 +79,7 @@ openthread:
 
 ## OpenThread text sensors configuration
 
-This example show how to configure Thread text sensors for a node.
+This example shows how to configure Thread text sensors for a node.
 
 ```yaml
 text_sensor:
