@@ -39,7 +39,7 @@ esp32:
   `360MHz` or `400MHz`. Defaults to `160MHz`. Not all values are available for all chips.
 
 - **partitions** (*Optional*, filename): The name of (optionally including the path to) the file containing the
-  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size` and `custom_partitions.
+  partitioning scheme to be used. When not specified, partitions are automatically generated based on `flash_size` and `custom_partitions`.
 
 - **custom_partitions** (*Optional*): Add partitions to the automatically generated partition scheme. See [Custom Partitions](#esp32-partitions).
 
