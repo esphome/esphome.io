@@ -166,6 +166,28 @@ switch:
     # ...
 ```
 
+{{< anchor "config-packages_conditional" >}}
+
+## Conditionally including a package
+
+You can include a package based on a condition, or choose a package dinamically by loading your package with `!include` into a substitution variable instead of under `packages`:
+
+```yaml
+# In config.yaml
+substitutions:
+  left_garage_door: !include
+    file: garage-door.yaml
+    vars:
+      door_name: Left
+
+  enable_extra_door: true
+
+packages:
+  extra_door: ${ left_garage_door if enable_extra_door else {} }
+```
+
+The above utilizes a {{< docref "/components/substitutions#jinja-expressions" "Jinja expression" >}} to determine whether `left_garage_door` package is actually included. `enable_extra_door` can be set from the {{< docref "/components/substitutions#command-line-substitutions" "command line" >}} as well.
+
 {{< anchor "config-packages_extend" >}}
 
 ## Extend
