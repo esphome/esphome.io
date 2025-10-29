@@ -245,10 +245,13 @@ git repository.
 
 ## Custom Partitions
 
-The `custom_partitions` option allows you to add partitions to the automatically generated partition table.
+The `custom_partitions` option allows you to add partitions to the automatically generated partition table. Valid partition types and subtypes
+are found in the [esp-idf documentation](https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/partition-tables.html).
 
-- **name** (*Required*, string): Name of the component e.g. `espressif/esp_hosted`.
-
+- **name** (*Required*, string): Name of the partition. Can not be any of `nvs`, `app0`, `app1`, `otadata`, `eeprom`, `spiffs`, `phy_init`.
+- **type** (*Required*, string or integer): Partition type. One of `app` or `data` or a custom type with integer between 0x40 and 0xFE.
+- **subtype** (*Required*, string or integer): Partition sub type. Can be a valid sub type name or integer between 0x0 and 0xFE.
+- **size** (*Required*, integer): Partition size in bytes.
 
 ## GPIO Pin Numbering
 
