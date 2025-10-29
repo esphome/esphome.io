@@ -31,6 +31,7 @@ esp32_hosted:
 update:
   - platform: esp32_hosted
     path: coprocessor-firmware.bin
+    sha256: 1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
 ```
 
 {{< anchor "update_esp32_hosted-configuration_variables" >}}
@@ -39,6 +40,9 @@ update:
 
 - **path** (**Required**, string): Path to the co-processor firmware binary file (`.bin`).
   The path is relative to your ESPHome configuration file.
+
+- **sha256** (**Required**, string): SHA256 hash of the firmware binary file. This is used to verify
+  the integrity of the firmware both at compile time and at runtime before flashing to the co-processor.
 
 - All other options from [Update](#config-update).
 
