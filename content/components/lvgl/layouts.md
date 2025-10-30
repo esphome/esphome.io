@@ -56,7 +56,8 @@ The configuration `layout: vertical` is a shorthand for a flex layout:
 
 ### Flex
 
-The Flex layout in LVGL is a subset implementation of [CSS Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
+The Flex layout in LVGL is a subset implementation
+of [CSS Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
 
 It can arrange items into rows or columns (tracks), handle wrapping, adjust spacing between items and tracks and even
 handle growing the layout to make the item(s) fill the remaining space with respect to minimum/maximum width and height.
@@ -111,9 +112,8 @@ handle growing the layout to make the item(s) fill the remaining space with resp
   line. Does not apply to `flex_align_track`.
 
 The `flex_align_cross` option may also take the argument `STRETCH` which will cause the items to fill the available
-space
-on the cross axis. This is achieved by setting the default height or width of each item to 100%. An explicit height
-or width on an item will override this.
+space on the cross axis. This is achieved by setting the default height or width of each item to 100%. An explicit
+height or width on an item will override this.
 
 - **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
 - **pad_column** (*Optional*, int16): Set the padding between the columns, in pixels.
@@ -139,7 +139,8 @@ or width on an item will override this.
 
 ### Grid
 
-The Grid layout in LVGL is a subset implementation of [CSS Grid](https://css-tricks.com/snippets/css/complete-guide-grid//).
+The Grid layout in LVGL is a subset implementation
+of [CSS Grid](https://css-tricks.com/snippets/css/complete-guide-grid//).
 
 It can arrange items into a 2D "table" that has rows or columns (tracks). The item(s) can span through multiple columns
 or rows. The track's size can be set in pixels, to the largest item of the track (`CONTENT`) or in "free units" to
@@ -163,9 +164,9 @@ Row and column spans will be taken into account when reserving space.
 
 #### Shorthand
 
-The configuration `layout: <rows>x<cols>` is a shorthand for a grid layout with the specified number of rows and columns,
-with all rows and columns of equal size.
-for example `layout: 2x3` is a shorthand for `layout: { type: grid, grid_rows: [2], grid_columns: [3] }` with
+The configuration `layout: <rows>x<cols>` is a shorthand for a grid layout with the specified number of rows and
+columns, with all rows and columns of equal size. For example `layout: 2x3` is a shorthand for
+`layout: { type: grid, grid_rows: [2], grid_columns: [3] }` with
 `FR(1)` set for all rows and columns.
 
 **Configuration variables (must be placed under the layout key):**
