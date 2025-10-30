@@ -191,7 +191,7 @@ placement:
 - **grid_cell_y_align** (*Optional*, string): How to align the widget vertically within the cell. Can also be applied
   through [Style properties](#lvgl-styling). Possible options below.
 - **grid_cell_row_span** (*Optional*, int16): How many rows to span across the widget. Defaults to `1`.
-- **grid_cell_column_span** (*Optional*, int16): How many columns to span across the widget.. Defaults to `1`.
+- **grid_cell_column_span** (*Optional*, int16): How many columns to span across the widget. Defaults to `1`.
 
 > [!NOTE]
 > These `grid_cell_` variables are applied to individual widgets (cells) within the grid layout!
