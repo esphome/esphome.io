@@ -32,7 +32,7 @@ calculations.
 
 The configuration `layout: horizontal` is a shorthand for a flex layout:
 
-```
+```yaml
   layout:
     type: flex
     flex_flow: row
@@ -45,7 +45,7 @@ The configuration `layout: horizontal` is a shorthand for a flex layout:
 
 The configuration `layout: vertical` is a shorthand for a flex layout:
 
-```
+```yaml
   layout:
     type: flex
     flex_flow: column
@@ -251,5 +251,3 @@ Values for use with `grid_column_align`, `grid_row_align`, `grid_cell_x_align`, 
 
 > [!TIP]
 > To visualize real, calculated sizes of transparent widgets you can temporarily set `outline_width: 1` on them.
-
-
