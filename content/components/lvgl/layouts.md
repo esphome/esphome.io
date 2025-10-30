@@ -25,8 +25,8 @@ calculations.
 ### Configuration variables
 
 - **layout** (*Optional*, dict): One of `HORIZONTAL`, `VERTICAL` or a dictionary describing the layout configuration:
-    - **type** (*Optional*, string): `FLEX`, `GRID` or `NONE`. Defaults to `NONE`.
-    - Further options from below depending on the chosen type.
+  - **type** (*Optional*, string): `FLEX`, `GRID` or `NONE`. Defaults to `NONE`.
+  - Further options from below depending on the chosen type.
 
 ### Horizontal Layout
 
@@ -40,7 +40,7 @@ The configuration `layout: horizontal` is a shorthand for a flex layout:
     flex_align_track: center
     flex_align_cross: stretch
 ```
-    
+
 ### Vertical Layout
 
 The configuration `layout: vertical` is a shorthand for a flex layout:
