@@ -11,7 +11,7 @@ params:
 
 ## Component/Hub
 
-The `m5stack_ain4_20ma` platform allows to use the [AIN4-20mA](https://docs.m5stack.com/en/unit/AIN4-20mA%20Unit) current analog measurement unit sensor 
+The `m5stack_ain4_20ma` platform allows to use the [AIN4-20mA](https://docs.m5stack.com/en/unit/AIN4-20mA%20Unit) current analog measurement unit sensor
 
 The AIN4-20mA Unit is a highly capable single-channel 4~20mA current analog measurement unit. Powered by the STM32G030F6 main control chip, it communicates through i2c, ensuring efficient and reliable data transmission.
 It can be used as base sensor for all sensors with a 4-20mA output.
@@ -19,7 +19,6 @@ It can be used as base sensor for all sensors with a 4-20mA output.
 {{< img src="m5stack_ain4_20ma.jpg" alt="AIN4-20mA Sensor" caption="The m5stack_ain4_20ma unit." class="align-center" >}}
 
 To use this sensor, first setup the [I²C Bus](#i2c) and connect the sensor to the pins specified there.
-
 
 ```yaml
 # Example configuration entry
