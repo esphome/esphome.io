@@ -271,6 +271,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "ADS1115","components/sensor/ads1115","ads1115.jpg","4-channel ADC",""
 "ADS1118","components/sensor/ads1118","ads1118.jpg","4-channel ADC",""
 "CD74HC4067","components/sensor/cd74hc4067","cd74hc4067.jpg","16-channel analog multiplexer",""
+"M5Stack_AIN4-20mA","components/sensor/m5stack_ain4_20ma", "m5stack_ain4_20ma.jpg", "4-20mA current measurement", ""
 "MCP3008","components/sensor/mcp3008","mcp3008.jpg","8-channel ADC",""
 "MCP3204 / MCP3208","components/sensor/mcp3204","mcp3204.jpg","4-channel ADC",""
 "NAU7802","components/sensor/nau7802","nau7802.jpg","ADC",""
@@ -473,7 +474,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 
 {{< imgtable >}}
 "AS3935","components/sensor/as3935","as3935.jpg","Storm lightning"
-"b-parasite","components/sensor/b_parasite","b_parasite.jpg","Moisture & Temperature & Humidity & Light"
+"b-parasite","components/sensor/b_parasite","b_parasite.jpg","Moisture & Temperature & Humidity & Light"
 "Binary Sensor Map","components/sensor/binary_sensor_map","binary_sensor_map.jpg","Map binary to value"
 "Combination","components/sensor/combination","function.svg","dark-invert"
 "Duty Time","components/sensor/duty_time","timer-play-outline.svg","dark-invert"
