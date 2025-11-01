@@ -26,7 +26,8 @@ sensor:
 ## Configuration variables
 
 - **address** (*Optional*, int): The address of the sensor. Required if there is more than one device on the bus and index is not specified.
-- **index** (*Optional*, byte): The index of the sensor. Required if there is more than one device on the bus and address is not specified. *Note this index is based on the hardware addresses of the sensor and indexes will shift when during startup a sensor is not connected.*
+- **index** (*Optional*, byte): The index (0-based) of the sensor. Required if there is more than one device on the bus and address is not specified.
+  *Note this index is based on the hardware addresses of the sensors and the order can change if sensors are changed, added, or removed.*
 - **resolution** (*Optional*, int): An optional resolution from 9 to 12. Higher means more accurate.
   Defaults to the maximum for most Dallas temperature sensors: 12.
 
