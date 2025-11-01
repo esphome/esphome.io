@@ -31,7 +31,7 @@ Examples of low power [nRF52840 boards](https://github.com/joric/nrfmicro/wiki).
 
 ## Flashing with Adafruit nRF52 Bootloader
 
-For Adafruit, Promicro nRF52840, Seeed Studio XIAO BLE boards via a flash drive.
+For Adafruit, ProMicro nRF52840, Seeed Studio XIAO BLE boards via a flash drive.
 
 1. Connect the board to the PC via USB.
 1. Quickly short the reset pin to ground twice.
