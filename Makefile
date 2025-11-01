@@ -1,59 +1,61 @@
-ESPHOME_PATH = ../esphome
-ESPHOME_REF = dev
+.PHONY: clean live-html check-links anchors production convert-from-rst convert-branch-in-place directories netlify repo-data all
 
-.PHONY: html html-strict cleanhtml deploy help live-html Makefile netlify netlify-api api netlify-dependencies svg2png copy-svg2png minify
+SHELL := bash
+.SHELLFLAGS := -euo pipefail -c
 
-html:
-	sphinx-build -M html . _build -j auto -n $(O)
-live-html:
-	sphinx-autobuild . _build -j auto -n $(O) --host 0.0.0.0
 
-html-strict:
-	sphinx-build -M html . _build -W -j auto -n $(O)
+PAGEFIND=$(shell command -v pagefind >/dev/null 2>&1 && echo "pagefind" || echo "npx --yes pagefind@1.3.0")
 
-minify:
-	minify _static/webserver-v1.js > _static/webserver-v1.min.js
-	minify _static/webserver-v1.css > _static/webserver-v1.min.css
+export HUGO_PARAMS_COMMIT_HASH=$(shell git rev-parse --short HEAD)
+export HUGO_PARAMS_COMMIT_TITLE=$(shell git log -1 --pretty=%s)
+export HUGO_PARAMS_BRANCH=$(shell git branch --show-current)
+export HUGO_PARAMS_REPO_URL=$(shell git config --get remote.origin.url)
 
-cleanhtml:
-	rm -rf "_build/html/*"
+all: production
 
-svg2png:
-	python3 svg2png.py
+production: anchors
+	hugo --minify
+	$(PAGEFIND)
+	hugo --minify
 
-help:
-	sphinx-build -M help . _build $(O)
+directories:
+	mkdir -p data public pagefind content static
 
-api:
-	mkdir -p _build/html/api
-	@if [ ! -d "$(ESPHOME_PATH)" ]; then \
-	  git clone --branch $(ESPHOME_REF) https://github.com/esphome/esphome.git $(ESPHOME_PATH) || \
-	  git clone --branch beta https://github.com/esphome/esphome.git $(ESPHOME_PATH); \
-	fi
-	ESPHOME_PATH=$(ESPHOME_PATH) doxygen Doxygen
+check-links: anchors
+	hugo --environment production
 
-netlify-api: netlify-dependencies
-	mkdir -p _build/html/api
-	@if [ ! -d "$(ESPHOME_PATH)" ]; then \
-	  git clone --branch $(ESPHOME_REF) https://github.com/esphome/esphome.git $(ESPHOME_PATH) || \
-	  git clone --branch beta https://github.com/esphome/esphome.git $(ESPHOME_PATH); \
-	fi
-	ESPHOME_PATH=$(ESPHOME_PATH) ../doxybin/doxygen Doxygen
+anchors: repo-data
+	$(PAGEFIND) -s pagefind-bootstrap
+	hugo --environment anchors
+	python3 script/md_anchors.py
 
-netlify-dependencies:
-	mkdir -p ../doxybin
-	curl -L https://github.com/esphome/esphome-docs/releases/download/v1.10.1/doxygen-1.8.13.xz | xz -d >../doxybin/doxygen
-	chmod +x ../doxybin/doxygen
+repo-data: directories
+	mkdir -p data/automations
+	curl -s -S https://data.esphome.io/release/automations.json | script/collate_automations.sh > data/automations/current.json
+	curl -s -S https://data.esphome.io/beta/automations.json | script/collate_automations.sh > data/automations/beta.json
+	curl -s -S https://data.esphome.io/dev/automations.json | script/collate_automations.sh > data/automations/next.json
 
-copy-svg2png:
-	cp svg2png/*.png _build/html/_images/
+live-html:	anchors
+	$(PAGEFIND)
+	hugo server --bind 0.0.0.0 --port 8000 --baseURL http://localhost:8000
 
-netlify: netlify-dependencies netlify-api html copy-svg2png
+clean:
+	rm -rf public/*
+	rm -rf pagefind/*
+	rm -rf data/automations/
+	rm -rf data/repo.yaml
+	rm -rf resources/_gen
+	hugo mod clean
 
-lint: html-strict
-	python3 lint.py
+convert-branch-in-place:
+	sh script/migrate.sh
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
-	sphinx-build -M $@ . _build $(O)
+
+netlify: repo-data
+	$(PAGEFIND) -s pagefind-bootstrap
+	hugo --environment anchors
+	python3 script/md_anchors.py
+	hugo --minify
+	$(PAGEFIND)
+	# rerun hugo to incorporate generated index
+	hugo --minify
