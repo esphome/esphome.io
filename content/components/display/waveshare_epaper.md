@@ -164,3 +164,4 @@ lambda: |-
 - {{< docref "index/" >}}
 - {{< apiref "waveshare_epaper/waveshare_epaper.h" "waveshare_epaper/waveshare_epaper.h" >}}
 - [Arduino Waveshare E-Paper library](https://github.com/soonuse/epd-library-arduino) by [Yehui (@soonuse)](https://github.com/soonuse)
+- [Support for some WeAct-Studio epapers](https://github.com/Ottes42/WeAct-Studio_ePaper) (and 3-Color-Support for some Waveshare ones) by [Ottes (@Ottes)](https://github.com/Ottes)
