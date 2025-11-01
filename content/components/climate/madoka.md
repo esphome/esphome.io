@@ -10,7 +10,7 @@ params:
 The `daikin_madoka` component creates a climate device which can be used
 to control Daikin Madoka controllers.
 
-![Daikin Madoka controller](images/daikin_madoka.png)
+{{< img src="daikin_madoka.png" alt="Daikin Madoka controller" width="60.0%" class="align-center" >}}
 
 This component supports the following functionality:
 
