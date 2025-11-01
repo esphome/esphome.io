@@ -7,10 +7,10 @@ params:
     image: daikin.png
 ---
 
-The `madoka` component creates a climate device which can be used
+The `daikin_madoka` component creates a climate device which can be used
 to control Daikin Madoka controllers.
 
-![Daikin Madoka controller](/images/madoka.png)
+![Daikin Madoka controller](images/daikin_madoka.png)
 
 This component supports the following functionality:
 
@@ -34,7 +34,7 @@ ble_client:
     id: madoka_climate
 
 climate:
-  - platform: madoka
+  - platform: daikin_madoka
     name: "Madoka Climate"
     ble_client_id: madoka_climate
     update_interval: 15s
@@ -61,4 +61,4 @@ You can find his writeup [here](https://github.com/blafois/Daikin-Madoka-BRC1H-B
 - {{< docref "/components/esp32_ble" >}}
 - {{< docref "/components/ble_client" >}}
 - {{< docref "/components/climate" >}}
-- {{< apiref "madoka/madoka.h" "madoka/madoka.h" >}}
+- {{< apiref "daikin_madoka/daikin_madoka.h" "daikin_madoka/daikin_madoka.h" >}}
