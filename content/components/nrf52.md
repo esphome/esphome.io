@@ -95,6 +95,18 @@ nrf52:
 
 - **reset_pin** (*Required*, [Pin](#config-pin)): The pin to use for trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
 
+
+## Nordic UART Service (NUS)
+
+The Bluetooth® Low Energy (LE) GATT Nordic UART Service is a custom service that receives and writes data and serves as a bridge to the UART interface.
+
+### Example Configuration
+
+```yaml
+ble_nus:
+  type: logs
+```
+
 ## See Also
 
 - {{< docref "esphome/" >}}
