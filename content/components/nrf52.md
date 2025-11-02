@@ -97,7 +97,7 @@ nrf52:
 
 ## Deep sleep
 
-To put the nRF52840 (Nordic Semiconductor) into deep sleep — the lowest power consumption mode — you use `deep_sleep` componant.
+To put the nRF52840 (Nordic Semiconductor) into deep sleep — the lowest power consumption mode — you use `deep_sleep` component.
 
 ### Example Configuration
 
