@@ -114,7 +114,6 @@ deep_sleep:
   sleep_duration: 50s
 ```
 
-
 ## See Also
 
 - {{< docref "esphome/" >}}
