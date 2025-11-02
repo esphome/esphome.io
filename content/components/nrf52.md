@@ -95,6 +95,26 @@ nrf52:
 
 - **reset_pin** (*Required*, [Pin](#config-pin)): The pin to use for trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
 
+## Deep sleep
+
+To put the nRF52840 (Nordic Semiconductor) into deep sleep — the lowest power consumption mode — you use `deep_sleep` componant.
+
+### Example Configuration
+
+```yaml
+esphome:
+  on_boot:
+    then:
+      - deep_sleep.prevent
+      - delay: 1s
+      - deep_sleep.allow
+
+deep_sleep:
+  run_duration: 10s
+  sleep_duration: 50s
+```
+
+
 ## See Also
 
 - {{< docref "esphome/" >}}
