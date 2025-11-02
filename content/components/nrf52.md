@@ -98,5 +98,6 @@ nrf52:
 ## See Also
 
 - {{< docref "esphome/" >}}
+- {{< docref "ble_nus/" >}}
 
 - [Guidelines for Adafruit Bootloader Memory Map](https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather?view=all#hathach-memory-map)
