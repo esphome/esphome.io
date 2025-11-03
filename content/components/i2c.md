@@ -39,7 +39,8 @@ i2c:
   Defaults to `true`.
 
 - **frequency** (*Optional*, float): Set the frequency the I²C bus should operate on.
-  Defaults to `50kHz`. Default for NRF52 is `100kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`. NRF52 support only `100kHz` and `400kHz`.
+  Defaults to `50kHz`. Default for NRF52 is `100kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`.
+  NRF52 support only `100kHz` and `400kHz`.
 
 - **timeout** (*Optional*, [Time](#config-time)): Set the I²C bus timeout.
   Defaults to the framework defaults (`100us` on `esp32` with `esp-idf`, `50ms` on `esp32` with `Arduino`,
