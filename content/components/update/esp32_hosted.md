@@ -19,7 +19,7 @@ or through the ESPHome API.
 # Example configuration entry
 # Note: Host device must be ESP32-H2 or ESP32-P4
 esp32_hosted:
-  variant: ESP32C6
+  variant: ESP32C6  # Co-processor variant
   reset_pin: GPIOXX
   cmd_pin: GPIOXX
   clk_pin: GPIOXX
