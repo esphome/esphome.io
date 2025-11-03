@@ -168,6 +168,7 @@ Create update entities simplifying management of OTA updates.
 "OpenTherm","components/opentherm","opentherm.png",""
 "SPI Bus","components/spi","spi.svg",""
 "UART","components/uart","uart.svg",""
+"USB CDC-ACM","components/usb_cdc_acm","usb.svg","dark-invert"
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
 {{< /imgtable >}}
