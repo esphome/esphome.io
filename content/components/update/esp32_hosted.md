@@ -17,6 +17,7 @@ or through the ESPHome API.
 
 ```yaml
 # Example configuration entry
+# Note: Host device must be ESP32-H2 or ESP32-P4
 esp32_hosted:
   variant: ESP32C6
   reset_pin: GPIOXX
