@@ -49,7 +49,12 @@ update:
 
 ## Platform requirements
 
-This update platform is only available on `ESP32-H2` and `ESP32-P4`
+This update platform requires:
+
+- **Host device** (running ESPHome): `ESP32-H2` or `ESP32-P4`
+- **Co-processor** (being updated): Any ESP32 variant supported by ESP-Hosted (e.g., `ESP32-C6` as shown in the example)
+
+The host device must have sufficient flash space to store the co-processor firmware binary.
 
 ## Obtaining co-processor firmware
 
