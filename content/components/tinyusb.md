@@ -10,13 +10,18 @@ params:
 The `tinyusb` component implements a foundation for USB device functionality. It is currently supported on the
 following ESP32 microcontroller variants:
 
+- ESP32-P4
 - ESP32-S2
 - ESP32-S3
-- ESP32-P4
 
 The component simply initializes the TinyUSB driver, allowing the microcontroller to act as a USB device when connected
-to a USB host. Note that this component does **not** implement any specific device functionality; it is simply a
-foundation for other components to do so.
+to a USB host.
+
+> [!NOTE]
+> This component:
+> - does **not** implement any specific device functionality; it is simply a foundation for other components to do so.
+> - cannot be used with the [`usb_host` component](usb_host.md); operation as both a host and a device simultaneously
+>   is not possible.
 
 ```yaml
 # Example minimal configuration entry
@@ -53,6 +58,8 @@ The `usb_lang_id` field uses USB Language IDs as defined by the USB specificatio
 - `0x0809` - English (United Kingdom)
 - `0x0407` - German (Germany)
 - `0x040C` - French (France)
+
+A more complete list can be found [here](https://github.com/brookebasile/USB-langids/blob/master/USB_LANGIDs.pdf).
 
 ## See Also
 
