@@ -7,14 +7,17 @@ params:
     image: usb.svg
 ---
 
-The USB CDC-ACM (Communications Device Class - Abstract Control Model) component enables ESP32-S2 and ESP32-S3 devices
-to function as USB virtual serial ports. When connected to a host computer, the microcontroller will appear as one or
-more standard serial/COM ports, allowing serial communication with the application running on the microcontroller.
+The USB CDC-ACM (Communications Device Class - Abstract Control Model) component enables supported devices to function
+as USB virtual serial ports. When connected to a host computer, the microcontroller will appear as one or
+more serial/COM ports, allowing serial communication with the application running on the microcontroller.
 
-You must have the TinyUSB component in your device's configuration to use this component.
+You must have {{< docref "/components/tinyusb" >}} in your device's configuration to use this component.
 
-> [!NOTE]
-> This component is only compatible with ESP32-S2 and ESP32-S3 variants using the ESP-IDF framework.
+The following ESP32 microcontroller variants are currently supported:
+
+- ESP32-P4
+- ESP32-S2
+- ESP32-S3
 
 ```yaml
 # Example minimal configuration entry
@@ -67,4 +70,5 @@ Increase buffer sizes if you experience data loss or need to handle larger data 
 
 ## See Also
 
+- {{< docref "/components/tinyusb" >}}
 - {{< apiref "usb_cdc_acm/usb_cdc_acm.h" "usb_cdc_acm/usb_cdc_acm.h" >}}
