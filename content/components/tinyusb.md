@@ -21,7 +21,7 @@ to a USB host.
 > This component:
 >
 > - does **not** implement any specific device functionality; it is simply a foundation for other components to do so.
-> - cannot be used with the [`usb_host` component](usb_host.md); operation as both a host and a device simultaneously
+> - cannot be used with the {{< docref "/components/usb_host" >}}; operation as both a host and a device simultaneously
 >   is not possible.
 
 ```yaml
