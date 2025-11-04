@@ -11,7 +11,7 @@ The `single_button_garage_door` cover platform allows you to create covers with 
 endstops at both ends of the cover to detect the fully-open and fully-closed states.
 When any of these endstops are reached, the corresponding state is sent out.
 
-This cover platform is mainly intended for garage door motors that have a single button (up/stop/down) where you can plug a switch to control the door. 
+This cover platform is mainly intended for garage door motors that have a single button (up/stop/down) where you can plug a switch to control the door.
 In addition, two endstops at either end should be added. The user just needs to enter what to do when the platform wants to click the button,
 as well as information about open and close information so that the current position can be approximated.
 
