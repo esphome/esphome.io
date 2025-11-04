@@ -57,6 +57,8 @@ remote_transmitter:
 | ESP32-S3 | 192 symbols | 48 symbols |
 
 - **clock_resolution** (*Optional*, int): The clock resolution used by the RMT peripheral in Hz. Defaults to `1000000`.
+- **non_blocking** (*Optional*, boolean): If enabled, any transmit will return immediately and the RMT will run in the
+  background. The `on_complete` automation will trigger after the transmit completes. Defaults to `true`.
 - **use_dma** (*Optional*, boolean): Enable DMA on variants that support it. If enabled `rmt_symbols` controls
   the DMA buffer size and can be set to a large value.
 
@@ -375,6 +377,34 @@ on_...:
 - **channel** (**Required**, int): The switch/channel to send, between 0 and 127 inclusive.
 - **command** (**Required**, int): The command to send, between 0 and 63 inclusive.
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+{{< anchor "remote_transmitter-transmit_dyson" >}}
+
+### `remote_transmitter.transmit_dyson` **Action**
+
+This [action](#config-action) sends a Dyson cool AM07 infrared protocol code to a remote transmitter.
+
+```yaml
+on_...:
+  - remote_transmitter.transmit_dyson:
+      code: '0x1200'
+      index: !lambda |-
+        uint8_t idx = id(idx);
+        id(idx) = (id(idx) + 1) & 3;
+        return idx;
+```
+
+#### Configuration variables
+
+- **code** (**Required**, int): The 16-bit code to trigger on, e.g. 0x1200=power, 0x1215=fan++,
+  0x122a=swing..., see dumper output for more info.
+- **index** (**Required**, int): The 8-bit rolling index (range=0..3).
+- All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
+
+> [!NOTE]
+> The **dyson** devices use rolling codes, i.e. each remote button generates 4 different codes in a pseudo
+> random manner. On every transmit the **index** variable must loop to let the **..transmit_dyson** function
+> generate a code that differs from the previous one.
 
 {{< anchor "remote_transmitter-transmit_gobox" >}}
 
