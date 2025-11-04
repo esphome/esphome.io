@@ -34,7 +34,7 @@ hlk_fm22x:
     ...
 ```
 
-### Configuration variables:
+### Configuration variables
 
 The configuration is made up of three parts: The central component, optional individual sensors, the optional enrolling binary sensor, and the optional version text sensor.
 
@@ -58,21 +58,21 @@ The configuration is made up of three parts: The central component, optional ind
 ## Sensor
 
 - **face_count**: The number of enrolled faces stored on the module.
-  All options from [Sensor](sensor/index).
+- All options from [Sensor](sensor/index).
 
 - **last_face_id**: The last matched enrolled face as set by [`on_face_scan_matched`](#on_face_scan_matched-trigger).
-  All options from [Sensor](sensor/index).
+- All options from [Sensor](sensor/index).
 
 - **status**: The integer representation of the internal status register of the module.
-  All options from [Sensor](sensor/index).
+- All options from [Sensor](sensor/index).
 
 ## Text Sensor
 
 - **version**: The module's firmware version.
-  All options from [Text Sensor](text_sensor/index).
+- All options from [Text Sensor](text_sensor/index).
 
 - **last_face_name**: The last matched enrolled face as set by [`on_face_scan_matched`](#on_face_scan_matched-trigger).
-  All options from [Text Sensor](text_sensor/index).
+- All options from [Text Sensor](text_sensor/index).
 
 ## `on_face_scan_matched` Trigger
 
@@ -195,7 +195,7 @@ on_...:
 **Configuration options:**
 
 - **name** (**Required**, string, templatable): The name associated with the face. Up to 32 ASCII characters.
-- **direction** (*Required*, int, templatable): The direction to scan the face for. `1` for center, `2` for right, `4` for left, `8` for down, and `16` for up.
+- **direction** (**Required**, int, templatable): The direction to scan the face for. `1` for center, `2` for right, `4` for left, `8` for down, and `16` for up.
 
 ## `hlk_fm22x.scan` Action
 
