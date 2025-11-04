@@ -19,7 +19,7 @@ to a USB host.
 
 > [!NOTE]
 > This component:
-> 
+>
 > - does **not** implement any specific device functionality; it is simply a foundation for other components to do so.
 > - cannot be used with the [`usb_host` component](usb_host.md); operation as both a host and a device simultaneously
 >   is not possible.
