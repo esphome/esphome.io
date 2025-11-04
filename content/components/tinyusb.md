@@ -12,6 +12,7 @@ following ESP32 microcontroller variants:
 
 - ESP32-S2
 - ESP32-S3
+- ESP32-P4
 
 The component simply initializes the TinyUSB driver, allowing the microcontroller to act as a USB device when connected
 to a USB host. Note that this component does **not** implement any specific device functionality; it is simply a
