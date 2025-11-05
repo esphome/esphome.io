@@ -29,7 +29,7 @@ boards and chips, but the driver is also designed to be customisable in YAML for
 ## Supported boards and driver chips
 
 The driver supports a number of display driver chips, and can be configured for custom displays. As well as support for
-driver chips, there are also specific configurations for several ESP32 boards with integrated displays. For tbose boards
+driver chips, there are also specific configurations for several ESP32 boards with integrated displays. For those boards
 the predefined configuration will set the correct pins and dimensions for the display.
 
 For custom displays, the driver can be configured with the correct pins and dimensions, and the driver chip can be
@@ -42,23 +42,23 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | ----------- | ------------------ |
 | RM690B0     | 320x240            |
 | ILI9341     | 320x240            |
-| ILI9481 | 320x480 |
-| ILI9486 | 320x480 |
-| ILI9488 | 320x480 |
-| ILI9488_A | 320x480 |
-| ST7796 | 320x480 |
-| ST7789V | 240x320 |
-| GC9A01A | 240x240 |
-| GC9D01N | 240x240 |
-| AXS15231 | 320x240 |
-| ST7735 | 128x160 |
-| CO5300 | 466x466 |
-| CUSTOM | Customisable |
+| ILI9481     | 320x480            |
+| ILI9486     | 320x480            |
+| ILI9488     | 320x480            |
+| ILI9488_A   | 320x480            |
+| ST7796      | 320x480            |
+| ST7789V     | 240x320            |
+| GC9A01A     | 240x240            |
+| GC9D01N     | 240x240            |
+| AXS15231    | 320x240            |
+| ST7735      | 128x160            |
+| CO5300      | 466x466            |
+| CUSTOM      | Customisable       |
 
 ### Boards with integrated displays
 
 | Model                                | Manufacturer | Product Description                                               |
-|--------------------------------------| ------------ | ----------------------------------------------------------------- |
+| ------------------------------------ | ------------ | ----------------------------------------------------------------- |
 | ADAFRUIT-S2-TFT-FEATHER              | Adafruit     | <https://www.adafruit.com/product/6312>                           |
 | ADAFRUIT-FUNHOUSE                    | Adafruit     | <https://www.adafruit.com/product/4985>                           |
 | M5CORE                               | M5Stack | <https://docs.m5stack.com/en/core/BASIC%20v2.6> |
@@ -74,7 +74,7 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | JC3636W518                           | Guition | <https://www.aliexpress.com/item/1005007890666293.html> |
 | JC3636W518V2                         | Guition | <https://www.aliexpress.com/item/1005007890666293.html> |
 | LANBON-L8                            | Lanbon | <https://www.lanbon.cn/product/lanbon-l8> |
-| T4-S3-AMOLED                         | Lilygo | <https://www.lilygo.cc/products/t4-s3> |
+| T4-S3                                | Lilygo | <https://www.lilygo.cc/products/t4-s3> |
 | T-EMBED                              | Lilygo | <https://www.lilygo.cc/products/t-embed> |
 | T-DISPLAY                            | Lilygo | <https://www.lilygo.cc/products/t-display> |
 | T-DISPLAY-S3                         | Lilygo | <https://www.lilygo.cc/products/t-display-s3> |
@@ -127,6 +127,8 @@ most of the configuration will be set by default, but can be overridden if neede
 - **invert_colors** (*Optional*, boolean): Specifies whether the display colors should be inverted. Options are `true` or `false`. Defaults to `false`.
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`. If the driver chip supports hardware rotation for the given orientation this will be translated to the appropriate hardware command. If hardware rotation is not supported, the display will be rotated in software.
 - **transform** (*Optional*): If `rotation` is not sufficient, use this to transform the display. If this option is specified, then the `dimensions` option must also be provided. The value can either be the string `disabled` to disable hardware transform, or a dictionary. Options are:
+  This option should not be used with `rotation`. For the `CUSTOM` model, use `transform: disabled`
+  if the display does not support it, which will prevent a `rotation` being translated to a hardware transform.
 
   - **swap_xy** (**Required**, boolean): If true, exchange the x and y axes.
   - **mirror_x** (**Required**, boolean): If true, mirror the x axis.
