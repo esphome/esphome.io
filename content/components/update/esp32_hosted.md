@@ -8,7 +8,7 @@ params:
 ---
 
 This platform allows you to update the firmware of an ESP32 co-processor connected via the
-{{< docref "esp32_hosted/" >}} component. The firmware binary is embedded into
+{{< docref "/components/esp32_hosted" >}} component. The firmware binary is embedded into
 your device's flash at compile time and can be deployed to the co-processor on demand.
 
 The component automatically detects the current co-processor firmware version and compares it to the
@@ -74,8 +74,26 @@ cd ..
 idf.py create-project-from-example "espressif/esp_hosted^2.6.1:slave"
 cd slave/
 idf.py set-target esp32c6
-idf.py build      # firmware file build/network_adapter.bin
+idf.py build
 ```
+
+After building the firmware, copy it to your ESPHome configuration directory and generate its SHA256 hash:
+
+```sh
+# Copy the firmware to your ESPHome config directory
+cp build/network_adapter.bin /path/to/your/esphome/config/coprocessor-firmware.bin
+
+# Generate SHA256 hash (Linux/macOS)
+sha256sum /path/to/your/esphome/config/coprocessor-firmware.bin
+
+# Generate SHA256 hash (Windows PowerShell)
+Get-FileHash -Algorithm SHA256 coprocessor-firmware.bin
+
+# Generate SHA256 hash (Windows Command Prompt with certutil)
+certutil -hashfile coprocessor-firmware.bin SHA256
+```
+
+Use the generated hash in your `sha256` configuration parameter.
 
 ## See Also
 
