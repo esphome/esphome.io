@@ -10,7 +10,7 @@ params:
 The `debug` component can be used to debug problems with ESPHome. At startup, it prints
 a bunch of useful information like reset reason, free heap size, ESPHome version and so on.
 It also allows you to get the same information as a text sensor, and to monitor the state of the
-ESP heap memory (free space, maximum free block size and fragmentation level) and the main-loop timing.
+ESP heap memory (free space, maximum free block size and fragmentation level) and the main-loop timing. Monitoring can be done via the logger or web server component if it has been configured.
 
 {{< img src="debug.png" alt="Image" caption="Example debug component output." class="align-center" >}}
 
@@ -40,10 +40,6 @@ sensor:
       name: "Free PSRAM"
     cpu_frequency:
       name: "CPU Frequency"
-
-# Logger must be configured
-logger:
-  level: debug
 ```
 
 ## Text Sensor
@@ -91,6 +87,17 @@ logger:
 - **psram** (*Optional*): Reports the free PSRAM in bytes. Only available on ESP32. All options from [Sensor](#config-sensor).
 
 - **cpu_frequency** (*Optional*): Reports the CPU frequency in Hz. All options from [Sensor](#config-sensor).
+
+## Zephyr
+
+The component enables debugging features for ESPHome devices running on the Zephyr RTOS.
+It helps with low-level firmware debugging using **SWD (Serial Wire Debug)**. It enables:
+
+- **Thread Awareness in GDB**  
+Injects Zephyr thread metadata so that all active threads can be inspected via GDB when connected over SWD.
+
+- **Real-Time Logging over RTT**  
+Enables logging output over **SEGGER RTT** (Real Time Transfer), allowing non-intrusive debug logs through SWD.
 
 ## See Also
 

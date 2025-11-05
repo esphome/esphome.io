@@ -178,11 +178,10 @@ on_...:
     - delay: !lambda "if (id(reed_switch).state) return 1000; else return 0;"
 ```
 
-{{< note >}}
-This is a "smart" asynchronous delay - other code will still run in the background while
-the delay is happening. When using a lambda call, you should return the delay value in milliseconds.
+> [!NOTE]
+> This is a "smart" asynchronous delay - other code will still run in the background while
+> the delay is happening. When using a lambda call, you should return the delay value in milliseconds.
 
-{{< /note >}}
 {{< anchor "if_action" >}}
 
 ### `if` Action
@@ -254,8 +253,10 @@ on_...:
   - repeat:
       count: 5
       then:
+        - lambda: ESP_LOGI("main", "Turning lights on for iteration [%d]", iteration);
         - light.turn_on: some_light
         - delay: 1s
+        - lambda: ESP_LOGI("main", "Turning lights off for iteration [%d]", iteration);
         - light.turn_off: some_light
         - delay: 10s
 ```
@@ -263,7 +264,7 @@ on_...:
 #### Configuration variables
 
 - **count** (**Required**, int): The number of times the action should be repeated. The counter is available to
-  lambdas using the reserved word "iteration".
+  lambdas using the implicit script parameter `iteration`.
 
 - **then** (**Required**, [Action](#config-action)): The action to repeat.
 
