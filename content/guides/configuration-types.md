@@ -128,8 +128,8 @@ Advanced options:
   you can suppress the warning by setting this option to `true` in the pin configuration.
 
 - **ignore_pin_validation_error** (*Optional*, boolean): Certain pins on ESP32 chips are reserved
-  for internal functions like flash memory interface (e.g., GPIO 6-11 on most ESP32 variants). ESPHome will
-  raise an error if you try to use these reserved pins.
+  for internal functions like flash memory interface (for example, GPIO 6-11 on most ESP32 variants). ESPHome
+  will raise an error if you try to use these reserved pins.
 
   However, some ESP32 board designs wire specific flash configurations that free up certain pins for general use.
   If you are *absolutely* certain that your specific board design allows a normally-reserved pin to be used,
