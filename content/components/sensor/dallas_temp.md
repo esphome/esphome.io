@@ -14,13 +14,20 @@ and similar 1-Wire temperature sensors. A {{< docref "/components/one_wire/index
 required to be set up in your configuration for this sensor to work.
 
 ```yaml
-# Example configuration entry
+# Example configuration entries
 sensor:
+  # only one device
   - platform: dallas_temp
-    address: 0x1234567812345628
-    index: 1
     name: temperature
     update_interval: 120s
+  # specific address
+  - platform: dallas_temp
+    address: 0x1234567812345628
+    name: temperature2
+  # second device
+  - platform: dallas_temp
+    index: 1
+    name: temperature1
 ```
 
 ## Configuration variables
