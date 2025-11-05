@@ -9,6 +9,9 @@ params:
 
 All-in-one e-paper display `Inkplate 5`, `Inkplate 6`, `Inkplate 10` and `Inkplate 6 Plus`.
 
+> [!NOTE]
+> For SPI-based **Inkplate 2**, see {{< docref "epaper_spi/" "ePaper SPI Display" >}}.
+
 The Inkplate 5, 6, 10 and 6 Plus are powerful, Wi-Fi enabled ESP32 based six-inch e-paper displays -
 recycled from a Kindle e-reader. Its main feature is simplicity.
 

@@ -28,10 +28,11 @@ display:
 
 ## Supported displays
 
-| Model name             | Manufacturer | Product Description                                        |
-|------------------------|--------------|------------------------------------------------------------|
-| Spectra-E6             | Eink         | <https://www.eink.com/brand/detail/Spectra6>               |
-| Seeed-reTerminal-E1002 | Seeed Studio | <https://www.seeedstudio.com/reTerminal-E1002-p-6533.html> |
+| Model name             | Manufacturer         | Product Description                                          |
+|------------------------|----------------------|--------------------------------------------------------------|
+| inkplate2              | Soldered Electronics | <https://soldered.com/documentation/inkplate/2/overview/>    |
+| Spectra-E6             | Eink                 | <https://www.eink.com/brand/detail/Spectra6>                 |
+| Seeed-reTerminal-E1002 | Seeed Studio         | <https://www.seeedstudio.com/reTerminal-E1002-p-6533.html>   |
 
 ## Configuration variables
 
