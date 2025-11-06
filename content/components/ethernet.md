@@ -143,6 +143,25 @@ If you are using a framework that does not support SPI-based ethernet modules wi
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
+- **lldp** (*Optional*): Configure the Link Layer Discovery Protocol (IEEE 802.1AB) transmitter
+
+  - **enabled** (*Optional*, boolean): set to `true` to enable LLDP transmission. The default values for the other LLDP
+    settings should be suitable for most users.
+  - **port** (*Optional*, string): Override the default Port-ID TLV value (default: `ETH_DEF`, 128 character maximum).
+  - **system_name** (*Optional*, string): Override the default System Name TLV (defaults to the value of `esphome.name`, 128 character maximum).
+  - **system_description** (*Optional*, string): Override the default System Description TLV (default is the combination of
+    `esphome.project.name` and `esphome.project.version` if these are set, otherwise of the form `ESPHome.io
+    <esphome-version> <board-name>`, 128 character maximum).
+  - **tx_fast_count** (*Optional*, int): number of packets to burst upon startup or reconnect (1-8, default 4)
+  - **tx_interval** (*Optional*, int): interval, in seconds, to transmit LLDP frames (1-3600, default 30)
+  - **tx_hold** (*Optional*, int): message hold value, used to calculate the LLDP time-to-live (1-100, default 4)
+
+  The `tx_fast_count`, `tx_interval` and `tx_hold` defaults are the recommended default values from the LLDP standard,
+  and should only need to be modified for advanced use cases.
+
+  The TTL value is calculated from `(tx_interval * tx_hold) + 1`, limited to the protocol maximum of 65535 seconds. The
+  calculated TTL will be output as part of the ethernet component configuration dump.
+
 > [!NOTE]
 > If your Ethernet board is not designed with an ESP32 built in, it's common to attempt
 > to use flying leads, dupont wires, etc. to connect the Ethernet controller to the ESP32.
@@ -332,6 +351,15 @@ ethernet:
 ```yaml
 ethernet:
   type: OPENETH
+```
+
+**QEMU qemu-system-xtensa with LLDP enabled**:
+
+```yaml
+ethernet:
+  type: OPENETH
+  lldp:
+    enabled: true
 ```
 
 **Waveshare ESP32-S3-ETH PoE**:
