@@ -8,7 +8,7 @@ params:
 ---
 
 The `sht4x` sensor platform allows you to use your SHT4X temperature and humidity sensor
-([datasheet](https://sensirion.com/media/documents/33FD6951/63E1087C/Datasheet_SHT4x_1.pdf), `Adafruit`_) with ESPHome.
+([datasheet](https://sensirion.com/media/documents/33FD6951/63E1087C/Datasheet_SHT4x_1.pdf), [Adafruit](https://www.adafruit.com)) with ESPHome.
 
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 

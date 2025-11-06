@@ -99,7 +99,7 @@ climate:
     which is no sampling/averaging.
 
 - **deadband_parameters** (*Optional*): Enables a deadband to stabilise and minimise changes in the
-  output when the temperature is close to the target temperature. See `Deadband Setup`_.
+  output when the temperature is close to the target temperature. See [Deadband Setup]({{<ref "#deadband-setup" >}}).
 
   - **threshold_high/threshold_low** (**Required**, float): Specifies a high/low
     threshold defining the deadband around the target temperature. For instance with
@@ -162,7 +162,7 @@ deadband_parameters:
 ```
 
 In this example the deadband is between `20.0°C - 21.5°C`. The PID controller will limit any output
-variation inside this deadband. How it limits depends on how you set the `Deadband Multipliers`_.
+variation inside this deadband. How it limits depends on how you set the [Deadband Multipliers]({{<ref "#deadband-multipliers" >}}).
 
 {{< img src="deadband1.png" alt="Image" >}}
 
