@@ -16,7 +16,7 @@ The `midea` component creates a Midea air conditioner climate device.
 > - [Qlima](https://www.qlima.com/)
 > - [Artel](https://www.artelgroup.com/)
 > - [Carrier](https://www.carrier.com/)
-> - [Comfee](http://www.comfee-russia.ru/)
+> - [Comfee](https://www.feelcomfee.com/global/)
 > - [Inventor](https://www.inventorairconditioner.com/)
 > - [Senville](https://senville.com/)
 > - and maybe others

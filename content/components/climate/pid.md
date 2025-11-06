@@ -27,9 +27,6 @@ temperature to a user-specified setpoint.
 > keep the temperature as constant as possible, and smooth out oscillations otherwise produced by
 > classic thermostats.
 
-Explaining how PID controllers work in detail is out of scope of this documentation entry,
-but there's a nice article explaining the function principle at <https://blog.opticontrols.com/archives/344>.
-
 ```yaml
 # Example configuration entry
 climate:
