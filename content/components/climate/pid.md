@@ -440,6 +440,5 @@ Advanced options:
 - {{< docref "/components/climate" >}}
 - {{< docref "/components/output/sigma_delta_output" >}}
 - {{< docref "/components/output/slow_pwm" >}}
-- [Principles of PID](https://blog.opticontrols.com/archives/344)
 - {{< apiref "pid/pid_climate.h" "pid/pid_climate.h" >}}
 - {{< apiref "PID Autotuner" "pid/pid_autotuner.h" >}}
