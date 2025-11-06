@@ -56,7 +56,7 @@ openthread:
 
 ### Nordic nRF52
 
-This component allow an nRF52840 board to use Thread as a transport layer.
+This component allow a nRF52840 board to use Thread as a transport layer.
 This example show how to configure Thread Dataset for a node.
 
 ```yaml
@@ -75,7 +75,6 @@ openthread:
   mesh_local_prefix: fd53:145f:ed22:ad81::/64
   force_dataset: true
 ```
-
 
 ### Configuration variables
 
