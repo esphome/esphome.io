@@ -18,6 +18,8 @@ This component allows ESPHome nodes to communicate with Home Assistant over a Th
 
 ## Usage
 
+### ESP32
+
 This component requires an ESP32 (ESP32-C6 or ESP32-H2 because they have Thread radio chip) and the use of
 ESP-IDF.
 
@@ -31,7 +33,7 @@ esp32:
 
 {{< anchor "config-openthread" >}}
 
-## Full Configuration
+#### Full Configuration
 
 This example show how to configure Thread Dataset for a node.
 
@@ -51,6 +53,29 @@ openthread:
   mesh_local_prefix: fd53:145f:ed22:ad81::/64
   force_dataset: true
 ```
+
+### Nordic nRF52
+
+This component allow an nRF52840 board to use Thread as a transport layer.
+This example show how to configure Thread Dataset for a node.
+
+```yaml
+# Example OpenThread component configuration
+network:
+  enable_ipv6: true
+
+openthread:
+  device_type: FTD
+  channel: 13
+  network_name: OpenThread-8f28
+  network_key: 0xdfd34f0f05cad978ec4e32b0413038ff
+  pan_id: 0x8f28
+  ext_pan_id: 0xd63e8e3e495ebbc3
+  pskc: 0xc23a76e98f1a6483639b1ac1271e2e27
+  mesh_local_prefix: fd53:145f:ed22:ad81::/64
+  force_dataset: true
+```
+
 
 ### Configuration variables
 
