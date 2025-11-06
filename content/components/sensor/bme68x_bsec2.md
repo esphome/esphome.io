@@ -22,7 +22,7 @@ The [I²C](#i2c) is required to be set up in your configuration for this sensor 
 
 > [!NOTE]
 > The BSEC2 library is only available for use after accepting its software license agreement. By enabling this
-> component in your configuration, you are explicitly agreeing to the terms of the [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf). Note
+> component in your configuration, you are explicitly agreeing to the terms of the [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2024_12/20241219_clickthrough_license_terms_bsec_bme680_bme688_bme690.pdf). Note
 > that the license forbids distribution of any compiled firmware binaries that include this component.
 
 {{< img src="bme680-full.jpg" alt="Image" caption="BME680 Temperature, Pressure, Humidity & Gas Sensor." width="50.0%" class="align-center" >}}

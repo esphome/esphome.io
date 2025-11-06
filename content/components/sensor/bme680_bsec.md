@@ -19,7 +19,7 @@ for CO₂ and Breath Volatile Organic Compounds (b-VOC) using a correlation betw
 > [!NOTE]
 >
 > - The BSEC library is only available for use after accepting its software license agreement. By enabling this component,
->   you are explicitly agreeing to the terms of the [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2023_04/license_terms_bme688_bme680_bsec.pdf). You must not distribute any compiled firmware
+>   you are explicitly agreeing to the terms of the [BSEC license agreement](https://www.bosch-sensortec.com/media/boschsensortec/downloads/software/bme688_development_software/2024_12/20241219_clickthrough_license_terms_bsec_bme680_bme688_bme690.pdf). You must not distribute any compiled firmware
 >   binaries that include this component.
 >
 > - We recommend using the newer {{< docref "bme68x_bsec2" "bme68x_bsec2" >}} component whenever possible.
