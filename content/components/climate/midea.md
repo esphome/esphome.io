@@ -12,7 +12,7 @@ The `midea` component creates a Midea air conditioner climate device.
 > [!NOTE]
 > This protocol also used by some vendors:
 >
-> - [Electrolux](https://www.electrolux.ru/)
+> - [Electrolux](https://www.electrolux.com/en/)
 > - [Qlima](https://www.qlima.com/)
 > - [Artel](https://www.artelgroup.com/)
 > - [Carrier](https://www.carrier.com/)
