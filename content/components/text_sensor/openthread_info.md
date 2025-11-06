@@ -4,7 +4,7 @@ title: "OpenThread Info Text Sensor"
 params:
   seo:
     description: Instructions for setting up OpenThread info text sensors.
-    image: openthread.svg
+    image: openthread.png
 ---
 
 The `openthread_info` text sensor platform exposes different OpenThread network information
