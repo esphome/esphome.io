@@ -10,10 +10,9 @@ params:
 The `valve` component is a generic representation of valves in ESPHome. A valve can (currently) either be *closed* or
 *open* and supports three commands: *open*, *close* and *stop*.
 
-{{< note >}}
-To use a valve in Home Assistant requires Home Assistant 2024.5 or later.
+> [!NOTE]
+> To use a valve in Home Assistant requires Home Assistant 2024.5 or later.
 
-{{< /note >}}
 {{< img src="valve-ui.png" alt="Image" class="align-center" >}}
 
 {{< anchor "config-valve" >}}
@@ -33,11 +32,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the valve. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and you want the valve
-to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and you want the valve
+> to use that name, you can set `name: None`.
 
 - **device_class** (*Optional*, string): The device class for the sensor. See
   <https://www.home-assistant.io/components/valve/> for a list of available options.
@@ -53,7 +50,8 @@ Advanced options:
   (usually Home Assistant) without the user manually enabling it (via the Home Assistant UI). Defaults to `false`.
 
 - **entity_category** (*Optional*, string): The category of the entity. See
-  <https://developers.home-assistant.io/docs/core/entity/#generic-properties> for a list of available options. Set to `""` to remove the default entity category.
+  <https://developers.home-assistant.io/docs/core/entity/#generic-properties> for a list of available options. Set to
+  `""` to remove the default entity category.
 
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
@@ -75,16 +73,15 @@ on_...:
     - valve.open: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_open();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_open();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-close_action" >}}
 
 ## `valve.close` Action
@@ -97,16 +94,15 @@ on_...:
     - valve.close: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_close();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_close();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-stop_action" >}}
 
 ## `valve.stop` Action
@@ -119,16 +115,15 @@ on_...:
     - valve.stop: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_stop();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_stop();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-toggle_action" >}}
 
 ## `valve.toggle` Action
@@ -142,16 +137,15 @@ on_...:
     - valve.toggle: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_toggle();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_toggle();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-control_action" >}}
 
 ## `valve.control` Action
@@ -177,17 +171,16 @@ Configuration variables:
   - `0.0` = `0%` = `CLOSED`
   - `1.0` = `100%` = `OPEN`
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> // set attributes
+> call.set_position(0.5);
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-// set attributes
-call.set_position(0.5);
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-lambda_calls" >}}
 
 ## Lambdas

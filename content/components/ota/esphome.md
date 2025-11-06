@@ -10,7 +10,7 @@ params:
 {{< anchor "config-ota_esphome" >}}
 
 ESPHome's Over-The-Air (OTA) platform allows you to remotely install modified/updated firmware binaries onto your
-ESPHome devices over their network (Wi-Fi or Ethernet) interface.
+ESPHome devices over their network interface (Wi-Fi / Ethernet / Thread).
 
 This platform is used by both the ESPHome dashboard as well as the command line interface (CLI) (via
 `esphome run ...`  ) to install firmware onto supported devices.
@@ -41,12 +41,10 @@ ota:
 
 - All [automations](#automation) supported by {{< docref "/components/ota" >}}.
 
-{{< note >}}
-After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
-update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
-must be power-cycled.
-
-{{< /note >}}
+> [!NOTE]
+> After a serial upload, ESP8266 modules must be reset before OTA updates will work. If you attempt to perform an OTA
+> update and receive the error message `Bad Answer: ERR: ERROR[11]: Invalid bootstrapping`, the ESP module/board
+> must be power-cycled.
 
 ## Updating the Password
 

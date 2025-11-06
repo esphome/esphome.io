@@ -123,6 +123,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "ESP32 BLE Server","components/esp32_ble_server","bluetooth.svg","dark-invert"
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
 "Improv via BLE","components/esp32_improv","improv.svg","dark-invert"
+"Nordic UART Service (NUS)","components/ble_nus","uart.svg",""
 {{< /imgtable >}}
 
 ## Management and Monitoring
@@ -166,6 +167,7 @@ Create update entities simplifying management of OTA updates.
 "I²S Audio","components/i2s_audio","i2s_audio.svg",""
 "OpenTherm","components/opentherm","opentherm.png",""
 "SPI Bus","components/spi","spi.svg",""
+"TinyUSB","components/tinyusb","usb.svg","dark-invert"
 "UART","components/uart","uart.svg",""
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
@@ -377,6 +379,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality",""
 "ENS210","components/sensor/ens210","ens210.jpg","Temperature & Humidity",""
 "HDC1080","components/sensor/hdc1080","hdc1080.jpg","Temperature & Humidity",""
+"HDC2010","components/sensor/hdc2010","hdc2010.png","Temperature & Humidity",""
 "HHCCJCY10 (MiFlora Pink)","components/sensor/xiaomi_hhccjcy10","xiaomi_hhccjcy10.jpg","Soil moisture & Temperature & Light",""
 "Honeywell ABP","components/sensor/honeywellabp","honeywellabp.jpg","Pressure & Temperature",""
 "Honeywell ABP2 I2C","components/sensor/honeywellabp2_i2c","honeywellabp.jpg","Pressure & Temperature",""
@@ -388,6 +391,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "HYT271","components/sensor/hyt271","hyt271.jpg","Temperature & Humidity",""
 "Inkbird IBS-TH1 Mini","components/sensor/inkbird_ibsth1_mini","inkbird_isbth1_mini.jpg","Temperature & Humidity",""
 "Internal Temperature","components/sensor/internal_temperature","thermometer.svg","Temperature","dark-invert"
+"LM75B","components/sensor/lm75b","lm75b.jpg","Temperature",""
 "LPS22","components/sensor/lps22","lps22.webp","Temperature & Barometric Pressure",""
 "MCP9808","components/sensor/mcp9808","mcp9808.jpg","Temperature",""
 "MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature",""
@@ -416,6 +420,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "TMP102","components/sensor/tmp102","tmp102.jpg","Temperature",""
 "TMP1075","components/sensor/tmp1075","tmp1075.jpg","Temperature",""
 "TMP117","components/sensor/tmp117","tmp117.jpg","Temperature",""
+"WTS01","components/sensor/wts01","wts01.png","Temperature",""
 "XGZP68xx Series","components/sensor/xgzp68xx","6897d.jpg","Differential Pressure",""
 {{< /imgtable >}}
 
@@ -724,6 +729,7 @@ Often known as "tag" or "card" readers within the community.
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
 "MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
+"ePaper SPI Displays","components/display/epaper_spi","epaper.svg"
 "ILI9xxx","components/display/ili9xxx","ili9341.jpg"
 "ILI9341","components/display/ili9xxx","ili9341.svg"
 "ILI9342","components/display/ili9xxx","ili9342.svg"

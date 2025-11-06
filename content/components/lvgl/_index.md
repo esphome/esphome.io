@@ -16,7 +16,10 @@ embedded graphics library to create beautiful UIs for any MCU, MPU and display t
 
 To use LVGL with a [display](#display-hw) in ESPHome, you'll need an ESP32 or RP2040. PSRAM is not a strict requirement but it is generally recommended, especially for large color displays.
 
-The graphic display should be configured with `auto_clear_enabled: false` and should not have any `lambda` set. The LVGL component will take care of the display rendering. For most displays, the `update_interval` should be set to `never`, but note that some displays such as OLED and ePaper will need the update interval set to a suitable value.
+The graphic display should be configured with `auto_clear_enabled: false` and should not have any `lambda` set.
+The LVGL component will take care of the display rendering. For most displays, the `update_interval` should be
+set to `never`, but note that some displays such as OLED and e-paper will need the update interval set to a suitable
+interval, or make use of the [`on_draw_end`](#on_draw_end) trigger to manually update the display.
 
 For interactivity, a {{< docref "/components/touchscreen/index" "Touchscreen" >}} (capacitive highly preferred), a {{< docref "/components/sensor/rotary_encoder" >}} or a custom keypad made up from discrete {{< docref "/components/binary_sensor/index" "Binary Sensors" >}} can be used.
 
@@ -63,14 +66,14 @@ Widgets can be assigned with an [ID](#config-id) so that they can be referenced 
 
 Some widgets integrate also as native ESPHome components:
 
-| LVGL Widget                    | ESPHome component                                                                                                  |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `button`                       | {{< docref "/components/switch/lvgl" "Switch" >}}, {{< docref "/components/binary_sensor/lvgl" "Binary Sensor" >}} |
-| `switch`  , `checkbox`         | {{< docref "/components/switch/lvgl" "Switch" >}}                                                                  |
-| `slider`, `arc`, `spinbox` | {{< docref "/components/number/lvgl" "Number" >}}, {{< docref "/components/sensor/lvgl" "Sensor" >}} |
-| `dropdown`, `roller`        | {{< docref "/components/select/lvgl" "Select" >}} |
-| `label`, `textarea`          | {{< docref "/components/text/lvgl" "Text" >}}, {{< docref "/components/text_sensor/lvgl" "Text Sensor" >}} |
-| `led`                          | {{< docref "/components/light/lvgl" "Light" >}} |
+| LVGL Widget                | ESPHome component                                                                                                  |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `button`                   | {{< docref "/components/switch/lvgl" "Switch" >}}, {{< docref "/components/binary_sensor/lvgl" "Binary Sensor" >}} |
+| `switch`  , `checkbox`     | {{< docref "/components/switch/lvgl" "Switch" >}}                                                                  |
+| `slider`, `arc`, `spinbox` | {{< docref "/components/number/lvgl" "Number" >}}, {{< docref "/components/sensor/lvgl" "Sensor" >}}               |
+| `dropdown`, `roller`       | {{< docref "/components/select/lvgl" "Select" >}}                                                                  |
+| `label`, `textarea`        | {{< docref "/components/text/lvgl" "Text" >}}, {{< docref "/components/text_sensor/lvgl" "Text Sensor" >}}         |
+| `led`                      | {{< docref "/components/light/lvgl" "Light" >}}                                                                    |
 
 These are useful with [Home Assistant automations](https://www.home-assistant.io/docs/automation/) interacting directly with the widgets.
 
@@ -115,21 +118,18 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **long_press_time** (*Optional*, [Time](#config-time)): For the keypad, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
   - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the keypad, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 
-{{< tip >}}
-When using binary sensors (from physical keys) to interact with LVGL, if there are only three keys available, they are best used when configured as a rotary encoder, where `LEFT` and `RIGHT` act like the rotary wheel, and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers). With four or more keys, a keypad configuration is generally more appropriate. For example, a keypad consisting of five keys might use `PREV`, `NEXT`, `UP`, `DOWN` and `ENTER`  ; `PREV`  /`NEXT` are used to select a widget within the group, `UP`  /`DOWN` changes the selected value and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers).
+> [!TIP]
+> When using binary sensors (from physical keys) to interact with LVGL, if there are only three keys available, they are best used when configured as a rotary encoder, where `LEFT` and `RIGHT` act like the rotary wheel, and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers). With four or more keys, a keypad configuration is generally more appropriate. For example, a keypad consisting of five keys might use `PREV`, `NEXT`, `UP`, `DOWN` and `ENTER`  ; `PREV`  /`NEXT` are used to select a widget within the group, `UP`  /`DOWN` changes the selected value and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers).
+>
+> The `long_press_time` and `long_press_repeat_time` can be fine-tuned also by setting them to `never` and using the `autorepeat` filter on each binary sensor separately.
 
-The `long_press_time` and `long_press_repeat_time` can be fine-tuned also by setting them to `never` and using the `autorepeat` filter on each binary sensor separately.
-
-{{< /tip >}}
-{{< tip >}}
-When using an encoder input device the navigation works as follows:
-
-- By turning the encoder you can focus on the next/previous object.
-- When you press the encoder on a simple object (like a button), it will be clicked.
-- If you press the encoder on a complex object (like a list, message box, etc.) the object will go to edit mode whereby you can adjust the value of the object by turning the encoder.
-- To leave edit mode, long press the button.
-
-{{< /tip >}}
+> [!TIP]
+> When using an encoder input device the navigation works as follows:
+>
+> - By turning the encoder you can focus on the next/previous object.
+> - When you press the encoder on a simple object (like a button), it will be clicked.
+> - If you press the encoder on a complex object (like a list, message box, etc.) the object will go to edit mode whereby you can adjust the value of the object by turning the encoder.
+> - To leave edit mode, long press the button.
 
 - **resume_on_input** (*Optional*, boolean): If LVGL is paused and the user interacts with the screen, resume the activity of LVGL. Defaults to `true`. "Interacts" means to release a touch or button, or rotate an encoder.
 - **color_depth** (*Optional*, string): The color depth at which the contents are generated. Currently only `16` is supported (RGB565, 2 bytes/pixel), which is the default value.
@@ -258,10 +258,9 @@ Two font choices are available:
 
 You can use [fonts configured normally](#display-fonts), the glyphs will be rendered while building the binary. This has the advantage that you can define custom sets of glyphs of any size, with icons or diacritic characters of your choice, for any language, from any TrueType/OpenType font, allowing a more optimal flash space usage because you don't need to include all glyphs for all sizes you wish to use.
 
-{{< tip >}}
-For best results, set `bpp: 4` to get the glyphs rendered with proper anti-aliasing.
+> [!TIP]
+> For best results, set `bpp: 4` to get the glyphs rendered with proper anti-aliasing.
 
-{{< /tip >}}
 Check out [MDI icons in text](#lvgl-cookbook-icontext), [Toggle state icon button](#lvgl-cookbook-iconstat) and [Battery status icon](#lvgl-cookbook-iconbatt) in the Cookbook for examples which demonstrate how to use icons and text with TrueType/OpenType fonts.
 
 #### Library fonts
@@ -296,12 +295,11 @@ You can display the embedded symbols among the text by their codepoint address p
 
 {{< img src="lvgl_symbols.png" alt="Image" class="align-center" >}}
 
-{{< note >}}
-The `text_font` parameter affects the size of symbols, since all the built-in font arrays based on Montserrat include these symbols at the respective sizes. If you set `text_font` on a widget to a custom ESPHome font, these symbols will likely not display, unless you include them manually from a FontAwesome OpenType file.
+> [!NOTE]
+> The `text_font` parameter affects the size of symbols, since all the built-in font arrays based on Montserrat include these symbols at the respective sizes. If you set `text_font` on a widget to a custom ESPHome font, these symbols will likely not display, unless you include them manually from a FontAwesome OpenType file.
+>
+> For escape sequences to work, you have to put them in strings enclosed in double quotes.
 
-For escape sequences to work, you have to put them in strings enclosed in double quotes.
-
-{{< /note >}}
 In addition to the above, the following special fonts are available from LVGL as built-in:
 
 - `unscii_8`  : 8 px pixel perfect font with only ASCII characters.
@@ -503,164 +501,6 @@ on_...:
       border_color: 0x00FF00
 ```
 
-{{< anchor "lvgl-layouts" >}}
-
-### Layouts
-
-Layouts aim to position widgets automatically, eliminating the need to specify `x` and `y` coordinates to position each widget. This is a great way to simplify your configuration as it allows you to omit alignment options.
-
-The layout configuration options are applied to any parent widget or page, influencing the appearance of the children. The position and size calculated by the layout overwrites the *normal* `x`, `y`, `width`, and `height` settings of the children.
-
-Check out [Flex layout positioning](#lvgl-cookbook-flex), [Grid layout positioning](#lvgl-cookbook-grid) and [Weather forecast panel](#lvgl-cookbook-weather) in the Cookbook for examples which demonstrate how to automate widget positioning, potentially reducing the size of your device's YAML configuration, and saving you from lots of manual calculations.
-
-The `hidden`, `ignore_layout` and `floating` [flags](#lvgl-widget-flags) can be used on widgets to ignore them in layout calculations.
-
-#### Configuration variables
-
-- **layout** (*Optional*, dict): A dictionary describing the layout configuration:
-  - **type** (*Optional*, string): `FLEX`, `GRID` or `NONE`. Defaults to `NONE`.
-  - Further options from below depending on the chosen type.
-
-#### Flex
-
-The Flex layout in LVGL is a subset implementation of [CSS Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
-
-It can arrange items into rows or columns (tracks), handle wrapping, adjust spacing between items and tracks and even handle growing the layout to make the item(s) fill the remaining space with respect to minimum/maximum width and height.
-
-**Terms used:**
-
-- *track*: the rows or columns *main* direction flow: row or column in the direction in which the items are placed one after the other.
-- *cross direction*: perpendicular to the main direction.
-- *wrap*: if there is no more space in the track a new track is started.
-- *gap*: the space between the rows and columns or the items on a track.
-- *grow*: if set on an item it will grow to fill the remaining space on the track. The available space will be distributed among items respective to their grow value (larger value means more space). It dictates what amount of the available space the widget should take up. For example if all items on the track have a `grow` set to `1`, the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
-
-**Configuration variables:**
-
-- **flex_flow** (*Optional*, string): Select the arrangement of the children widgets:
-- `ROW`  : place the children in a row without wrapping.
-- `COLUMN`  : place the children in a column without wrapping.
-- `ROW_WRAP`  : place the children in a row with wrapping (default).
-- `COLUMN_WRAP`  : place the children in a column with wrapping.
-- `ROW_REVERSE`  : place the children in a row without wrapping but in reversed order.
-- `COLUMN_REVERSE`  : place the children in a column without wrapping but in reversed order.
-- `ROW_WRAP_REVERSE`  : place the children in a row with wrapping but in reversed order.
-- `COLUMN_WRAP_REVERSE`  : place the children in a column with wrapping but in reversed order.
-
-- **flex_align_main** (*Optional*, string): Determines how to distribute the items in their track on the *main* axis. For example, flush the items to the right on with `flex_flow: ROW_WRAP` (known as *justify-content* in CSS). Possible options below.
-- **flex_align_cross** (*Optional*, string): Determines how to distribute the items in their track on the *cross* axis. For example, if the items have different height place them to the bottom of the track (known as *align-items* in CSS). Possible options below.
-- **flex_align_track** (*Optional*, string): Determines how to distribute the tracks (known as *align-content* in CSS). Possible options below.
-
-    Values for use with `flex_align_main`, `flex_align_cross`, `flex_align_track`  :
-
-- `START`  : means left horizontally and top vertically (default).
-- `END`  : means right horizontally and bottom vertically.
-- `CENTER`  : simply center.
-- `SPACE_EVENLY`  : items are distributed so that the spacing between any two items (and the space to the edges) is equal. Does not apply to `flex_align_track`.
-- `SPACE_AROUND`  : items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies. Does not apply to `flex_align_track`.
-- `SPACE_BETWEEN`  : items are evenly distributed in the track: first item is on the start line, last item on the end line. Does not apply to `flex_align_track`.
-
-- **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
-- **pad_column** (*Optional*, int16): Set the padding between the columns, in pixels.
-- **flex_grow** (*Optional*, int16): Can be used to make one or more children fill the available space on the track. When one or more children have `flex_grow` set, the available space will be distributed proportionally to the grow values. Defaults to `0`, which disables growing.
-
-```yaml
-# Example flex layout
-
-- obj:
-    layout:
-      type: flex
-      pad_row: 4
-      pad_column: 4px
-      flex_align_main: center
-      flex_align_cross: start
-      flex_align_track: end
-    widgets:
-      - animimg:
-          flex_grow: 1
-```
-
-#### Grid
-
-The Grid layout in LVGL is a subset implementation of [CSS Grid](https://css-tricks.com/snippets/css/complete-guide-grid//).
-
-It can arrange items into a 2D "table" that has rows or columns (tracks). The item(s) can span through multiple columns or rows. The track's size can be set in pixels, to the largest item of the track (`CONTENT`  ) or in "free units" to distribute the free space proportionally.
-
-**Terms used:**
-
-- *tracks*: the rows or the columns.
-- *gap*: the space between the rows and columns or the items on a track.
-- *free unit (FR)*: a proportional distribution unit for the space available on the track. It accepts a unitless integer value that serves as a proportion. It dictates what amount of the available space the widget should take up. For example if all items on the track have a `FR` set to `1`, the space in the track will be distributed equally to all of them. If one of the items has a value of 2, that one would take up twice as much of the space as either one of the others.
-
-Child widgets can be placed on the grid using the `grid_cell_row_pos` and `grid_cell_column_pos` configuration variables.
-If either is specified both must be specified. If neither is specified the widget will be placed in the first available position, in a row-major order.
-Row and column spans will be taken into account when reserving space.
-
-**Configuration variables (must be placed under the layout key):**
-
-- **grid_rows** (**Required**): The number of rows in the grid, expressed a list of values in pixels, `CONTENT` or `FR(n)` (free units, where `n` is a proportional integer value).
-- **grid_columns** (**Required**): The number of columns in the grid, expressed a list of values in pixels, `CONTENT` or `FR(n)` (free units, where `n` is a proportional integer value).
-- **grid_row_align** (*Optional*, string): How to align the row. Works only when `grid_rows` is given in pixels. Possible options below.
-- **grid_column_align** (*Optional*, string): How to align the column. Works only when `grid_columns` is given in pixels. Possible options below.
-- **pad_row** (*Optional*, int16): Set the padding between the rows, in pixels.
-- **pad_column** (*Optional*, int16): Set the padding between the columns, in pixels.
-
-In a grid layout, *all the widgets placed on the grid* can have some additional configuration variables to help with placement:
-
-- **grid_cell_row_pos** (*Optional*, int16): Position of the widget, in which row to appear (0 based count).
-- **grid_cell_column_pos** (*Optional*, int16): Position of the widget, in which column to appear (0 based count).
-- **grid_cell_x_align** (*Optional*, string): How to align the widget horizontally within the cell. Can also be applied through [Style properties](#lvgl-styling). Possible options below.
-- **grid_cell_y_align** (*Optional*, string): How to align the widget vertically within the cell. Can also be applied through [Style properties](#lvgl-styling). Possible options below.
-- **grid_cell_row_span** (*Optional*, int16): How many rows to span across the widget. Defaults to `1`.
-- **grid_cell_column_span** (*Optional*, int16): How many columns to span across the widget.. Defaults to `1`.
-
-{{< note >}}
-These `grid_cell_` variables are applied to individual widgets (cells) within the grid layout!
-
-{{< /note >}}
-Values for use with `grid_column_align`, `grid_row_align`, `grid_cell_x_align`, `grid_cell_y_align`  :
-
-- `START`  : means left horizontally and top vertically (default).
-- `END`  : means right horizontally and bottom vertically.
-- `CENTER`  : simply center.
-- `STRETCH`  : stretch the widget to the cell in the respective direction. Does not apply to `grid_column_align`, `grid_row_align`.
-- `SPACE_EVENLY`  : items are distributed so that the spacing between any two items (and the space to the edges) is equal.
-- `SPACE_AROUND`  : items are evenly distributed in the track with equal space around them. Note that visually the spaces aren't equal, since all the items have equal space on both sides. The first item will have one unit of space against the container edge, but two units of space between the next item because that next item has its own spacing that applies.
-- `SPACE_BETWEEN`  : items are evenly distributed in the track: first item is on the start line, last item on the end line.
-
-```yaml
-# Example grid layout
-
-- obj:
-    layout:
-      type: grid
-      grid_row_align: end
-      grid_rows: [25px, fr(1), content]
-      grid_columns: [fr(1), fr(1)]
-      pad_row: 6px
-      pad_column: 0
-    widgets:
-      - image:
-          grid_cell_row_pos: 0
-          grid_cell_column_pos: 0
-      - obj:
-          grid_cell_row_pos: 0
-          grid_cell_column_pos: 1
-      - obj:
-          grid_cell_row_pos: 2
-          grid_cell_column_pos: 0
-      - label:
-          text: "This will be placed in row 1, column 0"
-      - label:
-          text: "This will be placed in row 1, column 1"
-      - label:
-          text: "This will be placed in row 2, column 1, since 2/0 is occupied"
-```
-
-{{< tip >}}
-To visualize real, calculated sizes of transparent widgets you can temporarily set `outline_width: 1` on them.
-
-{{< /tip >}}
 {{< anchor "lvgl-gradients" >}}
 
 ### Gradients
@@ -989,6 +829,22 @@ This [trigger](#lvgl-automation-triggers) is triggered when LVGL is resumed. Thi
 ### `on_boot`
 
 This [trigger](#lvgl-automation-triggers) is triggered after LVGL has been setup. It is also available on any widget, but the timing is the same.
+
+### `on_draw_start`
+
+This [trigger](#lvgl-automation-triggers) is executed before each LVGL drawing operation.
+
+### `on_draw_end`
+
+This [trigger](#lvgl-automation-triggers) is executed after LVGL has completed drawing all updated screen elements. It
+may be used for example to trigger an update of a display component like an e-paper screen that requires the buffer
+to be sent to the display for it to be updated.
+
+```yaml
+lvgl:
+  on_draw_end:
+    component.update: my_display_id
+```
 
 ## See Also
 
