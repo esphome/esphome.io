@@ -11,7 +11,7 @@ params:
 
 The `bme680_bsec` sensor platform allows you to use your BME680
 ([datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme680-ds001.pdf),
-[Adafruit](https://www.adafruit.com), [Pimoroni](https://www.pimoroni.com)) temperature, pressure and humidity and gas sensors with ESPHome via the Bosch Sensortec Environmental Cluster (BSEC)
+[Adafruit](https://www.adafruit.com/product/3660), [Pimoroni](https://shop.pimoroni.com/products/bme680-breakout)) temperature, pressure and humidity and gas sensors with ESPHome via the Bosch Sensortec Environmental Cluster (BSEC)
 software library. The use of Bosch's proprietary algorithms provide an Index for Air Quality (IAQ) measurement derived from the
 gas resistance sensor's response to specific Volatile Organic Compounds (VOC). The BSEC software also provides estimated values
 for CO₂ and Breath Volatile Organic Compounds (b-VOC) using a correlation between VOC and CO₂ in a human's exhaled breath.
