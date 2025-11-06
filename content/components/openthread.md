@@ -77,38 +77,16 @@ openthread:
 
 - **tlv** (string): dataset TLVs from the Thread information in Home Assistant
 
-## OpenThread text sensors configuration
-
-This example shows how to configure Thread text sensors for a node.
-
-```yaml
-text_sensor:
-  - platform: openthread_info
-    ip_address:
-      name: "Off-mesh routable IP Address"
-    channel:
-      name: "Channel"
-    role:
-      name: "Device Role"
-    rloc16:
-      name: "RLOC16"
-    ext_addr:
-      name: "Extended Address"
-    eui64:
-      name: "EUI64"
-    network_name:
-      name: "Network Name"
-    network_key:
-      name: "Network Key"
-    pan_id:
-      name: "PAN ID"
-    ext_pan_id:
-      name: "Extended PAN ID"
-```
-
 ## OpenThread Device Type
 
 See <https://openthread.io/guides/thread-primer/node-roles-and-types>
 
 - **FTD** - Full Thread Device, sets CONFIG_OPENTHREAD_FTD, observed behavior is that this enables a REED (Router Eligible End Device) and can be promoted to a Router.
 - **MTD** - Minimal Thread Device, sets CONFIG_OPENTHREAD_MTD, cannot be promoted to Router. Switching back from MTD to FTD will not result in a REED unless Non Volatile Storage (NVS) is cleared.
+
+## See Also
+
+- {{< docref "/components/text_sensor/openthread_info" >}}
+- {{< docref "/components/network" >}}
+- {{< apiref "openthread/openthread_component.h" "openthread/openthread_component.h" >}}
+- <https://openthread.io/>
