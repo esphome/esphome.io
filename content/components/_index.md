@@ -123,6 +123,7 @@ ESPHome-specific components or components supporting ESPHome device provisioning
 "ESP32 BLE Server","components/esp32_ble_server","bluetooth.svg","dark-invert"
 "Bluetooth Proxy","components/bluetooth_proxy","bluetooth.svg","dark-invert"
 "Improv via BLE","components/esp32_improv","improv.svg","dark-invert"
+"Nordic UART Service (NUS)","components/ble_nus","uart.svg",""
 {{< /imgtable >}}
 
 ## Management and Monitoring
@@ -166,6 +167,7 @@ Create update entities simplifying management of OTA updates.
 "I²S Audio","components/i2s_audio","i2s_audio.svg",""
 "OpenTherm","components/opentherm","opentherm.png",""
 "SPI Bus","components/spi","spi.svg",""
+"TinyUSB","components/tinyusb","usb.svg","dark-invert"
 "UART","components/uart","uart.svg",""
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
@@ -272,6 +274,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "CD74HC4067","components/sensor/cd74hc4067","cd74hc4067.jpg","16-channel analog multiplexer",""
 "MCP3008","components/sensor/mcp3008","mcp3008.jpg","8-channel ADC",""
 "MCP3204 / MCP3208","components/sensor/mcp3204","mcp3204.jpg","4-channel ADC",""
+"MCP3221","components/sensor/mcp3221","mcp3221.png","ADC",""
 "NAU7802","components/sensor/nau7802","nau7802.jpg","ADC",""
 "Resistance","components/sensor/resistance","omega.svg","dark-invert",""
 {{< /imgtable >}}
@@ -377,6 +380,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "ENS160","components/sensor/ens160","ens160.jpg","eCO₂ & Air Quality",""
 "ENS210","components/sensor/ens210","ens210.jpg","Temperature & Humidity",""
 "HDC1080","components/sensor/hdc1080","hdc1080.jpg","Temperature & Humidity",""
+"HDC2010","components/sensor/hdc2010","hdc2010.png","Temperature & Humidity",""
 "HHCCJCY10 (MiFlora Pink)","components/sensor/xiaomi_hhccjcy10","xiaomi_hhccjcy10.jpg","Soil moisture & Temperature & Light",""
 "Honeywell ABP","components/sensor/honeywellabp","honeywellabp.jpg","Pressure & Temperature",""
 "Honeywell ABP2 I2C","components/sensor/honeywellabp2_i2c","honeywellabp.jpg","Pressure & Temperature",""
@@ -726,6 +730,7 @@ Often known as "tag" or "card" readers within the community.
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
 "MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
+"ePaper SPI Displays","components/display/epaper_spi","epaper.svg"
 "ILI9xxx","components/display/ili9xxx","ili9341.jpg"
 "ILI9341","components/display/ili9xxx","ili9341.svg"
 "ILI9342","components/display/ili9xxx","ili9342.svg"
