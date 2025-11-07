@@ -160,8 +160,8 @@ Got all that? Great. Let's take a closer look at some configuration.
 
 The thermostat controller uses the sensor to determine whether it should heat or cool.
 
-- **sensor** (**Required**, [ID](#config-id)): The sensor that is used to measure the current temperature.
-- **humidity_sensor** (*Optional*, [ID](#config-id)): If specified, this sensor is used to measure the current humidity.
+- **sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The sensor that is used to measure the current temperature.
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
 
 ### Heating and Cooling Actions

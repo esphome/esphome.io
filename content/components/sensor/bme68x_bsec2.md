@@ -44,7 +44,7 @@ bme68x_bsec2_i2c:
 - **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`. The sensor can
   also be configured to use `0x77`.
 
-- **i2c_id** (**Optional**, [ID](#config-id)): The ID of the [I²C bus](/components/i2c) the bme68x is connected to.
+- **i2c_id** (**Optional**, [ID](/guides/configuration-types#config-id)): The ID of the [I²C bus](/components/i2c) the bme68x is connected to.
 - **model** (_Required_, string): The model of the connected sensor; either `BME680` or `BME688`.
 - **algorithm_output** (_Optional_, string): The output of the BSEC2 algorithm. Either `classification` (default) or
   `regression`. _Only valid when model is BME688._
@@ -67,7 +67,7 @@ bme68x_bsec2_i2c:
 - **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save the calibrated BSEC2
   algorithm state to flash so that calibration doesn't have to start from scratch on device restart. Defaults to `6h`.
 
-- **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor
+- **id** (_Optional_, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor
   section to refer to the correct BME68x sensor if you have more than one device. This will also be used to refer to
   the calibrated BSEC2 algorithm state saved to flash.
 
@@ -93,7 +93,7 @@ sensor:
 
 ### Configuration variables
 
-- **bme68x_bsec2_id** (_Optional_, [ID](#config-id)): The ID of the `bme68x_bsec2_i2c` component sensors will refer
+- **bme68x_bsec2_id** (_Optional_, [ID](/guides/configuration-types#config-id)): The ID of the `bme68x_bsec2_i2c` component sensors will refer
   to. Useful when multiple devices are present in your configuration.
 
 - **temperature** (_Optional_): Configuration for the temperature sensor.
@@ -154,7 +154,7 @@ text_sensor:
 
 ### Configuration variables
 
-- **bme68x_bsec2_id** (_Optional_, [ID](#config-id)): The ID of the `bme68x_bsec2_i2c` component the text sensor
+- **bme68x_bsec2_id** (_Optional_, [ID](/guides/configuration-types#config-id)): The ID of the `bme68x_bsec2_i2c` component the text sensor
   will refer to. Useful when multiple devices are present in your configuration.
 
 - **iaq_accuracy** (_Optional_): Configuration for the IAQ accuracy sensor. Shows: `Stabilizing`, `Uncertain`,

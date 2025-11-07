@@ -38,7 +38,7 @@ touchscreen:
 
 ### Configuration variables
 
-- **display** (**Required**, [ID](#config-id)): The display to use this touchscreen with.
+- **display** (**Required**, [ID](/guides/configuration-types#config-id)): The display to use this touchscreen with.
 - **transform** (*Optional*): Transform the touchscreen presentation using hardware. All defaults are `false`.
 
   - **swap_xy** (*Optional*, boolean): If true, exchange the x and y axes.
@@ -268,15 +268,15 @@ binary_sensor:
 
 ### Configuration variables
 
-- **touchscreen_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the touchscreen.
+- **touchscreen_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the touchscreen.
 - **x_min** (**Required**, int): Left coordinate of the screen area to be detected as the virtual button.
 - **x_max** (**Required**, int): Right coordinate of the screen area to be detected as the virtual button.
 - **y_min** (**Required**, int): Top coordinate of the screen area to be detected as the virtual button.
 - **y_max** (**Required**, int): Bottom coordinate of the screen area to be detected as the virtual button.
-- **page_id** (*Optional*, [ID](#config-id)): Only trigger this binary sensor if the display is showing this page.
+- **page_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Only trigger this binary sensor if the display is showing this page.
   Cannot be used with `pages`.
 
-- **pages** (*Optional*, list of [ID](#config-id)): Only trigger this binary sensor if the display is showing one of these pages.
+- **pages** (*Optional*, list of [ID](/guides/configuration-types#config-id)): Only trigger this binary sensor if the display is showing one of these pages.
   Cannot be used with `page_id`.
 
 - **use_raw** (*Optional*, boolean): Some touch screens are larger than the underlying screen, and use this extra

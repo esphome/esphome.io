@@ -56,7 +56,7 @@ canbus:
 **Configuration variables:**
 
 - **platform** (**Required**, [platform](#platforms-canbus)): One of the supported CAN bus [Platforms](#platforms-canbus).
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **can_id** (**Required**, int): default *CAN ID* used for transmitting frames.
 - **use_extended_id** (*Optional*, boolean): Identifies the type of `can_id`  :
 

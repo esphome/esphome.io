@@ -32,7 +32,7 @@ sensor:
 
 ## Configuration variables
 
-- **sensor** (*Optional*, [ID](#config-id)): The ID of the `binary_sensor` to track the duty time. *May not be
+- **sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the `binary_sensor` to track the duty time. *May not be
   used with* `lambda`.
 
 - **lambda** (*Optional*, [lambda](#config-lambda)): Lambda that will be called in a loop to get the current
@@ -46,7 +46,7 @@ sensor:
   Warning: this option can wear out your flash. Defaults to `false`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The update interval. Defaults to `60s`.
-- **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 ## Automations

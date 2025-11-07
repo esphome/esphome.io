@@ -40,7 +40,7 @@ binary_sensor:
 
 ## Configuration variables
 
-- **nextion_id** (*Optional*, [ID](#config-id)): The ID of the Nextion display.
+- **nextion_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
 - **variable_name** (*Optional*, string): The name of the Nextion variable. Any value over `0`   is considered to be **on**
 - **page_id** (*Optional*, string): The ID of the page the component is on. Use `0`   for the default page.
@@ -114,7 +114,7 @@ on_...:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The ID of the Nextion switch.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the Nextion switch.
 - **state** (**Required**, string, [templatable](#config-templatable)): The boolean state to publish.
 - **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
   Default is true.

@@ -66,7 +66,7 @@ display:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **model** (*Optional*, enum): Specify the model. Defaults to `inkplate_6`.
   - `inkplate_6`
   - `inkplate_10`

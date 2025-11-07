@@ -49,7 +49,7 @@ display:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART Bus](/components/uart) you wish to use for this display. Specify this
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the [UART Bus](/components/uart) you wish to use for this display. Specify this
   when you have multiple UART configurations.
 
 - **brightness** (*Optional*, percentage): When specified, the display brightness will be set to this value at boot.
@@ -60,7 +60,7 @@ display:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
   Defaults to `5s`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **tft_url** (*Optional*, string): The URL from which to download the TFT file for display firmware updates (Nextion
   OTA). See [Nextion Upload](#nextion_upload_tft).
 

@@ -51,7 +51,7 @@ graph:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the graph later
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID with which you will be able to reference the graph later
   in your display code.
 
 - **width** (**Required**, int): The graph width in pixels
@@ -69,7 +69,7 @@ graph:
 
 Trace specific fields:
 
-- **sensor** (*Optional*, [ID](#config-id)): The sensor value to plot
+- **sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): The sensor value to plot
 - **line_thickness** (*Optional*): Defaults to 3
 - **line_type** (*Optional*): Specifies the plot line-type. Can be one of the following: `SOLID`, `DOTTED`, `DASHED`. Defaults to `SOLID`.
 - **continuous** (*Optional*): connects the individual points to make a continuous line. Defaults to `false`.

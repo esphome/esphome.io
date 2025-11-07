@@ -86,7 +86,7 @@ sensor:
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to
   the same UART bus. You will need to set the address of each device manually. Defaults to `1`.
 
-- **modbus_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the Modbus hub.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the Modbus hub.
 
 {{< anchor "pzemac-reset_energy_action" >}}
 

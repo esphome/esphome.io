@@ -27,7 +27,7 @@ touchscreen:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually set the ID of this touchscreen.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually set the ID of this touchscreen.
 - **interrupt_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The touch detection pin.
 
 - All other options from [Touchscreen](#config-touchscreen).

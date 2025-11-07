@@ -47,9 +47,9 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 
 ## Configuration variables
 
-- **modbus_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `modbus` hub.
+- **modbus_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the `modbus` hub.
 
-- **address** (**Required**, [ID](#config-id)): The Modbus address of the slave device.
+- **address** (**Required**, [ID](/guides/configuration-types#config-id)): The Modbus address of the slave device.
 
 - **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to `false`.
 

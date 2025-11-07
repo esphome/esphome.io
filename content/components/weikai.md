@@ -90,8 +90,8 @@ wk2168_spi:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this WeiKai component.
-- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this WeiKai component.
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
 - **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin on the ESP that the chip select line
@@ -106,7 +106,7 @@ wk2168_spi:
 
 - **uart** (**Required**): The UART channels.
 
-  - **id** (**Required**, [ID](#config-id)): The id to use for this UART channel.
+  - **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.
     Options: `0` to `1` or `0` to `3` depending on the model.
 
@@ -168,7 +168,7 @@ wk2168_i2c:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this WeiKai component.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this WeiKai component.
 - **address** (*Optional*): The I²C address of this component. Defaults to `0x10`.
 - **i2c_id** (*Optional*): The I²C Bus ID. Defaults to the default i²c bus.
 - **crystal** (*Optional*): The frequency in Hz of the crystal connected to the chip.
@@ -176,7 +176,7 @@ wk2168_i2c:
 
 - **uart** (**Required**): The UART channels.
 
-  - **id** (**Required**, [ID](#config-id)): The id to use for this UART channel.
+  - **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this UART channel.
   - **channel** (**Required**): Unique channel number of this virtual UART.
     Options: `0` to `1` or `0` to `3` depending on the model.
 
@@ -232,7 +232,7 @@ switch:
 
 ### Pin configuration variables
 
-- **wkxxxx_xxx** (**Required**, [ID](#config-id)): The id of the `wkxxxx_xxx` component for the pin. For
+- **wkxxxx_xxx** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the `wkxxxx_xxx` component for the pin. For
   example `wk2212_i2c: wk2168_bridge_spi`
 
 - **number** (**Required**): The pin number (`0` to `7`  )

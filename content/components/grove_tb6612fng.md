@@ -21,7 +21,7 @@ grove_tb6612fng:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this TB6612FNG component.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this TB6612FNG component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x14`.
 

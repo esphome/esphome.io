@@ -21,7 +21,7 @@ update:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. At least one of **id** and
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. At least one of **id** and
   **name** must be specified.
 - **name** (*Optional*, string): The name of the update entity. At least one of **id** and **name** must be specified.
 
@@ -53,7 +53,7 @@ This action allows you to trigger the update entity to start the update process.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the update entity.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the update entity.
 - **force_update** (*Optional*, boolean): Perform the update even if the device is already running the same version.
   Defaults to `false`.
 
@@ -63,6 +63,6 @@ This condition checks if an update is available for the device.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the update entity.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the update entity.
 
 ## See Also

@@ -34,10 +34,10 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for actions.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for actions.
 
 {{< img src="senseair_s8-pins.jpg" alt="Image" caption="Pins on the SenseAir S8. Only the ones marked with a red circle need to be connected." width="80.0%" class="align-center" >}}
 

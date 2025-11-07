@@ -68,7 +68,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the template sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the template sensor.
 - **state** (**Required**, float, [templatable](#config-templatable)):
   The state to publish.
 

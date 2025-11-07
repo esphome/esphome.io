@@ -36,7 +36,7 @@ binary_sensor:
 
 ## Configuration variables
 
-- **sensor_id** (**Required**, [ID](#config-id)): The ID of the source sensor.
+- **sensor_id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the source sensor.
 - **threshold** (**Required**, float [templatable](#config-templatable) or mapping): Configures the reference for comparison. Accepts either a shorthand
    float number that will be used as both upper/lower threshold, or a mapping to define different values for each (to
    use hysteresis).

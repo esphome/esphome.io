@@ -58,7 +58,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this MCP23S08 component.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this MCP23S08 component.
 - **cs_pin** (**Required**, int): The SPI chip select pin to use
 - **deviceaddress** (*Optional*, int): The address of the chip.
   Defaults to `0`.
@@ -69,7 +69,7 @@ binary_sensor:
 
 ### Pin Configuration Variables
 
-- **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23S08 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the MCP23S08 component.
 - **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - All other options from [Pin Schema](#config-pin_schema)
 
@@ -123,7 +123,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this MCP23S17 component.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this MCP23S17 component.
 - **cs_pin** (**Required**, int): The SPI chip select pin to use.
 - **deviceaddress** (*Optional*, int): The address of the chip.
   Defaults to `0`.
@@ -134,7 +134,7 @@ binary_sensor:
 
 ### Pin Configuration Variables
 
-- **mcp23xxx** (**Required**, [ID](#config-id)): The id of the MCP23S17 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the MCP23S17 component.
 - **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - All other options from [Pin Schema](#config-pin_schema)
 

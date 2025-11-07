@@ -60,7 +60,7 @@ Connection Options:
   - **frequency** (*Optional*, float): The frequency of the external clock, must be between 10
     and 20MHz. Defaults to `20MHz`.
 
-- **i2c_id** (**Required**, [ID](#config-id)): The ID of the [I²C bus](/components/i2c) the camera is connected to.
+- **i2c_id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the [I²C bus](/components/i2c) the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
   If set, this will reset the camera before the ESP boots.
 

@@ -76,7 +76,7 @@ light:
   maximum brightness of each channel. For example `[100%, 50%, 100%]` would set the green channel to be at most at
   50% brightness.
 
-- **power_supply** (*Optional*, [ID](#config-id)): The {{< docref "/components/power_supply" >}} to connect to this light. When
+- **power_supply** (*Optional*, [ID](/guides/configuration-types#config-id)): The {{< docref "/components/power_supply" >}} to connect to this light. When
   the light is turned on, the power supply will automatically be switched on too.
 
 **Advanced options:**
@@ -171,7 +171,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](#config-id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the light.
 - **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
   transition if the light supports it.
 
@@ -211,7 +211,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](#config-id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the light.
 - **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
   transition if the light supports it.
 
@@ -281,7 +281,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](#config-id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the light.
 - **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
   transition if the light supports it.
 
@@ -313,7 +313,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](#config-id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the light.
 - **state** (*Optional*, [templatable](#config-templatable), boolean): Change the ON/OFF state of the light.
 - All other options from [light state](#light-state_config).
 
@@ -334,7 +334,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](#config-id)): The ID of the light.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the light.
 - **relative_brightness** (**Required**, [templatable](#config-templatable), percentage): The relative brightness
   to dim the light by.
 
@@ -393,7 +393,7 @@ on_...:
 
 **Configuration variables:**
 
-- **id** (**Required**, [ID](#config-id)): The ID of the addressable light to control.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the addressable light to control.
 - **range_from** (*Optional*, [templatable](#config-templatable), int): The beginning of the range of LEDs to
   control, inclusive, using zero-based indexing. Defaults to 0 (the beginning of the strip).
 
@@ -1081,7 +1081,7 @@ light:
 
 **Configuration variables:**
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart). Useful if
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [UART Component](/components/uart). Useful if
   you've configured multiple UARTs.
 
 ### WLED Effect

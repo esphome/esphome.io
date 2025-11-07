@@ -40,10 +40,10 @@ output:
 
 ## Configuration variables
 
-- **output** (**Required**, [ID](#config-id)): The ID of the {{< docref "/components/output/index" "output component" >}}
+- **output** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the {{< docref "/components/output/index" "output component" >}}
   to use for this servo.
 
-- **id** (**Required**, [ID](#config-id)): The ID of this servo so that it can be controlled.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of this servo so that it can be controlled.
 
 Advanced Options:
 
@@ -107,7 +107,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the servo.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the servo.
 - **level** (*Optional*, percentage, [templatable](#config-templatable)): The target level.
   Range is from -100% to 100% (-1.0 to 1.0).
 

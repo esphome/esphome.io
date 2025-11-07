@@ -48,20 +48,20 @@ climate:
 
 ## Configuration variables
 
-- **sensor** (**Required**, [ID](#config-id)): The sensor that is used to measure the current
+- **sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The sensor that is used to measure the current
   temperature.
 
-- **humidity_sensor** (*Optional*, [ID](#config-id)): If specified, this sensor is used to measure the current humidity.
+- **humidity_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): If specified, this sensor is used to measure the current humidity.
   This is used for information only and does not influence temperature control.
 
 - **default_target_temperature** (**Required**, float): The default target temperature (setpoint)
   for the control algorithm. This can be dynamically set in the frontend later.
 
-- **heat_output** (*Optional*, [ID](#config-id)): The ID of a [float output](#config-output)
+- **heat_output** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of a [float output](#config-output)
   that increases the current temperature. At least one of `heat_output` and `cool_output` must
   be specified.
 
-- **cool_output** (*Optional*, [ID](#config-id)): The ID of a [float output](#config-output)
+- **cool_output** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of a [float output](#config-output)
   that decreases the current temperature. At least one of `heat_output` and `cool_output` must
   be specified.
 
@@ -341,7 +341,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): ID of the PID Climate to start autotuning for.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the PID Climate to start autotuning for.
 - **noiseband** (*Optional*, float): The noiseband of the process (=sensor) variable. The value
   of the PID controller must be able to reach this value. Defaults to `0.25`.
 
@@ -373,7 +373,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): ID of the PID Climate to start autotuning for.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the PID Climate to start autotuning for.
 - **kp** (**Required**, float): The factor for the proportional term of the PID controller.
 - **ki** (*Optional*, float): The factor for the integral term of the PID controller.
   Defaults to `0`.
@@ -394,7 +394,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): ID of the PID Climate being reset.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the PID Climate being reset.
 
 ## `pid` Sensor
 
@@ -427,7 +427,7 @@ Configuration variables:
 
 Advanced options:
 
-- **climate_id** (*Optional*, [ID](#config-id)): The ID of the pid climate to get the values from.
+- **climate_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the pid climate to get the values from.
 
 ## See Also
 

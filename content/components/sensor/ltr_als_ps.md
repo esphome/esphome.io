@@ -106,7 +106,7 @@ sensor:
 
 ## Configuration variables
 
-- **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (_Optional_, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **address** (_Optional_, int): Manually specify the I²C address of the sensor. Default is `0x29`.
 - **type** (_Optional_, string): The type of the sensor. Valid values are `ALS_PS` _(default)_ for
   integrated sensors, `ALS` for ambient light only or `PS` for proximity only devices.

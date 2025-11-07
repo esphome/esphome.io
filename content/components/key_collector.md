@@ -46,8 +46,8 @@ key_collector:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Set the ID of this entry for use in lambdas.
-- **source_id** (*Optional*, [ID](#config-id)): The ID of the key input device.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this entry for use in lambdas.
+- **source_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the key input device.
 - **min_length** (*Optional*, integer): The minimal length of the desired key sequence. Below
   this, `on_result` automation will not trigger even if any of the `end_keys` was pressed.
 

@@ -44,7 +44,7 @@ light:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the UART hub.
 
 > [!NOTE]
 > Currently, only the first hardware UART of the ESP is supported, which has to be configured like this:

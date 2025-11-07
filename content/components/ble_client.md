@@ -44,7 +44,7 @@ ble_client:
 
 - **mac_address** (**Required**, MAC Address): The MAC address of the BLE device to connect to.
 - **auto_connect** (*Optional*, boolean): If true the device will be automatically connected when found by the {{< docref "/components/esp32_ble_tracker" >}}. Defaults to true.
-- **id** (**Required**, [ID](#config-id)): The ID to use for code generation, and for reference by dependent components.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID to use for code generation, and for reference by dependent components.
 
 Automations:
 
@@ -238,7 +238,7 @@ switch:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service to write to.
 - **characteristic_uuid** (**Required**, UUID): UUID of the service's characteristic to write to.
 - **value** (**Required**, Array of bytes or [lambda](#config-lambda)): The value to be written.
@@ -261,7 +261,7 @@ on_...:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the associated BLE client.
 - **passkey** (**Required**, int): The 6-digit passkey.
 
 {{< anchor "ble_client-numeric_comparison_reply_action" >}}
@@ -282,7 +282,7 @@ on_...:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the associated BLE client.
 - **accept** (**Required**, boolean): Should be `true` if the passkeys
   displayed on both BLE devices are matching.
 
@@ -307,7 +307,7 @@ ble_client:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): ID of the associated BLE client.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the associated BLE client.
 
 ## BLE Overview
 

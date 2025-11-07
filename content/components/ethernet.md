@@ -141,7 +141,7 @@ If you are using a framework that does not support SPI-based ethernet modules wi
 
 - **mac_address** (*Optional*, MAC Address): Set the MAC address of the ethernet interface.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
 > If your Ethernet board is not designed with an ESP32 built in, it's common to attempt

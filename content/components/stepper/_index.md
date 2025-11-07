@@ -56,7 +56,7 @@ stepper:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): Specify the ID of the stepper so that you can control it.
 - **step_pin** (**Required**, [Pin Schema](#config-pin_schema)): The `STEP` pin of the A4988
   stepper driver.
 
@@ -116,7 +116,7 @@ stepper:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): Specify the ID of the stepper so that you can control it.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): Specify the ID of the stepper so that you can control it.
 - **pin_a** (**Required**, [Pin Schema](#config-pin_schema)): The pin **a** of the stepper control board.
 - **pin_b** (**Required**, [Pin Schema](#config-pin_schema)): The pin **b** of the stepper control board.
 - **pin_c** (**Required**, [Pin Schema](#config-pin_schema)): The pin **c** of the stepper control board.
@@ -159,7 +159,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the stepper.
 - **target** (**Required**, int, [templatable](#config-templatable)): The target position in steps.
 
 > [!WARNING]
@@ -214,7 +214,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the stepper.
 - **position** (**Required**, int, [templatable](#config-templatable)): The position to report in steps.
 
 {{< anchor "stepper-set_speed_action" >}}
@@ -232,7 +232,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the stepper.
 - **speed** (**Required**, [templatable](#config-templatable), float): The speed
   in `steps/s` (steps per seconds) to drive the stepper at.
 
@@ -251,7 +251,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the stepper.
 - **acceleration** (**Required**, [templatable](#config-templatable), float): The acceleration
   in `steps/s^2` (steps per seconds squared) to use when starting to move.
 
@@ -270,7 +270,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the stepper.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the stepper.
 - **deceleration** (**Required**, [templatable](#config-templatable), float): The same as `acceleration`,
   but for when the motor is decelerating shortly before reaching the set position.
 

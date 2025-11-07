@@ -68,7 +68,7 @@ on_...:
 
 Configuration option:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the AGS10 sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the AGS10 sensor.
 - **mode** (**Required**, enum): One of supported modes:
 
   - `FACTORY_DEFAULT` - reset to the factory zero-point
@@ -101,7 +101,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the AGS10 sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the AGS10 sensor.
 - **address** (**Required**, int): New I2C address.
 
 ## See Also

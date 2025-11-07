@@ -52,8 +52,8 @@ The configuration is made up of three parts: The central component, optional ind
 
 Base Configuration:
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the UART hub.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **sensing_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Pin connected to the reader's finger detection signal (WAKEUP) output.
 - **sensor_power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Output pin responsible for toogling the sensor power on and off.
 - **password** (*Optional*, int): Password to use for authentication. Defaults to `0x00`.

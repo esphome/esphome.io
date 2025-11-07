@@ -83,7 +83,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the template binary sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the template binary sensor.
 - **state** (**Required**, boolean, [templatable](#config-templatable)):
   The state to publish.
 

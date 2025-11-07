@@ -34,7 +34,7 @@ sensor:
 
 ## Configuration variables
 
-- **sensor** (**Required**, [ID](#config-id)): The source sensor to measure voltage values from.
+- **sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The source sensor to measure voltage values from.
 - **sample_duration** (*Optional*, [Time](#config-time)): The time duration to sample the current clamp
   with. Higher values can increase accuracy. Defaults to `200ms` which would be 10 whole cycles on a 50Hz system.
 

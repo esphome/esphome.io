@@ -29,7 +29,7 @@ sensor:
 
 ## Configuration variables
 
-- **sensor** (**Required**, [ID](#config-id)): The ID of the sensor to integrate over time.
+- **sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the sensor to integrate over time.
 - **time_unit** (**Required**, string): The time unit to integrate with, one of
   `ms`, `s`, `min`, `h` or `d`.
 

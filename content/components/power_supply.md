@@ -25,7 +25,7 @@ power_supply:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id of the
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the
   power supply so that it can be used by the outputs.
 
 - **pin** (**Required**, [Pin Schema](#config-pin_schema)): The

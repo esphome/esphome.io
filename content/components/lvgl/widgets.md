@@ -15,7 +15,7 @@ The properties below are common to all widgets.
 
 **Configuration variables:**
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **x** (*Optional*, int16 or percentage): Horizontal position of the widget.
 - **y** (*Optional*, int16 or percentage): Vertical position of the widget.
 
@@ -50,7 +50,7 @@ The properties below are common to all widgets.
 
 - **group** (*Optional*, string): The name of the group of widgets which will interact with a {{< docref "/components/sensor/rotary_encoder" >}}. In every group there is always one focused widget which receives the encoder actions. You need to associate an input device with a group. An input device can send key events to only one group but a group can receive data from more than one input device. If no group is specified for a widget or an encoder, an unnamed default group will be assigned, so in most cases where only one encoder is used it will not be necessary to explicitly specify a group.
 - **layout** (*Optional*): See [Layouts](#lvgl-layouts) for details. Defaults to `NONE`.
-- **styles** (*Optional*, [ID](#config-id)): The ID of a *style definition* from the main component configuration to override the theme styles.
+- **styles** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of a *style definition* from the main component configuration to override the theme styles.
 - **theme** (*Optional*, list): A list of styles to apply to the widget and children. Same configuration option as at the main component.
 - **widgets** (*Optional*, list): A list of LVGL widgets to be drawn as children of this widget. Same configuration option as at the main component.
 
@@ -1178,7 +1178,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
       - **width**: Arc width in pixels. Defaults to `4`.
       - **opa**: Opacity of the arc. Defaults to 100%.
     - **image** (*Optional*): Add a rotating needle image to the scale:
-      - **id**: Manually specify the [ID](#config-id) used for updating the indicator value at runtime.
+      - **id**: Manually specify the [ID](/guides/configuration-types#config-id) used for updating the indicator value at runtime.
       - **pivot_x**: Horizontal position of the pivot point of rotation, in pixels, relative to the top left corner of the image.
       - **pivot_y**: Vertical position of the pivot point of rotation, in pixels, relative to the top left corner of the image.
       - **src**: The ID of an existing image configuration, representing a needle pointing to the right like `-o--->`.
@@ -1186,7 +1186,7 @@ The meter widget can visualize data in very flexible ways. It can use arcs, need
       - **opa**: Opacity of the image. Defaults to 100%.
     - **line** (*Optional*): Add a needle line to the scale. By default, the length of the line is the same as the scale's radius:
       - **color**: [Color](#lvgl-color) for the needle line. Defaults to `0` (black).
-      - **id**: Manually specify the [ID](#config-id) used for updating the indicator value at runtime.
+      - **id**: Manually specify the [ID](/guides/configuration-types#config-id) used for updating the indicator value at runtime.
       - **r_mod**: Adjust the length of the needle from the scale radius with this amount (can be negative). Defaults to `0`.
       - **value**: The value in the scale range to show at start.
       - **width**: Needle line width in pixels. Defaults to `4`.

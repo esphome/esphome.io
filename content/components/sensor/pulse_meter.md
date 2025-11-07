@@ -40,7 +40,7 @@ sensor:
   - In `PULSE` mode, the rising edge is discarded if any further interrupts are detected before the `internal_filter` time has passed. In other words, a high pulse must be at least `internal_filter` long to be counted. This is useful if you have a noisy input signal that may have bounces before and/or after the main pulse.
 
 - **timeout** (*Optional*, [Time](#config-time)): If we don't see a pulse for this length of time, we assume *0 pulses/s*. Defaults to `5 min`.
-- **total** (*Optional*, [ID](#config-id)): An additional sensor that outputs the total number of pulses counted.
+- **total** (*Optional*, [ID](/guides/configuration-types#config-id)): An additional sensor that outputs the total number of pulses counted.
 - All other options from [Sensor](/components/sensor).
 
 ## Converting units

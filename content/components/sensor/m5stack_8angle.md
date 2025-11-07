@@ -24,8 +24,8 @@ m5stack_8angle:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **i2c_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [I²C Component](/components/i2c) if you need
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [I²C Component](/components/i2c) if you need
 - **address** (*Optional*, int): Manually specify the I²C address of the device. Defaults to `0x43`.
 
 ## Knob's position sensor

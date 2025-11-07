@@ -35,7 +35,7 @@ light:
 ## Configuration variables
 
 - **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The GPIO pin to operate the LED on.
-- **output** (*Optional*, [ID](#config-id)): The id of the binary [Output Component](#output) to use for this light.
+- **output** (*Optional*, [ID](/guides/configuration-types#config-id)): The id of the binary [Output Component](#output) to use for this light.
 - All other options from [Light](#config-light).
 
 > [!NOTE]

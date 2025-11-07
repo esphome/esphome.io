@@ -18,7 +18,7 @@ http_request:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
 - **timeout** (*Optional*, [Time](#config-time)): Timeout for request. Defaults to `4.5s`.

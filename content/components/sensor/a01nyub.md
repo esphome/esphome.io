@@ -27,7 +27,7 @@ sensor:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](/components/uart) you wish to use for this sensor.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the [UART bus](/components/uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
 
 - All other options from [Sensor](/components/sensor).

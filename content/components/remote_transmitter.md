@@ -35,7 +35,7 @@ remote_transmitter:
   modulate the signal using a carrier signal. Set this to `50%` if you're using IR LEDs and `100%` for RF
   applications like 433 MHz transmitters.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Useful when multiple
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. Useful when multiple
   transmitters are connected to a single device.
 
 ### ESP32 configuration variables
@@ -108,7 +108,7 @@ on_...:
   - **wait_time** ([templatable](#config-templatable), [Time](#config-time)): The time to wait between repeats (in
     µs as a result of a [lambda](#config-lambda)).
 
-- **transmitter_id** (*Optional*, [ID](#config-id)): The remote transmitter to send the remote code with. Defaults to
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The remote transmitter to send the remote code with. Defaults to
   the first one defined in the configuration.
 
 If you're looking for the same functionality as is default in the `rpi_rf` integration in Home Assistant, you'll want
@@ -1023,7 +1023,7 @@ on_...:
 
 #### Configuration variables
 
-- **transmitter_id** (*Optional*, [ID](#config-id)): The remote transmitter to set the pin value on. Defaults to
+- **transmitter_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The remote transmitter to set the pin value on. Defaults to
   the first one defined in the configuration.
 
 - **value** (**Required**, bool): The output value of the pin.

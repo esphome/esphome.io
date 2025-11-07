@@ -100,7 +100,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the template valve.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the template valve.
 - **state** (*Optional*, [templatable](#config-templatable)):
   The state to publish. One of `OPEN`, `CLOSED`. If using a lambda, use `VALVE_OPEN` or `VALVE_CLOSED`.
 

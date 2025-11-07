@@ -169,7 +169,7 @@ examples that are ready for you to copy and paste!
   [`sprinkler.next_valve` action](#sprinkler-controller-action_next_valve) and [`sprinkler.previous_valve` action](#sprinkler-controller-action_previous_valve) to skip
   over valves that are not enabled. Defaults to `false`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. While optional,
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. While optional,
   this is necessary to identify the controller instance (particularly in cases where more than one is
   defined) when calling controller actions (see below) such as `start_full_cycle` or `shutdown`.
 

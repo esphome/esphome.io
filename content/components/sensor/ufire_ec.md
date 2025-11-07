@@ -33,8 +33,8 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- **temperature_sensor** (*Optional*, [ID](#config-id)): Set the ID of the temperature
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **temperature_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of the temperature
   sensor. Only needed if the onboard temperature sensor is not used.
 
 - **ec** (*Optional*, [Sensor](/components/sensor)): Set the EC sensor configuration. All options from [Sensor](/components/sensor).
@@ -69,7 +69,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the ufire EC sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the ufire EC sensor.
 - **solution** (**Required**, float): Solution reference EC value.
 - **temperature** (**Required**, float): Solution current temperature.
 
@@ -94,7 +94,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the ufire EC sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the ufire EC sensor.
 
 ## See Also
 

@@ -58,7 +58,7 @@ cover:
 
 ## Configuration variables
 
-- **open_sensor** (**Required**, [ID](#config-id)): The open current sensor.
+- **open_sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The open current sensor.
 - **open_action** (**Required**, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote requests the cover to be opened.
 
@@ -71,7 +71,7 @@ cover:
 - **open_obstacle_current_threshold** (**Required**, float): The amount of current in Amps the motor
   should drain to consider the cover is blocked during opening.
 
-- **close_sensor** (**Required**, [ID](#config-id)): The close current sensor.
+- **close_sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The close current sensor.
 - **close_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote requests the cover to be closed.
 

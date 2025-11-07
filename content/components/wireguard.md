@@ -134,7 +134,7 @@ wireguard:
 - **update_interval** (*Optional*, [Time](#config-time)): How often to check
   the connection status and the latest handshake value. Default to `10s`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 
 {{< anchor "wireguard-static-routes" >}}
 

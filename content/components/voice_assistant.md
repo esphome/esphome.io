@@ -32,13 +32,13 @@ voice_assistant:
 - **microphone** (**Required**, [Microphone Source Configuration](#config-microphone-source)): The
   {{< docref "/components/microphone/index" "microphone" >}} settings to use for input.
 
-- **micro_wake_word** (*Optional*, [ID](#config-id)): The {{< docref "/components/micro_wake_word" "micro_wake_word" >}}
+- **micro_wake_word** (*Optional*, [ID](/guides/configuration-types#config-id)): The {{< docref "/components/micro_wake_word" "micro_wake_word" >}}
   component used for wake word detection. Configuring this allows Home Assistant to change which wake word model is enabled.
 
-- **speaker** (*Optional*, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to use to output
+- **speaker** (*Optional*, [ID](/guides/configuration-types#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to use to output
   the response. Cannot be used with `media_player` below.
 
-- **media_player** (*Optional*, [ID](#config-id)): The {{< docref "/components/media_player/index" "media_player" >}}
+- **media_player** (*Optional*, [ID](/guides/configuration-types#config-id)): The {{< docref "/components/media_player/index" "media_player" >}}
   to use to output the response. Cannot be used with `speaker` above.
 
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`.

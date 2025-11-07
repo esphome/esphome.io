@@ -96,13 +96,13 @@ Open options:
 - **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to open up from the fully-closed state.
 
-- **open_endstop** (*Optional*, [ID](#config-id)): The ID of the
+- **open_endstop** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the open position is reached.
 
-- **open_sensor** (*Optional*, [ID](#config-id)): The ID of the
+- **open_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the cover is moving in the open direction.
 
-- **open_obstacle_sensor** (*Optional*, [ID](#config-id)): The ID of the
+- **open_obstacle_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when an obstacle that blocks the
   open direction is detected.
 
@@ -114,13 +114,13 @@ Close options:
 - **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to close from the fully-open state.
 
-- **close_endstop** (*Optional*, [ID](#config-id)): The ID of the
+- **close_endstop** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the closed position is reached.
 
-- **close_sensor** (*Optional*, [ID](#config-id)): The ID of the
+- **close_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the cover is moving in the close direction.
 
-- **close_obstacle_sensor** (*Optional*, [ID](#config-id)): The ID of the
+- **close_obstacle_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when an obstacle that blocks the
   close direction is detected.
 

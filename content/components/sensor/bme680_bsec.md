@@ -106,13 +106,13 @@ Configuration variables:
 - **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save calibrated BSEC algorithm state to
   flash so that calibration doesn't have to start from zero on device restart. Defaults to `6h`.
 
-- **id** (_Optional_, [ID](#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor section to refer to the correct BME680 if you have more than one device. This will also be used to refer to the calibrated BSEC algorithm state saved to flash.
+- **id** (_Optional_, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. Use this ID in the sensor section to refer to the correct BME680 if you have more than one device. This will also be used to refer to the calibrated BSEC algorithm state saved to flash.
 
 ## Sensor
 
 Configuration variables:
 
-- **bme680_bsec_id** (_Optional_, [ID](#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
+- **bme680_bsec_id** (_Optional_, [ID](/guides/configuration-types#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
 
 - **temperature** (_Optional_): The information for the temperature sensor.
 
@@ -155,7 +155,7 @@ Accuracy can be reported in text format.
 
 Configuration variables:
 
-- **bme680_bsec_id** (_Optional_, [ID](#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
+- **bme680_bsec_id** (_Optional_, [ID](/guides/configuration-types#config-id)): Sets the ID of the bme680_bsec component to refer to. Useful when working with multiple devices.
 
 - **iaq_accuracy** (_Optional_): The information for the IAQ accuracy sensor. Shows: Stabilizing,
   Uncertain, Calibrating, Calibrated.

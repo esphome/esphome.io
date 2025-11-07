@@ -35,7 +35,7 @@ pipsolar:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this pipsolar component.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this pipsolar component.
 - **uart_id** (*Optional*): The uart Bus ID
 
 ## Sensor
@@ -314,7 +314,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the output.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the output.
 - **value** (*Optional*, percentage, [templatable](#config-templatable)): The target level.
 
 ## See Also

@@ -26,7 +26,7 @@ time:
 
 - **latitude** (**Required**, float): The latitude for performing the calculation.
 - **longitude** (**Required**, float): The longitude for performing the calculation.
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 
 ## Triggers
 

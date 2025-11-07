@@ -18,7 +18,7 @@ All time configuration schemas inherit these options.
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Specify the ID of the time for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Specify the ID of the time for use in lambdas.
 - **timezone** (*Optional*, string): Manually tell ESPHome what time zone to use with [this format](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html)
   (warning: the format is quite complicated, see [examples](https://github.com/nayarsystems/posix_tz_db/blob/master/zones.csv))
   or the simpler [TZ database name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in the form

@@ -60,16 +60,16 @@ binary_sensor:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
 - **update_interval** (*Optional*, [Time](#config-time)): Interval between full broadcasts. Defaults to 15s.
 - **sensors** (*Optional*, list): A list of sensor IDs to be broadcast. Each entry may be just the sensor id, or may set a different id to be broadcast.
 
-  - **id** (**Required**, [ID](#config-id)): The id of the sensor to be used
+  - **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the sensor to be used
   - **broadcast_id** (*Optional*, string): The id to be used for this sensor in the broadcast. Defaults to the same as the internal id.
 
 - **binary_sensors** (*Optional*, list): A list of binary sensor IDs to be broadcast.
 
-  - **id** (**Required**, [ID](#config-id)): The id of the binary sensor to be used
+  - **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the binary sensor to be used
   - **broadcast_id** (*Optional*, string): The id to be used for this binary sensor in the broadcast. Defaults to the same as the internal id.
 
 - **encryption** (*Optional*, string): The encryption key to use when broadcasting. Default is no encryption. This may be

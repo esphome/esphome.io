@@ -52,7 +52,7 @@ pylontech:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](#config-id)): The id to use for this Pylontech component.
+- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this Pylontech component.
 - **uart_id** (*Optional*): The uart Bus ID
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 

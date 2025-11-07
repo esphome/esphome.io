@@ -42,7 +42,7 @@ sensor:
 
 ## Configuration variables
 
-- **haier_id** (**Required**, [ID](#config-id)): The id of haier climate component
+- **haier_id** (**Required**, [ID](/guides/configuration-types#config-id)): The id of haier climate component
 - **outdoor_temperature** (*Optional*): Temperature sensor for outdoor temperature.
   All options from [Sensor](/components/sensor).
 
