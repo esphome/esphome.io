@@ -11,7 +11,7 @@ The `tuya` component creates a serial connection to the Tuya MCU for platforms t
 
 {{< img src="tuya.png" alt="Image" width="40%" class="align-center" >}}
 
-The `tuya` serial component requires a [UART bus](#uart) to be configured.
+The `tuya` serial component requires a [UART bus](/components/uart) to be configured.
 Put the `tuya` component in the config and it will list the possible devices for you in the config log.
 
 ```yaml
@@ -126,7 +126,7 @@ tuya:
 - **sensor_datapoint** (**Required**, int): The datapoint id number of the sensor.
 - **datapoint_type** (**Required**, string): The datapoint type one of *raw*, *string*, *bool*, *int*, *uint*, *enum*,
   *bitmask* or *any*.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 ## See Also
 

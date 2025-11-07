@@ -78,10 +78,10 @@ pin_a:
   - `RESTORE_DEFAULT_ZERO` - (Default) Attempt to restore state and default to zero (0) if not possible to restore.
   - `ALWAYS_ZERO` - Always initialize the counter with value zero (0).
 
-- **on_clockwise** (*Optional*, [Automation](#automation)): Actions to be performed when
+- **on_clockwise** (*Optional*, [Automation](/automations)): Actions to be performed when
   the knob is turned clockwise. See [`on_clockwise` and `on_anticlockwise` Triggers](#sensor-rotary_encoder-triggers).
 
-- **on_anticlockwise** (*Optional*, [Automation](#automation)): Actions to be performed when
+- **on_anticlockwise** (*Optional*, [Automation](/automations)): Actions to be performed when
   the knob is turned anticlockwise. See [`on_clockwise` and `on_anticlockwise` Triggers](#sensor-rotary_encoder-triggers).
 
 - All other options from [Sensor](#config-sensor).

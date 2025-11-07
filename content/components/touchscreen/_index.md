@@ -66,13 +66,13 @@ touchscreen:
 
       (or right if `swap_xy` is specified) edge of the touchscreen.
 
-- **on_touch** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_touch** (*Optional*, [Automation](/automations)): An automation to perform
   when the touchscreen is touched. See [`on_touch` Trigger](#touchscreen-on_touch).
 
-- **on_update** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_update** (*Optional*, [Automation](/automations)): An automation to perform
   when the touchscreen is touched. See [`on_update` Trigger](#touchscreen-on_update).
 
-- **on_release** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_release** (*Optional*, [Automation](/automations)): An automation to perform
   when the touchscreen is no longer touched. See [`on_release` Trigger](#touchscreen-on_release).
 
 {{< anchor "touchscreen-touchpoint" >}}

@@ -43,13 +43,13 @@ Possible return values for the optional lambda:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the valve.
 
-- **open_action** (*Optional*, [Action](#config-action)): The action that should be performed when the remote
+- **open_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should be performed when the remote
   (like Home Assistant's frontend) requests the valve to be opened.
 
-- **close_action** (*Optional*, [Action](#config-action)): The action that should be performed when the remote
+- **close_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should be performed when the remote
   requests the valve to be closed.
 
-- **stop_action** (*Optional*, [Action](#config-action)): The action that should be performed when the remote
+- **stop_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should be performed when the remote
   requests the valve to be stopped.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode, any command sent to
@@ -67,7 +67,7 @@ Possible return values for the optional lambda:
 - **has_position** (*Optional*, boolean): Whether this valve will publish its position as a floating point number.
   By default (`false`  ), the valve only publishes OPEN/CLOSED position.
 
-- **position_action** (*Optional*, [Action](#config-action)): The action that should be performed when the remote
+- **position_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should be performed when the remote
   (like Home Assistant's frontend) requests the valve be set to a specific position. The desired position is available
   in the lambda in the `pos` variable. Requires `has_position` (above) to be set to `true`.
 
@@ -122,6 +122,6 @@ Configuration options:
 ## See Also
 
 - {{< docref "/components/valve" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/cookbook/garage-door" >}}
 - {{< apiref "template/valve/template_valve.h" "template/valve/template_valve.h" >}}

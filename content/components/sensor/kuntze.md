@@ -8,7 +8,7 @@ params:
 ---
 
 The `kuntze` component allows you to integrate the Kuntze water measurement
-instrument in ESPHome. It uses [UART](#uart) (ModBUS) for communication.
+instrument in ESPHome. It uses [UART](/components/uart) (ModBUS) for communication.
 
 Once configured you can use sensors as described below for your projects.
 
@@ -66,7 +66,7 @@ All sensors are *Optional* and support all other options from [Sensor](#config-s
 
 ## See Also
 
-- [UART Bus](#uart)
+- [UART Bus](/components/uart)
 - [Logger Component](#logger)
 - [Sensor](#config-sensor)
 - [Kuntze manuals](https://www.kuntze.com/en/downloads-2/)

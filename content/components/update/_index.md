@@ -42,7 +42,7 @@ update:
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
   not be exposed to the frontend (like Home Assistant). Specifying an `id` without a `name` will
 
-- **on_update_available** (*Optional*, [Action](#config-action)): An automation to perform when an update is available.
+- **on_update_available** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform when an update is available.
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
 
 ## Automations

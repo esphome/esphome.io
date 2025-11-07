@@ -22,7 +22,7 @@ let you retrieve detailed power consumption or power production.
 There is plenty of example on the web.
 
 As the communication with the Teleinformation is done using UART, you need to
-have an [UART bus](#uart) in your configuration with the `rx_pin`
+have an [UART bus](/components/uart) in your configuration with the `rx_pin`
 connected to the output of the optocoupler component. Additionally, you need to
 set the baud rate to 9600bps if counter is configured to work in standard
 mode or 1200bps in historical mode. To find out which mode you are using,
@@ -54,7 +54,7 @@ In teleinfo platform:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation or multiple hubs.

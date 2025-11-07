@@ -12,7 +12,7 @@ params:
 ## Supported devices
 
 The `ina2xx` sensor platform allows you to use family of Texas Instruments current and power
-sensors with ESPHome. Appropriate interface ([I²C Bus](#i2c) or [SPI Bus](#spi)) is
+sensors with ESPHome. Appropriate interface ([I²C Bus](/components/i2c) or [SPI Bus](/components/spi)) is
 requred to be set up in your configuration for this sensor to work.
 
 | Product                                               | Protocol    | Description                                            |
@@ -32,7 +32,7 @@ for shunt resistor temperature variance.
 
 ## Over I²C
 
-Use `ina2xx_i2c` component to connect INA228, INA237, or INA238 device over [I²C](#i2c) bus.
+Use `ina2xx_i2c` component to connect INA228, INA237, or INA238 device over [I²C](/components/i2c) bus.
 
 ```yaml
 # Example configuration entry for I²C
@@ -80,11 +80,11 @@ sensor:
   no compensation is done. Defaults to `0`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
-- All other options from [Sensor](#config-sensor) and [I²C device](#i2c).
+- All other options from [Sensor](#config-sensor) and [I²C device](/components/i2c).
 
 ## Over SPI
 
-Use `ina2xx_spi` component to connect INA229 or INA239 device over [SPI](#spi) bus.
+Use `ina2xx_spi` component to connect INA229 or INA239 device over [SPI](/components/spi) bus.
 
 ```yaml
 # Example configuration entry for SPI
@@ -130,7 +130,7 @@ sensor:
   no compensation is done. Defaults to `0`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
-- All other options from [Sensor](#config-sensor) and [SPI device](#spi).
+- All other options from [Sensor](#config-sensor) and [SPI device](/components/spi).
 
 ## Sensors
 

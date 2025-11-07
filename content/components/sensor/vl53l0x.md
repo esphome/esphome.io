@@ -20,7 +20,7 @@ well enough (see also section 5 of datasheet).
 
 {{< img src="vl53l0x.png" alt="Image" width="100.0%" class="align-center" >}}
 
-The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 - `VCC` connects to 3V3 (`3V3` will output 3.3V), or directly connect `VCC` to 3.3V
 - `GND` connects to ground

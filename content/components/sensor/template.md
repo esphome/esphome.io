@@ -112,5 +112,5 @@ sensor:
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/sensor/template_sensor.h" "template/sensor/template_sensor.h" >}}

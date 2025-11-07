@@ -28,7 +28,7 @@ with ESPHome. This component is only for LCDs that display individual characters
 
 `lcd_pcf8574` is for LCD displays with a PCF8574 GPIO expander module connected to all the data pins. This has the
 benefit that you only need to connect two data wires to the ESP instead of the six or ten as with the [lcd_gpio Component](#lcd-gpio).
-The communication happens via [I²C Bus](#i2c), you need to have an `i2c:` section in your configuration.
+The communication happens via [I²C Bus](/components/i2c), you need to have an `i2c:` section in your configuration.
 
 {{< img src="lcd-pcf8574.jpg" alt="Image" caption="LCD Display with a PCF8574 board attached on the back" width="75.0%" class="align-center" >}}
 
@@ -51,7 +51,7 @@ display:
 - **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`. If you're not
   sure, power the display up and just count them.
 
-- **address** (*Optional*, int): The [I²C](#i2c) address of the PCF8574 chip, defaults to `0x3F`.
+- **address** (*Optional*, int): The [I²C](/components/i2c) address of the PCF8574 chip, defaults to `0x3F`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 

@@ -105,7 +105,7 @@ use `tx_pin: GPIO2`. Any other combination of pins will result in use of a softw
 
 ## `uart.write` Action
 
-This [Action](#config-action) sends a defined UART signal to the given UART bus.
+This [Action](/automations/actions#config-action) sends a defined UART signal to the given UART bus.
 
 ```yaml
 on_...:
@@ -173,7 +173,7 @@ uart:
   - **delimiter** (*Optional*, string or list of bytes): Trigger after the specified sequence of bytes is
     detected in the communication.
 
-- **sequence** (*Optional*, [Action](#config-action)): Action(s) to perform for publishing debugging data.
+- **sequence** (*Optional*, [Action](/automations/actions#config-action)): Action(s) to perform for publishing debugging data.
   Defaults to an action that logs the bytes in hex format. The actions can make use of the following variables:
 
   - **direction**: `uart::UART_DIRECTION_RX` or `uart::UART_DIRECTION_TX`

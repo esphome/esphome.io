@@ -97,10 +97,10 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level (here the root one) is entered. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level is not displayed anymore.
   See [`on_leave`](#display_menu-on_leave).
 
@@ -178,10 +178,10 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level is entered. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu level is not displayed anymore.
   See [`on_leave`](#display_menu-on_leave).
 
@@ -244,14 +244,14 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
@@ -318,14 +318,14 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
@@ -374,14 +374,14 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
@@ -401,7 +401,7 @@ additional configuration.
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu item is clicked.
   See [`on_value`](#display_menu-on_value).
 
@@ -436,22 +436,22 @@ Configuration variables:
 
 Automations:
 
-- **on_enter** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_enter** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is activated. See [`on_enter`](#display_menu-on_enter).
 
-- **on_leave** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_leave** (*Optional*, [Automation](/automations)): An automation to perform
   when the editing mode is exited.
   See [`on_leave`](#display_menu-on_leave).
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when the value is changed.
   See [`on_value`](#display_menu-on_value).
 
-- **on_next** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_next** (*Optional*, [Automation](/automations)): An automation to perform
   when the user navigates to the next value.
   See [`on_next`](#display_menu-on_next).
 
-- **on_prev** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_prev** (*Optional*, [Automation](/automations)): An automation to perform
   when the user navigates to the previous value.
   See [`on_prev`](#display_menu-on_prev).
 
@@ -559,7 +559,7 @@ lcd_menu:
 
 ### `display_menu.up` Action
 
-This is an [Action](#config-action) for navigating up in a menu. The action
+This is an [Action](/automations/actions#config-action) for navigating up in a menu. The action
 is usually wired to an anticlockwise turn of a rotary encoder or to the upper
 button of the joystick.
 
@@ -579,7 +579,7 @@ Configuration variables:
 
 ### `display_menu.down` Action
 
-This is an [Action](#config-action) for navigating down in a menu. The action
+This is an [Action](/automations/actions#config-action) for navigating down in a menu. The action
 is usually wired to a clockwise turn of a rotary encoder or to the lower
 button of the joystick.
 
@@ -599,7 +599,7 @@ Configuration variables:
 
 ### `display_menu.left` Action
 
-This is an [Action](#config-action) usually wired to the left button
+This is an [Action](/automations/actions#config-action) usually wired to the left button
 of the joystick. In the `joystick` mode it is used to set the previous
 value or to decrement the numeric one; depending on the `immediate_edit`
 flag entering the edit mode is required or not. If used in the `rotary`
@@ -622,7 +622,7 @@ Configuration variables:
 
 ### `display_menu.right` Action
 
-This is an [Action](#config-action) usually wired to the right button
+This is an [Action](/automations/actions#config-action) usually wired to the right button
 of the joystick. In the `joystick` mode it is used to set the next
 value or to increment the numeric one; depending on the `immediate_edit`
 flag entering the edit mode is required or not. In both modes it can
@@ -644,7 +644,7 @@ Configuration variables:
 
 ### `display_menu.enter` Action
 
-This is an [Action](#config-action) for triggering a selected menu item, resulting
+This is an [Action](/automations/actions#config-action) for triggering a selected menu item, resulting
 in an action depending on the type of the item - entering a submenu, starting/stopping
 editing or triggering a command. The action is usually wired to a press button
 of a rotary encoder or to the center button of the joystick.
@@ -668,7 +668,7 @@ Configuration variables:
 
 ### `display_menu.show` Action
 
-This is an [Action](#config-action) for showing an inactive menu. The state
+This is an [Action](/automations/actions#config-action) for showing an inactive menu. The state
 of the menu remains unchanged, i.e. the menu level shown at the moment it was hidden
 is restored, as is the selected item. The following snippet shows the menu if it is
 inactive, otherwise triggers the selected item.
@@ -692,7 +692,7 @@ Configuration variables:
 
 ### `display_menu.hide` Action
 
-This is an [Action](#config-action) for hiding the menu. A hidden menu
+This is an [Action](/automations/actions#config-action) for hiding the menu. A hidden menu
 does not react to `draw()` and does not process navigation actions.
 
 ```yaml
@@ -714,7 +714,7 @@ Configuration variables:
 
 ### `display_menu.show_main` Action
 
-This is an [Action](#config-action) for showing the root level of the menu.
+This is an [Action](/automations/actions#config-action) for showing the root level of the menu.
 
 ```yaml
 lcd_menu:
@@ -735,7 +735,7 @@ Configuration variables:
 
 ### `display_menu.is_active` Condition
 
-This [Condition](#config-condition) checks if the given menu is active, i.e.
+This [Condition](/automations/actions#config-condition) checks if the given menu is active, i.e.
 shown on the display and processing navigation events.
 
 ```yaml

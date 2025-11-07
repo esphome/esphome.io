@@ -79,7 +79,7 @@ One of `id` or `name` is required.
 
 Automations:
 
-- **on_event** (*Optional*, [Automation](#automation)): An automation to perform when an event is triggered.
+- **on_event** (*Optional*, [Automation](/automations)): An automation to perform when an event is triggered.
 
 MQTT options:
 
@@ -104,7 +104,7 @@ event:
             ESP_LOGD("main", "Event %s triggered.", event_type.c_str());
 ```
 
-Configuration variables: see [Automation](#automation).
+Configuration variables: see [Automation](/automations).
 
 ### `event.trigger` Action
 

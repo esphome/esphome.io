@@ -39,7 +39,7 @@ light:
 
 ## `output.libretiny_pwm.set_frequency` Action
 
-This [Action](#config-action) allows you to manually change the frequency of a LibreTiny PWM
+This [Action](/automations/actions#config-action) allows you to manually change the frequency of a LibreTiny PWM
 channel at runtime. Use cases include controlling a passive buzzer (for pitch control).
 
 ```yaml

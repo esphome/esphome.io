@@ -14,7 +14,7 @@ The `sen5x` sensor platform allows you to use your Sensirion
 ([datasheet](https://sensirion.com/media/documents/6791EFA0/62A1F68F/Sensirion_Datasheet_Environmental_Node_SEN5x.pdf))
 sensors with ESPHome.
 
-The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 This sensor supports both UART and I²C communication. Only I²C communication is implemented in this component.
 
 {{< img src="sen54-web.png" alt="Image" width="100.0%" class="align-center" >}}
@@ -195,7 +195,7 @@ this time counter.
 
 ## `sen5x.start_fan_autoclean` Action
 
-This [action](#config-action) manually starts fan-cleaning.
+This [action](/automations/actions#config-action) manually starts fan-cleaning.
 
 ```yaml
 on_...:

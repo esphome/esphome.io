@@ -98,18 +98,18 @@ sensor:
 
 Automations:
 
-- **on_ble_advertise** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_ble_advertise** (*Optional*, [Automation](/automations)): An automation to perform
   when a Bluetooth advertising is received. See [`on_ble_advertise` Trigger](#esp32_ble_tracker-on_ble_advertise).
 
-- **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](#automation)): An automation to
+- **on_ble_manufacturer_data_advertise** (*Optional*, [Automation](/automations)): An automation to
   perform when a Bluetooth advertising with manufacturer data is received. See
   [`on_ble_manufacturer_data_advertise` Trigger](#esp32_ble_tracker-on_ble_manufacturer_data_advertise).
 
-- **on_ble_service_data_advertise** (*Optional*, [Automation](#automation)): An automation to
+- **on_ble_service_data_advertise** (*Optional*, [Automation](/automations)): An automation to
   perform when a Bluetooth advertising with service data is received. See
   [`on_ble_service_data_advertise` Trigger](#esp32_ble_tracker-on_ble_service_data_advertise).
 
-- **on_scan_end** (*Optional*, [Automation](#automation)): An automation to perform when
+- **on_scan_end** (*Optional*, [Automation](/automations)): An automation to perform when
   a BLE scan has completed (the duration of the scan). This works with continuous set to true or false.
 
 ## ESP32 Bluetooth Low Energy Tracker Automation
@@ -149,7 +149,7 @@ esp32_ble_tracker:
 #### Configuration variables
 
 - **mac_address** (*Optional*, list of MAC Address): The MAC address to filter for this automation.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "esp32_ble_tracker-on_ble_manufacturer_data_advertise" >}}
 
@@ -179,7 +179,7 @@ esp32_ble_tracker:
 
 - **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
 - **manufacturer_id** (**Required**, string): 16 bit, 32 bit, or 128 bit BLE Manufacturer ID.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "esp32_ble_tracker-on_ble_service_data_advertise" >}}
 
@@ -206,7 +206,7 @@ esp32_ble_tracker:
 
 - **mac_address** (*Optional*, MAC Address): The MAC address to filter for this automation.
 - **service_uuid** (**Required**, string): 16 bit, 32 bit, or 128 bit BLE Service UUID.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 ### `on_scan_end` Trigger
 
@@ -226,7 +226,7 @@ esp32_ble_tracker:
 
 - None
 
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 ### `esp32_ble_tracker.start_scan` Action
 

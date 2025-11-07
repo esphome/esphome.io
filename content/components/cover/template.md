@@ -45,16 +45,16 @@ Possible return values for the optional lambda:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state/position of the cover.
 
-- **open_action** (*Optional*, [Action](#config-action)): The action that should
+- **open_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover to be opened.
 
-- **close_action** (*Optional*, [Action](#config-action)): The action that should
+- **close_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote requests the cover to be closed.
 
-- **stop_action** (*Optional*, [Action](#config-action)): The action that should
+- **stop_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote requests the cover to be stopped.
 
-- **toggle_action** (*Optional*, [Action](#config-action)): The action that should
+- **toggle_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote requests to toggle the the cover.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,
@@ -68,14 +68,14 @@ Possible return values for the optional lambda:
 - **has_position** (*Optional*, boolean): Whether this cover will publish its position as a floating point number.
   By default (`false`  ), the cover only publishes OPEN/CLOSED position.
 
-- **tilt_action** (*Optional*, [Action](#config-action)): The action that should
+- **tilt_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover be set to a specific
   tilt position. The desired tilt is available in the lambda in the `tilt` variable.
 
 - **tilt_lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current tilt position of the cover.
 
-- **position_action** (*Optional*, [Action](#config-action)): The action that should
+- **position_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the cover be set to a specific
   position. The desired position is available in the lambda in the `pos` variable.
   Used only when `has_position` is set to `true`.
@@ -135,6 +135,6 @@ Configuration options:
 ## See Also
 
 - {{< docref "/components/cover" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/cookbook/garage-door" >}}
 - {{< apiref "template/cover/template_cover.h" "template/cover/template_cover.h" >}}

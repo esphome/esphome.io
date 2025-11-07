@@ -24,7 +24,7 @@ The various sub-components implement some of the Modbus functions below (dependi
 | 15 | Write Multiple Coils |
 | 16 | Write Multiple Registers |
 
-Modbus RTU requires a [UART Bus](#uart) to communicate.
+Modbus RTU requires a [UART Bus](/components/uart) to communicate.
 
 ```yaml
 # Example configuration entry
@@ -38,7 +38,7 @@ modbus:
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 - **flow_control_pin** (*Optional*, [Pin](#config-pin)): The pin used to switch flow control.
@@ -64,5 +64,5 @@ modbus:
 - {{< docref "/components/select/modbus_controller" >}}
 - {{< docref "/components/text_sensor/modbus_controller" >}}
 - [Modbus RTU Protocol Description](https://www.modbustools.com/modbus.html)
-- [UART Bus](#uart)
+- [UART Bus](/components/uart)
 - {{< apiref "modbus/modbus.h" "modbus/modbus.h" >}}

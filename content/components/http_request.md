@@ -78,13 +78,13 @@ http_request:
 
 ## Actions
 
-The `http_request` component supports a number of [actions](#config-action) that can be used to send requests.
+The `http_request` component supports a number of [actions](/automations/actions#config-action) that can be used to send requests.
 
 {{< anchor "http_request-get_action" >}}
 
 ### `http_request.get` Action
 
-This [action](#config-action) sends a GET request.
+This [action](/automations/actions#config-action) sends a GET request.
 
 ```yaml
 on_...:
@@ -114,14 +114,14 @@ on_...:
 - **max_response_buffer_size** (*Optional*, integer): The maximum buffer size to be used to store the response.
   Defaults to `1 kB`.
 
-- **on_response** (*Optional*, [Automation](#automation)): An automation to perform after the request is received.
-- **on_error** (*Optional*, [Automation](#automation)): An automation to perform if the request cannot be completed.
+- **on_response** (*Optional*, [Automation](/automations)): An automation to perform after the request is received.
+- **on_error** (*Optional*, [Automation](/automations)): An automation to perform if the request cannot be completed.
 
 {{< anchor "http_request-post_action" >}}
 
 ### `http_request.post` Action
 
-This [action](#config-action) sends a POST request.
+This [action](/automations/actions#config-action) sends a POST request.
 
 ```yaml
 on_...:
@@ -147,7 +147,7 @@ on_...:
 
 ### `http_request.send` Action
 
-This [action](#config-action) sends a request.
+This [action](/automations/actions#config-action) sends a request.
 
 ```yaml
 on_...:

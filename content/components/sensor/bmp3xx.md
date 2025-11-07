@@ -9,13 +9,13 @@ params:
 
 The `bmp3xx` sensor platform allows you to use your BMP388 or BMP390
 ([datasheet](https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bmp390-ds002.pdf), [BMP390 product page](https://www.bosch-sensortec.com/products/environmental-sensors/pressure-sensors/bmp390/)) temperature and pressure sensors with ESPHome.
-Either [I²C](#i2c) bus or [SPI](#spi) bus is required to be set up in your configuration for this sensor to work.
+Either [I²C](/components/i2c) bus or [SPI](/components/spi) bus is required to be set up in your configuration for this sensor to work.
 
 {{< img src="bmp388.jpg" alt="Image" caption="BMP388/BMP390 Temperature and Pressure Sensor." width="50.0%" class="align-center" >}}
 
 ## Over I²C
 
-The `bmp3xx_i2c` component allows you to use the device over [I²C](#i2c) interface.
+The `bmp3xx_i2c` component allows you to use the device over [I²C](/components/i2c) interface.
 
 ```yaml
 # Example configuration entry for I2C connection
@@ -57,7 +57,7 @@ sensor:
 
 ## Over SPI
 
-The `bmp3xx_spi` component allows you to use the device over [SPI](#spi) interface.
+The `bmp3xx_spi` component allows you to use the device over [SPI](/components/spi) interface.
 
 ```yaml
 # Example configuration entry for SPI connection

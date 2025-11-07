@@ -12,7 +12,7 @@ The `pmsx003` sensor platform allows you to use your Plantower PMS5003, PMS7003,
 sensors with ESPHome.
 
 As the communication with the PMSX003 is done using UART, you need
-to have an [UART bus](#uart) in your configuration with the `rx_pin` connected to the SEND/TX pin
+to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the SEND/TX pin
 (may also be called the RX pin, depending on the model) of the PMS. Additionally, you need to set the baud rate to 9600.
 
 This platform supports three sensor types, which you need to specify using the `type:` configuration
@@ -93,7 +93,7 @@ sensor:
 - **update_interval** (*Optional*): Amount of time to wait between generating measurements. If this is longer than 30
   seconds, and if `tx_pin` is set in the UART configuration, the fan will be spun down between measurements. Default to `0s` (forward data as it's coming in from the sensor).
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 ## See Also

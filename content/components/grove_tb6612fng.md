@@ -110,5 +110,5 @@ on_...:
 
 ### See Also
 
-- [I²C Bus](#i2c)
+- [I²C Bus](/components/i2c)
 - {{< docref "switch/gpio" >}}

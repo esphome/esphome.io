@@ -22,7 +22,7 @@ that uses the Kamstrup Meter Protocol for communication.
 This component can be used to request measurements from the meter using
 the optical interface.
 
-A [UART bus](#uart) is required to communicate with the meter.
+A [UART bus](/components/uart) is required to communicate with the meter.
 
 ## Configuration
 
@@ -79,7 +79,7 @@ Configuration variables:
 >
 > - The uart baudrate has to be set to 1200 baud and the stop bits to 2.
 >   It is recommended to use pins associated with a hardware UART.
->   For more information regarding uart configuration, refer to [UART](#uart).
+>   For more information regarding uart configuration, refer to [UART](/components/uart).
 >
 > - Only the provided sensors will appear as sensor, and only those are read from
 >   the meter.

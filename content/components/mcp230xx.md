@@ -133,7 +133,7 @@ binary_sensor:
 The MCP23017 component allows you to use MCP23017 I/O expanders
 ([datasheet](http://ww1.microchip.com/downloads/en/devicedoc/20001952c.pdf),
 [Adafruit](https://www.adafruit.com/product/732)) in ESPHome.
-It uses the [I²C Bus](#i2c) for communication.
+It uses the [I²C Bus](/components/i2c) for communication.
 
 Once configured, you can use any of the 16 pins as
 pins for your projects. Within ESPHome they emulate a real internal GPIO pin
@@ -194,7 +194,7 @@ binary_sensor:
 
 ## See Also
 
-- [I²C Bus](#i2c)
+- [I²C Bus](/components/i2c)
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
 - {{< apiref "API Reference (MCP23008)" "mcp23008/mcp23008.h" >}}

@@ -27,7 +27,7 @@ This driver has been tested with the following displays:
 ## Usage
 
 This component requires an ESP32 and the use of
-ESP-IDF. PSRAM is a requirement due to the size of the display buffer. A [quad SPI bus](#spi) interface must be configured.
+ESP-IDF. PSRAM is a requirement due to the size of the display buffer. A [quad SPI bus](/components/spi) interface must be configured.
 
 {{< img src="t4-s3.jpg" alt="Image" caption="Lilygo T4-S3" width="75.0%" class="align-center" >}}
 

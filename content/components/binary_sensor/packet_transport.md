@@ -54,4 +54,4 @@ configured.
 
 - {{< docref "/components/packet_transport" >}}
 - {{< docref "/components/sensor" >}}
-- [Automation](#automation)
+- [Automation](/automations)

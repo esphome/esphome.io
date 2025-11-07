@@ -10,7 +10,7 @@ params:
 The `ezo_pmp` component allows you to use an Atlas Scientific Peristaltic Pump with ESPHome.
 Both the EZO-PMP ([datasheet](https://files.atlas-scientific.com/EZO_PMP_Datasheet.pdf))
 and EZO-PMP-L ([datasheet](https://files.atlas-scientific.com/EZO_PMP_L_Datasheet.pdf)) are supported.
-The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 > [!NOTE]
 > This component will not be directly controllable in the Home Assistant front-end automatically because
@@ -240,7 +240,7 @@ text_sensor:
 
 ### `ezo_pmp.dose_continuously` Action
 
-Use this action in an [automations](#automation) to have the peristaltic pump dose continuously
+Use this action in an [automations](/automations) to have the peristaltic pump dose continuously
 at the [Maximum Flow Rate](#ezo_pmp-max_flow_rate_sensor). The pump will automatically stop after 20 days
 of running in continuous mode.
 
@@ -259,7 +259,7 @@ on_...:
 
 ### `ezo_pmp.dose_volume` Action
 
-Use this action in an [automations](#automation) to have the peristaltic pump dose an specific volume (in milliliters)
+Use this action in an [automations](/automations) to have the peristaltic pump dose an specific volume (in milliliters)
 at the [Maximum Flow Rate](#ezo_pmp-max_flow_rate_sensor). If the volume is negative the pump will run backwards.
 
 ```yaml
@@ -285,7 +285,7 @@ on_...:
 
 ### `ezo_pmp.dose_volume_over_time` Action
 
-Use this action in an [automations](#automation) to have the peristaltic pump dose an specific `volume` (in milliliters)
+Use this action in an [automations](/automations) to have the peristaltic pump dose an specific `volume` (in milliliters)
 over the provided `duration` (in minutes). At the end of the time period the pump will have dosed the specified `volume`.
 If the volume is negative the pump will run backwards.
 
@@ -316,7 +316,7 @@ on_...:
 
 ### `ezo_pmp.dose_with_constant_flow_rate` Action
 
-Use this action in an [automations](#automation) to have the peristaltic pump dose an specific `volume` (in milliliters) every minute
+Use this action in an [automations](/automations) to have the peristaltic pump dose an specific `volume` (in milliliters) every minute
 for the provided `duration` (in minutes). At the end of the time period the pump will have dosed the specified `volume` times the `duration`.
 If the volume is negative the pump will run backwards.
 

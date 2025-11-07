@@ -33,12 +33,12 @@ sensor:
 
 Advanced options:
 
-- **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](#uart) you wish to use for this sensor.
+- **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](/components/uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
 
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- [UART Bus](#uart)
+- [UART Bus](/components/uart)
 - {{< docref "template/" >}}
 - {{< apiref "hrxl_maxsonar_wr/hrxl_maxsonar_wr.h" "hrxl_maxsonar_wr/hrxl_maxsonar_wr.h" >}}

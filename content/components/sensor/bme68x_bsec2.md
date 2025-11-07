@@ -18,7 +18,7 @@ Quality (IAQ) measurement derived from the gas resistance sensor's response to s
 (VOCs). The BSEC software also provides estimated values for CO₂ and Breath Volatile Organic Compounds (b-VOC) using
 a correlation between VOC and CO₂ in a human's exhaled breath.
 
-The [I²C](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 > [!NOTE]
 > The BSEC2 library is only available for use after accepting its software license agreement. By enabling this
@@ -44,7 +44,7 @@ bme68x_bsec2_i2c:
 - **address** (_Optional_, int): Manually specify the I²C address of the sensor. Defaults to `0x76`. The sensor can
   also be configured to use `0x77`.
 
-- **i2c_id** (**Optional**, [ID](#config-id)): The ID of the [I²C bus](#i2c) the bme68x is connected to.
+- **i2c_id** (**Optional**, [ID](#config-id)): The ID of the [I²C bus](/components/i2c) the bme68x is connected to.
 - **model** (_Required_, string): The model of the connected sensor; either `BME680` or `BME688`.
 - **algorithm_output** (_Optional_, string): The output of the BSEC2 algorithm. Either `classification` (default) or
   `regression`. _Only valid when model is BME688._

@@ -59,7 +59,7 @@ Every widget has a parent object where it is created. For example, if a label is
 
 Pages in ESPHome are implemented as LVGL screens, which are special objects which have no parent. There is always one active page on a display.
 
-Widgets can be assigned with an [ID](#config-id) so that they can be referenced in [automations](#automation).
+Widgets can be assigned with an [ID](#config-id) so that they can be referenced in [automations](/automations).
 
 Some widgets integrate also as native ESPHome components:
 

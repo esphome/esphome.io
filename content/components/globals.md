@@ -58,7 +58,7 @@ Within lambdas globals don’t have a state attribute, just a value. Note in the
 
 ## `globals.set` Action
 
-This [Action](#config-action) allows you to change the value of a `global`
+This [Action](/automations/actions#config-action) allows you to change the value of a `global`
 variable without having to use the lambda syntax.
 
 ```yaml

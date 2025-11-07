@@ -34,7 +34,7 @@ Possible return values of the lambda:
 - `return false;` if the binary sensor should be OFF.
 - `return {};` if the state is not known. The last known state will be maintained.
 
-As an alternative to using a lambda you may use ESPHome [condition expressions](#config-condition):
+As an alternative to using a lambda you may use ESPHome [condition expressions](/automations/actions#config-condition):
 
 ```yaml
 # Example configuration entry
@@ -52,7 +52,7 @@ binary_sensor:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
    C++ Lambda to be evaluated repeatedly to get the current state of the binary sensor.
 
-- **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine the value of the binary sensor. `lambda` and `condition` may not both be present in the configuration.
+- **condition** (*Optional*, [Condition](/automations/actions#config-condition)): The condition to check to determine the value of the binary sensor. `lambda` and `condition` may not both be present in the configuration.
 - All other options from [Binary Sensor](#config-binary_sensor).
 
 {{< anchor "binary_sensor-template-publish_action" >}}
@@ -98,5 +98,5 @@ Configuration options:
 
 - {{< docref "/components/binary_sensor" >}}
 - {{< docref "/components/sensor/template" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/binary_sensor/template_binary_sensor.h" "template/binary_sensor/template_binary_sensor.h" >}}

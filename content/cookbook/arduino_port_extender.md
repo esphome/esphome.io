@@ -37,7 +37,7 @@ esphome:
       - arduino_port_expander.h
 ```
 
-Setup your [I²C Bus](#i2c) and assign it an `id`  :
+Setup your [I²C Bus](/components/i2c) and assign it an `id`  :
 
 ```yaml
 i2c:

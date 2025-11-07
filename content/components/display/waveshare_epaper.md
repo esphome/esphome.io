@@ -24,7 +24,7 @@ Currently, most displays managed by Esphome are single-color E-Ink displays; but
 
 {{< img src="waveshare_epaper_7color_acep-full.jpg" alt="Image" caption="Waveshare E-Paper 7.3 Inch ACeP 7-Color E-Paper Display." width="75.0%" class="align-center" >}}
 
-The communication ESPHome has chosen to use for this integration is 4-wire [SPI](#spi), as it's the most stable and high-speed. So you need to make sure your board is set to the 4-wire SPI mode and have an `spi:` section in your
+The communication ESPHome has chosen to use for this integration is 4-wire [SPI](/components/spi), as it's the most stable and high-speed. So you need to make sure your board is set to the 4-wire SPI mode and have an `spi:` section in your
 configuration.
 
 | **E-Paper Pin**    | **ESP Pin** | **ESPHome Option** |
@@ -154,7 +154,7 @@ lambda: |-
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`, use `never` to only manually update the screen via `component.update`.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
-- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
+- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.

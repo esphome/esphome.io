@@ -94,7 +94,7 @@ on_...:
 
 ### `sensor.duty_time.is_running` / `sensor.duty_time.is_not_running` Condition
 
-This [Condition](#config-condition) checks if the `duty_time` counter is currently running (or suspended). In lambdas, you may use the `is_running()` method.
+This [Condition](/automations/actions#config-condition) checks if the `duty_time` counter is currently running (or suspended). In lambdas, you may use the `is_running()` method.
 
 ```yaml
 # In some trigger:
@@ -109,6 +109,6 @@ on_...:
 
 - [Base Sensor Configuration](#config-sensor)
 - [Templates](#config-lambda)
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< docref "/components/binary_sensor" >}}
 - {{< apiref "duty_time/duty_time_sensor.h" "duty_time/duty_time_sensor.h" >}}

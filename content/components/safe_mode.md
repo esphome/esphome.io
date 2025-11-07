@@ -38,10 +38,10 @@ safe_mode:
 - **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when in safe mode.
    Defaults to `5min`.
 
-- **on_safe_mode** (*Optional*, [Automation](#automation)): An action to be performed once when safe mode is invoked.
+- **on_safe_mode** (*Optional*, [Automation](/automations)): An action to be performed once when safe mode is invoked.
 
 > [!WARNING]
-> The `on_safe_mode` [automation](#automation) is intended for use by recovery actions **only**.
+> The `on_safe_mode` [automation](/automations) is intended for use by recovery actions **only**.
 >
 > As mentioned above, in safe mode, all components are disabled except serial logging, network (Wi-Fi or Ethernet)
 > and OTA component(s).

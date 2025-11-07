@@ -10,7 +10,7 @@ params:
 The `ags10` sensor platform VOC sensor allows you to use your ASAIR AGS10
 ([datasheet](http://www.aosong.com/userfiles/files/Datasheet%20AGS10.pdf),
 [ASAIR](http://www.aosong.com/en/products-86.html)) sensors with
-ESPHome. The [I²C Bus](#i2c) is
+ESPHome. The [I²C Bus](/components/i2c) is
 required to be set up in your configuration for this sensor to work.
 
 > [!NOTE]

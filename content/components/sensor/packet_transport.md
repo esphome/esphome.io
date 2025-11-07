@@ -48,4 +48,4 @@ configured.
 - {{< docref "/components/packet_transport" >}}
 - {{< docref "/components/binary_sensor" >}}
 - {{< docref "/components/udp" >}}
-- [Automation](#automation)
+- [Automation](/automations)

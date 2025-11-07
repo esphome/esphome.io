@@ -127,7 +127,7 @@ All [graphical display configuration](#display-configuration) options are availa
 
 - **init_sequence** (*Optional*): Allows custom initialisation sequences to be added. See below for more information.
 
-To modify the SPI setting see [SPI bus](#spi). The default **data_rate** is set to `40MHz` and the **spi_mode** mode is `MODE0` but some displays require `MODE3` (*).
+To modify the SPI setting see [SPI bus](/components/spi). The default **data_rate** is set to `40MHz` and the **spi_mode** mode is `MODE0` but some displays require `MODE3` (*).
 
 **Note:** The maximum achievable data rate will depend on the chip type (e.g. ESP32 vs ESP32-S3) the pins used (on ESP32 using the default SPI pins allows higher rates) and the connection type (on-board connections will support higher rates than long cables or DuPont wires.) If in doubt, start with a low speed and test higher rates to find what works. A MISO pin should preferably not be specified, as this will limit the maximum rate in some circumstances, and is not required if the SPI bus is used only for the display.
 

@@ -13,7 +13,7 @@ The `seeed_mr24hpc1` platform allows you to use Seeed Studio 24GHz mmWave Sensor
 Human Static Presence Module Lite ([Product Page](https://www.seeedstudio.com/24GHz-mmWave-Sensor-Human-Static-Presence-Module-Lite-p-5524.html)) and
 Seeed Studio mmWave Human Detection Sensor Kit ([Product Page](https://www.seeedstudio.com/mmWave-Human-Detection-Sensor-Kit-p-5773.html)) with ESPHome.
 
-The [UART](#uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`.
+The [UART](/components/uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`.
 You can use the ESP32 software or hardware serial to use this MR24HPC1, its default baud rate is 115200.
 
 {{< img src="seeed-mr24hpc1.jpg" alt="Image" caption="Seeed Studio 24GHz mmWave Sensor - Human Static Presence Module Lite" width="50.0%" class="align-center" >}}
@@ -27,7 +27,7 @@ seeed_mr24hpc1:
 
 ### Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this {{< docref "seeed_mr24hpc1/" >}} component if you need multiple components.

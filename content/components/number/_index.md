@@ -67,10 +67,10 @@ Configuration variables:
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#number-on_value).
 
-- **on_value_range** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value_range** (*Optional*, [Automation](/automations)): An automation to perform
   when a published value transition from outside to a range to inside. See [`on_value_range`](#number-on_value_range).
 
 MQTT Options:
@@ -100,7 +100,7 @@ number:
             red: !lambda "return x/255;"
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "number-on_value_range" >}}
 
@@ -130,7 +130,7 @@ Configuration variables:
 
 - **above** (*Optional*, float): The minimum for the trigger.
 - **below** (*Optional*, float): The maximum for the trigger.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "number-in_range_condition" >}}
 
@@ -162,7 +162,7 @@ Configuration variables:
 
 ### `number.set` Action
 
-This is an [Action](#config-action) for setting a number state.
+This is an [Action](/automations/actions#config-action) for setting a number state.
 
 ```yaml
 - number.set:
@@ -180,7 +180,7 @@ Configuration variables:
 
 ### `number.increment` Action
 
-This is an [Action](#config-action) for incrementing a number value by its
+This is an [Action](/automations/actions#config-action) for incrementing a number value by its
 step size (default: 1).
 
 ```yaml
@@ -204,7 +204,7 @@ Configuration variables:
 
 ### `number.decrement` Action
 
-This is an [Action](#config-action) for decrementing a number value by its
+This is an [Action](/automations/actions#config-action) for decrementing a number value by its
 step size (default: 1).
 
 ```yaml
@@ -228,7 +228,7 @@ Configuration variables:
 
 ### `number.to_min` Action
 
-This is an [Action](#config-action) setting a number to its minimum value, given
+This is an [Action](/automations/actions#config-action) setting a number to its minimum value, given
 a number component that has a minimum value defined for it.
 
 ```yaml
@@ -247,7 +247,7 @@ Configuration variables:
 
 ### `number.to_max` Action
 
-This is an [Action](#config-action) setting a number to its maximum value, given
+This is an [Action](/automations/actions#config-action) setting a number to its maximum value, given
 a number component that has a maximum value defined for it.
 
 ```yaml
@@ -266,7 +266,7 @@ Configuration variables:
 
 ### `number.operation` Action
 
-This is an [Action](#config-action) that can be used to perform an operation
+This is an [Action](/automations/actions#config-action) that can be used to perform an operation
 on a number component (set to minimum or maximum value, decrement, increment),
 using a generic templatable action call.
 

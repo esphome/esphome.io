@@ -9,7 +9,7 @@ params:
 
 The `liygo_t5_47` touchscreen platform allows using the touchscreen controller
 for the Lilygo T5 4.7" e-Paper Display with ESPHome.
-The [I²C](#i2c) is required to be set up in your configuration for this touchscreen to work.
+The [I²C](/components/i2c) is required to be set up in your configuration for this touchscreen to work.
 
 ```yaml
 # Example configuration entry

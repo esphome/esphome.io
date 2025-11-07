@@ -16,7 +16,7 @@ sensors with ESPHome.
 
 The Zio Ultrasonic Distance Sensor is an ultrasonic distance sensor based on the HC-SR04 sensor. Unlike the {{< docref "/components/sensor/ultrasonic" "Ultrasonic Distance Sensor component" >}}, measurements are read over the I²C bus.
 
-To use the sensor, first set up an [I²C Bus](#i2c) and connect the sensor to the specified pins.
+To use the sensor, first set up an [I²C Bus](/components/i2c) and connect the sensor to the specified pins.
 
 ```yaml
 # Example configuration entry

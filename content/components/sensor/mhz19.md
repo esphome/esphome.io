@@ -14,7 +14,7 @@ The CO_2 measurement also works with the MH-Z16 and MH-Z14 sensors.
 {{< img src="mhz19-full.jpg" alt="Image" caption="MH-Z19 CO_2 and Temperature Sensor." width="50.0%" class="align-center" >}}
 
 As the communication with the MH-Z19 is done using UART, you need
-to have an [UART bus](#uart) in your configuration with the `rx_pin` connected to the TX pin of the
+to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the TX pin of the
 MH-Z19 and the `tx_pin` connected to the RX Pin of the MH-Z19 (it's switched because the
 TX/RX labels are from the perspective of the MH-Z19). Additionally, you need to set the baud rate to 9600.
 
@@ -40,7 +40,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for actions.
@@ -59,7 +59,7 @@ sensor:
 
 ## `mhz19.calibrate_zero` Action
 
-This [action](#config-action) executes zero point calibration command on the sensor with the given ID.
+This [action](/automations/actions#config-action) executes zero point calibration command on the sensor with the given ID.
 
 If you want to execute zero point calibration, the MH-Z19 sensor must work in stable gas environment (400ppm)
 for over 20 minutes and you execute this function.
@@ -84,7 +84,7 @@ api:
 
 ## `mhz19.abc_enable` Action
 
-This [action](#config-action) enables automatic baseline calibration on the sensor with the given ID.
+This [action](/automations/actions#config-action) enables automatic baseline calibration on the sensor with the given ID.
 
 ```yaml
 on_...:
@@ -96,7 +96,7 @@ on_...:
 
 ## `mhz19.abc_disable` Action
 
-This [action](#config-action) disables automatic baseline calibration on the sensor with the given ID.
+This [action](/automations/actions#config-action) disables automatic baseline calibration on the sensor with the given ID.
 
 ```yaml
 on_...:

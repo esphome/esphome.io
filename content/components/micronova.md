@@ -7,9 +7,9 @@ params:
 ---
 
 The MicroNova component allows you to integrate a pellet stove with a MicroNova board in ESPHome.
-It uses [UART](#uart) for communication.
+It uses [UART](/components/uart) for communication.
 
-The [UART](#uart) must be configured with a baud rate 1200, 8 data bits, 2 stop bits, no parity, no flow control.
+The [UART](/components/uart) must be configured with a baud rate 1200, 8 data bits, 2 stop bits, no parity, no flow control.
 
 > [!WARNING]
 > MicroNova bords come in various flavours. This code is only tested on an ExtraFlame Ketty Evo 2.0 stove. The protocol is not

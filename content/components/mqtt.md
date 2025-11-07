@@ -118,16 +118,16 @@ mqtt:
   to keep the MQTT socket alive, decreasing this can help with overall stability due to more
   WiFi traffic with more pings. Defaults to 15 seconds.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection
   to the broker is established.
 
-- **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection
   to the broker is dropped.
 
-- **on_message** (*Optional*, [Automation](#automation)): An action to be
+- **on_message** (*Optional*, [Automation](/automations)): An action to be
   performed when a message on a specific MQTT topic is received. See [`on_message` Trigger](#mqtt-on_message).
 
-- **on_json_message** (*Optional*, [Automation](#automation)): An action to be
+- **on_json_message** (*Optional*, [Automation](/automations)): An action to be
   performed when a JSON message on a specific MQTT topic is received. See [`on_json_message` Trigger](#mqtt-on_json_message).
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
@@ -803,7 +803,7 @@ on_...:
 
 ### `mqtt.connected` Condition
 
-This [Condition](#config-condition) checks if the MQTT client is currently connected to
+This [Condition](/automations/actions#config-condition) checks if the MQTT client is currently connected to
 the MQTT broker.
 
 ```yaml

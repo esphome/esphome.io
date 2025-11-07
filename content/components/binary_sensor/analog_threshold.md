@@ -49,5 +49,5 @@ binary_sensor:
 
 - {{< docref "/components/binary_sensor" >}}
 - {{< docref "/components/sensor" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "analog_threshold/analog_threshold_binary_sensor.h" "analog_threshold/analog_threshold_binary_sensor.h" >}}

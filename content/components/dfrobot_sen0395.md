@@ -249,7 +249,7 @@ on_...:
 
 ## See Also
 
-- [UART bus](#uart)
+- [UART bus](/components/uart)
 - [Binary Sensor](#config-binary_sensor)
 - [ID](#config-id)
 - [DFRobot mmWave Radar Wiki page](https://wiki.dfrobot.com/mmWave_Radar_Human_Presence_Detection_SKU_SEN0395)

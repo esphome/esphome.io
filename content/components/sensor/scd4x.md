@@ -9,7 +9,7 @@ params:
 
 The `scd4x` sensor platform allows you to use your Sensirion SCD4X CO₂
 ([datasheet](https://sensirion.com/media/documents/48C4B7FB/67FE0194/CD_DS_SCD4x_Datasheet_D1.pdf)) sensors with ESPHome.
-The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 {{< img src="scd4x.jpg" alt="Image" width="80.0%" class="align-center" >}}
 
@@ -81,7 +81,7 @@ sensor:
 
 ## `perform_forced_calibration` Action
 
-This [action](#config-action) manually calibrates the sensor to the provided value in ppm.
+This [action](/automations/actions#config-action) manually calibrates the sensor to the provided value in ppm.
 Operate the SCD4x in the operation mode later used in normal sensor operation (periodic measurement, low power periodic measurement or single shot) for > 3 minutes in an environment with homogenous and constant CO2 concentration before performing a forced recalibration.
 As of March 2025, the global monthly mean CO₂ concentration is 426 ppm.
 
@@ -113,7 +113,7 @@ api:
 
 ## `factory_reset` Action
 
-This [action](#config-action) triggers a factory reset of the sensor. Calibration settings are restored from factory settings.
+This [action](/automations/actions#config-action) triggers a factory reset of the sensor. Calibration settings are restored from factory settings.
 
 ```yaml
 on_...:

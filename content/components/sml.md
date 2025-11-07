@@ -29,7 +29,7 @@ There are plenty of other examples and ready to buy solutions on the web.
 
 ## Component/Hub
 
-As the communciation with the sensor is done using UART, you need to have the [UART bus](#uart)
+As the communciation with the sensor is done using UART, you need to have the [UART bus](/components/uart)
 in your configuration. The interface parameters should be set to 9600/8N1 or 9600/7E1 depending on your
 smart meter. If you see checksum errors in the log try changing the interface parameter.
 
@@ -50,7 +50,7 @@ sml:
 ### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 ## Sensor
@@ -103,7 +103,7 @@ text_sensor:
 
 ## Automations
 
-- **on_data** (*Optional*, [Automation](#automation)): An automation to perform when a
+- **on_data** (*Optional*, [Automation](/automations)): An automation to perform when a
   SML message is received. See [`on_data` Trigger](#sml-on-data).
 
 {{< anchor "sml-on-data" >}}

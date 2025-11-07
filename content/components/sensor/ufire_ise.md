@@ -8,7 +8,7 @@ params:
 ---
 
 The `ufire_ise` sensor platform allows you to use your uFire ISE pH sensor with
-ESPHome. The [I²C Bus](#i2c) is
+ESPHome. The [I²C Bus](/components/i2c) is
 required to be set up in your configuration for this sensor to work.
 It required also to have an temperature sensor in the liquid tank; this can
 be on the same board or external sensor linked to the uFire ISE pH configuration.

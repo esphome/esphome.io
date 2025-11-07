@@ -13,7 +13,7 @@ is *only* for the digit "matrix" display, for the 7 segment display see {{< docr
 {{< img src="max7219digit.png" alt="Image" caption="MAX7219 Digit Display." width="75.0%" class="align-center" >}}
 
 As the communication with the MAX7219 Digit is done using SPI for this component, you need
-to have an [SPI bus](#spi) in your configuration with both the **mosi_pin** set (miso_pin is not required).
+to have an [SPI bus](/components/spi) in your configuration with both the **mosi_pin** set (miso_pin is not required).
 Connect VCC to 3.3V (the manufacturer recommends 4+ V, but 3.3V seems to work fine), DIN to your `mosi_pin` and
 CS to your set `cs_pin` and finally GND to GND.
 
@@ -67,7 +67,7 @@ display:
   MAX7219. See [Rendering Lambda](#display-max7219digit_lambda) for more information.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
-- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
+- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.

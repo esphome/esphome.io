@@ -9,7 +9,7 @@ params:
 
 The `honeywellabp2_i2c` sensor platform allows you to use your Honeywell ABP2
 ([datasheet](https://prod-edam.honeywell.com/content/dam/honeywell-edam/sps/siot/en-us/products/sensors/pressure-sensors/board-mount-pressure-sensors/basic-abp2-series/documents/sps-siot-abp2-series-datasheet-32350268-en.pdf?download=false))
-pressure and temperature sensors with ESPHome. The [I2C](#i2c) is
+pressure and temperature sensors with ESPHome. The [I2C](/components/i2c) is
 required to be set up in your configuration for this sensor to work
 
 {{< img src="honeywellabp.jpg" alt="Image" caption="Honeywell ABP Pressure and Temperature Sensor." width="50.0%" class="align-center" >}}

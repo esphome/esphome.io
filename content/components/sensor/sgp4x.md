@@ -11,7 +11,7 @@ The `sgp4x` sensor platform allows you to use your Sensirion SGP40
 ([datasheet](https://sensirion.com/media/documents/296373BB/6203C5DF/Sensirion_Gas_Sensors_Datasheet_SGP40.pdf)) or SGP41
 ([datasheet](https://sensirion.com/media/documents/5FE8673C/61E96F50/Sensirion_Gas_Sensors_Datasheet_SGP41.pdf)) with ESPHome.
 The type of sensor used is automatically detected.
-The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 > [!NOTE]
 > This sensor need to be driven at a rate of 1Hz. Because of this, the

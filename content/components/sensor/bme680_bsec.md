@@ -24,7 +24,7 @@ for CO₂ and Breath Volatile Organic Compounds (b-VOC) using a correlation betw
 >
 > - We recommend using the newer {{< docref "bme68x_bsec2" "bme68x_bsec2" >}} component whenever possible.
 
-The [I²C](#i2c) is required to be set up in your configuration for this sensor to work.
+The [I²C](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 {{< img src="bme680-full.jpg" alt="Image" caption="BME680 Temperature, Pressure, Humidity & Gas Sensor." width="50.0%" class="align-center" >}}
 

@@ -15,7 +15,7 @@ component will also work with other older Chamberlain garage door openers. It is
 newer Chamberlain units that use the Security+ 2.0 protocol.
 
 This component makes use of the HE60R keypad communication interface. This is a single-wire half duplex serial
-connection and requires a [UART Bus](#uart) component to be configured. The uart **must** be set to 1200 baud, EVEN parity. See
+connection and requires a [UART Bus](/components/uart) component to be configured. The uart **must** be set to 1200 baud, EVEN parity. See
 below for a sample hardware interface.
 
 ```yaml
@@ -96,5 +96,5 @@ binary_sensor:
 ## See Also
 
 - {{< docref "index/" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - [GPIO Binary Sensor](#gpio-binary-sensor)

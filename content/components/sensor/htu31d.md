@@ -8,7 +8,7 @@ params:
 ---
 
 The HTU31D Temperature & Humidity component allows you to use HTU31D sensors with
-ESPHome. The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+ESPHome. The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 Example sensors:
 

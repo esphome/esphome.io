@@ -114,5 +114,5 @@ text_sensor:
 ## See Also
 
 - {{< docref "/components/text_sensor" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "template/text_sensor/template_text_sensor.h" "template/text_sensor/template_text_sensor.h" >}}

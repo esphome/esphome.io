@@ -156,7 +156,7 @@ MQTT options:
 
 ### `climate.control` Action
 
-This is an [Action](#config-action) for setting parameters for climate devices.
+This is an [Action](/automations/actions#config-action) for setting parameters for climate devices.
 
 ```yaml
 - climate.control:

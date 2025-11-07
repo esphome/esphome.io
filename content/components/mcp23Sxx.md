@@ -80,7 +80,7 @@ binary_sensor:
 The MCP23S17 component allows you to use MCP23S17 I/O expanders
 ([datasheet](http://ww1.microchip.com/downloads/en/DeviceDoc/20001952C.pdf),
 [Digi-Key](https://www.digikey.com/product-detail/en/microchip-technology/MCP23S17-E-SP/MCP23S17-E-SP-ND/894276)) in ESPHome.
-It uses the [SPI Bus](#spi) for communication.
+It uses the [SPI Bus](/components/spi) for communication.
 
 Once configured, you can use any of the 16 pins as
 pins for your projects. Within ESPHome they emulate a real internal GPIO pin
@@ -140,7 +140,7 @@ binary_sensor:
 
 ## See Also
 
-- [SPI Bus](#spi)
+- [SPI Bus](/components/spi)
 - {{< docref "switch/gpio" >}}
 - {{< docref "binary_sensor/gpio" >}}
 - {{< apiref "API Reference (MCP23S08)" "mcp23S08/mcp23S08.h" >}}

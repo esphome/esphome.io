@@ -12,7 +12,7 @@ Any GPS module that uses the standardized NMEA communication protocol will work.
 
 {{< img src="gps-full.jpg" alt="Image" caption="GPS Module. Image by [Adafruit](https://www.adafruit.com)" width="50.0%" class="align-center" >}}
 
-For this component to work you need to have set up a [UART bus](#uart)
+For this component to work you need to have set up a [UART bus](/components/uart)
 in your configuration - only the RX pin should be necessary.
 
 ```yaml

@@ -12,7 +12,7 @@ allows you to play sound and music stored in an SD card or USB flash drive.
 
 {{< img src="dfplayer-full.jpg" alt="Image" caption="DF-Player mini Module." width="50.0%" class="align-center" >}}
 
-For this component to work you need to have set up a [UART bus](#uart) in your configuration.
+For this component to work you need to have set up a [UART bus](/components/uart) in your configuration.
 
 ## Overview
 
@@ -33,7 +33,7 @@ dfplayer:
 
 - **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the UART hub.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **on_finished_playback** (*Optional*, [Automation](#automation)): An action to be
+- **on_finished_playback** (*Optional*, [Automation](/automations)): An action to be
   performed when playback is finished.
 
 ## `dfplayer.is_playing` Condition

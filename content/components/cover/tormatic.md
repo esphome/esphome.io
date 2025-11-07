@@ -28,7 +28,7 @@ be supported:
 > detection, so it's assumed that the protocol is the same across all models.
 
 As the communication with the garage door drive is done using UART, you need to
-have an [UART bus](#uart) in your configuration with the `rx_pin`
+have an [UART bus](/components/uart) in your configuration with the `rx_pin`
 connected unit's USB D- line and the `tx_pin` connected to the USB's D+ line.
 The baud rate should be set to 9600. See [Setup](#setup) for more detailed
 instructions.
@@ -96,5 +96,5 @@ can be bent 90 degrees to sit parallel to the PCB, keeping a low profile.
 ## See Also
 
 * {{< docref "index/" >}}
-* [Automation](#automation)
+* [Automation](/automations)
 * {{< apiref "tormatic/tormatic_cover.h" "tormatic/tormatic_cover.h" >}}

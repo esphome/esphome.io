@@ -13,7 +13,7 @@ params:
 
 The `msa3xx` sensor platform allows you to use your MSA301 and MSA311 tri-axial,
 low-g accelerometers ([datasheet](https://cdn-shop.adafruit.com/product-files/5309/MSA311-V1.1-ENG.pdf))
-with ESPHome. The [I²C](#i2c) is required to be set up in your configuration for this sensor to work.
+with ESPHome. The [I²C](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 MSA301 and MSA311 are almost identical sensors. The only difference is the ADC resolution. MSA311 has fixed
 12-bits resolution while MSA301 ADC is 14-bits and it can be configured to do 8, 10, 12, or 14 bits measurements.

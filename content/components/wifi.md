@@ -107,8 +107,8 @@ wifi:
 - **enable_btm** (*Optional*, bool): Only on `esp32`. Enable 802.11v BSS Transition Management support.
 - **enable_rrm** (*Optional*, bool): Only on `esp32`. Enable 802.11k Radio Resource Management support.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
-- **on_disconnect** (*Optional*, [Automation](#automation)): An action to be performed when the connection is dropped.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
+- **on_disconnect** (*Optional*, [Automation](/automations)): An action to be performed when the connection is dropped.
 - **enable_on_boot** (*Optional*, boolean): If enabled, the WiFi interface will be enabled on boot. Defaults to `true`.
 - **use_psram** (*Optional*, boolean): For ESP32 only, requests that the WiFi libraries try to allocate memory from PSRAM.
   Defaults to `false`. Requires PSRAM to be configured.
@@ -377,8 +377,8 @@ on_...:
 - **timeout** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The time to wait for the connection
   to be established. Defaults to 30 seconds.
 
-- **on_connect** (*Optional*, [Automation](#automation)): An action to be performed when a connection is established.
-- **on_error** (*Optional*, [Automation](#automation)): An action to be performed when the connection fails.
+- **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.
+- **on_error** (*Optional*, [Automation](/automations)): An action to be performed when the connection fails.
 
 ## Conditions
 
@@ -386,7 +386,7 @@ on_...:
 
 ### `wifi.connected` Condition
 
-This [Condition](#config-condition) checks if the WiFi client is currently connected to a station.
+This [Condition](/automations/actions#config-condition) checks if the WiFi client is currently connected to a station.
 
 ```yaml
 on_...:
@@ -403,7 +403,7 @@ The lambda equivalent for this is `id(wifi_id).is_connected()`.
 
 ### `wifi.enabled` Condition
 
-This [Condition](#config-condition) checks if WiFi is currently enabled or not.
+This [Condition](/automations/actions#config-condition) checks if WiFi is currently enabled or not.
 
 ```yaml
 on_...:

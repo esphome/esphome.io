@@ -11,7 +11,7 @@ params:
 
 The `seeed_mr60bha2` platform allows you to use Seeed Studio MR60BHA2 60GHz mmWave Fall Detection Sensor Kit with XIAO ESP32C6 ([Product Page](https://www.seeedstudio.com/MR60BHA2-60GHz-mmWave-Sensor-Breathing-and-Heartbeat-Module-p-5945.html)) with ESPHome.
 
-The [UART](#uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`.
+The [UART](/components/uart) is required to be set up in your configuration for this sensor to work, `parity` and `stop_bits` **must be** respectively `NONE` and `1`.
 You can use the ESP32 software or hardware serial to use this MR60BHA2, its default baud rate is 115200.
 
 {{< img src="seeed_mr60bha2.jpg" alt="Image" caption="Seeed Studio MR60BHA2 60GHz mmWave Fall Detection Sensor Kit with XIAO ESP32C6" width="50.0%" class="align-center" >}}
@@ -23,7 +23,7 @@ seeed_mr60bha2:
 
 ### Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID for this {{< docref "seeed_mr60bha2/" >}} component if you need multiple components.

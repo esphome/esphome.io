@@ -13,7 +13,7 @@ or 433 MHz radio frequency (RF) signals.
 The component is split into two parts:
 
 - The remote transmitter "hub", which defines the pin and a few additional settings, and...
-- Individual [actions](#config-action) to send encoded remote signals.
+- Individual [actions](/automations/actions#config-action) to send encoded remote signals.
 
 **See** [Setting up IR Devices](#remote-setting-up-infrared) **and** [Setting up RF Devices](#remote-setting-up-rf) **for details.**
 
@@ -65,10 +65,10 @@ remote_transmitter:
 
 ## Automations
 
-- **on_transmit** (*Optional*, [Automation](#automation)): An automation to perform before
+- **on_transmit** (*Optional*, [Automation](/automations)): An automation to perform before
   data is sent. Useful if the radio / IR hardware needs to change state or power on.
 
-- **on_complete** (*Optional*, [Automation](#automation)): An automation to perform after
+- **on_complete** (*Optional*, [Automation](/automations)): An automation to perform after
   data has been sent. Useful if the radio / IR hardware needs to change state or power off.
 
 ```yaml
@@ -87,7 +87,7 @@ remote_transmitter:
 
 ## Remote Transmitter Actions
 
-Remote transmitters support a number of [actions](#config-action) that can be used to send remote codes. All
+Remote transmitters support a number of [actions](/automations/actions#config-action) that can be used to send remote codes. All
 supported protocols are listed below. All actions have these additional #### Configuration variables
 
 ```yaml
@@ -118,7 +118,7 @@ to set the **times** to 10 and the **wait_time** to 0s.
 
 ### `remote_transmitter.transmit_abbwelcome` **Action**
 
-This [action](#config-action) sends a ABB-Welcome message to the intercom bus. The
+This [action](/automations/actions#config-action) sends a ABB-Welcome message to the intercom bus. The
 message type, addresses, address length and data can vary a lot between ABB-Welcome
 systems. Please refer to the received messages while performing actions like ringing a
 doorbell or opening a door.
@@ -172,7 +172,7 @@ on_...:
 
 ### `remote_transmitter.transmit_aeha` **Action**
 
-This [action](#config-action) sends a AEHA code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a AEHA code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -197,7 +197,7 @@ companies.
 
 ### `remote_transmitter.transmit_beo4` **Action**
 
-This [action](#config-action) sends a B&O Beo4 infrared protocol code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a B&O Beo4 infrared protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -216,7 +216,7 @@ on_...:
 
 ### `remote_transmitter.transmit_byronsx` **Action**
 
-This [action](#config-action) sends a Byron Doorbell RF protocol code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Byron Doorbell RF protocol code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -235,7 +235,7 @@ on_...:
 
 ### `remote_transmitter.transmit_canalsat` **Action**
 
-This [action](#config-action) sends a CanalSat infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a CanalSat infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
@@ -262,7 +262,7 @@ on_...:
 
 ### `remote_transmitter.transmit_canalsatld` **Action**
 
-This [action](#config-action) sends a CanalSatLD infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a CanalSatLD infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > The CanalSat and CanalSatLD protocols use a higher carrier frequency (56kHz) and are very similar.
@@ -289,7 +289,7 @@ on_...:
 
 ### `remote_transmitter.transmit_coolix` **Action**
 
-This [action](#config-action) sends one or two 24-bit Coolix infrared remote codes to a remote transmitter.
+This [action](/automations/actions#config-action) sends one or two 24-bit Coolix infrared remote codes to a remote transmitter.
 
 ```yaml
 on_...:
@@ -312,7 +312,7 @@ on_...:
 
 ### `remote_transmitter.transmit_dish` **Action**
 
-This [action](#config-action) sends a Dish Network infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Dish Network infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -334,7 +334,7 @@ You can find a list of commands in the
 
 ### `remote_transmitter.transmit_dooya` **Action**
 
-This [action](#config-action) sends a Dooya RF remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Dooya RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -359,7 +359,7 @@ on_...:
 
 ### `remote_transmitter.transmit_drayton` **Action**
 
-This [action](#config-action) sends a Draton Digistat RF remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Draton Digistat RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -380,7 +380,7 @@ on_...:
 
 ### `remote_transmitter.transmit_gobox` **Action**
 
-This [action](#config-action) sends a command to a Go-Box via the IR transmitter.
+This [action](/automations/actions#config-action) sends a command to a Go-Box via the IR transmitter.
 
 ```yaml
 on_...:
@@ -411,7 +411,7 @@ on_...:
 
 ### `remote_transmitter.transmit_jvc` **Action**
 
-This [action](#config-action) sends a JVC infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a JVC infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -428,7 +428,7 @@ on_...:
 
 ### `remote_transmitter.transmit_keeloq` **Action**
 
-This [action](#config-action) sends KeeLoq RF remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends KeeLoq RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -454,7 +454,7 @@ on_...:
 
 ### `remote_transmitter.transmit_haier` **Action**
 
-This [action](#config-action) sends a 104-bit Haier code to a remote transmitter. The 8-bit checksum is added
+This [action](/automations/actions#config-action) sends a 104-bit Haier code to a remote transmitter. The 8-bit checksum is added
 automatically.
 
 ```yaml
@@ -472,7 +472,7 @@ on_...:
 
 ### `remote_transmitter.transmit_lg` **Action**
 
-This [action](#config-action) sends an LG infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends an LG infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -491,7 +491,7 @@ on_...:
 
 ### `remote_transmitter.transmit_magiquest` **Action**
 
-This [action](#config-action) sends a MagiQuest wand code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a MagiQuest wand code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -512,7 +512,7 @@ on_...:
 
 ### `remote_transmitter.transmit_midea` **Action**
 
-This [action](#config-action) sends a 40-bit Midea code to a remote transmitter. 8-bits of checksum added
+This [action](/automations/actions#config-action) sends a 40-bit Midea code to a remote transmitter. 8-bits of checksum added
 automatically.
 
 ```yaml
@@ -536,7 +536,7 @@ on_...:
 
 ### `remote_transmitter.transmit_nec` **Action**
 
-This [action](#config-action) sends an NEC infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends an NEC infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > In version 2021.12, the order of transferring bits was corrected from MSB to LSB in accordance with the NEC
@@ -565,7 +565,7 @@ on_...:
 
 ### `remote_transmitter.transmit_nexa` **Action**
 
-This [action](#config-action) a Nexa RF remote code to a remote transmitter.
+This [action](/automations/actions#config-action) a Nexa RF remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -592,7 +592,7 @@ on_...:
 
 ### `remote_transmitter.transmit_panasonic` **Action**
 
-This [action](#config-action) sends a Panasonic infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Panasonic infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -611,7 +611,7 @@ on_...:
 
 ### `remote_transmitter.transmit_pioneer` **Action**
 
-This [action](#config-action) sends a Pioneer infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Pioneer infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -642,7 +642,7 @@ are largely shared among devices within a given class.
 
 ### `remote_transmitter.transmit_pronto` **Action**
 
-This [action](#config-action) sends a raw code to a remote transmitter specified in Pronto format.
+This [action](/automations/actions#config-action) sends a raw code to a remote transmitter specified in Pronto format.
 
 ```yaml
 on_...:
@@ -661,7 +661,7 @@ on_...:
 
 ### `remote_transmitter.transmit_raw` **Action**
 
-This [action](#config-action) sends a raw code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a raw code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -690,7 +690,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc5` **Action**
 
-This [action](#config-action) sends an RC5 infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends an RC5 infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -709,7 +709,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc6` **Action**
 
-This [action](#config-action) sends an RC6 infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends an RC6 infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -728,7 +728,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_raw` **Action**
 
-This [action](#config-action) sends a raw RC-Switch code to a
+This [action](/automations/actions#config-action) sends a raw RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -750,7 +750,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_a` **Action**
 
-This [action](#config-action) sends a type A RC-Switch code to a
+This [action](/automations/actions#config-action) sends a type A RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -776,7 +776,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_b` **Action**
 
-This [action](#config-action) sends a type B RC-Switch code to a
+This [action](/automations/actions#config-action) sends a type B RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -802,7 +802,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_c` **Action**
 
-This [action](#config-action) sends a type C RC-Switch code to a
+This [action](/automations/actions#config-action) sends a type C RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -830,7 +830,7 @@ on_...:
 
 ### `remote_transmitter.transmit_rc_switch_type_d` **Action**
 
-This [action](#config-action) sends a type D RC-Switch code to a
+This [action](/automations/actions#config-action) sends a type D RC-Switch code to a
 remote transmitter.
 
 ```yaml
@@ -856,7 +856,7 @@ on_...:
 
 ### `remote_transmitter.transmit_roomba` **Action**
 
-This [action](#config-action) sends a Roomba infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Roomba infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -884,7 +884,7 @@ on_...:
 
 ### `remote_transmitter.transmit_samsung` **Action**
 
-This [action](#config-action) sends a Samsung infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Samsung infrared remote code to a remote transmitter.
 It transmits codes up to 64 bits in length in a single packet.
 
 ```yaml
@@ -907,7 +907,7 @@ on_...:
 
 ### `remote_transmitter.transmit_samsung36` **Action**
 
-This [action](#config-action) sends a Samsung36 infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Samsung36 infrared remote code to a remote transmitter.
 It transmits the `address` and `command` in two packets separated by a "space".
 
 ```yaml
@@ -927,7 +927,7 @@ on_...:
 
 ### `remote_transmitter.transmit_sony` **Action**
 
-This [action](#config-action) a Sony infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) a Sony infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -946,7 +946,7 @@ on_...:
 
 ### `remote_transmitter.transmit_toshiba_ac` **Action**
 
-This [action](#config-action) sends a Toshiba AC infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Toshiba AC infrared remote code to a remote transmitter.
 
 > [!NOTE]
 > This action transmits codes using the new(er) Toshiba AC protocol and likely will not work with older units.
@@ -970,7 +970,7 @@ on_...:
 
 ### `remote_transmitter.transmit_mirage` **Action**
 
-This [action](#config-action) sends a 112-bit Mirage code to a remote transmitter. 8-bits of checksum added
+This [action](/automations/actions#config-action) sends a 112-bit Mirage code to a remote transmitter. 8-bits of checksum added
 automatically.
 
 ```yaml
@@ -988,7 +988,7 @@ on_...:
 
 ### `remote_transmitter.transmit_toto` **Action**
 
-This [action](#config-action) sends a Toto infrared remote code to a remote transmitter.
+This [action](/automations/actions#config-action) sends a Toto infrared remote code to a remote transmitter.
 
 ```yaml
 on_...:
@@ -1013,7 +1013,7 @@ on_...:
 
 ### `remote_transmitter.digital_write` **Action**
 
-This [action](#config-action) sets the output value of the pin.
+This [action](/automations/actions#config-action) sets the output value of the pin.
 
 ```yaml
 on_...:

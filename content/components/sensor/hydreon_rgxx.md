@@ -9,7 +9,7 @@ params:
 
 The `hydreon_rgxx` sensor platform allows you to use rain sensors by Hydreon. Currently supported are the RG-9 and RG-15 sensors ([model comparison](https://rainsensors.com/products/model-comparison/)).
 
-These optical rain sensors use a UART connection at 3.3V. The [UART](#uart) is
+These optical rain sensors use a UART connection at 3.3V. The [UART](/components/uart) is
 required to be set up in your configuration for this sensor to work.
 
 Supported firmware versions:
@@ -65,7 +65,7 @@ sensor:
 
 - **disable_led** (*Optional*): Disables the on-board LED. Defaults to `false`. Only on RG-9 firmware version 1.200-onwards.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](#uart) if you want
+- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
 - **moisture** (*Optional*): Rain intensity level from 0-7 ([more detail](https://rainsensors.com/support/rg-9-rg-15-faq/#RG-9RValue)). Only on RG-9.

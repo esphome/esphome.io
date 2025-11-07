@@ -16,7 +16,7 @@ microphone platforms.
 
 Configuration variables:
 
-- **on_data** (*Optional*, [Automation](#automation)): An automation to
+- **on_data** (*Optional*, [Automation](/automations)): An automation to
   perform when new data is received.
 
 {{< anchor "config-microphone-source" >}}

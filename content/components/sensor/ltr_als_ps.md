@@ -12,7 +12,7 @@ params:
 {{< img src="ltr303-ui.png" alt="Image" caption="LTR-303 Sensor in Home Assistant UI." width="60.0%" class="align-center" >}}
 
 The `ltr_als_ps` sensor platform allows you to use a range of LiteOn ambient light and proximity sensors
-with ESPHome. The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
+with ESPHome. The [I²C Bus](/components/i2c) is required to be set up in your configuration for this sensor to work.
 
 The family of sensors includes:
 

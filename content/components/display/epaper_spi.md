@@ -12,7 +12,7 @@ with improved state management and non-blocking operation. This component implem
 queue-based state machine that eliminates blocking waits for the busy pin and provides
 better integration with ESPHome's async architecture.
 
-The communication method uses 4-wire [SPI](#spi), so you need to have an `spi:` section in your
+The communication method uses 4-wire [SPI](/components/spi), so you need to have an `spi:` section in your
 configuration.
 
 ```yaml
@@ -50,7 +50,7 @@ display:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `60s`,
   use `never` to only manually update the screen via `component.update`.
-- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](#spi) if you want
+- **spi_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
