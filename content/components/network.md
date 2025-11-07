@@ -31,3 +31,4 @@ network:
 
 - {{< docref "/components/wifi" >}}
 - {{< docref "/components/ethernet" >}}
+- {{< docref "/components/openthread" >}}
