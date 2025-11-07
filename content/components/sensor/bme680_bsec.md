@@ -117,37 +117,37 @@ Configuration variables:
 - **temperature** (_Optional_): The information for the temperature sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `lp` for low power consumption, sampling every 3 seconds or `ulp` for ultra-low power, sampling every 5 minutes.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **pressure** (_Optional_): The information for the pressure sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `lp` for low power consumption, sampling every 3 seconds or `ulp` for ultra-low power, sampling every 5 minutes.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **humidity** (_Optional_): The information for the humidity sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `lp` for low power consumption, sampling every 3 seconds or `ulp` for ultra-low power, sampling every 5 minutes.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **gas_resistance** (_Optional_): The information for the gas sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **iaq** (_Optional_): The information for the IAQ sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **iaq_accuracy** (_Optional_): The information for the numeric IAQ accuracy sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **co2_equivalent** (_Optional_): The information for the CO₂ equivalent sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **breath_voc_equivalent** (_Optional_): The information for the Breath VOC equivalent humidity sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 
@@ -169,7 +169,7 @@ Configuration variables:
 The following configuration shows all the available sensors and optional settings for the component. It also includes an example of filtering to guard against
 outliers, limit the number of updates sent to home assistant and reduce storage requirements in other systems such as influxdb used to store historical data.
 
-For each sensor, all other options from [Sensor](#config-sensor) and [TextSensor](#config-text_sensor) are also available for filtering, automation and so on.
+For each sensor, all other options from [Sensor](/components/sensor) and [TextSensor](#config-text_sensor) are also available for filtering, automation and so on.
 
 ```yaml
 bme680_bsec:

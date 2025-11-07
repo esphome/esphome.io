@@ -115,17 +115,17 @@ sensor:
 - **address** (**Required**, int): The 16 bit device address of the thermostat. See [Getting started](#uponor-gettingstarted) on how to find the address.
 - **uponor_smatrix_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the `uponor_smatrix` hub component if you want to use multiple hub components on one ESPHome device.
 - **humidity** (*Optional*): A sensor reading the current humidity the thermostat reports.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): A sensor reading the current temperature the thermostat reports.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **external_temperature** (*Optional*): A sensor reading the current external temperature the thermostat reports.
   This comes from an optionally attached external temperature sensor that can measure the floor or outdoor temperature.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **target_temperature** (*Optional*): A sensor reading the currently set target temperature the thermostat reports.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## See Also
 

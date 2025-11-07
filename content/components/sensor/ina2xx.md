@@ -80,7 +80,7 @@ sensor:
   no compensation is done. Defaults to `0`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
-- All other options from [Sensor](#config-sensor) and [I²C device](/components/i2c).
+- All other options from [Sensor](/components/sensor) and [I²C device](/components/i2c).
 
 ## Over SPI
 
@@ -130,13 +130,13 @@ sensor:
   no compensation is done. Defaults to `0`.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
-- All other options from [Sensor](#config-sensor) and [SPI device](/components/spi).
+- All other options from [Sensor](/components/sensor) and [SPI device](/components/spi).
 
 ## Sensors
 
 The component offers nine sensors. You can configure all or any subset of the sensors. Each configured sensor
 is reported separately on each update_interval. The `name` option is required for each sensor configured;
-all other options from [Sensor](#config-sensor) are also supported. Shorthand notation can be used for the sensors like this:
+all other options from [Sensor](/components/sensor) are also supported. Shorthand notation can be used for the sensors like this:
 `current: "Current"`.
 
 - **current** (*Optional*): Calculated current output, A

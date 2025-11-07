@@ -80,7 +80,7 @@ sensor:
 - **calibration** (**Required**, float): The calibration parameters of the sensor - see above
   for more details.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Self-Heating
 

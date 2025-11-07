@@ -34,7 +34,7 @@ sensor:
 - **one_wire_id** (*Optional*, {{< docref "/components/one_wire" >}}): The ID of the 1-Wire bus to use.
   Required if there is more than one bus.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ### See Also
 

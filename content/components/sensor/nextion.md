@@ -75,7 +75,7 @@ sensor:
 - **wave_max_length** (*Optional*, int): How many data points to store. Typically this is the width of the component in the Nextion
 - **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 **Only one** *component_name* **or** *variable_name* **can be set**
 

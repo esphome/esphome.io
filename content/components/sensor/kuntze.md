@@ -62,12 +62,12 @@ Configuration variables:
 - **ec** (*Optional*): Measured EC value.
 - **oci** (*Optional*): Measured OCI value.
 
-All sensors are *Optional* and support all other options from [Sensor](#config-sensor).
+All sensors are *Optional* and support all other options from [Sensor](/components/sensor).
 
 ## See Also
 
 - [UART Bus](/components/uart)
 - [Logger Component](#logger)
-- [Sensor](#config-sensor)
+- [Sensor](/components/sensor)
 - [Kuntze manuals](https://www.kuntze.com/en/downloads-2/)
 - [Communication protocol](https://www.kuntze.com/wp-content/uploads/2021/05/2019_Manual_Modbus-RTU_ENG.pdf)

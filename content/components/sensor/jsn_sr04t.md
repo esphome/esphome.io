@@ -58,7 +58,7 @@ sensor:
   Use this if you want to use multiple UART buses at once.
 
 - **model** (*Optional*): Sensor model. Available options: `jsn_sr04t` (default) and `aj_sr04m`.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

@@ -31,11 +31,11 @@ sensor:
 
 - **temperature** (_Optional_): The information for the temperature sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **humidity** (_Optional_): The information for the humidity sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **address** (_Optional_, int): Manually specify the I²C address of the sensor.
   Defaults to `0x44`. For SHT3x, an alternate address can be `0x45` while SHT85 supports only address `0x44`

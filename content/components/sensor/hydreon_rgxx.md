@@ -70,30 +70,30 @@ sensor:
 
 - **moisture** (*Optional*): Rain intensity level from 0-7 ([more detail](https://rainsensors.com/support/rg-9-rg-15-faq/#RG-9RValue)). Only on RG-9.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): Device internal temperature in Celsius. Accuracy is ±5°C. Only on RG-9 firmware version 1.100-onwards.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **resolution** (*Optional*, string): Specify rain sensor resolution. Must be either `low` or `high`. Default resolution is `high`.
   Only applies to RG-15.
 
 - **acc** (*Optional*): Amount of rain since last message (see `update_interval`  ), in `mm`. Only on RG-15.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **event_acc** (*Optional*): Amount of rain for this event (i.e. since it last stopped raining), in `mm`. Only on RG-15.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **total_acc** (*Optional*): Total amount of rain this sensor has ever measured, in `mm`. Only on RG-15.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **r_int** (*Optional*): Current rain intensity in `mm/h`. Only on RG-15.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 

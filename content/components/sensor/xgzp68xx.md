@@ -35,8 +35,8 @@ sensor:
 
 ## Configuration variables
 
-- **temperature** (*Optional*): All options from [Sensor](#config-sensor).
-- **pressure** (*Optional*): All options from [Sensor](#config-sensor).
+- **temperature** (*Optional*): All options from [Sensor](/components/sensor).
+- **pressure** (*Optional*): All options from [Sensor](/components/sensor).
 - **k_value** (*Optional*, int): The K value comes from the datasheet. It will default to 4096 if not specified, which is appropriate for a sensor with a range of +/- 0.5kPa.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 

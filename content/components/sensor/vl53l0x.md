@@ -71,7 +71,7 @@ sensor:
   Range is from 20000us - 4294967295us, inclusive. The timing budget allows the user to trade off speed for accuracy.
   If not specified, the default timing budget is 33000us.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ```yaml
 # Muliple VL53L0X sensors on same i2c bus

@@ -79,37 +79,37 @@ sensor:
 
 - **custom_presence_of_detection** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Radar detects human breath at a straight line distance, usually no more than 3 metres.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **movement_signs** (*Optional*, int): A value calculated by a built-in algorithm to determine if someone is moving in the current environment.
   When the value is 0, the radar determines that no one is present in the environment. When the value is 1,
   the radar determines that someone is present in the environment and is stationary.
   When the value is greater than 1, the radar determines that someone is present in the environment and is in motion.
   The larger the value, the stronger the motion.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_motion_distance** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Distance in meters of detected moving target.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_spatial_static_value** (*Optional*, int): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Electromagnetic waves are present in the environment, with a low change in frequency when no one is present.
   The value of the overall space electromagnetic wave reflection weakly floating when there is someone breathing in the space (chest breathing micromotion).
   The output range for this value is 0-250.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_spatial_motion_value** (*Optional*, int): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   Motion amplitude values, different motion amplitudes cause different electromagnetic wave frequency changes.
   The output range for this value is 0-250.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_motion_speed** (*Optional*, float): Valid only for [underlying open functions](#seeed_mr24hpc1-open_function).
   The magnitude of the speed of the target movement is determined in real time. Approaching radar speed is positive, away is negative.
   When there is no movement speed, the value is 0, and the speed gear is in 0.5m/s increments.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **custom_mode_num** (*Optional*, int): The custom mode number that the radar is currently in. If it is not in custom mode, then the value is 0.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 {{< anchor "seeed_mr24hpc1-open_function" >}}
 

@@ -26,11 +26,11 @@ sensor:
 
 - **temperature** (*Optional*): Temperature.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **pressure** (*Optional*): Barometric Pressure.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Default is `0x5d`. `0x5c` is another common address.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.

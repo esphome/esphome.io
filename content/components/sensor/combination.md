@@ -96,10 +96,10 @@ sensor:
   changes in the measured samples. A high value will update faster, but also be
   more noisy.
 
-- **std_dev** (*Optional*, only for `KALMAN` type, [Sensor](#config-sensor)): A sensor
+- **std_dev** (*Optional*, only for `KALMAN` type, [Sensor](/components/sensor)): A sensor
   that publishes the current standard deviation of the state with each update.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

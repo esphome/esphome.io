@@ -120,7 +120,7 @@ climate:
 
 To set up a PID climate controller, you need a couple of components:
 
-- A [Sensor](#config-sensor) to read the current temperature (`sensor`  ).
+- A [Sensor](/components/sensor) to read the current temperature (`sensor`  ).
 - At least one [float output](#config-output) to drive for heating or cooling (or both).
   This could for example be a PWM output via {{< docref "/components/output/sigma_delta_output" >}} or {{< docref "/components/output/slow_pwm" >}} that drives a heating unit.
 
@@ -423,7 +423,7 @@ Configuration variables:
   - `KI` - The current factor for the integral term of the PID controller.
   - `KD` - The current factor for the differential term of the PID controller.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 Advanced options:
 

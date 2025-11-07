@@ -83,7 +83,7 @@ sensor:
 - **type** (**Required**, string): The type of value to track. One of `elevation` and
   `azimuth`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Text Sensor
 

@@ -1046,7 +1046,7 @@ switch:
 ```
 
 While the above example simply illustrates creating a secondary "main" switch, this approach could be extended
-to take advantage of other devices such as a moisture [sensor](#config-sensor) -- when the moisture level
+to take advantage of other devices such as a moisture [sensor](/components/sensor) -- when the moisture level
 is too low (look for `on_value` or `on_value_range`  ), the sprinkler controller (or a specific valve) could
 be activated by calling one of the controller's start-up actions, such as `sprinkler.start_full_cycle`,
 `sprinkler.start_from_queue`, `sprinkler.start_single_valve`, or `sprinkler.resume_or_start_full_cycle`.

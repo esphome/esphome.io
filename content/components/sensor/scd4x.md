@@ -29,15 +29,15 @@ sensor:
 
 - **co2** (*Optional*): The information for the CO₂ sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): The information for the Temperature sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **humidity** (*Optional*): The information for the Humidity sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **temperature_offset** (*Optional*, float): The temperature offset can depend
   on various factors such as the SCD4x measurement mode, self-heating of close

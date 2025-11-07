@@ -37,8 +37,8 @@ sensor:
 - **temperature_sensor** (*Optional*, [ID](#config-id)): Set the ID of the temperature
   sensor. Only needed if the onboard temperature sensor is not used.
 
-- **ph** (*Optional*, [Sensor](#config-sensor)): Set the pH sensor configuration. All options from [Sensor](#config-sensor).
-- **temperature** (*Optional*, [Sensor](#config-sensor)): Set the onboard temperature sensor configuration. All options from [Sensor](#config-sensor).
+- **ph** (*Optional*, [Sensor](/components/sensor)): Set the pH sensor configuration. All options from [Sensor](/components/sensor).
+- **temperature** (*Optional*, [Sensor](/components/sensor)): Set the onboard temperature sensor configuration. All options from [Sensor](/components/sensor).
   Can't be used together with `temperature_sensor`.
 
 {{< anchor "sensor-ufire_ise-calibrate_probe_high_action" >}}

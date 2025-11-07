@@ -27,11 +27,11 @@ sensor:
 
 - **eco2** (*Optional*): The information for the CO₂eq. sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **tvoc** (*Optional*): The information for the total Volatile Organic Compounds sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **store_baseline** (*Optional*, boolean): Store the sensor baselines persistently when calculated or updated.
   Defaults to `true`.
@@ -52,11 +52,11 @@ Advanced:
 
 - **eco2_baseline** (*Optional*): The information for the CO₂eq. baseline value sensor. Baseline value is published in decimals.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **tvoc_baseline** (*Optional*): The information for the TVOC baseline value sensor. Baseline value is published in decimals.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **compensation** (*Optional*): The block containing sensors used for compensation. Both values must be supplied in order to be able to generate the absolute humidity to be reported to the sensor.
 

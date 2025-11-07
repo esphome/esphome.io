@@ -91,7 +91,7 @@ binary_sensor:
 
 Acceleration data is available through sensors configuration.
 You can use shorthand notation like `acceleration_x: "Acceleration X"` or use regular notation. For
-regular notation only the **name** is required. All options from [Sensor](#config-sensor).
+regular notation only the **name** is required. All options from [Sensor](/components/sensor).
 
 ```yaml
 sensor:

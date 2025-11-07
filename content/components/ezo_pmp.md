@@ -58,7 +58,7 @@ sensor:
 #### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-total_volume_dosed_sensor" >}}
 
@@ -78,7 +78,7 @@ sensor:
 #### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-absolute_total_volume_dosed_sensor" >}}
 
@@ -97,7 +97,7 @@ sensor:
 #### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-last_volume_requested_sensor" >}}
 
@@ -117,7 +117,7 @@ sensor:
 #### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-max_flow_rate_sensor" >}}
 
@@ -138,7 +138,7 @@ sensor:
 #### Configuration variables
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-pump_voltage_sensor" >}}
 
@@ -156,7 +156,7 @@ sensor:
 
 #### Configuration variables
 
-- All options from [Sensor](#config-sensor).
+- All options from [Sensor](/components/sensor).
 
 ## Binary Sensor
 

@@ -85,7 +85,7 @@ sensor:
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
 - **teleinfo_id** (*Optional*, [ID](#config-id)): Specify the ID of used hub.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ### Text Sensor
 

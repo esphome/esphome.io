@@ -41,7 +41,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval
   to check the sensor. Defaults to `60s`. The **update_interval** for `ct_clamp` has to be greater than **sample_duration**.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Calibration
 

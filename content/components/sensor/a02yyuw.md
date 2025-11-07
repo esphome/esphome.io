@@ -30,7 +30,7 @@ sensor:
 - **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART bus](/components/uart) you wish to use for this sensor.
   Use this if you want to use multiple UART buses at once.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 > [!NOTE]
 > [PWM and RS485](https://www.dypcn.com/uploads/A02-Datasheet.pdf) versions of the A02YYUW are not supported by this component.

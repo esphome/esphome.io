@@ -31,11 +31,11 @@ sensor:
 ## Configuration variables
 
 - **co2** (*Optional*): The CO_2 data from the sensor in parts per million (ppm).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): The information for the temperature sensor. Please note that this is
   not officially documented in the datasheet and seems to be quite inaccurate.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.

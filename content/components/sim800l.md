@@ -65,7 +65,7 @@ sensor:
 
 - **rssi** (*Optional*): The informed Received signal strength indication (RSSI) in dBm.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 ## Binary Sensor
 

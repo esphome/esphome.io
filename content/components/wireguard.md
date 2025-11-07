@@ -220,7 +220,7 @@ sensor:
       name: 'WireGuard Latest Handshake'
 ```
 
-All options from [Sensor](#config-sensor) can be added to the
+All options from [Sensor](/components/sensor) can be added to the
 above configuration.
 
 ### Address Text Sensor

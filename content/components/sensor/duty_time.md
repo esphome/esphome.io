@@ -39,7 +39,7 @@ sensor:
   state of the tracked object. *May not be used with* `sensor`.
 
 - **last_time** (*Optional*): Information of the last switch-on time sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so that the value can be
   restored upon power cycle or reboot.
@@ -47,7 +47,7 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The update interval. Defaults to `60s`.
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Automations
 
@@ -107,7 +107,7 @@ on_...:
 
 ## See Also
 
-- [Base Sensor Configuration](#config-sensor)
+- [Base Sensor Configuration](/components/sensor)
 - [Templates](#config-lambda)
 - [Automation](/automations)
 - {{< docref "/components/binary_sensor" >}}

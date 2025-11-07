@@ -78,52 +78,52 @@ sensor:
 ### Configuration variables
 
 - **voltage** (*Optional*): Voltage of the battery pack connected to Daly BMS.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **current** (*Optional*): Current flowing trough the BMS (input or output from batttery).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **battery_level** (*Optional*): Battery level in % (SoC).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **max_cell_voltage** (*Optional*): The cell of the battery with the higher voltage.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **max_cell_voltage_number** (*Optional*): The cell number of the battery with the higher voltage.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **min_cell_voltage** (*Optional*): The cell of the battery with the lower voltage.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **min_cell_voltage_number** (*Optional*): The cell number of the battery with the lower voltage.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **max_temperature** (*Optional*): The higher temperature measured from the temperature sensors.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **max_temperature_probe_number** (*Optional*): The sensor number which has measured the higher temperature.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **min_temperature** (*Optional*): The lower temperature measured from the temperature sensors.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **min_temperature_probe_number** (*Optional*): The sensor number which has measured the lower temperature.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **remaining_capacity** (*Optional*): The capacity in Ah left in the battery.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **cells_number** (*Optional*): The number of cells in series in the battery pack.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **temperature_1** (*Optional*): The first temperature sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **temperature_2** (*Optional*): The second temperature sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **cell_1_voltage** (*Optional*): The voltage of cell number 1. Cell number can be from 1 to 16.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 

@@ -37,13 +37,13 @@ set `min_pressure` and `max_pressure` to the measurement range, `transfer_functi
   - **min_pressure** (**Required**, int or float): Minimum pressure for the pressure sensor.
   - **max_pressure** (**Required**, int or float): Maximum pressure for the pressure sensor.
   - **transfer_function** (**Required**, "A" or "B"): Transfer function used by the pressure sensor.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 Some sensors do not have temperature sensing ability, see datasheet. In some cases the sensor may return a valid temperature even though the
 datasheet indicates that the sensor does not measure temperature.
 
 - **temperature** (*Optional*): The information for the temperature sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.

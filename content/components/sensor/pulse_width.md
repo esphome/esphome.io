@@ -32,7 +32,7 @@ sensor:
   Defaults to `60s`.
 
 - **id** (*Optional*, [ID](#config-id)): Set the ID of this sensor for use in lambdas.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

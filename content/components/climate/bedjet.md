@@ -166,11 +166,11 @@ sensor:
 
 - **outlet_temperature** (*Optional*): If specified, the temperature of the air being
   discharged from the BedJet will be reported as a sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **ambient_temperature** (*Optional*): If specified, the temperature of the room the
   BedJet is in will be reported as a sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## Known issues
 

@@ -38,7 +38,7 @@ Possible return values for the lambda:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Set to `never` to disable updates. Defaults to `60s`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "sensor-template-publish_action" >}}
 

@@ -32,16 +32,16 @@ sensor:
 ## Configuration variables
 
 - **e25** (*Optional*): Electrical Conductivity, reference at 25°C in dS/m.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **ec** (*Optional*): Electrical Conductivity in mS/m.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): Soil temperature in °C.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **vwc** (*Optional*): Volumetric Water Content in cm3cm−3.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x63`.

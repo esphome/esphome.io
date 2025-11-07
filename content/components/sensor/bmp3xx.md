@@ -40,14 +40,14 @@ sensor:
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See [Oversampling Options](#bmp3xx-oversampling).
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **pressure** (*Optional*): The information for the pressure sensor.
 
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See [Oversampling Options](#bmp3xx-oversampling).
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   `OFF`, `2x`, `4x`, `16x`, `32`, `64x`, `128x`. Defaults to `OFF`.
@@ -80,14 +80,14 @@ sensor:
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See [Oversampling Options](#bmp3xx-oversampling).
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **pressure** (*Optional*): The information for the pressure sensor.
 
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.
     See [Oversampling Options](#bmp3xx-oversampling).
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   `OFF`, `2x`, `4x`, `16x`, `32`, `64x`, `128x`. Defaults to `OFF`.

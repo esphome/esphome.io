@@ -28,7 +28,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval
   to check the sensor. Defaults to `60s`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

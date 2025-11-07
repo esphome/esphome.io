@@ -64,16 +64,16 @@ sensor:
 ### Configuration variables
 
 - **breath_rate** (*Optional*, float): Radar-detected respiratory rate during the first 60 seconds.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **heart_rate** (*Optional*, float): Heart rate during the first 60 seconds as detected by the radar.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **distance** (*Optional*, float): Straight-line distance between the radar and the monitoring object.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **num_targets** (*Optional*, int): The number of target detected by the radar.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## See Also
 

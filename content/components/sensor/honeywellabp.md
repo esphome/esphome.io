@@ -38,14 +38,14 @@ the measurement range and `unit_of_measurement` to the appropriate unit for your
 
   - **min_pressure** (**Required**, int or float): Minimum pressure for the pressure sensor, default unit `psi`.
   - **max_pressure** (**Required**, int or float): Maximum pressure for the pressure sensor, default unit `psi`.
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 Some sensors do not have temperature sensing ability, see datasheet. In some cases the sensor may return a valid temperature even though the
 datasheet indicates that the sensor does not measure temperature.
 
 - **temperature** (*Optional*): The information for the temperature sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **cs_pin** (**Required**, [SPI](/components/spi)): Chip select pin.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the

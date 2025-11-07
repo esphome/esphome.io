@@ -101,45 +101,45 @@ sensor:
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
     consumption, sampling every 3 seconds or `ULP` for ultra-low power, sampling every 5 minutes.
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **pressure** (_Optional_): Configuration for the pressure sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
     consumption, sampling every 3 seconds or `ULP` for ultra-low power, sampling every 5 minutes.
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **humidity** (_Optional_): Configuration for the humidity sensor.
 
   - **sample_rate** (_Optional_, string): Optional sample rate override for this sensor. Can be `LP` for low power
     consumption, sampling every 3 seconds or `ULP` for ultra-low power, sampling every 5 minutes.
 
-  - All other options from [Sensor](#config-sensor).
+  - All other options from [Sensor](/components/sensor).
 
 - **gas_resistance** (_Optional_): Configuration for the gas sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **iaq** (_Optional_): Configuration for the IAQ sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **iaq_static** (_Optional_): Configuration for the IAQ static sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **iaq_accuracy** (_Optional_): Configuration for the numeric IAQ accuracy sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **co2_equivalent** (_Optional_): Configuration for the CO₂ equivalent sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **breath_voc_equivalent** (_Optional_): Configuration for the Breath VOC equivalent humidity sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 

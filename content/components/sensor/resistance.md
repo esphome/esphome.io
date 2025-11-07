@@ -67,7 +67,7 @@ Some boards like NodeMCUv2 needs to multiply ADC reading by 3.3 to provide accur
 - **resistor** (**Required**, float): The value of the resistor with a constant value.
 
 - **reference_voltage** (*Optional*, float): The reference voltage. Defaults to `3.3V`.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 

@@ -28,7 +28,7 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to trigger measurement and update sensor.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 I²C Configuration variables:
 

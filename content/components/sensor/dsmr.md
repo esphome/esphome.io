@@ -78,143 +78,143 @@ Configuration variables:
 
 - **energy_delivered_tariff1** (*Optional*): Energy Consumed Tariff 1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **energy_delivered_tariff2** (*Optional*): Energy Consumed Tariff 2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **energy_returned_tariff1** (*Optional*): Energy Produced Tariff 1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **energy_returned_tariff2** (*Optional*): Energy Produced Tariff 2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_delivered** (*Optional*): Power Consumed.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_returned** (*Optional*): Power Produced.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_failures** (*Optional*): Electricity Failures.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_long_failures** (*Optional*): Long Electricity Failures.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_sags_l1** (*Optional*): Number of voltage sags in phase L1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_sags_l2** (*Optional*): Number of voltage sags in phase L2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_sags_l3** (*Optional*): Number of voltage sags in phase L3.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_swells_l1** (*Optional*): Number of voltage swells in phase L1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_swells_l2** (*Optional*): Number of voltage swells in phase L2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **electricity_swells_l3** (*Optional*): Number of voltage swells in phase L3.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **voltage_l1** (*Optional*): Voltage Phase 1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **voltage_l2** (*Optional*): Voltage Phase 2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **voltage_l3** (*Optional*): Voltage Phase 3.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **current_l1** (*Optional*): Current Phase 1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **current_l2** (*Optional*): Current Phase 2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **current_l3** (*Optional*): Current Phase 3.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_delivered_l1** (*Optional*): Power Consumed Phase 1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_delivered_l2** (*Optional*): Power Consumed Phase 2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_delivered_l3** (*Optional*): Power Consumed Phase 3.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_returned_l1** (*Optional*): Power Produced Phase 1.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_returned_l2** (*Optional*): Power Produced Phase 2.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **power_returned_l3** (*Optional*): Power Produced Phase 3.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **gas_delivered** (*Optional*): Gas Consumed.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **water_delivered** (*Optional*): Water Consumed.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 Belgium
 
 - **gas_delivered_be** (*Optional*): Gas Consumed Belgium.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **active_energy_import_current_average_demand** (*Optional*): Current Average Quarterly Demand for Peak Tarrif Belgium.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **active_energy_import_maximum_demand_running_month** (*Optional*): Current Month's Maximum Quarterly Demand for Peak Tarrif Belgium.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **active_energy_import_maximum_demand_last_13_months** (*Optional*): 13 Month Maximum Quarterly Demand for Peak Tarrif Belgium.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 Luxembourg
 
 - **energy_delivered_lux** (*Optional*): Energy Consumed Luxembourg
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **energy_returned_lux** (*Optional*): Energy Produced Luxembourg
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 

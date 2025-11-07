@@ -34,13 +34,13 @@ sensor:
 ## Configuration variables
 
 - **temperature** (*Optional*): The information for the temperature sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **humidity** (*Optional*): The information for the humidity sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **heater** (*Optional*): The information for the heater sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 

@@ -63,22 +63,22 @@ sensor:
 ## Configuration variables
 
 - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
-  [Sensor](#config-sensor).
+  [Sensor](/components/sensor).
 
 - **energy** (*Optional*): Use the (active) energy value of the sensor in watt*hours. All options from
-  [Sensor](#config-sensor).
+  [Sensor](/components/sensor).
 
 - **power** (*Optional*): Use the (active) power value of the sensor in watts. All options from
-  [Sensor](#config-sensor).
+  [Sensor](/components/sensor).
 
 - **voltage** (*Optional*): Use the voltage value of the sensor in volts.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **power_factor** (*Optional*): Use the power factor value of the sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.

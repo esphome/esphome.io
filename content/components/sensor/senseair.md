@@ -29,7 +29,7 @@ sensor:
 
 - **co2** (*Optional*): The CO_2 data from the sensor in parts per million (ppm).
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.

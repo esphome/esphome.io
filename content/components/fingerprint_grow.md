@@ -79,22 +79,22 @@ Base Configuration:
 ### Configuration variables
 
 - **fingerprint_count**: The number of enrolled fingerprints stored on the reader.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **last_finger_id**: The last matched enrolled fingerprint as set by [`on_finger_scan_matched` Trigger](#fingerprint_grow-on_finger_scan_matched).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **last_confidence**: The last matched confidence as set by [`on_finger_scan_matched` Trigger](#fingerprint_grow-on_finger_scan_matched).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **status**: The integer representation of the internal status register of the reader.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **capacity**: The fingerprint storage capacity of the reader.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **security_level**: The integer representation of the currently configured security level of the reader. Higher security levels reduce the false acceptance rate (FAR) at the expense of increasing the false rejection rate (FRR). Range is 1 (lowest) to 5 (highest).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 {{< anchor "fingerprint_grow-sleep_mode" >}}
 

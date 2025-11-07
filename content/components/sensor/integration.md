@@ -40,7 +40,7 @@ sensor:
   that the value can be restored upon power cycle or reboot.
   Warning: this option can wear out your flash. Defaults to `false`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "sensor-integration-reset_action" >}}
 

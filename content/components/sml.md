@@ -77,7 +77,7 @@ sensor:
 
 - **server_id** (*Optional*, string): Specify the device's server_id to retrieve the OBIS code from. Should be specified if more then one device is connected to the same hardware sensor component.
 - **sml_id** (*Optional*, [ID](#config-id)): The ID of the [SML platform](#sml-platform)
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Text Sensor
 

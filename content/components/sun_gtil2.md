@@ -80,22 +80,22 @@ sensor:
 - **sun_gtil2_id** (*Optional*): Manually specify the ID of the sun_gtil2 instance if there are multiple.
 
 - **temperature** (*Optional*): The temperature of your inverter's heatsink.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **dc_voltage** (*Optional*): The voltage of your DC source. (battery or solar panels)
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **ac_voltage** (*Optional*): The grid voltage measured by the inverter.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **dc_power** (*Optional*): The inverter's input power.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **ac_power** (*Optional*): The inverter's output power.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **limiter_power** (*Optional*): The power measured by the inverter's "Internal" limiter.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 ## Text Sensor
 

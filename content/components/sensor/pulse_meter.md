@@ -41,7 +41,7 @@ sensor:
 
 - **timeout** (*Optional*, [Time](#config-time)): If we don't see a pulse for this length of time, we assume *0 pulses/s*. Defaults to `5 min`.
 - **total** (*Optional*, [ID](#config-id)): An additional sensor that outputs the total number of pulses counted.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Converting units
 

@@ -29,13 +29,13 @@ sensor:
 ## Configuration variables
 
 - **formaldehyde** (*Optional*): The information for the Formaldehyde sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): The information for the Temperature sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **humidity** (*Optional*): The information for the Humidity sensor.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x5D`.

@@ -39,16 +39,16 @@ sensor:
 ## Configuration variables
 
 - **nitrogen_dioxide** (**Required**): The Nitrogen Dioxide sensor data.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **ethanol** (**Required**): The Ethanol (C2H5OH) sensor data.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **carbon_monoxide** (**Required**): The Carbon Monoxide sensor data.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **tvoc** (**Required**): The Total Volatile Organic Compounds (TVOC) sensor data.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.

@@ -88,15 +88,15 @@ climate:
 - **outdoor_temperature** (*Optional*): The information for the outdoor temperature
   sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 - **power_usage** (*Optional*): The information for the current power consumption
   sensor.
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 - **humidity_setpoint** (*Optional*): The information for the humidity indoor
   sensor (experimental).
 
-  - All options from [Sensor](#config-sensor).
+  - All options from [Sensor](/components/sensor).
 - All other options from [Climate](#config-climate).
 
 ## Automations

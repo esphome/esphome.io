@@ -29,7 +29,7 @@ sensor:
 
 ## Configuration variables
 
-- All options from [Sensor](#config-sensor).
+- All options from [Sensor](/components/sensor).
 
 Advanced options:
 

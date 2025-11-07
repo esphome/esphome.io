@@ -50,7 +50,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `10s`.
 - **bit_depth** (*Optional*, one of `12 bit` or `8 bit`  ) determines the precision of the analog readout, defaults to `8bit`.
 - **raw** (*Optional*, boolean) if true, the sensor returns the raw readout value of the knob.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Input switch binary sensor
 

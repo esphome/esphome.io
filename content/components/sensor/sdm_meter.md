@@ -64,25 +64,25 @@ sensor:
 - **phase_a** (*Optional*): The group of exposed sensors for Phase A/1.
 
   - **current** (*Optional*): Use the current value of the sensor in amperes. All options from
-    [Sensor](#config-sensor).
+    [Sensor](/components/sensor).
 
   - **voltage** (*Optional*): Use the voltage value of the sensor in volts (V).
-    All options from [Sensor](#config-sensor).
+    All options from [Sensor](/components/sensor).
 
   - **active_power** (*Optional*): Use the (active) power value of the sensor in watts (W). All options
-    from [Sensor](#config-sensor).
+    from [Sensor](/components/sensor).
 
   - **power_factor** (*Optional*): Use the power factor value of the sensor.
-    All options from [Sensor](#config-sensor).
+    All options from [Sensor](/components/sensor).
 
   - **apparent_power** (*Optional*): Use the apparent power value of the sensor in volt amps (VA). All
-    options from [Sensor](#config-sensor).
+    options from [Sensor](/components/sensor).
 
   - **reactive_power** (*Optional*): Use the reactive power value of the sensor in volt amps reactive (VAR). All
-    options from [Sensor](#config-sensor).
+    options from [Sensor](/components/sensor).
 
   - **phase_angle** (*Optional*): Use the phase angle value of the sensor in degrees (°). All options
-    from [Sensor](#config-sensor).
+    from [Sensor](/components/sensor).
 
 - **phase_b** (*Optional*): The group of exposed sensors for Phase B/2 on applicable meters. eg: SDM630
 
@@ -93,22 +93,22 @@ sensor:
   - All options from **phase_a**
 
 - **frequency** (*Optional*): Use the frequency value of the sensor in hertz.
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **total_power** (*Optional*): Use the total power value of the sensor in watts (W).
-  All options from [Sensor](#config-sensor).
+  All options from [Sensor](/components/sensor).
 
 - **import_active_energy** (*Optional*): Use the import active energy value of the sensor in kilowatt
-  hours (kWh). All options from [Sensor](#config-sensor).
+  hours (kWh). All options from [Sensor](/components/sensor).
 
 - **export_active_energy** (*Optional*): Use the export active energy value of the sensor in kilowatt
-  hours (kWh). All options from [Sensor](#config-sensor).
+  hours (kWh). All options from [Sensor](/components/sensor).
 
 - **import_reactive_energy** (*Optional*): Use the import reactive energy value of the sensor in
-  kilovolt amps reactive hours (kVArh). All options from [Sensor](#config-sensor).
+  kilovolt amps reactive hours (kVArh). All options from [Sensor](/components/sensor).
 
 - **export_reactive_energy** (*Optional*): Use the export reactive energy value of the sensor in
-  kilovolt amps reactive hours (kVArh). All options from [Sensor](#config-sensor).
+  kilovolt amps reactive hours (kVArh). All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.

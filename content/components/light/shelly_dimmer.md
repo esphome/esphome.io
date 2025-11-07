@@ -63,10 +63,10 @@ light:
 - **nrst_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "NRST" of STM32. The default is "GPIO5".
 - **boot0_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
 - **current** (*Optional*): Sensor of the current in Amperes. All options from
-  [Sensor](#config-sensor).
+  [Sensor](/components/sensor).
 
-- **voltage** (*Optional*): Sensor of the voltage in Volts. Only accurate if neutral is connected. All options from [Sensor](#config-sensor).
-- **power** (*Optional*): Sensor of the active power in Watts. Only accurate if neutral is connected. All options from [Sensor](#config-sensor).
+- **voltage** (*Optional*): Sensor of the voltage in Volts. Only accurate if neutral is connected. All options from [Sensor](/components/sensor).
+- **power** (*Optional*): Sensor of the active power in Watts. Only accurate if neutral is connected. All options from [Sensor](/components/sensor).
 - **firmware** (*Optional*):
 
   - **version** (*Optional*): Version string of the [firmware](https://github.com/jamesturton/shelly-dimmer-stm32) that will be expected on the microcontroller. The default is "51.6", another known-good firmware is "51.5".

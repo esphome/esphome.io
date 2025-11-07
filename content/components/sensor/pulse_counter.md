@@ -45,7 +45,7 @@ sensor:
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
 - **total** (*Optional*): Report the total number of pulses.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 > [!NOTE]
 > See {{< docref "/components/sensor/integration" "integration sensor" >}} for summing up pulse counter

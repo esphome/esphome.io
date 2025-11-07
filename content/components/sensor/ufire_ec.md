@@ -37,8 +37,8 @@ sensor:
 - **temperature_sensor** (*Optional*, [ID](#config-id)): Set the ID of the temperature
   sensor. Only needed if the onboard temperature sensor is not used.
 
-- **ec** (*Optional*, [Sensor](#config-sensor)): Set the EC sensor configuration. All options from [Sensor](#config-sensor).
-- **temperature** (*Optional*, [Sensor](#config-sensor)): Set the onboard temperature sensor configuration. All options from [Sensor](#config-sensor).
+- **ec** (*Optional*, [Sensor](/components/sensor)): Set the EC sensor configuration. All options from [Sensor](/components/sensor).
+- **temperature** (*Optional*, [Sensor](/components/sensor)): Set the onboard temperature sensor configuration. All options from [Sensor](/components/sensor).
 - **temperature_compensation** (*Optional*, float): Set the temperature compensation for the EC
   sensor. Defaults to `21.0`.
 

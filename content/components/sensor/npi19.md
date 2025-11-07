@@ -30,11 +30,11 @@ sensor:
 
 - **raw_pressure** (*Optional*): The information for the pressure sensor. See [Converting units](#npi19-converting).
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 - **temperature** (*Optional*): The information for the temperature sensor. Readings in degrees celsius (°C).
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 - **i2c_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the [I²C Component](/components/i2c). Defaults to the default I²C bus.
 

@@ -133,7 +133,7 @@ sensor:
 ### Configuration variables
 
 - **source_id** (**Required**, [ID](#config-id)): The sensor that should be mirrored.
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## Copy Switch
 

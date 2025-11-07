@@ -84,7 +84,7 @@ pin_a:
 - **on_anticlockwise** (*Optional*, [Automation](/automations)): Actions to be performed when
   the knob is turned anticlockwise. See [`on_clockwise` and `on_anticlockwise` Triggers](#sensor-rotary_encoder-triggers).
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 {{< anchor "sensor-rotary_encoder-set_value_action" >}}
 

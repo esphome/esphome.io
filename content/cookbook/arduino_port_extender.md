@@ -134,7 +134,7 @@ sensor:
           - throttle: 2s
 ```
 
-The listed `sensors` supports all options from [Sensor](#config-sensor) like
+The listed `sensors` supports all options from [Sensor](/components/sensor) like
 automations and filters.
 
 > [!NOTE]
