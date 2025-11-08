@@ -143,13 +143,11 @@ If you are using a framework that does not support SPI-based ethernet modules wi
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
-- **lldp** (*Optional*): Configure the Link Layer Discovery Protocol (IEEE 802.1AB) transmitter
+- **lldp** (*Optional*): Configure and enable the Link Layer Discovery Protocol (IEEE 802.1AB) transmitter. The simplest useful configuration is `lldp: {}`, which enables transmission with the default settings.
 
-  - **enabled** (*Optional*, boolean): set to `true` to enable LLDP transmission. The default values for the other LLDP
-    settings should be suitable for most users.
-  - **port** (*Optional*, string): Override the default Port-ID TLV value (default: `ETH_DEF`, 128 character maximum).
-  - **system_name** (*Optional*, string): Override the default System Name TLV (defaults to the value of `esphome.name`, 128 character maximum).
-  - **system_description** (*Optional*, string): Override the default System Description TLV (default is the combination of
+  - **port** (*Optional*, string): Override the Port-ID TLV value (default: `ETH_DEF`, 128 character maximum).
+  - **system_name** (*Optional*, string): Override the System Name TLV (defaults to the value of `esphome.name`, 128 character maximum).
+  - **system_description** (*Optional*, string): Override the System Description TLV (default is the combination of
     `esphome.project.name` and `esphome.project.version` if these are set, otherwise of the form `ESPHome.io
     <esphome-version> <board-name>`, 128 character maximum).
   - **tx_fast_count** (*Optional*, int): number of packets to burst upon startup or reconnect (1-8, default 4)
@@ -355,11 +353,12 @@ ethernet:
 
 **QEMU qemu-system-xtensa with LLDP enabled**:
 
+LLDP transmission enabled with default settings.
+
 ```yaml
 ethernet:
   type: OPENETH
-  lldp:
-    enabled: true
+  lldp: {}
 ```
 
 **Waveshare ESP32-S3-ETH PoE**:
