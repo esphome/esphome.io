@@ -142,7 +142,7 @@ display:
         lambda: |-
           // Draw graph and legend
           it.graph(10, 20, id(temperature_graph_with_legend));
-          it.graph_legend(170, 20, id(temperature_graph_with_legend), my_yellow);
+          it.legend(170, 20, id(temperature_graph_with_legend), my_yellow);
 
 color:
   - id: my_red
@@ -163,13 +163,11 @@ color:
     blue: 0%
 ```
 
-{{< note >}}
-Here are some things to note:
-
-- Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
-- Axis labels are currently not possible without manually placing them.
-- The grid and border color is set with `it.graph()`, while the traces are defined separately.
-- Legends are drawn separately using `it.graph_legend()` and can be positioned independently of the graph.
-- Legend dimensions are automatically calculated if not specified, based on font sizes and trace count.
-
-{{< /note >}}
+> [!NOTE]
+> Here are some things to note:
+>
+> - Setting `y_grid` will expand any specified range to the nearest multiple of grid spacings.
+> - Axis labels are currently not possible without manually placing them.
+> - The grid and border color is set with `it.graph()`, while the traces are defined separately.
+> - Legends are drawn separately using `it.legend()` and can be positioned independently of the graph.
+> - Legend dimensions are automatically calculated if not specified, based on font sizes and trace count.

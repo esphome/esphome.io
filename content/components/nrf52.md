@@ -9,15 +9,13 @@ params:
 
 This component contains platform-specific options for the NRF52 platform.
 
-{{< note >}}
-Support for all aspects of ESPHome on the NRF52 is still in development.
-
-{{< /note >}}
+> [!NOTE]
+> Support for all aspects of ESPHome on the NRF52 is still in development.
 
 ```yaml
 # Example configuration entry
 nrf52:
-    board: adafruit_feather_nrf52840
+  board: adafruit_feather_nrf52840
 ```
 
 ## Configuration variables
@@ -41,7 +39,7 @@ Flashing this bootloader requires an SWD connection, for which a programmer is n
 ```yaml
 # Example configuration entry
 nrf52:
-    board: adafruit_feather_nrf52840
+  board: adafruit_feather_nrf52840
 ```
 
 ## Flashing with Adafruit nRF52 Bootloader
@@ -61,7 +59,7 @@ This bootloader supports updates over USB CDC.
 ```yaml
 # Example configuration entry
 nrf52:
-    board: adafruit_itsybitsy_nrf52840
+  board: adafruit_itsybitsy_nrf52840
 ```
 
 ## GPIO Pin Numbering
@@ -70,6 +68,32 @@ There are two ways to reference GPIO pins:
 
 1. By pin name, e.g., `P0.15` or `P1.11`.
 1. By pin number, e.g., `15` or `43`.
+
+## DFU (Device Firmware Update)
+
+The ``dfu`` component enables automatic entry into **DFU (Device Firmware Update)** mode by monitoring
+the USB CDC serial connection. When a host opens the port at **1200 baud**, the component triggers
+a reset via a GPIO pin to put the device into DFU mode.
+
+ESPHome uses this component internally when uploading firmware via:
+
+```bash
+esphome upload d.yaml
+```
+
+### Example Configuration
+
+```yaml
+nrf52:
+  dfu:
+    reset_pin:
+      number: 14
+      inverted: true
+```
+
+### Configuration variables
+
+- **reset_pin** (*Required*, [Pin](#config-pin)): The pin to use for trigger a hardware reset. This pin should be connected to the MCU's reset line or to a circuit that causes the bootloader to enter DFU mode after reset.
 
 ## See Also
 

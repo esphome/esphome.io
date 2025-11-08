@@ -12,14 +12,12 @@ for configuring Wi-Fi on an ESP32 device by using Bluetooth Low Energy (BLE) to 
 
 The `esp32_improv` component will automatically set up the {{< docref "esp32_ble" "BLE Server" >}}.
 
-{{< warning >}}
-The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
-audio components are most likely to cause issues.
-
-{{< /warning >}}
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
+> audio components are most likely to cause issues.
 
 ```yaml
 # Example configuration entry
@@ -42,6 +40,8 @@ esp32_improv:
 - **identify_duration** (*Optional*, [Time](#config-time)): The amount of time to identify for. Defaults to `10s`.
 - **wifi_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before starting the Improv service
   after Wi-Fi is no longer connected. Defaults to `1min`.
+- **next_url** (*Optional*, string): The URL to open after provisioning is complete. Defaults to
+  `https://my.home-assistant.io/redirect/config_flow_start?domain=esphome`.
 
 - **on_start** (*Optional*, [Automation](#automation)): An action to be performed when Improv is waiting for
   authorization and/or upon authorization. See [`on_start`](#improv-on_start).
