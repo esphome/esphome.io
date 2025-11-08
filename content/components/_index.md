@@ -288,6 +288,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "Mopeka Pro Check LP","components/sensor/mopeka_pro_check","mopeka_pro_check.jpg","Tank level"
 "Mopeka Standard Check LP","components/sensor/mopeka_std_check","mopeka_std_check.jpg","Tank level"
 "RuuviTag","components/sensor/ruuvitag","ruuvitag.jpg","Temperature & Humidity & Accelerometer"
+"ThermPro TP357","components/sensor/thermpro_tp357","thermpro_tp357.jpg","Temperature & Humidity"
 "Xiaomi BLE","components/sensor/xiaomi_ble","xiaomi_mijia_logo.jpg","Various"
 {{< /imgtable >}}
 
