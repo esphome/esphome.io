@@ -47,7 +47,7 @@ light:
 
 ## `output.esp8266_pwm.set_frequency` Action
 
-This [Action](/automations/actions#config-action) allows you to manually change the frequency of an ESP8266 PWM
+This [Action](/automations/actions#all-actions) allows you to manually change the frequency of an ESP8266 PWM
 channel at runtime. Use cases include controlling a passive buzzer (for pitch control).
 
 ```yaml

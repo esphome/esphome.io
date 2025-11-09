@@ -96,7 +96,7 @@ Configuration variables: see [Automation](/automations).
 
 ### `button.press` Action
 
-This is an [Action](/automations/actions#config-action) for pressing a button in an Automation.
+This is an [Action](/automations/actions#all-actions) for pressing a button in an Automation.
 
 ```yaml
 - button.press: my_button

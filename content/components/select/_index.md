@@ -92,7 +92,7 @@ Configuration variables: See [Automation](/automations).
 
 ### `select.set` Action
 
-This is an [Action](/automations/actions#config-action) for setting the active option using an option value.
+This is an [Action](/automations/actions#all-actions) for setting the active option using an option value.
 
 ```yaml
 - select.set:
@@ -113,7 +113,7 @@ the select is left as-is.
 
 ### `select.set_index` Action
 
-This is an [Action](/automations/actions#config-action) for setting the active option using its index offset.
+This is an [Action](/automations/actions#all-actions) for setting the active option using its index offset.
 
 ```yaml
 - select.set_index:
@@ -134,7 +134,7 @@ the select is left as-is.
 
 ### `select.next` Action
 
-This is an [Action](/automations/actions#config-action) for selecting the next option in a select component.
+This is an [Action](/automations/actions#all-actions) for selecting the next option in a select component.
 
 ```yaml
 - select.next:
@@ -155,7 +155,7 @@ Configuration variables:
 
 ### `select.previous` Action
 
-This is an [Action](/automations/actions#config-action) for selecting the previous option in
+This is an [Action](/automations/actions#all-actions) for selecting the previous option in
 a select component.
 
 ```yaml
@@ -177,7 +177,7 @@ Configuration variables:
 
 ### `select.first` Action
 
-This is an [Action](/automations/actions#config-action) for selecting the first option in
+This is an [Action](/automations/actions#all-actions) for selecting the first option in
 a select component.
 
 ```yaml
@@ -196,7 +196,7 @@ Configuration variables:
 
 ### `select.last` Action
 
-This is an [Action](/automations/actions#config-action) for selecting the last option in
+This is an [Action](/automations/actions#all-actions) for selecting the last option in
 a select component.
 
 ```yaml
@@ -215,7 +215,7 @@ Configuration variables:
 
 ### `select.operation` Action
 
-This is an [Action](/automations/actions#config-action) that can be used to change the active
+This is an [Action](/automations/actions#all-actions) that can be used to change the active
 option in a select component (first, last, previous or next), using a generic
 templatable action call.
 

@@ -44,22 +44,22 @@ sensor:
 
 Automation triggers:
 
-- **on_led** (*Optional*, [Action](/automations/actions#config-action)): Triggered when the result of `get_led_state()` is ready. The LED
+- **on_led** (*Optional*, [Action](/automations/actions#all-actions)): Triggered when the result of `get_led_state()` is ready. The LED
   state is provided as a boolean variable named `x`.
 
-- **on_device_information** (*Optional*, [Action](/automations/actions#config-action)): Triggered when the result of `get_device_information()`
+- **on_device_information** (*Optional*, [Action](/automations/actions#all-actions)): Triggered when the result of `get_device_information()`
   is ready. The result is provided as a `std::string` variable named `x`.
 
-- **on_slope** (*Optional*, [Action](/automations/actions#config-action)): Triggered when the result of `get_slope()` is ready. The result
+- **on_slope** (*Optional*, [Action](/automations/actions#all-actions)): Triggered when the result of `get_slope()` is ready. The result
   is provided as a `std::string` variable named `x`.
 
-- **on_calibration** (*Optional*, [Action](/automations/actions#config-action)): Triggered when the result of `get_calibration()` is ready.
+- **on_calibration** (*Optional*, [Action](/automations/actions#all-actions)): Triggered when the result of `get_calibration()` is ready.
   The result is provided as a `std::string` variable named `x`.
 
-- **on_t** (*Optional*, [Action](/automations/actions#config-action)): Triggered when the result of `get_t()` is ready. The result is provided
+- **on_t** (*Optional*, [Action](/automations/actions#all-actions)): Triggered when the result of `get_t()` is ready. The result is provided
   as a `std::string` variable named `x`.
 
-- **on_custom** (*Optional*, [Action](/automations/actions#config-action)): Triggered when the result of `get_custom()` is ready. The result is provided as a `std::string` variable named `x`.
+- **on_custom** (*Optional*, [Action](/automations/actions#all-actions)): Triggered when the result of `get_custom()` is ready. The result is provided as a `std::string` variable named `x`.
 
 {{< anchor "ezo_lambda_calls" >}}
 

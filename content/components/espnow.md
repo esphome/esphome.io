@@ -90,7 +90,7 @@ This automation will be triggered when a broadcast packet is received.
 
 ### `espnow.send` Action
 
-This is an [Action](/automations/actions#config-action) for sending a data packet over the espnow protocol.
+This is an [Action](/automations/actions#all-actions) for sending a data packet over the espnow protocol.
 
 ```yaml
 on_...:
@@ -128,7 +128,7 @@ Automations:
 
 ### `espnow.broadcast` Action
 
-This is an [Action](/automations/actions#config-action) for sending a data packet over the espnow protocol to any device that is listening.
+This is an [Action](/automations/actions#all-actions) for sending a data packet over the espnow protocol to any device that is listening.
 
 ```yaml
 on_...:
@@ -148,7 +148,7 @@ on_...:
 
 ### `espnow.peer.add` Action
 
-This is an [Action](/automations/actions#config-action) to add a new peer to the internal allowed peers list.
+This is an [Action](/automations/actions#all-actions) to add a new peer to the internal allowed peers list.
 
 ```yaml
 on_...:
@@ -166,7 +166,7 @@ on_...:
 
 ### `espnow.peer.delete` Action
 
-This is an [Action](/automations/actions#config-action) to remove a known peer from the internal allowed peers list.
+This is an [Action](/automations/actions#all-actions) to remove a known peer from the internal allowed peers list.
 
 ```yaml
 on_...:
@@ -184,7 +184,7 @@ on_...:
 
 ### `espnow.set_channel` Action
 
-This is an [Action](/automations/actions#config-action) to change the channel that espnow is sending and receiving on.
+This is an [Action](/automations/actions#all-actions) to change the channel that espnow is sending and receiving on.
 
 ```yaml
 on_...:

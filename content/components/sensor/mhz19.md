@@ -59,7 +59,7 @@ sensor:
 
 ## `mhz19.calibrate_zero` Action
 
-This [action](/automations/actions#config-action) executes zero point calibration command on the sensor with the given ID.
+This [action](/automations/actions#all-actions) executes zero point calibration command on the sensor with the given ID.
 
 If you want to execute zero point calibration, the MH-Z19 sensor must work in stable gas environment (400ppm)
 for over 20 minutes and you execute this function.
@@ -84,7 +84,7 @@ api:
 
 ## `mhz19.abc_enable` Action
 
-This [action](/automations/actions#config-action) enables automatic baseline calibration on the sensor with the given ID.
+This [action](/automations/actions#all-actions) enables automatic baseline calibration on the sensor with the given ID.
 
 ```yaml
 on_...:
@@ -96,7 +96,7 @@ on_...:
 
 ## `mhz19.abc_disable` Action
 
-This [action](/automations/actions#config-action) disables automatic baseline calibration on the sensor with the given ID.
+This [action](/automations/actions#all-actions) disables automatic baseline calibration on the sensor with the given ID.
 
 ```yaml
 on_...:

@@ -195,7 +195,7 @@ this time counter.
 
 ## `sen5x.start_fan_autoclean` Action
 
-This [action](/automations/actions#config-action) manually starts fan-cleaning.
+This [action](/automations/actions#all-actions) manually starts fan-cleaning.
 
 ```yaml
 on_...:

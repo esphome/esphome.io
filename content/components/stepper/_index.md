@@ -221,7 +221,7 @@ Configuration variables:
 
 ## `stepper.set_speed` Action
 
-This [Action](/automations/actions#config-action) allows you to set the speed of a stepper at runtime.
+This [Action](/automations/actions#all-actions) allows you to set the speed of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -240,7 +240,7 @@ Configuration variables:
 
 ## `stepper.set_acceleration` Action
 
-This [Action](/automations/actions#config-action) allows you to set the acceleration of a stepper at runtime.
+This [Action](/automations/actions#all-actions) allows you to set the acceleration of a stepper at runtime.
 
 ```yaml
 on_...:
@@ -259,7 +259,7 @@ Configuration variables:
 
 ## `stepper.set_deceleration` Action
 
-This [Action](/automations/actions#config-action) allows you to set the deceleration of a stepper at runtime.
+This [Action](/automations/actions#all-actions) allows you to set the deceleration of a stepper at runtime.
 
 ```yaml
 on_...:

@@ -48,7 +48,7 @@ sensor:
 
 ## `senseair.background_calibration` Action
 
-This [action](/automations/actions#config-action) initiates a background calibration on the sensor with the given ID: the current
+This [action](/automations/actions#all-actions) initiates a background calibration on the sensor with the given ID: the current
 CO2 level will be used as a reference for the 400ppm threshold. Ensure that the sensor is in a stable environment with
 fresh ambient air, preferably near a window that has already been opened for a sufficient time.
 
@@ -62,7 +62,7 @@ on_...:
 
 ## `senseair.background_calibration_result` Action
 
-This [action](/automations/actions#config-action) requests the result of the background calibration procedure from the sensor
+This [action](/automations/actions#all-actions) requests the result of the background calibration procedure from the sensor
 with the given ID. The value will be printed in ESPHome logs.
 
 Wait at least one sensor lamp cycle after having triggered the background calibration before requesting its result.
@@ -77,7 +77,7 @@ on_...:
 
 ## `senseair.abc_get_period` Action
 
-This [action](/automations/actions#config-action) requests the currently configured ABC interval from the sensor with the given ID.
+This [action](/automations/actions#all-actions) requests the currently configured ABC interval from the sensor with the given ID.
 The value will be printed in ESPHome logs.
 
 ```yaml
@@ -90,7 +90,7 @@ on_...:
 
 ## `senseair.abc_enable` Action
 
-This [action](/automations/actions#config-action) enables Automatic Baseline Calibration on the sensor with the given ID.
+This [action](/automations/actions#all-actions) enables Automatic Baseline Calibration on the sensor with the given ID.
 ABC will be activated with the default interval of 180 hours.
 
 ```yaml
@@ -103,7 +103,7 @@ on_...:
 
 ## `senseair.abc_disable` Action
 
-This [action](/automations/actions#config-action) disables Automatic Baseline Calibration on the sensor with the given ID.
+This [action](/automations/actions#all-actions) disables Automatic Baseline Calibration on the sensor with the given ID.
 
 ```yaml
 on_...:

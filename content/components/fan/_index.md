@@ -89,25 +89,25 @@ MQTT options:
 
 Automation triggers:
 
-- **on_state** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_state** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan state is changed. See [`fan.on_state` Trigger](#fan-on_state_trigger).
 
-- **on_turn_on** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan is turned on. See [`fan.on_turn_on` / `fan.on_turn_off` Trigger](#fan-on_turn_on_off_trigger).
 
-- **on_turn_off** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_turn_off** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan is turned off. See [`fan.on_turn_on` / `fan.on_turn_off` Trigger](#fan-on_turn_on_off_trigger).
 
-- **on_direction_set** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_direction_set** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan direction is changed. See [`fan.on_direction_set` Trigger](#fan-on_direction_set_trigger).
 
-- **on_oscillating_set** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_oscillating_set** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan oscillating state is changed. See [`fan.on_oscillating_set` Trigger](#fan-on_oscillating_set_trigger).
 
-- **on_speed_set** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_speed_set** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan speed is changed. See [`fan.on_speed_set` Trigger](#fan-on_speed_set_trigger).
 
-- **on_preset_set** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_preset_set** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the fan preset mode is changed. See [`fan.on_preset_set` Trigger](#fan-on_preset_set_trigger).
 
 {{< anchor "fan-toggle_action" >}}

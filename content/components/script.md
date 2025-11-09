@@ -36,7 +36,7 @@ script:
   that must be provided in order to execute. All parameters defined here are mandatory and must be given when calling
   the script.
 
-- **then** (**Required**, [Action](/automations/actions#config-action)): The action to perform.
+- **then** (**Required**, [Action](/automations/actions#all-actions)): The action to perform.
 
 {{< anchor "script-parameters" >}}
 

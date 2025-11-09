@@ -122,7 +122,7 @@ Configuration options:
 
 ## `servo.detach` Action
 
-This [Action](/automations/actions#config-action) allows you to disable the output on a servo motor -
+This [Action](/automations/actions#all-actions) allows you to disable the output on a servo motor -
 this will make the servo motor stop immediately and disable its active control.
 
 ```yaml

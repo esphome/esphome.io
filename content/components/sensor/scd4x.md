@@ -81,7 +81,7 @@ sensor:
 
 ## `perform_forced_calibration` Action
 
-This [action](/automations/actions#config-action) manually calibrates the sensor to the provided value in ppm.
+This [action](/automations/actions#all-actions) manually calibrates the sensor to the provided value in ppm.
 Operate the SCD4x in the operation mode later used in normal sensor operation (periodic measurement, low power periodic measurement or single shot) for > 3 minutes in an environment with homogenous and constant CO2 concentration before performing a forced recalibration.
 As of March 2025, the global monthly mean CO₂ concentration is 426 ppm.
 
@@ -113,7 +113,7 @@ api:
 
 ## `factory_reset` Action
 
-This [action](/automations/actions#config-action) triggers a factory reset of the sensor. Calibration settings are restored from factory settings.
+This [action](/automations/actions#all-actions) triggers a factory reset of the sensor. Calibration settings are restored from factory settings.
 
 ```yaml
 on_...:

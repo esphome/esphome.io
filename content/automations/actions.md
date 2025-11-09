@@ -222,10 +222,10 @@ At least one of `condition`, `all` or `any` must be provided.
 - **any** (*Optional*, [Condition](#config-condition)): Takes a list of conditions; if at least one is true, the
   condition will be true.
 
-- **then** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to true.
+- **then** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to true.
   Defaults to doing nothing.
 
-- **else** (*Optional*, [Action](#config-action)): The action to perform if the condition evaluates to false.
+- **else** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to false.
   Defaults to doing nothing.
 
 {{< anchor "lambda_action" >}}
@@ -266,7 +266,7 @@ on_...:
 - **count** (**Required**, int): The number of times the action should be repeated. The counter is available to
   lambdas using the implicit script parameter `iteration`.
 
-- **then** (**Required**, [Action](#config-action)): The action to repeat.
+- **then** (**Required**, [Action](#all-actions)): The action to repeat.
 
 {{< anchor "wait_until_action" >}}
 
@@ -326,7 +326,7 @@ on_...:
 - **condition** (**Required**, [Condition](#config-condition)): The condition to check to determine whether or not to
   execute.
 
-- **then** (**Required**, [Action](#config-action)): The action to perform until the condition evaluates to false.
+- **then** (**Required**, [Action](#all-actions)): The action to perform until the condition evaluates to false.
 
 {{< anchor "component-update_action" >}}
 

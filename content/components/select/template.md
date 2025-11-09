@@ -29,7 +29,7 @@ select:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the current option of the select.
 
-- **set_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
+- **set_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests to set the Select option.
   The new option is available to lambdas in the `x` variable.
 

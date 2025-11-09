@@ -110,7 +110,7 @@ This means that there are only 4 steps between each value.
 
 ## `output.ledc.set_frequency` Action
 
-This [Action](/automations/actions#config-action) allows you to manually change the frequency of an LEDC
+This [Action](/automations/actions#all-actions) allows you to manually change the frequency of an LEDC
 channel at runtime. Use cases include controlling a passive buzzer (for pitch control).
 
 ```yaml

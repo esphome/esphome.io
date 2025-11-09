@@ -59,7 +59,7 @@ cover:
 ## Configuration variables
 
 - **open_sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The open current sensor.
-- **open_action** (**Required**, [Action](/automations/actions#config-action)): The action that should
+- **open_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be opened.
 
 - **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
@@ -72,7 +72,7 @@ cover:
   should drain to consider the cover is blocked during opening.
 
 - **close_sensor** (**Required**, [ID](/guides/configuration-types#config-id)): The close current sensor.
-- **close_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
+- **close_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be closed.
 
 - **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
@@ -84,7 +84,7 @@ cover:
 - **close_obstacle_current_threshold** (**Required**, float): The amount of current in Amps the motor
   should drain to consider the cover is blocked during closing.
 
-- **stop_action** (**Required**, [Action](/automations/actions#config-action)): The action that should
+- **stop_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
   be performed to stop the cover.
 
 - **max_duration** (*Optional*, [Time](#config-time)): The maximum duration the cover should be opening
@@ -99,7 +99,7 @@ cover:
   obstacle detection. Defaults to `10%`.
 
 - **malfunction_detection** (*Optional*, boolean): Enable to detect malfunction detection (Tipically welded realys). Defaults to `True`.
-- **malfunction_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
+- **malfunction_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when relay malfunction is detected. Malfunction may require device servicing. You can use this action
   to notify other systems about this situation
 

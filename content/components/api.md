@@ -102,10 +102,10 @@ api:
 - **password** (*Optional*, **Deprecated**, string): The password to protect the API Server with. Defaults
   to no password. It is recommended to use the `encryption` -> `key` above instead of the the `password`.
 
-- **on_client_connected** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform when a client
+- **on_client_connected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   connects to the API. See [`on_client_connected` Trigger](#api-on_client_connected_trigger).
 
-- **on_client_disconnected** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform when a client
+- **on_client_disconnected** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when a client
   disconnects from the API. See [`on_client_disconnected` Trigger](#api-on_client_disconnected_trigger).
 
 {{< anchor "api-actions" >}}

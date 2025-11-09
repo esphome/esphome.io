@@ -46,7 +46,7 @@ sensor:
 
 ## `sensor.integration.reset` Action
 
-This [Action](/automations/actions#config-action) allows you to reset the value of the integration sensor
+This [Action](/automations/actions#all-actions) allows you to reset the value of the integration sensor
 to zero. For example this can be used to reset the integration sensor to zero at midnight with
 a time-based automation.
 

@@ -97,7 +97,7 @@ Configuration variables: See [Automation](/automations).
 
 ### `datetime.date.set` Action
 
-This is an [Action](/automations/actions#config-action) for setting a datetime date state.
+This is an [Action](/automations/actions#all-actions) for setting a datetime date state.
 The `date` provided can be in one of 3 formats:
 
 ```yaml
@@ -163,7 +163,7 @@ advanced stuff (see the full API Reference for more info).
 
 ### `datetime.time.set` Action
 
-This is an [Action](/automations/actions#config-action) for setting a datetime time state.
+This is an [Action](/automations/actions#all-actions) for setting a datetime time state.
 The `time` provided can be in one of 3 formats:
 
 ```yaml
@@ -229,7 +229,7 @@ advanced stuff (see the full API Reference for more info).
 
 ### `datetime.datetime.set` Action
 
-This is an [Action](/automations/actions#config-action) for setting a datetime datetime state.
+This is an [Action](/automations/actions#all-actions) for setting a datetime datetime state.
 The `datetime` provided can be in one of 3 formats:
 
 ```yaml

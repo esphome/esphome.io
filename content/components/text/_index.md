@@ -93,7 +93,7 @@ Configuration variables: See [Automation](/automations).
 
 ### `text.set` Action
 
-This is an [Action](/automations/actions#config-action) for setting a text state.
+This is an [Action](/automations/actions#all-actions) for setting a text state.
 
 ```yaml
 - text.set:

@@ -57,10 +57,10 @@ Configuration variables:
 
   Unless a specific platform defines another default value, the default is `ALWAYS_OFF`.
 
-- **on_turn_on** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the switch is turned on. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
 
-- **on_turn_off** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform
+- **on_turn_off** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the switch is turned off. See [`switch.on_turn_on` / `switch.on_turn_off` Trigger](#switch-on_turn_on_off_trigger).
 
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,

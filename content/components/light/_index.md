@@ -61,13 +61,13 @@ light:
   - `ALWAYS_OFF` (Default) - Always initialize the light as OFF on bootup.
   - `ALWAYS_ON` - Always initialize the light as ON on bootup.
 
-- **on_turn_on** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform when the light is turned on. See
+- **on_turn_on** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned on. See
   [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
-- **on_turn_off** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform when the light is turned off.
+- **on_turn_off** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light is turned off.
   See [`light.on_turn_on` / `light.on_turn_off` Trigger](#light-on_turn_on_off_trigger).
 
-- **on_state** (*Optional*, [Action](/automations/actions#config-action)): An automation to perform when the light's set state is
+- **on_state** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform when the light's set state is
   changed. See [`light.on_state` Trigger](#light-on_state_trigger).
 
 **Additional configuration variables for addressable lights:**
@@ -300,7 +300,7 @@ on_...:
 
 ### `light.control` Action
 
-This [Action](/automations/actions#config-action) is a generic call to change the state of a light - it is essentially just a
+This [Action](/automations/actions#all-actions) is a generic call to change the state of a light - it is essentially just a
 combination of the turn_on and turn_off calls.
 
 ```yaml
@@ -321,7 +321,7 @@ on_...:
 
 ### `light.dim_relative` Action
 
-This [Action](/automations/actions#config-action) allows you to dim a light that supports brightness by a relative amount.
+This [Action](/automations/actions#all-actions) allows you to dim a light that supports brightness by a relative amount.
 
 ```yaml
 on_...:
@@ -377,7 +377,7 @@ on_...:
 
 ### `light.addressable_set` Action
 
-This [Action](/automations/actions#config-action) allows you to manually set a range of LEDs on an addressable light to a specific
+This [Action](/automations/actions#all-actions) allows you to manually set a range of LEDs on an addressable light to a specific
 color.
 
 ```yaml
@@ -999,7 +999,7 @@ light:
 **Configuration variables:**
 
 - **name** (*Optional*, string): The name of the effect.
-- **sequence** (*Optional*, [Action](/automations/actions#config-action)): The actions to perform in sequence until the effect is
+- **sequence** (*Optional*, [Action](/automations/actions#all-actions)): The actions to perform in sequence until the effect is
   stopped.
 
 {{< anchor "e131-light-effect" >}}

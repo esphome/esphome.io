@@ -39,10 +39,10 @@ Possible return values for the optional lambda:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated repeatedly to get the current state of the switch.
 
-- **turn_on_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
+- **turn_on_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the switch to be turned on.
 
-- **turn_off_action** (*Optional*, [Action](/automations/actions#config-action)): The action that should
+- **turn_off_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote (like Home Assistant's frontend) requests the switch to be turned off.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,

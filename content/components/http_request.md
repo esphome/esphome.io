@@ -78,13 +78,13 @@ http_request:
 
 ## Actions
 
-The `http_request` component supports a number of [actions](/automations/actions#config-action) that can be used to send requests.
+The `http_request` component supports a number of [actions](/automations/actions#all-actions) that can be used to send requests.
 
 {{< anchor "http_request-get_action" >}}
 
 ### `http_request.get` Action
 
-This [action](/automations/actions#config-action) sends a GET request.
+This [action](/automations/actions#all-actions) sends a GET request.
 
 ```yaml
 on_...:
@@ -121,7 +121,7 @@ on_...:
 
 ### `http_request.post` Action
 
-This [action](/automations/actions#config-action) sends a POST request.
+This [action](/automations/actions#all-actions) sends a POST request.
 
 ```yaml
 on_...:
@@ -147,7 +147,7 @@ on_...:
 
 ### `http_request.send` Action
 
-This [action](/automations/actions#config-action) sends a request.
+This [action](/automations/actions#all-actions) sends a request.
 
 ```yaml
 on_...:

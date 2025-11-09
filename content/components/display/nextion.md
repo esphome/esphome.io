@@ -72,11 +72,11 @@ display:
 - **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
 - **wake_up_page** (*Optional*, int): Sets the page to display after waking up
 - **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to `false`.
-- **on_setup** (*Optional*, [Action](/automations/actions#config-action)): An action to be performed after ESPHome connects to the Nextion. See [Nextion Automation](#nextion-on_setup).
-- **on_sleep** (*Optional*, [Action](/automations/actions#config-action)): An action to be performed when the Nextion goes to sleep. See [Nextion Automation](#nextion-on_sleep).
-- **on_wake** (*Optional*, [Action](/automations/actions#config-action)): An action to be performed when the Nextion wakes up. See [Nextion Automation](#nextion-on_sleep).
-- **on_page** (*Optional*, [Action](/automations/actions#config-action)): An action to be performed after a page change. See [Nextion Automation](#nextion-on_page).
-- **on_touch** (*Optional*, [Action](/automations/actions#config-action)): An action to be performed after a touch event (press or release). See [Nextion Automation](#nextion-on_touch).
+- **on_setup** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed after ESPHome connects to the Nextion. See [Nextion Automation](#nextion-on_setup).
+- **on_sleep** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion goes to sleep. See [Nextion Automation](#nextion-on_sleep).
+- **on_wake** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion wakes up. See [Nextion Automation](#nextion-on_sleep).
+- **on_page** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed after a page change. See [Nextion Automation](#nextion-on_page).
+- **on_touch** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed after a touch event (press or release). See [Nextion Automation](#nextion-on_touch).
 - **auto_wake_on_touch** (*Optional*, boolean): If set to `true`, the Nextion will be configured to wake from sleep
   when touched.
 
@@ -84,7 +84,7 @@ display:
   skipped. When set to `true`, the connection will be established without performing the handshake. This can be
   useful when using Nextion Simulator. Defaults to `false`.
 
-- **on_buffer_overflow** (*Optional*, [Action](/automations/actions#config-action)): An action to be performed when the Nextion
+- **on_buffer_overflow** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion
   reports a buffer overflow. See [Nextion Automation](#nextion-on_buffer_overflow).
 
 - **command_spacing** (*Optional*, [Time](#config-time)): Sets the minimum time between commands sent to the Nextion display.
