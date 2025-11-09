@@ -10,7 +10,7 @@ params:
 The `pmsa003i` sensor platform allows you to use your Plantower PMSA003I
 particulate matter sensor
 ([datasheet](https://cdn-shop.adafruit.com/product-files/4632/4505_PMSA003I_series_data_manual_English_V2.6.pdf),
-`Adafruit`_) with ESPHome.
+[Adafruit](https://www.adafruit.com/product/4632)) with ESPHome.
 
 The [I²C Bus](#i2c) is required to be set up in your configuration for this sensor to work.
 
@@ -76,16 +76,14 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-{{< note >}}
-Standard vs environmental units from <https://publiclab.org/questions/samr/04-07-2019/how-to-interpret-pms5003-sensor-values#c23772>
-
-  "Standard" refers to the concentration "corrected" to the "standard atmosphere" which in the US is DEFINED as "having a temperature of 288.15 K at the sea level 0 km geo-potential height and 1013.25 hPa" details here
-
-  On the other hand, the "ambient conditions" are just as the air is "now" (whatever temperature and pressure there is) Now what does that mean ...
-
-  Air being a gas, it is compressible which means that it changes its volume when the pressure changes so when you report concentrations as mass per volume of air it is relevant at what pressure that volume is calculated. For example, if you have a bunch of particles rising in the air in a bubble (no loss of particles, no addition, they're just riding a bubble up in the air) then, as they rise, the pressure drops so what was 1cc at the ground it is now 2cc so the concentration is now half without anything actually changing other than the ambient pressure. So, it is common to report concentrations (of anything) as "x mg per standard m3" and because we scientist don't like to write much (current example excluded) you'll usually see the "standard" being dropped because it is "implicit".
-
-{{< /note >}}
+> [!NOTE]
+> Standard vs environmental units from <https://publiclab.org/questions/samr/04-07-2019/how-to-interpret-pms5003-sensor-values#c23772>
+>
+> "Standard" refers to the concentration "corrected" to the "standard atmosphere" which in the US is DEFINED as "having a temperature of 288.15 K at the sea level 0 km geo-potential height and 1013.25 hPa" details here
+>
+> On the other hand, the "ambient conditions" are just as the air is "now" (whatever temperature and pressure there is) Now what does that mean ...
+>
+> Air being a gas, it is compressible which means that it changes its volume when the pressure changes so when you report concentrations as mass per volume of air it is relevant at what pressure that volume is calculated. For example, if you have a bunch of particles rising in the air in a bubble (no loss of particles, no addition, they're just riding a bubble up in the air) then, as they rise, the pressure drops so what was 1cc at the ground it is now 2cc so the concentration is now half without anything actually changing other than the ambient pressure. So, it is common to report concentrations (of anything) as "x mg per standard m3" and because we scientist don't like to write much (current example excluded) you'll usually see the "standard" being dropped because it is "implicit".
 
 ## See Also
 

@@ -323,7 +323,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "ATM90E32","components/sensor/atm90e32","atm90e32.jpg","Voltage & Current & Power"
 "BL0906","components/sensor/bl0906","bl0906.png","Voltage & Current & Power & Energy"
 "BL0939","components/sensor/bl0939","bl0939.png","Voltage & Current & Power & Energy"
-"BL0940","components/sensor/bl0940","bl0940.png","Voltage & Current & Power"
+"BL0940","components/sensor/bl0940","bl0940.png","Voltage & Current & Power & Energy"
 "BL0942","components/sensor/bl0942","bl0942.png","Voltage & Current & Power"
 "CS5460A","components/sensor/cs5460a","cs5460a.png","Voltage & Current & Power"
 "CSE7761","components/sensor/cse7761","cse7761.svg","Voltage & Current & Power"
@@ -388,6 +388,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "HYT271","components/sensor/hyt271","hyt271.jpg","Temperature & Humidity",""
 "Inkbird IBS-TH1 Mini","components/sensor/inkbird_ibsth1_mini","inkbird_isbth1_mini.jpg","Temperature & Humidity",""
 "Internal Temperature","components/sensor/internal_temperature","thermometer.svg","Temperature","dark-invert"
+"LM75B","components/sensor/lm75b","lm75b.jpg","Temperature",""
 "LPS22","components/sensor/lps22","lps22.webp","Temperature & Barometric Pressure",""
 "MCP9808","components/sensor/mcp9808","mcp9808.jpg","Temperature",""
 "MH-Z19","components/sensor/mhz19","mhz19.jpg","CO₂ & Temperature",""
@@ -416,6 +417,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "TMP102","components/sensor/tmp102","tmp102.jpg","Temperature",""
 "TMP1075","components/sensor/tmp1075","tmp1075.jpg","Temperature",""
 "TMP117","components/sensor/tmp117","tmp117.jpg","Temperature",""
+"WTS01","components/sensor/wts01","wts01.png","Temperature",""
 "XGZP68xx Series","components/sensor/xgzp68xx","6897d.jpg","Differential Pressure",""
 {{< /imgtable >}}
 
@@ -722,7 +724,9 @@ Often known as "tag" or "card" readers within the community.
 {{< imgtable >}}
 "Addressable Light","components/display/addressable_light","addressable_light.jpg"
 "MIPI DSI Displays","components/display/mipi_dsi","tab5.jpg"
+"MIPI RGB Displays","components/display/mipi_rgb","indicator.jpg"
 "MIPI SPI Displays","components/display/mipi_spi","t4-s3.jpg"
+"ePaper SPI Displays","components/display/epaper_spi","epaper.svg"
 "ILI9xxx","components/display/ili9xxx","ili9341.jpg"
 "ILI9341","components/display/ili9xxx","ili9341.svg"
 "ILI9342","components/display/ili9xxx","ili9342.svg"
@@ -730,7 +734,7 @@ Often known as "tag" or "card" readers within the community.
 "ILI9486","components/display/ili9xxx","ili9341.jpg"
 "ILI9488","components/display/ili9xxx","ili9488.svg"
 "WSPICOLCD","components/display/ili9xxx","ili9488.svg"
-"Inkplate","components/display/inkplate6","inkplate6.jpg"
+"Inkplate","components/display/inkplate","inkplate6.jpg"
 "LCD Display","components/display/lcd_display","lcd.jpg"
 "MAX7219 Dot Matrix","components/display/max7219digit","max7219digit.jpg"
 "MAX7219","components/display/max7219","max7219.jpg"
@@ -1039,6 +1043,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 ## Miscellaneous Components
 
 {{< imgtable >}}
+"Camera Encoder","components/camera/camera_encoder","camera.svg","dark-invert"
 "ESP32 Camera","components/esp32_camera","camera.svg","dark-invert"
 "Exposure Notifications","components/exposure_notifications","exposure_notifications.png",""
 "GPS","components/gps","crosshairs-gps.svg","dark-invert"
@@ -1048,6 +1053,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Status LED","components/status_led","led-on.svg","dark-invert"
 "Sun","components/sun","weather-sunny.svg","dark-invert"
 "Tuya MCU","components/tuya","tuya.png",""
+"Z-Wave Proxy","components/zwave_proxy","z-wave.svg",""
 {{< /imgtable >}}
 
 ## Cookbook

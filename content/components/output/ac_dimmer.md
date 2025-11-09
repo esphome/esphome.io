@@ -7,21 +7,20 @@ params:
     image: ac_dimmer.svg
 ---
 
-{{< warning >}}
-This component has not been fully tested yet, if you are testing this component
-please share your experience with the dimmer hardware and light model and
-configuration here <https://github.com/esphome/feature-requests/issues/278>
+> [!WARNING]
+> This component has not been fully tested yet, if you are testing this component
+> please share your experience with the dimmer hardware and light model and
+> configuration here <https://github.com/esphome/feature-requests/issues/278>
+>
+> Thanks!
 
-Thanks!
-
-{{< /warning >}}
 The `ac_dimmer` component allows you to connect a dimmable light or other load
 which supports phase control dimming to your ESPHome project.
 
 There are several already made boards which are compatible with this component, such as the
 [RobotDyn dimmer](https://robotdyn.com/ac-light-dimmer-module-1-channel-3-3v-5v-logic-ac-50-60hz-220v-110v.html).
 
-{{< img src="robotdyn_dimmer.jpg" alt="Image" caption="RobotDyn Module. Image by `RobotDyn`_" width="50.0%" class="align-center" >}}
+{{< img src="robotdyn_dimmer.jpg" alt="Image" caption="RobotDyn Module. Image by RobotDyn" width="50.0%" class="align-center" >}}
 
 ```yaml
 # Example configuration entry

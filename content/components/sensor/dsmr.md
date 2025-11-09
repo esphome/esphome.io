@@ -19,7 +19,7 @@ This component is passive, it does not transmit any data to your equipment, the 
 data which this component decodes and updates the configured sensors at the pace the data is received.
 
 - For official information about DSMR refer to: [DSMR Document](https://www.netbeheernederland.nl/dossiers/slimme-meter-15)
-- For official information about the P1 port refer to: [P1 Companion Standard](https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf)
+- For official information about the P1 port refer to: [P1 Companion Standard](https://www.netbeheernederland.nl/sites/default/files/2024-02/dsmr_5.0.2_p1_companion_standard.pdf)
 
 ```yaml
 # Example configuration entry
@@ -45,6 +45,7 @@ Configuration variables:
   telegrams. Used in Lux only.
 
 - **gas_mbus_id** (*Optional*, int): The id of the gas meter. Defaults to `1`.
+- **water_mbus_id** (*Optional*, int): The id of the water meter. Defaults to `2`.
 - **crc_check** (*Optional*, boolean): Specifies if the CRC check must be done. This is required to be set to false for
   older DSMR versions as they do not provide a CRC. Defaults to `true`.
 
@@ -68,9 +69,8 @@ Configuration variables:
 
 ## Sensor
 
-{{< note >}}
-Not all sensors are available on all devices.
-{{< /note >}}
+> [!NOTE]
+> Not all sensors are available on all devices.
 
 Country specific sensors are listed last.
 
@@ -181,6 +181,10 @@ Configuration variables:
   - All options from [Sensor](#config-sensor).
 
 - **gas_delivered** (*Optional*): Gas Consumed.
+
+  - All options from [Sensor](#config-sensor).
+
+- **water_delivered** (*Optional*): Water Consumed.
 
   - All options from [Sensor](#config-sensor).
 

@@ -17,9 +17,6 @@ esphome:
     name: livingroom
     comment: Living room ESP32 controller
     area: Living Room
-
-esp32:
-    board: nodemcu-32s
 ```
 
 {{< anchor "esphome-configuration_variables" >}}
@@ -136,11 +133,9 @@ esphome:
 This automation will be triggered when the ESP is about to shut down. Shutting down is usually caused by
 too many WiFi/MQTT connection attempts, Over-The-Air updates being applied or through the {{< docref "deep_sleep/" >}}.
 
-{{< note >}}
-It's not guaranteed that all components are in a connected state when this automation is triggered. For
-example, the MQTT client may have already disconnected. For use-cases that require specific shutdown ordering, look at the `priority` parameter.
-
-{{< /note >}}
+> [!NOTE]
+> It's not guaranteed that all components are in a connected state when this automation is triggered. For
+> example, the MQTT client may have already disconnected. For use-cases that require specific shutdown ordering, look at the `priority` parameter.
 
 ```yaml
 esphome:
@@ -343,13 +338,12 @@ Using `name_add_mac_suffix` allows {{< docref "/guides/creators" "creators" >}} 
 provision multiple devices at the factory with a single firmware and still
 have unique identification for customer installs.
 
-{{< note >}}
-End users will need to create an individual YAML config file if they want to OTA update the
-devices in the future. Creators can facilitate this process by providing `dashboard_import` URL
-for end users. This allows them to easily update their devices as new features are made available
-upstream.
+> [!NOTE]
+> End users will need to create an individual YAML config file if they want to OTA update the
+> devices in the future. Creators can facilitate this process by providing `dashboard_import` URL
+> for end users. This allows them to easily update their devices as new features are made available
+> upstream.
 
-{{< /note >}}
 {{< anchor "esphome-creators_project" >}}
 
 ## Project information

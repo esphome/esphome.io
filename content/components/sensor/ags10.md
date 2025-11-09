@@ -9,14 +9,13 @@ params:
 
 The `ags10` sensor platform VOC sensor allows you to use your ASAIR AGS10
 ([datasheet](http://www.aosong.com/userfiles/files/Datasheet%20AGS10.pdf),
-`ASAIR`_ ) sensors with
+[ASAIR](http://www.aosong.com/en/products-86.html)) sensors with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
 
-{{< note >}}
-The sensor supports up to 15kHz operation, so you should specify up to `frequency: 15kHz` in your `i2c` configuration.
+> [!NOTE]
+> The sensor supports up to 15kHz operation, so you should specify up to `frequency: 15kHz` in your `i2c` configuration.
 
-{{< /note >}}
 {{< img src="ags10.jpg" alt="Image" caption="AGS10 VOC Sensor" width="30.0%" class="align-center" >}}
 
 ```yaml

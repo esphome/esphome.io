@@ -14,10 +14,8 @@ serial port and through MQTT topics (if there is an MQTT client in the
 configuration). By default, all logs with a severity `DEBUG` or higher will be shown.
 Increasing the log level severity (to e.g `INFO` or `WARN`  ) can help with the performance of the application and memory size.
 
-{{< note >}}
-The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
-
-{{< /note >}}
+> [!NOTE]
+> The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
 
 ```yaml
 # Example configuration entry
@@ -36,6 +34,10 @@ logger:
 - **initial_level** (*Optional*, string): The initial log level, which may be varied at run time. Defaults to the same value as `level`.
 - **logs** (*Optional*, mapping): Manually set the log level for a
    specific component or tag. See [Manual Log Levels for more information](#logger-manual_tag_specific_levels).
+
+- **runtime_tag_levels** (*Optional*, boolean): Enable runtime per-tag log level changes. This is automatically enabled
+   when `logs` is configured or when `logger.set_level` is used with a `tag` parameter. Only needs to be manually
+   enabled if calling `set_log_level()` from a lambda or external component. Defaults to `false` (auto-enabled as needed).
 
 - **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
 
@@ -92,6 +94,7 @@ so if you use any other configuration you will not get log messages over the on-
 | ESP32-P4 | TX: 37, RX: 38 | N/A | TX: 10, RX: 11 | N/A | N/A | 24/25 |
 | ESP32-S2 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | N/A | 19/20 | N/A |
 | ESP32-S3 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | Undefined | 19/20 | 19/20 |
+| NRF52    | pins varies by board | N/A | pins varies by board | Undefined | D+/D- | N/A |
 
 *Undefined* means that the logger component cannot use this harware UART at this time.
 
@@ -104,17 +107,18 @@ hardware interfaces for logging. Many newer boards based on ESP32 variants (such
 are using the ESP's on-board USB hardware peripheral while boards based on older processors (such as
 the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for communication.
 
-|          | Arduino   | ESP-IDF           |
-| -------- | --------- | ----------------- |
-| ESP8266  | `UART0`   | N/A               |
-| ESP32    | `UART0`   | `UART0`           |
-| ESP32-C3 | `USB_CDC` | `USB_SERIAL_JTAG` |
-| ESP32-C5 | `USB_CDC` | `USB_SERIAL_JTAG` |
-| ESP32-C6 | `USB_CDC` | `USB_SERIAL_JTAG` |
-| ESP32-P4 | `USB_CDC` | `USB_SERIAL_JTAG` |
-| ESP32-S2 | `USB_CDC` | `USB_CDC`         |
-| ESP32-S3 | `USB_CDC` | `USB_SERIAL_JTAG` |
-| RP2040 | `USB_CDC` | N/A |
+|          | Interface |
+| -------- | --------- |
+| ESP8266  | `UART0`   |
+| ESP32    | `UART0`   |
+| ESP32-C3 | `USB_SERIAL_JTAG` |
+| ESP32-C5 | `USB_SERIAL_JTAG` |
+| ESP32-C6 | `USB_SERIAL_JTAG` |
+| ESP32-P4 | `USB_SERIAL_JTAG` |
+| ESP32-S2 | `USB_CDC`         |
+| ESP32-S3 | `USB_SERIAL_JTAG` |
+| RP2040   | `USB_CDC` |
+| NRF52    | `USB_CDC` |
 
 {{< anchor "logger-log_levels" >}}
 
@@ -175,6 +179,10 @@ logger:
     mqtt.component: DEBUG
     mqtt.client: ERROR
 ```
+
+> [!NOTE]
+> When using `logs`, runtime per-tag log level support is automatically enabled. When this feature is disabled
+> (the default when `logs` is not configured), the logger is optimized for better performance and reduced memory usage.
 
 The `level` option controls which log statements are included in the
 firmware. You cannot set a tag to a more detailed level than
@@ -240,6 +248,11 @@ on_...:
         tag: mqtt.client
 ```
 
+> [!NOTE]
+> When using `logger.set_level` with a `tag` parameter, runtime per-tag log level support is automatically enabled.
+> If you need to call `set_log_level()` directly from a lambda or external component, you must manually enable
+> `runtime_tag_levels: true` in the logger configuration.
+
 ## Logger Automation
 
 {{< anchor "logger-on_message" >}}
@@ -262,11 +275,9 @@ logger:
             return "Triggered on_message with level " + to_string(level) + ", tag " + tag + " and message " + message;
 ```
 
-{{< note >}}
-Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
-and the `ESP_LOGx` logging macros in this automation.
-
-{{< /note >}}
+> [!NOTE]
+> Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
+> and the `ESP_LOGx` logging macros in this automation.
 
 ## See Also
 

@@ -9,10 +9,10 @@ params:
 
 The `shtcx` sensor platform Temperature+Humidity sensor allows you to use your Sensirion SHTC1
 ([datasheet](https://sensirion.com/media/documents/21BF77EA/63A5A411/Datasheet_SHTC1.pdf),
-[Sensirion STHC1](https://www.sensirion.com/en/environmental-sensors/humidity-sensors/digital-humidity-sensor-for-consumer-electronics-and-iot/)) and
+[Sensirion SHTC1](https://sensirion.com/products/catalog/SHTC1/)) and
 the newer SHTC3
 ([datasheet](https://sensirion.com/media/documents/643F9C8E/63A5A436/Datasheet_SHTC3.pdf),
-`SparkFun`_ ) sensors with
+[SparkFun](https://www.sparkfun.com/products/15074)) sensors with
 ESPHome. The [I²C Bus](#i2c) is
 required to be set up in your configuration for this sensor to work.
 

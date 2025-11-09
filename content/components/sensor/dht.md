@@ -9,7 +9,7 @@ params:
 
 The DHT Temperature+Humidity sensor allows you to use your
 
-- DHT11 ([datasheet](https://akizukidenshi.com/download/ds/aosong/DHT11.pdf), [Adafruit](https://www.adafruit.com/product/386)),
+- DHT11 ([datasheet](https://www.makerhero.com/img/files/download/DHT11-Datasheet.pdf), [Adafruit](https://www.adafruit.com/product/386)),
 - DHT21/DHT22 ([datasheet](https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf), [Adafruit](https://www.adafruit.com/product/385)),
 - AMS2301/AM2302 ([datasheet](https://cdn-shop.adafruit.com/datasheets/Digital+humidity+and+temperature+sensor+AM2302.pdf), [Adafruit](https://www.adafruit.com/product/393)),
 - AM2120 ([datasheet](https://www.micros.com.pl/mediaserver/UPAM2120_0004.pdf)),
@@ -56,19 +56,17 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-{{< note >}}
-The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
-originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
-to configure them with `accuracy_decimals: 1`.
-
-If you're seeing lots of invalid temperature/humidity warnings in the logs, try manually setting the
-DHT model with the `model:` configuration variable. Other problems could be wrong pull-up resistor values
-on the DATA pin or too long cables.
-
-If you're using a DHT module with an external pull-up resistor and seeing invalid temperature/humidity warnings in the logs,
-set `pullup: false` under your `pin` configuration.
-
-{{< /note >}}
+> [!NOTE]
+> The default `accuracy_decimals` value of the *humidity* levels is `0`, as the DHT11 for which this was
+> originally written does not have a higher resolution. All other DHT sensors have a higher resolution, it's worth
+> to configure them with `accuracy_decimals: 1`.
+>
+> If you're seeing lots of invalid temperature/humidity warnings in the logs, try manually setting the
+> DHT model with the `model:` configuration variable. Other problems could be wrong pull-up resistor values
+> on the DATA pin or too long cables.
+>
+> If you're using a DHT module with an external pull-up resistor and seeing invalid temperature/humidity warnings in the logs,
+> set `pullup: false` under your `pin` configuration.
 
 ## See Also
 

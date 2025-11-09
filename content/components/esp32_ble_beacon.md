@@ -11,14 +11,12 @@ The `esp32_ble_beacon` component creates a Bluetooth Low Energy Beacon with your
 Beacons are BLE devices that repeatedly just send out a pre-defined packet of data. This packet
 can then be received by devices like smartphones and can then be used to track a phone's location.
 
-{{< warning >}}
-The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
-audio components are most likely to cause issues.
-
-{{< /warning >}}
+> [!WARNING]
+> The BLE software stack on the ESP32 consumes a significant amount of RAM on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. Memory-intensive components such as {{< docref "/components/voice_assistant" >}} and other
+> audio components are most likely to cause issues.
 
 ```yaml
 # Example configuration entry
@@ -85,7 +83,7 @@ Then, just compile and flash the ESP32.
 
 When everything is set up correctly, you should see a show up using your iBeacon scanner of choice. On iPhones,
 this should already work from the Bluetooth screen (not tested), on Android, you will need to use an app like
-["Beacon Scanner"](https://play.google.com/store/apps/details?id=com.bridou_n.beaconscanner) by Nicolas Bridoux.
+["nRF Connect for Mobile"](https://play.google.com/store/apps/details?id=no.nordicsemi.android.mcp).
 
 For using these beacons to track the location of your phone, you will need to use another app. For example, I used
 [this guide by the owntracks](https://owntracks.org/booklet/features/beacons/) app to let my Home Automation system

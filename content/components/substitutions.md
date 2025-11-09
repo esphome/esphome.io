@@ -74,7 +74,8 @@ Simple Jinja expressions and filters can be used inside `${ ... }` syntax.
 
 All substitution variables become accessible within Jinja expressions by their name.
 
-If the substitution variable is a key-value dictionary, you can access members with a dot notation: `${ device.name }`, or indexed `${ device["name"] }`
+If the substitution variable is a key-value dictionary, you can access members with a dot notation: `${ device.name }`,
+or indexed `${ device["name"] }`
 
 Lists can be indexed: `${ unused_pins[2] }`
 
@@ -150,6 +151,21 @@ In addition to the Jinja expressions, ESPHome supports a number of built-in func
 - `len` Returns the length of the string. Example: `len("Hello") == 5`
 
 {{< anchor "substitute-include-variables" >}}
+
+## Disabling Jinja and substitutions
+
+You can prevent ESPHome from substituting variables or processing Jinja by means of the `!literal` tag before any value:
+
+```yaml
+substitutions:
+  value: "Test Value"
+lvgl:
+  widgets:
+    - label:
+        text: !literal "This is a ${value}"
+```
+
+In the above example, the value of the `text` property will be, literally, `This is a ${value}`.
 
 ## Substitute !include variables
 
@@ -253,13 +269,11 @@ substitutions:
 <<: !include common.yaml
 ```
 
-{{< tip >}}
-To hide these base files from the dashboard, you can
-
-- Place them in a subdirectory (dashboard only shows files in top-level directory)
-- Prepend a dot to the filename, like `.base.yaml`
-
-{{< /tip >}}
+> [!TIP]
+> To hide these base files from the dashboard, you can
+>
+> - Place them in a subdirectory (dashboard only shows files in top-level directory)
+> - Prepend a dot to the filename, like `.base.yaml`
 
 ## See Also
 

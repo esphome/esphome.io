@@ -10,7 +10,7 @@ params:
 The `gps` component allows you to connect GPS modules to your ESPHome project.
 Any GPS module that uses the standardized NMEA communication protocol will work.
 
-{{< img src="gps-full.jpg" alt="Image" caption="GPS Module. Image by `Adafruit`_" width="50.0%" class="align-center" >}}
+{{< img src="gps-full.jpg" alt="Image" caption="GPS Module. Image by [Adafruit](https://www.adafruit.com)" width="50.0%" class="align-center" >}}
 
 For this component to work you need to have set up a [UART bus](#uart)
 in your configuration - only the RX pin should be necessary.
@@ -76,5 +76,5 @@ See {{< docref "time/gps" >}} for config options for the GPS time source.
 ## See Also
 
 - [Sensor Filters](#sensor-filters)
-- [TinyGPS++ library](http://arduiniana.org/libraries/tinygpsplus/)
+- [TinyGPS++ library](https://github.com/esphome/TinyGPSPlus)
 - {{< apiref "gps/gps.h" "gps/gps.h" >}}
