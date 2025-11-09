@@ -469,7 +469,7 @@ on_multi_click:
 
 ### `binary_sensor.is_on` / `binary_sensor.is_off` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the given binary sensor is ON (or OFF).
+This [Condition](/automations/actions#all-conditions) checks if the given binary sensor is ON (or OFF).
 
 ```yaml
 # In some trigger:

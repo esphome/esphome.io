@@ -232,7 +232,7 @@ Configuration variables: See [Automation](/automations).
 
 ## `text_sensor.state` Condition
 
-This [Condition](/automations/actions#config-condition) allows you to check if a given text sensor
+This [Condition](/automations/actions#all-conditions) allows you to check if a given text sensor
 has a specific state.
 
 ```yaml

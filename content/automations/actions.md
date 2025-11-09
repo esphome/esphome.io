@@ -213,13 +213,13 @@ on_...:
 
 At least one of `condition`, `all` or `any` must be provided.
 
-- **condition** (*Optional*, [Condition](#config-condition)): The condition to check to determine which branch to take.
+- **condition** (*Optional*, [Condition](#all-conditions)): The condition to check to determine which branch to take.
   If this is configured with a list of conditions then they must all be true for the condition to be true.
 
-- **all** (*Optional*, [Condition](#config-condition)): Takes a list of conditions, all of which must be true (and is
+- **all** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions, all of which must be true (and is
   therefore equivalent to `condition`  .)
 
-- **any** (*Optional*, [Condition](#config-condition)): Takes a list of conditions; if at least one is true, the
+- **any** (*Optional*, [Condition](#all-conditions)): Takes a list of conditions; if at least one is true, the
   condition will be true.
 
 - **then** (*Optional*, [Action](#all-actions)): The action to perform if the condition evaluates to true.
@@ -299,7 +299,7 @@ on_...:
 
 #### Configuration variables
 
-- **condition** (**Required**, [Condition](#config-condition)): The condition to wait to become true.
+- **condition** (**Required**, [Condition](#all-conditions)): The condition to wait to become true.
 - **timeout** (*Optional*, [Time](#config-time)): Time to wait before timing out. Defaults to never timing out.
 
 {{< anchor "while_action" >}}
@@ -323,7 +323,7 @@ on_...:
 
 #### Configuration variables
 
-- **condition** (**Required**, [Condition](#config-condition)): The condition to check to determine whether or not to
+- **condition** (**Required**, [Condition](#all-conditions)): The condition to check to determine whether or not to
   execute.
 
 - **then** (**Required**, [Action](#all-actions)): The action to perform until the condition evaluates to false.
@@ -460,7 +460,7 @@ on_...:
 - **time** (**Required**, [templatable](#config-templatable), [Time](#config-time)):
   The time for which the condition has to have been true.
 
-- **condition** (**Required**, [condition](#config-condition)): The condition to check.
+- **condition** (**Required**, [condition](#all-conditions)): The condition to check.
 
 {{< anchor "lambda_condition" >}}
 

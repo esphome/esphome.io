@@ -94,7 +94,7 @@ on_...:
 
 ### `lock.is_locked` / `lock.is_unlocked` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the given lock is LOCKED (or UNLOCKED).
+This [Condition](/automations/actions#all-conditions) checks if the given lock is LOCKED (or UNLOCKED).
 
 ```yaml
 # In some trigger:

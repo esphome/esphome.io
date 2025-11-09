@@ -38,7 +38,7 @@ All time configuration schemas inherit these options.
 
 ### `time.has_time` Condition
 
-This [Condition](/automations/actions#config-condition) checks if time has been set and is valid.
+This [Condition](/automations/actions#all-conditions) checks if time has been set and is valid.
 
 ```yaml
 # Example configuration

@@ -8,7 +8,7 @@ params:
 ---
 
 The `template` binary sensor platform allows you to define a boolean condition and use it to provide a binary sensor.
-The condition may be expressed as a C++ lambda, or as a [YAML expression](#config-condition).
+The condition may be expressed as a C++ lambda, or as a [YAML expression](/automations/actions#all-conditions).
 The condition expression will be evaluated continually, on each call to the component's `loop()` method, which is typically every 16ms.
 
 The example below polls an analog sensor and yields a value dependent on whether the sensor value is above a threshold.
@@ -34,7 +34,7 @@ Possible return values of the lambda:
 - `return false;` if the binary sensor should be OFF.
 - `return {};` if the state is not known. The last known state will be maintained.
 
-As an alternative to using a lambda you may use ESPHome [condition expressions](/automations/actions#config-condition):
+As an alternative to using a lambda you may use ESPHome [condition expressions](/automations/actions#all-conditions):
 
 ```yaml
 # Example configuration entry
@@ -52,7 +52,7 @@ binary_sensor:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
    C++ Lambda to be evaluated repeatedly to get the current state of the binary sensor.
 
-- **condition** (*Optional*, [Condition](/automations/actions#config-condition)): The condition to check to determine the value of the binary sensor. `lambda` and `condition` may not both be present in the configuration.
+- **condition** (*Optional*, [Condition](/automations/actions#all-conditions)): The condition to check to determine the value of the binary sensor. `lambda` and `condition` may not both be present in the configuration.
 - All other options from [Binary Sensor](#config-binary_sensor).
 
 {{< anchor "binary_sensor-template-publish_action" >}}

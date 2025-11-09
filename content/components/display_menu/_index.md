@@ -735,7 +735,7 @@ Configuration variables:
 
 ### `display_menu.is_active` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the given menu is active, i.e.
+This [Condition](/automations/actions#all-conditions) checks if the given menu is active, i.e.
 shown on the display and processing navigation events.
 
 ```yaml

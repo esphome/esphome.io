@@ -416,7 +416,7 @@ on_...:
 
 ### `light.is_on` / `light.is_off` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the given light is ON or OFF. OFF means that the light is completely
+This [Condition](/automations/actions#all-conditions) checks if the given light is ON or OFF. OFF means that the light is completely
 OFF, and ON means that the light is emitting at least a bit of light.
 
 ```yaml

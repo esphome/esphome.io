@@ -119,7 +119,7 @@ text_sensor:
 
 ## `sun.is_above_horizon` / `sun.is_below_horizon` Conditions
 
-The `sun.is_above_horizon` and `sun.is_below_horizon` [conditions](/automations/actions#config-condition)
+The `sun.is_above_horizon` and `sun.is_below_horizon` [conditions](/automations/actions#all-conditions)
 allow you to check if the sun is currently above or below the horizon.
 
 ```yaml

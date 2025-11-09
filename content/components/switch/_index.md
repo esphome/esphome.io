@@ -147,7 +147,7 @@ Configuration variables:
 
 ### `switch.is_on` / `switch.is_off` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the given switch is ON (or OFF).
+This [Condition](/automations/actions#all-conditions) checks if the given switch is ON (or OFF).
 
 ```yaml
 # In some trigger:

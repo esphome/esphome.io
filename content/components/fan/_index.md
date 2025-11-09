@@ -187,7 +187,7 @@ Configuration options:
 
 ## `fan.is_on` / `fan.is_off` Condition
 
-This [condition](/automations/actions#config-condition) passes if the given fan is on or off.
+This [condition](/automations/actions#all-conditions) passes if the given fan is on or off.
 
 ```yaml
 # in a trigger:

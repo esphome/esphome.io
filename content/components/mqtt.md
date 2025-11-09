@@ -803,7 +803,7 @@ on_...:
 
 ### `mqtt.connected` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the MQTT client is currently connected to
+This [Condition](/automations/actions#all-conditions) checks if the MQTT client is currently connected to
 the MQTT broker.
 
 ```yaml

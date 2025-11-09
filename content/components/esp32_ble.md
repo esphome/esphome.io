@@ -116,7 +116,7 @@ on_...:
 
 ## `ble.enabled` Condition
 
-This [Condition](/automations/actions#config-condition) checks if BLE is currently enabled or not.
+This [Condition](/automations/actions#all-conditions) checks if BLE is currently enabled or not.
 
 ```yaml
 on_...:

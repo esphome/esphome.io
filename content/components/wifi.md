@@ -386,7 +386,7 @@ on_...:
 
 ### `wifi.connected` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the WiFi client is currently connected to a station.
+This [Condition](/automations/actions#all-conditions) checks if the WiFi client is currently connected to a station.
 
 ```yaml
 on_...:
@@ -403,7 +403,7 @@ The lambda equivalent for this is `id(wifi_id).is_connected()`.
 
 ### `wifi.enabled` Condition
 
-This [Condition](/automations/actions#config-condition) checks if WiFi is currently enabled or not.
+This [Condition](/automations/actions#all-conditions) checks if WiFi is currently enabled or not.
 
 ```yaml
 on_...:

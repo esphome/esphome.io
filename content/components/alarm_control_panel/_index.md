@@ -307,7 +307,7 @@ on_...:
 
 ### `is_armed` Condition
 
-This [Condition](/automations/actions#config-condition) checks if the alarm control panel is armed.
+This [Condition](/automations/actions#all-conditions) checks if the alarm control panel is armed.
 
 ```yaml
 on_...:
