@@ -76,7 +76,7 @@ display:
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **dimensions** (**Required**): Dimensions of the screen, specified either as *width* **x** *height* (e.g `320x240`)
   or with separate config keys.
 
@@ -122,7 +122,7 @@ Displays needing a custom init sequence require an SPI bus to be configured, plu
     `20MHz` , `10MHz` , `5MHz` , `2MHz` , `1MHz` (default), `200kHz` , `75kHz` or `1kHz` .
 - **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is `MODE0` but some displays
   require `MODE3` .
-- **spi_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the SPI interface to use - may be omitted if only one SPI bus
+- **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the SPI interface to use - may be omitted if only one SPI bus
   is configured.
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display.
   Predefined boards

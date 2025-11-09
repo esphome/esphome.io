@@ -33,7 +33,7 @@ text_sensor:
 
 ## Configuration variables
 
-- **nextion_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the Nextion display.
+- **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
 - **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Text Sensor Protocol](#nextion_custom_text_sensor_protocol) this should not be used
 - **background_color** (*Optional*, [Color](#config-color)): The background color
@@ -86,7 +86,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the Nextion text sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Nextion text sensor.
 - **state** (**Required**, string, [templatable](#config-templatable)): The string to publish.
 - **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
   Default is true.

@@ -71,7 +71,7 @@ on_...:
 
 Configuration option:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pmwcs3 sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pmwcs3 sensor.
 
 {{< anchor "sensor-pmwcs3watercalibrationaction" >}}
 
@@ -95,7 +95,7 @@ on_...:
 
 Configuration option:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pmwcs3 sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pmwcs3 sensor.
 
 {{< anchor "sensor-pmwcs3newi2caddressaction" >}}
 
@@ -119,7 +119,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pmwcs3 sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pmwcs3 sensor.
 - **address** (**Required**, int): New I2C address.
 
 ## See Also

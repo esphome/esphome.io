@@ -62,7 +62,7 @@ switch:
      id: dehumidifier1
 ```
 
-First, we have to give the dehumidifier `switch` an [ID](/guides/configuration-types#config-id) so that we can refer to it inside of our
+First, we have to give the dehumidifier `switch` an [ID](/guides/configuration-types#id) so that we can refer to it inside of our
 automation.
 
 {{< anchor "actions-trigger" >}}

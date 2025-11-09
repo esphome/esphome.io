@@ -23,10 +23,10 @@ seeed_mr60bha2:
 
 ### Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for this {{< docref "seeed_mr60bha2/" >}} component if you need multiple components.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this {{< docref "seeed_mr60bha2/" >}} component if you need multiple components.
 
 ## Binary Sensor
 

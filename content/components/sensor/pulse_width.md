@@ -31,7 +31,7 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor.
   Defaults to `60s`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 ## See Also

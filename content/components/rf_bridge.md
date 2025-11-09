@@ -38,8 +38,8 @@ rf_bridge:
 
 ## Configuration variables
 
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF bridge.
-* **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the UART hub that the bridge component uses.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF bridge.
+* **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub that the bridge component uses.
 * **on_code_received** (*Optional*, [Automation](/automations)): An action to be
   performed when a code is received. See [`on_code_received` Trigger](#rf_bridge-on_code_received).
 
@@ -85,7 +85,7 @@ Configuration options:
 * **low** (**Required**, int, [templatable](#config-templatable)): RF Low timing
 * **high** (**Required**, int, [templatable](#config-templatable)): RF high timing
 * **code** (**Required**, int, [templatable](#config-templatable)): RF code
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple bridges or multiple bridge components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple bridges or multiple bridge components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -110,7 +110,7 @@ on_...:
 Configuration options:
 
 * **duration** (**Required**, int, [templatable](#config-templatable)): beep duration in milliseconds.
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -134,7 +134,7 @@ on_...:
 
 Configuration options:
 
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -164,7 +164,7 @@ on_...:
 Configuration options:
 
 * **raw** (**Required**, string, [templatable](#config-templatable)): RF raw string
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -219,7 +219,7 @@ Configuration options:
 * **length** (**Required**, int, [templatable](#config-templatable)): Length of code plus protocol
 * **protocol** (**Required**, int, [templatable](#config-templatable)): RF Protocol
 * **code** (**Required**, string, [templatable](#config-templatable)): RF code
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -243,7 +243,7 @@ on_...:
 
 Configuration options:
 
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -266,7 +266,7 @@ on_...:
 
 Configuration options:
 
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):
@@ -298,7 +298,7 @@ on_...:
 
 Configuration options:
 
-* **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the RF Bridge if you have multiple components.
+* **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
 > This action can also be written in [lambdas](#config-lambda):

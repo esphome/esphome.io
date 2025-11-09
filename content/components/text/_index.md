@@ -103,7 +103,7 @@ This is an [Action](/automations/actions#all-actions) for setting a text state.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the text to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the text to set.
 - **value** (**Required**, string, [templatable](#config-templatable)):
   The value to set the text to.
 

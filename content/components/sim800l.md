@@ -37,8 +37,8 @@ sim800l:
 
 ### Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the UART hub.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **on_sms_received** (*Optional*, [Automation](/automations)): An action to be
   performed when an SMS is received. See [`on_sms_received` Trigger](#sim800l-on_sms_received).
 
@@ -162,7 +162,7 @@ on_...:
   number.
 
 - **message** (**Required**, string, [templatable](#config-templatable)): The message content.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the SIM800L if you have multiple components.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the SIM800L if you have multiple components.
 
 {{< anchor "sim800l-dial_action" >}}
 
@@ -180,7 +180,7 @@ on_...:
 #### Configuration variables
 
 - **recipient** (**Required**, string, [templatable](#config-templatable)): The number to dial.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the SIM800L if you have multiple components.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the SIM800L if you have multiple components.
 
 ### `sim800l.connect` Action
 

@@ -115,7 +115,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the rotary encoder.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the rotary encoder.
 - **value** (**Required**, int, [templatable](#config-templatable)):
   The value to set the internal counter to.
 

@@ -37,7 +37,7 @@ display:
 
 ## Configuration variables
 
-- **addressable_light_id** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the addressable light component to use
+- **addressable_light_id** (**Required**, [ID](/guides/configuration-types#id)): The id of the addressable light component to use
   as a display.
 
 - **width** (**Required**, int): The width of the LED matrix in pixels.
@@ -55,7 +55,7 @@ display:
   `it` will be an instance of {{< apiclass "DisplayBuffer" "display::DisplayBuffer" >}}.
   See [Display Rendering Engine](#display-engine) for more information.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
 > When enabled (the default, but also via `it.set_enabled(true)`  ), any effect currently running on the

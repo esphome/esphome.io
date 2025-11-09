@@ -54,7 +54,7 @@ sensor:
 
 ## Configuration variables
 
-- **nextion_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the Nextion display.
+- **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the Nextion display.
 - **component_name** (*Optional*, string): Manually specify the name of the Nextion component.
 - **variable_name** (*Optional*, string): Manually specify the name of the Nextion variable.
 - **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor
@@ -125,7 +125,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the Nextion sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Nextion sensor.
 - **state** (**Required**, string, [templatable](#config-templatable)): The float state to publish.
 - **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
   Default is true.

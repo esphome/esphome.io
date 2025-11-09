@@ -36,7 +36,7 @@ sensor:
 
 - All other options from [Sensor](/components/sensor).
 
-- **i2c_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [I²C Component](/components/i2c). Defaults to the default I²C bus.
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [I²C Component](/components/i2c). Defaults to the default I²C bus.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   All known sensors currently configured to `0x28`. Defaults to `0x28`.

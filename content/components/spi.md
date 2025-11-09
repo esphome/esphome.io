@@ -74,7 +74,7 @@ spi:
 
 - **type** (*Optional*): Choose between `single` for standard 1 bit bus SPI (the default), `quad` and `octal`.
 - **clk_pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin used for the clock line of the SPI bus.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this SPI hub if you need multiple SPI hubs.
 - **interface** (*Optional*): Controls which hardware or software SPI implementation should be used.
   Value may be one of `any` (default), `software`, `hardware`, `spi`, `spi2` or `spi3`, depending on
   the type and the particular chip used. See discussion below.

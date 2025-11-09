@@ -104,7 +104,7 @@ This is an [Action](/automations/actions#all-actions) for pressing a button in a
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the button to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the button to set.
 
 > [!NOTE]
 > Buttons are designed to trigger an action on a device from Home Assistant, and have an unidirectional flow from

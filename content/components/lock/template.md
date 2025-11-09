@@ -91,7 +91,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the template lock.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template lock.
 - **state** (**Required**, boolean, [templatable](#config-templatable)):
   The state to publish.
 

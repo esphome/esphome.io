@@ -91,8 +91,8 @@ binary_sensor:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
-- **display_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the LCD display.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **display_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the LCD display.
 - **mark_back** (*Optional*, 0-255): Code of the character used to mark menu items going back
   one level. As the character set lacks a good looking back arrow, using a user defined character
   is advisable (use `8` to reference one at position `0` to avoid problems with zeros

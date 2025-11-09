@@ -31,7 +31,7 @@ output:
 
 ## Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this output component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - **type** (**Required**, string): The type of output. One of `binary` and `float`.
 - **write_action** (**Required**, [Automation](/automations)): An automation to perform
   when the state of the output is updated.

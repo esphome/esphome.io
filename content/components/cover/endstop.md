@@ -51,7 +51,7 @@ cover:
 - **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to open up from the fully-closed state.
 
-- **open_endstop** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the
+- **open_endstop** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the open position is reached.
 
 - **close_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
@@ -60,7 +60,7 @@ cover:
 - **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
   to close from the fully-open state.
 
-- **close_endstop** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the
+- **close_endstop** (**Required**, [ID](/guides/configuration-types#id)): The ID of the
   [Binary Sensor](#config-binary_sensor) that turns on when the closed position is reached.
 
 - **stop_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should

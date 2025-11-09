@@ -86,7 +86,7 @@ climate:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): ID of the UART port to communicate with AC.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the UART port to communicate with AC.
 - **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: `hon` or `smartair2`. The default value is `smartair2`.
 - **wifi_signal** (*Optional*, boolean): If `true` - send wifi signal level to AC.
 - **answer_timeout** (*Optional*, [Time](#config-time)): Responce timeout. The default value is `200ms`.

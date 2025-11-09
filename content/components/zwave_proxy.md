@@ -32,7 +32,7 @@ required in your configuration.
 zwave_proxy:
 ```
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for the `zwave_proxy`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the `zwave_proxy`.
 
 ## Maximizing performance
 

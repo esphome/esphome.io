@@ -92,7 +92,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
   Note: The ESP32 values listed above assume the default `clock_resolution`. If a different `clock_resolution` is used,
   the values are scaled by 1000000 / `clock_resolution`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation. Useful when multiple
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Useful when multiple
   receivers are configured on a single device.
 
 ### ESP32 configuration variables
@@ -341,7 +341,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **receiver_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The remote receiver to receive the remote code with. Required if
+- **receiver_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote receiver to receive the remote code with. Required if
   multiple receivers configured.
 
 - All other options from [Binary Sensor](#config-binary_sensor).

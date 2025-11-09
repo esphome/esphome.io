@@ -172,7 +172,7 @@ This is an [Action](/automations/actions#all-actions) for setting a number state
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the number to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number to set.
 - **value** (**Required**, float, [templatable](#config-templatable)):
   The value to set the number to.
 
@@ -194,7 +194,7 @@ step size (default: 1).
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the number component to update.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number component to update.
 - **cycle** (*Optional*, boolean): Whether or not to set the number to its minimum
   value when the increment pushes the value beyond its maximum value. This will only
   work when the number component uses a minimum and maximum value.
@@ -218,7 +218,7 @@ step size (default: 1).
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the number component to update.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number component to update.
 - **cycle** (*Optional*, boolean): Whether or not to set the number to its maximum
   value when the decrement pushes the value below its minimum value. This will only
   work when the number component uses a minimum and maximum value.
@@ -241,7 +241,7 @@ a number component that has a minimum value defined for it.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the number component to update.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number component to update.
 
 {{< anchor "number-to-max_action" >}}
 
@@ -260,7 +260,7 @@ a number component that has a maximum value defined for it.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the number component to update.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number component to update.
 
 {{< anchor "number-operation_action" >}}
 
@@ -286,7 +286,7 @@ using a generic templatable action call.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the number to update.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number to update.
 - **operation** (**Required**, string, [templatable](#config-templatable)):
   What operation to perform on the number component. One of `TO_MIN`,
   `TO_MAX`, `DECREMENT` or `INCREMENT` (case insensitive). When writing a

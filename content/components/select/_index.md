@@ -102,7 +102,7 @@ This is an [Action](/automations/actions#all-actions) for setting the active opt
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **option** (**Required**, string, [templatable](#config-templatable)):
   The option to set the select to.
 
@@ -123,7 +123,7 @@ This is an [Action](/automations/actions#all-actions) for setting the active opt
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **index** (**Required**, int, [templatable](#config-templatable)):
   The index offset of the option to be activated.
 
@@ -147,7 +147,7 @@ This is an [Action](/automations/actions#all-actions) for selecting the next opt
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump back to the first option
   of the select when the last option is currently selected. Defaults to `true`.
 
@@ -169,7 +169,7 @@ a select component.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **cycle** (*Optional*, boolean): Whether or not to jump to the last option
   of the select when the first option is currently selected. Defaults to `true`.
 
@@ -190,7 +190,7 @@ a select component.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 
 {{< anchor "select-last_action" >}}
 
@@ -209,7 +209,7 @@ a select component.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 
 {{< anchor "select-operation_action" >}}
 
@@ -235,7 +235,7 @@ templatable action call.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the select to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
 - **operation** (**Required**, string, [templatable](#config-templatable)): The
   operation to perform. One of `FIRST`, `LAST`, `PREVIOUS` or
   `NEXT` (case insensitive). When writing a lambda for this field, then return

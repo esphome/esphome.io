@@ -50,7 +50,7 @@ Configuration variables:
   for a list of available options.
   Set to `""` to remove the default entity category.
 
-- **time_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the time entity. Automatically set
+- **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the time entity. Automatically set
   to the ID of a time component if only a single one is defined. Required if `on_time` is used.
 
 - If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
@@ -124,7 +124,7 @@ The `date` provided can be in one of 3 formats:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the datetime to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the datetime to set.
 - **date** (**Required**, string, date parts, [templatable](#config-templatable)):
   The value to set the datetime to.
 
@@ -190,7 +190,7 @@ The `time` provided can be in one of 3 formats:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the datetime to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the datetime to set.
 - **time** (**Required**, string, time parts, [templatable](#config-templatable)):
   The value to set the datetime to.
 
@@ -259,7 +259,7 @@ The `datetime` provided can be in one of 3 formats:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the datetime to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the datetime to set.
 - **datetime** (**Required**, string, datetime parts, [templatable](#config-templatable)):
   The value to set the datetime to.
 

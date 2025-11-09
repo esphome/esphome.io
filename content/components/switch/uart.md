@@ -32,7 +32,7 @@ switch:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the UART hub.
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
 - **data** (*Optional*, string or list of bytes): The data to send via UART. Either an ASCII string
   or a list of bytes or one or both of the following nested options (see example above).
 

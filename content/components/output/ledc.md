@@ -16,7 +16,7 @@ bit depth which means the output is not that accurate for frequencies above ~300
 ## Configuration variables
 
 - **pin** (**Required**, [Pin](#config-pin)): The pin to use LEDC on. Can only be GPIO0-GPIO33.
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this output component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - **frequency** (*Optional*, float): At which frequency to run the LEDC
   channel's timer. Defaults to 1000Hz.
 
@@ -122,7 +122,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the LEDC output to change.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the LEDC output to change.
 - **frequency** (**Required**, [templatable](#config-templatable), float): The frequency
   to set in hertz.
 

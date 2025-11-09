@@ -151,7 +151,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the fan.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the fan.
 - **oscillating** (*Optional*, boolean, [templatable](#config-templatable)):
   Set the oscillation state of the fan. Defaults to not affecting oscillation.
 
@@ -179,7 +179,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the fan.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the fan.
 - **off_speed_cycle** (*Optional*, boolean, [templatable](#config-templatable)): Determines if the fan will cycle off after cycling though its highest speed. Can be `true` or `false`. If `false` fan will cycle to its lowest speed instead of turning off. Defaults to `true`.
 
 {{< anchor "fan-is_on_condition" >}}

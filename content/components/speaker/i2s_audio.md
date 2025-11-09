@@ -44,7 +44,7 @@ speaker:
 - **mclk_multiple** (*Optional*, enum): The multiple of the MCLK frequency to the sample rate. Must be divisible by 3 if using 24 bits per sample. One of `128`, `256`, `384`, `512`. Defaults to `256`.
 - **use_apll** (*Optional*, boolean): I2S using APLL as main I2S clock, enable it to get accurate clock. Defaults to `false`.
 - **i2s_mode** (*Optional*, enum): The I²S mode to use. One of `primary` (clock driven by the host) or `secondary` (clock driven by the attached device). Defaults to `primary`.
-- **i2s_audio_id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the [I²S Audio](#i2s_audio) you wish to use for this speaker.
+- **i2s_audio_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [I²S Audio](#i2s_audio) you wish to use for this speaker.
 - **i2s_comm_fmt** (*Optional*, enum): The I²S communication standard format used by this speaker.
 
   - `stand_i2s` (Default)

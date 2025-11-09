@@ -56,7 +56,7 @@ display:
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
 > If you're not seeing anything on the display, try turning the contrast potentiometer around on the
@@ -105,7 +105,7 @@ display:
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
 > If you're not seeing anything on the display, make sure you apply `3.3V` to the `VEE` (`03`  ) contrast control

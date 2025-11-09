@@ -42,7 +42,7 @@ time:
 
 ## Configuration variables
 
-- **power_id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the power sensor
+- **power_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the power sensor
   to integrate over time.
 
 - **restore** (*Optional*, boolean): Whether to store the intermediate result on the device so

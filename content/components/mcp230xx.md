@@ -56,7 +56,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this MCP23008 component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23008 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
@@ -66,7 +66,7 @@ binary_sensor:
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the MCP23008 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23008 component.
 - **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - **number** (**Required**, int): The pin number.
 - **inverted** (*Optional*, boolean): If all read and written values
@@ -117,13 +117,13 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this MCP23016 component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23016 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the MCP23016 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23016 component.
 - All other options from [Pin Schema](#config-pin_schema)
 
 {{< anchor "mcp23017-label" >}}
@@ -178,7 +178,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The id to use for this MCP23017 component.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this MCP23017 component.
 - **address** (*Optional*, int): The I²C address of the driver.
   Defaults to `0x20`.
 
@@ -188,7 +188,7 @@ binary_sensor:
 
 ### Pin configuration variables
 
-- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#config-id)): The id of the MCP23017 component.
+- **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23017 component.
 - **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
 - All other options from [Pin Schema](#config-pin_schema)
 

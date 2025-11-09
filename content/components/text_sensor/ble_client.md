@@ -30,7 +30,7 @@ text_sensor:
 
 ## Configuration variables
 
-- **ble_client_id** (**Required**, [ID](/guides/configuration-types#config-id)): ID of the associated BLE client.
+- **ble_client_id** (**Required**, [ID](/guides/configuration-types#id)): ID of the associated BLE client.
 - **service_uuid** (**Required**, UUID): UUID of the service on the device.
 - **characteristic_uuid** (**Required**, UUID): UUID of the service's characteristic to query.
 - **descriptor_uuid** (*Optional*, UUID): UUID of the characteristic's descriptor to query.

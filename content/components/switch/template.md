@@ -83,7 +83,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the template switch.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template switch.
 - **state** (**Required**, boolean, [templatable](#config-templatable)):
   The state to publish.
 

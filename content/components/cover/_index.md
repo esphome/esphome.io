@@ -176,7 +176,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The cover to control.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The cover to control.
 - **stop** (*Optional*, boolean): Whether to stop the cover.
 - **state** (*Optional*, string): The state to set the cover to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float): The cover position to set.

@@ -30,7 +30,7 @@ ezo_pmp:
 
 ### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): Specify the ID of the pump so that you can control it.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the pump so that you can control it.
 - **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to 103.
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
@@ -57,7 +57,7 @@ sensor:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-total_volume_dosed_sensor" >}}
@@ -77,7 +77,7 @@ sensor:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-absolute_total_volume_dosed_sensor" >}}
@@ -96,7 +96,7 @@ sensor:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-last_volume_requested_sensor" >}}
@@ -116,7 +116,7 @@ sensor:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-max_flow_rate_sensor" >}}
@@ -137,7 +137,7 @@ sensor:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 
 {{< anchor "ezo_pmp-pump_voltage_sensor" >}}
@@ -253,7 +253,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 
 {{< anchor "ezo_pmp-dose_volume_action" >}}
 
@@ -278,7 +278,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 - **volume** (**Required**, float, [templatable](#config-templatable)): The volume to dose in milliliters. If negative, pump will run in reverse.
 
 {{< anchor "ezo_pmp-dose_volume_over_time_action" >}}
@@ -308,7 +308,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 - **volume** (**Required**, float, [templatable](#config-templatable)): The volume to dose in milliliters. If negative, pump will run in reverse.
 - **duration** (**Required**, int, [templatable](#config-templatable)): The time (in minutes) the pump will take to dose the volume requested.
 
@@ -339,7 +339,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 - **volume_per_minute** (**Required**, float, [templatable](#config-templatable)): The volume to dose in milliliters every minute. If negative, pump will run in reverse.
 - **duration** (**Required**, int, [templatable](#config-templatable)): The time (in minutes) the pump will dose the volume requested every minute.
 
@@ -359,7 +359,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 
 {{< anchor "ezo_pmp-stop_dosing_action" >}}
 
@@ -376,7 +376,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 
 {{< anchor "ezo_pmp-clear_total_volume_dosed_action" >}}
 
@@ -394,7 +394,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 
 {{< anchor "ezo_pmp-set_calibration_volume_action" >}}
 
@@ -420,7 +420,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 - **volume** (**Required**, float, [templatable](#config-templatable)): The volume measured as part of the calibration process.
 
 {{< anchor "ezo_pmp-clear_calibration_action" >}}
@@ -439,7 +439,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 
 {{< anchor "ezo_pmp-find_action" >}}
 
@@ -456,7 +456,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 
 {{< anchor "ezo_pmp-change_i2c_address_action" >}}
 
@@ -475,7 +475,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the pump.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
 - **address** (**Required**, int, [templatable](#config-templatable)): The new I2C address for the pump.
 
 {{< anchor "ezo-pmp-ha-config" >}}

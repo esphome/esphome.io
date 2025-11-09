@@ -77,7 +77,7 @@ sensor:
 
 - **sources** (**Required**, list): A list of sensors to use as source.
 
-  - **source** (**Required**, [ID](/guides/configuration-types#config-id) of a {{< docref "/components/sensor" >}}): The
+  - **source** (**Required**, [ID](/guides/configuration-types#id) of a {{< docref "/components/sensor" >}}): The
     sensor id that is used as sample source.
 
   - **error** (**Required**, only for `KALMAN` type, float, [templatable](#config-templatable)):

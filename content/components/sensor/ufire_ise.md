@@ -33,8 +33,8 @@ sensor:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of this sensor for use in lambdas.
-- **temperature_sensor** (*Optional*, [ID](/guides/configuration-types#config-id)): Set the ID of the temperature
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
+- **temperature_sensor** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of the temperature
   sensor. Only needed if the onboard temperature sensor is not used.
 
 - **ph** (*Optional*, [Sensor](/components/sensor)): Set the pH sensor configuration. All options from [Sensor](/components/sensor).
@@ -65,7 +65,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the ufire pH sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the ufire pH sensor.
 - **solution** (**Required**, float): Solution reference pH value.
 
 {{< anchor "sensor-ufire_ise-calibrate_probe_low_action" >}}
@@ -92,7 +92,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the ufire pH sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the ufire pH sensor.
 - **solution** (**Required**, float): Solution reference pH value.
 
 {{< anchor "sensor-ufire_ise-reset_action" >}}
@@ -116,7 +116,7 @@ on_...:
 
 Configuration options:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the ufire pH sensor.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the ufire pH sensor.
 
 ## See Also
 

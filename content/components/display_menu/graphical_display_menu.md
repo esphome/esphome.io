@@ -41,8 +41,8 @@ graphical_display_menu:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
-- **display** (*Optional*, [ID](/guides/configuration-types#config-id)): ID of the display to render to. See
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **display** (*Optional*, [ID](/guides/configuration-types#id)): ID of the display to render to. See
   [Drawing Modes](#drawing_modes) for more details
 
 - **font** (**Required**, [Font](#display-fonts)): Specifies the font to use

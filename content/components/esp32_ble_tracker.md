@@ -92,7 +92,7 @@ sensor:
     which can improve reliability. Only available if `wifi` component is configured.
     Defaults to `true`.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for this ESP32 BLE Hub.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this ESP32 BLE Hub.
 - **max_connections** (*Optional*, int): **DEPRECATED** - This option has been moved to the {{< docref "esp32_ble/" >}} component.
   Please configure `max_connections` there instead. This option is kept for backward compatibility only. This option will be removed in ESPHome 2026.10.0.
 

@@ -76,7 +76,7 @@ binary_sensor:
 
 Configuration variables:
 
-- **root_item_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the root menu item.
+- **root_item_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the root menu item.
 - **active** (*Optional*, boolean): Whether the menu should start as active, meaning accepting
   user interactions and displaying output. Defaults to `true`.
 
@@ -108,7 +108,7 @@ Automations:
 
 The component manages a hierarchy of menu items. The common configuration variables are:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **type** (**Required**, string): The type of the menu item (see below).
 - **text** (*Optional*, string, [templatable](#config-templatable)): The text displayed
   for the menu item. If a lambda is specified it gets an `it` argument pointing to
@@ -234,7 +234,7 @@ Configuration variables:
 - **immediate_edit** (*Optional*, boolean): Whether the item can be immediately edited when
   selected. See [Editing Values](#display_menu-edit_mode). Defaults to `false`.
 
-- **select** (**Required**, [ID](/guides/configuration-types#config-id)): A `select` component managing
+- **select** (**Required**, [ID](/guides/configuration-types#id)): A `select` component managing
   the edited value.
 
 - **value_lambda** (*Optional*, [lambda](#config-lambda)):
@@ -303,7 +303,7 @@ Configuration variables:
   selected. See [Editing Values](#display_menu-edit_mode). Ignored in the `rotary` mode.
   Defaults to `false`.
 
-- **number** (**Required**, [ID](/guides/configuration-types#config-id)): A `number` component managing
+- **number** (**Required**, [ID](/guides/configuration-types#id)): A `number` component managing
   the edited value. If on entering the value is less than `min_value` or more than
   `max_value`, the value is capped to fall into the range.
 
@@ -365,7 +365,7 @@ Configuration variables:
 
 - **on_text** (*Optional*, string): The text for the `ON` state. Defaults to `On`.
 - **off_text** (*Optional*, string): The text for the `OFF` state. Defaults to `Off`.
-- **switch** (**Required**, [ID](/guides/configuration-types#config-id)): A `switch` component managing
+- **switch** (**Required**, [ID](/guides/configuration-types#id)): A `switch` component managing
   the edited value.
 
 - **value_lambda** (*Optional*, [lambda](#config-lambda)):
@@ -573,7 +573,7 @@ sensor:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to navigate.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to navigate.
 
 {{< anchor "display_menu-down_action" >}}
 
@@ -593,7 +593,7 @@ sensor:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to navigate.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to navigate.
 
 {{< anchor "display_menu-left_action" >}}
 
@@ -616,7 +616,7 @@ binary_sensor:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to navigate.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to navigate.
 
 {{< anchor "display_menu-right_action" >}}
 
@@ -638,7 +638,7 @@ binary_sensor:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to navigate.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to navigate.
 
 {{< anchor "display_menu-enter_action" >}}
 
@@ -662,7 +662,7 @@ binary_sensor:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to navigate.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to navigate.
 
 .. display_menu-show_action:
 
@@ -686,7 +686,7 @@ on_press:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to show.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to show.
 
 .. display_menu-hide_action:
 
@@ -708,7 +708,7 @@ lcd_menu:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to hide.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to hide.
 
 .. display_menu-show_main_action:
 
@@ -729,7 +729,7 @@ lcd_menu:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): The ID of the menu to hide.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the menu to hide.
 
 {{< anchor "display_menu-is_active" >}}
 

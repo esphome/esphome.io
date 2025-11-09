@@ -45,7 +45,7 @@ i2c:
   Defaults to the framework defaults (`100us` on `esp32` with `esp-idf`, `50ms` on `esp32` with `Arduino`,
   `1s` on `esp8266` and `1s` on `rp2040`  ). Maximum on `esp-idf` is 13ms.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for this I²C bus if you need multiple I²C buses.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for this I²C bus if you need multiple I²C buses.
 
 > [!NOTE]
 > If the device can support multiple I²C buses these buses need to be defined as below and sensors need to be setup specifying the correct bus:

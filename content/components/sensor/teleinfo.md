@@ -54,10 +54,10 @@ In teleinfo platform:
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
   sensor. Defaults to `60s`.
 
-- **uart_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID of the [UART Component](/components/uart) if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want
   to use multiple UART buses.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID used for code generation or multiple hubs.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation or multiple hubs.
 
 ### Sensor
 
@@ -84,7 +84,7 @@ sensor:
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
-- **teleinfo_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Specify the ID of used hub.
+- **teleinfo_id** (*Optional*, [ID](/guides/configuration-types#id)): Specify the ID of used hub.
 - All other options from [Sensor](/components/sensor).
 
 ### Text Sensor
@@ -98,7 +98,7 @@ text_sensor:
 ```
 
 - **tag_name** (**Required**, string): Specify the tag you want to retrieve from the Teleinformation.
-- **teleinfo_id** (*Optional*, [ID](/guides/configuration-types#config-id)): Specify the ID of used hub.
+- **teleinfo_id** (*Optional*, [ID](/guides/configuration-types#id)): Specify the ID of used hub.
 - All other options from [Text Sensor](#config-text_sensor).
 
 ## See Also

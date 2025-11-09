@@ -31,7 +31,7 @@ esp32_ble_beacon:
 - **uuid** (**Required**): The [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)
   to identify the beacon.
 
-- **id** (*Optional*, [ID](/guides/configuration-types#config-id)): Manually specify the ID for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for code generation.
 
 Advanced options:
 

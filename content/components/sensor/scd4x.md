@@ -66,7 +66,7 @@ sensor:
 
   - `single_shot_rht_only`  : A measurement is started in every update interval. A measurement takes 50 ms. Only humidity and temperature is measured. CO2 is reported as 0 ppm. This mode is only available on scd41 and useful if low power consumption is required.
 
-- **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#config-id)): Set an external pressure sensor ID used for ambient pressure compensation.
+- **ambient_pressure_compensation_source** (*Optional*, [ID](/guides/configuration-types#id)): Set an external pressure sensor ID used for ambient pressure compensation.
   The pressure sensor must report pressure in hPa. the correction is applied before updating the state of the co2 sensor.
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.

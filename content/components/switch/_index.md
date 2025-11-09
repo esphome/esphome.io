@@ -138,7 +138,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](/guides/configuration-types#config-id)): The ID of the switch to control.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the switch to control.
 - **state** (**Required**, boolean, [templatable](#config-templatable)):
   The state to set the switch to. `true` turns the switch on, `false` turns it off.
 
