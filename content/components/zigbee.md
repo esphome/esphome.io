@@ -39,6 +39,7 @@ esp32:
 ## Full Configuration
 
 This example show how to configure the Zigbee component.
+
 ```yaml
 # Example configuration entry
 zigbee:
@@ -79,7 +80,6 @@ Defaults to `yes`.
 
 > [!NOTE]
 > ZHA sets the minimum reporting interval to 30 seconds for most sensor devices. If you need faster responses set `report` to `force`.
-
 
 ## See Also
 
