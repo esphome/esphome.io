@@ -287,7 +287,12 @@ hlk_fm22x:
         data:
           status: !lambda 'return status;'
           left: !lambda 'return left;'
-          ...
+          top: !lambda 'return top;'
+          right: !lambda 'return right;'
+          bottom: !lambda 'return bottom;'
+          yaw: !lambda 'return yaw;'
+          pitch: !lambda 'return pitch;'
+          roll: !lambda 'return roll;'
   on_enrollment_done:
     - homeassistant.event:
         event: esphome.test_node_enrollment_done
