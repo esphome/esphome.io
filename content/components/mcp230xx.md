@@ -131,7 +131,7 @@ binary_sensor:
 ## MCP23017 Component
 
 The MCP23017 component allows you to use MCP23017 I/O expanders
-([datasheet](http://ww1.microchip.com/downloads/en/devicedoc/20001952c.pdf),
+([datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf),
 [Adafruit](https://www.adafruit.com/product/732)) in ESPHome.
 It uses the [I²C Bus](#i2c) for communication.
 
