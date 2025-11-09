@@ -34,6 +34,10 @@ esp32:
     type: esp-idf
 ```
 
+> [!WARNING]
+> Whenever the configuration is changed, the device should be re-inerviewed (z2m only) and removed and re-added
+> to the Zigbee network. This is especially important if components are added or removed or if names change.
+
 {{< anchor "config-zigbee" >}}
 
 ## Full Configuration
