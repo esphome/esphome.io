@@ -138,6 +138,10 @@ The Daikin ARC remotes (`daikin_arc` climate, `daikin_arc417`, `daikin_arc480` p
   - `yac1fb9`
   - `yx1ff`
   - `yag`
+- **display** (*Optional*, boolean): Controls whether the indoor unit display light remains on. Defaults to `true`. Set this to `false` if you prefer the panel light to stay off when ESPHome sends commands. This preference is preserved when switching between the standard presets (for example, `sleep`) that the integration exposes for compatible models.
+
+> [!TIP]
+> The Gree climate platform also exposes a custom preset named `Light off`, which can be used in automations to temporarily disable the display light without changing other preset options. While this preset is active it overrides the `display` setting; once cleared, the display light automatically returns to the configured `display` value.
 
 ```yaml
 # Example configuration entry
@@ -146,6 +150,33 @@ climate:
     name: "AC"
     sensor: room_temperature
     model: yan
+    display: false
+```
+
+```yaml
+# Example: switch to toggle the display light at runtime
+switch:
+  - platform: template
+    name: Office Air Conditioner - Display Light
+    optimistic: true
+    turn_on_action:
+      - lambda: |-
+          id(office_air_conditioner).set_display_light(true);
+      - climate.control:
+          id: office_air_conditioner
+    turn_off_action:
+      - lambda: |-
+          id(office_air_conditioner).set_display_light(false);
+      - climate.control:
+          id: office_air_conditioner
+
+climate:
+  - platform: gree
+    id: office_air_conditioner
+    name: Office Air Conditioner
+    transmitter_id: ir_tx
+    model: yan
+    supports_heat: false
 ```
 
 {{< anchor "midea_ir" >}}
