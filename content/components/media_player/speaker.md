@@ -17,16 +17,14 @@ It supports two different audio pipelines: announcement and media. Each audio pi
 
 On-device files built directly into the firmware are played without a network connection. Encode on-device files with the configured sample rate, 1 or 2 channels, and 16 bits per sample.
 
-This platform only works on ESP32 based chips using the [ESP-IDF framework](#esp32-espidf_framework).
+This platform only works on ESP32-based chips using the [ESP-IDF framework](#esp32-framework).
 
-{{< warning >}}
-Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
-
-**Crashes are likely to occur** if you include too many additional components in your device's
-configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
-combination with Voice Assistant and/or other audio components.
-
-{{< /warning >}}
+> [!WARNING]
+> Audio and voice components consume a significant amount of resources (RAM, CPU) on the device.
+>
+> **Crashes are likely to occur** if you include too many additional components in your device's
+> configuration. In particular, Bluetooth/BLE components are known to cause issues when used in
+> combination with Voice Assistant and/or other audio components.
 
 ```yaml
 # Example minimal configuration entry
@@ -40,7 +38,7 @@ media_player:
 
 - **announcement_pipeline** (**Required**, Pipeline Schema): Configuration settings for the announcement pipeline.
 
-  - **speaker** (**Required**, [ID](#config-id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the audio.
+  - **speaker** (**Required**, [ID](/guides/configuration-types#id)): The {{< docref "/components/speaker/index" "speaker" >}} to output the audio.
   - **format** (*Optional*, enum): The audio format Home Asssistant will transcode audio to before sending it to the device. One of `FLAC`, `MP3`, `WAV`, or `NONE`. `NONE` disables transcoding in Home Assistant. Defaults to `FLAC`.
   - **sample_rate** (*Optional*, positive integer): Sample rate for the transcoded audio. Should be supported by the configured `speaker` component. Defaults to the speaker's sample rate.
   - **num_channels** (*Optional*, positive integer): Number of channels for the transcoded audio. Must be either `1` or `2`. Defaults to the speaker's number of channels.
@@ -54,11 +52,11 @@ media_player:
 - **volume_min** (*Optional*, percentage): The minimum volume allowed. Defaults to `0%`.
 - **volume_max** (*Optional*, percentage): The maximum volume allowed. Defaults to `100%`.
 - **files** (*Optional*, list): A list of media files to build into the firmware for on-device playback.
-  - **id** (**Required**, [ID](#config-id)): Unique ID for the file.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): Unique ID for the file.
   - **file** (**Required**, string): Path to audio file. Can be a local file path or a URL.
-- **on_mute** (*Optional*, [Automation](#automation)): An automation to perform when muted.
-- **on_unmute** (*Optional*, [Automation](#automation)): An automation to perform when unmuted.
-- **on_volume** (*Optional*, [Automation](#automation)): An automation to perform when the volume is changed.
+- **on_mute** (*Optional*, [Automation](/automations)): An automation to perform when muted.
+- **on_unmute** (*Optional*, [Automation](/automations)): An automation to perform when unmuted.
+- **on_volume** (*Optional*, [Automation](/automations)): An automation to perform when the volume is changed.
 - All other options from [Media Player](#config-media_player)
 
 {{< anchor "media_player-speaker-examples" >}}
@@ -163,7 +161,7 @@ on_...:
 
 Configuration variables:
 
-- **media_file** (**Required**, [ID](#config-id)): The ID of the media file.
+- **media_file** (**Required**, [ID](/guides/configuration-types#id)): The ID of the media file.
 - **announcement** (*Optional*, boolean): Whether to play back the file as an announcement or media stream. Defaults to `false`.
 - **enqueue** (*Optional*, boolean): Whether to add the media file to the end of the pipeline's internal playlist. Defaults to `false`.
 

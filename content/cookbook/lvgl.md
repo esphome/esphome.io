@@ -11,20 +11,17 @@ params:
 
 Here are a couple recipes for various interesting things you can do with {{< docref "/components/lvgl" >}} in ESPHome.
 
-{{< note >}}
-Many of the examples below call service actions in Home Assistant; however, Home Assistant does not allow such action
-calls by default. For each ESPHome device which will call actions, you must explicitly enable this setting in Home
-Assistant. This may be done when the device is initially adopted or by using the `Configure` option in the "devices"
-list of the ESPHome integration.
+> [!NOTE]
+> Many of the examples below call service actions in Home Assistant; however, Home Assistant does not allow such action
+> calls by default. For each ESPHome device which will call actions, you must explicitly enable this setting in Home
+> Assistant. This may be done when the device is initially adopted or by using the `Configure` option in the "devices"
+> list of the ESPHome integration.
 
-{{< /note >}}
+> [!NOTE]
+> The examples below assume you've set up LVGL correctly with your display and its input device, and you have the
+> knowledge to set up various components in ESPHome. Some examples use absolute positioning for a screen with dimensions
+> of `240x320px`  ; if your display's dimensions differ, you'll need to adjust them in order to obtain the expected results.
 
-{{< note >}}
-The examples below assume you've set up LVGL correctly with your display and its input device, and you have the
-knowledge to set up various components in ESPHome. Some examples use absolute positioning for a screen with dimensions
-of `240x320px`  ; if your display's dimensions differ, you'll need to adjust them in order to obtain the expected results.
-
-{{< /note >}}
 {{< anchor "lvgl-cookbook-relay" >}}
 
 ## Local light switch
@@ -32,7 +29,7 @@ of `240x320px`  ; if your display's dimensions differ, you'll need to adjust the
 {{< img src="lvgl_switch.png" alt="Image" class="align-left" >}}
 
 The easiest way to integrate an LVGL [`switch`](#lvgl-widget-switch) widget and a switch or light is with
-[automations](#automation):
+[automations](/automations):
 
 ```yaml
 light:
@@ -205,14 +202,13 @@ lvgl:
 The `adv_hittest` option ensures that accidental touches to the screen won't cause sudden volume changes (more details
 in the [slider doc](#lvgl-widget-slider)).
 
-{{< note >}}
-Keep in mind that `on_value` is triggered *continuously* by the slider while it's being dragged. This generally has
-a negative effect on performance. For example, you shouldn't use this trigger to set the target temperature of a heat
-pump via Modbus, or set the position of motorized covers, because it will likely cause malfunctions. To mitigate this,
-consider using a universal widget trigger like `on_release` to get the `x` variable once after the interaction has
-completed.
+> [!NOTE]
+> Keep in mind that `on_value` is triggered *continuously* by the slider while it's being dragged. This generally has
+> a negative effect on performance. For example, you shouldn't use this trigger to set the target temperature of a heat
+> pump via Modbus, or set the position of motorized covers, because it will likely cause malfunctions. To mitigate this,
+> consider using a universal widget trigger like `on_release` to get the `x` variable once after the interaction has
+> completed.
 
-{{< /note >}}
 {{< anchor "lvgl-cookbook-gauge" >}}
 
 ## Semicircle gauge
@@ -311,11 +307,10 @@ lvgl:
                     text: "+10"
 ```
 
-{{< tip >}}
-The `obj` used to hide the middle part of the meter indicator line has `radius` equal to half of the `width` and
-`height`. This results in a circle - which is actually a square with extra large rounded corners.
+> [!TIP]
+> The `obj` used to hide the middle part of the meter indicator line has `radius` equal to half of the `width` and
+> `height`. This results in a circle - which is actually a square with extra large rounded corners.
 
-{{< /tip >}}
 {{< anchor "lvgl-cookbook-thermometer" >}}
 
 ## Thermometer
@@ -471,11 +466,9 @@ lvgl:
                     y: -6
 ```
 
-{{< tip >}}
-You can omit the `obj` used to hide the middle part of meter indicator line by using a bitmap `image` indicator as
-needle, were only the part hanging above the ticks scale is visible, the rest is transparent.
-
-{{< /tip >}}
+> [!TIP]
+> You can omit the `obj` used to hide the middle part of meter indicator line by using a bitmap `image` indicator as
+> needle, were only the part hanging above the ticks scale is visible, the rest is transparent.
 
 {{< anchor "lvgl-cookbook-climate" >}}
 
@@ -946,28 +939,28 @@ lvgl:
     pages:
       - id: room_page
         widgets:
-          - obj: # a properly placed coontainer object for all these controls
+          - obj: # a properly placed container object for all these controls
               align: CENTER
               width: 240
               height: 256
               x: 4
               y: 4
               pad_all: 3
-              pad_row: 6
-              pad_column: 8
               bg_opa: TRANSP
               border_opa: TRANSP
               layout: # enable the FLEX layout for the children widgets
                 type: FLEX
                 flex_flow: COLUMN_WRAP # the order of the widgets starts top left
                 flex_align_cross: CENTER # they sould be centered
+                pad_row: 6
+                pad_column: 8
               widgets:
                 - label:
                     text: "East"
                 - button:
                     id: but_cov_up_east
                     width: 70 # choose the button dimensions so
-                    height: 68 # they fill the columns nincely as they flow
+                    height: 68 # they fill the columns nicely as they flow
                     widgets:
                       - label:
                           id: cov_up_east
@@ -1072,19 +1065,19 @@ lvgl:
     pages:
       - id: room_page
         widgets:
-          - obj: # a properly placed coontainer object for all these controls
+          - obj: # a properly placed container object for all these controls
               align: CENTER
               width: 240
               height: 256
               pad_all: 6
-              pad_row: 6
-              pad_column: 8
               bg_opa: TRANSP
               border_opa: TRANSP
               layout: # enable the GRID layout for the children widgets
                 type: GRID # split the rows and the columns proportionally
                 grid_columns: [FR(1), FR(1), FR(1)] # equal
                 grid_rows: [FR(10), FR(30), FR(30), FR(30)] # like percents
+                pad_row: 6
+                pad_column: 8
               widgets:
                 - label:
                     text: "East"
@@ -1314,22 +1307,21 @@ lvgl:
               text_font: roboto_icons_42
 ```
 
-{{< tip >}}
-Follow these steps to choose your MDI icons:
+> [!TIP]
+> Follow these steps to choose your MDI icons:
+>
+> - To lookup your icons, use the [Pictogrammers](https://pictogrammers.com/library/mdi/) site. Click on the desired
+> - icon and note its codepoint (it's the hexadecimal number near the download options).
+> - To get the TrueType font with all the icons in it, head on to the
+> - [Pictogrammers GitHub repository](https://github.com/Pictogrammers/pictogrammers.github.io/tree/main/%40mdi/font/)
+>
+> -and from a recent version folder, download the `materialdesignicons-webfont.ttf` file and place it in your ESPHome
+> config directory under a folder named `fonts` (to match the example above).
+>
+> - To use the desired icon, prepend the copied codepoint with `\U000`. The Unicode character escape sequence has to
+> - start with capital `\U` and have exactly 8 hexadecimal digits.
+> - To translate the escape sequence into the real glyph, make sure you enclose your strings in double quotes.
 
-- To lookup your icons, use the [Pictogrammers](https://pictogrammers.com/library/mdi/) site. Click on the desired
-- icon and note its codepoint (it's the hexadecimal number near the download options).
-- To get the TrueType font with all the icons in it, head on to the
-- [Pictogrammers GitHub repository](https://github.com/Pictogrammers/pictogrammers.github.io/tree/main/%40mdi/font/)
-
--and from a recent version folder, download the `materialdesignicons-webfont.ttf` file and place it in your ESPHome
-config directory under a folder named `fonts` (to match the example above).
-
-- To use the desired icon, prepend the copied codepoint with `\U000`. The Unicode character escape sequence has to
-- start with capital `\U` and have exactly 8 hexadecimal digits.
-- To translate the escape sequence into the real glyph, make sure you enclose your strings in double quotes.
-
-{{< /tip >}}
 {{< anchor "lvgl-cookbook-ckboxmark" >}}
 
 ## Restore checkbox mark
@@ -1593,27 +1585,26 @@ lvgl:
               duration: 2200ms
 ```
 
-{{< tip >}}
-You can use both battery examples above placed on top of each other, and switch their `hidden` flag depending if the
-charger is connected or not:
+> [!TIP]
+> You can use both battery examples above placed on top of each other, and switch their `hidden` flag depending if the
+> charger is connected or not:
+>
+> ```yaml
+> binary_sensor:
+>   - platform: ...
+>     id: charger_connected
+>     on_press:
+>       then:
+>         - lvgl.widget.show: ani_battery_charging
+>         - lvgl.widget.hide: lbl_battery_status
+>     on_release:
+>       then:
+>         - lvgl.widget.show: lbl_battery_status
+>         - lvgl.widget.hide: ani_battery_charging
+> ```
+>
+> Use `x`, `y`, `align` widget properties for precise positioning.
 
-```yaml
-binary_sensor:
-  - platform: ...
-    id: charger_connected
-    on_press:
-      then:
-        - lvgl.widget.show: ani_battery_charging
-        - lvgl.widget.hide: lbl_battery_status
-    on_release:
-      then:
-        - lvgl.widget.show: lbl_battery_status
-        - lvgl.widget.hide: ani_battery_charging
-```
-
-Use `x`, `y`, `align` widget properties for precise positioning.
-
-{{< /tip >}}
 {{< anchor "lvgl-cookbook-clock" >}}
 
 ## An analog clock
@@ -2316,7 +2307,7 @@ You can combine it with the previous example to turn off the backlight, so the u
 
 - {{< docref "/components/lvgl" >}}
 - [Templates](#config-lambda)
-- [Automation](#automation)
+- [Automation](/automations)
 - [Key collector component](#key_collector)
 - [What is Image Sticking, Image Burn-in, an After Image, or a Ghost Image on an LCD?](https://www.philips.ca/c-f/XC000007486/what-is-image-sticking,-image-burn-in,-an-after-image,-or-a-ghost-image-on-an-lcd)
 - [Image persistence](https://en.wikipedia.org/wiki/Image_persistence)

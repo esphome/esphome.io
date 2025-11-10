@@ -28,11 +28,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the text sensor to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> you want the text sensor to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the sensor in the frontend.
 - **device_class** (*Optional*, string): The device class for the
@@ -58,10 +56,10 @@ you want the text sensor to use that name, you can set `name: None`.
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#text_sensor-on_value).
 
-- **on_raw_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_raw_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is received that hasn't passed through any filters. See [`on_raw_value`](#text_sensor-on_raw_value).
 
 {{< anchor "text_sensor-filters" >}}
@@ -209,7 +207,7 @@ text_sensor:
             ESP_LOGD("main", "The current version is %s", x.c_str());
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "text_sensor-on_raw_value" >}}
 
@@ -228,13 +226,13 @@ text_sensor:
             ESP_LOGD("main", "The current version is %s", x.c_str());
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "text_sensor-state_condition" >}}
 
 ## `text_sensor.state` Condition
 
-This [Condition](#config-condition) allows you to check if a given text sensor
+This [Condition](/automations/actions#all-conditions) allows you to check if a given text sensor
 has a specific state.
 
 ```yaml
@@ -249,20 +247,19 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The text sensor ID.
-- **state** (**Required**, [templatable](#config-templatable), string): The state to compare
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The text sensor ID.
+- **state** (**Required**, [templatable](/automations/templates), string): The state to compare
   to.
 
-{{< note >}}
-This condition can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This condition can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> if (id(my_text_sensor).state == "Hello World") {
+>   // do something
+> }
+> ```
 
-```cpp
-if (id(my_text_sensor).state == "Hello World") {
-  // do something
-}
-```
-
-{{< /note >}}
 {{< anchor "text_sensor-lambda_calls" >}}
 
 ### lambda calls
