@@ -22,16 +22,14 @@ The following ESP32 microcontroller variants are currently supported:
 ```yaml
 # Example minimal configuration entry
 usb_cdc_acm:
-  interfaces:
-    - number: 0
 ```
 
 ## Configuration variables
 
 - **usb_rx_buffer_size** (*Optional*, int): Size of the USB receive buffer in bytes. Range: 1-65535. Defaults to `256`.
 - **usb_tx_buffer_size** (*Optional*, int): Size of the USB transmit buffer in bytes. Range: 1-65535. Defaults to `256`.
-- **interfaces** (**Required**, list): List of CDC-ACM interface instances to configure; up to two are supported. At
-  least one is required.
+- **interfaces** (**Optional**, list): List of CDC-ACM interface instances to configure. Up to two are supported; at
+  least one is required. Defaults to a single-item list which defines interface zero (`number: 0`) only.
 
 ## Interface configuration variables
 
