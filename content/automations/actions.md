@@ -253,8 +253,10 @@ on_...:
   - repeat:
       count: 5
       then:
+        - lambda: ESP_LOGI("main", "Turning lights on for iteration [%d]", iteration);
         - light.turn_on: some_light
         - delay: 1s
+        - lambda: ESP_LOGI("main", "Turning lights off for iteration [%d]", iteration);
         - light.turn_off: some_light
         - delay: 10s
 ```
@@ -262,7 +264,7 @@ on_...:
 #### Configuration variables
 
 - **count** (**Required**, int): The number of times the action should be repeated. The counter is available to
-  lambdas using the reserved word "iteration".
+  lambdas using the implicit script parameter `iteration`.
 
 - **then** (**Required**, [Action](#config-action)): The action to repeat.
 
@@ -460,7 +462,21 @@ on_...:
 
 - **condition** (**Required**, [condition](#config-condition)): The condition to check.
 
-{{< anchor "lambda_condition" >}}
+### `component.is_idle` Condition
+
+This condition checks if a given component is idle. A component is considered to be idle if it has completed
+setup, has not been marked as failed, and is not currently being called by the loop task. This is useful for
+synchronizing actions with the state of the component, for example, an e-paper display component that requires
+a significant amount of time to update the display panel.
+
+```yaml
+on_...:
+  then:
+    - if:
+        condition:
+          component.is_idle: some_component
+        # ...
+```
 
 ### `lambda` Condition
 
