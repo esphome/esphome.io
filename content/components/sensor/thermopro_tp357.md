@@ -1,39 +1,39 @@
 ---
-description: "Instructions for setting up ThermPro TP357 Bluetooth-based temperature and humidity sensors in ESPHome."
-title: "ThermPro TP357 BLE Sensor"
+description: "Instructions for setting up ThermoPro TP357 Bluetooth-based temperature and humidity sensors in ESPHome."
+title: "ThermoPro TP357 BLE Sensor"
 params:
   seo:
-    description: Instructions for setting up ThermPro TP357 Bluetooth-based temperature and humidity sensors in ESPHome.
-    image: thermpro_tp357.jpg
+    description: Instructions for setting up ThermoPro TP357 Bluetooth-based temperature and humidity sensors in ESPHome.
+    image: thermopro_tp357.jpg
 ---
 
-The `thermpro_tp357` sensor platform lets you track the output of ThermPro TP357 Bluetooth
+The `thermopro_tp357` sensor platform lets you track the output of ThermoPro TP357 Bluetooth
 Low Energy devices using the {{< docref "/components/esp32_ble_tracker" >}}. This component will track the
 temperature, humidity, battery level and signal strength of the TP357 device every time the
 sensor sends out a BLE broadcast.
 
-{{< img src="thermpro_tp357-full.jpg" alt="Image" caption="ThermPro TP357 Temperature and Humidity Sensor over BLE." width="80.0%" class="align-center" >}}
+{{< img src="thermopro_tp357-full.jpg" alt="Image" caption="ThermoPro TP357 Temperature and Humidity Sensor over BLE." width="80.0%" class="align-center" >}}
 
 ```yaml
 # Example configuration entry
 esp32_ble_tracker:
 
 sensor:
-  - platform: thermpro_tp357
+  - platform: thermopro_tp357
     mac_address: XX:XX:XX:XX:XX:XX
     temperature:
-      name: "ThermPro Temperature"
+      name: "ThermoPro Temperature"
     humidity:
-      name: "ThermPro Humidity"
+      name: "ThermoPro Humidity"
     battery_level:
-      name: "ThermPro Battery Level"
+      name: "ThermoPro Battery Level"
     signal_strength:
-      name: "ThermPro Signal Strength"
+      name: "ThermoPro Signal Strength"
 ```
 
 ## Configuration variables
 
-- **mac_address** (**Required**, MAC Address): The MAC address of the ThermPro TP357 device.
+- **mac_address** (**Required**, MAC Address): The MAC address of the ThermoPro TP357 device.
 - **temperature** (*Optional*): The information for the temperature sensor.
 
   - All options from [Sensor](#config-sensor).
@@ -52,8 +52,8 @@ sensor:
 
 ## Setting Up Devices
 
-To set up ThermPro TP357 devices you first need to find their MAC Address so that ESPHome can
-identify them. So first, create a simple configuration without any `thermpro_tp357` entries
+To set up ThermoPro TP357 devices you first need to find their MAC Address so that ESPHome can
+identify them. So first, create a simple configuration without any `thermopro_tp357` entries
 like so:
 
 ```yaml
@@ -63,7 +63,7 @@ esp32_ble_tracker:
         - lambda: 'ESP_LOGD("ble_adv", "BLE device address: %s name: %s", x.address_str().c_str(), x.get_name().c_str());'
 ```
 
-After uploading the ESP32 will immediately try to scan for BLE devices such as the ThermPro TP357, so
+After uploading the ESP32 will immediately try to scan for BLE devices such as the ThermoPro TP357, so
 you will see messages like this (please note the TP357S name):
 
 ```log
@@ -72,11 +72,11 @@ you will see messages like this (please note the TP357S name):
 
 Note that it can sometimes take some time for the first BLE broadcast to be received.
 
-Then just copy the address (`XX:XX:XX:XX:XX:XX`) into a new `sensor.thermpro_tp357` platform
+Then just copy the address (`XX:XX:XX:XX:XX:XX`) into a new `sensor.thermopro_tp357` platform
 entry like in the configuration example at the top.
 
 > [!NOTE]
-> The ThermPro TP357 component listens passively to packets the device sends by itself.
+> The ThermoPro TP357 component listens passively to packets the device sends by itself.
 > ESPHome therefore has no impact on the battery life of the device.
 
 ## See Also
@@ -84,4 +84,4 @@ entry like in the configuration example at the top.
 - {{< docref "/components/esp32_ble_tracker" >}}
 - {{< docref "/components/sensor" >}}
 - {{< docref "absolute_humidity/" >}}
-- {{< apiref "thermpro_tp357/thermpro_tp357.h" "thermpro_tp357/thermpro_tp357.h" >}}
+- {{< apiref "thermopro_tp357/thermopro_tp357.h" "thermopro_tp357/thermopro_tp357.h" >}}
