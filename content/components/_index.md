@@ -167,6 +167,7 @@ Create update entities simplifying management of OTA updates.
 "I²S Audio","components/i2s_audio","i2s_audio.svg",""
 "OpenTherm","components/opentherm","opentherm.png",""
 "SPI Bus","components/spi","spi.svg",""
+"TinyUSB","components/tinyusb","usb.svg","dark-invert"
 "UART","components/uart","uart.svg",""
 "USB Host","components/usb_host","usb.svg","dark-invert"
 "USB UART","components/usb_uart","usb.svg","dark-invert"
@@ -273,6 +274,7 @@ Sensors are organized into categories; if a given sensor fits into more than one
 "CD74HC4067","components/sensor/cd74hc4067","cd74hc4067.jpg","16-channel analog multiplexer",""
 "MCP3008","components/sensor/mcp3008","mcp3008.jpg","8-channel ADC",""
 "MCP3204 / MCP3208","components/sensor/mcp3204","mcp3204.jpg","4-channel ADC",""
+"MCP3221","components/sensor/mcp3221","mcp3221.png","ADC",""
 "NAU7802","components/sensor/nau7802","nau7802.jpg","ADC",""
 "Resistance","components/sensor/resistance","omega.svg","dark-invert",""
 {{< /imgtable >}}
@@ -1049,6 +1051,7 @@ ESPHome to cellular networks. **Does not encompass Wi-Fi.**
 "Exposure Notifications","components/exposure_notifications","exposure_notifications.png",""
 "GPS","components/gps","crosshairs-gps.svg","dark-invert"
 "Grow Fingerprint Reader","components/fingerprint_grow","fingerprint.svg","dark-invert"
+"HLK-FM22x Face Recognition Module","components/hlk_fm22x","face.svg","dark-invert"
 "Modbus Controller","components/modbus_controller","modbus.png",""
 "Sprinkler","components/sprinkler","sprinkler-variant.svg","dark-invert"
 "Status LED","components/status_led","led-on.svg","dark-invert"
