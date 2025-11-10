@@ -60,7 +60,7 @@ Connection Options:
   - **frequency** (*Optional*, float): The frequency of the external clock, must be between 10
     and 20MHz. Defaults to `20MHz`.
 
-- **i2c_id** (**Required**, [ID](#config-id)): The ID of the [I²C bus](#i2c) the camera is connected to.
+- **i2c_id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the [I²C bus](/components/i2c) the camera is connected to.
 - **reset_pin** (*Optional*, pin): The ESP pin the reset pin of the camera is connected to.
   If set, this will reset the camera before the ESP boots.
 
@@ -168,34 +168,30 @@ White Balance Setting:
 
 Automations:
 
-- **on_stream_start** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_stream_start** (*Optional*, [Automation](/automations)): An automation to perform
   when a stream starts.
 
-- **on_stream_stop** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_stream_stop** (*Optional*, [Automation](/automations)): An automation to perform
   when a stream stops.
 
-- **on_image** (*Optional*, [Automation](#automation)): An automation called when image taken. Image is available as `image` variable of type {{< apistruct "esp32_camera::CameraImageData" "esp32_camera::CameraImageData" >}}.
+- **on_image** (*Optional*, [Automation](/automations)): An automation called when image taken. Image is available as `image` variable of type {{< apistruct "esp32_camera::CameraImageData" "esp32_camera::CameraImageData" >}}.
 
 Test Setting:
 
 - **test_pattern** (*Optional*, boolean): For tests purposes, it's possible to replace picture get from sensor by a test color pattern. Defaults to `false`.
 
-{{< note >}}
-Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
-a channel there (with the `channel: 2`  parameter)
-
-{{< /note >}}
+> [!NOTE]
+> Camera uses PWM timer #1. If you need PWM (via the `ledc` platform) you need to manually specify
+> a channel there (with the `channel: 2`  parameter)
 
 ## Configuration examples
 
 **Ai-Thinker Camera**:
 
-{{< warning >}}
-GPIO16 on this board (and possibly other boards below) is connected to onboard PSRAM.
-Using this GPIO for other purposes (eg as a button) will trigger the watchdog.
-Further information on pin notes can be found here: <https://github.com/raphaelbs/esp32-cam-ai-thinker/blob/master/docs/esp32cam-pin-notes.md>
-
-{{< /warning >}}
+> [!WARNING]
+> GPIO16 on this board (and possibly other boards below) is connected to onboard PSRAM.
+> Using this GPIO for other purposes (eg as a button) will trigger the watchdog.
+> Further information on pin notes can be found here: <https://github.com/raphaelbs/esp32-cam-ai-thinker/blob/master/docs/esp32cam-pin-notes.md>
 
 ```yaml
 # Example configuration entry
@@ -222,15 +218,13 @@ esp32_camera:
 
 **M5Stack Camera**:
 
-{{< warning >}}
-This camera board has insufficient cooling and will overheat over time,
-ESPHome does only activate the camera when Home Assistant requests an image, but
-the camera unit can still heat up considerably for some boards.
-
-If the camera is not recognized after a reboot and the unit feels warm, try waiting for
-it to cool down and check again - if that still doesn't work try enabling the test pattern.
-
-{{< /warning >}}
+> [!WARNING]
+> This camera board has insufficient cooling and will overheat over time,
+> ESPHome does only activate the camera when Home Assistant requests an image, but
+> the camera unit can still heat up considerably for some boards.
+>
+> If the camera is not recognized after a reboot and the unit feels warm, try waiting for
+> it to cool down and check again - if that still doesn't work try enabling the test pattern.
 
 ```yaml
 # Example configuration entry

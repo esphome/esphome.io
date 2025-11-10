@@ -35,22 +35,20 @@ display:
 
 Additionally, you can use the `animation.next_frame`, `animation.prev_frame` or `animation.set_frame` actions.
 
-{{< note >}}
-To draw the next animation independent of Display draw cycle use an interval:
-
-```yaml
-interval:
-  - interval: 5s
-      then:
-        animation.next_frame: my_animation
-```
-
-{{< /note >}}
+> [!NOTE]
+> To draw the next animation independent of Display draw cycle use an interval:
+>
+> ```yaml
+> interval:
+>   - interval: 5s
+>       then:
+>         animation.next_frame: my_animation
+> ```
 
 ## Configuration variables
 
 - **file** (**Required**, string): The path (relative to where the .yaml file is) of the gif file.
-- **id** (**Required**, [ID](#config-id)): The ID with which you will be able to reference the animation later
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the animation later
   in your display code.
 
 - **resize** (*Optional*, string): If set, this will resize all the frames to fit inside the given dimensions `WIDTHxHEIGHT`
@@ -84,15 +82,15 @@ interval:
 - **animation.next_frame**: Moves the animation to the next frame. This is equivalent to the
   `id(my_animation).next_frame();` lambda call.
 
-  - **id** (**Required**, [ID](#config-id)): The ID of the animation to animate.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to animate.
 
 - **animation.prev_frame**: Moves the animation to the previous frame. This is equivalent to the
   `id(my_animation).prev_frame();` lambda call.
 
-  - **id** (**Required**, [ID](#config-id)): The ID of the animation to animate.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to animate.
 
 - **animation.set_frame**: Moves the animation to a specific frame. This is equivalent to the
   `id(my_animation).set_frame(frame);` lambda call.
 
-  - **id** (**Required**, [ID](#config-id)): The ID of the animation to animate.
+  - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the animation to animate.
   - **frame** (**Required**, int): The frame index to show next.

@@ -48,10 +48,8 @@ output:
     max_power: 80%
 ```
 
-{{< note >}}
-Remember that `gamma_correct` is enabled by default (`γ=2.8`  ), and you may want take it into account for the calibration. For instance if you command a light to *50%* brightness and want it to be the new maximum: `max_PWM_power = max_light_power^2.8 = 0.5^2.8 = 0.144`, then you would set `max_power` to *14.4%*.
-
-{{< /note >}}
+> [!NOTE]
+> Remember that `gamma_correct` is enabled by default (`γ=2.8`  ), and you may want take it into account for the calibration. For instance if you command a light to *50%* brightness and want it to be the new maximum: `max_PWM_power = max_light_power^2.8 = 0.5^2.8 = 0.144`, then you would set `max_power` to *14.4%*.
 
 ## Color Interlock
 
@@ -67,13 +65,13 @@ the `color_mode` option of the [light control actions](#light-turn_on_action).
 
 ## Configuration variables
 
-- **red** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the red channel.
-- **green** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the green channel.
-- **blue** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the blue channel.
-- **cold_white** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the cold
+- **red** (**Required**, [ID](/guides/configuration-types#id)): The id of the float [Output Component](#output) to use for the red channel.
+- **green** (**Required**, [ID](/guides/configuration-types#id)): The id of the float [Output Component](#output) to use for the green channel.
+- **blue** (**Required**, [ID](/guides/configuration-types#id)): The id of the float [Output Component](#output) to use for the blue channel.
+- **cold_white** (**Required**, [ID](/guides/configuration-types#id)): The id of the float [Output Component](#output) to use for the cold
   white channel.
 
-- **warm_white** (**Required**, [ID](#config-id)): The id of the float [Output Component](#output) to use for the warm
+- **warm_white** (**Required**, [ID](/guides/configuration-types#id)): The id of the float [Output Component](#output) to use for the warm
   white channel.
 
 - **cold_white_color_temperature** (*Optional*, float): The color temperature (in

@@ -81,11 +81,9 @@ Packages can also be loaded from a Git repository by utilizing the correct confi
 {{< docref "/components/substitutions" >}} can be used inside the remote packages which allows users to override
 them locally with their own substitution value.
 
-{{< note >}}
-Remote packages cannot have `secret` lookups in them. They should instead make use of substitutions with an
-optional default in the packaged YAML, which the local device YAML can set using values from the local secrets.
-
-{{< /note >}}
+> [!NOTE]
+> Remote packages cannot have `secret` lookups in them. They should instead make use of substitutions with an
+> optional default in the packaged YAML, which the local device YAML can set using values from the local secrets.
 
 ```yaml
 # Git repo examples as a mapping
@@ -129,7 +127,7 @@ For each package:
   - list of objects containing `path` and `vars`
 
 - **ref** (*Optional*, string): The Git ref(erence) to be used when pulling content from the repository.
-- **refresh** (*Optional*, [Time](#config-time)): The interval at which the content from the repository should be refreshed.
+- **refresh** (*Optional*, [Time](/guides/configuration-types#time)): The interval at which the content from the repository should be refreshed.
 
 ## Packages as Templates
 
