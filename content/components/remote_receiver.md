@@ -29,7 +29,7 @@ Multiple remote receivers can be configured as a list of dict definitions within
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to receive the remote signal on.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to receive the remote signal on.
 - **dump** (*Optional*, list): Decode and dump these remote codes in the logs (at log.level=DEBUG).
   Set to `all` to dump all available codecs:
 

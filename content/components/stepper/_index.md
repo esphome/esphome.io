@@ -57,13 +57,13 @@ stepper:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control it.
-- **step_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The `STEP` pin of the A4988
+- **step_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The `STEP` pin of the A4988
   stepper driver.
 
-- **dir_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The `DIRECTION` pin of the A4988
+- **dir_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The `DIRECTION` pin of the A4988
   stepper driver.
 
-- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): Optionally also use the `SLEEP` pin
+- **sleep_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): Optionally also use the `SLEEP` pin
   of the A4988 stepper driver. If specified, the driver will be put into sleep mode as soon as the stepper
   reaches the target steps.
 
@@ -117,10 +117,10 @@ stepper:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the stepper so that you can control it.
-- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin **a** of the stepper control board.
-- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin **b** of the stepper control board.
-- **pin_c** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin **c** of the stepper control board.
-- **pin_d** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin **d** of the stepper control board.
+- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **a** of the stepper control board.
+- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **b** of the stepper control board.
+- **pin_c** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **c** of the stepper control board.
+- **pin_d** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin **d** of the stepper control board.
 - **sleep_when_done** (*Optional*, boolean): Whether to turn off all coils when the stepper has
   reached the target position
 

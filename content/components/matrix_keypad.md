@@ -39,10 +39,10 @@ matrix_keypad:
 ### Configuration variables
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this device for use in lambdas.
-- **rows** (**Required**, list): A list of [pins](/guides/configuration-types#pin) where the horrizontal
+- **rows** (**Required**, list): A list of [pins](/guides/configuration-types#pin-schema) where the horrizontal
   matrix lines are connected, in order from top to bottom. These pins need to be output capable.
 
-- **columns** (**Required**, list): A list of [pins](/guides/configuration-types#pin) where the vertical
+- **columns** (**Required**, list): A list of [pins](/guides/configuration-types#pin-schema) where the vertical
   matrix lines are connected, in order from left to right. These pins need to be input capable
   with pullups enabled. If there is no internal pullup, then an external one is required.
 

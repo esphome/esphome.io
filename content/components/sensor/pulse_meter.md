@@ -27,7 +27,7 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to count pulses on.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to count pulses on.
 
 - **internal_filter** (*Optional*, [Time](/guides/configuration-types#time)): If a pulse shorter than this time is detected, it is discarded. Defaults to `13us`.
 

@@ -106,7 +106,7 @@ For a more detailed explanation of the denoise configuration, please see the
 
 Waterproof configuration:
 
-- **waterproof_guard_ring** (*Optional*, [Pin](#config-pin)): Sets the touch channel to use for the guard pad. The guard
+- **waterproof_guard_ring** (*Optional*, [Pin](/guides/configuration-types#pin)): Sets the touch channel to use for the guard pad. The guard
   pad is used to detect the large area of water covering the touch panel.
 
 - **waterproof_shield_driver** (*Optional*): Shield channel drive capability configuration; the larger the
@@ -143,7 +143,7 @@ binary_sensor:
 
 ### Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to detect touch
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to detect touch
    events on.
 
 - **threshold** (**Required**, `int`  ): The threshold to use to detect touch events. See

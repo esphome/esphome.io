@@ -38,7 +38,7 @@ display:
 
 ## Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin you have the CS line hooked up to.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin you have the CS line hooked up to.
 - **num_chips** (*Optional*, int): The number of chips you wish to use for daisy chaining. Defaults to
   `4`.
 

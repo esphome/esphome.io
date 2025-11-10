@@ -55,13 +55,13 @@ uart:
 ## Configuration variables
 
 - **baud_rate** (**Required**, int): The baud rate of the UART bus.
-- **tx_pin** (*Optional*, [Pin](#config-pin)): The pin to send data to from the ESP's perspective. Use the full pin
+- **tx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to send data to from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 
-- **rx_pin** (*Optional*, [Pin](#config-pin)): The pin to receive data on from the ESP's perspective. Use the full pin
+- **rx_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin to receive data on from the ESP's perspective. Use the full pin
   schema and set `inverted: true` to invert logic levels. Not supported by host platform.
 
-- **flow_control_pin** (*Optional*, [Pin](#config-pin)): ESP32 only. The pin used to for hardware RS485 flow control.
+- **flow_control_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): ESP32 only. The pin used to for hardware RS485 flow control.
   Use of this setting enables half-duplex mode. Use the full pin schema and set `inverted: true` to invert logic levels.
 
 - **port** (*Optional*, string): Host platform only. Unix style name of the port to use.

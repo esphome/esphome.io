@@ -25,7 +25,7 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to count pulses on.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to count pulses on.
 - **count_mode** (*Optional*): Configure how the counter should behave
   on a detected rising edge/falling edge.
 

@@ -62,7 +62,7 @@ sensor:
   A dynamic re-address of sensor requires the `enable_pin` configuration variable to be assigned.
   If more then one VL53L0X sensor is used on the same i2c bus, a unique address must be specified per sensor.
 
-- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The pin connected to XSHUT
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin connected to XSHUT
   on vl53l0x to enable/disable sensor. **Required** if not using address `0x29` which is the cause if you
   have multiple VL53L0X on the same i2c bus. In this case you have to assign a different pin to each VL53L0X.
 

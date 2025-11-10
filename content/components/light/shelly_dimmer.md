@@ -60,8 +60,8 @@ light:
 - **min_brightness** (*Optional*, int): Minimum brightness value on a scale from 0..1000, the default is 0.
 - **max_brightness** (*Optional*, int): Maximum brightness value on a scale from 0..1000, the default is 1000.
 - **warmup_brightness** (*Optional*, int): Brightness threshold below which the dimmer switches on later in mains current cycle. [This might help with dimming LEDs](https://github.com/jamesturton/shelly-dimmer-stm32/pull/23). The value is from 0..1000 with an default of 0.
-- **nrst_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "NRST" of STM32. The default is "GPIO5".
-- **boot0_pin** (*Optional*, [Pin](#config-pin)): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
+- **nrst_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): Pin connected with "NRST" of STM32. The default is "GPIO5".
+- **boot0_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): Pin connected with "BOOT0" of STM32. The default is "GPIO4".
 - **current** (*Optional*): Sensor of the current in Amperes. All options from
   [Sensor](/components/sensor).
 

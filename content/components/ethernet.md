@@ -62,15 +62,15 @@ ethernet:
 
 ### RMII configuration variables
 
-- **mdc_pin** (**Required**, [Pin](#config-pin)): The MDC pin of the board.
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin of the board.
   Usually this is `GPIO23`.
 
-- **mdio_pin** (**Required**, [Pin](#config-pin)): The MDIO pin of the board.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin of the board.
   Usually this is `GPIO18`.
 
 - **clk** (**Required**, mapping):
 
-  - **pin** (**Required**, [Pin](#config-pin)): The RMII clock pin.
+  - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The RMII clock pin.
   - **mode** (**Required**, string): The clock mode of the data lines. See your board's
     datasheet for more details. Must be one of the following values:
 
@@ -84,19 +84,19 @@ ethernet:
   - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. `0x1FFA`  )
   - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07` for page 7)
 
-- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The pin controlling the
+- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
 ### SPI configuration variables
 
-- **clk_pin** (**Required**, [Pin](#config-pin)): The SPI clock pin.
-- **mosi_pin** (**Required**, [Pin](#config-pin)): The SPI MOSI pin.
-- **miso_pin** (**Required**, [Pin](#config-pin)): The SPI MISO pin.
-- **cs_pin** (**Required**, [Pin](#config-pin)): The SPI chip select pin.
-- **interrupt_pin** (*Optional*, [Pin](#config-pin)): The interrupt pin.
+- **clk_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
+- **mosi_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
+- **miso_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI chip select pin.
+- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
 
-- **reset_pin** (*Optional*, [Pin](#config-pin)): The reset pin.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
   Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.

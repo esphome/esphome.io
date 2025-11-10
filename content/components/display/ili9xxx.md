@@ -82,9 +82,9 @@ All [graphical display configuration](#display-configuration) options are availa
   - `ST7789V`, `ST7796`, `ST7735`
   - `GC9A01A`, `GC9D01N`, `CUSTOM`
 
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The DC pin.
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The RESET pin.
-- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The CS pin.
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin.
+- **cs_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
 
 > [!NOTE]
 > A DC pin is always required, the CS pin and RESET pin will only be needed if the specific board has those

@@ -40,7 +40,7 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin where the DHT bus is connected.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin where the DHT bus is connected.
 - **temperature** (**Required**): The information for the temperature sensor.
 
   - All options from [Sensor](/components/sensor).

@@ -54,7 +54,7 @@ light:
 - **chipset** (**Required**, string): Set a chipset to use.
   See [Supported Chipsets](#fastled_clockless-chipsets) for options.
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the FastLED light.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the FastLED light.
 - **num_leds** (**Required**, int): The number of LEDs attached.
 - **rgb_order** (*Optional*, string): The order of the RGB channels. Use this if your
   light doesn't seem to map the RGB light channels correctly. For example if your light
@@ -127,8 +127,8 @@ light:
 ### Configuration variables
 
 - **chipset** (**Required**, string): Set a chipset to use. See [Supported Chipsets](#fastled_spi-chipsets) for options.
-- **data_pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the FastLED light.
-- **clock_pin** (**Required**, [Pin](#config-pin)): The pin for the clock line of the FastLED light.
+- **data_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the FastLED light.
+- **clock_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the clock line of the FastLED light.
 - **num_leds** (**Required**, int): The number of LEDs attached.
 - **rgb_order** (*Optional*, string): The order of the RGB channels. Use this if your
   light doesn't seem to map the RGB light channels correctly. For example if your light

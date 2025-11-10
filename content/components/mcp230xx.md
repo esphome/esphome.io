@@ -124,7 +124,7 @@ binary_sensor:
 ### Pin configuration variables
 
 - **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23016 component.
-- All other options from [Pin Schema](/guides/configuration-types#pin)
+- All other options from [Pin Schema](/guides/configuration-types#pin-schema)
 
 {{< anchor "mcp23017-label" >}}
 
@@ -190,7 +190,7 @@ binary_sensor:
 
 - **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23017 component.
 - **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
-- All other options from [Pin Schema](/guides/configuration-types#pin)
+- All other options from [Pin Schema](/guides/configuration-types#pin-schema)
 
 ## See Also
 

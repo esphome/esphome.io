@@ -34,8 +34,8 @@ sensor:
 
 ## Configuration variables
 
-- **clock_pin** (**Required**, [Pin](#config-pin)): The pin where the clock bus is connected.
-- **data_pin** (**Required**, [Pin](#config-pin)): The pin where the data bus is connected.
+- **clock_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin where the clock bus is connected.
+- **data_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin where the data bus is connected.
 - **co2** (*Optional*): The information for the CO2 sensor.
 
   - All options from [Sensor](/components/sensor).

@@ -28,7 +28,7 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to measure the voltage on.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to measure the voltage on.
   Or on the ESP8266 or Raspberry Pi Pico it could alternatively be set to `VCC`, see [Measuring VCC](#adc-vcc).
 
 - **attenuation** (*Optional*): Only on ESP32. Specify the ADC

@@ -42,10 +42,10 @@ light:
 
 ## Configuration variables
 
-- **gate_pin** (**Required**, [Pin](#config-pin)): The pin used to control the Triac or
+- **gate_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin used to control the Triac or
   Mosfet.
 
-- **zero_cross_pin** (**Required**, [Pin](#config-pin)): The pin used to sense the AC
+- **zero_cross_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin used to sense the AC
   Zero cross event, you can have several dimmers controlled with the same zero cross
   detector, in such case duplicate the `zero_cross_pin` config on each output. When
   doing so, `allow_other_uses` pin schema option **must** be set to `true` to

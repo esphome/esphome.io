@@ -50,7 +50,7 @@ Utilizing the UART channels enables you to connect your UART devices, with each 
 as a virtual UART bus for the connected component.
 
 The I/O pins of the WeiKai chips can be use as any of the other GPIO pins.
-Any option accepting a [Pin Schema](/guides/configuration-types#pin) can theoretically
+Any option accepting a [Pin Schema](/guides/configuration-types#pin-schema) can theoretically
 be used, but some more complicated components that do communication through
 this I/O expander might not work.
 
@@ -94,7 +94,7 @@ wk2168_spi:
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin on the ESP that the chip select line
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin on the ESP that the chip select line
   of the chip is connected to.
 
 - **data_rate** (*Optional*): Set the data rate of the controller. One of `80MHz`, `40MHz`, `20MHz`, `10MHz`,

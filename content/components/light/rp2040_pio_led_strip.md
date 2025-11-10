@@ -23,7 +23,7 @@ light:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
 - **pio** (**Required**, int): The PIO peripheral to use. If using multiple strips, you can use up to 4 strips per PIO. Must be one of `0` or `1`.
 

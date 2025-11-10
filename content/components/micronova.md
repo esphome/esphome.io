@@ -48,7 +48,7 @@ micronova:
 
 ### Configuration variables
 
-- **enable_rx_pin** (**Required**, [Pin](#config-pin)): Output pin to be used to switch the line between RX and TX.
+- **enable_rx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Output pin to be used to switch the line between RX and TX.
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 

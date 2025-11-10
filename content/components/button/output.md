@@ -35,7 +35,7 @@ button:
 > [!NOTE]
 > When used with a {{< docref "/components/output/gpio" >}}, the pin will be low by default and pulled high when the button is
 > pressed. To invert this behaviour and have the pin pulled low when the button is pressed, set the `inverted` option
-> in the [Pin Schema](/guides/configuration-types#pin).
+> in the [Pin Schema](/guides/configuration-types#pin-schema).
 
 ## See Also
 

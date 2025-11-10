@@ -45,13 +45,13 @@ pin_a:
 
 ## Configuration variables
 
-- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types#pin)):
+- **pin_a** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)):
   The first pin for determining the step value. Must not be a pin from an external I/O expander.
 
-- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types#pin)):
+- **pin_b** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)):
   The second pin for determining the step value. Must not be a pin from an external I/O expander.
 
-- **pin_reset** (*Optional*, [Pin Schema](/guides/configuration-types#pin)):
+- **pin_reset** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)):
   An optional pin that resets the step value. This is useful with rotary encoders that have a
   third pin. Defaults to no reset pin.
 

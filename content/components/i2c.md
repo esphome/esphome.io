@@ -28,10 +28,10 @@ i2c:
 
 ## Configuration variables
 
-- **sda** (*Optional*, [Pin](#config-pin)): The pin for the data line of the I²C bus.
+- **sda** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin for the data line of the I²C bus.
   Defaults to the default of your board (usually GPIO21 for ESP32 and GPIO4 for ESP8266).
 
-- **scl** (*Optional*, [Pin](#config-pin)): The pin for the clock line of the I²C bus.
+- **scl** (*Optional*, [Pin](/guides/configuration-types#pin)): The pin for the clock line of the I²C bus.
   Defaults to the default of your board (usually GPIO22 for ESP32 and
   GPIO5 for ESP8266).
 

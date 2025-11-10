@@ -26,8 +26,8 @@ canbus:
 
 ## Configuration variables
 
-- **rx_pin** (**Required**, [Pin](#config-pin)): Receive pin.
-- **tx_pin** (**Required**, [Pin](#config-pin)): Transmit pin.
+- **rx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Receive pin.
+- **tx_pin** (**Required**, [Pin](/guides/configuration-types#pin)): Transmit pin.
 - **rx_queue_len** (*Optional*, int): Length of RX queue.
 - **tx_queue_len** (*Optional*, int): Length of TX queue, 0 to disable.
 - **tx_enqueue_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Maximum time to wait when the TX queue is full before

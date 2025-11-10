@@ -30,7 +30,7 @@ remote_transmitter:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin to transmit the remote signal on.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin to transmit the remote signal on.
 - **carrier_duty_percent** (*Optional*, int): How much of the time the remote is on. For example, infrared protocols
   modulate the signal using a carrier signal. Set this to `50%` if you're using IR LEDs and `100%` for RF
   applications like 433 MHz transmitters.

@@ -28,7 +28,7 @@ power_supply:
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id of the
   power supply so that it can be used by the outputs.
 
-- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The
   GPIO pin to control the power supply on.
 
 - **enable_time** (*Optional*, [Time](/guides/configuration-types#time)): The time

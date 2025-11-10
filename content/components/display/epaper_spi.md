@@ -29,14 +29,14 @@ display:
 
 ## Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The CS pin.
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The DC pin.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin.
 - **model** (**Required**): The model of the ePaper display. Currently supported:
 
   - `7.3in-spectra-e6` - 7.3" Spectra E6 6-color display (800×480 pixels)
 
-- **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The BUSY pin. Defaults to not connected.
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The RESET pin. Defaults to not connected.
+- **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin. Defaults to not connected.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
 
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated

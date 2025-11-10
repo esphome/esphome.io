@@ -81,8 +81,8 @@ lambda: |-
 
 ## Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The CS pin.
-- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The DC pin.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The CS pin.
+- **dc_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The DC pin.
 - **model** (**Required**): The model of the E-Paper display. Options are:
 
   - `1.54in`
@@ -131,8 +131,8 @@ lambda: |-
 > [!WARNING]
 > The BUSY pin on the `gdew0154m09`, the `Waveshare 7.30in-f` and the `Waveshare 7.50in V2` models must be inverted to prevent permanent display damage. Set the busy pin to `inverted: true` in the config.
 
-- **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The BUSY pin. Defaults to not connected.
-- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The RESET pin. Defaults to not connected.
+- **busy_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The BUSY pin. Defaults to not connected.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The RESET pin. Defaults to not connected.
   Make sure you pull this pin high (by connecting it to 3.3V with a resistor) if not connected to a GPIO pin.
   The 2.13" B74 and V2 display variants require the reset pin.
 

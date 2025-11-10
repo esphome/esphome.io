@@ -21,7 +21,7 @@ output:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin to turn on and off.
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to turn on and off.
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - All other options from [Output](#config-output).
 

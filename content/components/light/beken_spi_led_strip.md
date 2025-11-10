@@ -24,7 +24,7 @@ light:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin](#config-pin)): The pin for the data line of the light.
+- **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The pin for the data line of the light.
 - **num_leds** (**Required**, int): The number of LEDs in the strip.
 - **chipset** (**Required**, enum): The chipset to apply known timings from.
   - `WS2812`

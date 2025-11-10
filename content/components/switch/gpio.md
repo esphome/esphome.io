@@ -23,7 +23,7 @@ switch:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The
   GPIO pin to use for the switch.
 
 - **interlock** (*Optional*, list): A list of other GPIO switches in an interlock group. See
@@ -37,7 +37,7 @@ switch:
 
 ## Active Low Switch
 
-To create an active-low switch (one that is turned off by default), use the [Pin Schema](/guides/configuration-types#pin):
+To create an active-low switch (one that is turned off by default), use the [Pin Schema](/guides/configuration-types#pin-schema):
 
 ```yaml
 # Example configuration entry
