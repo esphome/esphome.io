@@ -42,23 +42,23 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | ----------- | ------------------ |
 | RM690B0     | 320x240            |
 | ILI9341     | 320x240            |
-| ILI9481 | 320x480 |
-| ILI9486 | 320x480 |
-| ILI9488 | 320x480 |
-| ILI9488_A | 320x480 |
-| ST7796 | 320x480 |
-| ST7789V | 240x320 |
-| GC9A01A | 240x240 |
-| GC9D01N | 240x240 |
-| AXS15231 | 320x240 |
-| ST7735 | 128x160 |
-| CO5300 | 466x466 |
-| CUSTOM | Customisable |
+| ILI9481     | 320x480            |
+| ILI9486     | 320x480            |
+| ILI9488     | 320x480            |
+| ILI9488_A   | 320x480            |
+| ST7796      | 320x480            |
+| ST7789V     | 240x320            |
+| GC9A01A     | 240x240            |
+| GC9D01N     | 240x240            |
+| AXS15231    | 320x240            |
+| ST7735      | 128x160            |
+| CO5300      | 466x466            |
+| CUSTOM      | Customisable       |
 
 ### Boards with integrated displays
 
 | Model                                | Manufacturer | Product Description                                               |
-|--------------------------------------| ------------ | ----------------------------------------------------------------- |
+| ------------------------------------ | ------------ | ----------------------------------------------------------------- |
 | ADAFRUIT-S2-TFT-FEATHER              | Adafruit     | <https://www.adafruit.com/product/6312>                           |
 | ADAFRUIT-FUNHOUSE                    | Adafruit     | <https://www.adafruit.com/product/4985>                           |
 | M5CORE                               | M5Stack | <https://docs.m5stack.com/en/core/BASIC%20v2.6> |
@@ -74,7 +74,7 @@ using an octal SPI bus, so references here to parallel and octal SPI are equival
 | JC3636W518                           | Guition | <https://www.aliexpress.com/item/1005007890666293.html> |
 | JC3636W518V2                         | Guition | <https://www.aliexpress.com/item/1005007890666293.html> |
 | LANBON-L8                            | Lanbon | <https://www.lanbon.cn/product/lanbon-l8> |
-| T4-S3-AMOLED                         | Lilygo | <https://www.lilygo.cc/products/t4-s3> |
+| T4-S3                                | Lilygo | <https://www.lilygo.cc/products/t4-s3> |
 | T-EMBED                              | Lilygo | <https://www.lilygo.cc/products/t-embed> |
 | T-DISPLAY                            | Lilygo | <https://www.lilygo.cc/products/t-display> |
 | T-DISPLAY-S3                         | Lilygo | <https://www.lilygo.cc/products/t-display-s3> |
