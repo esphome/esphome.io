@@ -66,7 +66,7 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template text sensor.
-- **state** (**Required**, string, [templatable](#config-templatable)):
+- **state** (**Required**, string, [templatable](/automations/templates)):
   The state to publish.
 
 > [!NOTE]

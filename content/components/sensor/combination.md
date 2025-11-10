@@ -80,12 +80,12 @@ sensor:
   - **source** (**Required**, [ID](/guides/configuration-types#id) of a {{< docref "/components/sensor" >}}): The
     sensor id that is used as sample source.
 
-  - **error** (**Required**, only for `KALMAN` type, float, [templatable](#config-templatable)):
+  - **error** (**Required**, only for `KALMAN` type, float, [templatable](/automations/templates)):
     The standard deviation of the sensor's measurements. This works like the `process_std_dev`
     parameter, with low values marking accurate data. If implemented as a template, the
     measurement is in parameter `x`.
 
-  - **coeffecient** (**Required**, only for `LINEAR` type, float, [templatable](#config-templatable)):
+  - **coeffecient** (**Required**, only for `LINEAR` type, float, [templatable](/automations/templates)):
     The coeffecient to multiply the sensor's state by before summing all source sensor states.
     If implemented as a template, the measurement is in parameter `x`.
 

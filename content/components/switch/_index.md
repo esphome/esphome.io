@@ -139,7 +139,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the switch to control.
-- **state** (**Required**, boolean, [templatable](#config-templatable)):
+- **state** (**Required**, boolean, [templatable](/automations/templates)):
   The state to set the switch to. `true` turns the switch on, `false` turns it off.
 
 {{< anchor "switch-is_on_condition" >}}

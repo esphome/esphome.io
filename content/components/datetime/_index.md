@@ -125,7 +125,7 @@ The `date` provided can be in one of 3 formats:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the datetime to set.
-- **date** (**Required**, string, date parts, [templatable](#config-templatable)):
+- **date** (**Required**, string, date parts, [templatable](/automations/templates)):
   The value to set the datetime to.
 
 {{< anchor "datetime-lambda_calls" >}}
@@ -191,7 +191,7 @@ The `time` provided can be in one of 3 formats:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the datetime to set.
-- **time** (**Required**, string, time parts, [templatable](#config-templatable)):
+- **time** (**Required**, string, time parts, [templatable](/automations/templates)):
   The value to set the datetime to.
 
 {{< anchor "datetime-time-lambda_calls" >}}
@@ -260,7 +260,7 @@ The `datetime` provided can be in one of 3 formats:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the datetime to set.
-- **datetime** (**Required**, string, datetime parts, [templatable](#config-templatable)):
+- **datetime** (**Required**, string, datetime parts, [templatable](/automations/templates)):
   The value to set the datetime to.
 
 {{< anchor "datetime-datetime-lambda_calls" >}}

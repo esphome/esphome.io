@@ -886,7 +886,7 @@ on_...:
 
 This [condition](#common_conditions) checks if the amount of time specified has passed since the last touch event.
 
-- **timeout** (**Required**, [templatable](#config-templatable), int): Amount of [time](#config-time) expected since the last touch event.
+- **timeout** (**Required**, [templatable](/automations/templates), int): Amount of [time](#config-time) expected since the last touch event.
 - **lvgl_id** (*Optional*): The ID of the LVGL instance to monitor.
 
 ```yaml
@@ -950,7 +950,7 @@ LVGL has a notion of screen inactivity -- i.e. the time since the last user inte
 
 The `on_idle` [triggers](#automation) are activated when inactivity time becomes longer than the specified `timeout`. You can configure any desired number of timeouts with different actions.
 
-- **timeout** (**Required**, [templatable](#config-templatable), int): [Time](#config-time) that has elapsed since the last touch event, after which the trigger will be invoked.
+- **timeout** (**Required**, [templatable](/automations/templates), int): [Time](#config-time) that has elapsed since the last touch event, after which the trigger will be invoked.
 
 ```yaml
 lvgl:

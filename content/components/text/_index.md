@@ -104,7 +104,7 @@ This is an [Action](/automations/actions#all-actions) for setting a text state.
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the text to set.
-- **value** (**Required**, string, [templatable](#config-templatable)):
+- **value** (**Required**, string, [templatable](/automations/templates)):
   The value to set the text to.
 
 {{< anchor "text-lambda_calls" >}}

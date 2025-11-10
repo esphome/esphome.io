@@ -146,7 +146,7 @@ Simple filter that just inverts every value from the binary sensor.
 
 ### `delayed_on`
 
-(**Required**, time, [templatable](#config-templatable)): When a signal ON is received,
+(**Required**, time, [templatable](/automations/templates)): When a signal ON is received,
 wait for the specified time period until publishing an ON state. If an OFF value is received
 while waiting, the ON action is discarded. Or in other words:
 Only send an ON value if the binary sensor has stayed ON for at least the specified time period.
@@ -155,7 +155,7 @@ When using a lambda call, you should return the delay value in milliseconds.
 
 ### `delayed_off`
 
-(**Required**, time, [templatable](#config-templatable)): When a signal OFF is received,
+(**Required**, time, [templatable](/automations/templates)): When a signal OFF is received,
 wait for the specified time period until publishing an OFF state. If an ON value is received
 while waiting, the OFF action is discarded. Or in other words:
 Only send an OFF value if the binary sensor has stayed OFF for at least the specified time period.
@@ -178,7 +178,7 @@ binary_sensor:
       - delayed_on_off: 1s
 ```
 
-(**Required**, time, [templatable](#config-templatable)): ON and OFF delay.
+(**Required**, time, [templatable](/automations/templates)): ON and OFF delay.
 When using a lambda call, you should return the delay value in milliseconds.
 **Useful for debouncing binary switches**.
 
@@ -196,8 +196,8 @@ binary_sensor:
 
 Configuration variables:
 
-- **time_on** (**Required**, time, [templatable](#config-templatable)): ON delay.
-- **time_off** (**Required**, time, [templatable](#config-templatable)): OFF delay.
+- **time_on** (**Required**, time, [templatable](/automations/templates)): ON delay.
+- **time_off** (**Required**, time, [templatable](/automations/templates)): OFF delay.
 
 When using a lambda call, you should return the delay value in milliseconds.
 
@@ -230,7 +230,7 @@ the filter chain.
 
 ### `settle`
 
-(**Required**, time, [templatable](#config-templatable)): When a signal is received, publish the state
+(**Required**, time, [templatable](/automations/templates)): When a signal is received, publish the state
 but wait for the received state to remain the same for specified time period before publishing any
 additional state changes. This filter complements the `delayed_on_off` filter but publishes value changes at
 the beginning of the delay period.
@@ -239,7 +239,7 @@ When using a lambda call, you should return the delay value in milliseconds.
 
 ### `timeout`
 
-(**Required**, time, [templatable](#config-templatable)): If no value is published for the specified
+(**Required**, time, [templatable](/automations/templates)): If no value is published for the specified
 time period, invalidate the state.
 
 ## Binary Sensor Automation

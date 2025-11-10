@@ -152,7 +152,7 @@ on_...:
 
 Configuration options:
 
-- **sleep_duration** (*Optional*, [templatable](#config-templatable), [Time](#config-time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
+- **sleep_duration** (*Optional*, [templatable](/automations/templates), [Time](#config-time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
 - **until** (*Optional*, string): The time of day to wake up. Only on ESP32.
 - **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the time component to use for the `until` option. Only on ESP32.
 

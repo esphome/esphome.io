@@ -91,11 +91,11 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the Nextion switch.
-- **state** (**Required**, string, [templatable](#config-templatable)): The boolean state to publish.
-- **publish_state** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Home Assistant.
+- **state** (**Required**, string, [templatable](/automations/templates)): The boolean state to publish.
+- **publish_state** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Home Assistant.
   Default is true.
 
-- **send_to_nextion** (*Optional*, bool, [templatable](#config-templatable)): Publish new state to Nextion
+- **send_to_nextion** (*Optional*, bool, [templatable](/automations/templates)): Publish new state to Nextion
   display which will update component. Default is true.
 
 > [!NOTE]

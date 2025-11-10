@@ -315,7 +315,7 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the output.
-- **value** (*Optional*, percentage, [templatable](#config-templatable)): The target level.
+- **value** (*Optional*, percentage, [templatable](/automations/templates)): The target level.
 
 ## See Also
 

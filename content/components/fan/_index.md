@@ -152,13 +152,13 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the fan.
-- **oscillating** (*Optional*, boolean, [templatable](#config-templatable)):
+- **oscillating** (*Optional*, boolean, [templatable](/automations/templates)):
   Set the oscillation state of the fan. Defaults to not affecting oscillation.
 
-- **speed** (*Optional*, int, [templatable](#config-templatable)):
+- **speed** (*Optional*, int, [templatable](/automations/templates)):
   Set the speed level of the fan. Can be a number between 1 and the maximum speed level of the fan.
 
-- **direction** (*Optional*, string, [templatable](#config-templatable)):
+- **direction** (*Optional*, string, [templatable](/automations/templates)):
   Set the direction of the fan. Can be either `forward` or `reverse`. Defaults to not changing the direction.
 
 {{< anchor "fan-cycle_speed_action" >}}
@@ -180,7 +180,7 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the fan.
-- **off_speed_cycle** (*Optional*, boolean, [templatable](#config-templatable)): Determines if the fan will cycle off after cycling though its highest speed. Can be `true` or `false`. If `false` fan will cycle to its lowest speed instead of turning off. Defaults to `true`.
+- **off_speed_cycle** (*Optional*, boolean, [templatable](/automations/templates)): Determines if the fan will cycle off after cycling though its highest speed. Can be `true` or `false`. If `false` fan will cycle to its lowest speed instead of turning off. Defaults to `true`.
 
 {{< anchor "fan-is_on_condition" >}}
 {{< anchor "fan-is_off_condition" >}}

@@ -105,8 +105,8 @@ on_...:
 
 #### Configuration variables
 
-- **url** (**Required**, string, [templatable](#config-templatable)): URL to which to send the request.
-- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](#config-templatable).
+- **url** (**Required**, string, [templatable](/automations/templates)): URL to which to send the request.
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](/automations/templates).
 - **collect_headers** (*Optional*, list of strings): List of the names of HTTP headers to collect from the response.
 - **capture_response** (*Optional*, boolean): when set to `true`, the response data will be captured and placed into
   the `body` variable as a `std::string` for use in [lambdas](#config-lambda). Defaults to `false`.
@@ -137,8 +137,8 @@ on_...:
 
 #### Configuration variables
 
-- **body** (*Optional*, string, [templatable](#config-templatable)): A HTTP body string to send with request.
-- **json** (*Optional*, mapping): A HTTP body in JSON format. Values are [templatable](#config-templatable).
+- **body** (*Optional*, string, [templatable](/automations/templates)): A HTTP body string to send with request.
+- **json** (*Optional*, mapping): A HTTP body in JSON format. Values are [templatable](/automations/templates).
   See [Examples](#http_request-examples).
 
 - All other options from [`http_request.get` Action](#http_request-get_action).

@@ -158,10 +158,10 @@ on_...:
 
 #### Configuration variables
 
-- **recipient** (**Required**, string, [templatable](#config-templatable)): The message recipient.
+- **recipient** (**Required**, string, [templatable](/automations/templates)): The message recipient.
   number.
 
-- **message** (**Required**, string, [templatable](#config-templatable)): The message content.
+- **message** (**Required**, string, [templatable](/automations/templates)): The message content.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the SIM800L if you have multiple components.
 
 {{< anchor "sim800l-dial_action" >}}
@@ -179,7 +179,7 @@ on_...:
 
 #### Configuration variables
 
-- **recipient** (**Required**, string, [templatable](#config-templatable)): The number to dial.
+- **recipient** (**Required**, string, [templatable](/automations/templates)): The number to dial.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the SIM800L if you have multiple components.
 
 ### `sim800l.connect` Action

@@ -160,7 +160,7 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
-- **target** (**Required**, int, [templatable](#config-templatable)): The target position in steps.
+- **target** (**Required**, int, [templatable](/automations/templates)): The target position in steps.
 
 > [!WARNING]
 > This turns the stepper to an absolute position! To have the stepper motor move *relative* to the current
@@ -215,7 +215,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
-- **position** (**Required**, int, [templatable](#config-templatable)): The position to report in steps.
+- **position** (**Required**, int, [templatable](/automations/templates)): The position to report in steps.
 
 {{< anchor "stepper-set_speed_action" >}}
 
@@ -233,7 +233,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
-- **speed** (**Required**, [templatable](#config-templatable), float): The speed
+- **speed** (**Required**, [templatable](/automations/templates), float): The speed
   in `steps/s` (steps per seconds) to drive the stepper at.
 
 {{< anchor "stepper-set_acceleration_action" >}}
@@ -252,7 +252,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
-- **acceleration** (**Required**, [templatable](#config-templatable), float): The acceleration
+- **acceleration** (**Required**, [templatable](/automations/templates), float): The acceleration
   in `steps/s^2` (steps per seconds squared) to use when starting to move.
 
 {{< anchor "stepper-set_deceleration_action" >}}
@@ -271,7 +271,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the stepper.
-- **deceleration** (**Required**, [templatable](#config-templatable), float): The same as `acceleration`,
+- **deceleration** (**Required**, [templatable](/automations/templates), float): The same as `acceleration`,
   but for when the motor is decelerating shortly before reaching the set position.
 
 {{< anchor "stepper-ha-config" >}}

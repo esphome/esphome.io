@@ -47,7 +47,7 @@ light:
 - **initial_state** (*Optional*): The initial state the light should be set to on bootup. This state will be applied
   when the state is **not** restored based on `restore_mode` (below).
 
-  - **state** (*Optional*, [templatable](#config-templatable), boolean): The ON/OFF state for the light.
+  - **state** (*Optional*, [templatable](/automations/templates), boolean): The ON/OFF state for the light.
   - All other options from [light state](#light-state_config).
 
 - **restore_mode** (*Optional*): Control how the light attempts to restore state on bootup.
@@ -101,7 +101,7 @@ light:
 Some actions/configuration refer to **light state**. A **light state** may consist of any of the following
 configuration variables:
 
-- **color_mode** (*Optional*, [templatable](#config-templatable)): For lights that support more than one color
+- **color_mode** (*Optional*, [templatable](/automations/templates)): For lights that support more than one color
   mode, the color mode that will be activated. The color mode determines which outputs of the light are active, and
   which parameters can be used. For example, this can be used to switch between colored and white light. Must be a
   color mode that is supported by the light. Valid color modes are:
@@ -130,22 +130,22 @@ configuration variables:
 
       from `RGB` and `COLD_WARM_WHITE` color modes.
 
-- **brightness** (*Optional*, percentage, [templatable](#config-templatable)): The primary brightness of the light;
+- **brightness** (*Optional*, percentage, [templatable](/automations/templates)): The primary brightness of the light;
   applies to all channels (both color and white) of the light.
 
-- **color_brightness** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the color
+- **color_brightness** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the color
   lights. Useful to control brightness of colored and white lights separately for RGBW lights.
 
-- **red** (*Optional*, percentage, [templatable](#config-templatable)): The red channel of the light.
-- **green** (*Optional*, percentage, [templatable](#config-templatable)): The green channel of the light.
-- **blue** (*Optional*, percentage, [templatable](#config-templatable)): The blue channel of the light.
-- **white** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the white channel.
-- **color_temperature** (*Optional*, float, [templatable](#config-templatable)): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
+- **red** (*Optional*, percentage, [templatable](/automations/templates)): The red channel of the light.
+- **green** (*Optional*, percentage, [templatable](/automations/templates)): The green channel of the light.
+- **blue** (*Optional*, percentage, [templatable](/automations/templates)): The blue channel of the light.
+- **white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the white channel.
+- **color_temperature** (*Optional*, float, [templatable](/automations/templates)): The color temperature (in [mireds](https://en.wikipedia.org/wiki/Mired) or Kelvin) of the white channel.
 
-- **cold_white** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the cold white
+- **cold_white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the cold white
   channel. Cannot be used at the same time as *color_temperature*.
 
-- **warm_white** (*Optional*, percentage, [templatable](#config-templatable)): The brightness of the warm white
+- **warm_white** (*Optional*, percentage, [templatable](/automations/templates)): The brightness of the warm white
   channel. Cannot be used at the same time as *color_temperature*.
 
 All percentage options accept values in the range `0%` to `100%` or `0.0` to `1.0` and they default to not
@@ -172,7 +172,7 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
+- **transition_length** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): The length of the
   transition if the light supports it.
 
 > [!NOTE]
@@ -212,13 +212,13 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
+- **transition_length** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): The length of the
   transition if the light supports it.
 
-- **flash_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): If set, will flash the
+- **flash_length** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): If set, will flash the
   given color for this period of time and then go back to the previous state.
 
-- **effect** (*Optional*, string, [templatable](#config-templatable)): If set, will attempt to start an effect
+- **effect** (*Optional*, string, [templatable](/automations/templates)): If set, will attempt to start an effect
   with the given name.
 
 - All other options from [light state](#light-state_config).
@@ -282,7 +282,7 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
+- **transition_length** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): The length of the
   transition if the light supports it.
 
 > [!NOTE]
@@ -314,7 +314,7 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **state** (*Optional*, [templatable](#config-templatable), boolean): Change the ON/OFF state of the light.
+- **state** (*Optional*, [templatable](/automations/templates), boolean): Change the ON/OFF state of the light.
 - All other options from [light state](#light-state_config).
 
 {{< anchor "light-dim_relative_action" >}}
@@ -335,10 +335,10 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the light.
-- **relative_brightness** (**Required**, [templatable](#config-templatable), percentage): The relative brightness
+- **relative_brightness** (**Required**, [templatable](/automations/templates), percentage): The relative brightness
   to dim the light by.
 
-- **transition_length** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The length of the
+- **transition_length** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): The length of the
   transition.
 
 - **brightness_limits** (*Optional*): Limits in the brightness range.
@@ -394,19 +394,19 @@ on_...:
 **Configuration variables:**
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the addressable light to control.
-- **range_from** (*Optional*, [templatable](#config-templatable), int): The beginning of the range of LEDs to
+- **range_from** (*Optional*, [templatable](/automations/templates), int): The beginning of the range of LEDs to
   control, inclusive, using zero-based indexing. Defaults to 0 (the beginning of the strip).
 
-- **range_to** (*Optional*, [templatable](#config-templatable), int): The end of the range of LEDs to control,
+- **range_to** (*Optional*, [templatable](/automations/templates), int): The end of the range of LEDs to control,
   inclusive, using zero-based indexing. Defaults to the end of the strip (`num_leds` - 1).
 
-- **color_brightness** (*Optional*, [templatable](#config-templatable), percentage): The brightness to set the
+- **color_brightness** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the
   color channel to.
 
-- **red** (*Optional*, [templatable](#config-templatable), percentage): The value to set the red channel to.
-- **green** (*Optional*, [templatable](#config-templatable), percentage): The value to set the green channel to.
-- **blue** (*Optional*, [templatable](#config-templatable), percentage): The value to set the blue channel to.
-- **white** (*Optional*, [templatable](#config-templatable), percentage): The brightness to set the white channel
+- **red** (*Optional*, [templatable](/automations/templates), percentage): The value to set the red channel to.
+- **green** (*Optional*, [templatable](/automations/templates), percentage): The value to set the green channel to.
+- **blue** (*Optional*, [templatable](/automations/templates), percentage): The value to set the blue channel to.
+- **white** (*Optional*, [templatable](/automations/templates), percentage): The brightness to set the white channel
   to.
 
 ## Light Conditions

@@ -35,7 +35,7 @@ This action sets the (microphone) gain of the ADC.
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `audio_adc` platform.
-- **mic_gain** (**Required**, percentage, [templatable](#config-templatable)): The desired gain level in decibels
+- **mic_gain** (**Required**, percentage, [templatable](/automations/templates)): The desired gain level in decibels
   for the input.
 
 ## See Also

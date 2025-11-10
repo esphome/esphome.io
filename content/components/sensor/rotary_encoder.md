@@ -116,7 +116,7 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the rotary encoder.
-- **value** (**Required**, int, [templatable](#config-templatable)):
+- **value** (**Required**, int, [templatable](/automations/templates)):
   The value to set the internal counter to.
 
 {{< anchor "sensor-rotary_encoder-triggers" >}}

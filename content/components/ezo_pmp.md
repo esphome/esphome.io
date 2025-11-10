@@ -279,7 +279,7 @@ on_...:
 #### Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
-- **volume** (**Required**, float, [templatable](#config-templatable)): The volume to dose in milliliters. If negative, pump will run in reverse.
+- **volume** (**Required**, float, [templatable](/automations/templates)): The volume to dose in milliliters. If negative, pump will run in reverse.
 
 {{< anchor "ezo_pmp-dose_volume_over_time_action" >}}
 
@@ -309,8 +309,8 @@ on_...:
 #### Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
-- **volume** (**Required**, float, [templatable](#config-templatable)): The volume to dose in milliliters. If negative, pump will run in reverse.
-- **duration** (**Required**, int, [templatable](#config-templatable)): The time (in minutes) the pump will take to dose the volume requested.
+- **volume** (**Required**, float, [templatable](/automations/templates)): The volume to dose in milliliters. If negative, pump will run in reverse.
+- **duration** (**Required**, int, [templatable](/automations/templates)): The time (in minutes) the pump will take to dose the volume requested.
 
 {{< anchor "ezo_pmp-dose_with_constant_flow_rate_action" >}}
 
@@ -340,8 +340,8 @@ on_...:
 #### Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
-- **volume_per_minute** (**Required**, float, [templatable](#config-templatable)): The volume to dose in milliliters every minute. If negative, pump will run in reverse.
-- **duration** (**Required**, int, [templatable](#config-templatable)): The time (in minutes) the pump will dose the volume requested every minute.
+- **volume_per_minute** (**Required**, float, [templatable](/automations/templates)): The volume to dose in milliliters every minute. If negative, pump will run in reverse.
+- **duration** (**Required**, int, [templatable](/automations/templates)): The time (in minutes) the pump will dose the volume requested every minute.
 
 {{< anchor "ezo_pmp-pause_dosing_action" >}}
 
@@ -421,7 +421,7 @@ on_...:
 #### Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
-- **volume** (**Required**, float, [templatable](#config-templatable)): The volume measured as part of the calibration process.
+- **volume** (**Required**, float, [templatable](/automations/templates)): The volume measured as part of the calibration process.
 
 {{< anchor "ezo_pmp-clear_calibration_action" >}}
 
@@ -476,7 +476,7 @@ on_...:
 #### Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the pump.
-- **address** (**Required**, int, [templatable](#config-templatable)): The new I2C address for the pump.
+- **address** (**Required**, int, [templatable](/automations/templates)): The new I2C address for the pump.
 
 {{< anchor "ezo-pmp-ha-config" >}}
 

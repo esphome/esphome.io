@@ -38,7 +38,7 @@ online_image:
 ## Configuration variables
 
 - **url** (**Required**, url): The URL where the image will be downloaded from.
-- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](#config-templatable).
+- **request_headers** (*Optional*, mapping): Map of HTTP headers. Values are [templatable](/automations/templates).
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID with which you will be able to reference the image later
   in your display code.
 

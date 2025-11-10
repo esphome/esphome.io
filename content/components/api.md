@@ -209,7 +209,7 @@ on_...:
 - **capture_response** (*Optional*, boolean): Enable capturing the response from the Home Assistant action call.
   When enabled, `on_success` must be configured. Defaults to `false`.
 
-- **response_template** (*Optional*, [templatable](#config-templatable), string): Optional Jinja template to process
+- **response_template** (*Optional*, [templatable](/automations/templates), string): Optional Jinja template to process
   the action response data. This template is evaluated on the Home Assistant side with Home Assistant's templating engine.
   Requires `capture_response: true`.
 
@@ -341,7 +341,7 @@ on_...:
 
 #### Configuration variables
 
-- **tag** (**Required**, [templatable](#config-templatable), string): The id of the scanned tag
+- **tag** (**Required**, [templatable](/automations/templates), string): The id of the scanned tag
 
 ## Triggers
 

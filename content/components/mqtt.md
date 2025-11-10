@@ -675,15 +675,15 @@ on_...:
 
 #### Configuration variables
 
-- **topic** (**Required**, string, [templatable](#config-templatable)):
+- **topic** (**Required**, string, [templatable](/automations/templates)):
    The MQTT topic to publish the message.
 
-- **payload** (**Required**, string, [templatable](#config-templatable)): The message content.
-- **qos** (*Optional*, int, [templatable](#config-templatable)): The [Quality of
+- **payload** (**Required**, string, [templatable](/automations/templates)): The message content.
+- **qos** (*Optional*, int, [templatable](/automations/templates)): The [Quality of
    Service](https://www.hivemq.com/blog/mqtt-essentials-part-6-mqtt-quality-of-service-levels)
    level of the topic. Defaults to 0.
 
-- **retain** (*Optional*, boolean, [templatable](#config-templatable)): If the published message should
+- **retain** (*Optional*, boolean, [templatable](/automations/templates)): If the published message should
    have a retain flag on or not. Defaults to `false`.
 
 > [!NOTE]
@@ -725,7 +725,7 @@ on_...:
 
 ### Configuration variables
 
-- **topic** (**Required**, string, [templatable](#config-templatable)):
+- **topic** (**Required**, string, [templatable](/automations/templates)):
    The MQTT topic to publish the message.
 
 - **payload** (**Required**, [lambda](#config-lambda)): The message content.

@@ -457,7 +457,7 @@ on_...:
 
 #### Configuration variables
 
-- **time** (**Required**, [templatable](#config-templatable), [Time](#config-time)):
+- **time** (**Required**, [templatable](/automations/templates), [Time](#config-time)):
   The time for which the condition has to have been true.
 
 - **condition** (**Required**, [condition](#all-conditions)): The condition to check.

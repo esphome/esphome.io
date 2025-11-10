@@ -110,8 +110,8 @@ on_...:
 
 #### Configuration variables
 
-- **address** (**Required**, [templatable](#config-templatable), MAC Address): The MAC address of the receiving device to send to.
-- **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
+- **address** (**Required**, [templatable](/automations/templates), MAC Address): The MAC address of the receiving device to send to.
+- **data** (**Required**, [templatable](/automations/templates), string or list of bytes): The data to be sent.
 - **wait_for_sent** (*Optional*, boolean): The automation will wait for the data to be sent and for the `on_sent` or `on_error`
   actions to be finished before continuing with the next action.
   Defaults to `true`.
@@ -142,7 +142,7 @@ on_...:
 
 #### Configuration variables
 
-- **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to be sent.
+- **data** (**Required**, [templatable](/automations/templates), string or list of bytes): The data to be sent.
 
 {{< anchor "espnow-peer_add-action" >}}
 

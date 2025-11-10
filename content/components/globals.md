@@ -71,7 +71,7 @@ on_...:
 ### Configuration variables
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The [ID](/guides/configuration-types#id) of the global variable to set.
-- **value** (**Required**, [templatable](#config-templatable)): The value to set the global
+- **value** (**Required**, [templatable](/automations/templates)): The value to set the global
   variable to.
 
 > [!NOTE]

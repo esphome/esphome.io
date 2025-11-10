@@ -300,8 +300,8 @@ on_...:
 
 #### Configuration variables
 
-- **finger_id** (**Required**, int, [templatable](#config-templatable)): The slot number to enroll the new fingerprint into. Limited to the fingerprint capacity available on the reader.
-- **num_scans** (*Optional*, int, [templatable](#config-templatable)): Number of times to scan the finger to be enrolled. Limited to the number of character buffers available on the reader. Defaults to 2.
+- **finger_id** (**Required**, int, [templatable](/automations/templates)): The slot number to enroll the new fingerprint into. Limited to the fingerprint capacity available on the reader.
+- **num_scans** (*Optional*, int, [templatable](/automations/templates)): Number of times to scan the finger to be enrolled. Limited to the number of character buffers available on the reader. Defaults to 2.
 
 ### `fingerprint_grow.cancel_enroll` Action
 
@@ -328,7 +328,7 @@ on_...:
 
 #### Configuration variables
 
-- **finger_id** (**Required**, int, [templatable](#config-templatable)): The slot number of the enrolled fingerprint to delete.
+- **finger_id** (**Required**, int, [templatable](/automations/templates)): The slot number of the enrolled fingerprint to delete.
 
 ## `fingerprint_grow.delete_all` Action
 
@@ -355,7 +355,7 @@ on_...:
 
 #### Configuration variables
 
-- **state** (**Required**, boolean, [templatable](#config-templatable)): The state to set the LED.
+- **state** (**Required**, boolean, [templatable](/automations/templates)): The state to set the LED.
 
 {{< anchor "fingerprint_grow-aura_led_control" >}}
 
@@ -432,10 +432,10 @@ on...:
 
 #### Configuration variables
 
-- **state** (**Required**, string, [templatable](#config-templatable)): The state to set the LED. One of `BREATHING`, `FLASHING`, `ALWAYS_ON`, `ALWAYS_OFF`, `GRADUAL_ON` and `GRADUAL_OFF`.
-- **speed** (**Required**, int, [templatable](#config-templatable)): The duration each cycle lasts, a factor of 10ms. Only relevant for `BREATHING`, `FLASHING`, `GRADUAL_ON` and `GRADUAL_OFF` states. The total duration is defined by 10ms *speed* count. Range is 0 to 255.
-- **color** (**Required**, string, [templatable](#config-templatable)): The LED color to activate. For R503, one of `RED`, `BLUE` and `PURPLE`. For R503-RGB, one of `RED`, `BLUE`, `PURPLE`, `GREEN`, `YELLOW`, `CYAN` and `WHITE`.
-- **count** (**Required**, int, [templatable](#config-templatable)): How many times to repeat the pattern. Only relevant for `BREATHING` and `FLASHING` states. 0 for infinite, or 1 to 255.
+- **state** (**Required**, string, [templatable](/automations/templates)): The state to set the LED. One of `BREATHING`, `FLASHING`, `ALWAYS_ON`, `ALWAYS_OFF`, `GRADUAL_ON` and `GRADUAL_OFF`.
+- **speed** (**Required**, int, [templatable](/automations/templates)): The duration each cycle lasts, a factor of 10ms. Only relevant for `BREATHING`, `FLASHING`, `GRADUAL_ON` and `GRADUAL_OFF` states. The total duration is defined by 10ms *speed* count. Range is 0 to 255.
+- **color** (**Required**, string, [templatable](/automations/templates)): The LED color to activate. For R503, one of `RED`, `BLUE` and `PURPLE`. For R503-RGB, one of `RED`, `BLUE`, `PURPLE`, `GREEN`, `YELLOW`, `CYAN` and `WHITE`.
+- **count** (**Required**, int, [templatable](/automations/templates)): How many times to repeat the pattern. Only relevant for `BREATHING` and `FLASHING` states. 0 for infinite, or 1 to 255.
 
 ## Test setup
 

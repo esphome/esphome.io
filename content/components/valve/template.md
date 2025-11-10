@@ -101,13 +101,13 @@ on_...:
 Configuration options:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the template valve.
-- **state** (*Optional*, [templatable](#config-templatable)):
+- **state** (*Optional*, [templatable](/automations/templates)):
   The state to publish. One of `OPEN`, `CLOSED`. If using a lambda, use `VALVE_OPEN` or `VALVE_CLOSED`.
 
-- **position** (*Optional*, [templatable](#config-templatable), float):
+- **position** (*Optional*, [templatable](/automations/templates), float):
   The position to publish, from 0 (CLOSED) to 1.0 (OPEN)
 
-- **current_operation** (*Optional*, [templatable](#config-templatable), string):
+- **current_operation** (*Optional*, [templatable](/automations/templates), string):
   The current operation mode to publish. One of `IDLE`, `OPENING` and `CLOSING`. If using a lambda, use
   `VALVE_OPERATION_IDLE`, `VALVE_OPERATION_OPENING`, and `VALVE_OPERATION_CLOSING`.
 

@@ -51,7 +51,7 @@ This action sets the output volume of the DAC.
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the `audio_dac` platform.
-- **volume** (**Required**, percentage, [templatable](#config-templatable)): The desired volume level for the
+- **volume** (**Required**, percentage, [templatable](/automations/templates)): The desired volume level for the
   output from 0% to 100%.
 
 ## See Also

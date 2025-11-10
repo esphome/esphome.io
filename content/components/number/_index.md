@@ -173,7 +173,7 @@ This is an [Action](/automations/actions#all-actions) for setting a number state
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number to set.
-- **value** (**Required**, float, [templatable](#config-templatable)):
+- **value** (**Required**, float, [templatable](/automations/templates)):
   The value to set the number to.
 
 {{< anchor "number-increment_action" >}}
@@ -287,14 +287,14 @@ using a generic templatable action call.
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the number to update.
-- **operation** (**Required**, string, [templatable](#config-templatable)):
+- **operation** (**Required**, string, [templatable](/automations/templates)):
   What operation to perform on the number component. One of `TO_MIN`,
   `TO_MAX`, `DECREMENT` or `INCREMENT` (case insensitive). When writing a
   lambda for this field, then return one of the following enum values:
   `NUMBER_OP_TO_MIN`, `NUMBER_OP_TO_MAX`, `NUMBER_OP_DECREMENT` or
   `NUMBER_OP_INCREMENT`.
 
-- **cycle** (*Optional*, bool, [templatable](#config-templatable)):
+- **cycle** (*Optional*, bool, [templatable](/automations/templates)):
   Can be used with `DECREMENT` or `INCREMENT` to specify whether or not to
   wrap around the value when respectively the minimum or maximum value of the
   number is exceeded.

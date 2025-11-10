@@ -81,10 +81,10 @@ on_...:
 
 Configuration options:
 
-* **sync** (**Required**, int, [templatable](#config-templatable)): RF Sync timing
-* **low** (**Required**, int, [templatable](#config-templatable)): RF Low timing
-* **high** (**Required**, int, [templatable](#config-templatable)): RF high timing
-* **code** (**Required**, int, [templatable](#config-templatable)): RF code
+* **sync** (**Required**, int, [templatable](/automations/templates)): RF Sync timing
+* **low** (**Required**, int, [templatable](/automations/templates)): RF Low timing
+* **high** (**Required**, int, [templatable](/automations/templates)): RF high timing
+* **code** (**Required**, int, [templatable](/automations/templates)): RF code
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple bridges or multiple bridge components.
 
 > [!NOTE]
@@ -109,7 +109,7 @@ on_...:
 
 Configuration options:
 
-* **duration** (**Required**, int, [templatable](#config-templatable)): beep duration in milliseconds.
+* **duration** (**Required**, int, [templatable](/automations/templates)): beep duration in milliseconds.
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
@@ -163,7 +163,7 @@ on_...:
 
 Configuration options:
 
-* **raw** (**Required**, string, [templatable](#config-templatable)): RF raw string
+* **raw** (**Required**, string, [templatable](/automations/templates)): RF raw string
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]
@@ -216,9 +216,9 @@ on_...:
 
 Configuration options:
 
-* **length** (**Required**, int, [templatable](#config-templatable)): Length of code plus protocol
-* **protocol** (**Required**, int, [templatable](#config-templatable)): RF Protocol
-* **code** (**Required**, string, [templatable](#config-templatable)): RF code
+* **length** (**Required**, int, [templatable](/automations/templates)): Length of code plus protocol
+* **protocol** (**Required**, int, [templatable](/automations/templates)): RF Protocol
+* **code** (**Required**, string, [templatable](/automations/templates)): RF code
 * **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the RF Bridge if you have multiple components.
 
 > [!NOTE]

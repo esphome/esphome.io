@@ -60,7 +60,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the PWM output to change.
-- **frequency** (**Required**, [templatable](#config-templatable), float): The frequency
+- **frequency** (**Required**, [templatable](/automations/templates), float): The frequency
   to set in hertz.
 
 ## See Also

@@ -248,7 +248,7 @@ on_...:
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The text sensor ID.
-- **state** (**Required**, [templatable](#config-templatable), string): The state to compare
+- **state** (**Required**, [templatable](/automations/templates), string): The state to compare
   to.
 
 > [!NOTE]

@@ -41,7 +41,7 @@ text_sensor:
 
 Configuration variables:
 
-- **decryption_key** (*Optional*, string, [templatable](#config-templatable), 32 characters, case insensitive): The key to decrypt the
+- **decryption_key** (*Optional*, string, [templatable](/automations/templates), 32 characters, case insensitive): The key to decrypt the
   telegrams. Used in Lux only.
 
 - **gas_mbus_id** (*Optional*, int): The id of the gas meter. Defaults to `1`.

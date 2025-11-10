@@ -103,7 +103,7 @@ This is an [Action](/automations/actions#all-actions) for setting the active opt
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
-- **option** (**Required**, string, [templatable](#config-templatable)):
+- **option** (**Required**, string, [templatable](/automations/templates)):
   The option to set the select to.
 
 When a non-existing option value is used, a warning is logged and the state of
@@ -124,7 +124,7 @@ This is an [Action](/automations/actions#all-actions) for setting the active opt
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
-- **index** (**Required**, int, [templatable](#config-templatable)):
+- **index** (**Required**, int, [templatable](/automations/templates)):
   The index offset of the option to be activated.
 
 When a non-existing index value is used, a warning is logged and the state of
@@ -236,13 +236,13 @@ templatable action call.
 Configuration variables:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the select to set.
-- **operation** (**Required**, string, [templatable](#config-templatable)): The
+- **operation** (**Required**, string, [templatable](/automations/templates)): The
   operation to perform. One of `FIRST`, `LAST`, `PREVIOUS` or
   `NEXT` (case insensitive). When writing a lambda for this field, then return
   one of the following enum values: `SELECT_OP_FIRST`, `SELECT_OP_LAST`,
   `SELECT_OP_PREVIOUS` or `SELECT_OP_NEXT`.
 
-- **cycle** (*Optional*, bool, [templatable](#config-templatable)):
+- **cycle** (*Optional*, bool, [templatable](/automations/templates)):
   Can be used for options `NEXT` and `PREVIOUS` to specify whether or not to
   wrap around the options list when respectively the last or first option in
   the select is currently active.

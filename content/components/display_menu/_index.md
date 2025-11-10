@@ -110,7 +110,7 @@ The component manages a hierarchy of menu items. The common configuration variab
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **type** (**Required**, string): The type of the menu item (see below).
-- **text** (*Optional*, string, [templatable](#config-templatable)): The text displayed
+- **text** (*Optional*, string, [templatable](/automations/templates)): The text displayed
   for the menu item. If a lambda is specified it gets an `it` argument pointing to
   the `MenuItem` that is being drawn.
 

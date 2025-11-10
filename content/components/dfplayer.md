@@ -86,10 +86,10 @@ on_...:
 
 Configuration options:
 
-- **file** (*Optional*, int, [templatable](#config-templatable)): The global track
+- **file** (*Optional*, int, [templatable](/automations/templates)): The global track
   number (from all tracks in the device). If not specified plays the first track.
 
-- **loop** (*Optional*, boolean, [templatable](#config-templatable)): Repeats playing
+- **loop** (*Optional*, boolean, [templatable](/automations/templates)): Repeats playing
   the same track. Defaults to `false`.
 
 ## `dfplayer.play_mp3` Action
@@ -120,7 +120,7 @@ on_...:
 
 Configuration options:
 
-- **file** (**Required**, int, [templatable](#config-templatable)): The file number
+- **file** (**Required**, int, [templatable](/automations/templates)): The file number
   inside the `mp3` folder to play.
 
 ## `dfplayer.play_folder` Action
@@ -153,11 +153,11 @@ on_...:
 
 Configuration options:
 
-- **folder** (**Required**, int, [templatable](#config-templatable)): The folder number.
-- **file** (*Optional*, int, [templatable](#config-templatable)): The file number
+- **folder** (**Required**, int, [templatable](/automations/templates)): The folder number.
+- **file** (*Optional*, int, [templatable](/automations/templates)): The file number
   inside the folder to play. Optional only if `loop` is not set.
 
-- **loop** (*Optional*, boolean, [templatable](#config-templatable)): Repeats playing
+- **loop** (*Optional*, boolean, [templatable](/automations/templates)): Repeats playing
   all files in the folder. Causes `file` to be ignored. Defaults to `false`.
 
 ## `dfplayer.set_device` Action
@@ -185,7 +185,7 @@ on_...:
 
 Configuration options:
 
-- **volume** (**Required**, int, [templatable](#config-templatable)): The volume value.
+- **volume** (**Required**, int, [templatable](/automations/templates)): The volume value.
   Valid values goes from `0` to `30`.
 
 ## `dfplayer.volume_up` Action

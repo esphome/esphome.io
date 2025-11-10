@@ -367,14 +367,14 @@ on_...:
 
 #### Configuration variables
 
-- **ssid** (**Required**, string, [templatable](#config-templatable)): The name of the WiFi access point.
-- **password** (**Required**, string, [templatable](#config-templatable)): The password of the WiFi access point.
+- **ssid** (**Required**, string, [templatable](/automations/templates)): The name of the WiFi access point.
+- **password** (**Required**, string, [templatable](/automations/templates)): The password of the WiFi access point.
   Leave empty for no password.
 
-- **save** (*Optional*, boolean, [templatable](#config-templatable)): If set to `true`, the SSID and password will be
+- **save** (*Optional*, boolean, [templatable](/automations/templates)): If set to `true`, the SSID and password will be
   saved in persistent memory. Defaults to `true`.
 
-- **timeout** (*Optional*, [Time](#config-time), [templatable](#config-templatable)): The time to wait for the connection
+- **timeout** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): The time to wait for the connection
   to be established. Defaults to 30 seconds.
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.

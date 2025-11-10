@@ -45,21 +45,21 @@ on_...:
 
 ### Configuration variables
 
-- **md5** (*Optional*, string, [templatable](#config-templatable)): The
+- **md5** (*Optional*, string, [templatable](/automations/templates)): The
   [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
   with `md5_url` (below); must be specified if `md5_url` is not.
 
-- **md5_url** (*Optional*, string, [templatable](#config-templatable)): The URL of the file containing an
+- **md5_url** (*Optional*, string, [templatable](/automations/templates)): The URL of the file containing an
   [MD5sum](https://en.wikipedia.org/wiki/Md5sum) of the firmware file pointed to by `url` (below). May not be used
   with `md5` (above); must be specified if `md5` is not.
 
-- **url** (**Required**, string, [templatable](#config-templatable)): The URL of the binary file containing the
+- **url** (**Required**, string, [templatable](/automations/templates)): The URL of the binary file containing the
   (new) firmware to be installed.
 
-- **username** (*Optional*, string, [templatable](#config-templatable)): The username to use for HTTP basic
+- **username** (*Optional*, string, [templatable](/automations/templates)): The username to use for HTTP basic
   authentication.
 
-- **password** (*Optional*, string, [templatable](#config-templatable)): The password to use for HTTP basic
+- **password** (*Optional*, string, [templatable](/automations/templates)): The password to use for HTTP basic
   authentication.
 
 > [!NOTE]

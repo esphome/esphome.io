@@ -155,16 +155,16 @@ on_...:
 
 Configuration variables:
 
-- **temperature** (**Required**, float, [templatable](#config-templatable)):
+- **temperature** (**Required**, float, [templatable](/automations/templates)):
   Sets the value of an internal temperature sensor. The value will be **clamped** to the range:
 
   - *0 °C to 37 °C* when `use_fahrenheit` is `false`.
   - *32 °F to 99 °F* when `use_fahrenheit` is `true`.
 
-- **use_fahrenheit** (*Optional*, boolean, [templatable](#config-templatable)):
+- **use_fahrenheit** (*Optional*, boolean, [templatable](/automations/templates)):
   Specifies if the `temperature` value is in Fahrenheit. When set to `true`, the temperature is parsed and sent in Fahrenheit. Defaults to `false` (Celsius).
 
-- **beeper** (*Optional*, boolean, [templatable](#config-templatable)):
+- **beeper** (*Optional*, boolean, [templatable](/automations/templates)):
   Sets beep on update. Defaults to `false`.
 
 {{< anchor "midea_ac-display_toggle_action" >}}

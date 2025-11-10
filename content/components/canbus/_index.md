@@ -173,7 +173,7 @@ on_...:
 
 **Configuration variables:**
 
-- **data** (**Required**, binary data, [templatable](#config-templatable)): Data to transmit, up to eight
+- **data** (**Required**, binary data, [templatable](/automations/templates)): Data to transmit, up to eight
   bytes/characters are supported by CAN bus per frame.
 
 - **canbus_id** (*Optional*): Sets the CAN bus ID to use for transmitting the frame. Required if you are have multiple

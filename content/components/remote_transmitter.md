@@ -104,8 +104,8 @@ on_...:
 - **repeat** (*Optional*): Defines the number of times the code is repeated when transmitted. By default, codes are
   sent only once.
 
-  - **times** ([templatable](#config-templatable), int): The number of times to repeat the code.
-  - **wait_time** ([templatable](#config-templatable), [Time](#config-time)): The time to wait between repeats (in
+  - **times** ([templatable](/automations/templates), int): The number of times to repeat the code.
+  - **wait_time** ([templatable](/automations/templates), [Time](#config-time)): The time to wait between repeats (in
     µs as a result of a [lambda](#config-lambda)).
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote transmitter to send the remote code with. Defaults to
@@ -300,10 +300,10 @@ on_...:
 
 #### Configuration variables
 
-- **first** (**Required**, [templatable](#config-templatable), uint32_t): The first 24-bit Coolix code to send;
+- **first** (**Required**, [templatable](/automations/templates), uint32_t): The first 24-bit Coolix code to send;
   see dumper output for more info.
 
-- **second** (*Optional*, [templatable](#config-templatable), uint32_t): The second 24-bit Coolix code to send;
+- **second** (*Optional*, [templatable](/automations/templates), uint32_t): The second 24-bit Coolix code to send;
   see dumper output for more info.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
@@ -529,7 +529,7 @@ on_...:
 
 #### Configuration variables
 
-- **code** (**Required**, list, [templatable](#config-templatable)): The 40-bit Midea code to send as a list of
+- **code** (**Required**, list, [templatable](/automations/templates)): The 40-bit Midea code to send as a list of
   hex or integers.
 
 - All other options from [Remote Transmitter Actions](#remote_transmitter-transmit_action).
