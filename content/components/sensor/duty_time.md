@@ -45,7 +45,7 @@ sensor:
   restored upon power cycle or reboot.
   Warning: this option can wear out your flash. Defaults to `false`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The update interval. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The update interval. Defaults to `60s`.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.
 - All other options from [Sensor](/components/sensor).
 

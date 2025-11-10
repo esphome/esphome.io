@@ -53,7 +53,7 @@ sensor:
   one of `AUTO_DETECT`, `DHT11`, `DHT22`, `DHT22_TYPE2`, `AM2302`, `RHT03`, `SI7021`, `AM2120`
   and helps with some connection issues. Defaults to `AUTO_DETECT`. Auto detection doesn't work for the SI7021 chip.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 > [!NOTE]

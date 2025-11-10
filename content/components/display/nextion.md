@@ -57,7 +57,7 @@ display:
   display. See [Rendering Lambda](#display-nextion_lambda) for more information. This is typically empty. The individual components
   for the Nextion will handle almost all functions needed for updating display elements.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to call the lambda to update the display.
   Defaults to `5s`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
@@ -87,7 +87,7 @@ display:
 - **on_buffer_overflow** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion
   reports a buffer overflow. See [Nextion Automation](#nextion-on_buffer_overflow).
 
-- **command_spacing** (*Optional*, [Time](#config-time)): Sets the minimum time between commands sent to the Nextion display.
+- **command_spacing** (*Optional*, [Time](/guides/configuration-types#time)): Sets the minimum time between commands sent to the Nextion display.
   A higher value can help prevent buffer overflows but will result in slower interface updates.
   Range is `0-255ms`. Defaults to `0ms` (disabled).
 

@@ -33,7 +33,7 @@ sensor:
   - All options from [Sensor](/components/sensor).
 
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor. Default is `0x5d`. `0x5c` is another common address.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 ## Sensor sampling details
 

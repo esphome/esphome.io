@@ -45,7 +45,7 @@ display:
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to call the lambda to update the display.
   Defaults to `16ms`.
 
 - **pixel_mapper** (*Optional*, [lambda](#config-lambda)): A lambda that returns the integer address of the LED

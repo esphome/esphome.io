@@ -218,9 +218,9 @@ set to default values.
 
 Configuration variables:
 
-- **delay** (*Optional*, [Time](#config-time)): Delay to proceed to the next timing. Defaults to `1s`.
-- **time_off** (*Optional*, [Time](#config-time)): Interval to hold the output at OFF. Defaults to `100ms`.
-- **time_on** (*Optional*, [Time](#config-time)): Interval to hold the output at ON. Defaults to `900ms`.
+- **delay** (*Optional*, [Time](/guides/configuration-types#time)): Delay to proceed to the next timing. Defaults to `1s`.
+- **time_off** (*Optional*, [Time](/guides/configuration-types#time)): Interval to hold the output at OFF. Defaults to `100ms`.
+- **time_on** (*Optional*, [Time](/guides/configuration-types#time)): Interval to hold the output at ON. Defaults to `900ms`.
 
 ### `lambda`
 
@@ -351,8 +351,8 @@ binary_sensor:
 
 Configuration variables:
 
-- **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`.
-- **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`.
+- **min_length** (*Optional*, [Time](/guides/configuration-types#time)): The minimum duration the click should last. Defaults to `50ms`.
+- **max_length** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration the click should last. Defaults to `350ms`.
 - See [Automation](/automations).
 
 > [!NOTE]
@@ -395,8 +395,8 @@ binary_sensor:
 
 Configuration variables:
 
-- **min_length** (*Optional*, [Time](#config-time)): The minimum duration the click should last. Defaults to `50ms`.
-- **max_length** (*Optional*, [Time](#config-time)): The maximum duration the click should last. Defaults to `350ms`.
+- **min_length** (*Optional*, [Time](/guides/configuration-types#time)): The minimum duration the click should last. Defaults to `50ms`.
+- **max_length** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration the click should last. Defaults to `350ms`.
 - See [Automation](/automations).
 
 {{< anchor "binary_sensor-on_multi_click" >}}
@@ -428,7 +428,7 @@ Configuration variables:
   - `<ON/OFF> for at least <TIME>`
   - `<ON/OFF> for at most <TIME>`
 
-- **invalid_cooldown** (*Optional*, [Time](#config-time)): If a multi click is started, but the timing
+- **invalid_cooldown** (*Optional*, [Time](/guides/configuration-types#time)): If a multi click is started, but the timing
   set in `timing` does not match, a "cool down" period will be activated during which no timing
   will be matched. Defaults to `1s`.
 

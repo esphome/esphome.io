@@ -46,7 +46,7 @@ bedjet:
 - **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/time" >}} which
   can be used to set the time on the BedJet device.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to dispatch status
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to dispatch status
   changes to child components. Defaults to `5s`. Each child component can decide whether to
   publish its own updated state on this interval, or use another (longer) update interval to
   throttle its own updates.

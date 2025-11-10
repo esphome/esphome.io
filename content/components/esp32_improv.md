@@ -33,12 +33,12 @@ esp32_improv:
 - **authorizer** (**Required**, [ID](/guides/configuration-types#id)): A {{< docref "binary_sensor/index" "binary sensor" >}} to authorize with.
   Also accepts `none` to skip authorization.
 
-- **authorized_duration** (*Optional*, [Time](#config-time)): The amount of time until authorization times out and needs
+- **authorized_duration** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time until authorization times out and needs
   to be re-authorized. Defaults to `1min`.
 
 - **status_indicator** (*Optional*, [ID](/guides/configuration-types#id)): An {{< docref "output/index" "output" >}} to display feedback to the user.
-- **identify_duration** (*Optional*, [Time](#config-time)): The amount of time to identify for. Defaults to `10s`.
-- **wifi_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before starting the Improv service
+- **identify_duration** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to identify for. Defaults to `10s`.
+- **wifi_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before starting the Improv service
   after Wi-Fi is no longer connected. Defaults to `1min`.
 
 - **on_start** (*Optional*, [Automation](/automations)): An action to be performed when Improv is waiting for

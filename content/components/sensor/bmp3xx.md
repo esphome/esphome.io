@@ -52,7 +52,7 @@ sensor:
 - **iir_filter** (*Optional*): Set up an Infinite Impulse Response filter to increase accuracy. One of
   `OFF`, `2x`, `4x`, `16x`, `32`, `64x`, `128x`. Defaults to `OFF`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 ## Over SPI
@@ -95,7 +95,7 @@ sensor:
 - **address** (*Optional*, int): *I2C* only. Manually specify the I²C address of
   the sensor. Defaults to `0x77`. Another address can be `0x76`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 {{< anchor "bmp3xx-oversampling" >}}

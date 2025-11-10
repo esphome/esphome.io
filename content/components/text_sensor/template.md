@@ -32,7 +32,7 @@ Possible return values for the lambda:
 - **lambda** (*Optional*, [lambda](#config-lambda)):
   Lambda to be evaluated every update interval to get the new value of the text sensor
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   text sensor. Set to `never` to disable updates. Defaults to `60s`.
 
 - All other options from [Text Sensor](#config-text_sensor).

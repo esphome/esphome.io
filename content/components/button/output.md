@@ -29,7 +29,7 @@ button:
 ## Configuration variables
 
 - **output** (**Required**, [ID](/guides/configuration-types#id)): The ID of the output component to use.
-- **duration** (**Required**, [Time](#config-time)): How long the output should be set when the button is pressed.
+- **duration** (**Required**, [Time](/guides/configuration-types#time)): How long the output should be set when the button is pressed.
 - All other options from [Button](#config-button).
 
 > [!NOTE]

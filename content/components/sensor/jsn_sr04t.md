@@ -51,7 +51,7 @@ sensor:
 
 ## Configuration variables
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`. Not applicable in mode 1.
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UART bus](/components/uart) you wish to use for this sensor.

@@ -33,7 +33,7 @@ select:
   be performed when the remote (like Home Assistant's frontend) requests to set the Select option.
   The new option is available to lambdas in the `x` variable.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval on which to update the select
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval on which to update the select
   by executing the `lambda`. Defaults to `60s`.
 
 - **optimistic** (*Optional*, boolean): Whether to operate in optimistic mode - when in this mode,

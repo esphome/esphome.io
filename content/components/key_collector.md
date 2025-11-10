@@ -63,7 +63,7 @@ key_collector:
 - **allowed_keys** (*Optional*, string): Keys allowed to be used. If not specified, then any otherwise
   unused keys will be allowed.
 
-- **timeout** (*Optional*, [Time](#config-time)): Timeout after which to cancel building the sequence and delete all the keys.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout after which to cancel building the sequence and delete all the keys.
 - **enable_on_boot** (*Optional*, boolean): If enabled, this key collector will be enabled on boot. Defaults to `true`.
 
 At least one of `end_keys` or `max_length` have to be specified. The rest are optional.

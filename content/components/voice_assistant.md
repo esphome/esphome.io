@@ -42,7 +42,7 @@ voice_assistant:
   to use to output the response. Cannot be used with `speaker` above.
 
 - **use_wake_word** (*Optional*, boolean): Enable wake word on the assist pipeline. Defaults to `false`.
-- **conversation_timeout** (*Optional*, [Time](#config-time)): How long to wait before resetting the `conversation_id`
+- **conversation_timeout** (*Optional*, [Time](/guides/configuration-types#time)): How long to wait before resetting the `conversation_id`
   sent to the voice assist pipeline, which contains the context of the current assist pipeline. Defaults to `300s`.
 
 - **on_intent_start** (*Optional*, [Automation](/automations)): An automation to perform when intent processing starts.

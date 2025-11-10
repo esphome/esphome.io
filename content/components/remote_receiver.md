@@ -69,20 +69,20 @@ Multiple remote receivers can be configured as a list of dict definitions within
   - **mirage**: Decode and dump Mirage infrared codes.
   - **toto**: Decode and dump Toto infrared codes.
 
-- **tolerance** (*Optional*, int, [Time](#config-time) or mapping): The percentage or time that the remote signal lengths
+- **tolerance** (*Optional*, int, [Time](/guides/configuration-types#time) or mapping): The percentage or time that the remote signal lengths
   can deviate in the decoding process. Defaults to `25%`.
 
   - **type** (**Required**, enum): Set the type of the tolerance. Can be `percentage` or `time`.
-  - **value** (**Required**, int or [Time](#config-time)): The percentage or time value. Allowed values are in range `0`
+  - **value** (**Required**, int or [Time](/guides/configuration-types#time)): The percentage or time value. Allowed values are in range `0`
     to `100%` or `0` to `4294967295us`.
 
 - **buffer_size** (*Optional*, int): The size of the internal buffer for storing the remote codes. Defaults to `10kB`
   on the ESP32 and `1kB` on the ESP8266.
 
-- **filter** (*Optional*, [Time](#config-time)): Filter any pulses that are shorter than this. Useful for removing
+- **filter** (*Optional*, [Time](/guides/configuration-types#time)): Filter any pulses that are shorter than this. Useful for removing
   glitches from noisy signals. Allowed values are in range `0` to `4294967295us`. Defaults to `50us`.
 
-- **idle** (*Optional*, [Time](#config-time)): The amount of time that a signal should remain stable/unchanged for it to
+- **idle** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time that a signal should remain stable/unchanged for it to
   be considered complete. The maximum allowable value is:
 
   - `65536us` on the `ESP32` and `ESP32-S2` variants

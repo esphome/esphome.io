@@ -31,12 +31,12 @@ power_supply:
 - **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The
   GPIO pin to control the power supply on.
 
-- **enable_time** (*Optional*, [Time](#config-time)): The time
+- **enable_time** (*Optional*, [Time](/guides/configuration-types#time)): The time
   that the power supply needs for startup. The output component will
   wait for this period of time after turning on the PSU and before
   switching the output on. Defaults to `20ms`. Maximum of less than `5s`.
 
-- **keep_on_time** (*Optional*, [Time](#config-time)): The time the
+- **keep_on_time** (*Optional*, [Time](/guides/configuration-types#time)): The time the
   power supply should be kept enabled after the last output that used
   it has been switch off. Defaults to `10s`.
 

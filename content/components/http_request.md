@@ -21,7 +21,7 @@ http_request:
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **follow_redirects** (*Optional*, boolean): Enable following HTTP redirects. Defaults to `true`.
 - **redirect_limit** (*Optional*, integer): Maximum amount of redirects to follow when enabled. Defaults to `3`.
-- **timeout** (*Optional*, [Time](#config-time)): Timeout for request. Defaults to `4.5s`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Timeout for request. Defaults to `4.5s`.
 - **useragent** (*Optional*, string): User-Agent header for requests. Defaults to
   `ESPHome/<version> (https://esphome.io)` where `<version>` is the version of ESPHome the device is running.
   For example: `ESPHome/2024.6.0 (https://esphome.io)`
@@ -32,7 +32,7 @@ http_request:
   Mozilla's NSS root certificate store. **May only be set to true when using the ESP-IDF framework; must be explicitly
   set to false when using the Arduino framework.**
 
-- **watchdog_timeout** (*Optional*, [Time](#config-time)): Change the watchdog timeout during connection/data transfer.
+- **watchdog_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Change the watchdog timeout during connection/data transfer.
   May be useful on slow connections or connections with high latency. **Do not change this value unless you are
   experiencing device reboots due to watchdog timeouts;** doing so may prevent the device from rebooting due to a
   legitimate problem. **Only available on ESP32 and RP2040**.

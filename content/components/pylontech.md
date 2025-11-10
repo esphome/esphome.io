@@ -54,7 +54,7 @@ pylontech:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this Pylontech component.
 - **uart_id** (*Optional*): The uart Bus ID
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 ## Sensor
 

@@ -45,7 +45,7 @@ modbus:
   This is useful for RS485 transceivers that do not have automatic flow control switching,
   like the common MAX485.
 
-- **send_wait_time** (*Optional*, [Time](#config-time)): Time in milliseconds before the next ModBUS command is sent when an answer from a previous command has not yet started (i.e. when to timeout and assume no response is coming). Defaults to 250 ms.
+- **send_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Time in milliseconds before the next ModBUS command is sent when an answer from a previous command has not yet started (i.e. when to timeout and assume no response is coming). Defaults to 250 ms.
   Set this value to the maximum time required for the slowest device on the bus to begin responding (time to first byte).
   If a device starts responding within this time, the next command will be queued and sent after the response is finished, no matter how long the response.
 

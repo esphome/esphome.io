@@ -45,8 +45,8 @@ touchscreen:
   - **mirror_x** (*Optional*, boolean): If true, mirror the x axis.
   - **mirror_y** (*Optional*, boolean): If true, mirror the y axis.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
-- **touch_timeout** (*Optional*, [Time](#config-time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The touchscreen polling interval - used only if an interrupt pin is not in use. Defaults to `50ms`.
+- **touch_timeout** (*Optional*, [Time](/guides/configuration-types#time)): A timeout for touchscreens that do not report the end of touch. The default varies depending on the touchscreen.
 - **calibration** (*Optional*): Some touchscreens require calibration on a per-device basis.
 
   - **x_min** (**Required**, int): The raw value corresponding to the left

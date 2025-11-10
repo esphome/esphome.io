@@ -48,7 +48,7 @@ datasheet indicates that the sensor does not measure temperature.
   - All options from [Sensor](/components/sensor).
 
 - **cs_pin** (**Required**, [SPI](/components/spi)): Chip select pin.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 ## See Also

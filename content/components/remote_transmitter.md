@@ -105,7 +105,7 @@ on_...:
   sent only once.
 
   - **times** ([templatable](/automations/templates), int): The number of times to repeat the code.
-  - **wait_time** ([templatable](/automations/templates), [Time](#config-time)): The time to wait between repeats (in
+  - **wait_time** ([templatable](/automations/templates), [Time](/guides/configuration-types#time)): The time to wait between repeats (in
     µs as a result of a [lambda](#config-lambda)).
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): The remote transmitter to send the remote code with. Defaults to

@@ -35,7 +35,7 @@ text_sensor:
 
 - **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the Nextion display.
 - **component_name** (*Optional*, string): The name of the Nextion component.
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. If using a [Nextion Custom Text Sensor Protocol](#nextion_custom_text_sensor_protocol) this should not be used
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor. If using a [Nextion Custom Text Sensor Protocol](#nextion_custom_text_sensor_protocol) this should not be used
 - **background_color** (*Optional*, [Color](#config-color)): The background color
 - **foreground_color** (*Optional*, [Color](#config-color)): The foreground color
 - **font_id** (*Optional*, int): The font id for the component

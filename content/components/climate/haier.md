@@ -89,7 +89,7 @@ climate:
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): ID of the UART port to communicate with AC.
 - **protocol** (*Optional*, string): Defines communication protocol with AC. Possible values: `hon` or `smartair2`. The default value is `smartair2`.
 - **wifi_signal** (*Optional*, boolean): If `true` - send wifi signal level to AC.
-- **answer_timeout** (*Optional*, [Time](#config-time)): Responce timeout. The default value is `200ms`.
+- **answer_timeout** (*Optional*, [Time](/guides/configuration-types#time)): Responce timeout. The default value is `200ms`.
 - **alternative_swing_control** (*Optional*, boolean): (supported by smartAir2 only) If `true` - use alternative values to control swing mode. Use only if the original control method is not working for your AC.
 - **status_message_header_size** (*Optional*, int): (supported only by hOn) Define the header size of the status message. Can be used to handle some protocol variations. Use only if you are sure what you are doing. The default value: `0`.
 - **control_packet_size** (*Optional*, int): (supported only by hOn) Define the size of the control packet. Can help with some newer models of ACs that use bigger packets. The default value: `10`.

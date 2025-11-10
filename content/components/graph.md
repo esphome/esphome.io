@@ -56,7 +56,7 @@ graph:
 
 - **width** (**Required**, int): The graph width in pixels
 - **height** (**Required**, int): The graph height in pixels
-- **duration** (**Required**, [Time](#config-time)): The total graph history duration.
+- **duration** (**Required**, [Time](/guides/configuration-types#time)): The total graph history duration.
 - **border** (*Optional*, boolean): Specifies if a border will be drawn around the graph. Default is True.
 - **x_grid** (*Optional*): Specifies the time per division. If not specified, no vertical grid will be drawn.
 - **y_grid** (*Optional*, float): Specifies the number of units per division. If not specified, no horizontal grid will be drawn.

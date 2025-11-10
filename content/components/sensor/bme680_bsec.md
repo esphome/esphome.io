@@ -103,7 +103,7 @@ Configuration variables:
   This controls the sampling rate for gas-dependent sensors and will govern the interval at which the sensor heater is operated.
   By default, this rate will also be used for temperature, pressure, and humidity sensors but these can be overridden on a per-sensor level if required.
 
-- **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save calibrated BSEC algorithm state to
+- **state_save_interval** (_Optional_, [Time](/guides/configuration-types#time)): The minimum interval at which to save calibrated BSEC algorithm state to
   flash so that calibration doesn't have to start from zero on device restart. Defaults to `6h`.
 
 - **id** (_Optional_, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use this ID in the sensor section to refer to the correct BME680 if you have more than one device. This will also be used to refer to the calibrated BSEC algorithm state saved to flash.

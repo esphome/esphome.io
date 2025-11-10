@@ -105,7 +105,7 @@ Automations:
 
 MQTT Options:
 
-- **expire_after** (*Optional*, [Time](#config-time)): Manually set the time in which
+- **expire_after** (*Optional*, [Time](/guides/configuration-types#time)): Manually set the time in which
   the sensor values should be marked as “expired”/“unknown”. Not providing any value means no expiry.
 
 - All other options from [MQTT Component](#config-mqtt-component).

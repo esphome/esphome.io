@@ -115,17 +115,17 @@ sensor:
 - **gain** (_Optional_, string): The gain the device will use. Higher values are better in low-light conditions.
   Valid values are `1X` _(default)_, `2X`, `4X`, `8X`, `48X`, `96X`.
 
-- **integration_time** (_Optional_, [Time](#config-time)):
+- **integration_time** (_Optional_, [Time](/guides/configuration-types#time)):
   The amount of time sensors are exposed. Longer means more accurate values.
   Valid values are: `50ms` _(default)_, `100ms`, `150ms`, `200ms`, `250ms`, `300ms`, `350ms`, `400ms`.
 
 - **glass_attenuation_factor** (_Optional_, float): The attenuation factor of glass if it's behind some glass
   or plastic facia. Default is `1.0` means `100%` transmissivity. `2` means `50%` transmissivity etc.
 
-- **update_interval** (_Optional_, [Time](#config-time)): The interval for checking the sensors.
+- **update_interval** (_Optional_, [Time](/guides/configuration-types#time)): The interval for checking the sensors.
   Defaults to `60s`.
 
-- **ps_cooldown** (_Optional_, [Time](#config-time)): The "cooldown" period after the proximity sensor is triggered.
+- **ps_cooldown** (_Optional_, [Time](/guides/configuration-types#time)): The "cooldown" period after the proximity sensor is triggered.
   Helps to avoid multiple calls. Defaults to `5s`.
 
 - **ps_gain** (_Optional_, string): The gain the device will use for proximity sensor. Higher values are better in low-light conditions.

@@ -55,7 +55,7 @@ display:
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]
@@ -104,7 +104,7 @@ display:
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 > [!NOTE]

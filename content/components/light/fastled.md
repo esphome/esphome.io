@@ -61,7 +61,7 @@ light:
   shows up green when you set a red color through the frontend. Valid values are `RGB`,
   `RBG`, `GRB`, `GBR`, `BRG` and `BGR`. Defaults to `RGB`.
 
-- **max_refresh_rate** (*Optional*, [Time](#config-time)):
+- **max_refresh_rate** (*Optional*, [Time](/guides/configuration-types#time)):
   A time interval used to limit the number of commands a light can handle per second. For example
   16ms will limit the light to a refresh rate of about 60Hz. Defaults to the default value for the used chipset.
 
@@ -135,7 +135,7 @@ light:
   shows up green when you set a red color through the frontend. Valid values are `RGB`,
   `RBG`, `GRB`, `GBR`, `BRG` and `BGR`. Defaults to `RGB`.
 
-- **max_refresh_rate** (*Optional*, [Time](#config-time)):
+- **max_refresh_rate** (*Optional*, [Time](/guides/configuration-types#time)):
   A time interval used to limit the number of commands a light can handle per second. For example
   16ms will limit the light to a refresh rate of about 60Hz. Defaults to the default value for the used chipset.
 

@@ -102,7 +102,7 @@ ethernet:
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
 
-- **polling_interval** (*Optional*, [Time](#config-time)): If `interrupt_pin` is not set,
+- **polling_interval** (*Optional*, [Time](/guides/configuration-types#time)): If `interrupt_pin` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.
 

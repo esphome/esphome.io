@@ -93,7 +93,7 @@ Open options:
 - **open_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be opened.
 
-- **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
+- **open_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the cover
   to open up from the fully-closed state.
 
 - **open_endstop** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
@@ -111,7 +111,7 @@ Close options:
 - **close_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be closed.
 
-- **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
+- **close_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the cover
   to close from the fully-open state.
 
 - **close_endstop** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the
@@ -139,16 +139,16 @@ Additional options:
   of hiding or disabling one of them. Defaults to `true` if no sensor is available to known
   the actual state of the cover.
 
-- **max_duration** (*Optional*, [Time](#config-time)): The maximum duration the cover should be opening
+- **max_duration** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional endstops.
   Requires internal, builtin or inferred endstops.
 
-- **direction_change_wait_time** (*Optional*, [Time](#config-time)): Stops cover and forces a wait time between changes in direction,
+- **direction_change_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Stops cover and forces a wait time between changes in direction,
   and takes it into account when computing cover position (useful to protect motors).
   When this option is set (even at 0s) if an open/close action is invoked while the cover is moving in the opposite direction,
   then and intermediate stop action will be invoked to generate the delay.
 
-- **acceleration_wait_time** (*Optional*, [Time](#config-time)): Considers a wait time needed by the cover to actually
+- **acceleration_wait_time** (*Optional*, [Time](/guides/configuration-types#time)): Considers a wait time needed by the cover to actually
   start moving after command is issued and takes it into account when computing cover position
   (useful for heavy covers with large inertia).
   Intended to not accumulate error when doing multiple partial open/close actions).
@@ -156,7 +156,7 @@ Additional options:
   issuing a command to reaching endstop.
   Defaults to `0s`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval
   to publish updated position information to the UI while the cover is moving.
   Defaults to `1s`.
 

@@ -74,7 +74,7 @@ wifi:
   - **manual_ip** (*Optional*): Manually set the IP options for the AP. Same options as
     manual_ip for station mode.
 
-  - **ap_timeout** (*Optional*, [Time](#config-time)): The time after which to enable the
+  - **ap_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The time after which to enable the
     configured fallback hotspot. Can be disabled by setting this to `0s`, which requires manually starting the AP by
     other means (eg: from a button press). Defaults to `1min`.
 
@@ -82,7 +82,7 @@ wifi:
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
   Defaults to `.local`.
 
-- **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   WiFi connection exists. Can be disabled by setting this to `0s`, but note that the low level IP stack currently
   seems to have issues with WiFi where a full reboot is required to get the interface back working. Defaults to `15min`.
   Does not apply when in access point mode.
@@ -374,7 +374,7 @@ on_...:
 - **save** (*Optional*, boolean, [templatable](/automations/templates)): If set to `true`, the SSID and password will be
   saved in persistent memory. Defaults to `true`.
 
-- **timeout** (*Optional*, [Time](#config-time), [templatable](/automations/templates)): The time to wait for the connection
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time), [templatable](/automations/templates)): The time to wait for the connection
   to be established. Defaults to 30 seconds.
 
 - **on_connect** (*Optional*, [Automation](/automations)): An action to be performed when a connection is established.

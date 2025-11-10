@@ -70,7 +70,7 @@ display:
 - **rotation** (*Optional*): Rotate the display presentation in software. Choose one of `0°`, `90°`, `180°`, or `270°`.
   This option cannot be used with `transform`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
 - **auto_clear_enabled** (*Optional*, boolean): If the display should be cleared before each update. Defaults to `true`
   if a lambda or pages are configured, false otherwise.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.

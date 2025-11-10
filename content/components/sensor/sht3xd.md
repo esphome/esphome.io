@@ -40,7 +40,7 @@ sensor:
 - **address** (_Optional_, int): Manually specify the I²C address of the sensor.
   Defaults to `0x44`. For SHT3x, an alternate address can be `0x45` while SHT85 supports only address `0x44`
 
-- **update_interval** (_Optional_, [Time](#config-time)): The interval to check the
+- **update_interval** (_Optional_, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **heater_enabled** (_Optional_, bool): Turn on/off heater at boot.

@@ -64,7 +64,7 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x61`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Available range: [2 … 1800]. Defaults to `60s`.
 
 ## Manual calibration

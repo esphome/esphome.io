@@ -300,7 +300,7 @@ on_...:
 #### Configuration variables
 
 - **condition** (**Required**, [Condition](#all-conditions)): The condition to wait to become true.
-- **timeout** (*Optional*, [Time](#config-time)): Time to wait before timing out. Defaults to never timing out.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Time to wait before timing out. Defaults to never timing out.
 
 {{< anchor "while_action" >}}
 
@@ -457,7 +457,7 @@ on_...:
 
 #### Configuration variables
 
-- **time** (**Required**, [templatable](/automations/templates), [Time](#config-time)):
+- **time** (**Required**, [templatable](/automations/templates), [Time](/guides/configuration-types#time)):
   The time for which the condition has to have been true.
 
 - **condition** (**Required**, [condition](#all-conditions)): The condition to check.

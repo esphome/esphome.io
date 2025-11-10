@@ -42,11 +42,11 @@ Advanced options:
 - **minor** (*Optional*, int): The iBeacon minor identifier of this beacon. Usually used to
   identify beacons within an iBeacon group. Defaults to `61958`.
 
-- **min_interval** (*Optional*, [Time](#config-time)): The iBeacon minimum transmit interval in milliseconds from 20 to 10240.
+- **min_interval** (*Optional*, [Time](/guides/configuration-types#time)): The iBeacon minimum transmit interval in milliseconds from 20 to 10240.
   Setting this less than `max_interval` gives the BLE hardware a better chance to avoid
   collisions with other BLE transmissions. Defaults to the iBeacon specification's defined interval: `100ms`.
 
-- **max_interval** (*Optional*, [Time](#config-time)): The iBeacon maximum transmit interval in milliseconds from 20 to 10240.
+- **max_interval** (*Optional*, [Time](/guides/configuration-types#time)): The iBeacon maximum transmit interval in milliseconds from 20 to 10240.
   Setting this greater than `min_interval` gives the BLE hardware a better chance to avoid
   collisions with other BLE transmissions. Defaults to the iBeacon specification's defined interval: `100ms`.
 

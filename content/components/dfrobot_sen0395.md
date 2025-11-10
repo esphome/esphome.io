@@ -223,11 +223,11 @@ on_...:
 
 - **output_latency** (*Optional*, dictionary):
 
-  - **delay_after_detect** (**Required**, [Time](#config-time)): Time to wait before signaling that a person was
+  - **delay_after_detect** (**Required**, [Time](/guides/configuration-types#time)): Time to wait before signaling that a person was
     detected. Specify in steps of 25 ms. Factory default is 2.5s. Value is tempatable: Return seconds value
     (100 ms = 0.1). Returning -1 keeps the value unchanged.
 
-  - **delay_after_disappear** (**Required**, [Time](#config-time)): Time to wait before signaling that a person
+  - **delay_after_disappear** (**Required**, [Time](/guides/configuration-types#time)): Time to wait before signaling that a person
     is no longer detected. Specify in steps of 25 ms. Factory default is 10 s. Value is tempatable: Return seconds
     value (100 ms = 0.1). Returning -1 keeps the value unchanged.
 

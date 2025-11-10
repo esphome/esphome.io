@@ -30,7 +30,7 @@ sensor:
 ## Configuration variables
 
 - **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to `0x3C`.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Set the ID of this sensor for use in lambdas.

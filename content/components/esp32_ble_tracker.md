@@ -68,15 +68,15 @@ sensor:
   See also [this guide by Texas Instruments](https://dev.ti.com/tirex/explore/content/simplelink_academy_cc2640r2sdk_5_10_02_00/modules/blestack/ble_scan_adv_basic/ble_scan_adv_basic.html#scanning-basics)
   for reference.
 
-  - **interval** (*Optional*, [Time](#config-time)): The interval between each consecutive scan window.
+  - **interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval between each consecutive scan window.
     This is the time the ESP spends on each of the 3 BLE advertising channels.
     Defaults to `320ms`.
 
-  - **window** (*Optional*, [Time](#config-time)): The time the ESP is actively listening for packets
+  - **window** (*Optional*, [Time](/guides/configuration-types#time)): The time the ESP is actively listening for packets
     on a channel during each scan interval. If this is close to the `interval` value, the ESP will
     spend more time listening to packets (but also consume more power). Defaults to `30ms`
 
-  - **duration** (*Optional*, [Time](#config-time)): The duration of each complete scan. This has no real
+  - **duration** (*Optional*, [Time](/guides/configuration-types#time)): The duration of each complete scan. This has no real
     impact on the device but can be used to debug the BLE stack. Defaults to `5min`.
 
   - **active** (*Optional*, boolean): Whether to actively send scan requests to request more data

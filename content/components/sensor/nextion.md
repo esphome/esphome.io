@@ -57,7 +57,7 @@ sensor:
 - **nextion_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the Nextion display.
 - **component_name** (*Optional*, string): Manually specify the name of the Nextion component.
 - **variable_name** (*Optional*, string): Manually specify the name of the Nextion variable.
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor
 - **precision** (*Optional*, int): This is for Nextion float components. This sets
   the precision that the component is set to. This typically is the `vvs1` setting of the component.
 
@@ -73,7 +73,7 @@ sensor:
 
 - **waveform_send_last_value** (*Optional*, int): This will send the last value set during an update interval. Setting to true will give a timeseries style graph
 - **wave_max_length** (*Optional*, int): How many data points to store. Typically this is the width of the component in the Nextion
-- **update_interval** (*Optional*, [Time](#config-time)): The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The duration to update the sensor. This typically should be set for waveforms to send periodic updates.
 
 - All other options from [Sensor](/components/sensor).
 

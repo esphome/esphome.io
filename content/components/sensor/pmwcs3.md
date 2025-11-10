@@ -46,7 +46,7 @@ sensor:
 - **address** (*Optional*, int): Manually specify the I²C address of the sensor.
   Defaults to `0x63`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 {{< anchor "sensor-pmwcs3aircalibrationaction" >}}

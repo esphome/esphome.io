@@ -29,7 +29,7 @@ sensor:
 
 - **temperature** (*Optional*): The information for the temperature sensor. All options from [Sensor](/components/sensor).
 - **internal_temperature** (*Optional*): The information for the temperature sensor inside the probe. All options from [Sensor](/components/sensor).
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `5s`.
 
 ## See Also

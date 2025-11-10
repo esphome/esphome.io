@@ -42,7 +42,7 @@ sensor:
 - **heater** (*Optional*): The information for the heater sensor.
   All options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 - **model** (*Optional*): Possible values are HTU21D, SI7021, SHT21. Some boards may be mislabeled. If you
   encounter I2C errors, try using HTU21D. Defaults to HTU21D.

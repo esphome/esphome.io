@@ -71,7 +71,7 @@ See {{< docref "time/gps" >}} for config options for the GPS time source.
 
   - All options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval of sensor updates. Defaults to `20s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval of sensor updates. Defaults to `20s`.
 
 ## See Also
 

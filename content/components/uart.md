@@ -167,7 +167,7 @@ uart:
   to trigger publishing the accumulated bytes. The possible options are:
 
   - **bytes** (*Optional*, int): Trigger after accumulating the specified number of bytes. Defaults to 150.
-  - **timeout** (*Optional*, [Time](#config-time)): Trigger after no communication has been seen during the
+  - **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Trigger after no communication has been seen during the
     specified timeout, while one or more bytes have been accumulated. Defaults to 100ms.
 
   - **delimiter** (*Optional*, string or list of bytes): Trigger after the specified sequence of bytes is

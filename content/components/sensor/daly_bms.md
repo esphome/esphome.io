@@ -25,7 +25,7 @@ daly_bms:
 
 ### Configuration variables
 
-- **update_interval** (*Optional*, [Time](#config-time)): Delay between data requests.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): Delay between data requests.
 - **address** (*Optional*, int): Address to use, defaults to `0x80`.
 
 ## Sensor

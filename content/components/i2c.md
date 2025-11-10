@@ -41,7 +41,7 @@ i2c:
 - **frequency** (*Optional*, float): Set the frequency the I²C bus should operate on.
   Defaults to `50kHz`. Values are `10kHz`, `50kHz`, `100kHz`, `200kHz`, ... `800kHz`
 
-- **timeout** (*Optional*, [Time](#config-time)): Set the I²C bus timeout.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Set the I²C bus timeout.
   Defaults to the framework defaults (`100us` on `esp32` with `esp-idf`, `50ms` on `esp32` with `Arduino`,
   `1s` on `esp8266` and `1s` on `rp2040`  ). Maximum on `esp-idf` is 13ms.
 

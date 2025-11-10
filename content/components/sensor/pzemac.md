@@ -80,7 +80,7 @@ sensor:
 - **power_factor** (*Optional*): Use the power factor value of the sensor.
   All options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to

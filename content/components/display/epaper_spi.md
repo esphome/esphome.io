@@ -42,13 +42,13 @@ display:
 - **rotation** (*Optional*): Set the rotation of the display. Everything you draw in `lambda:` will be rotated
   by this option. One of `0°` (default), `90°`, `180°`, `270°`.
 
-- **reset_duration** (*Optional*, [Time](#config-time)): Duration for the display reset operation. Defaults to `200ms`.
+- **reset_duration** (*Optional*, [Time](/guides/configuration-types#time)): Duration for the display reset operation. Defaults to `200ms`.
 
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `60s`,
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `60s`,
   use `never` to only manually update the screen via `component.update`.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.

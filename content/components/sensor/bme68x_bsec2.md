@@ -64,7 +64,7 @@ bme68x_bsec2_i2c:
   value is subtracted from the reading (for example, if the sensor reads 5°C higher than expected, set this to `5`  )
   and also corrects the relative humidity readings. Defaults to `0`.
 
-- **state_save_interval** (_Optional_, [Time](#config-time)): The minimum interval at which to save the calibrated BSEC2
+- **state_save_interval** (_Optional_, [Time](/guides/configuration-types#time)): The minimum interval at which to save the calibrated BSEC2
   algorithm state to flash so that calibration doesn't have to start from scratch on device restart. Defaults to `6h`.
 
 - **id** (_Optional_, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Use this ID in the sensor

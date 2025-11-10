@@ -53,10 +53,10 @@ On the bus side, you need 120 Ohm termination resistors at the ends of the bus c
 
 - **allow_duplicate_commands** (*Optional*, boolean): Whether to allow duplicate commands in the queue. Defaults to `false`.
 
-- **command_throttle** (*Optional*, [Time](#config-time)): minimum time in between 2 requests to the device. Default is `0ms`.
+- **command_throttle** (*Optional*, [Time](/guides/configuration-types#time)): minimum time in between 2 requests to the device. Default is `0ms`.
   Some Modbus slave devices limit the rate of requests from the master, so this allows the interval between requests to be altered.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval that the sensors should be checked.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval that the sensors should be checked.
   Defaults to 60 seconds.
 
 {{< anchor "modbus_controller-offline_skip_updates" >}}

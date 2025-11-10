@@ -87,8 +87,8 @@ The following configuration variables apply to the main `lvgl` component, in ord
 - **displays** (*Optional*, list, [ID](/guides/configuration-types#id)): A list of display IDs where LVGL should perform rendering based on its configuration. This may be omitted if there is a single display configured, which will be used automatically.
 - **touchscreens** (*Optional*, list): A list of touchscreens interacting with the LVGL widgets on the display. If you configure a single touchscreen it will be used automatically, and this config entry will not be required.
   - **touchscreen_id** (**Required**, [ID](/guides/configuration-types#id)): ID of a touchscreen configuration related to a display.
-  - **long_press_time** (*Optional*, [Time](#config-time)): For the touchscreen, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`.
-  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the touchscreen, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`.
+  - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the touchscreen, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`.
+  - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the touchscreen, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`.
 - **encoders** (*Optional*, list): A list of rotary encoders interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the the input device. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
   - **initial_focus** (*Optional*, [ID](/guides/configuration-types#id)): An optional ID for a widget to be given focus on startup (especially useful if there is only one focusable widget.)
@@ -96,8 +96,8 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **sensor** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/sensor/rotary_encoder" >}}; or a list with buttons for left/right interaction with the widgets:
     - **left_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `LEFT` key.
     - **right_button** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `RIGHT` key.
-  - **long_press_time** (*Optional*, [Time](#config-time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
-  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the rotary encoder, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
+  - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
+  - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the rotary encoder, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 - **keypads** (*Optional*, list): A list of keypads interacting with the LVGL widgets on the display.
   - **group** (*Optional*, string): A name for a group of widgets which will interact with the the input device. See the {{< docref "/components/lvgl/widgets" "common properties" >}} of the widgets for more information on groups.
   - **up** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `UP` key.
@@ -112,8 +112,8 @@ The following configuration variables apply to the main `lvgl` component, in ord
   - **prev** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `PREV` key.
   - **home** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `HOME` key.
   - **end** (*Optional*, [ID](/guides/configuration-types#id)): The ID of a {{< docref "/components/binary_sensor/index" "Binary Sensor" >}}, to be used as `END` key.
-  - **long_press_time** (*Optional*, [Time](#config-time)): For the keypad, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
-  - **long_press_repeat_time** (*Optional*, [Time](#config-time)): For the keypad, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
+  - **long_press_time** (*Optional*, [Time](/guides/configuration-types#time)): For the keypad, delay after which the `on_long_pressed` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `400ms`. Can be disabled with `never`.
+  - **long_press_repeat_time** (*Optional*, [Time](/guides/configuration-types#time)): For the keypad, repeated interval after `long_press_time`, when `on_long_pressed_repeat` [interaction trigger](#lvgl-automation-triggers) will be called. Defaults to `100ms`. Can be disabled with `never`.
 
 > [!TIP]
 > When using binary sensors (from physical keys) to interact with LVGL, if there are only three keys available, they are best used when configured as a rotary encoder, where `LEFT` and `RIGHT` act like the rotary wheel, and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers). With four or more keys, a keypad configuration is generally more appropriate. For example, a keypad consisting of five keys might use `PREV`, `NEXT`, `UP`, `DOWN` and `ENTER`  ; `PREV`  /`NEXT` are used to select a widget within the group, `UP`  /`DOWN` changes the selected value and `ENTER` generates an `on_press` [trigger](#lvgl-automation-triggers).
@@ -792,7 +792,7 @@ on_...:
 This [action](#actions-action) changes the page to the next/previous based on the configuration (pages with their `skip` option enabled are...skipped). Page changes will wrap around at the end.
 
 - **animation** (*Optional*): Animate page changes as specified. One of: `NONE`, `OVER_LEFT`, `OVER_RIGHT`, `OVER_TOP`, `OVER_BOTTOM`, `MOVE_LEFT`, `MOVE_RIGHT`, `MOVE_TOP`, `MOVE_BOTTOM`, `FADE_IN`, `FADE_OUT`, `OUT_LEFT`, `OUT_RIGHT`, `OUT_TOP`, `OUT_BOTTOM`. Defaults to `NONE`.
-- **time** (*Optional*, [Time](#config-time)): Duration of the page change animation. Defaults to `50ms`.
+- **time** (*Optional*, [Time](/guides/configuration-types#time)): Duration of the page change animation. Defaults to `50ms`.
 
 ```yaml
 on_...:
@@ -816,7 +816,7 @@ This [action](#actions-action) shows a specific page (including pages with their
 
 - **id** (**Required**): The ID of the page to be shown.
 - **animation** (*Optional*): Animate page changes as specified. One of: `NONE`, `OVER_LEFT`, `OVER_RIGHT`, `OVER_TOP`, `OVER_BOTTOM`, `MOVE_LEFT`, `MOVE_RIGHT`, `MOVE_TOP`, `MOVE_BOTTOM`, `FADE_IN`, `FADE_OUT`, `OUT_LEFT`, `OUT_RIGHT`, `OUT_TOP`, `OUT_BOTTOM`. Defaults to `NONE`.
-- **time** (*Optional*, [Time](#config-time)): Duration of the page change animation. Defaults to `50ms`.
+- **time** (*Optional*, [Time](/guides/configuration-types#time)): Duration of the page change animation. Defaults to `50ms`.
 
 ```yaml
 on_...:
@@ -886,7 +886,7 @@ on_...:
 
 This [condition](#common_conditions) checks if the amount of time specified has passed since the last touch event.
 
-- **timeout** (**Required**, [templatable](/automations/templates), int): Amount of [time](#config-time) expected since the last touch event.
+- **timeout** (**Required**, [templatable](/automations/templates), int): Amount of [time](/guides/configuration-types#time) expected since the last touch event.
 - **lvgl_id** (*Optional*): The ID of the LVGL instance to monitor.
 
 ```yaml
@@ -950,7 +950,7 @@ LVGL has a notion of screen inactivity -- i.e. the time since the last user inte
 
 The `on_idle` [triggers](#automation) are activated when inactivity time becomes longer than the specified `timeout`. You can configure any desired number of timeouts with different actions.
 
-- **timeout** (**Required**, [templatable](/automations/templates), int): [Time](#config-time) that has elapsed since the last touch event, after which the trigger will be invoked.
+- **timeout** (**Required**, [templatable](/automations/templates), int): [Time](/guides/configuration-types#time) that has elapsed since the last touch event, after which the trigger will be invoked.
 
 ```yaml
 lvgl:

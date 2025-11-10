@@ -62,7 +62,7 @@ cover:
 - **open_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be opened.
 
-- **open_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
+- **open_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the cover
   to open up from the fully-closed state.
 
 - **open_moving_current_threshold** (**Required**, float): The amount of current in Amps the motor
@@ -75,7 +75,7 @@ cover:
 - **close_action** (*Optional*, [Action](/automations/actions#all-actions)): The action that should
   be performed when the remote requests the cover to be closed.
 
-- **close_duration** (**Required**, [Time](#config-time)): The amount of time it takes the cover
+- **close_duration** (**Required**, [Time](/guides/configuration-types#time)): The amount of time it takes the cover
   to close from the fully-open state.
 
 - **close_moving_current_threshold** (**Required**, float): The amount of current in Amps the motor
@@ -87,10 +87,10 @@ cover:
 - **stop_action** (**Required**, [Action](/automations/actions#all-actions)): The action that should
   be performed to stop the cover.
 
-- **max_duration** (*Optional*, [Time](#config-time)): The maximum duration the cover should be opening
+- **max_duration** (*Optional*, [Time](/guides/configuration-types#time)): The maximum duration the cover should be opening
   or closing. Useful for protecting from dysfunctional motor integrated endstops.
 
-- **start_sensing_delay** (*Optional*, [Time](#config-time)): The amount of time the current sensing will be
+- **start_sensing_delay** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time the current sensing will be
   disabled when the movement starts. Motors can take some time before reaching their average consumption.
   Low values can cause an immediate stop because of the first current reading happening in the current-rising period.
   Defaults to `500ms`.

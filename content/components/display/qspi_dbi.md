@@ -66,7 +66,7 @@ display:
 - **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The RESET pin.
 - **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The display enable pin.
 - **brightness** (*Optional*, int): A brightness value in the range 0-255
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
 - **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display data before each lambda call,
   or to keep the existing display content (must overwrite explicitly, e.g., only on data change). Defaults to `true` if a lambda or pages are configured, false otherwise.
 

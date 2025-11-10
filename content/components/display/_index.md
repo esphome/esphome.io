@@ -32,7 +32,7 @@ For graphical displays, which offer the greatest flexibility, there are two opti
 All display components inherit these configuration variables.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Required if there are multiple displays.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 

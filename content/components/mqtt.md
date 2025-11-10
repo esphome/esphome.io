@@ -111,10 +111,10 @@ mqtt:
   The disadvantage is additional memory usage for the thread.
   Set this to true if you need to ensure that mqtt does not block the main thread, especially if you have poor network conditions.
 
-- **reboot_timeout** (*Optional*, [Time](#config-time)): The amount of time to wait before rebooting when no
+- **reboot_timeout** (*Optional*, [Time](/guides/configuration-types#time)): The amount of time to wait before rebooting when no
   MQTT connection exists. Can be disabled by setting this to `0s`. Defaults to `15min`.
 
-- **keepalive** (*Optional*, [Time](#config-time)): The time
+- **keepalive** (*Optional*, [Time](/guides/configuration-types#time)): The time
   to keep the MQTT socket alive, decreasing this can help with overall stability due to more
   WiFi traffic with more pings. Defaults to 15 seconds.
 

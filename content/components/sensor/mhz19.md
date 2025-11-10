@@ -37,7 +37,7 @@ sensor:
   not officially documented in the datasheet and seems to be quite inaccurate.
   All options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want

@@ -58,7 +58,7 @@ Base Configuration:
 - **sensor_power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): Output pin responsible for toogling the sensor power on and off.
 - **password** (*Optional*, int): Password to use for authentication. Defaults to `0x00`.
 - **new_password** (*Optional*, int): Sets a new password to use for authentication. See [Setting a New Password](#fingerprint_grow-set_new_password) for more information.
-- **idle_period_to_sleep** (*Optional*, [Time](#config-time)): The sensor idle period to wait before powering it off (sleep). Defaults to `5s`. See [Sleep Mode](#fingerprint_grow-sleep_mode) for more information.
+- **idle_period_to_sleep** (*Optional*, [Time](/guides/configuration-types#time)): The sensor idle period to wait before powering it off (sleep). Defaults to `5s`. See [Sleep Mode](#fingerprint_grow-sleep_mode) for more information.
 - **on_finger_scan_start** (*Optional*, [Automation](/automations)): An action to be performed when the finger touches the sensor. See [`on_finger_scan_start` Trigger](#fingerprint_grow-on_finger_scan_start).
 - **on_finger_scan_matched** (*Optional*, [Automation](/automations)): An action to be performed when an enrolled fingerprint is scanned. See [`on_finger_scan_matched` Trigger](#fingerprint_grow-on_finger_scan_matched).
 - **on_finger_scan_unmatched** (*Optional*, [Automation](/automations)): An action to be performed when an unknown fingerprint is scanned. See [`on_finger_scan_unmatched` Trigger](#fingerprint_grow-on_finger_scan_unmatched).

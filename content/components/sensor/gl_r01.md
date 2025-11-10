@@ -26,7 +26,7 @@ sensor:
 
 ## Configuration variables
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to trigger measurement and update sensor.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to trigger measurement and update sensor.
 
 - All other options from [Sensor](/components/sensor).
 

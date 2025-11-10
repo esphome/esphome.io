@@ -61,16 +61,16 @@ sensor:
 - **adc_range** (*Optional*, `0` or `1`  ): Selects the range for differential input across shunt
   resistor. `0` for ±163.84 mV, `1` for ±40.96 mV range. Defaults to `0`.
 
-- **adc_time** (*Optional*, [Time](#config-time)): The time in microseconds to perform a single ADC conversion.
+- **adc_time** (*Optional*, [Time](/guides/configuration-types#time)): The time in microseconds to perform a single ADC conversion.
   Defaults to `4120 us`. Valid values are `50 us`, `84 us`, `150 us`, `280 us`, `540 us`,
   `1052 us`, `2074 us`, `4120 us`.
 
   Instead of one time for all ADC measurements, separate configuration of conversion times for shunt voltage,
   bus voltage, and temperature measurements possible. Options are the same as for `adc_time`.
 
-  - **bus_voltage** (*Optional*, [Time](#config-time)): Conversion time for bus voltage measurement.
-  - **shunt_voltage** (*Optional*, [Time](#config-time)): Conversion time for shunt voltage measurement.
-  - **temperature** (*Optional*, [Time](#config-time)): Conversion time for temperature measurement.
+  - **bus_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for bus voltage measurement.
+  - **shunt_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for shunt voltage measurement.
+  - **temperature** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for temperature measurement.
 
 - **adc_averaging** (*Optional*, integer): Selects ADC sample averaging count. Defaults to `128`.
   Valid values are `1`, `4`, `16`, `64`, `128`, `256`, `512`, `1024`.
@@ -79,7 +79,7 @@ sensor:
   shunt for temperature compensation correction. Only applicable to INA228 and INA229 devices. Zero value means
   no compensation is done. Defaults to `0`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 - All other options from [Sensor](/components/sensor) and [I²C device](/components/i2c).
 
 ## Over SPI
@@ -111,16 +111,16 @@ sensor:
 - **adc_range** (*Optional*, `0` or `1`  ): Selects the range for differential input across shunt
   resistor. `0` for ±163.84 mV, `1` for ±40.96 mV range. Defaults to `0`.
 
-- **adc_time** (*Optional*, [Time](#config-time)): The time in microseconds to perform a single ADC conversion.
+- **adc_time** (*Optional*, [Time](/guides/configuration-types#time)): The time in microseconds to perform a single ADC conversion.
   Defaults to `4120 us`. Valid values are `50 us`, `84 us`, `150 us`, `280 us`, `540 us`,
   `1052 us`, `2074 us`, `4120 us`.
 
   Instead of one time for all ADC measurements, separate configuration of conversion times for shunt voltage,
   bus voltage, and temperature measurements possible. Options are the same as for `adc_time`.
 
-  - **bus_voltage** (*Optional*, [Time](#config-time)): Conversion time for bus voltage measurement.
-  - **shunt_voltage** (*Optional*, [Time](#config-time)): Conversion time for shunt voltage measurement.
-  - **temperature** (*Optional*, [Time](#config-time)): Conversion time for temperature measurement.
+  - **bus_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for bus voltage measurement.
+  - **shunt_voltage** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for shunt voltage measurement.
+  - **temperature** (*Optional*, [Time](/guides/configuration-types#time)): Conversion time for temperature measurement.
 
 - **adc_averaging** (*Optional*, integer): Selects ADC sample averaging count. Defaults to `128`.
   Valid values are `1`, `4`, `16`, `64`, `128`, `256`, `512`, `1024`.
@@ -129,7 +129,7 @@ sensor:
   shunt for temperature compensation correction. Only applicable to INA228 and INA229 devices. Zero value means
   no compensation is done. Defaults to `0`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 - All other options from [Sensor](/components/sensor) and [SPI device](/components/spi).
 
 ## Sensors

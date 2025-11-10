@@ -60,7 +60,7 @@ sensor:
 
   - All other options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`
 - **store_baseline** (*Optional*, boolean): Stores and retrieves the baseline information for quicker startups. Defaults to `true`
 
 - **compensation** (*Optional*): The block containing sensors used for compensation. If not set defaults will be used.

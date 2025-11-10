@@ -39,15 +39,15 @@ deep_sleep:
 
 ## Configuration variables
 
-- **run_duration** (*Optional*, [Time](#config-time)): The time duration the node should be active, i.e. run code.
+- **run_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration the node should be active, i.e. run code.
 
   Only on ESP32, instead of time, it is possible to specify run duration according to the wakeup reason from deep-sleep:
 
-  - **default** (**Required**, [Time](#config-time)): default run duration for timer wakeup and any unspecified wakeup reason.
-  - **gpio_wakeup_reason** (*Optional*, [Time](#config-time)): run duration if woken up by GPIO.
-  - **touch_wakeup_reason** (*Optional*, [Time](#config-time)): run duration if woken up by touch.
+  - **default** (**Required**, [Time](/guides/configuration-types#time)): default run duration for timer wakeup and any unspecified wakeup reason.
+  - **gpio_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by GPIO.
+  - **touch_wakeup_reason** (*Optional*, [Time](/guides/configuration-types#time)): run duration if woken up by touch.
 
-- **sleep_duration** (*Optional*, [Time](#config-time)): The time duration to stay in deep sleep mode.
+- **sleep_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode.
 - **touch_wakeup** (*Optional*, boolean): Only on ESP32. Use a touch event to wakeup from deep sleep. To be able
   to wakeup from a touch event, [Binary Sensor](#esp32-touch-binary-sensor) must be configured properly.
 
@@ -152,7 +152,7 @@ on_...:
 
 Configuration options:
 
-- **sleep_duration** (*Optional*, [templatable](/automations/templates), [Time](#config-time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
+- **sleep_duration** (*Optional*, [templatable](/automations/templates), [Time](/guides/configuration-types#time)): The time duration to stay in deep sleep mode. If a template is used, it should return a value in milliseconds.
 - **until** (*Optional*, string): The time of day to wake up. Only on ESP32.
 - **time_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the time component to use for the `until` option. Only on ESP32.
 

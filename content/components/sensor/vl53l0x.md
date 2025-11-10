@@ -46,7 +46,7 @@ sensor:
 
 ## Configuration variables
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **signal_rate_limit** (*Optional*, float): Set the return signal rate limit in units of MCPS
@@ -66,8 +66,8 @@ sensor:
   on vl53l0x to enable/disable sensor. **Required** if not using address `0x29` which is the cause if you
   have multiple VL53L0X on the same i2c bus. In this case you have to assign a different pin to each VL53L0X.
 
-- **timeout** (*Optional*, [Time](#config-time)): Sensor setup timeout. Default to `10ms`.
-- **timing_budget** (*Optional*, [Time](#config-time)): Set the timing budget the sensor will use for a single range measurement.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Sensor setup timeout. Default to `10ms`.
+- **timing_budget** (*Optional*, [Time](/guides/configuration-types#time)): Set the timing budget the sensor will use for a single range measurement.
   Range is from 20000us - 4294967295us, inclusive. The timing budget allows the user to trade off speed for accuracy.
   If not specified, the default timing budget is 33000us.
 

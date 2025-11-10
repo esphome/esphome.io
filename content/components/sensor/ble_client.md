@@ -50,7 +50,7 @@ sensor:
 
 rssi options:
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to poll the device.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to poll the device.
 - All other options from [Sensor](/components/sensor).
 
 characteristic options:
@@ -66,7 +66,7 @@ characteristic options:
 - **notify** (*Optional*, boolean): Instruct the server to send notifications for this
   characteristic.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to poll the device.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to poll the device.
 - All other options from [Sensor](/components/sensor).
 
 Automations:

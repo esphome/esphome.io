@@ -31,7 +31,7 @@ sensor:
 - **humidity** (**Required**): The information for the humidity sensor.
   All options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor. Defaults to `60s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the sensor. Defaults to `60s`.
 
 ## See Also
 

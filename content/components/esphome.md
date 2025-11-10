@@ -272,7 +272,7 @@ preferences:
 
 ### Configuration variables
 
-- **flash_write_interval** (*Optional*, [Time](#config-time)): Customize the frequency in which data is
+- **flash_write_interval** (*Optional*, [Time](/guides/configuration-types#time)): Customize the frequency in which data is
   flushed to the flash. This setting helps to prevent rapid changes to a component from being quickly
   written to the flash and wearing it out. Defaults to `1min`. Set to `never` to disable this feature.
 

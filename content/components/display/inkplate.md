@@ -85,7 +85,7 @@ display:
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `5s`.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
 
 - **ckv_pin** (**Required**, [Pin](#config-pin)): The CKV pin for the Inkplate display.

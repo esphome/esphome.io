@@ -54,9 +54,9 @@ display:
 
   - `STOP`  : When text is over it waits the `scroll_dwell` time and scroll is set back to the start.
 
-- **scroll_speed** (*Optional*, [Time](#config-time)): Set scroll speed. Defaults to `250ms`
-- **scroll_delay** (*Optional*, [Time](#config-time)): Set delay time before scroll starts. Defaults to `1s`.
-- **scroll_dwell** (*Optional*, [Time](#config-time)): Sets the wait time at the end of the scroll before starting
+- **scroll_speed** (*Optional*, [Time](/guides/configuration-types#time)): Set scroll speed. Defaults to `250ms`
+- **scroll_delay** (*Optional*, [Time](/guides/configuration-types#time)): Set delay time before scroll starts. Defaults to `1s`.
+- **scroll_dwell** (*Optional*, [Time](/guides/configuration-types#time)): Sets the wait time at the end of the scroll before starting
   over. This is only used in mode `STOP`. Defaults to `1s`.
 
 - **reverse_enable** (*Optional*, boolean): For some displays the order of the displays is reversed ("DCBA"). This option will reverse the display to ("ABCD") again. Defaults to `false`.
@@ -66,7 +66,7 @@ display:
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the
   MAX7219. See [Rendering Lambda](#display-max7219digit_lambda) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
 - **spi_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [SPI Component](/components/spi) if you want
   to use multiple SPI buses.
 

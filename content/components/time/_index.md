@@ -31,7 +31,7 @@ All time configuration schemas inherit these options.
 - **on_time_sync** (*Optional*, [Automation](/automations)): Automation to run when the time source
   could be (re-)synchronized.. See [`on_time_sync` Trigger](#time-on_time_sync).
 
-- **update_interval** (*Optional*, [Time](#config-time)): How often to synchronize the device time from the source.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to synchronize the device time from the source.
   Defaults to `15min`.
 
 {{< anchor "time-has_time_condition" >}}

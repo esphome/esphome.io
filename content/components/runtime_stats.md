@@ -26,7 +26,7 @@ runtime_stats:
 
 ## Configuration variables
 
-- **log_interval** (*Optional*, [Time](#config-time)): How often to log the statistics. Defaults to `60s`.
+- **log_interval** (*Optional*, [Time](/guides/configuration-types#time)): How often to log the statistics. Defaults to `60s`.
 
   - Minimum value is `1s`
   - Setting this too low will increase log spam

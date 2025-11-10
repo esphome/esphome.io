@@ -116,7 +116,7 @@ sensor:
 - **maximum_demand_apparent_power** (*Optional*): Use the maximum demand apparent power value of the sensor in VA. All
   options from [Sensor](/components/sensor).
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **address** (*Optional*, int): The address of the sensor if multiple sensors are attached to

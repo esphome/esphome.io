@@ -42,7 +42,7 @@ sensor:
 - **echo_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The input pin on which to
   wait for the echo.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - All other options from [Sensor](/components/sensor).
@@ -52,7 +52,7 @@ Advanced options:
 - **timeout** (*Optional*, float): The number of meters for the
   timeout. Most sensors can only sense up to 2 meters. Defaults to 2 meters.
 
-- **pulse_time** (*Optional*, [Time](#config-time)): The duration for which the trigger pin will be
+- **pulse_time** (*Optional*, [Time](/guides/configuration-types#time)): The duration for which the trigger pin will be
   active. Defaults to `10us`.
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.

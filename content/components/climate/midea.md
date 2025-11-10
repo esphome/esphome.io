@@ -73,8 +73,8 @@ climate:
   to use multiple UART buses.
 
 - **transmitter_id** (*Optional*, [ID](/guides/configuration-types#id)): Defined and used automatically when using {{< docref "../remote_transmitter" >}} component for IR commands transmit.
-- **period** (*Optional*, [Time](#config-time)): Minimal period between requests to the appliance. Defaults to `1s`.
-- **timeout** (*Optional*, [Time](#config-time)): Request response timeout until next request attempt. Defaults to `2s`.
+- **period** (*Optional*, [Time](/guides/configuration-types#time)): Minimal period between requests to the appliance. Defaults to `1s`.
+- **timeout** (*Optional*, [Time](/guides/configuration-types#time)): Request response timeout until next request attempt. Defaults to `2s`.
 - **num_attempts** (*Optional*, int): Number of request attempts between 1 and 5 inclusive. Defaults to `3`.
 - **autoconf** (*Optional*, boolean): Get capabilities automatically. Allows you not to manually define most of the capabilities of the appliance.
   Defaults to `True`.

@@ -80,11 +80,11 @@ climate:
 
 ### `climate_ir_lg`
 
-- **header_high** (*Optional*, [Time](#config-time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
-- **header_low** (*Optional*, [Time](#config-time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
-- **bit_high** (*Optional*, [Time](#config-time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
-- **bit_one_low** (*Optional*, [Time](#config-time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
-- **bit_zero_low** (*Optional*, [Time](#config-time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
+- **header_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of the header for the LG protocol. Defaults to `8000us`
+- **header_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of the header for the LG protocol. Defaults to `4000us`
+- **bit_high** (*Optional*, [Time](/guides/configuration-types#time)): time for the high part of any bit in the LG protocol. Defaults to `600us`
+- **bit_one_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '1' bit in the LG protocol. Defaults to `1600us`
+- **bit_zero_low** (*Optional*, [Time](/guides/configuration-types#time)): time for the low part of a '0' bit in the LG protocol. Defaults to `550us`
 
 ```yaml
 # Example configuration entry

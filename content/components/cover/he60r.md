@@ -37,8 +37,8 @@ cover:
 
 ## Configuration variables
 
-- **open_duration** (*Optional*, [Time](#config-time)): The time required for the door to fully open from the closed position. Default 15s.
-- **close_duration** (*Optional*, [Time](#config-time)): The time required for the door to fully close from the open position. Default 15s.
+- **open_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time required for the door to fully open from the closed position. Default 15s.
+- **close_duration** (*Optional*, [Time](/guides/configuration-types#time)): The time required for the door to fully close from the open position. Default 15s.
 - All other options from [Cover](#config-cover).
 
 The open and close duration serve to estimate the position to provide feedback during travel and for partial open/close

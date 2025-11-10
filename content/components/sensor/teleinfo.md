@@ -51,7 +51,7 @@ In teleinfo platform:
   With historical mode, baudrate of 1200 must be used whereas 9600 must be used in
   standard mode. Defaults to `false`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the [UART Component](/components/uart) if you want

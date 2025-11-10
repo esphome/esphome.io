@@ -32,7 +32,7 @@ ezo_pmp:
 
 - **id** (**Required**, [ID](/guides/configuration-types#id)): Specify the ID of the pump so that you can control it.
 - **address** (*Optional*, int): Specify the I²C address of the sensor. Defaults to 103.
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check the
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
   sensor. Defaults to `60s`.
 
 ## Sensor
