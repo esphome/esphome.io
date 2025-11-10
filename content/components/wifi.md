@@ -111,11 +111,9 @@ wifi:
 
   Defaults to `WPA2` on ESP32 and `WPA` on ESP8266 (will change to `WPA2` in 2026.6.0).
 
-  {{% notice warning %}}
   **Security Warning:** Setting `min_auth_mode: WPA` allows connection to networks using deprecated WPA/TKIP encryption,
   which has known security vulnerabilities. Only use this setting for legacy routers that cannot be upgraded to WPA2 or WPA3.
   If your router supports WPA2 or newer, use the default `WPA2` setting for better security.
-  {{% /notice %}}
 
 - **passive_scan** (*Optional*, boolean): If enabled, then the device will perform WiFi scans in a passive fashion.
   Defaults to `false`.
