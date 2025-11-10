@@ -33,11 +33,10 @@ usb_cdc_acm:
 
 ## Interface configuration variables
 
-Each interface in the `interfaces` list supports the following options:
+Each interface in the `interfaces` list consists of the following:
 
-- **id** (*Optional*, [ID](#config-id)): The ID to use for this interface instance.
-- **number** (**Required**, int): Unique interface identifier. Valid values are `0` or `1`. Each configured interface
-  must have a unique number.
+- **id** (*Optional*, [ID](#config-id)): The ID to use for this interface instance. This is used to refer to the
+  interface in other components, platforms or lambdas.
 
 ## Multiple Interface Example
 
@@ -49,9 +48,7 @@ allows you to create multiple independent communication channels over a single p
 usb_cdc_acm:
   interfaces:
     - id: cdc_acm_1
-      number: 0
     - id: cdc_acm_2
-      number: 1
 ```
 
 In this configuration, the device will appear as two separate serial/COM ports to the host computer. Each interface
