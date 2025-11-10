@@ -163,6 +163,8 @@ filters:
   - exponential_moving_average:
       alpha: 0.1
       send_every: 15
+  - high_pass: 0.75
+  - low_pass: 0.25
   - throttle: 1s
   - throttle_average: 1s
   - throttle_with_priority:
@@ -212,9 +214,17 @@ filters:
 
 {{< include "filter/heartbeat.md" >}}
 
+### `high_pass`
+
+{{< include "filter/high_pass.md" >}}
+
 ### `lambda`
 
 {{< include "filter/lambda.md" >}}
+
+### `low_pass`
+
+{{< include "filter/low_pass.md" >}}
 
 ### `max`
 
