@@ -41,8 +41,8 @@ graphical_display_menu:
 
 Configuration variables:
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
-- **display** (*Optional*, [ID](#config-id)): ID of the display to render to. See
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
+- **display** (*Optional*, [ID](/guides/configuration-types#id)): ID of the display to render to. See
   [Drawing Modes](#drawing_modes) for more details
 
 - **font** (**Required**, [Font](#display-fonts)): Specifies the font to use
@@ -54,7 +54,7 @@ Configuration variables:
 
 Automations:
 
-- **on_redraw** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_redraw** (*Optional*, [Automation](/automations)): An automation to perform
   when the menu needs to be redrawn. This can be useful if your display has slow refresh rates.
   For example E-Ink displays that are used with `display_interval: never`.
 
@@ -70,11 +70,9 @@ When a **display** is specified the menu will create a [page](#display-pages) as
 of the display when invoked. This is useful when you may want to use the display for other purposes but show a menu in response to user
 interaction.
 
-{{< note >}}
-Pop Up Mode requires that your display makes use of [pages](#display-pages). If you are using a drawing lambda, without pages, it will not
-behave as expected. Instead you will have to use Advanced Mode
-
-{{< /note >}}
+> [!NOTE]
+> Pop Up Mode requires that your display makes use of [pages](#display-pages). If you are using a drawing lambda, without pages, it will not
+> behave as expected. Instead you will have to use Advanced Mode
 
 ### Advanced Drawing Mode
 
@@ -161,10 +159,8 @@ graphical_display_menu:
     return label;
 ```
 
-{{< note >}}
-Ensure that all characters you use in the menu_item_value are available glyphs for your [font](#display-fonts)
-
-{{< /note >}}
+> [!NOTE]
+> Ensure that all characters you use in the menu_item_value are available glyphs for your [font](#display-fonts)
 
 ## User Interaction Example
 

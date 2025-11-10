@@ -13,7 +13,7 @@ with ESPHome.
 
 {{< img src="nextion-full.jpg" alt="Image" caption="Nextion display" width="75.0%" class="align-center" >}}
 
-Communication with the Nextion display is done via a serial interface, so you'll need to have a [UART Bus](#uart)
+Communication with the Nextion display is done via a serial interface, so you'll need to have a [UART Bus](/components/uart)
 in your configuration with both `rx_pin` and `tx_pin` configured. These pins must then be connected to the
 respective pins on the display.
 
@@ -28,16 +28,14 @@ bkcmd=0       // Tells the Nextion to not send responses on commands. This is th
 This permits faster communication with the Nextion display and it is highly recommended when using
 [Hardware UARTs](#uart-hardware_uarts).
 
-{{< warning >}}
-**We highly recommend using only** [Hardware UARTs](#uart-hardware_uarts) **with Nextion displays.**
-
-*Use of software UARTs is known to result in unpredictable/inconsistent behavior.*
-
-If you **must** use a software UART, note that baud rates greater than 9600 are extremely likely to cause problems.
-
-In short, avoid using software UARTs with Nextion displays.
-
-{{< /warning >}}
+> [!WARNING]
+> **We highly recommend using only** [Hardware UARTs](#uart-hardware_uarts) **with Nextion displays.**
+>
+> *Use of software UARTs is known to result in unpredictable/inconsistent behavior.*
+>
+> If you **must** use a software UART, note that baud rates greater than 9600 are extremely likely to cause problems.
+>
+> In short, avoid using software UARTs with Nextion displays.
 
 ```yaml
 # Example configuration entry
@@ -51,7 +49,7 @@ display:
 
 ## Configuration variables
 
-- **uart_id** (*Optional*, [ID](#config-id)): The ID of the [UART Bus](#uart) you wish to use for this display. Specify this
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the [UART Bus](/components/uart) you wish to use for this display. Specify this
   when you have multiple UART configurations.
 
 - **brightness** (*Optional*, percentage): When specified, the display brightness will be set to this value at boot.
@@ -59,10 +57,10 @@ display:
   display. See [Rendering Lambda](#display-nextion_lambda) for more information. This is typically empty. The individual components
   for the Nextion will handle almost all functions needed for updating display elements.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to call the lambda to update the display.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to call the lambda to update the display.
   Defaults to `5s`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **tft_url** (*Optional*, string): The URL from which to download the TFT file for display firmware updates (Nextion
   OTA). See [Nextion Upload](#nextion_upload_tft).
 
@@ -74,11 +72,11 @@ display:
 - **start_up_page** (*Optional*, int): Sets the page to display when ESPHome connects to the Nextion. (Nextion shows page 0 on start-up by default).
 - **wake_up_page** (*Optional*, int): Sets the page to display after waking up
 - **exit_reparse_on_start** (*Optional*, boolean): Request the Nextion exit Active Reparse Mode before setup of the display. Defaults to `false`.
-- **on_setup** (*Optional*, [Action](#config-action)): An action to be performed after ESPHome connects to the Nextion. See [Nextion Automation](#nextion-on_setup).
-- **on_sleep** (*Optional*, [Action](#config-action)): An action to be performed when the Nextion goes to sleep. See [Nextion Automation](#nextion-on_sleep).
-- **on_wake** (*Optional*, [Action](#config-action)): An action to be performed when the Nextion wakes up. See [Nextion Automation](#nextion-on_sleep).
-- **on_page** (*Optional*, [Action](#config-action)): An action to be performed after a page change. See [Nextion Automation](#nextion-on_page).
-- **on_touch** (*Optional*, [Action](#config-action)): An action to be performed after a touch event (press or release). See [Nextion Automation](#nextion-on_touch).
+- **on_setup** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed after ESPHome connects to the Nextion. See [Nextion Automation](#nextion-on_setup).
+- **on_sleep** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion goes to sleep. See [Nextion Automation](#nextion-on_sleep).
+- **on_wake** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion wakes up. See [Nextion Automation](#nextion-on_sleep).
+- **on_page** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed after a page change. See [Nextion Automation](#nextion-on_page).
+- **on_touch** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed after a touch event (press or release). See [Nextion Automation](#nextion-on_touch).
 - **auto_wake_on_touch** (*Optional*, boolean): If set to `true`, the Nextion will be configured to wake from sleep
   when touched.
 
@@ -86,10 +84,10 @@ display:
   skipped. When set to `true`, the connection will be established without performing the handshake. This can be
   useful when using Nextion Simulator. Defaults to `false`.
 
-- **on_buffer_overflow** (*Optional*, [Action](#config-action)): An action to be performed when the Nextion
+- **on_buffer_overflow** (*Optional*, [Action](/automations/actions#all-actions)): An action to be performed when the Nextion
   reports a buffer overflow. See [Nextion Automation](#nextion-on_buffer_overflow).
 
-- **command_spacing** (*Optional*, [Time](#config-time)): Sets the minimum time between commands sent to the Nextion display.
+- **command_spacing** (*Optional*, [Time](/guides/configuration-types#time)): Sets the minimum time between commands sent to the Nextion display.
   A higher value can help prevent buffer overflows but will result in slower interface updates.
   Range is `0-255ms`. Defaults to `0ms` (disabled).
 
@@ -133,11 +131,10 @@ display:
       it.set_component_text_printf("textview", "The uptime is: %.1f", id(uptime_sensor).state);
 ```
 
-{{< note >}}
-Although you can use the rendering lambda, most, if not all, updates to the Nextion can be handled by the
-individual Nextion components/platforms. **See Below**
+> [!NOTE]
+> Although you can use the rendering lambda, most, if not all, updates to the Nextion can be handled by the
+> individual Nextion components/platforms. **See Below**
 
-{{< /note >}}
 See [Formatted Text](#display-printf) for a quick introduction to the `printf` formatting rules and [Displaying Time](#display-strftime) for
 an introduction to `strftime` time formatting.
 
@@ -177,31 +174,29 @@ The list below calls out a few commonly-used methods:
   - `set_nextion_sensor_state(int queue_type, std::string name, float state);`
   - `set_nextion_text_state(std::string name, std::string state);`
 
-{{< note >}}
-The example below demonstrates how to define a user-API so Home Assistant can send updates to the Nextion by code.
-
-```yaml
-# Enable Home Assistant API
-api:
-  actions:
-    - action: set_nextion_sensor
-      variables:
-        nextion_type: int
-        name: string
-        state: float
-      then:
-        - lambda: |-
-            id(nextion1).set_nextion_sensor_state(nextion_type,name,state);
-    - action: set_nextion_text
-      variables:
-        name: string
-        state: string
-      then:
-        - lambda: |-
-            id(nextion1).set_nextion_text_state(name,state);
-```
-
-{{< /note >}}
+> [!NOTE]
+> The example below demonstrates how to define a user-API so Home Assistant can send updates to the Nextion by code.
+>
+> ```yaml
+> # Enable Home Assistant API
+> api:
+>   actions:
+>     - action: set_nextion_sensor
+>       variables:
+>         nextion_type: int
+>         name: string
+>         state: float
+>       then:
+>         - lambda: |-
+>             id(nextion1).set_nextion_sensor_state(nextion_type,name,state);
+>     - action: set_nextion_text
+>       variables:
+>         name: string
+>         state: string
+>       then:
+>         - lambda: |-
+>             id(nextion1).set_nextion_text_state(name,state);
+> ```
 
 ### Queue Types
 
@@ -375,14 +370,13 @@ Once completed, both ESPHome and the Nextion will reboot. ESPHome will be unresp
 logging or other {{< docref "/automations/index" "automations" >}} will occur. This process uses the same protocol as the
 [Nextion Editor](https://nextion.tech/nextion-editor/) and only transfers required portions of the TFT file.
 
-{{< warning >}}
-*Use of software UARTs is known to result in unpredictable/inconsistent behavior and will likely result in the
-update process failing.*
+> [!WARNING]
+> *Use of software UARTs is known to result in unpredictable/inconsistent behavior and will likely result in the
+> update process failing.*
+>
+> If you experience problems with the update process and are using a software UART (for example, on the ESP8266), you
+> should switch to an ESP32 or supported variant which has more available [Hardware UARTs](#uart-hardware_uarts).
 
-If you experience problems with the update process and are using a software UART (for example, on the ESP8266), you
-should switch to an ESP32 or supported variant which has more available [Hardware UARTs](#uart-hardware_uarts).
-
-{{< /warning >}}
 You can use Home Assistant itself or any other web server to host the TFT file. When using HTTPS (generally
 recommended), you may notice reduced upload speeds as the encryption consumes more resources on the microcontroller.
 
@@ -411,12 +405,11 @@ be `http(s)://your_home_assistant_url:port/local/tft/default.tft`
 
 This library supports a few different components allowing communication between Home Assistant, ESPHome and Nextion.
 
-{{< note >}}
-If the Nextion is sleeping or if the component was set to be hidden, it will not update its components even if
-updates are sent. To work around this, after the Nextion wakes up, all components will send their states to the
-Nextion.
+> [!NOTE]
+> If the Nextion is sleeping or if the component was set to be hidden, it will not update its components even if
+> updates are sent. To work around this, after the Nextion wakes up, all components will send their states to the
+> Nextion.
 
-{{< /note >}}
 With the exception of the {{< docref "../binary_sensor/nextion" >}} that has the `page_id`  /`component_id` options configured,
 the example below illustrates:
 

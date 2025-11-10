@@ -32,14 +32,12 @@ control the colors in the [light control actions](#light-turn_on_action), you ne
 
 ## Configuration variables
 
-- **pin_a** (**Required**, [ID](#config-id)): The id of the first float [Output Component](#output) to use for this light.
-- **pin_b** (**Required**, [ID](#config-id)): The id of the second float [Output Component](#output) to use for this light.
+- **pin_a** (**Required**, [ID](/guides/configuration-types#id)): The id of the first float [Output Component](#output) to use for this light.
+- **pin_b** (**Required**, [ID](/guides/configuration-types#id)): The id of the second float [Output Component](#output) to use for this light.
 - All other options from [Light](#config-light).
 
-{{< note >}}
-As we are switching the H-bridge in software, the light may glitch every so often when other tasks run on the MCU.
-
-{{< /note >}}
+> [!NOTE]
+> As we are switching the H-bridge in software, the light may glitch every so often when other tasks run on the MCU.
 
 ## See Also
 

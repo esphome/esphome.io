@@ -35,10 +35,10 @@ display:
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Display Rendering Engine](#display-engine) for more information.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `1s`.
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to re-draw the screen. Defaults to `1s`.
 - **sdl_options** (*Optional*, string): Build arguments if required to specify include or library paths. Should not be required if SDL2 is properly installed.
 - **pages** (*Optional*, list): Show pages instead of a single lambda. See [Display Pages](#display-pages).
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **window_options** (*Optional*): Options that affect how the display renders on the host system. All default to false, except position, which defaults to SDL's undefined position
 
   - **position** (*Optional*):
@@ -50,12 +50,10 @@ display:
   - **skip_taskbar** (*Optional*, boolean): Whether to skip adding a taskbar icon for the display window or not
   - **resizable** (*Optional*, boolean): Whether the display window can be manually resized
 
-{{< note >}}
-To build with this display you must have the
-[SDL2](https://wiki.libsdl.org/SDL2/Installation) package installed. The Sodium encryption library will
-also be required for any API calls. See below for installation hints.
-
-{{< /note >}}
+> [!NOTE]
+> To build with this display you must have the
+> [SDL2](https://wiki.libsdl.org/SDL2/Installation) package installed. The Sodium encryption library will
+> also be required for any API calls. See below for installation hints.
 
 ## MacOS SDL2 Installation
 

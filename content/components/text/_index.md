@@ -11,10 +11,9 @@ ESPHome has support for components to create a text entity. A text entity is
 like a `text_sensor` that can read a value from a device, but is useful when that value
 can be set by the user/frontend.
 
-{{< note >}}
-Home Assistant Core 2023.11 or higher is required for ESPHome text entities to work.
+> [!NOTE]
+> Home Assistant Core 2023.11 or higher is required for ESPHome text entities to work.
 
-{{< /note >}}
 {{< anchor "config-text" >}}
 
 ## Base Text Configuration
@@ -34,11 +33,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (**Required**, string): The name for the text.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the text to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> you want the text to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the text in the frontend.
 - **internal** (*Optional*, boolean): Mark this component as internal. Internal components will
@@ -60,7 +57,7 @@ you want the text to use that name, you can set `name: None`.
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#text-on_value).
 
 MQTT Options:
@@ -90,13 +87,13 @@ text:
             args: ["x.c_str()"]
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "text-set_action" >}}
 
 ### `text.set` Action
 
-This is an [Action](#config-action) for setting a text state.
+This is an [Action](/automations/actions#all-actions) for setting a text state.
 
 ```yaml
 - text.set:
@@ -106,8 +103,8 @@ This is an [Action](#config-action) for setting a text state.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the text to set.
-- **value** (**Required**, string, [templatable](#config-templatable)):
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the text to set.
+- **value** (**Required**, string, [templatable](/automations/templates)):
   The value to set the text to.
 
 {{< anchor "text-lambda_calls" >}}
