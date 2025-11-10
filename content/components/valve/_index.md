@@ -10,10 +10,9 @@ params:
 The `valve` component is a generic representation of valves in ESPHome. A valve can (currently) either be *closed* or
 *open* and supports three commands: *open*, *close* and *stop*.
 
-{{< note >}}
-To use a valve in Home Assistant requires Home Assistant 2024.5 or later.
+> [!NOTE]
+> To use a valve in Home Assistant requires Home Assistant 2024.5 or later.
 
-{{< /note >}}
 {{< img src="valve-ui.png" alt="Image" class="align-center" >}}
 
 {{< anchor "config-valve" >}}
@@ -33,11 +32,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the valve. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and you want the valve
-to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and you want the valve
+> to use that name, you can set `name: None`.
 
 - **device_class** (*Optional*, string): The device class for the sensor. See
   <https://www.home-assistant.io/components/valve/> for a list of available options.
@@ -68,7 +65,7 @@ MQTT options:
 
 ## `valve.open` Action
 
-This [action](#config-action) opens the valve with the given ID when executed.
+This [action](/automations/actions#all-actions) opens the valve with the given ID when executed.
 
 ```yaml
 on_...:
@@ -76,21 +73,20 @@ on_...:
     - valve.open: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_open();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_open();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-close_action" >}}
 
 ## `valve.close` Action
 
-This [action](#config-action) closes the valve with the given ID when executed.
+This [action](/automations/actions#all-actions) closes the valve with the given ID when executed.
 
 ```yaml
 on_...:
@@ -98,21 +94,20 @@ on_...:
     - valve.close: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_close();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_close();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-stop_action" >}}
 
 ## `valve.stop` Action
 
-This [action](#config-action) stops the valve with the given ID when executed.
+This [action](/automations/actions#all-actions) stops the valve with the given ID when executed.
 
 ```yaml
 on_...:
@@ -120,21 +115,20 @@ on_...:
     - valve.stop: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_stop();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_stop();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-toggle_action" >}}
 
 ## `valve.toggle` Action
 
-This [action](#config-action) toggles the valve with the given ID when executed, cycling through the states
+This [action](/automations/actions#all-actions) toggles the valve with the given ID when executed, cycling through the states
 close/stop/open/stop... This allows the valve to be controlled by a single push button.
 
 ```yaml
@@ -143,21 +137,20 @@ on_...:
     - valve.toggle: valve_1
 ```
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> call.set_command_toggle();
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-call.set_command_toggle();
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-control_action" >}}
 
 ## `valve.control` Action
 
-This [action](#config-action) is a more generic version of the other valve actions and allows all valve attributes
+This [action](/automations/actions#all-actions) is a more generic version of the other valve actions and allows all valve attributes
 to be set.
 
 ```yaml
@@ -170,7 +163,7 @@ on_...:
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The valve to control.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The valve to control.
 - **stop** (*Optional*, boolean): Whether to stop the valve.
 - **state** (*Optional*, string): The state to set the valve to - one of `OPEN` or `CLOSE`.
 - **position** (*Optional*, float): The valve position to set.
@@ -178,17 +171,16 @@ Configuration variables:
   - `0.0` = `0%` = `CLOSED`
   - `1.0` = `100%` = `OPEN`
 
-{{< note >}}
-This action can also be expressed in [lambdas](#config-lambda):
+> [!NOTE]
+> This action can also be expressed in [lambdas](#config-lambda):
+>
+> ```cpp
+> auto call = id(valve_1).make_call();
+> // set attributes
+> call.set_position(0.5);
+> call.perform();
+> ```
 
-```cpp
-auto call = id(valve_1).make_call();
-// set attributes
-call.set_position(0.5);
-call.perform();
-```
-
-{{< /note >}}
 {{< anchor "valve-lambda_calls" >}}
 
 ## Lambdas

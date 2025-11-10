@@ -42,11 +42,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name for the sensor. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the sensor to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> you want the sensor to use that name, you can set `name: None`.
 
 - **unit_of_measurement** (*Optional*, string): Manually set the unit
   of measurement the sensor should advertise its values with. This does
@@ -96,39 +94,38 @@ you want the sensor to use that name, you can set `name: None`.
 
 Automations:
 
-- **on_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a new value is published. See [`on_value`](#sensor-on_value).
 
-- **on_value_range** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_value_range** (*Optional*, [Automation](/automations)): An automation to perform
   when a published value transition from outside to a range to inside. See [`on_value_range`](#sensor-on_value_range).
 
-- **on_raw_value** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_raw_value** (*Optional*, [Automation](/automations)): An automation to perform
   when a raw value is received that hasn't passed through any filters. See [`on_raw_value`](#sensor-on_raw_value).
 
 MQTT Options:
 
-- **expire_after** (*Optional*, [Time](#config-time)): Manually set the time in which
+- **expire_after** (*Optional*, [Time](/guides/configuration-types#time)): Manually set the time in which
   the sensor values should be marked as “expired”/“unknown”. Not providing any value means no expiry.
 
 - All other options from [MQTT Component](#config-mqtt-component).
 
-{{< note >}}
-If you're trying to setup filters for a sensor that has multiple outputs - for example a DHT22 which
-reports temperature *and* humidity - put the `filters` option into each sensor output like this:
+> [!NOTE]
+> If you're trying to setup filters for a sensor that has multiple outputs - for example a DHT22 which
+> reports temperature *and* humidity - put the `filters` option into each sensor output like this:
+>
+> ```yaml
+> sensor:
+>   - platform: dht
+>     # ...
+>     temperature:
+>       filters:
+>         # ...
+>     humidity:
+>       filters:
+>         # ...
+> ```
 
-```yaml
-sensor:
-  - platform: dht
-    # ...
-    temperature:
-      filters:
-        # ...
-    humidity:
-      filters:
-        # ...
-```
-
-{{< /note >}}
 {{< anchor "sensor-filters" >}}
 
 ## Sensor Filters
@@ -328,7 +325,7 @@ sensor:
             red: !lambda "return x/255;"
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "sensor-on_value_range" >}}
 
@@ -365,7 +362,7 @@ Configuration variables:
 
 - **above** (*Optional*, float): The minimum for the trigger.
 - **below** (*Optional*, float): The maximum for the trigger.
-- See [Automation](#automation).
+- See [Automation](/automations).
 
 {{< anchor "sensor-on_raw_value" >}}
 
@@ -386,7 +383,7 @@ sensor:
             red: !lambda "return x/255;"
 ```
 
-Configuration variables: See [Automation](#automation).
+Configuration variables: See [Automation](/automations).
 
 {{< anchor "sensor-in_range_condition" >}}
 

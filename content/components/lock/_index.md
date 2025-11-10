@@ -25,11 +25,9 @@ Configuration variables:
 - **id** (*Optional*, string): Manually specify the ID for code generation. At least one of **id** and **name** must be specified.
 - **name** (*Optional*, string): The name of the lock. At least one of **id** and **name** must be specified.
 
-{{< note >}}
-If you have a [friendly_name](#esphome-configuration_variables) set for your device and
-you want the lock to use that name, you can set `name: None`.
-
-{{< /note >}}
+> [!NOTE]
+> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> you want the lock to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the
   lock in the frontend.
@@ -38,10 +36,10 @@ you want the lock to use that name, you can set `name: None`.
   not be exposed to the frontend (like Home Assistant). Only specifying an `id` without
   a `name` will implicitly set this to true.
 
-- **on_lock** (*Optional*, [Action](#config-action)): An automation to perform
+- **on_lock** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the lock is locked. See [`lock.on_lock` / `lock.on_unlock` Trigger](#lock-on_lock_unlock_trigger).
 
-- **on_unlock** (*Optional*, [Action](#config-action)): An automation to perform
+- **on_unlock** (*Optional*, [Action](/automations/actions#all-actions)): An automation to perform
   when the lock is unlocked. See [`lock.on_lock` / `lock.on_unlock` Trigger](#lock-on_lock_unlock_trigger)..
 
 - **disabled_by_default** (*Optional*, boolean): If true, then this entity should not be added to any client's frontend,
@@ -96,7 +94,7 @@ on_...:
 
 ### `lock.is_locked` / `lock.is_unlocked` Condition
 
-This [Condition](#config-condition) checks if the given lock is LOCKED (or UNLOCKED).
+This [Condition](/automations/actions#all-conditions) checks if the given lock is LOCKED (or UNLOCKED).
 
 ```yaml
 # In some trigger:
