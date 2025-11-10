@@ -25,7 +25,7 @@ sensor:
 
 ## Configuration variables
 
-- **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to observe for the
+- **pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The pin to observe for the
   pulse width.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the sensor.

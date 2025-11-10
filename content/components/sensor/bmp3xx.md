@@ -74,7 +74,7 @@ sensor:
 
 ### Configuration variables
 
-- **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The Chip Select (CS) pin.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The Chip Select (CS) pin.
 - **temperature** (*Optional*): The information for the temperature sensor.
 
   - **oversampling** (*Optional*): The oversampling parameter for the temperature sensor.

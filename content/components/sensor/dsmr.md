@@ -53,7 +53,7 @@ Configuration variables:
   if you are reading from a smart meter that sends large telegrams. Defaults to `1500`.
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
-- **request_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin that can be used for controlling
+- **request_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The pin that can be used for controlling
   the P1 port's Data Request pin. Defaults to not using a Data Request pin.
   See [Using the P1 Data Request pin](#sensor-dsmr-request_pin).
 

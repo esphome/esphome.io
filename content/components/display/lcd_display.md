@@ -93,14 +93,14 @@ display:
 - **dimensions** (**Required**, string): The dimensions of the display with `COLUMNSxROWS`. If you're not
   sure, power the display on, turn contrast high up and just count them.
 
-- **data_pins** (**Required**, list of [pins](#config-pin_schema)): A list of the data pins you
+- **data_pins** (**Required**, list of [pins](/guides/configuration-types#pin)): A list of the data pins you
   have hooked up to the LCD. The list can either be 4 items long (operating in 4-bit mode with
   either the first 4 data pins connected or the last 4 data pins connected), or 8 items long (when you have
   connected all 8 data pins).
 
-- **enable_pin** (**Required**, [pin](#config-pin_schema)): The pin you have `E` (`06`  ) hooked up to.
-- **rs_pin** (**Required**, [pin](#config-pin_schema)): The pin you have `RS` (`04`  ) hooked up to.
-- **rw_pin** (*Optional*, [pin](#config-pin_schema)): Optionally set the pin you have `R/W` (`05`  ) hooked up to. You can also just permanently connect that pin to `GND`.
+- **enable_pin** (**Required**, [pin](/guides/configuration-types#pin)): The pin you have `E` (`06`  ) hooked up to.
+- **rs_pin** (**Required**, [pin](/guides/configuration-types#pin)): The pin you have `RS` (`04`  ) hooked up to.
+- **rw_pin** (*Optional*, [pin](/guides/configuration-types#pin)): Optionally set the pin you have `R/W` (`05`  ) hooked up to. You can also just permanently connect that pin to `GND`.
 - **lambda** (*Optional*, [lambda](#config-lambda)): The lambda to use for rendering the content on the display.
   See [Rendering Lambda](#display-lcd_lambda) for more information.
 

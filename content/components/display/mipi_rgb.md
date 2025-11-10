@@ -88,18 +88,18 @@ display:
 
 - **data_pins** (**Required**): A list of pins used for the databus. Specified in 3 groups.
 
-  - **red** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the red databits, listed from least
+  - **red** (**Required**, [Pin Schema](/guides/configuration-types#pin)): Exactly 5 pins for the red databits, listed from least
     to most significant bit.
-  - **green** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 6 pins for the green databits, listed from
+  - **green** (**Required**, [Pin Schema](/guides/configuration-types#pin)): Exactly 6 pins for the green databits, listed from
     least to most significant bit.
-  - **blue** (**Required**, [Pin Schema](#config-pin_schema)): Exactly 5 pins for the blue databits, listed from
+  - **blue** (**Required**, [Pin Schema](/guides/configuration-types#pin)): Exactly 5 pins for the blue databits, listed from
     least to most significant bit.
 
-- **de_pin** (**Required**, [Pin Schema](#config-pin_schema)): The DE pin.
-- **pclk_pin** (**Required**, [Pin Schema](#config-pin_schema)): The PCLK pin.
-- **hsync_pin** (**Required**, [Pin Schema](#config-pin_schema)): The Horizontal sync pin.
-- **vsync_pin** (**Required**, [Pin Schema](#config-pin_schema)): The Vertical sync pin.
-- **reset_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The RESET pin.
+- **de_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The DE pin.
+- **pclk_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The PCLK pin.
+- **hsync_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The Horizontal sync pin.
+- **vsync_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The Vertical sync pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The RESET pin.
 - **hsync_pulse_width** (*Optional*, int): The horizontal sync pulse width.
 - **hsync_front_porch** (*Optional*, int): The horizontal front porch length.
 - **hsync_back_porch** (*Optional*, int): The horizontal back porch length.
@@ -117,7 +117,7 @@ for suitable values. These specify timing requirements for the display.
 
 Displays needing a custom init sequence require an SPI bus to be configured, plus these options:
 
-- **dc_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The DC pin.
+- **dc_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The DC pin.
 - **data_rate** (*Optional*): Set the data rate of the SPI interface to the display. One of `80MHz` , `40MHz` ,
     `20MHz` , `10MHz` , `5MHz` , `2MHz` , `1MHz` (default), `200kHz` , `75kHz` or `1kHz` .
 - **spi_mode** (*Optional*): Set the mode for the SPI interface to the display. Default is `MODE0` but some displays

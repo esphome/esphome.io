@@ -33,7 +33,7 @@ output:
 - **period** (**Required**, [Time](#config-time)): The duration of each cycle. (i.e. a 10s
   period at 50% duty would result in the pin being turned on for 5s, then off for 5s)
 
-- **pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin to pulse.
+- **pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The pin to pulse.
 - **state_change_action** (*Optional*, [Automation](/automations)): An automation to perform when the load is switched. If a lambda is used the boolean `state` parameter holds the new status.
 - **turn_on_action** (*Optional*, [Automation](/automations)): An automation to perform when the load is turned on. Can be used to control for example a switch or output component.
 - **turn_off_action** (*Optional*, [Automation](/automations)): An automation to perform when the load is turned off. `turn_on_action` and `turn_off_action` must be configured together.

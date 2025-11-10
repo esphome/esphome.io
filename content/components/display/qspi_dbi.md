@@ -62,9 +62,9 @@ display:
   - `AXS15231`
 
 - **init_sequence** (*Optional*, A list of byte arrays): Specifies the init sequence for the display. This is required when using the `CUSTOM` model - but may be empty. If specified for other models this data will be sent after the pre-configured sequence.
-- **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The chip select pin.
-- **reset_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The RESET pin.
-- **enable_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The display enable pin.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The chip select pin.
+- **reset_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The RESET pin.
+- **enable_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The display enable pin.
 - **brightness** (*Optional*, int): A brightness value in the range 0-255
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to re-draw the screen. Defaults to `5s`.
 - **auto_clear_enabled** (*Optional*, boolean): Whether to automatically clear the display data before each lambda call,

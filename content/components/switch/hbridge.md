@@ -25,8 +25,8 @@ switch:
 
 ## Configuration variables
 
-- **on_pin** (**Required**, [Pin Schema](#config-pin_schema)): The GPIO pin to pulse to turn on the switch.
-- **off_pin** (**Required**, [Pin Schema](#config-pin_schema)): The GPIO pin to pulse to turn off the switch.
+- **on_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The GPIO pin to pulse to turn on the switch.
+- **off_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The GPIO pin to pulse to turn off the switch.
 - **pulse_length** (*Optional*, [Time](#config-time)): The length in milliseconds of the pulse sent on `on_pin` and `off_pin` to change switch state. Defaults to `100 ms`.
 - **wait_time** (*Optional*, [Time](#config-time)): The time in milliseconds to delay between pulses on `off_pin` and `on_pin`. Defaults to no delay.
 - **optimistic** (*optional*, boolean): Whether to operate in optimistic mode - when in this mode,

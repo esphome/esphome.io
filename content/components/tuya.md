@@ -58,7 +58,7 @@ Here is another example output for a Tuya ME-81H thermostat:
 - **time_id** (*Optional*, [ID](/guides/configuration-types#id)): Some Tuya devices support obtaining local time from ESPHome.
   Specify the ID of the {{< docref "time/" >}} which will be used.
 
-- **status_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Some Tuya devices support WiFi status reporting ONLY
+- **status_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): Some Tuya devices support WiFi status reporting ONLY
   through gpio pin.
   Specify the pin reported in the config dump or leave empty otherwise.
   More about this on the [Tuya Developer Documentation](https://developer.tuya.com/en/docs/iot/tuya-cloud-universal-serial-port-access-protocol?id=K9hhi0xxtn9cb#title-6-Query%20working%20mode).

@@ -54,8 +54,8 @@ Base Configuration:
 
 - **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the UART hub.
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
-- **sensing_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Pin connected to the reader's finger detection signal (WAKEUP) output.
-- **sensor_power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): Output pin responsible for toogling the sensor power on and off.
+- **sensing_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): Pin connected to the reader's finger detection signal (WAKEUP) output.
+- **sensor_power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): Output pin responsible for toogling the sensor power on and off.
 - **password** (*Optional*, int): Password to use for authentication. Defaults to `0x00`.
 - **new_password** (*Optional*, int): Sets a new password to use for authentication. See [Setting a New Password](#fingerprint_grow-set_new_password) for more information.
 - **idle_period_to_sleep** (*Optional*, [Time](#config-time)): The sensor idle period to wait before powering it off (sleep). Defaults to `5s`. See [Sleep Mode](#fingerprint_grow-sleep_mode) for more information.

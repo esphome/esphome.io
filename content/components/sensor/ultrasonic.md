@@ -36,10 +36,10 @@ sensor:
 
 ## Configuration variables
 
-- **trigger_pin** (**Required**, [Pin Schema](#config-pin_schema)): The output pin to
+- **trigger_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The output pin to
   periodically send the trigger pulse to.
 
-- **echo_pin** (**Required**, [Pin Schema](#config-pin_schema)): The input pin on which to
+- **echo_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The input pin on which to
   wait for the echo.
 
 - **update_interval** (*Optional*, [Time](#config-time)): The interval to check the

@@ -71,7 +71,7 @@ binary_sensor:
 
 - **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23S08 component.
 - **interrupt** (*Optional*): Set this pin to trigger the INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
-- All other options from [Pin Schema](#config-pin_schema)
+- All other options from [Pin Schema](/guides/configuration-types#pin)
 
 {{< anchor "mcp23s17-label" >}}
 
@@ -136,7 +136,7 @@ binary_sensor:
 
 - **mcp23xxx** (**Required**, [ID](/guides/configuration-types#id)): The id of the MCP23S17 component.
 - **interrupt** (*Optional*): Set this pin to trigger the port INT pin on the component. Can be one of `CHANGE`, `RISING`, `FALLING`.
-- All other options from [Pin Schema](#config-pin_schema)
+- All other options from [Pin Schema](/guides/configuration-types#pin)
 
 ## See Also
 

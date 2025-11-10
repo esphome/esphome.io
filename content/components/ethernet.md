@@ -84,7 +84,7 @@ ethernet:
   - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. `0x1FFA`  )
   - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07` for page 7)
 
-- **power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin controlling the
+- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
 ### SPI configuration variables

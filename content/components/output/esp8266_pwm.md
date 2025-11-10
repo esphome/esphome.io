@@ -29,7 +29,7 @@ light:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to use PWM on.
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The pin to use PWM on.
 - **id** (**Required**, [ID](/guides/configuration-types#id)): The id to use for this output component.
 - **frequency** (*Optional*, frequency): The frequency to run the PWM with. Lower frequencies
   have more visual artifacts, but can represent much more colors. Defaults to `1000 Hz`.

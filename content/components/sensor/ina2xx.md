@@ -103,7 +103,7 @@ sensor:
 ### Configuration variables
 
 - **model** (**Required**, string): The model of the INA2xx sensor. Options are `INA229`, `INA239`.
-- **cs_pin** (**Required**, [Pin Schema](#config-pin_schema)): The Chip Select (CS) pin.
+- **cs_pin** (**Required**, [Pin Schema](/guides/configuration-types#pin)): The Chip Select (CS) pin.
 - **shunt_resistance** (**Required**, float): The value of the shunt resistor used for current calculation. No default value.
 - **max_current** (**Required**, float): The maximum current you are expecting. Component will use it to
   calibrate the sensor. No default value.
