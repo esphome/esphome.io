@@ -33,12 +33,14 @@ The network component can automatically apply optimized settings for components 
 The optimization level depends on whether PSRAM is guaranteed to be available (configured via the {{< docref "psram" >}} component with `ignore_not_found: false`):
 
 **With PSRAM guaranteed:**
+
 - TCP send/receive buffers: 512KB windows with window scaling enabled
 - WiFi RX buffers: 512 dynamic buffers
 - WiFi TX buffers: 32 static buffers
 - AMPDU aggregation: Optimized block acknowledgment windows
 
 **Without PSRAM (or when not guaranteed):**
+
 - TCP send/receive buffers: 65KB windows
 - WiFi RX buffers: 64 dynamic buffers
 - WiFi TX buffers: 64 dynamic buffers
