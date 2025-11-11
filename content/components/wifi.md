@@ -248,8 +248,9 @@ wifi:
 - **hidden** (*Optional*, boolean): Whether this network is hidden. Defaults to false.
   If you add this option you also have to specify ssid.
 
-- **priority** (*Optional*, float): The priority of this network. After each time, the network with
+- **priority** (*Optional*, int): The priority of this network (range: -128 to 127). After each time, the network with
   the highest priority is chosen. If the connection fails, the priority is decreased by one.
+  If all tracked BSSIDs have identical priorities, they are automatically reset to 0 to start fresh.
   Defaults to `0`.
 
 {{< anchor "eap" >}}
