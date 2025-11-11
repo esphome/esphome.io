@@ -112,7 +112,7 @@ nrf52:
 ### Configuration variables
 
 - **voltage** (**Required**, voltage): The desired output voltage - must be one of
-  1.8V, 2.1V, 2.4V, 2.7V, 3.0V, 3.3V, default.
+  1.8V, 2.1V, 2.4V, 2.7V, 3.0V, 3.3V.
 - **uicr_erase** (**Optional**, bool): If set to true, the User Information Configuration Registers (UICR)
 will be erased before writing the new voltage setting.
 ⚠️ Warning: Enabling this may cause the board to fail to boot if misconfigured. Default is false.
