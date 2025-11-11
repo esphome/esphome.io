@@ -10,7 +10,7 @@ params:
 {{< anchor "udp" >}}
 
 This component allows reception and transmission of data over a network using the [User Datagram Protocol (UDP)](https://en.wikipedia.org/wiki/User_Datagram_Protocol).
-In conjunction with the [Packet Transport Component](#packet-transport) it can be used to broadcast sensor data.
+In conjunction with the [Packet Transport Component](/components/packet_transport#packet-transport) it can be used to broadcast sensor data.
 
 ```yaml
 # Example configuration entry
@@ -21,7 +21,7 @@ udp:
 
 ## Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 - **port** (*Optional*, int): The destination UDP port number to use. Defaults to `18511`. Different listen and broadcast ports can be specified via a map instead of a single port number.:
   - **listen_port** (**Required**, int): The port to listen on for received packets.
   - **broadcast_port** (**Required**, int): The port to send packets to.
@@ -40,8 +40,8 @@ even provide any indication whether data has been successfully delivered or not.
 
 To write data to the UDP port, use the `udp.write` action. This action takes a single argument, the data to write to the UDP port.
 
-- **id** (*Optional*, [ID](#config-id)): The id of the UDP component to use. If there is only one UDP component, this can be omitted.
-- **data** (**Required**, [templatable](#config-templatable), string or list of bytes): The data to write to the UDP port.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): The id of the UDP component to use. If there is only one UDP component, this can be omitted.
+- **data** (**Required**, [templatable](/automations/templates), string or list of bytes): The data to write to the UDP port.
 
 ## On Receive Trigger
 
@@ -58,7 +58,7 @@ udp:
 
 ## Examples
 
-See the [Packet Transport Component](#packet-transport) for examples of how to use this component.
+See the [Packet Transport Component](/components/packet_transport#packet-transport) for examples of how to use this component.
 
 A more complex example is shown below:
 
@@ -119,5 +119,5 @@ binary_sensor:
 - {{< docref "/components/packet_transport/udp" >}}
 - {{< docref "/components/binary_sensor/packet_transport" >}}
 - {{< docref "/components/sensor/packet_transport" >}}
-- [Automation](#automation)
+- [Automation](/automations)
 - {{< apiref "udp/udp_component.h" "udp/udp_component.h" >}}
