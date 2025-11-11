@@ -67,7 +67,7 @@ After uploading the ESP32 will immediately try to scan for BLE devices such as t
 you will see messages like this (please note the TP357S name):
 
 ```log
-13:31:53	[D]	[ble_adv:042]	BLE device address: XX:XX:XX:XX:XX:XX name: TP357S (XXXX)
+[13:36:43][D][ble_adv:042]: BLE device address: XX:XX:XX:XX:XX:XX name: TP357S (XXXX)
 ```
 
 Note that it can sometimes take some time for the first BLE broadcast to be received.
