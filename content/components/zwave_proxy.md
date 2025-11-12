@@ -13,19 +13,17 @@ The `zwave_proxy` component allows proxying of Z-Wave data frames between a
 the {{< docref "/components/wifi" >}} or {{< docref "/components/ethernet" >}}. This allows for more flexibility when
 placing your Z-Wave hardware within your home.
 
-As the Z-Wave modem SoC communicates via a serial connection, you need to have a [UART](#uart) defined in your ESPHome
+As the Z-Wave modem SoC communicates via a serial connection, you need to have a [UART](/components/uart) defined in your ESPHome
 device's configuration.
 
 In addition, the `zwave_proxy` expects to proxy messages via ESPHome's {{< docref "/components/api" >}}; this is also
 required in your configuration.
 
-{{< note >}}
-Number of connections
-
-While ESPHome supports multiple API connections/clients, only a single client may subscribe to and receive proxied
-Z-Wave data frames at any given time.
-
-{{< /note >}}
+> [!NOTE]
+> Number of connections
+>
+> While ESPHome supports multiple API connections/clients, only a single client may subscribe to and receive proxied
+> Z-Wave data frames at any given time.
 
 ## Configuration
 
@@ -34,7 +32,7 @@ Z-Wave data frames at any given time.
 zwave_proxy:
 ```
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID for the `zwave_proxy`.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID for the `zwave_proxy`.
 
 ## Maximizing performance
 

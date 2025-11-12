@@ -14,10 +14,8 @@ serial port and through MQTT topics (if there is an MQTT client in the
 configuration). By default, all logs with a severity `DEBUG` or higher will be shown.
 Increasing the log level severity (to e.g `INFO` or `WARN`  ) can help with the performance of the application and memory size.
 
-{{< note >}}
-The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
-
-{{< /note >}}
+> [!NOTE]
+> The "severity" of a log message represents the importance of the message, i.e. how critical it is. The severity levels are defined in the [log levels](#logger-log_levels) section.
 
 ```yaml
 # Example configuration entry
@@ -37,7 +35,11 @@ logger:
 - **logs** (*Optional*, mapping): Manually set the log level for a
    specific component or tag. See [Manual Log Levels for more information](#logger-manual_tag_specific_levels).
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **runtime_tag_levels** (*Optional*, boolean): Enable runtime per-tag log level changes. This is automatically enabled
+   when `logs` is configured or when `logger.set_level` is used with a `tag` parameter. Only needs to be manually
+   enabled if calling `set_log_level()` from a lambda or external component. Defaults to `false` (auto-enabled as needed).
+
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
 Advanced settings:
 
@@ -55,7 +57,7 @@ Advanced settings:
 - **esp8266_store_log_strings_in_flash** (*Optional*, boolean): If set to false, disables storing
    log strings in the flash section of the device (uses more memory). Defaults to true.
 
-- **on_message** (*Optional*, [Automation](#automation)): An action to be
+- **on_message** (*Optional*, [Automation](/automations)): An action to be
    performed when a message is to be logged. The variables `int level`, `const char* tag` and
    `const char* message` are available for lambda processing.
 
@@ -92,6 +94,7 @@ so if you use any other configuration you will not get log messages over the on-
 | ESP32-P4 | TX: 37, RX: 38 | N/A | TX: 10, RX: 11 | N/A | N/A | 24/25 |
 | ESP32-S2 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | N/A | 19/20 | N/A |
 | ESP32-S3 | TX: 43, RX: 44 | N/A | TX: 17, RX: 18 | Undefined | 19/20 | 19/20 |
+| NRF52    | pins varies by board | N/A | pins varies by board | Undefined | D+/D- | N/A |
 
 *Undefined* means that the logger component cannot use this harware UART at this time.
 
@@ -114,7 +117,8 @@ the original ESP32 or ESP8266) continue to use USB-to-serial bridge ICs for comm
 | ESP32-P4 | `USB_SERIAL_JTAG` |
 | ESP32-S2 | `USB_CDC`         |
 | ESP32-S3 | `USB_SERIAL_JTAG` |
-| RP2040 | `USB_CDC` |
+| RP2040   | `USB_CDC` |
+| NRF52    | `USB_CDC` |
 
 {{< anchor "logger-log_levels" >}}
 
@@ -176,6 +180,10 @@ logger:
     mqtt.client: ERROR
 ```
 
+> [!NOTE]
+> When using `logs`, runtime per-tag log level support is automatically enabled. When this feature is disabled
+> (the default when `logs` is not configured), the logger is optimized for better performance and reduced memory usage.
+
 The `level` option controls which log statements are included in the
 firmware. You cannot set a tag to a more detailed level than
 the global one, because log statements with lower severity than that level are not compiled in.
@@ -198,7 +206,7 @@ However, the `wifi` tag has `VERBOSE` level enabled, and shown.
 
 Print a formatted message to the logs.
 
-In the `format` option, you can use `printf`  -style formatting (see [Formatted Text](#display-printf)).
+In the `format` option, you can use `printf`  -style formatting (see [Formatted Text](/components/display#display-printf)).
 
 ```yaml
 on_...:
@@ -213,8 +221,8 @@ on_...:
 
 Configuration options:
 
-- **format** (**Required**, string): The format for the message in [printf-style](#display-printf).
-- **args** (*Optional*, list of [lambda](#config-lambda)): The optional arguments for the
+- **format** (**Required**, string): The format for the message in [printf-style](/components/display#display-printf).
+- **args** (*Optional*, list of [lambda](/automations/templates#config-lambda)): The optional arguments for the
    format message.
 
 - **level** (*Optional*, string): The [log level](#logger-log_levels) to print the message
@@ -240,6 +248,11 @@ on_...:
         tag: mqtt.client
 ```
 
+> [!NOTE]
+> When using `logger.set_level` with a `tag` parameter, runtime per-tag log level support is automatically enabled.
+> If you need to call `set_log_level()` directly from a lambda or external component, you must manually enable
+> `runtime_tag_levels: true` in the logger configuration.
+
 ## Logger Automation
 
 {{< anchor "logger-on_message" >}}
@@ -247,7 +260,7 @@ on_...:
 ### `on_message`
 
 This automation will be triggered when a new message is added to the log.
-In [lambdas](#config-lambda) you can get the message, log level and tag from the trigger
+In [lambdas](/automations/templates#config-lambda) you can get the message, log level and tag from the trigger
 using `message` (`const char *`  ), `level` (`int`  ) and `tag` (`const char *`  ).
 
 ```yaml
@@ -262,11 +275,9 @@ logger:
             return "Triggered on_message with level " + to_string(level) + ", tag " + tag + " and message " + message;
 ```
 
-{{< note >}}
-Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
-and the `ESP_LOGx` logging macros in this automation.
-
-{{< /note >}}
+> [!NOTE]
+> Logging will not work in the `on_message` trigger. You can't use the [logger.log](#logger-log_action) action
+> and the `ESP_LOGx` logging macros in this automation.
 
 ## See Also
 

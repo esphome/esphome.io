@@ -62,15 +62,15 @@ ethernet:
 
 ### RMII configuration variables
 
-- **mdc_pin** (**Required**, [Pin](#config-pin)): The MDC pin of the board.
+- **mdc_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDC pin of the board.
   Usually this is `GPIO23`.
 
-- **mdio_pin** (**Required**, [Pin](#config-pin)): The MDIO pin of the board.
+- **mdio_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The MDIO pin of the board.
   Usually this is `GPIO18`.
 
 - **clk** (**Required**, mapping):
 
-  - **pin** (**Required**, [Pin](#config-pin)): The RMII clock pin.
+  - **pin** (**Required**, [Pin](/guides/configuration-types#pin)): The RMII clock pin.
   - **mode** (**Required**, string): The clock mode of the data lines. See your board's
     datasheet for more details. Must be one of the following values:
 
@@ -84,25 +84,25 @@ ethernet:
   - **value** (**Required**, hex): The value of the register to set as a hex number (e.g. `0x1FFA`  )
   - **page_id** (*Optional*, hex): (RTL8201 only) Register page number to select before writing (e.g. `0x07` for page 7)
 
-- **power_pin** (*Optional*, [Pin Schema](#config-pin_schema)): The pin controlling the
+- **power_pin** (*Optional*, [Pin Schema](/guides/configuration-types#pin-schema)): The pin controlling the
   power/reset status of the Ethernet controller. Leave unspecified for no power pin (default).
 
 ### SPI configuration variables
 
-- **clk_pin** (**Required**, [Pin](#config-pin)): The SPI clock pin.
-- **mosi_pin** (**Required**, [Pin](#config-pin)): The SPI MOSI pin.
-- **miso_pin** (**Required**, [Pin](#config-pin)): The SPI MISO pin.
-- **cs_pin** (**Required**, [Pin](#config-pin)): The SPI chip select pin.
-- **interrupt_pin** (*Optional*, [Pin](#config-pin)): The interrupt pin.
+- **clk_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI clock pin.
+- **mosi_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MOSI pin.
+- **miso_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI MISO pin.
+- **cs_pin** (**Required**, [Pin](/guides/configuration-types#pin)): The SPI chip select pin.
+- **interrupt_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The interrupt pin.
   This variable is **required** for older frameworks. See below.
 
-- **reset_pin** (*Optional*, [Pin](#config-pin)): The reset pin.
+- **reset_pin** (*Optional*, [Pin](/guides/configuration-types#pin)): The reset pin.
 - **clock_speed** (*Optional*, float): The SPI clock speed.
   Any frequency between `8MHz` and `80MHz` is allowed, but the nearest integer division
   of `80MHz` is used, i.e. `16MHz` (`80MHz` / 5) is used when `15MHz` is configured.
   Default: `26.67MHz`.
 
-- **polling_interval** (*Optional*, [Time](#config-time)): If `interrupt_pin` is not set,
+- **polling_interval** (*Optional*, [Time](/guides/configuration-types#time)): If `interrupt_pin` is not set,
   set the time interval for periodic polling. Minimum is 1ms, Defaults to 10ms.
   Older frameworks may not support this variable. See below for details.
 
@@ -139,20 +139,19 @@ If you are using a framework that does not support SPI-based ethernet modules wi
   For example, if it's set to `.local`, all uploads will be sent to `<HOSTNAME>.local`.
   Defaults to `.local`.
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation.
+- **mac_address** (*Optional*, MAC Address): Set the MAC address of the ethernet interface.
 
-{{< note >}}
-If your Ethernet board is not designed with an ESP32 built in, it's common to attempt
-to use flying leads, dupont wires, etc. to connect the Ethernet controller to the ESP32.
-This approach is likely to fail, however, as the Ethernet interface uses a high frequency
-clock signal that will not travel reliably over these types of connections. For more
-information and wiring details refer to the link in the *See also* section.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation.
 
-{{< /note >}}
-{{< note >}}
-SPI based chips do *not* use {{< docref "spi/" >}}. This means that SPI pins can't be shared with other devices.
+> [!NOTE]
+> If your Ethernet board is not designed with an ESP32 built in, it's common to attempt
+> to use flying leads, dupont wires, etc. to connect the Ethernet controller to the ESP32.
+> This approach is likely to fail, however, as the Ethernet interface uses a high frequency
+> clock signal that will not travel reliably over these types of connections. For more
+> information and wiring details refer to the link in the *See also* section.
 
-{{< /note >}}
+> [!NOTE]
+> SPI based chips do *not* use {{< docref "spi/" >}}. This means that SPI pins can't be shared with other devices.
 
 ## Configuration examples
 
@@ -170,10 +169,9 @@ ethernet:
   power_pin: GPIO12
 ```
 
-{{< note >}}
-WROVER version of Olimex POE cards change CLK to pin GPIO0.
+> [!NOTE]
+> WROVER version of Olimex POE cards change CLK to pin GPIO0.
 
-{{< /note >}}
 **Olimex ESP32-EVB**:
 
 ```yaml
@@ -284,10 +282,9 @@ ethernet:
       page_id: 0x07
 ```
 
-{{< note >}}
-Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY.
+> [!NOTE]
+> Revision 5 and below of the wESP32 board use the LAN8720 Ethernet PHY. Revision 7 and newer of it use the RTL8201 Ethernet PHY.
 
-{{< /note >}}
 **OpenHacks LAN8720**:
 
 ```yaml
@@ -298,12 +295,11 @@ ethernet:
   phy_addr: 1
 ```
 
-{{< note >}}
-This board has an issue that might cause the ESP32 to boot in program mode. When testing, make sure
-you are monitoring the serial output and reboot the device several times to see if it boots into the
-program properly.
+> [!NOTE]
+> This board has an issue that might cause the ESP32 to boot in program mode. When testing, make sure
+> you are monitoring the serial output and reboot the device several times to see if it boots into the
+> program properly.
 
-{{< /note >}}
 **Esp32-Stick-Eth** and **Esp32-Stick-PoE-P** and **Esp32-Stick-PoE-A**:
 
 ```yaml
@@ -365,10 +361,8 @@ ethernet:
   clock_speed: 8MHz
 ```
 
-{{< note >}}
-Using a higher clock_speed, including default, might cause rx errors and dropped packets.
-
-{{< /note >}}
+> [!NOTE]
+> Using a higher clock_speed, including default, might cause rx errors and dropped packets.
 
 ## See Also
 

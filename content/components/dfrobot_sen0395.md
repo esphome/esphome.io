@@ -63,10 +63,10 @@ dfrobot_sen0395:
 
 ### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID used for code generation. Necessary if you want
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for code generation. Necessary if you want
   to define multiple instances of this component.
 
-- **uart_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the {{< docref "/components/uart" >}} if you want
+- **uart_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the {{< docref "/components/uart" >}} if you want
   to use multiple UART buses.
 
 {{< anchor "dfrobot_sen0395-binary_sensor" >}}
@@ -113,16 +113,16 @@ binary_sensor:
 
 ### Configuration variables
 
-- **dfrobot_sen0395_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave component defined above.
+- **dfrobot_sen0395_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the DFRobot mmWave component defined above.
   Required when multiple instances of the `dfrobot_sen0395` component are defined.
 
-- All other options from [Binary Sensor](#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 {{< anchor "dfrobot_sen0395-switch" >}}
 
 ## Switch
 
-[Switch components](#config-switch) are used to enable/disable various module features/functions.
+[Switch components](/components/switch#config-switch) are used to enable/disable various module features/functions.
 
 ```yaml
 switch:
@@ -134,7 +134,7 @@ switch:
 
 ### Configuration variables
 
-- **dfrobot_sen0395_id** (*Optional*, [ID](#config-id)): The ID of the DFRobot mmWave component defined above.
+- **dfrobot_sen0395_id** (*Optional*, [ID](/guides/configuration-types#id)): The ID of the DFRobot mmWave component defined above.
   Required when multiple instances of the `dfrobot_sen0395` component are defined.
 
 - **type** (**Required**): One of:
@@ -149,7 +149,7 @@ switch:
   - `turn_on_led`  : when enabled, the mmWave sensor's LED blinks during operation; when disabled, the LED will always
     remain off.
 
-- All other options from [Switch](#config-switch).
+- All other options from [Switch](/components/switch#config-switch).
 
 {{< anchor "dfrobot_sen0395-actions" >}}
 
@@ -159,12 +159,11 @@ switch:
 
 ### `dfrobot_sen0395.settings` Action
 
-{{< warning >}}
-Each change to the configuration of the mmWave radar triggers a write to its internal flash/EEPROM.
-Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
-Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
+> [!WARNING]
+> Each change to the configuration of the mmWave radar triggers a write to its internal flash/EEPROM.
+> Write cycles to this memory are limited, so avoid the practice of changing settings frequently.
+> Determine the appropriate settings for your device and avoid changing them unless absolutely necessary.
 
-{{< /warning >}}
 The DFRobot mmWave Radar has several settings which can be changed. These settings are saved in non-volatile memory
 and do not need to be set on each boot.
 
@@ -187,7 +186,7 @@ on_...:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the mmWave sensor on which settings should be
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the mmWave sensor on which settings should be
   changed. If only one radar is defined, this is optional.
 
 - **factory_reset** (*Optional*, boolean): If set to true, a factory reset of the sensor will be performed (before
@@ -224,11 +223,11 @@ on_...:
 
 - **output_latency** (*Optional*, dictionary):
 
-  - **delay_after_detect** (**Required**, [Time](#config-time)): Time to wait before signaling that a person was
+  - **delay_after_detect** (**Required**, [Time](/guides/configuration-types#time)): Time to wait before signaling that a person was
     detected. Specify in steps of 25 ms. Factory default is 2.5s. Value is tempatable: Return seconds value
     (100 ms = 0.1). Returning -1 keeps the value unchanged.
 
-  - **delay_after_disappear** (**Required**, [Time](#config-time)): Time to wait before signaling that a person
+  - **delay_after_disappear** (**Required**, [Time](/guides/configuration-types#time)): Time to wait before signaling that a person
     is no longer detected. Specify in steps of 25 ms. Factory default is 10 s. Value is tempatable: Return seconds
     value (100 ms = 0.1). Returning -1 keeps the value unchanged.
 
@@ -246,11 +245,11 @@ on_...:
 
 #### Configuration variables
 
-- **id** (*Optional*, [ID](#config-id)): Manually specify the ID of the mmWave component. Useful when multiple instances of this component are defined.
+- **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the mmWave component. Useful when multiple instances of this component are defined.
 
 ## See Also
 
-- [UART bus](#uart)
-- [Binary Sensor](#config-binary_sensor)
-- [ID](#config-id)
+- [UART bus](/components/uart)
+- [Binary Sensor](/components/binary_sensor#config-binary_sensor)
+- [ID](/guides/configuration-types#id)
 - [DFRobot mmWave Radar Wiki page](https://wiki.dfrobot.com/mmWave_Radar_Human_Presence_Detection_SKU_SEN0395)

@@ -55,25 +55,23 @@ Finally, `id(...)` is a helper function that makes ESPHome fetch an object with 
 somewhere else, like `top_end_stop`  ) and lets you call any of ESPHome's many APIs directly. For example, here we're
 retrieving the current state of the end stop using `.state` and using it to construct our cover state.
 
-{{< note >}}
-ESPHome does not check the validity of lambda expressions you enter and will blindly copy them into the generated
-C++ code. If compilation fails or something else is not working as expected with lambdas, it's always best to look
-at the generated C++ source file under `<NODE_NAME>/src/main.cpp`.
+> [!NOTE]
+> ESPHome does not check the validity of lambda expressions you enter and will blindly copy them into the generated
+> C++ code. If compilation fails or something else is not working as expected with lambdas, it's always best to look
+> at the generated C++ source file under `<NODE_NAME>/src/main.cpp`.
 
-{{< /note >}}
-{{< tip >}}
-To store local variables inside lambdas that retain their value across executions, you can create `static`
-variables as shown in the example below. Here, the variable `num_executions` is incremented by one each time the
-lambda is executed and the current value is logged.
+> [!TIP]
+> To store local variables inside lambdas that retain their value across executions, you can create `static`
+> variables as shown in the example below. Here, the variable `num_executions` is incremented by one each time the
+> lambda is executed and the current value is logged.
+>
+> ```yaml
+> lambda: |-
+>   static int num_executions = 0;
+>   ESP_LOGD("main", "I am at execution number %d", num_executions);
+>   num_executions += 1;
+> ```
 
-```yaml
-lambda: |-
-  static int num_executions = 0;
-  ESP_LOGD("main", "I am at execution number %d", num_executions);
-  num_executions += 1;
-```
-
-{{< /tip >}}
 {{< anchor "config-templatable" >}}
 
 ## Templating Actions
@@ -100,14 +98,14 @@ using the lambda syntax as described/shown above.
 
 ## All Lambda Calls
 
-- [Sensor](#sensor-lambda_calls)
-- [Binary Sensor](#binary_sensor-lambda_calls)
-- [Switch](#switch-lambda_calls)
-- [Display](#display-engine)
-- [Cover](#cover-lambda_calls)
-- [Text Sensor](#text_sensor-lambda_calls)
-- [Stepper](#stepper-lambda_calls)
-- [Number](#number-lambda_calls)
+- [Sensor](/components/sensor#sensor-lambda_calls)
+- [Binary Sensor](/components/binary_sensor#binary_sensor-lambda_calls)
+- [Switch](/components/switch#switch-lambda_calls)
+- [Display](/components/display#display-engine)
+- [Cover](/components/cover#cover-lambda_calls)
+- [Text Sensor](/components/text_sensor#text_sensor-lambda_calls)
+- [Stepper](/components/stepper#stepper-lambda_calls)
+- [Number](/components/number#number-lambda_calls)
 
 ## See Also
 
