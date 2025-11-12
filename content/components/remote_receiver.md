@@ -151,7 +151,7 @@ to be used later.
   brennenstuhl RF code has been decoded. A variable ``x`` of type {{< apistruct "remote_base::BrennenstuhlData" "remote_base::BrennenstuhlData" >}}
   is passed to the automation for use in lambdas.
 
-- **on_byronsx** (*Optional*, [Automation](#automation)): An automation to perform when a
+- **on_byronsx** (*Optional*, [Automation](/automation)): An automation to perform when a
   Byron SX doorbell RF code has been decoded. A variable `x` of type {{< apistruct "remote_base::ByronSXData" "remote_base::ByronSXData" >}}
   is passed to the automation for use in lambdas.
 
