@@ -28,7 +28,6 @@ The advantage of using a DC/DC regulator is that the overall power consumption i
 as the efficiency of such a regulator is higher than that of a LDO.
 ⚠️ Warning: Enabling dcdc may cause the board to fail to boot if external LC filter are misconfigured or are poor quality.
 
-
 ## Getting Started
 
 The nRF52840 requires a bootloader, with two supported options: `MCUboot` and `Adafruit nRF52 Bootloader`. It is recommended to use MCUboot as it supports OTA (Over-The-Air) updates. Your board most likely comes with a manufacturer-provided bootloader. ESPHome determines the bootloader type based on the board name.
