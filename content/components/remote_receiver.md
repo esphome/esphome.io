@@ -147,7 +147,7 @@ to be used later.
   B&O Beo4 infrared remote code has been decoded. A variable `x` of type {{< apistruct "remote_base::Beo4Data" "remote_base::Beo4Data" >}}
   is passed to the automation for use in lambdas.
 
-- **on_brennenstuhl** (*Optional*, [Automation](#automation)): An automation to perform when a
+- **on_brennenstuhl** (*Optional*, [Automation](/automation)): An automation to perform when a
   brennenstuhl RF code has been decoded. A variable ``x`` of type {{< apistruct "remote_base::BrennenstuhlData" "remote_base::BrennenstuhlData" >}}
   is passed to the automation for use in lambdas.
 
