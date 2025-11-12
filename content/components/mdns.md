@@ -49,3 +49,9 @@ mdns:
   - **protocol** (**Required**, string): Protocol of service (_udp or_tcp).
   - **port** (*Optional*, [templatable](/automations/templates), int): Port number of extra service.
   - **txt** (*Optional*, mapping): Additional text records to add to service. Values are [templatable](/automations/templates).
+
+
+## See Also
+
+- {{< docref "/components/network" >}}
+- {{< docref "/components/openthread" >}}
