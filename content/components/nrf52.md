@@ -99,6 +99,7 @@ nrf52:
 
 Output voltage from the REG0 regulator stage, which powers the GPIO pins when the board operates in high-voltage mode.
 This setting can only be changed a limited number of times, unless uicr_erase is set to true.
+It requires `mcuboot` or `adafruit` bootloader at least `0.9.3`.
 
 ### Example Configuration
 
