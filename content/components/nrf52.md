@@ -26,7 +26,7 @@ nrf52:
 External LC filters must be connected to the DC/DC regulator pins if it is being used.
 The advantage of using a DC/DC regulator is that the overall power consumption is normally reduced
 as the efficiency of such a regulator is higher than that of a LDO.
-⚠️ Warning: Enabling DC/DC may cause the board to fail to boot if external LC filter are misconfigured or are poor quality.
+⚠️ Warning: Enabling DC/DC may cause the board to fail to boot if external LC filter is misconfigured or is poor quality.
 
 ## Getting Started
 
