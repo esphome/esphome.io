@@ -31,7 +31,11 @@ psram:
   1/16th, but also increases the rated temperature range of some ESP32 modules.
 
 - **disabled** (*Optional*, bool): Don't try to initialize the PSRAM. This is needed if one of the configured components autoloads psram
-  but the ESP32 module doesn't have PSRAM and you need to use one of the PSRAM control lines for something else. e.g. ethernet. Defaults to ``false``.
+  but the ESP32 module doesn't have PSRAM and you need to use one of the PSRAM control lines for something else. e.g. ethernet. Defaults to `false`.
+
+- **ignore_not_found** (*Optional*, bool): When ``true`` (default), the firmware ignores PSRAM initialisation failures and continues to boot.
+  When ``false``, other components can configure larger WiFi buffers for faster data transfer, but **PSRAM must be available or the device will
+  fail to boot.**
 
 ## Modes
 
@@ -48,7 +52,7 @@ the datasheet for the module you are using to be sure.
 - Not all ESP32 modules have PSRAM available. If you are unsure, consult the datasheet of your module.
 - Not all modules support all modes and speeds.
 - 120MHz is not available with octal mode, unless using ESP-IDF and the `enable_idf_experimental_features` is enabled
-  in the ESP-IDF platform [Advanced Configuration](#esp32-advanced_configuration).
+  in the ESP-IDF platform [Advanced Configuration](/components/esp32#esp32-advanced_configuration).
 - Configuring an unsupported speed will usually result in the PSRAM running at the default speed.
 
 ## See Also
