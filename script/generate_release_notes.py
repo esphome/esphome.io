@@ -17,13 +17,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
+from datetime import datetime
 import json
+from pathlib import Path
 import re
 import subprocess
 import sys
-from dataclasses import dataclass
-from pathlib import Path
-from datetime import datetime
 
 
 @dataclass
@@ -65,8 +65,7 @@ class Version:
         if self.month == 1:
             # January -> previous December
             return Version(year=self.year - 1, month=12, patch=0)
-        else:
-            return Version(year=self.year, month=self.month - 1, patch=0)
+        return Version(year=self.year, month=self.month - 1, patch=0)
 
 
 @dataclass
@@ -434,25 +433,32 @@ class ReleaseNotesGenerator:
         print("\n" + "=" * 80)
         print("STEP 1: Run these prompts through Claude Code CLI")
         print("=" * 80)
-        print("\nPrompt 1: Release Overview")
-        print(f"  File: {overview_file}")
-        print(f"  Save response to: {self.responses_dir / 'release_overview.md'}")
+        print(
+            "\nFor each prompt below, copy the file contents and paste into Claude Code CLI,"
+        )
+        print("then save the AI's response to the specified output file.\n")
+
+        print("Prompt 1: Release Overview")
+        print(f"  Read:  cat {overview_file}")
+        print("  Paste the contents into Claude Code CLI")
+        print(f"  Save:  {self.responses_dir / 'release_overview.md'}")
 
         if breaking_changes:
             print("\nPrompt 2: Breaking Changes (Users)")
-            print(f"  File: {breaking_users_file}")
-            print(
-                f"  Save response to: {self.responses_dir / 'breaking_changes_users.md'}"
-            )
+            print(f"  Read:  cat {breaking_users_file}")
+            print("  Paste the contents into Claude Code CLI")
+            print(f"  Save:  {self.responses_dir / 'breaking_changes_users.md'}")
 
             print("\nPrompt 3: Breaking Changes (Developers)")
-            print(f"  File: {breaking_devs_file}")
-            print(
-                f"  Save response to: {self.responses_dir / 'breaking_changes_developers.md'}"
-            )
+            print(f"  Read:  cat {breaking_devs_file}")
+            print("  Paste the contents into Claude Code CLI")
+            print(f"  Save:  {self.responses_dir / 'breaking_changes_developers.md'}")
+
+        print("\nNOTE: Each prompt already includes the output file path at the top.")
+        print("      Just copy/paste the entire file into Claude Code CLI.")
 
         print("\n" + "=" * 80)
-        print("STEP 2: After saving responses, run:")
+        print("STEP 2: After saving all AI responses, run:")
         print("=" * 80)
         print(f"  python script/generate_release_notes.py {self.version} --assemble")
         print()
@@ -830,11 +836,9 @@ BREAKING CHANGE PULL REQUESTS ({len(breaking_prs)} total):
         template = self._replace_marker_content(
             template, "AUTO_GENERATED_BREAKING_CHANGES_LIST", breaking_list
         )
-        template = self._replace_marker_content(
+        return self._replace_marker_content(
             template, "AUTO_GENERATED_ALL_CHANGES", all_list
         )
-
-        return template
 
     def _format_pr_list(self, prs: list[PullRequest]) -> str:
         """Format PRs as markdown list"""
