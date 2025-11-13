@@ -111,8 +111,11 @@ INSTRUCTIONS:
 5. **What to avoid**:
    ✗ Don't write about every PR - focus on major themes
    ✗ Don't just list features - explain benefits and context
-   ✗ Don't include breaking changes (they go in their own section)
+   ✗ Don't discuss breaking changes themselves (they go in their own section)
    ✗ Skip minor bug fixes and small improvements
+
+   Note: Some PRs labeled "breaking-change" may introduce important new features.
+   Focus on the NEW functionality they bring, not the breaking aspects.
 
 OUTPUT FORMAT FOR HIGHLIGHTS:
 - 3-5 complete ## sections ordered by importance (most impactful first)
@@ -150,6 +153,12 @@ NEW FEATURE PR FILES ({{ new_features|length }} total) - READ ALL {{ new_feature
 
 {% if breaking_changes %}
 BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ breaking_changes|length }} FILES:
+
+⚠️  IMPORTANT: These PRs have breaking changes, but for THIS section, ONLY evaluate them for
+    their NEW FEATURES and FUNCTIONALITY. Do NOT discuss the breaking changes themselves -
+    those will be covered in a separate "Breaking Changes" section of the release notes.
+    Focus on what new capabilities or improvements these PRs bring.
+
 {% for pr in breaking_changes %}
   {{ prs_cache_dir }}/{{ pr.number }}.json
 {% endfor %}
