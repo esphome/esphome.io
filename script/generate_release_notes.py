@@ -67,12 +67,25 @@ class Version:
         beta = int(match[5]) if match[5] else 0
         return cls(year=year, month=month, patch=patch, beta=beta)
 
-    def previous_version(self) -> Version:
-        """Get the previous version (decrements month, handles year rollover)"""
+    def previous_version_base(self) -> Version:
+        """Get the base version of previous month (always .0 patch)"""
         if self.month == 1:
             # January -> previous December
             return Version(year=self.year - 1, month=12, patch=0)
         return Version(year=self.year, month=self.month - 1, patch=0)
+
+    def find_latest_patch(self, all_tags: set[str]) -> Version:
+        """Find the latest patch release for this major.minor version"""
+        base = f"{self.year}.{self.month}."
+        patches = [
+            int(tag.replace(base, "").split("b")[0])
+            for tag in all_tags
+            if tag.startswith(base) and "b" not in tag
+        ]
+        if not patches:
+            return self
+        max_patch = max(patches)
+        return Version(year=self.year, month=self.month, patch=max_patch)
 
 
 @dataclass
@@ -305,10 +318,15 @@ class ReleaseNotesGenerator:
     def discover_prs(self) -> list[int]:
         """Discover PRs for this release"""
         current_tag = self.version.tag
-        previous_version = self.version.previous_version()
+
+        # Find the latest patch release of the previous month
+        previous_base = self.version.previous_version_base()
+        all_tags = self._fetch_all_tags()
+        previous_version = previous_base.find_latest_patch(all_tags)
         previous_tag = previous_version.tag
 
         print(f"\n=== Discovering PRs for {current_tag} ===\n")
+        print(f"Previous version: {previous_tag}")
 
         # Check if beta tag exists (e.g., 2025.11.0b1)
         beta_tag = f"{self.version.year}.{self.version.month}.0b1"
