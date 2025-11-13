@@ -32,7 +32,7 @@ The [native API](/components/api) is the primary communication method between ES
 ```yaml
 api:
   encryption:
-    key: !secret api_encryption_key
+    key: !secret device_name_api_key
 
 ```
 
@@ -323,20 +323,16 @@ wifi_password: "your-wifi-password"
 
 **Add to `.gitignore`:**
 
-```gitignore
-
+```txt
 secrets.yaml
 *.backup
-
 ```
 
 **Verify secrets.yaml is not tracked:**
 
 ```bash
-
 git status  # secrets.yaml should not appear
 git log --all --full-history -- secrets.yaml  # Should return nothing
-
 ```
 
 **If you accidentally committed secrets:**
@@ -409,8 +405,8 @@ Regularly review device logs for:
 
 Access logs via:
 
-- Home Assistant (System → Logs)
-- ESPHome Dashboard
+- `esphome logs <config>.yaml` command
+- ESPHome Device Builder web interface
 - Serial console (USB connection)
 
 ## Specific Component Security
@@ -511,7 +507,7 @@ wifi:
 # API with encryption (REQUIRED)
 api:
   encryption:
-    key: !secret api_encryption_key
+    key: !secret secure_device_api_key
 
 # OTA with password (REQUIRED)
 ota:
@@ -557,7 +553,7 @@ wifi:
 # API with encryption
 api:
   encryption:
-    key: !secret api_encryption_key
+    key: !secret production_device_api_key
   # Optional: Restrict to specific Home Assistant instance
   # reboot_timeout: 15min
 
