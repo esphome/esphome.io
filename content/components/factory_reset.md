@@ -6,7 +6,7 @@ params:
     description: Instructions for setting up conditions that can remotely invalidate all ESPHome preferences stored in flash and reboot ESP.
 ---
 
-The `factory_reset` component allows you to invalidate (reset) all ESPHome [preferences](#preferences-flash_write_interval) stored in flash memory and reboot your node.
+The `factory_reset` component allows you to invalidate (reset) all ESPHome [preferences](/components/esphome#preferences-flash_write_interval) stored in flash memory and reboot your node.
 After reboot all states, parameters and variables will be reinitialized with their default values. This is useful:
 
 - for devices preflashed with ESPHome to reset behavior back to factory state
@@ -47,7 +47,7 @@ factory_reset:
 - **resets_required** (*Optional*, integer): The number of power cycles after which the device will be reset.
   No default, if not configured the power cycle reset feature will be disabled
 
-- **max_delay** (*Optional*, [Time](#config-time)): The maximum delay between power cycles. Default: 10s
+- **max_delay** (*Optional*, [Time](/guides/configuration-types#time)): The maximum delay between power cycles. Default: 10s
 
 ## `on_increment` Trigger
 
