@@ -1,0 +1,161 @@
+SAVE YOUR RESPONSES TO TWO FILES:
+  1. Release Overview: {{ overview_file }}
+  2. Feature Highlights: {{ highlights_file }}
+
+NOTE: The output files and directories may not exist yet - that's fine, create them.
+      You can use: Write tool with the full path, or create directories first if needed.
+
+════════════════════════════════════════════════════════════════════════════════
+
+TASK: Write BOTH the Release Overview AND Feature Highlights for ESPHome {{ version }}.
+
+WHY COMBINED: These sections must be written together so the overview accurately reflects
+the feature highlights. The overview is a 2-4 sentence summary of the major themes you'll
+detail in the feature highlights sections.
+
+════════════════════════════════════════════════════════════════════════════════
+PART 1: RELEASE OVERVIEW (save to {{ overview_file }})
+════════════════════════════════════════════════════════════════════════════════
+
+CONTEXT:
+This is the opening 2-4 sentence paragraph that summarizes the major themes you'll detail
+in the Feature Highlights sections. Write this AFTER you've identified the 3-5 major themes.
+
+AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
+
+STYLE EXAMPLE from ESPHome 2025.10.0:
+
+  "ESPHome 2025.10.0 delivers major architectural improvements, new communication protocols, and
+   extensive performance optimizations. This release focuses on enhancing security, improving memory
+   efficiency, and expanding hardware support while introducing groundbreaking new features."
+
+INSTRUCTIONS:
+
+1. Read ALL PR JSON files below and identify 3-5 major themes
+2. Write the Feature Highlights sections first (detailed ## sections)
+3. Then write this overview as a summary of those highlights
+4. Lead with the biggest impact: new hardware, protocols, major features
+5. Group related PRs: "memory optimizations", "security enhancements", etc.
+6. Use specific names: component names, technologies, platforms
+7. Include numbers when impactful: "10KB RAM savings", "83% fewer allocations"
+
+OUTPUT FORMAT FOR OVERVIEW:
+- 1-2 paragraphs, 2-4 sentences total
+- No headings, no bullet points, no PR links
+- Just the prose summary
+
+════════════════════════════════════════════════════════════════════════════════
+PART 2: FEATURE HIGHLIGHTS (save to {{ highlights_file }})
+════════════════════════════════════════════════════════════════════════════════
+
+CONTEXT:
+These are detailed deep-dive sections that appear after "Key Highlights" and before
+"Breaking Changes". Each major feature gets its own ## heading.
+
+WHAT TO WRITE ABOUT:
+Select the 3-5 MOST IMPORTANT features/changes from the PRs:
+- New major features (USB host, new protocols, new components)
+- Architectural changes (framework changes, major refactorings)
+- Memory/performance optimizations with significant impact
+- Security enhancements
+- Features needing explanation or migration guidance
+
+STYLE EXAMPLES from ESPHome 2025.10.0:
+
+## Z-Wave Proxy
+
+{% raw %}The new {{< docref "/components/zwave_proxy" >}} component enables network-based connectivity
+for Z-Wave hardware by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS.{% endraw %}
+
+**Key Features:**
+
+- **Remote Z-Wave placement** - Position your Z-Wave modem anywhere with WiFi/Ethernet
+- **Serial-to-network bridge** - Proxies UART communication between hardware and Z-Wave JS
+- **Low latency** - Achieves 50-60ms typical latency
+
+## Arduino as IDF Component (Major Architectural Change)
+
+This release includes a fundamental change - **Arduino is now integrated as an ESP-IDF component**.
+
+**Memory Savings:**
+
+- **20-30KB RAM savings** on Arduino builds
+- **Additional ~8KB RAM savings** if using the web server
+
+### Should You Migrate to ESP-IDF?
+
+**We recommend ESP-IDF for most users**, especially for:
+- Bluetooth Proxy devices (lower memory usage)
+- New projects
+
+INSTRUCTIONS:
+
+1. **Read ALL PR JSON files** below (new features + new components)
+2. **Identify 3-5 major themes** - group related PRs (e.g., all memory optimizations together)
+3. **Write detailed sections**:
+   - ## Heading for each major feature
+   - Opening paragraph: what it is and why it matters
+   - **Key Features/Benefits** bulleted list with bold labels
+   - Subsections (###) for migration guidance or recommendations
+   - Use {% raw %}{{< docref "/path" >}}{% endraw %} for component links
+   - Use `code formatting` for config keys
+   - Use **bold** for emphasis
+
+4. **What makes good sections**:
+   ✓ Explains WHY the feature matters, not just what it does
+   ✓ Includes specific numbers (RAM savings, performance gains)
+   ✓ Groups related PRs into one cohesive narrative
+   ✓ Provides actionable guidance (migration steps, recommendations)
+   ✓ Professional but enthusiastic tone
+
+5. **What to avoid**:
+   ✗ Don't write about every PR - focus on major themes
+   ✗ Don't just list features - explain benefits and context
+   ✗ Don't include breaking changes (they go in their own section)
+   ✗ Skip minor bug fixes and small improvements
+
+OUTPUT FORMAT FOR HIGHLIGHTS:
+- 3-5 complete ## sections ordered by importance (most impactful first)
+- Do NOT include "Feature Highlights" heading - just write the ## sections
+- Do NOT include introductory text
+
+────────────────────────────────────────────────────────────────────────────────
+📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
+────────────────────────────────────────────────────────────────────────────────
+
+RELEASE STATISTICS:
+Total PRs: {{ total_prs }}
+New Features: {{ new_features|length }}
+New Components: {{ new_components|length }}
+Breaking Changes: {{ breaking_changes|length }}
+
+⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
+
+1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
+2. Do NOT skip any files or try to summarize without reading them all
+3. Do NOT assume you know the content - you must READ each file
+4. Each JSON file contains: number, title, body, author, labels, url
+5. Read ALL files in parallel for efficiency, then analyze the complete data
+6. After reading ALL files: identify themes, write feature highlights, then write overview
+
+NEW COMPONENT PR FILES ({{ new_components|length }} total) - READ ALL {{ new_components|length }} FILES:
+{% for pr in new_components %}
+  {{ prs_cache_dir }}/{{ pr.number }}.json
+{% endfor %}
+
+NEW FEATURE PR FILES ({{ new_features|length }} total) - READ ALL {{ new_features|length }} FILES:
+{% for pr in new_features %}
+  {{ prs_cache_dir }}/{{ pr.number }}.json
+{% endfor %}
+
+{% if breaking_changes %}
+BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ breaking_changes|length }} FILES:
+{% for pr in breaking_changes %}
+  {{ prs_cache_dir }}/{{ pr.number }}.json
+{% endfor %}
+{% endif %}
+────────────────────────────────────────────────────────────────────────────────
+⚠️  REMINDER: Read ALL files above, then write BOTH files in this order:
+    1. Feature Highlights: {{ highlights_file }} (3-5 detailed ## sections)
+    2. Release Overview: {{ overview_file }} (2-4 sentence summary of highlights)
+────────────────────────────────────────────────────────────────────────────────

@@ -25,6 +25,13 @@ import re
 import subprocess
 import sys
 
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+# Label constants
+LABEL_BREAKING_CHANGE = "breaking-change"
+LABEL_NEW_FEATURE = "new-feature"
+LABEL_NEW_COMPONENT = "new-component"
+
 
 @dataclass
 class Version:
@@ -125,6 +132,15 @@ class ReleaseNotesGenerator:
         self.prompts_dir = self.version_dir / "prompts"
         self.responses_dir = self.version_dir / "ai_responses"
         self._all_tags: set[str] | None = None
+
+        # Set up Jinja2 environment for templates
+        template_dir = Path("script/prompt_templates")
+        self.jinja_env = Environment(
+            loader=FileSystemLoader(template_dir),
+            autoescape=select_autoescape(),
+            trim_blocks=True,
+            lstrip_blocks=True,
+        )
 
     def check_github_cli(self) -> None:
         """Check if GitHub CLI is installed and authenticated"""
@@ -402,40 +418,24 @@ class ReleaseNotesGenerator:
         print("\n=== Generating AI Prompts ===\n")
 
         # Group PRs by label
-        breaking_changes = [pr for pr in prs if "breaking-change" in pr.labels]
-        new_features = [pr for pr in prs if "new-feature" in pr.labels]
-        new_components = [pr for pr in prs if "new-component" in pr.labels]
+        breaking_changes = [pr for pr in prs if LABEL_BREAKING_CHANGE in pr.labels]
+        new_features = [pr for pr in prs if LABEL_NEW_FEATURE in pr.labels]
+        new_components = [pr for pr in prs if LABEL_NEW_COMPONENT in pr.labels]
 
-        # Generate Release Overview Prompt
-        overview_prompt = self._generate_overview_prompt(
+        # Generate Combined Overview + Feature Highlights Prompt
+        overview_and_highlights_prompt = self._generate_overview_and_highlights_prompt(
             prs, new_features, new_components, breaking_changes
         )
-        overview_file = self.prompts_dir / "release_overview.txt"
-        overview_file.write_text(overview_prompt)
+        overview_highlights_file = self.prompts_dir / "overview_and_highlights.txt"
+        overview_highlights_file.write_text(overview_and_highlights_prompt)
 
-        # Generate Feature Highlights Prompt
-        if new_features or new_components:
-            highlights_prompt = self._generate_feature_highlights_prompt(
-                new_features, new_components
-            )
-            highlights_file = self.prompts_dir / "feature_highlights.txt"
-            highlights_file.write_text(highlights_prompt)
-
-        # Generate Breaking Changes Prompts
+        # Generate Combined Breaking Changes Prompt (user + developer)
         if breaking_changes:
-            # User-facing breaking changes
-            breaking_users_prompt = self._generate_breaking_changes_prompt(
-                breaking_changes, target="users"
+            breaking_prompt = self._generate_combined_breaking_changes_prompt(
+                breaking_changes
             )
-            breaking_users_file = self.prompts_dir / "breaking_changes_users.txt"
-            breaking_users_file.write_text(breaking_users_prompt)
-
-            # Developer-facing breaking changes
-            breaking_devs_prompt = self._generate_breaking_changes_prompt(
-                breaking_changes, target="developers"
-            )
-            breaking_devs_file = self.prompts_dir / "breaking_changes_developers.txt"
-            breaking_devs_file.write_text(breaking_devs_prompt)
+            breaking_file = self.prompts_dir / "breaking_changes.txt"
+            breaking_file.write_text(breaking_prompt)
 
         # Print instructions
         print("\n" + "=" * 80)
@@ -449,35 +449,26 @@ class ReleaseNotesGenerator:
         print("5. Copy Claude's response (just the markdown content)")
         print("6. Save to the specified output file\n")
 
-        print("Prompt 1: Release Overview")
-        print(f"  Prompt: {overview_file}")
-        print(f"  Output: {self.responses_dir / 'release_overview.md'}")
-
-        if new_features or new_components:
-            print("\nPrompt 2: Feature Highlights")
-            print(f"  Prompt: {highlights_file}")
-            print(f"  Output: {self.responses_dir / 'feature_highlights.md'}")
+        print("Prompt 1: Overview + Feature Highlights (COMBINED)")
+        print(f"  Prompt: {overview_highlights_file}")
+        print(f"  Outputs: {self.responses_dir / 'release_overview.md'}")
+        print(f"           {self.responses_dir / 'feature_highlights.md'}")
 
         if breaking_changes:
-            prompt_num = 3 if (new_features or new_components) else 2
-            print(f"\nPrompt {prompt_num}: Breaking Changes (Users)")
-            print(f"  Prompt: {breaking_users_file}")
-            print(f"  Output: {self.responses_dir / 'breaking_changes_users.md'}")
+            print("\nPrompt 2: Breaking Changes - Users + Developers (COMBINED)")
+            print(f"  Prompt: {breaking_file}")
+            print(f"  Outputs: {self.responses_dir / 'breaking_changes_users.md'}")
+            print(f"           {self.responses_dir / 'breaking_changes_developers.md'}")
 
-            prompt_num += 1
-            print(f"\nPrompt {prompt_num}: Breaking Changes (Developers)")
-            print(f"  Prompt: {breaking_devs_file}")
-            print(f"  Output: {self.responses_dir / 'breaking_changes_developers.md'}")
-
-        print("\nTIP: Each prompt file starts with 'SAVE YOUR RESPONSE TO: <path>'")
+        print("\nTIP: Each prompt specifies TWO output files - Claude will write both.")
         print(
-            "     Copy only Claude's markdown response, not the conversational wrapper."
+            "     Follow the instructions in each prompt to save the correct content to each file."
         )
         print(
             "\nALTERNATIVE: You can use the Read tool in Claude Code to read the prompt files:"
         )
         print(
-            f"     In Claude CLI: 'Please read {overview_file} and follow the instructions'"
+            f"     In Claude CLI: 'Please read {overview_highlights_file} and follow the instructions'"
         )
 
         print("\n" + "=" * 80)
@@ -486,358 +477,40 @@ class ReleaseNotesGenerator:
         print(f"  python script/generate_release_notes.py {self.version} --assemble")
         print()
 
-    def _generate_overview_prompt(
+    def _generate_overview_and_highlights_prompt(
         self,
         all_prs: list[PullRequest],
         new_features: list[PullRequest],
         new_components: list[PullRequest],
         breaking_changes: list[PullRequest],
     ) -> str:
-        """Generate prompt for release overview"""
-        output_file = self.responses_dir / "release_overview.md"
-        prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
+        """Generate combined prompt for release overview and feature highlights"""
+        template = self.jinja_env.get_template("overview_and_highlights.txt")
 
-NOTE: The output file and directory may not exist yet - that's fine, create them.
-      You can use: Write tool with the full path, or create the directory first if needed.
+        return template.render(
+            version=str(self.version),
+            overview_file=self.responses_dir / "release_overview.md",
+            highlights_file=self.responses_dir / "feature_highlights.md",
+            prs_cache_dir=self.prs_cache_dir,
+            total_prs=len(all_prs),
+            new_features=new_features,
+            new_components=new_components,
+            breaking_changes=breaking_changes,
+        )
 
-════════════════════════════════════════════════════════════════════════════════
-
-TASK: Write the Release Overview section for ESPHome {self.version} RELEASE NOTES.
-
-CONTEXT:
-This is the opening section of the changelog that users read first. It appears right after the
-"Key Highlights" bulleted list and sets the tone for the entire release. This section should
-give users a compelling, high-level summary of what's new and why this release matters.
-
-AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
-
-STYLE EXAMPLE from ESPHome 2025.10.0:
-
-  "ESPHome 2025.10.0 delivers major architectural improvements, new communication protocols, and
-   extensive performance optimizations. This release focuses on enhancing security, improving memory
-   efficiency, and expanding hardware support while introducing groundbreaking new features."
-
-WHAT MAKES A GOOD OVERVIEW:
-
-✓ Lead with the biggest, most impactful changes (new hardware support, architectural changes, major features)
-✓ Group related improvements into themes ("security enhancements", "memory optimizations", "new protocols")
-✓ Use specific, concrete language - mention actual component names and technologies
-✓ 2-4 sentences total, 1-2 paragraphs
-✓ Professional but enthusiastic tone - users should be excited!
-✓ Focus on user benefits, not implementation details
-
-GOOD EXAMPLE:
-"ESPHome 2025.11.0 introduces native USB host support for ESP32-S2/S3, enabling direct connection
-to USB devices like keyboards and storage. This release delivers extensive memory optimizations
-across WiFi, BLE, and Bluetooth Proxy components, plus enhanced API security with new authentication
-modes and connection limits."
-
-BAD EXAMPLE:
-"This release includes many new features and bug fixes. There are also some breaking changes.
-Overall, this is a great release with lots of improvements."
-(Too vague, no specifics, no excitement, just filler words)
-
-INSTRUCTIONS:
-
-Write 1-2 paragraphs (2-4 sentences total) that:
-1. Lead with the most impactful changes first (new hardware, protocols, major features)
-2. Group related PRs into themes (e.g., all memory optimizations together)
-3. Mention specific component/technology names when relevant
-4. Use action words (introduces, delivers, enhances, expands)
-5. Be specific about benefits (e.g., "saves 1.3KB RAM" not just "improves memory")
-
-OUTPUT FORMAT:
-- Write ONLY the prose paragraphs (no headings, no bullet points, no PR links)
-- 1-2 paragraphs, 2-4 sentences total
-- Do NOT include a "Key Highlights" list (added manually later)
-- Do NOT include section headings or PR numbers
-
-────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
-────────────────────────────────────────────────────────────────────────────────
-
-RELEASE STATISTICS:
-Total PRs: {len(all_prs)}
-New Features: {len(new_features)}
-New Components: {len(new_components)}
-Breaking Changes: {len(breaking_changes)}
-
-⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
-
-1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
-2. Do NOT skip any files or try to summarize without reading them all
-3. Do NOT assume you know the content - you must READ each file
-4. Each JSON file contains: number, title, body, author, labels, url
-5. Read ALL files in parallel for efficiency, then analyze the complete data
-6. Only after reading ALL files should you write the release overview
-
-NEW COMPONENT PR FILES ({len(new_components)} total) - READ ALL {len(new_components)} FILES:
-"""
-        for pr in new_components:
-            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
-
-        prompt += f"\nNEW FEATURE PR FILES ({len(new_features)} total) - READ ALL {len(new_features)} FILES:\n"
-        for pr in new_features:
-            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
-
-        if breaking_changes:
-            prompt += f"\nBREAKING CHANGE PR FILES ({len(breaking_changes)} total) - READ ALL {len(breaking_changes)} FILES:\n"
-            for pr in breaking_changes:
-                prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
-
-        prompt += "\n────────────────────────────────────────────────────────────────────────────────\n"
-        prompt += "⚠️  REMINDER: You MUST read ALL files listed above before writing the overview\n"
-        prompt += "────────────────────────────────────────────────────────────────────────────────\n"
-
-        return prompt
-
-    def _generate_breaking_changes_prompt(
-        self, breaking_prs: list[PullRequest], target: str = "users"
+    def _generate_combined_breaking_changes_prompt(
+        self, breaking_prs: list[PullRequest]
     ) -> str:
-        """Generate prompt for breaking changes section
-
-        Args:
-            breaking_prs: List of PRs with breaking-change label
-            target: Either "users" or "developers"
-        """
-        if target == "users":
-            output_file = self.responses_dir / "breaking_changes_users.md"
-            prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
-
-NOTE: The output file and directory may not exist yet - that's fine, create them.
-      You can use: Write tool with the full path, or create the directory first if needed.
-
-════════════════════════════════════════════════════════════════════════════════
-
-TASK: Write the USER-FACING Breaking Changes section for ESPHome {self.version} RELEASE NOTES.
-
-CONTEXT:
-This section explains breaking changes that affect ESPHome users' YAML configurations or
-component behavior. Users need clear migration guidance to update their configs.
-
-AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation users)
-
-STYLE EXAMPLE from ESPHome 2025.10.0:
-
-### Component Changes
-
-- **EKTF2232**: `rts_pin` renamed to `reset_pin` [#10720](https://github.com/esphome/esphome/pull/10720)
-- **MMC5603**: Fixed incorrect calculation factor (values will change)
-  [#9925](https://github.com/esphome/esphome/pull/9925)
-- **ESP32 BLE**: max_connections now shared between client and server
-  [#11006](https://github.com/esphome/esphome/pull/11006)
-
-INSTRUCTIONS:
-
-1. **Group by category** using ### headings (e.g., "Component Changes", "Platform Changes", "Configuration Changes")
-2. **Use bullet points** with bold component names: - **ComponentName**: Description [#PR](url)
-3. **Be concise but clear** - explain what changed and who is affected
-4. **Skip pure developer changes** (C++ API changes, internal refactors that don't affect YAML)
-5. **Include PR links** at the end of each bullet: [#12345](https://github.com/esphome/esphome/pull/12345)
-6. **Group related changes** - if multiple PRs affect the same component, list them together under one category
-
-FORMAT TEMPLATE:
-### Category Name
-
-- **Component/Feature**: Description of what changed and impact [#PR](url)
-- **Another Component**: Another change [#PR](url)
-
-### Another Category
-
-- **Feature**: Change description [#PR](url)
-
-OUTPUT:
-Write the complete user-facing breaking changes section following the format above. Focus ONLY on
-changes that require user action (YAML config updates, behavior changes affecting users).
-"""
-        else:  # developers
-            output_file = self.responses_dir / "breaking_changes_developers.md"
-            prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
-
-NOTE: The output file and directory may not exist yet - that's fine, create them.
-      You can use: Write tool with the full path, or create the directory first if needed.
-
-════════════════════════════════════════════════════════════════════════════════
-
-TASK: Write the DEVELOPER-FACING Breaking Changes section for ESPHome {self.version} RELEASE NOTES.
-
-CONTEXT:
-This section provides a brief summary of breaking changes that affect external component developers.
-Keep it concise and link to developers.esphome.io for full details.
-
-AUDIENCE: External component developers and those extending ESPHome with C++ code
-
-INSTRUCTIONS:
-
-1. **Be very brief** - this is just a summary, not detailed migration guides
-2. **Group by category** using bullet points (e.g., API changes, class renames, header changes)
-3. **List the change + PR link**: - Change description [#PR](url)
-4. **End with a note** linking to https://developers.esphome.io/ for full details
-5. **Skip user-facing changes** that were already covered in the user section above
-
-FORMAT TEMPLATE:
-
-- **ComponentName API**: Brief description of change [#PR](url)
-- **ClassName renamed**: Old name → New name [#PR](url)
-- **Method signature changed**: Brief description [#PR](url)
-
-For detailed migration guides and API documentation, see the [ESPHome Developers Documentation](https://developers.esphome.io/).
-
-OUTPUT:
-Write a concise list of developer-facing breaking changes (bullet points, grouped loosely if it makes sense).
-Keep it SHORT - just enough info to know what changed, then direct developers to the full docs.
-
-────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
-────────────────────────────────────────────────────────────────────────────────
-
-BREAKING CHANGE PULL REQUESTS ({len(breaking_prs)} total):
-
-⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
-
-1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
-2. Do NOT skip any files or try to write without reading them all
-3. Do NOT assume you know the content - you must READ each file
-4. Each JSON file contains: number, title, body (with migration details), author, labels, url
-5. Read ALL files in parallel for efficiency, then analyze the complete data
-6. Only after reading ALL {len(breaking_prs)} files should you write the breaking changes section
-
-BREAKING CHANGE PR FILES - READ ALL {len(breaking_prs)} FILES:
-"""
-        for pr in breaking_prs:
-            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
-
-        prompt += "\n────────────────────────────────────────────────────────────────────────────────\n"
-        prompt += f"⚠️  REMINDER: You MUST read ALL {len(breaking_prs)} files listed above before writing\n"
-        prompt += "────────────────────────────────────────────────────────────────────────────────\n"
-
-        return prompt
-
-    def _generate_feature_highlights_prompt(
-        self, new_features: list[PullRequest], new_components: list[PullRequest]
-    ) -> str:
-        """Generate prompt for feature highlights sections
-
-        Args:
-            new_features: List of PRs with new-feature label
-            new_components: List of PRs with new-component label
-        """
-        output_file = self.responses_dir / "feature_highlights.md"
-        prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
-
-NOTE: The output file and directory may not exist yet - that's fine, create them.
-      You can use: Write tool with the full path, or create the directory first if needed.
-
-════════════════════════════════════════════════════════════════════════════════
-
-TASK: Write FEATURE HIGHLIGHT SECTIONS for ESPHome {self.version} RELEASE NOTES.
-
-CONTEXT:
-These are detailed deep-dive sections that appear after the "Key Highlights" bullet list
-and before "Breaking Changes". Each major feature gets its own ## heading with detailed
-explanations, benefits, code examples, and migration guidance.
-
-AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
-
-WHAT TO WRITE ABOUT:
-Select the 3-5 MOST IMPORTANT features/changes from the PRs and write detailed sections.
-Look for:
-- New major features (USB host, new protocols, new components)
-- Architectural changes (framework changes, major refactorings)
-- Memory/performance optimizations with significant impact
-- Security enhancements
-- Features that need explanation or migration guidance
-
-STYLE EXAMPLES from ESPHome 2025.10.0:
-
-## Z-Wave Proxy
-
-The new {{{{< docref "/components/zwave_proxy" >}}}} component enables network-based connectivity for Z-Wave hardware
-by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS over WiFi or Ethernet.
-
-**Key Features:**
-
-- **Remote Z-Wave placement** - Position your Z-Wave modem anywhere in your home with WiFi/Ethernet connectivity
-- **Serial-to-network bridge** - Proxies UART communication between Z-Wave hardware and Z-Wave JS
-- **Low latency performance** - Achieves 50-60ms typical latency
-
-## Arduino as IDF Component (Major Architectural Change)
-
-This release includes a fundamental change in how ESP32 Arduino builds work - **Arduino is now integrated as an ESP-IDF component**.
-
-**Memory Savings:**
-
-- **20-30KB RAM savings** on Arduino builds
-- **Additional ~8KB RAM savings** if using the web server
-- **Smaller binary sizes** overall
-
-### Should You Migrate to ESP-IDF?
-
-**We recommend ESP-IDF for most users**, especially for:
-
-- Bluetooth Proxy devices (lower memory usage)
-- New projects
-- Configurations where you want faster builds
-
-INSTRUCTIONS:
-
-1. **Read ALL PR JSON files** listed below (new features + new components)
-2. **Identify 3-5 major themes** - group related PRs together (e.g., all memory optimizations)
-3. **Write detailed sections** with:
-   - ## Heading for each major feature
-   - Opening paragraph explaining what it is and why it matters
-   - **Key Features/Benefits** bulleted list with bold labels
-   - Subsections (###) for migration guidance, recommendations, or technical details
-   - Use {{{{< docref "/path" >}}}} for component links
-   - Use `code formatting` for config keys and technical terms
-   - Use **bold** for emphasis on key points
-
-4. **What makes a good section:**
-   ✓ Explains WHY the feature matters, not just what it does
-   ✓ Includes specific numbers (RAM savings, performance improvements)
-   ✓ Groups related PRs into one cohesive narrative
-   ✓ Provides actionable guidance (migration steps, recommendations)
-   ✓ Uses subsections to organize complex topics
-   ✓ Professional but enthusiastic tone
-
-5. **What to avoid:**
-   ✗ Don't write about every single PR - focus on major themes
-   ✗ Don't just list features - explain benefits and context
-   ✗ Don't include breaking changes here (they go in their own section)
-   ✗ Skip minor bug fixes and small improvements
-
-OUTPUT FORMAT:
-Write 3-5 complete ## sections, each following the style above. Order them by importance
-(biggest/most impactful first). Do NOT include any introductory text or section headings
-that say "Feature Highlights" - just write the ## sections directly.
-
-────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
-────────────────────────────────────────────────────────────────────────────────
-
-⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
-
-1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
-2. Do NOT skip any files or try to summarize without reading them all
-3. Do NOT assume you know the content - you must READ each file
-4. Each JSON file contains: number, title, body, author, labels, url
-5. Read ALL files in parallel for efficiency, then analyze the complete data
-6. Only after reading ALL files should you identify major themes and write sections
-
-NEW COMPONENT PR FILES ({len(new_components)} total) - READ ALL {len(new_components)} FILES:
-"""
-        for pr in new_components:
-            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
-
-        prompt += f"\nNEW FEATURE PR FILES ({len(new_features)} total) - READ ALL {len(new_features)} FILES:\n"
-        for pr in new_features:
-            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
-
-        prompt += "\n────────────────────────────────────────────────────────────────────────────────\n"
-        prompt += "⚠️  REMINDER: You MUST read ALL files listed above before writing sections\n"
-        prompt += "────────────────────────────────────────────────────────────────────────────────\n"
-
-        return prompt
+        """Generate combined prompt for both user and developer breaking changes"""
+        template = self.jinja_env.get_template("breaking_changes.txt")
+
+        return template.render(
+            version=str(self.version),
+            users_file=self.responses_dir / "breaking_changes_users.md",
+            devs_file=self.responses_dir / "breaking_changes_developers.md",
+            prs_cache_dir=self.prs_cache_dir,
+            breaking_changes=breaking_prs,
+        )
 
     def assemble_changelog(self) -> bool:
         """Assemble final changelog from template and AI responses"""
