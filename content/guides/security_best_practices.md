@@ -154,7 +154,7 @@ For devices that support it, use Ethernet instead of WiFi for better security an
 - Not susceptible to WiFi attacks (deauth, jamming, etc.)
 - Reduces wireless network congestion
 
-Components with Ethernet support: ESP32 with Ethernet PHY, RP2040 W5500, etc.
+For a list of supported Ethernet components and compatible hardware, see the [Ethernet component documentation](/components/ethernet).
 
 **WiFi Configuration ([WiFi component](/components/wifi)):**
 
