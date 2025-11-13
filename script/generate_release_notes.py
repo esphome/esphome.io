@@ -482,6 +482,9 @@ class ReleaseNotesGenerator:
         output_file = self.responses_dir / "release_overview.md"
         prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
 
+NOTE: The output file and directory may not exist yet - that's fine, create them.
+      You can use: Write tool with the full path, or create the directory first if needed.
+
 ════════════════════════════════════════════════════════════════════════════════
 
 TASK: Write the Release Overview section for ESPHome {self.version} RELEASE NOTES.
@@ -535,7 +538,7 @@ OUTPUT FORMAT:
 - Do NOT include section headings or PR numbers
 
 ────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILES - Use the Read tool to load these JSON files
+📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
 ────────────────────────────────────────────────────────────────────────────────
 
 RELEASE STATISTICS:
@@ -544,31 +547,31 @@ New Features: {len(new_features)}
 New Components: {len(new_components)}
 Breaking Changes: {len(breaking_changes)}
 
-INSTRUCTIONS FOR LOADING PR DATA:
-Use the Read tool to read the JSON files for each category. Each JSON file contains:
-- number: PR number
-- title: PR title
-- body: Full PR description
-- author: GitHub username
-- labels: List of labels
-- url: GitHub PR URL
+⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
 
-NEW COMPONENT PR FILES ({len(new_components)} total):
+1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
+2. Do NOT skip any files or try to summarize without reading them all
+3. Do NOT assume you know the content - you must READ each file
+4. Each JSON file contains: number, title, body, author, labels, url
+5. Read ALL files in parallel for efficiency, then analyze the complete data
+6. Only after reading ALL files should you write the release overview
+
+NEW COMPONENT PR FILES ({len(new_components)} total) - READ ALL {len(new_components)} FILES:
 """
         for pr in new_components:
             prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
 
-        prompt += f"\nNEW FEATURE PR FILES ({len(new_features)} total):\n"
+        prompt += f"\nNEW FEATURE PR FILES ({len(new_features)} total) - READ ALL {len(new_features)} FILES:\n"
         for pr in new_features:
             prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
 
         if breaking_changes:
-            prompt += f"\nBREAKING CHANGE PR FILES ({len(breaking_changes)} total):\n"
+            prompt += f"\nBREAKING CHANGE PR FILES ({len(breaking_changes)} total) - READ ALL {len(breaking_changes)} FILES:\n"
             for pr in breaking_changes:
                 prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
 
         prompt += "\n────────────────────────────────────────────────────────────────────────────────\n"
-        prompt += "END OF FILE LIST\n"
+        prompt += "⚠️  REMINDER: You MUST read ALL files listed above before writing the overview\n"
         prompt += "────────────────────────────────────────────────────────────────────────────────\n"
 
         return prompt
@@ -585,6 +588,9 @@ NEW COMPONENT PR FILES ({len(new_components)} total):
         if target == "users":
             output_file = self.responses_dir / "breaking_changes_users.md"
             prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
+
+NOTE: The output file and directory may not exist yet - that's fine, create them.
+      You can use: Write tool with the full path, or create the directory first if needed.
 
 ════════════════════════════════════════════════════════════════════════════════
 
@@ -633,6 +639,9 @@ changes that require user action (YAML config updates, behavior changes affectin
             output_file = self.responses_dir / "breaking_changes_developers.md"
             prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
 
+NOTE: The output file and directory may not exist yet - that's fine, create them.
+      You can use: Write tool with the full path, or create the directory first if needed.
+
 ════════════════════════════════════════════════════════════════════════════════
 
 TASK: Write the DEVELOPER-FACING Breaking Changes section for ESPHome {self.version} RELEASE NOTES.
@@ -664,27 +673,27 @@ Write a concise list of developer-facing breaking changes (bullet points, groupe
 Keep it SHORT - just enough info to know what changed, then direct developers to the full docs.
 
 ────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILES - Use the Read tool to load these JSON files
+📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
 ────────────────────────────────────────────────────────────────────────────────
 
 BREAKING CHANGE PULL REQUESTS ({len(breaking_prs)} total):
 
-INSTRUCTIONS FOR LOADING PR DATA:
-Use the Read tool to read each JSON file below. Each file contains:
-- number: PR number
-- title: PR title
-- body: Full PR description with migration details
-- author: GitHub username
-- labels: List of labels (will include "breaking-change")
-- url: GitHub PR URL
+⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
 
-BREAKING CHANGE PR FILES:
+1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
+2. Do NOT skip any files or try to write without reading them all
+3. Do NOT assume you know the content - you must READ each file
+4. Each JSON file contains: number, title, body (with migration details), author, labels, url
+5. Read ALL files in parallel for efficiency, then analyze the complete data
+6. Only after reading ALL {len(breaking_prs)} files should you write the breaking changes section
+
+BREAKING CHANGE PR FILES - READ ALL {len(breaking_prs)} FILES:
 """
         for pr in breaking_prs:
             prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
 
         prompt += "\n────────────────────────────────────────────────────────────────────────────────\n"
-        prompt += "END OF FILE LIST\n"
+        prompt += f"⚠️  REMINDER: You MUST read ALL {len(breaking_prs)} files listed above before writing\n"
         prompt += "────────────────────────────────────────────────────────────────────────────────\n"
 
         return prompt
