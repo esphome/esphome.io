@@ -99,6 +99,9 @@ ota:
 
 **Important consideration:** ESPHome devices use mDNS for discovery, which does not work across VLANs. For most home users, placing ESPHome devices on the **same network as Home Assistant** is the simplest and recommended approach.
 
+<details>
+<summary>Advanced: VLAN Isolation (for advanced users only)</summary>
+
 **For advanced users wanting VLAN isolation:**
 
 The recommended approach is to connect Home Assistant to **both networks** (dual-homing) rather than using an mDNS reflector, which is unreliable:
@@ -128,6 +131,8 @@ Home Assistant with two network interfaces:
 - Disable mDNS on devices
 - Manually configure device addresses in Home Assistant
 - More maintenance overhead but works with single interface
+
+</details>
 
 **Simple segmentation (recommended for most users):**
 
