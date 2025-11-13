@@ -654,7 +654,7 @@ you can remove and re-add the device in Home Assistant.
 
 ## How do I secure my ESPHome devices?
 
-See the comprehensive {{< docref "/guides/security_best_practices" >}} guide for detailed recommendations on API encryption, OTA passwords, network segmentation, physical security, and more.
+See the comprehensive {{< docref "security_best_practices" >}} guide for detailed recommendations on API encryption, OTA passwords, network segmentation, physical security, and more.
 
 ## See Also
 
