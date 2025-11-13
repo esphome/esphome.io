@@ -36,7 +36,7 @@ wifi:
 ```
 
 > [!TIP]
-> For WiFi security recommendations including `min_auth_mode` configuration, see the {{< docref "/guides/security_best_practices#wifi-security" >}} guide.
+> For WiFi security recommendations including `min_auth_mode` configuration, see the [Security Best Practices](/guides/security_best_practices#wifi-security) guide.
 
 {{< anchor "wifi-configuration_variables" >}}
 

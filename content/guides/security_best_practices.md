@@ -1,4 +1,11 @@
-# Security Best Practices
+---
+description: "Security best practices for ESPHome devices and networks."
+title: "Security Best Practices"
+params:
+  seo:
+    description: Security best practices for ESPHome devices and networks.
+    image: shield-alt.svg
+---
 
 This guide provides security recommendations for ESPHome users to help protect their devices and networks.
 
