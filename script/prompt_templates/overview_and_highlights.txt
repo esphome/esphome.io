@@ -1,25 +1,42 @@
 SAVE YOUR RESPONSES TO TWO FILES:
-  1. Release Overview: {{ overview_file }}
-  2. Feature Highlights: {{ highlights_file }}
+  1. Feature Highlights: {{ highlights_file }}
+  2. Release Overview: {{ overview_file }}
 
 NOTE: The output files and directories may not exist yet - that's fine, create them.
       You can use: Write tool with the full path, or create directories first if needed.
+
+IMPORTANT: Both files will be COMBINED into the same final changelog document:
+  - Feature Highlights ({{ highlights_file }}): Detailed ## sections explaining major features
+  - Release Overview ({{ overview_file }}): Short 2-4 sentence summary placed BEFORE the highlights
+
+Think of it like an executive summary:
+  - Overview = "Here are the 3-5 big themes of this release" (concise, high-level)
+  - Highlights = "Here's what each theme actually means and why it matters" (detailed, technical)
 
 ════════════════════════════════════════════════════════════════════════════════
 
 TASK: Write BOTH the Release Overview AND Feature Highlights for ESPHome {{ version }}.
 
-WHY COMBINED: These sections must be written together so the overview accurately reflects
-the feature highlights. The overview is a 2-4 sentence summary of the major themes you'll
-detail in the feature highlights sections.
+WHY COMBINED: These sections appear in the same document, so they must work together.
+The overview is a concise summary of the highlights, not a separate narrative.
 
 ════════════════════════════════════════════════════════════════════════════════
-PART 1: RELEASE OVERVIEW (save to {{ overview_file }})
+STEP 1: FEATURE HIGHLIGHTS (write first - save to {{ highlights_file }})
+════════════════════════════════════════════════════════════════════════════════
+
+Write the detailed feature highlight sections FIRST (see PART 2 below for full instructions).
+This is the main content - 3-5 detailed ## sections with measurements, examples, and context.
+
+════════════════════════════════════════════════════════════════════════════════
+STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
 ════════════════════════════════════════════════════════════════════════════════
 
 CONTEXT:
-This is the opening 2-4 sentence paragraph that summarizes the major themes you'll detail
-in the Feature Highlights sections. Write this AFTER you've identified the 3-5 major themes.
+This is a SHORT executive summary that appears BEFORE the feature highlights in the final document.
+It simply introduces the 3-5 major themes that you detailed in the feature highlights.
+
+CRITICAL: This is NOT a separate article - it's an introduction to the highlights you just wrote.
+Think: "This release focuses on X, Y, and Z" then the highlights explain X, Y, and Z in detail.
 
 AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
 
@@ -31,26 +48,25 @@ STYLE EXAMPLE from ESPHome 2025.10.0:
 
 INSTRUCTIONS:
 
-1. Read ALL PR JSON files below and identify 3-5 major themes
-2. Write the Feature Highlights sections first (detailed ## sections)
-3. Then write this overview as a summary of those highlights
-4. Lead with the biggest impact: new hardware, protocols, major features
-5. Group related PRs: "memory optimizations", "security enhancements", etc.
-6. Use specific names: component names, technologies, platforms
-7. Include numbers when impactful: "10KB RAM savings", "83% fewer allocations"
+1. Look at the 3-5 ## section headings you wrote in feature_highlights.md
+2. Write 2-4 sentences that name these themes in order of priority
+3. Keep it VERY concise - just name the themes, don't explain them (that's what the highlights do)
+4. Include a number or two if highly impactful ("7 new sensors", "5KB RAM savings")
+5. DO NOT duplicate the detailed content from feature highlights
 
 OUTPUT FORMAT FOR OVERVIEW:
 - 1-2 paragraphs, 2-4 sentences total
 - No headings, no bullet points, no PR links
-- Just the prose summary
+- Just a concise prose introduction to the themes you detailed in the highlights
+- Should be roughly 1/10th the length of the feature highlights
 
 ════════════════════════════════════════════════════════════════════════════════
-PART 2: FEATURE HIGHLIGHTS (save to {{ highlights_file }})
+DETAILED INSTRUCTIONS FOR STEP 1: FEATURE HIGHLIGHTS
 ════════════════════════════════════════════════════════════════════════════════
 
 CONTEXT:
-These are detailed deep-dive sections that appear after "Key Highlights" and before
-"Breaking Changes". Each major feature gets its own ## heading.
+These are detailed deep-dive sections that appear AFTER the release overview and before
+"Breaking Changes". Each major feature gets its own ## heading. This is the main content.
 
 WHAT TO WRITE ABOUT:
 Select the 3-5 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORITY:
@@ -194,7 +210,19 @@ BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ bre
 {% endfor %}
 {% endif %}
 ────────────────────────────────────────────────────────────────────────────────
-⚠️  REMINDER: Read ALL files above, then write BOTH files in this order:
-    1. Feature Highlights: {{ highlights_file }} (3-5 detailed ## sections)
-    2. Release Overview: {{ overview_file }} (2-4 sentence summary of highlights)
+⚠️  FINAL REMINDER: Read ALL files above, then write BOTH files:
+
+STEP 1 - Write Feature Highlights FIRST:
+   File: {{ highlights_file }}
+   Content: 3-5 detailed ## sections with measurements, examples, context
+   Length: ~10-15KB of detailed technical content
+
+STEP 2 - Write Release Overview SECOND (based on the highlights you just wrote):
+   File: {{ overview_file }}
+   Content: 2-4 sentence introduction that names the themes from your highlights
+   Length: ~1KB - roughly 1/10th the length of highlights
+   Purpose: Concise executive summary that introduces the detailed sections
+
+Remember: Both go in the same final document. Overview comes first, then highlights.
+Don't repeat detailed information - overview introduces, highlights explain.
 ────────────────────────────────────────────────────────────────────────────────
