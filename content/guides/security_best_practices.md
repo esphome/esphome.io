@@ -420,7 +420,7 @@ wifi:
   # ... your normal wifi config ...
   ap:
     ssid: "Device-Fallback"
-    password: !secret fallback_password  # ALWAYS SET THIS
+    password: !secret device_name_fallback_password  # ALWAYS SET THIS
 
 ```
 
@@ -502,7 +502,7 @@ wifi:
   # Fallback hotspot with password
   ap:
     ssid: "Secure-Device-Fallback"
-    password: !secret fallback_password
+    password: !secret secure_device_fallback_password
 
 # API with encryption (REQUIRED)
 api:
@@ -544,7 +544,7 @@ wifi:
 
   # Use static IP to reduce mDNS dependency
   manual_ip:
-    static_ip: !secret device_ip
+    static_ip: !secret production_device_ip
     gateway: !secret gateway_ip
     subnet: 255.255.255.0
 
