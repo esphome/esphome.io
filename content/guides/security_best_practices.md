@@ -141,29 +141,6 @@ Home Assistant with two network interfaces:
 
 </details>
 
-**Simple segmentation (recommended for most users):**
-
-```text
-
-Internet → Firewall → VLAN 10 (Home Automation - Home Assistant + ESPHome)
-                   → VLAN 20 (Guest Network)
-                   → VLAN 30 (Other IoT Devices)
-
-```
-
-**Benefits:**
-
-- mDNS discovery works automatically
-- Simpler network configuration
-- Easier troubleshooting
-- Still provides isolation from guest networks and other untrusted IoT devices
-
-**Firewall rules:**
-
-- Allow Home Automation VLAN → Internet (for updates, time sync)
-- Block other VLANs → Home Automation VLAN
-- Allow Home Automation VLAN → other internal networks (if needed for integrations)
-
 ### WiFi Security
 
 For full WiFi configuration options, see the [WiFi component](/components/wifi) documentation.
