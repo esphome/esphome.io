@@ -341,9 +341,8 @@ class ReleaseNotesGenerator:
         print(f"\n=== Discovering PRs for {current_tag} ===\n")
         print(f"Previous version: {previous_tag}")
 
-        # Check if beta tag exists (e.g., 2025.11.0b1)
-        beta_tag = f"{self.version.year}.{self.version.month}.0b1"
-        beta_tag_exists = self.tag_exists(beta_tag)
+        # Find the latest beta tag (e.g., 2025.11.0b1, b2, b3, etc.)
+        beta_tag, beta_tag_exists = self.version.find_latest_beta(all_tags)
 
         # Check if previous version tag exists
         if not self.tag_exists(previous_tag):
