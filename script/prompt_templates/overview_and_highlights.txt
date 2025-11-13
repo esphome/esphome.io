@@ -53,12 +53,20 @@ These are detailed deep-dive sections that appear after "Key Highlights" and bef
 "Breaking Changes". Each major feature gets its own ## heading.
 
 WHAT TO WRITE ABOUT:
-Select the 3-5 MOST IMPORTANT features/changes from the PRs:
-- New major features (USB host, new protocols, new components)
-- Architectural changes (framework changes, major refactorings)
-- Memory/performance optimizations with significant impact
-- Security enhancements
-- Features needing explanation or migration guidance
+Select the 3-5 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORITY:
+
+**Priority Order (most important first):**
+1. **New Major Features** - Groundbreaking user-facing functionality (new protocols, major capabilities)
+2. **New Hardware/Platform Support** - New chips, new sensors, new component types
+3. **Architectural Improvements** - Framework changes, major refactorings with significant impact
+4. **Performance/Memory Optimizations** - Only if substantial (multiple KB savings, major speedups)
+5. **Security Enhancements** - Critical security improvements
+
+**What qualifies as "Major":**
+- Enables entirely new use cases (Z-Wave support, USB host)
+- Adds support for popular/widely-used hardware
+- Framework changes affecting many components
+- Performance gains of 5KB+ or 50%+ improvements
 
 STYLE EXAMPLES from ESPHome 2025.10.0:
 
@@ -91,8 +99,23 @@ This release includes a fundamental change - **Arduino is now integrated as an E
 INSTRUCTIONS:
 
 1. **Read ALL PR JSON files** below (new features + new components)
-2. **Identify 3-5 major themes** - group related PRs (e.g., all memory optimizations together)
-3. **Write detailed sections**:
+   - Read the FULL PR body, not just titles
+   - Understand what the PR actually does (check description, motivation, testing notes)
+   - Look for measurements, benchmarks, use cases in the PR body
+
+2. **Accurately characterize each PR**:
+   - ESP32-P4 = new chip support (variant of ESP32 platform)
+   - "Native" platform = running multiple ESP chips together via networking
+   - Component PRs = new hardware support (sensors, displays, etc.)
+   - Framework PRs = internal improvements affecting existing components
+   - Don't mischaracterize platform features (read the PR description!)
+
+3. **Identify 3-5 major themes** - group related PRs:
+   - All memory optimizations together (if substantial)
+   - All new sensor/hardware components together
+   - Major new features separately (if truly groundbreaking)
+
+4. **Write detailed sections**:
    - ## Heading for each major feature
    - Opening paragraph: what it is and why it matters
    - **Key Features/Benefits** bulleted list with bold labels
@@ -101,26 +124,33 @@ INSTRUCTIONS:
    - Use `code formatting` for config keys
    - Use **bold** for emphasis
 
-4. **What makes good sections**:
+5. **What makes good sections**:
    ✓ Explains WHY the feature matters, not just what it does
    ✓ Includes specific numbers (RAM savings, performance gains)
    ✓ Groups related PRs into one cohesive narrative
    ✓ Provides actionable guidance (migration steps, recommendations)
    ✓ Professional but enthusiastic tone
 
-5. **What to avoid**:
+6. **What to avoid**:
    ✗ Don't write about every PR - focus on major themes
    ✗ Don't just list features - explain benefits and context
    ✗ Don't discuss breaking changes themselves (they go in their own section)
+   ✗ Don't discuss deprecation removals (these are breaking changes)
    ✗ Skip minor bug fixes and small improvements
+   ✗ Don't include sections about "Deprecation Removals" or "Migration Considerations"
 
    Note: Some PRs labeled "breaking-change" may introduce important new features.
-   Focus on the NEW functionality they bring, not the breaking aspects.
+   Focus on the NEW functionality they bring, not the breaking/removal aspects.
+
+   Example: If a PR removes deprecated code BUT ALSO adds a new capability, only
+   discuss the new capability. Ignore the removal aspect entirely.
 
 OUTPUT FORMAT FOR HIGHLIGHTS:
-- 3-5 complete ## sections ordered by importance (most impactful first)
+- 3-5 complete ## sections ordered by PRIORITY (see Priority Order above)
+- Order: New Major Features → New Hardware → Architectural Changes → Optimizations
 - Do NOT include "Feature Highlights" heading - just write the ## sections
 - Do NOT include introductory text
+- Do NOT include "Deprecation Removals" or "Migration Considerations" sections
 
 ────────────────────────────────────────────────────────────────────────────────
 📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
