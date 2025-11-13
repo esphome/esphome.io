@@ -80,7 +80,7 @@ api:
 > Support for configuring the encryption key on-the-fly will be implemented in a future release of Home Assistant.
 
 > [!TIP]
-> For comprehensive security guidance including API encryption best practices, see the [Security Best Practices](/guides/security_best_practices) guide.
+> For comprehensive security guidance including API encryption best practices, see the {{< docref "/guides/security_best_practices" >}} guide.
 
 - **actions** (*Optional*, list): A list of user-defined actions. See [User-defined Actions](#api-device-actions).
 - **batch_delay** (*Optional*, [Time](/guides/configuration-types#time)): The delay time for batching multiple state update messages

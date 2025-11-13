@@ -101,7 +101,7 @@ mqtt:
   [TLS with esp-idf (esp32)](#mqtt-tls-idf) for more information.
 
 > [!TIP]
-> For MQTT security recommendations including TLS configuration, see the [Security Best Practices](/guides/security_best_practices#mqtt) guide.
+> For MQTT security recommendations including TLS configuration, see the {{< docref "/guides/security_best_practices#mqtt" >}} guide.
 
 - **client_certificate** (*Optional*, string): Only on `esp32`. Client certificate in PEM format.
 - **client_certificate_key** (*Optional*, string): Only on `esp32`. Client private key in PEM format.
