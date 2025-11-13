@@ -470,6 +470,10 @@ class ReleaseNotesGenerator:
         print(
             f"     In Claude CLI: 'Please read {overview_highlights_file} and follow the instructions'"
         )
+        if breaking_changes:
+            print(
+                f"     In Claude CLI: 'Please read {breaking_file} and follow the instructions'"
+            )
 
         print("\n" + "=" * 80)
         print("STEP 2: After saving all AI responses, run:")
