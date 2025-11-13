@@ -87,6 +87,19 @@ class Version:
         max_patch = max(patches)
         return Version(year=self.year, month=self.month, patch=max_patch)
 
+    def find_latest_beta(self, all_tags: set[str]) -> tuple[str, bool]:
+        """Find the latest beta tag for this major.minor.0 version
+
+        Returns:
+            tuple of (beta_tag, exists) where beta_tag is like "2025.11.0b3"
+        """
+        base = f"{self.year}.{self.month}.0b"
+        betas = [int(tag.replace(base, "")) for tag in all_tags if tag.startswith(base)]
+        if not betas:
+            return (f"{base}1", False)
+        max_beta = max(betas)
+        return (f"{base}{max_beta}", True)
+
 
 @dataclass
 class PullRequest:
