@@ -32,7 +32,26 @@ params:
 - **Highlight 2** - Brief description
 - **Highlight 3** - Brief description
 
-<!-- MANUAL: Add feature highlight sections here -->
+<!-- AI_FEATURE_HIGHLIGHTS_START -->
+<!--
+  FEATURE HIGHLIGHT SECTIONS
+
+  Detailed deep-dive sections for major features, appearing after Key Highlights
+  and before Breaking Changes. Each feature gets its own ## heading with:
+  - Detailed explanations of what it is and why it matters
+  - Key features/benefits with bulleted lists
+  - Code examples and migration guidance
+  - Subsections (###) for additional details
+
+  Guidelines:
+  - Select 3-5 most important features/changes
+  - Group related PRs into cohesive narratives
+  - Include specific numbers (RAM savings, performance improvements)
+  - Use {{< docref >}} for component links
+  - Professional but enthusiastic tone
+  - Order by importance (most impactful first)
+-->
+<!-- AI_FEATURE_HIGHLIGHTS_END -->
 
 ## Breaking Changes
 

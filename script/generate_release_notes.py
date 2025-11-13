@@ -413,6 +413,14 @@ class ReleaseNotesGenerator:
         overview_file = self.prompts_dir / "release_overview.txt"
         overview_file.write_text(overview_prompt)
 
+        # Generate Feature Highlights Prompt
+        if new_features or new_components:
+            highlights_prompt = self._generate_feature_highlights_prompt(
+                new_features, new_components
+            )
+            highlights_file = self.prompts_dir / "feature_highlights.txt"
+            highlights_file.write_text(highlights_prompt)
+
         # Generate Breaking Changes Prompts
         if breaking_changes:
             # User-facing breaking changes
@@ -445,12 +453,19 @@ class ReleaseNotesGenerator:
         print(f"  Prompt: {overview_file}")
         print(f"  Output: {self.responses_dir / 'release_overview.md'}")
 
+        if new_features or new_components:
+            print("\nPrompt 2: Feature Highlights")
+            print(f"  Prompt: {highlights_file}")
+            print(f"  Output: {self.responses_dir / 'feature_highlights.md'}")
+
         if breaking_changes:
-            print("\nPrompt 2: Breaking Changes (Users)")
+            prompt_num = 3 if (new_features or new_components) else 2
+            print(f"\nPrompt {prompt_num}: Breaking Changes (Users)")
             print(f"  Prompt: {breaking_users_file}")
             print(f"  Output: {self.responses_dir / 'breaking_changes_users.md'}")
 
-            print("\nPrompt 3: Breaking Changes (Developers)")
+            prompt_num += 1
+            print(f"\nPrompt {prompt_num}: Breaking Changes (Developers)")
             print(f"  Prompt: {breaking_devs_file}")
             print(f"  Output: {self.responses_dir / 'breaking_changes_developers.md'}")
 
@@ -698,6 +713,132 @@ BREAKING CHANGE PR FILES - READ ALL {len(breaking_prs)} FILES:
 
         return prompt
 
+    def _generate_feature_highlights_prompt(
+        self, new_features: list[PullRequest], new_components: list[PullRequest]
+    ) -> str:
+        """Generate prompt for feature highlights sections
+
+        Args:
+            new_features: List of PRs with new-feature label
+            new_components: List of PRs with new-component label
+        """
+        output_file = self.responses_dir / "feature_highlights.md"
+        prompt = f"""SAVE YOUR RESPONSE TO: {output_file}
+
+NOTE: The output file and directory may not exist yet - that's fine, create them.
+      You can use: Write tool with the full path, or create the directory first if needed.
+
+════════════════════════════════════════════════════════════════════════════════
+
+TASK: Write FEATURE HIGHLIGHT SECTIONS for ESPHome {self.version} RELEASE NOTES.
+
+CONTEXT:
+These are detailed deep-dive sections that appear after the "Key Highlights" bullet list
+and before "Breaking Changes". Each major feature gets its own ## heading with detailed
+explanations, benefits, code examples, and migration guidance.
+
+AUDIENCE: ESPHome users (makers, DIY enthusiasts, home automation enthusiasts)
+
+WHAT TO WRITE ABOUT:
+Select the 3-5 MOST IMPORTANT features/changes from the PRs and write detailed sections.
+Look for:
+- New major features (USB host, new protocols, new components)
+- Architectural changes (framework changes, major refactorings)
+- Memory/performance optimizations with significant impact
+- Security enhancements
+- Features that need explanation or migration guidance
+
+STYLE EXAMPLES from ESPHome 2025.10.0:
+
+## Z-Wave Proxy
+
+The new {{{{< docref "/components/zwave_proxy" >}}}} component enables network-based connectivity for Z-Wave hardware
+by proxying serial communication between a Z-Wave modem SoC and Z-Wave JS over WiFi or Ethernet.
+
+**Key Features:**
+
+- **Remote Z-Wave placement** - Position your Z-Wave modem anywhere in your home with WiFi/Ethernet connectivity
+- **Serial-to-network bridge** - Proxies UART communication between Z-Wave hardware and Z-Wave JS
+- **Low latency performance** - Achieves 50-60ms typical latency
+
+## Arduino as IDF Component (Major Architectural Change)
+
+This release includes a fundamental change in how ESP32 Arduino builds work - **Arduino is now integrated as an ESP-IDF component**.
+
+**Memory Savings:**
+
+- **20-30KB RAM savings** on Arduino builds
+- **Additional ~8KB RAM savings** if using the web server
+- **Smaller binary sizes** overall
+
+### Should You Migrate to ESP-IDF?
+
+**We recommend ESP-IDF for most users**, especially for:
+
+- Bluetooth Proxy devices (lower memory usage)
+- New projects
+- Configurations where you want faster builds
+
+INSTRUCTIONS:
+
+1. **Read ALL PR JSON files** listed below (new features + new components)
+2. **Identify 3-5 major themes** - group related PRs together (e.g., all memory optimizations)
+3. **Write detailed sections** with:
+   - ## Heading for each major feature
+   - Opening paragraph explaining what it is and why it matters
+   - **Key Features/Benefits** bulleted list with bold labels
+   - Subsections (###) for migration guidance, recommendations, or technical details
+   - Use {{{{< docref "/path" >}}}} for component links
+   - Use `code formatting` for config keys and technical terms
+   - Use **bold** for emphasis on key points
+
+4. **What makes a good section:**
+   ✓ Explains WHY the feature matters, not just what it does
+   ✓ Includes specific numbers (RAM savings, performance improvements)
+   ✓ Groups related PRs into one cohesive narrative
+   ✓ Provides actionable guidance (migration steps, recommendations)
+   ✓ Uses subsections to organize complex topics
+   ✓ Professional but enthusiastic tone
+
+5. **What to avoid:**
+   ✗ Don't write about every single PR - focus on major themes
+   ✗ Don't just list features - explain benefits and context
+   ✗ Don't include breaking changes here (they go in their own section)
+   ✗ Skip minor bug fixes and small improvements
+
+OUTPUT FORMAT:
+Write 3-5 complete ## sections, each following the style above. Order them by importance
+(biggest/most impactful first). Do NOT include any introductory text or section headings
+that say "Feature Highlights" - just write the ## sections directly.
+
+────────────────────────────────────────────────────────────────────────────────
+📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
+────────────────────────────────────────────────────────────────────────────────
+
+⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
+
+1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
+2. Do NOT skip any files or try to summarize without reading them all
+3. Do NOT assume you know the content - you must READ each file
+4. Each JSON file contains: number, title, body, author, labels, url
+5. Read ALL files in parallel for efficiency, then analyze the complete data
+6. Only after reading ALL files should you identify major themes and write sections
+
+NEW COMPONENT PR FILES ({len(new_components)} total) - READ ALL {len(new_components)} FILES:
+"""
+        for pr in new_components:
+            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
+
+        prompt += f"\nNEW FEATURE PR FILES ({len(new_features)} total) - READ ALL {len(new_features)} FILES:\n"
+        for pr in new_features:
+            prompt += f"  {self.prs_cache_dir / f'{pr.number}.json'}\n"
+
+        prompt += "\n────────────────────────────────────────────────────────────────────────────────\n"
+        prompt += "⚠️  REMINDER: You MUST read ALL files listed above before writing sections\n"
+        prompt += "────────────────────────────────────────────────────────────────────────────────\n"
+
+        return prompt
+
     def assemble_changelog(self) -> bool:
         """Assemble final changelog from template and AI responses"""
         print("\n=== Assembling Changelog ===\n")
@@ -743,6 +884,11 @@ BREAKING CHANGE PR FILES - READ ALL {len(breaking_prs)} FILES:
         if breaking_devs_file.exists():
             breaking_devs = breaking_devs_file.read_text().strip()
 
+        highlights_file = self.responses_dir / "feature_highlights.md"
+        highlights = ""
+        if highlights_file.exists():
+            highlights = highlights_file.read_text().strip()
+
         # Load the PR numbers for this version from a manifest file
         manifest_file = self.version_dir / "pr_numbers.txt"
         if not manifest_file.exists():
@@ -767,6 +913,11 @@ BREAKING CHANGE PR FILES - READ ALL {len(breaking_prs)} FILES:
         template = self._replace_marker_content(
             template, "AI_RELEASE_OVERVIEW", overview
         )
+
+        if highlights:
+            template = self._replace_marker_content(
+                template, "AI_FEATURE_HIGHLIGHTS", highlights
+            )
 
         if breaking_users:
             template = self._replace_marker_content(
