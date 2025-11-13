@@ -50,7 +50,7 @@ binary_sensor:
 
 ## Configuration variables
 
-- **pin** (**Required**, [Pin Schema](#config-pin_schema)): The pin to monitor.
+- **pin** (**Required**, [Pin Schema](/guides/configuration-types#pin-schema)): The pin to monitor.
 - **use_interrupt** (*Optional*, boolean): Use hardware interrupts instead of polling for better
   performance and lower CPU usage. Defaults to `true` for most platforms, but defaults to `false`
   for LibreTiny-based platforms (BK72xx, RTL87xx, LN882x) due to hardware limitations. Only supported
@@ -62,7 +62,7 @@ binary_sensor:
   - `RISING`  : Trigger only on rising edge (low to high)
   - `FALLING`  : Trigger only on falling edge (high to low)
 
-- All other options from [Binary Sensor](#config-binary_sensor).
+- All other options from [Binary Sensor](/components/binary_sensor#config-binary_sensor).
 
 ## Interrupt Mode vs Polling Mode
 
@@ -104,7 +104,7 @@ If you're hooking up a button without an external pullup or see lots of ON/OFF e
 in the log output all the time, this often means the GPIO pin is floating.
 
 For these cases you need to manually enable the pull-up (or pull-down) resistors on the ESP,
-you can do so with the [Pin Schema](#config-pin_schema).
+you can do so with the [Pin Schema](/guides/configuration-types#pin-schema).
 
 ```yaml
 binary_sensor:
@@ -119,7 +119,7 @@ binary_sensor:
 
 ## Inverting Values
 
-Use the `inverted` property of the [Pin Schema](#config-pin_schema) to invert the binary
+Use the `inverted` property of the [Pin Schema](/guides/configuration-types#pin-schema) to invert the binary
 sensor:
 
 ```yaml
@@ -135,7 +135,7 @@ binary_sensor:
 ## Debouncing Values
 
 Some binary sensors are a bit unstable and quickly transition between the ON and OFF state while
-they're pressed. To fix this and debounce the signal, use the [binary sensor filters](#binary_sensor-filters):
+they're pressed. To fix this and debounce the signal, use the [binary sensor filters](/components/binary_sensor#binary_sensor-filters):
 
 ```yaml
 # Example configuration entry
@@ -164,5 +164,5 @@ binary_sensor:
 ## See Also
 
 - {{< docref "/components/binary_sensor" >}}
-- [Pin Schema](#config-pin_schema)
+- [Pin Schema](/guides/configuration-types#pin-schema)
 - {{< apiref "gpio/binary_sensor/gpio_binary_sensor.h" "gpio/binary_sensor/gpio_binary_sensor.h" >}}
