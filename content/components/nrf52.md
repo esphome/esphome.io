@@ -155,6 +155,15 @@ interval:
       - output.turn_off: red_led
 ```
 
+### Board do not boot
+
+Disable DC/DC.
+
+```yaml
+nrf52:
+  dcdc: False
+```
+
 ## See Also
 
 - {{< docref "esphome/" >}}
