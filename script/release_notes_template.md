@@ -105,12 +105,6 @@ params:
 <!-- This section is automatically generated from PR labels -->
 <!-- AUTO_GENERATED_NEW_COMPONENTS_END -->
 
-### New Platforms
-
-<!-- AUTO_GENERATED_NEW_PLATFORMS_START -->
-<!-- This section is automatically generated from PR labels -->
-<!-- AUTO_GENERATED_NEW_PLATFORMS_END -->
-
 ### Breaking Changes
 
 <!-- AUTO_GENERATED_BREAKING_CHANGES_LIST_START -->
@@ -125,15 +119,6 @@ params:
 <!-- AUTO_GENERATED_ALL_CHANGES_START -->
 <!-- This section is automatically generated from all merged PRs -->
 <!-- AUTO_GENERATED_ALL_CHANGES_END -->
-
-</details>
-
-<details>
-<summary></summary>
-
-<!-- AUTO_GENERATED_DEPENDENCY_UPDATES_START -->
-<!-- This section is automatically generated from dependency update PRs -->
-<!-- AUTO_GENERATED_DEPENDENCY_UPDATES_END -->
 
 </details>
 

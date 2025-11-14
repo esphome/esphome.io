@@ -1,17 +1,73 @@
 #!/usr/bin/env python3
 """
 ESPHome Release Notes Generator
+=================================
 
-This tool automates release notes generation by:
-1. Discovering PRs merged between releases using GitHub CLI
-2. Caching PR metadata locally
-3. Generating AI prompts for Claude Code CLI
-4. Assembling final changelog from AI responses and PR data
+This script automates the generation of release notes for ESPHome by:
+  1. Discovering PRs merged between releases using GitHub CLI
+  2. Caching PR metadata locally
+  3. Generating AI prompts for Claude Code CLI
+  4. Assembling the final changelog from AI responses and PR data
+
+Prerequisites:
+--------------
+- Python 3.8+ (recommended: 3.11+)
+- GitHub CLI (`gh`) installed and authenticated:
+    - Install: https://cli.github.com/
+    - Authenticate: `gh auth login`
+- Internet access for fetching PR data
+
+Required Dependencies:
+---------------------
+- `jinja2` (for templating)
+    Install via pip: `pip install jinja2`
+    Or via uv: `uv pip install jinja2`
 
 Usage:
-    python script/generate_release_notes.py 2025.11.0           # Fetch PRs, generate prompts
-    python script/generate_release_notes.py 2025.11.0 --update  # Force re-fetch PRs
-    python script/generate_release_notes.py 2025.11.0 --assemble # Assemble from AI responses
+------
+Basic workflow:
+  1. Fetch PRs and generate AI prompts:
+       python script/generate_release_notes.py 2025.11.0
+  2. Force re-fetch PRs (if needed):
+       python script/generate_release_notes.py 2025.11.0 --update
+  3. Assemble release notes from AI responses:
+       python script/generate_release_notes.py 2025.11.0 --assemble
+
+Detailed Workflow:
+------------------
+Step 1: Generate Prompts
+  $ python script/generate_release_notes.py 2025.11.0
+  This discovers PRs between the previous release and the current version,
+  caches PR metadata, and generates AI prompts in script/cache/2025.11.0/prompts/
+
+Step 2: Process Prompts with Claude Code CLI
+  Start Claude Code CLI and read the prompts:
+  $ claude
+  > Please read script/cache/2025.11.0/prompts/overview_and_highlights.txt and follow the instructions
+  > Please read script/cache/2025.11.0/prompts/breaking_changes.txt and follow the instructions
+
+  Claude will write AI responses to script/cache/2025.11.0/ai_responses/
+
+Step 3: Review AI Responses (CRITICAL!)
+  Carefully review and edit the AI-generated content in script/cache/2025.11.0/ai_responses/
+  Check for:
+  - Hallucinations or inaccurate technical claims
+  - Incorrect compatibility statements
+  - Mischaracterized features
+
+Step 4: Assemble Changelog
+  $ python script/generate_release_notes.py 2025.11.0 --assemble
+  This combines AI responses with auto-generated PR lists into content/changelog/2025.11.0.md
+
+Troubleshooting Common Issues:
+-----------------------------
+- "gh: command not found": Install GitHub CLI and ensure it's in your PATH.
+- "gh authentication failed": Run `gh auth login` and verify access to the repository.
+- "ModuleNotFoundError: No module named 'jinja2'": Install with `pip install jinja2` or `uv pip install jinja2`.
+- "No PRs found for version": Ensure the version tag exists and you have network access.
+- "Permission denied" or file errors: Check directory permissions and paths.
+
+For further help, see the ESPHome documentation or contact maintainers.
 """
 
 from __future__ import annotations
@@ -77,11 +133,13 @@ class Version:
     def find_latest_patch(self, all_tags: set[str]) -> Version:
         """Find the latest patch release for this major.minor version"""
         base = f"{self.year}.{self.month}."
-        patches = [
-            int(tag.replace(base, "").split("b")[0])
-            for tag in all_tags
-            if tag.startswith(base) and "b" not in tag
-        ]
+        patches = []
+        for tag in all_tags:
+            if tag.startswith(base) and "b" not in tag:
+                try:
+                    patches.append(int(tag.replace(base, "").split("b")[0]))
+                except ValueError:
+                    continue  # Skip malformed tags
         if not patches:
             return self
         max_patch = max(patches)
@@ -94,7 +152,13 @@ class Version:
             tuple of (beta_tag, exists) where beta_tag is like "2025.11.0b3"
         """
         base = f"{self.year}.{self.month}.0b"
-        betas = [int(tag.replace(base, "")) for tag in all_tags if tag.startswith(base)]
+        betas = []
+        for tag in all_tags:
+            if tag.startswith(base):
+                try:
+                    betas.append(int(tag.replace(base, "")))
+                except ValueError:
+                    continue  # Skip malformed tags
         if not betas:
             return (f"{base}1", False)
         max_beta = max(betas)
@@ -121,7 +185,9 @@ class PullRequest:
             number=data["number"],
             title=data["title"],
             body=data.get("body", ""),
-            author=data["author"]["login"],
+            author=data.get("author", {}).get("login", "unknown")
+            if data.get("author")
+            else "unknown",
             labels=[label["name"] for label in data.get("labels", [])],
             url=data["url"],
             state=data["state"],
@@ -168,6 +234,16 @@ class ReleaseNotesGenerator:
             lstrip_blocks=True,
         )
 
+    @staticmethod
+    def _print_gh_install_instructions() -> None:
+        """Print GitHub CLI installation instructions"""
+        print("\nInstallation instructions:")
+        print("  macOS:   brew install gh")
+        print(
+            "  Linux:   See https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
+        )
+        print("  Windows: See https://github.com/cli/cli#installation")
+
     def check_github_cli(self) -> None:
         """Check if GitHub CLI is installed and authenticated"""
         try:
@@ -179,21 +255,11 @@ class ReleaseNotesGenerator:
             )
             if result.returncode != 0:
                 print("Error: GitHub CLI (gh) is not installed or not in PATH")
-                print("\nInstallation instructions:")
-                print("  macOS:   brew install gh")
-                print(
-                    "  Linux:   See https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
-                )
-                print("  Windows: See https://github.com/cli/cli#installation")
+                self._print_gh_install_instructions()
                 sys.exit(1)
         except FileNotFoundError:
             print("Error: GitHub CLI (gh) is not installed")
-            print("\nInstallation instructions:")
-            print("  macOS:   brew install gh")
-            print(
-                "  Linux:   See https://github.com/cli/cli/blob/trunk/docs/install_linux.md"
-            )
-            print("  Windows: See https://github.com/cli/cli#installation")
+            self._print_gh_install_instructions()
             sys.exit(1)
 
         # Check authentication
@@ -208,7 +274,7 @@ class ReleaseNotesGenerator:
                 print("Error: GitHub CLI is not authenticated")
                 print("\nPlease run: gh auth login")
                 sys.exit(1)
-        except Exception as e:
+        except (FileNotFoundError, OSError) as e:
             print(f"Error checking GitHub CLI authentication: {e}")
             print("\nPlease run: gh auth login")
             sys.exit(1)
@@ -260,9 +326,9 @@ class ReleaseNotesGenerator:
             print(f"Found {len(self._all_tags)} tags")
             return self._all_tags
         except subprocess.CalledProcessError as e:
-            print(f"Error fetching tags: {e.stderr}")
-            self._all_tags = set()
-            return self._all_tags
+            print(f"Error fetching tags: {e.stderr}", file=sys.stderr)
+            print("Failed to fetch tags. Exiting.", file=sys.stderr)
+            sys.exit(1)
 
     def tag_exists(self, tag: str) -> bool:
         """Check if a git tag exists in esphome/esphome repo"""
@@ -306,12 +372,13 @@ class ReleaseNotesGenerator:
         """Get all PRs that were included in patch releases (e.g., 2025.10.1, 2025.10.2)"""
         patch_prs = set()
         patch_num = 1
+        max_patches = 100  # Safety limit to prevent infinite loops
 
         print(
             f"Checking for patch releases of {base_version.year}.{base_version.month}.x..."
         )
 
-        while True:
+        while patch_num <= max_patches:
             patch_tag = f"{base_version.year}.{base_version.month}.{patch_num}"
 
             if not self.tag_exists(patch_tag):
@@ -325,6 +392,11 @@ class ReleaseNotesGenerator:
             patch_prs.update(prs)
 
             patch_num += 1
+
+        if patch_num > max_patches:
+            print(
+                f"Warning: Reached maximum patch limit ({max_patches}). Some patches may have been skipped."
+            )
 
         return sorted(patch_prs)
 
@@ -595,8 +667,11 @@ class ReleaseNotesGenerator:
                 print("✓ Preserving existing imgtable")
 
             # Extract existing "Full list of changes" section
+            # This regex matches from "## Full list of changes" to end of file
             full_list_match = re.search(
-                r"## Full list of changes.*", existing_content, re.DOTALL
+                r"## Full list of changes.*?(?=^## |\Z)",
+                existing_content,
+                re.DOTALL | re.MULTILINE,
             )
             if full_list_match:
                 existing_full_list = full_list_match.group(0)
@@ -691,6 +766,7 @@ class ReleaseNotesGenerator:
             print(template[:1000])  # Show first 1000 chars
             print("...")
         else:
+            output_file.parent.mkdir(parents=True, exist_ok=True)
             output_file.write_text(template)
             print(f"\n✓ Changelog written to: {output_file}")
 
@@ -775,11 +851,9 @@ class ReleaseNotesGenerator:
             "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
         )
         date_str = f"{day}{suffix} {now.strftime('%B %Y')}"
-        month_str = now.strftime("%B")
 
         template = template.replace("{VERSION}", str(self.version))
         template = template.replace("{DATE}", date_str)
-        template = template.replace("{MONTH}", month_str)
 
         print(f"✓ Replaced placeholders: {self.version}, {date_str}")
 
