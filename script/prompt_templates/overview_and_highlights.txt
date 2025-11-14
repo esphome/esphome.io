@@ -10,7 +10,7 @@ IMPORTANT: Both files will be COMBINED into the same final changelog document:
   - Release Overview ({{ overview_file }}): Short 2-4 sentence summary placed BEFORE the highlights
 
 Think of it like an executive summary:
-  - Overview = "Here are the 3-5 big themes of this release" (concise, high-level)
+  - Overview = "Here are the 3-10 big themes of this release" (concise, high-level)
   - Highlights = "Here's what each theme actually means and why it matters" (detailed, technical)
 
 ════════════════════════════════════════════════════════════════════════════════
@@ -25,7 +25,7 @@ STEP 1: FEATURE HIGHLIGHTS (write first - save to {{ highlights_file }})
 ════════════════════════════════════════════════════════════════════════════════
 
 Write the detailed feature highlight sections FIRST (see PART 2 below for full instructions).
-This is the main content - 3-5 detailed ## sections with measurements, examples, and context.
+This is the main content - 3-10 detailed ## sections with measurements, examples, and context.
 
 ════════════════════════════════════════════════════════════════════════════════
 STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
@@ -33,7 +33,7 @@ STEP 2: RELEASE OVERVIEW (write second - save to {{ overview_file }})
 
 CONTEXT:
 This is a SHORT executive summary that appears BEFORE the feature highlights in the final document.
-It simply introduces the 3-5 major themes that you detailed in the feature highlights.
+It simply introduces the 3-10 major themes that you detailed in the feature highlights.
 
 CRITICAL: This is NOT a separate article - it's an introduction to the highlights you just wrote.
 Think: "This release focuses on X, Y, and Z" then the highlights explain X, Y, and Z in detail.
@@ -48,7 +48,7 @@ STYLE EXAMPLE from ESPHome 2025.10.0:
 
 INSTRUCTIONS:
 
-1. Look at the 3-5 ## section headings you wrote in feature_highlights.md
+1. Look at the 3-10 ## section headings you wrote in feature_highlights.md
 2. Write 2-4 sentences that name these themes in order of priority
 3. Keep it VERY concise - just name the themes, don't explain them (that's what the highlights do)
 4. Include a number or two if highly impactful ("7 new sensors", "5KB RAM savings")
@@ -69,7 +69,7 @@ These are detailed deep-dive sections that appear AFTER the release overview and
 "Breaking Changes". Each major feature gets its own ## heading. This is the main content.
 
 WHAT TO WRITE ABOUT:
-Select the 3-5 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORITY:
+Select the 3-10 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORITY:
 
 **Priority Order (most important first):**
 1. **New Major Features** - Groundbreaking user-facing functionality (new protocols, major capabilities)
@@ -77,12 +77,15 @@ Select the 3-5 MOST IMPORTANT features/changes from the PRs and ORDER BY PRIORIT
 3. **Architectural Improvements** - Framework changes, major refactorings with significant impact
 4. **Performance/Memory Optimizations** - Only if substantial (multiple KB savings, major speedups)
 5. **Security Enhancements** - Critical security improvements
+6. **Notable Bug Fixes** - Important fixes for crashes, data corruption, or major functionality issues
 
 **What qualifies as "Major":**
 - Enables entirely new use cases (Z-Wave support, USB host)
 - Adds support for popular/widely-used hardware
 - Framework changes affecting many components
 - Performance gains of 5KB+ or 50%+ improvements
+- Fixes that prevent crashes, data loss, or major malfunctions
+- Fixes for widely-used components affecting many users
 
 STYLE EXAMPLES from ESPHome 2025.10.0:
 
@@ -112,6 +115,20 @@ This release includes a fundamental change - **Arduino is now integrated as an E
 - Bluetooth Proxy devices (lower memory usage)
 - New projects
 
+## Notable Bug Fixes (Example)
+
+This release fixes critical WiFi mesh network failover issues that left devices stuck attempting to connect to failed access points ([#11805](https://github.com/esphome/esphome/pull/11805)).
+
+**The Problem:**
+Devices running ESPHome 2025.8.2+ would get stuck connecting to the strongest AP in a mesh network, even when that AP rejected the connection due to auth failures or capacity limits. The priority degradation system (designed to cycle through APs on failure) was rendered useless by a bug that always sorted by signal strength first.
+
+**The Fix:**
+- **Priority-based failover restored** - Failed APs are now correctly sorted lower, enabling automatic failover to working APs
+- **False positive filtering** - Two connection attempts per BSSID before marking as failed (eliminates transient auth failures)
+- **Hidden network handling fixed** - Networks marked `hidden: true` are tried before scanning, with smart skip logic to avoid wasting time on visible networks
+
+Devices now automatically fail over to the next strongest AP when connection fails, making mesh networks reliable again.
+
 INSTRUCTIONS:
 
 1. **Read ALL PR JSON files** below (new features + new components)
@@ -126,10 +143,11 @@ INSTRUCTIONS:
    - Framework PRs = internal improvements affecting existing components
    - Don't mischaracterize platform features (read the PR description!)
 
-3. **Identify 3-5 major themes** - group related PRs:
+3. **Identify 3-10 major themes** - group related PRs:
    - All memory optimizations together (if substantial)
    - All new sensor/hardware components together
    - Major new features separately (if truly groundbreaking)
+   - Notable bug fixes in their own section (especially crashes, data corruption, major malfunctions)
 
 4. **Write detailed sections**:
    - ## Heading for each major feature
@@ -154,15 +172,26 @@ INSTRUCTIONS:
    ✗ Don't discuss deprecation removals (these are breaking changes)
    ✗ Skip minor bug fixes and small improvements
    ✗ Don't include sections about "Deprecation Removals" or "Migration Considerations"
+   ✗ Don't claim breaking changes are "backward compatible" - be honest about compatibility
 
-   Note: Some PRs labeled "breaking-change" may introduce important new features.
-   Focus on the NEW functionality they bring, not the breaking/removal aspects.
+   **CRITICAL - Handling Breaking Change PRs:**
 
-   Example: If a PR removes deprecated code BUT ALSO adds a new capability, only
-   discuss the new capability. Ignore the removal aspect entirely.
+   Some PRs labeled "breaking-change" introduce important new features. You may discuss
+   these features, BUT you MUST acknowledge if they require user action:
+
+   ✓ GOOD: "The new min_auth_mode option improves WiFi security. ESP32 devices now
+            default to WPA2 (configure min_auth_mode: WPA if using legacy routers)."
+
+   ✗ BAD:  "These optimizations are backward compatible with existing configurations."
+           (when the PR list includes breaking changes that require config updates)
+
+   When discussing features from breaking-change PRs:
+   - Mention if users need to update configs (briefly, not in detail)
+   - Don't claim full backward compatibility
+   - Save migration details for the Breaking Changes section
 
 OUTPUT FORMAT FOR HIGHLIGHTS:
-- 3-5 complete ## sections ordered by PRIORITY (see Priority Order above)
+- 3-10 complete ## sections ordered by PRIORITY (see Priority Order above)
 - Order: New Major Features → New Hardware → Architectural Changes → Optimizations
 - Do NOT include "Feature Highlights" heading - just write the ## sections
 - Do NOT include introductory text
@@ -214,7 +243,7 @@ BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ bre
 
 STEP 1 - Write Feature Highlights FIRST:
    File: {{ highlights_file }}
-   Content: 3-5 detailed ## sections with measurements, examples, context
+   Content: 3-10 detailed ## sections with measurements, examples, context
    Length: ~10-15KB of detailed technical content
 
 STEP 2 - Write Release Overview SECOND (based on the highlights you just wrote):
