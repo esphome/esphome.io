@@ -28,7 +28,7 @@ sensor:
 
 ## Configuration variables
 
-- **i2c_id** (*Optional*, [ID](#config-id)): Manually specify the ID of the
+- **i2c_id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID of the
   [I²C Bus](/components/i2c) if you want to use multiple I²C buses.
 
 - **address** (*Optional*, int): The I²C address of the sensor. Defaults to
@@ -36,14 +36,14 @@ sensor:
   The address is determined by the ADDR pin configuration on the sensor.
   Possible addresses: `0x38`, `0x3C`, `0x3E`, `0x3F`.
 
-- **update_interval** (*Optional*, [Time](#config-time)): The interval to check
+- **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check
   the sensor. Defaults to `60s`.
 
-- All other options from [Sensor](#config-sensor).
+- All other options from [Sensor](/components/sensor).
 
 ## See Also
 
-- [Sensor Filters](#sensor-filters)
+- [Sensor Filters](/components/sensor#sensor-filters)
 - [I²C Bus](/components/i2c)
 - [STTS22H Datasheet (PDF)](https://www.st.com/resource/en/datasheet/stts22h.pdf)
 - [STTS22H Product Overview - STMicroelectronics](https://www.st.com/en/mems-and-sensors/stts22h.html)
