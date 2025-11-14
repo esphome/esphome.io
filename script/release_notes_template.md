@@ -13,7 +13,7 @@ params:
 
 ## Release Overview
 
-<!-- AI_RELEASE_OVERVIEW_START -->
+<!-- RELEASE_OVERVIEW_START -->
 <!--
   Generate 1-2 paragraphs providing a high-level summary of this release.
   Focus on the most significant changes and improvements.
@@ -24,15 +24,9 @@ params:
   - Be specific about what users can expect
   - Keep it concise but informative
 -->
-<!-- AI_RELEASE_OVERVIEW_END -->
+<!-- RELEASE_OVERVIEW_END -->
 
-**Key Highlights:**
-
-- **Highlight 1** - Brief description
-- **Highlight 2** - Brief description
-- **Highlight 3** - Brief description
-
-<!-- AI_FEATURE_HIGHLIGHTS_START -->
+<!-- FEATURE_HIGHLIGHTS_START -->
 <!--
   FEATURE HIGHLIGHT SECTIONS
 
@@ -51,11 +45,11 @@ params:
   - Professional but enthusiastic tone
   - Order by importance (most impactful first)
 -->
-<!-- AI_FEATURE_HIGHLIGHTS_END -->
+<!-- FEATURE_HIGHLIGHTS_END -->
 
 ## Breaking Changes
 
-<!-- AI_BREAKING_CHANGES_USERS_START -->
+<!-- BREAKING_CHANGES_USERS_START -->
 <!--
   USER-FACING BREAKING CHANGES
 
@@ -72,11 +66,11 @@ params:
   - Be clear and specific about what action users need to take
   - Use code blocks for YAML examples
 -->
-<!-- AI_BREAKING_CHANGES_USERS_END -->
+<!-- BREAKING_CHANGES_USERS_END -->
 
 ### Breaking Changes for Developers
 
-<!-- AI_BREAKING_CHANGES_DEVELOPERS_START -->
+<!-- BREAKING_CHANGES_DEVELOPERS_START -->
 <!--
   DEVELOPER-FACING BREAKING CHANGES
 
@@ -93,7 +87,7 @@ params:
   - Be technical and precise
   - Focus on what external component developers need to change
 -->
-<!-- AI_BREAKING_CHANGES_DEVELOPERS_END -->
+<!-- BREAKING_CHANGES_DEVELOPERS_END -->
 
 <!-- markdownlint-disable MD013 -->
 

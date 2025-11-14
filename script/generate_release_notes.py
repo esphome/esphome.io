@@ -565,11 +565,13 @@ class ReleaseNotesGenerator:
 
         template = template_file.read_text()
 
-        # Check if destination file exists and has an imgtable to preserve
+        # Check if destination file exists and has content to preserve
         output_file = Path("content/changelog") / f"{self.version}.md"
         existing_imgtable = None
+        existing_full_list = None
         if output_file.exists():
             existing_content = output_file.read_text()
+
             # Extract existing imgtable content
             imgtable_match = re.search(
                 r"{{< imgtable >}}(.*?){{< /imgtable >}}", existing_content, re.DOTALL
@@ -577,6 +579,14 @@ class ReleaseNotesGenerator:
             if imgtable_match and imgtable_match.group(1).strip():
                 existing_imgtable = imgtable_match.group(0)
                 print("✓ Preserving existing imgtable")
+
+            # Extract existing "Full list of changes" section
+            full_list_match = re.search(
+                r"## Full list of changes.*", existing_content, re.DOTALL
+            )
+            if full_list_match:
+                existing_full_list = full_list_match.group(0)
+                print("✓ Preserving existing 'Full list of changes' section")
 
         # Load AI responses
         overview = overview_file.read_text().strip()
@@ -616,24 +626,22 @@ class ReleaseNotesGenerator:
 
         print(f"Loaded {len(prs)} PRs from cache")
 
-        # Replace AI sections
-        template = self._replace_marker_content(
-            template, "AI_RELEASE_OVERVIEW", overview
-        )
+        # Replace AI-generated sections
+        template = self._replace_marker_content(template, "RELEASE_OVERVIEW", overview)
 
         if highlights:
             template = self._replace_marker_content(
-                template, "AI_FEATURE_HIGHLIGHTS", highlights
+                template, "FEATURE_HIGHLIGHTS", highlights
             )
 
         if breaking_users:
             template = self._replace_marker_content(
-                template, "AI_BREAKING_CHANGES_USERS", breaking_users
+                template, "BREAKING_CHANGES_USERS", breaking_users
             )
 
         if breaking_devs:
             template = self._replace_marker_content(
-                template, "AI_BREAKING_CHANGES_DEVELOPERS", breaking_devs
+                template, "BREAKING_CHANGES_DEVELOPERS", breaking_devs
             )
 
         # Generate auto sections
@@ -647,6 +655,15 @@ class ReleaseNotesGenerator:
             template = re.sub(
                 r"<!-- MANUAL: Add featured components here -->\s*{{< imgtable >}}.*?{{< /imgtable >}}",
                 existing_imgtable,
+                template,
+                flags=re.DOTALL,
+            )
+
+        # Replace "Full list of changes" section if we have one preserved
+        if existing_full_list:
+            template = re.sub(
+                r"## Full list of changes.*",
+                existing_full_list,
                 template,
                 flags=re.DOTALL,
             )
