@@ -506,9 +506,23 @@ class ReleaseNotesGenerator:
             )
 
         print("\n" + "=" * 80)
-        print("STEP 2: After saving all AI responses, run:")
+        print("STEP 2: Assemble the changelog")
         print("=" * 80)
         print(f"  python script/generate_release_notes.py {self.version} --assemble")
+        print("\n" + "=" * 80)
+        print("STEP 3: REVIEW AND EDIT ASSEMBLED CHANGELOG (CRITICAL!)")
+        print("=" * 80)
+        print("\n⚠️  WARNING: AI-generated content MUST be reviewed for accuracy!")
+        print("\nCarefully review and edit the assembled changelog:")
+        print(f"  content/changelog/{self.version}.md")
+        print("\nCheck for:")
+        print("  ✓ Hallucinations or inaccurate technical claims")
+        print(
+            "  ✓ Incorrect compatibility statements (e.g., claiming breaking changes are backward compatible)"
+        )
+        print("  ✓ Mischaracterized features or incorrect measurements")
+        print("  ✓ Proper tone and clarity")
+        print("  ✓ Correct component links and formatting")
         print()
 
     def _generate_overview_and_highlights_prompt(
