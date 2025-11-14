@@ -743,10 +743,10 @@ class ReleaseNotesGenerator:
         # Replace "Full list of changes" section if we have one preserved
         if existing_full_list:
             template = re.sub(
-                r"## Full list of changes.*",
+                r"## Full list of changes.*?(?=^## |\Z)",
                 existing_full_list,
                 template,
-                flags=re.DOTALL,
+                flags=re.DOTALL | re.MULTILINE,
             )
 
         # Write output
