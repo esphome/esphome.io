@@ -24,6 +24,7 @@ The following table shows the currently supported models of Vbus devices.
 | ---------------- | ---------------- | ----------- | ------------------- |
 | DeltaSol BS Plus | deltasol_bs_plus | 4221        |                     |
 | DeltaSol BS 2009 | deltasol_bs_2009 | 427B        | DeltaSol BS Plus V2 |
+| DeltaSol BS      | deltasol_bs_db   | 4278        | DeltaSol BS Drainb. |
 | Dux H3214 | deltasol_bs_2009 | 427B | Pump 2 unsupported |
 | DeltaSol C | deltasol_c | 4212 | |
 | DeltaSol CS2 | deltasol_cs2 | 1121 | |
