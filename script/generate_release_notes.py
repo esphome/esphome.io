@@ -543,15 +543,13 @@ class ReleaseNotesGenerator:
         print("\n" + "=" * 80)
         print("STEP 1: Process prompts through Claude Code CLI")
         print("=" * 80)
-        print("\nFor each prompt below:")
-        print("1. Open the prompt file in your editor/viewer")
-        print("2. Copy the entire contents")
-        print("3. Start a new Claude Code CLI session: claude")
-        print("4. Paste the prompt and wait for response")
-        print("5. Copy Claude's response (just the markdown content)")
-        print("6. Save to the specified output file\n")
+        print("\nStart Claude Code CLI and read the prompt files:\n")
+        print("  claude")
+        print(f"  > Please read {overview_highlights_file} and follow the instructions")
+        if breaking_changes:
+            print(f"  > Please read {breaking_file} and follow the instructions")
 
-        print("Prompt 1: Overview + Feature Highlights (COMBINED)")
+        print("\nPrompt 1: Overview + Feature Highlights (COMBINED)")
         print(f"  Prompt: {overview_highlights_file}")
         print(f"  Outputs: {self.responses_dir / 'release_overview.md'}")
         print(f"           {self.responses_dir / 'feature_highlights.md'}")
@@ -562,25 +560,19 @@ class ReleaseNotesGenerator:
             print(f"  Outputs: {self.responses_dir / 'breaking_changes_users.md'}")
             print(f"           {self.responses_dir / 'breaking_changes_developers.md'}")
 
-        print("\nTIP: Each prompt specifies TWO output files - Claude will write both.")
-        print(
-            "     Follow the instructions in each prompt to save the correct content to each file."
-        )
-        print(
-            "\nALTERNATIVE: You can use the Read tool in Claude Code to read the prompt files:"
-        )
-        print(
-            f"     In Claude CLI: 'Please read {overview_highlights_file} and follow the instructions'"
-        )
-        if breaking_changes:
-            print(
-                f"     In Claude CLI: 'Please read {breaking_file} and follow the instructions'"
-            )
+        print("\nNote: Each prompt will generate TWO output files automatically.")
 
         print("\n" + "=" * 80)
         print("STEP 2: Assemble the changelog")
         print("=" * 80)
         print(f"  python script/generate_release_notes.py {self.version} --assemble")
+
+        print("\n" + "=" * 80)
+        print("To reset and try again (delete AI responses):")
+        print("=" * 80)
+        print(f"  rm -rf {self.responses_dir}")
+        print("  # Then re-run step 1 above")
+
         print("\n" + "=" * 80)
         print("STEP 3: REVIEW AND EDIT ASSEMBLED CHANGELOG (CRITICAL!)")
         print("=" * 80)
