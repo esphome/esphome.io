@@ -88,22 +88,28 @@ Read the generated prompt files to understand what needs to be generated:
 - This is the Hugo template structure
 - Contains marker locations where content will be inserted
 
-### Step 5: Load PR Details
+### Step 5: Read PR Labels and Load PR Details
 
-The individual PR JSON files contain all the details you need:
+**First, read the PR labels file** to know which PRs to load:
 
-**For each PR** listed in the prompt files:
+```bash
+# Read this file first
+script/cache/{version}/pr_labels.json
+```
 
-- Read: `script/cache/prs/{pr_number}.json`
-- Contains: number, title, body (full description), author, labels, url, state, merged_at
+This file contains:
 
-**Read ALL PR files** mentioned in the prompt instructions:
+- `new_features`: Array of PR numbers for feature PRs
+- `new_components`: Array of PR numbers for component PRs
+- `breaking_changes`: Array of PR numbers for breaking change PRs
+- `all_prs`: Array of all PR numbers for this version
 
-- All new_features PRs
-- All new_components PRs
-- All breaking_changes PRs (evaluate for NEW features only, not breaking aspects)
+**Then, read individual PR JSON files** based on the numbers:
 
-The prompt files list all the individual PR JSON files to read.
+- For each PR number listed, read: `script/cache/prs/{pr_number}.json`
+- Each file contains: number, title, body (full description), author, labels, url, state, merged_at
+
+**Important**: The `script/cache/prs/` directory is shared across all versions, so you MUST use `pr_labels.json` to know which PRs belong to this version.
 
 ### Step 6: Generate Release Notes Sections
 
