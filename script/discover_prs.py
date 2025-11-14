@@ -461,6 +461,23 @@ class PRDiscovery:
             json.dump(output_data, f, indent=2)
 
         print(f"\n✓ PR data written to: {output_file}")
+
+        # Create PR labels file (just PR numbers by label)
+        pr_labels_data = {
+            "version": str(self.version),
+            "total_prs": len(all_prs),
+            "new_features": [pr.number for pr in new_features],
+            "new_components": [pr.number for pr in new_components],
+            "breaking_changes": [pr.number for pr in breaking_changes],
+            "all_prs": [pr.number for pr in all_prs],
+        }
+
+        labels_file = self.version_dir / "pr_labels.json"
+        with open(labels_file, "w") as f:
+            json.dump(pr_labels_data, f, indent=2)
+
+        print(f"✓ PR labels written to: {labels_file}")
+
         print("\nSummary:")
         print(f"  Total PRs: {len(all_prs)}")
         print(f"  New Features: {len(new_features)}")

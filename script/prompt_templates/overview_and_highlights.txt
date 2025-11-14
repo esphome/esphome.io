@@ -198,7 +198,7 @@ OUTPUT FORMAT FOR HIGHLIGHTS:
 - Do NOT include "Deprecation Removals" or "Migration Considerations" sections
 
 ────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILE - CRITICAL: You MUST read this file using the Read tool
+📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
 ────────────────────────────────────────────────────────────────────────────────
 
 RELEASE STATISTICS:
@@ -209,26 +209,34 @@ Breaking Changes: {{ breaking_changes|length }}
 
 ⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
 
-1. You MUST use the Read tool to read the PR data file: script/cache/{{ version }}/pr_data.json
-2. This file contains ALL PRs organized by type (new_features, new_components, breaking_changes, all_prs)
-3. Each PR object contains: number, title, body (full description), author, labels, url, state, merged_at
-4. The body field contains the FULL PR description - read it carefully for context and details
-5. After reading the file: identify themes, write feature highlights, then write overview
+1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
+2. Do NOT skip any files or try to summarize without reading them all
+3. Do NOT assume you know the content - you must READ each file
+4. Each JSON file contains: number, title, body, author, labels, url
+5. Read ALL files in parallel for efficiency, then analyze the complete data
+6. After reading ALL files: identify themes, write feature highlights, then write overview
 
-PR DATA FILE TO READ:
-  script/cache/{{ version }}/pr_data.json
+NEW COMPONENT PR FILES ({{ new_components|length }} total) - READ ALL {{ new_components|length }} FILES:
+{% for pr in new_components %}
+  {{ prs_cache_dir }}/{{ pr.number }}.json
+{% endfor %}
 
-This JSON file contains:
-  - new_features: Array of {{ new_features|length }} feature PRs with full details
-  - new_components: Array of {{ new_components|length }} component PRs with full details
-  - breaking_changes: Array of {{ breaking_changes|length }} breaking change PRs with full details
-  - all_prs: Array of all {{ total_prs }} PRs
+NEW FEATURE PR FILES ({{ new_features|length }} total) - READ ALL {{ new_features|length }} FILES:
+{% for pr in new_features %}
+  {{ prs_cache_dir }}/{{ pr.number }}.json
+{% endfor %}
 
 {% if breaking_changes %}
-⚠️  IMPORTANT: Breaking change PRs are included, but for THIS section, ONLY evaluate them for
+BREAKING CHANGE PR FILES ({{ breaking_changes|length }} total) - READ ALL {{ breaking_changes|length }} FILES:
+
+⚠️  IMPORTANT: These PRs have breaking changes, but for THIS section, ONLY evaluate them for
     their NEW FEATURES and FUNCTIONALITY. Do NOT discuss the breaking changes themselves -
     those will be covered in a separate "Breaking Changes" section of the release notes.
     Focus on what new capabilities or improvements these PRs bring.
+
+{% for pr in breaking_changes %}
+  {{ prs_cache_dir }}/{{ pr.number }}.json
+{% endfor %}
 {% endif %}
 ────────────────────────────────────────────────────────────────────────────────
 ⚠️  FINAL REMINDER: Read ALL files above, then write BOTH files:

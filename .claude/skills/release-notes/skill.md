@@ -44,14 +44,12 @@ Follow these steps carefully to generate release notes for a new ESPHome release
 python script/discover_prs.py {version}
 ```
 
-**Read PR data**:
+This will:
 
-- File: `script/cache/{version}/pr_data.json`
-- Contains: version, previous_version, beta_tag, comparison, total_prs, new_features, new_components, breaking_changes, all_prs
-
-**Display summary**:
-
-- "Found {total} PRs ({features} features, {components} new components, {breaking} breaking)"
+- Fetch all PRs from GitHub between the previous release and current version
+- Cache individual PR JSON files in `script/cache/prs/`
+- Create PR data summary file (used internally by other scripts)
+- Display summary: "Found {total} PRs ({features} features, {components} new components, {breaking} breaking)"
 
 ### Step 3: Generate Prompt Files
 
@@ -92,18 +90,20 @@ Read the generated prompt files to understand what needs to be generated:
 
 ### Step 5: Load PR Details
 
-The PR data JSON contains ALL the details you need:
+The individual PR JSON files contain all the details you need:
 
-**Read the PR data file**: `script/cache/{version}/pr_data.json`
+**For each PR** listed in the prompt files:
 
-This single file contains:
+- Read: `script/cache/prs/{pr_number}.json`
+- Contains: number, title, body (full description), author, labels, url, state, merged_at
 
-- `new_features`: Array of all feature PRs with full details (number, title, body, author, labels, url)
-- `new_components`: Array of all component PRs with full details
-- `breaking_changes`: Array of all breaking change PRs with full details
-- `all_prs`: Array of all PRs
+**Read ALL PR files** mentioned in the prompt instructions:
 
-Each PR object includes the full `body` field with the complete PR description.
+- All new_features PRs
+- All new_components PRs
+- All breaking_changes PRs (evaluate for NEW features only, not breaking aspects)
+
+The prompt files list all the individual PR JSON files to read.
 
 ### Step 6: Generate Release Notes Sections
 
