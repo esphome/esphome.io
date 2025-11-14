@@ -77,27 +77,26 @@ OUTPUT FORMAT FOR DEVELOPER CHANGES:
 - Link to developers.esphome.io at the end
 
 ────────────────────────────────────────────────────────────────────────────────
-📁 PR DATA FILES - CRITICAL: You MUST read ALL of these files using the Read tool
+📁 PR DATA FILE - CRITICAL: You MUST read this file using the Read tool
 ────────────────────────────────────────────────────────────────────────────────
 
 BREAKING CHANGE PULL REQUESTS ({{ breaking_changes|length }} total):
 
 ⚠️  CRITICAL INSTRUCTIONS FOR LOADING PR DATA:
 
-1. You MUST use the Read tool to read EVERY SINGLE JSON file listed below
-2. Do NOT skip any files or try to write without reading them all
-3. Do NOT assume you know the content - you must READ each file
-4. Each JSON file contains: number, title, body (with migration details), author, labels, url
-5. Read ALL files in parallel for efficiency, then analyze the complete data
-6. After reading: categorize each as user-facing or developer-facing, then write BOTH files
+1. You MUST use the Read tool to read the PR data file: script/cache/{{ version }}/pr_data.json
+2. Focus on the "breaking_changes" array which contains {{ breaking_changes|length }} PRs
+3. Each PR object contains: number, title, body (with migration details), author, labels, url
+4. The body field contains the FULL PR description - read it carefully for migration guidance
+5. After reading: categorize each as user-facing or developer-facing, then write BOTH files
 
-BREAKING CHANGE PR FILES - READ ALL {{ breaking_changes|length }} FILES:
-{% for pr in breaking_changes %}
-  {{ prs_cache_dir }}/{{ pr.number }}.json
-{% endfor %}
+PR DATA FILE TO READ:
+  script/cache/{{ version }}/pr_data.json
+
+The "breaking_changes" array contains all {{ breaking_changes|length }} breaking change PRs with full details.
 
 ────────────────────────────────────────────────────────────────────────────────
-⚠️  REMINDER: Read ALL files above, then write BOTH files:
+⚠️  REMINDER: Read the PR data file above, then write BOTH files:
     1. User Changes: {{ users_file }} (### headings, detailed)
     2. Developer Changes: {{ devs_file }} (bullet points, brief)
 ────────────────────────────────────────────────────────────────────────────────

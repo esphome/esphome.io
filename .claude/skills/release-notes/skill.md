@@ -92,18 +92,18 @@ Read the generated prompt files to understand what needs to be generated:
 
 ### Step 5: Load PR Details
 
-The PR data JSON contains summary info, but you need to read INDIVIDUAL PR JSON files to get full details:
+The PR data JSON contains ALL the details you need:
 
-**For each PR** listed in pr_data.json:
+**Read the PR data file**: `script/cache/{version}/pr_data.json`
 
-- Read: `script/cache/prs/{pr_number}.json`
-- Contains: number, title, body (full description), author, labels, url, state, merged_at
+This single file contains:
 
-**Read ALL PR files** mentioned in the template instructions:
+- `new_features`: Array of all feature PRs with full details (number, title, body, author, labels, url)
+- `new_components`: Array of all component PRs with full details
+- `breaking_changes`: Array of all breaking change PRs with full details
+- `all_prs`: Array of all PRs
 
-- All new_features PRs
-- All new_components PRs
-- All breaking_changes PRs (evaluate for NEW features only, not breaking aspects)
+Each PR object includes the full `body` field with the complete PR description.
 
 ### Step 6: Generate Release Notes Sections
 
