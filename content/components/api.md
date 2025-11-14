@@ -394,11 +394,28 @@ on_...:
   if:
     condition:
       api.connected:
+        homeassistant_only: False
+    then:
+      - logger.log: API is connected!
+```
+
+The lambda equivalent for this is `id(api_id).is_connected(true)`.
+
+```yaml
+on_...:
+  if:
+    condition:
+      api.connected:
     then:
       - logger.log: API is connected!
 ```
 
 The lambda equivalent for this is `id(api_id).is_connected()`.
+
+#### Configuration variables
+
+- **homeassistant_only** (*Optional*, boolean): If enabled, the condition checks for Home Assistant clients only.
+  Defaults to `false`.
 
 {{< anchor "api-device-actions" >}}
 
