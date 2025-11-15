@@ -1,15 +1,15 @@
 ---
 description: "Instructions for setting up HC8 CO2 sensors"
-title: "HC8 CO_2 Sensor"
+title: "HC8 CO₂ Sensor"
 params:
   seo:
     description: Instructions for setting up HC8 CO2 sensors
     image: hc8.png
 ---
 
-The `hc8` sensor platform allows you to use HC8 CO_2 sensors
+The `hc8` sensor platform allows you to use HC8 CO₂ sensors.
 
-{{< img src="hc8-full.png" alt="Image" caption="HC8 CO_2 Sensor." width="50.0%" class="align-center" >}}
+{{< img src="hc8-full.png" alt="HC8 CO₂ Sensor" caption="HC8 CO₂ Sensor." width="50.0%" class="align-center" >}}
 
 As the communication with the HC8 sensor is done using UART, you need
 to have an [UART bus](/components/uart) in your configuration with the `rx_pin` connected to the TX pin of the
@@ -24,9 +24,9 @@ sensor:
       name: HC8 CO2 Value
 ```
 
-## Configuration variables
+## Configuration Variables
 
-- **co2** (*Optional*): The CO_2 data from the sensor in parts per million (ppm).
+- **co2** (*Optional*): The CO₂ data from the sensor in parts per million (ppm).
   All options from [Sensor](/components/sensor).
 
 - **update_interval** (*Optional*, [Time](/guides/configuration-types#time)): The interval to check the
@@ -37,7 +37,7 @@ sensor:
 
 - **id** (*Optional*, [ID](/guides/configuration-types#id)): Manually specify the ID used for actions.
 
-- **warmup_time** (*Optional*, Time): The sensor has a warmup time and before that, it returns bougus readings (eg: 500ppm, 505ppm...). This setting discards readings until the warmup time happened (`NAN` is returned). The datasheet says preheating takes 10min, with a 90% accuracy after 3 minutes. Empirical evidence shows that reasonable values are usually returned after about 1 minute.
+- **warmup_time** (*Optional*, [Time](/guides/configuration-types#time)): The sensor has a warmup period during which it returns inaccurate readings (e.g., 500ppm, 505ppm). This setting discards readings until the warmup time has elapsed (returning `NaN` during warmup). The datasheet specifies a 10-minute preheating time for full accuracy, with 90% accuracy achieved after 3 minutes. Empirical evidence shows that reasonable values are usually returned after about 1 minute. Defaults to `75s`.
 
 {{< anchor "hc8-calibrate_action" >}}
 
@@ -45,15 +45,18 @@ sensor:
 
 This [action](/automations/actions#all-actions) executes baseline calibration command on the sensor with the given ID.
 
-If you want to execute baseline calibration, the HC8 sensor must work in stable gas environment
-for at least 2 minutes and you execute this function.
+Before executing baseline calibration, ensure the HC8 sensor has been operating in a stable gas environment
+(with known CO₂ concentration) for at least 2 minutes.
+
+**Warning:** Only calibrate the sensor in a known stable environment (e.g., outdoors or in a well-ventilated room).
+Incorrect calibration will result in inaccurate readings.
 
 ```yaml
 on_...:
   then:
     - hc8.calibrate:
         id: my_hc8_id
-        baseline: 400
+        baseline: 420  # Current outdoor CO₂ level
 ```
 
 You can provide an [action](/components/api#api-device-actions) to perform from Home Assistant
