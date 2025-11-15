@@ -387,7 +387,7 @@ api:
 
 ### `api.connected` Condition
 
-This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome
+This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome native API.
 native API. Please note `client` refers to any connection to the API, including Home Assistant, ESPHome's remote log viewer, and other API consumers.
 
 Check if any client is connected:
