@@ -422,7 +422,7 @@ on_boot:
 The lambda equivalent for this is `id(api_id).is_connected(true)`.
 
 **Use Cases:**
- 
+
 - Use `state_subscription_only: false` (default) to detect any API connection
 - Use `state_subscription_only: true` when you need to ensure Home Assistant (or other connections that subscribe to states) is connected before sending events or calling services, preventing errors from logger-only connections
 
