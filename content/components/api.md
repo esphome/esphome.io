@@ -407,13 +407,14 @@ The lambda equivalent for this is `id(api_id).is_connected()`.
 **Check if a client subscribed to entity states is connected (typically Home Assistant):**
 
 ```yaml
-on_...:
-  if:
-    condition:
-      api.connected:
-        state_subscription_only: True
-    then:
-      - logger.log: Client with state subscription is connected to API!
+on_boot:
+  - wait_until:
+      condition:
+        api.connected:
+          state_subscription_only: true
+  - logger.log: Home Assistant is connected!
+  - homeassistant.event:
+      event: esphome.device_booted
 ```
 
 The lambda equivalent for this is `id(api_id).is_connected(true)`.
