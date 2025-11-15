@@ -403,23 +403,23 @@ on_...:
 
 The lambda equivalent for this is `id(api_id).is_connected()`.
 
-Check if Home Assistant specifically is connected:
+Check if a client with state subscription (Home Assistant, Node-RED library) is connected:
 
 ```yaml
 on_...:
   if:
     condition:
       api.connected:
-        homeassistant_only: True
+        state_subscription_only: True
     then:
-      - logger.log: Home Assistant is connected to API!
+      - logger.log: Client with state subscription is connected to API!
 ```
 
 The lambda equivalent for this is `id(api_id).is_connected(true)`.
 
 #### Configuration variables
 
-- **homeassistant_only** (*Optional*, boolean): If enabled, the condition checks for Home Assistant clients only.
+- **state_subscription_only** (*Optional*, boolean): If enabled, the condition checks for clients with state subscription (Home Assistant, Node-RED library) only.
   Defaults to `false`.
 
 {{< anchor "api-device-actions" >}}
