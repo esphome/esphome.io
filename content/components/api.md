@@ -404,7 +404,7 @@ on_...:
 
 The lambda equivalent for this is `id(api_id).is_connected()`.
 
-Check if a client with state subscription (Home Assistant, Node-RED library) is connected:
+**Check if a client subscribed to entity states is connected (typically Home Assistant):**
 
 ```yaml
 on_...:
