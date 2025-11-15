@@ -388,10 +388,11 @@ api:
 ### `api.connected` Condition
 
 This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome native API.
-native API. Please note `client` refers to any connection to the API, including Home Assistant, ESPHome's remote log viewer, and other API consumers.
++#### Configuration variables
 
-Check if any client is connected:
+- **state_subscription_only** (*Optional*, boolean): If enabled, only counts clients that have subscribed to entity tate updates. This filters out logger-only connections (such as `esphome logs` command), which can cause false ositives when waiting for Home Assistant. Defaults to `false`.
 
+**Check if any client is connected:**
 ```yaml
 on_...:
   if:
