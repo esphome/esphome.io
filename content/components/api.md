@@ -412,7 +412,7 @@ on_...:
 
 The lambda equivalent for this is `id(api_id).is_connected()`.
 
-#### Configuration variables
+### Configuration variables
 
 - **homeassistant_only** (*Optional*, boolean): If enabled, the condition checks for Home Assistant clients only.
   Defaults to `false`.
