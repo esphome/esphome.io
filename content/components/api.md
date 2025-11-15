@@ -388,31 +388,32 @@ api:
 ### `api.connected` Condition
 
 This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome
-native API. Please note client not only includes Home Assistant, but also ESPHome's OTA log output
-if logs are shown remotely.
+native API. Please note `client` refers to any connection to the API, including Home Assistant, ESPHome's remote log viewer, and other API consumers.
 
-```yaml
-on_...:
-  if:
-    condition:
-      api.connected:
-        homeassistant_only: False
-    then:
-      - logger.log: API is connected!
-```
-
-The lambda equivalent for this is `id(api_id).is_connected(true)`.
-
+Check if any client is connected:
 ```yaml
 on_...:
   if:
     condition:
       api.connected:
     then:
-      - logger.log: API is connected!
+      - logger.log: Client is connected to API!
 ```
 
 The lambda equivalent for this is `id(api_id).is_connected()`.
+
+Check if Home Assistant specifically is connected:
+```yaml
+on_...:
+  if:
+    condition:
+      api.connected:
+        homeassistant_only: True
+    then:
+      - logger.log: Home Assistant is connected to API!
+```
+
+The lambda equivalent for this is `id(api_id).is_connected(true)`.
 
 #### Configuration variables
 
