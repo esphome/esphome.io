@@ -391,6 +391,7 @@ This [Condition](/automations/actions#all-conditions) checks if at least one cli
 native API. Please note `client` refers to any connection to the API, including Home Assistant, ESPHome's remote log viewer, and other API consumers.
 
 Check if any client is connected:
+
 ```yaml
 on_...:
   if:
@@ -403,6 +404,7 @@ on_...:
 The lambda equivalent for this is `id(api_id).is_connected()`.
 
 Check if Home Assistant specifically is connected:
+
 ```yaml
 on_...:
   if:
