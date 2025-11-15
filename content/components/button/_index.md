@@ -43,7 +43,7 @@ Configuration variables:
 - **name** (*Optional*, string): The name for the button. At least one of **id** and **name** must be specified.
 
 > [!NOTE]
-> If you have a [friendly_name](#esphome-configuration_variables) set for your device and
+> If you have a [friendly_name](/components/esphome#esphome-configuration_variables) set for your device and
 > you want the button to use that name, you can set `name: None`.
 
 - **icon** (*Optional*, icon): Manually set the icon to use for the button in the frontend.
@@ -62,16 +62,16 @@ Configuration variables:
   See <https://www.home-assistant.io/integrations/button/#device-class>
   for a list of available options.
 
-- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](#config-webserver-version-3-options).
+- If Webserver enabled and version 3 is selected, All other options from Webserver Component.. See [Webserver Version 3](/components/web_server#config-webserver-version-3-options).
 
 Automations:
 
-- **on_press** (*Optional*, [Automation](#automation)): An automation to perform
+- **on_press** (*Optional*, [Automation](/automations)): An automation to perform
   when the button is pressed. See [`on_press`](#button-on_press).
 
 MQTT options:
 
-- All other options from [MQTT Component](#config-mqtt-component).
+- All other options from [MQTT Component](/components/mqtt#config-mqtt-component).
 
 ## Button Automation
 
@@ -90,13 +90,13 @@ button:
         - logger.log: Button Pressed
 ```
 
-Configuration variables: see [Automation](#automation).
+Configuration variables: see [Automation](/automations).
 
 {{< anchor "button-press_action" >}}
 
 ### `button.press` Action
 
-This is an [Action](#config-action) for pressing a button in an Automation.
+This is an [Action](/automations/actions#all-actions) for pressing a button in an Automation.
 
 ```yaml
 - button.press: my_button
@@ -104,19 +104,19 @@ This is an [Action](#config-action) for pressing a button in an Automation.
 
 Configuration variables:
 
-- **id** (**Required**, [ID](#config-id)): The ID of the button to set.
+- **id** (**Required**, [ID](/guides/configuration-types#id)): The ID of the button to set.
 
 > [!NOTE]
 > Buttons are designed to trigger an action on a device from Home Assistant, and have an unidirectional flow from
 > Home Assistant to ESPHome. If you press a button using this action, no button press event will be triggered in Home
 > Assistant. If you want to trigger an automation in Home Assistant, you should use a
-> [Home Assistant event](#api-homeassistant_event_action) instead.
+> [Home Assistant event](/components/api#api-homeassistant_event_action) instead.
 
 {{< anchor "button-lambda_calls" >}}
 
 ### lambda calls
 
-From [lambdas](#config-lambda), you can press a button.
+From [lambdas](/automations/templates#config-lambda), you can press a button.
 
 - `press()`  : Press the button.
 

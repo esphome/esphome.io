@@ -148,6 +148,10 @@ esp32:
 - **enable_idf_experimental_features** (*Optional*, boolean): Can be set to `true` to enable experimental features. Use of
   experimental features may cause instability or other issues.
 
+- **loop_task_stack_size** (*Optional*, int): Loop task stack size in bytes. Increase if experiencing stack overflow
+  errors (e.g., with complex code or deep recursion). Higher values reduce heap availability. Valid range is 8192-32768
+  bytes. Defaults to 8192 bytes.
+
 **LWIP Optimization Options (ESP-IDF only):**
 
 The following options are available under the `advanced` section when using the ESP-IDF framework to optimize
@@ -226,7 +230,7 @@ esp32:
 ## IDF Components
 
 The `components` option allows you to include IDF components. These components will then be compiled into the resulting
-firmware and may be used by [lambdas](#config-lambda). The most common usage of this option is to include third-party
+firmware and may be used by [lambdas](/automations/templates#config-lambda). The most common usage of this option is to include third-party
 components that are available in the [ESP Component Registry](https://components.espressif.com/). They can be added by
 listing their name under this option. It is also possible to use specific versions, or to fetch components from a file or
 git repository.
