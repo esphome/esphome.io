@@ -381,9 +381,11 @@ api:
     - logger.log: "API client disconnected!"
 ```
 
+## Conditions
+
 {{< anchor "api-connected_condition" >}}
 
-## `api.connected` Condition
+### `api.connected` Condition
 
 This [Condition](/automations/actions#all-conditions) checks if at least one client is connected to the ESPHome
 native API. Please note client not only includes Home Assistant, but also ESPHome's OTA log output
@@ -412,7 +414,7 @@ on_...:
 
 The lambda equivalent for this is `id(api_id).is_connected()`.
 
-### Configuration variables
+#### Configuration variables
 
 - **homeassistant_only** (*Optional*, boolean): If enabled, the condition checks for Home Assistant clients only.
   Defaults to `false`.
