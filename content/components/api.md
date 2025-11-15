@@ -394,6 +394,7 @@ This [Condition](/automations/actions#all-conditions) checks if at least one cli
 - **state_subscription_only** (*Optional*, boolean): If enabled, only counts clients that have subscribed to entity state updates. This filters out logger-only connections (such as `esphome logs` command), which can cause false positives when waiting for Home Assistant. Defaults to `false`.
 
 **Check if any client is connected:**
+
 ```yaml
 on_...:
   if:
