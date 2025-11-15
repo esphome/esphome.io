@@ -51,6 +51,27 @@ The optimization level depends on whether PSRAM is guaranteed to be available (c
 > This has various security and privacy implications decribed in [RFC7721](https://datatracker.ietf.org/doc/rfc7721/), as this might leak outside of the smart home network and makes the device uniquely identifiable.
 > Therefore, the address generation does not comply to [RFC7217](https://datatracker.ietf.org/doc/rfc7217/).
 
+## Lambda: Check if any network component is available
+
+This function is more useful for developing external components, such as a status indicator.
+
+```yaml
+network:
+  id: network_id
+
+button:
+  id: update_now
+  name: "Update now"
+  on_press:
+    then:
+      - if:
+          condition:
+            lambda: |-
+              return id(network_id).is_available();
+          then:
+            - logger.log: "A Network component is available!"
+```
+
 ## See Also
 
 - {{< docref "wifi/" >}}
