@@ -240,13 +240,15 @@ If you have extreme security requirements, you can physically disable USB/serial
 
 - Fill USB ports with epoxy (PERMANENT - device cannot be recovered if it fails)
 - Cut serial header pins (PERMANENT - device cannot be reflashed via serial)
+- Disable bootloader access via UART using eFuses on ESP32 (PERMANENT and IRREVERSIBLE - blocks all serial flashing)
 - Use devices in hard-to-access locations (reversible)
 
 **Important considerations:**
 
-- Once you epoxy or cut pins, the device can ONLY be updated via OTA
+- Once you epoxy, cut pins, or burn eFuses, the device can ONLY be updated via OTA
 - If OTA fails or the device becomes unresponsive, the device is permanently bricked
 - You will not be able to troubleshoot connection issues or recover from bad firmware
+- eFuses cannot be reset - once blown, they are permanent for the life of the chip
 - This is only appropriate for extremely high-security environments where physical access is a critical threat
 
 </details>
