@@ -69,8 +69,8 @@ http_request:
 
 **For the host platform:**
 
-- **ca_certificate_path** (*Optional*, file path): Path to a CA certificate bundle. Not required on MacOS (the inbuilt CA bundle is used and SSL enabled by default).
-   On Linux this is required to enable SSL.
+- **ca_certificate_path** (*Optional*, file path): Path to a CA certificate bundle.
+- **verbose** (*Optional*, boolean): enables libcurl's printing of requests, responses and other status messages on stderr
 
 > [!NOTE]
 > To use SSL on Linux you must have the `libssl-dev` package installed (e.g. `sudo apt install libssl-dev`  ).
