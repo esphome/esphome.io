@@ -838,11 +838,7 @@ class ReleaseNotesGenerator:
         """Replace version placeholders"""
         # Format date
         now = datetime.now()
-        day = now.day
-        suffix = (
-            "th" if 11 <= day <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(day % 10, "th")
-        )
-        date_str = f"{day}{suffix} {now.strftime('%B %Y')}"
+        date_str = now.strftime('%B %Y')
 
         template = template.replace("{VERSION}", str(self.version))
         template = template.replace("{DATE}", date_str)
